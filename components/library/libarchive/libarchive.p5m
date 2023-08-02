@@ -1,41 +1,34 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2023 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # All man pages are pulled from $(COMPONENT_SRC)/doc/man and have a .3 suffix
 <transform file path=usr.*/man/man.+/(.+[.]3).*$ -> set action.hash %<1> >
+# We don't deliber 32 bit apps.
+<transform file path=.+/bin/$(MACH32)/.+ -> drop>
 
 # Symlink for the old SONAME libarchive.so.12 to the new libarchive.so.13.
 # This is to aid consumers of the old library. Upstream has confirmed that
@@ -43,61 +36,67 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 link path=usr/lib/$(MACH64)/libarchive.so.12 target=libarchive.so.13
 link path=usr/lib/libarchive.so.12 target=libarchive.so.13
 
-#file path=usr/bin/$(MACH32)/bsdcat
-#file path=usr/bin/$(MACH32)/bsdcpio
-#file path=usr/bin/$(MACH32)/bsdtar
+file path=usr/bin/$(MACH32)/bsdcat
+file path=usr/bin/$(MACH32)/bsdcpio
+file path=usr/bin/$(MACH32)/bsdtar
+file path=usr/bin/$(MACH32)/bsdunzip
 file path=usr/bin/bsdcat
 file path=usr/bin/bsdcpio
 file path=usr/bin/bsdtar
+file path=usr/bin/bsdunzip
 file path=usr/include/archive.h
 file path=usr/include/archive_entry.h
-link path=usr/lib/$(MACH64)/libarchive.so \
-    target=libarchive.so.1$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libarchive.so.1$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libarchive.so target=libarchive.so.1$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libarchive.so.1$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libarchive.so.13 \
-    target=libarchive.so.1$(COMPONENT_VERSION)
+    target=libarchive.so.1$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libarchive.pc
-link path=usr/lib/libarchive.so target=libarchive.so.1$(COMPONENT_VERSION)
-file path=usr/lib/libarchive.so.1$(COMPONENT_VERSION)
-link path=usr/lib/libarchive.so.13 target=libarchive.so.1$(COMPONENT_VERSION)
+link path=usr/lib/libarchive.so target=libarchive.so.1$(HUMAN_VERSION)
+file path=usr/lib/libarchive.so.1$(HUMAN_VERSION)
+link path=usr/lib/libarchive.so.13 target=libarchive.so.1$(HUMAN_VERSION)
 file path=usr/lib/pkgconfig/libarchive.pc
 file path=usr/share/man/man1/bsdcat.1
 file path=usr/share/man/man1/bsdcpio.1
 file path=usr/share/man/man1/bsdtar.1
-file path=usr/share/man/man3archive/archive_entry.3archive
-file path=usr/share/man/man3archive/archive_entry_acl.3archive
-file path=usr/share/man/man3archive/archive_entry_linkify.3archive
-file path=usr/share/man/man3archive/archive_entry_misc.3archive
-file path=usr/share/man/man3archive/archive_entry_paths.3archive
-file path=usr/share/man/man3archive/archive_entry_perms.3archive
-file path=usr/share/man/man3archive/archive_entry_stat.3archive
-file path=usr/share/man/man3archive/archive_entry_time.3archive
-file path=usr/share/man/man3archive/archive_read.3archive
-file path=usr/share/man/man3archive/archive_read_add_passphrase.3archive
-file path=usr/share/man/man3archive/archive_read_data.3archive
-file path=usr/share/man/man3archive/archive_read_disk.3archive
-file path=usr/share/man/man3archive/archive_read_extract.3archive
-file path=usr/share/man/man3archive/archive_read_filter.3archive
-file path=usr/share/man/man3archive/archive_read_format.3archive
-file path=usr/share/man/man3archive/archive_read_free.3archive
-file path=usr/share/man/man3archive/archive_read_header.3archive
-file path=usr/share/man/man3archive/archive_read_new.3archive
-file path=usr/share/man/man3archive/archive_read_open.3archive
-file path=usr/share/man/man3archive/archive_read_set_options.3archive
-file path=usr/share/man/man3archive/archive_util.3archive
-file path=usr/share/man/man3archive/archive_write.3archive
-file path=usr/share/man/man3archive/archive_write_blocksize.3archive
-file path=usr/share/man/man3archive/archive_write_data.3archive
-file path=usr/share/man/man3archive/archive_write_disk.3archive
-file path=usr/share/man/man3archive/archive_write_filter.3archive
-file path=usr/share/man/man3archive/archive_write_finish_entry.3archive
-file path=usr/share/man/man3archive/archive_write_format.3archive
-file path=usr/share/man/man3archive/archive_write_free.3archive
-file path=usr/share/man/man3archive/archive_write_header.3archive
-file path=usr/share/man/man3archive/archive_write_new.3archive
-file path=usr/share/man/man3archive/archive_write_open.3archive
-file path=usr/share/man/man3archive/archive_write_set_options.3archive
-file path=usr/share/man/man3archive/archive_write_set_passphrase.3archive
-file path=usr/share/man/man3lib/libarchive.3lib
-file path=usr/share/man/man3lib/libarchive_changes.3lib
-file path=usr/share/man/man3lib/libarchive_internals.3lib
+file path=usr/share/man/man1/bsdunzip.1
+file path=usr/share/man/man3/archive_entry.3
+file path=usr/share/man/man3/archive_entry_acl.3
+file path=usr/share/man/man3/archive_entry_linkify.3
+file path=usr/share/man/man3/archive_entry_misc.3
+file path=usr/share/man/man3/archive_entry_paths.3
+file path=usr/share/man/man3/archive_entry_perms.3
+file path=usr/share/man/man3/archive_entry_stat.3
+file path=usr/share/man/man3/archive_entry_time.3
+file path=usr/share/man/man3/archive_read.3
+file path=usr/share/man/man3/archive_read_add_passphrase.3
+file path=usr/share/man/man3/archive_read_data.3
+file path=usr/share/man/man3/archive_read_disk.3
+file path=usr/share/man/man3/archive_read_extract.3
+file path=usr/share/man/man3/archive_read_filter.3
+file path=usr/share/man/man3/archive_read_format.3
+file path=usr/share/man/man3/archive_read_free.3
+file path=usr/share/man/man3/archive_read_header.3
+file path=usr/share/man/man3/archive_read_new.3
+file path=usr/share/man/man3/archive_read_open.3
+file path=usr/share/man/man3/archive_read_set_options.3
+file path=usr/share/man/man3/archive_util.3
+file path=usr/share/man/man3/archive_write.3
+file path=usr/share/man/man3/archive_write_blocksize.3
+file path=usr/share/man/man3/archive_write_data.3
+file path=usr/share/man/man3/archive_write_disk.3
+file path=usr/share/man/man3/archive_write_filter.3
+file path=usr/share/man/man3/archive_write_finish_entry.3
+file path=usr/share/man/man3/archive_write_format.3
+file path=usr/share/man/man3/archive_write_free.3
+file path=usr/share/man/man3/archive_write_header.3
+file path=usr/share/man/man3/archive_write_new.3
+file path=usr/share/man/man3/archive_write_open.3
+file path=usr/share/man/man3/archive_write_set_options.3
+file path=usr/share/man/man3/archive_write_set_passphrase.3
+file path=usr/share/man/man3/libarchive.3
+file path=usr/share/man/man3/libarchive_changes.3
+file path=usr/share/man/man3/libarchive_internals.3
+file path=usr/share/man/man5/cpio.5
+file path=usr/share/man/man5/libarchive-formats.5
+file path=usr/share/man/man5/mtree.5
+file path=usr/share/man/man5/tar.5
