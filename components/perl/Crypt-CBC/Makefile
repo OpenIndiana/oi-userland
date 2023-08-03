@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::CBC
 HUMAN_VERSION =			3.04
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::CBC - Encrypt Data with Cipher Block Chaining Mode
 COMPONENT_CPAN_AUTHOR =		LDS
 COMPONENT_ARCHIVE_HASH =	\
@@ -27,6 +28,9 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Artistic-2.0
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-des
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-pbkdf2
