@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DateTime::TimeZone
 HUMAN_VERSION =			2.60
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DateTime::TimeZone - Time zone object base class and factory
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,13 +30,16 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/datetime
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/class-singleton
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
 PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
 PERL_REQUIRED_PACKAGES += library/perl-5/specio
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-requires
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires
