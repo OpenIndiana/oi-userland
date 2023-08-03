@@ -1,0 +1,382 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 Andreas Wacknitz
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/contrib@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="PostgreSQL 15 community contributed tools not part of core product"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+link path=usr/bin/oid2name target=../postgres/15/bin/oid2name mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_archivecleanup target=../postgres/15/bin/pg_archivecleanup mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_waldump target=../postgres/15/bin/pg_waldump mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_test_fsync target=../postgres/15/bin/pg_test_fsync mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_test_timing target=../postgres/15/bin/pg_test_timing mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pgbench target=../postgres/15/bin/pgbench mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/vacuumlo target=../postgres/15/bin/vacuumlo mediator=postgres mediator-implementation=postgresql mediator-version=15
+
+# man pages mediators
+link path=usr/share/man/man1/oid2name.1 target=../../../postgres/15/man/man1/oid2name.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_amcheck.1 target=../../../postgres/15/man/man1/pg_amcheck.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_archivecleanup.1 target=../../../postgres/15/man/man1/pg_archivecleanup.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_test_fsync.1 target=../../../postgres/15/man/man1/pg_test_fsync.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_test_timing.1 target=../../../postgres/15/man/man1/pg_test_timing.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_verifybackup.1 target=../../../postgres/15/man/man1/pg_verifybackup.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_waldump.1 target=../../../postgres/15/man/man1/pg_waldump.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pgbench.1 target=../../../postgres/15/man/man1/pgbench.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/vacuumlo.1 target=../../../postgres/15/man/man1/vacuumlo.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+
+file path=usr/postgres/15/bin/oid2name
+file path=usr/postgres/15/bin/pg_amcheck
+file path=usr/postgres/15/bin/pg_archivecleanup
+file path=usr/postgres/15/bin/pg_test_fsync
+file path=usr/postgres/15/bin/pg_test_timing
+file path=usr/postgres/15/bin/pg_verifybackup
+file path=usr/postgres/15/bin/pg_waldump
+file path=usr/postgres/15/bin/pgbench
+file path=usr/postgres/15/bin/vacuumlo
+file path=usr/postgres/15/lib/$(MACH64)/_int.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/adminpack.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/amcheck.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/auth_delay.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/auto_explain.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/autoinc.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/bloom.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/bool_plperl.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/btree_gin.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/btree_gist.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/citext.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/cube.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/dblink.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/dict_int.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/dict_xsyn.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/earthdistance.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/file_fdw.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/fuzzystrmatch.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/hstore.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/hstore_plperl.so
+file path=usr/postgres/15/lib/$(MACH64)/hstore_plpython3.so
+file path=usr/postgres/15/lib/$(MACH64)/insert_username.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/isn.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/lo.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/ltree.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/ltree_plpython3.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/moddatetime.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/old_snapshot.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pageinspect.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/passwordcheck.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pg_buffercache.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pg_freespacemap.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pg_prewarm.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pg_stat_statements.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pg_surgery.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pg_trgm.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pg_visibility.so
+file path=usr/postgres/15/lib/$(MACH64)/pgcrypto.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pgrowlocks.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pgstattuple.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/pgxml.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/postgres_fdw.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/refint.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/seg.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/sslinfo.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/tablefunc.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/tcn.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/test_decoding.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/tsm_system_rows.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/tsm_system_time.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/unaccent.so mode=0555
+file path=usr/postgres/15/lib/$(MACH64)/uuid-ossp.so mode=0555
+file path=usr/postgres/15/lib/uuid-ossp.so mode=0555
+file path=usr/postgres/15/share/extension/adminpack--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/adminpack--1.0.sql
+file path=usr/postgres/15/share/extension/adminpack--1.1--2.0.sql
+file path=usr/postgres/15/share/extension/adminpack--2.0--2.1.sql
+file path=usr/postgres/15/share/extension/adminpack.control
+file path=usr/postgres/15/share/extension/amcheck--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/amcheck--1.0.sql
+file path=usr/postgres/15/share/extension/amcheck--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/amcheck--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/amcheck.control
+file path=usr/postgres/15/share/extension/autoinc--1.0.sql
+file path=usr/postgres/15/share/extension/autoinc.control
+file path=usr/postgres/15/share/extension/bloom--1.0.sql
+file path=usr/postgres/15/share/extension/bloom.control
+file path=usr/postgres/15/share/extension/bool_plperl--1.0.sql
+file path=usr/postgres/15/share/extension/bool_plperl.control
+file path=usr/postgres/15/share/extension/bool_plperlu--1.0.sql
+file path=usr/postgres/15/share/extension/bool_plperlu.control
+file path=usr/postgres/15/share/extension/btree_gin--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/btree_gin--1.0.sql
+file path=usr/postgres/15/share/extension/btree_gin--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/btree_gin--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/btree_gin.control
+file path=usr/postgres/15/share/extension/btree_gist--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/btree_gist--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/btree_gist--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/btree_gist--1.2.sql
+file path=usr/postgres/15/share/extension/btree_gist--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/btree_gist--1.4--1.5.sql
+file path=usr/postgres/15/share/extension/btree_gist--1.5--1.6.sql
+file path=usr/postgres/15/share/extension/btree_gist.control
+file path=usr/postgres/15/share/extension/citext--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/citext--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/citext--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/citext--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/citext--1.4--1.5.sql
+file path=usr/postgres/15/share/extension/citext--1.4.sql
+file path=usr/postgres/15/share/extension/citext--1.5--1.6.sql
+file path=usr/postgres/15/share/extension/citext.control
+file path=usr/postgres/15/share/extension/cube--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/cube--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/cube--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/cube--1.2.sql
+file path=usr/postgres/15/share/extension/cube--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/cube--1.4--1.5.sql
+file path=usr/postgres/15/share/extension/cube.control
+file path=usr/postgres/15/share/extension/dblink--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/dblink--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/dblink--1.2.sql
+file path=usr/postgres/15/share/extension/dblink.control
+file path=usr/postgres/15/share/extension/dict_int--1.0.sql
+file path=usr/postgres/15/share/extension/dict_int.control
+file path=usr/postgres/15/share/extension/dict_xsyn--1.0.sql
+file path=usr/postgres/15/share/extension/dict_xsyn.control
+file path=usr/postgres/15/share/extension/earthdistance--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/earthdistance--1.1.sql
+file path=usr/postgres/15/share/extension/earthdistance.control
+file path=usr/postgres/15/share/extension/file_fdw--1.0.sql
+file path=usr/postgres/15/share/extension/file_fdw.control
+file path=usr/postgres/15/share/extension/fuzzystrmatch--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/fuzzystrmatch--1.1.sql
+file path=usr/postgres/15/share/extension/fuzzystrmatch.control
+file path=usr/postgres/15/share/extension/hstore--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/hstore--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/hstore--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/hstore--1.4--1.5.sql
+file path=usr/postgres/15/share/extension/hstore--1.4.sql
+file path=usr/postgres/15/share/extension/hstore--1.5--1.6.sql
+file path=usr/postgres/15/share/extension/hstore--1.6--1.7.sql
+file path=usr/postgres/15/share/extension/hstore--1.7--1.8.sql
+file path=usr/postgres/15/share/extension/hstore.control
+file path=usr/postgres/15/share/extension/hstore_plperl--1.0.sql
+file path=usr/postgres/15/share/extension/hstore_plperl.control
+file path=usr/postgres/15/share/extension/hstore_plperlu--1.0.sql
+file path=usr/postgres/15/share/extension/hstore_plperlu.control
+file path=usr/postgres/15/share/extension/hstore_plpython3u--1.0.sql
+file path=usr/postgres/15/share/extension/hstore_plpython3u.control
+file path=usr/postgres/15/share/extension/insert_username--1.0.sql
+file path=usr/postgres/15/share/extension/insert_username.control
+file path=usr/postgres/15/share/extension/intagg--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/intagg--1.1.sql
+file path=usr/postgres/15/share/extension/intagg.control
+file path=usr/postgres/15/share/extension/intarray--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/intarray--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/intarray--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/intarray--1.2.sql
+file path=usr/postgres/15/share/extension/intarray--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/intarray--1.4--1.5.sql
+file path=usr/postgres/15/share/extension/intarray.control
+file path=usr/postgres/15/share/extension/isn--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/isn--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/isn--1.1.sql
+file path=usr/postgres/15/share/extension/isn.control
+file path=usr/postgres/15/share/extension/jsonb_plperl--1.0.sql
+file path=usr/postgres/15/share/extension/jsonb_plperl.control
+file path=usr/postgres/15/share/extension/jsonb_plperlu--1.0.sql
+file path=usr/postgres/15/share/extension/jsonb_plperlu.control
+file path=usr/postgres/15/share/extension/jsonb_plpython3u--1.0.sql
+file path=usr/postgres/15/share/extension/jsonb_plpython3u.control
+file path=usr/postgres/15/share/extension/lo--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/lo--1.1.sql
+file path=usr/postgres/15/share/extension/lo.control
+file path=usr/postgres/15/share/extension/ltree--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/ltree--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/ltree--1.1.sql
+file path=usr/postgres/15/share/extension/ltree.control
+file path=usr/postgres/15/share/extension/ltree_plpython3u--1.0.sql
+file path=usr/postgres/15/share/extension/ltree_plpython3u.control
+file path=usr/postgres/15/share/extension/moddatetime--1.0.sql
+file path=usr/postgres/15/share/extension/moddatetime.control
+file path=usr/postgres/15/share/extension/old_snapshot--1.0.sql
+file path=usr/postgres/15/share/extension/old_snapshot.control
+file path=usr/postgres/15/share/extension/pageinspect--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pageinspect--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pageinspect--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/pageinspect--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/pageinspect--1.4--1.5.sql
+file path=usr/postgres/15/share/extension/pageinspect--1.5--1.6.sql
+file path=usr/postgres/15/share/extension/pageinspect--1.5.sql
+file path=usr/postgres/15/share/extension/pageinspect--1.6--1.7.sql
+file path=usr/postgres/15/share/extension/pageinspect--1.7--1.8.sql
+file path=usr/postgres/15/share/extension/pageinspect--1.8--1.9.sql
+file path=usr/postgres/15/share/extension/pageinspect.control
+file path=usr/postgres/15/share/extension/pg_buffercache--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pg_buffercache--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pg_buffercache--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/pg_buffercache--1.2.sql
+file path=usr/postgres/15/share/extension/pg_buffercache.control
+file path=usr/postgres/15/share/extension/pg_freespacemap--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pg_freespacemap--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pg_freespacemap--1.1.sql
+file path=usr/postgres/15/share/extension/pg_freespacemap.control
+file path=usr/postgres/15/share/extension/pg_prewarm--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pg_prewarm--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pg_prewarm--1.1.sql
+file path=usr/postgres/15/share/extension/pg_prewarm.control
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.4--1.5.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.4.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.5--1.6.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.6--1.7.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.7--1.8.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements--1.8--1.9.sql
+file path=usr/postgres/15/share/extension/pg_stat_statements.control
+file path=usr/postgres/15/share/extension/pg_surgery--1.0.sql
+file path=usr/postgres/15/share/extension/pg_surgery.control
+file path=usr/postgres/15/share/extension/pg_trgm--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pg_trgm--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pg_trgm--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/pg_trgm--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/pg_trgm--1.3.sql
+file path=usr/postgres/15/share/extension/pg_trgm--1.4--1.5.sql
+file path=usr/postgres/15/share/extension/pg_trgm--1.5--1.6.sql
+file path=usr/postgres/15/share/extension/pg_trgm.control
+file path=usr/postgres/15/share/extension/pg_visibility--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pg_visibility--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pg_visibility--1.1.sql
+file path=usr/postgres/15/share/extension/pg_visibility.control
+file path=usr/postgres/15/share/extension/pgcrypto--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pgcrypto--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pgcrypto--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/pgcrypto--1.3.sql
+file path=usr/postgres/15/share/extension/pgcrypto.control
+file path=usr/postgres/15/share/extension/pgrowlocks--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pgrowlocks--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pgrowlocks--1.2.sql
+file path=usr/postgres/15/share/extension/pgrowlocks.control
+file path=usr/postgres/15/share/extension/pgstattuple--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/pgstattuple--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/pgstattuple--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/pgstattuple--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/pgstattuple--1.4--1.5.sql
+file path=usr/postgres/15/share/extension/pgstattuple--1.4.sql
+file path=usr/postgres/15/share/extension/pgstattuple.control
+file path=usr/postgres/15/share/extension/postgres_fdw--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/postgres_fdw--1.0.sql
+file path=usr/postgres/15/share/extension/postgres_fdw.control
+file path=usr/postgres/15/share/extension/refint--1.0.sql
+file path=usr/postgres/15/share/extension/refint.control
+file path=usr/postgres/15/share/extension/seg--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/seg--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/seg--1.1.sql
+file path=usr/postgres/15/share/extension/seg--1.2--1.3.sql
+file path=usr/postgres/15/share/extension/seg--1.3--1.4.sql
+file path=usr/postgres/15/share/extension/seg.control
+file path=usr/postgres/15/share/extension/sslinfo--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/sslinfo--1.1--1.2.sql
+file path=usr/postgres/15/share/extension/sslinfo--1.2.sql
+file path=usr/postgres/15/share/extension/sslinfo.control
+file path=usr/postgres/15/share/extension/tablefunc--1.0.sql
+file path=usr/postgres/15/share/extension/tablefunc.control
+file path=usr/postgres/15/share/extension/tcn--1.0.sql
+file path=usr/postgres/15/share/extension/tcn.control
+file path=usr/postgres/15/share/extension/tsm_system_rows--1.0.sql
+file path=usr/postgres/15/share/extension/tsm_system_rows.control
+file path=usr/postgres/15/share/extension/tsm_system_time--1.0.sql
+file path=usr/postgres/15/share/extension/tsm_system_time.control
+file path=usr/postgres/15/share/extension/unaccent--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/unaccent--1.1.sql
+file path=usr/postgres/15/share/extension/unaccent.control
+file path=usr/postgres/15/share/extension/uuid-ossp--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/uuid-ossp--1.1.sql
+file path=usr/postgres/15/share/extension/uuid-ossp.control
+file path=usr/postgres/15/share/extension/xml2--1.0--1.1.sql
+file path=usr/postgres/15/share/extension/xml2--1.1.sql
+file path=usr/postgres/15/share/extension/xml2.control
+file path=usr/postgres/15/man/man1/oid2name.1
+file path=usr/postgres/15/man/man1/pg_amcheck.1
+file path=usr/postgres/15/man/man1/pg_archivecleanup.1
+file path=usr/postgres/15/man/man1/pg_verifybackup.1
+file path=usr/postgres/15/man/man1/pg_waldump.1
+file path=usr/postgres/15/man/man1/pg_test_fsync.1
+file path=usr/postgres/15/man/man1/pg_test_timing.1
+file path=usr/postgres/15/man/man1/pgbench.1
+file path=usr/postgres/15/man/man1/vacuumlo.1
+file path=usr/share/locale/cs/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_amcheck-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_test_fsync-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_test_timing-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_verifybackup-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_waldump-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_amcheck-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_test_fsync-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_test_timing-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_verifybackup-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_waldump-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_amcheck-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_test_fsync-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_test_timing-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_waldump-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_test_fsync-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_test_timing-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_verifybackup-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_amcheck-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_verifybackup-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_waldump-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_amcheck-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_test_fsync-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_test_timing-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_verifybackup-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_waldump-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_test_fsync-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_verifybackup-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_waldump-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_amcheck-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_test_fsync-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_test_timing-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_verifybackup-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_waldump-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_amcheck-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_test_fsync-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_test_timing-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_verifybackup-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_waldump-15.mo
+file path=usr/share/locale/tr/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_amcheck-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_test_fsync-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_test_timing-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_verifybackup-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_waldump-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_amcheck-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_archivecleanup-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_test_timing-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_verifybackup-15.mo

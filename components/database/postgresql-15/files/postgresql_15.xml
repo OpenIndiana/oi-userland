@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+ Use is subject to license terms.
+
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License (the "License").
+ You may not use this file except in compliance with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+
+        NOTE:  This service manifest is not editable; its contents will
+        be overwritten by package or patch operations, including
+        operating system upgrade.  Make customizations in a different
+        file.
+-->
+
+<service_bundle type='manifest' name='postgresql_15'>
+
+<service
+        name='application/database/postgresql_15'
+        type='service'
+        version='1'>
+
+	<!--
+	   Wait for network interfaces to be initialized.
+	-->
+        <dependency
+                name='network'
+                grouping='require_all'
+                restart_on='none'
+                type='service'>
+                <service_fmri value='svc:/milestone/network:default' />
+        </dependency>
+
+	<!--
+	   Wait for all local filesystems to be mounted.
+	-->
+        <dependency
+                name='filesystem-local'
+                grouping='require_all'
+                restart_on='none'
+                type='service'>
+                <service_fmri value='svc:/system/filesystem/local:default' />
+        </dependency>
+
+        <exec_method
+                type='method'
+                name='start'
+                exec='/lib/svc/method/postgres_15 start'
+                timeout_seconds='60' />
+
+        <exec_method
+                type='method'
+                name='stop'
+                exec='/lib/svc/method/postgres_15 stop'
+                timeout_seconds='60' />
+
+        <exec_method
+                type='method'
+                name='refresh'
+                exec='/lib/svc/method/postgres_15 refresh'
+                timeout_seconds='60' />
+
+        <!--
+          Both action_authorization and value_authorization are needed
+          to allow the framework general/enabled property to be changed
+          when performing action (enable, disable, etc) on the service.
+        -->
+        <property_group name='general' type='framework'>
+		<propval name='value_authorization' type='astring'
+			value='solaris.smf.value.postgres' />
+		<propval name='action_authorization' type='astring'
+			value='solaris.smf.manage.postgres' />
+        </property_group>
+
+        <instance name='default' enabled='false'>
+
+		<method_context>
+			<method_credential user='postgres' group='postgres' />
+		</method_context>
+
+		<!--
+		   Make sure the data configurable property points to the
+		   appropriate database directory and port number in
+		   postgresql.conf is different than the other instances.
+		-->
+		<property_group name='postgresql_15' type='application'>
+			<propval name='bin' type='astring'
+			   value='/usr/postgres/15/bin' />
+			<propval name='data' type='astring'
+			   value='/var/postgres/15/data' />
+			<propval name='log' type='astring'
+			   value='server.log' />
+			<propval name='initialized' type='boolean'
+			   value='false' />
+			<propval name='value_authorization' type='astring'
+			   value='solaris.smf.value.postgres' />
+		</property_group>
+
+        </instance>
+
+        <stability value='Evolving' />
+
+        <template>
+                <common_name>
+                        <loctext xml:lang='C'>
+                                PostgreSQL RDBMS version 15
+                        </loctext>
+                </common_name>
+        </template>
+
+</service>
+
+</service_bundle>
