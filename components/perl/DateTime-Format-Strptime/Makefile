@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DateTime::Format::Strptime
 HUMAN_VERSION =			1.79
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DateTime::Format::Strptime - Parse and format strp and strf time patterns
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,7 +36,7 @@ PERL_REQUIRED_PACKAGES += library/perl-5/datetime-locale
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime-timezone
 PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
 PERL_REQUIRED_PACKAGES += library/perl-5/specio
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
