@@ -19,19 +19,23 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jedi
-HUMAN_VERSION =			0.18.2
+HUMAN_VERSION =			0.19.0
 COMPONENT_SUMMARY =		jedi - An autocompletion tool for Python that can be used for text editors.
 COMPONENT_PROJECT_URL =		https://github.com/davidhalter/jedi
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/15/02/afd43c5066de05f6b3188f3aa74136a3289e6c30e7a45f351546cab0928c/jedi-0.18.2.tar.gz
+	https://files.pythonhosted.org/packages/57/38/4ac6f712c308de92af967142bd67e9d27e784ea5a3524c9e84f33507d82f/jedi-0.19.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bae794c30d07f6d910d32a7048af09b5a39ed740918da923c6b780790ebac612
+	sha256:bcf9894f1753969cbac8022a8c2eaee06bfa3724e4192470aaffe7eb6272b0c4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/parso
