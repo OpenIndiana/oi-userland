@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DateTime
 HUMAN_VERSION =			1.59
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DateTime - A date and time object for Perl
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,16 +31,16 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta-check
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime-locale
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime-timezone
 PERL_REQUIRED_PACKAGES += library/perl-5/dist-checkconflicts
 PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
 PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
 PERL_REQUIRED_PACKAGES += library/perl-5/specio
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
-PERL_REQUIRED_PACKAGES += library/perl-5/test-without-module
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-check
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-without-module
