@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_api
-HUMAN_VERSION =			1.5.2
+HUMAN_VERSION =			1.5.3
 COMPONENT_SUMMARY =		pyproject_api - API to interact with the python pyproject.toml based projects
 COMPONENT_PROJECT_URL =		http://pyproject_api.readthedocs.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6f/26/82a2773463e1b739b62e432cff62d39daf21b3172e5ace6213b7f2bbfad7/pyproject_api-1.5.2.tar.gz
+	https://files.pythonhosted.org/packages/f7/70/a63493ea5066b32053f80fdc24fae7c5a2fc65d8f01a1883b30fd850aa84/pyproject_api-1.5.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:999f58fa3c92b23ebd31a6bad5d1f87d456744d75e05391be7f5c729015d3d91
+	sha256:ffb5b2d7cad43f5b2688ab490de7c4d3f6f15e0b819cb588c4b771567c9729eb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,7 +43,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
-TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
