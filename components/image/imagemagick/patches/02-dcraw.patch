@@ -1,0 +1,36 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/MagickCore/delegate.c a/MagickCore/delegate.c
+--- a~/MagickCore/delegate.c	1970-01-01 00:00:00
++++ a/MagickCore/delegate.c	1970-01-01 00:00:00
+@@ -106,7 +106,7 @@ static const char
+     "  <delegate decode=\"https\" command=\"&quot;curl&quot; -s -k -L -o &quot;%o&quot; &quot;https:%M&quot;\"/>"
+     "  <delegate decode=\"doc\" command=\"&quot;soffice&quot; --convert-to pdf -outdir `dirname &quot;%i&quot;` &quot;%i&quot; 2&gt; &quot;%u&quot;; mv &quot;%i.pdf&quot; &quot;%o&quot;\"/>"
+     "  <delegate decode=\"docx\" command=\"&quot;soffice&quot; --convert-to pdf -outdir `dirname &quot;%i&quot;` &quot;%i&quot; 2&gt; &quot;%u&quot;; mv &quot;%i.pdf&quot; &quot;%o&quot;\"/>"
+-    "  <delegate decode=\"dng:decode\" command=\"&quot;ufraw-batch&quot; --silent --create-id=also --out-type=png --out-depth=16 &quot;--output=%u.png&quot; &quot;%i&quot;\"/>"
++    "  <delegate decode=\"dng:decode\" command=\"/opt/ooce/bin/dcraw -c -q 3 -H 5 -w &quot;%i&quot; &gt; &quot;%u.ppm&quot;\"/>"
+     "  <delegate decode=\"dot\" command=\"&quot;dot&quot; -Tsvg &quot;%i&quot; -o &quot;%o&quot;\"/>"
+     "  <delegate decode=\"dvi\" command=\"&quot;dvips&quot; -sstdout=%%stderr -o &quot;%o&quot; &quot;%i&quot;\"/>"
+     "  <delegate decode=\"dxf\" command=\"&quot;uniconvertor&quot; &quot;%i&quot; &quot;%o.svg&quot;; mv &quot;%o.svg&quot; &quot;%o&quot;\"/>"
+diff -wpruN --no-dereference '--exclude=*.orig' a~/config/delegates.xml.in a/config/delegates.xml.in
+--- a~/config/delegates.xml.in	1970-01-01 00:00:00
++++ a/config/delegates.xml.in	1970-01-01 00:00:00
+@@ -66,7 +66,7 @@
+   <delegate decode="https:decode" command="&quot;@WWWDecodeDelegate@&quot; -s -k -L -o &quot;%u.dat&quot; &quot;https:%M&quot;"/>
+   <delegate decode="doc" command="&quot;@DOCDecodeDelegate@&quot; --headless --convert-to pdf -outdir `dirname &quot;%i&quot;` &quot;%i&quot; 2&gt; &quot;%u&quot;; @MVDelegate@ &quot;%i.pdf&quot; &quot;%o&quot;"/>
+   <delegate decode="docx" command="&quot;@DOCDecodeDelegate@&quot; --headless --convert-to pdf -outdir `dirname &quot;%i&quot;` &quot;%i&quot; 2&gt; &quot;%u&quot;; @MVDelegate@ &quot;%i.pdf&quot; &quot;%o&quot;"/>
+-  <delegate decode="dng:decode" command="&quot;@DNGDecodeDelegate@&quot; --silent --create-id=also --out-type=png --out-depth=16 &quot;--output=%u.png&quot; &quot;%i&quot;"/>
++  <delegate decode="dng:decode" stealth="True" command="/opt/ooce/bin/dcraw -c -q 3 -H 5 -w &quot;%i&quot; &gt; &quot;%u.ppm&quot;"/>
+   <delegate decode="dot" command="&quot;@GVCDecodeDelegate@&quot; -Tsvg &quot;%i&quot; -o &quot;%o&quot;" />
+   <delegate decode="dvi" command="&quot;@DVIDecodeDelegate@&quot; -sstdout=%%stderr -o &quot;%o&quot; &quot;%i&quot;"/>
+   <delegate decode="edit" stealth="True" command="&quot;@EditorDelegate@&quot; -title &quot;Edit Image Comment&quot; -e vi &quot;%o&quot;"/>
+diff -wpruN --no-dereference '--exclude=*.orig' a~/www/source/delegates.xml a/www/source/delegates.xml
+--- a~/www/source/delegates.xml	1970-01-01 00:00:00
++++ a/www/source/delegates.xml	1970-01-01 00:00:00
+@@ -67,7 +67,7 @@
+   <delegate decode="https" command="&quot;curl&quot; -s -k -L -o &quot;%o&quot; &quot;https:%M&quot;"/>
+   <delegate decode="doc" command="&quot;soffice&quot; --convert-to pdf -outdir `dirname &quot;%i&quot;` &quot;%i&quot; 2&gt; &quot;%u&quot;; /usr/bin/mv &quot;%i.pdf&quot; &quot;%o&quot;"/>
+   <delegate decode="docx" command="&quot;soffice&quot; --convert-to pdf -outdir `dirname &quot;%i&quot;` &quot;%i&quot; 2&gt; &quot;%u&quot;; /usr/bin/mv &quot;%i.pdf&quot; &quot;%o&quot;"/>
+-  <delegate decode="dng:decode" command="&quot;ufraw-batch&quot; --silent --create-id=also --out-type=png --out-depth=16 &quot;--output=%u.png&quot; &quot;%i&quot;"/>
++  <delegate decode="dng:decode" stealth="True" command="/opt/ooce/bin/dcraw -c -q 3 -H 5 -w &quot;%i&quot; &gt; &quot;%u.ppm&quot;"/>
+   <delegate decode="dot" command='&quot;dot&quot; -Tsvg &quot;%i&quot; -o &quot;%o&quot;' />
+   <delegate decode="dvi" command="&quot;dvips&quot; -sstdout=%%stderr -o &quot;%o&quot; &quot;%i&quot;"/>
+   <delegate decode="dxf" command="&quot;uniconvertor&quot; &quot;%i&quot; &quot;%o.svg&quot;; /usr/bin/mv &quot;%o.svg&quot; &quot;%o&quot;"/>
