@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany
 COMPONENT_VERSION=      1.38
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=         editor/geany
 COMPONENT_SUMMARY=      A fast and lightweight IDE
@@ -54,10 +54,8 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxau
 REQUIRED_PACKAGES += x11/library/libxcb
