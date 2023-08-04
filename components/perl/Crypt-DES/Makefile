@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::DES
 HUMAN_VERSION =			2.07
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Crypt::DES - Perl DES encryption module
 COMPONENT_CPAN_AUTHOR =		DPARIS
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +31,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # remove lines with timing info from test results
 COMPONENT_TEST_TRANSFORMS += '-e "/wallclock/d"'
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-cbc
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
