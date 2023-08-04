@@ -27,11 +27,11 @@ ESR =
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # CANDIDATE_BETA is the beta version found in the candidates directory.
 # Do not define either for final release build.
-# CANDIDATE_BUILD=2
+# CANDIDATE_BUILD=1
 # CANDIDATE_BETA=8
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	116.0
+COMPONENT_VERSION =	116.0.1
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,7 +41,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ES
 else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
-COMPONENT_ARCHIVE_HASH= sha256:215d076945bf744327a252f498227ab68e9ba4e3b703e058683d9e4ab92cba76
+COMPONENT_ARCHIVE_HASH= sha256:1f6e27954da1102bffa9d60209ab87b050efc0e5f4ef5ed1047352cb01732b50
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
