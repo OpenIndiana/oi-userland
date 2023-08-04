@@ -31,12 +31,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(HUMAN_VERSION).dist-in
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/babel.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/build.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/get_deps.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/gh_deploy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/new.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/serve.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/config/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/config/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/config/config_options.py
@@ -91,6 +90,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/config/base_tests.
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/config/config_options_legacy_tests.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/config/config_options_tests.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/config/config_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/get_deps_tests.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/gh_deploy_tests.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/integration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/livereload_tests.py
@@ -106,6 +106,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/structure/toc_test
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/theme_tests.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/utils/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/utils/babel_stub_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/utils/templates_tests.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/utils/utils_tests.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/theme.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/__init__.py
@@ -125,7 +126,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/img/favico
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/img/grid.png
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/js/base.js
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/js/bootstrap.min.js
-file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/js/jquery-1.10.2.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/js/jquery-3.6.0.min.js
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/keyboard-modal.html
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/locales/de/LC_MESSAGES/messages.mo
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/locales/es/LC_MESSAGES/messages.mo
@@ -196,8 +197,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/toc.h
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/versions.html
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/utils/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/utils/babel_stub.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/utils/cache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/utils/filters.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/utils/meta.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/utils/templates.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/utils/yaml.py
 
 # python modules are unusable without python runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
@@ -209,9 +213,11 @@ depend type=require fmri=pkg:/library/python/ghp-import-$(PYV)
 depend type=require fmri=pkg:/library/python/importlib-metadata-$(PYV)
 depend type=require fmri=pkg:/library/python/jinja2-$(PYV)
 depend type=require fmri=pkg:/library/python/markdown-$(PYV)
+depend type=require fmri=pkg:/library/python/markupsafe-$(PYV)
 depend type=require fmri=pkg:/library/python/mergedeep-$(PYV)
 depend type=require fmri=pkg:/library/python/packaging-$(PYV)
+depend type=require fmri=pkg:/library/python/pathspec-$(PYV)
+depend type=require fmri=pkg:/library/python/platformdirs-$(PYV)
 depend type=require fmri=pkg:/library/python/pyyaml-$(PYV)
 depend type=require fmri=pkg:/library/python/pyyaml-env-tag-$(PYV)
-depend type=require fmri=pkg:/library/python/typing-extensions-$(PYV)
 depend type=require fmri=pkg:/library/python/watchdog-$(PYV)

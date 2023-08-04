@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs
-HUMAN_VERSION =			1.4.3
+HUMAN_VERSION =			1.5.2
 COMPONENT_SUMMARY =		mkdocs - Project documentation with Markdown.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b0/ef/49b4427e5eec761b77a3c3c421d3fd63010e2798b7401dc0fa2b875ef6b5/mkdocs-1.4.3.tar.gz
+	https://files.pythonhosted.org/packages/35/6a/63612e19d9c903a608caf91fd2c1f07ccbb9610de4ddb6f187aec1cce197/mkdocs-1.5.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5955093bbd4dd2e9403c5afaf57324ad8b04f16886512a3ee6ef828956481c57
+	sha256:70d0da09c26cff288852471be03c23f0f521fc15cf16ac89c7a3bfb9ae8d24f9
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,10 +45,12 @@ PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/jinja2
 PYTHON_REQUIRED_PACKAGES += library/python/markdown
+PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
 PYTHON_REQUIRED_PACKAGES += library/python/mergedeep
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/pathspec
+PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
 PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
 PYTHON_REQUIRED_PACKAGES += library/python/pyyaml-env-tag
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/watchdog
 PYTHON_REQUIRED_PACKAGES += runtime/python
