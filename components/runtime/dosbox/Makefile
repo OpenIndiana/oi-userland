@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dosbox
 COMPONENT_VERSION=	0.74-3
+COMPONENT_REVISION= 1
 IPS_COMPONENT_VERSION=	0.74.3
 COMPONENT_PROJECT_URL=	https://www.dosbox.com/
 COMPONENT_SUMMARY=	DosBox - DOS Emulator
