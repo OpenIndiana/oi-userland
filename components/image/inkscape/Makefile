@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
 COMPONENT_VERSION=	1.2.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 # COMPONENT_ITEM_NO is part of the download path
 # (find it on https://inkscape.org/release/inkscape-1.2.1/source/archive/xz/dl/ under "click here")
 # eg. https://inkscape.org/gallery/item/34673/inkscape-1.2.1.tar.xz
@@ -77,7 +77,7 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += developer/gsl
-REQUIRED_PACKAGES += image/imagemagick
+REQUIRED_PACKAGES += image/graphicsmagick
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/potrace
 REQUIRED_PACKAGES += library/c++/glibmm
