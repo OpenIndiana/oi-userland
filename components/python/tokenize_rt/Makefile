@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tokenize_rt
-HUMAN_VERSION =			5.1.0
+HUMAN_VERSION =			5.2.0
 COMPONENT_SUMMARY =		tokenize_rt - A wrapper around the stdlib \`tokenize\` which roundtrips.
 COMPONENT_PROJECT_URL =		https://github.com/asottile/tokenize-rt
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/asottile/tokenize-rt/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1c761a430d2450c0bb78ab0b75d3d6975bba44a7a2c8883976df6e9c3901a4f6
+	sha256:a5514a7c6390d67284e99ca9d7867de3e40d43df7d6e353641265b9223f0f784
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +33,11 @@ COMPONENT_LICENSE_FILE =	LICENSE
 COMPONENT_SRC=tokenize-rt-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:cov
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
