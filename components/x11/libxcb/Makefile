@@ -27,6 +27,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxcb
 COMPONENT_VERSION=		1.15
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=			x11/library/libxcb
 COMPONENT_SUMMARY=		The X protocol C-language Binding (XCB): Libraries
 COMPONENT_PROJECT_URL=	https://xcb.freedesktop.org

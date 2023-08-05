@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXau
 COMPONENT_VERSION= 1.0.11
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=    x11/library/libxau
 COMPONENT_SUMMARY= libXau - X11 Authorization Protocol library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
