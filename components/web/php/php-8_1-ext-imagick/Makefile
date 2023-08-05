@@ -18,8 +18,9 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.1-ext-imagick
 COMPONENT_VERSION=	3.7.0
-COMPONENT_PROJECT_URL=	https://pecl.php.net/package/imagick
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	ImageMagick for PHP
+COMPONENT_PROJECT_URL=	https://pecl.php.net/package/imagick
 COMPONENT_SRC=		imagick-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:5a364354109029d224bcbb2e82e15b248be9b641227f45e63425c06531792d3e
