@@ -185,7 +185,7 @@ GENERATE_EXTRA_CMD += | \
 		echo "    pkg.debug.depend.path=usr/perl5/\$$(PERLVER)/bin" ; \
 		echo "" ; \
 		echo "\# Automatically generated dependencies based on distribution metadata" ; \
-		$(CAT) $(BUILD_DIR)/META.depend-runtime.res | $(PKGFMT) \
+		$(CAT) $(BUILD_DIR)/META.depend-runtime.res $(MANGLE_DEPEND_RUNTIME) | $(PKGFMT) \
 	)
 
 # Add build dependencies from metadata to REQUIRED_PACKAGES.
