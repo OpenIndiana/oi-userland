@@ -20,11 +20,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		LWP
 COMPONENT_PERL_DISTRIBUTION =	libwww-perl
-HUMAN_VERSION =			6.71
+HUMAN_VERSION =			6.72
 COMPONENT_SUMMARY =		LWP - The World-Wide Web library for Perl
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9d852d92c1f087d838adcb4107c4ff69887e7e5bdb742f984639c4c18dddb6e7
+	sha256:e9b8354fd5e20be207afe23ddd584fcd59bf82998dc077decf684ba1dae5a05d
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,7 +45,10 @@ PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += library/perl-5/www-robotrules
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/data-dump
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-daemon
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/lwp-protocol-https
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requiresinternet
