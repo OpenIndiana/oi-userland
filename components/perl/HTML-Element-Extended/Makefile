@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_PERL_MODULE =		HTML::ElementTable
 COMPONENT_PERL_DISTRIBUTION =	HTML-Element-Extended
 HUMAN_VERSION =			1.18
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTML::ElementTable - Perl extension for manipulating a table composed of HTML::Element style components.
 COMPONENT_CPAN_AUTHOR =		MSISK
 COMPONENT_ARCHIVE_HASH =	\
