@@ -1,5 +1,5 @@
 ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
-py$(PYV): remove tox env folder .tox/py$(PYV)
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -8,12 +8,15 @@ hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.h
 rootdir: $(@D)
 configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 40 items
+collecting ... collected 45 items
 
 ::project PASSED
-conftest.py::BLACK PASSED
-docs/conf.py::BLACK PASSED
-jaraco/functools.py::BLACK PASSED
+conftest.py::black PASSED
+conftest.py::mypy PASSED
+conftest.py::mypy-status PASSED
+docs/conf.py::black PASSED
+docs/conf.py::mypy PASSED
+jaraco/functools.py::black PASSED
 jaraco/functools.py::jaraco.functools.apply PASSED
 jaraco/functools.py::jaraco.functools.assign_params PASSED
 jaraco/functools.py::jaraco.functools.bypass_unless PASSED
@@ -29,7 +32,7 @@ jaraco/functools.py::jaraco.functools.print_yielded PASSED
 jaraco/functools.py::jaraco.functools.result_invoke PASSED
 jaraco/functools.py::jaraco.functools.retry PASSED
 jaraco/functools.py::jaraco.functools.save_method_args PASSED
-test_functools.py::BLACK PASSED
+jaraco/functools.py::mypy PASSED
 test_functools.py::TestMethodCache::test_deepcopy PASSED
 test_functools.py::TestMethodCache::test_non_data_property XFAIL (ca...)
 test_functools.py::TestMethodCache::test_property XFAIL (can't repla...)
@@ -49,8 +52,12 @@ test_functools.py::TestRetry::test_with_arg PASSED
 test_functools.py::TestThrottler::test_function_throttled PASSED
 test_functools.py::TestThrottler::test_reconstruct_unwraps PASSED
 test_functools.py::TestThrottler::test_throttled_method PASSED
+test_functools.py::black PASSED
+test_functools.py::mypy PASSED
 
+===================================== mypy =====================================
 
-======== 37 passed, 2 xfailed ========
+Success: no issues found in 4 source files
+======== 42 passed, 2 xfailed ========
   py$(PYV): OK
   congratulations :)

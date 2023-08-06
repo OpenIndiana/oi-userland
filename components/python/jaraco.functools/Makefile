@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.functools
-HUMAN_VERSION =			3.8.0
+HUMAN_VERSION =			3.8.1
 COMPONENT_SUMMARY =		jaraco.functools - Functools like those found in stdlib
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.functools
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/99/62/3c214a2a6143701690af6a6687f324af93f6cb0222eee6dddd8196fcfd05/jaraco.functools-3.8.0.tar.gz
+	https://files.pythonhosted.org/packages/7f/52/1192cd48a506cd8da5d4db77eeb91c16c717eec0325fd2f83f8bdca50dfd/jaraco.functools-3.8.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cb5635ae5cc953d35d8ab6744f1a73723074b31eb6be16edee7960261a79b724
+	sha256:e96a0d4ea455005a4092ce89a69ea0f7fb7e22807ad3b1008f9bf70c48d1cf2e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
