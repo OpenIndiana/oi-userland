@@ -1,4 +1,5 @@
 PASS: test-accept
+PASS: test-alignasof
 PASS: test-alloca-opt
 PASS: test-arpa_inet
 PASS: test-array_list
@@ -18,6 +19,7 @@ PASS: test-ctype
 PASS: test-dup2
 PASS: test-environ
 PASS: test-errno
+PASS: test-error.sh
 PASS: test-explicit_bzero
 PASS: test-fcntl-h
 PASS: test-fcntl
@@ -81,6 +83,7 @@ PASS: test-lstat
 PASS: test-malloc-gnu
 PASS: test-malloca
 PASS: test-memchr
+PASS: test-memset_explicit
 PASS: test-nanosleep
 PASS: test-netdb
 PASS: test-netinet_in
@@ -125,7 +128,6 @@ PASS: test-snprintf
 PASS: test-sockets
 PASS: test-stat
 PASS: test-stat-time
-PASS: test-stdalign
 PASS: test-stdbool
 PASS: test-stdckdint
 PASS: test-stddef
@@ -163,8 +165,8 @@ PASS: test-verify.sh
 PASS: test-vsnprintf
 PASS: test-wchar
 PASS: test-xalloc-die.sh
-# TOTAL: 165
-# PASS:  165
+# TOTAL: 167
+# PASS:  167
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -540,6 +542,8 @@ PASS: pkcs7-verify-double-free
 SKIP: fips-rsa-sizes
 PASS: tls12-rehandshake-ticket
 PASS: pathbuf
+PASS: tls-force-ems
+PASS: psk-importer
 PASS: tls-channel-binding
 PASS: strict-der
 PASS: system-prio-file
@@ -547,31 +551,31 @@ PASS: pkcs11-cert-import-url-exts
 PASS: pkcs11-get-exts
 PASS: pkcs11-get-raw-issuer-exts
 PASS: pkcs11-cert-import-url4-exts
-FAIL: pkcs11/pkcs11-chainverify
-FAIL: pkcs11/pkcs11-get-issuer
-FAIL: pkcs11/pkcs11-is-known
-FAIL: pkcs11/pkcs11-combo
-FAIL: pkcs11/pkcs11-privkey
-FAIL: pkcs11/pkcs11-pubkey-import-rsa
-FAIL: pkcs11/pkcs11-pubkey-import-ecdsa
+SKIP: pkcs11/pkcs11-chainverify
+SKIP: pkcs11/pkcs11-get-issuer
+SKIP: pkcs11/pkcs11-is-known
+SKIP: pkcs11/pkcs11-combo
+SKIP: pkcs11/pkcs11-privkey
+SKIP: pkcs11/pkcs11-pubkey-import-rsa
+SKIP: pkcs11/pkcs11-pubkey-import-ecdsa
 PASS: pkcs11-import-url-privkey
 SKIP: pkcs11-privkey-fork
-FAIL: pkcs11/pkcs11-ec-privkey-test
+SKIP: pkcs11/pkcs11-ec-privkey-test
 PASS: pkcs11-privkey-always-auth
 PASS: pkcs11-privkey-export
-FAIL: pkcs11/pkcs11-import-with-pin
+SKIP: pkcs11/pkcs11-import-with-pin
 SKIP: pkcs11/pkcs11-privkey-pthread
 PASS: pkcs11/pkcs11-pin-func
-FAIL: pkcs11/pkcs11-obj-import
+SKIP: pkcs11/pkcs11-obj-import
 SKIP: pkcs11-privkey-fork-reinit
 SKIP: pkcs11-mechanisms
 PASS: pkcs11-privkey-safenet-always-auth
-FAIL: pkcs11/pkcs11-rsa-pss-privkey-test
-FAIL: pkcs11/tls-neg-pkcs11-key
-FAIL: pkcs11/pkcs11-privkey-generate
-FAIL: pkcs11/gnutls_x509_crt_list_import_url
-FAIL: pkcs11/gnutls_pcert_list_import_x509_file
-FAIL: pkcs11/pkcs11-eddsa-privkey-test
+SKIP: pkcs11/pkcs11-rsa-pss-privkey-test
+SKIP: pkcs11/tls-neg-pkcs11-key
+SKIP: pkcs11/pkcs11-privkey-generate
+SKIP: pkcs11/gnutls_x509_crt_list_import_url
+SKIP: pkcs11/gnutls_pcert_list_import_x509_file
+SKIP: pkcs11/pkcs11-eddsa-privkey-test
 SKIP: pkcs11-token-raw
 SKIP: pkcs11-obj-raw
 PASS: pkcs11-import-url-privkey-caps
@@ -593,11 +597,12 @@ PASS: tls13-early-data-neg
 PASS: tls13-early-data-neg2
 PASS: resume-with-record-size-limit
 PASS: record-sendfile
-FAIL: tls13/post-handshake-with-cert-pkcs11
+SKIP: tls13/post-handshake-with-cert-pkcs11
 SKIP: pkcs11/tls-neg-pkcs11-no-key
 SKIP: global-init-override
+SKIP: pkcs11/distrust-after
 PASS: rfc2253-escape-test.sh
-SKIP: rsa-md5-collision/rsa-md5-collision.sh
+PASS: rsa-md5-collision/rsa-md5-collision.sh
 PASS: systemkey.sh
 SKIP: dtls/dtls.sh
 SKIP: dtls/dtls-resume.sh
@@ -613,25 +618,25 @@ PASS: starttls-nntp.sh
 PASS: starttls-sieve.sh
 SKIP: ocsp-tests/ocsp-tls-connection.sh
 SKIP: ocsp-tests/ocsp-must-staple-connection.sh
-SKIP: ocsp-tests/ocsp-test.sh
+PASS: ocsp-tests/ocsp-test.sh
 FAIL: cipher-listings.sh
 PASS: sni-hostname.sh
-SKIP: server-multi-keys.sh
+PASS: server-multi-keys.sh
 PASS: psktool.sh
-SKIP: ocsp-tests/ocsp-load-chain.sh
+PASS: ocsp-tests/ocsp-load-chain.sh
 PASS: gnutls-cli-save-data.sh
-SKIP: gnutls-cli-debug.sh
+PASS: gnutls-cli-debug.sh
 PASS: sni-resume.sh
 FAIL: ocsp-tests/ocsptool.sh
 SKIP: cert-reencoding.sh
-SKIP: pkcs7-cat.sh
+FAIL: pkcs7-cat.sh
 FAIL: long-crl.sh
 PASS: serv-udp.sh
 PASS: logfile-option.sh
 PASS: gnutls-cli-resume.sh
 PASS: profile-tests.sh
-SKIP: server-weak-keys.sh
-SKIP: ocsp-tests/ocsp-signer-verify.sh
+PASS: server-weak-keys.sh
+PASS: ocsp-tests/ocsp-signer-verify.sh
 PASS: cfg-test.sh
 SKIP: sanity-lib.sh
 PASS: system-override-sig.sh
@@ -639,8 +644,8 @@ PASS: system-override-hash.sh
 PASS: system-override-versions.sh
 PASS: system-override-invalid.sh
 PASS: system-override-curves.sh
-SKIP: system-override-profiles.sh
-SKIP: system-override-tls.sh
+PASS: system-override-profiles.sh
+PASS: system-override-tls.sh
 PASS: system-override-kx.sh
 PASS: system-override-default-priority-string.sh
 PASS: system-override-sig-tls.sh
@@ -651,18 +656,18 @@ PASS: system-override-versions-allowlist.sh
 PASS: system-override-curves-allowlist.sh
 PASS: system-override-special-allowlist.sh
 PASS: protocol-set-allowlist.sh
-SKIP: gnutls-cli-self-signed.sh
-SKIP: gnutls-cli-invalid-crl.sh
+PASS: gnutls-cli-self-signed.sh
+PASS: gnutls-cli-invalid-crl.sh
 PASS: gnutls-cli-rawpk.sh
 PASS: dh-fips-approved.sh
 SKIP: p11-kit-trust.sh
 SKIP: testpkcs11.sh
 SKIP: certtool-pkcs11.sh
 SKIP: tpmtool_test.sh
-# TOTAL: 489
-# PASS:  419
-# SKIP:  49
+# TOTAL: 492
+# PASS:  432
+# SKIP:  55
 # XFAIL: 0
-# FAIL:  21
+# FAIL:  5
 # XPASS: 0
 # ERROR: 0

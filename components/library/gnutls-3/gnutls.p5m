@@ -10,16 +10,12 @@
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
-# Copyright 2019 Michal Nowak
-# Copyright 2022 Andreas Wacknitz
-# Copyright 2022 Niklas Poslovski
+# Copyright 2023 Andreas Wacknitz
 #
 
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -27,9 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Drop 32-bit apps:
+# We don't deliver 32 bit apps
 <transform file path=.*/bin/$(MACH32)/.+ -> drop>
-# Drop dir files:
+# dir files aren't allowed
 <transform file path=.+/info/dir -> drop>
 
 file path=usr/bin/$(MACH32)/certtool
@@ -66,16 +62,16 @@ file path=usr/include/gnutls/tpm.h
 file path=usr/include/gnutls/urls.h
 file path=usr/include/gnutls/x509-ext.h
 file path=usr/include/gnutls/x509.h
-link path=usr/lib/$(MACH64)/libgnutls.so target=libgnutls.so.30.35.0
-link path=usr/lib/$(MACH64)/libgnutls.so.30 target=libgnutls.so.30.35.0
-file path=usr/lib/$(MACH64)/libgnutls.so.30.35.0
+link path=usr/lib/$(MACH64)/libgnutls.so target=libgnutls.so.30.36.0
+link path=usr/lib/$(MACH64)/libgnutls.so.30 target=libgnutls.so.30.36.0
+file path=usr/lib/$(MACH64)/libgnutls.so.30.36.0
 link path=usr/lib/$(MACH64)/libgnutlsxx.so target=libgnutlsxx.so.30.0.0
 link path=usr/lib/$(MACH64)/libgnutlsxx.so.30 target=libgnutlsxx.so.30.0.0
 file path=usr/lib/$(MACH64)/libgnutlsxx.so.30.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/gnutls.pc
-link path=usr/lib/libgnutls.so target=libgnutls.so.30.35.0
-link path=usr/lib/libgnutls.so.30 target=libgnutls.so.30.35.0
-file path=usr/lib/libgnutls.so.30.35.0
+link path=usr/lib/libgnutls.so target=libgnutls.so.30.36.0
+link path=usr/lib/libgnutls.so.30 target=libgnutls.so.30.36.0
+file path=usr/lib/libgnutls.so.30.36.0
 link path=usr/lib/libgnutlsxx.so target=libgnutlsxx.so.30.0.0
 link path=usr/lib/libgnutlsxx.so.30 target=libgnutlsxx.so.30.0.0
 file path=usr/lib/libgnutlsxx.so.30.0.0
@@ -721,6 +717,7 @@ file path=usr/share/man/man3/gnutls_protocol_set_enabled.3
 file path=usr/share/man/man3/gnutls_psk_allocate_client_credentials.3
 file path=usr/share/man/man3/gnutls_psk_allocate_server_credentials.3
 file path=usr/share/man/man3/gnutls_psk_client_get_hint.3
+file path=usr/share/man/man3/gnutls_psk_format_imported_identity.3
 file path=usr/share/man/man3/gnutls_psk_free_client_credentials.3
 file path=usr/share/man/man3/gnutls_psk_free_server_credentials.3
 file path=usr/share/man/man3/gnutls_psk_server_get_username.3
@@ -729,10 +726,12 @@ file path=usr/share/man/man3/gnutls_psk_set_client_credentials.3
 file path=usr/share/man/man3/gnutls_psk_set_client_credentials2.3
 file path=usr/share/man/man3/gnutls_psk_set_client_credentials_function.3
 file path=usr/share/man/man3/gnutls_psk_set_client_credentials_function2.3
+file path=usr/share/man/man3/gnutls_psk_set_client_credentials_function3.3
 file path=usr/share/man/man3/gnutls_psk_set_params_function.3
 file path=usr/share/man/man3/gnutls_psk_set_server_credentials_file.3
 file path=usr/share/man/man3/gnutls_psk_set_server_credentials_function.3
 file path=usr/share/man/man3/gnutls_psk_set_server_credentials_function2.3
+file path=usr/share/man/man3/gnutls_psk_set_server_credentials_function3.3
 file path=usr/share/man/man3/gnutls_psk_set_server_credentials_hint.3
 file path=usr/share/man/man3/gnutls_psk_set_server_dh_params.3
 file path=usr/share/man/man3/gnutls_psk_set_server_known_dh_params.3
