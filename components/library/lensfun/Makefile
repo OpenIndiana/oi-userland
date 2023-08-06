@@ -17,14 +17,13 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         lensfun
-COMPONENT_VERSION=      0.3.3
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      0.3.4
 COMPONENT_SUMMARY=      Lensfun - library rectifying defects introduced by photographic equipment
 COMPONENT_PROJECT_URL=  https://lensfun.github.io/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/lensfun/lensfun/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:57ba5a0377f24948972339e18be946af12eda22b7c707eb0ddd26586370f6765
+COMPONENT_ARCHIVE_HASH= sha256:dafb39c08ef24a0e2abd00d05d7341b1bf1f0c38bfcd5a4c69cf5f0ecb6db112
 COMPONENT_FMRI=         image/library/lensfun
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=      GPLv3,LGPLv3
