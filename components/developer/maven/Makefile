@@ -17,12 +17,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	maven
-COMPONENT_VERSION= 3.9.3
+COMPONENT_VERSION= 3.9.4
 COMPONENT_SUMMARY= Apache Maven is a software project management and comprehension tool
 COMPONENT_PROJECT_URL=	https://maven.apache.org
 COMPONENT_SRC= apache-maven-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-bin.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e1e13ac0c42f3b64d900c57ffc652ecef682b8255d7d354efbbb4f62519da4f1
+COMPONENT_ARCHIVE_HASH= sha256:ff66b70c830a38d331d44f6c25a37b582471def9a161c93902bac7bea3098319
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/maven/maven-3/$(COMPONENT_VERSION)/binaries/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= developer/build/maven
 COMPONENT_CLASSIFICATION= Development/Java
