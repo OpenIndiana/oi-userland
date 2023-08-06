@@ -15,27 +15,31 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		prompt_toolkit
-HUMAN_VERSION =			3.0.38
+HUMAN_VERSION =			3.0.39
 COMPONENT_SUMMARY =		prompt_toolkit - Library for building powerful interactive command lines in Python
 COMPONENT_PROJECT_URL =		https://github.com/prompt-toolkit/python-prompt-toolkit
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4b/bb/75cdcd356f57d17b295aba121494c2333d26bfff1a837e6199b8b83c415a/prompt_toolkit-3.0.38.tar.gz
+	https://github.com/prompt-toolkit/python-prompt-toolkit/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:23ac5d50538a9a38c8bde05fecb47d0b403ecd0662857a86f886f798563d5b9b
+	sha256:f723e610262ccc4e356490a31f6a0530c02ad40bbc96d49c6b2edb79c68cac30
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+COMPONENT_SRC =			python-prompt-toolkit-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wcwidth
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
