@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::DNS::Resolver::Programmable
 HUMAN_VERSION =			0.009
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::DNS::Resolver::Programmable - programmable DNS resolver class for offline emulation of DNS
 COMPONENT_CPAN_AUTHOR =		BIGPRESH
 COMPONENT_ARCHIVE_HASH =	\
