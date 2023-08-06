@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      29.1
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -90,8 +91,7 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=yes
 CONFIGURE_OPTIONS +=	--with-xaw3d=no
 CONFIGURE_OPTIONS +=	--with-mailutils
-# Disable imagemagick (fixes https://www.illumos.org/issues/10354)
-CONFIGURE_OPTIONS +=	--without-imagemagick
+CONFIGURE_OPTIONS +=	--with-imagemagick
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
 # SPARC needs this to be set in order to publish correctly.
@@ -220,6 +220,7 @@ REQUIRED_PACKAGES += mail/mailutils
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += file/gnu-findutils
+REQUIRED_PACKAGES += image/imagemagick
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
