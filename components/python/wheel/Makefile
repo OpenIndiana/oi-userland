@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-HUMAN_VERSION =			0.41.0
+HUMAN_VERSION =			0.41.1
 COMPONENT_SUMMARY =		wheel - A built-package format for Python
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ec/34/903929e15b2657335b2ce8723d92fc804d3569b7ac0f1f8877ed1a7b2024/wheel-0.41.0.tar.gz
+	https://files.pythonhosted.org/packages/c9/3d/02a14af2b413d7abf856083f327744d286f4468365cddace393a43d9d540/wheel-0.41.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:55a0f0a5a84869bce5ba775abfd9c462e3a6b1b7b7ec69d72c0b83d673a5114d
+	sha256:12b911f083e876e10c595779709f8a88a59f45aacc646492a67fe9ef796c1b47
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
