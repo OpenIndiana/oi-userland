@@ -880,7 +880,7 @@ PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 # Default DB version should be the newest one we do have so we detect any
 # incompatibilities as soon as possible.  Components could override this when
 # they are not ready yet to compile with so new version.
-PG_VERSION ?=   14
+PG_VERSION ?=   15
 PG_IMPLEM ?=    postgres
 PG_VERNUM =     $(subst .,,$(PG_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed
