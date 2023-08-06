@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		XML::Parser
 HUMAN_VERSION =			2.46
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		XML::Parser - A perl module for parsing XML documents
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
