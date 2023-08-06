@@ -19,12 +19,12 @@ SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	barman
-COMPONENT_VERSION= 	3.5.0
+COMPONENT_VERSION= 	3.7.0
 COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
 COMPONENT_PROJECT_URL=	https://pgbarman.org/
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d08c96cbcb5bee8d5d4ed1a4da0e57aebb40503074136bc726574ff8b2219795
+COMPONENT_ARCHIVE_HASH=	sha256:44957fe15f4310c1865519d233a8e986b61e32de9077e4060f5ccd7738096132
 COMPONENT_ARCHIVE_URL=	https://github.com/EnterpriseDB/barman/releases/download/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		database/postgres/barman
 COMPONENT_CLASSIFICATION=	System/Databases
