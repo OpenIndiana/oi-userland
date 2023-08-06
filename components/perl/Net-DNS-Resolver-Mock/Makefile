@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::DNS::Resolver::Mock
 HUMAN_VERSION =			1.20230216
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::DNS::Resolver::Mock - Mock a DNS Resolver object for testing
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,5 +32,5 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/net-dns
-PERL_REQUIRED_PACKAGES += library/perl-5/test-exception
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
