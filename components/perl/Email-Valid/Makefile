@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Valid
 HUMAN_VERSION =			1.203
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Email::Valid - Check validity of Internet email addresses
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,8 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/io-captureoutput
 PERL_REQUIRED_PACKAGES += library/perl-5/mailtools
 PERL_REQUIRED_PACKAGES += library/perl-5/net-dns
-PERL_REQUIRED_PACKAGES += library/perl-5/net-domain-tld
 PERL_REQUIRED_PACKAGES += runtime/perl
