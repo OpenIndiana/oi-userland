@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		XML::SAX::Expat
 HUMAN_VERSION =			0.51
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		XML::SAX::Expat - SAX2 Driver for Expat (XML::Parser)
 COMPONENT_CPAN_AUTHOR =		BJOERN
 COMPONENT_ARCHIVE_HASH =	\
