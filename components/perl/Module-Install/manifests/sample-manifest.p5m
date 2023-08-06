@@ -1,0 +1,96 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::AutoInstall.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::API.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Admin.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Admin::Include.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Admin::Manifest.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Base.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Bundle.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Can.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Compiler.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Deprecated.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::External.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::FAQ.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Makefile.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::PAR.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Philosophy.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::Share.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Module::Install::With.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/inc::Module::Install.3perl
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/AutoInstall.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/API.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin/Bundle.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin/Compiler.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin/Find.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin/Include.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin/Makefile.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin/Manifest.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin/Metadata.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin/ScanDeps.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Admin/WriteAll.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/AutoInstall.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Base.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Bundle.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Can.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Compiler.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Deprecated.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/External.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/FAQ.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Fetch.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Include.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Inline.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/MakeMaker.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Makefile.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Metadata.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/PAR.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Philosophy.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Run.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Scripts.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Share.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/Win32.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/With.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Install/WriteAll.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/inc/Module/Install.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/archive-zip-$(PLV)@1.37
+depend type=require fmri=pkg:/library/perl-5/file-homedir-$(PLV)@1
+depend type=require fmri=pkg:/library/perl-5/file-remove-$(PLV)@1.42
+depend type=require fmri=pkg:/library/perl-5/json-$(PLV)@2.9
+depend type=require fmri=pkg:/library/perl-5/libwww-perl-$(PLV)@6.5
+depend type=require fmri=pkg:/library/perl-5/module-build-$(PLV)@0.29
+depend type=require fmri=pkg:/library/perl-5/module-scandeps-$(PLV)@1.9
+depend type=require fmri=pkg:/library/perl-5/par-dist-$(PLV)@0.29
+depend type=require fmri=pkg:/library/perl-5/yaml-tiny-$(PLV)@1.38
