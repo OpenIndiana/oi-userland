@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Digest::BubbleBabble
 HUMAN_VERSION =			0.02
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Digest::BubbleBabble - Create bubble-babble fingerprints
 COMPONENT_CPAN_AUTHOR =		BTROTT
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,9 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Makefile.PL needs to find bundled inc::Module::Install
+COMPONENT_CONFIGURE_ENV += PERL5LIB=$(@D)
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
