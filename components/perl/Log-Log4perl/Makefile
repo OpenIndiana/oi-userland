@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Log::Log4perl
 HUMAN_VERSION =			1.57
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Log::Log4perl - Log4j implementation for Perl
 COMPONENT_CPAN_AUTHOR =		ETJ
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,4 +31,11 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/dbd-csv
+PERL_REQUIRED_PACKAGES += library/perl-5/dbd-sqlite
+PERL_REQUIRED_PACKAGES += library/perl-5/dbi
+PERL_REQUIRED_PACKAGES += library/perl-5/log-dispatch
+PERL_REQUIRED_PACKAGES += library/perl-5/log-dispatch-filerotate
+PERL_REQUIRED_PACKAGES += library/perl-5/sql-statement
+PERL_REQUIRED_PACKAGES += library/perl-5/xml-dom
 PERL_REQUIRED_PACKAGES += runtime/perl
