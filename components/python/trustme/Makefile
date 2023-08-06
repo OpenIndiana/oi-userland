@@ -19,18 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		trustme
-HUMAN_VERSION =			1.0.0
+HUMAN_VERSION =			1.1.0
 COMPONENT_SUMMARY =		trustme - #1 quality TLS certs while you wait, for the discerning tester
 COMPONENT_PROJECT_URL =		https://github.com/python-trio/trustme
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/34/42/9958ef9b4a8f804f142b262f029d121706646db98d8459a83a5104496264/trustme-1.0.0.tar.gz
+	https://files.pythonhosted.org/packages/60/65/1e0fa6e1d336e4e50e41999699903ee216ac500c40ebb2578742d8f1c656/trustme-1.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1d4f0b0fe28091506edc29c19ad90cca387646add436c3ca66ba7bcc53807f55
+	sha256:5375ad7fb427074bec956592e0d4ee2a4cf4da68934e1ba4bcf4217126bc45e6
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:cov
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cryptography
