@@ -34,14 +34,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
 # binutils-2.40 is broken for us. We need an old version with fake 2.40 version.
-COMPONENT_VERSION=	2.40
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	2.41
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:0f8a4c272d7f17f369ded10a4aca28b8e304828e95526da482b0ccc4dfc9d8e1
+COMPONENT_ARCHIVE_HASH= sha256:ae9a5789e23459e59606e6714723f2d3ffc31c03174191ef0d015bdf06007450
 COMPONENT_FMRI=		developer/gnu-binutils
 COMPONENT_CLASSIFICATION=Development/GNU
 
@@ -84,6 +83,5 @@ COMPONENT_TEST_MASTER = \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += library/msgpack
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
