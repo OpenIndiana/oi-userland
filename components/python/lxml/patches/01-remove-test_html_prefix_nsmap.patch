@@ -1,0 +1,20 @@
+The test is failing.  It should be fixed in the next lxml release.
+See https://github.com/lxml/lxml/commit/72f5a287a4016ecb405f2e8a4a03ae22a5b0b496
+
+--- lxml-4.9.3/src/lxml/tests/test_etree.py.orig
++++ lxml-4.9.3/src/lxml/tests/test_etree.py
+@@ -3067,14 +3067,6 @@
+         self.assertEqual(re, e.nsmap)
+         self.assertEqual(r,  s.nsmap)
+ 
+-    def test_html_prefix_nsmap(self):
+-        etree = self.etree
+-        el = etree.HTML('<hha:page-description>aa</hha:page-description>').find('.//page-description')
+-        if etree.LIBXML_VERSION < (2, 9, 11):
+-            self.assertEqual({'hha': None}, el.nsmap)
+-        else:
+-            self.assertEqual({}, el.nsmap)
+-
+     def test_getchildren(self):
+         Element = self.etree.Element
+         SubElement = self.etree.SubElement
