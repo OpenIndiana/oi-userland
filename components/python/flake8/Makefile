@@ -19,33 +19,29 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8
-HUMAN_VERSION =			6.0.0
+HUMAN_VERSION =			6.1.0
 COMPONENT_SUMMARY =		flake8 - the modular source code checker: pep8 pyflakes and co
 COMPONENT_PROJECT_URL =		https://github.com/pycqa/flake8
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/66/53/3ad4a3b74d609b3b9008a10075c40e7c8909eae60af53623c3888f7a529a/flake8-6.0.0.tar.gz
+	https://github.com/PyCQA/flake8/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c61007e76655af75e6785a931f452915b371dc48f56efd765247c8fe68f2b181
+	sha256:bcb01efc0c83d3c9362e200b5359fe22e11b859962dd27e5bebf3ada7620ae2f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# flake8 >= 6.0.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
-
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# Note:
-#
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
+
 # Testing expects there are no additional flake8 plugins installed otherwise
-# some tests will fail.  This is the current list of packages that should NOT
-# be installed:
-#
-#	flake8-2020
-#	flake8-noqa
-#	flake8-typing-imports
-#	teamcity-messages
-#
+# some tests will fail.
+TEST_CONFLICTING_PACKAGES.python += library/python/flake8-2020
+TEST_CONFLICTING_PACKAGES.python += library/python/flake8-bugbear
+TEST_CONFLICTING_PACKAGES.python += library/python/flake8-noqa
+TEST_CONFLICTING_PACKAGES.python += library/python/flake8-typing-imports
+TEST_CONFLICTING_PACKAGES.python += library/python/teamcity-messages
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/mccabe

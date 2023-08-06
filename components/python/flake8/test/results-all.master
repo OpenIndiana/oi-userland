@@ -1,14 +1,14 @@
 ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
-py$(PYV): recreate env because env type changed from {'name': 'py$(PYV)', 'type': 'PrintEnv'} to {'name': 'py$(PYV)', 'type': 'CurrentEnv'}
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m coverage run -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
+rootdir: $(@D)
+configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 464 items
+collecting ... collected 466 items
 
 ::project PASSED
 tests/integration/test_aggregator.py::test_aggregate_options_when_isolated PASSED
@@ -61,6 +61,8 @@ tests/integration/test_main.py::test_tokenization_error_but_not_syntax_error PAS
 tests/integration/test_main.py::test_tokenization_error_is_a_syntax_error PASSED
 tests/integration/test_plugins.py::test_enable_local_plugin_from_config PASSED
 tests/integration/test_plugins.py::test_local_plugin_can_add_option PASSED
+tests/integration/test_plugins.py::test_logical_line_plugin PASSED
+tests/integration/test_plugins.py::test_physical_line_plugin_multiline_fstring PASSED
 tests/integration/test_plugins.py::test_physical_line_plugin_multiline_string PASSED
 tests/integration/test_plugins.py::test_plugin_gets_enabled_by_default PASSED
 tests/integration/test_plugins.py::test_plugin_off_by_default PASSED
@@ -232,7 +234,6 @@ tests/unit/test_file_processor.py::test_expand_indent[      -6] PASSED
 tests/unit/test_file_processor.py::test_expand_indent[    -4] PASSED
 tests/unit/test_file_processor.py::test_expand_indent[\t-8] PASSED
 tests/unit/test_file_processor.py::test_expand_indent[\t\t-16] PASSED
-tests/unit/test_file_processor.py::test_inside_multiline PASSED
 tests/unit/test_file_processor.py::test_keyword_arguments_for[params0-args0-expected_kwargs0] PASSED
 tests/unit/test_file_processor.py::test_keyword_arguments_for[params1-args1-expected_kwargs1] PASSED
 tests/unit/test_file_processor.py::test_keyword_arguments_for[params2-args2-expected_kwargs2] PASSED
@@ -474,6 +475,9 @@ tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa: E111,W1
 tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa:E111, W123,F821-True] PASSED
 tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa:E111,W123,F821-True] PASSED
 
-======== 463 passed ========
+41 files skipped due to complete coverage.
+
+
+======== 464 passed ========
   py$(PYV): OK
   congratulations :)
