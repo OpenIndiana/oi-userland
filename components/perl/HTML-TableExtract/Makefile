@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTML::TableExtract
 HUMAN_VERSION =			2.15
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		HTML::TableExtract - Perl module for extracting the content contained in tables within an HTML document, either as text or encoded element trees.
 COMPONENT_CPAN_AUTHOR =		MSISK
 COMPONENT_ARCHIVE_HASH =	\
