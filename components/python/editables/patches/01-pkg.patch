@@ -1,8 +1,8 @@
 This is to avoid clash with ips pkg module.
 
---- editables-0.4/tests/test_redirects.py.orig
-+++ editables-0.4/tests/test_redirects.py
-@@ -60,7 +60,7 @@
+--- editables-0.5/tests/test_redirects.py.orig
++++ editables-0.5/tests/test_redirects.py
+@@ -61,7 +61,7 @@
      project = tmp_path / "project"
      project_files = {
          "mod.py": "val = 42",
@@ -11,7 +11,7 @@ This is to avoid clash with ips pkg module.
              "__init__.py": "val = 42",
              "sub.py": "val = 42",
          },
-@@ -70,14 +70,14 @@
+@@ -71,17 +71,17 @@
      with save_import_state():
          F.install()
          F.map_module("mod", project / "mod.py")
@@ -31,3 +31,6 @@ This is to avoid clash with ips pkg module.
  
 -        assert pkg.sub.val == 42
 +        assert pkg1.sub.val == 42
+ 
+ 
+ def test_cache_invalidation():
