@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		editables
-HUMAN_VERSION =			0.4
+HUMAN_VERSION =			0.5
 COMPONENT_SUMMARY =		editables - Editable installations
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/43/8a/a060ff3e75328015150f680b4b4bc4617644aaef199ece380342a334d78f/editables-0.4.tar.gz
+	https://files.pythonhosted.org/packages/37/4a/986d35164e2033ddfb44515168a281a7986e260d344cf369c3f52d4c3275/editables-0.5.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dc322c42e7ccaf19600874035a4573898d88aadd07e177c239298135b75da772
+	sha256:309627d9b5c4adc0e668d8c6fa7bac1ba7c8c5d415c2d27f60f081f8e80d1de2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
