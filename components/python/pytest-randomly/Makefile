@@ -19,18 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-randomly
-HUMAN_VERSION =			3.12.0
+HUMAN_VERSION =			3.13.0
 COMPONENT_SUMMARY =		pytest-randomly - Pytest plugin to randomly order tests and control random.seed.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-randomly
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2e/1c/35f9746b7bd794e205f3a70ae0d6e167d2c929342e15de40d9d37f3b675e/pytest-randomly-3.12.0.tar.gz
+	https://github.com/pytest-dev/pytest-randomly/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d60c2db71ac319aee0fc6c4110a7597d611a8b94a5590918bfa8583f00caccb2
+	sha256:24e182a8e89b8851d660bcc24e8e96c7c89bef07e68f099ef91e960f7bc86264
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# https://github.com/pytest-dev/pytest-randomly/issues/526
-TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
