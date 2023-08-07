@@ -85,6 +85,19 @@ function convert_version
 	[[ "$DIST" == "Mail-DKIM" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 12)) && VER[1]=$((1${VERSION:2:4} - 10000)) && VER[2]=$((1${VERSION:6:2} - 100)) && VER[3]=$((1${VERSION:8:2} - 100)) && VER[4]=${VERSION:11:1} && VERSION=${VERSION:0:1}
 	[[ "$DIST" == "Mail-DMARC" && "${VERSION:1:1}" == "." ]] && ((${#VERSION} == 10)) && VER[1]=$((1${VERSION:2:4} - 10000)) && VER[2]=$((1${VERSION:6:2} - 100)) && VER[3]=$((1${VERSION:8:2} - 100)) && VERSION=${VERSION:0:1}
 	[[ "$DIST" == "Mail-DMARC" && "${VERSION:0:2}" == "0." ]] && ((${#VERSION} == 8)) && VER[1]=$((1${VERSION:2:2} - 100)) && VER[2]=$((1${VERSION:4:3} - 1000)) && VER[3]=$((1${VERSION:7:1} - 10)) && VERSION=${VERSION:0:1}
+	if [[ "$DIST" == "Math-Pari" && "$VERSION" != "${VERSION/.}" ]] ; then
+		V=${VERSION#*.}
+		VERSION=${VERSION%.$V}
+		[[ "${V%a}" != "$V" ]] && V="${V%a}0001"
+		[[ "${V%b}" != "$V" ]] && V="${V%b}0002"
+		((${#V} / 2 * 2 != ${#V})) && V="${V}0"
+		i=1
+		while ((${#V})) ; do
+			VER[$i]=$((1${V:0:2} - 100))
+			V=${V:2}
+			i=$((i + 1))
+		done
+	fi
 	[[ "$DIST" == "Module-Build" ]] && ((${#VERSION} == 6)) && VER[1]=$((1${VERSION:2:4} - 10000)) && VERSION=${VERSION:0:1}
 	[[ "$DIST" == "Mozilla-CA" ]] && ((${#VERSION} == 8)) && VER[1]=$((1${VERSION:4:2} - 100)) && VER[2]=$((1${VERSION:6:2} - 100)) && VERSION=${VERSION:0:4}
 	[[ "$DIST" == "Net-DNS-Resolver-Mock" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 10)) && VER[1]=$((1${VERSION:2:4} - 10000)) && VER[2]=$((1${VERSION:6:2} - 100)) && VER[3]=$((1${VERSION:8:2} - 100)) && VERSION=${VERSION:0:1}
