@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::DKIM
 HUMAN_VERSION =			1.20230630
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mail::DKIM - Signs/verifies Internet mail with DKIM/DomainKey signatures
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
