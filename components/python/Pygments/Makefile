@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pygments
-HUMAN_VERSION =			2.15.1
+HUMAN_VERSION =			2.16.1
 COMPONENT_SUMMARY =		Pygments - Pygments is a syntax highlighting package written in Python.
 COMPONENT_PROJECT_URL =		https://pygments.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/89/6b/2114e54b290824197006e41be3f9bbe1a26e9c39d1f5fa20a6d62945a0b3/Pygments-2.15.1.tar.gz
+	https://files.pythonhosted.org/packages/d6/f7/4d461ddf9c2bcd6a4d7b2b139267ca32a69439387cc1f02a924ff8883825/Pygments-2.16.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8ace4d3c1dd481894b2005f560ead0f9f19ee64fe983366be1a21e171d12775c
+	sha256:1daff0494820c69bc8941e407aa20f577374ee88364ee10a98fdbe0aece96e29
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,8 +33,10 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Testing fails with the checkdocs plugin installed
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
 PYTEST_ADDOPTS += -p no:checkdocs
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
