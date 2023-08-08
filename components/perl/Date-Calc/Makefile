@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Date::Calc
 HUMAN_VERSION =			6.4
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Date::Calc - Gregorian calendar date calculations
 COMPONENT_CPAN_AUTHOR =		STBEY
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +28,18 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only OR LGPL-2.0-only
 
 include $(WS_MAKE_RULES)/common.mk
+
+#
+# There is circular runtime dependency:
+#
+#	Date-Calc recommends Date-Calc-XS
+#	Date-Calc-XS requires Date-Calc
+#
+# To bootstrap both components we need to build Date-Calc first and remove any
+# unresolved runtime dependency on Date-Calc-XS.
+#
+MANGLE_DEPEND_RUNTIME += | \
+	$(GNU_GREP) -v '^depend type=require fmri=__TBD pkg\.debug\.depend\.file=Date/Calc/XS\.pm'
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/bit-vector
