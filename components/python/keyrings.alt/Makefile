@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		keyrings.alt
-HUMAN_VERSION =			4.2.0
+HUMAN_VERSION =			5.0.0
 COMPONENT_SUMMARY =		keyrings.alt - Alternate keyring implementations
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/keyrings.alt
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/88/4e/2af12a91eb8245b7ff24fdc0afbe5a1d62e9d5ec24ffdb53972753cec644/keyrings.alt-4.2.0.tar.gz
+	https://files.pythonhosted.org/packages/a6/97/c7344bed881cc6f78b6231262436eb0c72615011fab4786d23d676ab77b0/keyrings.alt-5.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2ba3d56441ba0637f5f9c096068f67010ac0453f9d0b626de2aa3019353b6431
+	sha256:9d446cb47bbcea90ffa2ecc3e8003acf41573fc201bf44b4bf13bd0e11484828
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -46,10 +46,9 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-classes
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/backports-unittest-mock
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/fs
 TEST_REQUIRED_PACKAGES.python += library/python/keyring
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodome
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodomex
@@ -58,5 +57,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
