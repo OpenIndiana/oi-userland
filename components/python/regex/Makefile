@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		regex
-HUMAN_VERSION =			2023.6.3
+HUMAN_VERSION =			2023.8.8
 COMPONENT_SUMMARY =		regex - Alternative regular expression module, to replace re.
 COMPONENT_PROJECT_URL =		https://github.com/mrabarnett/mrab-regex
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/18/df/401fd39ffd50062ff1e0344f95f8e2c141de4fd1eca1677d2f29609e5389/regex-2023.6.3.tar.gz
+	https://files.pythonhosted.org/packages/4f/1d/6998ba539616a4c8f58b07fd7c9b90c6b0f0c0ecbe8db69095a6079537a7/regex-2023.8.8.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:72d1a25bf36d2050ceb35b517afe13864865268dfb45910e2e17a84be6cbfeb0
+	sha256:fcbdc5f2b0f1cd0f6a56cdb46fe41d2cce1e644e3b68832f3eeebc5fb0f7712e
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
