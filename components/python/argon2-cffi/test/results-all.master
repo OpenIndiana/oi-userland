@@ -1,0 +1,105 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests
+asyncio: mode=strict
+collecting ... collected 73 items
+
+tests/__init__.py::mypy PASSED
+tests/__init__.py::mypy-status PASSED
+tests/test_legacy.py::TestHash::test_hash_defaults PASSED
+tests/test_legacy.py::TestHash::test_hash_fast PASSED
+tests/test_legacy.py::TestHash::test_hash_nul_bytes PASSED
+tests/test_legacy.py::TestHash::test_hash_password[Type.D-$argon2d$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$cZn5d+rFh+ZfuRhm2iGUGgcrW5YLeM6q7L3vBsdmFA0] PASSED
+tests/test_legacy.py::TestHash::test_hash_password[Type.I-$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$IMit9qkFULCMA/ViizL57cnTLOa5DiVM9eMwpAvPwr4] PASSED
+tests/test_legacy.py::TestHash::test_hash_password[Type.ID-$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
+tests/test_legacy.py::TestHash::test_hash_password_raw[Type.D-q\x99\xf9w\xea\xc5\x87\xe6_\xb9\x18f\xda!\x94\x1a\x07+[\x96\x0bx\xce\xaa\xec\xbd\xef\x06\xc7f\x14\r] PASSED
+tests/test_legacy.py::TestHash::test_hash_password_raw[Type.I- \xc8\xad\xf6\xa9\x05P\xb0\x8c\x03\xf5b\x8b2\xf9\xed\xc9\xd3,\xe6\xb9\x0e%L\xf5\xe30\xa4\x0b\xcf\xc2\xbe] PASSED
+tests/test_legacy.py::TestHash::test_hash_password_raw[Type.ID-\x1a\x96w\xb0\xaf\xe8\x1f\xda{T\x88\x95\xe7\xa1\xbf\xeb\x86h\xff\xc1\x9aS\x0e7\xe0\x88\xa6h\xfa\xb1\xc0*] PASSED
+tests/test_legacy.py::TestHash::test_hash_wrong_arg_type PASSED
+tests/test_legacy.py::TestHash::test_illegal_argon2_parameter PASSED
+tests/test_legacy.py::TestHash::test_random_salt PASSED
+tests/test_legacy.py::TestHash::test_raw_defaults PASSED
+tests/test_legacy.py::TestVerify::test_fail_wrong_argon2_type PASSED
+tests/test_legacy.py::TestVerify::test_success[Type.D-$argon2d$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$cZn5d+rFh+ZfuRhm2iGUGgcrW5YLeM6q7L3vBsdmFA0] PASSED
+tests/test_legacy.py::TestVerify::test_success[Type.I-$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$IMit9qkFULCMA/ViizL57cnTLOa5DiVM9eMwpAvPwr4] PASSED
+tests/test_legacy.py::TestVerify::test_success[Type.ID-$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
+tests/test_legacy.py::TestVerify::test_wrong_arg_type PASSED
+tests/test_legacy.py::mypy PASSED
+tests/test_low_level.py::TestHash::test_hash_fast[hash_secret] PASSED
+tests/test_low_level.py::TestHash::test_hash_fast[hash_secret_raw] PASSED
+tests/test_low_level.py::TestHash::test_hash_nul_bytes PASSED
+tests/test_low_level.py::TestHash::test_hash_secret[Type.D-$argon2d$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$cZn5d+rFh+ZfuRhm2iGUGgcrW5YLeM6q7L3vBsdmFA0] PASSED
+tests/test_low_level.py::TestHash::test_hash_secret[Type.I-$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$IMit9qkFULCMA/ViizL57cnTLOa5DiVM9eMwpAvPwr4] PASSED
+tests/test_low_level.py::TestHash::test_hash_secret[Type.ID-$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
+tests/test_low_level.py::TestHash::test_hash_secret_raw[Type.D-q\x99\xf9w\xea\xc5\x87\xe6_\xb9\x18f\xda!\x94\x1a\x07+[\x96\x0bx\xce\xaa\xec\xbd\xef\x06\xc7f\x14\r] PASSED
+tests/test_low_level.py::TestHash::test_hash_secret_raw[Type.I- \xc8\xad\xf6\xa9\x05P\xb0\x8c\x03\xf5b\x8b2\xf9\xed\xc9\xd3,\xe6\xb9\x0e%L\xf5\xe30\xa4\x0b\xcf\xc2\xbe] PASSED
+tests/test_low_level.py::TestHash::test_hash_secret_raw[Type.ID-\x1a\x96w\xb0\xaf\xe8\x1f\xda{T\x88\x95\xe7\xa1\xbf\xeb\x86h\xff\xc1\x9aS\x0e7\xe0\x88\xa6h\xfa\xb1\xc0*] PASSED
+tests/test_low_level.py::TestHash::test_hash_wrong_arg_type[hash_secret] PASSED
+tests/test_low_level.py::TestHash::test_hash_wrong_arg_type[hash_secret_raw] PASSED
+tests/test_low_level.py::TestHash::test_illegal_argon2_parameter[hash_secret] PASSED
+tests/test_low_level.py::TestHash::test_illegal_argon2_parameter[hash_secret_raw] PASSED
+tests/test_low_level.py::TestVerify::test_fail[Type.D-$argon2d$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$cZn5d+rFh+ZfuRhm2iGUGgcrW5YLeM6q7L3vBsdmFA0] PASSED
+tests/test_low_level.py::TestVerify::test_fail[Type.I-$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$IMit9qkFULCMA/ViizL57cnTLOa5DiVM9eMwpAvPwr4] PASSED
+tests/test_low_level.py::TestVerify::test_fail[Type.ID-$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
+tests/test_low_level.py::TestVerify::test_fail_wrong_argon2_type PASSED
+tests/test_low_level.py::TestVerify::test_old_hash PASSED
+tests/test_low_level.py::TestVerify::test_success[Type.D-$argon2d$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$cZn5d+rFh+ZfuRhm2iGUGgcrW5YLeM6q7L3vBsdmFA0] PASSED
+tests/test_low_level.py::TestVerify::test_success[Type.I-$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$IMit9qkFULCMA/ViizL57cnTLOa5DiVM9eMwpAvPwr4] PASSED
+tests/test_low_level.py::TestVerify::test_success[Type.ID-$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
+tests/test_low_level.py::TestVerify::test_wrong_arg_type PASSED
+tests/test_low_level.py::mypy PASSED
+tests/test_low_level.py::test_argument_ranges PASSED
+tests/test_low_level.py::test_core PASSED
+tests/test_password_hasher.py::TestEnsureBytes::test_is_bytes PASSED
+tests/test_password_hasher.py::TestEnsureBytes::test_is_str PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_check PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_check_needs_rehash_no PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_check_needs_rehash_yes PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_hash[p\xe4ssword0] PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_hash[p\xe4ssword1] PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_hash_verify[p\xe4ssword0] PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_hash_verify[p\xe4ssword1] PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_type_is_configurable PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_verify_agility[p\xe4ssword0] PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_verify_agility[p\xe4ssword1] PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_verify_invalid_hash PASSED
+tests/test_password_hasher.py::mypy PASSED
+tests/test_utils.py::TestCheckTypes::test_fail PASSED
+tests/test_utils.py::TestCheckTypes::test_success PASSED
+tests/test_utils.py::TestExtractParameters::test_invalid_hash[$argon2id$v=19$m=65536,t=2$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
+tests/test_utils.py::TestExtractParameters::test_invalid_hash[$argon2id$v=19$m=65536,t=2,p=four$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
+tests/test_utils.py::TestExtractParameters::test_invalid_hash[] PASSED
+tests/test_utils.py::TestExtractParameters::test_invalid_hash[abc$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
+tests/test_utils.py::TestExtractParameters::test_valid_hash PASSED
+tests/test_utils.py::TestExtractParameters::test_valid_hash_v18 PASSED
+tests/test_utils.py::TestParameters::test_eq PASSED
+tests/test_utils.py::TestParameters::test_eq_wrong_type PASSED
+tests/test_utils.py::TestParameters::test_repr PASSED
+tests/test_utils.py::mypy PASSED
+tests/test_utils.py::test_decoded_str_len PASSED
+
+6 files skipped due to complete coverage.
+
+===================================== mypy =====================================
+
+Success: no issues found in 5 source files
+======== 73 passed ========
+py$(PYV): commands[1]> python -m argon2 -n 1 -t 1 -m 8 -p 1
+Running Argon2id 1 times with:
+hash_len: 32 bytes
+memory_cost: 8 KiB
+parallelism: 1 threads
+time_cost: 1 iterations
+
+Measuring...
+
+0.1ms per password verification
+  py$(PYV): OK
+  congratulations :)
