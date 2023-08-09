@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBD::Pg
 HUMAN_VERSION =			3.16.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DBD::Pg - PostgreSQL database driver for the DBI module
 COMPONENT_CPAN_AUTHOR =		TURNSTEP
 COMPONENT_ARCHIVE_HASH =	\
@@ -44,6 +45,8 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^Please wait, creating new database/d"'
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/dbi
+PERL_REQUIRED_PACKAGES += library/perl-5/module-signature
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += system/library
