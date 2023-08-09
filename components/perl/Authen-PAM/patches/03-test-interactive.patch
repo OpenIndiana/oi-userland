@@ -1,0 +1,31 @@
+Remove interactive test
+
+--- Authen-PAM-0.16/test.pl.orig
++++ Authen-PAM-0.16/test.pl
+@@ -120,26 +120,6 @@
+ #    skip(10, 'custom fail delay function is not supported by your PAM library');
+ #  }
+ 
+-   if ($login_name) {
+-     print
+-       "---- Now, you may be prompted to enter the password of '$login_name'.\n";
+-   } else{
+-     print
+-       "---- Now, you may be prompted to enter a user name and a password.\n";
+-   }
+-
+-  $res = pam_authenticate($pamh, 0);
+-#  $res = pam_chauthtok($pamh);
+-  {
+-    my $old_failures = $failures;
+-    pam_ok(9, $pamh, $res);
+-    print 
+-      "---- The failure of test 9 could be due to your PAM configuration\n",
+-	"---- or typing an incorrect password.\n"
+-      if ($res != PAM_SUCCESS());
+-    $failures = $old_failures; # Authentication failures don't count
+-  }
+-
+ #  if (HAVE_PAM_FAIL_DELAY()) {
+ #    ok(12, $res == $fd_status);
+ #  } else {
