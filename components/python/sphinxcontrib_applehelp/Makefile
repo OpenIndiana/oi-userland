@@ -11,22 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project sphinxcontrib-applehelp
+#   $WS_TOOLS/python-integrate-project sphinxcontrib_applehelp
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		sphinxcontrib-applehelp
-HUMAN_VERSION =			1.0.4
-COMPONENT_SUMMARY =		sphinxcontrib-applehelp - sphinxcontrib-applehelp is a Sphinx extension which outputs Apple help books
+COMPONENT_NAME =		sphinxcontrib_applehelp
+HUMAN_VERSION =			1.0.6
+COMPONENT_SUMMARY =		sphinxcontrib_applehelp - sphinxcontrib-applehelp is a Sphinx extension which outputs Apple help books
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/32/df/45e827f4d7e7fcc84e853bcef1d836effd762d63ccb86f43ede4e98b478c/sphinxcontrib-applehelp-1.0.4.tar.gz
+	https://files.pythonhosted.org/packages/e5/8c/6111eb770597b1eb3cacb704d45cb40767a74270a8a89a2ef0c94c4e7381/sphinxcontrib_applehelp-1.0.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:828f867945bbe39817c210a1abfd1bc4895c8b73fcaade56d45357a348a07d7e
+	sha256:a59274de7a952a99af36b8a5092352d9249279c0e3280b7dceaae8e15873c942
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -43,9 +42,12 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
+PYTHON_REQUIRED_PACKAGES += library/python/sphinx
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
