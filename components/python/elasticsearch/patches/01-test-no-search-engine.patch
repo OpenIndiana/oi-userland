@@ -1,0 +1,18 @@
+es_url() pollutes the output with diagnostic messages when it is unable to
+connect.  Since we do not have the search engine packaged we simply skip all
+tests that needs the engine.
+
+--- elasticsearch-py-8.9.0/test_elasticsearch/conftest.py.orig
++++ elasticsearch-py-8.9.0/test_elasticsearch/conftest.py
+@@ -26,10 +26,7 @@
+ 
+ @pytest.fixture(scope="session")
+ def elasticsearch_url():
+-    try:
+-        return es_url()
+-    except RuntimeError as e:
+-        pytest.skip(str(e))
++    pytest.skip("Needs the search engine")
+ 
+ 
+ @pytest.fixture(scope="session")

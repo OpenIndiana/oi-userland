@@ -1,0 +1,23 @@
+We need to skip these two tests since we do not have aiohttp yet.
+
+--- elasticsearch-py-8.9.0/test_elasticsearch/test_async/test_transport.py.orig
++++ elasticsearch-py-8.9.0/test_elasticsearch/test_async/test_transport.py
+@@ -259,6 +259,7 @@
+             == b'{"query":{"match":"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"}}'
+         )
+ 
++    @pytest.mark.skip(reason="needs aiohttp")
+     def test_kwargs_passed_on_to_node_pool(self):
+         dt = object()
+         client = AsyncElasticsearch(
+--- elasticsearch-py-8.9.0/test_elasticsearch/test_client/test_rewrite_parameters.py.orig
++++ elasticsearch-py-8.9.0/test_elasticsearch/test_client/test_rewrite_parameters.py
+@@ -214,7 +214,7 @@
+         self.wrapped_func_aliases(source=["key3"])
+         assert self.calls[-1] == ((), {"source": ["key3"]})
+ 
+-    @pytest.mark.parametrize("client_cls", [Elasticsearch, AsyncElasticsearch])
++    @pytest.mark.parametrize("client_cls", [Elasticsearch])
+     def test_positional_argument_error(self, client_cls):
+         client = client_cls("https://localhost:9200")
+ 
