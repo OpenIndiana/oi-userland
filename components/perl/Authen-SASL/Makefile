@@ -19,18 +19,19 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Authen::SASL
-HUMAN_VERSION =			2.16
+HUMAN_VERSION =			2.1700
 COMPONENT_SUMMARY =		Authen::SASL - SASL Authentication framework
-COMPONENT_CPAN_AUTHOR =		GBARR
+COMPONENT_CPAN_AUTHOR =		EHUELS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6614fa7518f094f853741b63c73f3627168c5d3aca89b1d02b1016dc32854e09
+	sha256:b86d5a576b8d387aee24f39f47a54afd14bb66b09003db5065001f1de03a8ece
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Makefile.PL needs to find bundled inc::Module::Install
-COMPONENT_CONFIGURE_ENV += PERL5LIB=$(@D)
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/pod-coverage-trustpod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
