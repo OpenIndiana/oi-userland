@@ -15,19 +15,18 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyzmq
-HUMAN_VERSION =			25.1.0
+HUMAN_VERSION =			25.1.1
 COMPONENT_SUMMARY =		pyzmq - Python bindings for 0MQ
 COMPONENT_PROJECT_URL =		https://pyzmq.readthedocs.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/64/9c/2b2614b0b86ff703b3a33ea5e044923bd7d100adc8c829d579a9b71ea9e7/pyzmq-25.1.0.tar.gz
+	https://files.pythonhosted.org/packages/3f/7c/69d31a75a3fe9bbab349de7935badac61396f22baf4ab53179a8d940d58e/pyzmq-25.1.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:80c41023465d36280e801564a69cbfce8ae85ff79b080e1913f6e90481fb8957
-COMPONENT_LICENSE =		BSD-3-Clause AND GPL-3.0-only
+	sha256:259c22485b71abacdfa8bf79720cd7bcf4b9d128b30ea554f01ae71fdbfdaa23
+COMPONENT_LICENSE =		BSD-3-Clause AND LGPL-3.0-only
 
 TEST_STYLE = pytest
 
@@ -63,9 +62,10 @@ COMPONENT_PRE_TEST_ACTION +=	$(SYMLINK) ../zmq-RENAMED/tests $(@D)/zmq/tests ;
 COMPONENT_POST_TEST_ACTION +=	$(RM) -r $(@D)/zmq ;
 COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/zmq-RENAMED $(@D)/zmq ;
 
-# Testing fails with the checkdocs plugin installed
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
 PYTEST_ADDOPTS += -p no:checkdocs
-# Testing fails with the randomly plugin installed
+PYTEST_ADDOPTS += -p no:mypy
 PYTEST_ADDOPTS += -p no:randomly
 
 # Testing of pyzmq fails if there is flaky installed.  See
