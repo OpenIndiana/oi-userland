@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		async-timeout
-COMPONENT_VERSION =		4.0.2
+HUMAN_VERSION =			4.0.3
 COMPONENT_SUMMARY =		async-timeout - Timeout context manager for asyncio programs
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/async-timeout
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/54/6e/9678f7b2993537452710ffb1750c62d2c26df438aa621ad5fa9d1507a43a/async-timeout-4.0.2.tar.gz
+	https://files.pythonhosted.org/packages/87/d6/21b30a550dafea84b1b8eee21b5e23fa16d010ae006011221f33dcd8d7f8/async-timeout-4.0.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15
+	sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,8 +33,10 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python

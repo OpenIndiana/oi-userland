@@ -2,196 +2,51 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg
-collecting ... collected 33 items
+rootdir: $(@D)
+configfile: setup.cfg
+asyncio: mode=strict
+collecting ... collected 40 items
 
-tests/test_timeout.py::test_async_no_timeout SKIPPED (async def func...)
-tests/test_timeout.py::test_async_timeout SKIPPED (async def functio...)
-tests/test_timeout.py::test_cancel_outer_coro SKIPPED (async def fun...)
-tests/test_timeout.py::test_deadline SKIPPED (async def function and...)
-tests/test_timeout.py::test_deprecated_with SKIPPED (async def funct...)
-tests/test_timeout.py::test_enter_twice SKIPPED (async def function ...)
-tests/test_timeout.py::test_expired_after_rejecting SKIPPED (async d...)
-tests/test_timeout.py::test_expired_after_timeout SKIPPED (async def...)
-tests/test_timeout.py::test_for_race_conditions SKIPPED (async def f...)
-tests/test_timeout.py::test_outer_coro_is_not_cancelled SKIPPED (asy...)
-tests/test_timeout.py::test_reject_finished SKIPPED (async def funct...)
-tests/test_timeout.py::test_shift SKIPPED (async def function and no...)
-tests/test_timeout.py::test_shift_by_after_cm_exit SKIPPED (async de...)
-tests/test_timeout.py::test_shift_by_expired SKIPPED (async def func...)
-tests/test_timeout.py::test_shift_negative_expired SKIPPED (async de...)
-tests/test_timeout.py::test_shift_nonscheduled SKIPPED (async def fu...)
-tests/test_timeout.py::test_shift_to_expired SKIPPED (async def func...)
-tests/test_timeout.py::test_timeout SKIPPED (async def function and ...)
-tests/test_timeout.py::test_timeout_at SKIPPED (async def function a...)
-tests/test_timeout.py::test_timeout_at_not_fired SKIPPED (async def ...)
-tests/test_timeout.py::test_timeout_blocking_loop SKIPPED (async def...)
-tests/test_timeout.py::test_timeout_canceled_error_is_not_converted_to_timeout SKIPPED
-tests/test_timeout.py::test_timeout_disable SKIPPED (async def funct...)
-tests/test_timeout.py::test_timeout_expired SKIPPED (async def funct...)
-tests/test_timeout.py::test_timeout_finish_in_time SKIPPED (async de...)
-tests/test_timeout.py::test_timeout_inner_other_error SKIPPED (async...)
-tests/test_timeout.py::test_timeout_inner_timeout_error SKIPPED (asy...)
-tests/test_timeout.py::test_timeout_is_none_no_schedule SKIPPED (asy...)
+::project PASSED
+async_timeout/__init__.py::mypy PASSED
+setup.py::mypy PASSED
+setup.py::mypy-status PASSED
+tests/test_timeout.py::mypy PASSED
+tests/test_timeout.py::test_async_no_timeout PASSED
+tests/test_timeout.py::test_async_timeout PASSED
+tests/test_timeout.py::test_cancel_outer_coro PASSED
+tests/test_timeout.py::test_deadline PASSED
+tests/test_timeout.py::test_deprecated_with PASSED
+tests/test_timeout.py::test_enter_twice PASSED
+tests/test_timeout.py::test_expired_after_rejecting PASSED
+tests/test_timeout.py::test_expired_after_timeout PASSED
+tests/test_timeout.py::test_for_race_conditions PASSED
+tests/test_timeout.py::test_outer_coro_is_not_cancelled PASSED
+tests/test_timeout.py::test_reject_finished PASSED
+tests/test_timeout.py::test_shift PASSED
+tests/test_timeout.py::test_shift_by_after_cm_exit PASSED
+tests/test_timeout.py::test_shift_by_expired PASSED
+tests/test_timeout.py::test_shift_negative_expired PASSED
+tests/test_timeout.py::test_shift_nonscheduled PASSED
+tests/test_timeout.py::test_shift_to_expired PASSED
+tests/test_timeout.py::test_timeout PASSED
+tests/test_timeout.py::test_timeout_at PASSED
+tests/test_timeout.py::test_timeout_at_not_fired PASSED
+tests/test_timeout.py::test_timeout_blocking_loop PASSED
+tests/test_timeout.py::test_timeout_canceled_error_is_not_converted_to_timeout PASSED
+tests/test_timeout.py::test_timeout_disable PASSED
+tests/test_timeout.py::test_timeout_expired PASSED
+tests/test_timeout.py::test_timeout_finish_in_time PASSED
+tests/test_timeout.py::test_timeout_inner_other_error PASSED
+tests/test_timeout.py::test_timeout_inner_timeout_error PASSED
+tests/test_timeout.py::test_timeout_is_none_no_schedule PASSED
 tests/test_timeout.py::test_timeout_no_loop PASSED
-tests/test_timeout.py::test_timeout_not_relevant_exception SKIPPED (...)
-tests/test_timeout.py::test_timeout_suppress_exception_chain SKIPPED
-tests/test_timeout.py::test_timeout_time SKIPPED (async def function...)
-tests/test_timeout.py::test_timeout_zero SKIPPED (async def function...)
+tests/test_timeout.py::test_timeout_not_relevant_exception PASSED
+tests/test_timeout.py::test_timeout_suppress_exception_chain PASSED
+tests/test_timeout.py::test_timeout_time PASSED
+tests/test_timeout.py::test_timeout_zero PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_configure_node uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_configure_node(self, node):
+===================================== mypy =====================================
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_testnodedown uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_testnodedown(self, node, error):
-
-tests/test_timeout.py:25
-  $(@D)/tests/test_timeout.py:25: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:44
-  $(@D)/tests/test_timeout.py:44: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:55
-  $(@D)/tests/test_timeout.py:55: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:70
-  $(@D)/tests/test_timeout.py:70: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:82
-  $(@D)/tests/test_timeout.py:82: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:89
-  $(@D)/tests/test_timeout.py:89: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:97
-  $(@D)/tests/test_timeout.py:97: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:105
-  $(@D)/tests/test_timeout.py:105: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:116
-  $(@D)/tests/test_timeout.py:116: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:126
-  $(@D)/tests/test_timeout.py:126: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:144
-  $(@D)/tests/test_timeout.py:144: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:164
-  $(@D)/tests/test_timeout.py:164: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:182
-  $(@D)/tests/test_timeout.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:190
-  $(@D)/tests/test_timeout.py:190: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:198
-  $(@D)/tests/test_timeout.py:198: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:206
-  $(@D)/tests/test_timeout.py:206: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:217
-  $(@D)/tests/test_timeout.py:217: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:227
-  $(@D)/tests/test_timeout.py:227: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:236
-  $(@D)/tests/test_timeout.py:236: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:244
-  $(@D)/tests/test_timeout.py:244: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:254
-  $(@D)/tests/test_timeout.py:254: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:263
-  $(@D)/tests/test_timeout.py:263: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:273
-  $(@D)/tests/test_timeout.py:273: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:281
-  $(@D)/tests/test_timeout.py:281: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:288
-  $(@D)/tests/test_timeout.py:288: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:300
-  $(@D)/tests/test_timeout.py:300: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:310
-  $(@D)/tests/test_timeout.py:310: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:318
-  $(@D)/tests/test_timeout.py:318: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:327
-  $(@D)/tests/test_timeout.py:327: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:338
-  $(@D)/tests/test_timeout.py:338: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:348
-  $(@D)/tests/test_timeout.py:348: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py:358
-  $(@D)/tests/test_timeout.py:358: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-tests/test_timeout.py: 32 warnings
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:184: PytestUnhandledCoroutineWarning: async def functions are not natively supported and have been skipped.
-  You need to install a suitable plugin for your async framework, for example:
-    - anyio
-    - pytest-asyncio
-    - pytest-tornasync
-    - pytest-trio
-    - pytest-twisted
-    warnings.warn(PytestUnhandledCoroutineWarning(msg.format(nodeid)))
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 1 passed, 32 skipped, 66 warnings ========
+Success: no issues found in 3 source files
+======== 38 passed ========
