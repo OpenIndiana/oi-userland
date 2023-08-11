@@ -19,22 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mypy
-HUMAN_VERSION =			1.4.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.5.0
 COMPONENT_SUMMARY =		mypy - Optional static typing for Python
 COMPONENT_PROJECT_URL =		https://www.mypy-lang.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/python/mypy/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e3216a2e9f612d3b4e5f5b6f9404c571ae2c0f27a83e648b8758c73e902537dc
+	sha256:7e1ee15f4f3e5da884d3e7fc7979a2f73ad4a271843a24b4c6b45ade9ec166a0
 COMPONENT_LICENSE =		MIT AND PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Testing needs to compile some C++ sources
-COMPONENT_TEST_ENV += CXX="$(CXX)"
-
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:cov
 # https://github.com/python/mypy/issues/15617
 PYTEST_ADDOPTS += -p no:mypy
 
@@ -50,21 +48,14 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/filelock
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/flake8-bugbear
-TEST_REQUIRED_PACKAGES.python += library/python/flake8-noqa
-TEST_REQUIRED_PACKAGES.python += library/python/isort
 TEST_REQUIRED_PACKAGES.python += library/python/lxml
 TEST_REQUIRED_PACKAGES.python += library/python/mypy-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
-TEST_REQUIRED_PACKAGES.python += library/python/py
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-forked
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/six
 TEST_REQUIRED_PACKAGES.python += library/python/tomli
 TEST_REQUIRED_PACKAGES.python += library/python/types-psutil
 TEST_REQUIRED_PACKAGES.python += library/python/types-setuptools
