@@ -195,7 +195,7 @@ REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-build.res
 REQUIRED_PACKAGES_EXTRA_DEPS += $(BUILD_DIR)/META.depend-test.required
 $(BUILD_DIR)/META.depend-test.required: $(BUILD_DIR)/META.depend-test.res
 	$(GSED) -e 's|^depend.*pkg:/\(library/perl-5/.*\)-\$$(PLV).*$$|TEST_REQUIRED_PACKAGES.perl += \1|' \
-		-e '/^TEST_REQUIRED_PACKAGES\.perl/!s/.*/\# &/' < $< > $@
+		-e '/^TEST_REQUIRED_PACKAGES\.perl/!s/.*/\# TODO: &/' < $< > $@
 
 # Add META.depend-test.required to the generated list of REQUIRED_PACKAGES
 REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'
