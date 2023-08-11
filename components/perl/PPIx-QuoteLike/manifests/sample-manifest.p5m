@@ -1,0 +1,57 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Constant.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Dumper.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Token.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Token::Control.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Token::Delimiter.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Token::Interpolation.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Token::String.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Token::Structure.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Token::Unknown.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Token::Whitespace.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/PPIx::QuoteLike::Utils.3perl
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Constant.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Dumper.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Token.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Token/Control.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Token/Delimiter.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Token/Interpolation.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Token/String.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Token/Structure.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Token/Unknown.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Token/Whitespace.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/PPIx/QuoteLike/Utils.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/ppi-$(PLV)@1.238
+depend type=require fmri=pkg:/library/perl-5/readonly-$(PLV)
