@@ -7,7 +7,7 @@ This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 
-diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
 --- a~/auth2-pubkey.c	1970-01-01 00:00:00
 +++ a/auth2-pubkey.c	1970-01-01 00:00:00
 @@ -23,6 +23,11 @@
@@ -52,7 +52,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
  static int
  userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -747,6 +763,124 @@ user_key_command_allowed2(struct passwd
+@@ -745,6 +761,124 @@ user_key_command_allowed2(struct passwd
  	return found_key;
  }
  
@@ -177,7 +177,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -792,6 +926,10 @@ user_key_allowed(struct ssh *ssh, struct
+@@ -796,6 +930,10 @@ user_key_allowed(struct ssh *ssh, struct
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -186,12 +186,12 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
 +		return success;
 +
  	if ((success = user_key_command_allowed2(pw, key, remote_ip,
- 	    remote_host, &opts)) != 0)
+ 	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
-diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -211,6 +211,7 @@ initialize_server_options(ServerOptions
+@@ -209,6 +209,7 @@ initialize_server_options(ServerOptions
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -199,7 +199,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -559,6 +560,7 @@ typedef enum {
+@@ -557,6 +558,7 @@ typedef enum {
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
  	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
@@ -207,7 +207,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -725,6 +727,7 @@ static struct {
+@@ -723,6 +725,7 @@ static struct {
  	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
  	{ "rdomain", sRDomain, SSHCFG_ALL },
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
@@ -215,7 +215,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
  	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
  	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
-@@ -2626,6 +2629,18 @@ process_server_config_line_depth(ServerO
+@@ -2631,6 +2634,18 @@ process_server_config_line_depth(ServerO
  		}
  		break;
  
@@ -234,7 +234,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  	case sDeprecated:
  	case sIgnore:
  	case sUnsupported:
-diff -wpruN '--exclude=*.orig' a~/servconf.h a/servconf.h
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
 --- a~/servconf.h	1970-01-01 00:00:00
 +++ a/servconf.h	1970-01-01 00:00:00
 @@ -237,6 +237,7 @@ typedef struct {

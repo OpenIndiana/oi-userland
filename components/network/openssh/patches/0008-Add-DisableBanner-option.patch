@@ -1,7 +1,7 @@
-diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.c a/readconf.c
 --- a~/readconf.c	1970-01-01 00:00:00
 +++ a/readconf.c	1970-01-01 00:00:00
-@@ -164,6 +164,9 @@ typedef enum {
+@@ -167,6 +167,9 @@ typedef enum {
  	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
  	oSendEnv, oSetEnv, oControlPath, oControlMaster, oControlPersist,
  	oHashKnownHosts,
@@ -11,7 +11,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	oTunnel, oTunnelDevice,
  	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
  	oVisualHostKey,
-@@ -289,6 +292,9 @@ static struct {
+@@ -294,6 +297,9 @@ static struct {
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
  	{ "include", oInclude },
@@ -21,7 +21,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -921,6 +927,17 @@ parse_multistate_value(const char *arg,
+@@ -1005,6 +1011,17 @@ parse_multistate_value(const char *arg,
  	return -1;
  }
  
@@ -39,7 +39,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2181,6 +2198,13 @@ parse_pubkey_algos:
+@@ -2280,6 +2297,13 @@ parse_pubkey_algos:
  		intptr = &options->required_rsa_size;
  		goto parse_int;
  
@@ -53,7 +53,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	case oDeprecated:
  		debug("%s line %d: Deprecated option \"%s\"",
  		    filename, linenum, keyword);
-@@ -2416,6 +2440,9 @@ initialize_options(Options * options)
+@@ -2516,6 +2540,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -63,7 +63,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2616,6 +2643,10 @@ fill_default_options(Options * options)
+@@ -2718,6 +2745,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -74,11 +74,11 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	if (options->fingerprint_hash == -1)
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
-diff -wpruN '--exclude=*.orig' a~/readconf.h a/readconf.h
+diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.h a/readconf.h
 --- a~/readconf.h	1970-01-01 00:00:00
 +++ a/readconf.h	1970-01-01 00:00:00
-@@ -179,6 +179,9 @@ typedef struct {
- 	int	required_rsa_size;	/* minimum size of RSA keys */
+@@ -182,6 +182,9 @@ typedef struct {
+ 	int	enable_escape_commandline;	/* ~C commandline */
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 +#ifdef DISABLE_BANNER
@@ -87,7 +87,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.h a/readconf.h
  }       Options;
  
  #define SSH_PUBKEY_AUTH_NO	0x00
-@@ -219,6 +222,12 @@ typedef struct {
+@@ -222,6 +225,12 @@ typedef struct {
  #define SSH_STRICT_HOSTKEY_YES	2
  #define SSH_STRICT_HOSTKEY_ASK	3
  
@@ -100,10 +100,10 @@ diff -wpruN '--exclude=*.orig' a~/readconf.h a/readconf.h
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
      const char *portstr, const char *user);
-diff -wpruN '--exclude=*.orig' a~/ssh_config.5 a/ssh_config.5
+diff -wpruN --no-dereference '--exclude=*.orig' a~/ssh_config.5 a/ssh_config.5
 --- a~/ssh_config.5	1970-01-01 00:00:00
 +++ a/ssh_config.5	1970-01-01 00:00:00
-@@ -611,6 +611,14 @@ If set to a time in seconds, or a time i
+@@ -633,6 +633,14 @@ If set to a time in seconds, or a time i
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -118,10 +118,10 @@ diff -wpruN '--exclude=*.orig' a~/ssh_config.5 a/ssh_config.5
  .It Cm DynamicForward
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
-diff -wpruN '--exclude=*.orig' a~/sshconnect2.c a/sshconnect2.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshconnect2.c a/sshconnect2.c
 --- a~/sshconnect2.c	1970-01-01 00:00:00
 +++ a/sshconnect2.c	1970-01-01 00:00:00
-@@ -85,6 +85,10 @@ extern char *client_version_string;
+@@ -84,6 +84,10 @@ extern char *client_version_string;
  extern char *server_version_string;
  extern Options options;
  
@@ -132,7 +132,7 @@ diff -wpruN '--exclude=*.orig' a~/sshconnect2.c a/sshconnect2.c
  /*
   * SSH2 key exchange
   */
-@@ -603,8 +607,28 @@ input_userauth_banner(int type, u_int32_
+@@ -585,8 +589,28 @@ input_userauth_banner(int type, u_int32_
  	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
  	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
  		goto out;
