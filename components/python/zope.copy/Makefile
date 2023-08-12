@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.copy
 HUMAN_VERSION =			4.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		zope.copy - Pluggable object copying mechanism
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.copy
 COMPONENT_ARCHIVE_URL =		\
@@ -41,6 +42,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Force no colors and more verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
