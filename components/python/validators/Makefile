@@ -14,25 +14,25 @@
 #   $WS_TOOLS/python-integrate-project validators
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		validators
-HUMAN_VERSION =			0.20.0
-COMPONENT_SUMMARY =		validators - Python Data Validation for Humans™.
-COMPONENT_PROJECT_URL =		https://github.com/kvesteri/validators
+HUMAN_VERSION =			0.21.2
+COMPONENT_SUMMARY =		validators - Python Data Validation for Humans™
+COMPONENT_PROJECT_URL =		https://python-validators.github.io/validators
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/95/14/ed0af6865d378cfc3c504aed0d278a890cbefb2f1934bf2dbe92ecf9d6b1/validators-0.20.0.tar.gz
+	https://files.pythonhosted.org/packages/82/ae/8c79246a983328a964e46ce95f2d20d10e6fb86bf4575cd9edfe8c058c15/validators-0.21.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:24148ce4e64100a2d5e267233e23e7afeb55316b47d30faae7eb6e7292bc226a
+	sha256:002ba1552076535176824e43149c18c06f6b611bc8b597ddbcf8770bcf5f9f5c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/decorator
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
