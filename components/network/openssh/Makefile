@@ -31,14 +31,13 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-COMPONENT_VERSION=	9.3.0.2
-HUMAN_VERSION=		9.3p2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	9.4.0.1
+HUMAN_VERSION=		9.4p1
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openssh.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:200ebe147f6cb3f101fd0cdf9e02442af7ddca298dffd9f456878e7ccac676e8
+COMPONENT_ARCHIVE_HASH=	sha256:3608fd9088db2163ceb3e600c85ab79d0de3d221e59192ea1923e23263866a85
 COMPONENT_ARCHIVE_URL=	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/ssh
 COMPONENT_LICENSE=	BSD, BSD-like
