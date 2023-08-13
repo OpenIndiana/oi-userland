@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.component
 HUMAN_VERSION =			6.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		zope.component - Zope Component Architecture
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.component
 COMPONENT_ARCHIVE_URL =		\
@@ -41,6 +42,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Force no colors and more verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
