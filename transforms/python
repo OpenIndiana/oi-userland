@@ -20,3 +20,9 @@
 <transform file path=(usr/bin/)([^/]+)-(3\.\d+)$ tmp.fmri=.*library/python/ -> emit \
     link path=%<1>%<2> target=%<2>-%<3> mediator=python mediator-version=%<3> >
 <transform file tmp.fmri=.* -> delete tmp.fmri .* >
+
+# Bypass automatic detection of Python dependencies for files in
+# vendor-packages directory.  Such dependencies are generated from Python
+# project's metadata.
+<transform file path=usr/lib/python3\.\d+/vendor-packages/ -> add \
+    pkg.depend.bypass-generate usr/lib/python3.* >
