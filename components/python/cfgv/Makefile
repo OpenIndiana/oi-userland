@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cfgv
-COMPONENT_VERSION =		3.3.1
+HUMAN_VERSION =			3.4.0
 COMPONENT_SUMMARY =		cfgv - Validate configuration and produce human readable error messages.
 COMPONENT_PROJECT_URL =		https://github.com/asottile/cfgv
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c4/bf/d0d622b660d414a47dc7f0d303791a627663f554345b21250e39e7acb48b/cfgv-3.3.1.tar.gz
+	https://files.pythonhosted.org/packages/11/74/539e56497d9bd1d484fd863dd69cbbfa653cd2aa27abfe35653494d85e94/cfgv-3.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f5a830efb9ce7a445376bb66ec94c638a9787422f96264c98edc6bdeed8ab736
+	sha256:e52591d4c5f5dead8e0f673fb16db7949d2cfb3f7da4582893288f0ded8fe560
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
