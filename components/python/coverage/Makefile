@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		coverage
-HUMAN_VERSION =			7.2.7
+HUMAN_VERSION =			7.3.0
 COMPONENT_SUMMARY =		coverage - Code coverage measurement for Python
 COMPONENT_PROJECT_URL =		https://github.com/nedbat/coveragepy
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/45/8b/421f30467e69ac0e414214856798d4bc32da1336df745e49e49ae5c1e2a8/coverage-7.2.7.tar.gz
+	https://files.pythonhosted.org/packages/4e/87/c0163d39ac70cab62ebcaee164c988215cd312919a78940c2251a2fcfabb/coverage-7.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:924d94291ca674905fe9481f12294eb11f2d3d3fd1adb20314ba89e94f44ed59
+	sha256:49dbb19cdcafc130f597d9e04a29d0a032ceedf729e41b181f51cd170e6ee865
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -49,7 +49,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/flaky
 TEST_REQUIRED_PACKAGES.python += library/python/gevent
 TEST_REQUIRED_PACKAGES.python += library/python/greenlet
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
-TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/iniconfig
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pip
@@ -62,8 +61,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/six
 TEST_REQUIRED_PACKAGES.python += library/python/sortedcontainers
 TEST_REQUIRED_PACKAGES.python += library/python/tomli
-TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
-TEST_REQUIRED_PACKAGES.python += library/python/zipp
 TEST_REQUIRED_PACKAGES.python += library/python/zope-event
 TEST_REQUIRED_PACKAGES.python += library/python/zope-interface
