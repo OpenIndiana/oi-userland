@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2023 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,14 +25,14 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 dir path=etc/odbc/ODBCDataSources
 
-file path=etc/odbc/odbc.ini preserve=true
-file path=etc/odbc/odbcinst.ini preserve=true
-file path=usr/bin/$(MACH64)/dltest
-file path=usr/bin/$(MACH64)/isql
-file path=usr/bin/$(MACH64)/iusql
-file path=usr/bin/$(MACH64)/odbc_config
-file path=usr/bin/$(MACH64)/odbcinst
-file path=usr/bin/$(MACH64)/slencheck
+file path=etc/odbc/odbc.ini preserve=yes
+file path=etc/odbc/odbcinst.ini preserve=yes
+file path=usr/bin/$(MACH32)/dltest
+file path=usr/bin/$(MACH32)/isql
+file path=usr/bin/$(MACH32)/iusql
+file path=usr/bin/$(MACH32)/odbc_config
+file path=usr/bin/$(MACH32)/odbcinst
+file path=usr/bin/$(MACH32)/slencheck
 file path=usr/bin/dltest
 file path=usr/bin/isql
 file path=usr/bin/iusql
@@ -47,15 +47,10 @@ file path=usr/include/odbc/sqlext.h
 file path=usr/include/odbc/sqlspi.h
 file path=usr/include/odbc/sqltypes.h
 file path=usr/include/odbc/sqlucode.h
-file path=usr/include/odbc/unixodbc_conf.h
+file path=usr/include/odbc/unixODBC/unixodbc_conf.h
+file path=usr/include/odbc/unixodbc.h
 file path=usr/include/odbc/uodbc_extras.h
 file path=usr/include/odbc/uodbc_stats.h
-link path=usr/lib/$(MACH64)/libesoobS.so target=libesoobS.so.1.0.0
-link path=usr/lib/$(MACH64)/libesoobS.so.1 target=libesoobS.so.1.0.0
-file path=usr/lib/$(MACH64)/libesoobS.so.1.0.0
-link path=usr/lib/$(MACH64)/libmimerS.so target=libmimerS.so.1.0.0
-link path=usr/lib/$(MACH64)/libmimerS.so.1 target=libmimerS.so.1.0.0
-file path=usr/lib/$(MACH64)/libmimerS.so.1.0.0
 link path=usr/lib/$(MACH64)/libnn.so target=libnn.so.1.0.0
 link path=usr/lib/$(MACH64)/libnn.so.1 target=libnn.so.1.0.0
 file path=usr/lib/$(MACH64)/libnn.so.1.0.0
@@ -65,57 +60,18 @@ file path=usr/lib/$(MACH64)/libodbc.so.2.0.0
 link path=usr/lib/$(MACH64)/libodbccr.so target=libodbccr.so.2.0.0
 link path=usr/lib/$(MACH64)/libodbccr.so.2 target=libodbccr.so.2.0.0
 file path=usr/lib/$(MACH64)/libodbccr.so.2.0.0
-link path=usr/lib/$(MACH64)/libodbcdrvcfg1S.so target=libodbcdrvcfg1S.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbcdrvcfg1S.so.1 target=libodbcdrvcfg1S.so.1.0.0
-file path=usr/lib/$(MACH64)/libodbcdrvcfg1S.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbcdrvcfg2S.so target=libodbcdrvcfg2S.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbcdrvcfg2S.so.1 target=libodbcdrvcfg2S.so.1.0.0
-file path=usr/lib/$(MACH64)/libodbcdrvcfg2S.so.1.0.0
 link path=usr/lib/$(MACH64)/libodbcinst.so target=libodbcinst.so.2.0.0
 link path=usr/lib/$(MACH64)/libodbcinst.so.2 target=libodbcinst.so.2.0.0
 file path=usr/lib/$(MACH64)/libodbcinst.so.2.0.0
-link path=usr/lib/$(MACH64)/libodbcminiS.so target=libodbcminiS.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbcminiS.so.1 target=libodbcminiS.so.1.0.0
-file path=usr/lib/$(MACH64)/libodbcminiS.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbcmyS.so target=libodbcmyS.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbcmyS.so.1 target=libodbcmyS.so.1.0.0
-file path=usr/lib/$(MACH64)/libodbcmyS.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbcnnS.so target=libodbcnnS.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbcnnS.so.1 target=libodbcnnS.so.1.0.0
-file path=usr/lib/$(MACH64)/libodbcnnS.so.1.0.0
 link path=usr/lib/$(MACH64)/libodbcpsql.so target=libodbcpsql.so.2.0.0
 link path=usr/lib/$(MACH64)/libodbcpsql.so.2 target=libodbcpsql.so.2.0.0
 file path=usr/lib/$(MACH64)/libodbcpsql.so.2.0.0
-link path=usr/lib/$(MACH64)/libodbcpsqlS.so target=libodbcpsqlS.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbcpsqlS.so.1 target=libodbcpsqlS.so.1.0.0
-file path=usr/lib/$(MACH64)/libodbcpsqlS.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbctxtS.so target=libodbctxtS.so.1.0.0
-link path=usr/lib/$(MACH64)/libodbctxtS.so.1 target=libodbctxtS.so.1.0.0
-file path=usr/lib/$(MACH64)/libodbctxtS.so.1.0.0
-link path=usr/lib/$(MACH64)/liboplodbcS.so target=liboplodbcS.so.1.0.0
-link path=usr/lib/$(MACH64)/liboplodbcS.so.1 target=liboplodbcS.so.1.0.0
-file path=usr/lib/$(MACH64)/liboplodbcS.so.1.0.0
-link path=usr/lib/$(MACH64)/liboraodbcS.so target=liboraodbcS.so.1.0.0
-link path=usr/lib/$(MACH64)/liboraodbcS.so.1 target=liboraodbcS.so.1.0.0
-file path=usr/lib/$(MACH64)/liboraodbcS.so.1.0.0
-link path=usr/lib/$(MACH64)/libsapdbS.so target=libsapdbS.so.1.0.0
-link path=usr/lib/$(MACH64)/libsapdbS.so.1 target=libsapdbS.so.1.0.0
-file path=usr/lib/$(MACH64)/libsapdbS.so.1.0.0
-link path=usr/lib/$(MACH64)/libtdsS.so target=libtdsS.so.1.0.0
-link path=usr/lib/$(MACH64)/libtdsS.so.1 target=libtdsS.so.1.0.0
-file path=usr/lib/$(MACH64)/libtdsS.so.1.0.0
 link path=usr/lib/$(MACH64)/libtemplate.so target=libtemplate.so.1.0.0
 link path=usr/lib/$(MACH64)/libtemplate.so.1 target=libtemplate.so.1.0.0
 file path=usr/lib/$(MACH64)/libtemplate.so.1.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/odbc.pc
 file path=usr/lib/$(MACH64)/pkgconfig/odbccr.pc
 file path=usr/lib/$(MACH64)/pkgconfig/odbcinst.pc
-link path=usr/lib/libesoobS.so target=libesoobS.so.1.0.0
-link path=usr/lib/libesoobS.so.1 target=libesoobS.so.1.0.0
-file path=usr/lib/libesoobS.so.1.0.0
-link path=usr/lib/libmimerS.so target=libmimerS.so.1.0.0
-link path=usr/lib/libmimerS.so.1 target=libmimerS.so.1.0.0
-file path=usr/lib/libmimerS.so.1.0.0
 link path=usr/lib/libnn.so target=libnn.so.1.0.0
 link path=usr/lib/libnn.so.1 target=libnn.so.1.0.0
 file path=usr/lib/libnn.so.1.0.0
@@ -125,45 +81,12 @@ file path=usr/lib/libodbc.so.2.0.0
 link path=usr/lib/libodbccr.so target=libodbccr.so.2.0.0
 link path=usr/lib/libodbccr.so.2 target=libodbccr.so.2.0.0
 file path=usr/lib/libodbccr.so.2.0.0
-link path=usr/lib/libodbcdrvcfg1S.so target=libodbcdrvcfg1S.so.1.0.0
-link path=usr/lib/libodbcdrvcfg1S.so.1 target=libodbcdrvcfg1S.so.1.0.0
-file path=usr/lib/libodbcdrvcfg1S.so.1.0.0
-link path=usr/lib/libodbcdrvcfg2S.so target=libodbcdrvcfg2S.so.1.0.0
-link path=usr/lib/libodbcdrvcfg2S.so.1 target=libodbcdrvcfg2S.so.1.0.0
-file path=usr/lib/libodbcdrvcfg2S.so.1.0.0
 link path=usr/lib/libodbcinst.so target=libodbcinst.so.2.0.0
 link path=usr/lib/libodbcinst.so.2 target=libodbcinst.so.2.0.0
 file path=usr/lib/libodbcinst.so.2.0.0
-link path=usr/lib/libodbcminiS.so target=libodbcminiS.so.1.0.0
-link path=usr/lib/libodbcminiS.so.1 target=libodbcminiS.so.1.0.0
-file path=usr/lib/libodbcminiS.so.1.0.0
-link path=usr/lib/libodbcmyS.so target=libodbcmyS.so.1.0.0
-link path=usr/lib/libodbcmyS.so.1 target=libodbcmyS.so.1.0.0
-file path=usr/lib/libodbcmyS.so.1.0.0
-link path=usr/lib/libodbcnnS.so target=libodbcnnS.so.1.0.0
-link path=usr/lib/libodbcnnS.so.1 target=libodbcnnS.so.1.0.0
-file path=usr/lib/libodbcnnS.so.1.0.0
 link path=usr/lib/libodbcpsql.so target=libodbcpsql.so.2.0.0
 link path=usr/lib/libodbcpsql.so.2 target=libodbcpsql.so.2.0.0
 file path=usr/lib/libodbcpsql.so.2.0.0
-link path=usr/lib/libodbcpsqlS.so target=libodbcpsqlS.so.1.0.0
-link path=usr/lib/libodbcpsqlS.so.1 target=libodbcpsqlS.so.1.0.0
-file path=usr/lib/libodbcpsqlS.so.1.0.0
-link path=usr/lib/libodbctxtS.so target=libodbctxtS.so.1.0.0
-link path=usr/lib/libodbctxtS.so.1 target=libodbctxtS.so.1.0.0
-file path=usr/lib/libodbctxtS.so.1.0.0
-link path=usr/lib/liboplodbcS.so target=liboplodbcS.so.1.0.0
-link path=usr/lib/liboplodbcS.so.1 target=liboplodbcS.so.1.0.0
-file path=usr/lib/liboplodbcS.so.1.0.0
-link path=usr/lib/liboraodbcS.so target=liboraodbcS.so.1.0.0
-link path=usr/lib/liboraodbcS.so.1 target=liboraodbcS.so.1.0.0
-file path=usr/lib/liboraodbcS.so.1.0.0
-link path=usr/lib/libsapdbS.so target=libsapdbS.so.1.0.0
-link path=usr/lib/libsapdbS.so.1 target=libsapdbS.so.1.0.0
-file path=usr/lib/libsapdbS.so.1.0.0
-link path=usr/lib/libtdsS.so target=libtdsS.so.1.0.0
-link path=usr/lib/libtdsS.so.1 target=libtdsS.so.1.0.0
-file path=usr/lib/libtdsS.so.1.0.0
 link path=usr/lib/libtemplate.so target=libtemplate.so.1.0.0
 link path=usr/lib/libtemplate.so.1 target=libtemplate.so.1.0.0
 file path=usr/lib/libtemplate.so.1.0.0

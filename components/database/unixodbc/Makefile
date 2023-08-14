@@ -23,20 +23,19 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
-PATH=$(PATH.illumos)
+PATH= $(PATH.illumos)
 
 COMPONENT_NAME=		unixODBC
-COMPONENT_VERSION=	2.3.9
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.3.12
 COMPONENT_SUMMARY=	The UnixODBC Subsystem and SDK
 COMPONENT_DESCRIPTION= An Open Source implementation of the ODBC Standard providing a Library Framework for Software Development
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.unixodbc.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:52833eac3d681c8b0c9a5a65f2ebd745b3a964f208fc748f977e44015a31b207
+COMPONENT_ARCHIVE_HASH= sha256:f210501445ce21bf607ba51ef8c125e10e22dffdffec377646462df5f01915ec
 COMPONENT_ARCHIVE_URL=	ftp://ftp.unixodbc.org/pub/unixODBC/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/unixodbc
 COMPONENT_CLASSIFICATION=	Development/Databases
@@ -45,11 +44,11 @@ COMPONENT_LICENSE=	LGPLv2.1, GPLv2
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
+
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
-CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += -std=c99
 
 GSED= /usr/gnu/bin/sed
 
@@ -69,7 +68,6 @@ CONFIGURE_OPTIONS += --x-libraries="$(X11LIB.$(BITS))"
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock
-CONFIGURE_OPTIONS += --disable-gui
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --disable-gnuthreads
 CONFIGURE_OPTIONS += --enable-readline
@@ -87,13 +85,10 @@ CONFIGURE_OPTIONS += --without-pth-test
 CONFIGURE_OPTIONS += --with-libiconv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --disable-ltdl-install
 CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += MAKE="$(GMAKE)"
 
 CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
-
-COMPONENT_POST_BUILD_ACTION.64 += \
-	(cd $(BUILD_DIR_$(BITS)) && \
-	 $(GPATCH) -p2 < $(COMPONENT_DIR)/files/fix-unixodbc_conf-h.patch)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libtool/libltdl
