@@ -1,0 +1,79 @@
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+configfile: pytest.ini
+testpaths: tests
+asyncio: mode=strict
+collecting ... collected 34 items
+
+ pytest collect file
+
+    only loads dot py files
+    skips underscored files
+    skips underscored directories
+    does not consume conftest files
+
+RelaxedMixin
+
+    selects all non underscored members
+    skips setup and teardown
+    skips pytest fixtures
+    setup given inner class instances when inherited
+    setup method given inner class instances
+
+SpecModule
+
+    skips non callable items
+    skips imported objects
+    does not warn about imported names
+    replaces class tests with custom recursing classes
+    does not collect test prefixed files
+
+SpecClass
+
+    methods self objects exhibit class attributes
+    nested self objects exhibit parent attributes
+    nesting is infinite
+    overriding works naturally
+    normal methods from outer classes are not copied
+    private methods from outer classes are copied
+    module contents are not copied into top level classes
+
+RegularFunctions
+
+    acts just like normal pytest
+
+VerboseFunctions
+
+    displays tests indented under module header
+    test prefixes are stripped
+
+VerboseClasses
+
+    shows tests nested under classes without files
+    tests are colorized by test result
+    nests many levels deep no problem
+    headers and tests have underscores turn to spaces
+    test prefixes are stripped
+    test suffixes are stripped
+
+ raises
+
+    when given exception raised no problem
+    when given exception not raised it raises Exception
+    when some other exception raised it is untouched
+
+=============================== warnings summary ===============================
+tests/test_collection.py: 21 warnings
+tests/test_display.py: 5 warnings
+  $(@D)/pytest_relaxed/plugin.py:40: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(trylast=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.trylast  # So we can be sure builtin terminalreporter exists
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+======== 32 passed, 2 skipped, 26 warnings ========
