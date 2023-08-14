@@ -2,12 +2,12 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-OpenSSL: OpenSSL 1.1.1u  30 May 2023
+OpenSSL: OpenSSL 1.1.1v  1 Aug 2023
 FIPS Enabled: False
 rootdir: $(@D)
 configfile: pyproject.toml
 asyncio: mode=strict
-collecting ... collected 3067 items
+collecting ... collected 3070 items
 
 ::project PASSED
 tests/bench/test_aead.py::test_aesccm_decrypt PASSED
@@ -1806,6 +1806,8 @@ tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_dsa_unsupported[p2
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_inner_outer_key_type_mismatch PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_invalid_b64 PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_invalid_cert_type PASSED
+tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_invalid_encodings[p256-ed25519-non-singular-crit-opt-val.pub] PASSED
+tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_invalid_encodings[p256-ed25519-non-singular-ext-val.pub] PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_invalid_encodings[p256-p256-duplicate-crit-opts.pub] PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_invalid_encodings[p256-p256-duplicate-extension.pub] PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_invalid_encodings[p256-p256-non-lexical-crit-opts.pub] PASSED
@@ -1819,6 +1821,7 @@ tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_invalid_signature[
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_invalid_signature[p256-rsa-sha512.pub] PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_load_ssh_public_key PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_loads_a_cert_empty_principals PASSED
+tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_loads_deprecated_invalid_encoding_cert PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_loads_ssh_cert PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_mismatched_inner_signature_type_and_sig_type PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHCertificate::test_not_bytes PASSED
@@ -3075,5 +3078,6 @@ tests/x509/test_x509_revokedcertbuilder.py::TestRevokedCertificateBuilder::test_
 tests/x509/test_x509_revokedcertbuilder.py::TestRevokedCertificateBuilder::test_set_revocation_date_twice PASSED
 tests/x509/test_x509_revokedcertbuilder.py::TestRevokedCertificateBuilder::test_set_serial_number_twice PASSED
 
+
 =========================== short test summary info ============================
-======== 2991 passed, 74 skipped ========
+======== 2994 passed, 74 skipped ========
