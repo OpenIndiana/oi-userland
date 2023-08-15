@@ -9,13 +9,12 @@ rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
 asyncio: mode=strict
-collecting ... collected 89 items
+collecting ... collected 86 items
 
-tests/__init__.py::BLACK PASSED
-tests/conftest.py::BLACK PASSED
-tests/test_catch.py::BLACK PASSED
+tests/test_catch.py::test_async_handler PASSED
 tests/test_catch.py::test_bad_arg PASSED
 tests/test_catch.py::test_bad_handler PASSED
+tests/test_catch.py::test_bare_raise_in_handler PASSED
 tests/test_catch.py::test_catch_exceptiongroup[iterable_basegroup] PASSED
 tests/test_catch.py::test_catch_exceptiongroup[iterable_group] PASSED
 tests/test_catch.py::test_catch_exceptiongroup[naked_basegroup] PASSED
@@ -28,7 +27,6 @@ tests/test_catch.py::test_catch_no_match PASSED
 tests/test_catch.py::test_catch_single_no_match PASSED
 tests/test_catch.py::test_catch_subclass PASSED
 tests/test_catch.py::test_catch_ungrouped PASSED
-tests/test_exceptions.py::BLACK PASSED
 tests/test_exceptions.py::BadConstructorArgs::test_bad_EG_construction__bad_excs_sequence PASSED
 tests/test_exceptions.py::BadConstructorArgs::test_bad_EG_construction__bad_message PASSED
 tests/test_exceptions.py::BadConstructorArgs::test_bad_EG_construction__nested_non_exceptions PASSED
@@ -72,7 +70,6 @@ tests/test_exceptions.py::NestedExceptionGroupSubclassSplitTest::test_split_Exce
 tests/test_exceptions.py::TestExceptionGroupTypeHierarchy::test_exception_group_is_generic_type PASSED
 tests/test_exceptions.py::TestExceptionGroupTypeHierarchy::test_exception_group_types PASSED
 tests/test_exceptions.py::test_repr PASSED
-tests/test_formatting.py::BLACK PASSED
 tests/test_formatting.py::test_bug_suggestions_attributeerror_no_obj[patched] PASSED
 tests/test_formatting.py::test_bug_suggestions_attributeerror_no_obj[unpatched] PASSED
 tests/test_formatting.py::test_exceptiongroup_as_cause PASSED
@@ -101,37 +98,7 @@ tests/test_formatting.py::test_print_exception[unpatched-newstyle] PASSED
 tests/test_formatting.py::test_print_exception[unpatched-oldstyle] PASSED
 tests/test_formatting.py::test_works_around_httperror_bug PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147: PytestDeprecationWarning: <class 'pytest_black.BlackItem'> is not using a cooperative constructor and only takes {'parent', 'fspath'}.
-  See https://docs.pytest.org/en/stable/deprecations.html#constructors-of-custom-pytest-node-subclasses-should-take-kwargs for more details.
-    warnings.warn(
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263: PytestRemovedIn8Warning: The (fspath: py.path.local) argument to BlackItem is deprecated. Please use the (path: pathlib.Path) argument instead.
-  See https://docs.pytest.org/en/latest/deprecations.html#fspath-argument-for-node-constructors-replaced-with-pathlib-path
-    return cls._create(parent=parent, **kw)
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:719
-  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:719: PytestWarning: BlackItem is an Item subclass and should not be a collector, however its bases File are collectors.
-  Please split the Collectors and the Item into separate node types.
-  Pytest Doc example: https://docs.pytest.org/en/latest/example/nonpython.html
-  example pull request on a plugin: https://github.com/asmeurer/pytest-flakes/pull/40/
-    warnings.warn(
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
 =========================== short test summary info ============================
-======== 85 passed, 4 skipped, 13 warnings ========
+======== 82 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
