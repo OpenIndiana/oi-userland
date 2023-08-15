@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib_serializinghtml
-HUMAN_VERSION =			1.1.7
+HUMAN_VERSION =			1.1.8
 COMPONENT_SUMMARY =		sphinxcontrib_serializinghtml - sphinxcontrib-serializinghtml is a sphinx extension which outputs \\\\\\\"serialized\\\\\\\" HTML files (json and pickle)
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0d/1b/96acc54abc747faa2c9a64b05f12e043eee30de7933181a752cb458d1134/sphinxcontrib_serializinghtml-1.1.7.tar.gz
+	https://files.pythonhosted.org/packages/a0/a3/4bd9d8c5c97312bf46b059bcf76eab42ce6ffb12560b7ce9a247e2e524a3/sphinxcontrib_serializinghtml-1.1.8.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ca31afee32e1508cff4034e258060ce2c81a3b1c49e77da60fdb61f0e7a73c22
+	sha256:aaf3026335146e688fd209b72320314b1b278320cf232e3cda198f873838511a
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,10 +37,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
