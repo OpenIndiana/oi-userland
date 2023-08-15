@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib_qthelp
-HUMAN_VERSION =			1.0.5
+HUMAN_VERSION =			1.0.6
 COMPONENT_SUMMARY =		sphinxcontrib_qthelp - sphinxcontrib-qthelp is a sphinx extension which outputs QtHelp documents
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/43/7c/188a654c6eecc132b521e8718cc65d8364d89d18ceda2dcfaaecd5c6a5aa/sphinxcontrib_qthelp-1.0.5.tar.gz
+	https://files.pythonhosted.org/packages/4f/a2/53129fc967ac8402d5e4e83e23c959c3f7a07362ec154bdb2e197d8cc270/sphinxcontrib_qthelp-1.0.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d31d1a1beaf3894866bb318fb712f1edc82687f1c06235a01e5b2c50c36d5c40
+	sha256:62b9d1a186ab7f5ee3356d906f648cacb7a6bdb94d201ee7adf26db55092982d
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,10 +41,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
