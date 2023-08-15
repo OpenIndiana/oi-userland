@@ -1,0 +1,90 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/inv-$(PYVER)
+file path=usr/bin/invoke-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke-$(HUMAN_VERSION).dist-info/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke-$(HUMAN_VERSION).dist-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/collection.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/completion/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/completion/bash.completion
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/completion/complete.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/completion/fish.completion
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/completion/zsh.completion
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/env.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/executor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/loader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/main.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/parser/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/parser/argument.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/parser/context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/parser/parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/program.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/runners.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/tasks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/terminals.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/fluidity/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/fluidity/backwardscompat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/fluidity/machine.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/lexicon/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/lexicon/_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/lexicon/alias_dict.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/lexicon/attribute_dict.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/composer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/constructor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/cyaml.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/dumper.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/emitter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/error.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/loader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/nodes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/reader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/representer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/resolver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/serializer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/vendor/yaml/tokens.py
+file path=usr/lib/python$(PYVER)/vendor-packages/invoke/watchers.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
