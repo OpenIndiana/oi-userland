@@ -412,6 +412,21 @@ PYTEST_ADDOPTS += --verbose
 # Force pytest to not use colored output so the results normalization is unaffected
 PYTEST_ADDOPTS += --color=no
 
+#
+# Some pytest plugins are enabled automatically and could affect test results
+# or test output.  In a case a component does not expect such a plugin
+# installed (it is neither in REQUIRED_PACKAGES nor in TEST_REQUIRED_PACKAGES)
+# we simply disable the plugin to get consistent test results.
+#
+PYTEST_ADDOPTS += $(if $(filter library/python/pytest-black-$(PYV), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:black)
+PYTEST_ADDOPTS += $(if $(filter library/python/pytest-checkdocs-$(PYV), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:checkdocs)
+PYTEST_ADDOPTS += $(if $(filter library/python/pytest-cov-$(PYV), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:cov)
+PYTEST_ADDOPTS += $(if $(filter library/python/flaky-$(PYV), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:flaky)
+PYTEST_ADDOPTS += $(if $(filter library/python/pytest-mypy-$(PYV), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:mypy)
+PYTEST_ADDOPTS += $(if $(filter library/python/pytest-randomly-$(PYV), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:randomly)
+PYTEST_ADDOPTS += $(if $(filter library/python/pytest-relaxed-$(PYV), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:relaxed)
+PYTEST_ADDOPTS += $(if $(filter library/python/pytest-reporter-$(PYV), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:reporter)
+
 # Normalize pytest test results.  The pytest framework could be used either
 # directly or via tox or setup.py so add these transforms for all test styles
 # unconditionally.
