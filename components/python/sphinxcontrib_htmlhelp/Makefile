@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib_htmlhelp
-HUMAN_VERSION =			2.0.3
+HUMAN_VERSION =			2.0.4
 COMPONENT_SUMMARY =		sphinxcontrib_htmlhelp - sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e6/24/0dcb5a8aec31046cf37691ac64d21b9a4dfc977f5ba3237f1104940d8d0c/sphinxcontrib_htmlhelp-2.0.3.tar.gz
+	https://files.pythonhosted.org/packages/fd/2d/abf5cd4cc1d5cd9842748b15a28295e4c4a927facfa8a0e173bd3f151bc5/sphinxcontrib_htmlhelp-2.0.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:14358d0f88ccf58447f2b54343cdcc0012f32de2f8d27cf934fdbc0b362f9597
+	sha256:6c26a118a05b76000738429b724a0568dbde5b72391a688577da08f11891092a
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
