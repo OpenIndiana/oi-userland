@@ -19,22 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		immutables
-HUMAN_VERSION =			0.19
+HUMAN_VERSION =			0.20
 COMPONENT_SUMMARY =		immutables - Immutable Collections
-COMPONENT_PROJECT_URL =		https://github.com/MagicStack/immutables
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/MagicStack/immutables/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/7d/63/27f038a28ff2110bc04908a047817fd316d5a16ae06d0d3707732dee8013/immutables-0.20.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2a3d6f217dad8d83e87dd6a2af33a62ace73217da48fad1f866c756a734a9f50
+	sha256:1d2f83e6a6a8455466cd97b9a90e2b4f7864648616dfa6b19d18f49badac3876
 COMPONENT_LICENSE =		Apache-2.0 AND 0BSD
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
