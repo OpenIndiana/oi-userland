@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib_devhelp
-HUMAN_VERSION =			1.0.4
+HUMAN_VERSION =			1.0.5
 COMPONENT_SUMMARY =		sphinxcontrib_devhelp - sphinxcontrib-devhelp is a sphinx extension which outputs Devhelp documents
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/52/14/35164e8fd79b8ec7f9570984ab4af38f2ec728084df7ddd3c4b045e6b63a/sphinxcontrib_devhelp-1.0.4.tar.gz
+	https://files.pythonhosted.org/packages/2e/f2/6425b6db37e7c2254ad661c90a871061a078beaddaf9f15a00ba9c3a1529/sphinxcontrib_devhelp-1.0.5.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4fd751c63dc40895ac8740948f26bf1a3c87e4e441cc008672abd1cb2bc8a3d1
+	sha256:63b41e0d38207ca40ebbeabcf4d8e51f76c03e78cd61abe118cf4435c73d4212
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,10 +41,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
