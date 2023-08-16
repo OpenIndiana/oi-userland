@@ -338,7 +338,7 @@ while true ; do
 
 	# Disable some pytest plugins that almost always collects tests to run
 	# even there are no pytest tests available otherwise
-	pytest -p no:black -p no:checkdocs -p no:cov -p no:mypy --setup-plan
+	pytest -p no:black -p no:checkdocs -p no:cov -p no:mypy -p no:relaxed --setup-plan
 	(($? != 5)) && TEST_STYLE="pytest" && break
 
 	[[ -f setup.py ]] && python setup.py test --help && TEST_STYLE="setup.py" && break
