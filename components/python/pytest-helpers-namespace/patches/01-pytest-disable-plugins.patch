@@ -1,0 +1,56 @@
+--- pytest-helpers-namespace-2021.12.29/tests/test_helpers_namespace.py.orig
++++ pytest-helpers-namespace-2021.12.29/tests/test_helpers_namespace.py
+@@ -34,7 +34,7 @@
+     """
+     )
+ 
+-    result = pytester.runpytest("-s")
++    result = pytester.runpytest("-s", "-p", "no:black", "-p", "no:mypy")
+ 
+     # fnmatch_lines does an assertion internally
+     result.stdout.fnmatch_lines(
+@@ -68,7 +68,7 @@
+     """
+     )
+ 
+-    result = pytester.runpytest("-s")
++    result = pytester.runpytest("-s", "-p", "no:black", "-p", "no:mypy")
+ 
+     # fnmatch_lines does an assertion internally
+     result.stdout.fnmatch_lines(
+@@ -95,7 +95,7 @@
+     """
+     )
+ 
+-    result = pytester.runpytest("-s")
++    result = pytester.runpytest("-s", "-p", "no:black", "-p", "no:cov", "-p", "no:mypy")
+ 
+     # fnmatch_lines does an assertion internally
+     result.stdout.fnmatch_lines(
+@@ -197,7 +197,7 @@
+         """
+     )
+ 
+-    result = pytester.runpytest("-svv", "--log-cli-level=debug")
++    result = pytester.runpytest("-svv", "--log-cli-level=debug", "-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed")
+ 
+     # fnmatch_lines does an assertion internally
+     result.stdout.fnmatch_lines(["test_helper_as_regular_function.py::test_helpers PASSED"])
+@@ -222,7 +222,7 @@
+     """
+     )
+ 
+-    result = pytester.runpytest("-s")
++    result = pytester.runpytest("-s", "-p", "no:black", "-p", "no:mypy")
+ 
+     # fnmatch_lines does an assertion internally
+     result.stdout.fnmatch_lines(
+@@ -257,7 +257,7 @@
+         """
+     )
+ 
+-    result = pytester.runpytest("-vv")
++    result = pytester.runpytest("-vv", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(passed=1)
+ 
+ 
