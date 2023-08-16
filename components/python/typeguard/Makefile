@@ -19,23 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typeguard
-HUMAN_VERSION =			4.1.0
+HUMAN_VERSION =			4.1.1
 COMPONENT_SUMMARY =		typeguard - Run-time type checker for Python
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/44/24/42a46ccadf37b06e1d635fe70ad18fbccd39173fd192b0dd944794375e98/typeguard-4.1.0.tar.gz
+	https://files.pythonhosted.org/packages/84/29/4c062df3e7bd7198a07960608f3d5b0b938a10018de2a12a4c52bf00c23e/typeguard-4.1.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b05a54bb0276eefd28880df42e004a71e699c8081fcb9d0536b2ceb01019f60c
+	sha256:278ad7a974c9e6325037751fdffc470b9b0212d282c1746ecc452235922e3602
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:randomly
-
-# https://github.com/agronholm/typeguard/issues/377
-PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
