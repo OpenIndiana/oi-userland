@@ -9,10 +9,8 @@ rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
 asyncio: mode=strict
-collecting ... collected 73 items
+collecting ... collected 74 items
 
-tests/__init__.py::mypy PASSED
-tests/__init__.py::mypy-status PASSED
 tests/test_legacy.py::TestHash::test_hash_defaults PASSED
 tests/test_legacy.py::TestHash::test_hash_fast PASSED
 tests/test_legacy.py::TestHash::test_hash_nul_bytes PASSED
@@ -31,7 +29,6 @@ tests/test_legacy.py::TestVerify::test_success[Type.D-$argon2d$v=19$m=65536,t=2,
 tests/test_legacy.py::TestVerify::test_success[Type.I-$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$IMit9qkFULCMA/ViizL57cnTLOa5DiVM9eMwpAvPwr4] PASSED
 tests/test_legacy.py::TestVerify::test_success[Type.ID-$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
 tests/test_legacy.py::TestVerify::test_wrong_arg_type PASSED
-tests/test_legacy.py::mypy PASSED
 tests/test_low_level.py::TestHash::test_hash_fast[hash_secret] PASSED
 tests/test_low_level.py::TestHash::test_hash_fast[hash_secret_raw] PASSED
 tests/test_low_level.py::TestHash::test_hash_nul_bytes PASSED
@@ -54,14 +51,19 @@ tests/test_low_level.py::TestVerify::test_success[Type.D-$argon2d$v=19$m=65536,t
 tests/test_low_level.py::TestVerify::test_success[Type.I-$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$IMit9qkFULCMA/ViizL57cnTLOa5DiVM9eMwpAvPwr4] PASSED
 tests/test_low_level.py::TestVerify::test_success[Type.ID-$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
 tests/test_low_level.py::TestVerify::test_wrong_arg_type PASSED
-tests/test_low_level.py::mypy PASSED
 tests/test_low_level.py::test_argument_ranges PASSED
 tests/test_low_level.py::test_core PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_description PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_does_not_exist PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_email PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_uri PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_version PASSED
 tests/test_password_hasher.py::TestEnsureBytes::test_is_bytes PASSED
 tests/test_password_hasher.py::TestEnsureBytes::test_is_str PASSED
 tests/test_password_hasher.py::TestPasswordHasher::test_check PASSED
 tests/test_password_hasher.py::TestPasswordHasher::test_check_needs_rehash_no PASSED
 tests/test_password_hasher.py::TestPasswordHasher::test_check_needs_rehash_yes PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_custom_salt PASSED
 tests/test_password_hasher.py::TestPasswordHasher::test_hash[p\xe4ssword0] PASSED
 tests/test_password_hasher.py::TestPasswordHasher::test_hash[p\xe4ssword1] PASSED
 tests/test_password_hasher.py::TestPasswordHasher::test_hash_verify[p\xe4ssword0] PASSED
@@ -70,7 +72,7 @@ tests/test_password_hasher.py::TestPasswordHasher::test_type_is_configurable PAS
 tests/test_password_hasher.py::TestPasswordHasher::test_verify_agility[p\xe4ssword0] PASSED
 tests/test_password_hasher.py::TestPasswordHasher::test_verify_agility[p\xe4ssword1] PASSED
 tests/test_password_hasher.py::TestPasswordHasher::test_verify_invalid_hash PASSED
-tests/test_password_hasher.py::mypy PASSED
+tests/test_password_hasher.py::TestPasswordHasher::test_verify_invalid_hash_error PASSED
 tests/test_utils.py::TestCheckTypes::test_fail PASSED
 tests/test_utils.py::TestCheckTypes::test_success PASSED
 tests/test_utils.py::TestExtractParameters::test_invalid_hash[$argon2id$v=19$m=65536,t=2$c29tZXNhbHQ$GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo] PASSED
@@ -82,16 +84,10 @@ tests/test_utils.py::TestExtractParameters::test_valid_hash_v18 PASSED
 tests/test_utils.py::TestParameters::test_eq PASSED
 tests/test_utils.py::TestParameters::test_eq_wrong_type PASSED
 tests/test_utils.py::TestParameters::test_repr PASSED
-tests/test_utils.py::mypy PASSED
 tests/test_utils.py::test_decoded_str_len PASSED
 
-6 files skipped due to complete coverage.
-
-===================================== mypy =====================================
-
-Success: no issues found in 5 source files
-======== 73 passed ========
-py$(PYV): commands[1]> python -m argon2 -n 1 -t 1 -m 8 -p 1
+======== 74 passed ========
+py$(PYV): commands[1]> python -Im argon2 -n 1 -t 1 -m 8 -p 1
 Running Argon2id 1 times with:
 hash_len: 32 bytes
 memory_cost: 8 KiB

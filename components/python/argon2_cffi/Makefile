@@ -11,32 +11,30 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project argon2-cffi
+#   $WS_TOOLS/python-integrate-project argon2_cffi
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		argon2-cffi
-HUMAN_VERSION =			21.3.0
-COMPONENT_SUMMARY =		argon2-cffi - The secure Argon2 password hashing algorithm.
+COMPONENT_NAME =		argon2_cffi
+HUMAN_VERSION =			23.1.0
+COMPONENT_SUMMARY =		argon2_cffi - Argon2 for Python
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3f/18/20bb5b6bf55e55d14558b57afc3d4476349ab90e0c43e60f27a7c2187289/argon2-cffi-21.3.0.tar.gz
+	https://files.pythonhosted.org/packages/31/fa/57ec2c6d16ecd2ba0cf15f3c7d1c3c2e7b5fcb83555ff56d7ab10888ec8f/argon2_cffi-23.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d384164d944190a7dd7ef22c6aa3ff197da12962bd04b17f64d4e93d934dba5b
+	sha256:879c3e79a2729ce768ebb7d36d4609e3a78a4ca2ec3a9f12286ca057e3d0db08
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/argon2-cffi-bindings
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
