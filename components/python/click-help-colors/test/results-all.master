@@ -1,0 +1,31 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 16 items
+
+tests/test_basic.py::test_basic_command PASSED
+tests/test_basic.py::test_basic_group PASSED
+tests/test_basic.py::test_env_no_color PASSED
+tests/test_basic.py::test_unknown_color PASSED
+tests/test_custom_colors.py::test_command_custom_colors PASSED
+tests/test_custom_colors.py::test_custom_option_color PASSED
+tests/test_custom_colors.py::test_flag_option_color[--no-shout] PASSED
+tests/test_custom_colors.py::test_flag_option_color[--shout] PASSED
+tests/test_custom_colors.py::test_multi_name_option_color[--name] PASSED
+tests/test_custom_colors.py::test_multi_name_option_color[-n,] PASSED
+tests/test_custom_colors.py::test_multi_name_option_color[-n] PASSED
+tests/test_custom_colors.py::test_option_color PASSED
+tests/test_multi_commands.py::test_multi_command PASSED
+tests/test_version_option.py::test_custom_message PASSED
+tests/test_version_option.py::test_message_color PASSED
+tests/test_version_option.py::test_version_and_prog_name_color PASSED
+
+======== 16 passed ========
+  py$(PYV): OK
+  congratulations :)
