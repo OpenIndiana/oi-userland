@@ -19,18 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		shellingham
-HUMAN_VERSION =			1.5.0.post1
+HUMAN_VERSION =			1.5.3
 COMPONENT_SUMMARY =		shellingham - Tool to Detect Surrounding Shell
 COMPONENT_PROJECT_URL =		https://github.com/sarugaku/shellingham
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1f/13/fab0a3f512478bc387b66c51557ee715ede8e9811c77ce952f9b9a4d8ac1/shellingham-1.5.0.post1.tar.gz
+	https://github.com/sarugaku/shellingham/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:823bc5fb5c34d60f285b624e7264f4dda254bc803a3774a147bf99c0e3004a28
+	sha256:3deee7dd3482a6a85b9855275cf3728404a255433757a616bb58672143f10ede
 COMPONENT_LICENSE =		ISC
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# https://github.com/sarugaku/shellingham/issues/73
-TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
