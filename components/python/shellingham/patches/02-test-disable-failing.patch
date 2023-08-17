@@ -1,0 +1,10 @@
+--- shellingham-1.5.3/tests/test_posix.py.orig
++++ shellingham-1.5.3/tests/test_posix.py
+@@ -81,6 +81,7 @@
+         MAPPING_EXAMPLE_KEEGANCSMITH, ('bash', '==MOCKED=LOGIN=SHELL==/bash'),
+     ),
+ ])
++@pytest.mark.skip(reason="always fails: https://github.com/sarugaku/shellingham/issues/80")
+ def test_get_shell(mocker, environ, mapping, result):
+     environ.patch(SHELL='==MOCKED=LOGIN=SHELL==/bash')
+     mocker.patch.object(posix, '_get_process_mapping', return_value=mapping)
