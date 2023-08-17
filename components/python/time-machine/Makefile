@@ -19,26 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		time-machine
-HUMAN_VERSION =			2.11.0
+HUMAN_VERSION =			2.12.0
 COMPONENT_SUMMARY =		time-machine - Travel through time in your tests.
 COMPONENT_PROJECT_URL =		https://github.com/adamchainz/time-machine
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/adamchainz/time-machine/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a146ca10dde910a158f3607f3e45d3f9ec5034263967f5b55b1c40ebcf3fa487
+	sha256:a77c0543f67746f508b4c8ac395c58921a7188d1228e35608d4a5bbed82f2987
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/adamchainz/time-machine/issues/360
-PYTEST_ADDOPTS += -p no:mypy
-
-# https://github.com/christiansandberg/pytest-reporter/issues/8
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-reporter
-
-# Testing unable to start with pytest-black installed
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-black
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
@@ -46,3 +37,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
+TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
