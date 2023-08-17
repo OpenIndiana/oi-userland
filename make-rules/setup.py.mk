@@ -427,6 +427,12 @@ PYTEST_ADDOPTS += $(if $(filter library/python/pytest-randomly-$(subst .,,$(PYTH
 PYTEST_ADDOPTS += $(if $(filter library/python/pytest-relaxed-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:relaxed)
 PYTEST_ADDOPTS += $(if $(filter library/python/pytest-reporter-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:reporter)
 
+# By default we are not interested in full list of test failures so exit on
+# first failure to save time.  This could be easily overridden from environment
+# if needed (for example to debug test failures) or in per-component Makefile.
+PYTEST_FASTFAIL = -x
+PYTEST_ADDOPTS += $(PYTEST_FASTFAIL)
+
 # Normalize pytest test results.  The pytest framework could be used either
 # directly or via tox or setup.py so add these transforms for all test styles
 # unconditionally.
