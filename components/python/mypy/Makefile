@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mypy
-HUMAN_VERSION =			1.5.0
+HUMAN_VERSION =			1.5.1
 COMPONENT_SUMMARY =		mypy - Optional static typing for Python
 COMPONENT_PROJECT_URL =		https://www.mypy-lang.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/python/mypy/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7e1ee15f4f3e5da884d3e7fc7979a2f73ad4a271843a24b4c6b45ade9ec166a0
+	sha256:22894445313d989109498ea7a6b124034ab10cbb2b50f3878b81883eaa3290d2
 COMPONENT_LICENSE =		MIT AND PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
