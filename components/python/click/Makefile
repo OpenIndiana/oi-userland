@@ -19,21 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		click
-HUMAN_VERSION =			8.1.6
+HUMAN_VERSION =			8.1.7
 COMPONENT_SUMMARY =		click - Composable command line interface toolkit
 COMPONENT_PROJECT_URL =		https://palletsprojects.com/p/click/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/72/bd/fedc277e7351917b6c4e0ac751853a97af261278a4c7808babafa8ef2120/click-8.1.6.tar.gz
+	https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:48ee849951919527a045bfe3bf7baa8a959c423134e1a5b98c05c20ba75a1cbd
+	sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
