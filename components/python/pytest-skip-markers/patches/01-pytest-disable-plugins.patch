@@ -1,0 +1,894 @@
+Some pytest plugins causes subcalls to fail so disable them.
+
+--- pytest-skip-markers-1.4.1/tests/functional/test_destructive_test.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_destructive_test.py
+@@ -16,7 +16,7 @@
+             assert True
+         """
+     )
+-    res = pytester.runpytest()
++    res = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -31,7 +31,7 @@
+             assert True
+         """
+     )
+-    res = pytester.runpytest("--run-destructive")
++    res = pytester.runpytest("--run-destructive", "-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -50,7 +50,7 @@
+             assert True
+         """
+     )
+-    res = pytester.runpytest("--run-destructive")
++    res = pytester.runpytest("--run-destructive", "-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(errors=2)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+     res.stdout.fnmatch_lines(
+--- pytest-skip-markers-1.4.1/tests/functional/test_expensive_test.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_expensive_test.py
+@@ -16,7 +16,7 @@
+             assert True
+         """
+     )
+-    res = pytester.runpytest()
++    res = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -31,7 +31,7 @@
+             assert True
+         """
+     )
+-    res = pytester.runpytest("--run-expensive")
++    res = pytester.runpytest("--run-expensive", "-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -50,7 +50,7 @@
+             assert True
+         """
+     )
+-    res = pytester.runpytest("--run-expensive")
++    res = pytester.runpytest("--run-expensive", "-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(errors=2)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+     res.stdout.fnmatch_lines(
+--- pytest-skip-markers-1.4.1/tests/functional/test_requires_network.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_requires_network.py
+@@ -37,7 +37,7 @@
+         side_effect=[ports.get_unused_localhost_port() for n in range(10)],
+     ):
+         with mock.patch("pytestskipmarkers.utils.markers.socket.socket"):
+-            res = pytester.runpytest()
++            res = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+             res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -59,6 +59,6 @@
+         side_effect=[ports.get_unused_localhost_port() for n in range(10)],
+     ):
+         with mock.patch("pytestskipmarkers.utils.markers.socket.socket", return_value=mock_socket):
+-            res = pytester.runpytest_inprocess()
++            res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+             res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_if_binaries_missing.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_if_binaries_missing.py
+@@ -25,7 +25,7 @@
+             assert True
+         """
+     )
+-    res = pytester.runpytest()
++    res = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -40,7 +40,7 @@
+             assert True
+         """
+     )
+-    res = pytester.runpytest()
++    res = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -57,7 +57,7 @@
+             python_binary
+         )
+     )
+-    res = pytester.runpytest_subprocess("-ra", "-vv")
++    res = pytester.runpytest_subprocess("-ra", "-vv", "-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -74,6 +74,6 @@
+             python_binary
+         )
+     )
+-    res = pytester.runpytest_subprocess("-ra", "-vv")
++    res = pytester.runpytest_subprocess("-ra", "-vv", "-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_if_not_root.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_if_not_root.py
+@@ -37,7 +37,7 @@
+         )
+ 
+     with mocked_func:
+-        res = pytester.runpytest()
++        res = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -60,7 +60,7 @@
+         )
+ 
+     with mocked_func:
+-        res = pytester.runpytest_inprocess("-ra", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -79,7 +79,7 @@
+             assert True
+         """
+     )
+-    res = pytester.runpytest()
++    res = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     res.assert_outcomes(errors=2)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+     res.stdout.fnmatch_lines(
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_aarch64.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_aarch64.py
+@@ -30,7 +30,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_aarch64", return_value=True):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -46,7 +46,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_aarch64", return_value=False):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -62,6 +62,6 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_aarch64", return_value=True):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_aix.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_aix.py
+@@ -32,7 +32,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_aix", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -49,7 +49,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_aix", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -66,6 +66,6 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_aix", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_darwin.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_darwin.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_darwin", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_darwin", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_darwin", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_env.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_env.py
+@@ -31,7 +31,7 @@
+         """
+     )
+     with mock.patch.dict(os.environ, FOOBAR="1"):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -47,6 +47,6 @@
+         """
+     )
+     with mock.patch.dict(os.environ, FOOBAR="1"):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_freebsd.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_freebsd.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_freebsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_freebsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_freebsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_linux.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_linux.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_linux", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_linux", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_linux", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_netbsd.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_netbsd.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_netbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_netbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_netbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_openbsd.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_openbsd.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_openbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_openbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_openbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_photonos.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_photonos.py
+@@ -30,7 +30,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_photonos", return_value=True):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -46,7 +46,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_photonos", return_value=False):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -62,6 +62,6 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_photonos", return_value=True):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_platforms.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_platforms.py
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch(f"pytestskipmarkers.utils.platform.is_{platform}", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -82,7 +82,7 @@
+     )
+     return_value = False
+     with mock.patch(f"pytestskipmarkers.utils.platform.is_{platform}", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -99,7 +99,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_windows", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+ 
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_smartos.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_smartos.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_smartos", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_smartos", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_smartos", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_spawning_platform.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_spawning_platform.py
+@@ -30,7 +30,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_spawning_platform", return_value=True):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -46,7 +46,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_spawning_platform", return_value=False):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -62,6 +62,6 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_spawning_platform", return_value=True):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_sunos.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_sunos.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_sunos", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_sunos", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_sunos", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_on_windows.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_on_windows.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_windows", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_windows", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_windows", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_aarch64.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_aarch64.py
+@@ -30,7 +30,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_aarch64", return_value=False):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -46,7 +46,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_aarch64", return_value=True):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -62,6 +62,6 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_aarch64", return_value=False):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_aix.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_aix.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_aix", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_aix", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_aix", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_darwin.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_darwin.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_darwin", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_darwin", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_darwin", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_freebsd.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_freebsd.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_freebsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_freebsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_freebsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_linux.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_linux.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_linux", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_linux", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_linux", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_netbsd.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_netbsd.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_netbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_netbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_netbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_openbsd.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_openbsd.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_openbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_openbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_openbsd", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_photonos.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_photonos.py
+@@ -30,7 +30,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_photonos", return_value=False):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -46,7 +46,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_photonos", return_value=True):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -62,6 +62,6 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_photonos", return_value=False):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_platforms.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_platforms.py
+@@ -53,7 +53,7 @@
+     else:
+         patch_target = f"pytestskipmarkers.utils.platform.is_{platform}"
+     with mock.patch(patch_target, return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -92,7 +92,7 @@
+     else:
+         patch_target = f"pytestskipmarkers.utils.platform.is_{platform}"
+     with mock.patch(patch_target, return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -109,7 +109,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_windows", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+ 
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_smartos.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_smartos.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_smartos", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_smartos", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_smartos", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_spawning_platform.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_spawning_platform.py
+@@ -30,7 +30,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_spawning_platform", return_value=False):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -46,7 +46,7 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_spawning_platform", return_value=True):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -62,6 +62,6 @@
+         """
+     )
+     with mock.patch("pytestskipmarkers.utils.platform.is_spawning_platform", return_value=False):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_sunos.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_sunos.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_sunos", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_sunos", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_sunos", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
+--- pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_windows.py.orig
++++ pytest-skip-markers-1.4.1/tests/functional/test_skip_unless_on_windows.py
+@@ -31,7 +31,7 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_windows", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -48,7 +48,7 @@
+     )
+     return_value = True
+     with mock.patch("pytestskipmarkers.utils.platform.is_windows", return_value=return_value):
+-        res = pytester.runpytest_inprocess()
++        res = pytester.runpytest_inprocess("-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(passed=1)
+     res.stdout.no_fnmatch_line("*PytestUnknownMarkWarning*")
+ 
+@@ -65,6 +65,6 @@
+     )
+     return_value = False
+     with mock.patch("pytestskipmarkers.utils.platform.is_windows", return_value=return_value):
+-        res = pytester.runpytest_inprocess("-ra", "-s", "-vv")
++        res = pytester.runpytest_inprocess("-ra", "-s", "-vv", "-p", "no:black", "-p", "no:mypy")
+         res.assert_outcomes(skipped=1)
+     res.stdout.fnmatch_lines(["SKIPPED * test_skip_reason.py:*: Because!"])
