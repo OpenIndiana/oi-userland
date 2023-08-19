@@ -19,23 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		humanize
-HUMAN_VERSION =			4.7.0
+HUMAN_VERSION =			4.8.0
 COMPONENT_SUMMARY =		humanize - Python humanize utilities
 COMPONENT_PROJECT_URL =		https://github.com/python-humanize/humanize
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/69/86/34d04afc5c33a31f4e9939f857e28fc9d039440f29b99a34f2190f0ab0ac/humanize-4.7.0.tar.gz
+	https://files.pythonhosted.org/packages/0c/84/e58c665f4ebb03d2fbeb28b51afb0743f846db18a5b594ed8b8973676ddf/humanize-4.8.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7ca0e43e870981fa684acb5b062deb307218193bca1a01f2b2676479df849b3a
+	sha256:9783373bf1eec713a770ecaa7c2d7a7902c98398009dfa3d8a2df91eec9311e8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENCE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/python-humanize/humanize/issues/105
-PYTEST_ADDOPTS += -p no:randomly
-
-# https://github.com/jaraco/pytest-enabler/issues/8
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
