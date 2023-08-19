@@ -3,6 +3,12 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for note on a project zero variant.
 
+20.0.2
+
+Reinstate make/data/charsetmapping/stdcs-solaris, removal broke the
+build.
+See illumos-port-23.patch
+
 20.0.1
 
 Needed to include <limits.h> in
