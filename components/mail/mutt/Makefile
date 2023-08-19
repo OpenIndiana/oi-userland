@@ -23,17 +23,16 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019, Michal Nowak
 #
-# Only openssl-1.0 is supported by mutt (for newer openssl version some symbols cannot be found):
-USE_OPENSSL10= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	2.2.10
+COMPONENT_VERSION=	2.2.11
 COMPONENT_SUMMARY=	Mutt is a small but very powerful text-based mail client for Unix operating systems.
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4d773f22422f79096f7b94b57bee45654ad9a25165dbb36463c58295b4cd3d88
+COMPONENT_ARCHIVE_HASH=	sha256:12325cf66d5ff8ac4bd87fac8db52c869de52dd278fc301cfd57d5a1f9f465cc
 COMPONENT_ARCHIVE_URL=	http://ftp.mutt.org/pub/mutt/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		mail/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -66,7 +65,7 @@ CONFIGURE_OPTIONS += --with-sasl
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/libidn2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/slang
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
