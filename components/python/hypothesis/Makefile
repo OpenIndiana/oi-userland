@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hypothesis
-HUMAN_VERSION =			6.82.4
+HUMAN_VERSION =			6.82.6
 COMPONENT_SUMMARY =		hypothesis - A library for property-based testing
 COMPONENT_PROJECT_URL =		https://hypothesis.works
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:91332db0f17b0faca95ae528324658d0225ff4e2227579107b6d9b18084b0590
+	sha256:802c18a65e27aa21dc12fb9fbf1b76a1a96fb3d046b1b0140e9820e5db6a349e
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,11 +35,6 @@ COMPONENT_SRC =			hypothesis-hypothesis-python-$(HUMAN_VERSION)
 COMPONENT_SUBDIR =		hypothesis-python
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:cov
-PYTEST_ADDOPTS += -p no:mypy
 
 # Random temporary directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(/tmp\).\{8\}/|\1XXXXXXXX/|g'"
