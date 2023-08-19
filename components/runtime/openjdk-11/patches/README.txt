@@ -5,6 +5,10 @@ All patches -p0
 
 This set of patches for jdk11u
 
+11.0.20
+
+Minor patch update needed in Awt2dLibraries.gmk
+
 11.0.19
 
 Rework of the way the build and target OS is identified.
