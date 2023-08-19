@@ -17,17 +17,17 @@ undocumented, while statvfs() gives the behaviour we actually want.
  
  #ifdef __cplusplus
  extern "C" {
-@@ -124,8 +128,13 @@
-         array[3] = (jlong)freeBytesAvailable.QuadPart;
-     }
- #else
+@@ -142,8 +146,13 @@
+     chars[len] = '\0';
+     (*env)->ReleaseStringChars(env, root, strchars);
+ 
 +#ifdef __sun__
 +    struct statvfs buf;
-+    int result = statvfs((const char*)chars, &buf);
++    int result = statvfs(chars, &buf);
 +#else
      struct statfs buf;
-     int result = statfs((const char*)chars, &buf);
+     int result = statfs(chars, &buf);
 +#endif
-     (*env)->ReleaseStringChars(env, root, chars);
+     free(chars);
      if (result < 0) {
          JNU_ThrowByNameWithLastError(env, "java/lang/RuntimeException",
