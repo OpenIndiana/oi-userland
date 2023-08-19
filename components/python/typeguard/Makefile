@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typeguard
-HUMAN_VERSION =			4.1.1
+HUMAN_VERSION =			4.1.2
 COMPONENT_SUMMARY =		typeguard - Run-time type checker for Python
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/84/29/4c062df3e7bd7198a07960608f3d5b0b938a10018de2a12a4c52bf00c23e/typeguard-4.1.1.tar.gz
+	https://files.pythonhosted.org/packages/85/3b/bfac182aaf3d084832fbe5fb1bdbf52c3ec8b0d10838888521b697952900/typeguard-4.1.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:278ad7a974c9e6325037751fdffc470b9b0212d282c1746ecc452235922e3602
+	sha256:3be187945f9ef5a9f6d7a926dfe54babb7dfd807085ce05f9a5e8735f2487990
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
