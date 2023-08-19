@@ -1,0 +1,33 @@
+--- a/src/hotspot/share/runtime/mutex.hpp	Wed Jul  6 08:12:32 2022
++++ b/src/hotspot/share/runtime/mutex.hpp	Thu Jul  7 13:59:23 2022
+@@ -28,7 +28,7 @@
+ #include "memory/allocation.hpp"
+ #include "runtime/atomic.hpp"
+ 
+-#if defined(LINUX) || defined(AIX) || defined(BSD)
++#if defined(LINUX) || defined(AIX) || defined(BSD) || defined(SOLARIS)
+ # include "mutex_posix.hpp"
+ #else
+ # include OS_HEADER(mutex)
+--- a/src/hotspot/share/runtime/park.hpp	Wed Jul  6 08:12:32 2022
++++ b/src/hotspot/share/runtime/park.hpp	Thu Jul  7 14:01:18 2022
+@@ -28,7 +28,7 @@
+ #include "utilities/debug.hpp"
+ #include "utilities/globalDefinitions.hpp"
+ 
+-#if defined(LINUX) || defined(AIX) || defined(BSD)
++#if defined(LINUX) || defined(AIX) || defined(BSD) || defined(SOLARIS)
+ # include "park_posix.hpp"
+ #else
+ # include OS_HEADER(park)
+--- a/src/hotspot/share/runtime/threadCrashProtection.hpp	Wed Jul  6 08:12:32 2022
++++ b/src/hotspot/share/runtime/threadCrashProtection.hpp	Thu Jul  7 14:11:04 2022
+@@ -27,7 +27,7 @@
+ #define SHARE_RUNTIME_THREADCRASHPROTECTION_HPP
+ 
+ #include "memory/allocation.hpp"
+-#if defined(LINUX) || defined(AIX) || defined(BSD)
++#if defined(LINUX) || defined(AIX) || defined(BSD) || defined(SOLARIS)
+ # include "threadCrashProtection_posix.hpp"
+ #else
+ # include OS_HEADER(threadCrashProtection)
