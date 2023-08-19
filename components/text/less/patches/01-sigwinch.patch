@@ -1,0 +1,12 @@
+# SIGWINCH should not stop reading from pipes; should be send up stream
+--- less-633/ttyin.c.org	2023-05-03 11:43:01.000000000 -0700
++++ less-633/ttyin.c	2023-08-09 03:52:33.769132730 -0700
+@@ -187,7 +187,7 @@
+ 			result = iread(tty, &uc, sizeof(char));
+ 			c = (char) uc;
+ 		}
+-		if (result == READ_INTR)
++		if (result == READ_INTR || result == READ_AGAIN)
+ 			return (READ_INTR);
+ 		if (result < 0)
+ 		{
