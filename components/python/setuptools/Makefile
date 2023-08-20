@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			68.0.0
+HUMAN_VERSION =			68.1.2
 COMPONENT_SUMMARY =		setuptools - Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_PROJECT_URL =		https://github.com/pypa/setuptools
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/dc/98/5f896af066c128669229ff1aa81553ac14cfb3e5e74b6b44594132b8540e/setuptools-68.0.0.tar.gz
+	https://files.pythonhosted.org/packages/19/20/d8dd9d8becaf3e2d6fdc17cc41870d5ada5ceda518996cf5968c2ca71bd8/setuptools-68.1.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:baf1fdb41c6da4cd2eae722e135500da913332ab3f2f5c7d33af9b492acb5235
+	sha256:3d4dfa6d95f1b101d695a6160a7626e15583af71a5f52176efa5d39a054d475d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -54,10 +54,10 @@ TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/filelock
 TEST_REQUIRED_PACKAGES.python += library/python/flake8-2020
 TEST_REQUIRED_PACKAGES.python += library/python/ini2toml
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-develop
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-envs
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
 TEST_REQUIRED_PACKAGES.python += library/python/pip
-TEST_REQUIRED_PACKAGES.python += library/python/pip-run
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
@@ -65,7 +65,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-perf
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-ruff
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/tomli-w
