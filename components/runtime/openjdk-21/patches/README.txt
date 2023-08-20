@@ -3,7 +3,7 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for note on a project zero variant.
 
-JDK 21 now that jdk20 has been forked off.
+JDK 21 now we're in rampdown.
 
 Issues known that indicate serious bugs, likely due to not integrating
 loom correctly as they date back to that change. Specifically, I
@@ -11,6 +11,31 @@ suspect we need to provide a working DefaultPoller implementation
 rather than the current stub.
 * jshell doesn't work
 * illuminate doesn't work
+
+21+34, 21+35
+
+No changes.
+
+21+33
+
+No changes in regular port.
+
+Fix zero port; see Atomic and print_register_info change in jdk 21+23
+
+21+27, 21+28, 21+29, 21+30, 21+31, 21+32
+
+No changes.
+
+21+26
+
+Forked to the jdk21 stabilisation repo.
+
+Some patch noise.
+
+Add null implementation of jfr_report_memory_info()
+
+It appears that pipewire has been imported; see illumos-port-27.patch
+for a minor tweak to make it compile
 
 21+25
 

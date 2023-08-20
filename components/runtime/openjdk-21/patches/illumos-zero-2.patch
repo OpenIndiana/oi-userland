@@ -1,7 +1,7 @@
 diff -ur -N /tmp/g/atomic_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/atomic_solaris_zero.hpp
 --- /tmp/g/atomic_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_zero/atomic_solaris_zero.hpp	2020-08-27 09:48:36.864797068 +0000
-@@ -0,0 +1,200 @@
+@@ -0,0 +1,182 @@
 +/*
 + * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -29,9 +29,6 @@ diff -ur -N /tmp/g/atomic_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/ato
 +#ifndef OS_CPU_SOLARIS_X86_ATOMIC_SOLARIS_X86_HPP
 +#define OS_CPU_SOLARIS_X86_ATOMIC_SOLARIS_X86_HPP
 +
-+// For Sun Studio - implementation is in solaris_x86_64.il.
-+
-+#ifdef __GNUC__
 +inline int32_t _Atomic_add(int32_t add_value, volatile int32_t* dest) {
 +  int32_t rv = add_value;
 +  __asm__ volatile ("lock xaddl %0,(%2)"
@@ -83,37 +80,22 @@ diff -ur -N /tmp/g/atomic_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/ato
 +                    : "cc", "memory");
 +  return exchange_value;
 +}
-+#else
-+extern "C" {
-+  int32_t _Atomic_add(int32_t add_value, volatile int32_t* dest);
-+  int64_t _Atomic_add_long(int64_t add_value, volatile int64_t* dest);
-+
-+  int32_t _Atomic_xchg(int32_t exchange_value, volatile int32_t* dest);
-+  int64_t _Atomic_xchg_long(int64_t exchange_value, volatile int64_t* dest);
-+  int8_t  _Atomic_cmpxchg_byte(int8_t exchange_value, volatile int8_t* dest,
-+                               int8_t compare_value);
-+  int32_t _Atomic_cmpxchg(int32_t exchange_value, volatile int32_t* dest,
-+                          int32_t compare_value);
-+  int64_t _Atomic_cmpxchg_long(int64_t exchange_value, volatile int64_t* dest,
-+                               int64_t compare_value);
-+}
-+#endif
 +
 +template<size_t byte_size>
 +struct Atomic::PlatformAdd {
 +  template<typename D, typename I>
-+  D add_and_fetch(D volatile* dest, I add_value, atomic_memory_order order) const;
++  D add_then_fetch(D volatile* dest, I add_value, atomic_memory_order order) const;
 +
 +  template<typename D, typename I>
-+  D fetch_and_add(D volatile* dest, I add_value, atomic_memory_order order) const {
-+    return add_and_fetch(dest, add_value, order) - add_value;
++  D fetch_then_add(D volatile* dest, I add_value, atomic_memory_order order) const {
++    return add_then_fetch(dest, add_value, order) - add_value;
 +  }
 +};
 +
 +// Not using add_using_helper; see comment for cmpxchg.
 +template<>
 +template<typename D, typename I>
-+inline D Atomic::PlatformAdd<4>::add_and_fetch(D volatile* dest, I add_value,
++inline D Atomic::PlatformAdd<4>::add_then_fetch(D volatile* dest, I add_value,
 +                                               atomic_memory_order order) const {
 +  STATIC_ASSERT(4 == sizeof(I));
 +  STATIC_ASSERT(4 == sizeof(D));
@@ -125,7 +107,7 @@ diff -ur -N /tmp/g/atomic_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/ato
 +// Not using add_using_helper; see comment for cmpxchg.
 +template<>
 +template<typename D, typename I>
-+inline D Atomic::PlatformAdd<8>::add_and_fetch(D volatile* dest, I add_value,
++inline D Atomic::PlatformAdd<8>::add_then_fetch(D volatile* dest, I add_value,
 +                                               atomic_memory_order order) const {
 +  STATIC_ASSERT(8 == sizeof(I));
 +  STATIC_ASSERT(8 == sizeof(D));
@@ -571,8 +553,8 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +  ShouldNotCallThis();
 +}
 +
-+void os::print_register_info(outputStream *st, const void *context) {
-+  ShouldNotCallThis();
++void os::print_register_info(outputStream *st, const void *context, int& continuation) {
++  st->print_cr("No register info.");
 +}
 +
 +// Atomically copy 64 bits of data
