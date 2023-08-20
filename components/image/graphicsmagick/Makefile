@@ -18,13 +18,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= GraphicsMagick
 COMPONENT_MAJOR_VERSION= 1.3
-COMPONENT_MINOR_VERSION= 40
+COMPONENT_MINOR_VERSION= 41
 COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_PROJECT_URL= http://www.graphicsmagick.org/
 COMPONENT_SUMMARY= A collection of utilities to support file format conversion,image processing, and 2D vector rendering.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:97dc1a9d4e89c77b25a3b24505e7ff1653b88f9bfe31f189ce10804b8efa7746
+COMPONENT_ARCHIVE_HASH=	sha256:b741b11ba86162db4d4ec1b354989a773f73c40722d1148239f6c69c9f04a6aa
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI= image/graphicsmagick
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
@@ -33,11 +33,11 @@ COMPONENT_LICENSE_FILE=	Copyright.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
+CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+LDFLAGS += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
 
 unexport SHELLOPTS
 
