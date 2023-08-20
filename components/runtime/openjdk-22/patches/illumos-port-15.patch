@@ -1,0 +1,23 @@
+
+This fixes the following frequently seen warning
+
+	SIGSEGV happened inside stack but outside yellow and red zone.
+
+diff --git a/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp
+index c5a72c791..9d9ab5618 100644
+--- a/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp
++++ b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp
+@@ -293,8 +293,11 @@ bool PosixSignals::pd_hotspot_signal_handler(int sig, siginfo_t* info,
+     // Handle ALL stack overflow variations here
+     if (sig == SIGSEGV && info->si_code == SEGV_ACCERR) {
+       address addr = (address) info->si_addr;
+-      if (os::Posix::handle_stack_overflow(thread, addr, pc, uc, &stub)) {
+-        return 1; // continue
++      if (thread->is_in_full_stack(addr)) {
++        // stack overflow
++        if (os::Posix::handle_stack_overflow(thread, addr, pc, uc, &stub)) {
++          return true; // continue
++        }
+       }
+     }
+ 
