@@ -24,44 +24,24 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-USE_DEFAULT_TEST_TRANSFORMS= yess
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
-COMPONENT_VERSION=	1.12
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.13
 COMPONENT_SUMMARY=	The GNU Zip (gzip) compression utility
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ce5e03e519f637e1f814011ace35c4f87b33c0bbabeec35baf5fbd3479e91956
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:7454eb6935db17c6655576c2e1b0fabefd38b4d0936e0f87f48cd062ce91a057
 COMPONENT_FMRI=		compress/gzip
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/common.mk
 
-# To get correct @bindir@ substitution in the various gz<whatever> scripts.
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
-
-# Prevent gzip compilation using assembly code, which segv's with Studio 12.3.
-CONFIGURE_OPTIONS +=	gzip_cv_assembler=no
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-
-# Needed for "gmake test" to work successfully.
-# If SHELLOPTS is exported (as it is by the userland makefiles),
-# then all shell options get exported to child invocations of bash,
-# which results in test failures due to nounset and xtrace being
-# set unexpectedly, and errors such as "$1: unbound variable" and
-# diffs failing due to script tracing in output files.
-unexport SHELLOPTS
-
-COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR); $(AUTORECONF) -if)
-
-# Get the binaries to test from the component build area.
-COMPONENT_TEST_ENV +=	PATH=$(BUILD_DIR_$(BITS)):/usr/xpg4/bin:/usr/bin
-COMPONENT_TEST_TARGETS = check
+COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR); $(AUTORECONF) -if )
 
 # Fix references to Solaris renamed programs (z*->gz*) in man pages, info
 # pages and in wrapper scripts.
@@ -83,8 +63,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 	 done)
 
 # Provide missing man pages.
-GZGREP_MAN_VARIANTS+=$(PROTOUSRSHAREMAN1DIR)/gzegrep.1
-GZGREP_MAN_VARIANTS+=$(PROTOUSRSHAREMAN1DIR)/gzfgrep.1
+GZGREP_MAN_VARIANTS += $(PROTOUSRSHAREMAN1DIR)/gzegrep.1
+GZGREP_MAN_VARIANTS += $(PROTOUSRSHAREMAN1DIR)/gzfgrep.1
 
 $(GZGREP_MAN_VARIANTS):
 	$(RM) $@; echo ".so man1/gzgrep.1" > $@
@@ -92,6 +72,19 @@ $(GZGREP_MAN_VARIANTS):
 ASLR_MODE = $(ASLR_ENABLE)
 
 install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
+
+# Note that the tests need to be run without extra privileges otherwise some tests may fail or skipped.
+#
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
+# Get the binaries to test from the component build area.
+COMPONENT_TEST_ENV += PATH=$(BUILD_DIR_$(BITS)):$(PATH.gnu)
+COMPONENT_TEST_TARGETS = check
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/bash
