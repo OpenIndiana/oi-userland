@@ -1046,7 +1046,7 @@ INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
 
 # OpenSSL macros
-OPENSSL_DEFAULT = 1.1
+OPENSSL_DEFAULT = 3.1
 ifeq ($(strip $(USE_OPENSSL11)),yes)
 OPENSSL_VERSION = 1.1
 else
