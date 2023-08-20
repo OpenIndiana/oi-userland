@@ -17,20 +17,19 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	LibreCAD
-COMPONENT_VERSION =     2.2.0-rc1
-COMPONENT_REVISION=     3
-IPS_COMPONENT_VERSION = 2.2.0.1
+COMPONENT_VERSION = 2.2.0.2
+COMPONENT_SUMMARY= LibreCAD is a 2D CAD drawing tool based on the community edition of QCAD.
 COMPONENT_PROJECT_URL =	https://github.com/LibreCAD
-COMPONENT_FMRI =	desktop/librecad
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = \
-   sha256:2c937a9423ecf501902ef74c722ec413562e47c45125ac87257f02942d0676ea
-COMPONENT_ARCHIVE_URL=	https://github.com/LibreCAD/LibreCAD/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_SUMMARY=	LibreCAD is a 2D CAD drawing tool based on the community edition of QCAD.
+COMPONENT_ARCHIVE_HASH = sha256:fcb888a550f1f515ef6a2f7af2dd02605dd5c6da8a23f6c3a52479f8532ac109
+COMPONENT_ARCHIVE_URL = https://github.com/LibreCAD/LibreCAD/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI =	desktop/librecad
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	LICENSE
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH.qt5 = /usr/lib/qt/5.15/bin/$(MACH64)
