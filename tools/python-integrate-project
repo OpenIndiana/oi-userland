@@ -187,8 +187,9 @@ if [[ -z "$DOWNLOAD_URL" ]] ; then
 fi
 
 
-# Remove everything from git (except known patches, history, and $CONF)
+# Remove everything from git (except known patches, files, history, and $CONF)
 [[ -f "$CONF" ]] && grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
+[[ -f "$CONF" ]] && grep "^%file%" "$CONF" | while read TAG FILE ; do rm -f "files/$FILE" ; done
 rm -f history "$CONF"
 find . -type f | while read f ; do git rm "$f" > /dev/null 2>&1 ; done
 rm -rf "$DIR" 2>/dev/null
@@ -197,6 +198,10 @@ git checkout "$CONF" > /dev/null 2>&1
 [[ -f "$CONF" ]] && grep "^%patch%" "$CONF" | while read TAG PATCH ; do
 	git checkout "patches/$PATCH" > /dev/null 2>&1
 	[[ -f "patches/$PATCH" ]] || printf "WARNING: Patch %s not found\n" "$PATCH" >&2
+done
+[[ -f "$CONF" ]] && grep "^%file%" "$CONF" | while read TAG FILE ; do
+	git checkout "files/$FILE" > /dev/null 2>&1
+	[[ -f "files/$FILE" ]] || printf "WARNING: File %s not found\n" "$FILE" >&2
 done
 
 
