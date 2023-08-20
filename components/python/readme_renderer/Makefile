@@ -19,18 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		readme_renderer
-HUMAN_VERSION =			40.0
+HUMAN_VERSION =			41.0
 COMPONENT_SUMMARY =		readme_renderer - readme_renderer is a library for rendering \\\\\\\"readme\\\\\\\" descriptions for Warehouse
 COMPONENT_PROJECT_URL =		https://github.com/pypa/readme_renderer
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/22/ec/12a48255bb1f15e2bd16a75e9f537ea498c8884069de4655afe47d5ffe34/readme_renderer-40.0.tar.gz
+	https://files.pythonhosted.org/packages/16/3f/ab83435572c1a3b1a8a6f9bdfc2b5a24dc642583c7c06ceee63a84cfd104/readme_renderer-41.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9f77b519d96d03d7d7dce44977ba543090a14397c4f60de5b6eb5b8048110aa4
+	sha256:4f4b11e5893f5a5d725f592c5a343e0dc74f5f273cb3dcf8c42d9703a27073f7
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# readme_renderer >= 40.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
