@@ -421,6 +421,16 @@ $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))
 $(eval $(call disable-pytest-plugin,randomly,pytest-randomly))
 $(eval $(call disable-pytest-plugin,relaxed,pytest-relaxed))		# https://github.com/bitprophet/pytest-relaxed/issues/28
 $(eval $(call disable-pytest-plugin,reporter,pytest-reporter))		# https://github.com/christiansandberg/pytest-reporter/issues/8
+$(eval $(call disable-pytest-plugin,salt-factories,pytest-salt-factories))			# requires salt
+$(eval $(call disable-pytest-plugin,salt-factories-event-listener,pytest-salt-factories))	# requires salt
+$(eval $(call disable-pytest-plugin,salt-factories-factories,pytest-salt-factories))		# requires salt
+$(eval $(call disable-pytest-plugin,salt-factories-loader-mock,pytest-salt-factories))		# requires salt
+$(eval $(call disable-pytest-plugin,salt-factories-log-server,pytest-salt-factories))		# requires salt
+$(eval $(call disable-pytest-plugin,salt-factories-markers,pytest-salt-factories))		# requires salt
+$(eval $(call disable-pytest-plugin,salt-factories-sysinfo,pytest-salt-factories))		# requires salt
+$(eval $(call disable-pytest-plugin,salt-factories-sysstats,pytest-salt-factories))		# requires salt
+$(eval $(call disable-pytest-plugin,tempdir,pytest-tempdir))		# pollutes output with PytestDeprecationWarning (project is archived at github since 2022-03-25)
+$(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminder line to test output
 
 # By default we are not interested in full list of test failures so exit on
 # first failure to save time.  This could be easily overridden from environment
