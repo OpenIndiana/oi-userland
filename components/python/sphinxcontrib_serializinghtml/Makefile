@@ -19,21 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib_serializinghtml
-HUMAN_VERSION =			1.1.8
+HUMAN_VERSION =			1.1.9
 COMPONENT_SUMMARY =		sphinxcontrib_serializinghtml - sphinxcontrib-serializinghtml is a sphinx extension which outputs \\\\\\\"serialized\\\\\\\" HTML files (json and pickle)
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a0/a3/4bd9d8c5c97312bf46b059bcf76eab42ce6ffb12560b7ce9a247e2e524a3/sphinxcontrib_serializinghtml-1.1.8.tar.gz
+	https://files.pythonhosted.org/packages/5c/41/df4cd017e8234ded544228f60f74fac1fe1c75bdb1e87b33a83c91a10530/sphinxcontrib_serializinghtml-1.1.9.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:aaf3026335146e688fd209b72320314b1b278320cf232e3cda198f873838511a
+	sha256:0c64ff898339e1fac29abd2bf5f11078f3ec413cfe9c046d3120d7ca65530b54
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# sphinxcontrib-serializinghtml needs sphinx to run tests, but sphinx needs
-# sphinxcontrib-serializinghtml to build itself.  This is special case when we
-# need to set PYTHON_TEST_BOOTSTRAP to make sure the
-# sphinxcontrib-serializinghtml tests are not run when there is no sphinx
-# available yet.
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# sphinxcontrib_serializinghtml --> sphinx ==> sphinxcontrib_serializinghtml
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
