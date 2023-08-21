@@ -155,14 +155,6 @@ PYTHON_ENV +=	CXXFLAGS="$(CXXFLAGS)"
 PYTHON_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 COMPONENT_BUILD_ENV += $(PYTHON_ENV)
-# We need to set GIT_DIR to workaround the nasty poetry bug:
-# https://github.com/python-poetry/poetry/issues/5547.  Technically, we should
-# set this on per-project basis, but we would need to check every newly
-# integrated project to see if it is build by poetry backend or not.  We would
-# also need to do similar check on every version bump, because any project
-# could switch to poetry anytime.  Since this would be a lot of work we simply
-# opted to set GIT_DIR for every python project.
-COMPONENT_BUILD_ENV += GIT_DIR=$(BUILD_DIR)
 COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
