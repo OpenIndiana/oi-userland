@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_core
-HUMAN_VERSION =			1.6.1
+HUMAN_VERSION =			1.7.0
 COMPONENT_SUMMARY =		poetry_core - Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/20/e8/e0a80cc355bc207fb1760160344e978f39d683c35e1230f71b8916bf3a50/poetry_core-1.6.1.tar.gz
+	https://files.pythonhosted.org/packages/cb/1c/af7f886e723b2dfbaea9b8a739153f227b386dd856cf956f9fd0ed0a502b/poetry_core-1.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0f9b0de39665f36d6594657e7d57b6f463cc10f30c28e6d1c3b9ff54c26c9ac3
+	sha256:8f679b83bd9c820082637beca1204124d5d2a786e4818da47ec8acefd0353b74
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,11 +41,5 @@ include $(WS_MAKE_RULES)/common.mk
 # https://github.com/python-poetry/poetry/issues/7824
 # https://github.com/python-poetry/poetry/issues/7826
 
-# We need to set GIT_DIR to workaround the nasty poetry bug:
-# https://github.com/python-poetry/poetry/issues/5547.
-# Without this some tests (like test_includes_with_inline_table) fails.
-COMPONENT_TEST_ENV += GIT_DIR=$(BUILD_DIR)
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += runtime/python
