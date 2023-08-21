@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		click-help-colors
-HUMAN_VERSION =			0.9.1
+HUMAN_VERSION =			0.9.2
 COMPONENT_SUMMARY =		click-help-colors - Colorization of help messages in Click
-COMPONENT_PROJECT_URL =		https://github.com/r-m-n/click-help-colors
+COMPONENT_PROJECT_URL =		https://github.com/click-contrib/click-help-colors
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6c/c1/abc07420cfdc046c1005e16bc8090bc1f226d631b2bd172e5a8f5524c127/click-help-colors-0.9.1.tar.gz
+	https://files.pythonhosted.org/packages/a8/5a/e38178c3fd7bb0a0f143ed5291f7f80d391431f262db5a5e16e7d8f34046/click-help-colors-0.9.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:78cbcf30cfa81c5fc2a52f49220121e1a8190cd19197d9245997605d3405824d
+	sha256:756245e542d29226bb3bc056bfa58886f212ba2b82f4e8cf5fc884176ac96d72
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
