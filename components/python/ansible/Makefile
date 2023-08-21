@@ -19,15 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ansible
-HUMAN_VERSION =			8.1.0
+HUMAN_VERSION =			8.3.0
 COMPONENT_SUMMARY =		ansible - Radically simple IT automation
 COMPONENT_PROJECT_URL =		https://ansible.com/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/87/d7/322dd9d88261e56862ade2f9b9c125d0de648857e755d7177500272d2e05/ansible-8.1.0.tar.gz
+	https://files.pythonhosted.org/packages/3b/e5/ce68986eae98f0ef98120c4e77e3ef6420f4cec1bbdbfb778238d09e40aa/ansible-8.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:91f20b5bfcf5f298533c174a93881e00bc9e6b41411464f44c054a38d716a56a
+	sha256:5e58001d7d6dc33e5d156ca343883b613ec988f69364b0a43f7124fe4b5be2f2
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING
+
+COMPONENT_FMRI =		system/management/ansible
+COMPONENT_CLASSIFICATION =	System/Administration and Configuration
 
 # This project is a collection of other projects (see tags.yaml), each with its
 # own test requirements.  We do not support testing of that (yet).
@@ -38,17 +41,6 @@ TEST_STYLE = none
 SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Remove python shebang from installed files.  We usually do this by a patch,
-# but this project have many files so it is far easier to use a script to avoid
-# maintenance nightmage on upgrades.  We need to recompile modified files to
-# make sure pyc files are not outdated.
-COMPONENT_POST_INSTALL_ACTION += \
-	for d in $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ; do \
-		[ -d $$d ] || continue ; \
-		$(FIND) $$d -type f -name '*.py' -print0 ; \
-	done | /usr/bin/xargs -0 $(GSED) -i -e '1{/^\#!.*python/d}' ; \
-	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/ansible-core
