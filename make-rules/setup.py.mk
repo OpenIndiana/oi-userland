@@ -418,14 +418,17 @@ PYTEST_ADDOPTS += --color=no
 # installed (it is neither in REQUIRED_PACKAGES nor in TEST_REQUIRED_PACKAGES)
 # we simply disable the plugin to get consistent test results.
 #
-PYTEST_ADDOPTS += $(if $(filter library/python/pytest-black-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:black)
-PYTEST_ADDOPTS += $(if $(filter library/python/pytest-checkdocs-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:checkdocs)
-PYTEST_ADDOPTS += $(if $(filter library/python/pytest-cov-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:cov)
-PYTEST_ADDOPTS += $(if $(filter library/python/flaky-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:flaky)
-PYTEST_ADDOPTS += $(if $(filter library/python/pytest-mypy-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:mypy)
-PYTEST_ADDOPTS += $(if $(filter library/python/pytest-randomly-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:randomly)
-PYTEST_ADDOPTS += $(if $(filter library/python/pytest-relaxed-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:relaxed)
-PYTEST_ADDOPTS += $(if $(filter library/python/pytest-reporter-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,-p no:reporter)
+define disable-pytest-plugin
+PYTEST_ADDOPTS += $$(if $$(filter library/python/$(2)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES)),,-p no:$(1))
+endef
+$(eval $(call disable-pytest-plugin,black,pytest-black))
+$(eval $(call disable-pytest-plugin,checkdocs,pytest-checkdocs))
+$(eval $(call disable-pytest-plugin,cov,pytest-cov))
+$(eval $(call disable-pytest-plugin,flaky,flaky))
+$(eval $(call disable-pytest-plugin,mypy,pytest-mypy))
+$(eval $(call disable-pytest-plugin,randomly,pytest-randomly))
+$(eval $(call disable-pytest-plugin,relaxed,pytest-relaxed))		# https://github.com/bitprophet/pytest-relaxed/issues/28
+$(eval $(call disable-pytest-plugin,reporter,pytest-reporter))		# https://github.com/christiansandberg/pytest-reporter/issues/8
 
 # By default we are not interested in full list of test failures so exit on
 # first failure to save time.  This could be easily overridden from environment
