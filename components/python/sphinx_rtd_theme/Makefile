@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinx_rtd_theme
-HUMAN_VERSION =			1.2.2
+HUMAN_VERSION =			1.3.0
 COMPONENT_SUMMARY =		sphinx_rtd_theme - Read the Docs theme for Sphinx
 COMPONENT_PROJECT_URL =		https://github.com/readthedocs/sphinx_rtd_theme
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/66/86/7b2c3d15f44cb3ea2e1c54481494121d755081aa57a8076de3fa2be4d587/sphinx_rtd_theme-1.2.2.tar.gz
+	https://files.pythonhosted.org/packages/db/3e/477c5b3ed78b6818d673f63512db12ace8c89e83eb9eecc913f9e2cc8416/sphinx_rtd_theme-1.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:01c5c5a72e2d025bd23d1f06c59a4831b06e6ce6c01fdd5ebfe9986c0a880fc7
+	sha256:590b030c7abb9cf038ec053b95e5380b5c70d61591eb0b552063fbe7c41f0931
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
