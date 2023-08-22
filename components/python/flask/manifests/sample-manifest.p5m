@@ -1,0 +1,65 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/flask-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/flask-$(HUMAN_VERSION).dist-info/LICENSE.rst
+file path=usr/lib/python$(PYVER)/vendor-packages/flask-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/flask-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/flask-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/app.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/blueprints.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/ctx.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/debughelpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/globals.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/helpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/json/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/json/provider.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/json/tag.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/logging.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/scaffold.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/sessions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/signals.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/templating.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/testing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/typing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/flask/wrappers.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/blinker-$(PYV)
+depend type=require fmri=pkg:/library/python/click-$(PYV)
+depend type=require fmri=pkg:/library/python/importlib-metadata-$(PYV)
+depend type=require fmri=pkg:/library/python/itsdangerous-$(PYV)
+depend type=require fmri=pkg:/library/python/jinja2-$(PYV)
+depend type=require fmri=pkg:/library/python/werkzeug-$(PYV)
