@@ -15,25 +15,21 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		validate-pyproject
-HUMAN_VERSION =			0.13
+HUMAN_VERSION =			0.14
 COMPONENT_SUMMARY =		validate-pyproject - Validation library and CLI tool for checking on 'pyproject.toml' files using JSON Schema
 COMPONENT_PROJECT_URL =		https://github.com/abravalheri/validate-pyproject/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b7/be/8ebb13b4c8f369096e0fe95fa5729467efa5c3fb3a14f1a215faf2ea9573/validate-pyproject-0.13.tar.gz
+	https://files.pythonhosted.org/packages/fc/cd/50d79420ea539b53ffe328795e81482901cad31f85ea0c02472cbd42703f/validate-pyproject-0.14.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9fc9153ea587592a37ed5313628221bd276886497cb8ec35a2e02c28ddd39911
+	sha256:3457578f5b8589f11ff0d1fbafba273ed6b8d2ec9d1c62a7716bd7ac3f65a076
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Testing fails with the checkdocs plugin installed
-PYTEST_ADDOPTS += -p no:checkdocs
 
 # There are two sets of test results (pytest is run twice by tox) so we need to
 # sort the 2nd one too (the first one is sorted in setup.py.mk).
@@ -48,7 +44,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/fastjsonschema
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
