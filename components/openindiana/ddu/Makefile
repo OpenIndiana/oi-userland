@@ -25,6 +25,7 @@ COMPONENT_FMRI= diagnostic/ddu
 COMPONENT_CLASSIFICATION= System/Hardware
 COMPONENT_LICENSE= CDDL,BSD3
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_PROJECT_URL=	$(GIT_REPO)
 
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
@@ -89,9 +90,9 @@ REQUIRED_PACKAGES += text/locale
 PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
 PYTHON_REQUIRED_PACKAGES += library/python/simplejson
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += gnome/help-viewer/yelp
 REQUIRED_PACKAGES += service/hal
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
