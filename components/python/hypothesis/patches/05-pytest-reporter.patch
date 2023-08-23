@@ -1,0 +1,23 @@
+https://github.com/christiansandberg/pytest-reporter/issues/8
+
+--- hypothesis-hypothesis-python-6.82.6/hypothesis-python/tests/nocover/test_baseexception.py.orig
++++ hypothesis-hypothesis-python-6.82.6/hypothesis-python/tests/nocover/test_baseexception.py
+@@ -125,6 +125,6 @@
+         exception=exc_name, strategy="things()" if use_composite else "st.none()"
+     )
+     test_file = str(testdir.makepyfile(code))
+-    pytest_stdout = str(testdir.runpytest_inprocess(test_file, "--tb=native", "-p", "no:relaxed").stdout)
++    pytest_stdout = str(testdir.runpytest_inprocess(test_file, "--tb=native", "-p", "no:relaxed", "-p", "no:reporter").stdout)
+     assert "x=101" in pytest_stdout
+     assert exc_name in pytest_stdout
+--- hypothesis-hypothesis-python-6.82.6/hypothesis-python/tests/nocover/test_scrutineer.py.orig
++++ hypothesis-hypothesis-python-6.82.6/hypothesis-python/tests/nocover/test_scrutineer.py
+@@ -54,7 +54,7 @@
+     test_file = str(testdir.makepyfile(file_contents))
+     pytest_stdout = str(
+         testdir.runpytest_inprocess(
+-            test_file, "--tb=native", "-p", "no:black", "-p", "no:cov", "-p", "no:mypy", "-p", "no:relaxed"
++            test_file, "--tb=native", "-p", "no:black", "-p", "no:cov", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter"
+         ).stdout
+     )
+ 

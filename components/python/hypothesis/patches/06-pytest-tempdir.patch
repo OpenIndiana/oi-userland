@@ -1,0 +1,27 @@
+pytest.PytestDeprecationWarning: The hookimpl pytest_tempdir_temproot uses old-style configuration options (marks or attributes).
+Please use the pytest.hookimpl(trylast=True) decorator instead
+ to configure the hooks.
+ See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+ at /usr/lib/python3.9/vendor-packages/pytest_tempdir/plugin.py:150
+
+--- hypothesis-hypothesis-python-6.82.6/hypothesis-python/tests/nocover/test_baseexception.py.orig
++++ hypothesis-hypothesis-python-6.82.6/hypothesis-python/tests/nocover/test_baseexception.py
+@@ -125,6 +125,6 @@
+         exception=exc_name, strategy="things()" if use_composite else "st.none()"
+     )
+     test_file = str(testdir.makepyfile(code))
+-    pytest_stdout = str(testdir.runpytest_inprocess(test_file, "--tb=native", "-p", "no:relaxed", "-p", "no:reporter").stdout)
++    pytest_stdout = str(testdir.runpytest_inprocess(test_file, "--tb=native", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir").stdout)
+     assert "x=101" in pytest_stdout
+     assert exc_name in pytest_stdout
+--- hypothesis-hypothesis-python-6.82.6/hypothesis-python/tests/nocover/test_scrutineer.py.orig
++++ hypothesis-hypothesis-python-6.82.6/hypothesis-python/tests/nocover/test_scrutineer.py
+@@ -54,7 +54,7 @@
+     test_file = str(testdir.makepyfile(file_contents))
+     pytest_stdout = str(
+         testdir.runpytest_inprocess(
+-            test_file, "--tb=native", "-p", "no:black", "-p", "no:cov", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter"
++            test_file, "--tb=native", "-p", "no:black", "-p", "no:cov", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"
+         ).stdout
+     )
+ 
