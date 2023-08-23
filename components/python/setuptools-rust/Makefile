@@ -19,13 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools-rust
-HUMAN_VERSION =			1.6.0
+HUMAN_VERSION =			1.7.0
 COMPONENT_SUMMARY =		setuptools-rust - Setuptools Rust extension plugin
-COMPONENT_PROJECT_URL =		https://github.com/PyO3/setuptools-rust
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0e/c9/6f9de9f7a8404416d5d22484ccdeb138f469cc1e11bbd62a2bd26d5c1385/setuptools-rust-1.6.0.tar.gz
+	https://files.pythonhosted.org/packages/90/f1/70b31cacce03bf21fa645d359d6303fb5590c1a02c41c7e2df1c480826b4/setuptools-rust-1.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c86e734deac330597998bfbc08da45187e6b27837e23bd91eadb320732392262
+	sha256:c7100999948235a38ae7e555fe199aa66c253dc384b125f5d85473bf81eae3a3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -43,6 +42,8 @@ COMPONENT_TEST_TARGETS += tests
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/semantic-version
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
