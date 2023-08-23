@@ -8,9 +8,8 @@ hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.h
 rootdir: $(@D)
 configfile: pyproject.toml
 asyncio: mode=strict
-collecting ... collected 96 items / 1 skipped
+collecting ... collected 90 items / 1 skipped
 
-::project PASSED
 tests/cli/test_convert.py::test_convert_egg PASSED
 tests/cli/test_convert.py::test_egg_re PASSED
 tests/cli/test_pack.py::test_pack[erasebuildnum] PASSED
@@ -35,8 +34,10 @@ tests/test_bdist_wheel.py::test_build_number PASSED
 tests/test_bdist_wheel.py::test_compression[deflated] PASSED
 tests/test_bdist_wheel.py::test_compression[stored] PASSED
 tests/test_bdist_wheel.py::test_data_dir_with_tag_build PASSED
-tests/test_bdist_wheel.py::test_get_abi_tag_new PASSED
-tests/test_bdist_wheel.py::test_get_abi_tag_old PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_fallback PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_graalpy PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_pypy_new PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_pypy_old PASSED
 tests/test_bdist_wheel.py::test_licenses_default PASSED
 tests/test_bdist_wheel.py::test_licenses_deprecated PASSED
 tests/test_bdist_wheel.py::test_licenses_disabled PASSED
@@ -45,6 +46,8 @@ tests/test_bdist_wheel.py::test_licenses_override[setup.cfg-[metadata]\nlicense_
 tests/test_bdist_wheel.py::test_licenses_override[setup.py-from setuptools import setup\n\nsetup(\n    name='dummy_dist',\n    version='1.0',\n  license_files=['licenses/DUMMYFILE', 'LICENSE'])\n] PASSED
 tests/test_bdist_wheel.py::test_limited_abi PASSED
 tests/test_bdist_wheel.py::test_no_scripts PASSED
+tests/test_bdist_wheel.py::test_platform_linux32[linux-aarch64-linux_armv7l] PASSED
+tests/test_bdist_wheel.py::test_platform_linux32[linux-x86_64-linux_i686] PASSED
 tests/test_bdist_wheel.py::test_platform_with_space PASSED
 tests/test_bdist_wheel.py::test_preserve_unicode_metadata PASSED
 tests/test_bdist_wheel.py::test_rmtree_readonly PASSED
@@ -60,7 +63,8 @@ tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_information_about_prob
 tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_simple PASSED
 tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_version_bump PASSED
 tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_warning_on_to_low_env_variable PASSED
-tests/test_macosx_libfile.py::test_get_platform_linux PASSED
+tests/test_macosx_libfile.py::test_get_platform_linux32[linux-aarch64-linux_armv7l] PASSED
+tests/test_macosx_libfile.py::test_get_platform_linux32[linux-x86_64-linux_i686] PASSED
 tests/test_macosx_libfile.py::test_read_from_dylib PASSED
 tests/test_metadata.py::test_pkginfo_to_metadata PASSED
 tests/test_tagopt.py::test_build_number PASSED
@@ -97,8 +101,7 @@ tests/test_wheelfile.py::test_wheelfile_re[foo-2-py2.py3-none-manylinux_2_17_x86
 tests/test_wheelfile.py::test_wheelfile_re[foo-2-py3-none-any.whl] PASSED
 tests/test_wheelfile.py::test_write_str PASSED
 
-
 =========================== short test summary info ============================
-======== 85 passed, 2 skipped ========
+======== 89 passed, 2 skipped ========
   py$(PYV): OK
   congratulations :)
