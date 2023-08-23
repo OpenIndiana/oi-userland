@@ -1,0 +1,51 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -W error::ResourceWarning -W error::DeprecationWarning -W error::PendingDeprecationWarning -W 'ignore:pkg_resources is deprecated as an API:DeprecationWarning' -W 'ignore:datetime.utcfromtimestamp() is deprecated:DeprecationWarning' -m coverage run -m pytest -p no:randomly tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pyproject.toml
+collecting ... collected 37 items
+
+tests/test_pytest_randomly.py::test_class_test_methods_reordered PASSED
+tests/test_pytest_randomly.py::test_classes_reordered PASSED
+tests/test_pytest_randomly.py::test_doctests_in_txt_files_reordered PASSED
+tests/test_pytest_randomly.py::test_doctests_reordered PASSED
+tests/test_pytest_randomly.py::test_entrypoint_injection PASSED
+tests/test_pytest_randomly.py::test_entrypoint_missing PASSED
+tests/test_pytest_randomly.py::test_factory_boy PASSED
+tests/test_pytest_randomly.py::test_failing_import SKIPPED (always f...)
+tests/test_pytest_randomly.py::test_faker PASSED
+tests/test_pytest_randomly.py::test_faker_fixture PASSED
+tests/test_pytest_randomly.py::test_files_reordered PASSED
+tests/test_pytest_randomly.py::test_files_reordered_when_seed_not_reset PASSED
+tests/test_pytest_randomly.py::test_fixtures_dont_interfere_with_tests_getting_same_random_state PASSED
+tests/test_pytest_randomly.py::test_fixtures_get_different_random_state_to_tests PASSED
+tests/test_pytest_randomly.py::test_it_reports_a_header_when_not_set PASSED
+tests/test_pytest_randomly.py::test_it_reports_a_header_when_set PASSED
+tests/test_pytest_randomly.py::test_it_resets_the_random_seed_at_the_end_of_test_classes PASSED
+tests/test_pytest_randomly.py::test_it_resets_the_random_seed_at_the_start_of_test_classes PASSED
+tests/test_pytest_randomly.py::test_it_reuses_the_same_random_seed_per_test PASSED
+tests/test_pytest_randomly.py::test_it_runs_before_stepwise PASSED
+tests/test_pytest_randomly.py::test_it_works_with_the_simplest_test_items PASSED
+tests/test_pytest_randomly.py::test_model_bakery SKIPPED (model_bake...)
+tests/test_pytest_randomly.py::test_numpy SKIPPED (numpy is not avai...)
+tests/test_pytest_randomly.py::test_numpy_doesnt_crash_with_large_seed SKIPPED
+tests/test_pytest_randomly.py::test_passing_nonsense_for_randomly_seed PASSED
+tests/test_pytest_randomly.py::test_test_functions_reordered PASSED
+tests/test_pytest_randomly.py::test_test_functions_reordered_when_randomness_in_module PASSED
+tests/test_pytest_randomly.py::test_the_same_random_seed_per_test_can_be_turned_off PASSED
+tests/test_pytest_randomly.py::test_using_last_explicit_seed PASSED
+tests/test_pytest_randomly.py::test_using_last_seed PASSED
+tests/test_pytest_randomly.py::test_without_cacheprovider PASSED
+tests/test_pytest_randomly.py::test_works_without_xdist PASSED
+tests/test_pytest_randomly.py::test_xdist[0] PASSED
+tests/test_pytest_randomly.py::test_xdist[1] PASSED
+tests/test_pytest_randomly.py::test_xdist[2] PASSED
+tests/test_pytest_randomly.py::test_xdist[3] PASSED
+tests/test_pytest_randomly.py::test_xdist[4] PASSED
+
+======== 33 passed, 4 skipped ========
+  py$(PYV): OK
+  congratulations :)
