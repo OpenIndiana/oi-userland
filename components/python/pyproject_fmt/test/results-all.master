@@ -1,6 +1,6 @@
 ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest tests
+py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PYTHON_DIR)/site-packages/pyproject_fmt --cov $(@D)/tests --cov-fail-under=100 --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
 Error processing line 1 of $(PYTHON_DIR)/vendor-packages/coverage_enable_subprocess.pth:
 
   Traceback (most recent call last):
@@ -8,9 +8,9 @@ Error processing line 1 of $(PYTHON_DIR)/vendor-packages/coverage_enable_subproc
       exec(line)
     File "<string>", line 1, in <module>
     File "<string>", line 7, in <module>
-    File "$(PYTHON_DIR)/vendor-packages/coverage/control.py", line 1368, in process_startup
+    File "$(PYTHON_DIR)/vendor-packages/coverage/control.py", line 1391, in process_startup
       cov = Coverage(config_file=cps)
-    File "$(PYTHON_DIR)/vendor-packages/coverage/control.py", line 276, in __init__
+    File "$(PYTHON_DIR)/vendor-packages/coverage/control.py", line 283, in __init__
       self.config = read_coverage_config(
     File "$(PYTHON_DIR)/vendor-packages/coverage/config.py", line 601, in read_coverage_config
       raise ConfigError(f"Couldn't read {fname!r} as a config file")
@@ -24,17 +24,14 @@ hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.h
 rootdir: $(@D)
 configfile: pyproject.toml
 asyncio: mode=strict
-collecting ... collected 80 items
+collecting ... collected 71 items
 
-tests/__init__.py::mypy PASSED
-tests/__init__.py::mypy-status PASSED
-tests/formatter/conftest.py::mypy PASSED
-tests/formatter/test_build_system.py::mypy PASSED
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
+$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/pyproject_fmt was never imported. (module-not-imported)
 tests/formatter/test_build_system.py::test_backend_path PASSED
 tests/formatter/test_build_system.py::test_build_backend_order PASSED
 tests/formatter/test_build_system.py::test_build_system_missing PASSED
 tests/formatter/test_build_system.py::test_requires PASSED
-tests/formatter/test_pep508.py::mypy PASSED
 tests/formatter/test_pep508.py::test_bad_syntax_requires[ ] PASSED
 tests/formatter/test_pep508.py::test_bad_syntax_requires[!] PASSED
 tests/formatter/test_pep508.py::test_bad_syntax_requires[<] PASSED
@@ -53,14 +50,14 @@ tests/formatter/test_pep508.py::test_requires_fmt[packaging>=20.0;python_version
 tests/formatter/test_pep508.py::test_requires_fmt[pytest==6.0.0-result9] PASSED
 tests/formatter/test_pep508.py::test_requires_fmt[pytest>=6.0.0-result8] PASSED
 tests/formatter/test_pep508.py::test_requires_fmt[pytest~=6.0.0-result10] PASSED
-tests/formatter/test_project.py::mypy PASSED
 tests/formatter/test_project.py::test_classifier_eq PASSED
 tests/formatter/test_project.py::test_classifier_gt PASSED
 tests/formatter/test_project.py::test_classifier_gt_tox PASSED
 tests/formatter/test_project.py::test_classifier_gt_tox_conf_missing PASSED
 tests/formatter/test_project.py::test_classifier_gt_tox_no_py_ver PASSED
-tests/formatter/test_project.py::test_classifier_keep_impl PASSED
 tests/formatter/test_project.py::test_classifier_lt PASSED
+tests/formatter/test_project.py::test_classifier_tox_exe_bad PASSED
+tests/formatter/test_project.py::test_classifier_tox_fails_call PASSED
 tests/formatter/test_project.py::test_entry_points PASSED
 tests/formatter/test_project.py::test_project_classifiers PASSED
 tests/formatter/test_project.py::test_project_dependencies PASSED
@@ -72,11 +69,9 @@ tests/formatter/test_project.py::test_project_name[[project]\nname='a-b'] PASSED
 tests/formatter/test_project.py::test_project_name[[project]\nname='a.-..-__B'] PASSED
 tests/formatter/test_project.py::test_project_optional_dependencies PASSED
 tests/formatter/test_project.py::test_project_scripts PASSED
-tests/formatter/test_tools.py::mypy PASSED
 tests/formatter/test_tools.py::test_sub_table_newline PASSED
 tests/formatter/test_tools.py::test_sub_table_no_op PASSED
 tests/formatter/test_tools.py::test_tools_ordering PASSED
-tests/test_cli.py::mypy PASSED
 tests/test_cli.py::test_cli_inputs_ok PASSED
 tests/test_cli.py::test_cli_pyproject_toml_not_exists PASSED
 tests/test_cli.py::test_cli_pyproject_toml_not_file PASSED
@@ -85,7 +80,6 @@ tests/test_cli.py::test_cli_pyproject_toml_permission_fail[128-read] PASSED
 tests/test_cli.py::test_cli_pyproject_toml_permission_fail[256-write] PASSED
 tests/test_cli.py::test_pyproject_toml_dir PASSED
 tests/test_cli.py::test_pyproject_toml_resolved PASSED
-tests/test_main.py::mypy PASSED
 tests/test_main.py::test_color_diff PASSED
 tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-False-False] PASSED
 tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-False-True] PASSED
@@ -103,16 +97,16 @@ tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",
 tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False-True] PASSED
 tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-False] PASSED
 tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-True] PASSED
-tests/test_pyproject_toml_fmt.py::mypy PASSED
 tests/test_pyproject_toml_fmt.py::test_help_invocation_as_module PASSED
-tests/test_pyproject_toml_fmt.py::test_help_invocation_as_script SKIPPED
+tests/test_pyproject_toml_fmt.py::test_help_invocation_as_script PASSED
 
-8 files skipped due to complete coverage.
+- generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-Required test coverage of 88.0% reached. Total coverage: 99.63%
-===================================== mypy =====================================
+9 files skipped due to complete coverage.
+Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
+Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Success: no issues found in 9 source files
-======== 79 passed, 1 skipped ========
+Required test coverage of 100% reached. Total coverage: 100.00%
+======== 71 passed ========
   py$(PYV): OK
   congratulations :)
