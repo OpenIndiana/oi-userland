@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
 COMPONENT_VERSION=	4.9.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU Screen terminal multiplexer
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/screen/
 COMPONENT_FMRI=		terminal/screen
@@ -64,6 +65,5 @@ $(INSTALL_64):	$(PROTOTERMINFODIR)
 REQUIRED_PACKAGES += text/texinfo
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libutempter
