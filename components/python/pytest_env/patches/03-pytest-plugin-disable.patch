@@ -1,9 +1,9 @@
---- pytest_env-1.0.0/tests/test_env.py.orig
-+++ pytest_env-1.0.0/tests/test_env.py
-@@ -106,6 +106,6 @@
+--- pytest_env-1.0.1/tests/test_env.py.orig
++++ pytest_env-1.0.1/tests/test_env.py
+@@ -113,6 +113,6 @@
  
      # monkeypatch persists env variables across parametrized tests, therefore using mock.patch.dict
-     with mock.patch.dict(os.environ, {**env, "_TEST_ENV": repr(expected_env)}, clear=True):
+     with mock.patch.dict(os.environ, new_env, clear=True):
 -        result = testdir.runpytest()
 +        result = testdir.runpytest("-p", "no:black", "-p", "no:mypy")
  
