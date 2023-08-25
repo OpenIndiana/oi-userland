@@ -173,9 +173,12 @@ set name=variant.arch value=$(MACH)
 # Avoid mangling compressed man pages
 <transform file path=usr.*/man/.+\.(Z|bzip2|gz|xz)$ -> default mangler.bypass true>
 
+# Create default package-level attributes
 <transform set name=pkg.fmri -> emit set name=userland.info.git-remote \
              value=$(USERLAND_GIT_REMOTE)>
 <transform set name=pkg.fmri -> emit set name=userland.info.git-branch \
              value=$(USERLAND_GIT_BRANCH)>
 <transform set name=pkg.fmri -> emit set name=userland.info.git-rev \
              value=$(USERLAND_GIT_REV)>
+<transform set name=pkg.fmri -> emit set name=userland.info.component \
+    value=$(COMPONENT)>
