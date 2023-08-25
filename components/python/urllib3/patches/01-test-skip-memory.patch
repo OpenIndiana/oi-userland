@@ -1,0 +1,10 @@
+--- urllib3-2.0.4/test/with_dummyserver/test_socketlevel.py.orig
++++ urllib3-2.0.4/test/with_dummyserver/test_socketlevel.py
+@@ -1610,6 +1610,7 @@
+     @pytest.mark.parametrize(
+         "preload_content,read_amt", [(True, None), (False, None), (False, 2**31)]
+     )
++    @pytest.mark.skip(reason="needs a lot of memory")
+     def test_requesting_large_resources_via_ssl(
+         self, preload_content: bool, read_amt: int | None
+     ) -> None:
