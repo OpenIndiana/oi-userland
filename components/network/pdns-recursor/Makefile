@@ -14,31 +14,29 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-USE_OPENSSL11=yes
+OPENSSL_VERSION= 1.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
-COMPONENT_VERSION=	4.9.0
-COMPONENT_PROJECT_URL=	https://www.powerdns.com/downloads.html
-COMPONENT_FMRI=		service/network/dns/powerdns-recursor
+COMPONENT_VERSION=	4.9.1
+COMPONENT_SUMMARY=	Non-authoritative/recursing DNS server
+COMPONENT_PROJECT_URL=	https://www.powerdns.com/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:d36f162843e367646a661a785ca0becde9b68552855bf40532aebafa103966f3
+COMPONENT_ARCHIVE_HASH= sha256:0a1edc13e8f2bd661f39e316387d941e22de6a03b8a7a2fc662fdf8b942ea2be
 COMPONENT_ARCHIVE_URL=	https://downloads.powerdns.com/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2
+COMPONENT_FMRI=		service/network/dns/powerdns-recursor
+COMPONENT_CLASSIFICATION=	System/Services
+COMPONENT_LICENSE=		GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_SUMMARY=	a DNS server
-COMPONENT_CLASSIFICATION=System/Services
 
 include $(WS_MAKE_RULES)/common.mk
 
-CXXFLAGS+=-g -pthread
+CXXFLAGS += -g -pthread
 
-COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi )
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
