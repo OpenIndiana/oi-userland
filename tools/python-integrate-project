@@ -417,6 +417,34 @@ grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\
 ! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
 
 
+# Handle history
+COMPONENT_FMRI=$($GMAKE print-value-COMPONENT_FMRI)
+PYTHON_VERSIONS_OBSOLETING=$($GMAKE print-value-PYTHON_VERSIONS_OBSOLETING)
+OV=
+OV_PLURAL=
+for o in $(echo $OBSOLETE $PYTHON_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
+	PYV=${o//.}
+	FMRI=$(pkg list -nvH "$COMPONENT_FMRI-$PYV" 2>/dev/null | egrep -v '(o|r)$' | sed -e 's|^.*\('"$COMPONENT_FMRI"'\)|\1|g' -e 's/:[^:]*$//g' -e 's/\(-[^-]*\)$/,5.11\1/g')
+	[[ -n "$FMRI" ]] || continue
+	FMRI_H=${FMRI%.*}
+	FMRI_T=${FMRI##*.}
+	if [[ "$FMRI_H" == "$FMRI" ]] ; then
+		printf "WARNING: Wrong fmri format: %s\n" "$FMRI" >&2
+		continue
+	fi
+	FMRI_T=$((FMRI_T + 1))
+	printf "%s.%s noincorporate\n" "$FMRI_H" "$FMRI_T" >> history
+
+	[[ -n "$OV" ]] && OV="$OV and " && OV_PLURAL="s"
+	OV="$OV$o"
+done
+if [[ -f history ]] ; then
+	LC_ALL=C sort -u history > history.new
+	mv history.new history
+	git add history
+fi
+
+
 # Cleanup before we try to publish to make sure there are no leftovers from
 # previous steps
 $GMAKE clobber > /dev/null 2>&1
@@ -490,34 +518,6 @@ done
 if [[ "$common_results" == "yes" ]] ; then
 	sed -i -e '/^USE_COMMON_TEST_MASTER/d' Makefile
 	git add Makefile
-fi
-
-
-# Handle history
-COMPONENT_FMRI=$($GMAKE print-value-COMPONENT_FMRI)
-PYTHON_VERSIONS_OBSOLETING=$($GMAKE print-value-PYTHON_VERSIONS_OBSOLETING)
-OV=
-OV_PLURAL=
-for o in $(echo $OBSOLETE $PYTHON_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
-	PYV=${o//.}
-	FMRI=$(pkg list -nvH "$COMPONENT_FMRI-$PYV" 2>/dev/null | egrep -v '(o|r)$' | sed -e 's|^.*\('"$COMPONENT_FMRI"'\)|\1|g' -e 's/:[^:]*$//g' -e 's/\(-[^-]*\)$/,5.11\1/g')
-	[[ -n "$FMRI" ]] || continue
-	FMRI_H=${FMRI%.*}
-	FMRI_T=${FMRI##*.}
-	if [[ "$FMRI_H" == "$FMRI" ]] ; then
-		printf "WARNING: Wrong fmri format: %s\n" "$FMRI" >&2
-		continue
-	fi
-	FMRI_T=$((FMRI_T + 1))
-	printf "%s.%s noincorporate\n" "$FMRI_H" "$FMRI_T" >> history
-
-	[[ -n "$OV" ]] && OV="$OV and " && OV_PLURAL="s"
-	OV="$OV$o"
-done
-if [[ -f history ]] ; then
-	LC_ALL=C sort -u history > history.new
-	mv history.new history
-	git add history
 fi
 
 
