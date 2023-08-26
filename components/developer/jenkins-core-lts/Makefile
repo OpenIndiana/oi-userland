@@ -28,9 +28,9 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=				jenkins
 JENKINS_RELEASE=			lts
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	401
-COMPONENT_PATCH_VERSION=	3
-COMPONENT_ARCHIVE_HASH=		sha256:a798a0c5481a8ffb0320d9121f6cf49dc575c369028daae17a4dd398b69e000d
+COMPONENT_MINOR_VERSION=	414
+COMPONENT_PATCH_VERSION=	1
+COMPONENT_ARCHIVE_HASH=		sha256:f2523f9b5fe50199f68f60f96b6bef9ca100e18099e3e3da7a9a49ae8c47b015
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
@@ -46,7 +46,6 @@ COMPONENT_ARCHIVE_URL=		https://get.jenkins.io/war-stable/$(COMPONENT_VERSION)/j
 COMPONENT_LICENSE=			MIT
 COMPONENT_LICENSE_FILE= 	jenkins.license
 COMPONENT_SUMMARY=			Jenkins is a Java-based CI automation server
-COMPONENT_REVISION=			1
 
 # Note: for the core, we only download a WAR - no unpacking, no building...
 include $(WS_MAKE_RULES)/prep-download.mk
