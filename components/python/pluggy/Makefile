@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pluggy
-HUMAN_VERSION =			1.2.0
+HUMAN_VERSION =			1.3.0
 COMPONENT_SUMMARY =		pluggy - plugin and hook calling mechanisms for python
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pluggy
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8a/42/8f2833655a29c4e9cb52ee8a2be04ceac61bcff4a680fb338cbd3d1e322d/pluggy-1.2.0.tar.gz
+	https://files.pythonhosted.org/packages/36/51/04defc761583568cae5fd533abda3d40164cbdcf22dee5b7126ffef68a40/pluggy-1.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d12f0c4b579b15f5e054301bb226ee85eeeba08ffec228092f8defbaa3a4c4b3
+	sha256:cf61ae8f126ac6f7c451172cf30e3e43d3ca77615509771b3a984a0730651e12
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,7 +42,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_ENV += _PLUGGY_TOX_CMD="python -m pytest"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
