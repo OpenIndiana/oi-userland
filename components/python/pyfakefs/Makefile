@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyfakefs
 HUMAN_VERSION =			5.2.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pyfakefs - pyfakefs implements a fake file system that mocks the Python file system modules.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pyfakefs
 COMPONENT_ARCHIVE_URL =		\
