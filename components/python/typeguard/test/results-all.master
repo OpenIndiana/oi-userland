@@ -1,17 +1,15 @@
 ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest
+py$(PYV): commands[0]> coverage run -p -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-asyncio: mode=strict
-collecting ... collected 424 items
+collecting ... collected 426 items
 
-tests/mypy/test_type_annotations.py::test_negative PASSED
+tests/mypy/test_type_annotations.py::test_negative PASSED                [100%]Clearing the cache
 tests/mypy/test_type_annotations.py::test_positive PASSED
 tests/test_checkers.py::TestAbstractSet::test_bad_type PASSED
 tests/test_checkers.py::TestAbstractSet::test_custom_type PASSED
@@ -343,6 +341,7 @@ tests/test_transformer.py::test_avoid_local_names PASSED
 tests/test_transformer.py::test_avoid_nonlocal_names PASSED
 tests/test_transformer.py::test_classmethod PASSED
 tests/test_transformer.py::test_dont_leave_empty_ast_container_nodes PASSED
+tests/test_transformer.py::test_dont_leave_empty_ast_container_nodes_2 PASSED
 tests/test_transformer.py::test_dont_parse_annotated_2nd_arg PASSED
 tests/test_transformer.py::test_function_local_class_method PASSED
 tests/test_transformer.py::test_keyword_only_argument PASSED
@@ -359,6 +358,7 @@ tests/test_transformer.py::test_no_type_check_decorator[import typing-@typing.no
 tests/test_transformer.py::test_pass_only PASSED
 tests/test_transformer.py::test_positional_only_argument PASSED
 tests/test_transformer.py::test_respect_docstring PASSED
+tests/test_transformer.py::test_respect_future_import PASSED
 tests/test_transformer.py::test_return_only PASSED
 tests/test_transformer.py::test_staticmethod PASSED
 tests/test_transformer.py::test_variable_keyword_argument PASSED
@@ -436,7 +436,8 @@ tests/test_utils.py::test_qualified_name[instance] PASSED
 tests/test_warn_on_error.py::test_check_type PASSED
 tests/test_warn_on_error.py::test_typechecked PASSED
 
+
 =========================== short test summary info ============================
-======== 416 passed, 2 skipped, 6 xfailed ========
+======== 418 passed, 2 skipped, 6 xfailed ========
   py$(PYV): OK
   congratulations :)
