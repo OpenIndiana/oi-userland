@@ -15,17 +15,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccl
-COMPONENT_VERSION=	1.12
+COMPONENT_VERSION=	1.12.2
 COMPONENT_SUMMARY=	ccl - Clozure Common Lisp
 COMPONENT_PROJECT_URL=	https://ccl.clozure.com/
 COMPONENT_SRC=		ccl
 COMPONENT_ARCHIVE=	ccl-$(COMPONENT_VERSION)-solarisx86.tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:080fdcd415ee868986c95405690d43cce87c415b73931f4baa6889a53150ce98
+COMPONENT_ARCHIVE_HASH=	sha256:f058137c92349ccce86a2725c68f4129ed660d07d834b0794de441339366dc8d
 COMPONENT_ARCHIVE_URL=  https://github.com/Clozure/ccl/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	runtime/ccl
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=	Apache-2.0
+COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -73,6 +73,6 @@ install: $(MY_INSTALL)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
