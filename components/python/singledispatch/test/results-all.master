@@ -1,24 +1,18 @@
-py$(PYV): remove tox env folder .tox/py$(PYV)
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 35 items
+rootdir: $(@D)
+configfile: pytest.ini
+collecting ... collected 29 items
 
 ::project PASSED
-docs/conf.py::BLACK PASSED
-docs/conf.py::flake-8::FLAKE8 PASSED
+docs/conf.py::black PASSED
 docs/conf.py::mypy PASSED
-singledispatch/__init__.py::BLACK PASSED
-singledispatch/__init__.py::flake-8::FLAKE8 PASSED
+singledispatch/__init__.py::black PASSED
 singledispatch/__init__.py::mypy PASSED
-singledispatch/helpers.py::BLACK PASSED
-singledispatch/helpers.py::flake-8::FLAKE8 PASSED
-singledispatch/helpers.py::mypy PASSED
-test_singledispatch.py::BLACK PASSED
 test_singledispatch.py::TestSingleDispatch::test_abstractmethod_register PASSED
 test_singledispatch.py::TestSingleDispatch::test_annotations PASSED
 test_singledispatch.py::TestSingleDispatch::test_c3_abc PASSED
@@ -39,13 +33,13 @@ test_singledispatch.py::TestSingleDispatch::test_simple_overloads PASSED
 test_singledispatch.py::TestSingleDispatch::test_staticmethod_register PASSED
 test_singledispatch.py::TestSingleDispatch::test_type_ann_register PASSED
 test_singledispatch.py::TestSingleDispatch::test_wrapping_attributes PASSED
-test_singledispatch.py::flake-8::FLAKE8 PASSED
+test_singledispatch.py::black PASSED
 test_singledispatch.py::mypy PASSED
 test_singledispatch.py::mypy-status PASSED
 
 ===================================== mypy =====================================
 
-Success: no issues found in 4 source files
-======== 34 passed ========
+Success: no issues found in 3 source files
+======== 28 passed ========
   py$(PYV): OK
   congratulations :)
