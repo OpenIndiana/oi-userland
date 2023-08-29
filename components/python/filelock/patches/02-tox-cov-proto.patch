@@ -1,0 +1,13 @@
+We test in proto area not in site-packages.
+
+--- filelock-3.12.3/tox.ini.orig
++++ filelock-3.12.3/tox.ini
+@@ -27,7 +27,7 @@
+     COVERAGE_FILE = {toxworkdir}{/}.coverage.{envname}
+ commands =
+     pytest {tty:--color=yes} {posargs: \
+-      --junitxml {toxworkdir}{/}junit.{envname}.xml --cov {envsitepackagesdir}{/}filelock --cov {toxinidir}{/}tests \
++      --junitxml {toxworkdir}{/}junit.{envname}.xml --cov filelock --cov {toxinidir}{/}tests \
+       --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test \
+       --cov-report html:{envtmpdir}{/}htmlcov --cov-report xml:{toxworkdir}{/}coverage.{envname}.xml \
+       tests
