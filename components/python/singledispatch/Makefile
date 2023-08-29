@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		singledispatch
-HUMAN_VERSION =			4.0.0
+HUMAN_VERSION =			4.1.0
 COMPONENT_SUMMARY =		singledispatch - Backport functools.singledispatch to older Pythons.
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/singledispatch
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/dd/63/3a100956b06f24b200feaadac4b37e57409fb74d6307b3dbb8d8eff033e8/singledispatch-4.0.0.tar.gz
+	https://files.pythonhosted.org/packages/b7/6e/1f1f4067cd963dc0f5c36953dca67a12f67fd65309dbcd14f4a6c5b2b7f0/singledispatch-4.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f3c327a968651a7f4b03586eab7d90a07b05ff3ef7942d1967036eb9f75ab8fc
+	sha256:f3430b886d5b4213d07d715096a75da5e4a8105284c497b9aee6d6d48bfe90cb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,11 +36,9 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
