@@ -1,0 +1,30 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests
+collecting ... collected 15 items
+
+tests/test_config.py::test_base_ini PASSED
+tests/test_config.py::test_base_pyproject PASSED
+tests/test_config.py::test_empty_pyproject PASSED
+tests/test_config.py::test_setup_cfg PASSED
+tests/test_documentation.py::test_documentation PASSED
+tests/test_documentation.py::test_type_to_str PASSED
+tests/test_pytoolconfig.py::test_cli PASSED
+tests/test_pytoolconfig.py::test_fall_through PASSED
+tests/test_pytoolconfig.py::test_global SKIPPED
+tests/test_pytoolconfig.py::test_invalid_key PASSED
+tests/test_pytoolconfig.py::test_nested PASSED
+tests/test_pytoolconfig.py::test_simple PASSED
+tests/test_pytoolconfig.py::test_universal_key PASSED
+tests/test_utils.py::test_find_pyproject PASSED
+tests/test_utils.py::test_parse_deps PASSED
+
+======== 14 passed, 1 skipped ========
+  py$(PYV): OK
+  congratulations :)
