@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.testrunner
-HUMAN_VERSION =			6.0
+HUMAN_VERSION =			6.1
 COMPONENT_SUMMARY =		zope.testrunner - Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b3/2b/3f6879377744e7f790cac882f72dc74781ebc35fce9de5d76004cd0457d9/zope.testrunner-6.0.tar.gz
+	https://files.pythonhosted.org/packages/69/9a/6cb05a12b0551bdbd42477d20ce3894a6a5522df60ec9c6817dd927f2bc7/zope.testrunner-6.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8cb6fba3af95edb0c9f2aed039de855e333824e8ccb4ef94d36929577b3351b5
+	sha256:fbfdcaf49e099208cdd819a490c0e14187377a4be09a29af9e91d6e18dddb0ba
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -45,6 +44,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
 COMPONENT_TEST_TARGETS += -- -vv
+
+# Random pid
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(subprocess \)[0-9]\{1,\}\( is still running\)/\1\$$(PID)\2/'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
