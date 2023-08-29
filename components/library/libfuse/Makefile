@@ -23,8 +23,7 @@ COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_SUMMARY=	FUSE stands for 'File system in User Space'. It provides a simple interface to allow implementation of a fully functional file system in user-space.
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:55ff0e54fdaaa51267cef3cd031991862aca48c00efba735b3ac169f051357b0
+COMPONENT_ARCHIVE_HASH=	sha256:55ff0e54fdaaa51267cef3cd031991862aca48c00efba735b3ac169f051357b0
 COMPONENT_PROJECT_URL=	https://github.com/libfuse/libfuse
 COMPONENT_ARCHIVE_URL=  https://github.com/jurikm/illumos-fusefs/raw/master/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =	LGPLv2
@@ -58,3 +57,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Manually added dependencies
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
