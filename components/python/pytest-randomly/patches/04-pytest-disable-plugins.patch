@@ -1,0 +1,334 @@
+https://github.com/bitprophet/pytest-relaxed/issues/28
+https://github.com/christiansandberg/pytest-reporter/issues/8
+
+--- pytest-randomly-3.15.0/tests/test_pytest_randomly.py.orig
++++ pytest-randomly-3.15.0/tests/test_pytest_randomly.py
+@@ -48,12 +48,12 @@
+ 
+ 
+ def test_it_reports_a_header_when_not_set(simpletester):
+-    out = simpletester.runpytest()
++    out = simpletester.runpytest("-p", "no:checkdocs", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     assert len([x for x in out.outlines if x.startswith("Using --randomly-seed=")]) == 1
+ 
+ 
+ def test_it_reports_a_header_when_set(simpletester):
+-    out = simpletester.runpytest("--randomly-seed=10")
++    out = simpletester.runpytest("--randomly-seed=10", "-p", "no:checkdocs", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     lines = [x for x in out.outlines if x.startswith("Using --randomly-seed=")]
+     assert lines == ["Using --randomly-seed=10"]
+ 
+@@ -78,7 +78,7 @@
+                 assert test_b.num == test_a.num
+         """
+     )
+-    out = ourtester.runpytest("--randomly-dont-reorganize")
++    out = ourtester.runpytest("--randomly-dont-reorganize", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=2, failed=0)
+ 
+ 
+@@ -89,7 +89,7 @@
+             pass
+         """
+     )
+-    out = ourtester.runpytest("-p", "no:cacheprovider")
++    out = ourtester.runpytest("-p", "no:cacheprovider", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=1, failed=0)
+ 
+ 
+@@ -100,13 +100,13 @@
+             pass
+         """
+     )
+-    out = ourtester.runpytest()
++    out = ourtester.runpytest("-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=1, failed=0)
+     seed_line = [x for x in out.stdout.lines if x.startswith("Using --randomly-seed=")][
+         0
+     ]
+ 
+-    out = ourtester.runpytest("--randomly-seed=last")
++    out = ourtester.runpytest("--randomly-seed=last", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=1, failed=0)
+     out.stdout.fnmatch_lines([seed_line])
+ 
+@@ -118,11 +118,11 @@
+             pass
+         """
+     )
+-    out = ourtester.runpytest("--randomly-seed=33")
++    out = ourtester.runpytest("--randomly-seed=33", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=1, failed=0)
+     out.stdout.fnmatch_lines(["Using --randomly-seed=33"])
+ 
+-    out = ourtester.runpytest("--randomly-seed=last")
++    out = ourtester.runpytest("--randomly-seed=last", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=1, failed=0)
+     out.stdout.fnmatch_lines(["Using --randomly-seed=33"])
+ 
+@@ -134,7 +134,7 @@
+             pass
+         """
+     )
+-    out = ourtester.runpytest("--randomly-seed=invalidvalue")
++    out = ourtester.runpytest("--randomly-seed=invalidvalue", "-p", "no:checkdocs", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     assert out.ret != 0
+     out.stderr.fnmatch_lines(
+         [
+@@ -177,7 +177,7 @@
+                 assert True
+         """
+     )
+-    out = ourtester.runpytest()
++    out = ourtester.runpytest("-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=2, failed=0)
+ 
+ 
+@@ -212,7 +212,7 @@
+                 assert cls.suc_num == getattr(A, 'suc_num', cls.suc_num)
+         """
+     )
+-    out = ourtester.runpytest()
++    out = ourtester.runpytest("-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=2, failed=0)
+ 
+ 
+@@ -235,7 +235,8 @@
+         """
+     )
+     out = ourtester.runpytest(
+-        "--randomly-dont-reset-seed", "--randomly-dont-reorganize"
++        "--randomly-dont-reset-seed", "--randomly-dont-reorganize", "-p", "no:black",
++        "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"
+     )
+     out.assert_outcomes(passed=2, failed=0)
+ 
+@@ -246,7 +247,8 @@
+             pass
+     """
+     ourtester.makepyfile(test_a=code, test_b=code, test_c=code, test_d=code)
+-    args = ["-v", "--randomly-seed=15"]
++    args = ["-v", "--randomly-seed=15", "-p", "no:asyncio", "-p", "no:benchmark", "-p", "no:black", "-p", "no:checkdocs",
++        "-p", "no:hypothesispytest", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     out = ourtester.runpytest(*args)
+ 
+@@ -265,7 +267,8 @@
+             pass
+     """
+     ourtester.makepyfile(test_a=code, test_b=code, test_c=code, test_d=code)
+-    args = ["-v", "--randomly-seed=15"]
++    args = ["-v", "--randomly-seed=15", "-p", "no:asyncio", "-p", "no:benchmark", "-p", "no:black", "-p", "no:checkdocs",
++        "-p", "no:hypothesispytest", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     args.append("--randomly-dont-reset-seed")
+     out = ourtester.runpytest(*args)
+@@ -305,7 +308,8 @@
+                 pass
+         """
+     )
+-    args = ["-v", "--randomly-seed=15"]
++    args = ["-v", "--randomly-seed=15", "-p", "no:asyncio", "-p", "no:benchmark", "-p", "no:black", "-p", "no:checkdocs",
++        "-p", "no:hypothesispytest", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     out = ourtester.runpytest(*args)
+ 
+@@ -337,7 +341,8 @@
+                 pass
+         """
+     )
+-    args = ["-v", "--randomly-seed=15"]
++    args = ["-v", "--randomly-seed=15", "-p", "no:asyncio", "-p", "no:benchmark", "-p", "no:black", "-p", "no:checkdocs",
++        "-p", "no:hypothesispytest", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     out = ourtester.runpytest(*args)
+ 
+@@ -366,7 +371,8 @@
+             pass
+         """
+     )
+-    args = ["-v", "--randomly-seed=15"]
++    args = ["-v", "--randomly-seed=15", "-p", "no:asyncio", "-p", "no:benchmark", "-p", "no:black", "-p", "no:checkdocs",
++        "-p", "no:hypothesispytest", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     out = ourtester.runpytest(*args)
+ 
+@@ -400,7 +406,8 @@
+             pass
+         """
+     )
+-    args = ["-v", "--randomly-seed=15"]
++    args = ["-v", "--randomly-seed=15", "-p", "no:asyncio", "-p", "no:benchmark", "-p", "no:black", "-p", "no:checkdocs",
++        "-p", "no:hypothesispytest", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     out = ourtester.runpytest(*args)
+ 
+@@ -431,7 +438,8 @@
+             return 9002
+         """
+     )
+-    args = ["-v", "--doctest-modules", "--randomly-seed=1"]
++    args = ["-v", "--doctest-modules", "--randomly-seed=1", "-p", "no:asyncio", "-p", "no:benchmark", "-p", "no:black",
++        "-p", "no:checkdocs", "-p", "no:hypothesispytest", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     out = ourtester.runpytest(*args)
+     out.assert_outcomes(passed=2)
+@@ -493,7 +501,7 @@
+             )
+         """
+     )
+-    args = ["-v"]
++    args = ["-v", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     out = ourtester.runpytest(*args)
+     out.assert_outcomes(passed=3)
+@@ -511,7 +519,7 @@
+             0
+             """,
+     )
+-    args = ["-v", "--randomly-seed=2"]
++    args = ["-v", "--randomly-seed=2", "-p", "no:asyncio", "-p", "no:benchmark", "-p", "no:checkdocs", "-p", "no:hypothesispytest", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     out = ourtester.runpytest(*args)
+     out.assert_outcomes(passed=2)
+@@ -532,7 +540,7 @@
+             assert 0
+         """
+     )
+-    out = ourtester.runpytest("-v", "--randomly-seed=1", "--stepwise")
++    out = ourtester.runpytest("-v", "--randomly-seed=1", "--stepwise", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(failed=1)
+ 
+     # Now make test_b pass
+@@ -547,9 +555,9 @@
+         """
+     )
+     shutil.rmtree(ourtester.path / "__pycache__")
+-    out = ourtester.runpytest("-v", "--randomly-seed=1", "--stepwise")
++    out = ourtester.runpytest("-v", "--randomly-seed=1", "--stepwise", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=1, failed=1)
+-    out = ourtester.runpytest("-v", "--randomly-seed=1", "--stepwise")
++    out = ourtester.runpytest("-v", "--randomly-seed=1", "--stepwise", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(failed=1)
+ 
+ 
+@@ -570,7 +578,7 @@
+             assert myfixture != random.getstate()
+         """
+     )
+-    out = ourtester.runpytest()
++    out = ourtester.runpytest("-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=1)
+ 
+ 
+@@ -601,7 +609,7 @@
+             assert random.getstate() == state_at_seed_two
+         """
+     )
+-    args = ["--randomly-seed=2"]
++    args = ["--randomly-seed=2", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"]
+ 
+     out = ourtester.runpytest(*args)
+     out.assert_outcomes(passed=2)
+@@ -633,7 +641,7 @@
+         """
+     )
+ 
+-    out = ourtester.runpytest("--randomly-seed=1")
++    out = ourtester.runpytest("--randomly-seed=1", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=2)
+ 
+ 
+@@ -652,7 +660,7 @@
+         """
+     )
+ 
+-    out = ourtester.runpytest("--randomly-seed=1")
++    out = ourtester.runpytest("--randomly-seed=1", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=2)
+ 
+ 
+@@ -667,7 +675,7 @@
+         """
+     )
+ 
+-    out = ourtester.runpytest("--randomly-seed=1")
++    out = ourtester.runpytest("--randomly-seed=1", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=2)
+ 
+ 
+@@ -693,7 +701,7 @@
+         """
+     )
+ 
+-    out = ourtester.runpytest("--randomly-seed=1")
++    out = ourtester.runpytest("--randomly-seed=1", "-p", "no:checkdocs", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=2)
+ 
+ 
+@@ -711,7 +719,7 @@
+         """
+     )
+ 
+-    out = ourtester.runpytest("--randomly-seed=1")
++    out = ourtester.runpytest("--randomly-seed=1", "-p", "no:checkdocs", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=2)
+ 
+ 
+@@ -726,10 +734,11 @@
+         """
+     )
+ 
+-    out = ourtester.runpytest("--randomly-seed=7106521602475165645")
++    out = ourtester.runpytest("--randomly-seed=7106521602475165645", "-p", "no:checkdocs", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=1)
+ 
+ 
++@pytest.mark.skip(reason="always fails: https://github.com/bitprophet/pytest-relaxed/issues/28")
+ def test_failing_import(testdir):
+     """Test with pytest raising CollectError or ImportError.
+ 
+@@ -768,7 +777,7 @@
+     entry_points.append(_FakeEntryPoint("test_seeder", reseed))
+ 
+     # Need to run in-process so that monkeypatching works
+-    pytester.runpytest_inprocess("--randomly-seed=1")
++    pytester.runpytest_inprocess("--randomly-seed=1", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     assert reseed.mock_calls == [
+         mock.call(1),
+         mock.call(1),
+@@ -778,7 +787,7 @@
+     ]
+ 
+     reseed.mock_calls[:] = []
+-    pytester.runpytest_inprocess("--randomly-seed=424242")
++    pytester.runpytest_inprocess("--randomly-seed=424242", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     assert reseed.mock_calls == [
+         mock.call(424242),
+         mock.call(424242),
+@@ -800,13 +809,13 @@
+     monkeypatch.setattr(pytest_randomly, "entry_points", fake_entry_points)
+ 
+     # Need to run in-process so that monkeypatching works
+-    result = pytester.runpytest_inprocess("--randomly-seed=1")
++    result = pytester.runpytest_inprocess("--randomly-seed=1", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+ 
+     assert result.ret == 0
+ 
+ 
+ def test_works_without_xdist(simpletester):
+-    out = simpletester.runpytest("-p", "no:xdist")
++    out = simpletester.runpytest("-p", "no:xdist", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=1)
+ 
+ 
+@@ -825,7 +834,8 @@
+         test_six="def test_a(): pass",
+     )
+ 
+-    out = ourtester.runpytest("-n", "6", "-v", "--dist=loadfile")
++    out = ourtester.runpytest("-n", "6", "-v", "--dist=loadfile",
++        "-p", "no:benchmark", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     out.assert_outcomes(passed=6)
+ 
+     # Can't make any assertion on the order, since output comes back from
