@@ -1,31 +1,27 @@
---- Twisted-22.10.0/tox.ini.orig
-+++ Twisted-22.10.0/tox.ini
-@@ -17,15 +17,11 @@
- ;
- [tox]
+We do not need to build wheels during testing so let's remove tox-wheel.
+
+--- twisted-23.8.0/tox.ini.orig
++++ twisted-23.8.0/tox.ini
+@@ -19,8 +19,7 @@
  minversion=3.24.1
--requires=
--    virtualenv>=20.7.2
+ requires=
+     virtualenv>=20.7.2
 -    tox-wheel>=0.6.0
+-    tox < 4
++    tox
  skip_missing_interpreters=True
  envlist=lint, mypy,
      apidocs, narrativedocs, newsfragment,
-     release-prepare,
-     alldeps-nocov
--isolated_build=true
- 
- 
- [default]
-@@ -43,7 +39,7 @@
- ;; dependencies managed by extras in setup.cfg
+@@ -44,7 +43,7 @@
+ ;; dependencies managed by extras in pyproject.toml
  extras =
      ; The "nodeps" build still depends on PyHamcrest.
 -    nodeps: test
 +    test
  
-     ; We also need to include `dev_release` so that we can test our
-     ; release helpers or documentation generation, and `conch_nacl` so that
-@@ -93,7 +89,7 @@
+     ; FIXME:https://github.com/twisted/twisted/issues/11583
+     ; Once we no longer have custom `towncrier` check the dev_release deps
+@@ -121,7 +120,7 @@
      posix: python -c "print('Running on POSIX (no special dependencies)')"
  
      ; Run tests without wrapping them using coverage.
