@@ -19,22 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pdm_backend
-HUMAN_VERSION =			2.1.5
+HUMAN_VERSION =			2.1.6
 COMPONENT_SUMMARY =		pdm_backend - The build backend used by PDM that supports latest packaging standards
 COMPONENT_PROJECT_URL =		https://github.com/pdm-project/pdm-backend
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/12/0d/cfe7ce34e411d44bd4e1863c8332365e8bfddedc84a0c51f18ab76ae4aec/pdm_backend-2.1.5.tar.gz
+	https://files.pythonhosted.org/packages/27/72/f6bcf7336908c7e3f80f5d63f1d0a5b26fe70b7949ede126eef4761de7eb/pdm_backend-2.1.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:38ea0b3888293d99407928fe3ab841cca2785ce951decc7c96bfa9be7314f9ed
+	sha256:75cdee279ce99df3ce9c53c5c81e3cc1cd3f9fa901eeb14d2bc88ab770daf92d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
