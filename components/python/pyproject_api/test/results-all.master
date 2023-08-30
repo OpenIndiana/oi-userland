@@ -4,10 +4,8 @@ py$(PYV): commands[0]> python -m pytest --no-cov-on-fail --cov-context=test --co
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 56 items
+collecting ... collected 59 items
 
   self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
 $(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/pyproject_api was never imported. (module-not-imported)
@@ -22,6 +20,7 @@ tests/test_backend.py::test_valid_request PASSED
 tests/test_frontend.py::test_backend_build_editable PASSED
 tests/test_frontend.py::test_backend_build_editable_bad PASSED
 tests/test_frontend.py::test_backend_build_sdist_demo_pkg_inline PASSED
+tests/test_frontend.py::test_backend_build_wheel PASSED
 tests/test_frontend.py::test_backend_get_requires_for_build_editable PASSED
 tests/test_frontend.py::test_backend_get_requires_for_build_editable_bad PASSED
 tests/test_frontend.py::test_backend_get_requires_for_build_editable_miss PASSED
@@ -35,11 +34,13 @@ tests/test_frontend.py::test_bad_return_type_build_wheel PASSED
 tests/test_frontend.py::test_bad_return_type_get_requires_for_build[sdist] PASSED
 tests/test_frontend.py::test_bad_return_type_get_requires_for_build[wheel] PASSED
 tests/test_frontend.py::test_bad_return_type_prepare_metadata_for_build_wheel PASSED
-tests/test_frontend.py::test_bad_wheel_prepare_metadata_for_build_wheel PASSED
+tests/test_frontend.py::test_bad_wheel_metadata_from_built_wheel PASSED
 tests/test_frontend.py::test_create_no_pyproject PASSED
 tests/test_frontend.py::test_empty_pyproject PASSED
 tests/test_frontend.py::test_get_requires_for_build_missing[sdist] PASSED
 tests/test_frontend.py::test_get_requires_for_build_missing[wheel] PASSED
+tests/test_frontend.py::test_metadata_from_built_wheel[editable] PASSED
+tests/test_frontend.py::test_metadata_from_built_wheel[wheel] PASSED
 tests/test_frontend.py::test_missing_backend PASSED
 tests/test_frontend.py::test_missing_required_cmd[build_sdist] PASSED
 tests/test_frontend.py::test_missing_required_cmd[build_wheel] PASSED
@@ -70,11 +71,11 @@ tests/test_version.py::test_version PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-7 files skipped due to complete coverage.
+8 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 98.0% reached. Total coverage: 98.34%
-======== 56 passed ========
+Required test coverage of 100% reached. Total coverage: 100.00%
+======== 59 passed ========
   py$(PYV): OK
   congratulations :)
