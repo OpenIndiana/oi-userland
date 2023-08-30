@@ -19,18 +19,15 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Chameleon
-HUMAN_VERSION =			4.0.1
+HUMAN_VERSION =			4.1.0
 COMPONENT_SUMMARY =		Chameleon - Fast HTML/XML Template Compiler.
 COMPONENT_PROJECT_URL =		https://chameleon.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/malthe/chameleon/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/a6/b3/a12f28e3a0ed85d2b953ab67dcba7983e6f6aed9c74f4faee2551c71dd20/Chameleon-4.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1c34d936eadf785701d49d1a4b4cb23c3f563fe3a9f27ac70dacd47ba72d1a30
+	sha256:f1a372a8ceb38690f96fe55c4e1b5aca76614c41042dd997668295059992b880
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
-
-# Github tarball use different source directory than sdist
-COMPONENT_SRC=chameleon-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
