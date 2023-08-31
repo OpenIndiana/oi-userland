@@ -1,0 +1,13 @@
+We test in proto area not in site-packages.
+
+--- virtualenv-20.24.4/tox.ini.orig
++++ virtualenv-20.24.4/tox.ini
+@@ -29,7 +29,7 @@
+     COVERAGE_FILE = {toxworkdir}/.coverage.{envname}
+     COVERAGE_PROCESS_START = {toxinidir}/pyproject.toml
+     PYTHONWARNDEFAULTENCODING = 1
+-    _COVERAGE_SRC = {envsitepackagesdir}/virtualenv
++    _COVERAGE_SRC = virtualenv
+ commands =
+     coverage erase
+     coverage run -m pytest {posargs:--junitxml {toxworkdir}/junit.{envname}.xml tests --int}

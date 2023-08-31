@@ -5,25 +5,17 @@ py$(PYV): commands[1]> python -m coverage run -m pytest --junitxml $(@D)/.tox/ju
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
 timeout: 600.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 377 items
+collecting ... collected 323 items
 
-::project PASSED
-tests/conftest.py::black PASSED
-tests/integration/test_run_int.py::black PASSED
 tests/integration/test_run_int.py::test_app_data_pinning PASSED
-tests/integration/test_zipapp.py::black PASSED
 tests/integration/test_zipapp.py::test_zipapp_create[app-data] PASSED
 tests/integration/test_zipapp.py::test_zipapp_create[pip] PASSED
 tests/integration/test_zipapp.py::test_zipapp_help PASSED
-tests/unit/activation/conftest.py::black PASSED
-tests/unit/activation/test_activation_support.py::black PASSED
 tests/unit/activation/test_activation_support.py::test_activator_no_support_posix[BatchActivator] PASSED
 tests/unit/activation/test_activation_support.py::test_activator_no_support_windows[CShellActivator] PASSED
 tests/unit/activation/test_activation_support.py::test_activator_support_posix[BashActivator] PASSED
@@ -36,41 +28,30 @@ tests/unit/activation/test_activation_support.py::test_activator_support_windows
 tests/unit/activation/test_activation_support.py::test_activator_support_windows[FishActivator] PASSED
 tests/unit/activation/test_activation_support.py::test_activator_support_windows[PowerShellActivator] PASSED
 tests/unit/activation/test_activation_support.py::test_activator_support_windows[PythonActivator] PASSED
-tests/unit/activation/test_activator.py::black PASSED
 tests/unit/activation/test_activator.py::test_activator_prompt_cwd PASSED
-tests/unit/activation/test_bash.py::black PASSED
 tests/unit/activation/test_bash.py::test_bash[no_prompt] PASSED
 tests/unit/activation/test_bash.py::test_bash[with_prompt] PASSED
-tests/unit/activation/test_batch.py::black PASSED
 tests/unit/activation/test_batch.py::test_batch[no_prompt] SKIPPED (...)
 tests/unit/activation/test_batch.py::test_batch[with_prompt] SKIPPED
-tests/unit/activation/test_csh.py::black PASSED
 tests/unit/activation/test_csh.py::test_csh[no_prompt] PASSED
 tests/unit/activation/test_csh.py::test_csh[with_prompt] PASSED
-tests/unit/activation/test_fish.py::black PASSED
 tests/unit/activation/test_fish.py::test_fish[no_prompt] PASSED
 tests/unit/activation/test_fish.py::test_fish[with_prompt] PASSED
-tests/unit/activation/test_nushell.py::black PASSED
 tests/unit/activation/test_nushell.py::test_nushell[no_prompt] SKIPPED
 tests/unit/activation/test_nushell.py::test_nushell[with_prompt] SKIPPED
-tests/unit/activation/test_powershell.py::black PASSED
 tests/unit/activation/test_powershell.py::test_powershell[no_prompt] SKIPPED
 tests/unit/activation/test_powershell.py::test_powershell[with_prompt] SKIPPED
-tests/unit/activation/test_python_activator.py::black PASSED
 tests/unit/activation/test_python_activator.py::test_python[no_prompt] PASSED
 tests/unit/activation/test_python_activator.py::test_python[with_prompt] PASSED
-tests/unit/config/cli/test_parser.py::black PASSED
 tests/unit/config/cli/test_parser.py::test_builtin_discovery_class_preferred PASSED
 tests/unit/config/cli/test_parser.py::test_flag PASSED
 tests/unit/config/cli/test_parser.py::test_reset_app_data_does_not_conflict_clear PASSED
-tests/unit/config/test___main__.py::black PASSED
 tests/unit/config/test___main__.py::test_fail_no_traceback PASSED
 tests/unit/config/test___main__.py::test_fail_with_traceback PASSED
 tests/unit/config/test___main__.py::test_main PASSED
 tests/unit/config/test___main__.py::test_session_report_full PASSED
 tests/unit/config/test___main__.py::test_session_report_minimal PASSED
 tests/unit/config/test___main__.py::test_session_report_subprocess PASSED
-tests/unit/config/test_env_var.py::black PASSED
 tests/unit/config/test_env_var.py::test_extra_search_dir_via_env_var PASSED
 tests/unit/config/test_env_var.py::test_python_multi_value_newline_via_env_var PASSED
 tests/unit/config/test_env_var.py::test_python_multi_value_prefer_newline_via_env_var PASSED
@@ -79,13 +60,7 @@ tests/unit/config/test_env_var.py::test_python_via_env_var PASSED
 tests/unit/config/test_env_var.py::test_value_alias PASSED
 tests/unit/config/test_env_var.py::test_value_bad PASSED
 tests/unit/config/test_env_var.py::test_value_ok PASSED
-tests/unit/config/test_ini.py::black PASSED
 tests/unit/config/test_ini.py::test_ini_can_be_overwritten_by_flag PASSED
-tests/unit/create/conftest.py::black PASSED
-tests/unit/create/console_app/demo/__init__.py::black PASSED
-tests/unit/create/console_app/demo/__main__.py::black PASSED
-tests/unit/create/console_app/setup.py::black PASSED
-tests/unit/create/test_creator.py::black PASSED
 tests/unit/create/test_creator.py::test_create_clear_resets[clear-cpython3-posix] PASSED
 tests/unit/create/test_creator.py::test_create_clear_resets[clear-venv] PASSED
 tests/unit/create/test_creator.py::test_create_clear_resets[no_clear-cpython3-posix] PASSED
@@ -134,11 +109,8 @@ tests/unit/create/test_creator.py::test_python_path[on] PASSED
 tests/unit/create/test_creator.py::test_venv_creator_without_write_perms PASSED
 tests/unit/create/test_creator.py::test_venv_fails_not_inline PASSED
 tests/unit/create/test_creator.py::test_zip_importer_can_import_setuptools PASSED
-tests/unit/create/test_interpreters.py::black PASSED
 tests/unit/create/test_interpreters.py::test_failed_to_find_bad_spec PASSED
 tests/unit/create/test_interpreters.py::test_failed_to_find_implementation[CPython] PASSED
-tests/unit/create/via_global_ref/builtin/conftest.py::black PASSED
-tests/unit/create/via_global_ref/builtin/cpython/test_cpython3_win.py::black PASSED
 tests/unit/create/via_global_ref/builtin/cpython/test_cpython3_win.py::test_2_exe_on_default_py_host[cpython3_win_embed] PASSED
 tests/unit/create/via_global_ref/builtin/cpython/test_cpython3_win.py::test_3_exe_on_not_default_py_host[cpython3_win_embed] PASSED
 tests/unit/create/via_global_ref/builtin/cpython/test_cpython3_win.py::test_exe_dll_pyd_without_shim[cpython3_win_embed] PASSED
@@ -146,21 +118,12 @@ tests/unit/create/via_global_ref/builtin/cpython/test_cpython3_win.py::test_no_p
 tests/unit/create/via_global_ref/builtin/cpython/test_cpython3_win.py::test_no_python_zip_if_not_exists[cpython3_win_embed] PASSED
 tests/unit/create/via_global_ref/builtin/cpython/test_cpython3_win.py::test_only_shim[cpython3_win_embed] PASSED
 tests/unit/create/via_global_ref/builtin/cpython/test_cpython3_win.py::test_python_zip_if_exists_and_set_in_path[cpython3_win_embed] PASSED
-tests/unit/create/via_global_ref/builtin/pypy/test_pypy3.py::black PASSED
 tests/unit/create/via_global_ref/builtin/pypy/test_pypy3.py::test_debian_pypy37_virtualenvs[deb_pypy37] PASSED
 tests/unit/create/via_global_ref/builtin/pypy/test_pypy3.py::test_debian_pypy38_virtualenvs_exclude_usr[deb_pypy38] PASSED
 tests/unit/create/via_global_ref/builtin/pypy/test_pypy3.py::test_portable_pypy3_virtualenvs_get_their_libs[portable_pypy38] PASSED
-tests/unit/create/via_global_ref/builtin/testing/__init__.py::black PASSED
-tests/unit/create/via_global_ref/builtin/testing/helpers.py::black PASSED
-tests/unit/create/via_global_ref/builtin/testing/path.py::black PASSED
-tests/unit/create/via_global_ref/builtin/testing/py_info.py::black PASSED
-tests/unit/create/via_global_ref/greet/setup.py::black PASSED
-tests/unit/create/via_global_ref/test_api.py::black PASSED
 tests/unit/create/via_global_ref/test_api.py::test_can_symlink_when_symlinks_not_enabled PASSED
-tests/unit/create/via_global_ref/test_build_c_ext.py::black PASSED
 tests/unit/create/via_global_ref/test_build_c_ext.py::test_can_build_c_extensions[cpython3-posix] PASSED
 tests/unit/create/via_global_ref/test_build_c_ext.py::test_can_build_c_extensions[venv] PASSED
-tests/unit/discovery/py_info/test_py_info.py::black PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_bad_exe_py_info_no_raise PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_bad_exe_py_info_raise PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_current_as_json PASSED
@@ -211,7 +174,6 @@ tests/unit/discovery/py_info/test_py_info.py::test_system_executable_no_exact_ma
 tests/unit/discovery/py_info/test_py_info.py::test_system_executable_no_exact_match[target1-0-discovered1] PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_system_executable_no_exact_match[target2-0-discovered2] PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_uses_posix_prefix_on_debian_3_10_without_venv SKIPPED
-tests/unit/discovery/py_info/test_py_info_exe_based_of.py::black PASSED
 tests/unit/discovery/py_info/test_py_info_exe_based_of.py::test_discover_empty_folder PASSED
 tests/unit/discovery/py_info/test_py_info_exe_based_of.py::test_discover_ok[CPython-3--.-] PASSED
 tests/unit/discovery/py_info/test_py_info_exe_based_of.py::test_discover_ok[CPython-3--bin-] PASSED
@@ -237,7 +199,6 @@ tests/unit/discovery/py_info/test_py_info_exe_based_of.py::test_discover_ok[pyth
 tests/unit/discovery/py_info/test_py_info_exe_based_of.py::test_discover_ok[python-3.9.16--bin-] PASSED
 tests/unit/discovery/py_info/test_py_info_exe_based_of.py::test_discover_ok[python-3.9.16-64-.-] PASSED
 tests/unit/discovery/py_info/test_py_info_exe_based_of.py::test_discover_ok[python-3.9.16-64-bin-] PASSED
-tests/unit/discovery/test_discovery.py::black PASSED
 tests/unit/discovery/test_discovery.py::test_discovery_fallback_fail PASSED
 tests/unit/discovery/test_discovery.py::test_discovery_fallback_ok PASSED
 tests/unit/discovery/test_discovery.py::test_discovery_via_path[lower] PASSED
@@ -245,7 +206,6 @@ tests/unit/discovery/test_discovery.py::test_discovery_via_path[mixed] PASSED
 tests/unit/discovery/test_discovery.py::test_discovery_via_path[upper] PASSED
 tests/unit/discovery/test_discovery.py::test_discovery_via_path_not_found PASSED
 tests/unit/discovery/test_discovery.py::test_relative_path PASSED
-tests/unit/discovery/test_py_spec.py::black PASSED
 tests/unit/discovery/test_py_spec.py::test_bad_py_spec PASSED
 tests/unit/discovery/test_py_spec.py::test_py_spec_first_digit_only_major PASSED
 tests/unit/discovery/test_py_spec.py::test_relative_spec PASSED
@@ -292,8 +252,6 @@ tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.16-3.9.16] P
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.16-3.9] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.16-3] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.16-] PASSED
-tests/unit/discovery/windows/conftest.py::black PASSED
-tests/unit/discovery/windows/test_windows.py::black PASSED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[cpython-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[cpython3.10-C:\\Users\\user\\Miniconda3-64\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[cpython3.12-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe] SKIPPED
@@ -302,17 +260,13 @@ tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python-C
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python3.10-C:\\Users\\user\\Miniconda3-64\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python3.12-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python3.6-Z:\\CompanyA\\Python\\3.6\\python.exe] SKIPPED
-tests/unit/discovery/windows/test_windows_pep514.py::black PASSED
 tests/unit/discovery/windows/test_windows_pep514.py::test_pep514 SKIPPED
 tests/unit/discovery/windows/test_windows_pep514.py::test_pep514_run SKIPPED
-tests/unit/discovery/windows/winreg-mock-values.py::black PASSED
-tests/unit/seed/embed/test_base_embed.py::black PASSED
 tests/unit/seed/embed/test_base_embed.py::test_download_cli_flag[args0-False] PASSED
 tests/unit/seed/embed/test_base_embed.py::test_download_cli_flag[args1-False] PASSED
 tests/unit/seed/embed/test_base_embed.py::test_download_cli_flag[args2-False] PASSED
 tests/unit/seed/embed/test_base_embed.py::test_download_cli_flag[args3-True] PASSED
 tests/unit/seed/embed/test_base_embed.py::test_embed_wheel_versions PASSED
-tests/unit/seed/embed/test_bootstrap_link_via_app_data.py::black PASSED
 tests/unit/seed/embed/test_bootstrap_link_via_app_data.py::test_app_data_parallel_fail PASSED
 tests/unit/seed/embed/test_bootstrap_link_via_app_data.py::test_app_data_parallel_ok PASSED
 tests/unit/seed/embed/test_bootstrap_link_via_app_data.py::test_base_bootstrap_link_via_app_data_no[pip] PASSED
@@ -323,12 +277,10 @@ tests/unit/seed/embed/test_bootstrap_link_via_app_data.py::test_populated_read_o
 tests/unit/seed/embed/test_bootstrap_link_via_app_data.py::test_populated_read_only_cache_and_symlinked_app_data PASSED
 tests/unit/seed/embed/test_bootstrap_link_via_app_data.py::test_seed_link_via_app_data[False] PASSED
 tests/unit/seed/embed/test_bootstrap_link_via_app_data.py::test_seed_link_via_app_data[True] PASSED
-tests/unit/seed/embed/test_pip_invoke.py::black PASSED
 tests/unit/seed/embed/test_pip_invoke.py::test_base_bootstrap_via_pip_invoke[] PASSED
 tests/unit/seed/embed/test_pip_invoke.py::test_base_bootstrap_via_pip_invoke[pip] PASSED
 tests/unit/seed/embed/test_pip_invoke.py::test_base_bootstrap_via_pip_invoke[setuptools] PASSED
 tests/unit/seed/embed/test_pip_invoke.py::test_base_bootstrap_via_pip_invoke[wheel] PASSED
-tests/unit/seed/wheels/test_acquire.py::black PASSED
 tests/unit/seed/wheels/test_acquire.py::test_download_fails PASSED
 tests/unit/seed/wheels/test_acquire.py::test_download_wheel_bad_output PASSED
 tests/unit/seed/wheels/test_acquire.py::test_get_wheel_download_cached PASSED
@@ -337,18 +289,15 @@ tests/unit/seed/wheels/test_acquire.py::test_get_wheel_download_called[bundle] P
 tests/unit/seed/wheels/test_acquire.py::test_get_wheel_download_not_called[embed] PASSED
 tests/unit/seed/wheels/test_acquire.py::test_get_wheel_download_not_called[pinned] PASSED
 tests/unit/seed/wheels/test_acquire.py::test_pip_wheel_env_run_could_not_find PASSED
-tests/unit/seed/wheels/test_acquire_find_wheel.py::black PASSED
 tests/unit/seed/wheels/test_acquire_find_wheel.py::test_find_bad_spec PASSED
 tests/unit/seed/wheels/test_acquire_find_wheel.py::test_find_exact PASSED
 tests/unit/seed/wheels/test_acquire_find_wheel.py::test_find_latest_none PASSED
 tests/unit/seed/wheels/test_acquire_find_wheel.py::test_find_latest_string PASSED
-tests/unit/seed/wheels/test_bundle.py::black PASSED
 tests/unit/seed/wheels/test_bundle.py::test_version_bundle PASSED
 tests/unit/seed/wheels/test_bundle.py::test_version_embed PASSED
 tests/unit/seed/wheels/test_bundle.py::test_version_pinned_in_app_data PASSED
 tests/unit/seed/wheels/test_bundle.py::test_version_pinned_is_embed PASSED
 tests/unit/seed/wheels/test_bundle.py::test_version_pinned_not_found PASSED
-tests/unit/seed/wheels/test_periodic_update.py::black PASSED
 tests/unit/seed/wheels/test_periodic_update.py::test_do_update_first PASSED
 tests/unit/seed/wheels/test_periodic_update.py::test_do_update_skip_already_done PASSED
 tests/unit/seed/wheels/test_periodic_update.py::test_download_manual_ignores_pre_release PASSED
@@ -376,23 +325,160 @@ tests/unit/seed/wheels/test_periodic_update.py::test_periodic_update_trigger[sta
 tests/unit/seed/wheels/test_periodic_update.py::test_pick_periodic_update PASSED
 tests/unit/seed/wheels/test_periodic_update.py::test_trigger_update_debug PASSED
 tests/unit/seed/wheels/test_periodic_update.py::test_trigger_update_no_debug PASSED
-tests/unit/seed/wheels/test_wheels_util.py::black PASSED
 tests/unit/seed/wheels/test_wheels_util.py::test_bad_as_version_tuple PASSED
 tests/unit/seed/wheels/test_wheels_util.py::test_wheel_not_support PASSED
 tests/unit/seed/wheels/test_wheels_util.py::test_wheel_repr PASSED
 tests/unit/seed/wheels/test_wheels_util.py::test_wheel_support_no_python_requires PASSED
-tests/unit/test_run.py::black PASSED
 tests/unit/test_run.py::test_help PASSED
 tests/unit/test_run.py::test_logging_setup[False] PASSED
 tests/unit/test_run.py::test_logging_setup[True] PASSED
 tests/unit/test_run.py::test_version PASSED
-tests/unit/test_util.py::black PASSED
 tests/unit/test_util.py::test_reentrant_file_lock_is_thread_safe PASSED
 tests/unit/test_util.py::test_run_fail PASSED
 
+=============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/setuptools_rust/build.py:21
+  $(PYTHON_DIR)/vendor-packages/setuptools_rust/build.py:21: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zest')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: 15 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 354 passed, 21 skipped ========
-$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/virtualenv was never imported. (module-not-imported)
-  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
+======== 302 passed, 21 skipped, 26 warnings ========
+py$(PYV): commands[2]> python -m coverage combine
+py$(PYV): commands[3]> python -m coverage report --skip-covered --show-missing
+Name                                                                                                                                                                              Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/batch/__init__.py                             15      5      0      0    67%   14-16, 20-21
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/python/activate_this.py                       20     20      2      0     0%   8-36
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/via_template.py                               45      3     10      1    93%   10-13
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/__init__.py                                     35      3     12      2    89%   20, 27-28
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/base.py                                         49      3      2      1    92%   54-55, 90
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/na.py                                           37      6      0      0    84%   29, 32, 37, 41, 44, 56
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/read_only.py                                    24      6      2      1    73%   15-16, 21-22, 36-37
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/via_disk_folder.py                             104     15     12      3    83%   51, 65-67, 71-76, 92->89, 127, 134-135, 139-140
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/config/cli/parser.py                                     98      6     40      4    91%   35, 39, 57-58, 98-99, 117->119
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/config/convert.py                                        52      6     14      2    85%   34-35, 41-43, 74
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/config/ini.py                                            58      7      8      3    85%   25, 35-36, 44-45, 47, 56
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/creator.py                                       132     10     38      5    90%   67, 123-125, 127-129, 143->152, 208-211, 218->220
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/debug.py                                          49     49     10      0     0%   2-93
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/describe.py                                       73      3      8      2    91%   45->47, 51-53, 57->59
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/pyenv_cfg.py                                      47      1      4      0    98%   59
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/_virtualenv.py                     57     57     22      0     0%   3-102
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/api.py                             72      4     18      6    89%   45, 50, 64-65, 66->74, 74->exit, 89->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/cpython/common.py          37      1      7      1    95%   53
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/cpython/cpython3.py        74      5     20      2    90%   29, 50-52, 97
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/cpython/mac_os.py         157    125     46      0    16%   28-39, 43-48, 61, 64, 68-72, 76-77, 115-124, 129-258
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/pypy/common.py             32      0      6      1    97%   38->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/pypy/pypy3.py              41      7     10      1    80%   28, 31, 53, 62, 67-69
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/ref.py                    123     25     42     11    72%   42-43, 49, 53->62, 58-61, 66->71, 68, 75-80, 88, 90, 105, 109->117, 112->114, 116, 128-134, 144, 168
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/via_global_self_do.py      79     11     37      7    79%   34->36, 43, 45-53, 55, 57, 90->89
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/store.py                           10      5      2      0    42%   7-9, 13-14
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/venv.py                            69      8     20      4    84%   32, 34, 38, 54-55, 58-66
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/builtin.py                                    120     27     46      9    75%   64, 77-83, 95, 102-105, 119->112, 126-129, 142-151, 158, 160
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/cached_py_info.py                             110      8     36      7    90%   58-59, 71-74, 130->138, 134, 140->148, 144, 164
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/discover.py                                    18      0      2      1    95%   40->43
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/py_info.py                                    347     51    157     16    81%   42, 71-72, 91-96, 135-156, 180-181, 184->187, 197, 205-206, 210, 219, 244-246, 258, 261, 311->322, 316-318, 390-394, 417-426, 430, 439-440, 468, 477->479, 540->542, 548->543, 552->543
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/py_spec.py                                     87      0     44      2    98%   51->56, 75->80
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/windows/__init__.py                            18     18      8      0     0%   1-44
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/windows/pep514.py                             106    106     40      0     0%   3-148
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/info.py                                                  38      9      8      2    76%   35->48, 37-45
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/report.py                                                30      1      6      1    94%   29
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/__init__.py                                          74      3     14      1    95%   95, 100-101
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/plugin/activators.py                                 30      2     14      1    93%   34-35
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/plugin/base.py                                       49      5     16      3    82%   11-13, 23, 54-55
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/plugin/creators.py                                   58      5     22      3    88%   33-34, 38, 50-51
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/session.py                                           57      1      8      0    98%   26
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/base_embed.py                                 55      4     22      4    90%   30, 75, 107, 110
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/pip_invoke.py                                 43      6     12      4    82%   18, 30-31, 38, 52-53
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/pip_install/base.py             149     11     56      3    90%   59-69, 109, 124->133, 180-181
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/pip_install/symlink.py           42      6     10      1    83%   25-27, 52-54
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/via_app_data.py                 103     19     36      4    79%   41, 81->99, 96-98, 100-113, 127-128
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/acquire.py                                   60      1     24      3    95%   45->48, 97, 103->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/bundle.py                                    30      0     16      3    93%   29->36, 32->exit, 42->41
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/periodic_update.py                          243      3     88      4    98%   86-87, 222, 281->285, 283->285
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/util.py                                      79      0     28      1    99%   59->57
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/lock.py                                            114      1     16      2    98%   29->31, 52, 95->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_permission.py                                 20      2      8      1    89%   10->exit, 17-18
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_sync.py                                       54      5     14      2    90%   18-19, 47->49, 57-59
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_win.py                                        14     11      2      0    19%   6-18
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/subprocess/__init__.py                              14      1      2      1    88%   23
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/zipapp.py                                           23     14      2      0    36%   11-13, 17-22, 26-31
+tests/conftest.py                                                                                                                                                                   250     31     86     17    82%   29->exit, 30->exit, 31->exit, 40, 45-47, 59-64, 71, 84-85, 89, 116, 135, 160-161, 167->186, 177-184, 231, 242->271, 286->283, 288-289, 330, 350->exit, 356-358
+tests/integration/test_run_int.py                                                                                                                                                    18      1      4      1    91%   27
+tests/integration/test_zipapp.py                                                                                                                                                     63     16     10      2    67%   24-52, 55
+tests/unit/activation/conftest.py                                                                                                                                                   161     11     21      4    92%   53, 70, 82-85, 145->exit, 185-190
+tests/unit/activation/test_batch.py                                                                                                                                                  24      3      2      0    81%   27, 31, 34
+tests/unit/activation/test_nushell.py                                                                                                                                                20      5      2      1    73%   14, 22, 26-28
+tests/unit/activation/test_powershell.py                                                                                                                                             25      4      0      0    84%   26, 30, 33, 36
+tests/unit/create/conftest.py                                                                                                                                                        25      7      6      3    68%   29-35, 48, 50
+tests/unit/create/test_creator.py                                                                                                                                                   395     28    132     18    89%   65, 84-85, 98->100, 100->96, 139, 144->exit, 161->exit, 171->177, 178, 187, 195->exit, 205-207, 210-214, 243, 313, 321->exit, 346-348, 354, 422-430, 494->496, 561-562
+tests/unit/create/via_global_ref/builtin/testing/path.py                                                                                                                             59      3      6      2    92%   20, 51->55, 69-70
+tests/unit/create/via_global_ref/builtin/testing/py_info.py                                                                                                                          14      3      0      0    79%   13-16
+tests/unit/create/via_global_ref/test_build_c_ext.py                                                                                                                                 36      8      6      0    71%   19-26
+tests/unit/discovery/py_info/test_py_info.py                                                                                                                                        235     31     34      4    86%   162, 286, 295, 315-322, 330, 357, 390-408, 414-478
+tests/unit/discovery/py_info/test_py_info_exe_based_of.py                                                                                                                            45      3      8      2    91%   41, 47-48
+tests/unit/discovery/test_discovery.py                                                                                                                                               58      1      8      1    97%   35
+tests/unit/discovery/test_py_spec.py                                                                                                                                                 83      1     22      1    98%   98
+tests/unit/discovery/windows/conftest.py                                                                                                                                             66     57     12      0    12%   11-65, 70-78, 84-102
+tests/unit/discovery/windows/test_windows.py                                                                                                                                         13      4      0      0    69%   31-35
+tests/unit/discovery/windows/test_windows_pep514.py                                                                                                                                  22     12      0      0    45%   12-15, 33-65
+tests/unit/seed/embed/test_bootstrap_link_via_app_data.py                                                                                                                           149      0     29      2    99%   117->exit, 122->exit
+tests/unit/seed/wheels/test_periodic_update.py                                                                                                                                      334      1     30      2    99%   321, 385->exit
+tests/unit/test_util.py                                                                                                                                                              27      2      4      0    94%   35-36
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                                                              6857    943   1643    196    83%
+
+59 files skipped due to complete coverage.
+py$(PYV): commands[4]> python -m coverage xml -o $(@D)/.tox/coverage.py$(PYV).xml
+Wrote XML report to $(@D)/.tox/coverage.py$(PYV).xml
+py$(PYV): commands[5]> python -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/htmlcov --show-contexts --title virtualenv-py$(PYV)-coverage
+Wrote HTML report to $(@D)/.tox/py$(PYV)/tmp/htmlcov/index.html
   py$(PYV): OK
   congratulations :)
