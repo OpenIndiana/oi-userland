@@ -45,6 +45,7 @@ $(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
 
 $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
 	$(MKDIR) $(PROTO_DIR)
+
 	(cd $(@D)/kernel && dmake install)
 
 	$(MKDIR) $(PROTOUSRKERNELDRVDIR) $(PROTOUSRKERNELDRVDIR64)
