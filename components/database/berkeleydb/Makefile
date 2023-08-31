@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		berkeleydb
 COMPONENT_VERSION=	5.3.28
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Berkeley DB is a computer software library that provides a high-performance embedded database for key/value data
 COMPONENT_PROJECT_URL=	https://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html
 COMPONENT_SRC_NAME=	db
