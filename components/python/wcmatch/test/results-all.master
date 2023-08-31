@@ -1,16 +1,14 @@
 ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> /usr/bin/mypy
+py$(PYV): commands[0]> $(PYTHON) -m mypy
 Success: no issues found in 10 source files
-py$(PYV): commands[1]> /usr/bin/py.test --cov wcmatch --cov-append tests
+py$(PYV): commands[1]> $(PYTHON) -m pytest --cov wcmatch --cov-append tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: tox.ini
-asyncio: mode=strict
-collecting ... collected 1316 items
+collecting ... collected 1322 items
 
 tests/test_fnmatch.py::TestExcludes::test_exclude PASSED
 tests/test_fnmatch.py::TestExcludes::test_exclude_mix PASSED
@@ -303,8 +301,10 @@ tests/test_glob.py::TestGlobCornerCaseMarked::test_glob_cases[case97] PASSED
 tests/test_glob.py::TestGlobCornerCaseMarked::test_glob_cases[case98] SKIPPED
 tests/test_glob.py::TestGlobCornerCaseMarked::test_glob_cases[case99] PASSED
 tests/test_glob.py::TestGlobCornerCaseMarked::test_glob_cases[case9] PASSED
+tests/test_glob.py::TestGlobCornerCaseMarked::test_magic_non_magic PASSED
 tests/test_glob.py::TestGlobCornerCaseMarked::test_negateall PASSED
 tests/test_glob.py::TestGlobCornerCaseMarked::test_negateall_bytes PASSED
+tests/test_glob.py::TestGlobCornerCaseMarked::test_non_magic_magic PASSED
 tests/test_glob.py::TestGlobEscapes::test_escape PASSED
 tests/test_glob.py::TestGlobEscapes::test_escape_forced_unix PASSED
 tests/test_glob.py::TestGlobEscapes::test_escape_forced_windows PASSED
@@ -412,8 +412,10 @@ tests/test_glob.py::TestGlobMarked::test_glob_cases[case97] PASSED
 tests/test_glob.py::TestGlobMarked::test_glob_cases[case98] SKIPPED
 tests/test_glob.py::TestGlobMarked::test_glob_cases[case99] PASSED
 tests/test_glob.py::TestGlobMarked::test_glob_cases[case9] PASSED
+tests/test_glob.py::TestGlobMarked::test_magic_non_magic PASSED
 tests/test_glob.py::TestGlobMarked::test_negateall PASSED
 tests/test_glob.py::TestGlobMarked::test_negateall_bytes PASSED
+tests/test_glob.py::TestGlobMarked::test_non_magic_magic PASSED
 tests/test_glob.py::TestGlobPaths::test_root_unix PASSED
 tests/test_glob.py::TestGlobPaths::test_root_win SKIPPED (Windows sp...)
 tests/test_glob.py::TestGlobPaths::test_start PASSED
@@ -548,8 +550,10 @@ tests/test_glob.py::Testglob::test_glob_cases[case97] PASSED
 tests/test_glob.py::Testglob::test_glob_cases[case98] SKIPPED (Chang...)
 tests/test_glob.py::Testglob::test_glob_cases[case99] PASSED
 tests/test_glob.py::Testglob::test_glob_cases[case9] PASSED
+tests/test_glob.py::Testglob::test_magic_non_magic PASSED
 tests/test_glob.py::Testglob::test_negateall PASSED
 tests/test_glob.py::Testglob::test_negateall_bytes PASSED
+tests/test_glob.py::Testglob::test_non_magic_magic PASSED
 tests/test_globmatch.py::TestExcludes::test_exclude PASSED
 tests/test_globmatch.py::TestExcludes::test_exclude_mix PASSED
 tests/test_globmatch.py::TestExcludes::test_filter PASSED
@@ -1330,25 +1334,25 @@ tests/test_wcparse.py::TestWcparse::test_translate_unique_optimization_okay PASS
 tests/test_wcparse.py::TestWcparse::test_unc_pattern PASSED
 
 
-======== 1165 passed, 151 skipped ========
-py$(PYV): commands[2]> /usr/bin/coverage html -d $(@D)/.tox/py$(PYV)/tmp/coverage
+======== 1171 passed, 151 skipped ========
+py$(PYV): commands[2]> $(PYTHON) -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/coverage
 Wrote HTML report to $(@D)/.tox/py$(PYV)/tmp/coverage/index.html
-py$(PYV): commands[3]> /usr/bin/coverage xml
+py$(PYV): commands[3]> $(PYTHON) -m coverage xml
 Wrote XML report to coverage.xml
-py$(PYV): commands[4]> /usr/bin/coverage report --show-missing
+py$(PYV): commands[4]> $(PYTHON) -m coverage report --show-missing
 Name                  Stmts   Miss  Cover   Missing
 ---------------------------------------------------
 wcmatch/__init__.py       1      0   100%
-wcmatch/__meta__.py      69      0   100%
-wcmatch/_wcmatch.py     142      1    99%   178
-wcmatch/_wcparse.py    1012      2    99%   367, 391
-wcmatch/fnmatch.py       39      0   100%
-wcmatch/glob.py         512     28    95%   115-117, 179-181, 226-228, 259-260, 310-322, 339-340, 816, 834-835
-wcmatch/pathlib.py       93      2    98%   96, 165
-wcmatch/posix.py          7      0   100%
-wcmatch/util.py          95      4    96%   60, 221-223
-wcmatch/wcmatch.py      164      4    98%   102-105, 134
+wcmatch/__meta__.py      70      0   100%
+wcmatch/_wcmatch.py     143      1    99%   179
+wcmatch/_wcparse.py    1013      2    99%   368, 392
+wcmatch/fnmatch.py       40      0   100%
+wcmatch/glob.py         513     28    95%   113-115, 177-179, 224-226, 257-258, 308-320, 337-338, 814, 832-833
+wcmatch/pathlib.py      103      6    94%   88, 102, 173, 182-184
+wcmatch/posix.py          8      0   100%
+wcmatch/util.py          96      4    96%   61, 222-224
+wcmatch/wcmatch.py      165      4    98%   103-106, 135
 ---------------------------------------------------
-TOTAL                  2134     41    98%
+TOTAL                  2152     45    98%
   py$(PYV): OK
   congratulations :)
