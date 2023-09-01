@@ -344,6 +344,10 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  py\$$(PYV): OK\) (.* seconds)$$/\1/'"
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  congratulations :)\) (.* seconds)$$/\1/'"
 
+# Remove useless lines from the "coverage combine" output
+COMPONENT_TEST_TRANSFORMS += "-e '/^Combined data file \.tox\/\.coverage\.py/d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^Skipping duplicate data \.tox\/\.coverage\.py/d'"
+
 # sort list of Sphinx doctest results
 COMPONENT_TEST_TRANSFORMS += \
 	"| ( \
