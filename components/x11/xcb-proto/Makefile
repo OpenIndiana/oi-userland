@@ -23,16 +23,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xcb-proto
-COMPONENT_VERSION=        1.15.2
+COMPONENT_VERSION=        1.16.0
 COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Protocol descriptions
 COMPONENT_PROJECT_URL=    https://xcb.freedesktop.org
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	  sha256:7072beb1f680a2fe3f9e535b797c146d22528990c72f63ddb49d2f350a3653ed
+COMPONENT_ARCHIVE_HASH=	  sha256:a75a1848ad2a89a82d841a51be56ce988ff3c63a8d6bf4383ae3219d8d915119
 COMPONENT_ARCHIVE_URL=    https://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           x11/header/xcb-protocols
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_LICENSE=        MIT
+COMPONENT_LICENSE_FILE=   COPYING
 
 TEST_TARGET = $(NO_TESTS)
 
