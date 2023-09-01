@@ -31,12 +31,12 @@ USE_OPENSSL11 =			yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_VERSION =		4.18.6
+COMPONENT_VERSION =		4.19.0
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:284c8a994ce989c87cd6808c390fcb9d00c36b21a0dc1a8a75474b67c9e715e7
+COMPONENT_ARCHIVE_HASH = 	sha256:28f98ceab75a6a59432912fa110fc8c716abcab1ed6d8bdd4393d178acff3d20
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI =		service/network/samba
@@ -93,8 +93,7 @@ CONFIGURE_ENV +=	CPP="$(CC) -E"
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
 CONFIGURE_ENV +=	PATH=$(GNUBIN.$(BITS)):$(USRBINDIR.$(BITS)):$(PATH.gnu)
-#CONFIGURE_ENV +=	PERL=$(PERL)
-CONFIGURE_ENV +=	PYTHONARCHDIR=$(PYTHON_VENDOR_PACKAGES)/samba
+ONFIGURE_ENV +=	PYTHONARCHDIR=$(PYTHON_VENDOR_PACKAGES)/samba
 
 # --enable-fhs should not be on
 CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
@@ -116,8 +115,9 @@ CONFIGURE_OPTIONS +=    --sharedstatedir=$(VARDIR)/samba/com
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec/$(MACH64)
 CONFIGURE_OPTIONS +=	--with-bind-dns-dir=$(CONFIGURE_PREFIX)/bind-dns
 
-CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl
-CONFIGURE_OPTIONS +=	--with-shared-modules=ALL,vfs_zfsacl,vfs_cacheprime
+CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl,vfs_zfsacl
+CONFIGURE_OPTIONS +=	--with-shared-modules=ALL,vfs_cacheprime
+CONFIGURE_OPTIONS +=	--with-acl-support
 CONFIGURE_OPTIONS +=	--with-ads
 CONFIGURE_OPTIONS +=	--with-winbind
 CONFIGURE_OPTIONS +=	--with-ldap
