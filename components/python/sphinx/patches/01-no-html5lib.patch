@@ -1,0 +1,54 @@
+We do not have html5lib packaged (yet)
+
+--- sphinx-7.2.5/pyproject.toml.orig
++++ sphinx-7.2.5/pyproject.toml
+@@ -91,7 +91,6 @@
+ ]
+ test = [
+     "pytest>=4.6",
+-    "html5lib",
+     "cython>=3.0",
+     "setuptools>=67.0",  # for Cython compilation
+     "filelock",
+--- sphinx-7.2.5/tests/test_smartquotes.py.orig
++++ sphinx-7.2.5/tests/test_smartquotes.py
+@@ -1,6 +1,7 @@
+ """Test smart quotes."""
+ 
+ import pytest
++pytest.skip("no html5lib available", allow_module_level=True)
+ from html5lib import HTMLParser
+ 
+ 
+--- sphinx-7.2.5/tests/test_build_html.py.orig
++++ sphinx-7.2.5/tests/test_build_html.py
+@@ -9,7 +9,10 @@
+ from unittest.mock import ANY, call, patch
+ 
+ import pytest
+-from html5lib import HTMLParser
++try:
++    from html5lib import HTMLParser
++except:
++    pass
+ 
+ import sphinx.builders.html
+ from sphinx.builders.html import validate_html_extra_path, validate_html_static_path
+@@ -50,6 +53,7 @@
+         if fname in etree_cache:
+             return etree_cache[fname]
+         with (fname).open('rb') as fp:
++            pytest.skip("no html5lib available")
+             etree = HTMLParser(namespaceHTMLElements=False).parse(fp)
+             etree_cache.clear()
+             etree_cache[fname] = etree
+--- sphinx-7.2.5/tests/test_domain_std.py.orig
++++ sphinx-7.2.5/tests/test_domain_std.py
+@@ -5,6 +5,7 @@
+ import pytest
+ from docutils import nodes
+ from docutils.nodes import definition, definition_list, definition_list_item, term
++pytest.skip("no html5lib available", allow_module_level=True)
+ from html5lib import HTMLParser
+ 
+ from sphinx import addnodes
