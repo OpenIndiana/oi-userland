@@ -16,17 +16,17 @@
 #
 
 BUILD_STYLE= justmake
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
-COMPONENT_VERSION=	3.8.1
+COMPONENT_VERSION=	3.8.2
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	https://www.postfix.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	https://github.com/vdukhovni/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:edda63ee47d7b5ee325ab4584143928d64ef26eeca4fa60aa62b574e33d2d61d
+COMPONENT_ARCHIVE_URL=	https://de.postfix.org/ftpmirror/official/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:6790903cdbb5e0e47196691eb9a5f2cf8050262def941e039e6d4bf4043a5e30
 COMPONENT_FMRI=		service/network/smtp/postfix
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_LICENSE=	IBM PUBLIC LICENSE, Eclipse Public License 2.0
@@ -34,8 +34,6 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_POST_UNPACK_ACTION= ( $(RM) $(SOURCE_DIR)/LICENSE $(SOURCE_DIR)/README && $(MV) $(SOURCE_DIR)/postfix/* $(SOURCE_DIR) )
 
 CCARGS =  -DDEF_COMMAND_DIR=\\\"/usr/sbin\\\"
 CCARGS += -DDEF_DAEMON_DIR=\\\"/usr/lib/postfix\\\"
@@ -79,7 +77,7 @@ REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
