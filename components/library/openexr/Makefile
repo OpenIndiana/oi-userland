@@ -28,12 +28,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
-COMPONENT_VERSION=      3.1.11
+COMPONENT_VERSION=      3.2.0
 COMPONENT_SUMMARY=      OpenEXR header files and libraries used to read and write OpenEXR images
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.openexr.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:06b4a20d0791b5ec0f804c855d320a0615ce8445124f293616a086e093f1f1e1
+COMPONENT_ARCHIVE_HASH= sha256:b1b200606640547fceff0d3ebe01ac05c4a7ae2a131be7e9b3e5b9f491ef35b3
 COMPONENT_ARCHIVE_URL=  https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/openexr
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -50,7 +50,7 @@ CMAKE_OPTIONS += -DOPENEXR_USE_DEFAULT_VISIBILITY=OFF
 CMAKE_OPTIONS += -DCMAKE_INSTALL_BINDIR=bin/$(MACH64)
 
 COMPONENT_TEST_TRANSFORMS= \
-	' -e "s/[0-9]*\.[0-9]* sec/X.XX sec/" ' \
+	'-e "s/[0-9]*\.[0-9]* sec//" ' \
 	'-n ' \
     '-e "/Passed/p" ' \
     '-e "/Failed/p" ' \
@@ -60,6 +60,5 @@ COMPONENT_TEST_TRANSFORMS= \
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/imath
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
