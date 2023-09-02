@@ -1,14 +1,12 @@
 ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> mypy
+py$(PYV): commands[0]> $(PYTHON) -m mypy
 Success: no issues found in 3 source files
-py$(PYV): commands[1]> python -m py.test --cov bracex --cov-append tests
+py$(PYV): commands[1]> $(PYTHON) -m pytest --cov bracex --cov-append tests
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
 collecting ... collected 219 items
 
 tests/test_brace.py::TestBraces::test_bash_cases[case0] PASSED
@@ -233,17 +231,17 @@ tests/test_versions.py::TestVersion::test_version_parsing PASSED
 
 
 ======== 219 passed ========
-py$(PYV): commands[2]> python -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/coverage
+py$(PYV): commands[2]> $(PYTHON) -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/coverage
 Wrote HTML report to $(@D)/.tox/py$(PYV)/tmp/coverage/index.html
-py$(PYV): commands[3]> python -m coverage xml
+py$(PYV): commands[3]> $(PYTHON) -m coverage xml
 Wrote XML report to coverage.xml
-py$(PYV): commands[4]> python -m coverage report --show-missing
+py$(PYV): commands[4]> $(PYTHON) -m coverage report --show-missing
 Name                 Stmts   Miss  Cover   Missing
 --------------------------------------------------
-bracex/__init__.py     230      0   100%
+bracex/__init__.py     231      0   100%
 bracex/__main__.py      15      0   100%
-bracex/__meta__.py      69      0   100%
+bracex/__meta__.py      70      0   100%
 --------------------------------------------------
-TOTAL                  314      0   100%
+TOTAL                  316      0   100%
   py$(PYV): OK
   congratulations :)
