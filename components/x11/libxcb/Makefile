@@ -21,51 +21,52 @@
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
 
-X11_CATEGORY=LIB
+X11_CATEGORY= LIB
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxcb
-COMPONENT_VERSION=		1.15
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=		1.16
 COMPONENT_FMRI=			x11/library/libxcb
 COMPONENT_SUMMARY=		The X protocol C-language Binding (XCB): Libraries
 COMPONENT_PROJECT_URL=	https://xcb.freedesktop.org
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:cc38744f817cf6814c847e2df37fcb8997357d72fa4bcbc228ae0fe47219a059
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://xorg.freedesktop.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:4348566aa0fbf196db5e0a576321c65966189210cb51328ea2bb2be39c711d71
+COMPONENT_LICENSE_FILE=	COPYING
+
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --disable-libtool-lock 
-CONFIGURE_OPTIONS+= --enable-devel-docs=no 
-CONFIGURE_OPTIONS+= --enable-composite 
-CONFIGURE_OPTIONS+= --enable-damage 
-CONFIGURE_OPTIONS+= --enable-dpms 
-CONFIGURE_OPTIONS+= --enable-dri2 
-CONFIGURE_OPTIONS+= --enable-glx 
-CONFIGURE_OPTIONS+= --enable-randr 
-CONFIGURE_OPTIONS+= --enable-record 
-CONFIGURE_OPTIONS+= --enable-render 
-CONFIGURE_OPTIONS+= --enable-resource 
-CONFIGURE_OPTIONS+= --enable-screensaver 
-CONFIGURE_OPTIONS+= --enable-shape 
-CONFIGURE_OPTIONS+= --enable-shm 
-CONFIGURE_OPTIONS+= --enable-sync 
-CONFIGURE_OPTIONS+= --enable-xevie 
-CONFIGURE_OPTIONS+= --enable-xfixes 
-CONFIGURE_OPTIONS+= --enable-xfree86-dri 
-CONFIGURE_OPTIONS+= --enable-xinerama 
-CONFIGURE_OPTIONS+= --enable-xinput 
-CONFIGURE_OPTIONS+= --enable-xprint 
-CONFIGURE_OPTIONS+= --disable-selinux 
-CONFIGURE_OPTIONS+= --enable-xtest 
-CONFIGURE_OPTIONS+= --enable-xv 
-CONFIGURE_OPTIONS+= --enable-xvmc 
-CONFIGURE_OPTIONS+= --with-queue-size=32768 
-CONFIGURE_OPTIONS+= --with-pic
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-libtool-lock 
+CONFIGURE_OPTIONS += --enable-devel-docs=no 
+CONFIGURE_OPTIONS += --enable-composite 
+CONFIGURE_OPTIONS += --enable-damage 
+CONFIGURE_OPTIONS += --enable-dpms 
+CONFIGURE_OPTIONS += --enable-dri2 
+CONFIGURE_OPTIONS += --enable-glx 
+CONFIGURE_OPTIONS += --enable-randr 
+CONFIGURE_OPTIONS += --enable-record 
+CONFIGURE_OPTIONS += --enable-render 
+CONFIGURE_OPTIONS += --enable-resource 
+CONFIGURE_OPTIONS += --enable-screensaver 
+CONFIGURE_OPTIONS += --enable-shape 
+CONFIGURE_OPTIONS += --enable-shm 
+CONFIGURE_OPTIONS += --enable-sync 
+CONFIGURE_OPTIONS += --enable-xevie 
+CONFIGURE_OPTIONS += --enable-xfixes 
+CONFIGURE_OPTIONS += --enable-xfree86-dri 
+CONFIGURE_OPTIONS += --enable-xinerama 
+CONFIGURE_OPTIONS += --enable-xinput 
+CONFIGURE_OPTIONS += --enable-xprint 
+CONFIGURE_OPTIONS += --disable-selinux 
+CONFIGURE_OPTIONS += --enable-xtest 
+CONFIGURE_OPTIONS += --enable-xv 
+CONFIGURE_OPTIONS += --enable-xvmc 
+CONFIGURE_OPTIONS += --with-queue-size=32768 
+CONFIGURE_OPTIONS += --with-pic
 
 unexport SHELLOPTS
 
