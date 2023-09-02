@@ -10,9 +10,7 @@
 #
 
 #
-# Copyright 2017 Aurelien Larcher
-# Copyright 2022 Daniel Chan
-# Copyright 2023 Niklas Poslovski
+# Copyright 2023 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -67,6 +65,7 @@ file path=usr/include/OpenEXR/ImfChromaticitiesAttribute.h
 file path=usr/include/OpenEXR/ImfCompositeDeepScanLine.h
 file path=usr/include/OpenEXR/ImfCompression.h
 file path=usr/include/OpenEXR/ImfCompressionAttribute.h
+file path=usr/include/OpenEXR/ImfCompressor.h
 file path=usr/include/OpenEXR/ImfConvert.h
 file path=usr/include/OpenEXR/ImfDeepCompositing.h
 file path=usr/include/OpenEXR/ImfDeepFrameBuffer.h
@@ -120,6 +119,7 @@ file path=usr/include/OpenEXR/ImfLineOrder.h
 file path=usr/include/OpenEXR/ImfLineOrderAttribute.h
 file path=usr/include/OpenEXR/ImfLut.h
 file path=usr/include/OpenEXR/ImfMatrixAttribute.h
+file path=usr/include/OpenEXR/ImfMisc.h
 file path=usr/include/OpenEXR/ImfMultiPartInputFile.h
 file path=usr/include/OpenEXR/ImfMultiPartOutputFile.h
 file path=usr/include/OpenEXR/ImfMultiView.h
@@ -165,7 +165,8 @@ file path=usr/include/OpenEXR/openexr_attr.h
 file path=usr/include/OpenEXR/openexr_base.h
 file path=usr/include/OpenEXR/openexr_chunkio.h
 file path=usr/include/OpenEXR/openexr_coding.h
-file path=usr/include/OpenEXR/openexr_conf.h
+file path=usr/include/OpenEXR/openexr_compression.h
+file path=usr/include/OpenEXR/openexr_config.h
 file path=usr/include/OpenEXR/openexr_context.h
 file path=usr/include/OpenEXR/openexr_debug.h
 file path=usr/include/OpenEXR/openexr_decode.h
@@ -173,36 +174,43 @@ file path=usr/include/OpenEXR/openexr_encode.h
 file path=usr/include/OpenEXR/openexr_errors.h
 file path=usr/include/OpenEXR/openexr_part.h
 file path=usr/include/OpenEXR/openexr_std_attr.h
+file path=usr/include/OpenEXR/openexr_version.h
 file path=usr/lib/$(MACH64)/cmake/OpenEXR/OpenEXRConfig.cmake
 file path=usr/lib/$(MACH64)/cmake/OpenEXR/OpenEXRConfigVersion.cmake
 file path=usr/lib/$(MACH64)/cmake/OpenEXR/OpenEXRTargets-none.cmake
 file path=usr/lib/$(MACH64)/cmake/OpenEXR/OpenEXRTargets.cmake
-link path=usr/lib/$(MACH64)/libIex-3_1.so target=libIex-3_1.so.30
-link path=usr/lib/$(MACH64)/libIex-3_1.so.30 target=libIex-3_1.so.30.11.1
-file path=usr/lib/$(MACH64)/libIex-3_1.so.30.11.1
-link path=usr/lib/$(MACH64)/libIex.so target=libIex-3_1.so
-link path=usr/lib/$(MACH64)/libIlmThread-3_1.so target=libIlmThread-3_1.so.30
-link path=usr/lib/$(MACH64)/libIlmThread-3_1.so.30 \
-    target=libIlmThread-3_1.so.30.11.1
-file path=usr/lib/$(MACH64)/libIlmThread-3_1.so.30.11.1
-link path=usr/lib/$(MACH64)/libIlmThread.so target=libIlmThread-3_1.so
-link path=usr/lib/$(MACH64)/libOpenEXR-3_1.so target=libOpenEXR-3_1.so.30
-link path=usr/lib/$(MACH64)/libOpenEXR-3_1.so.30 target=libOpenEXR-3_1.so.30.11.1
-file path=usr/lib/$(MACH64)/libOpenEXR-3_1.so.30.11.1
-link path=usr/lib/$(MACH64)/libOpenEXR.so target=libOpenEXR-3_1.so
-link path=usr/lib/$(MACH64)/libOpenEXRCore-3_1.so \
-    target=libOpenEXRCore-3_1.so.30
-link path=usr/lib/$(MACH64)/libOpenEXRCore-3_1.so.30 \
-    target=libOpenEXRCore-3_1.so.30.11.1
-file path=usr/lib/$(MACH64)/libOpenEXRCore-3_1.so.30.11.1
-link path=usr/lib/$(MACH64)/libOpenEXRCore.so target=libOpenEXRCore-3_1.so
-link path=usr/lib/$(MACH64)/libOpenEXRUtil-3_1.so \
-    target=libOpenEXRUtil-3_1.so.30
-link path=usr/lib/$(MACH64)/libOpenEXRUtil-3_1.so.30 \
-    target=libOpenEXRUtil-3_1.so.30.11.1
-file path=usr/lib/$(MACH64)/libOpenEXRUtil-3_1.so.30.11.1
-link path=usr/lib/$(MACH64)/libOpenEXRUtil.so target=libOpenEXRUtil-3_1.so
+link path=usr/lib/$(MACH64)/libIex-3_2.so target=libIex-3_2.so.31
+link path=usr/lib/$(MACH64)/libIex-3_2.so.31 \
+    target=libIex-3_2.so.31.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libIex-3_2.so.31.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libIex.so target=libIex-3_2.so
+link path=usr/lib/$(MACH64)/libIlmThread-3_2.so target=libIlmThread-3_2.so.31
+link path=usr/lib/$(MACH64)/libIlmThread-3_2.so.31 \
+    target=libIlmThread-3_2.so.31.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libIlmThread-3_2.so.31.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libIlmThread.so target=libIlmThread-3_2.so
+link path=usr/lib/$(MACH64)/libOpenEXR-3_2.so target=libOpenEXR-3_2.so.31
+link path=usr/lib/$(MACH64)/libOpenEXR-3_2.so.31 \
+    target=libOpenEXR-3_2.so.31.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libOpenEXR-3_2.so.31.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libOpenEXR.so target=libOpenEXR-3_2.so
+link path=usr/lib/$(MACH64)/libOpenEXRCore-3_2.so \
+    target=libOpenEXRCore-3_2.so.31
+link path=usr/lib/$(MACH64)/libOpenEXRCore-3_2.so.31 \
+    target=libOpenEXRCore-3_2.so.31.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libOpenEXRCore-3_2.so.31.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libOpenEXRCore.so target=libOpenEXRCore-3_2.so
+link path=usr/lib/$(MACH64)/libOpenEXRUtil-3_2.so \
+    target=libOpenEXRUtil-3_2.so.31
+link path=usr/lib/$(MACH64)/libOpenEXRUtil-3_2.so.31 \
+    target=libOpenEXRUtil-3_2.so.31.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libOpenEXRUtil-3_2.so.31.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libOpenEXRUtil.so target=libOpenEXRUtil-3_2.so
 file path=usr/lib/$(MACH64)/pkgconfig/OpenEXR.pc
+file path=usr/share/doc/OpenEXR/examples/deepExamples.cpp
+file path=usr/share/doc/OpenEXR/examples/deepExamples.h
+file path=usr/share/doc/OpenEXR/examples/deepTiledExamples.cpp
+file path=usr/share/doc/OpenEXR/examples/deepTiledExamples.h
 file path=usr/share/doc/OpenEXR/examples/drawImage.cpp
 file path=usr/share/doc/OpenEXR/examples/drawImage.h
 file path=usr/share/doc/OpenEXR/examples/generalInterfaceExamples.cpp
@@ -212,6 +220,8 @@ file path=usr/share/doc/OpenEXR/examples/generalInterfaceTiledExamples.h
 file path=usr/share/doc/OpenEXR/examples/lowLevelIoExamples.cpp
 file path=usr/share/doc/OpenEXR/examples/lowLevelIoExamples.h
 file path=usr/share/doc/OpenEXR/examples/main.cpp
+file path=usr/share/doc/OpenEXR/examples/multipartExamples.cpp
+file path=usr/share/doc/OpenEXR/examples/multipartExamples.h
 file path=usr/share/doc/OpenEXR/examples/namespaceAlias.h
 file path=usr/share/doc/OpenEXR/examples/previewImageExamples.cpp
 file path=usr/share/doc/OpenEXR/examples/previewImageExamples.h

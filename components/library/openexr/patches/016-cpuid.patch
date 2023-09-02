@@ -1,54 +1,65 @@
-diff -Nru openexr-3.1.6.orig/src/lib/OpenEXR/ImfSystemSpecific.cpp openexr-3.1.6/src/lib/OpenEXR/ImfSystemSpecific.cpp
---- openexr-3.1.6.orig/src/lib/OpenEXR/ImfSystemSpecific.cpp	2023-03-05 21:23:47.000000000 +0100
-+++ openexr-3.1.6/src/lib/OpenEXR/ImfSystemSpecific.cpp	2023-03-12 16:14:03.387974646 +0100
-@@ -16,15 +16,11 @@
+--- openexr-3.2.0/src/lib/OpenEXR/ImfSystemSpecific.cpp.orig	2023-08-28 19:56:26.000000000 +0200
++++ openexr-3.2.0/src/lib/OpenEXR/ImfSystemSpecific.cpp	2023-09-02 09:30:06.458371741 +0200
+@@ -19,23 +19,22 @@
+ #if defined(IMF_HAVE_SSE2) && defined(__GNUC__) && !defined(__e2k__)
  
- namespace {
- #if defined(IMF_HAVE_SSE2) &&  defined(__GNUC__) && !defined(__e2k__)
--
+ // Helper functions for gcc + SSE enabled
++
 +#include <cpuid.h>
-     // Helper functions for gcc + SSE enabled
--    void cpuid(int n, int &eax, int &ebx, int &ecx, int &edx)
-+    void cpuid(unsigned int n, unsigned int &eax, unsigned int &ebx, unsigned int &ecx, unsigned int &edx)
-     {
--        __asm__ __volatile__ (
--            "cpuid"
--            : /* Output  */ "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx)
--            : /* Input   */ "a"(n)
--            : /* Clobber */);
++
+ void
+-cpuid (int n, int& eax, int& ebx, int& ecx, int& edx)
++cpuid (unsigned int n, unsigned int& eax, unsigned int& ebx, unsigned int& ecx, unsigned int& edx)
+ {
+-    __asm__ __volatile__(
+-        "cpuid"
+-        : /* Output  */ "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx)
+-        : /* Input   */ "a"(n)
+-        : /* Clobber */);
 +        __get_cpuid(n, &eax, &ebx, &ecx, &edx);
-     }
+ }
  
  #elif defined(_MSC_VER) && ( defined(_M_IX86) || ( defined(_M_AMD64) && !defined(_M_ARM64EC) ) )
-@@ -44,7 +40,7 @@
- #else // IMF_HAVE_SSE2 && __GNUC__ && !__e2k__
  
-     // Helper functions for generic compiler - all disabled
--    void cpuid(int n, int &eax, int &ebx, int &ecx, int &edx)
-+    void cpuid(unsigned int n, unsigned int &eax, unsigned int &ebx, unsigned int &ecx, unsigned int &edx)
-     {
-         eax = ebx = ecx = edx = 0;
-     }
-@@ -54,7 +50,7 @@
+ // Helper functions for MSVC
+ void
+-cpuid (int n, int& eax, int& ebx, int& ecx, int& edx)
++cpuid (unsigned int n, unsigned int& eax, unsigned int& ebx, unsigned int& ecx, unsigned int& edx)
+ {
+-    int cpuInfo[4] = { -1 };
++    unsigned int cpuInfo[4] = { -1 };
+     __cpuid (cpuInfo, n);
+     eax = cpuInfo[0];
+     ebx = cpuInfo[1];
+@@ -47,7 +46,7 @@
  
+ // Helper functions for generic compiler - all disabled
+ void
+-cpuid (int n, int& eax, int& ebx, int& ecx, int& edx)
++cpuid (unsigned int n, unsigned int& eax, unsigned int& ebx, unsigned int& ecx, unsigned int& edx)
+ {
+     eax = ebx = ecx = edx = 0;
+ }
+@@ -57,7 +56,7 @@
  #ifdef IMF_HAVE_GCC_INLINEASM_X86
  
--    void xgetbv(int n, int &eax, int &edx)
-+    void xgetbv(unsigned int n, unsigned int &eax, unsigned int &edx)
-     {
-         __asm__ __volatile__ (
-             "xgetbv"
-@@ -65,7 +61,7 @@
- 
+ void
+-xgetbv (int n, int& eax, int& edx)
++xgetbv (unsigned int n, unsigned int& eax, unsigned int& edx)
+ {
+     __asm__ __volatile__("xgetbv"
+                          : /* Output  */ "=a"(eax), "=d"(edx)
+@@ -68,7 +67,7 @@
  #else //  IMF_HAVE_GCC_INLINEASM_X86
  
--    void xgetbv(int n, int &eax, int &edx)
-+    void xgetbv(unsigned int n, unsigned int &eax, unsigned int &edx)
-     {
-         eax = edx = 0;
-     }
-@@ -108,8 +104,8 @@
- #   endif
+ void
+-xgetbv (int n, int& eax, int& edx)
++xgetbv (unsigned int n, unsigned int& eax, unsigned int& edx)
+ {
+     eax = edx = 0;
+ }
+@@ -111,8 +110,8 @@
+ #    endif
  #else // x86/x86_64
      bool osxsave = false;
 -    int  max     = 0;
@@ -56,5 +67,5 @@ diff -Nru openexr-3.1.6.orig/src/lib/OpenEXR/ImfSystemSpecific.cpp openexr-3.1.6
 +    unsigned int  max     = 0;
 +    unsigned int  eax, ebx, ecx, edx;
  
-     cpuid(0, max, ebx, ecx, edx);
+     cpuid (0, max, ebx, ecx, edx);
      if (max > 0)
