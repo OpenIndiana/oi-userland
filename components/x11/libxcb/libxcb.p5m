@@ -13,22 +13,22 @@
 # Copyright 2017 Aurelien Larcher
 #
 
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-depend type=require fmri=x11/library/libpthread-stubs
-
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend type=require fmri=x11/library/libpthread-stubs
 
 file path=usr/include/xcb/bigreq.h
 file path=usr/include/xcb/composite.h
 file path=usr/include/xcb/damage.h
+file path=usr/include/xcb/dbe.h
 file path=usr/include/xcb/dpms.h
 file path=usr/include/xcb/dri2.h
 file path=usr/include/xcb/dri3.h
@@ -65,6 +65,9 @@ file path=usr/lib/$(MACH64)/libxcb-composite.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-damage.so target=libxcb-damage.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-damage.so.0 target=libxcb-damage.so.0.0.0
 file path=usr/lib/$(MACH64)/libxcb-damage.so.0.0.0
+link path=usr/lib/$(MACH64)/libxcb-dbe.so target=libxcb-dbe.so.0.0.0
+link path=usr/lib/$(MACH64)/libxcb-dbe.so.0 target=libxcb-dbe.so.0.0.0
+file path=usr/lib/$(MACH64)/libxcb-dbe.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-dpms.so target=libxcb-dpms.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-dpms.so.0 target=libxcb-dpms.so.0.0.0
 file path=usr/lib/$(MACH64)/libxcb-dpms.so.0.0.0
@@ -141,6 +144,7 @@ link path=usr/lib/$(MACH64)/libxcb.so.1 target=libxcb.so.1.1.0
 file path=usr/lib/$(MACH64)/libxcb.so.1.1.0
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-composite.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-damage.pc
+file path=usr/lib/$(MACH64)/pkgconfig/xcb-dbe.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-dpms.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-dri2.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-dri3.pc
@@ -171,6 +175,9 @@ file path=usr/lib/libxcb-composite.so.0.0.0
 link path=usr/lib/libxcb-damage.so target=libxcb-damage.so.0.0.0
 link path=usr/lib/libxcb-damage.so.0 target=libxcb-damage.so.0.0.0
 file path=usr/lib/libxcb-damage.so.0.0.0
+link path=usr/lib/libxcb-dbe.so target=libxcb-dbe.so.0.0.0
+link path=usr/lib/libxcb-dbe.so.0 target=libxcb-dbe.so.0.0.0
+file path=usr/lib/libxcb-dbe.so.0.0.0
 link path=usr/lib/libxcb-dpms.so target=libxcb-dpms.so.0.0.0
 link path=usr/lib/libxcb-dpms.so.0 target=libxcb-dpms.so.0.0.0
 file path=usr/lib/libxcb-dpms.so.0.0.0
@@ -245,6 +252,7 @@ link path=usr/lib/libxcb.so.1 target=libxcb.so.1.1.0
 file path=usr/lib/libxcb.so.1.1.0
 file path=usr/lib/pkgconfig/xcb-composite.pc
 file path=usr/lib/pkgconfig/xcb-damage.pc
+file path=usr/lib/pkgconfig/xcb-dbe.pc
 file path=usr/lib/pkgconfig/xcb-dpms.pc
 file path=usr/lib/pkgconfig/xcb-dri2.pc
 file path=usr/lib/pkgconfig/xcb-dri3.pc
@@ -388,6 +396,27 @@ file path=usr/share/man/man3/xcb_damage_query_version_reply.3
 file path=usr/share/man/man3/xcb_damage_query_version_unchecked.3
 file path=usr/share/man/man3/xcb_damage_subtract.3
 file path=usr/share/man/man3/xcb_damage_subtract_checked.3
+file path=usr/share/man/man3/xcb_dbe_allocate_back_buffer.3
+file path=usr/share/man/man3/xcb_dbe_allocate_back_buffer_checked.3
+file path=usr/share/man/man3/xcb_dbe_begin_idiom.3
+file path=usr/share/man/man3/xcb_dbe_begin_idiom_checked.3
+file path=usr/share/man/man3/xcb_dbe_deallocate_back_buffer.3
+file path=usr/share/man/man3/xcb_dbe_deallocate_back_buffer_checked.3
+file path=usr/share/man/man3/xcb_dbe_end_idiom.3
+file path=usr/share/man/man3/xcb_dbe_end_idiom_checked.3
+file path=usr/share/man/man3/xcb_dbe_get_back_buffer_attributes.3
+file path=usr/share/man/man3/xcb_dbe_get_back_buffer_attributes_reply.3
+file path=usr/share/man/man3/xcb_dbe_get_back_buffer_attributes_unchecked.3
+file path=usr/share/man/man3/xcb_dbe_get_visual_info.3
+file path=usr/share/man/man3/xcb_dbe_get_visual_info_reply.3
+file path=usr/share/man/man3/xcb_dbe_get_visual_info_supported_visuals_iterator.3
+file path=usr/share/man/man3/xcb_dbe_get_visual_info_supported_visuals_length.3
+file path=usr/share/man/man3/xcb_dbe_get_visual_info_unchecked.3
+file path=usr/share/man/man3/xcb_dbe_query_version.3
+file path=usr/share/man/man3/xcb_dbe_query_version_reply.3
+file path=usr/share/man/man3/xcb_dbe_query_version_unchecked.3
+file path=usr/share/man/man3/xcb_dbe_swap_buffers.3
+file path=usr/share/man/man3/xcb_dbe_swap_buffers_checked.3
 file path=usr/share/man/man3/xcb_delete_property.3
 file path=usr/share/man/man3/xcb_delete_property_checked.3
 file path=usr/share/man/man3/xcb_destroy_notify_event_t.3
@@ -411,8 +440,11 @@ file path=usr/share/man/man3/xcb_dpms_get_version.3
 file path=usr/share/man/man3/xcb_dpms_get_version_reply.3
 file path=usr/share/man/man3/xcb_dpms_get_version_unchecked.3
 file path=usr/share/man/man3/xcb_dpms_info.3
+file path=usr/share/man/man3/xcb_dpms_info_notify_event_t.3
 file path=usr/share/man/man3/xcb_dpms_info_reply.3
 file path=usr/share/man/man3/xcb_dpms_info_unchecked.3
+file path=usr/share/man/man3/xcb_dpms_select_input.3
+file path=usr/share/man/man3/xcb_dpms_select_input_checked.3
 file path=usr/share/man/man3/xcb_dpms_set_timeouts.3
 file path=usr/share/man/man3/xcb_dpms_set_timeouts_checked.3
 file path=usr/share/man/man3/xcb_dri2_authenticate.3
