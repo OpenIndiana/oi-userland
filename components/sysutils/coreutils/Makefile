@@ -27,17 +27,18 @@
 # Copyright 2020-2021 Nona Hansel
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
-COMPONENT_VERSION=      9.2
+COMPONENT_VERSION=      9.4
 COMPONENT_FMRI=         file/gnu-coreutils	
 COMPONENT_SUMMARY=		GNU Core Utilities are the basic file, shell and text manipulation utilities
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/coreutils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:6885ff47b9cdb211de47d368c17853f406daaf98b148aaecdf10de29cc04b0b3
+COMPONENT_ARCHIVE_HASH= sha256:ea613a4cf44612326e917201bbbcdfbd301de21ffc3b59b6e5c07e040b275e52
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3, FDLv1.3
 
@@ -50,6 +51,8 @@ PATCH_LEVEL = 0
 
 gcc_OPT.sparc.32 = -O1
 
+CFLAGS += $(CPP_LARGEFILES)
+
 # Recreate configure and Makefile to pick up changes in .../src/local.mk
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 
@@ -60,12 +63,13 @@ CONFIGURE_OPTIONS	+=	--libdir=$(USRLIBDIR.$(BITS))
 # Put libstdbuf in the library directory
 CONFIGURE_OPTIONS	+=	--libexecdir=$(USRLIBDIR.$(BITS))
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS.32 +=	--disable-year2038
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # OS as reported by `uname -o`
-CONFIGURE_ENV		+=	gl_cv_host_operating_system=illumos
+CONFIGURE_ENV += gl_cv_host_operating_system=illumos
 
 COMPONENT_POST_INSTALL_ACTION += ( cp $(COMPONENT_DIR)/files/*.1 \
                                       $(PROTOGNUSHAREMAN1) ) 
@@ -95,16 +99,9 @@ COMPONENT_TEST_ENV += PATH=$(PROTOGNUBIN):$(USRBINDIR)
 
 # Master test results are different between x86 and SPARC (different # of
 # tests run).
-COMPONENT_TEST_MASTER = \
-	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 # Some tests pass or are skip depending on the host.
-# Let us just check for failed tests.
-COMPONENT_TEST_TRANSFORMS += \
- 	'-n ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/ERROR/p" '
 
 test:		install $(TEST_64)
 
