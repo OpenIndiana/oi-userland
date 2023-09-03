@@ -25,22 +25,22 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=		32_and_64
-BUILD_STYLE=		configure
-
+BUILD_BITS= 64_and_32
+BUILD_STYLE= configure
+USE_COMMON_TEST_MASTER= no
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		guile
-COMPONENT_VERSION=	2.2.7
+COMPONENT_VERSION=	3.0.8
 COMPONENT_SUMMARY=	GNU guile utility
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/guile/
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/guile/
 COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_FMRI=		library/guile
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:cdf776ea5f29430b1258209630555beea6d2be5481f9da4d64986b077ff37504
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/guile/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:daa7060a56f2804e9b74c8d7e7fe8beed12b43aab2789a38585183fcc17b8a13
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/guile/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3.0, LGPLv3.0, GFDLv1.3
 COMPONENT_LICENSE_FILE=	COPYING
 
@@ -49,16 +49,20 @@ CONFIGURE_FIX_LIBTOOL_RPATH = no
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV+= CPP="$(GCC_ROOT)/bin/gcc -E"
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):$(USRLIBDIR.64)"
 
-CONFIGURE_OPTIONS +=	CPPFLAGS="-D__USE_LEGACY_PROTOTYPES__"
+CONFIGURE_OPTIONS.64 += --libexecdir=$(USRLIBDIR.64)
+CONFIGURE_OPTIONS.64 +=	--with-libgmp-prefix=$(USRLIBDIR.64)
+CONFIGURE_OPTIONS.64 +=	--with-libunistring-prefix=$(USRLIBDIR.64)
+CONFIGURE_OPTIONS.64 +=	--with-libreadline-prefix=$(USRLIBDIR.64)
 CONFIGURE_OPTIONS +=	LIBS="-lsocket -lnsl"
+CONFIGURE_OPTIONS +=	--disable-dependency-tracking
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
+
 ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
 endif
-
-CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 # bug at: https://bugs.gentoo.org/676468
 ifeq ($(strip $(MACH)),sparc)
@@ -74,14 +78,14 @@ COMPONENT_POST_INSTALL_ACTION= (find $(PROTO_DIR) -name *.go -print0 | xargs -0 
 
 # Build dependencies
 # The tests need an ISO-8859-1 locale to run in
-REQUIRED_PACKAGES += locale/en-extra
+TEST_REQUIRED_PACKAGES += locale/en-extra
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
