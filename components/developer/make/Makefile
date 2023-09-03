@@ -25,11 +25,11 @@
 
 BUILD_BITS=			32_and_64
 BUILD_SYSTEM=		configure
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		make
 COMPONENT_VERSION=	4.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/make/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -42,17 +42,14 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS +=	--program-prefix=g
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	--with-guile
+CONFIGURE_OPTIONS += --program-prefix=g
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --with-guile
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # force re-runs to be the same
-COMPONENT_PRE_TEST_ACTION = \
-    ($(TOUCH) $(SOURCE_DIR)/getloadavg.c)
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_PRE_TEST_ACTION = ( $(TOUCH) $(SOURCE_DIR)/getloadavg.c )
 
 # Strip compilation lines from test output
 COMPONENT_TEST_TRANSFORMS += \
