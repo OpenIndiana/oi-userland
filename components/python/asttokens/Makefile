@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		asttokens
-HUMAN_VERSION =			2.2.1
+HUMAN_VERSION =			2.3.0
 COMPONENT_SUMMARY =		asttokens - Annotate AST trees with source code positions
 COMPONENT_PROJECT_URL =		https://github.com/gristlabs/asttokens
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c8/e3/b0b4f32162621126fbdaba636c152c6b6baec486c99f48686e66343d638f/asttokens-2.2.1.tar.gz
+	https://files.pythonhosted.org/packages/15/ce/a94c29a74936f0a7825eb5f122610510872de7155eff58f71f03ce3048ad/asttokens-2.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4622110b2a6f30b77e1473affaa97e711bc2f07d3f10848420ff1898edbe94f3
+	sha256:2552a88626aaa7f0f299f871479fc755bd4e7c11e89078965e928fb7bb9a6afe
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
