@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Abstract
-HUMAN_VERSION =			3.009
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			3.010
 COMPONENT_SUMMARY =		Email::Abstract - unified interface to mail representations
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:040b7292e22e54815e9e6dfcdbfac9d874741930a20744ff5b369147dde201fc
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:8c12f68b5974cafc99d74942abefc8597193035aafd2763128e6aaafca4b7ed6
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
