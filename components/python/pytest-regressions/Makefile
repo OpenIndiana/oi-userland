@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-regressions
-HUMAN_VERSION =			2.4.2
+HUMAN_VERSION =			2.5.0
 COMPONENT_SUMMARY =		pytest-regressions - Easy to use fixtures to write regression tests.
 COMPONENT_PROJECT_URL =		https://github.com/ESSS/pytest-regressions
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b5/50/00bcd3e966d03c75fab7c4a136c1140459f1c5648599aff6d5be43bce353/pytest-regressions-2.4.2.tar.gz
+	https://files.pythonhosted.org/packages/33/c6/2b6088711d0a9d87b82a7e6ac84c6cb59aab3bf37778bb25645590a5729c/pytest-regressions-2.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eab89e7ba4aa339bdfe07b31047e8e6a70b1e7846e74a8bbfc31a588d01e7303
+	sha256:818c7884c1cff3babf89eebb02cbc27b307856b1985427c24d52cb812a106fd9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
