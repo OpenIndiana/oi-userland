@@ -1,11 +1,176 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest -ra --cov --cov-config pyproject.toml --cov-report=html:$(@D)/.tox/py$(PYV)/htmlcov --cov-context=test --cov-report=xml:$(@D)/.tox/coverage.py$(PYV).xml
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml
-asyncio: mode=strict
-collecting ... collected 1 item
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+installed packages of interest: build==1.0.0 colorama==0.4.6 filelock==3.12.3 packaging==23.1 pip==23.2.1 pyproject_hooks==1.0.0 setuptools==68.1.2 tomli==2.0.1 virtualenv==20.24.4 wheel==0.41.2
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests
+collecting ... collected 158 items
 
-::project PASSED
+tests/test_env.py::test_can_get_venv_paths_with_conflicting_default_scheme SKIPPED
+tests/test_env.py::test_can_get_venv_paths_with_posix_local_default_scheme SKIPPED
+tests/test_env.py::test_default_pip_is_never_too_old PASSED
+tests/test_env.py::test_executable_missing_post_creation PASSED
+tests/test_env.py::test_isolated_env_abstract PASSED
+tests/test_env.py::test_isolated_env_has_executable_still_abstract PASSED
+tests/test_env.py::test_isolated_env_has_install_still_abstract PASSED
+tests/test_env.py::test_isolated_env_log PASSED
+tests/test_env.py::test_isolated_environment_install PASSED
+tests/test_env.py::test_isolation PASSED
+tests/test_env.py::test_pip_needs_upgrade_mac_os_11[arm64-20.2.0] PASSED
+tests/test_env.py::test_pip_needs_upgrade_mac_os_11[arm64-20.3.0] PASSED
+tests/test_env.py::test_pip_needs_upgrade_mac_os_11[arm64-21.0.0] PASSED
+tests/test_env.py::test_pip_needs_upgrade_mac_os_11[arm64-21.0.1] PASSED
+tests/test_env.py::test_pip_needs_upgrade_mac_os_11[x86_64-20.2.0] PASSED
+tests/test_env.py::test_pip_needs_upgrade_mac_os_11[x86_64-20.3.0] PASSED
+tests/test_env.py::test_pip_needs_upgrade_mac_os_11[x86_64-21.0.0] PASSED
+tests/test_env.py::test_pip_needs_upgrade_mac_os_11[x86_64-21.0.1] PASSED
+tests/test_env.py::test_venv_symlink[True] PASSED
+tests/test_integration.py::test_build[Solaar-isolated-code] SKIPPED
+tests/test_integration.py::test_build[Solaar-isolated-entrypoint] SKIPPED
+tests/test_integration.py::test_build[Solaar-isolated-module] SKIPPED
+tests/test_integration.py::test_build[Solaar-no_isolation-code] SKIPPED
+tests/test_integration.py::test_build[Solaar-no_isolation-entrypoint] SKIPPED
+tests/test_integration.py::test_build[Solaar-no_isolation-module] SKIPPED
+tests/test_integration.py::test_build[build-isolated-code] SKIPPED (...)
+tests/test_integration.py::test_build[build-isolated-entrypoint] SKIPPED
+tests/test_integration.py::test_build[build-isolated-module] SKIPPED
+tests/test_integration.py::test_build[build-no_isolation-code] SKIPPED
+tests/test_integration.py::test_build[build-no_isolation-entrypoint] SKIPPED
+tests/test_integration.py::test_build[build-no_isolation-module] SKIPPED
+tests/test_integration.py::test_build[dateutil-isolated-code] SKIPPED
+tests/test_integration.py::test_build[dateutil-isolated-entrypoint] SKIPPED
+tests/test_integration.py::test_build[dateutil-isolated-module] SKIPPED
+tests/test_integration.py::test_build[dateutil-no_isolation-code] SKIPPED
+tests/test_integration.py::test_build[dateutil-no_isolation-entrypoint] SKIPPED
+tests/test_integration.py::test_build[dateutil-no_isolation-module] SKIPPED
+tests/test_integration.py::test_build[flit-isolated-code] SKIPPED (i...)
+tests/test_integration.py::test_build[flit-isolated-entrypoint] SKIPPED
+tests/test_integration.py::test_build[flit-isolated-module] SKIPPED
+tests/test_integration.py::test_build[flit-no_isolation-code] SKIPPED
+tests/test_integration.py::test_build[flit-no_isolation-entrypoint] SKIPPED
+tests/test_integration.py::test_build[flit-no_isolation-module] SKIPPED
+tests/test_integration.py::test_build[pip-isolated-code] SKIPPED (in...)
+tests/test_integration.py::test_build[pip-isolated-entrypoint] SKIPPED
+tests/test_integration.py::test_build[pip-isolated-module] SKIPPED (...)
+tests/test_integration.py::test_build[pip-no_isolation-code] SKIPPED
+tests/test_integration.py::test_build[pip-no_isolation-entrypoint] SKIPPED
+tests/test_integration.py::test_build[pip-no_isolation-module] SKIPPED
+tests/test_integration.py::test_isolation SKIPPED (integration tests...)
+tests/test_main.py::test_build_isolated PASSED
+tests/test_main.py::test_build_no_isolation_check_deps_empty PASSED
+tests/test_main.py::test_build_no_isolation_with_check_deps[missing_deps0-\n\tfoo] PASSED
+tests/test_main.py::test_build_no_isolation_with_check_deps[missing_deps1-\n\tfoo\n\tbar\n\tbaz -> qux] PASSED
+tests/test_main.py::test_build_package PASSED
+tests/test_main.py::test_build_package_via_sdist PASSED
+tests/test_main.py::test_build_package_via_sdist_cant_build PASSED
+tests/test_main.py::test_build_package_via_sdist_invalid_distribution PASSED
+tests/test_main.py::test_build_raises_build_backend_exception PASSED
+tests/test_main.py::test_build_raises_build_exception PASSED
+tests/test_main.py::test_colors[False-env0-colors0] PASSED
+tests/test_main.py::test_colors[False-env2-colors2] PASSED
+tests/test_main.py::test_colors[False-env4-colors4] PASSED
+tests/test_main.py::test_colors[True-env1-colors1] PASSED
+tests/test_main.py::test_colors[True-env3-colors3] PASSED
+tests/test_main.py::test_colors[True-env5-colors5] PASSED
+tests/test_main.py::test_colors_conflict PASSED
+tests/test_main.py::test_output[sdist-and-wheel-direct-no-isolation] PASSED
+tests/test_main.py::test_output[sdist-direct-no-isolation] PASSED
+tests/test_main.py::test_output[via-sdist-isolation] PASSED
+tests/test_main.py::test_output[via-sdist-no-isolation] PASSED
+tests/test_main.py::test_output[wheel-direct-isolation] PASSED
+tests/test_main.py::test_output[wheel-direct-no-isolation] PASSED
+tests/test_main.py::test_output_env_subprocess_error[color] PASSED
+tests/test_main.py::test_output_env_subprocess_error[no-color] PASSED
+tests/test_main.py::test_parse_args[cli_args0-build_args0-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[cli_args1-build_args1-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[cli_args10-build_args10-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[cli_args11-build_args11-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[cli_args2-build_args2-build_package] PASSED
+tests/test_main.py::test_parse_args[cli_args3-build_args3-build_package] PASSED
+tests/test_main.py::test_parse_args[cli_args4-build_args4-build_package] PASSED
+tests/test_main.py::test_parse_args[cli_args5-build_args5-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[cli_args6-build_args6-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[cli_args7-build_args7-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[cli_args8-build_args8-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[cli_args9-build_args9-build_package_via_sdist] PASSED
+tests/test_main.py::test_prog PASSED
+tests/test_main.py::test_venv_fail PASSED
+tests/test_main.py::test_version PASSED
+tests/test_main_helpers.py::test_natural_language_list PASSED
+tests/test_module.py::test_dir PASSED
+tests/test_module.py::test_version PASSED
+tests/test_projectbuilder.py::test_bad_project PASSED
+tests/test_projectbuilder.py::test_build PASSED
+tests/test_projectbuilder.py::test_build_missing_backend[sdist] PASSED
+tests/test_projectbuilder.py::test_build_missing_backend[wheel] PASSED
+tests/test_projectbuilder.py::test_build_not_dir_outdir PASSED
+tests/test_projectbuilder.py::test_build_system_typo PASSED
+tests/test_projectbuilder.py::test_build_with_dep_on_console_script PASSED
+tests/test_projectbuilder.py::test_check_dependencies PASSED
+tests/test_projectbuilder.py::test_check_dependency[circular_dep-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep == 1.0.0-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep == 2.0.0-expected12] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep[extra-with-met-deps]-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep[extra-with-unmet-deps]-expected5] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep[extra-without-associated-deps] == 1.0.0-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep[extra-without-associated-deps] == 2.0.0-expected14] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep[extra-without-associated-deps]-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep[recursive-extra-with-unmet-deps]-expected6] PASSED
+tests/test_projectbuilder.py::test_check_dependency[extras_dep[undefined_extra]-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[missing_dep-expected1] PASSED
+tests/test_projectbuilder.py::test_check_dependency[missing_dep; python_version<="1"-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[missing_dep; python_version>"10"-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[missing_dep; python_version>="1"-expected10] PASSED
+tests/test_projectbuilder.py::test_check_dependency[prerelease_dep >= 1.0.0-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency[requireless_dep-None] PASSED
+tests/test_projectbuilder.py::test_default_backend PASSED
+tests/test_projectbuilder.py::test_get_requires_for_build_missing_backend[sdist] PASSED
+tests/test_projectbuilder.py::test_get_requires_for_build_missing_backend[wheel] PASSED
+tests/test_projectbuilder.py::test_get_requires_for_build_missing_optional_hooks[sdist] PASSED
+tests/test_projectbuilder.py::test_get_requires_for_build_missing_optional_hooks[wheel] PASSED
+tests/test_projectbuilder.py::test_init PASSED
+tests/test_projectbuilder.py::test_init_makes_source_dir_absolute PASSED
+tests/test_projectbuilder.py::test_log PASSED
+tests/test_projectbuilder.py::test_metadata_invalid_wheel PASSED
+tests/test_projectbuilder.py::test_metadata_path_legacy PASSED
+tests/test_projectbuilder.py::test_metadata_path_no_prepare PASSED
+tests/test_projectbuilder.py::test_metadata_path_with_prepare PASSED
+tests/test_projectbuilder.py::test_missing_backend PASSED
+tests/test_projectbuilder.py::test_missing_outdir PASSED
+tests/test_projectbuilder.py::test_missing_requires PASSED
+tests/test_projectbuilder.py::test_no_outdir_multiple PASSED
+tests/test_projectbuilder.py::test_no_outdir_single PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[pyproject_toml0-`requires` is a required property] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[pyproject_toml1-`requires` must be an array of strings] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[pyproject_toml2-`requires` must be an array of strings] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[pyproject_toml3-`build-backend` must be a string] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[pyproject_toml4-`backend-path` must be an array of strings] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[pyproject_toml5-`backend-path` must be an array of strings] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[pyproject_toml6-Unknown properties: unknown-prop] PASSED
+tests/test_projectbuilder.py::test_parse_valid_build_system_table_type[pyproject_toml0-parse_output0] PASSED
+tests/test_projectbuilder.py::test_parse_valid_build_system_table_type[pyproject_toml1-parse_output1] PASSED
+tests/test_projectbuilder.py::test_parse_valid_build_system_table_type[pyproject_toml2-parse_output2] PASSED
+tests/test_projectbuilder.py::test_prepare PASSED
+tests/test_projectbuilder.py::test_prepare_error PASSED
+tests/test_projectbuilder.py::test_prepare_no_hook PASSED
+tests/test_projectbuilder.py::test_prepare_not_dir_outdir PASSED
+tests/test_projectbuilder.py::test_relative_outdir PASSED
+tests/test_projectbuilder.py::test_runner_user_specified PASSED
+tests/test_self_packaging.py::test_build_sdist PASSED
+tests/test_self_packaging.py::test_build_wheel[direct] PASSED
+tests/test_self_packaging.py::test_build_wheel[from_sdist] PASSED
+tests/test_util.py::test_wheel_metadata[False] PASSED
+tests/test_util.py::test_wheel_metadata[True] PASSED
+tests/test_util.py::test_wheel_metadata_isolation XFAIL (flit_core i...)
+tests/test_util.py::test_with_get_requires PASSED
 
-======== 1 passed ========
+
+=========================== short test summary info ============================
+======== 124 passed, 33 skipped, 1 xfailed ========
+  py$(PYV): OK
+  congratulations :)
