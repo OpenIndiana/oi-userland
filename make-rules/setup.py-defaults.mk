@@ -16,26 +16,9 @@
 #
 # Component defaults
 #
-# To support Post-releases (see PEP 440) we need to convert the 'post' part of
-# the (human) version number to some numbers.  According to PEP 440 we need to
-# make sure that Post-release always immediately follows the corresponding
-# release and is ahead of any subsequent release.  We do so by converting word
-# 'post' to sequence of zeros.
-#
-# Unfortunately it is not possible to create solution that would work in all
-# cases, so we arbitrarily chose to use 'three dotted zeros'.
-#
-# Example when the 'three dotted zeros' solution won't work properly:
-#
-#	HUMAN_VERSION		COMPONENT_VERSION
-#	1.1			1.1
-#	1.2			1.2
-#	1.2.post1		1.2.0.0.0.1
-#	1.2.post2		1.2.0.0.0.2
-#	1.2.0.0.0.0.1		1.2.0.0.0.0.1
-#	1.2.0.0.0.1		1.2.0.0.0.1
-#
-COMPONENT_VERSION ?=		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/post/0.0.0./')
+
+# Support for Post-releases (see PEP 440).
+COMPONENT_VERSION ?=		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.post.*//')
 COMPONENT_CLASSIFICATION ?=	Development/Python
 COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
