@@ -1,0 +1,10 @@
+--- pytest-7.4.1/testing/test_debugging.py.orig
++++ pytest-7.4.1/testing/test_debugging.py
+@@ -667,6 +667,7 @@
+         self.flush(child)
+ 
+     @pytest.mark.parametrize("capture_arg", ("", "-s", "-p no:capture"))
++    @pytest.mark.skip(reason="randomly fails: https://github.com/pytest-dev/pytest/issues/11411")
+     def test_pdb_continue_with_recursive_debug(
+         self, capture_arg, pytester: Pytester
+     ) -> None:
