@@ -15,13 +15,13 @@
 #
 
 BUILD_STYLE = makemaker
-USE_OPENSSL11 = yes
-
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::SpamAssassin
 HUMAN_VERSION =			4.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mail::SpamAssassin - Spam detector and markup engine
 COMPONENT_CPAN_AUTHOR =		SIDNEY
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,21 +31,58 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-LDFLAGS=-L/usr/openssl/1.1/lib/amd64
-CFLAGS=-I/usr/openssl/1.1/include
-# add CONFIGURE options
-CONFIGURE_OPTIONS = INSTALLDIRS=vendor CONTACT_ADDRESS=postmaster@example.com SYSCONFDIR=/etc DATADIR=/usr/share/spamassassin LOCALSTATEDIR=/var/spamassassin ENABLE_SSL=yes < /dev/null
-# to force openssl 1.1
-COMPONENT_POST_CONFIGURE_ACTION+= $(GSED) -i -e 's:SSLCFLAGS =:SSLCFLAGS = -I/usr/openssl/1.1/include/:' -e 's:SSLLIBS =:SSLLIBS = -L/usr/openssl/1.1/lib/amd64:' $(@D)/spamc/Makefile.in
+# see the PACKAGING file
+CONFIGURE_OPTIONS += INSTALLDIRS=vendor
+CONFIGURE_OPTIONS += CONTACT_ADDRESS=postmaster@example.com
+CONFIGURE_OPTIONS += SYSCONFDIR=/etc
+CONFIGURE_OPTIONS += DATADIR=/usr/share/spamassassin
+CONFIGURE_OPTIONS += LOCALSTATEDIR=/var/spamassassin
+CONFIGURE_OPTIONS += ENABLE_SSL=yes
+CONFIGURE_OPTIONS += CONFIGURE="\$$(PERL_BIN) spamc/configure.pl LDFLAGS=-L$(OPENSSL_LIBDIR) CFLAGS=-I$(OPENSSL_INCDIR)"
+CONFIGURE_OPTIONS += < /dev/null
 
+# install spamassassin
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTO_DIR)/lib/svc/method ; \
+	$(CP) $(COMPONENT_DIR)/files/spamassassin $(PROTO_DIR)/lib/svc/method ;
+# install spamassassin.xml
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTO_DIR)/lib/svc/manifest/network ; \
+	$(CP) $(COMPONENT_DIR)/files/spamassassin.xml $(PROTO_DIR)/lib/svc/manifest/network ;
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/archive-zip
+PERL_REQUIRED_PACKAGES += library/perl-5/bsd-resource
+PERL_REQUIRED_PACKAGES += library/perl-5/dbd-sqlite
+PERL_REQUIRED_PACKAGES += library/perl-5/dbi
+PERL_REQUIRED_PACKAGES += library/perl-5/email-address-xs
+PERL_REQUIRED_PACKAGES += library/perl-5/encode-detect
+PERL_REQUIRED_PACKAGES += library/perl-5/geo-ip
 PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
+PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-inet6
+PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl
+PERL_REQUIRED_PACKAGES += library/perl-5/io-string
+PERL_REQUIRED_PACKAGES += library/perl-5/ip-country
+PERL_REQUIRED_PACKAGES += library/perl-5/ip-country-db_file
+PERL_REQUIRED_PACKAGES += library/perl-5/libwww-perl
 PERL_REQUIRED_PACKAGES += library/perl-5/mail-dkim
+PERL_REQUIRED_PACKAGES += library/perl-5/mail-dmarc
+PERL_REQUIRED_PACKAGES += library/perl-5/mail-spf
+PERL_REQUIRED_PACKAGES += library/perl-5/net-cidr-lite
 PERL_REQUIRED_PACKAGES += library/perl-5/net-dns
+PERL_REQUIRED_PACKAGES += library/perl-5/net-libidn
+PERL_REQUIRED_PACKAGES += library/perl-5/net-libidn2
+PERL_REQUIRED_PACKAGES += library/perl-5/net-patricia
 PERL_REQUIRED_PACKAGES += library/perl-5/netaddr-ip
-PERL_REQUIRED_PACKAGES += library/perl-5/text-diff
+PERL_REQUIRED_PACKAGES += library/perl-5/razor2-client-agent
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-cycle
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/perl-critic
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/perl-critic-policy-perlsecret
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/text-diff
