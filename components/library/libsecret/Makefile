@@ -14,6 +14,7 @@
 #
 
 BUILD_BITS= 64_and_32
+BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 USE_COMMON_TEST_MASTER= no
 SINGLE_PYTHON_VERSION= yes
@@ -21,12 +22,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libsecret
 COMPONENT_MAJOR_VERSION= 0.20
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).4
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).5
 COMPONENT_SUMMARY=      GObject based library for accessing the Secret Service API
 COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:325a4c54db320c406711bf2b55e5cb5b6c29823426aa82596a907595abb39d28
+COMPONENT_ARCHIVE_HASH= sha256:3fb3ce340fcd7db54d87c893e69bfc2b1f6e4d4b279065ffe66dac9f0fd12b4d
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Security
@@ -35,22 +36,22 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# If we use gcc-7 vala tests cannot be build because of a 32/64 bit ELFCLASS mismatch.
-GCC_VERSION= 10
-
 PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS.32 += --disable-introspection
-CONFIGURE_OPTIONS.64 += --enable-introspection
-CONFIGURE_OPTIONS.32 += --disable-vala
-CONFIGURE_OPTIONS.64 += --enable-vala
+CONFIGURE_OPTIONS.32 += -Dintrospection=false
+CONFIGURE_OPTIONS.32 += -Dvapi=false
+CONFIGURE_OPTIONS.32 += -Dgtk_doc=false
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-COMPONENT_TEST_ENV += CC="$(CC)"
-COMPONENT_TEST_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_TEST_TRANSFORMS = \
+	' -n ' \
+	' -e "s/[0-9][0-9]*\.[0-9][0-9]*s//" ' \
+	' -e "/OK/p" ' \
+	' -e "/FAIL/p" ' \
+	' -e "/Ok/p" ' \
+	' -e "/Fail/p" ' \
+	' -e "/Skipped/p" ' \
+	' -e "/Timeout/p" ' \
+	' -e "/Pass/p" '
 
 # Manually added dependencies
 REQUIRED_PACKAGES += developer/vala
