@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			68.1.2
+HUMAN_VERSION =			68.2.2
 COMPONENT_SUMMARY =		setuptools - Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_PROJECT_URL =		https://github.com/pypa/setuptools
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/19/20/d8dd9d8becaf3e2d6fdc17cc41870d5ada5ceda518996cf5968c2ca71bd8/setuptools-68.1.2.tar.gz
+	https://files.pythonhosted.org/packages/ef/cc/93f7213b2ab5ed383f98ce8020e632ef256b406b8569606c3f160ed8e1c9/setuptools-68.2.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3d4dfa6d95f1b101d695a6160a7626e15583af71a5f52176efa5d39a054d475d
+	sha256:4ac1475276d2f1c48684874089fefcd83bd7162ddaafb81fac866ba0db282a87
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -57,6 +57,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/ini2toml
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-develop
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-envs
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
+TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
