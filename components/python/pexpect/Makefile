@@ -20,13 +20,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pexpect
 HUMAN_VERSION =			4.8.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		pexpect - Pexpect allows easy control of interactive console applications.
 COMPONENT_PROJECT_URL =		https://pexpect.readthedocs.io/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e5/9b/ff402e0e930e70467a7178abb7c128709a30dfb22d8777c043e501bc1b10/pexpect-4.8.0.tar.gz
+	https://github.com/pexpect/pexpect/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fc65a43959d153d0114afe13997d439c22823a27cefceb5ff35c2178c6784c0c
+	sha256:f2ea54a12cc893636a60421e8da0a36c40caad7825eb674697f1e25f5f91245e
 COMPONENT_LICENSE =		ISC
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +34,14 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements-testing.txt
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/ptyprocess
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/coveralls
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
