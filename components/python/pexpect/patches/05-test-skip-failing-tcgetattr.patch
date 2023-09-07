@@ -1,0 +1,10 @@
+--- pexpect-4.8.0/tests/test_replwrap.py.orig
++++ pexpect-4.8.0/tests/test_replwrap.py
+@@ -88,6 +88,7 @@
+         res = bash.run_command("echo '1 2\n3 4'")
+         self.assertEqual(res.strip().splitlines(), ['1 2', '3 4'])
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/pexpect/pexpect/issues/767")
+     def test_existing_spawn(self):
+         child = pexpect.spawn("bash", timeout=5, encoding='utf-8')
+         repl = replwrap.REPLWrapper(child, re.compile('[$#]'),

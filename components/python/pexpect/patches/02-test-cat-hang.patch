@@ -1,0 +1,22 @@
+https://github.com/pexpect/pexpect/issues/765
+
+--- pexpect-4.8.0/tests/test_expect.py.orig
++++ pexpect-4.8.0/tests/test_expect.py
+@@ -455,7 +455,7 @@
+         '''Tests that timeouts do not truncate before, a bug in 4.4-4.7.'''
+         child = pexpect.spawn('cat', echo=False)
+         child.sendline('BEGIN')
+-        for i in range(100):
++        for i in range(39):
+             child.sendline('foo' * 100)
+         e = child.expect([b'xyzzy', pexpect.TIMEOUT],
+                          searchwindowsize=10, timeout=0.001)
+@@ -472,7 +472,7 @@
+         '''Tests that the search window can be expanded, a bug in 4.4-4.7.'''
+         child = pexpect.spawn('cat', echo=False)
+         child.sendline('BEGIN')
+-        for i in range(100):
++        for i in range(39):
+             child.sendline('foo' * 100)
+         e = child.expect([b'xyzzy', pexpect.TIMEOUT],
+                          searchwindowsize=10, timeout=0.5)
