@@ -1,0 +1,43 @@
+From 72f8c0bf6e342ffa80a6cd8460608cdda57bb30e Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <illumos@fiddaman.net>
+Date: Wed, 26 Oct 2022 12:53:51 +0000
+Subject: Add -fforce-omit-frame-pointer
+
+---
+ gcc/common.opt                  | 4 ++++
+ gcc/config/i386/i386-options.cc | 7 +++++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/common.opt b/gcc/common.opt
+index 9dad568d6e6..4896e4ad644 100644
+--- a/gcc/common.opt
++++ b/gcc/common.opt
+@@ -2191,6 +2191,10 @@ fomit-frame-pointer
+ Common Var(flag_omit_frame_pointer) Optimization
+ When possible do not generate stack frames.
+ 
++fforce-omit-frame-pointer
++Common Var(flag_force_omit_frame_pointer) Optimization
++When possible, do not generate stack frames. Hinders debugging with mdb and dtrace.
++
+ fopt-info
+ Common Var(flag_opt_info) Optimization
+ Enable all optimization info dumps on stderr.
+diff --git a/gcc/config/i386/i386-options.cc b/gcc/config/i386/i386-options.cc
+index 6e4c774b965..d09c68578cf 100644
+--- a/gcc/config/i386/i386-options.cc
++++ b/gcc/config/i386/i386-options.cc
+@@ -2922,8 +2922,11 @@ ix86_option_override_internal (bool main_args_p,
+    * questionable benefit anyway, even on i386.
+    */
+ 
+-  flag_omit_frame_pointer = 0;
+-  opts->x_flag_omit_frame_pointer = 0;
++  if (flag_force_omit_frame_pointer == 0)
++    {
++      flag_omit_frame_pointer = 0;
++      opts->x_flag_omit_frame_pointer = 0;
++    }
+ 
+   /* Save the initial options in case the user does function specific
+      options.  */
