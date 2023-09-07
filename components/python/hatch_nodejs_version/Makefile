@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatch_nodejs_version
-COMPONENT_VERSION =		0.3.1
+HUMAN_VERSION =			0.3.2
 COMPONENT_SUMMARY =		hatch_nodejs_version - Hatch plugin for versioning from a package.json file
 COMPONENT_PROJECT_URL =		https://github.com/agoose77/hatch-nodejs-version
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1a/f7/e563b874c1ebd181e002b56801562516408fa1ff12bbba4f803faa4f433b/hatch_nodejs_version-0.3.1.tar.gz
+	https://files.pythonhosted.org/packages/af/b6/c9406cfa9edf740c6b3de6173408a159228eac0cee80eead4a5b9cc88848/hatch_nodejs_version-0.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0e55fd713d92c5c1ccfee778efecaa780fd8bcd276d4ca7aff9f6791f6f76d9c
+	sha256:8a7828d817b71e50bbbbb01c9bfc0b329657b7900c56846489b9c958de15b54c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
