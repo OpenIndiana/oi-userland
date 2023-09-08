@@ -1,0 +1,29 @@
+--- detect-test-pollution-1.1.1/tests/detect_test_pollution_test.py.orig
++++ detect-test-pollution-1.1.1/tests/detect_test_pollution_test.py
+@@ -17,6 +17,7 @@
+     res = pytester.inline_runsource(
+         'def test(): pass',
+         '-p', detect_test_pollution.__name__,
++        '-p', 'no:black',
+     )
+     assert res.ret == 0
+ 
+@@ -35,6 +36,9 @@
+         '-p', detect_test_pollution.__name__,
+         # use `=` to avoid pytest's basedir detection
+         f'--dtp-testids-output-file={out}',
++        '-p', 'no:black',
++        '-p', 'no:mypy',
++        '-p', 'no:randomly',
+     )
+     assert res.ret == 0
+ 
+@@ -78,6 +82,8 @@
+         '-p', detect_test_pollution.__name__,
+         # use `=` to avoid pytest's basedir detection
+         f'--dtp-results-output-file={out}',
++        '-p', 'no:black',
++        '-p', 'no:mypy',
+     )
+     assert res.ret == 1
+ 
