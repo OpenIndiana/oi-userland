@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-HUMAN_VERSION =			4.11.0
+HUMAN_VERSION =			4.11.3
 COMPONENT_SUMMARY =		tox - tox is a generic virtualenv management and test command line tool
 COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5d/4e/75ae9a8c4d9f9180d543f1d1a1b8b120ca09e1922ddbe10c2dbd46ef64a8/tox-4.11.0.tar.gz
+	https://files.pythonhosted.org/packages/c9/48/7744b1a3ebf2ae5e3bf6a23e8f9775476ae770061fa912db1c966a720fbf/tox-4.11.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cc665e1e6b095f843b952ea5696f7a64bb64982aff62b62547ef171fa60e21eb
+	sha256:5039f68276461fae6a9452a3b2c7295798f00a0e92edcd9a3b78ba1a73577951
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -54,8 +54,6 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/detect-test-pollution
-TEST_REQUIRED_PACKAGES.python += library/python/devpi-process
-TEST_REQUIRED_PACKAGES.python += library/python/diff-cover
 TEST_REQUIRED_PACKAGES.python += library/python/distlib
 TEST_REQUIRED_PACKAGES.python += library/python/flaky
 TEST_REQUIRED_PACKAGES.python += library/python/hatch-vcs
