@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
-HUMAN_VERSION =			7.4.0
+HUMAN_VERSION =			7.4.2
 COMPONENT_SUMMARY =		pytest - pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a7/f3/dadfbdbf6b6c8b5bd02adb1e08bc9fbb45ba51c68b0893fa536378cdf485/pytest-7.4.0.tar.gz
+	https://files.pythonhosted.org/packages/e5/d0/18209bb95db8ee693a9a04fe056ab0663c6d6b1baf67dd50819dd9cd4bd7/pytest-7.4.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b4bf8c45bd59934ed84001ad51e11b4ee40d40a1229d2c79f9c592b0a3f6bd8a
+	sha256:a766259cfab564a2ad52cb1aae1b881a75c3eb7e34ca3779697c23ed47c47069
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,9 +36,13 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# In a case the pytest-xprocess is installed we need the following workaround
+COMPONENT_PRE_TEST_ACTION +=	$(RM) $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)/py ;
+COMPONENT_PRE_TEST_ACTION +=	$(SYMLINK) $(PYTHON_VENDOR_PACKAGES)/py $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)/py ;
+COMPONENT_POST_TEST_ACTION +=	$(RM) $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)/py ;
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/iniconfig
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pluggy

@@ -1,0 +1,18 @@
+--- pytest-7.4.1/testing/_py/test_local.py.orig
++++ pytest-7.4.1/testing/_py/test_local.py
+@@ -617,6 +617,7 @@
+         assert str(local()) == os.getcwd()
+ 
+     @skiponwin32
++    @pytest.mark.skip(reason="always fails: https://github.com/pytest-dev/pytest/issues/11402")
+     def test_chdir_gone(self, path1):
+         p = path1.ensure("dir_to_be_removed", dir=1)
+         p.chdir()
+@@ -630,6 +631,7 @@
+                 raise NotImplementedError
+ 
+     @skiponwin32
++    @pytest.mark.skip(reason="always fails: https://github.com/pytest-dev/pytest/issues/11402")
+     def test_chdir_gone_in_as_cwd(self, path1):
+         p = path1.ensure("dir_to_be_removed", dir=1)
+         p.chdir()

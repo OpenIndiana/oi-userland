@@ -1,0 +1,44 @@
+https://github.com/pytest-dev/pytest/issues/10042#issuecomment-1274655510
+
+--- pytest-7.4.1/testing/test_debugging.py.orig
++++ pytest-7.4.1/testing/test_debugging.py
+@@ -372,7 +372,6 @@
+         result = pytester.runpytest_subprocess("--pdb", ".")
+         result.stdout.fnmatch_lines(["-> import unknown"])
+ 
+-    @pytest.mark.xfail(reason="#10042")
+     def test_pdb_interaction_capturing_simple(self, pytester: Pytester) -> None:
+         p1 = pytester.makepyfile(
+             """
+@@ -541,7 +540,6 @@
+         assert "BdbQuit" not in rest
+         assert "UNEXPECTED EXCEPTION" not in rest
+ 
+-    @pytest.mark.xfail(reason="#10042")
+     def test_pdb_interaction_capturing_twice(self, pytester: Pytester) -> None:
+         p1 = pytester.makepyfile(
+             """
+@@ -577,7 +575,6 @@
+         assert "1 failed" in rest
+         self.flush(child)
+ 
+-    @pytest.mark.xfail(reason="#10042")
+     def test_pdb_with_injected_do_debug(self, pytester: Pytester) -> None:
+         """Simulates pdbpp, which injects Pdb into do_debug, and uses
+         self.__class__ in do_continue.
+@@ -1022,7 +1019,6 @@
+         assert "reading from stdin while output" not in rest
+         TestPDB.flush(child)
+ 
+-    @pytest.mark.xfail(reason="#10042")
+     def test_pdb_not_altered(self, pytester: Pytester) -> None:
+         p1 = pytester.makepyfile(
+             """
+@@ -1182,7 +1178,6 @@
+ 
+ 
+ @pytest.mark.parametrize("fixture", ("capfd", "capsys"))
+-@pytest.mark.xfail(reason="#10042")
+ def test_pdb_suspends_fixture_capturing(pytester: Pytester, fixture: str) -> None:
+     """Using "-s" with pytest should suspend/resume fixture capturing."""
+     p1 = pytester.makepyfile(

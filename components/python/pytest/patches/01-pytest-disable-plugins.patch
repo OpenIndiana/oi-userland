@@ -1,0 +1,135 @@
+https://github.com/bitprophet/pytest-relaxed/issues/28
+https://github.com/christiansandberg/pytest-reporter/issues/8
+https://github.com/jaraco/pytest-enabler/issues/10
+
+pytest.PytestDeprecationWarning: The hookimpl pytest_tempdir_temproot uses old-style configuration options (marks or attributes).
+Please use the pytest.hookimpl(trylast=True) decorator instead
+ to configure the hooks.
+ See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+ at /usr/lib/python3.9/vendor-packages/pytest_tempdir/plugin.py:150
+
+--- pytest-7.4.1/testing/test_config.py.orig
++++ pytest-7.4.1/testing/test_config.py
+@@ -886,7 +886,7 @@
+         option_dict = {"verbose": 444, "foo": "bar", "capture": "no"}
+         args = ["a", "b"]
+ 
+-        config = Config.fromdictargs(option_dict, args)
++        config = Config.fromdictargs(option_dict, ["-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"] + args)
+         with pytest.raises(AssertionError):
+             config.parse(["should refuse to parse again"])
+         assert config.option.verbose == 444
+@@ -897,7 +897,7 @@
+     def test_invocation_params_args(self, _sys_snapshot) -> None:
+         """Show that fromdictargs can handle args in their "orig" format"""
+         option_dict: Dict[str, object] = {}
+-        args = ["-vvvv", "-s", "a", "b"]
++        args = ["-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir", "-p", "no:plugin-enabled options"] + ["-vvvv", "-s", "a", "b"]
+ 
+         config = Config.fromdictargs(option_dict, args)
+         assert config.args == ["a", "b"]
+@@ -939,7 +939,7 @@
+         )
+         with MonkeyPatch.context() as mp:
+             mp.chdir(cwd)
+-            config = Config.fromdictargs(option_dict, ())
++            config = Config.fromdictargs(option_dict, ["-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"])
+             inipath = absolutepath(inifilename)
+ 
+         assert config.args == [str(cwd)]
+@@ -1687,7 +1687,7 @@
+         cache_dir = ".custom_cache"
+         monkeypatch.setenv("PYTEST_ADDOPTS", "-o cache_dir=%s" % cache_dir)
+         config = _config_for_test
+-        config._preparse([], addopts=True)
++        config._preparse(["-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"], addopts=True)
+         assert config._override_ini == ["cache_dir=%s" % cache_dir]
+ 
+     def test_addopts_from_env_not_concatenated(
+--- pytest-7.4.1/testing/test_helpconfig.py.orig
++++ pytest-7.4.1/testing/test_helpconfig.py
+@@ -5,7 +5,7 @@
+ 
+ def test_version_verbose(pytester: Pytester, pytestconfig, monkeypatch) -> None:
+     monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD")
+-    result = pytester.runpytest("--version", "--version")
++    result = pytester.runpytest("--version", "--version", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     assert result.ret == 0
+     result.stdout.fnmatch_lines([f"*pytest*{pytest.__version__}*imported from*"])
+     if pytestconfig.pluginmanager.list_plugin_distinfo():
+@@ -14,7 +14,7 @@
+ 
+ def test_version_less_verbose(pytester: Pytester, pytestconfig, monkeypatch) -> None:
+     monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD")
+-    result = pytester.runpytest("--version")
++    result = pytester.runpytest("--version", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+     assert result.ret == 0
+     result.stdout.fnmatch_lines([f"pytest {pytest.__version__}"])
+ 
+--- pytest-7.4.1/testing/test_junitxml.py.orig
++++ pytest-7.4.1/testing/test_junitxml.py
+@@ -43,7 +43,7 @@
+         if family:
+             args = ("-o", "junit_family=" + family) + args
+         xml_path = self.pytester.path.joinpath("junit.xml")
+-        result = self.pytester.runpytest("--junitxml=%s" % xml_path, *args)
++        result = self.pytester.runpytest("-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir", "--junitxml=%s" % xml_path, *args)
+         if family == "xunit2":
+             with xml_path.open(encoding="utf-8") as f:
+                 self.schema.validate(f)
+--- pytest-7.4.1/testing/test_terminal.py.orig
++++ pytest-7.4.1/testing/test_terminal.py
+@@ -858,7 +858,7 @@
+                 pass
+         """
+         )
+-        result = pytester.runpytest()
++        result = pytester.runpytest("-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+         verinfo = ".".join(map(str, sys.version_info[:3]))
+         result.stdout.fnmatch_lines(
+             [
+@@ -1082,7 +1082,7 @@
+ 
+         monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD")
+         result = pytester.runpytest(
+-            verbose_testfile, "-v", "-n 1", "-Walways::pytest.PytestWarning"
++            verbose_testfile, "-v", "-n 1", "-Walways::pytest.PytestWarning", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"
+         )
+         result.stdout.fnmatch_lines(
+             ["*FAIL*test_verbose_reporting_xdist.py::test_fail*"]
+@@ -2174,7 +2174,7 @@
+     ) -> None:
+         pytest.importorskip("xdist")
+         monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
+-        output = pytester.runpytest("-n2")
++        output = pytester.runpytest("-n2", "-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+         output.stdout.re_match_lines([r"\.{20} \s+ \[100%\]"])
+ 
+     def test_xdist_normal_count(
+@@ -2188,7 +2188,7 @@
+             console_output_style = count
+         """
+         )
+-        output = pytester.runpytest("-n2")
++        output = pytester.runpytest("-n2", "-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+         output.stdout.re_match_lines([r"\.{20} \s+ \[20/20\]"])
+ 
+     def test_xdist_verbose(
+@@ -2196,7 +2196,7 @@
+     ) -> None:
+         pytest.importorskip("xdist")
+         monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
+-        output = pytester.runpytest("-n2", "-v")
++        output = pytester.runpytest("-n2", "-v", "-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+         output.stdout.re_match_lines_random(
+             [
+                 r"\[gw\d\] \[\s*\d+%\] PASSED test_bar.py::test_bar\[1\]",
+@@ -2338,7 +2338,7 @@
+     def test_xdist_normal(self, many_files, pytester: Pytester, monkeypatch) -> None:
+         pytest.importorskip("xdist")
+         monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
+-        output = pytester.runpytest("-n2")
++        output = pytester.runpytest("-n2", "-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir")
+         output.stdout.re_match_lines([r"[\.E]{40} \s+ \[100%\]"])
+ 
+ 
