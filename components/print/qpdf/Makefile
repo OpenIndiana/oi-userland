@@ -15,15 +15,15 @@
 #
 
 BUILD_STYLE= cmake
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= qpdf
-COMPONENT_VERSION= 11.5.0
+COMPONENT_VERSION= 11.6.1
 COMPONENT_SUMMARY= QPDF is a command-line program that does structural, content-preserving transformations on PDF files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:15cb419e72c494a4a4b2e7c0eb9f4e980c8fd4e61ccdea64399e987f4c56c8ee
+COMPONENT_ARCHIVE_HASH= sha256:8756633243c3bd7216f12fc2139736f32f18d37effe1d5b04f37340d8ed851b5
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/qpdf/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://qpdf.sourceforge.net/
 COMPONENT_FMRI= print/qpdf
@@ -67,6 +67,6 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += library/gnutls-3
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
