@@ -1,0 +1,55 @@
+From a0a66f8ce2520681709702871eb7ded77be6a1e8 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Mon, 11 Jan 2021 14:09:40 +0000
+Subject: 13185 -zassert-deflib does not work for 64-bit objects
+
+---
+ gcc/gcc.cc | 33 ++++++++++++++++++++++++++-------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
+
+diff --git a/gcc/gcc.cc b/gcc/gcc.cc
+index fbcc9d03314..ec524111a20 100644
+--- a/gcc/gcc.cc
++++ b/gcc/gcc.cc
+@@ -7931,15 +7931,34 @@ is_directory (const char *path1, bool linker)
+   *cp = '\0';
+ 
+   /* Exclude directories that the linker is known to search.  */
+-  if (linker
+-      && IS_DIR_SEPARATOR (path[0])
+-      && ((cp - path == 6
+-	   && filename_ncmp (path + 1, "lib", 3) == 0)
+-	  || (cp - path == 10
++  if (linker && IS_DIR_SEPARATOR (path[0])) {
++	size_t len = cp - path;
++
++	if (len >= 6 && filename_ncmp (path + 1, "lib", 3) == 0) {
++		if (len == 6)
++			return 0;
++		if (multilib_os_dir != NULL
++		    && len == 6 + strlen(multilib_os_dir) + 1
++		    && filename_ncmp(path + 5, multilib_os_dir,
++		    strlen(multilib_os_dir)) == 0) {
++			return 0;
++		}
++	}
++
++	if (len >= 10
+ 	      && filename_ncmp (path + 1, "usr", 3) == 0
+ 	      && IS_DIR_SEPARATOR (path[4])
+-	      && filename_ncmp (path + 5, "lib", 3) == 0)))
+-    return 0;
++	      && filename_ncmp (path + 5, "lib", 3) == 0) {
++		if (len == 10)
++			return 0;
++		if (multilib_os_dir != NULL
++		    && len == 10 + strlen(multilib_os_dir) + 1
++		    && filename_ncmp(path + 9, multilib_os_dir,
++		    strlen(multilib_os_dir)) == 0) {
++			return 0;
++		}
++	}
++  }
+ 
+   return (stat (path, &st) >= 0 && S_ISDIR (st.st_mode));
+ }

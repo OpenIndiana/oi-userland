@@ -1,0 +1,155 @@
+From 2fcc96443510231eea1da5ac5606db14118a36a9 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Fri, 3 May 2019 00:56:45 +0000
+Subject: i386: don't assert the FP is valid during epilogue
+ adjustment
+
+I did this, I think, to double check some assumptions.  Unfortunately,
+there is a case where the fp won't be valid here, despite us having
+saved arguments.  That where we're returning through an error handler
+via __builtin_eh_return().
+
+While here, make the code more readable and conventional.
+---
+ gcc/config/i386/i386.cc | 68 +++++++++++++++++++----------------------
+ 1 file changed, 32 insertions(+), 36 deletions(-)
+
+diff --git a/gcc/config/i386/i386.cc b/gcc/config/i386/i386.cc
+index a3e4787dfb8..7f58b53d566 100644
+--- a/gcc/config/i386/i386.cc
++++ b/gcc/config/i386/i386.cc
+@@ -7139,21 +7139,21 @@ static void
+ ix86_emit_save_regs (void)
+ {
+   unsigned int regno;
++  struct ix86_frame &frame = cfun->machine->frame;
+   rtx_insn *insn;
+ 
+   if (TARGET_SAVE_ARGS)
+     {
+       int i;
+-      int nsaved = ix86_nsaved_args ();
+       int start = cfun->returns_struct;
+ 
+-      for (i = start; i < start + nsaved; i++)
++      for (i = start; i < start + frame.nmsave_args; i++)
+ 	{
+ 	  regno = x86_64_int_parameter_registers[i];
+ 	  insn = emit_insn (gen_push (gen_rtx_REG (word_mode, regno)));
+ 	  RTX_FRAME_RELATED_P (insn) = 1;
+ 	}
+-      if (nsaved % 2 != 0)
++      if (frame.nmsave_args % 2 != 0)
+ 	pro_epilogue_adjust_stack (stack_pointer_rtx, stack_pointer_rtx,
+ 				   GEN_INT (-UNITS_PER_WORD), -1, false);
+     }
+@@ -7244,22 +7244,21 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+ /* Emit code to save registers using MOV insns.
+    First register is stored at CFA - CFA_OFFSET.  */
+ static void
+-ix86_emit_save_regs_using_mov (const struct ix86_frame *frame)
++ix86_emit_save_regs_using_mov (const struct ix86_frame &frame)
+ {
+   unsigned int regno;
+-  HOST_WIDE_INT cfa_offset = frame->arg_save_offset;
++  HOST_WIDE_INT cfa_offset = frame.arg_save_offset;
+ 
+   if (TARGET_SAVE_ARGS)
+     {
+       int i;
+-      int nsaved = ix86_nsaved_args ();
+       int start = cfun->returns_struct;
+ 
+       /* We deal with this twice? */
+-      if (nsaved % 2 != 0)
++      if (frame.nmsave_args % 2 != 0)
+ 	cfa_offset -= UNITS_PER_WORD;
+ 
+-      for (i = start + nsaved - 1; i >= start; i--)
++      for (i = start + frame.nmsave_args - 1; i >= start; i--)
+ 	{
+ 	  regno = x86_64_int_parameter_registers[i];
+ 	  ix86_emit_save_reg_using_mov(word_mode, regno, cfa_offset);
+@@ -7267,7 +7266,7 @@ ix86_emit_save_regs_using_mov (const struct ix86_frame *frame)
+ 	}
+     }
+ 
+-  cfa_offset = frame->reg_save_offset;
++  cfa_offset = frame.reg_save_offset;
+ 
+   for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
+     if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
+@@ -8664,7 +8663,7 @@ ix86_expand_prologue (void)
+ 	       && (! TARGET_STACK_PROBE
+ 		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
+ 	{
+-	  ix86_emit_save_regs_using_mov (&frame);
++	  ix86_emit_save_regs_using_mov (frame);
+ 	  cfun->machine->red_zone_used = true;
+ 	  int_registers_saved = true;
+ 	}
+@@ -8964,7 +8963,7 @@ ix86_expand_prologue (void)
+     }
+ 
+   if (!int_registers_saved)
+-    ix86_emit_save_regs_using_mov (&frame);
++    ix86_emit_save_regs_using_mov (frame);
+   if (!sse_registers_saved)
+     ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
+   else if (save_stub_call_needed)
+@@ -9624,33 +9623,30 @@ ix86_expand_epilogue (int style)
+       ix86_emit_restore_regs_using_pop ();
+     }
+ 
+-  if (TARGET_SAVE_ARGS) {
+-    /*
+-     * For each saved argument, emit a restore note, to make sure it happens
+-     * correctly within the shrink wrapping (I think).
+-     *
+-     * Note that 'restore' in this case merely means the rule is the same as
+-     * it was on function entry, not that we have actually done a register
+-     * restore (which of course, we haven't).
+-     *
+-     * If we do not do this, the DWARF code will emit sufficient restores to
+-     * provide balance on its own initiative, which in the presence of
+-     * -fshrink-wrap may actually _introduce_ unbalance (whereby we only
+-     * .cfi_offset a register sometimes, but will always .cfi_restore it.
+-     * This will trip an assert.)
+-     */
+-    int start = cfun->returns_struct;
+-    int nsaved = ix86_nsaved_args();
+-    int i;
+-
+-    for (i = start + nsaved - 1; i >= start; i--)
+-      queued_cfa_restores
+-	= alloc_reg_note (REG_CFA_RESTORE,
++  /*
++   * For each saved argument, emit a restore note, to make sure it happens
++   * correctly within the shrink wrapping (I think).
++   *
++   * Note that 'restore' in this case merely means the rule is the same as
++   * it was on function entry, not that we have actually done a register
++   * restore (which of course, we haven't).
++   *
++   * If we do not do this, the DWARF code will emit sufficient restores to
++   * provide balance on its own initiative, which in the presence of
++   * -fshrink-wrap may actually _introduce_ unbalance (whereby we only
++   * .cfi_offset a register sometimes, but will always .cfi_restore it.
++   * This will trip an assert.)
++   */
++  if (TARGET_SAVE_ARGS && frame.nmsave_args > 0) {
++	  int start = cfun->returns_struct;
++	  int i;
++
++	  for (i = start + frame.nmsave_args - 1; i >= start; i--)
++		  queued_cfa_restores
++		      = alloc_reg_note (REG_CFA_RESTORE,
+ 			  gen_rtx_REG(Pmode,
+-				      x86_64_int_parameter_registers[i]),
++			      x86_64_int_parameter_registers[i]),
+ 			  queued_cfa_restores);
+-
+-    gcc_assert(m->fs.fp_valid);
+   }
+ 
+   /* If we used a stack pointer and haven't already got rid of it,

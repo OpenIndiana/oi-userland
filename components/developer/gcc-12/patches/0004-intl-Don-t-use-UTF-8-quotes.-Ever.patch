@@ -1,0 +1,42 @@
+From e5f67d0792d581d47bf66eb6b2b2da0354cbff60 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 11 Mar 2014 21:50:30 +0000
+Subject: intl: Don't use UTF-8 quotes.  Ever.
+
+---
+ gcc/intl.cc | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
+
+diff --git a/gcc/intl.cc b/gcc/intl.cc
+index d83e351139c..d14429d6977 100644
+--- a/gcc/intl.cc
++++ b/gcc/intl.cc
+@@ -74,17 +74,11 @@ gcc_init_libintl (void)
+ 
+   if (!strcmp (open_quote, "`") && !strcmp (close_quote, "'"))
+     {
+-      /* Untranslated quotes that it may be possible to replace with
+-	 U+2018 and U+2019; but otherwise use "'" instead of "`" as
+-	 opening quote.  */
++      /*
++       * open_quote is ` purely for ease of translation.  If they aren't
++       * translated, use ' for both
++       */
+       open_quote = "'";
+-#if defined HAVE_LANGINFO_CODESET
+-      if (locale_utf8)
+-	{
+-	  open_quote = "\xe2\x80\x98";
+-	  close_quote = "\xe2\x80\x99";
+-	}
+-#endif
+     }
+ }
+ 
+@@ -145,6 +139,3 @@ get_spaces (const char *str)
+    spaces[len] = '\0';
+    return spaces;
+ }
+-
+-
+-

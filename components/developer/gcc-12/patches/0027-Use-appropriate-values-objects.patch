@@ -1,0 +1,30 @@
+From c026d8f5f32b94bc9a49a1e2752e307dd58952cc Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Tue, 7 Jan 2020 15:08:43 +0000
+Subject: Use appropriate values objects
+
+---
+ gcc/config/sol2.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index 698d0cad2e4..924520954dc 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -201,8 +201,14 @@ along with GCC; see the file COPYING3.  If not see
+ #undef STARTFILE_ARCH_SPEC
+ #define STARTFILE_ARCH_SPEC \
+   "%{!shared:%{!symbolic: \
+-     %{ansi|std=c*|std=iso9899\\:199409:values-Xc.o%s; :values-Xa.o%s} \
+-     %{std=c90|std=gnu90:values-xpg4.o%s; :values-xpg6.o%s}}}"
++     %{ \
++	std=c89|std=c90|std=gnu89|std=gnu90:values-Xa.o%s; \
++	ansi|std=c*|std=iso9899\\:199409:values-Xc.o%s; \
++	:values-Xa.o%s} \
++     %{ \
++	std=c89|std=c90|std=gnu89|std=gnu90:; \
++	:values-xpg6.o%s \
++     }}}"
+ 
+ #if defined(HAVE_LD_PIE) && defined(HAVE_SOLARIS_CRTS)
+ #define STARTFILE_CRTBEGIN_SPEC "%{static:crtbegin.o%s; \

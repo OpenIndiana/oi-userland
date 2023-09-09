@@ -1,0 +1,31 @@
+From 6627831da214544482f40afe1c34b804240c7bc8 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Wed, 28 Apr 2021 12:29:31 +0000
+Subject: Fix cp/module.cc build - use posix_madvise()
+
+---
+ gcc/cp/module.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/cp/module.cc b/gcc/cp/module.cc
+index 5c5d02bb523..74dc81a9e0e 100644
+--- a/gcc/cp/module.cc
++++ b/gcc/cp/module.cc
+@@ -1639,7 +1639,7 @@ elf_in::defrost (const char *name)
+ 	      set_error (errno);
+ 	  else
+ 	    {
+-	      if (madvise (mapping, hdr.pos, MADV_RANDOM))
++	      if (posix_madvise (mapping, hdr.pos, MADV_RANDOM))
+ 		goto fail;
+ 
+ 	      /* These buffers are never NULL in this case.  */
+@@ -1750,7 +1750,7 @@ elf_in::begin (location_t loc)
+     }
+   /* We'll be hopping over this randomly.  Some systems declare the
+      first parm as char *, and other declare it as void *.  */
+-  if (madvise (reinterpret_cast <char *> (mapping), size, MADV_RANDOM))
++  if (posix_madvise (reinterpret_cast <char *> (mapping), size, MADV_RANDOM))
+     goto fail;
+ 
+   hdr.buffer = (char *)mapping;

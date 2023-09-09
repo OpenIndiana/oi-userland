@@ -1,0 +1,45 @@
+From c8eaf406088b2b56d3d0ec95b3fc22dd008ab3ff Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 4 Mar 2014 02:58:33 +0000
+Subject: strict-cc2: check that disabling function cloning
+ prevents constant propagation eliding or changing arguments
+
+---
+ .../gcc.dg/fno-clone-preserves-unused-args.c  | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c
+
+diff --git a/gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c b/gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c
+new file mode 100644
+index 00000000000..0955381c848
+--- /dev/null
++++ b/gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c
+@@ -0,0 +1,28 @@
++/* { dg-do compile { target { ilp32 } } } */
++/* { dg-options "-O2 -funit-at-a-time -fipa-sra -fno-clone-functions"  } */
++/* { dg-final { scan-assembler "pushl.*\\\$1" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$2" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$3" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$4" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$5" } } */
++
++#include <stdio.h>
++
++/*
++ * Verify that preventing function cloning prevents constant prop/scalar
++ * reduction removing parameters
++ */
++static void
++t(int, int, int, int, int) __attribute__ ((noinline));
++
++int foo()
++{
++    t(1, 2, 3, 4, 5);
++}
++
++/* Only use 3 params, bait constprop/sra into deleting the other two */
++static void
++t(int a, int b, int c, int d, int e)
++{
++    printf("%d %d\n", a, b, c);
++}
