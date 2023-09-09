@@ -1,15 +1,12 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -v
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg
-asyncio: mode=strict
-collecting ... collected 423 items / 1 skipped
+rootdir: $(@D)
+configfile: setup.cfg
+collecting ... collected 421 items / 1 skipped
 
-::project <- . PASSED
 tests/test_callbacks.py::TestNofollowCallback::test_basic PASSED
 tests/test_callbacks.py::TestNofollowCallback::test_blank PASSED
 tests/test_callbacks.py::TestNofollowCallback::test_has_nofollow_already PASSED
@@ -202,14 +199,14 @@ tests/test_clean.py::test_self_closing_tags_self_close[embed] PASSED
 tests/test_clean.py::test_self_closing_tags_self_close[hr] PASSED
 tests/test_clean.py::test_self_closing_tags_self_close[img] PASSED
 tests/test_clean.py::test_self_closing_tags_self_close[input] PASSED
-tests/test_clean.py::test_self_closing_tags_self_close[keygen] XFAIL (https://github.com/mozilla/bleach/issues/488)
+tests/test_clean.py::test_self_closing_tags_self_close[keygen] XFAIL
 tests/test_clean.py::test_self_closing_tags_self_close[link] PASSED
-tests/test_clean.py::test_self_closing_tags_self_close[menuitem] XFAIL (https://github.com/mozilla/bleach/issues/488)
+tests/test_clean.py::test_self_closing_tags_self_close[menuitem] XFAIL
 tests/test_clean.py::test_self_closing_tags_self_close[meta] PASSED
 tests/test_clean.py::test_self_closing_tags_self_close[param] PASSED
 tests/test_clean.py::test_self_closing_tags_self_close[source] PASSED
 tests/test_clean.py::test_self_closing_tags_self_close[track] PASSED
-tests/test_clean.py::test_self_closing_tags_self_close[wbr] XFAIL (https://github.com/mozilla/bleach/issues/488)
+tests/test_clean.py::test_self_closing_tags_self_close[wbr] XFAIL
 tests/test_clean.py::test_strip_respects_block_level_elements[<div><p>This is our <b>description!</b> &amp;</p></div><p>nice!</p>-\nThis is our description! &amp;\nnice!] PASSED
 tests/test_clean.py::test_strip_respects_block_level_elements[<div><p>This is our <b>description!</b> &amp;</p><p>1</p><ul><li>a</li><li>b</li><li>c</li></ul></div><p>nice!</p>-\nThis is our description! &amp;\n1\n\na\nb\nc\nnice!] PASSED
 tests/test_clean.py::test_strip_respects_block_level_elements[<p>Te<b>st</b>!</p><p>Hello</p>-Test!\nHello] PASSED
@@ -432,8 +429,9 @@ tests/test_unicode.py::test_url_utf8[http://\xe9x\xe1mpl\xe9.com/\xed\xe0\xf1\xe
 tests/test_unicode.py::test_url_utf8[http://\xe9x\xe1mpl\xe9.com/\xed\xe0\xf1\xe1/] PASSED
 tests/test_unicode.py::test_url_utf8[http://\xe9x\xe1mpl\xe9.com/] PASSED
 
-======== 418 passed, 1 skipped, 4 xfailed ========
+======== 417 passed, 1 skipped, 4 xfailed ========
 py$(PYV): commands[1]> python setup.py build
+No 'requirements-files' section was found. Nothing to do.
 running build
 running build_py
 running egg_info

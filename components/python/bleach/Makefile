@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bleach
 HUMAN_VERSION =			6.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		bleach - An easy safelist-based HTML-sanitizing tool.
 COMPONENT_PROJECT_URL =		https://github.com/mozilla/bleach
 COMPONENT_ARCHIVE_URL =		\
@@ -51,6 +52,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/tox-gh-actions
 TEST_REQUIRED_PACKAGES.python += library/python/twine
 TEST_REQUIRED_PACKAGES.python += library/python/wheel
