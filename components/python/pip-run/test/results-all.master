@@ -1,62 +1,67 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
-py$(PYV): remove tox env folder .tox/py$(PYV)
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 80 items
+collecting ... collected 96 items
 
 ::project PASSED
-conftest.py::BLACK PASSED
+conftest.py::black PASSED
 conftest.py::mypy PASSED
 conftest.py::mypy-status PASSED
-docs/conf.py::BLACK PASSED
+docs/conf.py::black PASSED
 docs/conf.py::mypy PASSED
-pip-run.py::BLACK PASSED
+pip-run.py::black PASSED
 pip-run.py::mypy PASSED
-pip_run/__init__.py::BLACK PASSED
+pip_run/__init__.py::black PASSED
 pip_run/__init__.py::mypy PASSED
-pip_run/__main__.py::BLACK PASSED
+pip_run/__main__.py::black PASSED
 pip_run/__main__.py::mypy PASSED
-pip_run/_py37compat.py::BLACK PASSED
+pip_run/_py37compat.py::black PASSED
 pip_run/_py37compat.py::mypy PASSED
-pip_run/_py38compat.py::BLACK PASSED
+pip_run/_py38compat.py::black PASSED
 pip_run/_py38compat.py::mypy PASSED
-pip_run/commands.py::BLACK PASSED
+pip_run/commands.py::black PASSED
 pip_run/commands.py::mypy PASSED
 pip_run/commands.py::pip_run.commands._separate_dash PASSED
 pip_run/commands.py::pip_run.commands._separate_script PASSED
 pip_run/commands.py::pip_run.commands.infer_ipython PASSED
 pip_run/commands.py::pip_run.commands.separate PASSED
-pip_run/deps.py::BLACK PASSED
+pip_run/deps.py::black PASSED
 pip_run/deps.py::mypy PASSED
 pip_run/deps.py::pip_run.deps.Install.__bool__ PASSED
 pip_run/deps.py::pip_run.deps.empty PASSED
-pip_run/launch.py::BLACK PASSED
+pip_run/launch.py::black PASSED
 pip_run/launch.py::mypy PASSED
 pip_run/launch.py::pip_run.launch._build_env PASSED
 pip_run/launch.py::pip_run.launch._path_insert PASSED
 pip_run/launch.py::pip_run.launch.infer_cmd PASSED
 pip_run/launch.py::pip_run.launch.inject_sitecustomize PASSED
-pip_run/mode/__init__.py::BLACK PASSED
+pip_run/mode/__init__.py::black PASSED
 pip_run/mode/__init__.py::mypy PASSED
-pip_run/mode/ephemeral.py::BLACK PASSED
+pip_run/mode/ephemeral.py::black PASSED
 pip_run/mode/ephemeral.py::mypy PASSED
-pip_run/mode/persist.py::BLACK PASSED
+pip_run/mode/persist.py::black PASSED
 pip_run/mode/persist.py::mypy PASSED
 pip_run/mode/persist.py::pip_run.mode.persist.cache_key PASSED
-pip_run/read-deps.py::BLACK PASSED
+pip_run/read-deps.py::black PASSED
 pip_run/read-deps.py::mypy PASSED
 pip_run/read-deps.py::pip_run.read-deps.run PASSED
-pip_run/scripts.py::BLACK PASSED
+pip_run/scripts.py::black PASSED
 pip_run/scripts.py::mypy PASSED
 pip_run/scripts.py::pip_run.scripts.DepsReader.read_comments PASSED
 pip_run/scripts.py::pip_run.scripts.DepsReader.read_python PASSED
-tests/test_deps.py::BLACK PASSED
+tests/test_commands.py::black PASSED
+tests/test_commands.py::mypy PASSED
+tests/test_commands.py::test_shebang_detected[#!/usr/bin/env -S pip-run] PASSED
+tests/test_commands.py::test_shebang_detected[#!/usr/bin/env python] PASSED
+tests/test_commands.py::test_shebang_detected[#!/usr/bin/python -W error] PASSED
+tests/test_commands.py::test_shebang_detected[\ufeff#!/usr/bin/env -S python] PASSED
+tests/test_commands.py::test_shebang_invalid_encoding PASSED
+tests/test_commands.py::test_shebang_not_detected[!/usr/bin/env python] PASSED
+tests/test_commands.py::test_shebang_not_detected[#/usr/bin/env python] PASSED
 tests/test_deps.py::TestInstallCheck::test_installed PASSED
 tests/test_deps.py::TestInstallCheck::test_installed_version PASSED
 tests/test_deps.py::TestInstallCheck::test_not_installed PASSED
@@ -65,15 +70,15 @@ tests/test_deps.py::TestLoad::test_no_args_passes[ephemeral] PASSED
 tests/test_deps.py::TestLoad::test_no_args_passes[persist] PASSED
 tests/test_deps.py::TestLoad::test_only_options_passes[ephemeral] PASSED
 tests/test_deps.py::TestLoad::test_only_options_passes[persist] PASSED
+tests/test_deps.py::black PASSED
 tests/test_deps.py::mypy PASSED
 tests/test_deps.py::test_target_mode_context[ephemeral] PASSED
 tests/test_deps.py::test_target_mode_context[persist] PASSED
-tests/test_launch.py::BLACK PASSED
+tests/test_launch.py::black PASSED
 tests/test_launch.py::mypy PASSED
 tests/test_launch.py::test_build_env PASSED
 tests/test_launch.py::test_with_path PASSED
 tests/test_launch.py::test_with_path_result_code PASSED
-tests/test_scripts.py::BLACK PASSED
 tests/test_scripts.py::TestNotebookDepsReader::test_code_and_markdown PASSED
 tests/test_scripts.py::TestNotebookDepsReader::test_jupyter_directives PASSED
 tests/test_scripts.py::TestNotebookDepsReader::test_multiple_code_blocks PASSED
@@ -85,14 +90,75 @@ tests/test_scripts.py::TestSourceDepsReader::test_reads_files_with_attribute_ass
 tests/test_scripts.py::TestSourceDepsReader::test_reads_files_with_multiple_assignment PASSED
 tests/test_scripts.py::TestSourceDepsReader::test_search_long_parameter PASSED
 tests/test_scripts.py::TestSourceDepsReader::test_single_dep PASSED
+tests/test_scripts.py::black PASSED
 tests/test_scripts.py::mypy PASSED
-tests/test_scripts.py::test_pkg_imported PASSED
+tests/test_scripts.py::test_pkg_imported[#!/usr/bin/env python--dash4] PASSED
+tests/test_scripts.py::test_pkg_imported[#!/usr/bin/env python--dash5] PASSED
+tests/test_scripts.py::test_pkg_imported[#!/usr/bin/env python-.py-dash6] PASSED
+tests/test_scripts.py::test_pkg_imported[#!/usr/bin/env python-.py-dash7] PASSED
+tests/test_scripts.py::test_pkg_imported[--dash0] SKIPPED (Unable to...)
+tests/test_scripts.py::test_pkg_imported[--dash1] PASSED
+tests/test_scripts.py::test_pkg_imported[-.py-dash2] PASSED
+tests/test_scripts.py::test_pkg_imported[-.py-dash3] PASSED
 tests/test_scripts.py::test_pkg_loaded_from_alternate_index PASSED
 tests/test_scripts.py::test_pkg_loaded_from_url PASSED
 
-===================================== mypy =====================================
+=============================== warnings summary ===============================
+::project
+  $(PYTHON_DIR)/vendor-packages/setuptools_rust/build.py:21: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
 
-Success: no issues found in 18 source files
-======== 79 passed ========
+::project
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zest')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+: 15 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+===================================== mypy =====================================
+Success: no issues found in 19 source files
+======== 94 passed, 1 skipped, 26 warnings ========
   py$(PYV): OK
   congratulations :)
