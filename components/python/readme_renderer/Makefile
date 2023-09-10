@@ -19,21 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		readme_renderer
-HUMAN_VERSION =			41.0
-COMPONENT_SUMMARY =		readme_renderer - readme_renderer is a library for rendering \\\\\\\"readme\\\\\\\" descriptions for Warehouse
-COMPONENT_PROJECT_URL =		https://github.com/pypa/readme_renderer
+HUMAN_VERSION =			42.0
+COMPONENT_SUMMARY =		readme_renderer - readme_renderer is a library for rendering readme descriptions for Warehouse
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/16/3f/ab83435572c1a3b1a8a6f9bdfc2b5a24dc642583c7c06ceee63a84cfd104/readme_renderer-41.0.tar.gz
+	https://files.pythonhosted.org/packages/b5/35/1cb5a6a97514812f63c06df6c2855d82ebed3e5c02e9d536a78669854c8a/readme_renderer-42.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4f4b11e5893f5a5d725f592c5a343e0dc74f5f273cb3dcf8c42d9703a27073f7
+	sha256:2d55489f83be4992fe4454939d1a051c33edbab778e82761d060c9fc6b308cd1
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/bleach
 PYTHON_REQUIRED_PACKAGES += library/python/docutils
+PYTHON_REQUIRED_PACKAGES += library/python/nh3
 PYTHON_REQUIRED_PACKAGES += library/python/pygments
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
