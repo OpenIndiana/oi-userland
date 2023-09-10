@@ -1,4 +1,3 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m coverage run --source=faker -m pytest
 ============================= test session starts ==============================
@@ -6,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1791 items
+collecting ... collected 1809 items
 
 Use a separate pytest run for tests like this with the "--exclusive-
 Use a separate pytest run for tests like this with the "--exclusive-
@@ -123,6 +122,15 @@ tests/providers/test_address.py::TestEnAu::test_city_prefix PASSED
 tests/providers/test_address.py::TestEnAu::test_postcode PASSED
 tests/providers/test_address.py::TestEnAu::test_state PASSED
 tests/providers/test_address.py::TestEnAu::test_state_abbr PASSED
+tests/providers/test_address.py::TestEnBd::test_administrative_unit PASSED
+tests/providers/test_address.py::TestEnBd::test_area_name PASSED
+tests/providers/test_address.py::TestEnBd::test_building_name PASSED
+tests/providers/test_address.py::TestEnBd::test_building_number PASSED
+tests/providers/test_address.py::TestEnBd::test_city PASSED
+tests/providers/test_address.py::TestEnBd::test_city_prefix PASSED
+tests/providers/test_address.py::TestEnBd::test_postcode PASSED
+tests/providers/test_address.py::TestEnBd::test_secondary_address PASSED
+tests/providers/test_address.py::TestEnBd::test_town PASSED
 tests/providers/test_address.py::TestEnCa::test_city_prefix PASSED
 tests/providers/test_address.py::TestEnCa::test_postal_code_letter PASSED
 tests/providers/test_address.py::TestEnCa::test_postalcode PASSED
@@ -596,6 +604,10 @@ tests/providers/test_color.py::TestAzAz::test_color_name PASSED
 tests/providers/test_color.py::TestBgBg::test_color_name PASSED
 tests/providers/test_color.py::TestBgBg::test_safe_color_name PASSED
 tests/providers/test_color.py::TestColorProvider::test_color PASSED
+tests/providers/test_color.py::TestColorProvider::test_color_hsl PASSED
+tests/providers/test_color.py::TestColorProvider::test_color_hsv PASSED
+tests/providers/test_color.py::TestColorProvider::test_color_rgb PASSED
+tests/providers/test_color.py::TestColorProvider::test_color_rgb_float PASSED
 tests/providers/test_color.py::TestColorProvider::test_hex_color PASSED
 tests/providers/test_color.py::TestColorProvider::test_rgb_color PASSED
 tests/providers/test_color.py::TestColorProvider::test_rgb_css_color PASSED
@@ -618,6 +630,8 @@ tests/providers/test_color.py::TestRandomColor::test_color_format_hsl PASSED
 tests/providers/test_color.py::TestRandomColor::test_color_format_hsv PASSED
 tests/providers/test_color.py::TestRandomColor::test_color_format_rgb PASSED
 tests/providers/test_color.py::TestRandomColor::test_color_format_unspecified PASSED
+tests/providers/test_color.py::TestRandomColor::test_hsl PASSED
+tests/providers/test_color.py::TestRandomColor::test_hsv PASSED
 tests/providers/test_color.py::TestRandomColor::test_hue_float PASSED
 tests/providers/test_color.py::TestRandomColor::test_hue_integer PASSED
 tests/providers/test_color.py::TestRandomColor::test_hue_invalid PASSED
@@ -626,6 +640,8 @@ tests/providers/test_color.py::TestRandomColor::test_hue_tuple_inverted_values P
 tests/providers/test_color.py::TestRandomColor::test_hue_word PASSED
 tests/providers/test_color.py::TestRandomColor::test_luminosity_invalid PASSED
 tests/providers/test_color.py::TestRandomColor::test_luminosity_word PASSED
+tests/providers/test_color.py::TestRandomColor::test_rgb PASSED
+tests/providers/test_color.py::TestRandomColor::test_rgb_float PASSED
 tests/providers/test_color.py::TestSkSk::test_safe_color_name PASSED
 tests/providers/test_company.py::TestAzAz::test_company_suffix PASSED
 tests/providers/test_company.py::TestAzAz::test_large_companies PASSED
@@ -1707,6 +1723,7 @@ tests/test_providers_formats.py::test_no_invalid_formats[el_CY] PASSED
 tests/test_providers_formats.py::test_no_invalid_formats[el_GR] PASSED
 tests/test_providers_formats.py::test_no_invalid_formats[en] PASSED
 tests/test_providers_formats.py::test_no_invalid_formats[en_AU] PASSED
+tests/test_providers_formats.py::test_no_invalid_formats[en_BD] PASSED
 tests/test_providers_formats.py::test_no_invalid_formats[en_CA] PASSED
 tests/test_providers_formats.py::test_no_invalid_formats[en_GB] PASSED
 tests/test_providers_formats.py::test_no_invalid_formats[en_IE] PASSED
@@ -1887,7 +1904,7 @@ tests/pytest/test_unique_clear.py::test_unique_clears
     @pytest.mark.trylast
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1782 passed, 9 skipped, 29 warnings ========
+======== 1800 passed, 9 skipped, 29 warnings ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -1961,6 +1978,8 @@ faker/providers/address/en/__init__.py                3      0   100%
 faker/providers/address/en/__init__.py                3      0   100%
 faker/providers/address/en_AU/__init__.py            23     23     0%
 faker/providers/address/en_AU/__init__.py            23     23     0%
+faker/providers/address/en_BD/__init__.py            37     37     0%
+faker/providers/address/en_BD/__init__.py            37     37     0%
 faker/providers/address/en_CA/__init__.py            47     47     0%
 faker/providers/address/en_CA/__init__.py            47     47     0%
 faker/providers/address/en_GB/__init__.py            31      8    74%
@@ -2227,8 +2246,8 @@ faker/providers/barcode/fr_CA/__init__.py             3      3     0%
 faker/providers/barcode/fr_CA/__init__.py             3      3     0%
 faker/providers/barcode/ja_JP/__init__.py             9      9     0%
 faker/providers/barcode/ja_JP/__init__.py             9      9     0%
-faker/providers/color/__init__.py                    23      7    70%
-faker/providers/color/__init__.py                    23      7    70%
+faker/providers/color/__init__.py                    35     12    66%
+faker/providers/color/__init__.py                    35     12    66%
 faker/providers/color/ar_PS/__init__.py               5      5     0%
 faker/providers/color/ar_PS/__init__.py               5      5     0%
 faker/providers/color/az_AZ/__init__.py               5      5     0%
@@ -2237,8 +2256,8 @@ faker/providers/color/bg_BG/__init__.py               6      6     0%
 faker/providers/color/bg_BG/__init__.py               6      6     0%
 faker/providers/color/bn_BD/__init__.py               6      6     0%
 faker/providers/color/bn_BD/__init__.py               6      6     0%
-faker/providers/color/color.py                      128    104    19%
-faker/providers/color/color.py                      128    104    19%
+faker/providers/color/color.py                      136    105    23%
+faker/providers/color/color.py                      136    105    23%
 faker/providers/color/da_DK/__init__.py               6      6     0%
 faker/providers/color/da_DK/__init__.py               6      6     0%
 faker/providers/color/el_GR/__init__.py               6      6     0%
@@ -3160,6 +3179,6 @@ faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      9    44%
 faker/utils/text.py                                  16      9    44%
 ---------------------------------------------------------------------
-TOTAL                                             19298  16912    12%
+TOTAL                                             19412  16998    12%
   py$(PYV): OK
   congratulations :)
