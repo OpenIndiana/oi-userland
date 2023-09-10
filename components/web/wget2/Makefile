@@ -18,19 +18,19 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2022, Andreas Wacknitz
+# Copyright (c) 2023, Andreas Wacknitz
 #
 
-#USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wget2
-COMPONENT_VERSION=      2.0.1
+COMPONENT_VERSION=      2.1.0
 COMPONENT_SUMMARY=		GNU Wget2 is the successor of GNU Wget, a file and recursive website downloader
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH= sha256:2c942fba6a547997aa7aae0053b7c46a5203e311e4e62d305d575b6d2f06411f
+COMPONENT_ARCHIVE_HASH= sha256:bc034194b512bb83ce0171d15a8db33e1c5c3ab8b3e343e1e6f2cf48f9154fad
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			web/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -42,8 +42,7 @@ include $(WS_MAKE_RULES)/common.mk
 CPPFLAGS +=	-I/usr/include/idn2
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-# Our gnutls is more up-to-date than our openssl:
-#CONFIGURE_OPTIONS +=	--with-ssl=openssl
+CONFIGURE_OPTIONS +=	--with-ssl=openssl
 CONFIGURE_OPTIONS +=	--with-bzip2
 CONFIGURE_OPTIONS +=	--with-microhttpd
 CONFIGURE_OPTIONS +=	--with-libnghttp2
@@ -77,12 +76,12 @@ REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
-REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libidn2
+REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/lzlib
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/security/gpgme
-REQUIRED_PACKAGES += library/security/libassuan
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
