@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		black
-HUMAN_VERSION =			23.7.0
+HUMAN_VERSION =			23.9.0
 COMPONENT_SUMMARY =		black - The uncompromising code formatter.
 COMPONENT_PROJECT_URL =		https://github.com/psf/black
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e9/20/29d7a6614606785923edf9e8ec3ff630231992cc2fabc02eacb0d475372e/black-23.7.0.tar.gz
+	https://files.pythonhosted.org/packages/41/b7/7ee0cae729ef330c9483a9544a34d5c77b71b5dccf1339dae61106729ffc/black-23.9.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:022a582720b0d9480ed82576c920a8c1dde97cc38ff11d8d8859b3bd6ca9eedb
+	sha256:3511c8a7e22ce653f89ae90dfddaf94f3bb7e2587a245246572d3b9c92adf066
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
