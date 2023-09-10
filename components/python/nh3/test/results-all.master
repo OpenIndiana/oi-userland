@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
+rootdir: $(@D)
+collecting ... collected 4 items
+
+tests/test_nh3.py::test_clean PASSED
+tests/test_nh3.py::test_clean_text PASSED
+tests/test_nh3.py::test_clean_with_attribute_filter PASSED
+tests/test_nh3.py::test_is_html PASSED
+
+=============================== warnings summary ===============================
+tests/test_nh3.py::test_clean_with_attribute_filter
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:78: PytestUnraisableExceptionWarning: Exception ignored in: ('img', 'src', 'foo')
+  
+  Traceback (most recent call last):
+    File "$(@D)/tests/test_nh3.py", line 71, in test_clean_with_attribute_filter
+      nh3.clean(html, attribute_filter=lambda _element, _attribute, _value: True)
+  TypeError: expected attribute_filter to return str or None
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 4 passed, 1 warning ========
