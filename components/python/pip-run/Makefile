@@ -19,25 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip-run
-HUMAN_VERSION =			12.1.0
+HUMAN_VERSION =			12.2.2
 COMPONENT_SUMMARY =		pip-run - install packages and run Python with them
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pip-run
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fc/8f/03b3374e7adb09129be9dca512b7d3ab54b4e96628b1e579d3bfd2900f76/pip-run-12.1.0.tar.gz
+	https://files.pythonhosted.org/packages/fe/2b/ff2fc382e4c2e05eb41b2db522478bd8171b18fe8ce7f8de6dc724908946/pip-run-12.2.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2e0f57fdbd8492fcd8eeed6cd87d19b7e30d0adaf7b4ddc3153fd8067ac5f209
+	sha256:25503e9f42bdbb607eaa632b5010517962fed37620cc2b6964296792d4fd224c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Revert back unneeded PYV normalizations
-COMPONENT_TEST_TRANSFORMS += "-e 's/py\$$(PYV)compat/py$(shell echo $(PYTHON_VERSION) | tr -d .)compat/'"
+COMPONENT_TEST_TRANSFORMS += "-e 's/py\$$(PYV)compat/py$(subst .,,$(PYTHON_VERSION))compat/'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/autocommand
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-resources
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-env
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
@@ -51,6 +49,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/flit-core
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
 TEST_REQUIRED_PACKAGES.python += library/python/nbformat
@@ -61,5 +60,3 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
-TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/wheel
