@@ -20,6 +20,7 @@ ulimit -n 65536
 HAPROXY="/usr/sbin/haproxy"
 CONF_FILE="/etc/haproxy/haproxy.cfg"
 PID_FILE="/var/run/haproxy.pid"
+MASTER_SOCKET="/var/run/haproxy-master.sock,uid,root,gid,root,mode,600"
 
 haproxy_verify_config() {
 
@@ -40,17 +41,17 @@ case "$1" in
     start)
         haproxy_verify_config
 
-        exec ${HAPROXY} -D -f ${CONF_FILE} -p ${PID_FILE} -sf "$(<${PID_FILE})"
+        exec ${HAPROXY} -D -f ${CONF_FILE} -W -S ${MASTER_SOCKET} -p ${PID_FILE} -sf $(<${PID_FILE})
     ;;
 
     refresh)
         haproxy_verify_config
 
-        exec ${HAPROXY} -D -f ${CONF_FILE} -p ${PID_FILE} -sf "$(<${PID_FILE})"
+        exec /usr/bin/kill -USR2 $(<${PID_FILE})
     ;;
 
     stop)
-        exec ${HAPROXY} -D -f ${CONF_FILE} -p ${PID_FILE} -st "$(<${PID_FILE})"
+        exec /usr/bin/kill -TERM $(<${PID_FILE})
     ;;
 
     *)
