@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fbreader
 COMPONENT_VERSION=	0.99.4
-COMPONENT_REVISION=	6
+COMPONENT_REVISION=	7
 COMPONENT_SUMMARY=	Powerful e-book reader
 COMPONENT_PROJECT_URL=	https://www.fbreader.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,7 +33,7 @@ COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu):$(QT5_BINDIR)
+PATH= $(PATH.gnu):$(QT5_BINDIR)
 
 ENV += TARGET_ARCH=desktop
 ENV += UI_TYPE=qt4
