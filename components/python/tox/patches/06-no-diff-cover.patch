@@ -1,0 +1,22 @@
+We cannot compare against origin/main branch because we build from sdist, not git.
+
+--- tox-4.11.3/tox.ini.orig
++++ tox-4.11.3/tox.ini
+@@ -34,7 +34,6 @@
+       --cov-report html:{envtmpdir}{/}htmlcov \
+       --cov-report xml:{toxworkdir}{/}coverage.{envname}.xml \
+       tests --durations 5 --run-integration}
+-    diff-cover --compare-branch {env:DIFF_AGAINST:origin/main} {toxworkdir}{/}coverage.{envname}.xml
+ 
+ [testenv:fix]
+ description = format the code base to adhere to our styles, and complain about what we cannot do automatically
+--- tox-4.11.3/pyproject.toml.orig
++++ tox-4.11.3/pyproject.toml
+@@ -74,7 +74,6 @@
+   "build[virtualenv]>=0.10",
+   "covdefaults>=2.3",
+   "detect-test-pollution>=1.1.1",
+-  "diff-cover>=7.7",
+   "distlib>=0.3.7",
+   "flaky>=3.7",
+   "hatch-vcs>=0.3",

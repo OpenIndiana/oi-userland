@@ -1,0 +1,61 @@
+--- tox-4.11.2/tests/test_version.py.orig
++++ tox-4.11.2/tests/test_version.py
+@@ -11,11 +11,14 @@
+ 
+     from tox.pytest import ToxProjectCreator
+ 
++import pytest
++
+ 
+ def test_version() -> None:
+     assert __version__
+ 
+ 
++@pytest.mark.skip(reason="tox-current-env is always installed")
+ def test_version_without_plugin(tox_project: ToxProjectCreator) -> None:
+     outcome = tox_project({"tox.ini": ""}).run("--version")
+     outcome.assert_success()
+--- tox-4.11.2/tests/config/cli/test_cli_env_var.py.orig
++++ tox-4.11.2/tests/config/cli/test_cli_env_var.py
+@@ -67,6 +67,9 @@
+         "labels": [],
+         "skip_env": "",
+         "list_dependencies": is_ci(),
++        "current_env": False,           # tox-current-env
++        "print_deps_to": False,         # tox-current-env
++        "print_extras_to": False,       # tox-current-env
+     }
+ 
+ 
+@@ -126,6 +129,9 @@
+         "exit_and_dump_after": 0,
+         "skip_env": "",
+         "list_dependencies": is_ci(),
++        "current_env": False,           # tox-current-env
++        "print_deps_to": False,         # tox-current-env
++        "print_extras_to": False,       # tox-current-env
+     }
+     assert options.parsed.verbosity == 4
+     assert options.cmd_handlers == core_handlers
+--- tox-4.11.2/tests/config/cli/test_cli_ini.py.orig
++++ tox-4.11.2/tests/config/cli/test_cli_ini.py
+@@ -107,6 +107,9 @@
+         "exit_and_dump_after": 0,
+         "skip_env": "",
+         "list_dependencies": is_ci(),
++        "current_env": False,           # tox-current-env
++        "print_deps_to": False,         # tox-current-env
++        "print_extras_to": False,       # tox-current-env
+     }
+ 
+ 
+@@ -156,6 +159,9 @@
+         "exit_and_dump_after": 0,
+         "skip_env": "",
+         "list_dependencies": is_ci(),
++        "current_env": False,           # tox-current-env
++        "print_deps_to": False,         # tox-current-env
++        "print_extras_to": False,       # tox-current-env
+     }
+     assert options.parsed.verbosity == 4
+     assert options.cmd_handlers == core_handlers
