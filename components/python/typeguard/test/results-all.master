@@ -1,15 +1,14 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> coverage run -p -m pytest
+py$(PYV): commands[0]> coverage run -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 426 items
+collecting ... collected 431 items
 
-tests/mypy/test_type_annotations.py::test_negative PASSED                [100%]Clearing the cache
+tests/mypy/test_type_annotations.py::test_negative PASSED
 tests/mypy/test_type_annotations.py::test_positive PASSED
 tests/test_checkers.py::TestAbstractSet::test_bad_type PASSED
 tests/test_checkers.py::TestAbstractSet::test_custom_type PASSED
@@ -319,10 +318,14 @@ tests/test_transformer.py::TestAsyncGenerator::test_no_yield_type_check PASSED
 tests/test_transformer.py::TestGenerator::test_no_return_type_check PASSED
 tests/test_transformer.py::TestGenerator::test_no_send_type_check PASSED
 tests/test_transformer.py::TestGenerator::test_yield PASSED
+tests/test_transformer.py::TestTypeShadowedByArgument::test_pep604_union PASSED
+tests/test_transformer.py::TestTypeShadowedByArgument::test_typing_union PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_collection_parameter PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_direct_references PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_generator_function PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_optional PASSED
+tests/test_transformer.py::TestTypecheckingImport::test_pep604_union PASSED
+tests/test_transformer.py::TestTypecheckingImport::test_subscript_within_union PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_variable_annotations PASSED
 tests/test_transformer.py::test_any_in_nested_dict PASSED
 tests/test_transformer.py::test_any_in_pep_604_union PASSED
@@ -350,7 +353,8 @@ tests/test_transformer.py::test_local_assignment_typename_conflicts PASSED
 tests/test_transformer.py::test_local_function PASSED
 tests/test_transformer.py::test_local_named_expr_typename_conflicts PASSED
 tests/test_transformer.py::test_method PASSED
-tests/test_transformer.py::test_new PASSED
+tests/test_transformer.py::test_new_with_explicit_class_name PASSED
+tests/test_transformer.py::test_new_with_self PASSED
 tests/test_transformer.py::test_no_type_check_decorator[from typeguard import typeguard_ignore-@typeguard_ignore] PASSED
 tests/test_transformer.py::test_no_type_check_decorator[from typing import no_type_check-@no_type_check] PASSED
 tests/test_transformer.py::test_no_type_check_decorator[import typeguard-@typeguard.typeguard_ignore] PASSED
@@ -436,8 +440,7 @@ tests/test_utils.py::test_qualified_name[instance] PASSED
 tests/test_warn_on_error.py::test_check_type PASSED
 tests/test_warn_on_error.py::test_typechecked PASSED
 
-
 =========================== short test summary info ============================
-======== 418 passed, 2 skipped, 6 xfailed ========
+======== 423 passed, 2 skipped, 6 xfailed ========
   py$(PYV): OK
   congratulations :)
