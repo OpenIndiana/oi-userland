@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libass
 COMPONENT_VERSION=	0.17.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
 COMPONENT_PROJECT_URL=	https://github.com/libass/libass
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
