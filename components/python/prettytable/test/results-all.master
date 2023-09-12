@@ -1,15 +1,11 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> $(PYTHON) -m pytest --cov prettytable --cov tests --cov-report xml
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 165 items
+collecting ... collected 164 items
 
-::project PASSED
 tests/test_colortable.py::TestColorTable::test_theme_setter PASSED
 tests/test_colortable.py::TestColorTable::test_themeless PASSED
 tests/test_colortable.py::TestFormatCode::test_basic PASSED
@@ -176,6 +172,16 @@ tests/test_prettytable.py::test_autoindex PASSED
 tests/test_prettytable.py::test_paginate PASSED
 
 
-======== 165 passed ========
+======== 164 passed ========
+py$(PYV): commands[1]> python -m coverage report
+Name                                                                                                                                           Stmts   Miss  Cover
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/prettytable/__init__.py          5      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/prettytable/colortable.py       45      2    96%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/prettytable/prettytable.py    1406    118    92%
+tests/test_colortable.py                                                                                                                          59      0   100%
+tests/test_prettytable.py                                                                                                                        845      0   100%
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                           2360    120    95%
   py$(PYV): OK
   congratulations :)
