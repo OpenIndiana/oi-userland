@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		httpx
-HUMAN_VERSION =			0.24.1
+HUMAN_VERSION =			0.25.0
 COMPONENT_SUMMARY =		httpx - The next generation HTTP client.
 COMPONENT_PROJECT_URL =		https://github.com/encode/httpx
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f8/2a/114d454cb77657dbf6a293e69390b96318930ace9cd96b51b99682493276/httpx-0.24.1.tar.gz
+	https://files.pythonhosted.org/packages/a5/24/dbc981590a8b72ddd5f954fbddb1da010ae844a1cde904bca3c9380ccb1d/httpx-0.25.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5853a43053df830c20f8110c5e69fe44d035d850b2dfe795e196f00fdb774bdd
+	sha256:47ecda285389cb32bb2691cc6e069e3ab0205956f681c5b2ad2325719751d875
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
