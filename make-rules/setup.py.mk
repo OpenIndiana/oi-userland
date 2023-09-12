@@ -570,9 +570,13 @@ $(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS)) $(BUILD_DIR)/META.de
 # Generate raw lists of test dependencies per Python version
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
-	for f in $(TEST_REQUIREMENTS) ; do \
+	( for f in $(TEST_REQUIREMENTS) ; do \
 		$(CAT) $$f ; \
-	done | $(WS_TOOLS)/python-resolve-deps \
+	done ; \
+	for e in $(TEST_REQUIREMENTS_EXTRAS) ; do \
+		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
+	done ) | $(WS_TOOLS)/python-resolve-deps \
 		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 	| $(PYTHON) $(WS_TOOLS)/python-requires - >> $(@D)/.depend-test ;
