@@ -19,20 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python-rapidjson
-HUMAN_VERSION =			1.10
+HUMAN_VERSION =			1.11
 COMPONENT_SUMMARY =		python-rapidjson - Python wrapper around rapidjson
 COMPONENT_PROJECT_URL =		https://github.com/python-rapidjson/python-rapidjson
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/28/86/f941b03934b9dfb4d1b780706f7676fd7926a8316cd694d82fc4e73222f0/python-rapidjson-1.10.tar.gz
+	https://files.pythonhosted.org/packages/7e/6f/fa2bb2ad952d0ee21d35eb0af2aea240fcf270f70a1640c45e31fd03b343/python-rapidjson-1.11.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:acfecbf5edb91ec72a20a125de7f56b8c2f6161eff4c65382c8ee6a2484d3540
+	sha256:94cf045b37517e88d6b07ab21ef09e5e2337cc151160eb9a1e01d6e39ae3eab4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# We need to compile some C++ sources
-COMPONENT_BUILD_ENV += CXX="$(CXX)"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
