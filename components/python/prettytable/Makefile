@@ -19,24 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		prettytable
-HUMAN_VERSION =			3.8.0
+HUMAN_VERSION =			3.9.0
 COMPONENT_SUMMARY =		prettytable - A simple Python library for easily displaying tabular data in a visually appealing ASCII table format
 COMPONENT_PROJECT_URL =		https://github.com/jazzband/prettytable
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/18/fa/82e719efc465238383f099c08b5284b974f5002dbe12050bcbbc912366eb/prettytable-3.8.0.tar.gz
+	https://files.pythonhosted.org/packages/e1/c0/5e9c4d2a643a00a6f67578ef35485173de273a4567279e4f0c200c01386b/prettytable-3.9.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:031eae6a9102017e8c7c7906460d150b7ed78b20fd1d8c8be4edaf88556c07ce
+	sha256:f4ed94803c23073a90620b201965e5dc0bccf1760b7a7eaf3158cab8aaffdf34
 COMPONENT_LICENSE =		BSD-3-Clause
 
-# prettytable >= 3.8.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
-
 include $(WS_MAKE_RULES)/common.mk
-
-# Remove unpatched version of files from proto area to make sure they do not
-# leak into sample manifest.
-COMPONENT_POST_INSTALL_ACTION += \
-	$(FIND) $(PROTO_DIR)/$(PYTHON_LIB) -name '*.~*~' -exec rm {} \; ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
