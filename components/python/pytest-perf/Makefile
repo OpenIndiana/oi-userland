@@ -14,24 +14,35 @@
 #   $WS_TOOLS/python-integrate-project pytest-perf
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-perf
-COMPONENT_VERSION =		0.12.0
-COMPONENT_SUMMARY =		pytest-perf - pytest-perf
+HUMAN_VERSION =			0.13.1
+COMPONENT_SUMMARY =		pytest-perf - Run performance tests against the mainline code.
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-perf
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d2/30/abc855aab357e72a4f4f9ab55513bc6bb42c0c3f45283dd5eedf2b0860e4/pytest-perf-0.12.0.tar.gz
+	https://files.pythonhosted.org/packages/d2/74/8c112d99f595dc1718225ba50709ee3ed14a6f480bba7e5428a78ffaa94a/pytest-perf-0.13.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:008abdf145c9a693499fc45f3cec60226c74ce0b4d0bfed3357134387309a66a
+	sha256:0ec3bfeb0c8a6dcb8b1d3ea4ed1abb0b26685cfaff584e733395bd09608ab5a2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# See https://github.com/jaraco/pytest-perf/issues/8
-COMPONENT_SUMMARY =		pytest-perf - Run performance tests against the mainline code.
+# Tests require working git repo:
+# https://github.com/jaraco/pytest-perf/issues/6
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
+PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/pip-run
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/tempora
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python

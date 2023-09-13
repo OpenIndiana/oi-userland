@@ -23,12 +23,23 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
-file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(HUMAN_VERSION).dist-info/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf-$(HUMAN_VERSION).dist-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf/deco.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf/plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest_perf/runner.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/jaraco-context-$(PYV)
+depend type=require fmri=pkg:/library/python/jaraco-functools-$(PYV)
+depend type=require fmri=pkg:/library/python/more-itertools-$(PYV)
+depend type=require fmri=pkg:/library/python/packaging-$(PYV)
+depend type=require fmri=pkg:/library/python/pip-run-$(PYV)
+depend type=require fmri=pkg:/library/python/tempora-$(PYV)
