@@ -1,0 +1,63 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601-$(HUMAN_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/builders/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/builders/python.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/builders/tests/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/builders/tests/test_init.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/builders/tests/test_python.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/date.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/decimalfraction.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/duration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/interval.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/resolution.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/test_compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/test_date.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/test_decimalfraction.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/test_duration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/test_init.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/test_interval.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/test_time.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/test_timezone.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/tests/test_utcoffset.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/time.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/timezone.py
+file path=usr/lib/python$(PYVER)/vendor-packages/aniso8601/utcoffset.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
