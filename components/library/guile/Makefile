@@ -33,6 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		guile
 COMPONENT_VERSION=	3.0.8
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU guile utility
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/guile/
 COMPONENT_CLASSIFICATION= Development/Other Languages
