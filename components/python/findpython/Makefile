@@ -19,23 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		findpython
-HUMAN_VERSION =			0.3.1
+HUMAN_VERSION =			0.4.0
 COMPONENT_SUMMARY =		findpython - A utility to find python versions on your system
 COMPONENT_PROJECT_URL =		https://github.com/frostming/findpython
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5f/f1/e41623e7952500b0b0a259dcc3c3383800eb97da74772fb8b023464855ca/findpython-0.3.1.tar.gz
+	https://files.pythonhosted.org/packages/9f/8b/b58064e28219d08905116692192e34fde978c736c3c4af55dae8d16afa95/findpython-0.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7621f8a9c199a70d219831cddaeb84ca7e83e20b8358172bff47871a18a5eda4
+	sha256:18b14d115678da18ae92ee22d7001cc30915ea531053f77010ee05a39680f438
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
