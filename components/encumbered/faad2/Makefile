@@ -17,25 +17,24 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         faad2
-COMPONENT_VERSION=      2.7
-COMPONENT_REVISION=     3
-COMPONENT_SUMMARY=      Open source MPEG-4 and MPEG-2 AAC decoder
+COMPONENT_VERSION=      2.10.1
+COMPONENT_SUMMARY=      Freeware Advanced Audio (AAC) Decoder including SBR decoding
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:ee26ed1e177c0cd8fa8458a481b14a0b24ca0b51468c8b4c8b676fd3ceccd330
-COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/faac/faad2-src/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  https://www.audiocoding.com/faad2.html	
-COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_ARCHIVE_HASH= sha256:4c16c71295ca0cbf7c3dfe98eb11d8fa8d0ac3042e41604cfd6cc11a408cf264
+COMPONENT_PROJECT_URL=  https://github.com/knik0/faad2
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_CLASSIFICATION=Applications/Sound and Video
 COMPONENT_FMRI=         audio/faad2
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if)
+COMPONENT_POST_CONFIGURE_ACTION = ( $(CP) -rp $(BUILD_DIR_$(BITS))/include/*.h $(SOURCE_DIR)/include/ )
 
 CFLAGS += $(CPP_LARGEFILES)
 
