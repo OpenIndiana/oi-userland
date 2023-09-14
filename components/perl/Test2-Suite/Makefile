@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test2::Suite
-HUMAN_VERSION =			0.000155
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.000156
 COMPONENT_SUMMARY =		Test2::Suite - Distribution with a rich set of tools built upon the Test2 framework.
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c78e6bc4d69bc097836976863382b52b9e0c31ee185066ce60c54bd74baad53d
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:bf382ae72f3a93bf7ed36885118fae2ffab0ff117743f59038df254efef2c94e
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
@@ -36,3 +35,5 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/json-maybexs
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/term-table
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/module-pluggable
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/termreadkey
