@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wget2
 COMPONENT_VERSION=      2.1.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		GNU Wget2 is the successor of GNU Wget, a file and recursive website downloader
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
