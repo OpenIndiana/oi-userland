@@ -74,6 +74,8 @@ INSTALL_64 = $(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 INSTALL_NO_ARCH = $(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.installed)
 
 COMPONENT_CONFIGURE_ENV +=	$(COMMON_PERL_ENV)
+# Avoid interactive behaviour for Module::AutoInstall
+COMPONENT_CONFIGURE_ENV +=	PERL_AUTOINSTALL=--skipdeps
 COMPONENT_CONFIGURE_ENV +=	PERL="$(PERL)"
 $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 	($(RM) -r $(@D) ; $(MKDIR) $(@D))
