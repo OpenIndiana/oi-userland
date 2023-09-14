@@ -1,11 +1,19 @@
---- VirtualBox-6.1.30~/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c	2021-11-22 15:19:50.000000000 +0000
-+++ VirtualBox-6.1.30/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c	2022-01-21 23:40:27.560684865 +0000
-@@ -210,22 +210,6 @@
-         }
- 
+diff --git a/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c b/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c
+index e8dd270..790fce5 100644
+--- a/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c
++++ b/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c
+@@ -68,6 +68,7 @@ bool                            g_frtSolOldIPIUlong = false;
+ RTR0FNSOLXCCALL                 g_rtSolXcCall;
+ /** Whether to use the old-style installctx()/removectx() routines. */
+ bool                            g_frtSolOldThreadCtx = false;
++bool                            g_frtillumosNewThreadCtx = false;
+ /** The thread-context hooks callout table structure. */
+ RTR0FNSOLTHREADCTX              g_rtSolThreadCtx;
+ /** Thread preemption offset in the thread structure. */
+@@ -212,18 +213,6 @@ DECLHIDDEN(int) rtR0InitNative(void)
          /*
--         * Mandatory: Thread-context hooks.
--         */
+          * Mandatory: Thread-context hooks.
+          */
 -        rc = RTR0DbgKrnlInfoQuerySymbol(g_hKrnlDbgInfo, NULL /* pszModule */, "exitctx",  NULL /* ppvSymbol */);
 -        if (RT_SUCCESS(rc))
 -        {
@@ -18,15 +26,57 @@
 -            g_rtSolThreadCtx.Install.pfnSol_installctx_old = (void *)installctx;
 -            g_rtSolThreadCtx.Remove.pfnSol_removectx_old   = (void *)removectx;
 -        }
--
--        /*
+ 
+         /*
           * Mandatory: map_addr() hooks.
-          */
-         rc = RTR0DbgKrnlInfoQuerySymbol(g_hKrnlDbgInfo, NULL /* pszModule */, "plat_map_align_amount",  NULL /* ppvSymbol */);
-diff -ru VirtualBox-6.1.30~/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c VirtualBox-6.1.30/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c
---- VirtualBox-6.1.30~/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c	2021-11-22 15:19:50.000000000 +0000
-+++ VirtualBox-6.1.30/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c	2022-01-21 23:40:36.659756754 +0000
-@@ -153,6 +153,12 @@
+diff --git a/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h b/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h
+index 4a69c97..8a07dfb 100644
+--- a/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h
++++ b/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h
+@@ -163,6 +163,15 @@ typedef struct RTR0FNSOLTHREADCTX
+ {
+     union
+     {
++        void *(*pfnillumos_installctx)    (kthread_t *pThread, void *pvArg,
++                                           void (*pfnSave)(void *pvArg),
++                                           void (*pfnRestore)(void *pvArg),
++                                           void (*pfnFork)(void *pvThread, void *pvThreadFork),
++                                           void (*pfnLwpCreate)(void *pvThread, void *pvThreadCreate),
++                                           void (*pfnExit)(void *pvThread),
++                                           void (*pfnFree)(void *pvArg, int fIsExec),
++                                           void *ctx);
++
+         void *(*pfnSol_installctx)        (kthread_t *pThread, void *pvArg,
+                                            void (*pfnSave)(void *pvArg),
+                                            void (*pfnRestore)(void *pvArg),
+@@ -181,6 +190,14 @@ typedef struct RTR0FNSOLTHREADCTX
+ 
+     union
+     {
++        int (*pfnillumos_removectx)           (kthread_t *pThread, void *pvArg,
++                                           void (*pfnSave)(void *pvArg),
++                                           void (*pfnRestore)(void *pvArg),
++                                           void (*pfnFork)(void *pvThread, void *pvThreadFork),
++                                           void (*pfnLwpCreate)(void *pvThread, void *pvThreadCreate),
++                                           void (*pfnExit)(void *pvThread),
++                                           void (*pfnFree)(void *pvArg, int fIsExec));
++
+         int (*pfnSol_removectx)           (kthread_t *pThread, void *pvArg,
+                                            void (*pfnSave)(void *pvArg),
+                                            void (*pfnRestore)(void *pvArg),
+@@ -201,6 +218,7 @@ typedef RTR0FNSOLTHREADCTX *PRTR0FNSOLTHREADCTX;
+ 
+ extern RTR0FNSOLTHREADCTX       g_rtSolThreadCtx;
+ extern bool                     g_frtSolOldThreadCtx;
++extern bool                     g_frtillumosNewThreadCtx;
+ 
+ /*
+  * Workaround for older Solaris versions which called map_addr()/choose_addr()/
+diff --git a/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c b/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c
+index 665549f..1563e86 100644
+--- a/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c
++++ b/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c
+@@ -153,6 +153,12 @@ static void rtThreadCtxHookSolFree(void *pvThreadCtxInt, int fIsExec)
      }
  }
  
@@ -39,15 +89,10 @@ diff -ru VirtualBox-6.1.30~/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-
  
  RTDECL(int) RTThreadCtxHookCreate(PRTTHREADCTXHOOK phCtxHook, uint32_t fFlags, PFNRTTHREADCTXHOOK pfnCallback, void *pvUser)
  {
-@@ -177,32 +183,7 @@
-     pThis->fEnabled     = false;
-     pThis->cRefs        = 2;        /* One reference for the thread, one for the caller. */
- 
--    /*
--     * installctx() allocates memory and thus cannot be used in RTThreadCtxHookRegister() which can be used
--     * with preemption disabled. We allocate the context-hooks here and use 'fEnabled' to determine if we can
--     * invoke the consumer's hook or not.
--     */
+@@ -182,27 +188,7 @@ RTDECL(int) RTThreadCtxHookCreate(PRTTHREADCTXHOOK phCtxHook, uint32_t fFlags, P
+      * with preemption disabled. We allocate the context-hooks here and use 'fEnabled' to determine if we can
+      * invoke the consumer's hook or not.
+      */
 -    if (g_frtSolOldThreadCtx)
 -    {
 -        g_rtSolThreadCtx.Install.pfnSol_installctx_old(curthread,
@@ -73,7 +118,7 @@ diff -ru VirtualBox-6.1.30~/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-
  
      *phCtxHook = pThis;
      return VINF_SUCCESS;
-@@ -244,27 +225,7 @@
+@@ -244,27 +230,8 @@ RTDECL(int) RTThreadCtxHookDestroy(RTTHREADCTXHOOK hCtxHook)
           * ring-0 thread dies, Solaris will call rtThreadCtxHookSolFree() which will free the hook object.
           */
          int rc;
@@ -98,6 +143,7 @@ diff -ru VirtualBox-6.1.30~/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-
 -                                                          NULL,                         /* exit */
 -                                                          rtThreadCtxHookSolFree);
 -        }
++
 +	rc = ctxop_remove(curthread, &vbox_ctxop_tpl, pThis);
          AssertMsg(rc, ("removectx() failed. rc=%d\n", rc));
          NOREF(rc);

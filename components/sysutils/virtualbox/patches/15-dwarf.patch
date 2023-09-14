@@ -1,0 +1,30 @@
+diff --git a/Config.kmk b/Config.kmk
+index 8659576..89c14d8 100644
+--- a/Config.kmk
++++ b/Config.kmk
+@@ -4964,7 +4964,7 @@ TEMPLATE_VBOXR0DRV_CFLAGS              = -Wpointer-arith -Winline $(VBOX_GCC_Wno
+ 	-Wformat  -Wimplicit-int -Wimplicit-function-declaration -Werror-implicit-function-declaration -Wparentheses \
+ 	-O2 -fno-omit-frame-pointer -nodefaultlibs -fno-strict-aliasing -fno-common -std=c99
+ TEMPLATE_VBOXR0DRV_CFLAGS.x86          = -m32 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow
+-TEMPLATE_VBOXR0DRV_CFLAGS.amd64        = -m64 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow $(VBOX_GCC_msave-args) \
++TEMPLATE_VBOXR0DRV_CFLAGS.amd64        = -g -gdwarf-2 -gstrict-dwarf -m64 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow $(VBOX_GCC_msave-args) \
+ 	-mno-red-zone -mcmodel=kernel $(if-expr defined(VBOX_GCC_USING_SOLARIS_AS),-Wa$(COMMA)-xmodel=kernel,) \
+ 	-fno-reorder-blocks -fno-asynchronous-unwind-tables -funit-at-a-time
+ TEMPLATE_VBOXR0DRV_CXXFLAGS           = -Wpointer-arith -Winline \
+diff --git a/Config.kmk b/Config.kmk
+index 3c3b92e..13e6ef8 100644
+--- a/Config.kmk
++++ b/Config.kmk
+@@ -4598,10 +4598,10 @@ endif # pe
+ 
+ ifeq ($(VBOX_LDR_FMT),elf)
+ TEMPLATE_VBoxR0_TOOL                = $(VBOX_GCC_TOOL)
+-TEMPLATE_VBoxR0_CFLAGS              = -fno-pie -nostdinc -g $(VBOX_GCC_pipe) $(VBOX_GCC_WERR) $(VBOX_GCC_PEDANTIC_C) \
++TEMPLATE_VBoxR0_CFLAGS              = -fno-pie -nostdinc -g -gdwarf-2 -gstrict-dwarf $(VBOX_GCC_pipe) $(VBOX_GCC_WERR) $(VBOX_GCC_PEDANTIC_C) \
+ 	$(VBOX_GCC_Wno-variadic-macros) $(VBOX_GCC_R0_OPT) $(VBOX_GCC_R0_FP) -fno-strict-aliasing -fno-exceptions \
+ 	$(VBOX_GCC_fno-stack-protector) -fno-common -ffreestanding $(VBOX_GCC_fvisibility-hidden) -std=gnu99 $(VBOX_GCC_IPRT_FMT_CHECK)
+-TEMPLATE_VBoxR0_CXXFLAGS            = -fno-pie -nostdinc -g $(VBOX_GCC_pipe) $(VBOX_GCC_WERR) $(VBOX_GCC_PEDANTIC_CXX) \
++TEMPLATE_VBoxR0_CXXFLAGS            = -fno-pie -nostdinc -g -gdwarf-2 -gstrict-dwarf $(VBOX_GCC_pipe) $(VBOX_GCC_WERR) $(VBOX_GCC_PEDANTIC_CXX) \
+ 	$(VBOX_GCC_Wno-variadic-macros) $(VBOX_GCC_R0_OPT) $(VBOX_GCC_R0_FP) -fno-strict-aliasing -fno-exceptions \
+ 	$(VBOX_GCC_fno-stack-protector) -fno-common $(VBOX_GCC_fvisibility-inlines-hidden) $(VBOX_GCC_fvisibility-hidden) \
+ 	-fno-rtti $(VBOX_GCC_IPRT_FMT_CHECK)
