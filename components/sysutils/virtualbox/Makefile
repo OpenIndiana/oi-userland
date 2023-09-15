@@ -18,7 +18,9 @@
 
 BUILD_STYLE= configure
 BUILD_BITS= 64
-USE_OPENSSL11= yes
+# Virtualbox uses the default openssl. It was not possible to provide configure the include and library paths separately
+# and thus, it doesn't find anything else than the default which is 1.0 at the moment.
+USE_OPENSSL10= yes
 include ../../../make-rules/shared-macros.mk
 GCC_VERSION= 12
 gcc_OPT =
@@ -261,15 +263,15 @@ REQUIRED_PACKAGES += developer/object-file
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/gsoap
 REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/sdl
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
