@@ -17,8 +17,7 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dovecot
-COMPONENT_VERSION=      2.3.20
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      2.3.21
 COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
@@ -28,9 +27,9 @@ COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for 
 COMPONENT_PROJECT_URL=  https://dovecot.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE).sig
+#COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE).sig
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:caa832eb968148abdf35ee9d0f534b779fa732c0ce4a913d9ab8c3469b218552
+COMPONENT_ARCHIVE_HASH= sha256:05b11093a71c237c2ef309ad587510721cc93bbee6828251549fc1586c36502d
 COMPONENT_FMRI=         mail/dovecot
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      MIT,LGPLv2.1
@@ -64,7 +63,7 @@ CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
 
 # RPATH needed to make 'make REQUIRED_PACKAGES' happy
 COMPONENT_POST_CONFIGURE_ACTION= \
-	( cd $(@D) ; $(GSED) -i -e 's:^LDFLAGS = .*:LDFLAGS = $(NOPLUGIN_LDFLAGS) -Wl,-rpath=$(MYSQL_LIBDIR) -Wl,-rpath=$(PG_LIBDIR):' -e 's:mariadb/10.1:mariadb/10.6:g' src/lib-sql/Makefile  )
+	( cd $(@D) ; $(GSED) -i -e 's:^LDFLAGS = .*:LDFLAGS = $(NOPLUGIN_LDFLAGS) -Wl,-rpath=$(MYSQL_LIBDIR) -Wl,-rpath=$(PG_LIBDIR):' src/lib-sql/Makefile  )
 
 COMPONENT_TEST_ARGS+=   -k
 COMPONENT_TEST_TRANSFORMS = \
@@ -74,7 +73,6 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/: FAILED$$/p" '
 
 # manually added dependencies
-REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
 REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 
