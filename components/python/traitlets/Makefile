@@ -15,20 +15,19 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		traitlets
-HUMAN_VERSION =			5.9.0
+HUMAN_VERSION =			5.10.0
 COMPONENT_SUMMARY =		traitlets - Traitlets Python configuration system
 COMPONENT_PROJECT_URL =		https://github.com/ipython/traitlets
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/39/c3/205e88f02959712b62008502952707313640369144a7fded4cbc61f48321/traitlets-5.9.0.tar.gz
+	https://files.pythonhosted.org/packages/1a/19/381eb24d3bf6d3038bfd63263e2456fd1334d5a93d5f3953de6f06b276b5/traitlets-5.10.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f6cde21a9c68cf756af02035f72d5a723bf607e862e7be33ece505abf4a3bad9
+	sha256:f584ea209240466e66e91f3c81aa7d004ba4cf794990b0c775938a1544217cd1
 COMPONENT_LICENSE =		BSD-3-Clause
-COMPONENT_LICENSE_FILE =	COPYING.md
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
