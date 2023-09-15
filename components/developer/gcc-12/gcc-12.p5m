@@ -39,63 +39,50 @@
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
 
-set name=pkg.fmri value=pkg:/developer/gcc-12@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.fmri \
+    value=pkg:/developer/gcc-12@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value="$(COMPONENT_PROJECT_URL)"
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license COPYING.RUNTIME license="GCC runtime license"
-license COPYING license=GPLv2
-license COPYING3 license=GPLv3
-license COPYING.LIB license=LGPLv2.1
-license COPYING3.LIB license=LGPLv3
-
-# Dependency to runtime packages auto-generated
-#depend fmri=pkg:/system/library/gcc-12-runtime@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-#depend fmri=pkg:/system/library/g++-12-runtime@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-# depend fmri=pkg:/system/library/gfortran-12-runtime@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-depend fmri=pkg:/developer/gnu-binutils type=require
-depend fmri=pkg:/developer/linker type=require
-depend fmri=pkg:/system/header type=require
-depend fmri=pkg:/system/library/c-runtime type=require
 
 # Mediated links
 link path=usr/bin/c++ target=../gcc/12/bin/c++ mediator=gcc mediator-version=12
-link path=usr/bin/cpp target=../gcc/12/bin/cpp mediator=gcc mediator-version=12
-link path=usr/bin/g++ target=../gcc/12/bin/g++ mediator=gcc mediator-version=12
-link path=usr/bin/gcc target=../gcc/12/bin/gcc mediator=gcc mediator-version=12
-# link path=usr/bin/gccgo target=../gcc/12/bin/gccgo mediator=gcc mediator-version=12
-link path=usr/bin/gcov target=../gcc/12/bin/gcov mediator=gcc mediator-version=12
-link path=usr/bin/gcov-dump target=../gcc/12/bin/gcov-dump mediator=gcc mediator-version=12
-link path=usr/bin/gcov-tool target=../gcc/12/bin/gcov-tool mediator=gcc mediator-version=12
-link path=usr/bin/gcpp target=../gcc/12/bin/cpp mediator=gcc mediator-version=12
-# link path=usr/bin/gfortran target=../gcc/12/bin/gfortran mediator=gcc mediator-version=12
-
-link path=usr/share/man/man1/cpp.1 target=../../../gcc/12/share/man/man1/cpp.1 mediator=gcc mediator-version=12
-link path=usr/share/man/man1/g++.1 target=../../../gcc/12/share/man/man1/g++.1 mediator=gcc mediator-version=12
-link path=usr/share/man/man1/gcc.1 target=../../../gcc/12/share/man/man1/gcc.1 mediator=gcc mediator-version=12
-# link path=usr/share/man/man1/gccgo.1 target=../../../gcc/12/share/man/man1/gccgo.1 mediator=gcc mediator-version=12
-link path=usr/share/man/man1/gcov.1 target=../../../gcc/12/share/man/man1/gcov.1 mediator=gcc mediator-version=12
-link path=usr/share/man/man1/gcov-dump.1 target=../../../gcc/12/share/man/man1/gcov-dump.1 mediator=gcc mediator-version=12
-link path=usr/share/man/man1/gcov-tool.1 target=../../../gcc/12/share/man/man1/gcov-tool.1 mediator=gcc mediator-version=12
-# link path=usr/share/man/man1/gfortran.1 target=../../../gcc/12/share/man/man1/gfortran.1 mediator=gcc mediator-version=12
 
 # Versioned links
 link path=usr/bin/c++-12 target=../gcc/12/bin/c++
+link path=usr/bin/cpp target=../gcc/12/bin/cpp mediator=gcc mediator-version=12
 link path=usr/bin/cpp-12 target=../gcc/12/bin/cpp
+link path=usr/bin/g++ target=../gcc/12/bin/g++ mediator=gcc mediator-version=12
 link path=usr/bin/g++-12 target=../gcc/12/bin/g++
+link path=usr/bin/gcc target=../gcc/12/bin/gcc mediator=gcc mediator-version=12
 link path=usr/bin/gcc-12 target=../gcc/12/bin/gcc
-# link path=usr/bin/gccgo-12 target=../gcc/12/bin/gccgo
+link path=usr/bin/gccgo target=../gcc/12/bin/gccgo mediator=gcc \
+    mediator-version=12
+link path=usr/bin/gccgo-12 target=../gcc/12/bin/gccgo
+link path=usr/bin/gcov target=../gcc/12/bin/gcov mediator=gcc \
+    mediator-version=12
 link path=usr/bin/gcov-12 target=../gcc/12/bin/gcov
+link path=usr/bin/gcov-dump target=../gcc/12/bin/gcov-dump mediator=gcc \
+    mediator-version=12
+link path=usr/bin/gcov-tool target=../gcc/12/bin/gcov-tool mediator=gcc \
+    mediator-version=12
+link path=usr/bin/gcpp target=../gcc/12/bin/cpp mediator=gcc mediator-version=12
 link path=usr/bin/gcpp-12 target=../gcc/12/bin/cpp
-# link path=usr/bin/gfortran-12 target=../gcc/12/bin/gfortran
-
-# Version major links
-link path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/12 target=$(HUMAN_VERSION)
-link path=usr/gcc/12/include/c++/12 target=$(HUMAN_VERSION)
+link path=usr/bin/gfortran target=../gcc/12/bin/gfortran mediator=gcc \
+    mediator-version=12
+link path=usr/bin/gfortran-12 target=../gcc/12/bin/gfortran
+hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-c++ target=g++
+hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-g++ target=g++
+hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc target=gcc
+hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc-$(HUMAN_VERSION) target=gcc
+hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc-ar target=gcc-ar
+hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc-nm target=gcc-nm
+hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc-ranlib target=gcc-ranlib
+hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gccgo target=gccgo
+hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gfortran target=gfortran
 
 # Binaries
 hardlink path=usr/gcc/12/bin/c++ target=g++
@@ -105,24 +92,60 @@ file path=usr/gcc/12/bin/gcc
 file path=usr/gcc/12/bin/gcc-ar
 file path=usr/gcc/12/bin/gcc-nm
 file path=usr/gcc/12/bin/gcc-ranlib
-# file path=usr/gcc/12/bin/gccgo
+file path=usr/gcc/12/bin/gccgo
 file path=usr/gcc/12/bin/gcov
 file path=usr/gcc/12/bin/gcov-dump
 file path=usr/gcc/12/bin/gcov-tool
-# file path=usr/gcc/12/bin/gfortran
-# file path=usr/gcc/12/bin/go
-# file path=usr/gcc/12/bin/gofmt
-# file path=usr/gcc/12/bin/lto-dump
-hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-c++ target=g++
-hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-g++ target=g++
-hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc target=gcc
-hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc-$(HUMAN_VERSION) \
-    target=gcc
-hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc-ar target=gcc-ar
-hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc-nm target=gcc-nm
-hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gcc-ranlib target=gcc-ranlib
-# hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gccgo target=gccgo
-# hardlink path=usr/gcc/12/bin/$(GNU_TRIPLET)-gfortran target=gfortran
+file path=usr/gcc/12/bin/gfortran
+file path=usr/gcc/12/bin/go
+file path=usr/gcc/12/bin/gofmt
+file path=usr/gcc/12/bin/lto-dump
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/atomic_word.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/basic_file.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/c++allocator.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/c++config.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/c++io.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/c++locale.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/cpu_defines.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/ctype_base.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/ctype_inline.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/cxxabi_tweaks.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/error_constants.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/extc++.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/gthr-default.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/gthr-posix.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/gthr-single.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/gthr.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/messages_members.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/opt_random.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/os_defines.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/stdc++.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/stdtr1c++.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/time_members.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/ext/opt_random.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/atomic_word.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/basic_file.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/c++allocator.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/c++config.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/c++io.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/c++locale.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/cpu_defines.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/ctype_base.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/ctype_inline.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/cxxabi_tweaks.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/error_constants.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/extc++.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/gthr-default.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/gthr-posix.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/gthr-single.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/gthr.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/messages_members.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/opt_random.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/os_defines.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/stdc++.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/stdtr1c++.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/time_members.h
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/ext/opt_random.h
 
 # Headers
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/algorithm
@@ -818,6 +841,7 @@ file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/spanstream
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/sstream
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/stack
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/stacktrace
+file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/stdatomic.h
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/stdexcept
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/stdlib.h
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/stop_token
@@ -907,77 +931,179 @@ file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/valarray
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/variant
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/vector
 file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/version
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/atomic_word.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/basic_file.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/c++allocator.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/c++config.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/c++io.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/c++locale.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/cpu_defines.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/ctype_base.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/ctype_inline.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/cxxabi_tweaks.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/error_constants.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/extc++.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/gthr-default.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/gthr-posix.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/gthr-single.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/gthr.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/messages_members.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/opt_random.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/os_defines.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/stdc++.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/stdtr1c++.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/bits/time_members.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/32/ext/opt_random.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/atomic_word.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/basic_file.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/c++allocator.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/c++config.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/c++io.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/c++locale.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/cpu_defines.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/ctype_base.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/ctype_inline.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/cxxabi_tweaks.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/error_constants.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/extc++.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/gthr-default.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/gthr-posix.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/gthr-single.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/gthr.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/messages_members.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/opt_random.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/os_defines.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/stdc++.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/stdtr1c++.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/time_members.h
-file path=usr/gcc/12/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/ext/opt_random.h
-
-# Libraries
+link path=usr/gcc/12/include/c++/12 target=$(HUMAN_VERSION)
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/archive/tar.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/archive/zip.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bufio.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bytes.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/bzip2.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/flate.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/gzip.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/lzw.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/zlib.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/heap.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/list.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/ring.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/context.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/aes.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/cipher.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/des.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/dsa.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/ecdsa.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/ed25519.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/elliptic.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/hmac.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/md5.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rand.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rc4.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rsa.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha1.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha256.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha512.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/subtle.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/tls.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/x509.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/x509/pkix.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/database/sql.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/database/sql/driver.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/buildinfo.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/dwarf.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/elf.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/gosym.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/macho.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/pe.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/plan9obj.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/embed.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/ascii85.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/asn1.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/base32.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/base64.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/binary.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/csv.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/gob.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/hex.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/json.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/pem.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/xml.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/errors.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/expvar.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/flag.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/fmt.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/ast.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/build.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/build/constraint.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/constant.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/doc.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/format.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/importer.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/parser.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/printer.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/scanner.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/token.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/types.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/adler32.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/crc32.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/crc64.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/fnv.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/maphash.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/html.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/html/template.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/color.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/color/palette.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/draw.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/gif.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/jpeg.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/png.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/index/suffixarray.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/internal/reflectlite.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/internal/unsafeheader.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io/fs.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io/ioutil.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/log.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/log/syslog.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/big.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/bits.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/cmplx.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/rand.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime/multipart.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime/quotedprintable.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/cgi.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/cookiejar.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/fcgi.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httptest.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httptrace.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httputil.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/pprof.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/mail.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/netip.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/rpc.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/rpc/jsonrpc.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/smtp.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/textproto.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/url.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/exec.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/signal.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/user.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/path.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/path/filepath.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/reflect.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/regexp.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/regexp/syntax.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/cgo.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/debug.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/metrics.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/pprof.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/trace.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sort.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/strconv.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/strings.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sync.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sync/atomic.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/syscall.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/fstest.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/internal/testdeps.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/iotest.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/quick.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/scanner.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/tabwriter.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/template.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/template/parse.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/time.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/time/tzdata.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode/utf16.gox
+file path=usr/gcc/12/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode/utf8.gox
 file path=usr/gcc/12/lib/$(MACH64)/libasan.a
 link path=usr/gcc/12/lib/$(MACH64)/libasan.so target=libasan.so.8.0.0
 link path=usr/gcc/12/lib/$(MACH64)/libasan.so.8 target=libasan.so.8.0.0
 file path=usr/gcc/12/lib/$(MACH64)/libasan.so.8.0.0
 file path=usr/gcc/12/lib/$(MACH64)/libasan_preinit.o
 file path=usr/gcc/12/lib/$(MACH64)/libatomic.a
-#link path=usr/gcc/12/lib/$(MACH64)/libatomic.so target=libatomic.so.1.2.0
-#link path=usr/gcc/12/lib/$(MACH64)/libatomic.so.1 target=libatomic.so.1.2.0
-#file path=usr/gcc/12/lib/$(MACH64)/libatomic.so.1.2.0
 link path=usr/gcc/12/lib/$(MACH64)/libcc1.so target=libcc1.so.0.0.0
 link path=usr/gcc/12/lib/$(MACH64)/libcc1.so.0 target=libcc1.so.0.0.0
 file path=usr/gcc/12/lib/$(MACH64)/libcc1.so.0.0.0
-#link path=usr/gcc/12/lib/$(MACH64)/libgcc_s.so target=libgcc_s.so.1
-#file path=usr/gcc/12/lib/$(MACH64)/libgcc_s.so.1
-file path=usr/gcc/12/lib/$(MACH64)/libquadmath.a variant.arch=i386
-#link path=usr/gcc/12/lib/$(MACH64)/libquadmath.so target=libquadmath.so.0.0.0
-#link path=usr/gcc/12/lib/$(MACH64)/libquadmath.so.0 target=libquadmath.so.0.0.0
-#file path=usr/gcc/12/lib/$(MACH64)/libquadmath.so.0.0.0
+file path=usr/gcc/12/lib/$(MACH64)/libgfortran.a
+file path=usr/gcc/12/lib/$(MACH64)/libgo.a
+file path=usr/gcc/12/lib/$(MACH64)/libgobegin.a
+file path=usr/gcc/12/lib/$(MACH64)/libgolibbegin.a
+file path=usr/gcc/12/lib/$(MACH64)/libgomp.a
+file path=usr/gcc/12/lib/$(MACH64)/libitm.a
+file path=usr/gcc/12/lib/$(MACH64)/libobjc.a
+file path=usr/gcc/12/lib/$(MACH64)/libquadmath.a
 file path=usr/gcc/12/lib/$(MACH64)/libsanitizer.spec
 file path=usr/gcc/12/lib/$(MACH64)/libssp.a
-#link path=usr/gcc/12/lib/$(MACH64)/libssp.so target=libssp.so.0.0.0
-#link path=usr/gcc/12/lib/$(MACH64)/libssp.so.0 target=libssp.so.0.0.0
-#file path=usr/gcc/12/lib/$(MACH64)/libssp.so.0.0.0
 file path=usr/gcc/12/lib/$(MACH64)/libssp_nonshared.a
 file path=usr/gcc/12/lib/$(MACH64)/libstdc++.a
 file path=usr/gcc/12/lib/$(MACH64)/libstdc++.so.6.0.30-gdb.py
@@ -995,15 +1121,33 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtendS.o
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtfastmath.o
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtp.o
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtpg.o
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtprec32.o variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtprec64.o variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtprec80.o variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtprec32.o \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtprec64.o \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/crtprec80.o \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/ieee_arithmetic.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/ieee_exceptions.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/ieee_features.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/omp_lib.f90
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/omp_lib.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/omp_lib.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/omp_lib_kinds.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/openacc.f90
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/openacc.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/openacc_kinds.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/finclude/openacc_lib.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/gmon.o
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/libcaf_single.a
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/libgcc.a
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/libgcc_eh.a
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/libgcov.a
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/buildid
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cc1
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cc1obj
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cc1plus
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cgo
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/collect2
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtbegin.o
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtbeginS.o
@@ -1012,102 +1156,286 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtendS.o
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtfastmath.o
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtp.o
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtpg.o
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtprec32.o variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtprec64.o variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtprec80.o variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtprec32.o \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtprec64.o \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtprec80.o \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/f951
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/ieee_arithmetic.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/ieee_exceptions.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/ieee_features.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/omp_lib.f90
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/omp_lib.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/omp_lib.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/omp_lib_kinds.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/openacc.f90
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/openacc.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/openacc_kinds.mod
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/openacc_lib.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/g++-mapper-server
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/gmon.o
-# file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/go1
-# file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ISO_Fortran_binding.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/go1
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ISO_Fortran_binding.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/acc_prof.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/adxintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ammintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/amxbf16intrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/amxint8intrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/amxtileintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx2intrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx5124fmapsintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx5124vnniwintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512bf16intrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512bf16vlintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512bitalgintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512bwintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512cdintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512dqintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512erintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512fintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512ifmaintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512ifmavlintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512pfintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vbmi2intrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vbmi2vlintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vbmiintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vbmivlintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vlbwintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vldqintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vlintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vnniintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vnnivlintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vp2intersectintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vp2intersectvlintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vpopcntdqintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vpopcntdqvlintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avxintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avxvnniintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/bmi2intrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/bmiintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/bmmintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cet.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cetintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cldemoteintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/clflushoptintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/clwbintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/clzerointrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cpuid.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cross-stdarg.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/emmintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/enqcmdintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/f16cintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/adxintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ammintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/amxbf16intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/amxint8intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/amxtileintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx2intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx5124fmapsintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx5124vnniwintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512bf16intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512bf16vlintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512bitalgintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512bwintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512cdintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512dqintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512erintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512fintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512fp16intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512fp16vlintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512ifmaintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512ifmavlintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512pfintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vbmi2intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vbmi2vlintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vbmiintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vbmivlintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vlbwintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vldqintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vlintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vnniintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vnnivlintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vp2intersectintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vp2intersectvlintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vpopcntdqintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avx512vpopcntdqvlintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avxintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/avxvnniintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/bmi2intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/bmiintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/bmmintrin.h \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cet.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cetintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cldemoteintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/clflushoptintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/clwbintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/clzerointrin.h \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cpuid.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/cross-stdarg.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/emmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/enqcmdintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/f16cintrin.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/float.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/fma4intrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/fmaintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/fxsrintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/fma4intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/fmaintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/fxsrintrin.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/gcov.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mwaitintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/gfniintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/hresetintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ia32intrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/immintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/gfniintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/hresetintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ia32intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/immintrin.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/iso646.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/keylockerintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/lwpintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/lzcntintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mm3dnow.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mm_malloc.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mmintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/movdirintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mwaitxintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/nmmintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/keylockerintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/lwpintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/lzcntintrin.h \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mm3dnow.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mm_malloc.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/movdirintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mwaitintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/mwaitxintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/nmmintrin.h \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/NXConstStr.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/Object.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/Protocol.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/message.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/objc-decls.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/objc-exception.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/objc-sync.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/objc.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/runtime.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/objc/thr.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/omp.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/openacc.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/pconfigintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/pkuintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/pmmintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/popcntintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/prfchwintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/quadmath.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/quadmath_weak.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/rdseedintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/rtmintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/pconfigintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/pkuintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/pmmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/popcntintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/prfchwintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/quadmath.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/quadmath_weak.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/rdseedintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/rtmintrin.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/sanitizer/asan_interface.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/sanitizer/common_interface_defs.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/sanitizer/hwasan_interface.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/sanitizer/lsan_interface.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/sanitizer/tsan_interface.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/serializeintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/sgxintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/shaintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/smmintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/serializeintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/sgxintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/shaintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/smmintrin.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ssp/ssp.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ssp/stdio.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ssp/string.h
@@ -1121,28 +1449,66 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/stdfix.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/stdint-gcc.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/stdint.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/stdnoreturn.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/tbmintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/tbmintrin.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/tgmath.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/tmmintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/tsxldtrkintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/uintrintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/tmmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/tsxldtrkintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/uintrintrin.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/unwind.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/vaesintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/vaesintrin.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/varargs.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/visintrin.h variant.arch=sparc
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/vpclmulqdqintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/waitpkgintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/wbnoinvdintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/wmmintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/x86gprintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/x86intrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xmmintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xopintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xsavecintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xsaveintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xsaveoptintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xsavesintrin.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xtestintrin.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/visintrin.h \
+    variant.arch=sparc
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/vpclmulqdqintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/waitpkgintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/wbnoinvdintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/wmmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/x86gprintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/x86intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xmmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xopintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xsavecintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xsaveintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xsaveoptintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xsavesintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/xtestintrin.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/fixinc.sh
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/fixinc_list
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/fixincl
@@ -1153,10 +1519,12 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/macro
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/mkheaders
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/mkheaders.conf
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/mkinstalldirs
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/libcaf_single.a
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/libgcc.a
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/libgcc_eh.a
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/libgcov.a
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/liblto_plugin.so pkg.linted.userland.action001.2=true
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/liblto_plugin.so \
+    pkg.linted.userland.action001.2=true
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/lto-wrapper
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/lto1
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/gengtype
@@ -1186,6 +1554,7 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/buil
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/bversion.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/c-family/c-common.def
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/c-family/c-common.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/c-family/c-objc.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/c-family/c-pragma.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/c-family/c-pretty-print.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/c-tree.h
@@ -1207,25 +1576,56 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/coll
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/collect2-aix.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/collect2.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/color-macros.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/common/config/$(MACH)/i386-cpuinfo.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/common/config/$(MACH)/i386-cpuinfo.h \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/conditions.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/att.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/biarch64.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/default64.h variant.arch=sparc
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/i386-opts.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/i386-protos.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/i386.h variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/att.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/biarch64.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/default64.h \
+    variant.arch=sparc
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/i386-isa.def \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/i386-opts.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/i386-protos.h \
+    variant.arch=i386
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/i386.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/sol2.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/sparc-opts.h variant.arch=sparc
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/sparc-protos.h variant.arch=sparc
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/sparc.h variant.arch=sparc
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/stringop.def variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/sparc-opts.h \
+    variant.arch=sparc
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/sparc-protos.h \
+    variant.arch=sparc
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/sparc.h \
+    variant.arch=sparc
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/stringop.def \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/sysv4.h
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/tso.h variant.arch=sparc
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/unix.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/x86-64.h variant.arch=i386
-file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/x86-tune.def variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/tso.h \
+    variant.arch=sparc
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/unix.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/x86-64.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/$(MACH)/x86-tune.def \
+    variant.arch=i386
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/dbxelf.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/elfos.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/config/initfini-array.h
@@ -1249,6 +1649,7 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/cppb
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/cppdefault.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/cpplib.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/cselib.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/ctfc.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/d/d-tree.def
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/data-streamer.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/dbgcnt.def
@@ -1265,6 +1666,7 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/diag
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/diagnostic-event-id.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/diagnostic-metadata.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/diagnostic-path.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/diagnostic-spec.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/diagnostic-url.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/diagnostic.def
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/diagnostic.h
@@ -1276,6 +1678,7 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/doub
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/dump-context.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/dumpfile.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/dwarf2asm.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/dwarf2ctf.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/dwarf2out.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/edit-context.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/emit-rtl.h
@@ -1318,13 +1721,18 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimp
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-iterator.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-low.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-match.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-predicate-analysis.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-predict.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-pretty-print.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-range-cache.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-range-edge.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-range-fold.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-range-gori.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-range-path.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-range-trace.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-range.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-ssa-evrp-analyze.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-ssa-warn-access.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-ssa-warn-restrict.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-ssa.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/gimple-streamer.h
@@ -1417,6 +1825,7 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/memm
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/memory-block.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/mode-classes.def
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/mux-utils.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/objc/objc-tree.def
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/obstack-utils.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/obstack.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/omp-builtins.def
@@ -1447,6 +1856,7 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/plug
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/plugin-version.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/plugin.def
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/plugin.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/pointer-query.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/poly-int-types.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/poly-int.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/predict.def
@@ -1598,10 +2008,12 @@ file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/type
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/typed-splay-tree.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/ubsan.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/valtrack.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/value-pointer-equiv.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/value-prof.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/value-query.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/value-range-equiv.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/value-range.h
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/value-relation.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/varasm.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/vec-perm-indices.h
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/include/vec.h
@@ -1629,27 +2041,187 @@ link \
     path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/libcp1plugin.so.0 \
     target=libcp1plugin.so.0.0.0
 file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/libcp1plugin.so.0.0.0
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/test2json
+file path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/vet
+
+# Version major links
+link path=usr/gcc/12/lib/gcc/$(GNU_TRIPLET)/12 target=$(HUMAN_VERSION)
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/archive/tar.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/archive/zip.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bufio.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bytes.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/bzip2.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/flate.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/gzip.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/lzw.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/zlib.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/heap.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/list.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/ring.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/context.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/aes.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/cipher.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/des.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/dsa.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/ecdsa.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/ed25519.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/elliptic.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/hmac.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/md5.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rand.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rc4.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rsa.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha1.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha256.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha512.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/subtle.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/tls.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/x509.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/x509/pkix.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/database/sql.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/database/sql/driver.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/buildinfo.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/dwarf.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/elf.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/gosym.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/macho.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/pe.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/plan9obj.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/embed.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/ascii85.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/asn1.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/base32.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/base64.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/binary.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/csv.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/gob.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/hex.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/json.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/pem.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/xml.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/errors.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/expvar.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/flag.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/fmt.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/ast.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/build.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/build/constraint.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/constant.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/doc.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/format.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/importer.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/parser.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/printer.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/scanner.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/token.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/types.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/adler32.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/crc32.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/crc64.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/fnv.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/maphash.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/html.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/html/template.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/color.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/color/palette.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/draw.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/gif.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/jpeg.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/png.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/index/suffixarray.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/internal/reflectlite.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/internal/unsafeheader.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io/fs.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io/ioutil.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/log.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/log/syslog.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/big.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/bits.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/cmplx.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/rand.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime/multipart.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime/quotedprintable.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/cgi.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/cookiejar.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/fcgi.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httptest.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httptrace.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httputil.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/pprof.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/mail.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/netip.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/rpc.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/rpc/jsonrpc.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/smtp.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/textproto.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/url.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/exec.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/signal.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/user.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/path.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/path/filepath.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/reflect.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/regexp.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/regexp/syntax.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/cgo.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/debug.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/metrics.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/pprof.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/trace.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sort.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/strconv.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/strings.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sync.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sync/atomic.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/syscall.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/fstest.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/internal/testdeps.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/iotest.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/quick.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/scanner.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/tabwriter.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/template.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/template/parse.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/time.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/time/tzdata.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode/utf16.gox
+file path=usr/gcc/12/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode/utf8.gox
 file path=usr/gcc/12/lib/libasan.a
 link path=usr/gcc/12/lib/libasan.so target=libasan.so.8.0.0
 link path=usr/gcc/12/lib/libasan.so.8 target=libasan.so.8.0.0
 file path=usr/gcc/12/lib/libasan.so.8.0.0
 file path=usr/gcc/12/lib/libasan_preinit.o
 file path=usr/gcc/12/lib/libatomic.a
-#link path=usr/gcc/12/lib/libatomic.so target=libatomic.so.1.2.0
-#link path=usr/gcc/12/lib/libatomic.so.1 target=libatomic.so.1.2.0
-#file path=usr/gcc/12/lib/libatomic.so.1.2.0
 file path=usr/gcc/12/lib/libgcc-unwind.map
-#link path=usr/gcc/12/lib/libgcc_s.so target=libgcc_s.so.1
-#file path=usr/gcc/12/lib/libgcc_s.so.1
-file path=usr/gcc/12/lib/libquadmath.a variant.arch=i386
-#link path=usr/gcc/12/lib/libquadmath.so target=libquadmath.so.0.0.0
-#link path=usr/gcc/12/lib/libquadmath.so.0 target=libquadmath.so.0.0.0
-#file path=usr/gcc/12/lib/libquadmath.so.0.0.0
+file path=usr/gcc/12/lib/libgfortran.a
+file path=usr/gcc/12/lib/libgfortran.spec
+file path=usr/gcc/12/lib/libgo.a
+file path=usr/gcc/12/lib/libgobegin.a
+file path=usr/gcc/12/lib/libgolibbegin.a
+file path=usr/gcc/12/lib/libgomp.a
+file path=usr/gcc/12/lib/libgomp.spec
+file path=usr/gcc/12/lib/libitm.a
+link path=usr/gcc/12/lib/libitm.so target=libitm.so.1.0.0
+link path=usr/gcc/12/lib/libitm.so.1 target=libitm.so.1.0.0
+file path=usr/gcc/12/lib/libitm.so.1.0.0
+file path=usr/gcc/12/lib/libitm.spec
+file path=usr/gcc/12/lib/libobjc.a
+file path=usr/gcc/12/lib/libquadmath.a
 file path=usr/gcc/12/lib/libsanitizer.spec
 file path=usr/gcc/12/lib/libssp.a
-#link path=usr/gcc/12/lib/libssp.so target=libssp.so.0.0.0
-#link path=usr/gcc/12/lib/libssp.so.0 target=libssp.so.0.0.0
-#file path=usr/gcc/12/lib/libssp.so.0.0.0
 file path=usr/gcc/12/lib/libssp_nonshared.a
 file path=usr/gcc/12/lib/libstdc++.a
 file path=usr/gcc/12/lib/libstdc++.so.6.0.30-gdb.py
@@ -1663,13 +2235,6 @@ file path=usr/gcc/12/share/gcc-$(HUMAN_VERSION)/python/libstdcxx/__init__.py
 file path=usr/gcc/12/share/gcc-$(HUMAN_VERSION)/python/libstdcxx/v6/__init__.py
 file path=usr/gcc/12/share/gcc-$(HUMAN_VERSION)/python/libstdcxx/v6/printers.py
 file path=usr/gcc/12/share/gcc-$(HUMAN_VERSION)/python/libstdcxx/v6/xmethods.py
-file path=usr/gcc/12/share/info/cpp.info
-file path=usr/gcc/12/share/info/cppinternals.info
-#file path=usr/gcc/12/share/info/dir
-file path=usr/gcc/12/share/info/gcc.info
-file path=usr/gcc/12/share/info/gccinstall.info
-file path=usr/gcc/12/share/info/gccint.info
-file path=usr/gcc/12/share/info/libquadmath.info variant.arch=i386
 file path=usr/gcc/12/share/locale/be/LC_MESSAGES/cpplib.mo
 file path=usr/gcc/12/share/locale/be/LC_MESSAGES/gcc.mo
 file path=usr/gcc/12/share/locale/ca/LC_MESSAGES/cpplib.mo
@@ -1691,9 +2256,11 @@ file path=usr/gcc/12/share/locale/id/LC_MESSAGES/cpplib.mo
 file path=usr/gcc/12/share/locale/id/LC_MESSAGES/gcc.mo
 file path=usr/gcc/12/share/locale/ja/LC_MESSAGES/cpplib.mo
 file path=usr/gcc/12/share/locale/ja/LC_MESSAGES/gcc.mo
+file path=usr/gcc/12/share/locale/ka/LC_MESSAGES/cpplib.mo
 file path=usr/gcc/12/share/locale/nl/LC_MESSAGES/cpplib.mo
 file path=usr/gcc/12/share/locale/nl/LC_MESSAGES/gcc.mo
 file path=usr/gcc/12/share/locale/pt_BR/LC_MESSAGES/cpplib.mo
+file path=usr/gcc/12/share/locale/ro/LC_MESSAGES/cpplib.mo
 file path=usr/gcc/12/share/locale/ru/LC_MESSAGES/cpplib.mo
 file path=usr/gcc/12/share/locale/ru/LC_MESSAGES/gcc.mo
 file path=usr/gcc/12/share/locale/sr/LC_MESSAGES/cpplib.mo
@@ -1713,9 +2280,47 @@ file path=usr/gcc/12/share/locale/zh_TW/LC_MESSAGES/gcc.mo
 file path=usr/gcc/12/share/man/man1/cpp.1
 file path=usr/gcc/12/share/man/man1/g++.1
 file path=usr/gcc/12/share/man/man1/gcc.1
+file path=usr/gcc/12/share/man/man1/gccgo.1
 file path=usr/gcc/12/share/man/man1/gcov-dump.1
 file path=usr/gcc/12/share/man/man1/gcov-tool.1
 file path=usr/gcc/12/share/man/man1/gcov.1
+file path=usr/gcc/12/share/man/man1/gfortran.1
+file path=usr/gcc/12/share/man/man1/go.1
+file path=usr/gcc/12/share/man/man1/gofmt.1
+file path=usr/gcc/12/share/man/man1/lto-dump.1
 file path=usr/gcc/12/share/man/man7/fsf-funding.7
 file path=usr/gcc/12/share/man/man7/gfdl.7
 file path=usr/gcc/12/share/man/man7/gpl.7
+link path=usr/share/man/man1/cpp.1 target=../../../gcc/12/share/man/man1/cpp.1 \
+    mediator=gcc mediator-version=12
+link path=usr/share/man/man1/g++.1 target=../../../gcc/12/share/man/man1/g++.1 \
+    mediator=gcc mediator-version=12
+link path=usr/share/man/man1/gcc.1 target=../../../gcc/12/share/man/man1/gcc.1 \
+    mediator=gcc mediator-version=12
+link path=usr/share/man/man1/gcov-dump.1 \
+    target=../../../gcc/12/share/man/man1/gcov-dump.1 mediator=gcc \
+    mediator-version=12
+link path=usr/share/man/man1/gcov-tool.1 \
+    target=../../../gcc/12/share/man/man1/gcov-tool.1 mediator=gcc \
+    mediator-version=12
+# link path=usr/share/man/man1/gccgo.1 target=../../../gcc/12/share/man/man1/gccgo.1 mediator=gcc mediator-version=12
+link path=usr/share/man/man1/gcov.1 \
+    target=../../../gcc/12/share/man/man1/gcov.1 mediator=gcc \
+    mediator-version=12
+link path=usr/share/man/man1/gfortran.1 \
+    target=../../../gcc/12/share/man/man1/gfortran.1 mediator=gcc \
+    mediator-version=12
+license COPYING.RUNTIME license="GCC runtime license"
+license COPYING license=GPLv2
+license COPYING3 license=GPLv3
+license COPYING.LIB license=LGPLv2.1
+license COPYING3.LIB license=LGPLv3
+
+# Dependency to runtime packages auto-generated
+#depend fmri=pkg:/system/library/gcc-12-runtime@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+#depend fmri=pkg:/system/library/g++-12-runtime@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+# depend fmri=pkg:/system/library/gfortran-12-runtime@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+depend type=require fmri=pkg:/developer/gnu-binutils
+depend type=require fmri=pkg:/developer/linker
+depend type=require fmri=pkg:/system/header
+depend type=require fmri=pkg:/system/library/c-runtime

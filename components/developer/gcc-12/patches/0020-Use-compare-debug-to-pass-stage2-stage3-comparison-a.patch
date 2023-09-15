@@ -1,23 +1,31 @@
-From 14c777d0cfa9c7a634abe5752db3d1691f7e5333 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
-Date: Thu, 25 Oct 2018 20:59:37 +0200
-Subject: Use compare-debug to pass stage2/stage3 comparison as
- avx_*.o and sse-*.o contain debug info that should be stripped
-
----
- Makefile.in | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Makefile.in b/Makefile.in
-index 593495e1650..89203c4cb7a 100644
---- a/Makefile.in
-+++ b/Makefile.in
-@@ -640,7 +640,7 @@ STAGEautoprofile_TFLAGS = $(STAGE2_TFLAGS)
- STAGEautofeedback_CFLAGS = $(STAGE3_CFLAGS)
- STAGEautofeedback_TFLAGS = $(STAGE3_TFLAGS)
- 
--do-compare = @do_compare@
-+do-compare = $(srcdir)/contrib/compare-debug $$f1 $$f2
- do-compare3 = $(do-compare)
- 
- # -----------------------------------------------
+diff --git a/configure b/configure
+index 5dcaab1..6dad150 100755
+--- a/configure
++++ b/configure
+@@ -5761,25 +5761,7 @@ $as_echo_n "checking how to compare bootstrapped objects... " >&6; }
+ if ${gcc_cv_prog_cmp_skip+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+-   echo abfoo >t1
+-  echo cdfoo >t2
+-  gcc_cv_prog_cmp_skip='tail -c +17 $$f1 > tmp-foo1; tail -c +17 $$f2 > tmp-foo2; cmp tmp-foo1 tmp-foo2'
+-  if cmp t1 t2 2 2 > /dev/null 2>&1; then
+-    if cmp t1 t2 1 1 > /dev/null 2>&1; then
+-      :
+-    else
+-      gcc_cv_prog_cmp_skip='cmp $$f1 $$f2 16 16'
+-    fi
+-  fi
+-  if cmp --ignore-initial=2 t1 t2 > /dev/null 2>&1; then
+-    if cmp --ignore-initial=1 t1 t2 > /dev/null 2>&1; then
+-      :
+-    else
+-      gcc_cv_prog_cmp_skip='cmp --ignore-initial=16 $$f1 $$f2'
+-    fi
+-  fi
+-  rm t1 t2
+-
++      gcc_cv_prog_cmp_skip='${srcdir}/contrib/compare-debug $$f1 $$f2'
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $gcc_cv_prog_cmp_skip" >&5
+ $as_echo "$gcc_cv_prog_cmp_skip" >&6; }
