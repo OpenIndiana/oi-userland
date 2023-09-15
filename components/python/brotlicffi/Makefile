@@ -20,13 +20,13 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		brotlicffi
-HUMAN_VERSION =			1.0.9.2
+HUMAN_VERSION =			1.1.0.0
 COMPONENT_SUMMARY =		brotlicffi - Python CFFI bindings to the Brotli library
 COMPONENT_PROJECT_URL =		https://github.com/python-hyper/brotlicffi
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d3/d8/6acbb65e350213ad6bd96180593fad0a269a3baa845c67fed21adee3959d/brotlicffi-1.0.9.2.tar.gz
+	https://files.pythonhosted.org/packages/95/9d/70caa61192f570fcf0352766331b735afa931b4c6bc9a348a0925cc13288/brotlicffi-1.1.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0c248a68129d8fc6a217767406c731e498c3e19a7be05ea0a90c3c86637b7d96
+	sha256:b77827a689905143f87915310b93b273ab17888fd43ef350d4832c4a71083c13
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
