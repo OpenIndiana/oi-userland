@@ -19,19 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lazy
-HUMAN_VERSION =			1.5
+HUMAN_VERSION =			1.6
 COMPONENT_SUMMARY =		lazy - Lazy attributes for Python objects
 COMPONENT_PROJECT_URL =		https://github.com/stefanholek/lazy
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/29/00/ba9688438904f0cd446e1986deb826610385c042776dd939ecb2b360b3bd/lazy-1.5.tar.gz
+	https://files.pythonhosted.org/packages/3c/e6/704c32da169b023a9ac86d116f5433b42d02b4afeda24c9400a69b3530e5/lazy-1.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cb3d8612aa895a48afe8f08860573ba8ef5ee4fdbe1b3cd606c5f50a16152186
+	sha256:7127324ec709e8324f08cb4611c1abe01776bda53bb9ce68dc5dfa46ca0ed3e9
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Force verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -v
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
