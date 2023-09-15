@@ -17,11 +17,11 @@ BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsoup3
-COMPONENT_VERSION= 3.4.2
+COMPONENT_VERSION= 3.4.3
 COMPONENT_SUMMARY= Libsoup is an HTTP client/server library for GNOME
 COMPONENT_SRC= libsoup-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:78c8fa37cb152d40ec8c4a148d6155e2f6947f3f1602a7cda3a31ad40f5ee2f3
+COMPONENT_ARCHIVE_HASH= sha256:b7f1bbaeeb43f5812daba3ee258a72e1b4b14c2fd91f4a1a75d4eea10dcf288f
 COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/libsoup/3.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/libsoup
 COMPONENT_FMRI= library/libsoup3
