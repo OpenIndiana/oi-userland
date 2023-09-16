@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pillow
-HUMAN_VERSION =			10.0.0
+HUMAN_VERSION =			10.0.1
 COMPONENT_SUMMARY =		Pillow - Python Imaging Library (Fork)
 COMPONENT_PROJECT_URL =		https://python-pillow.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0f/8b/2ebaf9adcf4260c00f842154865f8730cf745906aa5dd499141fb6063e26/Pillow-10.0.0.tar.gz
+	https://files.pythonhosted.org/packages/64/9e/7e638579cce7dc346632f020914141a164a872be813481f058883ee8d421/Pillow-10.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9c82b5b3e043c7af0d95792d0d20ccf68f61a1fec6b3530e718b688422727396
+	sha256:d72967b06be9300fed5cfbc8b5bafceec48bf7cdc7dab66b1d2549035287191d
 COMPONENT_LICENSE =		HPND
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -54,7 +54,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/check-manifest
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/defusedxml
 TEST_REQUIRED_PACKAGES.python += library/python/markdown2
-TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/olefile
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pyroma
