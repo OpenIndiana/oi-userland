@@ -23,6 +23,16 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Files in the files directory
+file zrepl.yml path=etc/zrepl/zrepl.yml \
+    mode=0644 preserve=true
+file zrepl.yml path=etc/zrepl/zrepl.yml-ref \
+    mode=0444
+file zrepl.xml path=lib/svc/manifest/application/zrepl.xml
+file zrepl path=lib/svc/method/zrepl \
+    mode=0555
+file exec_attr path=etc/security/exec_attr.d/zrepl
+
 file path=usr/bin/zrepl
 file path=usr/share/bash-completion/completions/zrepl
 file path=usr/share/man/man5/zrepl.yml.5
@@ -40,17 +50,7 @@ file path=usr/share/zrepl/config/quickstart_fan_out_replication_source.yml
 file path=usr/share/zrepl/config/quickstart_fan_out_replication_target.yml
 file path=usr/share/zrepl/config/sink.yml
 file path=usr/share/zrepl/config/snap.yml
+file path=usr/share/zrepl/config/snap_cron.yml
 file path=usr/share/zrepl/config/source.yml
 file path=usr/share/zrepl/config/source_ssh.yml
 file path=usr/share/zsh/site-functions/_zrepl
-
-# Files in the files directory
-file zrepl.yml path=etc/zrepl/zrepl.yml \
-    mode=0644 preserve=true
-file zrepl.yml path=etc/zrepl/zrepl.yml-ref \
-    mode=0444
-file zrepl.xml path=lib/svc/manifest/application/zrepl.xml
-file zrepl path=lib/svc/method/zrepl \
-    mode=0555
-file exec_attr path=etc/security/exec_attr.d/zrepl
-
