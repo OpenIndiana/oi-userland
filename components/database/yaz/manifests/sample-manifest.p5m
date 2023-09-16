@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,18 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/yaz-asncomp
-file path=usr/bin/$(MACH64)/yaz-client
-file path=usr/bin/$(MACH64)/yaz-config
-file path=usr/bin/$(MACH64)/yaz-iconv
-file path=usr/bin/$(MACH64)/yaz-icu
-file path=usr/bin/$(MACH64)/yaz-illclient
-file path=usr/bin/$(MACH64)/yaz-json-parse
-file path=usr/bin/$(MACH64)/yaz-marcdump
-file path=usr/bin/$(MACH64)/yaz-record-conv
-file path=usr/bin/$(MACH64)/yaz-url
-file path=usr/bin/$(MACH64)/yaz-ztest
-file path=usr/bin/$(MACH64)/zoomsh
 file path=usr/bin/yaz-asncomp
 file path=usr/bin/yaz-client
 file path=usr/bin/yaz-config
@@ -73,6 +62,7 @@ file path=usr/include/yaz/json.h
 file path=usr/include/yaz/log.h
 file path=usr/include/yaz/logrpn.h
 file path=usr/include/yaz/malloc_info.h
+file path=usr/include/yaz/marc_sax.h
 file path=usr/include/yaz/marcdisp.h
 file path=usr/include/yaz/match_glob.h
 file path=usr/include/yaz/matchstr.h
@@ -170,17 +160,9 @@ file path=usr/lib/$(MACH64)/libyaz_icu.so.5.0.0
 link path=usr/lib/$(MACH64)/libyaz_server.so target=libyaz_server.so.5.0.0
 link path=usr/lib/$(MACH64)/libyaz_server.so.5 target=libyaz_server.so.5.0.0
 file path=usr/lib/$(MACH64)/libyaz_server.so.5.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/yaz-icu.pc
+file path=usr/lib/$(MACH64)/pkgconfig/yaz-server.pc
 file path=usr/lib/$(MACH64)/pkgconfig/yaz.pc
-link path=usr/lib/libyaz.so target=libyaz.so.5.0.0
-link path=usr/lib/libyaz.so.5 target=libyaz.so.5.0.0
-file path=usr/lib/libyaz.so.5.0.0
-link path=usr/lib/libyaz_icu.so target=libyaz_icu.so.5.0.0
-link path=usr/lib/libyaz_icu.so.5 target=libyaz_icu.so.5.0.0
-file path=usr/lib/libyaz_icu.so.5.0.0
-link path=usr/lib/libyaz_server.so target=libyaz_server.so.5.0.0
-link path=usr/lib/libyaz_server.so.5 target=libyaz_server.so.5.0.0
-file path=usr/lib/libyaz_server.so.5.0.0
-file path=usr/lib/pkgconfig/yaz.pc
 file path=usr/share/aclocal/yaz.m4
 file path=usr/share/doc/yaz/apilayer.png
 file path=usr/share/doc/yaz/asn.external.html

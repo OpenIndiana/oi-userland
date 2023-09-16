@@ -14,19 +14,17 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
-
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yaz
-COMPONENT_VERSION=	5.28.0
+COMPONENT_VERSION=	5.34.0
 COMPONENT_SUMMARY=	toolkit supporting the development of Z39.50/SRW/SRU clients and servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:194b09b3212b9c0626c729e8f1e13cbfbe55141434c0627860aa1469433892c4
-COMPONENT_ARCHIVE_URL= \
-	http://ftp.indexdata.dk/pub/yaz/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:bcbea894599a13342910003401c17576f0fb910092aecb51cb54065d0cd2d613
+COMPONENT_ARCHIVE_URL=	http://ftp.indexdata.dk/pub/yaz/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.indexdata.com/resources/software/yaz/
 COMPONENT_FMRI=		database/yaz
 COMPONENT_CLASSIFICATION= Development/Databases
@@ -44,20 +42,12 @@ CONFIGURE_OPTIONS += --disable-static
 ENV=/usr/bin/env -i
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ERROR:/p" '
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libmemcached
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += runtime/tcl-8
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
