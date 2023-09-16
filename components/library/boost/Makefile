@@ -19,14 +19,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		boost
 COMPONENT_VERSION=	1.78.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC_VERSION=	$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	boost - free peer-reviewed portable C++ source libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_SRC_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc
 COMPONENT_ARCHIVE_URL=	https://boostorg.jfrog.io/artifactory/main/release/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.boost.org
+COMPONENT_PROJECT_URL=	https://www.boost.org
 COMPONENT_FMRI=		system/library/boost
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	Boost Software license
