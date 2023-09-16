@@ -14,18 +14,23 @@
 #
 
 BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ibus
-COMPONENT_VERSION=      1.5.26
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.5.28
 COMPONENT_SUMMARY=      iBus - Intelligent Input Bus
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:5c2fd118e7bfd4e9a42c3a20e6175a263426c90b6256f94989ed3d0384f4c9fc
+COMPONENT_ARCHIVE_HASH= sha256:6c9ff3a7576c3d61264f386030f47ee467eb7298c8104367002986e008765667
 COMPONENT_PROJECT_URL=  https://github.com/ibus/ibus
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			system/input-method/ibus
+COMPONENT_CLASSIFICATION=	System/Internationalization
+COMPONENT_LICENSE=		LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING
 
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
@@ -52,6 +57,7 @@ CONFIGURE_OPTIONS.64 += --with-gtk-im-module-dir=/usr/lib/$(MACH64)/gtk-2.0/$(GT
 CONFIGURE_OPTIONS += --disable-emoji-dict
 CONFIGURE_OPTIONS += --disable-unicode-dict
 CONFIGURE_OPTIONS += --disable-systemd-services
+CONFIGURE_OPTIONS += --disable-wayland
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
@@ -66,16 +72,7 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 # Note: Running the tests need X11.
 unexport SHELLOPTS
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-         '-n ' \
-         '-e "/^PASS:/p" ' \
-         '-e "/^XPASS:/p" ' \
-         '-e "/^ERROR:/p" ' \
-         '-e "/^FAIL:/p" ' \
-         '-e "/^XFAIL:/p" ' \
-         '-e "/^SKIP:/p" ' \
-         '-e "/^TOTAL:/p" ' \
          '-e "/^See/p" ' \
          '-e "/^Please/p" ' \
          '-e "/^Testsuite/p" ' \
@@ -94,6 +91,7 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

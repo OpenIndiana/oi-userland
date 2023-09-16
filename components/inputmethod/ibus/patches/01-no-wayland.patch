@@ -1,0 +1,30 @@
+We don't have Wayland and thus we need to remove all references to it.
+
+--- ibus-1.5.28/ui/gtk3/panel.c.orig	2023-02-21 04:01:06.000000000 +0100
++++ ibus-1.5.28/ui/gtk3/panel.c	2023-09-16 21:58:19.192918654 +0200
+@@ -34,7 +34,6 @@
+ #include <gdk-pixbuf/gdk-pixbuf.h>
+ #include <cairo-gobject.h>
+ #include <gdk/gdk.h>
+-#include <gdk/gdkwayland.h>
+ #include <glib/gi18n-lib.h>
+ #include <gdk/gdkx.h>
+ #include <X11/Xlib.h>
+@@ -1109,7 +1108,6 @@
+ 	GdkDisplay* _tmp4_;
+ 	GType instance_type = 0UL;
+ 	GdkDisplay* _tmp5_;
+-	GType wayland_type = 0UL;
+ 	CandidatePanel* _tmp6_;
+ 	CandidatePanel* _tmp7_;
+ 	CandidatePanel* _tmp8_;
+@@ -1135,8 +1133,7 @@
+ 	display = _tmp4_;
+ 	_tmp5_ = display;
+ 	instance_type = G_TYPE_FROM_INSTANCE ((GObject*) _tmp5_);
+-	wayland_type = gdk_wayland_display_get_type ();
+-	self->priv->m_is_wayland = g_type_is_a (instance_type, wayland_type);
++	self->priv->m_is_wayland = False;
+ 	gdk_set_allowed_backends ("x11");
+ 	panel_init_settings (self);
+ 	if (self->priv->m_is_kde) {

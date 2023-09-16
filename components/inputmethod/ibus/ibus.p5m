@@ -1,25 +1,28 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2023 Andreas Wacknitz
 #
 
-set name=pkg.fmri value=pkg:/system/input-method/ibus@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:System/Internationalization"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license COPYING license='LGPLv2.1'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
 <transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
@@ -87,9 +90,9 @@ file path=usr/include/ibus-1.0/ibusxml.h
 file path=usr/lib/$(MACH64)/girepository-1.0/IBus-1.0.typelib
 file path=usr/lib/$(MACH64)/gtk-2.0/2.10.0/immodules/im-ibus.so
 file path=usr/lib/$(MACH64)/gtk-3.0/3.0.0/immodules/im-ibus.so
-link path=usr/lib/$(MACH64)/libibus-1.0.so target=libibus-1.0.so.5.0.526
-link path=usr/lib/$(MACH64)/libibus-1.0.so.5 target=libibus-1.0.so.5.0.526
-file path=usr/lib/$(MACH64)/libibus-1.0.so.5.0.526
+link path=usr/lib/$(MACH64)/libibus-1.0.so target=libibus-1.0.so.5.0.528
+link path=usr/lib/$(MACH64)/libibus-1.0.so.5 target=libibus-1.0.so.5.0.528
+file path=usr/lib/$(MACH64)/libibus-1.0.so.5.0.528
 file path=usr/lib/$(MACH64)/pkgconfig/ibus-1.0.pc
 file path=usr/lib/gtk-2.0/2.10.0/immodules/im-ibus.so
 file path=usr/lib/gtk-3.0/3.0.0/immodules/im-ibus.so
@@ -103,11 +106,12 @@ file path=usr/lib/ibus/ibus-engine-simple
 file path=usr/lib/ibus/ibus-portal
 file path=usr/lib/ibus/ibus-ui-gtk3
 file path=usr/lib/ibus/ibus-x11
-link path=usr/lib/libibus-1.0.so target=libibus-1.0.so.5.0.526
-link path=usr/lib/libibus-1.0.so.5 target=libibus-1.0.so.5.0.526
-file path=usr/lib/libibus-1.0.so.5.0.526
+link path=usr/lib/libibus-1.0.so target=libibus-1.0.so.5.0.528
+link path=usr/lib/libibus-1.0.so.5 target=libibus-1.0.so.5.0.528
+file path=usr/lib/libibus-1.0.so.5.0.528
 file path=usr/lib/pkgconfig/ibus-1.0.pc
-file path=usr/lib/python3.9/vendor-packages/gi/overrides/IBus.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gi/overrides/IBus.py
+file path=usr/lib/python2.7/vendor-packages/gi/overrides/IBus.py
 file path=usr/share/GConf/gsettings/ibus.convert
 file path=usr/share/applications/org.freedesktop.IBus.Setup.desktop
 file path=usr/share/bash-completion/completions/ibus.bash
@@ -239,6 +243,7 @@ file path=usr/share/locale/ia/LC_MESSAGES/ibus10.mo
 file path=usr/share/locale/id/LC_MESSAGES/ibus10.mo
 file path=usr/share/locale/it/LC_MESSAGES/ibus10.mo
 file path=usr/share/locale/ja/LC_MESSAGES/ibus10.mo
+file path=usr/share/locale/ka/LC_MESSAGES/ibus10.mo
 file path=usr/share/locale/kn/LC_MESSAGES/ibus10.mo
 file path=usr/share/locale/ko/LC_MESSAGES/ibus10.mo
 file path=usr/share/locale/lv/LC_MESSAGES/ibus10.mo
