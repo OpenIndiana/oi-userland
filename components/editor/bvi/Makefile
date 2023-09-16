@@ -16,8 +16,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bvi
 COMPONENT_VERSION=      1.4.2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      bvi - Binary Visual Editor  
-COMPONENT_PROJECT_URL=  http://bvi.sourceforge.net/
+COMPONENT_PROJECT_URL=  https://bvi.sourceforge.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/bvi/files/bvi/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
