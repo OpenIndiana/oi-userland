@@ -14,17 +14,16 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_STYLE=	justmake
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netpbm
-COMPONENT_VERSION= 10.73.42
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 10.73.43
 COMPONENT_SUMMARY= Netpbm is a toolkit for manipulation of graphic images, including conversion of images between a variety of different formats.
 COMPONENT_PROJECT_URL= https://netpbm.sourceforge.net/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha256:f1ddaa753d189aa7760a75265b6f7ab96eeedac3e2493ef57227824d058d528c
+COMPONENT_ARCHIVE_HASH= sha256:f9fd9a7f932258224d1925bfce61396a15e0fad93e3853d6324ac308d1adebf8
 COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/$(COMPONENT_NAME)/files/super_stable/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -32,6 +31,8 @@ COMPONENT_LICENSE=	GPL,BSD,MIT,BSD
 COMPONENT_LICENSE_FILE= doc/copyright_summary
 
 include $(WS_MAKE_RULES)/common.mk
+
+PATH= $(PATH.gnu)
 
 COMPONENT_PRE_BUILD_ACTION = ( \
 	$(CLONEY) $(SOURCE_DIR) $(@D); \
@@ -41,9 +42,9 @@ COMPONENT_PRE_BUILD_ACTION = ( \
 	)
 
 # build with the distribution preferred libjpeg implementation
-CFLAGS   +=  $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS +=  $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  +=  $(JPEG_LDFLAGS)
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 COMPONENT_INSTALL_ARGS=		package
 COMPONENT_INSTALL_TARGETS=	pkgdir=$(PROTO_DIR)/usr
@@ -59,10 +60,9 @@ COMPONENT_POST_INSTALL_ACTION=	( \
 	$(GSED) -i -e 's/@LINKDIR@//' $(PROTO_DIR)/usr/config_template; \
 	)
 
-COMPONENT_TEST_ENV += -i PATH=$(PATH.gnu)
 COMPONENT_TEST_TARGETS=	check-tree
 COMPONENT_TEST_TRANSFORMS= \
-        '-n ' \
+	'-n ' \
 	'-e "/=======$$/p"' \
 	'-e "/All tests done./p"' \
 	'-e "/SUCCESS/p"' \
