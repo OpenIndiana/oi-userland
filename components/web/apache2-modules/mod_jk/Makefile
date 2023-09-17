@@ -24,7 +24,7 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_jk
-COMPONENT_VERSION=	1.2.48
+COMPONENT_VERSION=	1.2.49
 COMPONENT_FMRI=		web/server/apache-24/module/apache-jk
 COMPONENT_SUMMARY=	Tomcat Connector plugin for Apache Web Server V2.4
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
@@ -33,7 +33,7 @@ COMPONENT_SRC_NAME=	tomcat-connectors
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cb1b360ba0a12b2dbec119b60f561e9f657ed75df8188e5d902534b56b908e97
+    sha256:43cb0283c92878e9d4ef110631dbd2beb6b55713c127ce043190b2b308757e9c
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/tomcat/tomcat-connectors/jk/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	Apache 2.0
 COMPONENT_LICENSE_FILE=	LICENSE
