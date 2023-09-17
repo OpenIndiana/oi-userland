@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tiff
-COMPONENT_VERSION= 4.5.1
+COMPONENT_VERSION= 4.6.0
 COMPONENT_SUMMARY= libtiff - library for reading and writing TIFF
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d7f38b6788e4a8f5da7940c5ac9424f494d8a79eba53d555f4a507167dca5e2b
+COMPONENT_ARCHIVE_HASH= sha256:88b3979e6d5c7e32b50d7ec72fb15af724f6ab2cbf7e10880c360a77e4b5d99a
 COMPONENT_ARCHIVE_URL=	https://download.osgeo.org/libtiff/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.simplesystems.org/libtiff/
 COMPONENT_FMRI=	image/library/libtiff
@@ -41,6 +41,7 @@ LDFLAGS           +=    $(JPEG_LDFLAGS)
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-cxx
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
@@ -64,4 +65,3 @@ REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/freeglut
