@@ -22,19 +22,20 @@
 #
 # Copyright (c), 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2017, Wiselabs Software Ltda - http://www.wiselabs.com.br. All rights reserved.
+# Copyright 2023 Niklas Poslovski
 #
 
 BUILD_STYLE = justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
-COMPONENT_VERSION=	1.10.13
+COMPONENT_VERSION=	1.10.14
 COMPONENT_SUMMARY=	Apache Ant is a Java-based build tool
 COMPONENT_PROJECT_URL=	https://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:06a8f6f11529aeadcd10f96335dcd8b166188e2b970d27a648006a1be79b29f7
+COMPONENT_ARCHIVE_HASH= sha256:c451b8abca000892ef82f9e23ab26b02369973f5ca76fdf2b8d8fa258debffef
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/ant/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/build/ant
 COMPONENT_CLASSIFICATION=	Development/Distribution Tools
@@ -86,6 +87,7 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s/[0-9]*ms//" ' \
     '-e "s/[0-9]* minutes//" ' \
     '-e "s/[0-9]* seconds//" ' \
+    '-e "s/Time elapsed: [0-9]*,/Time elapsed: /" ' \
 	'-e "/BUILD/p" ' \
 	'-e "/Testsuite/p" ' \
 	'-e "/Testcase/p" ' \
