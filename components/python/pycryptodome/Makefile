@@ -14,19 +14,19 @@
 #   $WS_TOOLS/python-integrate-project pycryptodome
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 PYTHON3_SOABI = abi3
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycryptodome
-HUMAN_VERSION =			3.18.0
+HUMAN_VERSION =			3.19.0
 COMPONENT_SUMMARY =		pycryptodome - Cryptographic library for Python
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b9/05/0e7547c445bbbc96c538d870e6c5c5a69a9fa5df0a9df3e27cb126527196/pycryptodome-3.18.0.tar.gz
+	https://github.com/Legrandin/pycryptodome/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c9adee653fc882d98956e33ca2c1fb582e23a8af7ac82fee75bd6113c55a0413
+	sha256:30354c769a508f644cf5c9647ef1f3a346b6fb3e64034fc3a8a364f6986beeb1
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
@@ -38,6 +38,13 @@ include $(WS_MAKE_RULES)/common.mk
 # get verbose test output
 COMPONENT_TEST_TARGETS += -vv
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements-test.txt
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/pycryptodome-test-vectors
