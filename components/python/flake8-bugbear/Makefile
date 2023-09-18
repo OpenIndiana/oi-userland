@@ -19,17 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8-bugbear
-HUMAN_VERSION =			23.7.10
+HUMAN_VERSION =			23.9.16
 COMPONENT_SUMMARY =		flake8-bugbear - A plugin for flake8 finding likely bugs and design problems in your program. Contains warnings that don't belong in pyflakes and pycodestyle.
 COMPONENT_PROJECT_URL =		https://github.com/PyCQA/flake8-bugbear
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b6/7d/4713ba70574d1354f68e69e25c8d2347dbf5b3269ba4861a56727dc82a95/flake8-bugbear-23.7.10.tar.gz
+	https://files.pythonhosted.org/packages/4c/fd/07a050a23e310581f8d4b6e50ffe0593fac0f049a6abc9a318b5c161327a/flake8-bugbear-23.9.16.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0ebdc7d8ec1ca8bd49347694562381f099f4de2f8ec6bda7a7dca65555d9e0d4
+	sha256:90cf04b19ca02a682feb5aac67cae8de742af70538590509941ab10ae8351f71
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Force verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -v
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
@@ -39,4 +42,3 @@ PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
-TEST_REQUIRED_PACKAGES.python += library/python/hypothesmith
