@@ -90,19 +90,14 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	    -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
 	    -e 's|^export VERSION=.*|export VERSION=\"$$(git log -1 --format=illumos-%h)\"|' \
 	    -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|' \
-	    -e 's|^export ENABLE_SMATCH=.*||' \
-	    -e 's|^export ON_CLOSED_BINS=.*|export ON_CLOSED_BINS=\"/opt/onbld/closed\"|' \
+	    -e '/^export ENABLE_SMATCH=/d' \
 	    -e 's|^export MULTI_PROTO=.*|export MULTI_PROTO=\"$(MULTI_PROTO)\"|' \
-	    -e 's|^export SHADOW_CCS=.*||' \
-	    -e 's|^export SHADOW_CCCS=.*||' ; \
+	    -e '/^export SHADOW_CCS=/d' \
+	    -e '/^export SHADOW_CCCS=/d' ; \
 	  echo export PERL_VERSION=\"$(PERL_VERSION)\"; \
 	  echo export PERL_VARIANT=\"-thread-multi\" ; \
 	  echo export PERL_PKGVERS=\"-$(subst .,,$(PERL_VERSION))\"; \
 	  echo export BUILDPERL32=\"#\"; \
-	  echo export BLD_JAVA_8=; \
-	  echo export CW_NO_SHADOW=1; \
-	  echo export __GNUC=\"\"; \
-	  echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM); \
 	  echo export BOOTBANNER1=\"$(DISTRIBUTION_NAME) $(DISTRIBUTION_VERSION) Version ^v ^w-bit\") > \
 	  illumos.sh && \
@@ -155,12 +150,6 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)
 	# We want to replace dependency on particular agpart version, but preserve dependency on any version
 	echo "<transform depend type=require fmri=pkg:/driver/graphics/agpgart@.* -> emit depend type=require fmri=pkg:/driver/graphics/agpgart>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend type=require fmri=pkg:/driver/graphics/agpgart@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
-
-	# Fix pkgdepend issue with GCC 7 runtime (https://www.illumos.org/issues/11255)
-	echo "<transform depend type=require-any fmri=pkg:/system/library/gcc-\d+-runtime@.* -> emit depend type=require fmri=pkg:/system/library/gcc-7-runtime>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
-	echo "<transform depend type=require-any fmri=pkg:/system/library/gcc-\d+-runtime@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
-	echo "<transform depend type=require-any fmri=pkg:/system/library/g\+\+-\d+-runtime@.* -> emit depend type=require fmri=pkg:/system/library/g++-7-runtime> " >> $(BUILD_DIR)/$(MACH)/publish.transforms
-	echo "<transform depend type=require-any fmri=pkg:/system/library/g\+\+-\d+-runtime@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	# Loader branding
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/loader.conf group=sys mode=0644 owner=root preserve=true>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
@@ -260,6 +249,6 @@ print-package-names:
 	grep -v -x -F -f packages.ignore.in pkg5.complete.fmris > pkg5.fmris
 	cat pkg5.fmris
 
-REQUIRED_PACKAGES += developer/gcc-7
-REQUIRED_PACKAGES += developer/illumos-closed
-PYTHON_REQUIRED_PACKAGES += runtime/python
+# build-essential always brings superset of packages needed to build
+# illumos-gate
+REQUIRED_PACKAGES += metapackages/build-essential
