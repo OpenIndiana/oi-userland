@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-pytz
-HUMAN_VERSION =			2023.3.0.1
+HUMAN_VERSION =			2023.3.1.0
 COMPONENT_SUMMARY =		types-pytz - Typing stubs for pytz
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/78/04/f1a77be852ae8102dc6ab531a3095ce1c1cc80cfa8a12afe015eeec68aa5/types-pytz-2023.3.0.1.tar.gz
+	https://files.pythonhosted.org/packages/51/b0/c39263c48bf1c12bde20ce7569ba4376d6b5f701cff2775b0c4f2983d830/types-pytz-2023.3.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1a7b8d4aac70981cfa24478a41eadfcd96a087c986d6f150d77e3ceb3c2bdfab
+	sha256:8e7d2198cba44a72df7628887c90f68a568e1445f14db64631af50c3cab8c090
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
 TEST_STYLE = setup.py
