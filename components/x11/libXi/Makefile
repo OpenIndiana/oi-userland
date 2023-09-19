@@ -18,23 +18,30 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXi
-COMPONENT_VERSION= 1.7.10
+COMPONENT_VERSION= 1.8.1
 COMPONENT_FMRI =   x11/library/libxi
 COMPONENT_SUMMARY= libXi - X Input extension client library
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:36a30d8f6383a72e7ce060298b4b181fd298bc3a135c8e201b7ca847f5f81061
+  sha256:89bfc0e814f288f784202e6e5f9b362b788ccecdeb078670145eacd8749656a7
 COMPONENT_LICENSE_FILE = COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf -f -i )
 
 CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
 CONFIGURE_OPTIONS +=  --enable-static=no
 CONFIGURE_OPTIONS +=  --with-pic
+CONFIGURE_OPTIONS +=	LIB_MAN_SUFFIX=3xi
 
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
+
+# Packages needed to generate documentation
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += text/xmlto
+REQUIRED_PACKAGES += x11/documentation/xorg-sgml-doctools
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
