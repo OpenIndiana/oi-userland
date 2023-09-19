@@ -1,0 +1,13 @@
+https://github.com/jaraco/pytest-enabler/issues/11
+
+--- pytest-ignore-flaky-2.0.0/tests/test_functional.py.orig
++++ pytest-ignore-flaky-2.0.0/tests/test_functional.py
+@@ -34,7 +34,7 @@
+ 
+ def test_fail_flaky(testdir, capsys):
+     test = testdir.makepyfile(TEST_SAMPLE)
+-    rec = testdir.inline_run(test)
++    rec = testdir.inline_run('-p', 'no:plugin-enabled options', test)
+     results = get_results(rec)
+     assert results['test_ok', 'call'] == 'passed'
+     assert results['test_mf', 'call'] == 'failed'
