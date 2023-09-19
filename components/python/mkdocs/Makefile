@@ -19,23 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs
-HUMAN_VERSION =			1.5.2
+HUMAN_VERSION =			1.5.3
 COMPONENT_SUMMARY =		mkdocs - Project documentation with Markdown.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/35/6a/63612e19d9c903a608caf91fd2c1f07ccbb9610de4ddb6f187aec1cce197/mkdocs-1.5.2.tar.gz
+	https://files.pythonhosted.org/packages/ed/bb/24a22f8154cf79b07b45da070633613837d6e59c7d870076f693b7b1c556/mkdocs-1.5.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:70d0da09c26cff288852471be03c23f0f521fc15cf16ac89c7a3bfb9ae8d24f9
+	sha256:eb7c99214dcb945313ba30426c2451b735992c73c2e10838f76d09e39ff4d0e2
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Remove unpatched version of files from proto area to make sure they do not
-# leak into sample manifest.
-COMPONENT_POST_INSTALL_ACTION += \
-	$(FIND) $(PROTO_DIR)/$(PYTHON_LIB) -name '*.~*~' -exec rm {} \; ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/babel
