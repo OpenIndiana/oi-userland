@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gmp
 COMPONENT_VERSION=      6.3.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      GNU Multiple Precision Bignum Library
 COMPONENT_PROJECT_URL=  https://gmplib.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -63,7 +64,6 @@ MPN64_sparc = sparc64/ultrasparc34 sparc64/ultrasparc1234 sparc64 generic
 MPN_32 = $(MPN32_$(MACH))
 MPN_64 = $(MPN64_$(MACH))
 GM4 = /usr/bin/gm4
-GSED = /usr/bin/gsed
 # libgmpxx.so.4 always gets built with unnecessary paths in RUNPATH/RPATH
 ELFEDIT = /usr/bin/elfedit
 
