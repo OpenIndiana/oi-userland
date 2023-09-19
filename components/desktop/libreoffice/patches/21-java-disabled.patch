@@ -1,0 +1,24 @@
+libreoffice-7.6.0/libreoffice-7.6.0.1/cui/source/options/optjava.cxx:945:29: error: 'jfw_convertUserPathList' was not declared in this scope
+  945 |         std::vector paths = jfw_convertUserPathList(_rPath);
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~
+
+jfw_convertUserPathList should only be used if java is enabled in build
+
+--- libreoffice-7.6.0.1/cui/source/options/optjava.cxx.old	2023-07-11 21:48:13.156312810 -0400
++++ libreoffice-7.6.0.1/cui/source/options/optjava.cxx	2023-07-11 21:49:27.273278053 -0400
+@@ -937,6 +937,7 @@
+ 
+ void SvxJavaClassPathDlg::SetClassPath( const OUString& _rPath )
+ {
++#if HAVE_FEATURE_JAVA
+     if ( m_sOldPath.isEmpty() )
+         m_sOldPath = _rPath;
+     m_xPathList->clear();
+@@ -962,6 +963,7 @@
+         m_xPathList->select(0);
+     }
+     SelectHdl_Impl(*m_xPathList);
++#endif
+ }
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
