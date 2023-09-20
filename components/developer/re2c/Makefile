@@ -24,11 +24,12 @@
 # Copyright (c) 2020, Andreas Wacknitz
 # Copyright (c) 2023, Friedrich Kink
 #
-BUILD_BITS=				64
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			re2c
-COMPONENT_VERSION=		3.0
+COMPONENT_VERSION=		3.1
 COMPONENT_SUMMARY=		re2c is a free and open-source lexer generator for C, C++ and Go.
 COMPONENT_DESCRIPTION=	Its main goal is generating fast lexers: at least as \
 	fast as their reasonably optimized hand-coded counterparts. Instead of \
@@ -40,22 +41,22 @@ COMPONENT_DESCRIPTION=	Its main goal is generating fast lexers: at least as \
 	Another distinctive feature is its flexible interface: instead of assuming a \
 	fixed program template, re2c lets the programmer write most of the interface code \
 	and adapt the generated lexer to any particular environment.
-COMPONENT_FMRI=			developer/lexer/re2c
-COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_PROJECT_URL=		https://re2c.org
-COMPONENT_ARCHIVE_HASH=	sha256:b3babbbb1461e13fe22c630a40c43885efcfbbbb585830c6f4c0d791cf82ba0b
+COMPONENT_PROJECT_URL=	https://re2c.org
+COMPONENT_ARCHIVE_HASH=	sha256:0ac299ad359e3f512b06a99397d025cfff81d3be34464ded0656f8a96676c029
 COMPONENT_ARCHIVE_URL=	https://github.com/skvadrik/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			developer/lexer/re2c
+COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=		public domain
-COMPONENT_LICENSE_FILE=		LICENSE
+COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-export PATH=$(PATH.gnu)
+export PATH= $(PATH.gnu)
 
 # Needed to get the tests to run successfully.
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -64,12 +65,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 # set unexpectedly, and errors such as "$1: unbound variable" and
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
-COMPONENT_TEST_TRANSFORMS= \
-        '-n ' \
-        '-e "/=======$$/p"' \
-        '-e "/^Testsuite/p"' \
-        '-e "/^PASS:/p"' \
-        '-e "/^\# /p"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
