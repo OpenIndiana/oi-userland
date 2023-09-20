@@ -13,35 +13,41 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= twolame
-COMPONENT_VERSION= 0.3.13
-COMPONENT_REVISION=2
-COMPONENT_SUMMARY= twolame MP3 Encoder
+COMPONENT_VERSION= 0.4.0
+COMPONENT_SUMMARY= Optimised MPEG Audio Layer 2 (MP2) encoder
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:98f332f48951f47f23f70fd0379463aff7d7fb26f07e1e24e42ddef22cc6112a
+  sha256:cc35424f6019a88c6f52570b63e1baf50f62963a3eac52a03a800bb070d7c87d
 COMPONENT_ARCHIVE_URL= \
   http://tenet.dl.sourceforge.net/project/twolame/twolame/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.twolame.org/
-COMPONENT_LICENSE = LGPLv2.1
+COMPONENT_LICENSE = LGPL-2.1-only
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = audio/twolame
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
+include $(WS_TOP)/make-rules/common.mk
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
-build: $(BUILD_32_and_64)
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
+# Install html documentation
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTOUSRSHAREDOCDIR)/twolame/html ;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) $(SOURCE_DIR)/doc/html/* $(PROTOUSRSHAREDOCDIR)/twolame/html ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDOCDIR)/twolame/html/{Doxyfile,Makefile}.* ;
 
-install: $(INSTALL_32_and_64)
+# We need to run tests in clean environment
+COMPONENT_TEST_ENV_CMD = $(ENV) -
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libsndfile
