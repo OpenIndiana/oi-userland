@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPILER=gcc
 COMPONENT_NAME=		qbittorrent
 COMPONENT_VERSION=	4.5.5
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		network/qbittorrent
 COMPONENT_PROJECT_URL=	https://www.qbittorrent.org/
 COMPONENT_SUMMARY=	Qt cross-platform application and UI framework
