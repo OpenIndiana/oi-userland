@@ -1,14 +1,16 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -W error::ResourceWarning -W error::DeprecationWarning -W error::PendingDeprecationWarning -W ignore:datetime.utcfromtimestamp:DeprecationWarning -W ignore:datetime.utcnow:DeprecationWarning -m coverage run -m pytest tests
+py$(PYV): commands[0]> python -W error::ResourceWarning -W error::DeprecationWarning -W error::PendingDeprecationWarning -W ignore:datetime.datetime.utcfromtimestamp:DeprecationWarning -W ignore:datetime.datetime.utcnow:DeprecationWarning -m coverage run -m pytest tests
+$(PYTHON_DIR)/vendor-packages/pytest_ignore_flaky.py:13: PytestDeprecationWarning: The hookimpl PluginIgnoreFlaky.pytest_runtest_makereport uses old-style configuration options (marks or attributes).
+Please use the pytest.hookimpl(hookwrapper=True) decorator instead
+ to configure the hooks.
+ See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+  @pytest.mark.hookwrapper
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
-collecting ... collected 81 items
+collecting ... collected 96 items
 
 tests/test_time_machine.py::TestEscapeHatch::test_datetime_now PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_datetime_now_tz PASSED
@@ -19,6 +21,8 @@ tests/test_time_machine.py::TestEscapeHatch::test_time_clock_gettime PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_time_clock_gettime_ns PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_time_gmtime PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_time_localtime PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_monotonic PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_monotonic_ns PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_time_strftime_arg PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_time_strftime_no_arg PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_time_time PASSED
@@ -50,12 +54,23 @@ tests/test_time_machine.py::test_destination_datetime_tzinfo_zoneinfo_windows PA
 tests/test_time_machine.py::test_destination_generator PASSED
 tests/test_time_machine.py::test_destination_int PASSED
 tests/test_time_machine.py::test_destination_string PASSED
+tests/test_time_machine.py::test_destination_string_naive[1970-01-01 00:00-Europe/Amsterdam--3600] PASSED
+tests/test_time_machine.py::test_destination_string_naive[1970-01-01 00:00-US/Eastern-18000] PASSED
+tests/test_time_machine.py::test_destination_string_naive[1970-01-01 00:00-UTC-0] PASSED
+tests/test_time_machine.py::test_destination_string_naive[1970-01-01-Europe/Amsterdam--3600] PASSED
+tests/test_time_machine.py::test_destination_string_naive[1970-01-01-US/Eastern-18000] PASSED
+tests/test_time_machine.py::test_destination_string_naive[1970-01-01-UTC-0] PASSED
+tests/test_time_machine.py::test_destination_timedelta PASSED
+tests/test_time_machine.py::test_destination_timedelta_negative PASSED
+tests/test_time_machine.py::test_destination_timedelta_nested PASSED
 tests/test_time_machine.py::test_exceptions_dont_break_it PASSED
+tests/test_time_machine.py::test_fixture_move_to_and_shift PASSED
+tests/test_time_machine.py::test_fixture_move_to_twice PASSED
+tests/test_time_machine.py::test_fixture_shift_without_move_to PASSED
 tests/test_time_machine.py::test_fixture_unused PASSED
 tests/test_time_machine.py::test_fixture_used PASSED
 tests/test_time_machine.py::test_fixture_used_tick_false PASSED
 tests/test_time_machine.py::test_fixture_used_tick_true PASSED
-tests/test_time_machine.py::test_fixture_used_twice PASSED
 tests/test_time_machine.py::test_function_decorator PASSED
 tests/test_time_machine.py::test_import_without_clock_realtime PASSED
 tests/test_time_machine.py::test_move_to_datetime PASSED
@@ -80,6 +95,8 @@ tests/test_time_machine.py::test_time_gmtime_no_args_no_tick PASSED
 tests/test_time_machine.py::test_time_localtime PASSED
 tests/test_time_machine.py::test_time_localtime_arg PASSED
 tests/test_time_machine.py::test_time_localtime_no_tick PASSED
+tests/test_time_machine.py::test_time_monotonic_ns PASSED
+tests/test_time_machine.py::test_time_montonic PASSED
 tests/test_time_machine.py::test_time_strftime_format PASSED
 tests/test_time_machine.py::test_time_strftime_format_no_tick PASSED
 tests/test_time_machine.py::test_time_strftime_format_t PASSED
@@ -92,6 +109,6 @@ tests/test_time_machine.py::test_traveller_object PASSED
 tests/test_time_machine.py::test_unsupported_type PASSED
 tests/test_time_machine.py::test_uuid1 PASSED
 
-======== 76 passed, 5 skipped ========
+======== 91 passed, 5 skipped ========
   py$(PYV): OK
   congratulations :)
