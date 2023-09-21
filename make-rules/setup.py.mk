@@ -430,7 +430,7 @@ $(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to
 $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))
 $(eval $(call disable-pytest-plugin,randomly,pytest-randomly))
-$(eval $(call disable-pytest-plugin,relaxed,pytest-relaxed))		# https://github.com/bitprophet/pytest-relaxed/issues/28
+$(eval $(call disable-pytest-plugin,relaxed,pytest-relaxed))		# produces different test report
 $(eval $(call disable-pytest-plugin,reporter,pytest-reporter))		# https://github.com/christiansandberg/pytest-reporter/issues/8
 $(eval $(call disable-pytest-plugin,salt-factories,pytest-salt-factories))			# requires salt
 $(eval $(call disable-pytest-plugin,salt-factories-event-listener,pytest-salt-factories))	# requires salt

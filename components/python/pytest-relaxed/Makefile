@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-relaxed
 HUMAN_VERSION =			2.0.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest-relaxed - Relaxed test discovery/organization for pytest
 COMPONENT_PROJECT_URL =		https://pytest-relaxed.readthedocs.io/
 COMPONENT_ARCHIVE_URL =		\
@@ -32,11 +33,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
-PYTEST_ADDOPTS += -p no:randomly
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/decorator

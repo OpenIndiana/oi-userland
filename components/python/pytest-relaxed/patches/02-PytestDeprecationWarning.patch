@@ -1,0 +1,13 @@
+https://github.com/bitprophet/pytest-relaxed/issues/28
+
+--- pytest-relaxed-2.0.1/pytest_relaxed/plugin.py.orig
++++ pytest-relaxed-2.0.1/pytest_relaxed/plugin.py
+@@ -37,7 +37,7 @@
+     return SpecModule.from_parent(parent=parent, path=file_path)
+ 
+ 
+-@pytest.mark.trylast  # So we can be sure builtin terminalreporter exists
++@pytest.hookimpl(trylast=True)  # So we can be sure builtin terminalreporter exists
+ def pytest_configure(config):
+     # TODO: we _may_ sometime want to do the isatty/slaveinput/etc checks that
+     # pytest-sugar does?
