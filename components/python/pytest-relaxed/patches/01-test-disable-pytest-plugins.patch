@@ -70,7 +70,7 @@ Some pytest plugins needs to be disabled because they produce unexpected output.
          """
          )
 -        stdout = testdir.runpytest("-v").stdout.str()
-+        stdout = testdir.runpytest("-v", "-p", "no:black").stdout.str()
++        stdout = testdir.runpytest("-v", "-p", "no:black", "-p", "no:helpers_namespace").stdout.str()
          assert "a test is me" in stdout
          assert "helper" not in stdout
          assert "Helper" not in stdout

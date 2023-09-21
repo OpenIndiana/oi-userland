@@ -1,79 +1,113 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests
-asyncio: mode=strict
 collecting ... collected 34 items
 
- pytest collect file
-
-    only loads dot py files
-    skips underscored files
-    skips underscored directories
-    does not consume conftest files
-
-RelaxedMixin
-
-    selects all non underscored members
-    skips setup and teardown
-    skips pytest fixtures
-    setup given inner class instances when inherited
-    setup method given inner class instances
-
-SpecModule
-
-    skips non callable items
-    skips imported objects
-    does not warn about imported names
-    replaces class tests with custom recursing classes
-    does not collect test prefixed files
-
-SpecClass
-
-    methods self objects exhibit class attributes
-    nested self objects exhibit parent attributes
-    nesting is infinite
-    overriding works naturally
-    normal methods from outer classes are not copied
-    private methods from outer classes are copied
-    module contents are not copied into top level classes
-
-RegularFunctions
-
-    acts just like normal pytest
-
-VerboseFunctions
-
-    displays tests indented under module header
-    test prefixes are stripped
-
-VerboseClasses
-
-    shows tests nested under classes without files
-    tests are colorized by test result
-    nests many levels deep no problem
-    headers and tests have underscores turn to spaces
-    test prefixes are stripped
-    test suffixes are stripped
-
- raises
-
-    when given exception raised no problem
-    when given exception not raised it raises Exception
-    when some other exception raised it is untouched
+tests/test_collection.py::TestRelaxedMixin::test_selects_all_non_underscored_members PASSED
+tests/test_collection.py::TestRelaxedMixin::test_setup_given_inner_class_instances_when_inherited PASSED
+tests/test_collection.py::TestRelaxedMixin::test_setup_method_given_inner_class_instances PASSED
+tests/test_collection.py::TestRelaxedMixin::test_skips_pytest_fixtures PASSED
+tests/test_collection.py::TestRelaxedMixin::test_skips_setup_and_teardown PASSED
+tests/test_collection.py::TestSpecClass::test_methods_self_objects_exhibit_class_attributes PASSED
+tests/test_collection.py::TestSpecClass::test_module_contents_are_not_copied_into_top_level_classes PASSED
+tests/test_collection.py::TestSpecClass::test_nested_self_objects_exhibit_parent_attributes PASSED
+tests/test_collection.py::TestSpecClass::test_nesting_is_infinite PASSED
+tests/test_collection.py::TestSpecClass::test_normal_methods_from_outer_classes_are_not_copied PASSED
+tests/test_collection.py::TestSpecClass::test_overriding_works_naturally PASSED
+tests/test_collection.py::TestSpecClass::test_private_methods_from_outer_classes_are_copied PASSED
+tests/test_collection.py::TestSpecModule::test_correctly_handles_marked_test_cases SKIPPED
+tests/test_collection.py::TestSpecModule::test_does_not_collect_test_prefixed_files PASSED
+tests/test_collection.py::TestSpecModule::test_does_not_warn_about_imported_names PASSED
+tests/test_collection.py::TestSpecModule::test_replaces_class_tests_with_custom_recursing_classes PASSED
+tests/test_collection.py::TestSpecModule::test_skips_imported_objects PASSED
+tests/test_collection.py::TestSpecModule::test_skips_non_callable_items PASSED
+tests/test_collection.py::Test_pytest_collect_file::test_does_not_consume_conftest_files PASSED
+tests/test_collection.py::Test_pytest_collect_file::test_only_loads_dot_py_files PASSED
+tests/test_collection.py::Test_pytest_collect_file::test_skips_underscored_directories PASSED
+tests/test_collection.py::Test_pytest_collect_file::test_skips_underscored_files PASSED
+tests/test_display.py::TestRegularFunctions::test_acts_just_like_normal_pytest PASSED
+tests/test_display.py::TestVerboseClasses::test_headers_and_tests_have_underscores_turn_to_spaces PASSED
+tests/test_display.py::TestVerboseClasses::test_nests_many_levels_deep_no_problem PASSED
+tests/test_display.py::TestVerboseClasses::test_shows_tests_nested_under_classes_without_files PASSED
+tests/test_display.py::TestVerboseClasses::test_test_prefixes_are_stripped PASSED
+tests/test_display.py::TestVerboseClasses::test_test_suffixes_are_stripped PASSED
+tests/test_display.py::TestVerboseClasses::test_tests_are_colorized_by_test_result PASSED
+tests/test_display.py::TestVerboseFunctions::test_displays_tests_indented_under_module_header SKIPPED
+tests/test_display.py::TestVerboseFunctions::test_test_prefixes_are_stripped PASSED
+tests/test_raises.py::Test_raises::test_when_given_exception_not_raised_it_raises_Exception PASSED
+tests/test_raises.py::Test_raises::test_when_given_exception_raised_no_problem PASSED
+tests/test_raises.py::Test_raises::test_when_some_other_exception_raised_it_is_untouched PASSED
 
 =============================== warnings summary ===============================
 tests/test_collection.py: 21 warnings
 tests/test_display.py: 5 warnings
-  $(@D)/pytest_relaxed/plugin.py:40: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
+  $(PYTHON_DIR)/vendor-packages/pytest_reporter/__init__.py:1: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    from pkg_resources import get_distribution, DistributionNotFound
+
+tests/test_collection.py: 42 warnings
+tests/test_display.py: 10 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_collection.py: 21 warnings
+tests/test_display.py: 5 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_collection.py: 42 warnings
+tests/test_display.py: 10 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_collection.py: 21 warnings
+tests/test_display.py: 5 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_collection.py: 21 warnings
+tests/test_display.py: 5 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_collection.py: 21 warnings
+tests/test_display.py: 5 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_collection.py: 21 warnings
+tests/test_display.py: 5 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_collection.py: 21 warnings
+tests/test_display.py: 5 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zest')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_collection.py: 315 warnings
+tests/test_display.py: 75 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_collection.py: 21 warnings
+tests/test_display.py: 5 warnings
+  $(PYTHON_DIR)/vendor-packages/pytest_tempdir/plugin.py:150: PytestDeprecationWarning: The hookimpl pytest_tempdir_temproot uses old-style configuration options (marks or attributes).
   Please use the pytest.hookimpl(trylast=True) decorator instead
    to configure the hooks.
    See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.trylast  # So we can be sure builtin terminalreporter exists
+    @pytest.mark.trylast
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 32 passed, 2 skipped, 26 warnings ========
+======== 32 passed, 2 skipped, 702 warnings ========
