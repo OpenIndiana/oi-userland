@@ -440,7 +440,6 @@ $(eval $(call disable-pytest-plugin,salt-factories-log-server,pytest-salt-factor
 $(eval $(call disable-pytest-plugin,salt-factories-markers,pytest-salt-factories))		# requires salt
 $(eval $(call disable-pytest-plugin,salt-factories-sysinfo,pytest-salt-factories))		# requires salt
 $(eval $(call disable-pytest-plugin,salt-factories-sysstats,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,tempdir,pytest-tempdir))		# pollutes output with PytestDeprecationWarning (project is archived at github since 2022-03-25)
 $(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminder line to test output
 
 # By default we are not interested in full list of test failures so exit on
