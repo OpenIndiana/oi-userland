@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-tempdir
 HUMAN_VERSION =			2019.10.12
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest-tempdir - Predictable and repeatable tempdir support.
 COMPONENT_PROJECT_URL =		https://github.com/saltstack/pytest-tempdir
 COMPONENT_ARCHIVE_URL =		\
