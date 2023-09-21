@@ -19,24 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonschema
-HUMAN_VERSION =			4.19.0
+HUMAN_VERSION =			4.19.1
 COMPONENT_SUMMARY =		jsonschema - An implementation of JSON Schema validation for Python
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/99/ba/e51d376c6160d27669c7a9ad0b61d9cbd58fa58be6e6ddc0e7e0b6e6aa40/jsonschema-4.19.0.tar.gz
+	https://files.pythonhosted.org/packages/e4/43/087b24516db11722c8687e0caf0f66c7785c0b1c51b0ab951dfde924e3f5/jsonschema-4.19.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6e1e7569ac13be8139b2dd2c21a55d350066ee3f80df06c608b398cdc6f30e8f
+	sha256:ec84cc37cfa703ef7cd4928db24f9cb31428a5d0fa77747b8b51a847458e0bbf
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
-PYTEST_ADDOPTS += -p no:randomly
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
