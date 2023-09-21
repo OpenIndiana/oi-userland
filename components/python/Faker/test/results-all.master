@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1809 items
+collecting ... collected 1811 items
 
 Use a separate pytest run for tests like this with the "--exclusive-
 Use a separate pytest run for tests like this with the "--exclusive-
@@ -1303,10 +1303,12 @@ tests/providers/test_python.py::TestPyfloat::test_left_digits PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_and_min_value_negative PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_and_min_value_negative_with_decimals PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_and_min_value_positive_with_decimals PASSED
+tests/providers/test_python.py::TestPyfloat::test_max_none_and_min_value_with_decimals PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_value PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_value_and_positive PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_value_should_be_greater_than_min_value PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_value_zero_and_left_digits PASSED
+tests/providers/test_python.py::TestPyfloat::test_min_none_and_max_value_with_decimals PASSED
 tests/providers/test_python.py::TestPyfloat::test_min_value PASSED
 tests/providers/test_python.py::TestPyfloat::test_min_value_and_left_digits PASSED
 tests/providers/test_python.py::TestPyfloat::test_positive PASSED
@@ -1839,13 +1841,6 @@ tests/test_providers_formats.py::test_no_invalid_formats[fr_QC]
     warnings.warn("fr_QC locale is deprecated. Please use fr_CA.")
 
 tests/pytest/test_unique_clear.py::test_unique_clears
-  $(PYTHON_DIR)/vendor-packages/pytest_relaxed/plugin.py:40: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(trylast=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.trylast  # So we can be sure builtin terminalreporter exists
-
-tests/pytest/test_unique_clear.py::test_unique_clears
   $(PYTHON_DIR)/vendor-packages/pytest_reporter/__init__.py:1: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
     from pkg_resources import get_distribution, DistributionNotFound
 
@@ -1896,15 +1891,8 @@ tests/pytest/test_unique_clear.py: 15 warnings
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
-tests/pytest/test_unique_clear.py::test_unique_clears
-  $(PYTHON_DIR)/vendor-packages/pytest_tempdir/plugin.py:150: PytestDeprecationWarning: The hookimpl pytest_tempdir_temproot uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(trylast=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.trylast
-
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1800 passed, 9 skipped, 29 warnings ========
+======== 1802 passed, 9 skipped, 27 warnings ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -3038,8 +3026,8 @@ faker/providers/profile/__init__.py                  22     13    41%
 faker/providers/profile/__init__.py                  22     13    41%
 faker/providers/profile/en_US/__init__.py             0      0   100%
 faker/providers/profile/en_US/__init__.py             0      0   100%
-faker/providers/python/__init__.py                  237    202    15%
-faker/providers/python/__init__.py                  237    202    15%
+faker/providers/python/__init__.py                  255    220    14%
+faker/providers/python/__init__.py                  255    220    14%
 faker/providers/python/en_US/__init__.py              0      0   100%
 faker/providers/python/en_US/__init__.py              0      0   100%
 faker/providers/sbn/__init__.py                      25     15    40%
@@ -3179,6 +3167,6 @@ faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      9    44%
 faker/utils/text.py                                  16      9    44%
 ---------------------------------------------------------------------
-TOTAL                                             19412  16998    12%
+TOTAL                                             19448  17034    12%
   py$(PYV): OK
   congratulations :)
