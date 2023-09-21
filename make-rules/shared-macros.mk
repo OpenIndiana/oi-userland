@@ -805,7 +805,7 @@ QT5_INCDIR = $(QT5_BASEDIR)/include
 QT5_PKG_CONFIG_PATH = $(QT5_LIBDIR)/pkgconfig
 
 # We deliver version 6 only in a 64-bit variant.
-QT6_VERSION = 6.3
+QT6_VERSION = 6.5
 QT6_BASEDIR = $(USRLIBDIR)/qt/$(QT6_VERSION)
 QT6_BINDIR = $(QT6_BASEDIR)/bin/$(MACH64)
 QT6_LIBDIR = $(QT6_BASEDIR)/lib/$(MACH64)
