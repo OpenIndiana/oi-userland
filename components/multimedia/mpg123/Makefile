@@ -16,11 +16,11 @@
 
 BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
-USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpg123
 COMPONENT_VERSION= 1.31.3
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Fast console MPEG Audio Player and decoder library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -30,12 +30,13 @@ COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_PROJECT_URL= https://mpg123.org/
 COMPONENT_FMRI= audio/mpg123
 COMPONENT_CLASSIFICATION= Applications/Sound and Video
-COMPONENT_LICENSE= LGPLv2,GPLv2
+COMPONENT_LICENSE= GPL-2.0-only OR LGPL-2.1-only
 COMPONENT_LICENSE_FILE=  COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -D__EXTENSIONS__
+CFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
@@ -50,7 +51,11 @@ CONFIGURE_OPTIONS.64 += --with-cpu=x86-64
 endif
 CONFIGURE_OPTIONS += --with-default-audio=pulse
 
-unexport SHELLOPTS
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
+
+# We need to run tests in clean environment
+COMPONENT_TEST_ENV_CMD = $(ENV) -
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/openal
