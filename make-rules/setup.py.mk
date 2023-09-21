@@ -440,6 +440,7 @@ $(eval $(call disable-pytest-plugin,salt-factories-log-server,pytest-salt-factor
 $(eval $(call disable-pytest-plugin,salt-factories-markers,pytest-salt-factories))		# requires salt
 $(eval $(call disable-pytest-plugin,salt-factories-sysinfo,pytest-salt-factories))		# requires salt
 $(eval $(call disable-pytest-plugin,salt-factories-sysstats,pytest-salt-factories))		# requires salt
+$(eval $(call disable-pytest-plugin,tempdir,pytest-tempdir))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminder line to test output
 
 # By default we are not interested in full list of test failures so exit on
