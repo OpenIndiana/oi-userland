@@ -1,0 +1,13 @@
+https://github.com/schettino72/pytest-ignore-flaky/issues/4
+
+--- pytest-ignore-flaky-2.0.0/pytest_ignore_flaky.py.orig
++++ pytest-ignore-flaky-2.0.0/pytest_ignore_flaky.py
+@@ -10,7 +10,7 @@
+ 
+ class PluginIgnoreFlaky(object):
+ 
+-    @pytest.mark.hookwrapper
++    @pytest.hookimpl(hookwrapper=True)
+     def pytest_runtest_makereport(self, item, call):
+         '''Turn failures into xfail if test is marked as "flaky".'''
+         outcome = yield

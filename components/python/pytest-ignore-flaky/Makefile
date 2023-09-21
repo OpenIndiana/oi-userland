@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-ignore-flaky
 HUMAN_VERSION =			2.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest-ignore-flaky - ignore failures from flaky tests (pytest plugin)
 COMPONENT_PROJECT_URL =		http://pypi.python.org/pypi/pytest-ignore-flaky
 COMPONENT_ARCHIVE_URL =		\
