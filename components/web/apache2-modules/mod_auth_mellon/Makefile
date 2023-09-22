@@ -22,45 +22,44 @@
 # Copyright (c) 2022-2023 Niklas Poslovski
 #
 
-USE_OPENSSL11=		yes
+OPENSSL_VERSION= 3.1
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_auth_mellon
 COMPONENT_VERSION=	0.18.1
-#COMPONENT_REVISION=	1
-COMPONENT_FMRI=		web/server/apache-24/module/apache-mellon
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	SAML2.0 authentication module for Apache
-COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_PROJECT_URL=	https://github.com/latchset/mod_auth_mellon
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:2e95396444689475d32e736ade4e9c31ea6dd3b619c888efbfc9ebe3636ce6c0
+COMPONENT_ARCHIVE_HASH= sha256:2e95396444689475d32e736ade4e9c31ea6dd3b619c888efbfc9ebe3636ce6c0
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		web/server/apache-24/module/apache-mellon
+COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
 INSTALL_TARGET=	build
-TEST_TARGET=	$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(CPP_XPG7MODE)
 APXS = /usr/apache2/2.4/bin/apxs
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D)) && \
-	(cd $(SOURCE_DIR); ./autogen.sh)
+	( $(CLONEY) $(SOURCE_DIR) $(@D)) && \
+	(cd $(SOURCE_DIR); ./autogen.sh )
 
-CONFIGURE_OPTIONS.APXS= --with-apxs2=$(APXS)
-CONFIGURE_OPTIONS+=	--enable-diagnostics
+CONFIGURE_OPTIONS.APXS = --with-apxs2=$(APXS)
+CONFIGURE_OPTIONS += --enable-diagnostics
 
+# Manually added dependencies
 REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lasso
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
