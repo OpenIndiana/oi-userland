@@ -14,41 +14,44 @@
 # Copyright 2021, Till Wegmueller.
 #
 
-BUILD_BITS=64
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         jq
-COMPONENT_VERSION=      1.6
-COMPONENT_REVISION= 	2
+COMPONENT_VERSION=      1.7
 COMPONENT_SUMMARY=      jq - lightweight and flexible command-line JSON processor
 COMPONENT_PROJECT_URL=	https://stedolan.github.io/jq/
-COMPONENT_FMRI=         text/jq
-COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:5de8c8e29aaa3fb9cc6b47bb27299f271354ebb72514e3accadc7d38b5bbaa72
-COMPONENT_ARCHIVE_URL=	\
-  https://github.com/stedolan/jq/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:402a0d6975d946e6f4e484d1a84320414a0ff8eb6cf49d2c11d144d4d344db62
+COMPONENT_ARCHIVE_URL=	https://github.com/stedolan/jq/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         text/jq
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+ELFEDIT = /usr/bin/elfedit
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fiv )
+
 # Tests are broken out of source
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D); cd $(@D))
-#COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D); cd $(@D); autoreconf -fi)
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS) $(CPP_XPG6MODE)"
-COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS) $(CPP_XPG6MODE) -DNDEBUG=1"
+# Remove the RUNPATH otherwise it will be set to somewhere inside PROTO_DIR
+COMPONENT_POST_INSTALL_ACTION += $(ELFEDIT) -e "dyn:runpath ''" $(PROTOUSRBINDIR)/jq ;
 
+CONFIGURE_ENV += CFLAGS="$(CFLAGS) $(XPG6MODE)"
+COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS) $(XPG6MODE) -DNDEBUG=1"
+
+CONFIGURE_OPTIONS += --disable-dependency-tracking
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-valgrind
 CONFIGURE_OPTIONS += --with-oniguruma=/usr
 
 COMPONENT_TEST_CMD = ./tests/jqtest
 COMPONENT_TEST_TARGETS = 
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 COMPONENT_TEST_TRANSFORMS += \
         '-e "/^==/d" '
@@ -57,4 +60,3 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/oniguruma
-
