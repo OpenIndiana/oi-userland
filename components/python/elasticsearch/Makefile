@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elasticsearch
-HUMAN_VERSION =			8.9.0
+HUMAN_VERSION =			8.10.0
 COMPONENT_SUMMARY =		elasticsearch - Python client for Elasticsearch
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elasticsearch-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/elastic/elasticsearch-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c67d48cfa08a96e2ab48d3cfcf8d7a90b73b6fa5f6af5478e50d1c67fb7e4c1f
+	sha256:d8f3159ff6e1ff9a25647bca2a24cffe2d2d57f4af47acc8a5e6fb7144532dba
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,10 +35,25 @@ COMPONENT_SRC = elasticsearch-py-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += dev-requirements.txt
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/elastic-transport
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/elastic-transport
+TEST_REQUIRED_PACKAGES.python += library/python/isort
+TEST_REQUIRED_PACKAGES.python += library/python/jinja2
+TEST_REQUIRED_PACKAGES.python += library/python/nox
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
+TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
+TEST_REQUIRED_PACKAGES.python += library/python/requests
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/twine
