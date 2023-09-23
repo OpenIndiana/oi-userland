@@ -24,25 +24,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Drop 32-bit binaries and static libraries:
-<transform path=usr/bin/$(MACH32) -> drop>
-<transform path=usr/lib/.*\.a -> drop>
-<transform path=usr/lib/$(MACH64)/i.*\.a -> drop>
-
-file Octave/sndfile_load.m path=usr/share/octave/site/m/sndfile_load.m
-file Octave/sndfile_play.m path=usr/share/octave/site/m/sndfile_play.m
-file Octave/sndfile_save.m path=usr/share/octave/site/m/sndfile_save.m
-
-file path=usr/bin/$(MACH32)/sndfile-cmp
-file path=usr/bin/$(MACH32)/sndfile-concat
-file path=usr/bin/$(MACH32)/sndfile-convert
-file path=usr/bin/$(MACH32)/sndfile-deinterleave
-file path=usr/bin/$(MACH32)/sndfile-info
-file path=usr/bin/$(MACH32)/sndfile-interleave
-file path=usr/bin/$(MACH32)/sndfile-metadata-get
-file path=usr/bin/$(MACH32)/sndfile-metadata-set
-file path=usr/bin/$(MACH32)/sndfile-play
-file path=usr/bin/$(MACH32)/sndfile-salvage
 file path=usr/bin/sndfile-cmp
 file path=usr/bin/sndfile-concat
 file path=usr/bin/sndfile-convert
@@ -55,17 +36,13 @@ file path=usr/bin/sndfile-play
 file path=usr/bin/sndfile-salvage
 file path=usr/include/sndfile.h
 file path=usr/include/sndfile.hh
-file path=usr/lib/$(MACH64)/libsndfile.a
-link path=usr/lib/$(MACH64)/libsndfile.so \
-    target=libsndfile.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libsndfile.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libsndfile.so.1 \
-    target=libsndfile.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libsndfile.so target=libsndfile.so.1.0.37
+link path=usr/lib/$(MACH64)/libsndfile.so.1 target=libsndfile.so.1.0.37
+file path=usr/lib/$(MACH64)/libsndfile.so.1.0.37
 file path=usr/lib/$(MACH64)/pkgconfig/sndfile.pc
-file path=usr/lib/libsndfile.a
-link path=usr/lib/libsndfile.so target=libsndfile.so.$(COMPONENT_VERSION)
-file path=usr/lib/libsndfile.so.$(COMPONENT_VERSION)
-link path=usr/lib/libsndfile.so.1 target=libsndfile.so.$(COMPONENT_VERSION)
+link path=usr/lib/libsndfile.so target=libsndfile.so.1.0.37
+link path=usr/lib/libsndfile.so.1 target=libsndfile.so.1.0.37
+file path=usr/lib/libsndfile.so.1.0.37
 file path=usr/lib/pkgconfig/sndfile.pc
 file path=usr/share/doc/libsndfile/FAQ.md
 file path=usr/share/doc/libsndfile/api.md
@@ -93,3 +70,6 @@ file path=usr/share/man/man1/sndfile-metadata-get.1
 file path=usr/share/man/man1/sndfile-metadata-set.1
 file path=usr/share/man/man1/sndfile-play.1
 file path=usr/share/man/man1/sndfile-salvage.1
+file path=usr/share/octave/site/m/sndfile_load.m
+file path=usr/share/octave/site/m/sndfile_play.m
+file path=usr/share/octave/site/m/sndfile_save.m
