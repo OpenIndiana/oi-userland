@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-PyYAML
-HUMAN_VERSION =			6.0.12.11
+HUMAN_VERSION =			6.0.12.12
 COMPONENT_SUMMARY =		types-PyYAML - Typing stubs for PyYAML
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/04/c0/7358cce7f79f1b369ebbe57da67d5f538ea81ce5b9c97093121bfc973f09/types-PyYAML-6.0.12.11.tar.gz
+	https://files.pythonhosted.org/packages/af/48/b3bbe63a129a80911b60f57929c5b243af909bc1c9590917434bca61a4a3/types-PyYAML-6.0.12.12.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7d340b19ca28cddfdba438ee638cd4084bde213e501a3978738543e27094775b
+	sha256:334373d392fde0fdf95af5c3f1661885fa10c52167b14593eb856289e1855062
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
 TEST_STYLE = setup.py
