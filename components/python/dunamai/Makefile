@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dunamai
-HUMAN_VERSION =			1.18.0
+HUMAN_VERSION =			1.18.1
 COMPONENT_SUMMARY =		dunamai - Dynamic version generation
 COMPONENT_PROJECT_URL =		https://github.com/mtkennerly/dunamai
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/77/c8/845bdb9167570937cada51b586393dded1e77c56db458f350a671c4f1ab9/dunamai-1.18.0.tar.gz
+	https://files.pythonhosted.org/packages/61/f8/416bf0a7ef5775b631305a5772d2c5d67282caeb9fad3fd5181d1742e336/dunamai-1.18.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5200598561ea5ba956a6174c36e402e92206c6a6aa4a93a6c5cb8003ee1e0997
+	sha256:5e9a91e43d16bb56fa8fcddcf92fa31b2e1126e060c3dcc8d094d9b508061f9d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,18 +33,10 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:mypy
-
 # Testing dependencies for this project are maintained using poetry.  We
 # neither do have poetry packaged yet, nor support listing poetry dependencies
 # without poetry.  For now we just hope all required testing dependencies are
 # installed.
-
-# Testing needs access to dunamai binary
-COMPONENT_PRE_TEST_ACTION += $(SYMLINK) dunamai-$(PYTHON_VERSION) $(PROTO_DIR)/usr/bin/dunamai ;
-COMPONENT_POST_TEST_ACTION += $(RM) $(PROTO_DIR)/usr/bin/dunamai ;
-COMPONENT_TEST_ENV += PATH=$(PROTO_DIR)/usr/bin:$(PATH)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
