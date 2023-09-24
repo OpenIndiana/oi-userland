@@ -478,6 +478,10 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} short test summary info =\{1,\}$$/,/
 # unconditionally.
 COMPONENT_TEST_TRANSFORMS += "-e '/SetuptoolsDeprecationWarning:/,+1d'"		# depends on Python version and is useless
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\{0,1\}\) in .*$$/\1/'"	# delete timing from test results
+# Filter out message produced by setuptools-declarative-requirements.
+# See also https://github.com/s0undt3ch/setuptools-declarative-requirements/issues/12
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(filter library/python/setuptools-declarative-requirements-$(subst .,,$$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),,"-e '/^No '\''requirements-files'\'' section was found\. Nothing to do\.\$$/d'")
 
 COMPONENT_TEST_DIR = $(@D)$(COMPONENT_SUBDIR:%=/%)
 
