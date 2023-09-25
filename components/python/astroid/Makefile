@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		astroid
-HUMAN_VERSION =			2.15.6
+HUMAN_VERSION =			2.15.7
 COMPONENT_SUMMARY =		astroid - An abstract syntax tree for Python with inference support.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d5/05/2c2ef3504e32a22b224614d45c590abb5be417cfed47ee63bf6089c3ae56/astroid-2.15.6.tar.gz
+	https://github.com/pylint-dev/astroid/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:903f024859b7c7687d7a7f3a3f73b17301f8e42dfd9cc9df9d4418172d3e2dbd
+	sha256:a36bb3a543d8f46ddf006e676eee207c82ea28d01f89b1f414cdfdd84e189452
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,17 +38,25 @@ PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += library/python/wrapt
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
-TEST_REQUIRED_PACKAGES.python += library/python/contributors-txt
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/flake8-bugbear
+TEST_REQUIRED_PACKAGES.python += library/python/flake8-typing-imports
+TEST_REQUIRED_PACKAGES.python += library/python/isort
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/nose
 TEST_REQUIRED_PACKAGES.python += library/python/numpy
+TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
+TEST_REQUIRED_PACKAGES.python += library/python/pylint
 TEST_REQUIRED_PACKAGES.python += library/python/pyqt6
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/regex
 TEST_REQUIRED_PACKAGES.python += library/python/six
-TEST_REQUIRED_PACKAGES.python += library/python/tbump
-TEST_REQUIRED_PACKAGES.python += library/python/types-attrs
-TEST_REQUIRED_PACKAGES.python += library/python/types-pkg-resources
 TEST_REQUIRED_PACKAGES.python += library/python/types-python-dateutil
+TEST_REQUIRED_PACKAGES.python += library/python/types-setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/types-six
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/urllib3
