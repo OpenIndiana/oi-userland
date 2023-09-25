@@ -6,8 +6,8 @@ Workaround for https://github.com/PyO3/setuptools-rust/issues/358
          exception=exc_name, strategy="things()" if use_composite else "st.none()"
      )
      test_file = str(testdir.makepyfile(code))
--    pytest_stdout = str(testdir.runpytest_inprocess(test_file, "--tb=native", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir").stdout)
-+    pytest_stdout = str(testdir.runpytest_inprocess(test_file, "--tb=native", "-p", "no:checkdocs", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir").stdout)
+-    pytest_stdout = str(testdir.runpytest_inprocess(test_file, "--tb=native", "-p", "no:reporter").stdout)
++    pytest_stdout = str(testdir.runpytest_inprocess(test_file, "--tb=native", "-p", "no:checkdocs", "-p", "no:reporter").stdout)
      assert "x=101" in pytest_stdout
      assert exc_name in pytest_stdout
 --- hypothesis-hypothesis-python-6.82.7/hypothesis-python/tests/nocover/test_scrutineer.py.orig
@@ -16,8 +16,8 @@ Workaround for https://github.com/PyO3/setuptools-rust/issues/358
      test_file = str(testdir.makepyfile(file_contents))
      pytest_stdout = str(
          testdir.runpytest_inprocess(
--            test_file, "--tb=native", "-p", "no:black", "-p", "no:cov", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"
-+            test_file, "--tb=native", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:cov", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter", "-p", "no:tempdir"
+-            test_file, "--tb=native", "-p", "no:black", "-p", "no:cov", "-p", "no:mypy", "-p", "no:reporter"
++            test_file, "--tb=native", "-p", "no:black", "-p", "no:checkdocs", "-p", "no:cov", "-p", "no:mypy", "-p", "no:reporter"
          ).stdout
      )
  
