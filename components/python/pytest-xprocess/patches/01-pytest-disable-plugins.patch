@@ -1,4 +1,3 @@
-https://github.com/bitprophet/pytest-relaxed/issues/28
 https://github.com/christiansandberg/pytest-reporter/issues/8
 
 --- pytest-xprocess-0.22.2/tests/test_functional_workflow.py.orig
@@ -8,13 +7,13 @@ https://github.com/christiansandberg/pytest-reporter/issues/8
          % (tcp_port, str(server_path))
      )
 -    result = testdir.runpytest()
-+    result = testdir.runpytest("-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter")
++    result = testdir.runpytest("-p", "no:black", "-p", "no:mypy", "-p", "no:reporter")
      result.stdout.fnmatch_lines("*1 passed*")
 -    result = testdir.runpytest("--xshow")
-+    result = testdir.runpytest("--xshow", "-p", "no:relaxed", "-p", "no:reporter")
++    result = testdir.runpytest("--xshow", "-p", "no:reporter")
      result.stdout.fnmatch_lines("*LIVE*")
 -    result = testdir.runpytest("--xkill")
-+    result = testdir.runpytest("--xkill", "-p", "no:relaxed", "-p", "no:reporter")
++    result = testdir.runpytest("--xkill", "-p", "no:reporter")
      result.stdout.fnmatch_lines("*TERMINATED*")
 --- pytest-xprocess-0.22.2/tests/test_interruption_clean_up.py.orig
 +++ pytest-xprocess-0.22.2/tests/test_interruption_clean_up.py
@@ -23,8 +22,8 @@ https://github.com/christiansandberg/pytest-reporter/issues/8
      result = testdir.runpytest_subprocess()
      result.stdout.fnmatch_lines("*KeyboardInterrupt*")
 -    result = testdir.runpytest("--xshow")
-+    result = testdir.runpytest("--xshow", "-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter")
++    result = testdir.runpytest("--xshow", "-p", "no:black", "-p", "no:mypy", "-p", "no:reporter")
      result.stdout.fnmatch_lines("*LIVE*")
 -    result = testdir.runpytest("--xkill")
-+    result = testdir.runpytest("--xkill", "-p", "no:black", "-p", "no:mypy", "-p", "no:relaxed", "-p", "no:reporter")
++    result = testdir.runpytest("--xkill", "-p", "no:black", "-p", "no:mypy", "-p", "no:reporter")
      result.stdout.fnmatch_lines("*TERMINATED*")
