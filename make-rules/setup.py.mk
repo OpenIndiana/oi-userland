@@ -418,7 +418,7 @@ PYTEST_ADDOPTS += --color=no
 # we simply disable the plugin to get consistent test results.
 #
 define disable-pytest-plugin
-PYTEST_ADDOPTS += $$(if $$(filter library/python/$(2)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES)),,-p no:$(1))
+PYTEST_ADDOPTS += $$(if $$(filter library/python/$(2)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES) $$(COMPONENT_FMRI)-$$(subst .,,$$(PYTHON_VERSION))),,-p no:$(1))
 endef
 $(eval $(call disable-pytest-plugin,asyncio,pytest-asyncio))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,benchmark,pytest-benchmark))	# adds line to test report header; adds benchmark report
