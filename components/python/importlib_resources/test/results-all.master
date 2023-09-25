@@ -1,14 +1,11 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 221 items
+collecting ... collected 220 items
 
 ::project PASSED
 docs/conf.py::black PASSED
@@ -202,10 +199,14 @@ importlib_resources/tests/test_resource.py::ResourceCornerCaseTests::test_packag
 importlib_resources/tests/test_resource.py::ResourceDiskTests::test_is_dir PASSED
 importlib_resources/tests/test_resource.py::ResourceDiskTests::test_is_file_exists PASSED
 importlib_resources/tests/test_resource.py::ResourceDiskTests::test_is_file_missing PASSED
-importlib_resources/tests/test_resource.py::ResourceFromNamespaceTest01::test_is_submodule_resource PASSED
-importlib_resources/tests/test_resource.py::ResourceFromNamespaceTest01::test_read_submodule_resource_by_name PASSED
-importlib_resources/tests/test_resource.py::ResourceFromNamespaceTest01::test_submodule_contents PASSED
-importlib_resources/tests/test_resource.py::ResourceFromNamespaceTest01::test_submodule_contents_by_name PASSED
+importlib_resources/tests/test_resource.py::ResourceFromNamespaceDiskTests::test_is_submodule_resource PASSED
+importlib_resources/tests/test_resource.py::ResourceFromNamespaceDiskTests::test_read_submodule_resource_by_name PASSED
+importlib_resources/tests/test_resource.py::ResourceFromNamespaceDiskTests::test_submodule_contents PASSED
+importlib_resources/tests/test_resource.py::ResourceFromNamespaceDiskTests::test_submodule_contents_by_name PASSED
+importlib_resources/tests/test_resource.py::ResourceFromNamespaceZipTests::test_is_submodule_resource PASSED
+importlib_resources/tests/test_resource.py::ResourceFromNamespaceZipTests::test_read_submodule_resource_by_name PASSED
+importlib_resources/tests/test_resource.py::ResourceFromNamespaceZipTests::test_submodule_contents PASSED
+importlib_resources/tests/test_resource.py::ResourceFromNamespaceZipTests::test_submodule_contents_by_name PASSED
 importlib_resources/tests/test_resource.py::ResourceFromZipsTest01::test_as_file_directory PASSED
 importlib_resources/tests/test_resource.py::ResourceFromZipsTest01::test_is_submodule_resource PASSED
 importlib_resources/tests/test_resource.py::ResourceFromZipsTest01::test_read_submodule_resource_by_name PASSED
@@ -221,19 +222,67 @@ importlib_resources/tests/test_resource.py::ResourceZipTests::test_is_file_exist
 importlib_resources/tests/test_resource.py::ResourceZipTests::test_is_file_missing PASSED
 importlib_resources/tests/test_resource.py::black PASSED
 importlib_resources/tests/test_resource.py::mypy PASSED
-importlib_resources/tests/update-zips.py::black PASSED
-importlib_resources/tests/update-zips.py::importlib_resources.tests.update-zips.main PASSED
-importlib_resources/tests/update-zips.py::mypy PASSED
 importlib_resources/tests/util.py::black PASSED
 importlib_resources/tests/util.py::mypy PASSED
-importlib_resources/tests/zipdata01/__init__.py::black PASSED
-importlib_resources/tests/zipdata01/__init__.py::mypy PASSED
-importlib_resources/tests/zipdata02/__init__.py::black PASSED
-importlib_resources/tests/zipdata02/__init__.py::mypy PASSED
+importlib_resources/tests/zip.py::black PASSED
+importlib_resources/tests/zip.py::mypy PASSED
+
+=============================== warnings summary ===============================
+::project
+  $(PYTHON_DIR)/vendor-packages/setuptools_rust/build.py:21: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
+
+::project
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+::project
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zest')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+: 15 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
 ===================================== mypy =====================================
-
-Success: no issues found in 30 source files
-======== 219 passed, 1 skipped ========
+Success: no issues found in 28 source files
+======== 218 passed, 1 skipped, 26 warnings ========
   py$(PYV): OK
   congratulations :)
