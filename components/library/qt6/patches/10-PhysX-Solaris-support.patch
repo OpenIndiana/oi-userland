@@ -1,0 +1,264 @@
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxIntrinsics.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxIntrinsics.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxIntrinsics.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxIntrinsics.h	2023-01-12 09:46:33.266160798 +0000
+@@ -34,7 +34,7 @@
+ 
+ #if PX_WINDOWS_FAMILY
+ #include "foundation/windows/PxWindowsIntrinsics.h"
+-#elif(PX_LINUX || PX_ANDROID || PX_APPLE_FAMILY || PX_PS4)
++#elif(PX_LINUX || PX_ANDROID || PX_APPLE_FAMILY || PX_PS4 || PX_SOLARIS)
+ #include "foundation/unix/PxUnixIntrinsics.h"
+ #elif PX_XBOXONE
+ #include "foundation/XboxOne/PxXboxOneIntrinsics.h"
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxPreprocessor.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxPreprocessor.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxPreprocessor.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxPreprocessor.h	2023-01-12 10:07:19.377991385 +0000
+@@ -108,6 +108,8 @@
+ #define PX_PS4 1
+ #elif defined(__NX__)
+ #define PX_SWITCH 1
++#elif defined(__sun)
++#define PX_SOLARIS 1
+ #else
+ #error "Unknown operating system"
+ #endif
+@@ -193,6 +195,9 @@
+ #ifndef PX_SWITCH
+ #define PX_SWITCH 0
+ #endif
++#ifndef PX_SOLARIS
++#define PX_SOLARIS 0
++#endif
+ #ifndef PX_UWP
+ #define PX_UWP 0
+ #endif
+@@ -253,7 +258,7 @@
+ #define PX_MICROSOFT_FAMILY (PX_XBOXONE || PX_WINDOWS_FAMILY || PX_XBOX_SERIES_X)
+ #define PX_LINUX_FAMILY (PX_LINUX || PX_ANDROID)
+ #define PX_APPLE_FAMILY (PX_IOS || PX_OSX)                  // equivalent to #if __APPLE__
+-#define PX_UNIX_FAMILY (PX_LINUX_FAMILY || PX_APPLE_FAMILY) // shortcut for unix/posix platforms
++#define PX_UNIX_FAMILY (PX_LINUX_FAMILY || PX_APPLE_FAMILY || PX_SOLARIS) // shortcut for unix/posix platforms
+ #if defined(__EMSCRIPTEN__)
+ #define PX_EMSCRIPTEN 1
+ #else
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/unix/PxUnixIntrinsics.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/unix/PxUnixIntrinsics.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/unix/PxUnixIntrinsics.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/unix/PxUnixIntrinsics.h	2023-01-12 09:49:38.925791130 +0000
+@@ -33,7 +33,7 @@
+ #include "foundation/Px.h"
+ #include "foundation/PxSharedAssert.h"
+ 
+-#if !(PX_LINUX || PX_ANDROID || PX_PS4 || PX_APPLE_FAMILY)
++#if !(PX_LINUX || PX_ANDROID || PX_PS4 || PX_APPLE_FAMILY || PX_SOLARIS)
+ #error "This file should only be included by Unix builds!!"
+ #endif
+ 
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsAllocator.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsAllocator.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsAllocator.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsAllocator.h	2023-01-12 09:53:34.519815438 +0000
+@@ -118,6 +118,9 @@
+ #elif PX_SWITCH
+ 	#include <malloc.h>
+ 	#define PxAlloca(x) alloca(x)
++#elif PX_SOLARIS
++	#include <alloca.h>
++	#define PxAlloca(x) alloca(x)
+ #endif
+ 
+ #define PxAllocaAligned(x, alignment) ((size_t(PxAlloca(x + alignment)) + (alignment - 1)) & ~size_t(alignment - 1))
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsFPU.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsFPU.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsFPU.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsFPU.h	2023-01-12 09:55:32.586641342 +0000
+@@ -79,7 +79,7 @@
+ 
+ #if PX_WINDOWS_FAMILY || PX_XBOXONE || PX_XBOX_SERIES_X
+ #include "windows/PsWindowsFPU.h"
+-#elif (PX_LINUX && PX_SSE2) || PX_PS4 || PX_OSX
++#elif (PX_LINUX && PX_SSE2) || PX_PS4 || PX_OSX || PX_SOLARIS
+ #include "unix/PsUnixFPU.h"
+ #else
+ PX_INLINE physx::shdfnd::SIMDGuard::SIMDGuard()
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsIntrinsics.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsIntrinsics.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsIntrinsics.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsIntrinsics.h	2023-01-12 09:56:07.055424800 +0000
+@@ -34,7 +34,7 @@
+ 
+ #if PX_WINDOWS_FAMILY
+ #include "windows/PsWindowsIntrinsics.h"
+-#elif(PX_LINUX || PX_ANDROID || PX_APPLE_FAMILY || PX_PS4)
++#elif(PX_LINUX || PX_ANDROID || PX_APPLE_FAMILY || PX_PS4 || PX_SOLARIS)
+ #include "unix/PsUnixIntrinsics.h"
+ #elif PX_XBOXONE
+ #include "XboxOne/PsXboxOneIntrinsics.h"
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsThread.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsThread.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsThread.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsThread.h	2023-01-12 09:54:47.501172410 +0000
+@@ -41,7 +41,7 @@
+ 
+ #if PX_WINDOWS_FAMILY || PX_XBOXONE || PX_XBOX_SERIES_X
+ #define PxSpinLockPause() __asm pause
+-#elif PX_LINUX || PX_ANDROID || PX_PS4 || PX_APPLE_FAMILY || PX_SWITCH
++#elif PX_LINUX || PX_ANDROID || PX_PS4 || PX_APPLE_FAMILY || PX_SWITCH || PX_SOLARIS
+ #define PxSpinLockPause() asm("nop")
+ #else
+ #error "Platform not supported!"
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsTime.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsTime.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsTime.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/PsTime.h	2023-01-12 09:56:59.177171999 +0000
+@@ -84,7 +84,7 @@
+ 	Second getLastTime() const;
+ 
+   private:
+-#if PX_LINUX || PX_ANDROID || PX_APPLE_FAMILY || PX_PS4
++#if PX_LINUX || PX_ANDROID || PX_APPLE_FAMILY || PX_PS4 || PX_SOLARIS
+ 	Second mLastTime;
+ #else
+ 	int64_t mTickCount;
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/PsUnixFPU.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/PsUnixFPU.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/PsUnixFPU.h 2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/PsUnixFPU.h      2023-01-12 12:14:21.264356558 +0000
+@@ -32,7 +32,7 @@
+
+ #include "foundation/PxPreprocessor.h"
+
+-#if PX_LINUX || PX_PS4 || PX_OSX
++#if PX_LINUX || PX_PS4 || PX_OSX || PX_SOLARIS
+
+ #if PX_X86 || PX_X64
+ #if PX_EMSCRIPTEN
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/PsUnixIntrinsics.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/PsUnixIntrinsics.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/PsUnixIntrinsics.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/PsUnixIntrinsics.h	2023-01-12 09:58:21.950222631 +0000
+@@ -45,7 +45,7 @@
+ // this file is for internal intrinsics - that is, intrinsics that are used in
+ // cross platform code but do not appear in the API
+ 
+-#if !(PX_LINUX || PX_ANDROID || PX_PS4 || PX_APPLE_FAMILY)
++#if !(PX_LINUX || PX_ANDROID || PX_PS4 || PX_APPLE_FAMILY || PX_SOLARIS)
+ #error "This file should only be included by unix builds!!"
+ #endif
+ 
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/physxextensions/src/serialization/SnSerialUtils.cpp qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/physxextensions/src/serialization/SnSerialUtils.cpp
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/physxextensions/src/serialization/SnSerialUtils.cpp	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/physxextensions/src/serialization/SnSerialUtils.cpp	2023-01-12 10:03:41.356389570 +0000
+@@ -39,7 +39,7 @@
+ namespace
+ {
+ 
+-#define SN_NUM_BINARY_PLATFORMS 19
++#define SN_NUM_BINARY_PLATFORMS 20
+ const PxU32 sBinaryPlatformTags[SN_NUM_BINARY_PLATFORMS] =
+ {
+ 	PX_MAKE_FOURCC('W','_','3','2'),
+@@ -82,6 +82,7 @@
+ 	"uwparm64",
+ 	"macarm",
+ 	"linuxarm",
++	"solaris64",
+ 	"unknown",
+ };
+ 
+@@ -127,8 +128,10 @@
+     return sBinaryPlatformTags[16];
+ #elif PX_LINUX && PX_ARM
+ 	return sBinaryPlatformTags[17];
++#elif PX_SOLARIS && PX_A64
++	return sBinaryPlatformTags[18]
+ #else
+-	return sBinaryPlatformTags[18];
++	return sBinaryPlatformTags[19];
+ #endif
+ }
+ 
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/sse2/PsUnixSse2AoS.h qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/sse2/PsUnixSse2AoS.h
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/sse2/PsUnixSse2AoS.h	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/include/unix/sse2/PsUnixSse2AoS.h	2023-01-12 10:38:01.826091091 +0000
+@@ -43,7 +43,7 @@
+ namespace aos
+ {
+ 
+-#if PX_EMSCRIPTEN
++#if PX_EMSCRIPTEN || PX_SOLARIS
+ typedef int8_t   __int8_t;
+ typedef int16_t  __int16_t;
+ typedef int32_t  __int32_t;
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/src/unix/PsUnixFPU.cpp qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/src/unix/PsUnixFPU.cpp
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/src/unix/PsUnixFPU.cpp	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/src/unix/PsUnixFPU.cpp	2023-01-12 11:27:56.161455763 +0000
+@@ -28,7 +28,7 @@
+ // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
+ #include "PsFPU.h"
+ 
+-#if !(defined(__CYGWIN__) || PX_ANDROID || PX_PS4)
++#if !(defined(__CYGWIN__) || PX_ANDROID || PX_PS4 || PX_SOLARIS)
+ #include <fenv.h>
+ PX_COMPILE_TIME_ASSERT(8 * sizeof(uint32_t) >= sizeof(fenv_t));
+ #endif
+@@ -42,6 +42,8 @@
+ {
+ #if defined(__CYGWIN__)
+ #pragma message "FPUGuard::FPUGuard() is not implemented"
++#elif PX_SOLARIS
++#pragma message "FPUGuard::FPUGuard() is not implemented"
+ #elif PX_ANDROID
+ // not supported unless ARM_HARD_FLOAT is enabled.
+ #elif PX_PS4
+@@ -72,6 +74,8 @@
+ {
+ #if defined(__CYGWIN__)
+ #pragma message "FPUGuard::~FPUGuard() is not implemented"
++#elif PX_SOLARIS
++#pragma message "FPUGuard::~FPUGuard() is not implemented"
+ #elif PX_ANDROID
+ // not supported unless ARM_HARD_FLOAT is enabled.
+ #elif PX_PS4
+diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/src/unix/PsUnixThread.cpp qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/src/unix/PsUnixThread.cpp
+--- qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/src/unix/PsUnixThread.cpp	2022-12-12 20:36:44.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtquick3dphysics/src/3rdparty/PhysX/source/foundation/src/unix/PsUnixThread.cpp	2023-01-12 11:37:01.207995499 +0000
+@@ -36,7 +36,7 @@
+ #include "PsThread.h"
+ 
+ #include <math.h>
+-#if !PX_APPLE_FAMILY && !defined(ANDROID) && !defined(__CYGWIN__) && !PX_PS4 && !PX_EMSCRIPTEN
++#if !PX_APPLE_FAMILY && !defined(ANDROID) && !defined(__CYGWIN__) && !PX_PS4 && !PX_EMSCRIPTEN && !PX_SOLARIS
+ #include <bits/local_lim.h> // PTHREAD_STACK_MIN
+ #endif
+ #include <stdio.h>
+@@ -44,7 +44,7 @@
+ #include <unistd.h>
+ #if !PX_PS4
+ #include <sys/syscall.h>
+-#if !PX_APPLE_FAMILY && !PX_EMSCRIPTEN
++#if !PX_APPLE_FAMILY && !PX_EMSCRIPTEN && !PX_SOLARIS
+ #include <asm/unistd.h>
+ #include <sys/resource.h>
+ #endif
+@@ -115,7 +115,7 @@
+ // AM: TODO: neither of the below are implemented
+ #elif PX_APPLE_FAMILY
+ 	threadImpl.tid = syscall(SYS_gettid);
+-#elif PX_EMSCRIPTEN
++#elif PX_EMSCRIPTEN || PX_SOLARIS
+ 	threadImpl.tid = pthread_self();
+ #else
+ 	threadImpl.tid = syscall(__NR_gettid);
+@@ -313,6 +313,8 @@
+ 		prevMask = setAffinityMaskPS4(getThread(this)->thread, mask);
+ #elif PX_EMSCRIPTEN
+ 		// not supported
++#elif PX_SOLARIS
++		// not supported
+ #elif !PX_APPLE_FAMILY // Apple doesn't support syscall with getaffinity and setaffinity
+ 		int32_t errGet = syscall(__NR_sched_getaffinity, getThread(this)->tid, sizeof(prevMask), &prevMask);
+ 		if(errGet < 0)
+diff -Nru qt-everywhere-src-6.5.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/pvd/include/PxProfileAllocatorWrapper.h qt-everywhere-src-6.5.2/qtquick3dphysics/src/3rdparty/PhysX/source/pvd/include/PxProfileAllocatorWrapper.h
+--- qt-everywhere-src-6.5.2.orig/qtquick3dphysics/src/3rdparty/PhysX/source/pvd/include/PxProfileAllocatorWrapper.h	2023-09-19 22:33:53.903393945 +0200
++++ qt-everywhere-src-6.5.2/qtquick3dphysics/src/3rdparty/PhysX/source/pvd/include/PxProfileAllocatorWrapper.h	2023-09-19 22:34:06.459406024 +0200
+@@ -38,6 +38,7 @@
+ 
+ #include "PsArray.h"
+ #include "PsHashMap.h"
++#include <typeinfo>
+ 
+ namespace physx { namespace profile {
+ 
