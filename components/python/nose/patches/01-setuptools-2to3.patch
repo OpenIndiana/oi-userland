@@ -1,0 +1,32 @@
+Support for 2to3 was removed in setuptools 58.0.0 so we cannot use it.
+
+--- nose-1.3.7/setup.py.orig
++++ nose-1.3.7/setup.py
+@@ -13,7 +13,7 @@
+         from distribute_setup import use_setuptools
+         use_setuptools()
+ 
+-    extra = {'use_2to3': True,
++    extra = {'use_2to3': False,
+              'test_dirs': test_dirs,
+              'test_build_dir': 'build/tests',
+              'pyversion_patching': True,
+--- nose-1.3.7/setup3lib.py.orig
++++ nose-1.3.7/setup3lib.py
+@@ -18,7 +18,6 @@
+     import logging
+     from setuptools import Distribution as _Distribution
+     from distutils.core import Command
+-    from setuptools.command.build_py import Mixin2to3
+     from distutils import dir_util, file_util, log
+     import setuptools.command.test
+     from pkg_resources import normalize_path
+@@ -68,7 +67,7 @@
+             self.pyversion_patching = False
+             _Distribution.__init__(self, attrs)
+ 
+-    class BuildTestsCommand (Command, Mixin2to3):
++    class BuildTestsCommand (Command):
+         # Create mirror copy of tests, convert all .py files using 2to3
+         user_options = []
+ 
