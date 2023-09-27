@@ -19,12 +19,12 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Unidecode
-HUMAN_VERSION =			1.3.6
+HUMAN_VERSION =			1.3.7
 COMPONENT_SUMMARY =		Unidecode - ASCII transliterations of Unicode text
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0b/25/37c77fc07821cd06592df3f18281f5e716bc891abd6822ddb9ff941f821e/Unidecode-1.3.6.tar.gz
+	https://files.pythonhosted.org/packages/80/5d/f156f6a7254ecc0549de0eb75f786d2df724c0310b97c825383517d2c98d/Unidecode-1.3.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fed09cf0be8cf415b391642c2a5addfc72194407caee4f98719e40ec2a72b830
+	sha256:3c90b4662aa0de0cb591884b934ead8d2225f1800d8da675a7750cbc3bd94610
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
