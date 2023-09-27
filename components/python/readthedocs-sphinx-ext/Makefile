@@ -19,21 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		readthedocs-sphinx-ext
-HUMAN_VERSION =			2.2.2
+HUMAN_VERSION =			2.2.3
 COMPONENT_SUMMARY =		readthedocs-sphinx-ext - Sphinx extension for Read the Docs overrides
 COMPONENT_PROJECT_URL =		http://github.com/readthedocs/readthedocs-sphinx-ext
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/readthedocs/readthedocs-sphinx-ext/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7b968f7d03a84bafabd25c9ba06973541a199c62cea2585cf4559edef120e7dd
+	sha256:9e9f5343452dc896d1f386f8b47fc99c307facf5fc970a1f24b94529daae915d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Testing fails with black and mypy
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/jinja2
