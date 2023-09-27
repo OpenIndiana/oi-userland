@@ -10,14 +10,14 @@
 #
 
 #
-# Copyright 2018 Adam Stevko
+# Copyright 2023 Till Wegmueller
 #
 
-PORTS="~/.cargo/target/debug/ports"
+PKGDEV="/ws/toasty/.cargo/bin/pkgdev"
 
 generate-pakage-kdl:
 	@echo "generating package.kdl for $(COMPONENT_NAME)"
-	$(PORTS) create $(COMPONENT_NAME)
+	$(PKGDEV) create $(COMPONENT_NAME)
 #	@for package in $(REQUIRED_PACKAGES) ; do \
 #		echo $$package ;  \
 #	done | LANG=C LC_ALL=C sort -u
