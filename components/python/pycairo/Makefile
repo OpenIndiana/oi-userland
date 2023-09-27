@@ -21,13 +21,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycairo
-HUMAN_VERSION =			1.24.0
+HUMAN_VERSION =			1.25.0
 COMPONENT_SUMMARY =		pycairo - Python interface for cairo
 COMPONENT_PROJECT_URL =		https://pycairo.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a2/dd/bc2c9ee9485308a29c18b1241329e677917af25c60b127857f0fb23d0c6e/pycairo-1.24.0.tar.gz
+	https://files.pythonhosted.org/packages/db/f1/45f288a45215e12dea5a107a2e686e33902701d5485219437b5d64d1080a/pycairo-1.25.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1444d52f1bb4cc79a4a0c0fe2ccec4bd78ff885ab01ebe1c0f637d8392bcafb6
+	sha256:37842b9bfa6339c45a5025f752e1d78d5840b1a0f82303bdd5610846ad8b5c4f
 COMPONENT_LICENSE =		LGPL-2.1-only OR MPL-1.1
 
 TEST_STYLE = pytest
@@ -47,15 +47,12 @@ COMPONENT_INSTALL_ARGS += install_pkgconfig --pkgconfigdir=$(PKG_CONFIG_PATH.$(B
 # Rename headers and pkgconfig files to contain version number
 COMPONENT_POST_INSTALL_ACTION += \
 	for f in $(PROTOUSRINCDIR)/pycairo/* $(PROTO_DIR)$(PKG_CONFIG_PATH.$(BITS))/* ; do \
-		[[ -f $$f ]] || continue ; \
+		[ -f $$f ] || continue ; \
 		for v in $(PYTHON_VERSIONS) ; do \
-			[[ "$$f" == "$${f%%$$v}" ]] || continue 2 ; \
+			[ "$$f" == "$${f%%$$v}" ] || continue 2 ; \
 		done ; \
 		$(MV) $$f $$f-$(PYTHON_VERSION) ; \
 	done ;
-
-# Testing fails with the checkdocs plugin installed
-PYTEST_ADDOPTS += -p no:checkdocs
 
 # Tests are run from build directory which contains cloned copy of sdist.  We
 # try to ask Python to find tested modules in the proto area (the PYTHONPATH is
