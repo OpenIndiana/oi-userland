@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         SDL
 COMPONENT_VERSION=      1.2.15
-COMPONENT_REVISION=     5
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=      libsdl - Simple DirectMedia Layer
 COMPONENT_PROJECT_URL=  https://www.libsdl.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,12 +30,15 @@ COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/Libraries
 
 TEST_TARGET=$(NO_TESTS)
+
+DROP_STATIC_LIBRARIES = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION= ( cd $(@D)  && \
-	$(CONFIG_SHELL) autogen.sh )
+	PATH="$(PATH)" $(CONFIG_SHELL) autogen.sh )
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
