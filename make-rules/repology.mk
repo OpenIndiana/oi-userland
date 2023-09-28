@@ -17,8 +17,16 @@ PKGDEV="/ws/toasty/.cargo/bin/pkgdev"
 
 generate-pakage-kdl:
 	@echo "generating package.kdl for $(COMPONENT_NAME)"
-	$(PKGDEV) create $(COMPONENT_NAME)
-#	@for package in $(REQUIRED_PACKAGES) ; do \
-#		echo $$package ;  \
-#	done | LANG=C LC_ALL=C sort -u
+	$(PKGDEV) create $(COMPONENT_FMRI)
+	@for package in $(REQUIRED_PACKAGES) ; do \
+		$(PKGDEV) add dependency --dev --kind require $$package ;  \
+	done
+	$(PKGDEV) set project-name "$(COMPONENT_NAME)"
+	$(PKGDEV) set summary "$(COMPONENT_SUMMARY)"
+	$(PKGDEV) set classification "$(COMPONENT_CLASSIFICATION)"
+	$(PKGDEV) set license "$(COMPONENT_LICENSE)" "$(COMPONENT_LICENSE_FILE)"
+	$(PKGDEV) set version "$(COMPONENT_VERSION)"
+	$(PKGDEV) set project-url "$(COMPONENT_PROJECT_URL)"
+	$(PKGDEV) set maintainer "The OpenIndiana Maintainers"
+	$(PKGDEV) add source archive "$(COMPONENT_ARCHIVE_URL)"
 
