@@ -19,12 +19,12 @@ generate-pakage-kdl:
 	@echo "generating package.kdl for $(COMPONENT_NAME)"
 	$(PKGDEV) create $(COMPONENT_FMRI)
 	@for package in $(REQUIRED_PACKAGES) ; do \
-		$(PKGDEV) edit add dependency -- --dev true --kind require $$package ;  \
+		$(PKGDEV) edit add dependency -- --dev --kind require $$package ;  \
 	done
 	$(PKGDEV) edit set project-name "$(COMPONENT_NAME)"
 	$(PKGDEV) edit set summary "$(COMPONENT_SUMMARY)"
 	$(PKGDEV) edit set classification "$(COMPONENT_CLASSIFICATION)"
-	$(PKGDEV) edit set license "$(COMPONENT_LICENSE)" "$(COMPONENT_LICENSE_FILE)"
+	$(PKGDEV) edit set license -- "$(COMPONENT_LICENSE)" -f "$(COMPONENT_LICENSE_FILE)"
 	$(PKGDEV) edit set version "$(COMPONENT_VERSION)"
 	$(PKGDEV) edit set project-url "$(COMPONENT_PROJECT_URL)"
 	$(PKGDEV) edit set maintainer "The OpenIndiana Maintainers"
