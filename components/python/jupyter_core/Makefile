@@ -19,24 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jupyter_core
-HUMAN_VERSION =			5.3.1
+HUMAN_VERSION =			5.3.2
 COMPONENT_SUMMARY =		jupyter_core - Jupyter core package. A base package on which Jupyter projects rely.
 COMPONENT_PROJECT_URL =		https://jupyter.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9e/53/f27bd74ceaa672a1ce17b4b2bee93c0742ca00cb9f540ec4fa60cf7319b5/jupyter_core-5.3.1.tar.gz
+	https://files.pythonhosted.org/packages/85/dc/69afd5b08fb101a2377e9fedc30118066a49c2716255b9ab6a524ce1eaa8/jupyter_core-5.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5ba5c7938a7f97a6b0481463f7ff0dbac7c15ba48cf46fa4035ca6e838aa1aba
+	sha256:0c28db6cbe2c37b5b398e1a1a5b22f84fd64cd10afc1f6c05b02fb09481ba45f
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Remove unpatched version of files from proto area to make sure they do not
-# leak into sample manifest.
-COMPONENT_POST_INSTALL_ACTION += \
-	$(FIND) $(PROTO_DIR)/$(PYTHON_LIB) -name '*.~*~' -exec rm {} \; ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
