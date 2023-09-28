@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus
 COMPONENT_VERSION=	1.12.28
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Simple IPC library based on messages
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/dbus/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,7 +36,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION =	( cd $(@D) && autoreconf --force --install )
+COMPONENT_PREP_ACTION =	( cd $(@D) && PATH="$(PATH)" autoreconf --force --install )
 
 CPPFLAGS += -std=gnu89
 
