@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		detect_test_pollution
-HUMAN_VERSION =			1.1.1
+HUMAN_VERSION =			1.2.0
 COMPONENT_SUMMARY =		detect_test_pollution - a tool to detect test pollution
 COMPONENT_PROJECT_URL =		https://github.com/asottile/detect-test-pollution
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/asottile/detect-test-pollution/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1e162642442f7763c6da465de0afcf2e0e3267845a6dd07aaf59b09a296ca9e9
+	sha256:768636d6a670c2876e09508a460534a8e6b03872b07fd42599ef8ae225817150
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
