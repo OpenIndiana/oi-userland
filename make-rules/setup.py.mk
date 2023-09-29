@@ -308,7 +308,7 @@ COMPONENT_TEST_ARGS +=		--recreate
 COMPONENT_TEST_ARGS +=		$(TOX_TESTENV)
 COMPONENT_TEST_TARGETS =
 
-TOX_TESTENV = -e py$(shell echo $(PYTHON_VERSION) | tr -d .)
+TOX_TESTENV = -e py$(subst .,,$(PYTHON_VERSION))
 
 # Make sure following tools are called indirectly to properly support tox-current-env
 TOX_CALL_INDIRECTLY += py.test
@@ -332,7 +332,7 @@ COMPONENT_PRE_TEST_ACTION += \
 COMPONENT_PRE_TEST_ACTION += true ;
 
 # Normalize tox test results.
-COMPONENT_TEST_TRANSFORMS += "-e 's/py$(shell echo $(PYTHON_VERSION) | tr -d .)/py\$$(PYV)/g'"	# normalize PYV
+COMPONENT_TEST_TRANSFORMS += "-e 's/py$(subst .,,$(PYTHON_VERSION))/py\$$(PYV)/g'"	# normalize PYV
 COMPONENT_TEST_TRANSFORMS += "-e '/^py\$$(PYV) installed:/d'"		# depends on set of installed packages
 COMPONENT_TEST_TRANSFORMS += "-e '/PYTHONHASHSEED/d'"			# this is random
 

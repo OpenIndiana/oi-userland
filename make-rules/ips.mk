@@ -223,10 +223,10 @@ ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
 VERSIONED_MANIFEST_TYPES+= PY
 NOPY_MANIFESTS = $(filter-out %-PYVER.p5m,$(UNVERSIONED_MANIFESTS))
 PY_MANIFESTS = $(filter %-PYVER.p5m,$(CANONICAL_MANIFESTS))
-PYV_VALUES = $(shell echo $(PYTHON_VERSIONS) | tr -d .)
+PYV_VALUES = $(subst .,,$(PYTHON_VERSIONS))
 PYV_FMRI_VERSION = PYV
-PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
-PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
+PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(PY_MANIFESTS:-PYVER.p5m=-$(v).p5m))
+PYNV_MANIFESTS = $(PY_MANIFESTS:-PYVER.p5m=.p5m)
 MKGENERIC_SCRIPTS += $(BUILD_DIR)/mkgeneric-python
 else
 NOPY_MANIFESTS = $(UNVERSIONED_MANIFESTS)
@@ -236,7 +236,7 @@ endif
 # - for all currently supported python versions (from PYTHON_VERSIONS)
 # - for all python versions we are currently obsoleting (from PYTHON_VERSIONS_OBSOLETING)
 # - the $(PYV) string itself
-PYTHON_PYV_VALUES = $(shell echo $(PYTHON_VERSIONS) $(PYTHON_VERSIONS_OBSOLETING) | tr -d .) $$(PYV)
+PYTHON_PYV_VALUES = $(subst .,,$(PYTHON_VERSIONS) $(PYTHON_VERSIONS_OBSOLETING)) $$(PYV)
 # Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for runtime/python
 REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PYTHON_PYV_VALUES), -e 's|^\(.*runtime/python\)-$(v)$$|PYTHON_\1|g')
 # Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for library/python/*
@@ -247,10 +247,10 @@ ifeq ($(findstring -PERLVER,$(UNVERSIONED_MANIFESTS)),-PERLVER)
 VERSIONED_MANIFEST_TYPES+= PERL
 NOPERL_MANIFESTS = $(filter-out %-PERLVER.p5m,$(NOPY_MANIFESTS))
 PERL_MANIFESTS = $(filter %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS))
-PERLV_VALUES = $(shell echo $(PERL_VERSIONS) | tr -d .)
+PERLV_VALUES = $(subst .,,$(PERL_VERSIONS))
 PERLV_FMRI_VERSION = PLV
-PERLV_MANIFESTS = $(foreach v,$(PERLV_VALUES),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
-PERLNV_MANIFESTS = $(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER//')
+PERLV_MANIFESTS = $(foreach v,$(PERLV_VALUES),$(PERL_MANIFESTS:-PERLVER.p5m=-$(v).p5m))
+PERLNV_MANIFESTS = $(PERL_MANIFESTS:-PERLVER.p5m=.p5m)
 else
 NOPERL_MANIFESTS = $(NOPY_MANIFESTS)
 endif
@@ -259,7 +259,7 @@ endif
 # - for all currently supported perl versions (from PERL_VERSIONS)
 # - for all perl versions we are currently obsoleting (from PERL_VERSIONS_OBSOLETING)
 # - the $(PLV) string itself
-PERL_PLV_VALUES = $(shell echo $(PERL_VERSIONS) $(PERL_VERSIONS_OBSOLETING) | tr -d .) $$(PLV)
+PERL_PLV_VALUES = $(sunst .,,$(PERL_VERSIONS) $(PERL_VERSIONS_OBSOLETING)) $$(PLV)
 # Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for runtime/perl
 REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERL_PLV_VALUES), -e 's|^\(.*runtime/perl\)-$(v)$$|PERL_\1|g')
 # Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for library/perl-5/*
@@ -275,11 +275,8 @@ NORUBY_MANIFESTS = $(filter-out %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBY_MANIFESTS = $(filter %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBYV_VALUES = $(RUBY_VERSIONS)
 RUBYV_FMRI_VERSION = RUBYV
-RUBYV_MANIFESTS = $(foreach v,$(RUBY_VERSIONS),\
-                      $(shell echo $(RUBY_MANIFESTS) |\
-                      sed -e 's/-RUBYVER.p5m/-$(shell echo $(v) |\
-                      cut -d. -f1,2 | tr -d .).p5m/g'))
-RUBYNV_MANIFESTS = $(shell echo $(RUBY_MANIFESTS) | sed -e 's/-RUBYVER//')
+RUBYV_MANIFESTS = $(foreach v,$(RUBY_VERSIONS),$(RUBY_MANIFESTS:-RUBYVER.p5m=-$(shell echo $(v) | cut -d. -f1,2 | tr -d .).p5m))
+RUBYNV_MANIFESTS = $(RUBY_MANIFESTS:-RUBYVER.p5m=.p5m)
 else
 NORUBY_MANIFESTS = $(NOPERL_MANIFESTS)
 endif
@@ -367,11 +364,11 @@ endif
 $(MANIFEST_BASE)-%-$(2).p5m: %-PYVER.p5m
 	$(PKGMOGRIFY) -D PYVER=$(1) $(MANIFEST_LIMITING_VARS) -D PYV=$(2)  $$< > $$@
 endef
-$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(shell echo $(ver)|tr -d .))))
+$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(subst .,,$(ver)))))
 
 ifeq ($(strip $(SINGLE_PYTHON_VERSION)),yes)
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
-PKG_MACROS += PYV=$(shell echo $(PYTHON_VERSION)|tr -d .)
+PKG_MACROS += PYV=$(subst .,,$(PYTHON_VERSION))
 endif
 
 # A rule to create a helper transform package for python, that will insert the
@@ -380,9 +377,9 @@ endif
 # corresponding version of python is on the system.
 $(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ) $(BUILD_DIR)
 	$(RM) $@
-	$(foreach ver,$(shell echo $(PYTHON_VERSIONS) | tr -d .), \
+	$(foreach ver,$(subst .,,$(PYTHON_VERSIONS)), \
 		$(call mkgeneric,runtime/python,$(ver)))
-	$(call mkgenericdep,runtime/python,$(shell echo $(PYTHON_VERSIONS) | tr -d .))
+	$(call mkgenericdep,runtime/python,$(subst .,,$(PYTHON_VERSIONS)))
 
 # Build Python version-wrapping manifests from the generic version.
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
@@ -393,15 +390,15 @@ $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 # Define and execute a macro that generates a rule to create a manifest for a
 # perl module specific to a particular version of the perl runtime.
 define perl-manifest-rule
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
-	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$$(shell echo $(1) | tr -d .) \
+$(MANIFEST_BASE)-%-$(subst .,,$(1)).p5m: %-PERLVER.p5m
+	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$$(subst .,,$(1)) \
 		-D PERL_ARCH=$$(call PERL_ARCH_FUNC,$$(PERL.$(1))) $$< > $$@
 endef
 $(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
 
 ifeq ($(strip $(SINGLE_PERL_VERSION)),yes)
 PKG_MACROS += PERLVER=$(PERL_VERSION)
-PKG_MACROS += PLV=$(shell echo $(PERL_VERSION)|tr -d .)
+PKG_MACROS += PLV=$(subst .,,$(PERL_VERSION))
 endif
 
 # A rule to create a helper transform package for perl, that will insert the
@@ -410,9 +407,9 @@ endif
 # corresponding version of perl is on the system.
 $(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ)
 	$(RM) $@
-	$(foreach ver,$(shell echo $(PERL_VERSIONS) | tr -d .), \
+	$(foreach ver,$(subst .,,$(PERL_VERSIONS)), \
 		$(call mkgeneric,runtime/perl,$(ver)))
-	$(call mkgenericdep,runtime/perl,$(shell echo $(PERL_VERSIONS) | tr -d .))
+	$(call mkgenericdep,runtime/perl,$(subst .,,$(PERL_VERSIONS)))
 
 # Build Perl version-wrapping manifests from the generic version.
 $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
@@ -433,16 +430,16 @@ $(foreach mfst,$(HISTORICAL_MANIFESTS),$(eval $(call history-manifest-rule,$(mfs
 # Creates build/manifest-*-modulename-##.p5m file where ## is replaced with
 # the version number.
 define ruby-manifest-rule
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: \
+$(MANIFEST_BASE)-%-$(subst .,,$(1)).mogrified: \
         PKG_MACROS += RUBY_VERSION=$(1) RUBY_LIB_VERSION=$(2) \
             RUBYV=$(subst .,,$(1))
 
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m
-	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then \
-	        cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; \
+$(MANIFEST_BASE)-%-$(subst .,,$(1)).p5m: %-RUBYVER.p5m
+	if [ -f $$*-$(subst .,,$(1))GENFRAG.p5m ]; then \
+	        cat $$*-$(subst .,,$(1))GENFRAG.p5m >> $$@; \
 	fi
 	$(PKGMOGRIFY) -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
-	    -D RUBYV=$(shell echo $(1) | tr -d .) $$< > $$@
+	    -D RUBYV=$(subst .,,$(1)) $$< > $$@
 endef
 $(foreach ver,$(RUBY_VERSIONS),\
         $(eval $(call ruby-manifest-rule,$(shell echo $(ver) | \
