@@ -31,5 +31,5 @@ generate-pakage-kdl:
 	$(PKGDEV) edit add source archive "$(COMPONENT_ARCHIVE_URL)" "$(COMPONENT_ARCHIVE_HASH)"
 	if [ -d "patches" ]; then $(PKGDEV) edit add source patch patches; fi
 ifdef CONFIGURE_OPTIONS
-	$(PKGDEV) edit add build configure -- --options="$(CONFIGURE_OPTIONS)" --flags="$(CONFIGURE_ENV)"
+	$(PKGDEV) edit add build configure -- --options='$(CONFIGURE_OPTIONS)' --flags='$(CONFIGURE_ENV)'
 endif
