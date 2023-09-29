@@ -14,19 +14,18 @@
 #   $WS_TOOLS/python-integrate-project cffi
 #
 
-BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cffi
-HUMAN_VERSION =			1.15.1
+HUMAN_VERSION =			1.16.0
 COMPONENT_SUMMARY =		cffi - Foreign Function Interface for Python calling C code.
 COMPONENT_PROJECT_URL =		http://cffi.readthedocs.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2b/a8/050ab4f0c3d4c1b8aaa805f70e26e84d0e27004907c5b8ecc1d31815f92a/cffi-1.15.1.tar.gz
+	https://files.pythonhosted.org/packages/68/ce/95b0bae7968c65473e1298efb042e10cafc7bafc14d9e4f154008241c91d/cffi-1.16.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d400bfb9a37b1351253cb402671cea7e89bdecc294e8016a707f6d1d8ac934f9
+	sha256:bcb3ef43e58665bbda2fb198698fcae6776483e0c4a631aa5647806c25e02cc0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,11 +36,13 @@ include $(WS_MAKE_RULES)/common.mk
 # Set full path to gcc for testing
 COMPONENT_PREP_ACTION = $(GSED) -i -e 's|cc|'"$(CC.$(COMPILER).$(BUILD_BITS))"'|' $(@D)/testing/cffi0/test_ownlib.py
 
-# Without this some random tests could fail
-PYTEST_ADDOPTS += -p no:randomly
+# Testing needs to find gcc
+COMPONENT_TEST_ENV += PATH="$(GCC_BINDIR):$(PATH)"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pycparser
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library
