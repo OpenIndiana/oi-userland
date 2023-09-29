@@ -1,12 +1,12 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> $(PYTHON) -m pytest --cov-config=$(@D)/tox.ini --verbose --junit-xml=.tox/results.py$(PYV).xml --durations=3 '--log-format=%(levelname)s %(relativeCreated)2.2f %(filename)s:%(lineno)d %(message)s' tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 24 items
+configfile: tox.ini
+collecting ... collected 22 items
 
-::project PASSED
 tests/test_core.py::test_combining_cafe PASSED
 tests/test_core.py::test_combining_enclosing PASSED
 tests/test_core.py::test_combining_spacing PASSED
@@ -30,4 +30,9 @@ tests/test_ucslevel.py::test_nearest_lowint40_unicode PASSED
 tests/test_ucslevel.py::test_nonint_str PASSED
 tests/test_ucslevel.py::test_nonint_unicode PASSED
 
-======== 23 passed ========
+- generated xml file: $(@D)/.tox/results.py$(PYV).xml -
+
+============================= slowest 3 durations ==============================
+======== 22 passed ========
+  py$(PYV): OK
+  congratulations :)
