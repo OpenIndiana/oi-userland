@@ -30,4 +30,6 @@ generate-pakage-kdl:
 	$(PKGDEV) edit set maintainer "The OpenIndiana Maintainers"
 	$(PKGDEV) edit add source archive "$(COMPONENT_ARCHIVE_URL)" "$(COMPONENT_ARCHIVE_HASH)"
 	if [ -d "patches" ]; then $(PKGDEV) edit add source patch patches
-
+ifdef CONFIGURE_OPTIONS
+	$(PKGDEV) edit add build configure -- --options="$(CONFIGURE_OPTIONS)" --flags="$(CONFIGURE_ENV)"
+endif
