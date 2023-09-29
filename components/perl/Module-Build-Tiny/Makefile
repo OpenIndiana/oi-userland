@@ -15,17 +15,15 @@
 #
 
 BUILD_STYLE = modulebuild
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Build::Tiny
-HUMAN_VERSION =			0.046
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.047
 COMPONENT_SUMMARY =		Module::Build::Tiny - A tiny replacement for Module::Build
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:be193027e2debb4c9926434aaf1aa46c9fc7bf4db83dcc347eb6e359ee878289
+	sha256:71260e9421b93c33dd1b3e7d0cf15f759c0ca7c753fa840279ec3be70f8f8c9d
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,3 +34,4 @@ PERL_REQUIRED_PACKAGES += library/perl-5/extutils-config
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-helpers
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-installpaths
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-sharedir
