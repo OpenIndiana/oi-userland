@@ -17,16 +17,26 @@ pipeline {
             steps {
                 sh 'rm -f components/components.mk'
                 sh 'rm -f components/depends.mk'
-                withPublisher('openindiana.org', 'full') {
+                withPublisher('openindiana.org', 'incremental') {
                     sh 'gmake setup'
                 }
             }
         }
         stage('Gmake Publish') {
             steps {
-                withPublisher('openindiana.org', 'full') {
+                withPublisher('openindiana.org', 'incremental') {
                     sh 'gmake publish -k'
                 }
+            }
+        }
+        stage('copy packages') {
+            steps {
+                pkgcopyEncumbered()
+            }
+        }
+        stage('update system') {
+            steps {
+                update()
             }
         }
     }
