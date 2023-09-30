@@ -1,0 +1,64 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2023, Jonathan Schleifer. All rights reserved.
+#
+
+BUILD_BITS = 64_and_32
+USE_PARALLEL_BUILD = yes
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME = objfw
+COMPONENT_VERSION = 1.0.3
+COMPONENT_SUMMARY = A portable, lightweight framework for the Objective-C language
+COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH = sha256:1c81d7d03578b2d9084fc5d8722d4eaa4bdc2f3f09ce41231e7ceab8212fae17
+COMPONENT_ARCHIVE_URL = https://objfw.nil.im/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://objfw.nil.im/
+COMPONENT_FMRI = library/objfw
+COMPONENT_CLASSIFICATION = Development/Objective C
+COMPONENT_LICENSE = QPL OR GPLv3 OR GPLv2
+
+include $(WS_MAKE_RULES)/common.mk
+
+# The build system does not support building out of tree.
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CONFIGURE_OPTIONS += --disable-rpath
+CONFIGURE_OPTIONS += --with-tls=gnutls
+CONFIGURE_OPTIONS.32 += OBJC="$(CLANG_PREFIX)/bin/clang -m32"
+CONFIGURE_OPTIONS.64 += OBJC="$(CLANG_PREFIX)/bin/clang -m64"
+# When using 64 bit, clang uses a different linking order than GCC, which
+# breaks unwinding. Using this reorders libgcc_s so that it works.
+CONFIGURE_OPTIONS.64 += LIBS="$$(gcc --print-file-name=libgcc_s.so)"
+# ... but then we also need to add libgcc_s to rpath
+CONFIGURE_OPTIONS.32 += LDFLAGS="-Wl,-rpath,$$(realpath $$(dirname $$(gcc -m32 --print-file-name=libgcc_s.so)))"
+CONFIGURE_OPTIONS.64 += LDFLAGS="-Wl,-rpath,$$(realpath $$(dirname $$(gcc -m64 --print-file-name=libgcc_s.so)))"
+
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
