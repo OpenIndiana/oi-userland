@@ -11,36 +11,34 @@
 # Copyright 2022, Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS=             64
-BUILD_STYLE=            configure
-
+BUILD_BITS= 64
+BUILD_STYLE= configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c_icap
-COMPONENT_VERSION=	0.5.10
+COMPONENT_VERSION=	0.5.11
 COMPONENT_SUMMARY=	The c-icap project
-COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
 COMPONENT_DESCRIPTION=	c-icap is an implementation of an ICAP server. It can be \
 			used with HTTP proxies that support the ICAP protocol to \
 			implement content adaptation and filtering services. \
 			Most of the commercial HTTP proxies must support the ICAP \
 			protocol. The open source Squid 3.x proxy server supports it. 
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:541d503354907f06d1d72fa90fffd031002f0f4346150fb7b2203ad5825ae49d
-COMPONENT_PROJECT_URL=	http://c-icap.sourceforge.net/
+COMPONENT_ARCHIVE_HASH=	sha256:c1c773045e6e2300ccdab2b8a59c67731ce73ffe01f5871327812ad3bd2484d4
+COMPONENT_PROJECT_URL=	https://c-icap.sourceforge.net/
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/c-icap/files/c-icap/0.5.x/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=		$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=     CPPFLAGS=-I/usr/include/openldap
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-dependency-tracking
+CONFIGURE_OPTIONS += CPPFLAGS=-I/usr/include/openldap
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
