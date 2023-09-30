@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 asyncio: mode=strict
-collecting ... collected 1399 items / 2 skipped
+collecting ... collected 1411 items / 2 skipped
 
 IPython/core/completer.py::IPython.core.completer SKIPPED (all docst...)
 IPython/core/completer.py::IPython.core.completer.provisionalcompleter SKIPPED
@@ -220,7 +220,6 @@ IPython/core/tests/test_displayhook.py::test_underscore_no_overwrite_user PASSED
 IPython/core/tests/test_events.py::CallbackTests::test_bare_function_missed_unregister PASSED
 IPython/core/tests/test_events.py::CallbackTests::test_cb_error PASSED
 IPython/core/tests/test_events.py::CallbackTests::test_cb_keyboard_interrupt PASSED
-IPython/core/tests/test_events.py::CallbackTests::test_ignore_event_arguments_if_no_argument_required PASSED
 IPython/core/tests/test_events.py::CallbackTests::test_register_unregister PASSED
 IPython/core/tests/test_events.py::CallbackTests::test_unregister_during_callback PASSED
 IPython/core/tests/test_exceptiongroup_tb.py::test_native_exceptiongroup[another-another] PASSED
@@ -309,8 +308,10 @@ IPython/core/tests/test_guarded_eval.py::test_evaluates_binary_operations[contex
 IPython/core/tests/test_guarded_eval.py::test_evaluates_binary_operations[context2-5 / 2-2.5] PASSED
 IPython/core/tests/test_guarded_eval.py::test_evaluates_binary_operations[context2-5 // 2-2] PASSED
 IPython/core/tests/test_guarded_eval.py::test_evaluates_binary_operations[context2-5**2-25] PASSED
-IPython/core/tests/test_guarded_eval.py::test_evaluates_calls[data0-data.index(2)-data.append(4)-1] PASSED
-IPython/core/tests/test_guarded_eval.py::test_evaluates_calls[data1-data.keys().isdisjoint({})-data.update()-True] PASSED
+IPython/core/tests/test_guarded_eval.py::test_evaluates_calls[data0-data.index(2)-data.append(4)-1-True] PASSED
+IPython/core/tests/test_guarded_eval.py::test_evaluates_calls[data1-data.keys().isdisjoint({})-data.update()-True-True] PASSED
+IPython/core/tests/test_guarded_eval.py::test_evaluates_calls[data2-data()-data.__class__()-HeapType-False] PASSED
+IPython/core/tests/test_guarded_eval.py::test_evaluates_calls[data3-data()-data.__class__()-frozenset-False] PASSED
 IPython/core/tests/test_guarded_eval.py::test_evaluates_comparisons[context0-(1 < 4) < 3-True] PASSED
 IPython/core/tests/test_guarded_eval.py::test_evaluates_comparisons[context0-0 in [1]-False] PASSED
 IPython/core/tests/test_guarded_eval.py::test_evaluates_comparisons[context0-0 not in [1]-True] PASSED
@@ -1361,7 +1362,18 @@ IPython/utils/tests/test_tempdir.py::test_named_file_in_temporary_directory PASS
 IPython/utils/tests/test_tempdir.py::test_temporary_working_directory PASSED
 IPython/utils/tests/test_text.py::test_LSString PASSED
 IPython/utils/tests/test_text.py::test_SList PASSED
-IPython/utils/tests/test_text.py::test_columnize PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa          ccccc\nbbbbb          ddddd\n-20-False-True] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa      bbbbb      ccccc      ddddd\n-40-False-True] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa  bbbbb  ccccc  ddddd\n-80-False-False] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa  bbbbb  ccccc  ddddd\n-80-True-False] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa  bbbbb\nccccc  ddddd\n-12-True-False] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa  bbbbb\nccccc  ddddd\n-25-True-False] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa  ccccc\nbbbbb  ddddd\n-12-False-False] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa  ccccc\nbbbbb  ddddd\n-12-False-True] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa  ccccc\nbbbbb  ddddd\n-25-False-False] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa\nbbbbb\nccccc\nddddd\n-10-False-False] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa\nbbbbb\nccccc\nddddd\n-10-False-True] PASSED
+IPython/utils/tests/test_text.py::test_columnize[aaaaa\nbbbbb\nccccc\nddddd\n-10-True-False] PASSED
 IPython/utils/tests/test_text.py::test_columnize_long[False] PASSED
 IPython/utils/tests/test_text.py::test_columnize_long[True] PASSED
 IPython/utils/tests/test_text.py::test_columnize_medium[False] PASSED
@@ -1525,6 +1537,9 @@ IPython/extensions/tests/test_storemagic.py::test_autorestore
   $(@D)/IPython/extensions/tests/test_storemagic.py:53: DeprecationWarning: `magic(...)` is deprecated since IPython 0.13 (warning added in 8.1), use run_line_magic(magic_name, parameter_s).
     ip.magic('store foo')
 
+IPython/utils/text.py::IPython.utils.text.compute_item_matrix
+  <doctest IPython.utils.text.compute_item_matrix[1]>:1: PendingDeprecationWarning: `compute_item_matrix` is Pending Deprecation since IPython 8.17.It is considered fro removal in in future version. Please open an issue if you believe it should be kept.
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ============================= slowest 10 durations =============================
-======== 1308 passed, 92 skipped, 1 xpassed, 35 warnings ========
+======== 1320 passed, 92 skipped, 1 xpassed, 36 warnings ========
