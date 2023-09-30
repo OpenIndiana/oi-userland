@@ -21,15 +21,12 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE = pkg
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		"Package History"
+COMPONENT_NAME=		history
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/history.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PACKAGE_NAMES  = consolidation/l10n/l10n-incorporation
-PACKAGE_NAMES += consolidation/sfw/sfw-incorporation
-PACKAGE_NAMES += consolidation/SunVTS/SunVTS-incorporation
-PACKAGE_NAMES += consolidation/xvm/xvm-incorporation
-PACKAGE_NAMES += SUNWacpidump
+# Auto-generated dependencies
