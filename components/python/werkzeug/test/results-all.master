@@ -1,15 +1,12 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-asyncio: mode=strict
-collecting ... collected 929 items / 24 deselected / 905 selected
+collecting ... collected 896 items / 24 deselected / 872 selected
 
 tests/middleware/test_dispatcher.py::test_dispatcher PASSED
 tests/middleware/test_lint.py::test_lint_middleware PASSED
@@ -21,6 +18,7 @@ tests/middleware/test_lint.py::test_lint_middleware_http_headers[headers1-Header
 tests/middleware/test_lint.py::test_lint_middleware_http_headers[headers2-The status header is not supported.] PASSED
 tests/middleware/test_lint.py::test_lint_middleware_invalid_location PASSED
 tests/middleware/test_lint.py::test_lint_middleware_invalid_status PASSED
+tests/middleware/test_profiler.py::test_filename_format_function PASSED
 tests/middleware/test_proxy_fix.py::test_proxy_fix[all] PASSED
 tests/middleware/test_proxy_fix.py::test_proxy_fix[for] PASSED
 tests/middleware/test_proxy_fix.py::test_proxy_fix[host] PASSED
@@ -613,6 +611,7 @@ tests/test_routing.py::test_unicode_rules PASSED
 tests/test_routing.py::test_uuid_converter PASSED
 tests/test_routing.py::test_weighting PASSED
 tests/test_security.py::test_default_password_method PASSED
+tests/test_security.py::test_invalid_method PASSED
 tests/test_security.py::test_pbkdf2 PASSED
 tests/test_security.py::test_require_salt PASSED
 tests/test_security.py::test_safe_join PASSED
@@ -716,29 +715,13 @@ tests/test_test.py::test_run_wsgi_apps[False-True] PASSED
 tests/test_test.py::test_run_wsgi_apps[True-False] PASSED
 tests/test_test.py::test_run_wsgi_apps[True-True] PASSED
 tests/test_test.py::test_set_cookie_app PASSED
-tests/test_urls.py::test_bytes_unquoting PASSED
-tests/test_urls.py::test_fileurl_parsing_windows[127.0.0.1-False] PASSED
-tests/test_urls.py::test_fileurl_parsing_windows[127.0.0.1-True] PASSED
-tests/test_urls.py::test_fileurl_parsing_windows[::1-False] PASSED
-tests/test_urls.py::test_fileurl_parsing_windows[::1-True] PASSED
-tests/test_urls.py::test_fileurl_parsing_windows[localhost-False] PASSED
-tests/test_urls.py::test_fileurl_parsing_windows[localhost-True] PASSED
 tests/test_urls.py::test_iri_safe_quoting PASSED
 tests/test_urls.py::test_iri_support PASSED
 tests/test_urls.py::test_iri_to_uri_dont_quote_valid_code_points PASSED
 tests/test_urls.py::test_iri_to_uri_idempotence_ascii_only PASSED
 tests/test_urls.py::test_iri_to_uri_idempotence_non_ascii PASSED
 tests/test_urls.py::test_iri_to_uri_to_iri PASSED
-tests/test_urls.py::test_multidict_encoding PASSED
-tests/test_urls.py::test_ordered_multidict_encoding PASSED
-tests/test_urls.py::test_parsing PASSED
-tests/test_urls.py::test_partial_unencoded_decode PASSED
-tests/test_urls.py::test_quoting PASSED
 tests/test_urls.py::test_quoting_of_local_urls PASSED
-tests/test_urls.py::test_replace PASSED
-tests/test_urls.py::test_sorted_url_encode PASSED
-tests/test_urls.py::test_stream_decoding_string_fails PASSED
-tests/test_urls.py::test_streamed_url_encoding PASSED
 tests/test_urls.py::test_uri_iri_normalization[http://f\xf6\xf1.com/\u2610/fred?utf8=%E2%9C%93] PASSED
 tests/test_urls.py::test_uri_iri_normalization[http://f\xf6\xf1.com/\u2610/fred?utf8=\u2713] PASSED
 tests/test_urls.py::test_uri_iri_normalization[http://xn--f-rgao.com/%E2%98%90/fred?utf8=%E2%9C%930] PASSED
@@ -748,17 +731,6 @@ tests/test_urls.py::test_uri_to_iri_dont_unquote_space PASSED
 tests/test_urls.py::test_uri_to_iri_idempotence_ascii_only PASSED
 tests/test_urls.py::test_uri_to_iri_idempotence_non_ascii PASSED
 tests/test_urls.py::test_uri_to_iri_to_uri PASSED
-tests/test_urls.py::test_url_attributes PASSED
-tests/test_urls.py::test_url_attributes_bytes PASSED
-tests/test_urls.py::test_url_bytes_decoding PASSED
-tests/test_urls.py::test_url_decoding PASSED
-tests/test_urls.py::test_url_encoding PASSED
-tests/test_urls.py::test_url_fixing PASSED
-tests/test_urls.py::test_url_fixing_filepaths PASSED
-tests/test_urls.py::test_url_fixing_qs PASSED
-tests/test_urls.py::test_url_joining PASSED
-tests/test_urls.py::test_url_parse_does_not_clear_warnings_registry PASSED
-tests/test_urls.py::test_url_unquote_plus_unicode PASSED
 tests/test_utils.py::test_append_slash_redirect[False-/-http://example.org/-http://example.org/] PASSED
 tests/test_utils.py::test_append_slash_redirect[False-/-http://example.org/app-http://example.org/app/] PASSED
 tests/test_utils.py::test_append_slash_redirect[False-/foo-http://example.org/app-http://example.org/app/foo/] PASSED
@@ -901,23 +873,15 @@ tests/test_wsgi.py::test_get_host[name, ignore https port] PASSED
 tests/test_wsgi.py::test_get_host[prefer host] PASSED
 tests/test_wsgi.py::test_get_host_fallback PASSED
 tests/test_wsgi.py::test_get_host_validate_trusted_hosts PASSED
-tests/test_wsgi.py::test_iter_functions_support_iterators PASSED
 tests/test_wsgi.py::test_limited_stream PASSED
 tests/test_wsgi.py::test_limited_stream_disconnection PASSED
 tests/test_wsgi.py::test_limited_stream_json_load PASSED
 tests/test_wsgi.py::test_limited_stream_read_with_raw_io PASSED
-tests/test_wsgi.py::test_lines_longer_buffer_size PASSED
-tests/test_wsgi.py::test_lines_longer_buffer_size_cap PASSED
-tests/test_wsgi.py::test_make_chunk_iter PASSED
-tests/test_wsgi.py::test_make_chunk_iter_bytes PASSED
-tests/test_wsgi.py::test_multi_part_line_breaks PASSED
-tests/test_wsgi.py::test_multi_part_line_breaks_bytes PASSED
-tests/test_wsgi.py::test_multi_part_line_breaks_problematic PASSED
 tests/test_wsgi.py::test_path_info_and_script_name_fetching PASSED
 tests/test_wsgi.py::test_range_wrapper PASSED
 tests/test_wsgi.py::test_responder PASSED
 
-======== 905 passed, 24 deselected ========
+======== 872 passed, 24 deselected ========
 pytest-xprocess reminder::Be sure to terminate the started process by running 'pytest --xkill' if you have not explicitly done so in your fixture with 'xprocess.getinfo(<process_name>).terminate()'.
   py$(PYV): OK
   congratulations :)
