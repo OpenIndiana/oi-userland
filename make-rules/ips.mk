@@ -259,7 +259,7 @@ endif
 # - for all currently supported perl versions (from PERL_VERSIONS)
 # - for all perl versions we are currently obsoleting (from PERL_VERSIONS_OBSOLETING)
 # - the $(PLV) string itself
-PERL_PLV_VALUES = $(sunst .,,$(PERL_VERSIONS) $(PERL_VERSIONS_OBSOLETING)) $$(PLV)
+PERL_PLV_VALUES = $(subst .,,$(PERL_VERSIONS) $(PERL_VERSIONS_OBSOLETING)) $$(PLV)
 # Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for runtime/perl
 REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERL_PLV_VALUES), -e 's|^\(.*runtime/perl\)-$(v)$$|PERL_\1|g')
 # Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for library/perl-5/*
