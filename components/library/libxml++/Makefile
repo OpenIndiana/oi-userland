@@ -11,41 +11,42 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2023 Andreas Wacknitz
 #
 
+BUILD_BITS= 64_and_32
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libxml++
-COMPONENT_VERSION= 2.40.1
-COMPONENT_REVISION= 1
-COMPONENT_CLASSIFICATION=Development/C++
-COMPONENT_FMRI=library/c++/libxml++
+COMPONENT_MJR_VERSION= 2.42
+COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).2
 COMPONENT_SUMMARY= Library for HTML support in GNOME
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:4ad4abdd3258874f61c2e2a41d08e9930677976d303653cd1670d3e9f35463e9
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.40/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
+COMPONENT_ARCHIVE_HASH= sha256:a433987f54cc1ecaa84af26af047a62df9e884574e0d686e5ddc6f70441c152b
+COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://www.gnome.org
+COMPONENT_FMRI= library/c++/libxml++
+COMPONENT_CLASSIFICATION= Development/C++
 COMPONENT_LICENSE= LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
+COMPONENT_TEST_ENV += LANG=C
+COMPONENT_TEST_ENV += LC_ALL=C
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+# Build dependency
+REQUIRED_PACKAGES += developer/build/pkg-config
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += developer/macro/gnu-m4
+REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += library/desktop/c++/mm-common
+REQUIRED_PACKAGES += library/libxslt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
