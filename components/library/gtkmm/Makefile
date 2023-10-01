@@ -13,12 +13,12 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtkmm
 COMPONENT_VERSION= 2.24.5
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= gtkmm - C++ Wrapper for the Gtk+ Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -30,11 +30,12 @@ COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
-CXXFLAGS += -std=c++11
+CXXFLAGS += -std=c++17
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
