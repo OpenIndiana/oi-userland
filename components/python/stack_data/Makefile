@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		stack_data
-HUMAN_VERSION =			0.6.2
+HUMAN_VERSION =			0.6.3
 COMPONENT_SUMMARY =		stack_data - Extract data from python stack frames and tracebacks for informative displays
 COMPONENT_PROJECT_URL =		http://github.com/alexmojaki/stack_data
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/db/18/aa7f2b111aeba2cd83503254d9133a912d7f61f459a0c8561858f0d72a56/stack_data-0.6.2.tar.gz
+	https://files.pythonhosted.org/packages/28/e3/55dcc2cfbc3ca9c29519eb6884dd1415ecb53b0e934862d3559ddcb7e20b/stack_data-0.6.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:32d2dd0376772d01b6cb9fc996f3c8b57a357089dec328ed4b6553d037eaf815
+	sha256:836a778de4fec4dcd1dcd89ed8abff8a221f58308462e1c4aa2a3cf30148f0b9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
