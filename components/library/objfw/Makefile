@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = objfw
 COMPONENT_VERSION = 1.0.3
+COMPONENT_REVISION = 1
 COMPONENT_SUMMARY = A portable, lightweight framework for the Objective-C language
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
