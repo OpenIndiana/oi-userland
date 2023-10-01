@@ -1,14 +1,11 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/tmp/py$(PYV) tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
-collecting ... collected 482 items
+collecting ... collected 483 items
 
 in 3.11)
 tests/test_appctx.py::test_app_context_provides_current_app PASSED
@@ -323,6 +320,7 @@ tests/test_helpers.py::TestUrlFor::test_url_for_with_alternating_schemes PASSED
 tests/test_helpers.py::TestUrlFor::test_url_for_with_anchor PASSED
 tests/test_helpers.py::TestUrlFor::test_url_for_with_scheme PASSED
 tests/test_helpers.py::TestUrlFor::test_url_for_with_scheme_not_external PASSED
+tests/test_helpers.py::TestUrlFor::test_url_for_with_self PASSED
 tests/test_helpers.py::TestUrlFor::test_url_with_method PASSED
 tests/test_helpers.py::test_abort_no_app PASSED
 tests/test_helpers.py::test_abort_with_app PASSED
@@ -494,6 +492,6 @@ tests/test_views.py::test_view_inheritance PASSED
 tests/test_views.py::test_view_patching PASSED
 tests/test_views.py::test_view_provide_automatic_options_attr PASSED
 
-======== 481 passed, 1 skipped ========
+======== 482 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)
