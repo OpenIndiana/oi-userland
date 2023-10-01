@@ -1,0 +1,16 @@
+diff -Nru elinks-0.16.1.1.orig/meson.build elinks-0.16.1.1/meson.build
+--- elinks-0.16.1.1.orig/meson.build	2023-05-01 10:45:22.000000000 +0200
++++ elinks-0.16.1.1/meson.build	2023-10-01 16:30:47.179745062 +0200
+@@ -476,6 +476,12 @@
+     deps += smbdeps
+ endif
+ 
++nsldeps = compiler.find_library('nsl', static: st)
++deps += nsldeps
++
++socketdeps = compiler.find_library('socket', static: st)
++deps += socketdeps
++
+ dep_atomic = dependency('', required: false)
+ 
+ if not compiler.links('''#include <stdint.h>
