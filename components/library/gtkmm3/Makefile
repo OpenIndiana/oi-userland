@@ -13,17 +13,19 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
 #
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkmm3
-COMPONENT_VERSION=	3.24.2
-COMPONENT_REVISION=	2
+COMPONENT_MJR_VERSION=	3.24
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).8
 COMPONENT_SUMMARY=	gtkmm - C++ Wrapper for the Gtk+ Library
 COMPONENT_SRC=		gtkmm-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:6d71091bcd1863133460d4188d04102810e9123de19706fb656b7bb915b4adc3
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/gtkmm/3.24/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:d2940c64922e5b958554b23d4c41d1839ea9e43e0d2e5b3819cfb46824a098c4
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/gtkmm/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtkmm.org/
 COMPONENT_FMRI=		library/desktop/c++/gtkmm3
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
@@ -35,6 +37,14 @@ include $(WS_MAKE_RULES)/common.mk
 PATH = $(PATH.gnu)
 
 unexport SHELLOPTS
+
+# Build dependency
+REQUIRED_PACKAGES += developer/build/pkg-config
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += developer/macro/gnu-m4
+REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += library/desktop/c++/mm-common
+REQUIRED_PACKAGES += library/libxslt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
