@@ -20,37 +20,34 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2023, Niklas Poslovski
 #
-
-BUILD_BITS=64
-
+BUILD_STYLE=meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		elinks
-COMPONENT_REVISION=	2
-COMPONENT_VERSION=	0.11.7
-COMPONENT_PROJECT_URL=	http://elinks.or.cz/
+COMPONENT_VERSION=	0.16.1.1
+COMPONENT_PROJECT_URL=	https://github.com/rkd77/elinks
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:456db6f704c591b1298b0cd80105f459ff8a1fc07a0ec1156a36c4da6f898979
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/elinks
+    sha256:303c6f830b98658dcb813b68432ecde27d3857ccf1e765109fb6b0edb89f5095
+COMPONENT_ARCHIVE_URL=	https://github.com/rkd77/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		web/browser/elinks
+COMPONENT_SUMMARY=	advanced text-mode WWW browser
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=		--enable-bittorrent
-CONFIGURE_OPTIONS  +=		--enable-html-highlight
-CONFIGURE_OPTIONS  +=		--enable-256-colors
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-
-ASLR_MODE = $(ASLR_ENABLE)
+CONFIGURE_OPTIONS += -Dgpm=false
+CONFIGURE_OPTIONS += -Didn=false
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += library/tre
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += x11/library/libx11
