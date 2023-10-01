@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Warnings
-HUMAN_VERSION =			0.031
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.032
 COMPONENT_SUMMARY =		Test::Warnings - Test for warnings and the lack of them
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1e542909fef305e45563e9878ea1c3b0c7cef1b28bb7ae07eba2e1efabec477b
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:4727dae2416e9f07e41e2dc3a9143ba6affc1ec57652117c99d50038e313e9d9
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENCE
 
 include $(WS_MAKE_RULES)/common.mk
@@ -35,3 +34,5 @@ COMPONENT_TEST_TRANSFORMS += '-e "s/\(Does::Not::Exist::\)[0-9]*/\1RANDOM/"'
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-check
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/padwalker
