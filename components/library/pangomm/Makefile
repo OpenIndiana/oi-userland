@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE= meson
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pangomm
 COMPONENT_MAJOR_VERSION=	2.46
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	pangomm - C++ Wrapper for the pango Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -32,15 +33,25 @@ COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
+# There are no tests available.
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
-CXXFLAGS += -std=c++11
+CXXFLAGS += -std=c++17
 
 # I haven't found the reason yet why generating the documentation differs from my systems to the build server.
 # So we won't build documentation for now as it increases the package size significantely. 
 CONFIGURE_OPTIONS += -Dbuild-documentation=false
+
+# Build dependency
+REQUIRED_PACKAGES += developer/build/pkg-config
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += developer/macro/gnu-m4
+REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += library/desktop/c++/mm-common
+REQUIRED_PACKAGES += library/libxslt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
