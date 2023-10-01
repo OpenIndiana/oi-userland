@@ -11,39 +11,40 @@
 
 #
 # Copyright (c) 2015-2021 Jim Klimov
+# Copyright (c) 2023 Niklas Poslovski
 #
-
-BUILD_STYLE=configure
-BUILD_BITS=64
+BUILD_STYLE=cmake
+USE_DEFAULT_TEST_TRANSFORMS=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ccache
-COMPONENT_VERSION=      3.3.4
-COMPONENT_REVISION=     3
-COMPONENT_PROJECT_URL=  http://ccache.samba.org/
-COMPONENT_DOWNLOAD_URL=	http://samba.org/ftp/$(COMPONENT_NAME)/
-COMPONENT_DOCUMENTATION_URL =	http://ccache.samba.org/manual.html
+COMPONENT_VERSION=      4.8.3
+COMPONENT_PROJECT_URL=  https://ccache.dev
+COMPONENT_DOCUMENTATION_URL =	https://ccache.dev/documentation.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:fa9d7f38367431bc86b19ad107d709ca7ecf1574fdacca01698bdf0a47cd8567
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
+	sha256:e47374c810b248cfca3665ee1d86c7c763ffd68d9944bc422d9c1872611f2b11
+COMPONENT_ARCHIVE_URL=  https://github.com/ccache/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=      ccache - cacher of GCC-compiled files to avoid doing the same job twice
 COMPONENT_FMRI=         developer/ccache
 COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_LICENSE=      "GPLv3,murmurhash,papowell/jhweiss,PostgreSQL,Python,zlib"
-COMPONENT_LICENSE_FILE= LICENSE.txt
+COMPONENT_LICENSE_FILE= LICENSE.adoc
 
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS  += -D_GNU_SOURCE -D__EXTENSIONS__ --std=c99
-
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
+COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9].[0-9][0-9] sec//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9][0-9].[0-9][0-9] sec//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9][0-9][0-9].[0-9][0-9] sec//" '
+unexport SHELLOPTS
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += database/hiredis
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += file/gnu-coreutils

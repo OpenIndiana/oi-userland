@@ -1,0 +1,24 @@
+diff -Nru ccache-4.8.3.orig/CMakeLists.txt ccache-4.8.3/CMakeLists.txt
+--- ccache-4.8.3.orig/CMakeLists.txt	2023-08-29 21:41:23.000000000 +0200
++++ ccache-4.8.3/CMakeLists.txt	2023-10-01 15:04:39.129393873 +0200
+@@ -144,7 +144,7 @@
+ # ccache executable
+ #
+ add_executable(ccache src/main.cpp)
+-target_link_libraries(ccache PRIVATE standard_settings standard_warnings ccache_framework)
++target_link_libraries(ccache PRIVATE standard_settings standard_warnings ccache_framework nsl socket)
+ 
+ #
+ # Documentation
+diff -Nru ccache-4.8.3.orig/unittest/CMakeLists.txt ccache-4.8.3/unittest/CMakeLists.txt
+--- ccache-4.8.3.orig/unittest/CMakeLists.txt	2023-08-29 21:41:23.000000000 +0200
++++ ccache-4.8.3/unittest/CMakeLists.txt	2023-10-01 15:04:49.926288823 +0200
+@@ -56,7 +56,7 @@
+ 
+ target_link_libraries(
+   unittest
+-  PRIVATE standard_settings standard_warnings ccache_framework third_party)
++  PRIVATE standard_settings standard_warnings ccache_framework third_party nsl socket)
+ 
+ target_include_directories(unittest PRIVATE ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${ccache_SOURCE_DIR}/src)
+ 
