@@ -161,6 +161,19 @@ endif
 
 USERLAND_REQUIRED_PACKAGES += developer/build/meson
 
+MESON_TEST_TRANSFORMS = \
+	'-n ' \
+	'-e "/Ok:/p" ' \
+	'-e "/Fail:/p" ' \
+	'-e "/Pass:/p" ' \
+	'-e "/Skipped:/p" ' \
+	'-e "/Timeout:/p" '
+
+USE_DEFAULT_TEST_TRANSFORMS?=no
+ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)
+COMPONENT_TEST_TRANSFORMS+= $(MESON_TEST_TRANSFORMS)
+endif
+
 # Meson generates build.ninja files for the ninja build tool to run,
 # so we include ninja.mk for the build/install/test rules
 
