@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = objfw
 COMPONENT_VERSION = 1.0.3
-COMPONENT_REVISION = 1
+COMPONENT_REVISION = 2
 COMPONENT_SUMMARY = A portable, lightweight framework for the Objective-C language
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
@@ -48,14 +48,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --disable-rpath
 CONFIGURE_OPTIONS += --with-tls=gnutls
-CONFIGURE_OPTIONS.32 += OBJC="$(CLANG_PREFIX)/bin/clang -m32"
-CONFIGURE_OPTIONS.64 += OBJC="$(CLANG_PREFIX)/bin/clang -m64"
-# When using 64 bit, clang uses a different linking order than GCC, which
-# breaks unwinding. Using this reorders libgcc_s so that it works.
-CONFIGURE_OPTIONS.64 += LIBS="$$(gcc --print-file-name=libgcc_s.so)"
-# ... but then we also need to add libgcc_s to rpath
-CONFIGURE_OPTIONS.32 += LDFLAGS="-Wl,-rpath,$$(realpath $$(dirname $$(gcc -m32 --print-file-name=libgcc_s.so)))"
-CONFIGURE_OPTIONS.64 += LDFLAGS="-Wl,-rpath,$$(realpath $$(dirname $$(gcc -m64 --print-file-name=libgcc_s.so)))"
+CONFIGURE_OPTIONS += OBJC="$(CLANG_PREFIX)/bin/clang -m$(BITS)"
+CONFIGURE_OPTIONS += LDFLAGS="-Wl,-rpath,$$(realpath $$(dirname $$(gcc -m$(BITS) --print-file-name=libgcc_s.so)))"
 
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 # Auto-generated dependencies
