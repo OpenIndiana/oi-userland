@@ -1,0 +1,87 @@
+--- lua-5.4.6/src/lauxlib.h	2023-05-02 22:02:28.000000000 +0200
++++ lua-5.4.6/src/lauxlib.h.new	2023-10-02 22:24:14.018899755 +0200
+@@ -8,6 +8,9 @@
+ #ifndef lauxlib_h
+ #define lauxlib_h
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
+ 
+ #include <stddef.h>
+ #include <stdio.h>
+@@ -294,7 +297,9 @@
+ #endif
+ /* }============================================================ */
+ 
+-
++#ifdef __cplusplus
++}
++#endif
+ 
+ #endif
+ 
+--- lua-5.4.6/src/lua.h	2023-05-02 22:02:30.000000000 +0200
++++ lua-5.4.6/src/lua.h.new	2023-10-02 22:25:46.666545597 +0200
+@@ -9,6 +9,10 @@
+ #ifndef lua_h
+ #define lua_h
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ #include <stdarg.h>
+ #include <stddef.h>
+ 
+@@ -519,5 +523,8 @@
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ ******************************************************************************/
+ 
++#ifdef __cplusplus
++}
++#endif
+ 
+ #endif
+--- lua-5.4.6/src/lualib.h	2023-05-02 22:02:30.000000000 +0200
++++ lua-5.4.6/src/lualib.h.new	2023-10-02 22:28:07.547172506 +0200
+@@ -8,6 +8,10 @@
+ #ifndef lualib_h
+ #define lualib_h
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ #include "lua.h"
+ 
+ 
+@@ -48,5 +52,8 @@
+ /* open all previous libraries */
+ LUALIB_API void (luaL_openlibs) (lua_State *L);
+ 
++#ifdef __cplusplus
++}
++#endif
+ 
+ #endif
+--- lua-5.4.6/src/luaconf.h	2023-05-02 22:02:30.000000000 +0200
++++ lua-5.4.6/src/luaconf.h.new	2023-10-02 22:30:32.600468200 +0200
+@@ -223,7 +223,7 @@
+ 
+ #else			/* }{ */
+ 
+-#define LUA_ROOT	"/usr/local/"
++#define LUA_ROOT	"/usr/"
+ #define LUA_LDIR	LUA_ROOT "share/lua/" LUA_VDIR "/"
+ #define LUA_CDIR	LUA_ROOT "lib/lua/" LUA_VDIR "/"
+ 
+@@ -313,7 +313,7 @@
+ */
+ #if defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
+     defined(__ELF__)		/* { */
+-#define LUAI_FUNC	__attribute__((visibility("internal"))) extern
++#define LUAI_FUNC	extern
+ #else				/* }{ */
+ #define LUAI_FUNC	extern
+ #endif				/* } */
