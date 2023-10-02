@@ -17,14 +17,14 @@ BUILD_STYLE= archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        hubot-sans
-COMPONENT_VERSION=      1.0
+COMPONENT_VERSION=      1.0.1
 COMPONENT_SUMMARY=      Hubot Sans is Mona Sans’s robotic sidekick. \
 						The typeface is designed with more geometric accents to lend a technical and idiosyncratic feel
 COMPONENT_PROJECT_URL=  https://github.com/github/hubot-sans
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:27f39ca58cce4d4419f18069db29011a48b07173320818ce5621307a943175ac
+COMPONENT_ARCHIVE_HASH= sha256:60a4a121ba1f6bd3cde08e760c0871ae6ad17acccf10f8ad47821745e6428d1d
 COMPONENT_LICENSE=      SIL Open Font License Version 1.1
 COMPONENT_LICENSE_FILE=	LICENSE
 
@@ -32,7 +32,7 @@ FONT_TYPE= TTF
 
 include $(WS_MAKE_RULES)/font.mk
 
-COMPONENT_FONT_SRC_DIR= dist
+COMPONENT_FONT_SRC_DIR= fonts/ttf
 COMPONENT_FONT_FILES += *.ttf
 
 COMPONENT_FONTCONF_SRC_DIR= 
