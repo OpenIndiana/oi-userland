@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic
-HUMAN_VERSION =			1.10.12
+HUMAN_VERSION =			1.10.13
 COMPONENT_SUMMARY =		pydantic - Data validation using Python type hints
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3b/9b/a7631bf35e55326fd74654fe6bd896478f47d65e97ca69e60ddb1b3823ee/pydantic-1.10.12.tar.gz
+	https://files.pythonhosted.org/packages/51/cd/721eb771f3f09f60de0807e240c3acf44c38828d0ced869fe8df7e79801b/pydantic-1.10.13.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0fe8a415cea8f340e7a9af9c54fc71a649b43e8ca3cc732986116b3cb135d303
+	sha256:32c8b48dcd3b2ac4e78b0ba4af3a2c2eb6048cb75202f0ea7b34feb740efc340
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,11 +33,8 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
-# https://github.com/pydantic/pydantic/issues/5561
-PYTEST_ADDOPTS += -p no:randomly
+# https://github.com/PyO3/setuptools-rust/issues/358
+TEST_CONFLICTING_PACKAGES.python += library/python/setuptools-rust
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
