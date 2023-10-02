@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fastjsonschema
-HUMAN_VERSION =			2.18.0
+HUMAN_VERSION =			2.18.1
 COMPONENT_SUMMARY =		fastjsonschema - Fastest Python implementation of JSON schema
 COMPONENT_PROJECT_URL =		https://github.com/horejsek/python-fastjsonschema
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e5/23/cd3d068a28f030efa05169a9f3fcfb091532614ae9abd3f047d50373bed7/fastjsonschema-2.18.0.tar.gz
+	https://files.pythonhosted.org/packages/82/d1/0e54b17b6ebae7a347602bb07bb2f5c4cff9bdbbd354f202b3af48f22f75/fastjsonschema-2.18.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e820349dd16f806e4bd1467a138dced9def4bc7d6213a34295272a6cac95b5bd
+	sha256:06dc8680d937628e993fa0cd278f196d20449a1adc087640710846b324d422ea
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
