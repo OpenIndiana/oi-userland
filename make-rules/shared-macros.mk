@@ -1043,6 +1043,7 @@ GTAR =		/usr/gnu/bin/tar
 STRIP =	/usr/bin/strip
 IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
 JQ =		/usr/bin/jq
+DOS2UNIX =	/usr/bin/dos2unix
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)

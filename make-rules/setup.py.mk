@@ -575,7 +575,7 @@ $(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS)) $(BUILD_DIR)/META.de
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 	( for f in $(TEST_REQUIREMENTS) ; do \
-		$(CAT) $$f ; \
+		$(CAT) $$f | $(DOS2UNIX) -ascii ; \
 	done ; \
 	for e in $(TEST_REQUIREMENTS_EXTRAS) ; do \
 		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
