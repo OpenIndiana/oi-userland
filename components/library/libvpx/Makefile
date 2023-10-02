@@ -13,17 +13,18 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2023 Andreas Wacknitz
 #
+
 BUILD_BITS= 64_and_32
-USE_COMMON_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvpx
-COMPONENT_VERSION= 1.13.0
+COMPONENT_VERSION= 1.13.1
 COMPONENT_SUMMARY= The WebM VP8/VP9 Codec SDK
 COMPONENT_PROJECT_URL = http://www.webmproject.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:cb2a393c9c1fae7aba76b950bb0ad393ba105409fe1a147ccd61b0aaa1501066
+COMPONENT_ARCHIVE_HASH=	sha256:00dae80465567272abd077f59355f95ac91d7809a2d3006f9ace2637dd429d14
 COMPONENT_ARCHIVE_URL=	https://github.com/webmproject/libvpx/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI = library/video/libvpx
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
@@ -59,11 +60,8 @@ TEST_LIBPATH.32 =   $(PROTOUSRLIBDIR)
 TEST_LIBPATH.64 =   $(PROTOUSRLIBDIR64)
 COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 COMPONENT_TEST_TRANSFORMS += \
-        '-e "s/ ([0-9]\+ ms.*)//" ' \
-        '-n ' \
-        '-e "/tests/p" ' \
-        '-e "/RUN/p" ' \
-        '-e "/OK/p" '
+	' -n ' \
+	'-e "/PASSED/p" '
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/assembler/yasm
