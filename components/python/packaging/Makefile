@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		packaging
-HUMAN_VERSION =			23.1
+HUMAN_VERSION =			23.2
 COMPONENT_SUMMARY =		packaging - Core utilities for Python packages
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b9/6c/7c6658d258d7971c5eb0d9b69fa9265879ec9a9158031206d47800ae2213/packaging-23.1.tar.gz
+	https://files.pythonhosted.org/packages/fb/2b/9b9c33ffed44ee921d0967086d653047286054117d584f1b1a7c22ceaf7b/packaging-23.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a392980d2b6cffa644431898be54b0045151319d1e7ec34f0cfed48767dd334f
+	sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 
 TEST_STYLE = pytest
