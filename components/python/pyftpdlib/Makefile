@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project pyftpdlib
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyftpdlib
-HUMAN_VERSION =			1.5.7
+HUMAN_VERSION =			1.5.8
 COMPONENT_SUMMARY =		pyftpdlib - Very fast asynchronous FTP server library
 COMPONENT_PROJECT_URL =		https://github.com/giampaolo/pyftpdlib/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2f/bc/f03a15bf807698bbecdcf316041e3d79b25a40fa7b6e071e17702ff7b9d4/pyftpdlib-1.5.7.tar.gz
+	https://files.pythonhosted.org/packages/62/7e/64a9108bed5610e0a83b66dd725ef1a9bad59a87840c4786a969a23c9762/pyftpdlib-1.5.8.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7ea3ce4137db8209af1f6b9ea020590f462c63ed7c7a1240bd596e4d3a7b656e
+	sha256:bf6dabb67dff32b3ff040e2825fffbc6b8de70373bc9d9b553480cc4d7504d6c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,5 +35,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/psutil
-PYTHON_REQUIRED_PACKAGES += library/python/pyopenssl
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
