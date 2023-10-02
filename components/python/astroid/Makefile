@@ -19,31 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		astroid
-HUMAN_VERSION =			2.15.7
+HUMAN_VERSION =			3.0.0
 COMPONENT_SUMMARY =		astroid - An abstract syntax tree for Python with inference support.
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/pylint-dev/astroid/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/60/f7/536d171ce4e334b0ceec9720c016f59f2c75d986e4dbc52b34601cd7834a/astroid-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a36bb3a543d8f46ddf006e676eee207c82ea28d01f89b1f414cdfdd84e189452
+	sha256:1defdbca052635dd29657ea674edfc45e4b5be9cd53630c5b084fcfed94344a8
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/lazy-object-proxy
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += library/python/wrapt
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/flake8-bugbear
-TEST_REQUIRED_PACKAGES.python += library/python/flake8-typing-imports
-TEST_REQUIRED_PACKAGES.python += library/python/isort
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/nose
 TEST_REQUIRED_PACKAGES.python += library/python/numpy
@@ -55,8 +49,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/regex
 TEST_REQUIRED_PACKAGES.python += library/python/six
-TEST_REQUIRED_PACKAGES.python += library/python/types-python-dateutil
-TEST_REQUIRED_PACKAGES.python += library/python/types-setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/types-six
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/urllib3
