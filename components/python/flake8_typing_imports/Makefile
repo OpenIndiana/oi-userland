@@ -19,17 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8_typing_imports
-HUMAN_VERSION =			1.14.0
+HUMAN_VERSION =			1.15.0
 COMPONENT_SUMMARY =		flake8_typing_imports - flake8 plugin which checks that typing imports are properly guarded
 COMPONENT_PROJECT_URL =		https://github.com/asottile/flake8-typing-imports
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/04/ae/3e6e7dad6cb04573315a5bad115590dffd66f80de0f71e898cf0bb32cdae/flake8_typing_imports-1.14.0.tar.gz
+	https://files.pythonhosted.org/packages/78/8c/3cbcbeaa6b9664888b309998123049030fb6a6143242bd8d0554ba3daa72/flake8_typing_imports-1.15.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0612976976f1e90bd4588a03d9be5a9c408411e5dc46b29cc6b052e5de42277c
+	sha256:6c04b1e9986874d81399f115f5ec683325675268e9b4924e8464f8b1b6b211d1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
