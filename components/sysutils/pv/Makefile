@@ -23,36 +23,31 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pv
-COMPONENT_VERSION=	1.6.20
+COMPONENT_VERSION=	1.8.0
+COMPONENT_SUMMARY=	Pipe Viewer
+COMPONENT_DESCRIPTION=	pv - a terminal-based tool for monitoring the progress of data through a pipeline.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_FMRI=		shell/pipe-viewer
-COMPONENT_SUMMARY=	'Pipe Viewer'
-COMPONENT_LICENSE=	Artistic
-COMPONENT_LICENSE_FILE=	pv.license
 COMPONENT_PROJECT_URL=	https://www.ivarch.com/programs/pv.shtml
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:e831951eff0718fba9b1ef286128773b9d0e723e1fbfae88d5a3188814fdc603
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:5cec4f737826a0eddab471dd3b75a587bd29a2e7cfa30068d57f29439a251fdf
 COMPONENT_ARCHIVE_URL=	https://www.ivarch.com/programs/sources/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		shell/pipe-viewer
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE=	GPLv3+
+COMPONENT_LICENSE_FILE=	docs/COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PKG_PROTO_DIRS += $(BUILD_DIR_32)
-
-COMPONENT_PRE_CONFIGURE_ACTION = \
-    ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 ASLR_MODE = $(ASLR_ENABLE)
-LD_Z_IGNORE =
 
-COMPONENT_TEST_ENV +=  PATH="$(PATH.gnu)"
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/0/p" '
+# Note that we have 3 failing tests regarding memory safety. These tests are using valgrind which might probably lead to errors.
+COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
