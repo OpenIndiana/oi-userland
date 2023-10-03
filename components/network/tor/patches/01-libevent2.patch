@@ -6,7 +6,7 @@
  fi
  
 -TOR_SEARCH_LIBRARY(libevent, $trylibeventdir, [-levent $STATIC_LIBEVENT_FLAGS $TOR_LIB_IPHLPAPI $TOR_LIB_BCRYPT $TOR_LIB_WS32], [
-+TOR_SEARCH_LIBRARY(libevent, $trylibeventdir, [-levent-2.0 $STATIC_LIBEVENT_FLAGS $TOR_LIB_IPHLPAPI $TOR_LIB_BCRYPT $TOR_LIB_WS32], [
++TOR_SEARCH_LIBRARY(libevent, $trylibeventdir, [-levent-2.1 $STATIC_LIBEVENT_FLAGS $TOR_LIB_IPHLPAPI $TOR_LIB_BCRYPT $TOR_LIB_WS32], [
  #ifdef _WIN32
  #include <winsock2.h>
  #endif
@@ -16,8 +16,8 @@
       if test "x$ac_cv_header_event2_event_h" = "xyes"; then
 -       AC_SEARCH_LIBS(event_new, [event event_core], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for event_new"))
 -       AC_SEARCH_LIBS(evdns_base_new, [event event_extra], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for evdns_base_new"))
-+       AC_SEARCH_LIBS(event_new, [event-2.0 event_core-2.0], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for event_new"))
-+       AC_SEARCH_LIBS(evdns_base_new, [event-2.0 event_extra-2.0], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for evdns_base_new"))
++       AC_SEARCH_LIBS(event_new, [event-2.1 event_core-2.1], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for event_new"))
++       AC_SEARCH_LIBS(evdns_base_new, [event-2.1 event_extra-2.1], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for evdns_base_new"))
  
         if test "$ac_cv_search_event_new" != "none required"; then
           TOR_LIBEVENT_LIBS="$ac_cv_search_event_new"
