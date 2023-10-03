@@ -10,9 +10,9 @@
 
 #
 # Copyright (c) 2017 Dariusz Sendkowski
+# Copyright (c) 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 32_and_64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
@@ -20,6 +20,7 @@ COMPONENT_NAME= GraphicsMagick
 COMPONENT_MAJOR_VERSION= 1.3
 COMPONENT_MINOR_VERSION= 42
 COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
+COMPONENT_REVISION= 1
 COMPONENT_PROJECT_URL= http://www.graphicsmagick.org/
 COMPONENT_SUMMARY= A collection of utilities to support file format conversion,image processing, and 2D vector rendering.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
