@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt
-HUMAN_VERSION =			1.1.0
+HUMAN_VERSION =			1.2.0
 COMPONENT_SUMMARY =		pyproject_fmt - Format your pyproject.toml file
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/14/15/a7972bda756ba9bf803e814bd9d7a6a72472f1f2645eb43492b84ee35b55/pyproject_fmt-1.1.0.tar.gz
+	https://files.pythonhosted.org/packages/3c/ea/a688d3985097fae0a1119d1a2eca7e1fa10ea1a01a98914c708b31b2641c/pyproject_fmt-1.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6149f55a981f6ed3183c953e363afb64e591842604346692ff67be568e0f5931
+	sha256:342eb0722ac6aab8364ae0f803c45c8bbe329beb2371e9fe06080eb548d56ad9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
