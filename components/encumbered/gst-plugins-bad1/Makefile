@@ -16,13 +16,12 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
-USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-bad1
 COMPONENT_VERSION=      1.22.6
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=	gst-plugins-bad
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -42,11 +41,6 @@ PATH = $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include/mesa
 CFLAGS += -I/usr/X11/include
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += -Dexamples=disabled
@@ -112,7 +106,7 @@ REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/opus
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libdvdnav
 REQUIRED_PACKAGES += library/video/libdvdread
