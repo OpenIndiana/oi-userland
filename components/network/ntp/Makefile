@@ -23,13 +23,14 @@
 # Copyright (c) 2010, 2018, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2021, Andreas Wacknitz
+# Copyright (c) 2023, Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 HUMAN_VERSION=		4.2.8p17
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
@@ -135,7 +136,7 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
