@@ -11,39 +11,35 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64_and_32
+BUILD_STYLE = cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= jasper
-COMPONENT_VERSION= 1.900.1
-COMPONENT_REVISION= 4
+COMPONENT_VERSION= 4.0.0
 COMPONENT_SUMMARY= A free software-based reference implementation of the JPEG-2000 Part-1 CODEC
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH=  sha256:6b905a9c2aca2e275544212666eefc4eb44d95d0a57e4305457b407fe63f9494
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=  sha256:39514e1b53a5333fcff817e19565371f016ea536c36fd2d13a9c4d8da8f0be0c
 COMPONENT_PROJECT_URL=	https://www.ece.uvic.ca/~frodo/jasper
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/software/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://github.com/jasper-software/$(COMPONENT_NAME)/releases/download/version-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= codec/jasper
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE= BSD-like
-COMPONENT_LICENSE_FILE= LICENSE
+COMPONENT_LICENSE_FILE= LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --without-docs
+COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9].[0-9][0-9] sec//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9][0-9].[0-9][0-9] sec//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9][0-9][0-9].[0-9][0-9] sec//" '
+unexport SHELLOPTS
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/freeglut
