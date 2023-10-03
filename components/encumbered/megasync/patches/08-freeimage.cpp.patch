@@ -1,6 +1,6 @@
-diff -Nru MEGAsync-4.9.0.0_Linux.orig/src/MEGASync/mega/src/gfx/freeimage.cpp MEGAsync-4.9.0.0_Linux/src/MEGASync/mega/src/gfx/freeimage.cpp
---- MEGAsync-4.9.0.0_Linux.orig/src/MEGASync/mega/src/gfx/freeimage.cpp	2023-03-03 23:13:58.000000000 +0100
-+++ MEGAsync-4.9.0.0_Linux/src/MEGASync/mega/src/gfx/freeimage.cpp	2023-03-21 20:59:33.164120527 +0100
+diff -Nru MEGAsync-4.9.5.0_Linux.orig/src/MEGASync/mega/src/gfx/freeimage.cpp MEGAsync-4.9.5.0_Linux/src/MEGASync/mega/src/gfx/freeimage.cpp
+--- MEGAsync-4.9.5.0_Linux.orig/src/MEGASync/mega/src/gfx/freeimage.cpp	2023-06-08 09:24:13.000000000 +0200
++++ MEGAsync-4.9.5.0_Linux/src/MEGASync/mega/src/gfx/freeimage.cpp	2023-10-03 09:47:52.023993600 +0200
 @@ -209,12 +209,6 @@
  
  #ifdef HAVE_FFMPEG
@@ -14,20 +14,10 @@ diff -Nru MEGAsync-4.9.0.0_Linux.orig/src/MEGASync/mega/src/gfx/freeimage.cpp ME
  const char *GfxProviderFreeImage::supportedformatsFfmpeg()
  {
      return  ".264.265.3g2.3gp.3gpa.3gpp.3gpp2.mp3"
-@@ -313,7 +307,7 @@
- 
-     // Find decoder for video stream
-     AVCodecID codecId = codecParm->codec_id;
--    AVCodec* decoder = avcodec_find_decoder(codecId);
-+    auto decoder = avcodec_find_decoder(codecId);
-     if (!decoder)
-     {
-         LOG_warn << "Codec not found: " << codecId;
-@@ -330,11 +324,6 @@
+@@ -330,10 +324,6 @@
  
      // Force seeking to key frames
      formatContext->seek2any = false;
--    videoStream->skip_to_keyframe = true;
 -    if (decoder->capabilities & CAP_TRUNCATED)
 -    {
 -        codecContext->flags |= CAP_TRUNCATED;
