@@ -11,14 +11,14 @@
 #
 # Copyright 2014-2017 Alexander Pyhalov
 # Copyright 2019, Michal Nowak
+# Copyright 2023, Niklas Poslovski
 #
 
-BUILD_BITS=		64
-USE_OPENSSL11=		no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tor
 COMPONENT_VERSION=	0.4.8.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.torproject.org
 COMPONENT_SUMMARY=	Anonymizing overlay network for TCP
 COMPONENT_FMRI=		network/tor
@@ -27,7 +27,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:b20d2b9c74db28a00c07f090ee5b0241b2b684f3afdecccc6b8008931c557491
-COMPONENT_ARCHIVE_URL=	https://www.torproject.org/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://dist.torproject.org/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc	
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	BSD, OPEN DATA LICENSE
