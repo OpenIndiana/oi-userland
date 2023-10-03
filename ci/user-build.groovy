@@ -31,7 +31,7 @@ pipeline {
         }
         stage('copy packages') {
             steps {
-                pkgcopyEncumbered()
+                pkgcopy()
             }
         }
         stage('update system') {
