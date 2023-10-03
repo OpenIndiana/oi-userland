@@ -25,7 +25,7 @@ pipeline {
         stage('Gmake Publish') {
             steps {
                 withPublisher('openindiana.org', 'incremental') {
-                    sh 'gmake publish -k'
+                    sh './tools/jenkinshelper.ksh -s build_changed'
                 }
             }
         }
