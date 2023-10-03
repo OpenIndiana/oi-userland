@@ -11,20 +11,20 @@
 #
 # Copyright (c) 2017 Dariusz Sendkowski
 # Copyright (c) 2023 Andreas Wacknitz
+# Copyright (c) 2023 Niklas Poslovski
 #
 
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        gdl
-COMPONENT_VERSION=      1.0.2
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.0.3
 COMPONENT_PROJECT_URL=  https://gnudatalanguage.github.io/
-COMPONENT_SUMMARY=      A free/libre/open source incremental compiler compatible with IDL and to some extent with PV-WAVE.	
-COMPONENT_SRC=	        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9c623daef20a87fc9fb2ecc29587b38c3444b2706fa8bfe8694e4da4a094f76c
-COMPONENT_ARCHIVE_URL=  https://github.com/gnudatalanguage/gdl/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_SUMMARY=      A free/libre/open source incremental compiler compatible with IDL and to some extent with PV-WAVE.
+COMPONENT_SRC=	        $(COMPONENT_NAME)
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:db72eeb84c54dba387d5474500ce005ff1dc605b070bd00f57a552d3bb6ab16c
+COMPONENT_ARCHIVE_URL=  https://github.com/gnudatalanguage/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         scientific/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Development/Suites
 COMPONENT_LICENSE=      GPLv2
