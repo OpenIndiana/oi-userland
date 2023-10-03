@@ -230,3 +230,9 @@ COMPONENT_POST_TEST_ACTION += $(COMPONENT_POST_TEST_ACTION.$(MACH))
 ifneq ($(strip $(GCC_VERSION)),$(GCC_DEFAULT))
 USERLAND_REQUIRED_PACKAGES += developer/gcc-$(GCC_VERSION)
 endif
+
+# If component asked for non-default clang version we need to make sure it is
+# installed
+ifneq ($(strip $(CLANG_VERSION)),$(CLANG_DEFAULT))
+USERLAND_REQUIRED_PACKAGES += developer/clang-$(CLANG_VERSION)
+endif

@@ -684,8 +684,9 @@ endif
 LD =		/usr/bin/ld
 
 # Clang definitions (we only have 64 bit clang)
-CLANG_VERSION           ?= 17
-CLANG_FULL_VERSION      ?= $(CLANG_VERSION).0
+CLANG_DEFAULT =		17
+CLANG_VERSION =		$(CLANG_DEFAULT)
+CLANG_FULL_VERSION =	$(CLANG_VERSION).0
 CLANG_PREFIX             = /usr/clang/$(CLANG_FULL_VERSION)
 CLANG_LIBDIR             = $(CLANG_PREFIX)/lib
 CLANG_DEVELOPER_PKG      = developer/clang-$(CLANG_VERSION)
