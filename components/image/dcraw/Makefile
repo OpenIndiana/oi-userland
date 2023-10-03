@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			dcraw
 COMPONENT_VERSION=		9.28.0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=		dcraw - Decoding RAW digital photos
 COMPONENT_PROJECT_URL=	https://www.dechifro.org/dcraw/
 COMPONENT_SRC=			$(COMPONENT_NAME)
