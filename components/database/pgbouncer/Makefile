@@ -11,14 +11,14 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
-USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
 COMPONENT_VERSION= 	1.20.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -48,5 +48,5 @@ REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
