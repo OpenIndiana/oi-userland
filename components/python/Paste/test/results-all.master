@@ -1,14 +1,11 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests
-asyncio: mode=strict
 collecting ... collected 150 items
 
 tests/test_auth/test_auth_cookie.py::test_basic PASSED
@@ -163,21 +160,68 @@ tests/test_wsgiwrappers.py::test_wsgirequest_charset_fileupload PASSED
 tests/test_wsgiwrappers.py::test_wsgiresponse_charset PASSED
 
 =============================== warnings summary ===============================
-tests/test_httpserver.py:7
-  $(@D)/tests/test_httpserver.py:7: DeprecationWarning: OpenSSL.tsafe is deprecated and will be removed
-    from paste.httpserver import LimitedLengthFile, WSGIHandler, serve
+tests/__init__.py:6
+  $(@D)/tests/__init__.py:6: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
 
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zest')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: 15 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_cgitb_catcher.py: 1 warning
+tests/test_errordocument.py: 1 warning
+tests/test_fileapp.py: 1 warning
 tests/test_grantip.py: 1 warning
 tests/test_recursive.py: 1 warning
-tests/test_request.py: 1 warning
-tests/test_fileapp.py: 1 warning
-tests/test_exceptions/test_error_middleware.py: 1 warning
-tests/test_urlmap.py: 1 warning
-tests/test_cgitb_catcher.py: 1 warning
-tests/test_urlparser.py: 1 warning
-tests/test_errordocument.py: 1 warning
 tests/test_registry.py: 1 warning
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:785: DeprecationWarning: setup_module is deprecated
+tests/test_request.py: 1 warning
+tests/test_urlmap.py: 1 warning
+tests/test_urlparser.py: 1 warning
+tests/test_exceptions/test_error_middleware.py: 1 warning
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:777: DeprecationWarning: setup_module is deprecated
     func(arg)
 
 tests/test_recursive.py::test_ForwardRequestException
@@ -185,6 +229,6 @@ tests/test_recursive.py::test_ForwardRequestException
     raise ForwardRequestException(path_info=self.url)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 149 passed, 1 skipped, 12 warnings ========
+======== 149 passed, 1 skipped, 37 warnings ========
   py$(PYV): OK
   congratulations :)
