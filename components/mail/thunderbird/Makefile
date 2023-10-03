@@ -24,26 +24,30 @@
 # Copyright 2018 Michal Nowak
 # Copyright (c) 2015, 2021, Oracle and/or its affiliates.
 # Copyright 2021, Carsten Grzemba
+# Copyright 2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	102.14.0
+COMPONENT_VERSION =	115.3.1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:68514ac2e196b3526588b2957f2ab51b99b366af497fe13d1518a52bf8298c83
+	 sha256:c2fd640ec6ab005c2acb6d7594b90751b1ef684ca038f0d3919044baafe736de
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)
 endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI = mail/thunderbird
+COMPONENT_CLASSIFICATION = Applications/Internet
+COMPONENT_LICENSE = MPL v2.0
 
-RUST_VERSION = 1.70.0
+RUST_VERSION = 1.71.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -96,9 +100,12 @@ THUNDERBIRD_LIBDIR = /usr/lib/$(MACH64)
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	rm -f  $(MOZCONFIG); \
 	echo "ac_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
+	echo "ac_add_options PKG_CONFIG=/usr/bin/amd64/pkg-config" >> $(MOZCONFIG) ; \
+	echo "ac_add_options CC_TYPE=$(CC_TYPE)" >> $(MOZCONFIG) ; \
+	echo "ac_add_options CC=$(CC)" >> $(MOZCONFIG) ; \
+	echo "ac_add_options CXX=$(CXX)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --libdir=$(THUNDERBIRD_LIBDIR)" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --disable-av1" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-debug-symbols" >> $(MOZCONFIG_NON_DEBUG) ; \
 	echo "ac_add_options --disable-install-strip" >> $(MOZCONFIG_DEBUG) ; \
@@ -107,9 +114,12 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-application=comm/mail" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-debug" >> $(MOZCONFIG_DEBUG) ; \
+	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-js-shell" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-official-branding" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-optimize" >> $(MOZCONFIG_NON_DEBUG) ; \
+	echo "ac_add_options --enable-pulseaudio" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
@@ -150,10 +160,6 @@ COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
 # because we touched old-configure.in and js/src/old-configure.in
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
-	cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
-        cp configure.in configure; \
-        cd js/src; \
-        cp configure.in configure; \
         export RUSTUP_HOME=$(RUSTUP_HOME); \
         export CARGO_HOME=$(CARGO_HOME); \
         export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
@@ -162,7 +168,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         rustup install $(RUST_VERSION); \
         rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
         rustup show; \
-	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.24.2 cbindgen; \
+	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.24.3 cbindgen; \
 	);
 
 # COMPONENT_POST_BUILD_ACTION = \
