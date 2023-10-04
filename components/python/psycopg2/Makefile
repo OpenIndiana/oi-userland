@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		psycopg2
-HUMAN_VERSION =			2.9.8
+HUMAN_VERSION =			2.9.9
 COMPONENT_SUMMARY =		psycopg2 - psycopg2 - Python-PostgreSQL Database Adapter
 COMPONENT_PROJECT_URL =		https://psycopg.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9e/78/3b15ee8bbbf36f8bace9b0e6fe8a7481372650c76bcf1a7de1ed723cce96/psycopg2-2.9.8.tar.gz
+	https://files.pythonhosted.org/packages/c9/5e/dc6acaf46d78979d6b03458b7a1618a68e152a6776fce95daac5e0f0301b/psycopg2-2.9.9.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3da6488042a53b50933244085f3f91803f1b7271f970f3e5536efa69314f6a49
+	sha256:d1454bde93fb1e224166811694d600e746430c006fbb031ea06ecc2ea41bf156
 COMPONENT_LICENSE =		LGPL-3.0-only
 
 # see doc/src/install.rst
