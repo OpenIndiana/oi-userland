@@ -1,0 +1,18 @@
+The 115.x version of Firefox & Thunderbird are mixing OpenGL & EGL calls in a way
+that works with Mesa but not the Nvidia drivers
+--- firefox-115.2.0.orig/toolkit/xre/glxtest/glxtest.cpp	2023-09-18 15:31:54.579296247 -0400
++++ firefox-115.2.0/toolkit/xre/glxtest/glxtest.cpp	2023-09-18 15:12:11.836077440 -0400
+@@ -956,9 +956,13 @@
+ #ifdef MOZ_X11
+   if (!aWayland) {
+     // TODO: --display command line argument is not properly handled
++#ifdef __sun
++    glxtest();
++#else
+     if (!x11_egltest()) {
+       glxtest();
+     }
++#endif
+   }
+ #endif
+   // Finally write buffered data to the pipe.
