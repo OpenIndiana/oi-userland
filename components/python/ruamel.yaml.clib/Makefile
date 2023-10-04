@@ -14,25 +14,27 @@
 #   $WS_TOOLS/python-integrate-project ruamel.yaml.clib
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ruamel.yaml.clib
-HUMAN_VERSION =			0.2.7
+HUMAN_VERSION =			0.2.8
 COMPONENT_SUMMARY =		ruamel.yaml.clib - C version of reader, parser and emitter for ruamel.yaml derived from libyaml
 COMPONENT_PROJECT_URL =		https://sourceforge.net/p/ruamel-yaml-clib/code/ci/default/tree
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d5/31/a3e6411947eb7a4f1c669f887e9e47d61a68f9d117f10c3c620296694a0b/ruamel.yaml.clib-0.2.7.tar.gz
+	https://files.pythonhosted.org/packages/46/ab/bab9eb1566cd16f060b54055dd39cf6a34bfa0240c53a7218c43e974295b/ruamel.yaml.clib-0.2.8.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1f08fd5a2bea9c4180db71678e850b995d2a5f4537be0e94557668cf0f5f9497
+	sha256:beb2e0404003de9a4cab9753a8805a8fe9320ee6673136ed7f04255fe60bb512
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
