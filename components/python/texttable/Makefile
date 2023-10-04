@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		texttable
-HUMAN_VERSION =			1.6.7
+HUMAN_VERSION =			1.7.0
 COMPONENT_SUMMARY =		texttable - module to create simple ASCII tables
 COMPONENT_PROJECT_URL =		https://github.com/foutaise/texttable/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e4/84/4686ee611bb020038375c5f11fe7b6b3bb94ee78614a1faba45effe51591/texttable-1.6.7.tar.gz
+	https://files.pythonhosted.org/packages/1c/dc/0aff23d6036a4d3bf4f1d8c8204c5c79c4437e25e0ae94ffe4bbb55ee3c2/texttable-1.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:290348fb67f7746931bcdfd55ac7584ecd4e5b0846ab164333f0794b121760f2
+	sha256:2d2068fb55115807d3ac77a4ca68fa48803e84ebb0ee2340f858107a36522638
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
