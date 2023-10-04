@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-datadir
-HUMAN_VERSION =			1.4.1
+HUMAN_VERSION =			1.5.0
 COMPONENT_SUMMARY =		pytest-datadir - pytest plugin for test data directories and files
 COMPONENT_PROJECT_URL =		http://github.com/gabrielcnr/pytest-datadir
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ae/98/640d2c1d309506df53a4a6ef9dc8e80a0a3ff78b21cd42aca1ad2a6e3ea0/pytest-datadir-1.4.1.tar.gz
+	https://files.pythonhosted.org/packages/aa/97/a93900d82635aa3f419c3cd2059b4de7d7fe44e415eaf00c298854582dcc/pytest-datadir-1.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9f7a3c4def6ac4cac3cc8181139ab53bd2667231052bd40cb07081748d4420f0
+	sha256:1617ed92f9afda0c877e4eac91904b5f779d24ba8f5e438752e3ae39d8d2ee3f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
