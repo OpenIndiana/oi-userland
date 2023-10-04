@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2014 Andrzej Szeszo. All rights reserved.
 #
 
@@ -161,7 +161,7 @@ SAMPLE_MANIFEST_DIR = 	$(COMPONENT_DIR)/manifests
 SAMPLE_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/sample-manifest.p5m
 GENERIC_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/generic-manifest.p5m
 
-CANONICAL_MANIFESTS =	$(wildcard *.p5m)
+CANONICAL_MANIFESTS =	$(filter-out dummy.p5m,$(wildcard *.p5m))
 ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 endif
@@ -287,7 +287,7 @@ VERSIONED_MANIFESTS = \
 	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
 	$(PERLV_MANIFESTS) $(PERLNV_MANIFESTS) \
 	$(RUBYV_MANIFESTS) $(RUBYNV_MANIFESTS) \
-	$(NORUBY_MANIFESTS) $(HISTORICAL_MANIFESTS)
+	$(NORUBY_MANIFESTS)
 
 GENERATED =		$(MANIFEST_BASE)-generated
 COMBINED =		$(MANIFEST_BASE)-combined
@@ -298,6 +298,9 @@ DEPENDED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend)
 RESOLVED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend.res)
 PRE_PUBLISHED=$(RESOLVED:%.depend.res=%.pre-published)
 PUBLISHED=$(RESOLVED:%.depend.res=%.published)
+
+HISTOGRIFIED =		$(HISTORICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.histogrified)
+PUBLISHED +=		$(HISTORICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
 
 COPYRIGHT_FILE ?=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
 IPS_COMPONENT_VERSION ?=	$(COMPONENT_VERSION)
@@ -597,10 +600,17 @@ $(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.li
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 	@echo "NEW PACKAGE CONTENTS ARE LOCALLY VALIDATED AND READY TO GO"
 
+$(MANIFEST_BASE)-%.histogrified: $(MANIFEST_BASE)-%.p5m
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< > $@
+
 # Push to the repo
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.pre-published
 	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@
+
+$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.histogrified
+	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest --no-catalog $<
+	$(CP) $< $@
 
 $(BUILD_DIR)/.pre-published-$(MACH):	$(PRE_PUBLISHED)
 	$(TOUCH) $@
