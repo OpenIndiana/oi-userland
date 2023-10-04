@@ -166,6 +166,14 @@ ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 endif
 
+# Support for arch specific manifests
+ARCH_MANIFESTS =	$(wildcard *.p5m.$(MACH))
+GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.p5m)
+CANONICAL_MANIFESTS +=  $(GENERATED_ARCH_MANIFESTS)
+
+%.p5m: 	%.p5m.$(MACH)
+	$(CP) $< $@
+
 define ips-print-depend-require-rule
 $(shell cat $(1) $(WS_TOP)/transforms/print-depend-require |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
@@ -681,3 +689,4 @@ CLEAN_PATHS +=	required-pkgs.mk
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-perl
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-python
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-ruby
+CLEAN_PATHS +=	$(GENERATED_ARCH_MANIFESTS)
