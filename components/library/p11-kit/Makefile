@@ -32,7 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
 COMPONENT_VERSION=	0.25.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
@@ -69,6 +69,12 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^ *CC/d" ' \
 	'-e "/is up to date/d" ' \
 	'-e "/ok/p" ' 
+
+# bash-completion is needed to get the following two files installed into proto
+# area:
+# - usr/share/bash-completion/completions/p11-kit
+# - usr/share/bash-completion/completions/trust
+REQUIRED_PACKAGES += utility/bash-completion
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libffi
