@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libusb
 COMPONENT_VERSION= 1.0.26
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A cross-platform user library to access USB devices
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -35,15 +36,13 @@ COMPONENT_ARCHIVE_URL= https://github.com/libusb/libusb/releases/download/v$(COM
 COMPONENT_PROJECT_URL= https://libusb.info/
 COMPONENT_FMRI= library/libusb-1
 COMPONENT_CLASSIFICATION= Development/C
-COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE= LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Find issues with undefined symbols in build time
 LD_OPTIONS += $(LD_Z_DEFS)
-
-COMPONENT_PREP_ACTION = ( cd $(@D); $(AUTORECONF) -if )
 
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --enable-log
