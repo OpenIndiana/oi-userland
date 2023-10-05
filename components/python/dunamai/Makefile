@@ -19,19 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dunamai
-HUMAN_VERSION =			1.18.1
+HUMAN_VERSION =			1.19.0
 COMPONENT_SUMMARY =		dunamai - Dynamic version generation
 COMPONENT_PROJECT_URL =		https://github.com/mtkennerly/dunamai
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/61/f8/416bf0a7ef5775b631305a5772d2c5d67282caeb9fad3fd5181d1742e336/dunamai-1.18.1.tar.gz
+	https://files.pythonhosted.org/packages/1d/03/338fba56a6c76ea6d99ca0b7af3098292c2dd6597ed656daa6ae26a07a77/dunamai-1.19.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5e9a91e43d16bb56fa8fcddcf92fa31b2e1126e060c3dcc8d094d9b508061f9d
+	sha256:6ad99ae34f7cd290550a2ef1305d2e0292e6e6b5b1b830dfc07ceb7fd35fec09
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# testing fails without HOME and USER environment variables
+COMPONENT_TEST_ENV += HOME=/tmp
+COMPONENT_TEST_ENV += USER=$(shell id -un)
 
 # Testing dependencies for this project are maintained using poetry.  We
 # neither do have poetry packaged yet, nor support listing poetry dependencies
