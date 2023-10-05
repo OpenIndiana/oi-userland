@@ -19,22 +19,25 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXt
 COMPONENT_VERSION= 1.2.1
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=    x11/library/toolkit/libxt
 COMPONENT_SUMMARY= libXt - X Toolkit library
 COMPONENT_ARCHIVE_HASH= \
   sha256:679cc08f1646dbd27f5e48ffe8dd49406102937109130caab02ca32c083a3d60
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 # https://bugs.freedesktop.org/show_bug.cgi?id=6569
 LD_B_DIRECT=
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf -f -i )
 
 CPPFLAGS+= -DGETVALUES_BUG -DNO_ALLOCA
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS+= LIB_MAN_SUFFIX=3xt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
