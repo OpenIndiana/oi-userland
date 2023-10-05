@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libexif
 COMPONENT_RELEASE= 0.6
 COMPONENT_VERSION= $(COMPONENT_RELEASE).24
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= EXIF tag parsing library for digital cameras
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -30,12 +30,12 @@ COMPONENT_ARCHIVE_URL= https://github.com/libexif/libexif/archive/refs/tags/v$(C
 COMPONENT_PROJECT_URL= https://libexif.github.io/
 COMPONENT_FMRI= image/library/libexif
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE= LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION= (cd $(@D) && PATH="$(PATH)" autoreconf -fi)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-docs
