@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
 COMPONENT_VERSION=	0.25.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
@@ -40,8 +41,8 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:d55583bcdde83d86579cabe3a8f7f2638675fef01d23cace733ff748fc354706
 COMPONENT_ARCHIVE_URL=	https://github.com/p11-glue/p11-kit/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	BSD-like
-COMPONENT_LICENSE_FILE= p11-kit.license
+COMPONENT_LICENSE=	BSD-3-Clause
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,7 +50,7 @@ CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 LDFLAGS += -lsocket -lnsl
 
 # Needed due to patch to automake-related files.
-COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
+COMPONENT_PREP_ACTION += (cd $(@D); PATH="$(PATH)" autoreconf -fiv);
 
 CONFIGURE_OPTIONS	+= --enable-doc
 CONFIGURE_OPTIONS	+= --disable-doc-html
