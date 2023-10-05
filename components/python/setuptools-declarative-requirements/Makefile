@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools-declarative-requirements
 HUMAN_VERSION =			1.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		setuptools-declarative-requirements - File support for setuptools declarative setup.cfg
 COMPONENT_PROJECT_URL =		https://github.com/s0undt3ch/setuptools-declarative-requirements
 COMPONENT_ARCHIVE_URL =		\
