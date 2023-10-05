@@ -257,9 +257,45 @@ SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE")
 sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
 git add Makefile
 
+# Refresh patches
+rm -rf patches
+! $GMAKE prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
+git checkout patches > /dev/null 2>&1
+mkdir -p patches
+# see make-rules/prep-patch.mk
+PATCHES=$(find patches -type f -name '*.patch*' 2>/dev/null | LC_COLLATE=C sort)
+SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
+cd "$SOURCE_DIR"
+ln -s ../patches .
+for p in $PATCHES ; do
+	quilt import --quiltrc /dev/null "$p" > /dev/null 2>&1
+	(($? == 1)) && printf 'FATAL: failed to import old patch %s!\n' "$p" && exit 1
+	quilt push --quiltrc /dev/null -q > /dev/null 2>&1
+	(($? == 1)) && printf 'FATAL: failed to apply old patch %s!\n' "$p" && exit 1
+	quilt refresh --quiltrc /dev/null -p 1 --no-timestamps --no-index > /dev/null 2>&1
+	(($? == 1)) && printf 'FATAL: failed to refresh old patch %s!\n' "$p" && exit 1
+done
+touch patches/series
+quilt pop --quiltrc /dev/null -a -q > /dev/null 2>&1
+(($? == 1)) && printf 'FATAL: failed to remove patches!\n' && exit 1
+rm -f patches/series
+cd "$DIR"
+for p in $PATCHES ; do
+	quilt import --quiltrc /dev/null -p 0 "$p" > /dev/null 2>&1
+	(($? == 1)) && printf 'FATAL: failed to import new patch %s!\n' "$p" && exit 1
+	quilt push --quiltrc /dev/null -q > /dev/null 2>&1
+	(($? == 1)) && printf 'FATAL: failed to apply new patch %s!\n' "$p" && exit 1
+	quilt refresh --quiltrc /dev/null -p 0 --no-timestamps --no-index > /dev/null 2>&1
+	(($? == 1)) && printf 'FATAL: failed to refresh new patch %s!\n' "$p" && exit 1
+done
+# cleanup
+rm -rf .pc patches/series
+rmdir patches > /dev/null 2>&1
+$GMAKE clobber > /dev/null 2>&1
+git add patches 2>/dev/null
+
 # Unpack sources
 ! $GMAKE prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
-SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
 COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
 [[ -n "$COMPONENT_SUBDIR" ]] && COMPONENT_SUBDIR="/$COMPONENT_SUBDIR"
 
