@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jedi
-HUMAN_VERSION =			0.19.0
+HUMAN_VERSION =			0.19.1
 COMPONENT_SUMMARY =		jedi - An autocompletion tool for Python that can be used for text editors.
 COMPONENT_PROJECT_URL =		https://github.com/davidhalter/jedi
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/57/38/4ac6f712c308de92af967142bd67e9d27e784ea5a3524c9e84f33507d82f/jedi-0.19.0.tar.gz
+	https://files.pythonhosted.org/packages/d6/99/99b493cec4bf43176b678de30f81ed003fd6a647a301b9c927280c600f0a/jedi-0.19.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bcf9894f1753969cbac8022a8c2eaee06bfa3724e4192470aaffe7eb6272b0c4
+	sha256:cf0496f3651bc65d7174ac1b7d043eff454892c708a87d1b683e57b569927ffd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -33,10 +33,15 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += testing
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/parso
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/attrs
+TEST_REQUIRED_PACKAGES.python += library/python/colorama
+TEST_REQUIRED_PACKAGES.python += library/python/django
+TEST_REQUIRED_PACKAGES.python += library/python/docopt
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
