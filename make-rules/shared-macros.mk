@@ -26,8 +26,8 @@
 # whenever PATH is to be defined there:
 #     PATH = $(PATH.illumos)
 #     PATH = $(PATH.gnu)
-PATH.illumos=$(PATH.prepend):$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
-PATH.gnu=$(PATH.prepend):$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
+PATH.illumos =	$(subst $(space),:,$(strip $(PATH.prepend))):$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR)
+PATH.gnu =	$(subst $(space),:,$(strip $(PATH.prepend))):$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR)
 
 # Default PATH
 PATH = $(PATH.illumos)
@@ -626,10 +626,6 @@ GCC_DEFAULT =	10
 GCC_VERSION =	$(GCC_DEFAULT)
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
-GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
-GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
-GCC_LIBDIR =	$(GCC_LIBDIR.$(BITS))
-
 # Define runtime package names to be used in dependencies
 GCC_VERSION_MAJOR    = $(shell echo $(GCC_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
 GCC_RUNTIME_PKG      = system/library/gcc-$(GCC_VERSION_MAJOR)-runtime
@@ -658,6 +654,7 @@ GCC_LIBDIR =	$(GCC_LIBDIR.$(BITS))
 GCC_INCDIR =	$(GCC_ROOT)/include
 GCC_LIBGCCDIR =	$(GCC_ROOT)/lib/gcc
 GCC_INCGXXDIR =	$(GCC_ROOT)/include/c++/$(GCC_FULL_VERSION)
+PATH.prepend +=	$(GCC_BINDIR)
 
 ifneq ($(strip $(CCACHE)),)
 
@@ -688,11 +685,13 @@ CLANG_DEFAULT =		17
 CLANG_VERSION =		$(CLANG_DEFAULT)
 CLANG_FULL_VERSION =	$(CLANG_VERSION).0
 CLANG_PREFIX             = /usr/clang/$(CLANG_FULL_VERSION)
+CLANG_BINDIR =		$(CLANG_PREFIX)/bin
 CLANG_LIBDIR             = $(CLANG_PREFIX)/lib
 CLANG_DEVELOPER_PKG      = developer/clang-$(CLANG_VERSION)
 CLANG_RUNTIME_PKG        = runtime/clang-$(CLANG_VERSION)
 REQUIRED_PACKAGES_SUBST += CLANG_DEVELOPER_PKG
 REQUIRED_PACKAGES_SUBST += CLANG_RUNTIME_PKG
+PATH.prepend +=		$(CLANG_BINDIR)
 
 # Python definitions
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
@@ -867,6 +866,7 @@ $(foreach perlver,$(PERL_VERSIONS),$(eval $(call perl-path-rule,$(perlver))))
 PERL5BINDIR = 	$(PERL5BINDIR.$(PERL_VERSION))
 PERL =		$(PERL.$(PERL_VERSION))
 POD2MAN =	$(POD2MAN.$(PERL_VERSION))
+PATH.prepend +=	$(PERL5BINDIR)
 
 PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
@@ -912,6 +912,7 @@ PG_LIBDIR =     $(PG_LIBDIR.$(BITS))
 PG_CONFIG.32 =  $(PG_BINDIR.32)/pg_config
 PG_CONFIG.64 =  $(PG_BINDIR.64)/pg_config
 PG_CONFIG =     $(PG_CONFIG.$(BITS))
+PATH.prepend +=	$(PG_BINDIR)
 
 PKG_MACROS +=   PG_VERSION=$(PG_VERSION)
 PKG_MACROS +=   PG_VERNUM=$(PG_VERNUM)
@@ -960,6 +961,7 @@ MYSQL_CONFIG.32 =  $(MYSQL_BINDIR.32)/mysql_config
 MYSQL_CONFIG.64 =  $(MYSQL_BINDIR.64)/mysql_config
 MYSQL_CONFIG =     $(MYSQL_CONFIG.$(BITS))
 MYSQL_PKG_CONFIG_PATH =	$(MYSQL_LIBDIR)/pkgconfig
+PATH.prepend +=		$(MYSQL_BINDIR)
 
 PKG_MACROS +=   MYSQL_VERSION=$(MYSQL_VERSION)
 PKG_MACROS +=   MYSQL_VERNUM=$(MYSQL_VERNUM)
