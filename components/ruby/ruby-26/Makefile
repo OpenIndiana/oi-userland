@@ -24,16 +24,17 @@
 # Copyright 2020, Michal Nowak
 #
 
-BUILD_BITS=		64
+OPENSSL_VERSION= 1.0
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	2.6.10
+HUMAN_VERSION=		2.6.10
+COMPONENT_VERSION=	3.2.2
 COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Ruby, RubyGems, and Rake
 COMPONENT_PROJECT_URL=	https://www.ruby-lang.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://cache.ruby-lang.org/pub/ruby/2.6/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= sha256:5fd8ded51321b88fdc9c1b4b0eb1b951d2eddbc293865da0151612c2e814c1f2
@@ -44,11 +45,11 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# COMPONENT_VERSION <major>.<minor>.<teeny>
+# HUMAN_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
 # First change the separator '.' to ' ', so we can use "word" to pull the
 # first two space-separated words from the string.
-RUBY_VER_WORDS=	$(subst ., ,$(COMPONENT_VERSION))
+RUBY_VER_WORDS=	$(subst ., ,$(HUMAN_VERSION))
 RUBY_VER=$(word 1,$(RUBY_VER_WORDS)).$(word 2,$(RUBY_VER_WORDS))
 # the library-compatible version
 RUBY_LIB_VER=2.6.0
