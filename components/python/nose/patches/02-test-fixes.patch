@@ -127,6 +127,14 @@
      <BLANKLINE>
 --- nose-1.3.7/unit_tests/test_config_defaults.rst.orig
 +++ nose-1.3.7/unit_tests/test_config_defaults.rst
+@@ -1,6 +1,6 @@
+     >>> from optparse import OptionParser
+     >>> import os
+-    >>> from cStringIO import StringIO
++    >>> from io import StringIO
+ 
+     >>> import nose.config
+ 
 @@ -12,7 +12,7 @@
      ...                        "config_defaults")
  
@@ -136,16 +144,6 @@
  
      >>> def get_parser():
      ...     parser = OptionParser()
---- nose-1.3.7/unit_tests/test_config_defaults.rst.orig
-+++ nose-1.3.7/unit_tests/test_config_defaults.rst
-@@ -1,6 +1,6 @@
-     >>> from optparse import OptionParser
-     >>> import os
--    >>> from cStringIO import StringIO
-+    >>> from io import StringIO
- 
-     >>> import nose.config
- 
 @@ -129,18 +129,18 @@
  (filename)
  
@@ -201,17 +199,6 @@
  
 --- nose-1.3.7/unit_tests/test_ls_tree.rst.orig
 +++ nose-1.3.7/unit_tests/test_ls_tree.rst
-@@ -32,7 +32,7 @@
-     Note that files matching skip_pattern (by default SVN files,
-     backup files and compiled Python files) are ignored
- 
--    >>> print ls_tree(os.path.join(dir_path, "top"))
-+    >>> print(ls_tree(os.path.join(dir_path, "top")))
-     |-- file
-     |-- file2
-     |-- .notsvn
---- nose-1.3.7/unit_tests/test_ls_tree.rst.orig
-+++ nose-1.3.7/unit_tests/test_ls_tree.rst
 @@ -7,7 +7,7 @@
      >>> dir_path = tempfile.mkdtemp()
  
@@ -221,6 +208,15 @@
      ...     os.close(fd)
  
      >>> os.mkdir(os.path.join(dir_path, "top"))
+@@ -32,7 +32,7 @@
+     Note that files matching skip_pattern (by default SVN files,
+     backup files and compiled Python files) are ignored
+ 
+-    >>> print ls_tree(os.path.join(dir_path, "top"))
++    >>> print(ls_tree(os.path.join(dir_path, "top")))
+     |-- file
+     |-- file2
+     |-- .notsvn
 --- nose-1.3.7/functional_tests/test_loader.py.orig
 +++ nose-1.3.7/functional_tests/test_loader.py
 @@ -369,7 +369,7 @@

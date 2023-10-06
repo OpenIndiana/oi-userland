@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nose
 HUMAN_VERSION =			1.3.7
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		nose - nose extends unittest to make testing easier
 COMPONENT_PROJECT_URL =		http://readthedocs.org/docs/nose/
 COMPONENT_ARCHIVE_URL =		\
