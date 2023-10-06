@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libcst
-HUMAN_VERSION =			1.0.1
+HUMAN_VERSION =			1.1.0
 COMPONENT_SUMMARY =		libcst - A concrete syntax tree with AST-like properties for Python 3.5, 3.6, 3.7, 3.8, 3.9, and 3.10 programs.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f4/b2/dd6fcf70dc59281e6de7c4b2f6150d07c26db127262dd5cba16fde1464ed/libcst-1.0.1.tar.gz
+	https://files.pythonhosted.org/packages/81/ef/610498b5e982d9dd64f2af8422ece1be44a946a8dbda15d08087e0e1ff08/libcst-1.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:37187337f979ba426d8bfefc08008c3c1b09b9e9f9387050804ed2da88107570
+	sha256:0acbacb9a170455701845b7e940e2d7b9519db35a86768d86330a0b0deae1086
 COMPONENT_LICENSE =		MIT OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
