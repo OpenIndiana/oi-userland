@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zodbpickle
-HUMAN_VERSION =			3.0.1
+HUMAN_VERSION =			3.1
 COMPONENT_SUMMARY =		zodbpickle - Fork of Python 3 pickle module.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zodbpickle
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2f/ff/68ad84892488418896004278c0e88bb87b2a8654c9e387d03ac7016bcd87/zodbpickle-3.0.1.tar.gz
+	https://files.pythonhosted.org/packages/95/30/7f60f6f4382d472b7303255adea8fd877d2a9580d1f819102f40b694f0aa/zodbpickle-3.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0f0975bdd4a7615320e74af2b0b8be4763c73cf8bf7c4212ab72044289e77498
+	sha256:b9ec32e706c7b808b79a53a7ad96609117e94283772b400ee76552107aabcc11
 COMPONENT_LICENSE =		PSF-2.0 OR ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
