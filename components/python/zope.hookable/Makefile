@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.hookable
-HUMAN_VERSION =			5.4
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		zope.hookable - Zope hookable
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.hookable
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/26/ce/ba1346f4c078321683c0118fc7706287493294d1cb637bf356be94de8c40/zope.hookable-5.4.tar.gz
+	https://files.pythonhosted.org/packages/78/ce/4eeb5f4d12bfb6ba46584c3e7cd0b8f29264b10a9159eaf06d90f71a22a9/zope.hookable-6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fb601f00ac87e5aa582a81315ed96768ce3513280729d3f51f79312e2b8b94ac
+	sha256:1668993d40a7cfdc867843dd5725929e7f83a5b0c195c709af1daef8274f43cb
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -39,5 +39,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
