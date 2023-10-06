@@ -37,29 +37,29 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://cache.ruby-lang.org/pub/ruby/3.2/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= sha256:4b352d0f7ec384e332e3e44cdbfdcd5ff2d594af3c8296b5636c710975149e23
-COMPONENT_FMRI=		runtime/ruby-26
+COMPONENT_FMRI=		runtime/ruby-32
 COMPONENT_CLASSIFICATION= Development/Ruby
 COMPONENT_LICENSE=	Ruby License
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=                   $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
 # First change the separator '.' to ' ', so we can use "word" to pull the
 # first two space-separated words from the string.
 RUBY_VER_WORDS=	$(subst ., ,$(COMPONENT_VERSION))
-RUBY_VER=$(word 1,$(RUBY_VER_WORDS)).$(word 2,$(RUBY_VER_WORDS))
+RUBY_VER= $(word 1,$(RUBY_VER_WORDS)).$(word 2,$(RUBY_VER_WORDS))
 # the library-compatible version
-RUBY_LIB_VER=$(RUBY_VER)
+RUBY_LIB_VER= $(RUBY_VER)
 
-PROTORUBYDIR=$(PROTO_DIR)/usr/ruby/$(RUBY_VER)
-PROTO_RBCONFIG_FILE=$(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/x86_64-solaris$(SOLARIS_VERSION)/rbconfig.rb
+PROTORUBYDIR= $(PROTO_DIR)/usr/ruby/$(RUBY_VER)
+PROTO_RBCONFIG_FILE= $(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/x86_64-solaris$(SOLARIS_VERSION)/rbconfig.rb
 
 # these macros are used in the package manifest
-PKG_MACROS+=	RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER)
+PKG_MACROS += RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER)
 
 # Apply some of the edits here--including to the sed scripts themselves.
 # These modifications of ruby.1 must occur after ruby
