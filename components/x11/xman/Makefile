@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xman
-COMPONENT_VERSION=      1.1.5
-COMPONENT_FMRI=         x11/xman
+COMPONENT_VERSION=      1.1.6
 COMPONENT_SUMMARY=      xman - Manual page display program for the X Window System
-COMPONENT_ARCHIVE_HASH= \
-  sha256:4e3c2c7497e9734a6d3c8e1b6a364612892bb31e9f33076c9fdae7177ab60978
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:7f555acd3855e49060e186a0be60f3224f60b4123b2990dcf6b8d70c482ed593
+COMPONENT_FMRI=         x11/xman
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
