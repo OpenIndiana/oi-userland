@@ -1,6 +1,5 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m zope.testrunner --test-path=. '--tests-pattern=^tests$' -vv
+py$(PYV): commands[0]> python -m zope.testrunner --test-path=$(@D) -s zest.releaser '--tests-pattern=^tests$' -vv
 $(PYTHON_DIR)/vendor-packages/twine/__init__.py:43: DeprecationWarning: Implicit None on return values is deprecated and will raise KeyErrors.
   __license__ = metadata["license"]
 Mocking twine.cli.dispatch...
@@ -19,10 +18,7 @@ __main__.py: error: the following arguments are required: message
  $(@D)/zest/releaser/tests/choose.txt
  $(@D)/zest/releaser/tests/fullrelease.txt
  $(@D)/zest/releaser/tests/functional-git.txt
- $(@D)/zest/releaser/tests/functional-with-hooks.txtsrc/tha/__init__.py:1: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('tha')`.
-Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-  __import__('pkg_resources').declare_namespace(__name__)
-
+ $(@D)/zest/releaser/tests/functional-with-hooks.txt
  $(@D)/zest/releaser/tests/git.txt
  $(@D)/zest/releaser/tests/postrelease.txt
  $(@D)/zest/releaser/tests/prerelease.txt
