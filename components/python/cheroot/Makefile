@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cheroot
 HUMAN_VERSION =			10.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		cheroot - Highly-optimized, pure-python HTTP server
 COMPONENT_PROJECT_URL =		https://cheroot.cherrypy.dev
 COMPONENT_ARCHIVE_URL =		\
@@ -32,12 +33,10 @@ COMPONENT_LICENSE_FILE =	LICENSE.md
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm-git-archive
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
