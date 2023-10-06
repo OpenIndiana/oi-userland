@@ -19,13 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ansi2html
-HUMAN_VERSION =			1.8.0
+HUMAN_VERSION =			1.9.1
 COMPONENT_SUMMARY =		ansi2html - Convert text with ANSI color codes to HTML or to LaTeX
-COMPONENT_PROJECT_URL =		https://github.com/pycontribs/ansi2html
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/62/88/491c699c135c63e4420f69e348c9f14559b82c2b81f5b4c698ae5c374a88/ansi2html-1.8.0.tar.gz
+	https://files.pythonhosted.org/packages/ca/f1/a82ae514fe3d2d66b20a24dd53d45f588a6c0a1d9b5f493eddff679bd99a/ansi2html-1.9.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:38b82a298482a1fa2613f0f9c9beb3db72a8f832eeac58eb2e47bf32cd37f6d5
+	sha256:5c6837a13ecc1903aab7a545353312049dfedfe5105362ad3a8d9d207871ec71
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,7 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm-git-archive
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
