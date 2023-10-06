@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.proxy
-HUMAN_VERSION =			5.0.0
+HUMAN_VERSION =			5.1
 COMPONENT_SUMMARY =		zope.proxy - Generic Transparent Proxies
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.proxy
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ec/93/e2fbb3c34cdd29ba09909c25c0153522a59939f84f15cc0c88865780f1d7/zope.proxy-5.0.0.tar.gz
+	https://files.pythonhosted.org/packages/92/97/2741828b69a23752af21bdc3aaf8792ce8b5cf07be74232deb9ad06f1f34/zope.proxy-5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6fa44c97a412b4dc51e2f5fd4dc73c5bd499d35280f88cd2bcd26f8ae1e4577b
+	sha256:7777bd3f8f7cea74521726202e1a6d5153dbf649f204e250058ad03af46a4318
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -52,5 +52,6 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-security
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
