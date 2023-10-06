@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		persistent
-HUMAN_VERSION =			5.0
+HUMAN_VERSION =			5.1
 COMPONENT_SUMMARY =		persistent - Translucent persistent objects
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/persistent/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8f/24/a04530e61999442cecf4a6acb234db159915abaeb8081a28be821abf861a/persistent-5.0.tar.gz
+	https://files.pythonhosted.org/packages/e7/bd/9efb67cf7704368663b7b07a99ad08e58fef69423fd90a35c7a75fa2b04c/persistent-5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:871e63c52131160795cdc8e9c3dd313f86e0dff34c151c98dcd9123c6d8ce673
+	sha256:97ccc2fa26cc9bdcc3be1fc65aa4f4f28afe5204c2d4fd24a67445908db7469b
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -50,4 +50,5 @@ REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/manuel
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
