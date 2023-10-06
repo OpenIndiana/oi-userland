@@ -1,21 +1,48 @@
-Adjust the set of standard locations that the erlang erts configure script
-uses to try to find SSL. Without this change, we see the following error
-at pkglint time:
-
-ERROR userland.action001.3        bad RUNPATH, 'usr/lib/amd64/erlang/lib/crypto-3.5/priv/lib/crypto.so' includes '/usr/local/lib/64:/opt/local/lib/64:/usr/pkg/lib/64:/usr/local/openssl/lib/64:/usr/lib/openssl/lib/64:/usr/openssl/lib/64:/usr/local/ssl/lib/64:/usr/lib/ssl/lib/64:/usr/ssl/lib/64://lib/64:/usr/local/lib:/opt/local/lib:/usr/pkg/lib:/usr/local/openssl/lib:/usr/lib/openssl/lib:/usr/openssl/lib:/usr/local/ssl/lib:/usr/lib/ssl/lib:/usr/ssl/lib://lib'
-
-This change will not be sent upstream.
-
-diff --git a/lib/crypto/configure.in b/lib/crypto/configure.in
-index a3b6673..ba9643e 100644
---- a/lib/crypto/configure.in
-+++ b/lib/crypto/configure.in
-@@ -66,7 +66,7 @@ dnl use "PATH/include" and "PATH/lib".
+diff --git a/lib/crypto/configure.ac b/lib/crypto/configure.ac
+index 26193e8..f487ca4 100644
+--- a/lib/crypto/configure.ac
++++ b/lib/crypto/configure.ac
+@@ -49,6 +49,8 @@ LM_WINDOWS_ENVIRONMENT
+ 
+ ERL_DED
+ 
++DED_EXT=so
++
+ AC_MSG_CHECKING([for multiarch directory])
+ multiarch_dir=
+ if test "$GCC" = "yes"; then
+@@ -75,7 +77,7 @@ dnl use "PATH/include" and "PATH/lib".
  
  AC_CHECK_SIZEOF(void *)
  
--std_ssl_locations="/usr/local /usr/sfw /usr /opt/local /usr/pkg /usr/local/openssl /usr/lib/openssl /usr/openssl /usr/local/ssl /usr/lib/ssl /usr/ssl /"
+-std_ssl_locations="/usr/local /usr/sfw /usr /opt/local /usr/pkg /usr/local/openssl /usr/local/opt/openssl /usr/lib/openssl /usr/openssl /usr/local/ssl /usr/lib/ssl /usr/ssl /"
 +std_ssl_locations="/usr"
+ 			
+ AC_ARG_WITH(ssl,
+ AS_HELP_STRING([--with-ssl=PATH], [base location of OpenSSL include and lib directories])
+diff --git a/lib/crypto/configure.ac b/lib/crypto/configure.ac
+index f487ca4..2842dc4 100644
+--- a/lib/crypto/configure.ac
++++ b/lib/crypto/configure.ac
+@@ -710,7 +710,7 @@ AS_CASE(["$with_ssl_rpath"],
+                       # If none of the above links, we skip runtime
+                       # library path...
+                       #
+-                      for type in std x_std curr; do
++                      for type in curr; do
  
- AC_ARG_WITH(ssl-zlib,
- AS_HELP_STRING([--with-ssl-zlib=PATH],
+                           ded_ld_rpath="$ded_ld_rflg$SSL_RUNTIME_LIBDIR"
+                           rpath="$SSL_RUNTIME_LIBDIR"
+diff --git a/lib/crypto/configure.ac b/lib/crypto/configure.ac
+index 1659a04..8897dcb 100644
+--- a/lib/crypto/configure.ac
++++ b/lib/crypto/configure.ac
+@@ -356,7 +356,7 @@ done
+ # Setup subdirectories to search in...
+ search_subdirs="lib"
+ if test "$ac_cv_sizeof_void_p" = "8"; then
+-   search_subdirs="$search_subdirs lib64 lib/64"
++   search_subdirs="lib/amd64"
+ else
+    search_subdirs="$search_subdirs lib32 lib/32"
+ fi

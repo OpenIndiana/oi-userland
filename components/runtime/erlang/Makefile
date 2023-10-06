@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2023 Carsten Grzemba
 #
 # Built in SFW with gcc and builds cleanly now only with gcc
 
@@ -32,16 +33,16 @@ PATH=$(JAVA_HOME)/bin:$(USRBINDIR)
 
 COMPONENT_FMRI=           runtime/erlang
 COMPONENT_NAME=     erlang
-COMPONENT_VERSION=    22.2.8
+COMPONENT_VERSION=    24.2.2
 COMPONENT_PROJECT_URL=  http://www.erlang.org/
 COMPONENT_SRC_NAME= otp_src
 COMPONENT_SRC=    $(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= OTP-${COMPONENT_VERSION}.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:71f73ddd59db521928a0f6c8d4354d6f4e9f4bfbd0b40d321cd5253a6c79b095
+	sha256:b6adfc0bf14d94348146ae26cc38d09dca545f8e14ebab7ddcf9482a6e8d1162
 COMPONENT_ARCHIVE_URL=  https://github.com/erlang/otp/archive/${COMPONENT_ARCHIVE}
 COMPONENT_POST_UNPACK_ACTION= ( $(MV) otp-OTP-$(COMPONENT_VERSION) $(COMPONENT_SRC))
-COMPONENT_PREP_ACTION = (cd $(@D); ./otp_build autoconf)
+COMPONENT_PREP_ACTION = (cd $(@D); ./otp_build update_configure --no-commit)
 COMPONENT_VERSION_SHORT= $(shell echo $(COMPONENT_VERSION) | cut -d'.' -f1-2)
 COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE=        Apache-2.0
@@ -54,7 +55,7 @@ COMPONENT_NAME_1= otp_doc_man
 COMPONENT_SRC_1=  $(COMPONENT_NAME_1)_$(COMPONENT_VERSION_SHORT)
 COMPONENT_ARCHIVE_1=  $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:aad7e3795a44091aa33a460e3fdc94efe8757639caeba0b5ba7d79bd91c972b3
+    sha256:56ae4b13fc7c003f4dd9951a9ff2a0bae0b38473df2c078d79c8553c277c5f4c
 COMPONENT_ARCHIVE_URL_1=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_1)
 UNPACK_ARGS_1=  -r $(COMPONENT_SRC_1)
 PKG_PROTO_DIRS += $(COMPONENT_SRC_1)
@@ -64,7 +65,7 @@ COMPONENT_NAME_2= otp_doc_html
 COMPONENT_SRC_2=  $(COMPONENT_NAME_2)_$(COMPONENT_VERSION_SHORT)
 COMPONENT_ARCHIVE_2=  $(COMPONENT_SRC_2).tar.gz
 COMPONENT_ARCHIVE_HASH_2= \
-    sha256:09d41810d79fafde293feb48ebb249940eca6f9f5733abb235e37d06b8f482e3
+    sha256:f479cbc8a28532fd6a0a55fc26684b4e79312da4f86ee0735d0757f936672bbc
 COMPONENT_ARCHIVE_URL_2=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_2)
 UNPACK_ARGS_2=  -r $(COMPONENT_SRC_2)
 PKG_PROTO_DIRS += $(COMPONENT_SRC_2)
@@ -73,7 +74,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 
-CFLAGS += -std=gnu99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+CFLAGS += -DOPENSSL_NO_MD4 -DOPENSSL_NO_RC2 -DOPENSSL_NO_RC4
 
 # Fix 64-bit linking.
 LDFLAGS += $(CC_BITS)
@@ -84,7 +85,7 @@ CONFIGURE_OPTIONS.64 += --with-wx-config=/usr/bin/$(MACH64)/wx-config
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
-CONFIGURE_OPTIONS += --with-ssl
+CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --enable-fips
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 
@@ -95,6 +96,7 @@ CONFIGURE_OPTIONS.i386  = --enable-hipe
 CONFIGURE_OPTIONS.sparc = --disable-hipe
 # Disable kernel poll on sparc to avoid hangs in erl_child_setup (bug 31443512).
 CONFIGURE_OPTIONS.sparc += --disable-kernel-poll
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
 
 # Erlang doesn't appear to like ASLR: it uses mmap() with MAP_FIXED, and
 # makes assumptions about memory layout that aren't true on Solaris x86,
@@ -108,6 +110,7 @@ ASLR_MODE =	$(ASLR_DISABLE)
 # erlang version 17.5.
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CP) -rp $(SOURCE_DIR)/. $(@D))
+
 CONFIGURE_SCRIPT =		$(@D)/configure
 
 # We need to re-run the nested configure script for the wx sub-component so
@@ -159,12 +162,10 @@ REQUIRED_PACKAGES += runtime/java/openjdk8
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/graphics/wxwidgets
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/glu

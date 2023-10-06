@@ -1,0 +1,13 @@
+https://github.com/erlang/otp/pull/5912/commits/023be12263c2a91dadd03342bd4b3e3b77d1818b
+
+--- otp_src_24.2/lib/wx/c_src/gen/wxe_wrapper_5.cpp
++++ otp_src_24.2/lib/wx/c_src/gen/wxe_wrapper_5.cpp
+@@ -2162,7 +2162,7 @@ ERL_NIF_TERM * argv = Ecmd.args;
+   wxMenuItem *This;
+   This = (wxMenuItem *) memenv->getPtr(env, argv[0], "This");
+   if(!This) throw wxe_badarg("This");
+-  const wxBitmap * Result = &This->GetBitmap();
++  wxBitmap * Result = new wxBitmap(This->GetBitmap()); app->newPtr((void *) Result,3, memenv);;
+   wxeReturn rt = wxeReturn(memenv, Ecmd.caller, true);
+   rt.send(  rt.make_ref(app->getRef((void *)Result,memenv), "wxBitmap"));
+ 

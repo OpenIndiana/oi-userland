@@ -1,0 +1,3598 @@
+from https://github.com/erlang/otp/commit/30ca523fa146fcc888ade1548c46d80c2f42bb50
+From 30ca523fa146fcc888ade1548c46d80c2f42bb50 Mon Sep 17 00:00:00 2001
+From: Rickard Green <rickard@erlang.org>
+Date: Wed, 26 May 2021 18:15:14 +0200
+Subject: [PATCH] Adapt configure scripts to autoconf 2.71 (step 2)
+
+Replace conditional constructs (if, case) with autoconf constructs
+(AS_IF(), AS_CASE()) where needed. This due to the following (cut
+from autoconf 2.70 release notes):
+
+   - Autoconf macros that use AC_REQUIRE are not safe to use in shell
+     control-flow constructs that appear outside of macros defined by
+     AC_DEFUN.  Use AS_IF, AS_CASE, etc. instead.  (See the
+     Prerequisite Macro section of the manual for details.)
+
+     The set of macros that use AC_REQUIRE internally may change from
+     release to release.  The only macros that are guaranteed *not* to
+     use AC_REQUIRE are the macros for acting on the results of a
+     test: AC_DEFINE, AC_SUBST, AC_MSG_*, AC_CACHE_CHECK, etc.
+---
+ erts/aclocal.m4                          |  429 +++++----
+ erts/autoconf/win32.config.cache.static  |    6 +-
+ erts/autoconf/win64.config.cache.static  |    6 +-
+ erts/configure.ac                        |  338 ++++----
+ lib/common_test/configure.ac             |    6 +-
+ lib/common_test/test_server/configure.ac |   73 +-
+ lib/crypto/configure.ac                  | 1012 +++++++++++-----------
+ lib/erl_interface/configure.ac           |   36 +-
+ lib/megaco/configure.ac                  |    6 +-
+ lib/odbc/configure.ac                    |   91 +-
+ lib/snmp/configure.ac                    |    6 +-
+ lib/wx/configure.ac                      |  110 ++-
+ make/configure.ac                        |   13 +-
+ otp_build                                |   12 +-
+ 14 files changed, 1183 insertions(+), 961 deletions(-)
+
+diff --git a/erts/aclocal.m4 b/erts/aclocal.m4
+index c5126a322a2..605481cace9 100644
+--- a/erts/aclocal.m4
++++ b/erts/aclocal.m4
+@@ -1,4 +1,4 @@
+-dnl
++dnl -*-Autoconf-*-
+ dnl %CopyrightBegin%
+ dnl
+ dnl Copyright Ericsson AB 1998-2020. All Rights Reserved.
+@@ -26,6 +26,42 @@ dnl could/should be part of autoconf are prefixed LM_, macros specific
+ dnl to the Erlang system are prefixed ERL_.
+ dnl
+ 
++AC_DEFUN([ERL_CANONICAL_SYSTEM_TYPE],
++[
++    AC_CANONICAL_HOST
++    # Adjust for local legacy windows hack...
++    AS_CASE([$host],
++            [local-*-windows],
++            [
++                host=win32
++                host_os=win32
++                host_vendor=
++                host_cpu=
++            ])
++
++    AC_CANONICAL_BUILD
++    # Adjust for local legacy windows hack...
++    AS_CASE([$build],
++            [local-*-windows],
++            [
++                build=win32
++                build_os=win32
++                build_vendor=
++                build_cpu=
++            ])
++
++    AC_CANONICAL_TARGET
++    # Adjust for local legacy windows hack...
++    AS_CASE([$target],
++            [local-*-windows],
++            [
++                target=win32
++                target_os=win32
++                target_vendor=
++                target_cpu=
++            ])
++])
++
+ AC_DEFUN(LM_PRECIOUS_VARS,
+ [
+ 
+@@ -90,13 +126,18 @@ fi
+ 
+ AC_DEFUN(LM_CHECK_GETCONF,
+ [
+-if test "$cross_compiling" != "yes"; then
++AS_IF(
++  [test "$cross_compiling" != "yes"],
++  [
+     AC_CHECK_PROG([GETCONF], [getconf], [getconf], [false])
+-else
++  ],
++  [
+     dnl First check if we got a `<HOST>-getconf' in $PATH
+     host_getconf="$host_alias-getconf"
+     AC_CHECK_PROG([GETCONF], [$host_getconf], [$host_getconf], [false])
+-    if test "$GETCONF" = "false" && test "$erl_xcomp_sysroot" != ""; then
++    AS_IF(
++      [test "$GETCONF" = "false" && test "$erl_xcomp_sysroot" != ""],
++      [
+ 	dnl We should perhaps give up if we have'nt found it by now, but at
+ 	dnl least in one Tilera MDE `getconf' under sysroot is a bourne
+ 	dnl shell script which we can use. We try to find `<HOST>-getconf'
+@@ -107,8 +148,8 @@ else
+ 	prfx="$erl_xcomp_sysroot"
+         AC_PATH_TOOL([GETCONF], [getconf], [false],
+ 	             ["$prfx/usr/bin:$prfx/bin:$prfx/usr/local/bin"])
+-    fi
+-fi
++      ])
++   ])
+ ])
+ 
+ dnl ----------------------------------------------------------------------
+@@ -274,7 +315,8 @@ if test "$ac_cv_prog_emu_cc" = no; then
+ 	done
+ fi
+ 
+-if test "$ac_cv_prog_emu_cc" != no; then
++AS_IF([test "$ac_cv_prog_emu_cc" != no],
++      [
+ 	save_CC="$CC"
+ 	save_CFLAGS=$CFLAGS
+ 	save_CPPFLAGS=$CPPFLAGS
+@@ -304,7 +346,7 @@ if test "$ac_cv_prog_emu_cc" != no; then
+ 	CC=$save_CC
+ 	CFLAGS=$save_CFLAGS
+ 	CPPFLAGS=$save_CPPFLAGS
+-fi
++     ])
+ ])
+ if test "$ac_cv_prog_emu_cc" = no; then
+ 	AC_DEFINE(NO_JUMP_TABLE,[],[Defined if no found C compiler can handle jump tables])
+@@ -407,16 +449,20 @@ AC_DEFUN(LM_DECL_INADDR_LOOPBACK,
+ #include <netinet/in.h>]], [[int i = INADDR_LOOPBACK;]])],[ac_cv_decl_inaddr_loopback=yes],[ac_cv_decl_inaddr_loopback=no])
+ ])
+ 
+-if test ${ac_cv_decl_inaddr_loopback} = no; then
++AS_IF(
++ [test ${ac_cv_decl_inaddr_loopback} = no],
++ [
+   AC_CACHE_CHECK([for INADDR_LOOPBACK in rpc/types.h],
+                    ac_cv_decl_inaddr_loopback_rpc,
+                    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <rpc/types.h>]], [[int i = INADDR_LOOPBACK;]])],[ac_cv_decl_inaddr_loopback_rpc=yes],[ac_cv_decl_inaddr_loopback_rpc=no]))
+ 
+-   case "${ac_cv_decl_inaddr_loopback_rpc}" in
+-     "yes" )
++   AS_IF(
++      [test "${ac_cv_decl_inaddr_loopback_rpc}" = "yes"],
++      [
+         AC_DEFINE(DEF_INADDR_LOOPBACK_IN_RPC_TYPES_H,[],
+-		[Define if you need to include rpc/types.h to get INADDR_LOOPBACK defined]) ;;
+-      * )
++		[Define if you need to include rpc/types.h to get INADDR_LOOPBACK defined])
++      ],
++      [
+   	AC_CACHE_CHECK([for INADDR_LOOPBACK in winsock2.h],
+                    ac_cv_decl_inaddr_loopback_winsock2,
+                    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#define WIN32_LEAN_AND_MEAN
+@@ -429,9 +475,9 @@ if test ${ac_cv_decl_inaddr_loopback} = no; then
+ 			# couldn't find it anywhere
+         		AC_DEFINE(HAVE_NO_INADDR_LOOPBACK,[],
+ 				[Define if you don't have a definition of INADDR_LOOPBACK]) ;;
+-	esac;;
+-   esac
+-fi
++	esac
++      ])
++ ])
+ ])
+ 
+ 
+@@ -475,9 +521,12 @@ AC_CACHE_VAL(ac_cv_sys_ipv6_support,
+ #include <netinet/in.h>
+ #endif]], [[struct in6_addr a6; struct sockaddr_in6 s6;]])],[ok_so_far=yes],[ok_so_far=no])
+ 
+-if test $ok_so_far = yes; then
++AS_IF(
++ [test $ok_so_far = yes],
++ [
+   ac_cv_sys_ipv6_support=yes
+-else
++ ],
++ [
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+ #ifdef __WIN32__
+ #include <winsock2.h>
+@@ -485,7 +534,7 @@ else
+ #else
+ #include <netinet/in.h>
+ #endif]], [[struct in_addr6 a6; struct sockaddr_in6 s6;]])],[ac_cv_sys_ipv6_support=in_addr6],[ac_cv_sys_ipv6_support=no])
+-fi
++ ])
+ ])dnl
+ 
+ dnl
+@@ -520,8 +569,7 @@ dnl
+ 
+ AC_DEFUN(LM_SYS_MULTICAST,
+ [AC_CACHE_CHECK([for multicast support], ac_cv_sys_multicast_support,
+-[AC_REQUIRE([AC_PROG_CPP])
+-AC_REQUIRE([AC_PROG_EGREP])
++[
+ AC_EGREP_CPP(^yes$,
+ [#include <sys/types.h>
+ #include <sys/socket.h>
+@@ -762,12 +810,14 @@ $trust_test
+ 
+   LIBS="$save_LIBS"
+ 
+-  if test "$LD_MAY_BE_WEAK" != "no"; then
++  AS_IF(
++   [test "$LD_MAY_BE_WEAK" != "no"],
++   [
+     AC_CHECK_FUNCS([clock_get_attributes gethrtime])
+-  else
++   ],
++   [
+     AC_CHECK_FUNCS([clock_getres clock_get_attributes gethrtime])
+-  fi
+-
++   ])
+   
+   AC_CACHE_CHECK([for mach clock_get_time() with monotonic clock type], erl_cv_mach_clock_get_time_monotonic,
+   [
+@@ -903,9 +953,10 @@ $trust_test
+ 
+   LIBS="$save_LIBS"
+ 
+-  if test "$LD_MAY_BE_WEAK" = "no"; then
+-     AC_CHECK_FUNCS([clock_getres])
+-  fi
++  AS_IF([test "$LD_MAY_BE_WEAK" = "no"],
++        [
++            AC_CHECK_FUNCS([clock_getres])
++        ])
+ 
+   AC_CHECK_FUNCS([clock_get_attributes gettimeofday])
+   
+@@ -974,13 +1025,16 @@ NEED_NPTL_PTHREAD_H=no
+ 
+ dnl win32?
+ AC_MSG_CHECKING([for native win32 threads])
+-if test "X$host_os" = "Xwin32"; then
++AS_IF(
++  [test "X$host_os" = "Xwin32"],
++  [
+     AC_MSG_RESULT(yes)
+     THR_DEFS="-DWIN32_THREADS"
+     THR_LIBS=
+     THR_LIB_NAME=win32_threads
+     THR_LIB_TYPE=win32_threads
+-else
++  ],
++  [
+     AC_MSG_RESULT(no)
+     THR_DEFS=
+     THR_LIBS=
+@@ -993,17 +1047,21 @@ dnl The usual pthread lib...
+     AC_CHECK_LIB(pthread, pthread_create, THR_LIBS="-lpthread")
+ 
+ dnl Very old versions of FreeBSD have pthreads in special c library, c_r...
+-    if test "x$THR_LIBS" = "x"; then
+-	AC_CHECK_LIB(c_r, pthread_create, THR_LIBS="-lc_r")
+-    fi
++    AS_IF([test "x$THR_LIBS" = "x"],
++          [
++              AC_CHECK_LIB([c_r], [pthread_create], [THR_LIBS="-lc_r"])
++          ])
+ 
+ dnl QNX has pthreads in standard C library
+-    if test "x$THR_LIBS" = "x"; then
+-	AC_CHECK_FUNC(pthread_create, THR_LIBS="none_needed")
+-    fi
++    AS_IF([test "x$THR_LIBS" = "x"],
++          [
++              AC_CHECK_FUNC([pthread_create], [THR_LIBS="none_needed"])
++          ])
+ 
+ dnl On ofs1 the '-pthread' switch should be used
+-    if test "x$THR_LIBS" = "x"; then
++    AS_IF(
++      [test "x$THR_LIBS" = "x"],
++      [
+ 	AC_MSG_CHECKING([if the '-pthread' switch can be used])
+ 	saved_cflags=$CFLAGS
+ 	CFLAGS="$CFLAGS -pthread"
+@@ -1015,18 +1073,24 @@ dnl On ofs1 the '-pthread' switch should be used
+ 	else
+ 	    AC_MSG_RESULT(no)
+ 	fi
+-    fi
++      ])
+ 
+-    if test "x$THR_LIBS" != "x"; then
++    AS_IF(
++      [test "x$THR_LIBS" != "x"],
++      [
+ 	THR_DEFS="$THR_DEFS -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS"
+ 	THR_LIB_NAME=pthread
+ 	if test "x$THR_LIBS" = "xnone_needed"; then
+ 	    THR_LIBS=
+ 	fi
+-	case $host_os in
+-	    solaris*)
+-		THR_DEFS="$THR_DEFS -D_POSIX_PTHREAD_SEMANTICS" ;;
+-	    linux*)
++	AS_CASE(
++            [$host_os],
++	    [solaris*],
++            [
++		THR_DEFS="$THR_DEFS -D_POSIX_PTHREAD_SEMANTICS"
++            ],
++            [linux*],
++            [
+ 		THR_DEFS="$THR_DEFS -D_POSIX_THREAD_SAFE_FUNCTIONS"
+ 
+ 		LM_CHECK_GETCONF
+@@ -1051,13 +1115,17 @@ dnl On ofs1 the '-pthread' switch should be used
+ 		    nptl=yes
+ 		    AC_MSG_WARN([result yes guessed because of cross compilation])
+ 		fi
+-		if test $nptl = yes; then
++		AS_IF(
++                  [test $nptl = yes],
++                  [
+ 		    THR_LIB_TYPE=posix_nptl
+ 		    need_nptl_incldir=no
+-		    AC_CHECK_HEADER(nptl/pthread.h,
++		    AC_CHECK_HEADER([nptl/pthread.h],
+ 				    [need_nptl_incldir=yes
+ 				     NEED_NPTL_PTHREAD_H=yes])
+-		    if test $need_nptl_incldir = yes; then
++		    AS_IF(
++                      [test $need_nptl_incldir = yes],
++                      [
+ 			# Ahh...
+ 			nptl_path="$C_INCLUDE_PATH:$CPATH"
+ 			if test X$cross_compiling != Xyes; then
+@@ -1078,8 +1146,8 @@ dnl On ofs1 the '-pthread' switch should be used
+ 			IFS=$save_ifs
+ 			nptl_incldir=
+ 			for dir in $nptl_ws_path; do
+-		            AC_CHECK_HEADER($dir/nptl/pthread.h,
+-					    nptl_incldir=$dir/nptl)
++		            AC_CHECK_HEADER([$dir/nptl/pthread.h],
++					    [nptl_incldir=$dir/nptl])
+ 			    if test "x$nptl_incldir" != "x"; then
+ 				THR_DEFS="$THR_DEFS -isystem $nptl_incldir"
+ 				break
+@@ -1088,11 +1156,9 @@ dnl On ofs1 the '-pthread' switch should be used
+ 			if test "x$nptl_incldir" = "x"; then
+ 			    AC_MSG_ERROR(Failed to locate nptl system include directory)
+ 			fi
+-		    fi
+-		fi
+-		;;
+-	    *) ;;
+-	esac
++                      ])
++                  ])
++            ])
+ 
+ 	dnl We sometimes need THR_DEFS in order to find certain headers
+ 	dnl (at least for pthread.h on osf1).
+@@ -1115,8 +1181,8 @@ dnl On ofs1 the '-pthread' switch should be used
+ 	dnl restore CPPFLAGS
+ 	CPPFLAGS=$saved_cppflags
+ 
+-    fi
+-fi
++      ])
++  ])
+ 
+ ])
+ 
+@@ -1313,8 +1379,10 @@ AC_DEFUN(ETHR_CHK_GCC_ATOMIC_OPS,
+     ethr_arm_dbm_sy_instr_val=0
+     ethr_arm_dbm_st_instr_val=0
+     ethr_arm_dbm_ld_instr_val=0
+-    case "$GCC-$host_cpu" in
+-	yes-arm*|yes-aarch*)
++    AS_CASE(
++      ["$GCC-$host_cpu"],
++      [yes-arm*|yes-aarch*],
++      [
+ 	    AC_CACHE_CHECK([for ARM 'dmb sy' instruction], ethr_cv_arm_dbm_sy_instr,
+ 			   [
+ 				ethr_cv_arm_dbm_sy_instr=no
+@@ -1346,10 +1414,9 @@ AC_DEFUN(ETHR_CHK_GCC_ATOMIC_OPS,
+ 			   ])
+ 	    if test $ethr_cv_arm_dbm_ld_instr = yes; then
+ 		ethr_arm_dbm_ld_instr_val=1
+-	    fi;;
+-	*)
+-	    ;;
+-    esac
++	    fi
++      ])
++
+     AC_DEFINE_UNQUOTED([ETHR_HAVE_GCC_ASM_ARM_DMB_INSTRUCTION], [$ethr_arm_dbm_sy_instr_val], [Define as a boolean indicating whether you have a gcc compatible compiler capable of generating the ARM 'dmb sy' instruction, and are compiling for an ARM processor with ARM DMB instruction support, or not])
+     AC_DEFINE_UNQUOTED([ETHR_HAVE_GCC_ASM_ARM_DMB_ST_INSTRUCTION], [$ethr_arm_dbm_st_instr_val], [Define as a boolean indicating whether you have a gcc compatible compiler capable of generating the ARM 'dmb st' instruction, and are compiling for an ARM processor with ARM DMB instruction support, or not])
+     AC_DEFINE_UNQUOTED([ETHR_HAVE_GCC_ASM_ARM_DMB_LD_INSTRUCTION], [$ethr_arm_dbm_ld_instr_val], [Define as a boolean indicating whether you have a gcc compatible compiler capable of generating the ARM 'dmb ld' instruction, and are compiling for an ARM processor with ARM DMB instruction support, or not])
+@@ -1538,9 +1605,10 @@ AS_HELP_STRING([--without-threadnames],
+ dnl Name of lib where ethread implementation is located
+ ethr_lib_name=ethread
+ 
+-case "$THR_LIB_NAME" in
+-
+-    win32_threads)
++AS_CASE(
++    ["$THR_LIB_NAME"],
++    [win32_threads],
++    [
+ 	ETHR_THR_LIB_BASE_DIR=win
+ 	# * _WIN32_WINNT >= 0x0400 is needed for
+ 	#   TryEnterCriticalSection
+@@ -1612,9 +1680,9 @@ case "$THR_LIB_NAME" in
+ 	   ethr_native_atomic_implementation=windows
+ 	   ethr_have_native_spinlock=yes
+ 	fi
+-	;;
+-
+-    pthread)
++    ],
++    [pthread],
++    [
+ 	ETHR_THR_LIB_BASE_DIR=pthread
+ 	AC_DEFINE(ETHR_PTHREADS, 1, [Define if you have pthreads])
+ 	case $host_os in
+@@ -1730,20 +1798,24 @@ case "$THR_LIB_NAME" in
+ 	dnl
+ 	dnl Check for functions
+ 	dnl
+-	AC_CHECK_FUNC(pthread_spin_lock, \
++	AC_CHECK_FUNC([pthread_spin_lock], \
+ 			[ethr_have_native_spinlock=yes \
+ 			 AC_DEFINE(ETHR_HAVE_PTHREAD_SPIN_LOCK, 1, \
+ [Define if you have the pthread_spin_lock function.])])
+ 
+ 	have_sched_yield=no
+ 	have_librt_sched_yield=no
+-	AC_CHECK_FUNC(sched_yield, [have_sched_yield=yes])
+-	if test $have_sched_yield = no; then
+-	    AC_CHECK_LIB(rt, sched_yield,
++	AC_CHECK_FUNC([sched_yield], [have_sched_yield=yes])
++	AS_IF(
++          [test $have_sched_yield = no],
++          [
++	    AC_CHECK_LIB([rt], [sched_yield],
+ 			 [have_librt_sched_yield=yes
+ 			  ETHR_X_LIBS="$ETHR_X_LIBS -lrt"])
+-	fi
+-	if test $have_sched_yield = yes || test $have_librt_sched_yield = yes; then
++          ])
++	AS_IF(
++          [test $have_sched_yield = yes || test $have_librt_sched_yield = yes],
++          [
+ 	    AC_DEFINE(ETHR_HAVE_SCHED_YIELD, 1, [Define if you have the sched_yield() function.])
+ 	    AC_MSG_CHECKING([whether sched_yield() returns an int])
+ 	    sched_yield_ret_int=no
+@@ -1756,11 +1828,13 @@ case "$THR_LIB_NAME" in
+ 	    if test $sched_yield_ret_int = yes; then
+ 		AC_DEFINE(ETHR_SCHED_YIELD_RET_INT, 1, [Define if sched_yield() returns an int.])
+ 	    fi
+-	fi
++          ])
+ 
+ 	have_pthread_yield=no
+-	AC_CHECK_FUNC(pthread_yield, [have_pthread_yield=yes])
+-	if test $have_pthread_yield = yes; then
++	AC_CHECK_FUNC([pthread_yield], [have_pthread_yield=yes])
++	AS_IF(
++          [test $have_pthread_yield = yes],
++          [
+ 	    AC_DEFINE(ETHR_HAVE_PTHREAD_YIELD, 1, [Define if you have the pthread_yield() function.])
+ 	    AC_MSG_CHECKING([whether pthread_yield() returns an int])
+ 	    pthread_yield_ret_int=no
+@@ -1777,17 +1851,20 @@ case "$THR_LIB_NAME" in
+ 	    if test $pthread_yield_ret_int = yes; then
+ 		AC_DEFINE(ETHR_PTHREAD_YIELD_RET_INT, 1, [Define if pthread_yield() returns an int.])
+ 	    fi
+-	fi
++          ])
+ 
+ 	have_pthread_rwlock_init=no
+ 	AC_CHECK_FUNC(pthread_rwlock_init, [have_pthread_rwlock_init=yes])
+-	if test $have_pthread_rwlock_init = yes; then
+-
++	AS_IF(
++          [test $have_pthread_rwlock_init = yes],
++          [
+ 	    ethr_have_pthread_rwlockattr_setkind_np=no
+ 	    AC_CHECK_FUNC(pthread_rwlockattr_setkind_np,
+ 			  [ethr_have_pthread_rwlockattr_setkind_np=yes])
+ 
+-	    if test $ethr_have_pthread_rwlockattr_setkind_np = yes; then
++	    AS_IF(
++              [test $ethr_have_pthread_rwlockattr_setkind_np = yes],
++              [
+ 		AC_DEFINE(ETHR_HAVE_PTHREAD_RWLOCKATTR_SETKIND_NP, 1, \
+ [Define if you have the pthread_rwlockattr_setkind_np() function.])
+ 
+@@ -1811,8 +1888,8 @@ case "$THR_LIB_NAME" in
+ 		    AC_DEFINE(ETHR_HAVE_PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP, 1, \
+ [Define if you have the PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP rwlock attribute.])
+ 		fi
+-	    fi
+-	fi
++              ])
++          ])
+ 
+ 	if test "$force_pthread_rwlocks" = "yes"; then
+ 
+@@ -1830,7 +1907,9 @@ case "$THR_LIB_NAME" in
+ 			AC_DEFINE(ETHR_HAVE_PTHREAD_ATTR_SETGUARDSIZE, 1, \
+ [Define if you have the pthread_attr_setguardsize function.]))
+ 
+-	if test "x$erl_monotonic_clock_id" != "x"; then
++	AS_IF(
++         [test "x$erl_monotonic_clock_id" != "x"],
++         [
+ 	  AC_MSG_CHECKING(whether pthread_cond_timedwait() can use the monotonic clock $erl_monotonic_clock_id for timeout)
+ 	  pthread_cond_timedwait_monotonic=no
+ 	  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+@@ -1864,7 +1943,7 @@ case "$THR_LIB_NAME" in
+ 	  if test $pthread_cond_timedwait_monotonic = yes; then
+ 	    AC_DEFINE(ETHR_HAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC, [1], [Define if pthread_cond_timedwait() can be used with a monotonic clock])
+ 	  fi
+-	fi
++	 ])
+ 
+ 	linux_futex=no
+ 	AC_MSG_CHECKING([for Linux futexes])
+@@ -1923,10 +2002,12 @@ case "$THR_LIB_NAME" in
+ 	esac
+ 	CFLAGS=$old_CFLAGS
+ 
+-	if test "X$disable_native_ethr_impls" = "Xyes"; then
++	AS_IF(
++          [test "X$disable_native_ethr_impls" = "Xyes"],
++          [
+ 	    ethr_have_native_atomics=no
+-	else
+-
++          ],
++          [
+ 	    ETHR_CHK_GCC_ATOMIC_OPS([])
+ 
+ 	    AC_MSG_CHECKING([for a usable libatomic_ops implementation])
+@@ -1978,7 +2059,9 @@ case "$THR_LIB_NAME" in
+ 			 ethr_native_atomic_implementation=libatomic_ops
+ 	    	         ethr_have_libatomic_ops=yes],[])
+ 	    AC_MSG_RESULT([$ethr_have_libatomic_ops])
+-	    if test $ethr_have_libatomic_ops = yes; then
++	    AS_IF(
++              [test $ethr_have_libatomic_ops = yes],
++              [
+ 	        AC_CHECK_SIZEOF(AO_t, ,
+ 	    	    	        [
+ 	    	    	    	    #include <stdio.h>
+@@ -1991,9 +2074,11 @@ case "$THR_LIB_NAME" in
+ 	    	    AC_DEFINE(ETHR_PREFER_LIBATOMIC_OPS_NATIVE_IMPLS, 1, [Define if you prefer libatomic_ops native ethread implementations])
+ 	        fi
+ 	        ETHR_DEFS="$ETHR_DEFS $libatomic_ops_include"
+-	    elif test "x$with_libatomic_ops" != "xno" && test "x$with_libatomic_ops" != "x"; then
++              ],
++              [test "x$with_libatomic_ops" != "xno" && test "x$with_libatomic_ops" != "x"],
++              [
+ 	        AC_MSG_ERROR([No usable libatomic_ops implementation found])
+-	    fi
++              ])
+ 
+ 	    case "$host_cpu" in
+ 	      sparc | sun4u | sparc64 | sun4v)
+@@ -2025,7 +2110,7 @@ case "$THR_LIB_NAME" in
+ 	    	    ;;
+ 	    esac
+ 
+-	fi
++          ])
+ 
+ 	test ethr_have_native_atomics = "yes" && ethr_have_native_spinlock=yes
+ 
+@@ -2034,10 +2119,7 @@ case "$THR_LIB_NAME" in
+ 	dnl restore CPPFLAGS
+ 	CPPFLAGS=$saved_cppflags
+ 
+-	;;
+-    *)
+-	;;
+-esac
++    ])
+ 
+ AC_MSG_CHECKING([whether default stack size should be modified])
+ if test "x$ethr_modified_default_stack_size" != "x"; then
+@@ -2089,8 +2171,10 @@ esac
+ AC_C_DOUBLE_MIDDLE_ENDIAN
+ 
+ ETHR_X86_SSE2_ASM=no
+-case "$GCC-$ac_cv_sizeof_void_p-$host_cpu" in
+-  yes-4-i86pc | yes-4-i*86 | yes-4-x86_64 | yes-4-amd64)
++AS_CASE(
++ ["$GCC-$ac_cv_sizeof_void_p-$host_cpu"],
++ [yes-4-i86pc | yes-4-i*86 | yes-4-x86_64 | yes-4-amd64],
++ [
+     AC_MSG_CHECKING([for gcc sse2 asm support])
+     save_CFLAGS="$CFLAGS"
+     CFLAGS="$CFLAGS -msse2"
+@@ -2105,14 +2189,12 @@ case "$GCC-$ac_cv_sizeof_void_p-$host_cpu" in
+       AC_DEFINE(ETHR_GCC_HAVE_SSE2_ASM_SUPPORT, 1, [Define if you use a gcc that supports -msse2 and understand sse2 specific asm statements])
+       ETHR_X86_SSE2_ASM=yes
+     fi
+-    ;;
+-  *)
+-    ;;
+-esac
+-
+-case "$GCC-$host_cpu" in
+-  yes-i86pc | yes-i*86 | yes-x86_64 | yes-amd64)
++ ])
+ 
++AS_CASE(
++  ["$GCC-$host_cpu"],
++  [yes-i86pc | yes-i*86 | yes-x86_64 | yes-amd64],
++  [
+     if test $ac_cv_sizeof_void_p = 4; then
+        dw_cmpxchg="cmpxchg8b"
+     else
+@@ -2190,7 +2272,9 @@ case "$GCC-$host_cpu" in
+ 
+     done
+ 
+-    if test $gcc_pic_dw_cmpxchg_asm = no && test $ac_cv_sizeof_void_p = 4; then
++    AS_IF(
++     [test $gcc_pic_dw_cmpxchg_asm = no && test $ac_cv_sizeof_void_p = 4],
++     [ 
+ 
+       AC_MSG_CHECKING([for gcc pic cmpxchg8b asm support with EBX workaround])
+ 
+@@ -2214,7 +2298,9 @@ case "$GCC-$host_cpu" in
+ 
+       AC_MSG_RESULT([$gcc_pic_dw_cmpxchg_asm])
+ 
+-      if test $gcc_pic_dw_cmpxchg_asm = no; then
++      AS_IF(
++       [test $gcc_pic_dw_cmpxchg_asm = no],
++       [
+ 
+       	AC_MSG_CHECKING([for gcc pic cmpxchg8b asm support with EBX and register shortage workarounds])
+         # If no optimization is enabled we sometimes get a
+@@ -2240,13 +2326,12 @@ case "$GCC-$host_cpu" in
+ 	 gcc_cmpxchg8b_pic_no_clobber_ebx_register_shortage=yes],[])
+ 
+         AC_MSG_RESULT([$gcc_pic_dw_cmpxchg_asm])
+-      fi
++       ])
+ 
+       if test $gcc_cflags_pic = yes; then
+         gcc_dw_cmpxchg_asm=$gcc_pic_dw_cmpxchg_asm
+       fi
+- 
+-   fi
++     ])
+ 
+     CFLAGS="$save_CFLAGS"
+ 
+@@ -2258,10 +2343,8 @@ case "$GCC-$host_cpu" in
+     fi
+     if test "$gcc_dw_cmpxchg_asm" = "yes"; then
+       AC_DEFINE(ETHR_GCC_HAVE_DW_CMPXCHG_ASM_SUPPORT, 1, [Define if you use a gcc that supports the double word cmpxchg instruction])
+-    fi;;
+-  *)
+-    ;;
+-esac
++    fi
++ ])
+ 
+ AC_DEFINE(ETHR_HAVE_ETHREAD_DEFINES, 1, \
+ [Define if you have all ethread defines])
+@@ -2328,7 +2411,9 @@ case "$with_clock_resolution" in
+      ;;
+ esac
+ 
+-if test "$force_gettimeofday_os_system_time" = "yes"; then
++AS_IF(
++ [test "$force_gettimeofday_os_system_time" = "yes"],
++ [
+ 
+   AC_CHECK_FUNCS([gettimeofday])
+   if test "$ac_cv_func_gettimeofday" = "yes"; then
+@@ -2336,8 +2421,9 @@ if test "$force_gettimeofday_os_system_time" = "yes"; then
+   else
+     AC_MSG_ERROR([No gettimeofday() available])
+   fi
+-
+-else # $force_gettimeofday_os_system_time != yes
++ ],
++ [
++  # $force_gettimeofday_os_system_time != yes
+ 
+ case "$with_clock_gettime_realtime_id" in
+    ""|no)
+@@ -2356,16 +2442,22 @@ case "$with_clock_gettime_realtime_id" in
+      ;;
+ esac
+ 
+-case "$with_clock_resolution-$with_clock_gettime_realtime_id" in
+-  high-no)
+-	ERL_WALL_CLOCK(high_resolution);;
+-  low-no)
+-	ERL_WALL_CLOCK(low_resolution);;
+-  default-no)
+-	ERL_WALL_CLOCK(default_resolution);;
+-  *)
+-	ERL_WALL_CLOCK(custom_resolution, $with_clock_gettime_realtime_id);;
+-esac
++AS_CASE(["$with_clock_resolution-$with_clock_gettime_realtime_id"],
++        [high-no],
++        [
++            ERL_WALL_CLOCK([high_resolution])
++        ],
++        [low-no],
++        [
++            ERL_WALL_CLOCK([low_resolution])
++        ],
++        [default-no],
++        [
++            ERL_WALL_CLOCK([default_resolution])
++        ],
++        [
++            ERL_WALL_CLOCK([custom_resolution], [$with_clock_gettime_realtime_id])
++        ])
+ 
+ case "$erl_wall_clock_func-$erl_wall_clock_id-$with_clock_gettime_realtime_id" in
+   *-*-no)
+@@ -2399,7 +2491,7 @@ if test "x$erl_wall_clock_id" != "x"; then
+     AC_DEFINE_UNQUOTED(WALL_CLOCK_ID, [$erl_wall_clock_id], [Define to wall clock id to use])
+ fi
+ 
+-fi # $force_gettimeofday_os_system_time != yes
++ ]) # $force_gettimeofday_os_system_time != yes
+ 
+ case "$with_clock_gettime_monotonic_id" in
+    ""|no)
+@@ -2418,16 +2510,22 @@ case "$with_clock_gettime_monotonic_id" in
+      ;;
+ esac
+ 
+-case "$with_clock_resolution-$with_clock_gettime_monotonic_id" in
+-  high-no)
+-	ERL_MONOTONIC_CLOCK(high_resolution, undefined, $prefer_elapsed_monotonic_time_during_suspend);;
+-  low-no)
+-	ERL_MONOTONIC_CLOCK(low_resolution, undefined, $prefer_elapsed_monotonic_time_during_suspend);;
+-  default-no)
+-	ERL_MONOTONIC_CLOCK(default_resolution, undefined, $prefer_elapsed_monotonic_time_during_suspend);;
+-  *)
+-	ERL_MONOTONIC_CLOCK(custom_resolution, $with_clock_gettime_monotonic_id, $prefer_elapsed_monotonic_time_during_suspend);;
+-esac
++AS_CASE(["$with_clock_resolution-$with_clock_gettime_monotonic_id"],
++        [high-no],
++        [
++            ERL_MONOTONIC_CLOCK([high_resolution], [undefined], [$prefer_elapsed_monotonic_time_during_suspend])
++        ],
++        [low-no],
++        [
++            ERL_MONOTONIC_CLOCK([low_resolution], [undefined], [$prefer_elapsed_monotonic_time_during_suspend])
++        ],
++        [default-no],
++        [
++            ERL_MONOTONIC_CLOCK([default_resolution], [undefined], [$prefer_elapsed_monotonic_time_during_suspend])
++        ],
++        [
++            ERL_MONOTONIC_CLOCK([custom_resolution], [$with_clock_gettime_monotonic_id], [$prefer_elapsed_monotonic_time_during_suspend])
++        ])
+ 
+ case "$erl_monotonic_clock_func-$erl_monotonic_clock_id-$with_clock_gettime_monotonic_id" in
+   *-*-no)
+@@ -2480,7 +2578,7 @@ if test $erl_cv_clock_gettime_monotonic_raw = yes; then
+   AC_DEFINE(HAVE_CLOCK_GETTIME_MONOTONIC_RAW, [1], [Define if you have clock_gettime(CLOCK_MONOTONIC_RAW, _)])
+ fi
+ 
+-ERL_MONOTONIC_CLOCK(high_resolution, undefined, no)
++ERL_MONOTONIC_CLOCK([high_resolution], [undefined], [no])
+ 
+ case $erl_monotonic_clock_low_resolution-$erl_monotonic_clock_func in
+   no-mach_clock_get_time)
+@@ -2580,13 +2678,13 @@ esac
+ ])
+ 
+ LIBRT=$xrtlib
+-case $erl_gethrvtime in
+-  procfs_ioctl)
++AS_IF([test "$erl_gethrvtime" = "procfs_ioctl"],
++      [
+ 	AC_DEFINE(HAVE_GETHRVTIME_PROCFS_IOCTL,[1],
+ 		[define if gethrvtime() works and uses ioctl() to /proc/self])
+ 	AC_MSG_RESULT(uses ioctl to procfs)
+-	;;
+-  *)
++      ],
++      [
+ 	if test $erl_gethrvtime = cross; then
+ 	    erl_gethrvtime=false
+ 	    AC_MSG_RESULT(cross)
+@@ -2647,8 +2745,7 @@ case $erl_gethrvtime in
+ 		*)
+ 			;;
+ 	esac
+-	;;
+-esac
++      ])
+ AC_SUBST(LIBRT)
+ ])dnl
+ 
+@@ -2669,12 +2766,15 @@ AC_DEFUN([LM_TRY_ENABLE_CFLAG], [
+     CFLAGS="$1 $$2";
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[return 0;]])],[can_enable_flag=true],[can_enable_flag=false])
+     CFLAGS=$saved_CFLAGS;
+-    if test "X$can_enable_flag" = "Xtrue"; then
++    AS_IF(
++      [test "X$can_enable_flag" = "Xtrue"],
++      [
+         AC_MSG_RESULT([yes])
+         AS_VAR_SET($2, "$1 $$2")
+-    else
++      ],
++      [
+         AC_MSG_RESULT([no])
+-    fi
++      ])
+ ])
+ 
+ AC_DEFUN([LM_CHECK_ENABLE_CFLAG], [
+@@ -2683,13 +2783,16 @@ AC_DEFUN([LM_CHECK_ENABLE_CFLAG], [
+     CFLAGS="$1 $CFLAGS";
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[return 0;]])],[can_enable_flag=true],[can_enable_flag=false])
+     CFLAGS=$saved_CFLAGS;
+-    if test "X$can_enable_flag" = "Xtrue"; then
++    AS_IF(
++      [test "X$can_enable_flag" = "Xtrue"],
++      [
+         AS_VAR_SET($2, true)
+         AC_MSG_RESULT([yes])
+-    else
++      ],
++      [
+         AS_VAR_SET($2, false)
+         AC_MSG_RESULT([no])
+-    fi
++      ])
+ ])
+ 
+ dnl
+@@ -2705,13 +2808,16 @@ AC_DEFUN([LM_CHECK_RUN_CFLAG], [
+     CFLAGS="$1 $CFLAGS";
+     AC_RUN_IFELSE([AC_LANG_SOURCE([[]])],[return 0;],[can_enable_flag=true],[can_enable_flag=false])
+     CFLAGS=$saved_CFLAGS;
+-    if test "X$can_enable_flag" = "Xtrue"; then
++    AS_IF(
++      [test "X$can_enable_flag" = "Xtrue"],
++      [
+         AS_VAR_SET($2, true)
+         AC_MSG_RESULT([yes])
+-    else
++      ],
++      [
+         AS_VAR_SET($2, false)
+         AC_MSG_RESULT([no])
+-    fi
++      ])
+ ])
+ 
+ dnl ERL_TRY_LINK_JAVA(CLASSES, FUNCTION-BODY
+@@ -2728,17 +2834,22 @@ class conftest { public static void main(String[] args) {
+    ; return; }}
+ EOF
+ changequote([, ])dnl
+-if AC_TRY_EVAL(java_link) && test -s conftest.class; then
++AS_IF(
++  [AC_TRY_EVAL(java_link) && test -s conftest.class],
++  [
+    ifelse([$3], , :, [rm -rf conftest*
+    $3])
+-else
++
++  ],
++  [
+    echo "configure: failed program was:" 1>&AS_MESSAGE_LOG_FD
+    cat conftest.java 1>&AS_MESSAGE_LOG_FD
+    echo "configure: PATH was $PATH" 1>&AS_MESSAGE_LOG_FD
+ ifelse([$4], , , [  rm -rf conftest*
+   $4
+ ])dnl
+-fi
++
++  ])
+ rm -f conftest*])
+ #define UNSAFE_MASK  0xc0000000 /* Mask for bits that must be constant */
+ 
+@@ -2909,7 +3020,9 @@ else
+ fi
+ # DED_EMU_THR_DEFS=$EMU_THR_DEFS
+ DED_CFLAGS="$CFLAGS $CPPFLAGS $DED_CFLAGS"
+-if test "x$GCC" = xyes; then
++AS_IF(
++  [test "x$GCC" = xyes],
++  [
+     # Use -fno-common for gcc, that is link error if multiple definitions of
+     # global variables are encountered. This is ISO C compliant.
+     # Until version 10, gcc has had -fcommon as default, which allows and merges
+@@ -2920,7 +3033,7 @@ if test "x$GCC" = xyes; then
+     DED_CFLAGS="$DED_CFLAGS -fPIC"
+     # Remove -fPIE and -fno-PIE
+     DED_CFLAGS=`echo $DED_CFLAGS | sed 's/-f\(no-\)\?PIE//g'`
+-fi
++  ])
+ 
+ DED_EXT=so
+ case $host_os in
+diff --git a/erts/autoconf/win32.config.cache.static b/erts/autoconf/win32.config.cache.static
+index b3328e54144..790ea9ab00e 100755
+--- a/erts/autoconf/win32.config.cache.static
++++ b/erts/autoconf/win32.config.cache.static
+@@ -36,11 +36,11 @@ ac_cv_env_CXX_value=cc.sh
+ ac_cv_env_LDFLAGS_set=
+ ac_cv_env_LDFLAGS_value=
+ ac_cv_env_build_alias_set=set
+-ac_cv_env_build_alias_value=win32
++ac_cv_env_build_alias_value=local-x86-pc-windows
+ ac_cv_env_host_alias_set=set
+-ac_cv_env_host_alias_value=win32
++ac_cv_env_host_alias_value=local-x86-pc-windows
+ ac_cv_env_target_alias_set=set
+-ac_cv_env_target_alias_value=win32
++ac_cv_env_target_alias_value=local-x86-pc-windows
+ ac_cv_exeext=${ac_cv_exeext=.exe}
+ ac_cv_func___brk=${ac_cv_func___brk=no}
+ ac_cv_func___sbrk=${ac_cv_func___sbrk=no}
+diff --git a/erts/autoconf/win64.config.cache.static b/erts/autoconf/win64.config.cache.static
+index c7d92c70007..73146cbb861 100755
+--- a/erts/autoconf/win64.config.cache.static
++++ b/erts/autoconf/win64.config.cache.static
+@@ -40,11 +40,11 @@ ac_cv_env_CXX_value=cc.sh
+ ac_cv_env_LDFLAGS_set=
+ ac_cv_env_LDFLAGS_value=
+ ac_cv_env_build_alias_set=set
+-ac_cv_env_build_alias_value=win32
++ac_cv_env_build_alias_value=local-x86_64-pc-windows
+ ac_cv_env_host_alias_set=set
+-ac_cv_env_host_alias_value=win32
++ac_cv_env_host_alias_value=local-x86_64-pc-windows
+ ac_cv_env_target_alias_set=set
+-ac_cv_env_target_alias_value=win32
++ac_cv_env_target_alias_value=local-x86_64-pc-windows
+ ac_cv_exeext=${ac_cv_exeext=.exe}
+ ac_cv_func___brk=${ac_cv_func___brk=no}
+ ac_cv_func___sbrk=${ac_cv_func___sbrk=no}
+diff --git a/erts/configure.ac b/erts/configure.ac
+index 00866a002a2..75a9153e7bf 100644
+--- a/erts/configure.ac
++++ b/erts/configure.ac
+@@ -1,4 +1,4 @@
+-dnl Process this file with autoconf to produce a configure script. -*-m4-*-
++dnl Process this file with autoconf to produce a configure script. -*-Autoconf-*-
+ 
+ dnl %CopyrightBegin%
+ dnl
+@@ -80,19 +80,7 @@ dnl ----------------------------------------------------------------------
+ dnl Figure out what system we are running on.
+ dnl ----------------------------------------------------------------------
+ 
+-dnl
+-dnl AC_CANONICAL_HOST does not like free_source as a host specification,
+-dnl so we make a little special case.
+-dnl
+-if test "$host" = "free_source" -o "$host" = "win32"; then
+-   host_os="$host"
+-else   
+-   AC_CANONICAL_HOST
+-fi
+-
+-#
+-# To configure for free source run ./configure --host=free_source
+-#
++ERL_CANONICAL_SYSTEM_TYPE
+ 
+ if test "$cross_compiling" = "yes"; then
+     CROSS_COMPILING=yes
+@@ -401,7 +389,8 @@ esac
+ 
+ i_noretpoline_attr=""
+ 
+-if test X"$with_spectre_mitigation" != X"no"; then
++AS_IF([test X"$with_spectre_mitigation" != X"no"],
++  [
+     CFLAGS="$CFLAGS -mindirect-branch=thunk"
+ 
+     AC_MSG_CHECKING([for spectre mitigation])
+@@ -410,7 +399,8 @@ if test X"$with_spectre_mitigation" != X"no"; then
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_ERROR([no])])
+ 
+-    if test X"$with_spectre_mitigation" = X"incomplete"; then
++    AS_IF([test X"$with_spectre_mitigation" = X"incomplete"],
++      [
+         # gcc and clang support this attribute if they're recent enough. Note
+         # that we must compile with -Werror to check for actual support as they
+         # warn rather than error out on unsupported attributes.
+@@ -426,8 +416,8 @@ if test X"$with_spectre_mitigation" != X"no"; then
+             [AC_MSG_ERROR([no])])
+ 
+         CFLAGS="$i_preserve_cflags"
+-    fi
+-fi
++      ])
++  ])
+ 
+ AC_DEFINE_UNQUOTED(ERTS_NO_RETPOLINE, $i_noretpoline_attr,
+                    [Per-function attribute for disabling retpoline. This is
+@@ -590,14 +580,14 @@ esac
+ 
+ lfs_conf=ok
+ lfs_source=none
+-if test "${LFS_CFLAGS+set}" = "set" || \
+-   test "${LFS_LDFLAGS+set}" = "set" || \
+-   test "${LFS_LIBS+set}" = "set"; then
++AS_IF([test "${LFS_CFLAGS+set}" = "set" || test "${LFS_LDFLAGS+set}" = "set" || test "${LFS_LIBS+set}" = "set"],
++  [
+     lfs_source=user
+-else
++  ],
++  [
+    LM_CHECK_GETCONF
+    test "$GETCONF" = "false" || lfs_source=getconf
+-fi
++  ])
+ 
+ if test "$lfs_source" = "none"; then
+     AC_MSG_WARN([Do not know how to check for large file support flags; no getconf is available])
+@@ -628,7 +618,8 @@ else
+     fi
+ fi
+ 
+-if test "x$GCC" = xyes; then
++AS_IF([test "x$GCC" = xyes],
++ [
+   # Treat certain GCC warnings as errors
+   LM_TRY_ENABLE_CFLAG([-Werror=return-type], [WERRORFLAGS])
+   LM_TRY_ENABLE_CFLAG([-Werror=implicit], [WERRORFLAGS])
+@@ -660,10 +651,11 @@ if test "x$GCC" = xyes; then
+   # Until version 10, gcc has had -fcommon as default, which allows and merges
+   # such dubious duplicates.
+   LM_TRY_ENABLE_CFLAG([-fno-common], [CFLAGS])
+-else
++ ],
++ [
+   WFLAGS=""
+   WERRORFLAGS=${WERRORFLAGS:-""}
+-fi
++ ])
+ 
+ AC_MSG_CHECKING([C99 support])
+ 
+@@ -697,7 +689,8 @@ LM_CHECK_RUN_CFLAG([-fprofile-generate -Werror],[PROFILE_GENERATE])
+ LM_CHECK_RUN_CFLAG([-fprofile-use -Werror],[PROFILE_USE])
+ LM_CHECK_RUN_CFLAG([-fprofile-use -fprofile-correction -Werror],[PROFILE_CORRECTION])
+ 
+-if test "X$PROFILE_CORRECTION" = "Xtrue"; then
++AS_IF([test "X$PROFILE_CORRECTION" = "Xtrue"],
++  [
+    saved_CFLAGS=$CFLAGS
+    saved_LDFLAGS=$LDFLAGS
+    CFLAGS="-fprofile-generate $saved_CFLAGS"
+@@ -710,11 +703,12 @@ if test "X$PROFILE_CORRECTION" = "Xtrue"; then
+          PROFILE_GENERATE=false])
+    CFLAGS=$saved_CFLAGS
+    LDFLAGS=$saved_LDFLAGS
+-fi
++  ])
+ 
+ ## Check if this is clang
+ LM_CHECK_ENABLE_CFLAG([-fprofile-instr-generate -Werror],[PROFILE_INSTR_GENERATE])
+-if test "X$PROFILE_INSTR_GENERATE" = "Xtrue"; then
++AS_IF([test "X$PROFILE_INSTR_GENERATE" = "Xtrue"],
++  [
+    # It was clang, now we also have to check if we have llvm-profdata and that
+    # we can link programs with -fprofile-instr-use
+    saved_CFLAGS=$CFLAGS;
+@@ -722,17 +716,21 @@ if test "X$PROFILE_INSTR_GENERATE" = "Xtrue"; then
+    AC_RUN_IFELSE([AC_LANG_PROGRAM([],[])],
+      [AC_PATH_PROG([LLVM_PROFDATA], [llvm-profdata],[],[$PATH:/Library/Developer/CommandLineTools/usr/bin])
+       AC_CHECK_PROGS([XCRUN], [xcrun])
+-      if test "X$XCRUN" != "X" -a "X$LLVM_PROFDATA" = "X"; then
++      AS_IF([test "X$XCRUN" != "X" -a "X$LLVM_PROFDATA" = "X"],
++       [
+         AC_MSG_CHECKING([for $XCRUN $LLVM_PROFDATA])
+-        if $XCRUN $LLVM_PROFDATA --help 2>& AS_MESSAGE_LOG_FD >& AS_MESSAGE_LOG_FD; then
++        AS_IF([$XCRUN $LLVM_PROFDATA --help 2>& AS_MESSAGE_LOG_FD >& AS_MESSAGE_LOG_FD],
++	 [
+           LLVM_PROFDATA="$XCRUN $LLVM_PROFDATA"
+           AC_MSG_RESULT([yes])
+-        else
++         ],
++	 [
+           AC_MSG_RESULT([no])
+-        fi
+-      fi
++         ])
++       ])
+       AC_SUBST(LLVM_PROFDATA)
+-      if test "X$LLVM_PROFDATA" != "X"; then
++      AS_IF([test "X$LLVM_PROFDATA" != "X"],
++       [
+         CFLAGS="-fprofile-instr-use=default.profdata $saved_CFLAGS";
+         $LLVM_PROFDATA merge -output=default.profdata *.profraw;
+         AC_MSG_CHECKING([whether $CC accepts -fprofile-instr-use=default.profdata -Werror])
+@@ -742,12 +740,12 @@ if test "X$PROFILE_INSTR_GENERATE" = "Xtrue"; then
+           [AC_MSG_RESULT([no])
+            PROFILE_INSTR_USE=false])
+         rm -f default.profdata
+-      fi],
++       ])],
+      [],
+      [AC_MSG_NOTICE([Disabling PGO when cross-compiling])])
+    rm -f *.profraw
+    CFLAGS=$saved_CFLAGS;
+-fi
++  ])
+ 
+ AC_ARG_ENABLE(pgo,
+ AS_HELP_STRING([--enable-pgo],
+@@ -968,28 +966,32 @@ AC_SUBST(ERLANG_OSTYPE)
+ # Otherwise we assume that if the linker accepts the flag, it is needed.
+ AC_MSG_CHECKING(for extra flags needed to export symbols)
+ DEXPORT=""
+-case $host_os in
+-	aix*|os400*)
++AS_CASE([$host_os],
++	[aix*|os400*],
++	[
+ 		DEXPORT=-Wl,-bexpall,-brtl
+-	;;
+-	bsdi*)
++	],
++	[bsdi*],
++	[
+     		DEXPORT="-rdynamic " 
+-    	;;
+-	win32)
++    	],
++	[win32],
++	[
+     		DEXPORT="" 
+-    	;;
+-	*)
++    	],
++	[
+ 		DEXPORT=
+ 		save_ldflags="$LDFLAGS"
+ 		LDFLAGS=-Wl,-export-dynamic
+ 		AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[DEXPORT="$LDFLAGS"])
+-		if test "$DEXPORT" = ""; then
++		AS_IF([test "$DEXPORT" = ""],
++		  [
+ 		   LDFLAGS=-Wl,-Bexport
+ 		   AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[DEXPORT="$LDFLAGS"])
+-		fi
++		  ])
+ 		LDFLAGS="$save_ldflags"
+-	;;
+-esac
++	])
++
+ AC_SUBST(DEXPORT)
+ case "x$DEXPORT" in
+ 	"x")
+@@ -1269,8 +1271,8 @@ dnl ----------------------------------------------------------------------
+ 
+ TERMCAP_LIB=
+ 
+-if test "x$with_termcap" != "xno" &&
+-   test "X$host" != "Xwin32"; then
++AS_IF([test "x$with_termcap" != "xno" && test "X$host" != "Xwin32"],
++  [
+     # try these libs
+     termcap_libs="tinfo ncurses curses termcap termlib"
+ 
+@@ -1284,7 +1286,7 @@ if test "x$with_termcap" != "xno" &&
+     if test "x$TERMCAP_LIB" = "x"; then
+ 	AC_MSG_ERROR([No curses library functions found])
+     fi
+-fi
++  ])
+ 
+ AC_SUBST(TERMCAP_LIB)
+ 
+@@ -1293,7 +1295,8 @@ if test "x$TERMCAP_LIB" != "x"; then
+ 	AC_DEFINE(HAVE_TERMCAP, 1, [Define if termcap functions exists])
+ fi
+ 
+-if test "X$host" != "Xwin32"; then
++AS_IF([test "X$host" != "Xwin32"],
++  [
+     AC_MSG_CHECKING(for wcwidth)
+     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <wchar.h>]], [[wcwidth(0);]])],[have_wcwidth=yes],[have_wcwidth=no])
+     if test $have_wcwidth = yes; then
+@@ -1301,7 +1304,7 @@ if test "X$host" != "Xwin32"; then
+         AC_DEFINE(HAVE_WCWIDTH, [1],
+                   [Define to 1 if you have a `wcwidth' function.])
+     fi
+-fi
++  ])
+ 
+ dnl -------------
+ dnl zlib
+@@ -1317,11 +1320,13 @@ AC_ARG_ENABLE(builtin-zlib,
+ 
+ Z_LIB=
+ 
+-if test "x$enable_builtin_zlib" = "xyes"; then
++AS_IF([test "x$enable_builtin_zlib" = "xyes"],
++ [
+   AC_DEFINE(HAVE_ZLIB_INFLATEGETDICTIONARY, 1,
+             [Define if your zlib version defines inflateGetDictionary.])
+   AC_MSG_NOTICE([Using our own built-in zlib source])
+-else
++ ],
++ [
+ AC_MSG_CHECKING(for zlib 1.2.5 or higher)
+ zlib_save_LIBS=$LIBS
+ LIBS="-lz $LIBS"
+@@ -1346,15 +1351,17 @@ error
+  AC_MSG_RESULT(no)
+ ])
+ 
+-if test "$Z_LIB" != ""; then
++AS_IF([test "$Z_LIB" != ""],
++ [
+   AC_SEARCH_LIBS(inflateGetDictionary, [z],
+                  AC_DEFINE(HAVE_ZLIB_INFLATEGETDICTIONARY, 1,
+                            [Define if your zlib version defines inflateGetDictionary.]))
+-fi
++ ])
+ 
+ LIBS=$zlib_save_LIBS
+ 
+-fi
++ ])
++
+ AC_SUBST(Z_LIB)
+ 
+ 
+@@ -1377,11 +1384,10 @@ else
+     fi
+ fi
+ 
+-if test "x$USE_ESOCK" = "xyes"; then
+-    if test "x$USE_ESOCK" = "xyes"; then
++AS_IF([test "x$USE_ESOCK" = "xyes" && test "x$USE_ESOCK" = "xyes"],
++      [
+         AC_CHECK_FUNCS([localtime_r strftime getprotoent setprotoent endprotoent])
+-    fi
+-fi
++      ])
+ 
+ AC_SUBST(USE_ESOCK)
+ 
+@@ -1501,14 +1507,16 @@ tk_oldLibs=$LIBS
+ erl_checkBoth=0
+ SOCKET_LIBS=""
+ AC_CHECK_FUNC(connect, erl_checkSocket=0, erl_checkSocket=1)
+-if test "$erl_checkSocket" = 1; then
++AS_IF([test "$erl_checkSocket" = 1],
++  [
+     AC_CHECK_LIB(socket, main, SOCKET_LIBS="-lsocket", erl_checkBoth=1)
+-fi
++  ])
+ 
+-if test "$erl_checkBoth" = 1; then
++AS_IF([test "$erl_checkBoth" = 1],
++  [
+     LIBS="$LIBS -lsocket -lnsl"
+     AC_CHECK_FUNC(accept, SOCKET_LIBS="-lsocket -lnsl")
+-fi
++  ])
+ 
+ LIBS="$tk_oldLibs $SOCKET_LIBS"
+ AC_CHECK_FUNC(gethostbyname, , AC_CHECK_LIB(nsl, main, [SOCKET_LIBS="$SOCKET_LIBS -lnsl"]))
+@@ -1523,20 +1531,23 @@ dnl These gethostbyname thingies use old style AC_DEFINE for BC with ancient
+ dnl autoconf...
+ dnl 
+ 
+-if test "$have_gethostbyname_r" = yes; then
++AS_IF([test "$have_gethostbyname_r" = yes],
++      [
+ 	# OK, so we have gethostbyname_r() - but do we know how to call it...?
+ 	# (if not, HAVE_GETHOSTBYNAME_R will not be defined at all)
+-	case $host_os in
+-		solaris2*)
++	AS_CASE([$host_os],
++		[solaris2*],
++		[
+ 			AC_DEFINE(HAVE_GETHOSTBYNAME_R, GHBN_R_SOLARIS,
+ 				[Define to flavour of gethostbyname_r])
+-		;;
+-		aix*|os400*)
++		],
++		[aix*|os400*],
++		[
+ 			# AIX version also needs "struct hostent_data" defn
+ 			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <netdb.h>]], [[struct hostent_data hd;]])],[AC_DEFINE(HAVE_GETHOSTBYNAME_R, GHBN_R_AIX,
+ 				    Define to flavour of gethostbyname_r)],[])
+-		;;
+-		*)
++		],
++		[
+ 			AC_EGREP_CPP(^yes$,[
+ #include <stdio.h>
+ #ifdef __GLIBC__
+@@ -1544,9 +1555,8 @@ yes
+ #endif
+ 			  ], AC_DEFINE(HAVE_GETHOSTBYNAME_R, GHBN_R_GLIBC,
+ 				[Define to flavour of gethostbyname_r]))
+-		;;
+-	esac
+-fi
++		])
++      ])
+ 
+ AC_MSG_CHECKING(for working posix_openpt implementation)
+ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+@@ -1656,7 +1666,8 @@ AC_CHECK_MEMBERS([struct ifreq.ifr_enaddr], [], [],
+ dnl ----------------------------------------------------------------------
+ dnl  Check the availability of systemd
+ dnl ----------------------------------------------------------------------
+-if test x"$enable_systemd" != x"no"; then
++AS_IF([test x"$enable_systemd" != x"no"],
++[
+ 
+ systemd_daemon_save_LIBS=$LIBS
+ LIBS=
+@@ -1676,7 +1687,7 @@ elif test x"$enable_systemd" = x"yes"; then
+   AC_MSG_FAILURE([--enable-systemd was given, but test for systemd failed])
+ fi
+ LIBS=$systemd_daemon_save_LIBS
+-fi
++])
+ AC_SUBST(SYSTEMD_DAEMON_LIBS)
+ 
+ 
+@@ -1684,7 +1695,8 @@ dnl ----------------------------------------------------------------------
+ dnl Check the availability for libdlpi
+ dnl ----------------------------------------------------------------------
+ AC_CHECK_LIB(dlpi, dlpi_open)
+-if test x"$ac_cv_lib_dlpi_dlpi_open" = x"no"; then
++AS_IF([test x"$ac_cv_lib_dlpi_dlpi_open" = x"no"],
++  [
+    unset -v ac_cv_lib_dlpi_dlpi_open
+    dnl Try again now with -L/lib (or ditto 64) as argument to linker since
+    dnl gcc makes /usr/ccs/bin/ld ignore the crle configured linker default paths
+@@ -1720,7 +1732,7 @@ if test x"$ac_cv_lib_dlpi_dlpi_open" = x"no"; then
+       LDFLAGS="$save_ldflags"
+    fi
+    unset -v save_ldflags
+-fi
++ ])
+ 
+ AC_CHECK_HEADER(sys/resource.h,
+ 	[AC_DEFINE(HAVE_SYS_RESOURCE_H, 1,
+@@ -1750,7 +1762,8 @@ AC_CHECK_HEADERS([netpacket/packet.h],
+ 
+ dnl Check for kernel SCTP support
+ AC_SUBST(LIBSCTP)
+-if test "x$enable_sctp" != "xno" ; then
++AS_IF([test "x$enable_sctp" != "xno"],
++  [
+     AC_CHECK_HEADER(netinet/sctp.h,
+         [LIBSCTP=libsctp.so.1
+ 	 AC_DEFINE(HAVE_SCTP_H, [1],
+@@ -1760,7 +1773,7 @@ if test "x$enable_sctp" != "xno" ; then
+ 	 #include <sys/socket.h>
+ 	 #endif
+ 	])
+-fi
++  ])
+ 
+ case "x$enable_sctp" in
+      xno|x)
+@@ -1771,7 +1784,8 @@ case "x$enable_sctp" in
+ 	fi;;
+ esac
+ 
+-if test x"$ac_cv_header_netinet_sctp_h" = x"yes"; then
++AS_IF([test x"$ac_cv_header_netinet_sctp_h" = x"yes"],
++  [
+     AS_IF([test "x$enable_sctp" = "xlib"],
+         AC_CHECK_LIB(sctp, sctp_bindx))
+     AC_CHECK_FUNCS([sctp_bindx sctp_peeloff sctp_getladdrs sctp_freeladdrs sctp_getpaddrs sctp_freepaddrs])
+@@ -1812,7 +1826,7 @@ if test x"$ac_cv_header_netinet_sctp_h" = x"yes"; then
+          #endif
+          #include <netinet/sctp.h>
+         ])
+-fi
++  ])
+ 
+ dnl Check for setns
+ AC_CHECK_HEADERS(sched.h setns.h)
+@@ -2013,21 +2027,21 @@ AC_SEARCH_LIBS(fdatasync, [rt])
+ 
+ 
+ dnl sendfile syscall
+-case $host_os in
+-    linux*|freebsd*|dragonfly*|darwin*)
++AS_CASE([$host_os],
++        [linux*|freebsd*|dragonfly*|darwin*],
++	[
+ 		AC_CHECK_FUNCS([sendfile])
+-		;;
+-    solaris*)
++	],
++    	[solaris*],
++	[
+ 		AC_SEARCH_LIBS(sendfilev, sendfile,
+ 			AC_DEFINE([HAVE_SENDFILEV],[1],
+ 		           [Define to 1 if you have the `sendfilev' function.]))
+-		;;
+-    win32)
++        ],
++	[win32],
++	[
+ 		LIBS="$LIBS -lmswsock"
+-		;;
+-    *)
+-		;;
+-esac
++	])
+ 
+ dnl ----------------------------------------------------------------------
+ dnl Checks for library functions.
+@@ -2182,13 +2196,18 @@ else
+     AC_MSG_RESULT(no)
+ fi
+ 
+-case X$erl_xcomp_posix_memalign in
+-     Xno) ;;
+-     Xyes) have_posix_memalign=yes ;;
+-     *)
++AS_CASE([X$erl_xcomp_posix_memalign],
++	[Xno],
++	[],
++	[Xyes],
++	[
++	have_posix_memalign=yes
++	],
++        [
+ 	AC_CHECK_FUNC(
+ 		[posix_memalign],
+-                [if test "$cross_compiling" != yes; then
++                [AS_IF([test "$cross_compiling" != yes],
++		       [     		       
+ AC_RUN_IFELSE([AC_LANG_SOURCE([[
+ #include <stdlib.h>
+ int main(void) {
+@@ -2201,10 +2220,11 @@ int main(void) {
+ }
+ ]])],[have_posix_memalign=yes
+ ],[],[])
+-		 else
++		       ],
++		       [
+ 			have_posix_memalign=yes
+-		 fi]);;
+-esac
++		       ])])
++	])
+ 
+ if test "$have_posix_memalign" = "yes"; then
+    AC_DEFINE(HAVE_POSIX_MEMALIGN,[1],
+@@ -2543,7 +2563,8 @@ case $erts_cv___after_morecore_hook_can_track_malloc in
+ 	*) ;;
+ esac
+ 
+-if test "x$ac_cv_func_sbrk" = "xyes"; then
++AS_IF([test "x$ac_cv_func_sbrk" = "xyes"],
++  [
+     AC_CACHE_CHECK([types of sbrk()s return value and argument],
+ 		    erts_cv_sbrk_ret_arg_types,
+ 		    [
+@@ -2576,9 +2597,10 @@ EOF
+ 	AC_DEFINE_UNQUOTED(SBRK_ARG_TYPE, $arg_type, \
+ [Define the sbrk() argument type.])
+     fi
+-fi
++  ])
+ 
+-if test $ac_cv_func_brk = yes; then
++AS_IF([test $ac_cv_func_brk = yes],
++  [
+     AC_CACHE_CHECK([types of brk()s return value and argument],
+ 		    erts_cv_brk_ret_arg_types,
+ 		    [
+@@ -2611,10 +2633,10 @@ EOF
+ 	AC_DEFINE_UNQUOTED(BRK_ARG_TYPE, $arg_type, \
+ [Define the brk() argument type.])
+     fi
++  ])
+ 
+-fi
+-
+-if test $ac_cv_func_sbrk = yes; then
++AS_IF([test $ac_cv_func_sbrk = yes],
++  [
+ 
+     AC_CACHE_CHECK([if sbrk()/brk() wrappers can track malloc()s core memory use],
+ 		    erts_cv_brk_wrappers_can_track_malloc,
+@@ -2798,7 +2820,7 @@ int main(void)
+ 		AC_MSG_WARN([result no guessed because of cross compilation]);;
+ 	    *) ;;
+ 	esac
+-fi
++  ])
+ 
+ dnl Restore LIBS
+ LIBS=$saved_libs
+@@ -2820,7 +2842,8 @@ AC_CHECK_PROG(M4, m4, m4)
+ 
+ dnl Test if JIT can be enabled
+ JIT_ARCH=
+-if test ${enable_jit} != no; then
++AS_IF([test ${enable_jit} != no],
++  [
+    case "$ARCH" in
+         amd64)
+            JIT_ARCH=x86
+@@ -2835,8 +2858,10 @@ if test ${enable_jit} != no; then
+            ;;
+    esac
+ 
+-   if test ${enable_jit} != no; then
+-       if test "$CXX" != false; then
++   AS_IF([test ${enable_jit} != no],
++     [
++       AS_IF([test "$CXX" != false],
++         [
+           AC_LANG_PUSH(C++)
+           old_CXXFLAGS=$CXXFLAGS
+           CXXFLAGS="$CXXFLAGS -std=c++17"
+@@ -2852,7 +2877,7 @@ if test ${enable_jit} != no; then
+                AC_MSG_RESULT([no])
+                HAVE_CXX17=false])
+           AC_LANG_POP()
+-       fi
++         ])
+        if test "$CXX" = false -o "$HAVE_CXX17" = false; then
+          if test ${enable_jit} = yes; then
+            AC_MSG_ERROR([JIT needs a C++ compiler with C++17 support])
+@@ -2865,27 +2890,32 @@ EOF
+            AC_MSG_WARN([JIT disable due to lack of C++ compiler with C++17 support])
+         fi
+      fi
+-   fi
++    ])
+ 
+    if test ${enable_jit} != no; then
+      enable_jit=yes
+    fi
+-fi
++  ])
+ 
+ dnl Test if we can use the native stack for Erlang code
+-if test ${enable_jit} != no; then
+-  case $host_os in
+-    openbsd*)
++AS_IF([test ${enable_jit} != no],
++ [
++  AS_CASE([$host_os],
++    [openbsd*],
++    [
+       # Whenever the kernel is entered (page faults, system calls, etc),
+       # OpenBSD checks whether the stack pointer is in an area allocated with
+       # MAP_STACK, so we can't use the native stack for Erlang code.
+       #
+       # https://undeadly.org/cgi?action=article;sid=20180310000858
+-      enable_native_stack=no;;
+-    win32*)
++      enable_native_stack=no
++    ],
++    [win32*],
++    [
+       # Windows never messes with the stack, so it's safe by default.
+-      enable_native_stack=yes;;
+-    *)
++      enable_native_stack=yes
++    ],
++    [
+       # Use the native stack if we can safely redirect OS signals to a
+       # different stack.
+       AC_MSG_CHECKING([for safe signal delivery])
+@@ -2897,14 +2927,14 @@ if test ${enable_jit} != no; then
+          #endif]])],[AC_MSG_RESULT([yes])
+          enable_native_stack=yes],[AC_MSG_RESULT([no, disabling native stack in JIT])
+          enable_native_stack=no
+-      ]);;
+-  esac
++      ])
++    ])
+ 
+   if test X${enable_native_stack} = Xyes; then
+     AC_DEFINE(NATIVE_ERLANG_STACK, [],
+               [Define if we can use the native stack for Erlang code])
+   fi
+-fi
++ ])
+ 
+ dnl
+ dnl Check if the `perf` profiler is supported. At the moment it assumes it
+@@ -2968,11 +2998,13 @@ AC_SUBST(FLAVORS)
+ # Check for working poll().
+ #
+ AC_MSG_CHECKING([for working poll()])
+-if test "x$ac_cv_header_poll_h" != "xyes" -o "x$ac_cv_func_poll" != "xyes"; then
++AS_IF([test "x$ac_cv_header_poll_h" != "xyes" -o "x$ac_cv_func_poll" != "xyes"],
++[
+ 
+ poll_works=no
+ 
+-else
++],
++[
+ 
+ AC_RUN_IFELSE([AC_LANG_SOURCE([[
+ #include <poll.h>
+@@ -3001,7 +3033,7 @@ case X$erl_xcomp_poll in
+ esac
+ ])
+ 
+-fi
++])
+ 
+ case $poll_works-$host_os in
+     no-*|cross-darwin*)
+@@ -3050,7 +3082,8 @@ fi
+ #
+ # If epoll() found, check that it is level triggered.
+ #
+-if test $have_kernel_poll = epoll; then
++AS_IF([test $have_kernel_poll = epoll],
++      [
+ 	AC_MSG_CHECKING([whether epoll is level triggered])
+ 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/epoll.h>]], [[
+ 			#ifdef EPOLLET
+@@ -3065,7 +3098,7 @@ if test $have_kernel_poll = epoll; then
+ 			]])],[level_triggered_epoll=yes],[level_triggered_epoll=no
+ 			 have_kernel_poll=no])
+ 	AC_MSG_RESULT([$level_triggered_epoll])
+-fi
++      ])
+ #
+ # Check if we should enable kernel poll support
+ #
+@@ -3164,19 +3197,23 @@ LM_FIND_EMU_CC
+ dnl
+ dnl DTrace & LTTNG
+ dnl
+-case $DYNAMIC_TRACE_FRAMEWORK in
+-     dtrace|systemtap)
++AS_CASE([$DYNAMIC_TRACE_FRAMEWORK],
++     [dtrace|systemtap],
++     [
+         AC_CHECK_TOOL(DTRACE, dtrace, none)
+         test "$DTRACE" = "none" && AC_MSG_ERROR([No dtrace utility found.]);
+         enable_lttng_test=no
+-	enable_dtrace_test=yes;;
+-     lttng)
++	enable_dtrace_test=yes
++     ],
++     [lttng],
++     [
+         enable_lttng_test=yes
+-        enable_dtrace_test=no;;
+-     *)
++        enable_dtrace_test=no
++     ],
++     [
+         enable_lttng_test=no
+-        enable_dtrace_test=no;;
+-esac        
++        enable_dtrace_test=no
++     ])
+ 		     
+ AC_SUBST(DTRACE)
+ 
+@@ -3200,8 +3237,10 @@ case $OPSYS in
+ 	: # Nothing to do
+     ;;
+ esac
+-if test "$enable_dtrace_test" = "yes" ; then
+-        if test "$DTRACE" = "dtrace" ; then
++AS_IF([test "$enable_dtrace_test" = "yes"],
++      [
++        AS_IF([test "$DTRACE" = "dtrace"],
++	      [
+                 AC_CHECK_HEADERS(sys/sdt.h)
+ 		AC_MSG_CHECKING([for 1-stage DTrace precompilation])
+                 # The OS X version of dtrace prints a spurious line here.
+@@ -3234,12 +3273,14 @@ if test "$enable_dtrace_test" = "yes" ; then
+                         LIBS="$LIBS -ldtrace"
+                     ;;
+                 esac
+-        else
++              ],
++	      [
+                 AC_MSG_ERROR([Dtrace preprocessing test failed.])
+-        fi
+-fi
++	      ])
++      ])
+ 
+-if test "$enable_lttng_test" = "yes" ; then
++AS_IF([test "$enable_lttng_test" = "yes"],
++  [
+     AC_CHECK_HEADERS(lttng/tracepoint.h)
+     AC_CHECK_HEADERS(lttng/tracepoint-event.h)
+     dnl The macro tracepoint_enabled is not present in older lttng versions
+@@ -3267,7 +3308,7 @@ if test "$enable_lttng_test" = "yes" ; then
+     else
+         AC_MSG_ERROR([No LTTng support found.])
+     fi
+-fi
++  ])
+ 
+ 
+ #--------------------------------------------------------------------
+@@ -3336,7 +3377,8 @@ else
+ fi
+ 
+ AC_CHECK_PROGS(JAVAC, $check_javac)
+-if test -n "$JAVAC"; then
++AS_IF([test -n "$JAVAC"],
++ [
+   dnl Make sure it's at least JDK 1.6
+   AC_CACHE_CHECK(for JDK version 1.6, 
+      ac_cv_prog_javac_ver_1_6,
+@@ -3345,7 +3387,7 @@ if test -n "$JAVAC"; then
+   if test $ac_cv_prog_javac_ver_1_6 = no; then
+     unset -v JAVAC
+   fi
+-fi
++ ])
+ if test -z "$JAVAC"; then
+ 
+   if test "X$with_javac" != "X"; then
+diff --git a/lib/common_test/configure.ac b/lib/common_test/configure.ac
+index 12bfb8a63be..3d04757b6ce 100644
+--- a/lib/common_test/configure.ac
++++ b/lib/common_test/configure.ac
+@@ -3,11 +3,7 @@ AC_PREREQ([2.71])
+ 
+ AC_CONFIG_AUX_DIR(priv/auxdir)
+ 
+-if test "$host" = "free_source" -o "$host" = "win32"; then
+-   host_os="$host"
+-else   
+-   AC_CANONICAL_HOST
+-fi
++ERL_CANONICAL_SYSTEM_TYPE
+ 
+ TARGET=$host
+ AC_SUBST(TARGET)
+diff --git a/lib/common_test/test_server/configure.ac b/lib/common_test/test_server/configure.ac
+index 8335ae8c003..8051614e992 100644
+--- a/lib/common_test/test_server/configure.ac
++++ b/lib/common_test/test_server/configure.ac
+@@ -23,11 +23,7 @@ AC_INIT
+ AC_CONFIG_SRCDIR([conf_vars.in])
+ AC_PREREQ([2.71])
+ 
+-if test "$host" = "free_source" -o "$host" = "win32"; then
+-   host_os="$host"
+-else   
+-   AC_CANONICAL_HOST
+-fi
++AC_CANONICAL_HOST
+ 
+ dnl Checks for programs.
+ AC_PROG_CC
+@@ -153,8 +149,10 @@ AC_CHECK_LIB(dl, dlopen, have_dl=yes, have_dl=no)
+ 
+ SHLIB_LDLIBS=
+ fullSrcDir=`cd $srcdir; pwd`
+-case $system in
+-    *-linux-*)
++AS_CASE([$system],
++
++    [*-linux-*],
++    [
+ 	SHLIB_CFLAGS="-fPIC"
+ 	SHLIB_SUFFIX=".so"
+ 	if test "$have_dl" = yes; then
+@@ -173,8 +171,10 @@ case $system in
+ 	    fi
+ 	fi
+ 	SHLIB_EXTRACT_ALL=""
+-	;;
+-    *-openbsd*|*-netbsd*|*-freebsd*|*-dragonfly*)
++    ],
++
++    [*-openbsd*|*-netbsd*|*-freebsd*|*-dragonfly*],
++    [
+ 	# Not available on all versions:  check for include file.
+ 	AC_CHECK_HEADER(dlfcn.h, [
+ 	    SHLIB_CFLAGS="-fpic"
+@@ -196,8 +196,10 @@ case $system in
+ 	    AC_MSG_ERROR(don't know how to compile and link dynamic drivers)
+ 	])
+ 	SHLIB_EXTRACT_ALL=""
+-	;;
+-    *-solaris2*|*-sysv4*)
++    ],
++
++    [*-solaris2*|*-sysv4*],
++    [
+ 	SHLIB_CFLAGS="-KPIC"
+ 	SHLIB_LD="/usr/ccs/bin/ld"
+ 	SHLIB_LDFLAGS="$no_mXX_LDFLAGS -G -z text"
+@@ -209,15 +211,19 @@ case $system in
+ 	fi
+ 	SHLIB_SUFFIX=".so"
+ 	SHLIB_EXTRACT_ALL="-z allextract"
+-	;;
+-    *darwin*)
++    ],
++
++    [*darwin*],
++    [
+ 	SHLIB_CFLAGS="-fno-common"
+ 	SHLIB_LD="cc"
+ 	SHLIB_LDFLAGS="$LDFLAGS -bundle -flat_namespace -undefined suppress"
+ 	SHLIB_SUFFIX=".so"
+ 	SHLIB_EXTRACT_ALL=""
+-	;;
+-    *osf1*)
++    ],
++
++    [*osf1*],
++    [
+ 	SHLIB_CFLAGS="-fPIC"
+ 	SHLIB_LD="ld"
+ 	SHLIB_LDFLAGS="$LDFLAGS -shared"
+@@ -229,15 +235,18 @@ case $system in
+ 	fi
+ 	SHLIB_SUFFIX=".so"
+ 	SHLIB_EXTRACT_ALL=""
+-	;;
+-    *osf5*)
++    ],
++
++    [*osf5*],
++    [
+ 	SHLIB_CFLAGS="-fPIC"
+ 	SHLIB_LD="${CC} -shared"
+ 	SHLIB_LDFLAGS="$LDFLAGS"
+ 	SHLIB_SUFFIX=".so"
+ 	SHLIB_EXTRACT_ALL=""
+-	;;
+-    *)
++    ],
++
++    [
+ 	# No dynamic loading.
+ 	SHLIB_CFLAGS=""
+ 	SHLIB_LD="ld"
+@@ -246,8 +255,7 @@ case $system in
+ 	SHLIB_SUFFIX=""
+ 	SHLIB_EXTRACT_ALL=""
+ 	AC_MSG_ERROR(don't know how to compile and link dynamic drivers)
+-	;;
+-esac
++    ])
+ 
+ # If we're running gcc, then change the C flags for compiling shared
+ # libraries to the right flags for gcc, instead of those for the
+@@ -320,14 +328,16 @@ AC_SUBST(EI_CFLAGS)
+ 
+ erl_checkBoth=0
+ AC_CHECK_FUNC(connect, erl_checkSocket=0, erl_checkSocket=1)
+-if test "$erl_checkSocket" = 1; then
++AS_IF([test "$erl_checkSocket" = 1],
++  [
+     AC_CHECK_LIB(socket, main, LIBS="$LIBS -lsocket", erl_checkBoth=1)
+-fi
+-if test "$erl_checkBoth" = 1; then
++  ])
++AS_IF([test "$erl_checkBoth" = 1],
++  [
+     tk_oldLibs=$LIBS
+     LIBS="$LIBS -lsocket -lnsl"
+     AC_CHECK_FUNC(accept, erl_checkNsl=0, [LIBS=$tk_oldLibs])
+-fi
++  ])
+ AC_CHECK_FUNC(gethostbyname, , AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"]))
+ 
+ dnl Checks for library functions.
+@@ -453,21 +463,24 @@ class conftest { public static void main(String[] args) {
+    ; return; }}
+ EOF
+ changequote([, ])dnl
+-if AC_TRY_EVAL(java_link) && test -s conftest.class; then
++AS_IF([AC_TRY_EVAL(java_link) && test -s conftest.class],
++ [
+    ifelse([$3], , :, [rm -rf conftest*
+    $3])
+-else
++ ],
++ [
+    echo "configure: failed program was:" 1>&AS_MESSAGE_LOG_FD
+    cat conftest.java 1>&AS_MESSAGE_LOG_FD
+    echo "configure: PATH was $PATH" 1>&AS_MESSAGE_LOG_FD
+ ifelse([$4], , , [  rm -rf conftest*
+   $4
+ ])dnl
+-fi
++ ])
+ rm -f conftest*])
+ dnl
+ AC_CHECK_PROGS(JAVAC, javac guavac gcj jikes bock)
+-if test -n "$JAVAC"; then
++AS_IF([test -n "$JAVAC"],
++ [
+   dnl Make sure it's at least JDK 1.5
+   AC_CACHE_CHECK(for JDK version 1.5, 
+      ac_cv_prog_javac_ver_1_5,
+@@ -476,7 +489,7 @@ if test -n "$JAVAC"; then
+   if test $ac_cv_prog_javac_ver_1_5 = no; then
+     unset -v JAVAC
+   fi
+-fi
++ ])
+ if test -n "$JAVAC"; then
+   AC_SUBST(JAVAC)
+   :
+diff --git a/lib/crypto/configure.ac b/lib/crypto/configure.ac
+index a953016193a..e742a6ee307 100644
+--- a/lib/crypto/configure.ac
++++ b/lib/crypto/configure.ac
+@@ -1,4 +1,4 @@
+-dnl Process this file with autoconf to produce a configure script. -*-m4-*-
++dnl Process this file with autoconf to produce a configure script. -*-Autoconf-*-
+ dnl
+ dnl %CopyrightBegin%
+ dnl
+@@ -29,11 +29,7 @@ AC_PREREQ([2.71])
+ 
+ AC_CONFIG_AUX_DIRS(${ERL_TOP}/erts/autoconf)
+ 
+-if test "$host" = "free_source" -o "$host" = "win32"; then
+-   host_os="$host"
+-else   
+-   AC_CANONICAL_HOST
+-fi
++ERL_CANONICAL_SYSTEM_TYPE
+ 
+ AC_LANG(C)
+ 
+@@ -49,8 +45,6 @@ AC_SUBST(CROSS_COMPILING)
+ ERL_XCOMP_SYSROOT_INIT
+ 
+ AC_PROG_CC
+-AC_PROG_CPP
+-AC_PROG_EGREP
+ LM_WINDOWS_ENVIRONMENT
+ 
+ ERL_DED
+@@ -226,105 +220,114 @@ yes
+ 		 [valid_include=no])
+     CPPFLAGS="$save_CPPFLAGS"
+ 
+-    if test $valid_include != yes; then
+-       static_crypto_lib_name=
+-       static_ssl_lib_name=
+-       static_extra_libs=
+-       static_lib_dir=
+-       dynamic_crypto_lib_name=
+-       dynamic_ssl_lib_name=
+-       dynamic_extra_libs=
+-       dynamic_lib_dir=
+-       dynamic_runtime_lib_dir=
+-    elif test "$host_os" = "win32" ; then
+-	if test -f "$dir/lib/VC/static/libcrypto${lib_bits}MD.lib"; then
+-       	    static_crypto_lib_name=libcrypto${lib_bits}MD
+-	    static_ssl_lib_name="libssl${lib_bits}MD"
+-	    static_extra_libs="$static_extra_libs -lCRYPT32 -lWS2_32"
+-	    static_lib_dir="$dir/lib/VC/static"
+-	    found_static_lib=yes
+-	fi
+-	if test -f "$dir/lib/VC/libcrypto${lib_bits}MD.lib"; then
+-       	    dynamic_crypto_lib_name=libcrypto${lib_bits}MD
+-	    dynamic_ssl_lib_name="libssl${lib_bits}MD"
+-    	    dynamic_runtime_lib_dir="$rdir/lib/VC"
+-    	    dynamic_lib_dir="$dir/lib/VC"
+-	    found_dynamic_lib=yes
+-	fi
+-    else # Non windows...
+-
+-	case "$host_os" in
+-       	    darwin*)
+-		static_ext=.a
+-		dynamic_ext=.dylib;;
+-	    *)
+-		static_ext=.a
+-		dynamic_ext=.so;;
+-	esac
+-	for sdir in $search_subdirs; do
+-	    if test -f "$dir/$sdir/lib$dynamic_crypto_lib_name$dynamic_ext"; then
+-	       found_dynlib=yes
+-	    else
+-	       found_dynlib=no
+-	       case $host_os in
+-	       	   openbsd*)
+-		       # libcrypto.so got a suffix on (at least some) openbsd. 
+-		       # If we find libcrypto.so with suffix, we try to link
+-		       # to it using -lcrypto ...
+-		       for f in "$dir/$sdir/lib$dynamic_crypto_lib_name$dynamic_ext"*; do
+-		       	   test -f "$f" && found_dynlib=yes
+-			   break
+-		       done;;
+-		   *)
+-		       ;;
+-	       esac
+-	    fi
+-	    if test $found_dynlib = yes; then
+-	       # Found dynamic library; check if it links...
+-	       dynamic_lib_dir="$dir/$sdir"
+-	       dynamic_runtime_lib_dir="$rdir/$sdir"
+-	       ERL_LINK_CRYPTO_IFELSE(
+-		  ["-I$idir/include"],
+-		  ["-L$dynamic_lib_dir"],
+-		  ["-l$dynamic_crypto_lib_name $dynamic_extra_libs"],
+-		  [found_dynamic_lib=yes],
+-		  [found_dynamic_lib=no])
+-	       if test $found_dynamic_lib = no -a $static_zlib != no; then
+-	          # No, but linking with zlib as well might help...
+-	          dynamic_extra_libs="$dynamic_extra_libs $static_zlib"			
+-	       	  ERL_LINK_CRYPTO_IFELSE(
+-		     ["-I$idir/include"],
+-		     ["-L$dynamic_lib_dir"],
+-		     ["-l$dynamic_crypto_lib_name $dynamic_extra_libs"],
+-		     [found_dynamic_lib=yes],
+-		     [found_dynamic_lib=no])
+-	       fi
+-	    fi
+-	    if test -f "$dir/$sdir/lib$static_crypto_lib_name$static_ext"; then
+-	       # Found static library; check if it links...
+-	       static_lib_dir="$dir/$sdir"
+-	       ERL_LINK_CRYPTO_IFELSE(
+-		  ["-I$idir/include"],
+-		  [],
+-		  ["$dir/$sdir/lib$static_crypto_lib_name$static_ext $static_extra_libs"],
+-		  [found_static_lib=yes],
+-		  [found_static_lib=no])
+-	       if test $found_static_lib = no -a $static_zlib != no; then
+-	          # No, but inking with zlib as well might help...
+-	       	  static_extra_libs="$static_extra_libs $static_zlib"
+-	       	  ERL_LINK_CRYPTO_IFELSE(
+-		     ["-I$idir/include"],
+-		     [],
+-		     ["$dir/$sdir/lib$static_crypto_lib_name$static_ext $static_extra_libs"],
+-		     [found_static_lib=yes],
+-		     [found_static_lib=no])
+-	       fi
+-	    fi
+-	    if test $found_static_lib = yes -o $found_dynamic_lib = yes; then
+-		break
+-	    fi
+-	done
+-    fi
++    AS_IF([test $valid_include != yes],
++          [
++              # Not a valid include...
++              static_crypto_lib_name=
++              static_ssl_lib_name=
++              static_extra_libs=
++              static_lib_dir=
++              dynamic_crypto_lib_name=
++              dynamic_ssl_lib_name=
++              dynamic_extra_libs=
++              dynamic_lib_dir=
++              dynamic_runtime_lib_dir=
++          ],
++          [test "$host_os" = "win32"],
++          [
++              # Windows...
++              AS_IF([test -f "$dir/lib/VC/static/libcrypto${lib_bits}MD.lib"],
++                    [
++                        static_crypto_lib_name=libcrypto${lib_bits}MD
++                        static_ssl_lib_name="libssl${lib_bits}MD"
++                        static_extra_libs="$static_extra_libs -lCRYPT32 -lWS2_32"
++                        static_lib_dir="$dir/lib/VC/static"
++                        found_static_lib=yes
++                    ])
++              AS_IF([test -f "$dir/lib/VC/libcrypto${lib_bits}MD.lib"],
++                    [
++                        dynamic_crypto_lib_name=libcrypto${lib_bits}MD
++                        dynamic_ssl_lib_name="libssl${lib_bits}MD"
++                        dynamic_runtime_lib_dir="$rdir/lib/VC"
++                        dynamic_lib_dir="$dir/lib/VC"
++                        found_dynamic_lib=yes
++                    ])
++          ],
++          [
++              # Not windows...
++              AS_CASE(["$host_os"],
++                      [darwin*],
++                      [
++                          static_ext=.a
++                          dynamic_ext=.dylib
++                      ],
++                      [
++                          static_ext=.a
++                          dynamic_ext=.so
++                      ])
++              for sdir in $search_subdirs; do
++                  AS_IF([test -f "$dir/$sdir/lib$dynamic_crypto_lib_name$dynamic_ext"],
++                        [
++                            found_dynlib=yes
++                        ],
++                        [
++                            found_dynlib=no
++                            AS_CASE([$host_os],
++                                    [openbsd*],
++                                    [
++                                        # libcrypto.so got a suffix on (at least some) openbsd. 
++                                        # If we find libcrypto.so with suffix, we try to link
++                                        # to it using -lcrypto ...
++                                        for f in "$dir/$sdir/lib$dynamic_crypto_lib_name$dynamic_ext"*; do
++                                               AS_IF([test -f "$f"], [found_dynlib=yes; break])
++                                        done
++                                    ])
++                       ])
++                  AS_IF([test $found_dynlib = yes],
++                        [
++                            # Found dynamic library; check if it links...
++                            dynamic_lib_dir="$dir/$sdir"
++                            dynamic_runtime_lib_dir="$rdir/$sdir"
++                            ERL_LINK_CRYPTO_IFELSE(["-I$idir/include"],
++                                                   ["-L$dynamic_lib_dir"],
++                                                   ["-l$dynamic_crypto_lib_name $dynamic_extra_libs"],
++                                                   [found_dynamic_lib=yes],
++                                                   [found_dynamic_lib=no])
++                            AS_IF([test $found_dynamic_lib = no -a $static_zlib != no],
++                                  [
++                                      # No, but linking with zlib as well might help...
++                                      dynamic_extra_libs="$dynamic_extra_libs $static_zlib"
++                                      ERL_LINK_CRYPTO_IFELSE(["-I$idir/include"],
++                                                             ["-L$dynamic_lib_dir"],
++                                                             ["-l$dynamic_crypto_lib_name $dynamic_extra_libs"],
++                                                             [found_dynamic_lib=yes],
++                                                             [found_dynamic_lib=no])
++                                  ])
++                        ])
++                  AS_IF([test -f "$dir/$sdir/lib$static_crypto_lib_name$static_ext"],
++                        [
++                            # Found static library; check if it links...
++                            static_lib_dir="$dir/$sdir"
++                            ERL_LINK_CRYPTO_IFELSE(["-I$idir/include"],
++                                                   [],
++                                                   ["$dir/$sdir/lib$static_crypto_lib_name$static_ext $static_extra_libs"],
++                                                   [found_static_lib=yes],
++                                                   [found_static_lib=no])
++                            AS_IF([test $found_static_lib = no -a $static_zlib != no],
++                                  [
++                                      # No, but inking with zlib as well might help...
++                                      static_extra_libs="$static_extra_libs $static_zlib"
++                                      ERL_LINK_CRYPTO_IFELSE(["-I$idir/include"],
++                                                             [],
++                                                             ["$dir/$sdir/lib$static_crypto_lib_name$static_ext $static_extra_libs"],
++                                                             [found_static_lib=yes],
++                                                             [found_static_lib=no])
++                                  ])
++                        ])
++                  AS_IF([test $found_static_lib = yes -o $found_dynamic_lib = yes],
++                        [break])
++              done
++          ])
+ ])
+ 
+ # Remove all SKIP files from previous runs
+@@ -402,364 +405,399 @@ case $enable_dynamic_ssl in
+ 	SSL_DYNAMIC_ONLY=no;;
+ esac
+ 
+-case "$erl_xcomp_without_sysroot-$with_ssl" in
+-  yes-* | no-no)
+-    SSL_APP=
+-    CRYPTO_APP=
+-    SSH_APP=
+-    if test "$with_ssl" != "no"; then
+-	skip="Cannot search for ssl; missing cross system root (erl_xcomp_sysroot)."
+-    fi
+-    for a in ssl crypto ssh; do
+-        echo "$skip" > $ERL_TOP/lib/$a/SKIP
+-    done
+-    ;;
+-  no-yes | no- )
+-    # We search for OpenSSL in the common OS standard locations.
+-    SSL_APP=ssl
+-    CRYPTO_APP=crypto
+-    SSH_APP=ssh
+-
+-    if  test "$host_os" = "win32" ; then
+-    	if test "x$ac_cv_sizeof_void_p" = "x8"; then
+-	  std_win_ssl_locations="/mnt/c/OpenSSL-Win64 /c/OpenSSL-Win64 /mnt/c/opt/local64/pgm/OpenSSL /opt/local64/pgm/OpenSSL /cygdrive/c/OpenSSL-Win64"
+-	  lib_bits=64
+-	else
+-	  std_win_ssl_locations="/mnt/c/OpenSSL-Win32 /c/OpenSSL-Win32 /mnt/c/OpenSSL /c/OpenSSL /cygdrive/c/OpenSSL /opt/local/pgm/OpenSSL /opt/local32/pgm/OpenSSL /mnt/c/opt/local/pgm/OpenSSL /mnt/c/opt/local32/pgm/OpenSSL /cygdrive/c/OpenSSL-Win32"
+-	  lib_bits=32
+-	fi
+-    else
+-        std_win_ssl_locations=""
+-    fi
+-
+-    usable_crypto=no
+-    AC_MSG_CHECKING([for OpenSSL crypto library with version >= 0.9.8c in standard locations])
+-    for rdir in $std_win_ssl_locations $std_ssl_locations; do
+-	if test -f "$erl_xcomp_isysroot$rdir/include/openssl/opensslv.h"; then
+-	   SSL_INCDIR="$erl_xcomp_isysroot$rdir"
+-	   SSL_INCLUDE="-I$SSL_INCDIR/include"
+-	   ERL_CRYPTO_CHECK_LIB(["$SSL_INCDIR"], ["$erl_xcomp_sysroot"], ["$rdir"])
+-	   case $enable_dynamic_ssl-$found_dynamic_lib-$found_static_lib in
+-	   	no-*-no)
+-		    ;; # Dynamic linking against ssl library disabled by user, and no static library found
+-		yes-no-*)
+-		    ;; # Static linking against ssl library disabled by user, and no dynamic library found
+-		*-no-no)
+-		    ;; # Neither static nor dynamic ssl library found
+-		no-*-yes | default_no-*-yes | default_yes-no-yes)
+-		    # Link statically...
+-		    SSL_CRYPTO_LIBNAME=$static_crypto_lib_name
+-		    SSL_SSL_LIBNAME=$static_ssl_lib_name
+-		    SSL_LIBDIR="$static_lib_dir"
+-		    SSL_EXTRA_LIBS="$static_extra_libs"
+-		    SSL_RUNTIME_LIBDIR=
+-		    SSL_DYNAMIC_ONLY=no
+-		    usable_crypto=yes
+-		    break;;
+-		*-yes-*)
+-		    # Link dynamically...
+-		    SSL_CRYPTO_LIBNAME=$dynamic_crypto_lib_name
+-		    SSL_SSL_LIBNAME=$dynamic_ssl_lib_name
+-		    SSL_EXTRA_LIBS="$dynamic_extra_libs"
+-		    SSL_LIBDIR="$dynamic_lib_dir"
+-		    SSL_RUNTIME_LIBDIR="$dynamic_runtime_lib_dir"
+-		    SSL_DYNAMIC_ONLY=yes
+-		    usable_crypto=yes
+-		    break;;
+-    	   esac
+-        fi
+-    done
+-
+-    if test $usable_crypto = yes ; then
+-       if test $SSL_DYNAMIC_ONLY = yes; then
+-       	  AC_MSG_RESULT([dynamic $SSL_CRYPTO_LIBNAME library in $SSL_LIBDIR])
+-       else
+-       	  AC_MSG_RESULT([static $SSL_CRYPTO_LIBNAME library in $SSL_LIBDIR])
+-       fi
+-    else
+-       AC_MSG_RESULT([no])
+-       SSL_APP=
+-       CRYPTO_APP=
+-       SSH_APP=
+-
+-       SSL_INCDIR=
+-       SSL_INCLUDE=
+-       SSL_CRYPTO_LIBNAME=
+-       SSL_SSL_LIBNAME=
+-       SSL_INCDIR=
+-       SSL_RUNTIME_LIBDIR=
+-       SSL_LIBDIR=
+-
+-       case "$with_ssl-$enable_dynamic_ssl" in
+-       	    yes-yes)
+-		AC_MSG_ERROR([crypto library with dynamic linking requested by user, but no such library was found])
+-		;;
+-       	    yes-no)
+-		AC_MSG_ERROR([crypto library with static linking requested by user, but no such library was found])
+-		;;
+-	    yes-*)
+-		AC_MSG_ERROR([crypto library requested by user, but no such library was found])
+-		;;
+-	    *)
+-		AC_MSG_WARN([No (usable) OpenSSL found, skipping ssl, ssh and crypto applications])
+-		;;
+-       esac
+-
+-       for a in ssl crypto ssh; do
+-           echo "No usable OpenSSL found" > $ERL_TOP/lib/$a/SKIP
+-       done
+-    fi
+-    ;;
+-  *)
+-    # Option given with PATH to package
+-    if test ! -d "$with_ssl" ; then
+-       AC_MSG_ERROR(Invalid path to option --with-ssl=PATH)
+-    fi
+-    if test ! -d "$with_ssl_incl" ; then
+-       AC_MSG_ERROR(Invalid path to option --with-ssl-incl=PATH)
+-    fi
+-    AC_MSG_CHECKING([for OpenSSL header in $with_ssl_incl])
+-    if test -f "$with_ssl_incl/include/openssl/opensslv.h"; then
+-       AC_MSG_RESULT([yes])
+-    else
+-       AC_MSG_ERROR([no OpenSSL header found in $with_ssl_incl])
+-    fi
+-    SSL_INCDIR="$with_ssl_incl"
+-    AC_MSG_CHECKING([for OpenSSL in $with_ssl])
+-    ERL_CRYPTO_CHECK_LIB(["$with_ssl_incl"], [""], ["$with_ssl"])
+-    case $enable_dynamic_ssl-$found_dynamic_lib-$found_static_lib in
+-    	 no-*-no)
+-       	   AC_MSG_ERROR([dynamic linking against crypto library disabled by user, but no static library found in $with_ssl]);;
+-	 yes-no-*)
+-       	   AC_MSG_ERROR([static linking against crypto library disabled by user, but no dynamic library found in $with_ssl]);;
+-	 *-no-no)
+-       	   AC_MSG_ERROR([neither static nor dynamic crypto library found in $with_ssl]);;
+-	 no-*-yes | default_no-*-yes | default_yes-no-yes)
+-	   # Link statically...
+-   	   SSL_CRYPTO_LIBNAME=$static_crypto_lib_name
+-	   SSL_SSL_LIBNAME=$static_ssl_lib_name
+-	   SSL_LIBDIR="$static_lib_dir"
+-	   SSL_EXTRA_LIBS="$static_extra_libs"
+-	   SSL_RUNTIME_LIBDIR=
+-	   SSL_DYNAMIC_ONLY=no;;
+-	 *-yes-*)
+-	   # Link dynamically...
+-	   SSL_CRYPTO_LIBNAME=$dynamic_crypto_lib_name
+-	   SSL_SSL_LIBNAME=$dynamic_ssl_lib_name
+-	   SSL_EXTRA_LIBS="$dynamic_extra_libs"
+-	   SSL_LIBDIR="$dynamic_lib_dir"
+-	   SSL_RUNTIME_LIBDIR="$dynamic_runtime_lib_dir"
+-	   SSL_DYNAMIC_ONLY=yes;;
+-    esac
+-    if test $SSL_DYNAMIC_ONLY = yes; then
+-       AC_MSG_RESULT([dynamic $SSL_CRYPTO_LIBNAME library in $SSL_LIBDIR])
+-    else
+-       AC_MSG_RESULT([static $SSL_CRYPTO_LIBNAME library in $SSL_LIBDIR])
+-    fi
+-    SSL_INCLUDE="-I$with_ssl_incl/include"
+-    SSL_APP=ssl
+-    CRYPTO_APP=crypto
+-    SSH_APP=ssh
+-    if test "$cross_compiling" = "yes"; then
+-	SSL_RUNTIME_LIBDIR=`echo "$SSL_LIBDIR" | sed -n "s|^$erl_xcomp_sysroot\(/*\)\(.*\)\$|/\2|p"`
+-    else
+-	SSL_RUNTIME_LIBDIR="$SSL_LIBDIR"
+-    fi
+-esac
++AS_CASE(["$erl_xcomp_without_sysroot-$with_ssl"],
++        [yes-* | no-no],
++        [
++            SSL_APP=
++            CRYPTO_APP=
++            SSH_APP=
++            if test "$with_ssl" != "no"; then
++	           skip="Cannot search for ssl; missing cross system root (erl_xcomp_sysroot)."
++               fi
++            for a in ssl crypto ssh; do
++                echo "$skip" > $ERL_TOP/lib/$a/SKIP
++                done
++        ],
++        [no-yes | no-],
++        [
++            # We search for OpenSSL in the common OS standard locations.
++            SSL_APP=ssl
++            CRYPTO_APP=crypto
++            SSH_APP=ssh
++
++            AS_IF([test "$host_os" != "win32"],
++                  [
++                      std_win_ssl_locations=
++                  ],
++                  [
++                      AS_IF([test "x$ac_cv_sizeof_void_p" = "x8"],
++                            [
++	                        std_win_ssl_locations="/mnt/c/OpenSSL-Win64 /c/OpenSSL-Win64 /mnt/c/opt/local64/pgm/OpenSSL /opt/local64/pgm/OpenSSL /cygdrive/c/OpenSSL-Win64"
++	                        lib_bits=64
++                            ],
++                            [
++                                std_win_ssl_locations="/mnt/c/OpenSSL-Win32 /c/OpenSSL-Win32 /mnt/c/OpenSSL /c/OpenSSL /cygdrive/c/OpenSSL /opt/local/pgm/OpenSSL /opt/local32/pgm/OpenSSL /mnt/c/opt/local/pgm/OpenSSL /mnt/c/opt/local32/pgm/OpenSSL /cygdrive/c/OpenSSL-Win32"
++	                        lib_bits=32
++                            ])
++	          ])
++
++           usable_crypto=no
++           AC_MSG_CHECKING([for OpenSSL crypto library with version >= 0.9.8c in standard locations])
++           for rdir in $std_win_ssl_locations $std_ssl_locations; do
++               AS_IF([test -f "$erl_xcomp_isysroot$rdir/include/openssl/opensslv.h"],
++                     [
++                         SSL_INCDIR="$erl_xcomp_isysroot$rdir"
++                         SSL_INCLUDE="-I$SSL_INCDIR/include"
++                         ERL_CRYPTO_CHECK_LIB(["$SSL_INCDIR"], ["$erl_xcomp_sysroot"], ["$rdir"])
++                         AS_CASE([$enable_dynamic_ssl-$found_dynamic_lib-$found_static_lib],
++                                 [no-*-no],
++                                 [
++                                     # Dynamic linking against ssl library disabled by user,
++                                     # and no static library found...
++                                 ],
++                                 [yes-no-*],
++                                 [
++                                     # Static linking against ssl library disabled by user,
++                                     # and no dynamic library found...
++                                 ],
++                                 [*-no-no],
++                                 [
++                                     # Neither static nor dynamic ssl library found...
++                                 ],
++                                 [no-*-yes | default_no-*-yes | default_yes-no-yes],
++                                 [
++                                     # Link statically...
++                                     SSL_CRYPTO_LIBNAME=$static_crypto_lib_name
++                                     SSL_SSL_LIBNAME=$static_ssl_lib_name
++                                     SSL_LIBDIR="$static_lib_dir"
++                                     SSL_EXTRA_LIBS="$static_extra_libs"
++                                     SSL_RUNTIME_LIBDIR=
++                                     SSL_DYNAMIC_ONLY=no
++                                     usable_crypto=yes
++                                     break
++                                 ],
++                                 [*-yes-*],
++                                 [
++                                     # Link dynamically...
++                                     SSL_CRYPTO_LIBNAME=$dynamic_crypto_lib_name
++                                     SSL_SSL_LIBNAME=$dynamic_ssl_lib_name
++                                     SSL_EXTRA_LIBS="$dynamic_extra_libs"
++                                     SSL_LIBDIR="$dynamic_lib_dir"
++                                     SSL_RUNTIME_LIBDIR="$dynamic_runtime_lib_dir"
++                                     SSL_DYNAMIC_ONLY=yes
++                                     usable_crypto=yes
++                                     break
++                                 ])
++                     ])
++            done
++
++            AS_IF([test $usable_crypto = yes],
++                  [AS_IF([test $SSL_DYNAMIC_ONLY = yes],
++       	                 [AC_MSG_RESULT([dynamic $SSL_CRYPTO_LIBNAME library in $SSL_LIBDIR])],
++                         [AC_MSG_RESULT([static $SSL_CRYPTO_LIBNAME library in $SSL_LIBDIR])])],
++                  [
++                         AC_MSG_RESULT([no])
++                         SSL_APP=
++                         CRYPTO_APP=
++                         SSH_APP=
++
++                         SSL_INCDIR=
++                         SSL_INCLUDE=
++                         SSL_CRYPTO_LIBNAME=
++                         SSL_SSL_LIBNAME=
++                         SSL_INCDIR=
++                         SSL_RUNTIME_LIBDIR=
++                         SSL_LIBDIR=
++
++                         AS_CASE(["$with_ssl-$enable_dynamic_ssl"],
++                                 [yes-yes],
++                                 [
++                                     AC_MSG_ERROR([crypto library with dynamic linking requested by user, but no such library was found])
++                                 ],
++                                 [yes-no],
++                                 [
++                                     AC_MSG_ERROR([crypto library with static linking requested by user, but no such library was found])
++                                 ],
++                                 [yes-*],
++                                 [
++                                     AC_MSG_ERROR([crypto library requested by user, but no such library was found])
++                                 ],
++                                 [
++                                     AC_MSG_WARN([No (usable) OpenSSL found, skipping ssl, ssh and crypto applications])
++                                 ])
++
++                         for a in ssl crypto ssh; do
++                             echo "No usable OpenSSL found" > $ERL_TOP/lib/$a/SKIP
++                         done
++                  ])
++        ],
++        [
++            # Option given with PATH to package
++            AS_IF([test ! -d "$with_ssl"],
++                  [AC_MSG_ERROR(Invalid path to option --with-ssl=PATH)])
++            AS_IF([test ! -d "$with_ssl_incl"],
++                  [AC_MSG_ERROR(Invalid path to option --with-ssl-incl=PATH)])
++            AC_MSG_CHECKING([for OpenSSL header in $with_ssl_incl])
++            AS_IF([test -f "$with_ssl_incl/include/openssl/opensslv.h"],
++                  [AC_MSG_RESULT([yes])],
++                  [AC_MSG_ERROR([no OpenSSL header found in $with_ssl_incl])])
++            SSL_INCDIR="$with_ssl_incl"
++            AC_MSG_CHECKING([for OpenSSL in $with_ssl])
++            ERL_CRYPTO_CHECK_LIB(["$with_ssl_incl"], [""], ["$with_ssl"])
++            AS_CASE([$enable_dynamic_ssl-$found_dynamic_lib-$found_static_lib],
++                    [no-*-no],
++       	            [
++                        AC_MSG_ERROR([dynamic linking against crypto library disabled by user, but no static library found in $with_ssl])
++                    ],
++                    [yes-no-*],
++       	            [
++                        AC_MSG_ERROR([static linking against crypto library disabled by user, but no dynamic library found in $with_ssl])
++                    ],
++                    [*-no-no],
++       	            [
++                        AC_MSG_ERROR([neither static nor dynamic crypto library found in $with_ssl])
++                    ],
++                    [no-*-yes | default_no-*-yes | default_yes-no-yes],
++                    [
++                        # Link statically...
++   	                    SSL_CRYPTO_LIBNAME=$static_crypto_lib_name
++                        SSL_SSL_LIBNAME=$static_ssl_lib_name
++                        SSL_LIBDIR="$static_lib_dir"
++                        SSL_EXTRA_LIBS="$static_extra_libs"
++                        SSL_RUNTIME_LIBDIR=
++                        SSL_DYNAMIC_ONLY=no
++                    ],
++	                [*-yes-*],
++                    [
++                        # Link dynamically...
++                        SSL_CRYPTO_LIBNAME=$dynamic_crypto_lib_name
++                        SSL_SSL_LIBNAME=$dynamic_ssl_lib_name
++                        SSL_EXTRA_LIBS="$dynamic_extra_libs"
++                        SSL_LIBDIR="$dynamic_lib_dir"
++                        SSL_RUNTIME_LIBDIR="$dynamic_runtime_lib_dir"
++                        SSL_DYNAMIC_ONLY=yes
++                   ])
++            AS_IF([test $SSL_DYNAMIC_ONLY = yes],
++                  [AC_MSG_RESULT([dynamic $SSL_CRYPTO_LIBNAME library in $SSL_LIBDIR])],
++                  [AC_MSG_RESULT([static $SSL_CRYPTO_LIBNAME library in $SSL_LIBDIR])])
++            SSL_INCLUDE="-I$with_ssl_incl/include"
++            SSL_APP=ssl
++            CRYPTO_APP=crypto
++            SSH_APP=ssh
++            AS_IF([test "$cross_compiling" = "yes"],
++                  [
++                      SSL_RUNTIME_LIBDIR=`echo "$SSL_LIBDIR" | sed -n "s|^$erl_xcomp_sysroot\(/*\)\(.*\)\$|/\2|p"`
++                  ],
++                  [
++                      SSL_RUNTIME_LIBDIR="$SSL_LIBDIR"
++                  ])
++        ])dnl AS_CASE
+ 
+ SSL_DED_LD_RUNTIME_LIBRARY_PATH=
+ ded_ld_rflg="$DED_LD_FLAG_RUNTIME_LIBRARY_PATH"
+ 
+-
+-case "$with_ssl_rpath" in
+-
+-yes | default)   # Use standard lib locations for ssl runtime library path
+-
+-  AC_MSG_CHECKING([for runtime library path to use])
+-
+-  if test $enable_dynamic_ssl = no -a "$with_ssl_rpath" = yes; then
+-     AC_MSG_ERROR([requested by user, but user also requested static linking])
+-  fi
+-  
+-  if test "$CRYPTO_APP" = ""; then
+-    if test "$with_ssl_rpath" = yes; then
+-       AC_MSG_ERROR([requested by user, but could not be used since no crypto library was found])
+-    fi
+-    AC_MSG_RESULT([])
+-  elif test "$ded_ld_rflg" = ""; then
+-    if test "$with_ssl_rpath" = yes; then
+-       AC_MSG_ERROR([requested by user, but cannot be set on this platform])
+-    fi
+-    AC_MSG_RESULT([])
+-  elif test "$SSL_DYNAMIC_ONLY" != "yes"; then
+-    if test "$with_ssl_rpath" = yes; then
+-       AC_MSG_WARN([requested by user, but dynamic linking will not be used])
+-    else
+-       AC_MSG_RESULT([])
+-    fi
+-  else
+-
+-    libdirs="/lib"
+-
+-    dir_lib64=no
+-    dir_lib_64=no
+-    dir_lib32=no
+-    dir_lib_32=no
+-    dir_multiarch=no
+-    dir_with_ssl_lib_subdir=no
+-
+-    test "$multiarch_dir" = "" || dir_multiarch=yes
+-    test "$with_ssl_lib_subdir" = "" || dir_with_ssl_lib_subdir=yes
+-
+-    case "$SSL_RUNTIME_LIBDIR" in
+-    	 */lib/64 | */lib/64/ ) dir_lib_64=yes;;
+-	 */lib64 | */lib64/ ) dir_lib64=yes;;
+-	 */lib/32 | */lib/32/ ) dir_lib_32=yes;;
+-	 */lib32 | */lib32/ ) dir_lib32=yes;;
+-	 *) ;;
+-    esac
+-
+-    for dir in $std_ssl_locations; do
+-    	if test "$ac_cv_sizeof_void_p" = "8"; then
+- 	    test $dir_lib_64 = no &&
+-	    	 test -d "$erl_xcomp_sysroot$dir/lib/64" &&
+-	     	      dir_lib_64=yes
+-	    test $dir_lib64 = no &&
+-	    	 test -d "$erl_xcomp_sysroot$dir/lib64" &&
+-		      dir_lib64=yes
+-	else
+-	    test $dir_lib_32 = no &&
+-	    	 test -d "$erl_xcomp_sysroot$dir/lib/32" &&
+-		      dir_lib_32=yes
+-	    test $dir_lib32 = no &&
+-	    	 test -d "$erl_xcomp_sysroot$dir/lib32" &&
+-		      dir_lib32=yes
+-	fi
+-	test $dir_multiarch = no &&
+-	     test -d "$erl_xcomp_sysroot$dir/lib/$multiarch_dir" &&
+-	     	  dir_multiarch=yes
+-    done
+-
+-    test $dir_with_ssl_lib_subdir = yes && libdirs="/$with_ssl_lib_subdir $libdirs"
+-    test $dir_multiarch = yes && libdirs="/lib/$multiarch_dir $libdirs"
+-    test $dir_lib_64 = yes && libdirs="/lib/64 $libdirs"
+-    test $dir_lib64 = yes && libdirs="/lib64 $libdirs"
+-    test $dir_lib_32 = yes && libdirs="/lib/32 $libdirs"
+-    test $dir_lib32 = yes && libdirs="/lib32 $libdirs"
+-
+-    #
+-    # We try the follwing runtime paths in the
+-    # following order:
+-    # 1. Standard ssl locations with all variations
+-    #    of lib subdirectories that we know of
+-    # 2. Standard ssl locations with all variations
+-    #    of lib subdirectories that we know of and
+-    #    exist on this machine
+-    # 3. Determined $SSL_RUNTIME_LIBDIR
+-    # If none of the above links, we skip runtime
+-    # library path...
+-    #
+-    for type in std x_std curr; do
+-
+-        ded_ld_rpath="$ded_ld_rflg$SSL_RUNTIME_LIBDIR"
+-	rpath="$SSL_RUNTIME_LIBDIR"
+-
+-	if test $type != curr; then
+-	    for ldir in $libdirs; do
+-		for dir in $std_ssl_locations; do
+-		    test "$SSL_RUNTIME_LIBDIR" != "$dir$ldir" || continue
+-		    test $type != x_std || test -d "$erl_xcomp_sysroot$dir$ldir" || continue
+-		    if test "$dir" = "/"; then
+-			libdir="$ldir"
+-		    else
+-			libdir="$dir$ldir"
+-		    fi
+-		    ded_ld_rpath="$ded_ld_rpath $ded_ld_rflg$libdir"
+-		    rpath="$rpath:$libdir"
+-                done
+-	    done
+-	fi
+-
+-	# Check that it still links when we add the runtime path...
+-	ERL_LINK_CRYPTO_IFELSE(
+-	   ["$SSL_INCLUDE"],
+-	   ["$ded_ld_rpath -L$SSL_LIBDIR"],
+-	   ["-l$SSL_CRYPTO_LIBNAME $SSL_EXTRA_LIBS"],
+-	   [rpath_success=yes],
+-	   [rpath_success=no])
+-
+-	test "$rpath_success" = "yes" && break
+-    done
+-
+-    test "$rpath_success" = "yes" || { ded_ld_rpath=; rpath=; }
+-
+-    SSL_DED_LD_RUNTIME_LIBRARY_PATH="$ded_ld_rpath"
+-
+-    if test "$rpath" != ""; then
+-       AC_MSG_RESULT([$rpath])
+-    elif test "$with_ssl_rpath" = yes; then
+-       AC_MSG_ERROR([requested by user, but could not be used])
+-    else
+-       AC_MSG_WARN([unable to set run path during linking])
+-    fi
+-  fi
+-  ;;
+-
+-no)   # Use no ssl runtime library path
+-  SSL_DED_LD_RUNTIME_LIBRARY_PATH=
+-  ;;
+-
+-*)    # Use ssl runtime library paths set by --with-ssl-rpath (without any check)
+-  AC_MSG_CHECKING([whether runtime library path can be set])
+-
+-  if test $enable_dynamic_ssl = no; then
+-     AC_MSG_ERROR([runtime library path requested by user, but user also requested static linking])
+-  elif test "$CRYPTO_APP" = ""; then
+-    if test "$with_ssl_rpath" = yes; then
+-       AC_MSG_ERROR([runtime library path requested by user, but could not be set since no crypto library was found])
+-    fi
+-    AC_MSG_RESULT([])
+-  elif test "$ded_ld_rflg" = ""; then
+-    if test "$with_ssl_rpath" = yes; then
+-       AC_MSG_ERROR([runtime library path requested by user, but cannot be set on this platform])
+-    fi
+-    AC_MSG_RESULT([])
+-  elif test "$SSL_DYNAMIC_ONLY" != "yes"; then
+-    if test "$with_ssl_rpath" = yes; then
+-       AC_MSG_WARN([runtime library path requested by user, but dynamic linking will not be used])
+-    else
+-       AC_MSG_RESULT([])
+-    fi
+-  else
+-     ded_ld_rpath=
+-     delimit=
+-     rpath=
+-     rpath_delimit=
+-     save_ifs="$IFS"; IFS=",:"
+-     for dir in $with_ssl_rpath; do
+-     	 ded_ld_rpath="$ded_ld_rpath$delimit$ded_ld_rflg$dir"
+-      	 delimit=" "
+-	 rpath="$rpath$rpath_delimit$dir"
+-     	 rpath_delimit=":"
+-     done
+-     IFS="$save_ifs"
+-     SSL_DED_LD_RUNTIME_LIBRARY_PATH="$ded_ld_rpath"
+-     ERL_LINK_CRYPTO_IFELSE(
+-	["$SSL_INCLUDE"],
+-	["$ded_ld_rpath -L$SSL_LIBDIR"],
+-	["-l$SSL_CRYPTO_LIBNAME $SSL_EXTRA_LIBS"],
+-	[rpath_success=yes],
+-	[rpath_success=no])
+-     if test "$rpath_success" = yes; then
+-     	AC_MSG_RESULT([yes; using $rpath])
+-     else
+-        AC_MSG_ERROR([runtime library path requested by user, but link failed])
+-     fi
+-  fi
+-  ;;
+-
+-esac
+-
++AS_CASE(["$with_ssl_rpath"],
++        [no],
++        [
++            # Use no ssl runtime library path
++            SSL_DED_LD_RUNTIME_LIBRARY_PATH=
++        ],
++        [yes | default],
++        [
++            # Use standard lib locations for ssl runtime library path
++            AC_MSG_CHECKING([for runtime library path to use])
++
++            if test $enable_dynamic_ssl = no -a "$with_ssl_rpath" = yes; then
++               AC_MSG_ERROR([requested by user, but user also requested static linking])
++            fi
++
++            AS_IF([test "$CRYPTO_APP" = ""],
++                  [
++                      AS_IF([test "$with_ssl_rpath" = yes],
++                            [AC_MSG_ERROR([requested by user, but could not be used since no crypto library was found])])
++                      AC_MSG_RESULT([])
++                  ],
++                  [test "$ded_ld_rflg" = ""],
++                  [
++                      AS_IF([test "$with_ssl_rpath" = yes],
++                            [AC_MSG_ERROR([requested by user, but cannot be set on this platform])])
++                      AC_MSG_RESULT([])
++                  ],
++                  [test "$SSL_DYNAMIC_ONLY" != "yes"],
++                  [
++                      AS_IF([test "$with_ssl_rpath" = yes],
++                            [AC_MSG_WARN([requested by user, but dynamic linking will not be used])],
++                            [AC_MSG_RESULT([])])
++                  ],
++                  [
++                      # Try to find a suitable rpath based on default install directories...
++                      libdirs="/lib"
++
++                      dir_lib64=no
++                      dir_lib_64=no
++                      dir_lib32=no
++                      dir_lib_32=no
++                      dir_multiarch=no
++                      dir_with_ssl_lib_subdir=no
++
++                      AS_IF([test "$multiarch_dir" != ""], [dir_multiarch=yes])
++                      AS_IF([test "$with_ssl_lib_subdir" != ""], [dir_with_ssl_lib_subdir=yes])
++
++                      AS_CASE(["$SSL_RUNTIME_LIBDIR"],
++                              [*/lib/64 | */lib/64/], [dir_lib_64=yes],
++                              [*/lib64 | */lib64/], [dir_lib64=yes],
++                              [*/lib/32 | */lib/32/], [dir_lib_32=yes],
++                              [*/lib32 | */lib32/], [dir_lib32=yes])
++
++                      for dir in $std_ssl_locations; do
++                          AS_IF([test "$ac_cv_sizeof_void_p" = "8"],
++                                [
++                                    AS_IF([test $dir_lib_64 = no && test -d "$erl_xcomp_sysroot$dir/lib/64"],
++                                          [dir_lib_64=yes])
++                                    AS_IF([test $dir_lib64 = no && test -d "$erl_xcomp_sysroot$dir/lib64"],
++                                          [dir_lib64=yes])
++                                ],
++                                [
++                                    AS_IF([test $dir_lib_32 = no && test -d "$erl_xcomp_sysroot$dir/lib/32"],
++                                          [dir_lib_32=yes])
++                                    AS_IF([test $dir_lib32 = no && test -d "$erl_xcomp_sysroot$dir/lib32"],
++                                          [dir_lib32=yes])
++                                ])
++                          AS_IF([test $dir_multiarch = no && test -d "$erl_xcomp_sysroot$dir/lib/$multiarch_dir"],
++                                [dir_multiarch=yes])
++                      done
++
++                      AS_IF([test $dir_with_ssl_lib_subdir = yes],
++                            [libdirs="/$with_ssl_lib_subdir $libdirs"])
++                      AS_IF([test $dir_multiarch = yes],
++                            [libdirs="/lib/$multiarch_dir $libdirs"])
++                      AS_IF([test $dir_lib_64 = yes],
++                            [libdirs="/lib/64 $libdirs"])
++                      AS_IF([test $dir_lib64 = yes],
++                            [libdirs="/lib64 $libdirs"])
++                      AS_IF([test $dir_lib_32 = yes],
++                            [libdirs="/lib/32 $libdirs"])
++                      AS_IF([test $dir_lib32 = yes],
++                            [libdirs="/lib32 $libdirs"])
++
++                      #
++                      # We try the follwing runtime paths in the
++                      # following order:
++                      # 1. Standard ssl locations with all variations
++                      #    of lib subdirectories that we know of
++                      # 2. Standard ssl locations with all variations
++                      #    of lib subdirectories that we know of and
++                      #    exist on this machine
++                      # 3. Determined $SSL_RUNTIME_LIBDIR
++                      # If none of the above links, we skip runtime
++                      # library path...
++                      #
++                      for type in std x_std curr; do
++
++                          ded_ld_rpath="$ded_ld_rflg$SSL_RUNTIME_LIBDIR"
++                          rpath="$SSL_RUNTIME_LIBDIR"
++
++                          AS_IF([test $type != curr],
++                                [
++                                    for ldir in $libdirs; do
++                                        for dir in $std_ssl_locations; do
++                                            AS_IF([test "$SSL_RUNTIME_LIBDIR" = "$dir$ldir"],
++                                                  [continue])
++                                            AS_IF([test $type = x_std && test '!' -d "$erl_xcomp_sysroot$dir$ldir"],
++                                                  [continue])
++                                            AS_IF([test "$dir" = "/"],
++                                                  [libdir="$ldir"],
++                                                  [libdir="$dir$ldir"])
++                                            ded_ld_rpath="$ded_ld_rpath $ded_ld_rflg$libdir"
++                                            rpath="$rpath:$libdir"
++                                        done
++                                    done
++                                ])
++
++                          # Check that it still links when we add the runtime path...
++                          ERL_LINK_CRYPTO_IFELSE(["$SSL_INCLUDE"],
++                                                 ["$ded_ld_rpath -L$SSL_LIBDIR"],
++                                                 ["-l$SSL_CRYPTO_LIBNAME $SSL_EXTRA_LIBS"],
++                                                 [rpath_success=yes],
++                                                 [rpath_success=no])
++
++                          AS_IF([test "$rpath_success" = "yes"], [break])
++
++                      done
++
++                      AS_IF([test "$rpath_success" != "yes"],
++                            [
++                                ded_ld_rpath=
++                                rpath=
++                            ])
++
++                      SSL_DED_LD_RUNTIME_LIBRARY_PATH="$ded_ld_rpath"
++
++                      AS_IF([test "$rpath" != ""],
++                            [
++                                AC_MSG_RESULT([$rpath])
++                            ],
++                            [test "$with_ssl_rpath" = yes],
++                            [
++                                AC_MSG_ERROR([requested by user, but could not be used])
++                            ],
++                            [
++                                AC_MSG_WARN([unable to set run path during linking])
++                            ])
++                  ])
++        # end yes|default
++        ],
++        [
++            # Use ssl runtime library paths set by --with-ssl-rpath
++            AC_MSG_CHECKING([whether runtime library path can be set])
++
++            AS_IF([test $enable_dynamic_ssl = no],
++                  [
++                      AC_MSG_ERROR([runtime library path requested by user, but user also requested static linking])
++                  ],
++                  [test "$CRYPTO_APP" = ""],
++                  [
++                      AS_IF([test "$with_ssl_rpath" = yes],
++                            [AC_MSG_ERROR([runtime library path requested by user, but could not be set since no crypto library was found])])
++                      AC_MSG_RESULT([])
++                  ],
++                  [test "$ded_ld_rflg" = ""],
++                  [
++                      AS_IF([test "$with_ssl_rpath" = yes],
++                            [AC_MSG_ERROR([runtime library path requested by user, but cannot be set on this platform])])
++                      AC_MSG_RESULT([])
++                  ]
++                  [test "$SSL_DYNAMIC_ONLY" != "yes"],
++                  [
++                      AS_IF([test "$with_ssl_rpath" = yes],
++                            [AC_MSG_WARN([runtime library path requested by user, but dynamic linking will not be used])],
++                            [AC_MSG_RESULT([])])
++                  ],
++                  [
++                      # Check that it links...
++                      ded_ld_rpath=
++                      delimit=
++                      rpath=
++                      rpath_delimit=
++                      save_ifs="$IFS"; IFS=",:"
++                      for dir in $with_ssl_rpath; do
++                          ded_ld_rpath="$ded_ld_rpath$delimit$ded_ld_rflg$dir"
++                          delimit=" "
++                          rpath="$rpath$rpath_delimit$dir"
++                          rpath_delimit=":"
++                      done
++                      IFS="$save_ifs"
++                      SSL_DED_LD_RUNTIME_LIBRARY_PATH="$ded_ld_rpath"
++                      ERL_LINK_CRYPTO_IFELSE(["$SSL_INCLUDE"],
++                                             ["$ded_ld_rpath -L$SSL_LIBDIR"],
++                                             ["-l$SSL_CRYPTO_LIBNAME $SSL_EXTRA_LIBS"],
++                                             [rpath_success=yes],
++                                             [rpath_success=no])
++                      AS_IF([test "$rpath_success" = yes],
++                            [AC_MSG_RESULT([yes; using $rpath])],
++                            [AC_MSG_ERROR([runtime library path requested by user, but link failed])])
++                  ])
++        ])dnl AS_CASE    
+ 
+ AC_ARG_ENABLE(fips,
+ AS_HELP_STRING([--enable-fips], [enable OpenSSL FIPS mode support])
+@@ -769,31 +807,33 @@ AS_HELP_STRING([--disable-fips], [disable OpenSSL FIPS mode support (default)]),
+     *)   enable_fips_support=no ;;
+   esac ], enable_fips_support=no)
+ 
+-if test "x$enable_fips_support" = "xyes" && test "$CRYPTO_APP" != ""; then
+-   saveCFLAGS="$CFLAGS"
+-   saveLDFLAGS="$LDFLAGS"
+-   saveLIBS="$LIBS"
+-   CFLAGS="$DED_BASIC_CFLAGS $SSL_INCLUDE"
+-   if test $SSL_DYNAMIC_ONLY = yes; then
+-      LDFLAGS="$DED_LDFLAGS_CONFTEST $ded_ld_rpath -L$SSL_LIBDIR"
+-      LIBS="$LIBS -l$SSL_CRYPTO_LIBNAME $SSL_EXTRA_LIBS"
+-   else
+-      LDFLAGS="$DED_LDFLAGS_CONFTEST"
+-      if test "$host_os" = "win32" ; then
+-	LIBS="$LIBS $SSL_LIBDIR/$SSL_CRYPTO_LIBNAME.lib $SSL_EXTRA_LIBS"
+-      else
+-	LIBS="$LIBS $SSL_LIBDIR/lib$SSL_CRYPTO_LIBNAME.a $SSL_EXTRA_LIBS"
+-      fi
+-   fi
+-   AC_CHECK_FUNC([FIPS_mode_set],
+-   [SSL_FLAGS="-DFIPS_SUPPORT"],
+-   [SSL_FLAGS=])
+-   CFLAGS="$saveCFLAGS"
+-   LDFLAGS="$saveLDFLAGS"
+-   LIBS="$saveLIBS"
+-else
+-   SSL_FLAGS=
+-fi
++SSL_FLAGS=
++AS_IF([test "$enable_fips_support" = "yes"],
++      [
++          AS_IF([test "$CRYPTO_APP" = ""],
++                [AC_MSG_ERROR([FIPS support requested, but no crypto library found])])
++          saveCFLAGS="$CFLAGS"
++          saveLDFLAGS="$LDFLAGS"
++          saveLIBS="$LIBS"
++          CFLAGS="$DED_BASIC_CFLAGS $SSL_INCLUDE"
++          AS_IF([test $SSL_DYNAMIC_ONLY = yes],
++                [
++                    LDFLAGS="$DED_LDFLAGS_CONFTEST $ded_ld_rpath -L$SSL_LIBDIR"
++                    LIBS="$LIBS -l$SSL_CRYPTO_LIBNAME $SSL_EXTRA_LIBS"
++                ],
++                [
++                    LDFLAGS="$DED_LDFLAGS_CONFTEST"
++                    AS_IF([test "$host_os" = "win32"],
++                          [LIBS="$LIBS $SSL_LIBDIR/$SSL_CRYPTO_LIBNAME.lib $SSL_EXTRA_LIBS"],
++                          [LIBS="$LIBS $SSL_LIBDIR/lib$SSL_CRYPTO_LIBNAME.a $SSL_EXTRA_LIBS"])
++                ])
++          AC_CHECK_FUNC([FIPS_mode_set],
++                        [SSL_FLAGS="-DFIPS_SUPPORT"],
++                        [AC_MSG_ERROR([FIPS support requested, but cannot be enabled])])
++          CFLAGS="$saveCFLAGS"
++          LDFLAGS="$saveLDFLAGS"
++          LIBS="$saveLIBS"
++      ])
+ 
+ AC_SUBST(SSL_INCLUDE)
+ AC_SUBST(SSL_INCDIR)
+diff --git a/lib/erl_interface/configure.ac b/lib/erl_interface/configure.ac
+index 371450eb626..caa219a74b8 100644
+--- a/lib/erl_interface/configure.ac
++++ b/lib/erl_interface/configure.ac
+@@ -54,11 +54,7 @@ esac
+ 
+ AC_CONFIG_AUX_DIR([$srcdir/src/auxdir])
+ 
+-if test "$host" = "free_source" -o "$host" = "win32"; then
+-   host_os="$host"
+-else   
+-   AC_CANONICAL_HOST
+-fi
++ERL_CANONICAL_SYSTEM_TYPE
+ 
+ TARGET=$host
+ AC_SUBST(TARGET)
+@@ -223,7 +219,8 @@ AC_ARG_WITH(gmp,
+ # We don't just want any GNU MP version, we want 4.1 or later
+ # that contain the import/export functions we need.
+ 
+-if test "x$with_gmp" = "xyes" ;then
++AS_IF([test "x$with_gmp" = "xyes"],
++  [
+     for dir in /usr /usr/pkg /usr/local /usr/local/gmp /usr/lib/gmp /usr/gmp; do
+ 	AC_CHECK_HEADER($dir/include/gmp.h, ac_cv_gmp=yes, ac_cv_gmp=no)
+ 	if test $ac_cv_gmp = yes ; then
+@@ -248,7 +245,7 @@ elif test "x$with_gmp" != "xno" -a -n "$with_gmp" ;then
+     AC_DEFINE(HAVE_GMP_H, [], [Define if you have "gmp.h"])
+     AC_CHECK_LIB(gmp, __gmpz_export)
+     # FIXME return ERROR if no lib
+-fi
++  ])
+ 
+ LM_WINDOWS_ENVIRONMENT
+ 	
+@@ -262,8 +259,10 @@ AC_SUBST(THR_LIBS)
+ AC_SUBST(THR_DEFS)
+ AC_SUBST(EI_THREADS)
+ 
+-case "$threads_disabled" in
+-    no|maybe)
++AS_CASE(["$threads_disabled"],
++
++    [no|maybe],
++    [
+ 	LM_CHECK_THR_LIB
+         ETHR_CHK_GCC_ATOMIC_OPS([])
+ 
+@@ -272,7 +271,7 @@ case "$threads_disabled" in
+ 	        EI_THREADS="false"
+ 		# Fail if --enable-threads given and no threads found
+ 		if test "x$threads_disabled" = "xno"; then
+-		    AC_MSG_ERROR(No threads support found)
++		    AC_MSG_ERROR([No threads support found])
+ 		fi
+ 	        ;;
+ 	    win32_threads)
+@@ -287,19 +286,21 @@ case "$threads_disabled" in
+ 	    	AC_MSG_WARN([Unexpected thread library: $THR_LIB_NAME])
+ 		;;
+ 	esac
+-	;;
+-    yes)
++    ],
++
++    [yes],
++    [
+ 	# Threads disabled
+ 	EI_THREADS="false"
+-	;;
+-esac
++    ])
+ 
+ # ---------------------------------------------------------------------------
+ # Warning flags to the C compiler
+ # ---------------------------------------------------------------------------
+ AC_SUBST(WFLAGS)
+ 
+-if test "x$GCC" = xyes; then
++AS_IF([test "x$GCC" = xyes],
++ [
+   # Treat certain GCC warnings as errors
+   LM_TRY_ENABLE_CFLAG([-Werror=return-type], [WERRORFLAGS])
+   WFLAGS="-Wall -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline"
+@@ -323,10 +324,11 @@ if test "x$GCC" = xyes; then
+   # Until version 10, gcc has had -fcommon as default, which allows and merges
+   # such dubious duplicates.
+   LM_TRY_ENABLE_CFLAG([-fno-common], [CFLAGS])
+-else
++ ],
++ [
+   WFLAGS=""
+   WERRORFLAGS=""
+-fi
++ ])
+ 
+ # ---------------------------------------------------------------------------
+ # FIXME We want to use libtool but until then....
+diff --git a/lib/megaco/configure.ac b/lib/megaco/configure.ac
+index 8c1762ed2b3..faeef5bfc38 100644
+--- a/lib/megaco/configure.ac
++++ b/lib/megaco/configure.ac
+@@ -29,11 +29,7 @@ AC_PREREQ([2.71])
+ 
+ AC_CONFIG_AUX_DIRS(${ERL_TOP}/erts/autoconf)
+ 
+-if test "$host" = "free_source" -o "$host" = "win32"; then
+-   host_os="$host"
+-else   
+-   AC_CANONICAL_HOST
+-fi
++ERL_CANONICAL_SYSTEM_TYPE
+ 
+ dnl ----------------------------------------------------------------------
+ dnl Checks for programs.
+diff --git a/lib/odbc/configure.ac b/lib/odbc/configure.ac
+index 98fbca37232..bcf7b113b61 100644
+--- a/lib/odbc/configure.ac
++++ b/lib/odbc/configure.ac
+@@ -29,23 +29,13 @@ AC_PREREQ([2.71])
+ 
+ AC_CONFIG_AUX_DIRS(${ERL_TOP}/erts/autoconf)
+ 
+-if test "$host" = "free_source" -o "$host" = "win32"; then
+-   host_os="$host"
+-else   
+-   AC_CANONICAL_HOST
+-fi
++ERL_CANONICAL_SYSTEM_TYPE
+ 
+ AC_ARG_WITH(odbc,
+ [  --with-odbc=PATH        specify location of ODBC include and lib
+   --with-odbc             use ODBC (default)
+   --without-odbc          don't use ODBC])
+ 
+-if test "$with_odbc" = "no"; then
+-
+-   rm -f "$ERL_TOP/lib/odbc/SKIP"
+-
+-else dnl "$with_odbc" != "no"
+-
+ ERL_XCOMP_SYSROOT_INIT
+ 
+ dnl Checks for programs.
+@@ -72,6 +62,15 @@ fi
+ 
+ _search_path=
+ 
++AS_IF([test "$with_odbc" = "no"],
++ [
++
++   rm -f "$ERL_TOP/lib/odbc/SKIP"
++
++ ],
++ [
++  dnl "$with_odbc" != "no"
++
+ 
+ # Sockets
+ #--------------------------------------------------------------------
+@@ -93,20 +92,22 @@ _search_path=
+ #--------------------------------------------------------------------
+ erl_checkBoth=0
+ AC_CHECK_FUNC(connect, erl_checkSocket=0, erl_checkSocket=1)
+-if test "$erl_checkSocket" = 1; then
++AS_IF([test "$erl_checkSocket" = 1],
++  [
+     AC_CHECK_LIB(socket, socket, LIBS="$LIBS -lsocket", erl_checkBoth=1)
+-fi
+-if test "$erl_checkBoth" = 1; then
++  ])
++AS_IF([test "$erl_checkBoth" = 1],
++  [
+     tk_oldLibs=$LIBS
+     LIBS="$LIBS -lsocket -lnsl"
+     AC_CHECK_FUNC(accept, odbc_erl_checkNsl=0, [LIBS=$tk_oldLibs])
+-fi
++  ])
+ AC_CHECK_FUNC(gethostbyname, , AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"]))
+-case "$host_os" in
+-	haiku*)
++AS_CASE(["$host_os"],
++        [haiku*],
++        [
+ 		AC_CHECK_LIB(network, socket)
+-		;;
+-esac
++        ])
+ 
+ dnl Checks for header files.
+ AC_CHECK_INCLUDES_DEFAULT
+@@ -143,8 +144,10 @@ AC_SUBST(THR_LIBS)
+ 
+ odbc_lib_link_success=no
+ AC_SUBST(TARGET_FLAGS)
+-    case $host_os in	
+-       darwin1[[0-9]].*)
++AS_CASE([$host_os],
++
++        [darwin1[[0-9]].*],
++        [
+                 TARGET_FLAGS="-DUNIX"
+ 	        if test ! -d "$with_odbc" || test "$with_odbc" = "yes"; then
+ 		    ODBC_LIB= -L"/usr/local/lib"
+@@ -155,15 +158,19 @@ AC_SUBST(TARGET_FLAGS)
+ 		fi
+ 
+                AC_CHECK_LIB(iodbc, SQLAllocHandle,[ODBC_LIB="$ODBC_LIB -lodbc"; odbc_lib_link_success=yes])
+-            ;;
+-	haiku*)
++        ],
++
++        [haiku*],
++        [
+                TARGET_FLAGS="-DUNIX"
+                ODBC_LIB= -L"/system/lib"
+                ODBC_INCLUDE="-I/system/develop/headers"
+                dnl Haiku's package manager will deal with this for us
+                AC_CHECK_LIB(odbc, SQLAllocHandle,[ODBC_LIB="$ODBC_LIB -lodbc"; odbc_lib_link_success=yes])
+-               ;;
+-        win32|cygwin)
++        ],
++
++        [win32|cygwin],
++        [
+ 		TARGET_FLAGS="-DWIN32"
+ 		AC_CHECK_LIB(ws2_32, main)
+ 		if test ! -d "$with_odbc" || test "$with_odbc" = "yes"; then
+@@ -174,17 +181,22 @@ AC_SUBST(TARGET_FLAGS)
+ 		    ODBC_INCLUDE="-I$with_odbc/include"
+ 		fi
+ 		AC_CHECK_LIB(odbc32, main, [ODBC_LIB="$ODBC_LIB -lodbc32"; odbc_lib_link_success=yes])
+-	    ;;
+-	    *)
++        ],
++
++        [
+ 	        TARGET_FLAGS="-DUNIX"
+-		case "$erl_xcomp_without_sysroot-$with_odbc" in
+-		    yes-yes | yes- )
++		AS_CASE(["$erl_xcomp_without_sysroot-$with_odbc"],
++
++                    [yes-yes | yes-],
++                    [
+ 			msg="Dont know where to search for odbc (setting erl_xcomp_sysroot will help)"
+ 			AC_MSG_WARN([$msg])
+ 			echo "$msg" > "$ERL_TOP/lib/odbc/SKIP"
+ 			odbc_lib_link_success=wont_try
+-			;;
+-		    no-yes | no- )
++                    ],
++
++                    [no-yes | no-],
++                    [
+ 			AC_CHECK_SIZEOF(void *)
+ 			AC_MSG_CHECKING([for odbc in standard locations])
+ 			for rdir in /usr/local/odbc /usr/local /usr/odbc \
+@@ -213,16 +225,14 @@ AC_SUBST(TARGET_FLAGS)
+ 			    AC_MSG_RESULT($ODBC_LIB)
+ 			    AC_CHECK_LIB(odbc, SQLAllocHandle,[ODBC_LIB="$ODBC_LIB -lodbc"; odbc_lib_link_success=yes])
+ 			fi
+-			;;
++                    ],
+ 
+-		    *)
++                    [
+ 			ODBC_LIB=-L"$with_odbc/lib"
+ 			ODBC_INCLUDE="-I$with_odbc/include"
+ 			AC_CHECK_LIB(odbc, SQLAllocHandle,[ODBC_LIB="$ODBC_LIB -lodbc"; odbc_lib_link_success=yes])
+-			;;
+-		esac
+-	  ;;
+-esac
++                    ])
++        ])
+ 
+ if test $odbc_required_headers = no;  then
+     AC_MSG_WARN(["ODBC library - header check failed"])
+@@ -236,12 +246,13 @@ fi
+ AC_SUBST(ODBC_LIB)
+ AC_SUBST(ODBC_INCLUDE)
+ 
+-fi dnl "$with_odbc" != "no"
++ ]) dnl "$with_odbc" != "no"
+ 
+-if test "x$GCC" = xyes; then
++AS_IF([test "x$GCC" = xyes],
++  [
+     # Treat certain GCC warnings as errors
+     LM_TRY_ENABLE_CFLAG([-Werror=return-type], [CFLAGS])
+-fi
++  ])
+ 
+ dnl ----------------------------------------------------------------------
+ dnl Enable -fsanitize= flags.
+diff --git a/lib/snmp/configure.ac b/lib/snmp/configure.ac
+index 0830b42299a..e1ec073f7e0 100644
+--- a/lib/snmp/configure.ac
++++ b/lib/snmp/configure.ac
+@@ -12,11 +12,7 @@ dnl ----------------------------------------------------------------------
+ dnl Checks for programs.
+ dnl ----------------------------------------------------------------------
+ 
+-if test "$host" = "free_source" -o "$host" = "win32"; then
+-   host_os="$host"
+-else   
+-   AC_CANONICAL_HOST
+-fi
++ERL_CANONICAL_SYSTEM_TYPE
+ 
+ AC_CHECK_PROG(PERL, perl, perl, no_perl)
+ if test "$PERL" = no_perl; then
+diff --git a/lib/wx/configure.ac b/lib/wx/configure.ac
+index cd6743951a1..4a6a3b166b9 100644
+--- a/lib/wx/configure.ac
++++ b/lib/wx/configure.ac
+@@ -40,24 +40,23 @@ AC_DEFUN([WX_MSG_ERROR],
+ ])
+ 
+ 
+-if test -z "$ERL_TOP" || test ! -d $ERL_TOP ; then
++AS_IF(
++ [test -z "$ERL_TOP" || test ! -d $ERL_TOP],
++ [
+   AC_MSG_ERROR([ERL_TOP is not set])
+-else
++ ],
++ [
+   erl_top=${ERL_TOP}
+   AC_CONFIG_AUX_DIRS($erl_top/erts/autoconf)
+   WX_BUILDING_INSIDE_ERLSRC=true
+-fi
++ ])
+ 
+ AC_ARG_WITH(wx,
+ [  --with-wxdir=PATH    specify location of wxWidgets include and lib
+   --with-wx             use wxWidgets (default)
+   --without-wx          don't use wxWidgets])
+ 
+-if test "$host" = "free_source" -o "$host" = "win32"; then
+-   host_os="$host"
+-else   
+-   AC_CANONICAL_HOST
+-fi
++ERL_CANONICAL_SYSTEM_TYPE
+ 
+ case $host_os in
+     mingw32)
+@@ -108,8 +107,10 @@ OBJC_CC=$CC
+ OBJC_CFLAGS=""
+ CXXFLAGS=""
+ dnl NOTE: CPPFLAGS will be included in CFLAGS at the end
+-case $host_os in
+-    darwin*)
++AS_CASE([$host_os],
++
++    [darwin*],
++    [
+ 	AC_MSG_CHECKING([Checking wxWidgets for min version:])
+ 	WX_CC=`wx-config --cc`
+ 	MAC_MIN=`echo "$WX_CC" | sed 's/^[[^ ]]*\ *//'`
+@@ -177,22 +178,26 @@ case $host_os in
+   	fi
+   	CFLAGS="$USER_CFLAGS $MAC_MIN -Wno-deprecated-declarations"
+ 	CPPFLAGS="$CPPFLAGS -D_MACOSX $PTHR_CFLAGS"
+-	;;
+-    mingw32)
++    ],
++
++    [mingw32],
++    [
+ 	CFLAGS="$CFLAGS -DWIN32 -DWINVER=0x0600 -D_WINDOWS -D_UNICODE -DUNICODE"
+ 	CPPFLAGS="$CPPFLAGS -D_WIN32_WINNT=0x0600"
+ 	AC_MSG_WARN([Reverting to 32-bit time_t])
+ 	CPPFLAGS="$CPPFLAGS -D_USE_32BIT_TIME_T"
+-	;;
+-    win32)
++    ],
++
++    [win32],
++    [
+ 	CFLAGS="$CFLAGS -DWIN32 -DWINVER=0x0600 -D_WINDOWS -D_UNICODE -DUNICODE"
+ 	CPPFLAGS="$CPPFLAGS -D_WIN32_WINNT=0x0600"
+-	;;
+-    *)
++    ],
++
++    [
+ 	CFLAGS="$CFLAGS -Wno-deprecated-declarations"
+ 	CPPFLAGS="$CPPFLAGS -D_GNU_SOURCE $PTHR_CFLAGS"
+-	;;
+-esac
++    ])
+ 
+ AC_SUBST(OBJC_CC)
+ AC_SUBST(OBJC_CFLAGS)
+@@ -249,47 +254,54 @@ dnl  Use -O1 -fno-move-loop-invariants for wxe_funcs.cpp to reduce
+ dnl  compilation time
+ dnl
+ 
+-if test "x$GCC" = xyes -a X"$host_os" != X"win32" ; then
++AS_IF([test "x$GCC" = xyes -a X"$host_os" != X"win32"],
++ [
+    CXXNOOPT="-O1"
+    LM_TRY_ENABLE_CFLAG([-fno-move-loop-invariants], [CXXNOOPT])
+    LM_TRY_ENABLE_CFLAG([-fno-var-tracking-assignments], [CXXNOOPT])
+-fi
++ ])
+ 
+ dnl
+ dnl  Opengl tests
+ dnl
+ 
+-if test X"$host_os" != X"win32" ; then
++AS_IF([test X"$host_os" != X"win32"],
++  [
+     AC_CHECK_HEADERS([GL/gl.h], [],
+     	[AC_CHECK_HEADERS([OpenGL/gl.h])])
+-    if test X"$ac_cv_header_GL_gl_h" != Xyes &&
+-       	test X"$ac_cv_header_OpenGL_gl_h" != Xyes
+-    then
++    AS_IF([test X"$ac_cv_header_GL_gl_h" != Xyes && test X"$ac_cv_header_OpenGL_gl_h" != Xyes],
++      [
+        	saved_CPPFLAGS="$CPPFLAGS"
+ 	AC_MSG_NOTICE(Checking for OpenGL headers in /usr/X11R6)
+        	CPPFLAGS="-isystem /usr/X11R6/include $CPPFLAGS"
+        	$as_unset ac_cv_header_GL_gl_h
+        	AC_CHECK_HEADERS([GL/gl.h])
+-       	if test X"$ac_cv_header_GL_gl_h" != Xyes ; then
++       	AS_IF([test X"$ac_cv_header_GL_gl_h" != Xyes],
++          [
+ 	    AC_MSG_NOTICE(Checking for OpenGL headers in /usr/local)
+ 	    CPPFLAGS="-isystem /usr/local/include $saved_CPPFLAGS"
+ 	    $as_unset ac_cv_header_GL_gl_h
+ 	    AC_CHECK_HEADERS([GL/gl.h])
+-	    if test X"$ac_cv_header_GL_gl_h" != Xyes ; then
++	    AS_IF([test X"$ac_cv_header_GL_gl_h" != Xyes],
++              [
+ 		WX_MSG_ERROR([No OpenGL headers found, wx will NOT be usable])
+ 		CPPFLAGS="$saved_CPPFLAGS"
+-	    else
++              ],
++              [
+ 	    	GL_LIBS="-L/usr/local/lib $GL_LIBS"
+-	    fi
+-	else
++              ])
++	  ],
++          [
+     	    GL_LIBS="-L/usr/X11R6/lib $GL_LIBS"
+-       	fi
+-    fi
+-else
++       	  ])
++      ])
++  ],
++  [
+     AC_CHECK_HEADERS([gl/gl.h],[],[],[#include <windows.h>])
+-fi
++  ])
+ 
+-if test X"$host_os" != X"win32" ; then
++AS_IF([test X"$host_os" != X"win32"],
++  [
+     AC_CHECK_HEADERS([GL/glu.h], [],
+         [AC_CHECK_HEADERS([OpenGL/glu.h])])
+     if test X"$ac_cv_header_GL_glu_h" != Xyes &&
+@@ -297,9 +309,10 @@ if test X"$host_os" != X"win32" ; then
+     then
+     WX_MSG_ERROR([No GLU headers found, wx will NOT be usable])
+     fi
+-else
++  ],
++  [
+     AC_CHECK_HEADERS([gl/glu.h],[],[],[#include <windows.h>])
+-fi
++  ])
+ 
+ AC_SUBST(GL_LIBS)
+ 
+@@ -324,9 +337,14 @@ AC_SUBST(ERLANG_ROOT_DIR)
+ dnl
+ dnl  Check for wxwidgets
+ dnl 
+-if test "$cross_compiling" = "yes"; then
++AS_IF(
++  [test "$cross_compiling" = "yes"],
++  [
+     WX_MSG_ERROR([Cross compilation of the wx driver is not supported yet, wx will NOT be usable])
+-elif test  X"$MIXED_VC" = X"no"; then
++  ],
++
++  [test  X"$MIXED_VC" = X"no"],
++  [
+     m4_include(wxwin-nothrow.m4)
+ 
+     AM_OPTIONS_WXCONFIG
+@@ -426,7 +444,9 @@ elif test  X"$MIXED_VC" = X"no"; then
+         is in LD_LIBRARY_PATH or equivalent variable and
+         wxWidgets version is $reqwx or above.])
+     fi
+-else
++  ],
++  
++  [ #else
+     AC_MSG_CHECKING(for wxWidgets in standard locations)
+     echo
+     # Check whether --with-wxdir was given.
+@@ -524,9 +544,10 @@ else
+     AC_SUBST(WX_LIBS_STATIC)
+     AC_SUBST(WX_RESCOMP)
+     AC_DEFINE([WXE_WEBVIEW])
+-fi
++  ])
+ 
+-if test "$WXERL_CAN_BUILD_DRIVER" != "false"; then
++AS_IF([test "$WXERL_CAN_BUILD_DRIVER" != "false"],
++[
+ 
+ AC_SUBST(WX_HAVE_STATIC_LIBS)
+ AC_SUBST(RC_FILE_TYPE)
+@@ -694,15 +715,16 @@ if test X"$CAN_LINK_WX" != X"yes" ; then
+    WX_MSG_ERROR([Can not link wx program are all developer packages installed?])
+ fi
+ 
+-fi dnl - if test "$WXERL_CAN_BUILD_DRIVER" != "false"
++]) dnl - if test "$WXERL_CAN_BUILD_DRIVER" != "false"
+ 
+ AC_SUBST(WXERL_CAN_BUILD_DRIVER)
+ 
+-if test "x$GCC" = xyes; then
++AS_IF([test "x$GCC" = xyes],
++  [
+     # Treat certain GCC warnings as errors
+     LM_TRY_ENABLE_CFLAG([-Werror=return-type], [CFLAGS])
+     LM_TRY_ENABLE_CFLAG([-Werror=return-type], [CXXFLAGS])
+-fi
++  ])
+ 
+ dnl ----------------------------------------------------------------------
+ dnl Enable -fsanitize= flags.
+diff --git a/otp_build b/otp_build
+index 9b237c08366..c9c7c66fb8a 100755
+--- a/otp_build
++++ b/otp_build
+@@ -21,7 +21,7 @@
+ 
+ USE_AUTOCONF_VERSION=2.71
+ 
+-aclocal_dirs="make ./lib/crypto ./lib/erl_interface ./lib/odbc ./lib/wx ./lib/megaco"
++aclocal_dirs="make ./lib/crypto ./lib/erl_interface ./lib/odbc ./lib/wx ./lib/megaco ./lib/snmp ./common_test"
+ autoconf_aux_dirs="./lib/common_test/priv/auxdir ./lib/erl_interface/src/auxdir ./lib/common_test/test_server ./lib/wx/autoconf"
+ 
+ aclocal_master="./erts/aclocal.m4"
+@@ -171,11 +171,13 @@ set_config_flags ()
+ 	#   (in the cross compilation case the whole command line as well as
+ 	#   the cross configuration have been moved here). 
+ 
+-	if target_contains free_source; then
+-		CONFIG_FLAGS="$CONFIG_FLAGS --host=$TARGET"
+-	fi
+ 	if target_contains win32; then
+-	    CONFIG_FLAGS="--build=$BUILDSYS build_alias=win32 --host=win32 --target=win32 $CONFIG_FLAGS" 
++	    if [ "$CONFIG_SUBTYPE" = "win64" ]; then
++		bht_type=local-x86_64-pc-windows
++	    else
++		bht_type=local-x86-pc-windows
++	    fi
++	    CONFIG_FLAGS="--build=$bht_type --host=$bht_type --target=$bht_type $CONFIG_FLAGS" 
+ 	fi
+ 	    
+ 
+--- a/make/configure.ac	Tue Jan 25 14:12:34 2022 +0000
++++ b/make/configure.ac	Tue Jan 25 14:15:50 2022 +0000
+@@ -91,12 +91,7 @@
+ dnl systems we cross compile for!
+ dnl
+ 
+-if test "X$host" != "Xfree_source" -a "X$host" != "Xwin32"; then
+-    AC_CANONICAL_HOST
+-    AC_CANONICAL_BUILD
+-else
+-    host_os=$host
+-fi
++ERL_CANONICAL_SYSTEM_TYPE
+ 
+ TARGET=$host
+ AC_SUBST(TARGET)

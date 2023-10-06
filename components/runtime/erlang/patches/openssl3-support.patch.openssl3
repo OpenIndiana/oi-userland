@@ -1,0 +1,16 @@
+The OpenSSL lib search directory needs to be adjusted in order
+to find OpenSSL 3 in our nonstandard location.
+
+Not suitable for upstream.
+
+--- otp_src_24.2/lib/crypto/configure.ac
++++ otp_src_24.2/lib/crypto/configure.ac
+@@ -352,7 +352,7 @@
+ done
+ 
+ # Setup subdirectories to search in...
+-search_subdirs="lib"
++search_subdirs="lib/64"
+ if test "$ac_cv_sizeof_void_p" = "8"; then
+    search_subdirs="$search_subdirs lib64 lib/64"
+ else
