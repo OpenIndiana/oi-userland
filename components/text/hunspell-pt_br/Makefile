@@ -21,7 +21,7 @@ COMPONENT_PROJECT_URL=	https://pt-br.libreoffice.org/projetos/vero
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for Portugese Brazilian
 COMPONENT_LICENSE=	MPL1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_FMRI=	library/myspell/dictionary/pt_br
+COMPONENT_FMRI=	library/myspell/dictionary/pt-br
 COMPONENT_CLASSIFICATION	= System/Localizations
 
 COMPONENT_SRC=            VeroptBR3215AOC
@@ -59,3 +59,5 @@ install: $(SOURCE_DIR)/.installed
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Auto-generated dependencies
