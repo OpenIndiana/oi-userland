@@ -27,12 +27,12 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			unrar
-COMPONENT_VERSION=		6.2.11
+COMPONENT_VERSION=		6.2.12
 COMPONENT_SRC=			$(COMPONENT_NAME)
 COMPONENT_SUMMARY=		Rar archives extractor utility
 COMPONENT_PROJECT_URL=	https://www.rarlabs.com/rar_add.htm
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a805e150d56445770f71a85c3fbdc9ab4b04fbe61b01cb57182d86fe3e7e6cec
+COMPONENT_ARCHIVE_HASH= sha256:a008b5f949bca9bb4ffa1bebbfc8b3c14b89df10a10354809b845232d5f582e5
 COMPONENT_ARCHIVE_URL=	https://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			archiver/unrar
 COMPONENT_CLASSIFICATION= Applications/System Utilities
