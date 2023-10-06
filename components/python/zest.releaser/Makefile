@@ -15,17 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zest.releaser
-HUMAN_VERSION =			8.0.0
+HUMAN_VERSION =			9.1.0
 COMPONENT_SUMMARY =		zest.releaser - Software releasing made easy and repeatable
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e9/24/35f528cbe655961c6e71cf479ce11d6acfebf74ae2f9619261800ffdc26c/zest.releaser-8.0.0.tar.gz
+	https://files.pythonhosted.org/packages/b7/7e/995fa9425344d76c47a5b4009fa72169391b9f3cfa5ddfedd098ee6a1d65/zest.releaser-9.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9b6495d02e594b318862f35cec84c596bf3fe37842db0009c39201f2ebcef809
+	sha256:f1c0f8fdfd80299d228d0c5555deb73949e505696cd504d8e078aca3b61cc6b7
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.GPL
 
@@ -49,7 +48,9 @@ COMPONENT_TEST_TARGETS += -- -vv
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(/testtemp\)......../|\1XXXXXXXX/|'"
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/build
 PYTHON_REQUIRED_PACKAGES += library/python/colorama
+PYTHON_REQUIRED_PACKAGES += library/python/readme-renderer
 PYTHON_REQUIRED_PACKAGES += library/python/requests
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
