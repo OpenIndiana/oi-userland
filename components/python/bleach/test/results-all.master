@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 421 items / 1 skipped
+collecting ... collected 425 items / 1 skipped
 
 tests/test_callbacks.py::TestNofollowCallback::test_basic PASSED
 tests/test_callbacks.py::TestNofollowCallback::test_blank PASSED
@@ -141,6 +141,8 @@ tests/test_clean.py::test_invisible_characters[1\x0823-1?23] PASSED
 tests/test_clean.py::test_invisible_characters[1\x0b23-1?23] PASSED
 tests/test_clean.py::test_invisible_characters[1\x0c23-1?23] PASSED
 tests/test_clean.py::test_invisible_characters[import y\x08ose\x08m\x08i\x08t\x08e\x08-import y?ose?m?i?t?e?] PASSED
+tests/test_clean.py::test_lessthan_escaping[<some thing-&lt;some thing] PASSED
+tests/test_clean.py::test_lessthan_escaping[<some thing=foo-&lt;some thing=foo] PASSED
 tests/test_clean.py::test_lessthan_escaping[<y-&lt;y] PASSED
 tests/test_clean.py::test_lessthan_escaping[<y>-&lt;y&gt;] PASSED
 tests/test_clean.py::test_lessthan_escaping[x < y-x &lt; y] PASSED
@@ -324,6 +326,7 @@ tests/test_linkify.py::test_ignore_bad_protocols PASSED
 tests/test_linkify.py::test_javascript_url PASSED
 tests/test_linkify.py::test_libgl PASSED
 tests/test_linkify.py::test_link_emails_and_urls PASSED
+tests/test_linkify.py::test_link_entities_in_a_tag PASSED
 tests/test_linkify.py::test_link_entities_in_characters_token PASSED
 tests/test_linkify.py::test_link_entities_in_qs PASSED
 tests/test_linkify.py::test_link_fragment PASSED
@@ -331,6 +334,7 @@ tests/test_linkify.py::test_link_ftp PASSED
 tests/test_linkify.py::test_link_http_complete PASSED
 tests/test_linkify.py::test_link_in_html PASSED
 tests/test_linkify.py::test_link_query PASSED
+tests/test_linkify.py::test_link_with_qs_with_array PASSED
 tests/test_linkify.py::test_linkify_filter[abc-abc] PASSED
 tests/test_linkify.py::test_linkify_filter[example.com-<a href="http://example.com" rel="nofollow">example.com</a>] PASSED
 tests/test_linkify.py::test_linkify_filter[http://example.com?b=1&amp;c=2-<a href="http://example.com?b=1&amp;c=2" rel="nofollow">http://example.com?b=1&amp;c=2</a>] PASSED
@@ -429,9 +433,8 @@ tests/test_unicode.py::test_url_utf8[http://\xe9x\xe1mpl\xe9.com/\xed\xe0\xf1\xe
 tests/test_unicode.py::test_url_utf8[http://\xe9x\xe1mpl\xe9.com/\xed\xe0\xf1\xe1/] PASSED
 tests/test_unicode.py::test_url_utf8[http://\xe9x\xe1mpl\xe9.com/] PASSED
 
-======== 417 passed, 1 skipped, 4 xfailed ========
+======== 421 passed, 1 skipped, 4 xfailed ========
 py$(PYV): commands[1]> python setup.py build
-No 'requirements-files' section was found. Nothing to do.
 running build
 running build_py
 running egg_info
