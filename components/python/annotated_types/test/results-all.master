@@ -1,12 +1,10 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-asyncio: mode=strict
-collecting ... collected 222 items
+collecting ... collected 247 items
 
 tests/test_grouped_metadata.py::test_non_subclass_implementer PASSED
 tests/test_grouped_metadata.py::test_subclass_without_implementing_iter PASSED
@@ -51,6 +49,19 @@ tests/test_main.py::test_invalid_cases[typing.Annotated[float, Lt(lt=0.5)] is in
 tests/test_main.py::test_invalid_cases[typing.Annotated[float, Lt(lt=0.5)] is invalid for 0.9] PASSED
 tests/test_main.py::test_invalid_cases[typing.Annotated[float, MultipleOf(multiple_of=0.5)] is invalid for 0.4] PASSED
 tests/test_main.py::test_invalid_cases[typing.Annotated[float, MultipleOf(multiple_of=0.5)] is invalid for 1.1] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<built-in function isfinite>)] is invalid for -inf] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<built-in function isfinite>)] is invalid for inf] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<built-in function isfinite>)] is invalid for nan] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<built-in function isinf>)] is invalid for 1.23] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<built-in function isinf>)] is invalid for nan] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<built-in function isnan>)] is invalid for 1.23] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<built-in function isnan>)] is invalid for inf] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<function cases.<locals>.<lambda> at $(POINTER)>), Predicate(func=<built-in function isinf>)] is invalid for -inf] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<function cases.<locals>.<lambda> at $(POINTER)>), Predicate(func=<built-in function isinf>)] is invalid for 1.23] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=<function cases.<locals>.<lambda> at $(POINTER)>), Predicate(func=<built-in function isinf>)] is invalid for nan] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=Not(func=<built-in function isfinite>))] is invalid for 1.23] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=Not(func=<built-in function isinf>))] is invalid for inf] PASSED
+tests/test_main.py::test_invalid_cases[typing.Annotated[float, Predicate(func=Not(func=<built-in function isnan>))] is invalid for nan] PASSED
 tests/test_main.py::test_invalid_cases[typing.Annotated[int, Ge(ge=4)] is invalid for -1] PASSED
 tests/test_main.py::test_invalid_cases[typing.Annotated[int, Ge(ge=4)] is invalid for 0] PASSED
 tests/test_main.py::test_invalid_cases[typing.Annotated[int, Gt(gt=4)] is invalid for -1] PASSED
@@ -169,6 +180,18 @@ tests/test_main.py::test_valid_cases[typing.Annotated[float, MultipleOf(multiple
 tests/test_main.py::test_valid_cases[typing.Annotated[float, MultipleOf(multiple_of=0.5)] is valid for 0] PASSED
 tests/test_main.py::test_valid_cases[typing.Annotated[float, MultipleOf(multiple_of=0.5)] is valid for 1.5] PASSED
 tests/test_main.py::test_valid_cases[typing.Annotated[float, MultipleOf(multiple_of=0.5)] is valid for 1] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=<built-in function isfinite>)] is valid for 1.23] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=<built-in function isinf>)] is valid for inf] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=<built-in function isnan>)] is valid for nan] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=<function cases.<locals>.<lambda> at $(POINTER)>), Predicate(func=<built-in function isinf>)] is valid for inf] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=Not(func=<built-in function isfinite>))] is valid for inf] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=Not(func=<built-in function isfinite>))] is valid for nan] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=Not(func=<built-in function isinf>))] is valid for 1.23] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=Not(func=<built-in function isinf>))] is valid for nan] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=Not(func=<built-in function isnan>))] is valid for 1.23] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[float, Predicate(func=Not(func=<built-in function isnan>))] is valid for inf] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[int, DocInfo(documentation='A number')] is valid for 1] PASSED
+tests/test_main.py::test_valid_cases[typing.Annotated[int, DocInfo(documentation='A number')] is valid for 2] PASSED
 tests/test_main.py::test_valid_cases[typing.Annotated[int, Ge(ge=4)] is valid for 1000] PASSED
 tests/test_main.py::test_valid_cases[typing.Annotated[int, Ge(ge=4)] is valid for 40] PASSED
 tests/test_main.py::test_valid_cases[typing.Annotated[int, Ge(ge=4)] is valid for 41] PASSED
@@ -231,5 +254,4 @@ tests/test_main.py::test_valid_cases[typing.Annotated[typing.Set[int], Len(min_l
 tests/test_main.py::test_valid_cases[typing.Annotated[typing.Tuple[int, ...], Len(min_length=2, max_length=3)] is valid for (1, 2)] PASSED
 tests/test_main.py::test_valid_cases[typing.Annotated[typing.Tuple[int, ...], Len(min_length=2, max_length=3)] is valid for (1, 2, 3)] PASSED
 
-
-======== 222 passed ========
+======== 247 passed ========
