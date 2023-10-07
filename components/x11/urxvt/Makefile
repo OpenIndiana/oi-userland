@@ -10,15 +10,14 @@
 
 #
 # Copyright 2011, Andrzej Szeszo
+# Copyright 2023, Niklas Poslovski
 #
 
-BUILD_BITS=	64
 SINGLE_PERL_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         rxvt-unicode
-COMPONENT_VERSION=      9.26
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      9.31
 COMPONENT_FMRI=         terminal/urxvt
 COMPONENT_SUMMARY=      rxvt-unicode is a fork of the well known terminal emulator rxvt
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -26,7 +25,7 @@ COMPONENT_LICENSE_FILE= urxvt.license
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:643116b9a25d29ad29f4890131796d42e6d2d21312282a613ef66c80c5b8c98b
+COMPONENT_ARCHIVE_HASH= sha256:aaa13fcbc149fe0f3f391f933279580f74a96fd312d6ed06b8ff03c2d46672e8
 COMPONENT_ARCHIVE_URL=  http://dist.schmorp.de/rxvt-unicode/Attic/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://software.schmorp.de/pkg/rxvt-unicode.html
 
@@ -53,10 +52,12 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libptytty
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxft
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxrender
