@@ -1,0 +1,10 @@
+--- setuptools-scm-8.0.2/testing/test_git.py.orig
++++ setuptools-scm-8.0.2/testing/test_git.py
+@@ -130,6 +130,7 @@
+ @contextlib.contextmanager
+ def break_folder_permissions(path: Path) -> Generator[None, None, None]:
+     """break the permissions of a folder for a while"""
++    pytest.skip("needs passwordless sudo")
+     if not shutil.which("sudo"):
+         pytest.skip("sudo executable not found")
+     original_stat = path.stat()
