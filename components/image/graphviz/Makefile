@@ -27,8 +27,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
-COMPONENT_VERSION=		7.1.0
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=		9.0.0
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
@@ -39,7 +38,7 @@ COMPONENT_SUMMARY=		Graph visualization software
 COMPONENT_PROJECT_URL=	https://www.graphviz.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8e1f773aa5728fad0c9d5fda3eb83ec749e64dde8e8852071154b08a64d63ca9
+COMPONENT_ARCHIVE_HASH= sha256:6c9afda06a732af7658c2619ee713d2545818c3ff19b7b8fd48effcd06d57bf6
 COMPONENT_ARCHIVE_URL= \
     https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			image/graphviz
@@ -49,9 +48,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-RUBY_VERSION =         2.6
+RUBY_VERSION =         3.2
 
-# preparation
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
 				aclocal && \
 				autoconf -f -I m4 && \
@@ -68,11 +66,11 @@ CONFIGURE_ENV +=	RUBY=$(RUBY)
 CONFIGURE_ENV +=	RUBY_VER=$(RUBY_VERSION)
 CONFIGURE_OPTIONS +=	--disable-man-pdfs
 CONFIGURE_OPTIONS +=	--disable-sharp
-CONFIGURE_OPTIONS +=	--disable-go
-CONFIGURE_OPTIONS +=	--disable-guile
-CONFIGURE_OPTIONS +=	--disable-php
+#CONFIGURE_OPTIONS +=	--disable-go
+CONFIGURE_OPTIONS +=	--disable-ocaml
+CONFIGURE_OPTIONS +=	--enable-php
 CONFIGURE_OPTIONS +=	--disable-python
-CONFIGURE_OPTIONS +=	--enable-python3
+#CONFIGURE_OPTIONS +=	--enable-python3
 CONFIGURE_OPTIONS +=	--disable-r
 CONFIGURE_OPTIONS +=	--enable-lefty
 CONFIGURE_OPTIONS +=	--without-included-ltdl
@@ -95,7 +93,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 # fix java, lua, ocaml, python, ruby man pages
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(PROTOUSRSHAREMAN3DIR) ; \
-	for e in java lua ocaml python ruby ; do \
+	for e in java lua ocaml python ruby guile go php; do \
 		for f in *.3$$e ; do \
 			$(MV) $$f $${f%.3$$e}-$$e.3 ; \
 		done ; \
@@ -122,8 +120,10 @@ TEST_TARGET = $(NO_TESTS)
 
 # various build dependencies not detected automatically
 REQUIRED_PACKAGES += developer/java/openjdk8
-REQUIRED_PACKAGES += runtime/ocaml
+#REQUIRED_PACKAGES += runtime/ocaml
 REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += web/php-81
+REQUIRED_PACKAGES += developer/golang-120
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
@@ -137,6 +137,7 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libwebp
@@ -144,7 +145,7 @@ REQUIRED_PACKAGES += library/math/gts
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/ruby-26
+REQUIRED_PACKAGES += runtime/ruby-32
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
