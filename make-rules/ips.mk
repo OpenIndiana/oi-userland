@@ -246,9 +246,9 @@ endif
 # - the $(PYV) string itself
 PYTHON_PYV_VALUES = $(subst .,,$(PYTHON_VERSIONS) $(PYTHON_VERSIONS_OBSOLETING)) $$(PYV)
 # Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for runtime/python
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PYTHON_PYV_VALUES), -e 's|^\(.*runtime/python\)-$(v)$$|PYTHON_\1|g')
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PYTHON_PYV_VALUES)),-e 's|^\(.*runtime/python\)-$(v)$$|PYTHON_\1|g')
 # Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for library/python/*
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PYTHON_PYV_VALUES), -e 's|^\(.*library/python/.*\)-$(v)$$|PYTHON_\1|g')
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PYTHON_PYV_VALUES)),-e 's|^\(.*library/python/.*\)-$(v)$$|PYTHON_\1|g')
 
 # Look for manifests which need to be duplicated for each version of perl.
 ifeq ($(findstring -PERLVER,$(UNVERSIONED_MANIFESTS)),-PERLVER)
@@ -269,9 +269,9 @@ endif
 # - the $(PLV) string itself
 PERL_PLV_VALUES = $(subst .,,$(PERL_VERSIONS) $(PERL_VERSIONS_OBSOLETING)) $$(PLV)
 # Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for runtime/perl
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERL_PLV_VALUES), -e 's|^\(.*runtime/perl\)-$(v)$$|PERL_\1|g')
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PERL_PLV_VALUES)),-e 's|^\(.*runtime/perl\)-$(v)$$|PERL_\1|g')
 # Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for library/perl-5/*
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERL_PLV_VALUES), -e 's|^\(.*library/perl-5/.*\)-$(v)$$|PERL_\1|g')
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PERL_PLV_VALUES)),-e 's|^\(.*library/perl-5/.*\)-$(v)$$|PERL_\1|g')
 
 # Look for manifests which need to be duplicated for each version of ruby.
 # NOPERL_MANIFESTS represents the manifests that are not Python or
