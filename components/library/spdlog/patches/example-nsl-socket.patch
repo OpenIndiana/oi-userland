@@ -1,0 +1,18 @@
+diff -Nru spdlog-1.12.0.orig/example/CMakeLists.txt spdlog-1.12.0/example/CMakeLists.txt
+--- spdlog-1.12.0.orig/example/CMakeLists.txt	2023-07-08 16:12:25.000000000 +0200
++++ spdlog-1.12.0/example/CMakeLists.txt	2023-10-07 09:11:26.520458206 +0200
+@@ -12,12 +12,12 @@
+ # Example of using pre-compiled library
+ # ---------------------------------------------------------------------------------------
+ add_executable(example example.cpp)
+-target_link_libraries(example PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
++target_link_libraries(example PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32> nsl socket)
+ 
+ # ---------------------------------------------------------------------------------------
+ # Example of using header-only library
+ # ---------------------------------------------------------------------------------------
+ if(SPDLOG_BUILD_EXAMPLE_HO)
+     add_executable(example_header_only example.cpp)
+-    target_link_libraries(example_header_only PRIVATE spdlog::spdlog_header_only)
++    target_link_libraries(example_header_only PRIVATE spdlog::spdlog_header_only nsl socket)
+ endif()
