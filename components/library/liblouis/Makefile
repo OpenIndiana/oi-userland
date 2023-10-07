@@ -19,14 +19,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liblouis
-COMPONENT_VERSION= 3.26.0
+COMPONENT_VERSION= 3.27.0
 COMPONENT_SUMMARY= The Liblouis software suite provides an open-source braille translator, back-translator and formatter for a large number of languages and braille codes
-COMPONENT_SRC= $(COMPONENT_NAME)-5d876c6e7fcef9f0840f1bc4fd045cd8eb2aacff
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2a5f1afe4705b4bb3d1c25e83ef0aae3bdb91c0eb4b654536e01a01344c655ec
-COMPONENT_ARCHIVE_URL=	https://github.com/liblouis/liblouis/archive/5d876c6e7fcef9f0840f1bc4fd045cd8eb2aacff.tar.gz
-# They tagged the version before increasing it in configure.ac - Remove the line above and uncomment the line below with the next update.
-#COMPONENT_ARCHIVE_URL=	https://github.com/liblouis/liblouis/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:8fff970a9391b46bcbf8d9f83d4ae362106b8cad0ffdee15b07df5da2b073fc7
+COMPONENT_ARCHIVE_URL=	https://github.com/liblouis/liblouis/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = https://liblouis.io/
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/liblouis
@@ -35,7 +33,7 @@ COMPONENT_LICENSE_FILE = liblouis.license
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_BUILD_ARGS =
 
