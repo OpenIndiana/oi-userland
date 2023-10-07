@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		anyio
 HUMAN_VERSION =			4.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		anyio - High level compatibility layer for multiple asynchronous event loop implementations
 COMPONENT_ARCHIVE_URL =		\
 	https://files.pythonhosted.org/packages/74/17/5075225ee1abbb93cd7fc30a2d343c6a3f5f71cf388f14768a7a38256581/anyio-4.0.0.tar.gz
@@ -40,6 +41,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# We have no trio packaged yet.
+# https://github.com/python-trio/trio/issues/1437
+COMPONENT_POST_UNPACK_ACTION += $(RM) $(COMPONENT_SRC)/src/anyio/_backends/_trio.py ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup
