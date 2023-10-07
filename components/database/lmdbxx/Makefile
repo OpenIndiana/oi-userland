@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         lmdbxx
 COMPONENT_VERSION=      1.0.0
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://github.com/hoytech/lmdbxx
 COMPONENT_SUMMARY=      C++17 wrapper for the LMDB embedded B+ tree database library
 COMPONENT_FMRI=         database/lmdb/library/c++/lmdbxx
@@ -30,6 +31,8 @@ COMPONENT_LICENSE=      Unlicense
 COMPONENT_LICENSE_FILE= UNLICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_INSTALL_ARGS += PREFIX=/usr
 
 # Manually added dependencies
 REQUIRED_PACKAGES += database/lmdb
