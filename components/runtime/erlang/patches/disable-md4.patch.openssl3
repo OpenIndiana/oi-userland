@@ -1,0 +1,18 @@
+Our OpenSSL 3 package doesn't deliver headers for legacy algorithms, and because
+of that, it's necessary to disable md4 when compiled with OpenSSL 3.
+
+Can be offered upstream.
+
+--- otp_src_25.0.3/lib/crypto/c_src/openssl_config.h
++++ otp_src_25.0.3/lib/crypto/c_src/openssl_config.h
+@@ -34,7 +34,9 @@
+ #include <openssl/rsa.h>
+ #include <openssl/aes.h>
+ #include <openssl/md5.h>
+-#include <openssl/md4.h>
++#ifndef OPENSSL_NO_MD4
++    #include <openssl/md4.h>
++#endif
+ #include <openssl/sha.h>
+ #include <openssl/ripemd.h>
+ #include <openssl/bn.h>
