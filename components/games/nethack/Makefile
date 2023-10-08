@@ -22,19 +22,19 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2018 Harry Liebel <hliebel@gmail.com>
+# Copyright 2023 Niklas Poslovski
 #
 
-PREFERRED_BITS=64
-
+BUILD_STYLE = justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nethack
-COMPONENT_VERSION=	3.6.0
+COMPONENT_VERSION=	3.6.7
 COMPONENT_PROJECT_URL=	https://www.nethack.org
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-360-src.tgz
+COMPONENT_SRC=		NetHack-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-367-src.tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1ade698d8458b8d87a4721444cb73f178c74ed1b6fde537c12000f8edf2cb18a
+    sha256:98cf67df6debf9668a61745aa84c09bcab362e5d33f5b944ec5155d44d2aacb2
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		games/nethack
 COMPONENT_LICENSE=      Nethack
@@ -43,9 +43,8 @@ COMPONENT_SUMMARY=      A single-player dungeon exploration game
 COMPONENT_DESCRIPTION=	Nethack is a turn-based single-player dungeon exploration game related to Hack and Rogue.  The primary interface is a pseudo-graphical display rendered in text in a terminal, and controlled by the keyboard.
 COMPONENT_CLASSIFICATION="Applications/Games"
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -68,23 +67,20 @@ COMPONENT_INSTALL_ENV += LFLAGS="$(CFLAGS)"
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/sys/unix
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
+COMPONENT_POST_INSTALL_ACTION = \
 	sed -e 's/^!\(NetHack.tomb\)/\1/' -e 's/^!\(NetHack.pet\)/\1/' \
 		-e 's/^!\(NetHack.tile_file\)/\1/' \
 		$(COMPONENT_SRC)/win/X11/NetHack.ad \
 		> $(PROTO_DIR)/usr/lib/nethack/NetHack.ad
 
-test:		$(NO_TESTS)
+# Manually added dependencies
+REQUIRED_PACKAGES += developer/parser/bison-38
+REQUIRED_PACKAGES += developer/lexer/flex
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxpm
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
-REQUIRED_PACKAGES += developer/parser/bison
-REQUIRED_PACKAGES += developer/lexer/flex
