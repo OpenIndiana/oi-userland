@@ -1,0 +1,71 @@
+diff -Nru NetHack-3.6.7.orig/sys/unix/Makefile.src NetHack-3.6.7/sys/unix/Makefile.src
+--- NetHack-3.6.7.orig/sys/unix/Makefile.src	2023-02-15 22:52:57.000000000 +0100
++++ NetHack-3.6.7/sys/unix/Makefile.src	2023-10-08 15:27:22.300140002 +0200
+@@ -41,7 +41,7 @@
+ # SHELL=E:/GEMINI2/MUPFEL.TTP
+ 
+ # Usually, the C compiler driver is used for linking:
+-#LINK=$(CC)
++LINK=$(CC)
+ 
+ # Pick the SYSSRC and SYSOBJ lines corresponding to your desired operating
+ # system.
+@@ -124,8 +124,8 @@
+ # LFLAGS = -s
+ 
+ # flags for BSD/OS 2.0
+-# CFLAGS = -O -I../include -I/usr/X11/include
+-# LFLAGS = -L/usr/X11/lib
++CFLAGS = -O -I../include -I/usr/X11/include
++LFLAGS = -L/usr/X11/lib
+ 
+ # flags for Linux
+ #   compile normally
+@@ -176,9 +176,9 @@
+ # The Qt and Be window systems are written in C++, while the rest of
+ # NetHack is standard C.  If using Qt, uncomment the LINK line here to get
+ # the C++ libraries linked in.
+-CXXFLAGS = $(CFLAGS) -I. -I$(QTDIR)/include
+-CXX ?= g++
+-MOC ?= moc
++#CXXFLAGS = $(CFLAGS) -I. -I$(QTDIR)/include
++#CXX ?= g++
++#MOC ?= moc
+ #LINK=g++
+ #	For cross-compiling, eg. with gcc on Linux (see also CC further up):
+ #CXX=arm-linux-g++
+@@ -267,8 +267,8 @@
+ #WINBEOBJ = winbe.o NHWindow.o NHMenuWindow.o NHMapWindow.o tile.o
+ #
+ #
+-#WINSRC = $(WINTTYSRC)
+-#WINOBJ = $(WINTTYOBJ)
++WINSRC = $(WINTTYSRC) $(WINX11SRC)
++WINOBJ = $(WINTTYOBJ) $(WINX11OBJ)
+ #
+ # Curses - Karl Garrison, Tangles
+ #WINSRC = $(WINCURSESSRC)
+@@ -287,12 +287,12 @@
+ # WINTTYLIB = -ltermcap
+ # WINTTYLIB = -lcurses
+ # WINTTYLIB = -lcurses16
+-# WINTTYLIB = -lncurses
++WINTTYLIB = -lncurses
+ #WINTTYLIB = -ltermlib
+ #
+ # libraries for X11
+ # If USE_XPM is defined in config.h, you will also need -lXpm here.
+-#WINX11LIB = -lXaw -lXmu -lXext -lXt -lX11
++WINX11LIB = -lXaw -lXmu -lXext -lXt -lX11
+ # WINX11LIB = -lXaw -lXmu -lXt -lX11
+ # WINX11LIB = -lXaw -lXmu -lXext -lXt -lXpm -lX11 -lm
+ # WINX11LIB = -lXaw -lXmu -lXpm -lXext -lXt -lX11 -lSM -lICE -lm # BSD/OS 2.0
+@@ -327,7 +327,7 @@
+ # same as above, for XCurses
+ #WINCURSESLIB = -L/usr/local/lib/pdcurses -lXCurses -lXawM -lXmu -lXext -lXt -lX11
+ #
+-#WINLIB = $(WINTTYLIB)
++WINLIB = -Wl,-zignore $(WINTTYLIB) $(WINX11LIB)
+ #
+ # For Curses
+ #WINLIB = $(WINCURSESLIB)

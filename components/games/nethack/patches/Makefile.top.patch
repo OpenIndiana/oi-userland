@@ -1,0 +1,61 @@
+diff -Nru NetHack-3.6.7.orig/sys/unix/Makefile.top NetHack-3.6.7/sys/unix/Makefile.top
+--- NetHack-3.6.7.orig/sys/unix/Makefile.top	2023-02-15 22:52:57.000000000 +0100
++++ NetHack-3.6.7/sys/unix/Makefile.top	2023-10-08 15:09:43.658440386 +0200
+@@ -19,20 +19,20 @@
+ # MAKE = make
+ 
+ # make NetHack
+-#PREFIX	 = /usr
++PREFIX	 = /usr
+ GAME     = nethack
+ # GAME     = nethack.prg
+-#GAMEUID  = games
+-#GAMEGRP  = bin
++GAMEUID  = bin
++GAMEGRP  = games
+ 
+ # Permissions - some places use setgid instead of setuid, for instance
+ # See also the option "SECURE" in include/config.h
+-#GAMEPERM = 04755
++GAMEPERM = 02755
+ FILEPERM = 0644
+-# VARFILEPERM = 0644
++VARFILEPERM = 0644
+ EXEPERM  = 0755
+ DIRPERM  = 0755
+-# VARDIRPERM = 0755
++VARDIRPERM = 0755
+ 
+ # VARDIR may also appear in unixconf.h as "VAR_PLAYGROUND" else HACKDIR
+ #
+@@ -41,15 +41,17 @@
+ # therefore there should not be anything in HACKDIR that you want to keep
+ # (if there is, you'll have to do the installation by hand or modify the
+ # instructions)
+-#HACKDIR  = $(PREFIX)/games/lib/$(GAME)dir
+-#VARDIR  = $(HACKDIR)
++HACKDIR  = $(ROOT)/$(PREFIX)/lib/$(GAME)
++CLIENT_HACKDIR = $(PREFIX)/lib/$(GAME)
++VARDIR  = $(ROOT)/var/games/nethack
++INSTDIR = $(HACKDIR)
+ # Where nethack.sh in installed.  If this is not defined, the wrapper is not used.
+-#SHELLDIR = $(PREFIX)/games
++SHELLDIR = $(ROOT)/$(PREFIX)/bin
+ 
+ # per discussion in Install.X11 and Install.Qt
+ #VARDATND = 
+ # VARDATND = x11tiles NetHack.ad pet_mark.xbm pilemark.xbm
+-# VARDATND = x11tiles NetHack.ad pet_mark.xbm pilemark.xbm rip.xpm
++VARDATND = x11tiles NetHack.ad pet_mark.xbm pilemark.xbm rip.xpm
+ # for Atari/Gem
+ # VARDATND = nh16.img title.img GEM_RSC.RSC rip.img
+ # for BeOS
+@@ -207,7 +209,7 @@
+ 	cp util/recover $(INSTDIR)
+ 	-if test -n '$(SHELLDIR)'; then rm -f $(SHELLDIR)/$(GAME); fi
+ 	if test -n '$(SHELLDIR)'; then \
+-		sed -e 's;/usr/games/lib/nethackdir;$(HACKDIR);' \
++		sed -e 's;/usr/games/lib/nethackdir;$(CLIENT_HACKDIR);' \
+ 		-e 's;HACKDIR/nethack;HACKDIR/$(GAME);' \
+ 		< sys/unix/nethack.sh \
+ 		> $(SHELLDIR)/$(GAME) ; fi
