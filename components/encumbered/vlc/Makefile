@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 3.0.18
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -42,7 +42,7 @@ LDFLAGS += -lnsl -lsocket
 LDFLAGS += -lssp
 
 # Required OpenGL extensions
-CFLAGS += -I/usr/include/mesa -DGLEXT_PROTOTYPES 
+CFLAGS += -I/usr/include/mesa -DGLEXT_PROTOTYPES
 
 # Define to ensure consistency
 CFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
@@ -216,6 +216,7 @@ REQUIRED_PACKAGES += library/audio/libmpcdec
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/audio/soxr
 REQUIRED_PACKAGES += library/audio/taglib
+REQUIRED_PACKAGES += library/c++/abseil-cpp
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/desktop/cairo
