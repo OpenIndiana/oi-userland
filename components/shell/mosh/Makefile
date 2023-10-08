@@ -19,14 +19,14 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2015, Predrag Zecevic. All rights reserved.
+# Copyright (c) 2023, Niklas Poslovski
 #
-BUILD_BITS=			64
-USE_OPENSSL11=		yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosh
 COMPONENT_VERSION=	1.4.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY=	Mosh (mobile shell) - Remote terminal application that allows roaming, supports intermittent connectivity, and provides intelligent local echo and line editing of user keystrokes (replacement for SSH).
 COMPONENT_PROJECT_URL=	https://mosh.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_URL=	https://github.com/mobile-shell/$(COMPONENT_NAME)/archive
 COMPONENT_FMRI=	service/network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_LICENSE=      GPLv3+
+COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -51,15 +52,16 @@ CONFIGURE_OPTIONS+=	--enable-completion
 CONFIGURE_OPTIONS+=	--with-utempter
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += utility/bash-completion 
+REQUIRED_PACKAGES += utility/bash-completion
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/c++/abseil-cpp
 REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libutempter
