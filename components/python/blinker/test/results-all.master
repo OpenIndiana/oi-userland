@@ -1,17 +1,16 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
 asyncio: mode=auto
-collecting ... collected 31 items
+collecting ... collected 32 items
 
 tests/test_context.py::test_temp_connection PASSED
-tests/test_context.py::test_temp_connection_failure PASSED
+tests/test_context.py::test_temp_connection_failure[BaseFailure] PASSED
+tests/test_context.py::test_temp_connection_failure[Failure] PASSED
 tests/test_context.py::test_temp_connection_for_sender PASSED
 tests/test_saferef.py::TestSaferef::test_In PASSED
 tests/test_saferef.py::TestSaferef::test_Representation PASSED
@@ -42,6 +41,6 @@ tests/test_signals.py::test_weak_receiver PASSED
 tests/test_utilities.py::test_pickled_symbols PASSED
 tests/test_utilities.py::test_symbols PASSED
 
-======== 31 passed ========
+======== 32 passed ========
   py$(PYV): OK
   congratulations :)
