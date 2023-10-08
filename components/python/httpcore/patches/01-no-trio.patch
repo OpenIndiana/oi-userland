@@ -1,7 +1,7 @@
-We have no pytest-trio.
+we have no trio
 
---- httpcore-0.17.3/tests/test_models.py.orig
-+++ httpcore-0.17.3/tests/test_models.py
+--- httpcore-1.0.0/tests/test_models.py.orig
++++ httpcore-1.0.0/tests/test_models.py
 @@ -136,28 +136,3 @@
      async def __aiter__(self) -> typing.AsyncIterator[bytes]:
          for chunk in self._chunks:
@@ -31,3 +31,14 @@ We have no pytest-trio.
 -    with pytest.raises(RuntimeError):
 -        async for chunk in response.aiter_stream():
 -            pass  # pragma: nocover
+--- httpcore-1.0.0/tests/_async/test_connection_pool.py.orig
++++ httpcore-1.0.0/tests/_async/test_connection_pool.py
+@@ -4,7 +4,7 @@
+ import hpack
+ import hyperframe.frame
+ import pytest
+-import trio as concurrency
++concurrency = pytest.importorskip("trio")
+ 
+ import httpcore
+ 
