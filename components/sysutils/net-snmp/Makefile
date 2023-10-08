@@ -21,24 +21,23 @@
 
 #
 # Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
+# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 # Copyright 2022 Friedrich Kink
 # Copyright 2023 Klaus Ziegler
+# Copyright 2023 Niklas Poslovski
 #
 
-USE_OPENSSL11= yes
 BUILD_BITS=64_and_32
-
+USE_COMMON_TEST_MASTER=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
-COMPONENT_VERSION=	5.9.3
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	5.9.4
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
-COMPONENT_PROJECT_URL=	https://www.net-snmp.org/
+COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2097f29b7e1bf3f1300b4bae52fa2308d0bb8d5d3998dbe02f9462a413a2ef0a
+COMPONENT_ARCHIVE_HASH=	sha256:8b4de01391e74e3c7014beb43961a2d6d6fa03acc34280b9585f4930745b0544
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/net-snmp/files/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/management/snmp/net-snmp
 COMPONENT_CLASSIFICATION= System/Enterprise Management
@@ -150,7 +149,7 @@ REQUIRED_PACKAGES += system/header/header-picl
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
