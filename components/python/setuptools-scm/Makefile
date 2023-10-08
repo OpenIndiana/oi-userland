@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools-scm
-HUMAN_VERSION =			8.0.2
+HUMAN_VERSION =			8.0.4
 COMPONENT_SUMMARY =		setuptools-scm - the blessed package to manage your versions by scm tags
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/51/11/58d3bdef61f2090330292b52d390d57b76dfc08f003174952eff0fafa10e/setuptools-scm-8.0.2.tar.gz
+	https://files.pythonhosted.org/packages/eb/b1/0248705f10f6de5eefe7ff93e399f7192257b23df4d431d2f5680bb2778f/setuptools-scm-8.0.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e45c8c87719b753b6d47cf09907d1239540c7e150cd44f06f658b602f402b005
+	sha256:b5f43ff6800669595193fd09891564ee9d1d7dcb196cab4b2506d53a2e1c95c7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,15 +44,13 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_CONFLICTING_PACKAGES.python += library/python/setuptools-rust
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/rich
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/rich
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/virtualenv

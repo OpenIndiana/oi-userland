@@ -4,12 +4,14 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 setuptools version 68.2.2 from '$(PYTHON_DIR)/vendor-packages/setuptools/__init__.py'
-setuptools_scm version 8.0.2 from '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/setuptools_scm/__init__.py'
+setuptools_scm version 8.0.4 from '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/setuptools_scm/__init__.py'
 packaging version 23.2 from '$(PYTHON_DIR)/vendor-packages/packaging/__init__.py'
+build version 1.0.3 from '$(PYTHON_DIR)/vendor-packages/build/__init__.py'
+wheel version 0.41.2 from '$(PYTHON_DIR)/vendor-packages/wheel/__init__.py'
 rootdir: $(@D)
-configfile: tox.ini
+configfile: pyproject.toml
 testpaths: testing
-collecting ... collected 237 items
+collecting ... collected 242 items
 
 testing/test_basic_api.py::test_custom_version_cls PASSED
 testing/test_basic_api.py::test_data_from_mime PASSED
@@ -101,6 +103,7 @@ testing/test_functions.py::test_format_version[distance-dirty-post-release-node-
 testing/test_functions.py::test_format_version[exact-guess-next-dev-node-and-date-1.1] PASSED
 testing/test_functions.py::test_format_version[exact-post-release-node-and-date-1.1] PASSED
 testing/test_functions.py::test_has_command PASSED
+testing/test_functions.py::test_has_command_logs_stderr PASSED
 testing/test_functions.py::test_next_tag[1.1-1.2] PASSED
 testing/test_functions.py::test_next_tag[1.1a2-1.1a3] PASSED
 testing/test_functions.py::test_next_tag[1.2.dev-1.2] PASSED
@@ -164,6 +167,9 @@ testing/test_integration.py::test_pretend_version_named_pyproject_integration[py
 testing/test_integration.py::test_pretend_version_named_pyproject_integration[pyproject.project] PASSED
 testing/test_integration.py::test_pretend_version_named_pyproject_integration[setup.cfg] PASSED
 testing/test_integration.py::test_pretend_version_named_pyproject_integration[setup.py] PASSED
+testing/test_integration.py::test_pyproject_missing_setup_hook_works[True] PASSED
+testing/test_integration.py::test_pyproject_missing_setup_hook_works[lambda: {}] PASSED
+testing/test_integration.py::test_pyproject_missing_setup_hook_works[{}] PASSED
 testing/test_integration.py::test_pyproject_support PASSED
 testing/test_integration.py::test_pyproject_support_with_git[pyproject tool.setuptools_scm] PASSED
 testing/test_integration.py::test_pyproject_support_with_git[pyproject.project] PASSED
@@ -200,6 +206,7 @@ testing/test_regressions.py::test_entrypoints_load PASSED
 testing/test_regressions.py::test_pip_download PASSED
 testing/test_regressions.py::test_pkginfo_noscmroot PASSED
 testing/test_regressions.py::test_use_scm_version_callable PASSED
+testing/test_regressions.py::test_write_to_absolute_path_passes_when_subdir_of_root PASSED
 testing/test_version.py::test_bump_dev_version_nonzero_raises PASSED
 testing/test_version.py::test_bump_dev_version_zero PASSED
 testing/test_version.py::test_calver_by_date[4 digits year] PASSED
@@ -249,6 +256,6 @@ testing/test_version.py::test_tag_regex1[v1.0.0-rc.1+-25259o4382757gjurh54-1.0.0
 testing/test_version.py::test_tag_regex1[v1.0.0-rc.1-1.0.0rc1] PASSED
 testing/test_version.py::test_version_bump_bad PASSED
 
-======== 231 passed, 5 skipped, 1 xfailed ========
+======== 236 passed, 5 skipped, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
