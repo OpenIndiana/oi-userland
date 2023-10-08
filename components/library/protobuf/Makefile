@@ -21,34 +21,41 @@
 # Copyright 2017 Gary Mills
 # Copyright (c) 2015, Predrag Zecevic. All rights reserved.
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
+# Copyright 2023 Niklas Poslovski
 #
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+
+BUILD_STYLE = cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         protobuf
-COMPONENT_VERSION=      3.5.1
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      24.4
 COMPONENT_FMRI=         library/c++/protobuf
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/google/protobuf/
-COMPONENT_ARCHIVE=      v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:826425182ee43990731217b917c5c3ea7190cfda141af4869e6d4ad9085a740f
-COMPONENT_ARCHIVE_URL=  https://github.com/google/protobuf/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:616bb3536ac1fff3fb1a141450fa28b875e985712170ea7f1bfe5e5fc41e2cd8
+COMPONENT_ARCHIVE_URL=  https://github.com/google/protobuf/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=      BSD
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license 
+COMPONENT_LICENSE_FILE= LICENSE
 COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 
-TEST_TARGET=$(NO_TESTS)
+# Tests require Googletest which we don't have yet.
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = cd $(SOURCE_DIR); ./autogen.sh
+CMAKE_OPTIONS += -Dprotobuf_BUILD_TESTS=OFF
+CMAKE_OPTIONS += -Dprotobuf_BUILD_SHARED_LIBS=ON
+CMAKE_OPTIONS += -Dprotobuf_ABSL_PROVIDER=package
 
-CONFIGURE_OPTIONS+=	--disable-static --disable-64bit-solaris
+#COMPONENT_POST_INSTALL_ACTION = \
+#    /usr/bin/elfedit -e 'dyn:delete RUNPATH' $(PROTO_DIR)/usr/bin/protoc; \
+#    /usr/bin/elfedit -e 'dyn:delete RPATH' $(PROTO_DIR)/usr/bin/protoc;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/c++/abseil-cpp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
