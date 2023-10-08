@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools-scm
 HUMAN_VERSION =			8.0.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		setuptools-scm - the blessed package to manage your versions by scm tags
 COMPONENT_ARCHIVE_URL =		\
 	https://files.pythonhosted.org/packages/eb/b1/0248705f10f6de5eefe7ff93e399f7192257b23df4d431d2f5680bb2778f/setuptools-scm-8.0.4.tar.gz
