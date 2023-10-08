@@ -49,6 +49,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 RUBY_VERSION =         3.2
+RUBY=		       ruby32
 
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
 				aclocal && \
@@ -70,7 +71,7 @@ CONFIGURE_OPTIONS +=	--disable-sharp
 CONFIGURE_OPTIONS +=	--disable-ocaml
 CONFIGURE_OPTIONS +=	--enable-php
 CONFIGURE_OPTIONS +=	--disable-python
-#CONFIGURE_OPTIONS +=	--enable-python3
+CONFIGURE_OPTIONS +=	--enable-python3
 CONFIGURE_OPTIONS +=	--disable-r
 CONFIGURE_OPTIONS +=	--enable-lefty
 CONFIGURE_OPTIONS +=	--without-included-ltdl
@@ -93,7 +94,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 # fix java, lua, ocaml, python, ruby man pages
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(PROTOUSRSHAREMAN3DIR) ; \
-	for e in java lua ocaml python ruby guile go php; do \
+	for e in java lua ocaml python ruby guile go php perl; do \
 		for f in *.3$$e ; do \
 			$(MV) $$f $${f%.3$$e}-$$e.3 ; \
 		done ; \
