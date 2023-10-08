@@ -13,14 +13,14 @@
 # Copyright (c) 2015 Aurelien Larcher
 # Copyright (c) 2018 Michal Nowak
 # Copyright (c) 2023 Andreas Wacknitz
+# Copyright (c) 2023 Niklas Poslovski
 #
 
-BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          libcompizconfig
 COMPONENT_VERSION=       0.8.18
-COMPONENT_REVISION=      1
+COMPONENT_REVISION=      2
 COMPONENT_SUMMARY=       compizconfig libraries - is an alternative configuration system for compiz
 COMPONENT_PROJECT_URL=   https://compiz-fusion.org/
 COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE_URL=   https://gitlab.com/compiz/$(COMPONENT_NAME)/-/archive/v
 COMPONENT_FMRI=          desktop/compiz/library/libcompizconfig
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=       GPLv2
+COMPONENT_LICENSE_FILE=  COPYING
 
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -53,6 +54,7 @@ REQUIRED_PACKAGES += desktop/compiz
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/c++/abseil-cpp
 REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
