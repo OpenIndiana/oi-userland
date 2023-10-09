@@ -6,6 +6,11 @@ pipeline {
         }
     }
     stages {
+        stage('Ensure is ready to build') {
+            steps {
+                sh 'mountall -F nfs
+            }
+        }
         stage('Git Checkout') {
             steps {
                 withSharedWs() {
