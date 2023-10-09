@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Ensure is ready to build') {
             steps {
-                sh 'pfexec /usr/sbin/mountall -F nfs'
+                sh 'pfexec /usr/sbin/mountall -F nfs || exit 0'
             }
         }
         stage('Git Checkout') {
