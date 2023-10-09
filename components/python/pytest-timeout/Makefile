@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project pytest-timeout
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-timeout
-HUMAN_VERSION =			2.1.0
+HUMAN_VERSION =			2.2.0
 COMPONENT_SUMMARY =		pytest-timeout - pytest plugin to abort hanging tests
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-timeout
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ef/30/37abbd50f86cb802cbcea50d68688438de1a7446d73c8ed8d048173b4b13/pytest-timeout-2.1.0.tar.gz
+	https://files.pythonhosted.org/packages/2a/b0/8e3182e9ed65ad5b247f9d13769f214fc52b0d3522c3e1c8dbfa2f879e5a/pytest-timeout-2.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c07ca07404c612f8abbe22294b23c368e2e5104b521c1790195561f37e1ac3d9
+	sha256:3b0b95dabf3cb50bac9ef5ca912fa0cfc286526af17afc806824df20c2f72c90
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,6 +42,8 @@ TEST_CONFLICTING_PACKAGES.python += library/python/pytest-mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/ipdb
 TEST_REQUIRED_PACKAGES.python += library/python/pexpect
