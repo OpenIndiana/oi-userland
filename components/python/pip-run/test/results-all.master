@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 94 items
+collecting ... collected 95 items
 
 ::project PASSED
 conftest.py::black PASSED
@@ -72,6 +72,7 @@ tests/test_deps.py::black PASSED
 tests/test_deps.py::mypy PASSED
 tests/test_deps.py::test_target_retention_context[destroy] PASSED
 tests/test_deps.py::test_target_retention_context[persist] PASSED
+tests/test_deps.py::test_url_req_never_installed PASSED
 tests/test_launch.py::black PASSED
 tests/test_launch.py::mypy PASSED
 tests/test_launch.py::test_build_env PASSED
@@ -143,11 +144,6 @@ tests/test_scripts.py::test_pkg_loaded_from_url PASSED
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
-::project
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zest')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
 : 15 warnings
   $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
@@ -157,6 +153,6 @@ tests/test_scripts.py::test_pkg_loaded_from_url PASSED
 
 ===================================== mypy =====================================
 Success: no issues found in 18 source files
-======== 92 passed, 1 skipped, 26 warnings ========
+======== 93 passed, 1 skipped, 25 warnings ========
   py$(PYV): OK
   congratulations :)

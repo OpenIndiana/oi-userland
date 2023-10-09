@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip-run
-HUMAN_VERSION =			12.3.1
+HUMAN_VERSION =			12.4.0
 COMPONENT_SUMMARY =		pip-run - install packages and run Python with them
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pip-run
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/82/58/c38c9e479777d3945c13aef71436d3d95281ef3558c502cae8a49b239b5b/pip-run-12.3.1.tar.gz
+	https://files.pythonhosted.org/packages/d9/c9/8a098e4ab11d04f4c07e5d01490008fd8f077e12f23553120f0fe4184011/pip-run-12.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c8cca3f73bd58578eb1f4535e7d2de96af9c0f62391c3aa7b0a768d50c1385ca
+	sha256:56f4ec37562c52c4fdd1e07f3c029c2f39514ad65b7c7a34041facc58848514a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
