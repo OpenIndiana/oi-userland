@@ -5,9 +5,12 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
-collecting ... collected 41 items
+collecting ... collected 45 items
 
 test_pytest_timeout.py::test_cov PASSED
+test_pytest_timeout.py::test_disable_debugger_detection_flag[ipdb-set_trace()] XFAIL
+test_pytest_timeout.py::test_disable_debugger_detection_flag[pdb-set_trace()] PASSED
+test_pytest_timeout.py::test_disable_debugger_detection_flag[pydevd-settrace(port=4678)] XFAIL
 test_pytest_timeout.py::test_fix_finalizer[class-signal] PASSED
 test_pytest_timeout.py::test_fix_finalizer[class-thread] PASSED
 test_pytest_timeout.py::test_fix_finalizer[function-signal] PASSED
@@ -30,6 +33,7 @@ test_pytest_timeout.py::test_header PASSED
 test_pytest_timeout.py::test_ini_method PASSED
 test_pytest_timeout.py::test_ini_timeout PASSED
 test_pytest_timeout.py::test_ini_timeout_func_only PASSED
+test_pytest_timeout.py::test_ini_timeout_func_only_marker_override PASSED
 test_pytest_timeout.py::test_is_debugging PASSED
 test_pytest_timeout.py::test_marker_help PASSED
 test_pytest_timeout.py::test_not_main_thread PASSED
@@ -51,6 +55,6 @@ test_pytest_timeout.py::test_timeout_marker_inheritance PASSED
 
 
 =========================== short test summary info ============================
-======== 39 passed, 2 xfailed ========
+======== 41 passed, 4 xfailed ========
   py$(PYV): OK
   congratulations :)
