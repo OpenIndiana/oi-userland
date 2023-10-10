@@ -1005,6 +1005,11 @@ TCLSH.8.6.sparc.32 =	/usr/bin/sparcv7/tclsh8.6
 TCLSH.8.6.sparc.64 =	/usr/bin/sparcv9/tclsh8.6
 TCLSH =		$(TCLSH.$(TCL_VERSION).$(MACH).$(BITS))
 
+# ICU library
+ICU_LIBRARY_PKG =		library/icu
+REQUIRED_PACKAGES_SUBST +=	ICU_LIBRARY_PKG
+
+
 CCSMAKE =	/usr/ccs/bin/make
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
