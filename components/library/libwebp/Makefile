@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
 COMPONENT_VERSION= 1.3.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= WebP image format library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -28,14 +28,13 @@ COMPONENT_ARCHIVE_URL= https://storage.googleapis.com/downloads.webmproject.org/
 COMPONENT_PROJECT_URL= https://developers.google.com/speed/webp/
 COMPONENT_FMRI= library/libwebp
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_LICENSE= BSD
+COMPONENT_LICENSE= BSD-3-Clause
+COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
-
-COMPONENT_PREP_ACTION= ( cd $(@D); sh autogen.sh; )
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -43,12 +42,15 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-libwebpmux
 CONFIGURE_OPTIONS += --enable-libwebpdemux
 CONFIGURE_OPTIONS += --enable-libwebpdecoder
 CONFIGURE_OPTIONS += --enable-libwebpextras
 CONFIGURE_OPTIONS += --enable-swap-16bit-csp
+
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
