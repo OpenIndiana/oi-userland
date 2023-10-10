@@ -29,13 +29,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c-ares
-COMPONENT_VERSION=	1.19.1
+COMPONENT_VERSION=	1.20.1
 COMPONENT_SUMMARY=	c-ares - C library for asynchronous DNS requests
 COMPONENT_DESCRIPTION=	c-ares is a C library for asynchronous DNS requests including name resolves
 COMPONENT_PROJECT_URL=	https://c-ares.haxx.se/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:321700399b72ed0e037d0074c629e7741f6b2ec2dda92956abe3e9671d3e268e
+COMPONENT_ARCHIVE_HASH= sha256:de24a314844cb157909730828560628704f4f896d167dd7da0fa2fb93ea18b10
 COMPONENT_ARCHIVE_URL=	https://c-ares.haxx.se/download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libcares
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -43,6 +43,10 @@ COMPONENT_LICENSE=		MIT
 COMPONENT_LICENSE_FILE=	LICENSE.md
 
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += $(XPG6MODE)
+
+CONFIGURE_OPTIONS += --enable-static=no
 
 # With SHELLOPTS tests will fail:
 unexport SHELLOPTS
