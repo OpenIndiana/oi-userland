@@ -15,32 +15,34 @@
 #
 
 BUILD_BITS= 64_and_32
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= icu
-COMPONENT_VERSION= 72.1
-COMPONENT_UVERSION= 72_1
-COMPONENT_DVERSION= 72-1
-COMPONENT_SUMMARY= International Components for Unicode
-COMPONENT_SRC= $(COMPONENT_NAME)
-COMPONENT_ARCHIVE= icu4c-$(COMPONENT_UVERSION)-src.tgz
-COMPONENT_ARCHIVE_HASH=	sha256:a2d2d38217092a7ed56635e34467f92f976b370e20182ad325edea6681a71d68
-COMPONENT_PROJECT_URL = https://icu-project.org
-COMPONENT_ARCHIVE_URL = https://github.com/unicode-org/icu/releases/download/release-$(COMPONENT_DVERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=		icu
-COMPONENT_LICENSE_FILE=	icu/LICENSE
+COMPONENT_NAME =		icu
+COMPONENT_VERSION =		72.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		International Components for Unicode
+COMPONENT_SRC =			$(COMPONENT_NAME)
+COMPONENT_ARCHIVE =		icu4c-$(subst .,_,$(HUMAN_VERSION))-src.tgz
+COMPONENT_ARCHIVE_HASH =	sha256:a2d2d38217092a7ed56635e34467f92f976b370e20182ad325edea6681a71d68
+COMPONENT_PROJECT_URL =		https://icu.unicode.org/
+COMPONENT_ARCHIVE_URL =		https://github.com/unicode-org/icu/releases/download/release-$(subst .,-,$(HUMAN_VERSION))/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION =	System/Internationalization
+COMPONENT_FMRI =		library/icu
+COMPONENT_LICENSE =		ICU
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# The build system does not honor the environment variables
-PATH = $(GCC_BINDIR):$(PATH.gnu)
+# Testing expects GNU diff in PATH
+PATH = $(PATH.gnu)
 
-# set relocate_to option while unpacking the tar ball
-UNPACK_ARGS= -r $(COMPONENT_SRC)
+PATCH_LEVEL = 2
 
 COMPONENT_BUILD_TARGETS = all
 
-CONFIGURE_SCRIPT = $(SOURCE_DIR)/icu/source/runConfigureICU
+CONFIGURE_SCRIPT = $(SOURCE_DIR)/source/runConfigureICU
 
 CONFIGURE_OPTIONS = Solaris/GCC
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
@@ -59,7 +61,13 @@ CXXFLAGS += -D__EXTENSIONS__ -DDECCHECK -D_XOPEN_SOURCE=600 -std=c++11
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(echo 'CPPFLAGS += -DICU_DATA_DIR=\"$(CONFIGURE_PREFIX)/share/icu/$(COMPONENT_VERSION)\"' >> $(@D)/icudefs.mk ) 
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+# Install additional man pages
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTOUSRSHAREMANDIR)/man3lib ;
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in $(COMPONENT_DIR)/files/*.3lib ; do \
+		$(INSTALL) $$f $(PROTOUSRSHAREMANDIR)/man3lib/$$(basename $$f) ; \
+		$(GSED) -i -e 's/\$$(HUMAN_VERSION)/$(HUMAN_VERSION)/g' $(PROTOUSRSHAREMANDIR)/man3lib/$$(basename $$f) ; \
+	done
 
 COMPONENT_TEST_TRANSFORMS += \
     '-n ' \
