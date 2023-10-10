@@ -13,46 +13,42 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/library/libproxy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license libproxy.license license="LGPLv2.1"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/bin/+ -> default mode 0555>
 <transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
 
-file usr/bin/$(MACH64)/proxy path=usr/demo/jds/bin/$(MACH64)/proxy mode=0555
-file usr/bin/proxy path=usr/demo/jds/bin/proxy mode=0555
-
-# Generated section:
-
+file path=usr/demo/jds/bin/proxy
 file path=usr/include/libproxy/proxy.h
 link path=usr/lib/$(MACH64)/libproxy.so target=libproxy.so.0.0.0
 link path=usr/lib/$(MACH64)/libproxy.so.0 target=libproxy.so.0.0.0
-file path=usr/lib/$(MACH64)/libproxy.so.0.0.0 mode=0555
-file path=usr/lib/$(MACH64)/libproxy/0.3.1/modules/config_direct.so mode=0555
-file path=usr/lib/$(MACH64)/libproxy/0.3.1/modules/config_envvar.so mode=0555
-file path=usr/lib/$(MACH64)/libproxy/0.3.1/modules/config_file.so mode=0555
-file path=usr/lib/$(MACH64)/libproxy/0.3.1/modules/config_wpad.so mode=0555
-file path=usr/lib/$(MACH64)/libproxy/0.3.1/modules/ignore_domain.so mode=0555
-file path=usr/lib/$(MACH64)/libproxy/0.3.1/modules/ignore_ip.so mode=0555
-file path=usr/lib/$(MACH64)/libproxy/0.3.1/modules/wpad_dns.so mode=0555
-file path=usr/lib/$(MACH64)/libproxy/0.3.1/modules/wpad_dnsdevolution.so mode=0555
+file path=usr/lib/$(MACH64)/libproxy.so.0.0.0
+file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_direct.so
+file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_envvar.so
+file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_file.so
+file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_wpad.so
+file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/ignore_domain.so
+file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/ignore_ip.so
+file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/wpad_dns.so
+file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/wpad_dnsdevolution.so
 file path=usr/lib/$(MACH64)/pkgconfig/libproxy-1.0.pc
 link path=usr/lib/libproxy.so target=libproxy.so.0.0.0
 link path=usr/lib/libproxy.so.0 target=libproxy.so.0.0.0
-file path=usr/lib/libproxy.so.0.0.0 mode=0555
-file path=usr/lib/libproxy/0.3.1/modules/config_direct.so mode=0555
-file path=usr/lib/libproxy/0.3.1/modules/config_envvar.so mode=0555
-file path=usr/lib/libproxy/0.3.1/modules/config_file.so mode=0555
-file path=usr/lib/libproxy/0.3.1/modules/config_wpad.so mode=0555
-file path=usr/lib/libproxy/0.3.1/modules/ignore_domain.so mode=0555
-file path=usr/lib/libproxy/0.3.1/modules/ignore_ip.so mode=0555
-file path=usr/lib/libproxy/0.3.1/modules/wpad_dns.so mode=0555
-file path=usr/lib/libproxy/0.3.1/modules/wpad_dnsdevolution.so mode=0555
+file path=usr/lib/libproxy.so.0.0.0
+file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_direct.so
+file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_envvar.so
+file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_file.so
+file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_wpad.so
+file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/ignore_domain.so
+file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/ignore_ip.so
+file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/wpad_dns.so
+file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/wpad_dnsdevolution.so
 file path=usr/lib/pkgconfig/libproxy-1.0.pc
-file path=usr/lib/python3.9/vendor-packages/libproxy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/libproxy.py
