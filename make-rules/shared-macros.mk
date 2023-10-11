@@ -1057,6 +1057,8 @@ STRIP =	/usr/bin/strip
 IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
 JQ =		/usr/bin/jq
 DOS2UNIX =	/usr/bin/dos2unix
+TAC =		/usr/bin/tac
+QUILT =		/usr/bin/quilt
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
@@ -1411,6 +1413,15 @@ TEST_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(TEST_REQUIRED_PACKAGE
 
 # Generate conflicting packages for all built python version variants for given package
 TEST_CONFLICTING_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_CONFLICTING_PACKAGES.python:%=%-$(subst .,,$(ver))))
+
+# Targets for some tools rarely used by the build framework.  We do not add
+# these tools to USERLAND_REQUIRED_PACKAGES to do not pollute it.
+$(QUILT):
+	@echo
+	@echo "$(QUILT) is missing"
+	@echo "Please install developer/quilt package"
+	@echo
+	@exit 1
 
 include $(WS_MAKE_RULES)/environment.mk
 include $(WS_MAKE_RULES)/depend.mk

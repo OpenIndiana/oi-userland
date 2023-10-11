@@ -102,3 +102,33 @@ endef
 #
 $(foreach suffix, $(PCH_SUFFIXES), $(eval $(call patch-rule,_$(suffix))))
 $(eval $(call patch-rule,))	# this must be last so we don't drop *.patch_%.
+
+# Helper target for patches refresh
+refresh-patches: $(QUILT) patch
+	# Unapply all patches
+	for p in $(PATCHES) ; do \
+		echo $$p ; \
+	done | $(TAC) | while read p ; do \
+		$(GPATCH) -d $(SOURCE_DIR) --strip=$(PATCH_LEVEL) --reverse < $$p ; \
+	done
+	# Make sure the series file does not exist
+	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
+	# Apply and refresh patches, then unapply them
+	cd $(SOURCE_DIR) ; for p in $(PATCHES) ; do \
+		QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) import --quiltrc /dev/null "../$$p" ; \
+		QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) push --quiltrc /dev/null -q ; \
+		QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) refresh --quiltrc /dev/null -p 1 --no-timestamps --no-index ; \
+	done ; \
+	[ ! -e $(COMPONENT_DIR)/$(PATCH_DIR)/series ] || QUILT_PATCHES=../$(PATCH_DIR) quilt pop --quiltrc /dev/null -a -q
+	# cleanup
+	$(RM) -r $(SOURCE_DIR)/.pc
+	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
+	# Apply and refresh patches again to get the desired patch format
+	for p in $(PATCHES) ; do \
+		QUILT_PATCHES=$(PATCH_DIR) $(QUILT) import --quiltrc /dev/null -p 0 "$$p" ; \
+		QUILT_PATCHES=$(PATCH_DIR) $(QUILT) push --quiltrc /dev/null -q ; \
+		QUILT_PATCHES=$(PATCH_DIR) $(QUILT) refresh --quiltrc /dev/null -p 0 --no-timestamps --no-index ; \
+	done ; \
+	# final cleanup
+	$(RM) -r $(COMPONENT_DIR)/.pc
+	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
