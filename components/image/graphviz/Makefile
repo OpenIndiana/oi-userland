@@ -49,7 +49,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 RUBY_VERSION =         3.2
-RUBY=		       ruby32
+RUBY=		       /usr/bin/ruby32
 
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
 				aclocal && \
@@ -83,13 +83,6 @@ CONFIGURE_OPTIONS +=	--without-gtkglext
 CONFIGURE_OPTIONS +=	--without-ann
 CONFIGURE_OPTIONS +=	--without-qt
 CONFIGURE_OPTIONS +=	--without-smyrna
-
-# graphviz.7 -> graphviz.5
-COMPONENT_POST_INSTALL_ACTION += \
-	$(RM) -r $(PROTOUSRSHAREMAN5DIR) ; \
-	$(MV) $(PROTOUSRSHAREMANDIR)/man7 $(PROTOUSRSHAREMAN5DIR) ; \
-	$(MV) $(PROTOUSRSHAREMAN5DIR)/graphviz.7 \
-	    $(PROTOUSRSHAREMAN5DIR)/graphviz.5 ;
 
 # fix java, lua, ocaml, python, ruby man pages
 COMPONENT_POST_INSTALL_ACTION += \
