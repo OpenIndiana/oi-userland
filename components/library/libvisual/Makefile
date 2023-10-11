@@ -13,56 +13,56 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS= 64_and_32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvisual
-COMPONENT_VERSION= 0.4.0
+COMPONENT_VERSION =		0.4.2
 COMPONENT_SUMMARY= Libvisual provides a convenient API for writing visualization plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:78f38d3ce857edde5482aa4415b504bbcd4d4a688fd4de09ec2131ad08174279
+	sha256:2aa5967c5c9522c8d7ab9bd9246c77a582c1aaf4f2b3f06493dbe3066f00380a
 COMPONENT_ARCHIVE_URL= \
-  http://downloads.sourceforge.net/libvisual/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://sourceforge.net/projects/libvisual/
+	https://github.com/Libvisual/libvisual/releases/download/libvisual-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL =		http://libvisual.org/
 COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_LICENSE = LGPLv2.1
+COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_FMRI = library/desktop/libvisual
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
 
-# This is necessary fro mapfile to be found
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+include $(WS_MAKE_RULES)/common.mk
 
-LDFLAGS += -Wl,-Mmap.remove_all
+LDFLAGS += -Wl,-M$(COMPONENT_DIR)/files/map.remove_all
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					libtoolize --copy --force &&\
+					PATH="$(PATH)" libtoolize --copy --force && \
 					aclocal -I m4 &&\
 					automake -c -f -a &&\
 					autoconf )
 
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-shared=yes
 CONFIGURE_OPTIONS += --enable-static=no
 
-COMPONENT_POST_INSTALL_ACTION= \
-            (cd $(PROTOUSRDIR) ;  \
-             $(MV) include/libvisual-0.4/libvisual/lvconfig.h include/libvisual-0.4/libvisual/lvconfig-$(BITS).h ) 
+# Use bitness specific lvconfig.h
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MV) $(PROTOUSRDIR)/include/libvisual-0.4/libvisual/lvconfig.h $(PROTOUSRDIR)/include/libvisual-0.4/libvisual/lvconfig-$(BITS).h ; \
+	$(INSTALL) $(COMPONENT_DIR)/files/lvconfig.h $(PROTOUSRDIR)/include/libvisual-0.4/libvisual ;
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 
 # Build dependencies
 REQUIRED_PACKAGES += library/glib2
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
