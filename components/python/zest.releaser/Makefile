@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zest.releaser
-HUMAN_VERSION =			9.1.0
+HUMAN_VERSION =			9.1.1
 COMPONENT_SUMMARY =		zest.releaser - Software releasing made easy and repeatable
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b7/7e/995fa9425344d76c47a5b4009fa72169391b9f3cfa5ddfedd098ee6a1d65/zest.releaser-9.1.0.tar.gz
+	https://files.pythonhosted.org/packages/6f/3d/9cf52aba7be33b8b7f68dc179cd8965113f0d885b7f193b7d5d879eaef22/zest.releaser-9.1.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f1c0f8fdfd80299d228d0c5555deb73949e505696cd504d8e078aca3b61cc6b7
+	sha256:4434c44597fdbdb890b768e5b61e1e13bad2155bf844e823219a831bf135345a
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.GPL
 
