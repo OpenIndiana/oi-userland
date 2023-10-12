@@ -19,14 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-ignore-flaky
-HUMAN_VERSION =			2.0.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.1.0
 COMPONENT_SUMMARY =		pytest-ignore-flaky - ignore failures from flaky tests (pytest plugin)
-COMPONENT_PROJECT_URL =		http://pypi.python.org/pypi/pytest-ignore-flaky
+COMPONENT_PROJECT_URL =		https://github.com/schettino72/pytest-ignore-flaky
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/schettino72/pytest-ignore-flaky/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/5e/1d/ec566a60a02fad11b5a5a73be05e6bfae0b776d006be758e70d1cc5011a0/pytest-ignore-flaky-2.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fb8c2e8919d96d096fa8a7ce4a654b719b725e9783b58ccfb227fbb930341b0b
+	sha256:bbdb2615df1a4854661ec52fff102b9ea47dcc08df6e46da521e0468d36467e1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
