@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmng
 COMPONENT_VERSION=	2.0.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The Multiple Image Network Graphics Library
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libmng/
 COMPONENT_DESCRIPTION=	A PNG-like image format library supporting multiple images, animations and transparent JPEG.
@@ -86,12 +86,12 @@ CONFIGURE_OPTIONS += --with-jpeg
 
 # distclean target was not run before the tarball was generated
 COMPONENT_PREP_ACTION = \
-	( cd $(@D) ; rm -f config.log config.status libmng.pc ; ./bootstrap.sh )
+	( cd $(@D) ; rm -f config.log config.status libmng.pc ; PATH="$(PATH)" ./bootstrap.sh )
 
 PKG_PROTO_DIRS += $(USERLAND_ARCHIVES)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
