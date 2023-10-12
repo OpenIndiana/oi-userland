@@ -19,22 +19,27 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mypy
-HUMAN_VERSION =			1.5.1
+HUMAN_VERSION =			1.6.1
 COMPONENT_SUMMARY =		mypy - Optional static typing for Python
 COMPONENT_PROJECT_URL =		https://www.mypy-lang.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/python/mypy/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/50/f8/0a8d4d8781b41b445534bc4f9210b7793bf0ab52aacfd06ebd2699663e2c/mypy-1.6.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:22894445313d989109498ea7a6b124034ab10cbb2b50f3878b81883eaa3290d2
+	sha256:4d01c00d09a0be62a4ca3f933e315455bde83f37f892ba4b08ce92f3cf44bcc1
 COMPONENT_LICENSE =		MIT AND PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
+# Testing expects GNU make
+PATH = $(PATH.gnu)
+
+# Testing fails with strange errors when pytest-cov is enabled.
+# This needs to be investigated further.
 PYTEST_ADDOPTS += -p no:cov
-# https://github.com/python/mypy/issues/15617
-PYTEST_ADDOPTS += -p no:mypy
+
+# https://github.com/python/mypy/issues/16265
+PYTEST_FASTFAIL=
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/mypy-extensions
