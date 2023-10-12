@@ -14,24 +14,22 @@
 # Copyright 2016 Jim Klimov
 #
 
-BUILD_BITS=64_and_32
-
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libzmq
-COMPONENT_VERSION= 4.3.4
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 4.3.5
 COMPONENT_SUMMARY= Open source message queue optimised for performance
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:0ff5a531c9ffaf0dfdc7dc78d13d1383088f454896d252934c429b2554d10559
+COMPONENT_ARCHIVE_HASH=	sha256:6c972d1e6a91a0ecd79c3236f04cf0126f2f4dfbbad407d72b4606a7ba93f9c6
 COMPONENT_ARCHIVE_URL=	https://github.com/zeromq/libzmq/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://zeromq.org/
 COMPONENT_FMRI= library/c++/zeromq
-# Two licenses in tarball, LGPLv3+ is referenced in their spec-file
-COMPONENT_LICENSE_FILE= COPYING.LESSER
-COMPONENT_LICENSE= LGPLv3+
 COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE= MPL 2.0
+COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -43,27 +41,15 @@ COMPONENT_PREP_ACTION = \
 	  automake -c -f -a && \
 	  autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # Build docs just once (for one ARCH), parameter varies from version to version
 CONFIGURE_OPTIONS.32 +=	--with-docs
 CONFIGURE_OPTIONS.64 +=	--without-docs
-
 CONFIGURE_OPTIONS +=	--enable-static=no
 CONFIGURE_OPTIONS +=	--with-libsodium
-
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ERROR:/p" '
 
 # Necessary for tests
 unexport SHELLOPTS
