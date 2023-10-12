@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdk-pixbuf
 COMPONENT_VERSION=      2.36.12
-COMPONENT_REVISION=     5
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=      GNOME gdk-pixbuf
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -28,11 +28,14 @@ COMPONENT_ARCHIVE_HASH= sha256:fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42c
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.36/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/gdk-pixbuf
 COMPONENT_FMRI=         library/desktop/gdk-pixbuf
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=	LGPL-2.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal  -I m4 && \
-				libtoolize --force --copy&& \
+				PATH="$(PATH)" libtoolize --force --copy && \
 				autoheader && \
 				automake -a -f -c --gnu && \
 				autoconf )
