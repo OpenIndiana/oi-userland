@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1811 items
+collecting ... collected 1812 items
 
 Use a separate pytest run for tests like this with the "--exclusive-
 Use a separate pytest run for tests like this with the "--exclusive-
@@ -947,6 +947,7 @@ tests/providers/test_internet.py::TestInternetProvider::test_ipv4_public PASSED
 tests/providers/test_internet.py::TestInternetProvider::test_ipv4_public_caching PASSED
 tests/providers/test_internet.py::TestInternetProvider::test_ipv4_public_class PASSED
 tests/providers/test_internet.py::TestInternetProvider::test_ipv6 PASSED
+tests/providers/test_internet.py::TestInternetProvider::test_mac_address PASSED
 tests/providers/test_internet.py::TestInternetProvider::test_nic_handles PASSED
 tests/providers/test_internet.py::TestInternetProvider::test_port_number PASSED
 tests/providers/test_internet.py::TestInternetProvider::test_ripe_id PASSED
@@ -1177,6 +1178,8 @@ tests/providers/test_person.py::TestHyAM::test_first_name PASSED
 tests/providers/test_person.py::TestHyAM::test_last_name PASSED
 tests/providers/test_person.py::TestHyAM::test_name PASSED
 tests/providers/test_person.py::TestJaJP::test_person PASSED
+tests/providers/test_person.py::TestLvLV::test_first_name PASSED
+tests/providers/test_person.py::TestLvLV::test_last_name PASSED
 tests/providers/test_person.py::TestNeNP::test_names PASSED
 tests/providers/test_person.py::TestNlBE::test_first_name PASSED
 tests/providers/test_person.py::TestNlBE::test_last_name PASSED
@@ -1303,12 +1306,10 @@ tests/providers/test_python.py::TestPyfloat::test_left_digits PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_and_min_value_negative PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_and_min_value_negative_with_decimals PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_and_min_value_positive_with_decimals PASSED
-tests/providers/test_python.py::TestPyfloat::test_max_none_and_min_value_with_decimals PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_value PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_value_and_positive PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_value_should_be_greater_than_min_value PASSED
 tests/providers/test_python.py::TestPyfloat::test_max_value_zero_and_left_digits PASSED
-tests/providers/test_python.py::TestPyfloat::test_min_none_and_max_value_with_decimals PASSED
 tests/providers/test_python.py::TestPyfloat::test_min_value PASSED
 tests/providers/test_python.py::TestPyfloat::test_min_value_and_left_digits PASSED
 tests/providers/test_python.py::TestPyfloat::test_positive PASSED
@@ -1881,18 +1882,13 @@ tests/pytest/test_unique_clear.py::test_unique_clears
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
-tests/pytest/test_unique_clear.py::test_unique_clears
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zest')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
 tests/pytest/test_unique_clear.py: 15 warnings
   $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1802 passed, 9 skipped, 27 warnings ========
+======== 1803 passed, 9 skipped, 26 warnings ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -2534,8 +2530,8 @@ faker/providers/geo/pt_PT/__init__.py                 5      5     0%
 faker/providers/geo/pt_PT/__init__.py                 5      5     0%
 faker/providers/geo/tr_TR/__init__.py                 3      3     0%
 faker/providers/geo/tr_TR/__init__.py                 3      3     0%
-faker/providers/internet/__init__.py                248    166    33%
-faker/providers/internet/__init__.py                248    166    33%
+faker/providers/internet/__init__.py                251    169    33%
+faker/providers/internet/__init__.py                251    169    33%
 faker/providers/internet/ar_AA/__init__.py            3      3     0%
 faker/providers/internet/ar_AA/__init__.py            3      3     0%
 faker/providers/internet/az_AZ/__init__.py            7      7     0%
@@ -2860,8 +2856,8 @@ faker/providers/person/ko_KR/__init__.py             12     12     0%
 faker/providers/person/ko_KR/__init__.py             12     12     0%
 faker/providers/person/lt_LT/__init__.py              5      5     0%
 faker/providers/person/lt_LT/__init__.py              5      5     0%
-faker/providers/person/lv_LV/__init__.py              5      5     0%
-faker/providers/person/lv_LV/__init__.py              5      5     0%
+faker/providers/person/lv_LV/__init__.py             10     10     0%
+faker/providers/person/lv_LV/__init__.py             10     10     0%
 faker/providers/person/ne_NP/__init__.py             11     11     0%
 faker/providers/person/ne_NP/__init__.py             11     11     0%
 faker/providers/person/nl_BE/__init__.py             10     10     0%
@@ -3026,8 +3022,8 @@ faker/providers/profile/__init__.py                  22     13    41%
 faker/providers/profile/__init__.py                  22     13    41%
 faker/providers/profile/en_US/__init__.py             0      0   100%
 faker/providers/profile/en_US/__init__.py             0      0   100%
-faker/providers/python/__init__.py                  255    220    14%
-faker/providers/python/__init__.py                  255    220    14%
+faker/providers/python/__init__.py                  237    202    15%
+faker/providers/python/__init__.py                  237    202    15%
 faker/providers/python/en_US/__init__.py              0      0   100%
 faker/providers/python/en_US/__init__.py              0      0   100%
 faker/providers/sbn/__init__.py                      25     15    40%
@@ -3167,6 +3163,6 @@ faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      9    44%
 faker/utils/text.py                                  16      9    44%
 ---------------------------------------------------------------------
-TOTAL                                             19448  17034    12%
+TOTAL                                             19428  17014    12%
   py$(PYV): OK
   congratulations :)
