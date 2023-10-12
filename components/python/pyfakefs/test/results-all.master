@@ -2,7 +2,7 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-collecting ... collected 2147 items
+collecting ... collected 2158 items
 
 pyfakefs/pytest_tests/pytest_check_failed_plugin_test.py::test_failed_testresult_stacktrace SKIPPED
 pyfakefs/pytest_tests/pytest_fixture_param_test.py::test_example_file_failing XFAIL
@@ -285,6 +285,8 @@ pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_exists PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_exists_with_drive PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_expand_root PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_expand_user PASSED
+pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_expand_user_no_home_environment PASSED
+pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_expand_user_windows SKIPPED
 pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_get_mtime PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_get_mtime_raises_os_error PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_getattr_forward_to_real_os_path PASSED
@@ -400,6 +402,7 @@ pyfakefs/tests/fake_filesystem_unittest_test.py::AdditionalSkipNamesTest::test_o
 pyfakefs/tests/fake_filesystem_unittest_test.py::AdditionalSkipNamesTest::test_path_exists PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::AdditionalSkipNamesTest::test_path_succeeds PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::AutoPatchOpenCodeTestCase::test_both PASSED
+pyfakefs/tests/fake_filesystem_unittest_test.py::AutoPatchOpenCodeTestCase::test_exec_module_in_fake_fs PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::AutoPatchOpenCodeTestCase::test_run_module PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::AutoPatchOpenCodeTestCase::test_run_path PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::FailedPatchingTest::test_system_stat XFAIL
@@ -1844,8 +1847,10 @@ pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_chm
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_chmod_no_followsymlinks SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_cwd PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_exists PASSED
-pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_expanduser PASSED
-pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_home PASSED
+pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_expanduser_posix PASSED
+pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_expanduser_windows SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_home_posix PASSED
+pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_home_windows SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_is_dir PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_is_file PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibFileObjectPropertyTest::test_is_symlink PASSED
@@ -1877,6 +1882,8 @@ pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_iter
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_link_to PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_mkdir PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_mkdir_exist_ok PASSED
+pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_mkdir_with_automount_drive SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_mkdir_with_automount_unc_path SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_open PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_read_bytes PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_read_text PASSED
@@ -1950,8 +1957,10 @@ pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_chm
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_chmod_no_followsymlinks SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_cwd SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_exists SKIPPED
-pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_expanduser SKIPPED
-pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_home SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_expanduser_posix SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_expanduser_windows SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_home_posix SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_home_windows SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_is_dir SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_is_file SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibFileObjectPropertyTest::test_is_symlink SKIPPED
@@ -1983,6 +1992,8 @@ pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_iter
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_link_to SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_mkdir SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_mkdir_exist_ok SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_mkdir_with_automount_drive SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_mkdir_with_automount_unc_path SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_open SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_read_bytes SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_read_text SKIPPED
@@ -2152,4 +2163,4 @@ pyfakefs/tests/mox3_stubout_test.py::StubOutForTestingTest::test_stubout_module_
 pyfakefs/tests/mox3_stubout_test.py::StubOutForTestingTest::test_stubout_module_with_smart_set PASSED
 pyfakefs/tests/mox3_stubout_test.py::StubOutForTestingTest::test_stubout_submodule_with_smart_set PASSED
 
-======== 1285 passed, 858 skipped, 4 xfailed ========
+======== 1287 passed, 867 skipped, 4 xfailed ========
