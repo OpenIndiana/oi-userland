@@ -15,15 +15,16 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Differences
-HUMAN_VERSION =			0.70
+HUMAN_VERSION =			0.71
 COMPONENT_SUMMARY =		Test::Differences - Test strings and data structures and show differences if not ok
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bee1b5186aa9ba27fed2bf1b0674520d0bd0cd051d913387f9086c1f94a56854
+	sha256:cac16a56cd843b0809e5b49199d60d75a8dbad7ca9a08380dbf3f5cc3aaa38d9
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
