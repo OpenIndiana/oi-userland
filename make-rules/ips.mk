@@ -105,7 +105,6 @@ endif
 
 # For items defined as variables or that may contain whitespace, add
 # them to a list to be expanded into PKG_OPTIONS later.
-PKG_VARS += ARC_CASE TPNO
 PKG_VARS += MACH MACH32 MACH64
 PKG_VARS += BUILD_VERSION OS_VERSION PKG_SOLARIS_VERSION
 PKG_VARS += GNU_TRIPLET
