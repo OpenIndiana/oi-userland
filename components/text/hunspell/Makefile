@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hunspell
 COMPONENT_VERSION=        1.7.2
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_SUMMARY=        Hunspell is a free spell checker and morphological analyzer library and command-line tool
 COMPONENT_PROJECT_URL=    https://hunspell.github.io/
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,7 +39,7 @@ CPPFLAGS += -I/usr/include/ncurses
 
 CFLAGS += $(CPP_XPG6MODE)
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -vif )
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf -vif )
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
@@ -50,6 +50,9 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 CONFIGURE_OPTIONS += --with-ui
 CONFIGURE_OPTIONS += --with-readline
+
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 
 unexport SHELLOPTS
 
