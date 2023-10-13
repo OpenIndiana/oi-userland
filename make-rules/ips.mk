@@ -608,7 +608,7 @@ $(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.li
 	@echo "NEW PACKAGE CONTENTS ARE LOCALLY VALIDATED AND READY TO GO"
 
 $(MANIFEST_BASE)-%.histogrified: $(MANIFEST_BASE)-%.p5m
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $< > $@
+	$(PKGMOGRIFY) -D CONSOLIDATION="$(CONSOLIDATION)" $< > $@
 
 # Push to the repo
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.pre-published
