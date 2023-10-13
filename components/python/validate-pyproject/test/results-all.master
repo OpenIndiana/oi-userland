@@ -1,17 +1,14 @@
-$(PYTHON_DIR)/vendor-packages/setuptools_scm/git.py:295: UserWarning: git archive did not support describe output
+$(PYTHON_DIR)/vendor-packages/setuptools_scm/git.py:308: UserWarning: git archive did not support describe output
   warnings.warn("git archive did not support describe output")
-$(PYTHON_DIR)/vendor-packages/setuptools_scm/git.py:312: UserWarning: unexported git archival found
-  warnings.warn("unexported git archival found")
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+$(PYTHON_DIR)/vendor-packages/setuptools_scm/git.py:327: UserWarning: unprocessed git archival found (no export subst applied)
+  warnings.warn("unprocessed git archival found (no export subst applied)")
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest --doctest-modules src
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: setup.cfg
-asyncio: mode=strict
 collecting ... collected 1 item
 
 src/validate_pyproject/error_reporting.py::validate_pyproject.error_reporting._separate_terms PASSED
@@ -22,18 +19,18 @@ py$(PYV): commands[1]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests
-asyncio: mode=strict
-collecting ... collected 358 items
+collecting ... collected 360 items
 
 tests/pre_compile/test_cli.py::test_invalid_replacements[["a", "b"]] PASSED
 tests/pre_compile/test_cli.py::test_invalid_replacements[{invalid: json}] PASSED
 tests/test_api.py::TestRegistry::test_duplicated_id PASSED
 tests/test_api.py::TestRegistry::test_incompatible_versions PASSED
 tests/test_api.py::TestRegistry::test_missing_id PASSED
+tests/test_api.py::TestRegistry::test_schema_ending[no#] PASSED
+tests/test_api.py::TestRegistry::test_schema_ending[with#] PASSED
 tests/test_api.py::TestRegistry::test_with_plugins PASSED
 tests/test_api.py::TestValidator::test_invalid PASSED
 tests/test_api.py::TestValidator::test_invalid_but_plugin_not_enabled PASSED
@@ -49,8 +46,8 @@ tests/test_cli.py::TestDisable::test_parse[setuptools-distutils] PASSED
 tests/test_cli.py::TestDisable::test_valid PASSED
 tests/test_cli.py::TestEnable::test_invalid PASSED
 tests/test_cli.py::TestEnable::test_invalid_not_enabled PASSED
-tests/test_cli.py::TestEnable::test_parse[distutils-setuptools] PASSED
-tests/test_cli.py::TestEnable::test_parse[setuptools-distutils] PASSED
+tests/test_cli.py::TestEnable::test_parse[distutils] PASSED
+tests/test_cli.py::TestEnable::test_parse[setuptools] PASSED
 tests/test_cli.py::TestEnable::test_valid PASSED
 tests/test_cli.py::TestHelp::test_custom_plugins PASSED
 tests/test_cli.py::TestHelp::test_list_default_plugins PASSED
@@ -389,6 +386,6 @@ tests/test_vendoring.py::test_cli PASSED
 tests/test_vendoring.py::test_main PASSED
 
 
-======== 357 passed, 1 skipped ========
+======== 359 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)

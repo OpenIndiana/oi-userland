@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		validate-pyproject
-HUMAN_VERSION =			0.14
+HUMAN_VERSION =			0.15
 COMPONENT_SUMMARY =		validate-pyproject - Validation library and CLI tool for checking on 'pyproject.toml' files using JSON Schema
 COMPONENT_PROJECT_URL =		https://github.com/abravalheri/validate-pyproject/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fc/cd/50d79420ea539b53ffe328795e81482901cad31f85ea0c02472cbd42703f/validate-pyproject-0.14.tar.gz
+	https://files.pythonhosted.org/packages/74/42/9c46c846488294bb27efa8cffc09ff61938b13866a33e88563c2ca218db5/validate-pyproject-0.15.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3457578f5b8589f11ff0d1fbafba273ed6b8d2ec9d1c62a7716bd7ac3f65a076
+	sha256:fc82b61f887739a4092de612466a5ab28ec47c407b19c6caef8d54c88c1d10c0
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
