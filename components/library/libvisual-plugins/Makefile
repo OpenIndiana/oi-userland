@@ -12,41 +12,42 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
+
 BUILD_BITS=32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvisual-plugins
-COMPONENT_VERSION= 0.4.0
-COMPONENT_REVISION= 2
+COMPONENT_VERSION =		0.4.2
 COMPONENT_SUMMARY= Visualization plugins for the Libvisual library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:518eef40a8a41946a0c2c0d59ede40d53ba7c142873af71aa4d2d8f297396601
+	sha256:a1dd04eb3d311d68b4f43a5c707df7aba7a98a9cab820c58395a7f5d7d6d0157
 COMPONENT_ARCHIVE_URL= \
-  http://downloads.sourceforge.net/libvisual/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://sourceforge.net/projects/libvisual/
+	https://github.com/Libvisual/libvisual/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL =		http://libvisual.org/
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_LICENSE = GPLv2
 COMPONENT_FMRI = library/desktop/libvisual/plugins
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 
 TEST_TARGET=$(NO_TESTS)
+
 include $(WS_MAKE_RULES)/common.mk
 
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-shared=yes
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --disable-corona
 CONFIGURE_OPTIONS += --disable-gforce
-CONFIGURE_OPTIONS += --disable-esd
-# Only 0.8 supported
-CONFIGURE_OPTIONS += --disable-gstreamer-plugin
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/libvisual
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/glu
