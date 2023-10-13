@@ -17,15 +17,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wxwidgets-3
 COMPONENT_MAJOR_VERSION= 3.2
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).2.1
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).3
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_SRC_NAME=     wxWidgets
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  https://github.com/wxWidgets/wxWidgets/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:dffcb6be71296fff4b7f8840eb1b510178f57aa2eb236b20da41182009242c02
-COMPONENT_FMRI=         library/graphics/wxwidgets-3
+COMPONENT_ARCHIVE_HASH= sha256:c170ab67c7e167387162276aea84e055ee58424486404bba692c401730d1a67a
+COMPONENT_FMRI=         library/graphics/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      wxWindows Library license
 COMPONENT_LICENSE_FILE= docs/licence.txt
@@ -88,5 +88,6 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxkbcommon
 REQUIRED_PACKAGES += x11/library/libxtst
 REQUIRED_PACKAGES += x11/library/libxxf86vm
