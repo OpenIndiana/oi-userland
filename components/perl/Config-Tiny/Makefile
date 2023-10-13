@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Config::Tiny
-HUMAN_VERSION =			2.29
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.30
 COMPONENT_SUMMARY =		Config::Tiny - Read/Write .ini style files with as little code as possible
-COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Config-Tiny-2.29.tgz
+COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Config-Tiny-2.30.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3de79b0ea03a8d6a93e9d9128fe845fb556222b14699a4f6f0d5ca057ae3333b
+	sha256:b2f7345619b3b8e636dd39ea010731c9dc2bfb8f022bcbd86ae6ad17866e110d
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
