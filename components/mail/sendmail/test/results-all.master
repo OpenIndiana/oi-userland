@@ -1,21 +1,4 @@
-make[1]: Entering directory '$(@D)'
-Making check in:
-$(@D)/libsm
-Configuration: pfx=, os=SunOS, rel=$(OS_VERSION), rbase=5, rroot=$(OS_VERSION), arch=$(ARCH), sfx=, variant=optimized
-Making in $(@D)/$(SM_BUILD_SUB_DIR)/libsm
-make[2]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
-make t-event  t-exc  t-rpool  t-string  t-smstdio  t-fget  t-match  t-strio  t-heap  t-fopen  t-strl  t-strrevcmp  t-types  t-path  t-float  t-scanf  t-shm  t-sem  t-inet6_ntop  t-qic  t-str2prt  t-ixlen  t-streq 
-make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
-t-types.c: In function 'main':
-t-types.c:64:17: warning: integer overflow in expression [-Woverflow]
-  lt = LLONG_MIN - 1;
-                 ^
-make[3]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
-make check-TESTS
-make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
 8 of 8 tests completed successfully
-This test may hang. If there is no output within twelve seconds, abort it
-and recompile with -DSM_CONF_SETITIMER=0
 PASS: t-event
 4 of 4 tests completed successfully
 PASS: t-exc
@@ -39,8 +22,6 @@ PASS: t-fopen
 PASS: t-strl
 6 of 6 tests completed successfully
 PASS: t-strrevcmp
-Your C compiler maybe issued a warning during compilation,
-please IGNORE the compiler warning!.
 12 of 12 tests completed successfully
 PASS: t-types
 4 of 4 tests completed successfully
@@ -48,86 +29,25 @@ PASS: t-path
 4 of 4 tests completed successfully
 PASS: t-float
 If tests for "h == 2" fail, check whether size_t is signed on your OS.
-If that is the case, add -DSM_CONF_BROKEN_SIZE_T to confENVDEF
-and start over. Otherwise contact sendmail.org.
 6 of 6 tests completed successfully
 PASS: t-scanf
 2 of 2 tests completed successfully
 5 of 5 tests completed successfully
 PASS: t-shm
 3 of 3 tests completed successfully
-This test takes about 8 seconds.
-If it takes longer than 30 seconds, please interrupt it
-and compile again without semaphore support, i.e.,-DSM_CONF_SEM=0
 6 of 6 tests completed successfully
-This test takes about 8 seconds.
-If it takes longer than 30 seconds, please interrupt it
-and compile again without semaphore support, i.e.,-DSM_CONF_SEM=0
 PASS: t-sem
 39 of 39 tests completed successfully
 PASS: t-inet6_ntop
-130 of 130 tests completed successfully
+150 of 150 tests completed successfully
 PASS: t-qic
 6 of 6 tests completed successfully
 PASS: t-str2prt
 11 of 11 tests completed successfully
 4 of 4 tests completed successfully
 PASS: t-ixlen.sh
-5 of 5 tests completed successfully
+9 of 9 tests completed successfully
 PASS: t-streq.sh
 ===================
 All 23 tests passed
 ===================
-make[3]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
-make[2]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
-Making check in:
-$(@D)/libmilter
-Configuration: pfx=, os=SunOS, rel=$(OS_VERSION), rbase=5, rroot=$(OS_VERSION), arch=$(ARCH), sfx=, variant=optimized
-Making in $(@D)/$(SM_BUILD_SUB_DIR)/libmilter
-make[2]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/libmilter'
-make 
-make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/libmilter'
-make[3]: Nothing to be done for 'all'.
-make[3]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/libmilter'
-make check-TESTS
-make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/libmilter'
-make[3]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/libmilter'
-make[2]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/libmilter'
-Making check in:
-$(@D)/sendmail
-Configuration: pfx=, os=SunOS, rel=$(OS_VERSION), rbase=5, rroot=$(OS_VERSION), arch=$(ARCH), sfx=, variant=optimized
-Making in $(@D)/$(SM_BUILD_SUB_DIR)/sendmail
-make[2]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/sendmail'
-make 
-make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/sendmail'
-make[3]: Nothing to be done for 'all'.
-make[3]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/sendmail'
-make check-TESTS
-make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/sendmail'
-make[3]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/sendmail'
-make[2]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/sendmail'
-Making check in:
-$(@D)/test
-Configuration: pfx=, os=SunOS, rel=$(OS_VERSION), rbase=5, rroot=$(OS_VERSION), arch=$(ARCH), sfx=, variant=optimized
-Using M4=/usr/bin/gm4
-Creating $(@D)/$(SM_BUILD_SUB_DIR)/test using $(@D)/devtools/OS/SunOS.$(OS_VERSION)
-Including $(@D)/devtools/Site/site.config.m4 
-Making dependencies in $(@D)/$(SM_BUILD_SUB_DIR)/test
-make[2]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
-if [ -r /usr/include/sysexits.h ]; \
-then \
-	ln -s /usr/include/sysexits.h; \
-fi
-makedepend -- -I. -I../../include -I/usr/openssl/1.1/include -I/usr/include/openldap -I/usr/include/sasl -DSOLARIS=21100 -DNETINET6 -DSM_CONF_LDAP_MEMFREE -DTCPWRAPPERS -DSASL -DMAP_REGEX -DALLOW_255 -DSTARTTLS -DTLS_EC -DUSE_EAI -DHASFLOCK -D_FFR_ALIAS_DETAIL -D_FFR_MTA_STS -D_FFR_TLSA_DANE -D_FFR_TLS_ALTNAMES -D_FFR_TLS_USE_CERTIFICATE_CHAIN_FILE  -erroff=E_STATEMENT_NOT_REACHED -m$(BITS) -D_FILE_OFFSET_BITS=64 -- t_dropgid.c   t_dropgid.c t_exclopen.c t_pathconf.c t_seteuid.c t_setgid.c t_setreuid.c t_setuid.c 
-make[2]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
-Making in $(@D)/$(SM_BUILD_SUB_DIR)/test
-make[2]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
-make 
-make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
-make[3]: Nothing to be done for 'all'.
-make[3]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
-make check-TESTS
-make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
-make[3]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
-make[2]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
-make[1]: Leaving directory '$(@D)'

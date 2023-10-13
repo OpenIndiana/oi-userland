@@ -257,85 +257,6 @@
  		to use it.  An optional argument can be used to override
  		the default of `[localhost]' to use as host to send all
  		e-mails to.  Note that MX records will be used if the
-@@ -1616,78 +1469,6 @@
- 		for the default value).
- 		For more information see doc/op/op.me.
- 
--+-------+
--| HACKS |
--+-------+
--
--Some things just can't be called features.  To make this clear,
--they go in the hack subdirectory and are referenced using the HACK
--macro.  These will tend to be site-dependent.  The release
--includes the Berkeley-dependent "cssubdomain" hack (that makes
--sendmail accept local names in either Berkeley.EDU or CS.Berkeley.EDU;
--this is intended as a short-term aid while moving hosts into
--subdomains.
--
--
--+--------------------+
--| SITE CONFIGURATION |
--+--------------------+
--
--    *****************************************************
--    * This section is really obsolete, and is preserved	*
--    * only for back compatibility.  You should plan on	*
--    * using mailertables for new installations.  In	*
--    * particular, it doesn't work for the newer forms	*
--    * of UUCP mailers, such as uucp-uudom.		*
--    *****************************************************
--
--Complex sites will need more local configuration information, such as
--lists of UUCP hosts they speak with directly.  This can get a bit more
--tricky.  For an example of a "complex" site, see cf/ucbvax.mc.
--
--The SITECONFIG macro allows you to indirectly reference site-dependent
--configuration information stored in the siteconfig subdirectory.  For
--example, the line
--
--	SITECONFIG(`uucp.ucbvax', `ucbvax', `U')
--
--reads the file uucp.ucbvax for local connection information.  The
--second parameter is the local name (in this case just "ucbvax" since
--it is locally connected, and hence a UUCP hostname).  The third
--parameter is the name of both a macro to store the local name (in
--this case, {U}) and the name of the class (e.g., {U}) in which to store
--the host information read from the file.  Another SITECONFIG line reads
--
--	SITECONFIG(`uucp.ucbarpa', `ucbarpa.Berkeley.EDU', `W')
--
--This says that the file uucp.ucbarpa contains the list of UUCP sites
--connected to ucbarpa.Berkeley.EDU.  Class {W} will be used to
--store this list, and $W is defined to be ucbarpa.Berkeley.EDU, that
--is, the name of the relay to which the hosts listed in uucp.ucbarpa
--are connected.  [The machine ucbarpa is gone now, but this
--out-of-date configuration file has been left around to demonstrate
--how you might do this.]
--
--Note that the case of SITECONFIG with a third parameter of ``U'' is
--special; the second parameter is assumed to be the UUCP name of the
--local site, rather than the name of a remote site, and the UUCP name
--is entered into class {w} (the list of local hostnames) as $U.UUCP.
--
--The siteconfig file (e.g., siteconfig/uucp.ucbvax.m4) contains nothing
--more than a sequence of SITE macros describing connectivity.  For
--example:
--
--	SITE(`cnmat')
--	SITE(`sgi olympus')
--
--The second example demonstrates that you can use two names on the
--same line; these are usually aliases for the same host (or are at
--least in the same company).
--
--The macro LOCAL_UUCP can be used to add rules into the generated
--cf file at the place where MAILER(`uucp') inserts its rules.  This
--should only be used if really necessary.
--
- +--------------------+
- | USING UUCP MAILERS |
- +--------------------+
 @@ -2475,7 +2256,7 @@
  map entries.  This feature allows spammers to abuse your mail server
  by specifying a return address that you enabled in your access file.
@@ -355,108 +276,6 @@
  3. When using a default ruleset for headers, the name of the header
  currently being checked can be found in the $&{hdr_name} macro.
  
-@@ -3281,101 +3061,6 @@
- (version=${tls_version} cipher=${cipher} bits=${cipher_bits} verify=${verify})
- 
- 
--+---------------------+
--| SMTP AUTHENTICATION |
--+---------------------+
--
--The macros ${auth_authen}, ${auth_author}, and ${auth_type} can be
--used in anti-relay rulesets to allow relaying for those users that
--authenticated themselves.  A very simple example is:
--
--SLocal_check_rcpt
--R$*		$: $&{auth_type}
--R$+		$# OK
--
--which checks whether a user has successfully authenticated using
--any available mechanism.  Depending on the setup of the Cyrus SASL
--library, more sophisticated rulesets might be required, e.g.,
--
--SLocal_check_rcpt
--R$*		$: $&{auth_type} $| $&{auth_authen}
--RDIGEST-MD5 $| $+@$=w	$# OK
--
--to allow relaying for users that authenticated using DIGEST-MD5
--and have an identity in the local domains.
--
--The ruleset trust_auth is used to determine whether a given AUTH=
--parameter (that is passed to this ruleset) should be trusted.  This
--ruleset may make use of the other ${auth_*} macros.  Only if the
--ruleset resolves to the error mailer, the AUTH= parameter is not
--trusted.  A user supplied ruleset Local_trust_auth can be written
--to modify the default behavior, which only trust the AUTH=
--parameter if it is identical to the authenticated user.
--
--Per default, relaying is allowed for any user who authenticated
--via a "trusted" mechanism, i.e., one that is defined via
--TRUST_AUTH_MECH(`list of mechanisms')
--For example:
--TRUST_AUTH_MECH(`KERBEROS_V4 DIGEST-MD5')
--
--If the selected mechanism provides a security layer the number of
--bits used for the key of the symmetric cipher is stored in the
--macro ${auth_ssf}.
--
--Providing SMTP AUTH Data when sendmail acts as Client
-------------------------------------------------------
--
--If sendmail acts as client, it needs some information how to
--authenticate against another MTA.  This information can be provided
--by the ruleset authinfo or by the option DefaultAuthInfo.  The
--authinfo ruleset looks up {server_name} using the tag AuthInfo: in
--the access map.  If no entry is found, {server_addr} is looked up
--in the same way and finally just the tag AuthInfo: to provide
--default values.  Note: searches for domain parts or IP nets are
--only performed if the access map is used; if the authinfo feature
--is used then only up to three lookups are performed (two exact
--matches, one default).
--
--Note: If your daemon does client authentication when sending, and
--if it uses either PLAIN or LOGIN authentication, then you *must*
--prevent ordinary users from seeing verbose output.  Do NOT install
--sendmail set-user-ID.  Use PrivacyOptions to turn off verbose output
--("goaway" works for this).
--
--Notice: the default configuration file causes the option DefaultAuthInfo
--to fail since the ruleset authinfo is in the .cf file. If you really
--want to use DefaultAuthInfo (it is deprecated) then you have to
--remove the ruleset.
--
--The RHS for an AuthInfo: entry in the access map should consists of a
--list of tokens, each of which has the form: "TDstring" (including
--the quotes).  T is a tag which describes the item, D is a delimiter,
--either ':' for simple text or '=' for a base64 encoded string.
--Valid values for the tag are:
--
--	U	user (authorization) id
--	I	authentication id
--	P	password
--	R	realm
--	M	list of mechanisms delimited by spaces
--
--Example entries are:
--
--AuthInfo:other.dom "U:user" "I:user" "P:secret" "R:other.dom" "M:DIGEST-MD5"
--AuthInfo:host.more.dom "U:user" "P=c2VjcmV0"
--
--User id or authentication id must exist as well as the password.  All
--other entries have default values.  If one of user or authentication
--id is missing, the existing value is used for the missing item.
--If "R:" is not specified, realm defaults to $j.  The list of mechanisms
--defaults to those specified by AuthMechanisms.
--
--Since this map contains sensitive information, either the access
--map must be unreadable by everyone but root (or the trusted user)
--or FEATURE(`authinfo') must be used which provides a separate map.
--Notice: It is not checked whether the map is actually
--group/world-unreadable, this is left to the user.
--
- +--------------------------------+
- | ADDING NEW MAILERS OR RULESETS |
- +--------------------------------+
 @@ -3701,8 +3386,6 @@
  This list is shown in four columns:  the name you define, the default
  value for that definition, the option or macro that is affected
@@ -600,3 +419,188 @@
  
  feature/msp.m4 defines almost all settings for the MSP.  Most of
  those should not be changed at all.  Some of the features and options
+--- sendmail-8.17.2/cf/README	2023-05-31 21:55:42.000000000 +0200
++++ sendmail-8.17.2/cf/README.new	2023-10-13 18:04:44.902861539 +0200
+@@ -1617,79 +1617,6 @@
+ 		For more information see doc/op/op.me.
+ 
+ 
+-+-------+
+-| HACKS |
+-+-------+
+-
+-Some things just can't be called features.  To make this clear,
+-they go in the hack subdirectory and are referenced using the HACK
+-macro.  These will tend to be site-dependent.  The release
+-includes the Berkeley-dependent "cssubdomain" hack (that makes
+-sendmail accept local names in either Berkeley.EDU or CS.Berkeley.EDU;
+-this is intended as a short-term aid while moving hosts into
+-subdomains.
+-
+-
+-+--------------------+
+-| SITE CONFIGURATION |
+-+--------------------+
+-
+-    *****************************************************
+-    * This section is really obsolete, and is preserved	*
+-    * only for back compatibility.  You should plan on	*
+-    * using mailertables for new installations.  In	*
+-    * particular, it doesn't work for the newer forms	*
+-    * of UUCP mailers, such as uucp-uudom.		*
+-    *****************************************************
+-
+-Complex sites will need more local configuration information, such as
+-lists of UUCP hosts they speak with directly.  This can get a bit more
+-tricky.  For an example of a "complex" site, see cf/ucbvax.mc.
+-
+-The SITECONFIG macro allows you to indirectly reference site-dependent
+-configuration information stored in the siteconfig subdirectory.  For
+-example, the line
+-
+-	SITECONFIG(`uucp.ucbvax', `ucbvax', `U')
+-
+-reads the file uucp.ucbvax for local connection information.  The
+-second parameter is the local name (in this case just "ucbvax" since
+-it is locally connected, and hence a UUCP hostname).  The third
+-parameter is the name of both a macro to store the local name (in
+-this case, {U}) and the name of the class (e.g., {U}) in which to store
+-the host information read from the file.  Another SITECONFIG line reads
+-
+-	SITECONFIG(`uucp.ucbarpa', `ucbarpa.Berkeley.EDU', `W')
+-
+-This says that the file uucp.ucbarpa contains the list of UUCP sites
+-connected to ucbarpa.Berkeley.EDU.  Class {W} will be used to
+-store this list, and $W is defined to be ucbarpa.Berkeley.EDU, that
+-is, the name of the relay to which the hosts listed in uucp.ucbarpa
+-are connected.  [The machine ucbarpa is gone now, but this
+-out-of-date configuration file has been left around to demonstrate
+-how you might do this.]
+-
+-Note that the case of SITECONFIG with a third parameter of ``U'' is
+-special; the second parameter is assumed to be the UUCP name of the
+-local site, rather than the name of a remote site, and the UUCP name
+-is entered into class {w} (the list of local hostnames) as $U.UUCP.
+-
+-The siteconfig file (e.g., siteconfig/uucp.ucbvax.m4) contains nothing
+-more than a sequence of SITE macros describing connectivity.  For
+-example:
+-
+-	SITE(`cnmat')
+-	SITE(`sgi olympus')
+-
+-The second example demonstrates that you can use two names on the
+-same line; these are usually aliases for the same host (or are at
+-least in the same company).
+-
+-The macro LOCAL_UUCP can be used to add rules into the generated
+-cf file at the place where MAILER(`uucp') inserts its rules.  This
+-should only be used if really necessary.
+-
+-
+ +--------------------+
+ | USING UUCP MAILERS |
+ +--------------------+
+@@ -3284,102 +3211,6 @@
+ (version=${tls_version} cipher=${cipher} bits=${cipher_bits} verify=${verify})
+ 
+ 
+-+---------------------+
+-| SMTP AUTHENTICATION |
+-+---------------------+
+-
+-The macros ${auth_authen}, ${auth_author}, and ${auth_type} can be
+-used in anti-relay rulesets to allow relaying for those users that
+-authenticated themselves.  A very simple example is:
+-
+-SLocal_check_rcpt
+-R$*		$: $&{auth_type}
+-R$+		$# OK
+-
+-which checks whether a user has successfully authenticated using
+-any available mechanism.  Depending on the setup of the Cyrus SASL
+-library, more sophisticated rulesets might be required, e.g.,
+-
+-SLocal_check_rcpt
+-R$*		$: $&{auth_type} $| $&{auth_authen}
+-RDIGEST-MD5 $| $+@$=w	$# OK
+-
+-to allow relaying for users that authenticated using DIGEST-MD5
+-and have an identity in the local domains.
+-
+-The ruleset trust_auth is used to determine whether a given AUTH=
+-parameter (that is passed to this ruleset) should be trusted.  This
+-ruleset may make use of the other ${auth_*} macros.  Only if the
+-ruleset resolves to the error mailer, the AUTH= parameter is not
+-trusted.  A user supplied ruleset Local_trust_auth can be written
+-to modify the default behavior, which only trust the AUTH=
+-parameter if it is identical to the authenticated user.
+-
+-Per default, relaying is allowed for any user who authenticated
+-via a "trusted" mechanism, i.e., one that is defined via
+-TRUST_AUTH_MECH(`list of mechanisms')
+-For example:
+-TRUST_AUTH_MECH(`KERBEROS_V4 DIGEST-MD5')
+-
+-If the selected mechanism provides a security layer the number of
+-bits used for the key of the symmetric cipher is stored in the
+-macro ${auth_ssf}.
+-
+-Providing SMTP AUTH Data when sendmail acts as Client
+------------------------------------------------------
+-
+-If sendmail acts as client, it needs some information how to
+-authenticate against another MTA.  This information can be provided
+-by the ruleset authinfo or by the option DefaultAuthInfo.  The
+-authinfo ruleset looks up {server_name} using the tag AuthInfo: in
+-the access map.  If no entry is found, {server_addr} is looked up
+-in the same way and finally just the tag AuthInfo: to provide
+-default values.  Note: searches for domain parts or IP nets are
+-only performed if the access map is used; if the authinfo feature
+-is used then only up to three lookups are performed (two exact
+-matches, one default).
+-
+-Note: If your daemon does client authentication when sending, and
+-if it uses either PLAIN or LOGIN authentication, then you *must*
+-prevent ordinary users from seeing verbose output.  Do NOT install
+-sendmail set-user-ID.  Use PrivacyOptions to turn off verbose output
+-("goaway" works for this).
+-
+-Notice: the default configuration file causes the option DefaultAuthInfo
+-to fail since the ruleset authinfo is in the .cf file. If you really
+-want to use DefaultAuthInfo (it is deprecated) then you have to
+-remove the ruleset.
+-
+-The RHS for an AuthInfo: entry in the access map should consists of a
+-list of tokens, each of which has the form: "TDstring" (including
+-the quotes).  T is a tag which describes the item, D is a delimiter,
+-either ':' for simple text or '=' for a base64 encoded string.
+-Valid values for the tag are:
+-
+-	U	user (authorization) id
+-	I	authentication id
+-	P	password
+-	R	realm
+-	M	list of mechanisms delimited by spaces
+-
+-Example entries are:
+-
+-AuthInfo:other.dom "U:user" "I:user" "P:secret" "R:other.dom" "M:DIGEST-MD5"
+-AuthInfo:host.more.dom "U:user" "P=c2VjcmV0"
+-
+-User id or authentication id must exist as well as the password.  All
+-other entries have default values.  If one of user or authentication
+-id is missing, the existing value is used for the missing item.
+-If "R:" is not specified, realm defaults to $j.  The list of mechanisms
+-defaults to those specified by AuthMechanisms.
+-
+-Since this map contains sensitive information, either the access
+-map must be unreadable by everyone but root (or the trusted user)
+-or FEATURE(`authinfo') must be used which provides a separate map.
+-Notice: It is not checked whether the map is actually
+-group/world-unreadable, this is left to the user.
+-
+-
+ +--------------------------------+
+ | ADDING NEW MAILERS OR RULESETS |
+ +--------------------------------+
