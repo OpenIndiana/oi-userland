@@ -15,7 +15,7 @@
 
 BUILD_BITS= 64
 BUILD_STYLE= cmake
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	clamav
@@ -23,7 +23,7 @@ COMPONENT_NAME=	clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	1.2.0
+COMPONENT_VERSION=	1.2.1
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -38,7 +38,7 @@ COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, desi
 			anti-virus engine available in a form of shared library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:97a192dffe141480b56cabf1063d79a9fc55cd59203241fa41bfc7a98a548020
+COMPONENT_ARCHIVE_HASH=	sha256:9a14fe870cbb8f5f79f668b789dca0f25cc6be22abe32f4f7d3677e4ee3935b0
 COMPONENT_PROJECT_URL=	https://www.clamav.net
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/downloads/production/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
@@ -76,16 +76,18 @@ CPPFLAGS += $(CPP_LARGEFILES) -I$(OPENSSL_INCDIR)
 COMPONENT_PREP_ACTION= (cd $(@D) && for f in COPYING/*; do cat $$f >> COPYING.$(COMPONENT_NAME) ; done )
 
 CMAKE_ENV += LDFLAGS="-L$(OPENSSL_LIBDIR) -lsocket -lnsl"
+LDFLAGS+=-L$(OPENSSL_LIBDIR) -lsocket -lnsl
 
 CMAKE_OPTIONS += -DPCRE2_INCLUDE_DIR=/usr/include/pcre
 # clang still does not work
-#CMAKE_OPTIONS+= -DBYTECODE_RUNTIME=llvm
+CMAKE_OPTIONS+= -DBYTECODE_RUNTIME=llvm
 CMAKE_OPTIONS += -DBYTECODE_RUNTIME=interpreter
-CMAKE_OPTIONS += -DLLVM_ROOT_DIR=$(CLANG_PREFIX)
+#CMAKE_OPTIONS += -DLLVM_ROOT_DIR=$(CLANG_PREFIX)
 CMAKE_OPTIONS += -DAPP_CONFIG_DIRECTORY=/etc/clamav
 CMAKE_OPTIONS += -DCMAKE_SKIP_RPATH=ON
 CMAKE_OPTIONS += -DENABLE_JSON_SHARED=OFF
 CMAKE_OPTIONS += -DENABLE_UNRAR=ON
+CMAKE_OPTIONS += -DENABLE_JSON_SHARED=ON
 CMAKE_OPTIONS += -DENABLE_SYSTEMD=OFF
 
 # ClamAV has a JIT bytecode support based on CLang LLVM.
@@ -107,11 +109,12 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
