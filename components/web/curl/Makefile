@@ -26,22 +26,23 @@
 BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 USE_COMMON_TEST_MASTER= no
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      8.0.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      8.4.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:0a381cd82f4d00a9a334438b8ca239afea5bfefcfa9a1025f2bf118e79e0b5f0
+COMPONENT_ARCHIVE_HASH= sha256:16c62a9c4af0f703d28bda6d7bbf37ba47055ad3414d70dec63e2e6336f2a82d
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      CURL
+COMPONENT_LICENSE_FILE=      COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,12 +50,22 @@ include $(WS_MAKE_RULES)/common.mk
 $(BUILD_DIR_32)/.configured:   CPPFLAGS += -D__ILP32=32
 $(BUILD_DIR_64)/.configured:   CPPFLAGS += -D__LP64=64
 
+CPPFLAGS += $(CPP_LARGEFILES)
+CPPFLAGS += $(CC_PIC_ENABLE)
+CPPFLAGS += -DNAME_MAX=256
+
+CPPFLAGS += -I/usr/include/openldap
+CPPFLAGS += $(shell pkg-config --cflags libidn2)
+# GSS MECH's API is in /usr/include/kerberosv5/gssapi/
+CPPFLAGS += $(shell krb5-config --cflags)
+LIBS     += $(shell krb5-config --libs gssapi)
+
 GSSAPI_LIBDIR_32= /usr/lib
 GSSAPI_LIBDIR_64= /usr/lib/$(MACH64)
 
-CPPFLAGS += $(CPP_LARGEFILES)
+LDFLAGS += -m$(BITS)
+LDFLAGS += $(LD_Z_DEFS)
 
-OPENSSL_VERSION= 1.1
 CONFIGURE_ENV += CFLAGS="-I$(OPENSSL_INCDIR) $(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="-I$(OPENSSL_INCDIR) $(CPPFLAGS) -I/usr/include/openldap"
 
@@ -99,10 +110,10 @@ COMPONENT_TEST_ENV += LC_ALL=C
 COMPONENT_TEST_ARGS += -k -i
 
 # Only the #'s of passed/failed tests are verified for change
+# Note that we have many broken tests if valgrind is installed.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/ during [0-9][0-9]* seconds.//" ' \
-	'-e "/TESTDONE:/p" ' \
-	'-e "/TESTFAIL:/p" ' 
+	'-e "s/ during [0-9]* seconds.//" ' \
+	'-e "/TESTDONE:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
@@ -114,7 +125,7 @@ REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
