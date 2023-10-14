@@ -29,13 +29,12 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
-COMPONENT_VERSION=      3.9.16
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=      3.9.18
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:22dddc099246dd2760665561e8adb7394ea0cc43a72684c6480f9380f7786439
+COMPONENT_ARCHIVE_HASH= sha256:01597db0132c1cf7b331eff68ae09b5a235a3c3caa9c944c29cac7d1c4c4c00a
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/python-39
 COMPONENT_CLASSIFICATION= Development/Python
@@ -109,6 +108,7 @@ CONFIGURE_ENV += ac_cv_func_getentropy=no
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-optimizations
+CONFIGURE_OPTIONS += --enable-loadable-sqlite-extensions
 CONFIGURE_OPTIONS += --with-dtrace
 CONFIGURE_OPTIONS += --with-system-expat
 CONFIGURE_OPTIONS += --with-system-ffi
