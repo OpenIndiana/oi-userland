@@ -164,6 +164,21 @@ COMPONENT_TEST_TARGETS=
 
 # configure the unpacked source for building 32 and 64 bit version
 CMAKE =	cmake
+
+# provide test transforms for ctest
+CMAKE_TEST_TRANSFORMS = \
+	' -e "s/[0-9]*\.[0-9]* sec//" ' \
+	' -n ' \
+	' -e "/Start/p" ' \
+	' -e "/Failed/p" ' \
+	' -e "/Passed/p" ' \
+	' -e "/failed/p" '
+
+USE_DEFAULT_TEST_TRANSFORMS?=no
+ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)
+COMPONENT_TEST_TRANSFORMS += $(CMAKE_TEST_TRANSFORMS)
+endif
+
 $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
 	$(COMPONENT_PRE_CMAKE_ACTION)
