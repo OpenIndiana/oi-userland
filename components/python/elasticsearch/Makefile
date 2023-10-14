@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elasticsearch
-HUMAN_VERSION =			8.10.0
+HUMAN_VERSION =			8.10.1
 COMPONENT_SUMMARY =		elasticsearch - Python client for Elasticsearch
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elasticsearch-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/elastic/elasticsearch-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d8f3159ff6e1ff9a25647bca2a24cffe2d2d57f4af47acc8a5e6fb7144532dba
+	sha256:27b8e9173778b8b60b0e8d7f75bb05790aea199e4164364dc734c90dba1e56c0
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -56,4 +56,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
 TEST_REQUIRED_PACKAGES.python += library/python/requests
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/twine
