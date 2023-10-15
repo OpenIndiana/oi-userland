@@ -884,6 +884,24 @@ PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 
+#
+# Upstream supports major PostgreSQL versions for 5 years after its initial
+# release.  After that one last minor version is released and then the major
+# version is considered EOL.
+#
+# We will start to obsolete PostgreSQL versions according the following table:
+#
+# +--------------------+----------------+
+# | PostgreSQL version | Obsolete after |
+# +--------------------+----------------+
+# |         12         |   2024-11-14   |
+# |         14         |   2026-11-12   |
+# |         15         |   2027-11-11   |
+# +--------------------+----------------+
+#
+# See https://www.postgresql.org/support/versioning/
+#
+
 # Config magic for Postgres/EnterpriseDB/...
 # Default DB version should be the newest one we do have so we detect any
 # incompatibilities as soon as possible.  Components could override this when
@@ -922,6 +940,21 @@ PATH.prepend +=	$(PG_BINDIR)
 PKG_MACROS +=   PG_VERSION=$(PG_VERSION)
 PKG_MACROS +=   PG_VERNUM=$(PG_VERNUM)
 PKG_MACROS +=   PG_BASEPKG=$(PG_BASEPKG)
+
+#
+# Upstream maintains long-term MariaDB releases for at least 5 years and
+# short-term MariaDB releases for at least one year.
+#
+# We will start to obsolete MariaDB versions according the following table:
+#
+# +-----------------+----------------+
+# | MariaDB version | Obsolete after |
+# +-----------------+----------------+
+# |      10.6       |   2026-07      |
+# +-----------------+----------------+
+#
+# See https://mariadb.org/about/#maintenance-policy
+#
 
 # Config magic for MySQL/MariaDB/Percona/...
 # Default DB version should be the newest one we do have so we detect any
