@@ -422,14 +422,15 @@ PYTEST_ADDOPTS += $$(if $$(filter library/python/$(2)-$$(subst .,,$$(PYTHON_VERS
 endef
 $(eval $(call disable-pytest-plugin,asyncio,pytest-asyncio))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,benchmark,pytest-benchmark))	# adds line to test report header; adds benchmark report
-$(eval $(call disable-pytest-plugin,black,pytest-black))
-$(eval $(call disable-pytest-plugin,checkdocs,pytest-checkdocs))
+$(eval $(call disable-pytest-plugin,black,pytest-black))		# runs extra test(s)
+$(eval $(call disable-pytest-plugin,checkdocs,pytest-checkdocs))	# runs extra test(s)
 $(eval $(call disable-pytest-plugin,cov,pytest-cov))
 $(eval $(call disable-pytest-plugin,flaky,flaky))
 $(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to test report header
 $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
-$(eval $(call disable-pytest-plugin,mypy,pytest-mypy))
-$(eval $(call disable-pytest-plugin,randomly,pytest-randomly))
+$(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
+$(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
+$(eval $(call disable-pytest-plugin,randomly,pytest-randomly))		# reorders tests
 $(eval $(call disable-pytest-plugin,relaxed,pytest-relaxed))		# produces different test report
 $(eval $(call disable-pytest-plugin,reporter,pytest-reporter))		# https://github.com/christiansandberg/pytest-reporter/issues/8
 $(eval $(call disable-pytest-plugin,salt-factories,pytest-salt-factories))			# requires salt
