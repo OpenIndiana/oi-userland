@@ -27,16 +27,15 @@
 
 BUILD_BITS =			64_and_32
 BUILD_STYLE =			waf
-USE_OPENSSL11 =			yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_VERSION =		4.19.0
+COMPONENT_VERSION =		4.19.1
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:28f98ceab75a6a59432912fa110fc8c716abcab1ed6d8bdd4393d178acff3d20
+COMPONENT_ARCHIVE_HASH = 	sha256:ce3b7f0d18bf91aa5fd646e8bb385a3b35375b703c6e5123b02b85a1abc81879
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI =		service/network/samba
@@ -166,11 +165,11 @@ REQUIRED_PACKAGES += library/python/markdown
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/ncurses
