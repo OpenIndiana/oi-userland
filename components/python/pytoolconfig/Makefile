@@ -19,36 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytoolconfig
-HUMAN_VERSION =			1.2.5
+HUMAN_VERSION =			1.2.6
 COMPONENT_SUMMARY =		pytoolconfig - Python tool configuration
 COMPONENT_PROJECT_URL =		https://github.com/bageljrkhanofemus/pytoolconfig
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/aa/ce/ac21cf0549ae05d8924e91f02f8b406e43beb42e605dc732fdf700f8cd8c/pytoolconfig-1.2.5.tar.gz
+	https://files.pythonhosted.org/packages/78/ab/9e5168b7101e682e2916b5d028e9fcd857b79cbbc9a29e36b1597f3926d0/pytoolconfig-1.2.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a50f9dfe23b03a9d40414c1fdf902fefbeae12f2ac75a3c8f915944d6ffac279
+	sha256:f2d00ea4f8cbdffd3006780ba51016618c835b338f634e3f7f8b2715b1710889
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
-
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# pytoolconfig --> pytoolconfig
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pdm-pep517
+PYTHON_REQUIRED_PACKAGES += library/python/pdm-backend
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/platformdirs
-TEST_REQUIRED_PACKAGES.python += library/python/pytoolconfig
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx-autodoc-typehints
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
+TEST_REQUIRED_PACKAGES.python += library/python/tabulate
