@@ -24,13 +24,11 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		caja
 COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MNR_VERSION=	3
 COMPONENT_SUMMARY=	File manager for the MATE desktop
-COMPONENT_ARCHIVE_HASH= sha256:d5dd708d2325a3bb5e9e93e902ba8989602549ccf75bfaa36e8c70d3f7bed99b
-COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
+COMPONENT_ARCHIVE_HASH= sha256:813edf08a36f995ec3c1504131ff8afbbd021f6e1586643fe5dced5e73e5790d
 COMPONENT_CLASSIFICATION= System/Libraries
-# 1.26.2 has a non-standard file name, the line below can likely be removed again with the next update
-COMPONENT_SRC=		caja-glib-2.50-1.26.2
+COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
 TEST_TARGET= $(TEST_$(MK_BITS))
 include $(WS_MAKE_RULES)/common.mk
