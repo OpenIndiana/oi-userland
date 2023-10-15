@@ -16,14 +16,14 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		arpack
-COMPONENT_VERSION=	3.9.0
+COMPONENT_VERSION=	3.9.1
 REAL_NAME=		arpack-ng
 COMPONENT_SUMMARY=	Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems
 COMPONENT_DESCRIPTION=	The package is designed to compute a few eigenvalues and corresponding eigenvectors of a general n by n matrix A. It is most appropriate for large sparse or structured matrices A where structured means that a matrix-vector product w <- Av requires order n rather than the usual order n**2 floating point operations. This software is based upon an algorithmic variant of the Arnoldi process called the Implicitly Restarted Arnoldi Method (IRAM).
 COMPONENT_PROJECT_URL=	https://github.com/opencollab/$(REAL_NAME)
 COMPONENT_SRC=		$(REAL_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:24f2a2b259992d3c797d80f626878aa8e2ed5009d549dad57854bbcfb95e1ed0
+COMPONENT_ARCHIVE_HASH=	sha256:f6641deb07fa69165b7815de9008af3ea47eb39b2bb97521fbf74c97aba6e844
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/math/arpack
 COMPONENT_CLASSIFICATION=       System/Libraries
