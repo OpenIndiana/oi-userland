@@ -192,7 +192,7 @@ endef
 
 define ips-print-names-rule
 $(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
-	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $(call per-manifest-options,$(1:.p5m=)) /dev/fd/0 |\
 	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
@@ -495,9 +495,13 @@ $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated $(MAKEFILE_PREREQ)
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 else
+
+per-manifest-options = $(foreach var,$(PKG_VARS),$(if $($(var).$(1)),-D $(var)="$(strip $($(var).$(1)))")) \
+	$(if $(COMPONENT_CLASSIFICATION.$(1)),-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION.$(1)))")
+
 # mogrify non-parameterized manifests
 $(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR) $(MAKEFILE_PREREQ)
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $(call per-manifest-options,$*) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
@@ -630,7 +634,8 @@ print-depend-require:	canonical-manifests
 		$(foreach t,$(VERSIONED_MANIFEST_TYPES),$(call ips-print-depend-require-type-rule,$(t))) | tr ' ' '\n'
 
 print-package-names:	canonical-manifests $(MKGENERIC_SCRIPTS)
-	@echo $(call ips-print-names-rule,$(NONVER_MANIFESTS)) \
+	@echo $(foreach m,$(NONVER_MANIFESTS),\
+		$(call ips-print-names-rule,$(m))) \
 	    $(foreach t,$(VERSIONED_MANIFEST_TYPES),\
 	        $(call ips-print-names-type-rule,$(t))) \
 	    | tr ' ' '\n'
