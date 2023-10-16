@@ -34,6 +34,9 @@ GFX_DRM_REPO=$(SOURCE_DIR)/packages/$(MACH)/nightly-nd/repo.drm
 CLEAN_PATHS += $(BUILD_DIR)
 CLOBBER_PATHS += $(SOURCE_DIR)
 
+COMPONENT_PREP_GIT=no
+include $(WS_MAKE_RULES)/prep.mk
+
 $(SOURCE_DIR)/.downloaded: 
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
@@ -48,19 +51,6 @@ update:
 	  $(GIT) log -1 --format=%H > .downloaded
 
 download:: $(SOURCE_DIR)/.downloaded
-
-PATCH_DIR?= patches
-PATCH_PATTERN?= *.patch
-PATCHES= # please don't patch -- update gfx-drm instead
-
-$(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
-	$(MKDIR) $(@D)
-	cd $(SOURCE_DIR) && \
-        $(GIT) checkout -f && \
-              $(GIT) clean -f
-	$(TOUCH) $@
-
-prep::	$(SOURCE_DIR)/.patched
 
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	$(MKDIR) $(@D)
@@ -135,12 +125,23 @@ clean::
 clobber::       clean
 	$(RM) -r $(CLOBBER_PATHS)
 
-PACKAGE_NAMES  = driver/graphics/agpgart
-PACKAGE_NAMES += driver/graphics/drm
-PACKAGE_NAMES += system/header/header-agp
-PACKAGE_NAMES += system/header/header-drm
-PACKAGE_NAMES += system/test/libdrm
-PACKAGE_NAMES += x11/library/libdrm
+#
+# Ensure that when printing packages delivered by gfx-drm, we ignore the
+# packages that will be dropped when publishing to the userland repository.
+#
+# Note that the "pkg5.complete.fmris" cache file should contain all packages
+# delivered by the gate, so that "packages.ignore.in" can be modified to apply
+# a new filter without rebuilding the gate or the cached list.
+#
+print-package-names:
+	if test -d $(GFX_DRM_REPO); then \
+		pkgrepo list -H -F tsv -s $(GFX_DRM_REPO) \
+		    | cut -f 2 \
+		    | LANG=C LC_ALL=C sort -u \
+		    > pkg5.complete.fmris; \
+	fi
+	grep -v -x -F -f packages.ignore.in pkg5.complete.fmris > pkg5.fmris
+	cat pkg5.fmris
 
 REQUIRED_PACKAGES += developer/build/onbld
 REQUIRED_PACKAGES += diagnostic/scanpci
