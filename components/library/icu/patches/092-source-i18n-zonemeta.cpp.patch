@@ -2,12 +2,11 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 Add NULL checks for TimeZone::createTimeZoneIDEnumeration calls
-http://bugs.icu-project.org/trac/ticket/12377
-diff --git a/icu/source/i18n/dtfmtsym.cpp.original b/icu/source/i18n/dtfmtsym.cpp
-index 4c44976..46cb93e 100644
---- a/icu/source/i18n/dtfmtsym.cpp.original
-+++ b/icu/source/i18n/dtfmtsym.cpp
-@@ -1295,6 +1295,10 @@ DateFormatSymbols::initZoneStringsArray(void) {
+https://unicode-org.atlassian.net/browse/ICU-12377
+
+--- icu/source/i18n/dtfmtsym.cpp.orig
++++ icu/source/i18n/dtfmtsym.cpp
+@@ -1295,6 +1295,10 @@
      do { // dummy do-while
  
          tzids = TimeZone::createTimeZoneIDEnumeration(ZONE_SET, NULL, NULL, status);
@@ -18,11 +17,9 @@ index 4c44976..46cb93e 100644
          rows = tzids->count(status);
          if (U_FAILURE(status)) {
              break;
-diff --git a/icu/source/i18n/zonemeta.cpp.original b/icu/source/i18n/zonemeta.cpp
-index 7cf3a5e..9fc342c 100644
---- a/icu/source/i18n/zonemeta.cpp.original
-+++ b/icu/source/i18n/zonemeta.cpp
-@@ -456,12 +456,14 @@ ZoneMeta::getCanonicalCountry(const UnicodeString &tzid, UnicodeString &country,
+--- icu/source/i18n/zonemeta.cpp.orig
++++ icu/source/i18n/zonemeta.cpp
+@@ -456,12 +456,14 @@
              u_UCharsToChars(region, regionBuf, 2);
  
              StringEnumeration *ids = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL_LOCATION, regionBuf, NULL, status);
