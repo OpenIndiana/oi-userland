@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pillow
-HUMAN_VERSION =			10.0.1
+HUMAN_VERSION =			10.1.0
 COMPONENT_SUMMARY =		Pillow - Python Imaging Library (Fork)
 COMPONENT_PROJECT_URL =		https://python-pillow.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/64/9e/7e638579cce7dc346632f020914141a164a872be813481f058883ee8d421/Pillow-10.0.1.tar.gz
+	https://files.pythonhosted.org/packages/80/d7/c4b258c9098b469c4a4e77b0a99b5f4fd21e359c2e486c977d231f52fc71/Pillow-10.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d72967b06be9300fed5cfbc8b5bafceec48bf7cdc7dab66b1d2549035287191d
+	sha256:e6bf8de6c36ed96c86ea3b6e1d5273c53f46ef518a062464cd7ef5dd2cf92e38
 COMPONENT_LICENSE =		HPND
 COMPONENT_LICENSE_FILE =	LICENSE
 
