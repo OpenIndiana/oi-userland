@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dotconf
 COMPONENT_VERSION= 1.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= Configuration file parser
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -31,7 +31,7 @@ COMPONENT_LICENSE_FILE = COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION= ( cd $(@D) && PATH="$(PATH)" autoreconf -fi)
 
 CONFIGURE_OPTIONS += --disable-static
 
