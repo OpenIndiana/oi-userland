@@ -1,6 +1,6 @@
---- a/src/tcs/rpc/tcstp/rpc.c.orig	Fri Jun  5 12:45:50 2009
-+++ b/src/tcs/rpc/tcstp/rpc.c	Thu Sep 10 13:05:33 2009
-@@ -385,134 +385,134 @@
+--- trousers-0.3.11.2/src/tcs/rpc/tcstp/rpc.c.orig
++++ trousers-0.3.11.2/src/tcs/rpc/tcstp/rpc.c
+@@ -387,134 +387,134 @@
  typedef struct tdDispatchTable {
  	TSS_RESULT (*Func) (struct tcsd_thread_data *);
  	const char *name;
@@ -260,7 +260,7 @@
  int
  access_control(struct tcsd_thread_data *thread_data)
  {
-@@ -562,11 +562,190 @@
+@@ -564,11 +564,190 @@
  	return 1;
  }
  
@@ -451,7 +451,7 @@
  
  	/* First, check the ordinal bounds */
  	if (data->comm.hdr.u.ordinal >= TCSD_MAX_NUM_ORDS) {
-@@ -596,6 +775,9 @@
+@@ -599,6 +778,9 @@
  	}
  
  	/* Now, dispatch */
@@ -461,7 +461,7 @@
  	if ((result = tcs_func_table[data->comm.hdr.u.ordinal].Func(data)) == TSS_SUCCESS) {
  		/* set the comm buffer */
  		offset = 0;
-@@ -607,6 +789,9 @@
+@@ -610,6 +792,9 @@
  		LoadBlob_UINT32(&offset, data->comm.hdr.parm_size, data->comm.buf);
  		LoadBlob_UINT32(&offset, data->comm.hdr.parm_offset, data->comm.buf);
  	}
