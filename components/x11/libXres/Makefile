@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXres
 COMPONENT_VERSION= 1.2.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libXres - X Resource extension library
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:9a7446f3484b9b7538ac5ee30d2c1ce9e5b7fbbaf1440e02f6cca186a1fa745f
@@ -26,10 +27,9 @@ COMPONENT_FMRI=    x11/library/libxres
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
-
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS+= LIB_MAN_SUFFIX=3xres
 
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
 
