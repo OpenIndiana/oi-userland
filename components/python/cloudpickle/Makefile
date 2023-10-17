@@ -14,30 +14,29 @@
 #   $WS_TOOLS/python-integrate-project cloudpickle
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cloudpickle
-HUMAN_VERSION =			2.2.1
-COMPONENT_SUMMARY =		cloudpickle - Extended pickling support for Python objects
+HUMAN_VERSION =			3.0.0
+COMPONENT_SUMMARY =		cloudpickle - Pickler class to extend the standard pickle.Pickler functionality
 COMPONENT_PROJECT_URL =		https://github.com/cloudpipe/cloudpickle
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5f/51/913ecca3970a2227cf4d5e8937df52cc28f465ac442216110b8e3323262d/cloudpickle-2.2.1.tar.gz
+	https://github.com/cloudpipe/cloudpickle/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d89684b8de9e34a2a43b3460fbca07d09d6e25ce858df4d5a44240403b6178f5
+	sha256:49cc8581ce305630b1e179bc083069b21b45db4731e5e3f2ea6fc40b131e1c55
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/codecov
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/numpy
-TEST_REQUIRED_PACKAGES.python += library/python/pickle5
+TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
