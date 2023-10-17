@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXaw
 COMPONENT_VERSION= 1.0.15
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libXaw - X Athena Widgets library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:ab35f70fde9fb02cc71b342f654846a74328b74cb3a0703c02d20eddb212754a
@@ -27,12 +28,14 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
-                          cd $(@D) &&  autoreconf -f  -i )
-
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-xaw6
+CONFIGURE_OPTIONS += LIB_MAN_SUFFIX=3xaw
+
+# Install additional man page
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTOUSRSHAREMANDIR)/man3lib ;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) $(COMPONENT_DIR)/files/libXaw.3lib $(PROTOUSRSHAREMANDIR)/man3lib ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
