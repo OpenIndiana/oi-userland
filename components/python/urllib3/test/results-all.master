@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 2305 items
+collecting ... collected 2307 items
 
 test/contrib/test_pyopenssl.py::TestClientCerts::test_client_cert_with_bytes_password PASSED
 test/contrib/test_pyopenssl.py::TestClientCerts::test_client_cert_with_string_password PASSED
@@ -1455,6 +1455,7 @@ test/with_dummyserver/test_connection.py::test_invalid_tunnel_scheme PASSED
 test/with_dummyserver/test_connection.py::test_releases_conn PASSED
 test/with_dummyserver/test_connection.py::test_returns_urllib3_HTTPResponse PASSED
 test/with_dummyserver/test_connection.py::test_set_tunnel_is_reset PASSED
+test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_303_redirect_makes_request_lose_body PASSED
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_bad_connect PASSED
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_bad_decode PASSED
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_bytes_header PASSED
@@ -2092,6 +2093,7 @@ test/with_dummyserver/test_https.py::TestHTTPS_TLSv1_3::test_wrap_socket_failure
 test/with_dummyserver/test_no_ssl.py::TestHTTPSWithoutSSL::test_simple PASSED
 test/with_dummyserver/test_no_ssl.py::TestHTTPWithoutSSL::test_simple PASSED
 test/with_dummyserver/test_poolmanager.py::TestIPv6PoolManager::test_ipv6 PASSED
+test/with_dummyserver/test_poolmanager.py::TestPoolManager::test_303_redirect_makes_request_lose_body PASSED
 test/with_dummyserver/test_poolmanager.py::TestPoolManager::test_body PASSED
 test/with_dummyserver/test_poolmanager.py::TestPoolManager::test_cross_host_redirect PASSED
 test/with_dummyserver/test_poolmanager.py::TestPoolManager::test_encode_http_target[/echo_uri#?#-/echo_uri] PASSED
@@ -2313,25 +2315,25 @@ test/with_dummyserver/test_socketlevel.py::TestStream::test_stream_none_unchunke
 
 =============================== warnings summary ===============================
 test/test_ssltransport.py::SingleTLSLayerTestCase::test_unwrap_existing_socket
-  $(@D)/dummyserver/server.py:146: ResourceWarning: unclosed <ssl.SSLSocket fd=15, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0, laddr=('::1', 54453, 0, 0), raddr=('::1', 62699, 0, 0)>
+  $(@D)/dummyserver/server.py:146: ResourceWarning: unclosed <ssl.SSLSocket fd=15, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0, laddr=('::1', 60951, 0, 0), raddr=('::1', 61277, 0, 0)>
     self.socket_handler(sock)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/test_ssltransport.py::SingleTLSLayerTestCase::test_unwrap_existing_socket
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=16, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62699, 0, 0), raddr=('::1', 54453, 0, 0)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=16, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 61277, 0, 0), raddr=('::1', 60951, 0, 0)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/contrib/test_pyopenssl.py::TestHTTPS_TLSv1_2::test_server_hostname
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=19, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 40268), raddr=('127.0.0.1', 50675)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=19, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 38042), raddr=('127.0.0.1', 37767)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/contrib/test_pyopenssl.py::TestHTTPS_TLSv1_3::test_server_hostname
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=19, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 43767), raddr=('127.0.0.1', 46330)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=19, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 62479), raddr=('127.0.0.1', 44651)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
@@ -2341,166 +2343,166 @@ test/contrib/test_socks.py: 17 warnings
     warnings.warn("No IPv6 support. Falling back to IPv4.", NoIPv6Warning)
 
 test/with_dummyserver/test_connection.py::test_returns_urllib3_HTTPResponse
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=19, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 54794, 0, 0), raddr=('::1', 54412, 0, 0)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=19, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 58016, 0, 0), raddr=('::1', 62137, 0, 0)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connection.py::test_does_not_release_conn
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=20, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 45058, 0, 0), raddr=('::1', 64207, 0, 0)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=20, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 63343, 0, 0), raddr=('::1', 42549, 0, 0)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connection.py::test_double_getresponse
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=20, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 34559, 0, 0), raddr=('::1', 33342, 0, 0)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=20, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 60359, 0, 0), raddr=('::1', 50417, 0, 0)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_connectionpool.py::TestConnectionPoolTimeouts::test_conn_closed
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/urllib3/util/connection.py:100: ResourceWarning: unclosed <socket.socket fd=19, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 35252, 0, 0), raddr=('::1', 61423, 0, 0)>
-    sock.setsockopt(*opt)
+test/with_dummyserver/test_connectionpool.py::TestConnectionPoolTimeouts::test_total_timeout
+  $(PYTHON_DIR)/vendor-packages/_pytest/_code/code.py:540: ResourceWarning: unclosed <socket.socket fd=19, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62814, 0, 0), raddr=('::1', 58977, 0, 0)>
+    return cls(None, _ispytest=True)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_headers_not_modified_by_request[dict-False-True]
-  $(@D)/test/with_dummyserver/test_connectionpool.py:1061: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 34382, 0, 0), raddr=('::1', 37831, 0, 0)>
+  $(@D)/test/with_dummyserver/test_connectionpool.py:1072: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 45908, 0, 0), raddr=('::1', 59073, 0, 0)>
     conn = pool._get_conn()
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_headers_not_modified_by_request[dict-False-True]
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=22, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 57887, 0, 0), raddr=('::1', 37831, 0, 0)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 45870, 0, 0), raddr=('::1', 59073, 0, 0)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_headers_not_modified_by_request[dict-False-False]
-  $(@D)/test/with_dummyserver/test_connectionpool.py:1061: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 37192, 0, 0), raddr=('::1', 37831, 0, 0)>
+  $(@D)/test/with_dummyserver/test_connectionpool.py:1072: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 58272, 0, 0), raddr=('::1', 59073, 0, 0)>
     conn = pool._get_conn()
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_headers_not_modified_by_request[dict-False-False]
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 38202, 0, 0), raddr=('::1', 37831, 0, 0)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 45077, 0, 0), raddr=('::1', 59073, 0, 0)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_headers_not_modified_by_request[HTTPHeaderDict-False-True]
-  $(@D)/test/with_dummyserver/test_connectionpool.py:1061: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 51653, 0, 0), raddr=('::1', 37831, 0, 0)>
+  $(@D)/test/with_dummyserver/test_connectionpool.py:1072: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 52466, 0, 0), raddr=('::1', 59073, 0, 0)>
     conn = pool._get_conn()
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_headers_not_modified_by_request[HTTPHeaderDict-False-True]
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 59249, 0, 0), raddr=('::1', 37831, 0, 0)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=22, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 54582, 0, 0), raddr=('::1', 59073, 0, 0)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_headers_not_modified_by_request[HTTPHeaderDict-False-False]
-  $(@D)/test/with_dummyserver/test_connectionpool.py:1061: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 37524, 0, 0), raddr=('::1', 37831, 0, 0)>
+  $(@D)/test/with_dummyserver/test_connectionpool.py:1072: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 53206, 0, 0), raddr=('::1', 59073, 0, 0)>
     conn = pool._get_conn()
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_headers_not_modified_by_request[HTTPHeaderDict-False-False]
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 58767, 0, 0), raddr=('::1', 37831, 0, 0)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 40264, 0, 0), raddr=('::1', 59073, 0, 0)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_connectionpool.py::TestConnectionPool::test_request_chunked_is_deprecated
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 59161, 0, 0), raddr=('::1', 37831, 0, 0)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 57516, 0, 0), raddr=('::1', 59073, 0, 0)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_https.py::TestHTTPS_TLSv1_2::test_server_hostname
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <ssl.SSLSocket fd=21, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 53692), raddr=('127.0.0.1', 36916)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <ssl.SSLSocket fd=21, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 42751), raddr=('127.0.0.1', 37845)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 test/with_dummyserver/test_https.py::TestHTTPS_TLSv1_3::test_server_hostname
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <ssl.SSLSocket fd=21, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 45302), raddr=('127.0.0.1', 44485)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:194: ResourceWarning: unclosed <ssl.SSLSocket fd=21, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 42526), raddr=('127.0.0.1', 63207)>
     result = testfunction(**testargs)
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_tunneling_proxy_connect_timeout[https-https]
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/urllib3/_collections.py:96: ResourceWarning: unclosed <socket.socket [closed] fd=39, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6>
-    item = self._container.pop(key)
+test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_forwarding_proxy_connect_timeout[https-https-True]
+  $(PYTHON_DIR)/threading.py:239: ResourceWarning: unclosed <socket.socket [closed] fd=40, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6>
+    self._release_save = lock._release_save
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_tunneling_proxy_connect_timeout[https-https]
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/urllib3/_collections.py:96: ResourceWarning: unclosed <socket.socket [closed] fd=50, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6>
-    item = self._container.pop(key)
+test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_forwarding_proxy_connect_timeout[https-https-True]
+  $(PYTHON_DIR)/threading.py:239: ResourceWarning: unclosed <socket.socket [closed] fd=36, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6>
+    self._release_save = lock._release_save
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_tunneling_proxy_connect_timeout[https-https]
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/urllib3/_collections.py:96: ResourceWarning: unclosed <socket.socket [closed] fd=47, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6>
-    item = self._container.pop(key)
+test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_forwarding_proxy_connect_timeout[https-https-True]
+  $(PYTHON_DIR)/threading.py:239: ResourceWarning: unclosed <ssl.SSLSocket [closed] fd=49, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0>
+    self._release_save = lock._release_save
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_tunneling_proxy_connect_timeout[https-https]
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/urllib3/_collections.py:96: ResourceWarning: unclosed <socket.socket [closed] fd=44, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6>
-    item = self._container.pop(key)
+test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_forwarding_proxy_connect_timeout[https-https-True]
+  $(PYTHON_DIR)/threading.py:239: ResourceWarning: unclosed <socket.socket [closed] fd=46, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6>
+    self._release_save = lock._release_save
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_tunneling_proxy_connect_timeout[https-https]
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/urllib3/_collections.py:96: ResourceWarning: unclosed <ssl.SSLSocket [closed] fd=62, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0>
-    item = self._container.pop(key)
+test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_forwarding_proxy_connect_timeout[https-https-True]
+  $(PYTHON_DIR)/threading.py:239: ResourceWarning: unclosed <socket.socket [closed] fd=43, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6>
+    self._release_save = lock._release_save
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_tunneling_proxy_connect_timeout[https-https]
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/urllib3/_collections.py:96: ResourceWarning: unclosed <ssl.SSLSocket [closed] fd=53, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0>
-    item = self._container.pop(key)
+test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_forwarding_proxy_connect_timeout[https-https-True]
+  $(PYTHON_DIR)/threading.py:239: ResourceWarning: unclosed <ssl.SSLSocket [closed] fd=58, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0>
+    self._release_save = lock._release_save
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_tunneling_proxy_connect_timeout[https-https]
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/urllib3/_collections.py:96: ResourceWarning: unclosed <ssl.SSLSocket [closed] fd=56, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0>
-    item = self._container.pop(key)
+test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_forwarding_proxy_connect_timeout[https-https-True]
+  $(PYTHON_DIR)/threading.py:239: ResourceWarning: unclosed <ssl.SSLSocket [closed] fd=55, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0>
+    self._release_save = lock._release_save
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_tunneling_proxy_connect_timeout[https-https]
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/urllib3/_collections.py:96: ResourceWarning: unclosed <ssl.SSLSocket [closed] fd=59, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0>
-    item = self._container.pop(key)
+test/with_dummyserver/test_proxy_poolmanager.py::TestHTTPProxyManager::test_forwarding_proxy_connect_timeout[https-https-True]
+  $(PYTHON_DIR)/threading.py:239: ResourceWarning: unclosed <ssl.SSLSocket [closed] fd=52, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=0>
+    self._release_save = lock._release_save
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_socketlevel.py::TestContentFraming::test_chunked_specified[file-PUT-True]
-  $(PYTHON_DIR)/email/feedparser.py:123: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 52513, 0, 0), raddr=('::1', 47100, 0, 0)>
-    self._lines.extend(lines)
+test/with_dummyserver/test_socketlevel.py::TestMultipartResponse::test_multipart_assert_header_parsing_no_defects
+  $(PYTHON_DIR)/unittest/mock.py:2104: ResourceWarning: unclosed <socket.socket fd=21, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 42223, 0, 0), raddr=('::1', 34417, 0, 0)>
+    self.name = name
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_socketlevel.py::TestContentFraming::test_chunked_specified[file-PUT-True]
-  $(PYTHON_DIR)/email/feedparser.py:123: ResourceWarning: unclosed <socket.socket fd=24, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 34522, 0, 0), raddr=('::1', 34564, 0, 0)>
-    self._lines.extend(lines)
+test/with_dummyserver/test_socketlevel.py::TestMultipartResponse::test_multipart_assert_header_parsing_no_defects
+  $(PYTHON_DIR)/unittest/mock.py:2104: ResourceWarning: unclosed <socket.socket fd=24, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 61258, 0, 0), raddr=('::1', 46303, 0, 0)>
+    self.name = name
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_socketlevel.py::TestContentFraming::test_chunked_specified[file-PUT-True]
-  $(PYTHON_DIR)/email/feedparser.py:123: ResourceWarning: unclosed <socket.socket fd=26, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 55246, 0, 0), raddr=('::1', 46367, 0, 0)>
-    self._lines.extend(lines)
+test/with_dummyserver/test_socketlevel.py::TestMultipartResponse::test_multipart_assert_header_parsing_no_defects
+  $(PYTHON_DIR)/unittest/mock.py:2104: ResourceWarning: unclosed <socket.socket fd=26, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 43732, 0, 0), raddr=('::1', 46042, 0, 0)>
+    self.name = name
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
-test/with_dummyserver/test_socketlevel.py::TestContentFraming::test_chunked_specified[file-PUT-True]
-  $(PYTHON_DIR)/email/feedparser.py:123: ResourceWarning: unclosed <socket.socket fd=29, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 64826, 0, 0), raddr=('::1', 51520, 0, 0)>
-    self._lines.extend(lines)
+test/with_dummyserver/test_socketlevel.py::TestMultipartResponse::test_multipart_assert_header_parsing_no_defects
+  $(PYTHON_DIR)/unittest/mock.py:2104: ResourceWarning: unclosed <socket.socket fd=30, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 39719, 0, 0), raddr=('::1', 41343, 0, 0)>
+    self.name = name
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1735 passed, 570 skipped, 48 warnings ========
+======== 1737 passed, 570 skipped, 48 warnings ========
