@@ -14,13 +14,12 @@
 # Copyright 2016-2018 Aurelien Larcher
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xorg-server
 COMPONENT_VERSION=      1.19.7
-COMPONENT_REVISION=     10
+COMPONENT_REVISION=     11
 COMPONENT_SUMMARY=      Xorg - X11R7 X server
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -41,7 +40,7 @@ COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR))
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D) &&\
-                                  cd $(@D) && autoreconf --install --force )
+                                  cd $(@D) && PATH="$(PATH)" autoreconf --install --force )
 
 # Enabling gcc optimization leads to crashes
 gcc_OPT =
@@ -122,13 +121,8 @@ REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/font-util
 REQUIRED_PACKAGES += x11/library/libxkbfile
 REQUIRED_PACKAGES += x11/library/libxres
-REQUIRED_PACKAGES += x11/library/xcb-util
 REQUIRED_PACKAGES += x11/library/xcb-util-cursor
 REQUIRED_PACKAGES += x11/library/xcb-util-errors
-REQUIRED_PACKAGES += x11/library/xcb-util-image
-REQUIRED_PACKAGES += x11/library/xcb-util-keysyms
-REQUIRED_PACKAGES += x11/library/xcb-util-renderutil
-REQUIRED_PACKAGES += x11/library/xcb-util-wm
 REQUIRED_PACKAGES += x11/library/xtrans
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/header/header-drm
@@ -136,7 +130,6 @@ REQUIRED_PACKAGES += developer/debug/mdb
 REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
 
 # Sustained dependencies
-REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxfont
 REQUIRED_PACKAGES += x11/library/libxv
 
@@ -145,6 +138,7 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += service/hal
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
@@ -158,9 +152,15 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxfont2
 REQUIRED_PACKAGES += x11/library/libxi
+REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxmuu
 REQUIRED_PACKAGES += x11/library/libxpm
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxshmfence
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += x11/library/xcb-util
+REQUIRED_PACKAGES += x11/library/xcb-util-image
+REQUIRED_PACKAGES += x11/library/xcb-util-keysyms
+REQUIRED_PACKAGES += x11/library/xcb-util-renderutil
+REQUIRED_PACKAGES += x11/library/xcb-util-wm
