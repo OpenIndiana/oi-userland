@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Perl::Critic
-HUMAN_VERSION =			1.150
+HUMAN_VERSION =			1.152
 COMPONENT_SUMMARY =		Perl::Critic - Critique Perl source code for best-practices.
 COMPONENT_CPAN_AUTHOR =		PETDANCE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e5cd95de3e43bce70775176274baa405f326fc8740df0054bb816975cc8d349b
+	sha256:e5bfaf67f61a2a6a0ed343f0403b19f515b4890eed6272abaab707749c5e5e1e
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
