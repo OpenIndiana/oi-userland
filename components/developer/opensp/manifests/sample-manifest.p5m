@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,18 +23,20 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/onsgmls
-file path=usr/bin/$(MACH64)/osgmlnorm
-file path=usr/bin/$(MACH64)/ospam
-file path=usr/bin/$(MACH64)/ospcat
-file path=usr/bin/$(MACH64)/ospent
-file path=usr/bin/$(MACH64)/osx
+link path=usr/bin/nsgmls target=onsgmls
 file path=usr/bin/onsgmls
+link path=usr/bin/osgml2xml target=osx
 file path=usr/bin/osgmlnorm
 file path=usr/bin/ospam
 file path=usr/bin/ospcat
 file path=usr/bin/ospent
 file path=usr/bin/osx
+link path=usr/bin/s2x target=osx
+link path=usr/bin/sgml2xml target=osx
+link path=usr/bin/sgmlnorm target=osgmlnorm
+link path=usr/bin/spam target=ospam
+link path=usr/bin/spcat target=ospcat
+link path=usr/bin/spent target=ospent
 file path=usr/include/OpenSP/Allocator.h
 file path=usr/include/OpenSP/ArcEngine.h
 file path=usr/include/OpenSP/Attribute.h
@@ -172,42 +174,9 @@ file path=usr/include/OpenSP/rtti.h
 file path=usr/include/OpenSP/sptchar.h
 file path=usr/include/OpenSP/types.h
 file path=usr/include/OpenSP/xnew.h
-file path=usr/lib/$(MACH64)/libosp.a
-link path=usr/lib/$(MACH64)/libosp.so target=libosp.so.4.0.0
-link path=usr/lib/$(MACH64)/libosp.so.4 target=libosp.so.4.0.0
-file path=usr/lib/$(MACH64)/libosp.so.4.0.0
-file path=usr/lib/libosp.a
-link path=usr/lib/libosp.so target=libosp.so.4.0.0
-link path=usr/lib/libosp.so.4 target=libosp.so.4.0.0
-file path=usr/lib/libosp.so.4.0.0
-file path=usr/share/OpenSP/HTML32.dcl
-file path=usr/share/OpenSP/HTML32.dtd
-file path=usr/share/OpenSP/HTML32.soc
-file path=usr/share/OpenSP/HTML4-f.dtd
-file path=usr/share/OpenSP/HTML4-s.dtd
-file path=usr/share/OpenSP/HTML4.dcl
-file path=usr/share/OpenSP/HTML4.dtd
-file path=usr/share/OpenSP/HTML4.soc
-file path=usr/share/OpenSP/HTMLlat1.ent
-file path=usr/share/OpenSP/HTMLspec.ent
-file path=usr/share/OpenSP/HTMLsym.ent
-file path=usr/share/OpenSP/ISOlat1.ent
-file path=usr/share/OpenSP/ISOlat1.sgm
-file path=usr/share/OpenSP/catalog
-file path=usr/share/OpenSP/demo.sgm
-file path=usr/share/OpenSP/gensyntax.pl
-file path=usr/share/OpenSP/html-1.dtd
-file path=usr/share/OpenSP/html-1s.dtd
-file path=usr/share/OpenSP/html-s.dtd
-file path=usr/share/OpenSP/html.dcl
-file path=usr/share/OpenSP/html.dtd
-file path=usr/share/OpenSP/html.soc
-file path=usr/share/OpenSP/japan.dcl
-file path=usr/share/OpenSP/opensp-implied.dcl
-file path=usr/share/OpenSP/unicode.sd
-file path=usr/share/OpenSP/unicode.syn
-file path=usr/share/OpenSP/xml.dcl
-file path=usr/share/OpenSP/xml.soc
+link path=usr/lib/$(MACH64)/libosp.so target=libosp.so.5.0.0
+link path=usr/lib/$(MACH64)/libosp.so.5 target=libosp.so.5.0.0
+file path=usr/lib/$(MACH64)/libosp.so.5.0.0
 file path=usr/share/doc/OpenSP/ABOUT-NLS
 file path=usr/share/doc/OpenSP/AUTHORS
 file path=usr/share/doc/OpenSP/BUGS
@@ -238,19 +207,24 @@ file path=usr/share/doc/OpenSP/doc/sysid.htm
 file path=usr/share/doc/OpenSP/doc/xml.htm
 file path=usr/share/doc/OpenSP/doc/xmlwarn.htm
 file path=usr/share/doc/OpenSP/releasenotes.html
-file path=usr/share/doc/OpenSP/releasenotes.pdf
-file path=usr/share/doc/OpenSP/releasenotes.ps
-file path=usr/share/man/man1/nsgmls.1
+link path=usr/share/man/man1/nsgmls.1 target=onsgmls.1
 file path=usr/share/man/man1/onsgmls.1
-file path=usr/share/man/man1/osgml2xml.1
+link path=usr/share/man/man1/osgml2xml.1 target=osx.1
 file path=usr/share/man/man1/osgmlnorm.1
 file path=usr/share/man/man1/ospam.1
 file path=usr/share/man/man1/ospcat.1
 file path=usr/share/man/man1/ospent.1
 file path=usr/share/man/man1/osx.1
-file path=usr/share/man/man1/s2x.1
-file path=usr/share/man/man1/sgml2xml.1
-file path=usr/share/man/man1/sgmlnorm.1
-file path=usr/share/man/man1/spam.1
-file path=usr/share/man/man1/spcat.1
-file path=usr/share/man/man1/spent.1
+link path=usr/share/man/man1/s2x.1 target=osx.1
+link path=usr/share/man/man1/sgml2xml.1 target=osx.1
+link path=usr/share/man/man1/sgmlnorm.1 target=osgmlnorm.1
+link path=usr/share/man/man1/spam.1 target=ospam.1
+link path=usr/share/man/man1/spcat.1 target=ospcat.1
+link path=usr/share/man/man1/spent.1 target=ospent.1
+link path=usr/share/sgml/CATALOG.opensp \
+    target=../../../../var/lib/sgml/CATALOG.opensp
+file path=usr/share/sgml/opensp/japan.dcl
+file path=usr/share/sgml/opensp/opensp-implied.dcl
+file path=usr/share/sgml/opensp/xml.dcl
+file path=usr/share/sgml/opensp/xml.soc
+file path=var/lib/sgml/CATALOG.opensp
