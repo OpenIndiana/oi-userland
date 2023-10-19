@@ -19,24 +19,22 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Cython
-HUMAN_VERSION =			3.0.3
+HUMAN_VERSION =			3.0.4
 COMPONENT_SUMMARY =		Cython - The Cython compiler for writing C extensions in the Python language.
 COMPONENT_PROJECT_URL =		https://cython.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1a/1d/c79482ecb7217fc5840eceb724f7ebb4d3a70c5bf46309add0c0cd299891/Cython-3.0.3.tar.gz
+	https://files.pythonhosted.org/packages/3f/aa/1a5c72615e0ba4dc30cc36de7e8a9a2eca2158922b0677654fced0d3476c/Cython-3.0.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:327309301b01f729f173a94511cb2280c87ba03c89ed428e88f913f778245030
+	sha256:2e379b491ee985d31e5faaf050f79f4a8f59f482835906efe4477b33b4fbe9ff
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Our Python 3.9 is compiled with removed full path for compiler from Python
-# configuration so testing is unable to find proper compiler without explicit
-# PATH
-COMPONENT_TEST_ENV += PATH="$(GCC_BINDIR):$(PATH)"
 # Use well known path for Cython cache directory
 COMPONENT_TEST_ENV += CYTHON_CACHE_DIR=$(@D)/.cython-cache-dir
+# Testing installs packages using pip so direct it to private directory
+COMPONENT_TEST_ENV += PYTHONUSERBASE=$(@D)/.python-user-base
 
 # Normalize tmp dir name
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(TEST_TMP/cycache-test\).\{8\}\(/src\).\{8\}/|\1\2/|g'"
