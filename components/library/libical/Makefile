@@ -17,14 +17,13 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libical
-COMPONENT_VERSION=	3.0.16
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.0.17
 COMPONENT_SUMMARY=	libical is an Open Source implementation of the IETF's iCalendar Calendaring and Scheduling protocols
 COMPONENT_PROJECT_URL=	https://libical.github.io/libical
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/libical/libical/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b44705dd71ca4538c86fb16248483ab4b48978524fb1da5097bd76aa2e0f0c33
+COMPONENT_ARCHIVE_HASH= sha256:bcda9a6db6870240328752854d1ea475af9bbc6356e6771018200e475e5f781b
 COMPONENT_FMRI=		library/libical
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
