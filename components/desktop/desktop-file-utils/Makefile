@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         desktop-file-utils
 COMPONENT_VERSION=      0.27
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      A few command line utilities for working with desktop entries
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/desktop-file-utils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
