@@ -11,68 +11,55 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2023 Friedrich Kink.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opal
-COMPONENT_VERSION= 3.10.10
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 3.16.2
 COMPONENT_SUMMARY= OPAL - Open Phone Abstraction Library
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= library/libopal
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f208985003461b2743575eccac13ad890b3e5baac35b68ddef17162460aff864
+  sha256:9225e881e7a450d39f739be7db97d0b1f845c754afdc2f26d8ebdbd5799dd3ed
 COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.10/$(COMPONENT_ARCHIVE)
+  https://sourceforge.net/projects/opalvoip/files/V3.16%20Procyon/Stable%202/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= MPLv1.0 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-OPAL_FFMPEG_PATCH =\
-sed -e 's/CODEC_ID/AV_&/' \
-    -e 's/PIX_FMT_/AV_&/' \
-    -i plugins/video/H.263-1998/h263-1998.cxx \
-       plugins/video/common/dyna.cxx          \
-       plugins/video/H.264/h264-x264.cxx      \
-       plugins/video/MPEG4-ffmpeg/mpeg4.cxx \
-&& \
-sed -e '/<< mime.PrintContents/ s/mime/(const std::string\&)&/' \
-    -i src/im/msrp.cxx
+PATH=           $(PATH.gnu)
 
+COMPONENT_BUILD_ARGS += VERBOSE=1
 
-COMPONENT_PREP_ACTION=( cd $(@D)/plugins && aclocal && autoconf &&\
-		cd $(@D)&& aclocal && autoconf && $(OPAL_FFMPEG_PATCH) )
+OPAL_FFMPEG_PATCH = \
+       $(GSED) -e '/<< mime.PrintContents/ s/mime/(const std::string\&)&/' \
+       -i src/im/msrp.cxx
+
+COMPONENT_PREP_ACTION=( cd $(@D)/plugins && aclocal && autoconf && \
+               cd $(@D) && aclocal && autoconf && $(OPAL_FFMPEG_PATCH) )
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION =  ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR) $(@D) )
+
+COMPONENT_POST_CONFIGURE_ACTION = ( \
+	echo "install: ;  @\$$(MAKE) --file=$(SOURCE_DIR)/Makefile \$$(MAKECMDGOALS)" >> $(@D)/Makefile )
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --disable-iax
-CONFIGURE_OPTIONS += --enable-localgsm
-CONFIGURE_OPTIONS += --disable-x264
-CONFIGURE_OPTIONS += --disable-libavcodec
+CONFIGURE_OPTIONS += --disable-srtp
+CONFIGURE_OPTIONS += --disable-spandsp
+CONFIGURE_OPTIONS += --disable-libavutil
+CONFIGURE_OPTIONS += --enable-localsrtp
+CONFIGURE_OPTIONS += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 
 # opal comes with SILK SDK, which has own build system
 COMPONENT_BUILD_ENV += SILK_CC="$(CC)"
 COMPONENT_BUILD_ENV += SILK_CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += SILK_LDFLAGS="$(LDFLAGS)"
-
-COMPONENT_POST_INSTALL_ACTION= \
-            (cd $(PROTOUSRDIR) ;  \
-             $(MV) include/opal/opal/buildopts.h include/opal/opal/buildopts-$(BITS).h )
-
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -80,6 +67,8 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += library/desktop/ptlib
+REQUIRED_PACKAGES += library/opus
 REQUIRED_PACKAGES += library/speexdsp
+REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
