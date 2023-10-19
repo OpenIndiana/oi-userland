@@ -25,16 +25,16 @@
 # Copyright (c) 2023, Niklas Poslovski
 #
 
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.57
+COMPONENT_VERSION=	2.4.58
 COMPONENT_PROJECT_URL=	https://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:bc3e7e540b83ec24f9b847c6b4d7148c55b79b27d102e21227eb65f7183d6b45
+COMPONENT_ARCHIVE_HASH= sha256:503a7da4a4a27fd496037998b17078dc9fe004db32c657c96cce8356b8aa2eb6
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_DEFAULT_DIRS= no
@@ -91,6 +91,7 @@ install: $(INSTALL_64)
 	$(TOUCH) $(BUILD_DIR)
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
@@ -102,7 +103,7 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl
