@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 HUMAN_VERSION=		4.2.8p17
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
@@ -42,6 +42,7 @@ COMPONENT_ARCHIVE_URL=	https://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	service/network/ntp
 COMPONENT_CLASSIFICATION=	System/Services
 COMPONENT_LICENSE=	ntp license
+COMPONENT_LICENSE_FILE=	COPYRIGHT
 
 PATCH_LEVEL = 0
 
@@ -133,11 +134,11 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 	fi
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/security/openssl-31
-REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
