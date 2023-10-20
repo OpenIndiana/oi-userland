@@ -15,16 +15,16 @@
 # Copyright 2023 Friedrich Kink
 #
 
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	20.4.0
+COMPONENT_VERSION=	21.0.0
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:92b17a130607e6e793fcf943598d79305d91bc0b6a17d8eb84da3f2385dd1f02
+COMPONENT_ARCHIVE_HASH=	sha256:3b812b7ec64cffce8e067e88cfa442d6a0b1b08f6ac73202f21fbdf616e36de8
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk
@@ -142,12 +142,12 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/spandsp
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/lua-53
+REQUIRED_PACKAGES += runtime/lua-54
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
