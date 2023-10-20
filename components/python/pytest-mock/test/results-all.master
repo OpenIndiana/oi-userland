@@ -1,14 +1,12 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m coverage run --append --source=$(PYTHON_DIR)/site-packages/pytest_mock -m pytest tests
+py$(PYV): commands[0]> python -m coverage run --append --source=pytest_mock -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: tox.ini
 asyncio: mode=auto
-collecting ... collected 83 items
+collecting ... collected 82 items
 
 tests/test_pytest_mock.py::TestMockerStub::test_async_stub_type PASSED
 tests/test_pytest_mock.py::TestMockerStub::test_call PASSED
@@ -67,7 +65,6 @@ tests/test_pytest_mock.py::test_mocker_aliases[NonCallableMagicMock] PASSED
 tests/test_pytest_mock.py::test_mocker_aliases[NonCallableMock] PASSED
 tests/test_pytest_mock.py::test_mocker_aliases[PropertyMock] PASSED
 tests/test_pytest_mock.py::test_mocker_aliases[call] PASSED
-tests/test_pytest_mock.py::test_mocker_aliases[create_autospec] PASSED
 tests/test_pytest_mock.py::test_mocker_aliases[mock_open] PASSED
 tests/test_pytest_mock.py::test_mocker_aliases[seal] PASSED
 tests/test_pytest_mock.py::test_mocker_aliases[sentinel] PASSED
@@ -94,11 +91,75 @@ tests/test_pytest_mock.py::test_used_with_session_scope PASSED
 tests/test_pytest_mock.py::test_warn_patch_context_manager PASSED
 tests/test_pytest_mock.py::test_warn_patch_object_context_manager PASSED
 
+=============================== warnings summary ===============================
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+  $(PYTHON_DIR)/vendor-packages/pytest_reporter/__init__.py:1: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    from pkg_resources import get_distribution, DistributionNotFound
+
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_pytest_mock.py::test_missing_introspection
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_pytest_mock.py: 45 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 79 passed, 4 skipped ========
-$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/pytest_mock was never imported. (module-not-imported)
-  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
-$(PYTHON_DIR)/vendor-packages/coverage/control.py:860: CoverageWarning: No data was collected. (no-data-collected)
-  self._warn("No data was collected.", slug="no-data-collected")
+======== 78 passed, 4 skipped, 75 warnings ========
   py$(PYV): OK
   congratulations :)
