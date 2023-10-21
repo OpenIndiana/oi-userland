@@ -15,22 +15,24 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
+BUILD_BITS= 64
+OPENSSL_VERSION= 1.1
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openconnect
 COMPONENT_VERSION=	8.10
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
+COMPONENT_SUMMARY=	An SSL VPN client (intended to be) compatible with Cisco AnyConnect and Juniper Pulse
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_FMRI=		network/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.infradead.org/openconnect
 COMPONENT_ARCHIVE_HASH=	sha256:ae99d87585388098510c837e3db5f0a9ad13998464a91bd30275de58c0c995f3
 COMPONENT_ARCHIVE_URL=	https://github.com/openconnect/openconnect/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=		network/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING.LGPL
-COMPONENT_SUMMARY=	An SSL VPN client (intended to be) compatible with Cisco AnyConnect and Juniper Pulse
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -45,22 +47,12 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
-COMPONENT_TEST_TRANSFORMS= \
-    '-n ' \
-    '-e "/TOTAL/p" ' \
-    '-e "/PASS/p" '  \
-    '-e "/SKIP/p" '  \
-    '-e "/XFAIL/p" ' \
-    '-e "/FAIL/p" '  \
-    '-e "/XPASS/p" ' \
-    '-e "/ERROR/p" '
-
-OPENSSL_VERSION = 1.1
 # Use OpenSSL, it allows more options on OI/Hipster that openconnect uses
-CONFIGURE_OPTIONS +=	--with-system-cafile=/etc/certs/ca-certificates.crt
-CONFIGURE_OPTIONS +=	--without-gnutls
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS += --with-system-cafile=/etc/certs/ca-certificates.crt
+CONFIGURE_OPTIONS += --without-gnutls
+CONFIGURE_OPTIONS += --libexecdir=/usr/lib/$(MACH64)
 
+# Manually added dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += network/vpnc-scripts
 REQUIRED_PACKAGES += driver/network/header-tun
