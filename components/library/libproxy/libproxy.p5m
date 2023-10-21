@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,32 +23,26 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+file files/libproxy.3lib path=usr/share/man/man3lib/libproxy.3lib
 
 file path=usr/demo/jds/bin/proxy
 file path=usr/include/libproxy/proxy.h
-link path=usr/lib/$(MACH64)/libproxy.so target=libproxy.so.0.0.0
-link path=usr/lib/$(MACH64)/libproxy.so.0 target=libproxy.so.0.0.0
-file path=usr/lib/$(MACH64)/libproxy.so.0.0.0
-file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_direct.so
-file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_envvar.so
-file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_file.so
-file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_wpad.so
-file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/ignore_domain.so
-file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/ignore_ip.so
-file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/wpad_dns.so
-file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/wpad_dnsdevolution.so
+link path=usr/lib/$(MACH64)/libproxy.so target=libproxy.so.1
+link path=usr/lib/$(MACH64)/libproxy.so.1 target=libproxy.so.1.0.0
+file path=usr/lib/$(MACH64)/libproxy.so.1.0.0
+#file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_gnome3.so
+#file path=usr/lib/$(MACH64)/libproxy/$(HUMAN_VERSION)/modules/config_pacrunner.so
 file path=usr/lib/$(MACH64)/pkgconfig/libproxy-1.0.pc
-link path=usr/lib/libproxy.so target=libproxy.so.0.0.0
-link path=usr/lib/libproxy.so.0 target=libproxy.so.0.0.0
-file path=usr/lib/libproxy.so.0.0.0
-file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_direct.so
-file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_envvar.so
-file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_file.so
-file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_wpad.so
-file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/ignore_domain.so
-file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/ignore_ip.so
-file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/wpad_dns.so
-file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/wpad_dnsdevolution.so
+file path=usr/lib/$(MACH64)/pxgsettings mode=0555
+link path=usr/lib/libproxy.so target=libproxy.so.1
+link path=usr/lib/libproxy.so.1 target=libproxy.so.1.0.0
+file path=usr/lib/libproxy.so.1.0.0
+#file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_gnome3.so
+#file path=usr/lib/libproxy/$(HUMAN_VERSION)/modules/config_pacrunner.so
 file path=usr/lib/pkgconfig/libproxy-1.0.pc
+file path=usr/lib/pxgsettings mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/libproxy.py
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Net/Libproxy.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Net/Libproxy/Libproxy.so
+file path=usr/share/cmake/Modules/Findlibproxy.cmake
+file path=usr/share/vala/vapi/libproxy-1.0.vapi
