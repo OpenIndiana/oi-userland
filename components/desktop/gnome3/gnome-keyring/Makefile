@@ -20,14 +20,14 @@ USE_COMMON_TEST_MASTER= no
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-keyring
-COMPONENT_MJR_VERSION=	3.36
-COMPONENT_MNR_VERSION=	0
+COMPONENT_MJR_VERSION=	42
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY=	GNOME Keyring is a collection of components that store secrets, passwords, keys, certificates and make them available to applications
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a264b57a8d1a71fdf0d66e8cd6033d013fb828be279c35766545eb9bb3734f87
+COMPONENT_ARCHIVE_HASH= sha256:c7f4d040cc76a6b7fe67e08ef9106911c3c80d40fc88cbfc8e2684a4c946e3e6
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Sessions
 COMPONENT_FMRI=		gnome/gnome-keyring
@@ -43,8 +43,6 @@ PAM_MODULE_DIR.32 = $(USRLIBDIR)/security
 PAM_MODULE_DIR.64 = $(PAM_MODULE_DIR.32)/$(MACH64)
 PAM_MODULE_DIR = $(PAM_MODULE_DIR.$(BITS))
 
-CONFIGURE_ENV =	GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
-
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-selinux
@@ -58,8 +56,16 @@ CONFIGURE_OPTIONS += --with-pic
 # Linux-specific capabilities support.
 CONFIGURE_OPTIONS += --without-libcap-ng
 
+# Required due to patches.
+COMPONENT_PREP_ACTION = ( cd $(@D); autoreconf -fiv )
+
+CONFIGURE_ENV += PATH=$(PATH.gnu)
+
+COMPONENT_TEST_ARGS = -k -i
+
 COMPONENT_TEST_TRANSFORMS = \
-	'-e "s|t create temporary file.*|t create temporary file|" ' \
+	'-e "s/scratch-test.*/scratch-test-import\*pkcs8/" ' \
+	'-e "s/glib.*\//GLIB2\//" ' \
 	'-n ' \
 	'-e "/TOTAL:/p" ' \
 	'-e "/SKIP:/p" ' \

@@ -1,0 +1,15 @@
+fixes crash at daemon exit as g_mutex_clear on uninitialized gmutex
+isn't safe on non-linux platforms here
+reported upstream as
+https://gitlab.gnome.org/GNOME/gnome-keyring/-/issues/65
+diff -r a4708fe9bdfb daemon/ssh-agent/gkd-ssh-agent-preload.c
+--- a/daemon/ssh-agent/gkd-ssh-agent-preload.c	Mon Aug 24 18:23:07 2020 +0200
++++ b/daemon/ssh-agent/gkd-ssh-agent-preload.c	Mon Aug 24 18:25:18 2020 +0200
+@@ -82,6 +82,7 @@
+ {
+ 	self->keys_by_public_filename = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+ 	self->keys_by_public_key = g_hash_table_new_full (g_bytes_hash, g_bytes_equal, NULL, gkd_ssh_agent_key_info_free);
++	g_mutex_init (&self->lock);
+ }
+ 
+ static void
