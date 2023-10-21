@@ -23,11 +23,12 @@
 #
 
 BUILD_BITS= 64_and_32
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			neon
 COMPONENT_VERSION=		0.32.5
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Neon is a HTTP and WebDAV client library with a C interface
 COMPONENT_PROJECT_URL=	https://notroj.github.io/$(COMPONENT_NAME)
 COMPONENT_SRC= 			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -75,7 +76,7 @@ COMPONENT_TEST_TRANSFORMS= \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libproxy
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
