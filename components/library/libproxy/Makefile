@@ -10,42 +10,66 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright (c) 2015, 2023, Oracle and/or its affiliates.
+# Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS=64_and_32
+BUILD_BITS= 64_and_32
+BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= false
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libproxy
-
-COMPONENT_VERSION=      0.3.1
-COMPONENT_REVISION=     	4
+COMPONENT_VERSION=      0.4.18
 COMPONENT_SUMMARY=      Libproxy is a library that provides automatic proxy configuration management
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:dbb2dd519d58c0a41c5c59204863c327dfa61f3ac564fc448ab2703a35610a2e
-COMPONENT_ARCHIVE_URL=  \
-	https://github.com/libproxy/libproxy/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  https://github.com/libproxy/libproxy
+COMPONENT_PROJECT_URL=  https://libproxy.github.io/libproxy/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:69b5856e9ea42c38ac77e6b8c92ffc86a71d341fef74e77bef85f9cc6c47a4b1
+COMPONENT_ARCHIVE_URL=	https://github.com/libproxy/libproxy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/libproxy
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
-COMPONENT_LICENSE_FILE=		COPYING
-
-DROP_STATIC_LIBRARIES = yes
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION= ( cd $(@D) && \
-		PATH="$(PATH)" libtoolize --force && \
-                aclocal -I . &&\
-                automake -a -c -f &&\
-                autoconf )
+PATH = $(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CFLAGS+= -D__EXTENSIONS__
+CFLAGS += $(XPG6_MODE)
+CXXFLAGS += -std=c++11
+
+# Our Perl is 64-bit, so don't deliver Perl bindings for 32-bit build.
+CMAKE_OPTIONS.32 = -DWITH_PERL=OFF
+CMAKE_OPTIONS.64 = -DWITH_PERL=ON
+
+# Our Python is 64-bit only, so don't deliver Python bindings for 32-bit build.
+CMAKE_OPTIONS.32 = -DWITH_PYTHON3=OFF
+CMAKE_OPTIONS.64 = -DWITH_PYTHON3=ON
+CMAKE_OPTIONS.64 += -DPYTHON3_EXECUTABLE="$(PYTHON)"
+CMAKE_OPTIONS.64 += -DPYTHON3_SITEPKG_DIR=$(PYTHON_LIB)
+
+CMAKE_OPTIONS += -DINCLUDE_INSTALL_DIR="$(USRINCDIR)/$(COMPONENT_NAME)"
+CMAKE_OPTIONS += -DPERL_VENDORINSTALL=ON
+CMAKE_OPTIONS += -DPERL_EXECUTABLE=$(PERL)
+CMAKE_OPTIONS += -DWITH_PYTHON2=OFF
+CMAKE_OPTIONS += -DWITH_KDE=OFF
+# Required for other components.
+CMAKE_OPTIONS += -DWITH_GNOME3=ON
+CMAKE_OPTIONS += -DWITH_VALA=ON
+# Always build pacrunner as a module.
+CMAKE_OPTIONS += -DBIPR=ON
+
+LDFLAGS += -lsocket -lxnet -lnsl
+
+# Assumes "make" is GNU make, turns into fork bomb if it finds illumos make
+COMPONENT_BUILD_ENV += PATH=$(PATH.gnu)
+
+COMPONENT_POST_INSTALL_ACTION=  \
+    [ $(BITS) -eq 64 ] && $(PYTHON) -m py_compile $(PROTO_DIR)/$(PYTHON_LIB)/libproxy.py || truea ;
 
 # Drop 32-bit binaries
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
@@ -53,32 +77,12 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 $(INSTALL_64):	COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTOUSRDIR)/demo/jds/bin/ ;
 $(INSTALL_64):	COMPONENT_POST_INSTALL_ACTION += $(MV) $(PROTOUSRBINDIR)/proxy $(PROTOUSRDIR)/demo/jds/bin/ ;
 
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS+= --includedir=$(USRINCDIR)/libproxy
-CONFIGURE_OPTIONS+= --libexecdir=$(USRLIBDIR)
-CONFIGURE_OPTIONS+= --localstatedir=$(VARDIR)/lib
-CONFIGURE_OPTIONS+= --with-gnome
-CONFIGURE_OPTIONS+= --without-dotnet
-CONFIGURE_OPTIONS+= --with-direct
-CONFIGURE_OPTIONS+= --with-envvar
-CONFIGURE_OPTIONS+= --with-file
-CONFIGURE_OPTIONS+= --with-wpad
-CONFIGURE_OPTIONS+= --without-networkmanager
-CONFIGURE_OPTIONS+= --without-webkit
-CONFIGURE_OPTIONS+= --without-mozjs
-
-CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
-CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
-CONFIGURE_ENV    += PERL=$(PERL)
-CONFIGURE_ENV    += PYTHON="$(PYTHON)"
-CONFIGURE_ENV    += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
-CONFIGURE_ENV    += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
-
-COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
 # Build dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += system/library/libdbus
