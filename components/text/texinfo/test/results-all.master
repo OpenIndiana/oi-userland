@@ -47,6 +47,7 @@ PASS: t/split-footnotes.sh
 PASS: t/window-split-dir.sh
 PASS: t/last-node-not-top-level.sh
 PASS: t/adjust-anchors.sh
+PASS: t/recode-C-locale.sh
 PASS: t/xref-to-anchor.sh
 PASS: t/search-after-tag.sh
 PASS: t/split-file-menu.sh
@@ -84,8 +85,8 @@ PASS: t/next-quoted.sh
 PASS: t/echo-area-no-completions.sh
 PASS: t/multiple-completions.sh
 PASS: t/help.sh
-# TOTAL: 86
-# PASS:  86
+# TOTAL: 87
+# PASS:  87
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -148,8 +149,10 @@ PASS: ii-0054-test
 PASS: ii-0055-test
 PASS: ii-0056-test
 PASS: ii-0057-test
-# TOTAL: 57
-# PASS:  57
+PASS: ii-0058-test
+PASS: ii-0059-test
+# TOTAL: 59
+# PASS:  59
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -162,44 +165,31 @@ PASS: ii-0057-test
 # FAIL:  0
 # XPASS: 0
 # ERROR: 0
-PASS: test_scripts/formatting_texi_ignore_and_comments.sh
-PASS: test_scripts/formatting_ignore_and_comments_output.sh
-PASS: test_scripts/formatting_test_redefine_need.sh
 PASS: test_scripts/formatting_split_nocopying_split_dev_null.sh
 PASS: test_scripts/formatting_simplest_test_css.sh
+PASS: test_scripts/formatting_defcondx_Dbar.sh
+PASS: test_scripts/formatting_defcondx_Ubar.sh
 PASS: test_scripts/formatting_documentlanguage_cmdline.sh
 PASS: test_scripts/formatting_cpp_lines.sh
-PASS: test_scripts/formatting_non_ascii_command_line.sh
-PASS: test_scripts/formatting_non_ascii_test_epub.sh
-PASS: test_scripts/formatting_non_ascii_test_rawtext.sh
-PASS: test_scripts/formatting_non_ascii_no_setfilename_test_rawtext.sh
-PASS: test_scripts/formatting_non_ascii_test_latex.sh
-PASS: test_scripts/formatting_manual_include_accented_file_name_latin1.sh
-PASS: test_scripts/formatting_manual_include_accented_file_name_latin1_explicit_encoding.sh
-PASS: test_scripts/formatting_manual_include_accented_file_name_latin1_use_locale_encoding.sh
-PASS: test_scripts/sectioning_sectioning_directions.sh
-PASS: test_scripts/sectioning_sectioning_directions_split_chapter.sh
-PASS: test_scripts/indices_nodes_before_top_and_sections_html_chapter.sh
-PASS: test_scripts/indices_nodes_before_top_and_sections_html_chapter_nodes.sh
-PASS: test_scripts/indices_index_special_region.sh
-PASS: test_scripts/indices_index_special_region_no_region.sh
-PASS: test_scripts/indices_index_special_region_no_insertcopying.sh
-PASS: test_scripts/indices_index_special_region_html.sh
-PASS: test_scripts/indices_index_special_region_no_region_html.sh
-PASS: test_scripts/indices_index_special_region_no_insertcopying_html.sh
-PASS: test_scripts/indices_index_nodes.sh
-PASS: test_scripts/indices_index_nodes_nodes.sh
-PASS: test_scripts/indices_printindex_between_node_section.sh
-PASS: test_scripts/indices_printindex_between_part_chapter.sh
-PASS: test_scripts/indices_index_and_node_same_name.sh
-PASS: test_scripts/indices_index_entry_in_footnote.sh
-PASS: test_scripts/indices_index_one_node.sh
-PASS: test_scripts/indices_index_no_node_no_top.sh
-PASS: test_scripts/indices_index_entry_in_footnote_info.sh
-PASS: test_scripts/indices_index_entry_in_footnote_separated_info.sh
-PASS: test_scripts/indices_index_table.sh
-PASS: test_scripts/indices_indices_in_begin_tables_lists.sh
-PASS: test_scripts/indices_indices_in_begin_tables_lists_latex.sh
+PASS: test_scripts/formatting_no_content.sh
+PASS: test_scripts/formatting_no_content_separate.sh
+PASS: test_scripts/formatting_no_content_do_contents_separate.sh
+PASS: test_scripts/formatting_no_content_do_contents.sh
+PASS: test_scripts/formatting_no_content_inline.sh
+PASS: test_scripts/formatting_no_content_do_contents_inline.sh
+PASS: test_scripts/formatting_indices_in_begin_tables_lists.sh
+PASS: test_scripts/formatting_indices_in_begin_tables_lists_latex.sh
+PASS: test_scripts/formatting_index_entries_relate_to_item.sh
+PASS: test_scripts/formatting_info_extension_warning.sh
+PASS: test_scripts/encoded_non_ascii_command_line.sh
+PASS: test_scripts/encoded_non_ascii_test_epub.sh
+PASS: test_scripts/encoded_non_ascii_test_rawtext.sh
+PASS: test_scripts/encoded_non_ascii_no_setfilename_test_rawtext.sh
+PASS: test_scripts/encoded_non_ascii_test_info.sh
+PASS: test_scripts/encoded_non_ascii_test_latex.sh
+PASS: test_scripts/encoded_manual_include_accented_file_name_latin1.sh
+PASS: test_scripts/encoded_manual_include_accented_file_name_latin1_explicit_encoding.sh
+PASS: test_scripts/encoded_manual_include_accented_file_name_latin1_use_locale_encoding.sh
 PASS: test_scripts/nested_formats_texi_nested_formats.sh
 PASS: test_scripts/nested_formats_nested_group.sh
 PASS: test_scripts/nested_formats_nested_itemize.sh
@@ -212,69 +202,45 @@ PASS: test_scripts/nested_formats_nested_enumerate.sh
 PASS: test_scripts/nested_formats_nested_deffn.sh
 PASS: test_scripts/nested_formats_nested_example.sh
 PASS: test_scripts/nested_formats_nested_quotation.sh
-PASS: test_scripts/contents_contents_at_begin.sh
-PASS: test_scripts/contents_contents_at_end.sh
-PASS: test_scripts/contents_contents_in_middle_chapter.sh
-PASS: test_scripts/contents_contents_in_middle_section.sh
-PASS: test_scripts/contents_double_contents.sh
-PASS: test_scripts/contents_double_contents_chapter.sh
-PASS: test_scripts/contents_double_contents_section.sh
-PASS: test_scripts/contents_double_contents_nodes.sh
-PASS: test_scripts/contents_no_content.sh
-PASS: test_scripts/contents_no_content_do_contents.sh
-PASS: test_scripts/contents_no_content_setcatpage.sh
-PASS: test_scripts/contents_no_content_setcatpage_do_contents.sh
-PASS: test_scripts/contents_contents_at_begin_inline.sh
-PASS: test_scripts/contents_contents_at_end_inline.sh
-PASS: test_scripts/contents_contents_in_middle_chapter_inline.sh
-PASS: test_scripts/contents_contents_in_middle_section_inline.sh
-PASS: test_scripts/contents_double_contents_inline.sh
-PASS: test_scripts/contents_double_contents_inline_chapter.sh
-PASS: test_scripts/contents_double_contents_inline_section.sh
-PASS: test_scripts/contents_double_contents_inline_nodes.sh
-PASS: test_scripts/contents_double_contents_after_title.sh
-PASS: test_scripts/contents_double_contents_after_title_no_texi2html.sh
-PASS: test_scripts/contents_no_content_inline.sh
-PASS: test_scripts/contents_no_content_do_contents_inline.sh
-PASS: test_scripts/contents_no_content_setcatpage_inline.sh
-PASS: test_scripts/contents_no_content_setcatpage_do_contents_inline.sh
-PASS: test_scripts/contents_double_contents_book.sh
-PASS: test_scripts/contents_double_contents_after_title_book.sh
-PASS: test_scripts/contents_double_contents_after_title_book_chapter.sh
-PASS: test_scripts/contents_contents_and_parts.sh
-PASS: test_scripts/contents_contents_at_begin_info.sh
-PASS: test_scripts/contents_contents_at_end_info.sh
-PASS: test_scripts/contents_contents_in_middle_chapter_info.sh
-PASS: test_scripts/contents_contents_in_middle_section_info.sh
-PASS: test_scripts/contents_double_contents_info.sh
-PASS: test_scripts/layout_no_monolithic_only_toc_out.sh
-PASS: test_scripts/layout_navigation_test_misc_file_collision.sh
-PASS: test_scripts/layout_formatting_macro_expand.sh
-PASS: test_scripts/layout_formatting_docbook.sh
-PASS: test_scripts/layout_formatting_xml.sh
-PASS: test_scripts/layout_formatting_html.sh
-PASS: test_scripts/layout_formatting_html_nodes.sh
-PASS: test_scripts/layout_formatting_html_no_texi2html.sh
-PASS: test_scripts/layout_formatting_info.sh
-PASS: test_scripts/layout_formatting_plaintext.sh
-PASS: test_scripts/layout_formatting_latex.sh
-PASS: test_scripts/layout_formatting_textcontent.sh
-PASS: test_scripts/layout_formatting_rawtext.sh
-PASS: test_scripts/layout_formatting_nodes.sh
+PASS: test_scripts/customization_texi_ignore_and_comments.sh
+PASS: test_scripts/customization_ignore_and_comments_output.sh
+PASS: test_scripts/customization_test_redefine_need.sh
+PASS: test_scripts/customization_sectioning_directions.sh
+PASS: test_scripts/customization_sectioning_directions_split_chapter.sh
+PASS: test_scripts/customization_sectioning_without_anchors.sh
+PASS: test_scripts/customization_double_contents_book.sh
+PASS: test_scripts/customization_double_contents_after_title_book.sh
+PASS: test_scripts/customization_double_contents_after_title_book_chapter.sh
+PASS: test_scripts/coverage_formatting_macro_expand.sh
+PASS: test_scripts/coverage_formatting_info.sh
+PASS: test_scripts/coverage_formatting_plaintext.sh
+PASS: test_scripts/coverage_formatting_docbook.sh
+PASS: test_scripts/coverage_formatting_xml.sh
+PASS: test_scripts/coverage_formatting_html_no_split.sh
+PASS: test_scripts/coverage_formatting_latex.sh
+PASS: test_scripts/coverage_formatting_epub.sh
+PASS: test_scripts/coverage_formatting_textcontent.sh
+PASS: test_scripts/coverage_formatting_rawtext.sh
+PASS: test_scripts/coverage_formatting_html32.sh
+PASS: test_scripts/coverage_formatting_xhtml.sh
+PASS: test_scripts/coverage_formatting_chm.sh
+PASS: test_scripts/coverage_formatting_regions.sh
+PASS: test_scripts/layout_formatting_texi2html.sh
+PASS: test_scripts/layout_formatting_texi2html_nodes.sh
+PASS: test_scripts/layout_formatting_info_ascii_punctuation.sh
+PASS: test_scripts/layout_formatting_info_disable_encoding.sh
+PASS: test_scripts/layout_formatting_plaintext_ascii_punctuation.sh
+PASS: test_scripts/layout_formatting_sort_element_counts.sh
 PASS: test_scripts/layout_formatting_mathjax.sh
 PASS: test_scripts/layout_formatting_weird_quotes.sh
-PASS: test_scripts/layout_formatting_html32.sh
-PASS: test_scripts/layout_formatting_regions.sh
 PASS: test_scripts/layout_formatting_numerical_entities.sh
 PASS: test_scripts/layout_formatting_enable_encoding.sh
-PASS: test_scripts/layout_formatting_xhtml.sh
 PASS: test_scripts/layout_formatting_exotic.sh
 PASS: test_scripts/layout_formatting_inline_css.sh
+PASS: test_scripts/layout_formatting_fr.sh
+PASS: test_scripts/layout_formatting_fr_info.sh
 PASS: test_scripts/layout_formatting_fr_icons.sh
-PASS: test_scripts/layout_formatting_chm.sh
-PASS: test_scripts/layout_formatting_epub.sh
 PASS: test_scripts/layout_formatting_epub_nodes.sh
-PASS: test_scripts/layout_formatting.sh
 SKIP: test_scripts/tex_html_block_EOL_tex.sh
 SKIP: test_scripts/tex_html_simplest_httex.sh
 SKIP: test_scripts/tex_html_tex_notex.sh
@@ -305,10 +271,13 @@ SKIP: test_scripts/tex_html_tex_encoded_latin1_l2h.sh
 SKIP: test_scripts/tex_html_tex_encoded_latin1_httex.sh
 SKIP: test_scripts/tex_html_formatting_singular.sh
 SKIP: test_scripts/other_highlight_syntax_example.sh
+SKIP: test_scripts/other_highlight_syntax_example_pygments.sh
+SKIP: test_scripts/other_highlight_syntax_example_highlight.sh
+SKIP: test_scripts/other_highlight_syntax_example_default_language.sh
 SKIP: test_scripts/other_highlight_syntax_example_latin9.sh
-# TOTAL: 144
-# PASS:  113
-# SKIP:  31
+# TOTAL: 110
+# PASS:  76
+# SKIP:  34
 # XFAIL: 0
 # FAIL:  0
 # XPASS: 0
