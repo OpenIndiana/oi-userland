@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-skip-markers
-HUMAN_VERSION =			1.4.1
+HUMAN_VERSION =			1.5.0
 COMPONENT_SUMMARY =		pytest-skip-markers - Pytest Salt Plugin
 COMPONENT_PROJECT_URL =		https://github.com/saltstack/pytest-skip-markers
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/75/58/1c5de2ff3599457df03f41e58533ea89937a2d905c45df2829ba033e492c/pytest-skip-markers-1.4.1.tar.gz
+	https://files.pythonhosted.org/packages/91/b2/ebe0efd3b70877e8e6049e7765f4e4640c6449704ca299443be72f891aff/pytest-skip-markers-1.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:99400e026b725b43faea83c32c7f9d024a0b69a102e121b33dce70920167e973
+	sha256:d71d74d689875ee638331c3b5b429aa6d48c7a4b1c2cba0f20a963f8f3736583
 COMPONENT_LICENSE =		Apache-2.0
 
 TEST_STYLE = pytest
