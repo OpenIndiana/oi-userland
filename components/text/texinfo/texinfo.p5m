@@ -1,22 +1,12 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
@@ -36,6 +26,8 @@ set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+<transform file path=.+/share/info/dir -> drop>
 
 # For svc-texinfo-update
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/python3.9
@@ -61,8 +53,7 @@ file path=usr/bin/texindex
 file path=usr/lib/$(MACH64)/texinfo/MiscXS.so
 file path=usr/lib/$(MACH64)/texinfo/Parsetexi.so
 file path=usr/lib/$(MACH64)/texinfo/XSParagraph.so
-dir  path=usr/share/info
-link path=usr/share/info/dir target=../../../var/info/usr_share_info_dir
+file path=usr/share/info/dir
 file path=usr/share/info/info-stnd.info
 file path=usr/share/info/texi2any_api.info
 file path=usr/share/info/texi2any_internals.info
@@ -97,10 +88,12 @@ file path=usr/share/locale/id/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/it/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/it/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/ja/LC_MESSAGES/texinfo.mo
+file path=usr/share/locale/ka/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/nb/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/nl/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/nl/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/no.us-ascii/LC_MESSAGES/texinfo_document.mo
+file path=usr/share/locale/pl.iso-8859-2/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/pl/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/pl/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/pt.us-ascii/LC_MESSAGES/texinfo_document.mo
@@ -175,13 +168,13 @@ file path=usr/share/texinfo/Texinfo/Translations.pm
 file path=usr/share/texinfo/Texinfo/XS/parsetexi/Parsetexi.pm
 file path=usr/share/texinfo/Texinfo/XSLoader.pm
 file path=usr/share/texinfo/ext/epub3.pm
+file path=usr/share/texinfo/ext/highlight_syntax.pm
 file path=usr/share/texinfo/ext/latex2html.pm
 file path=usr/share/texinfo/ext/tex4ht.pm
 file path=usr/share/texinfo/htmlxref.cnf
 file path=usr/share/texinfo/init/book.pm
 file path=usr/share/texinfo/init/chm.pm
 file path=usr/share/texinfo/init/documentation_examples.pm
-file path=usr/share/texinfo/init/highlight_syntax.pm
 file path=usr/share/texinfo/init/html32.pm
 file path=usr/share/texinfo/js/info.css
 file path=usr/share/texinfo/js/info.js
@@ -195,6 +188,7 @@ file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x04.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x05.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x06.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x07.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x08.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x09.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x0a.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x0b.pm
@@ -211,6 +205,11 @@ file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x15.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x16.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x17.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x18.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x19.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x1a.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x1b.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x1c.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x1d.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x1e.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x1f.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x20.pm
@@ -222,12 +221,42 @@ file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x25.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x26.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x27.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x28.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x29.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x2a.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x2b.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x2c.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x2d.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x2e.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x2f.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x30.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x31.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x32.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x33.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x34.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x35.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x36.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x37.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x38.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x39.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x3a.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x3b.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x3c.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x3d.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x3e.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x3f.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x40.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x41.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x42.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x43.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x44.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x45.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x46.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x47.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x48.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x49.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x4a.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x4b.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x4c.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x4d.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x4e.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x4f.pm
@@ -316,6 +345,13 @@ file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xa1.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xa2.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xa3.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xa4.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xa5.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xa6.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xa7.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xa8.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xa9.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xaa.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xab.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xac.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xad.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xae.pm
@@ -360,6 +396,39 @@ file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xd4.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xd5.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xd6.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xd7.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xd8.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xd9.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xda.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xdb.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xdc.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xdd.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xde.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xdf.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe0.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe1.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe2.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe3.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe4.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe5.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe6.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe7.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe8.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xe9.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xea.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xeb.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xec.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xed.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xee.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xef.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf0.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf1.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf2.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf3.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf4.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf5.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf6.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf7.pm
+file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf8.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xf9.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xfa.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xfb.pm
