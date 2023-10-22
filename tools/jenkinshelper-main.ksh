@@ -55,7 +55,7 @@ stage_setup() {
 # we try to be smart and assume that all updates will always touch
 # the components Makefile also (to update COMPONENT_REVISION, etc)
 stage_build_changed() {
-	echo "Last successful commit $2"
+	echo "Last successful commit $1"
 	for f in $(git diff --name-only HEAD^1 | grep Makefile; exit 0); do
 		echo "jenkinshelper: building for ${f%/*}..."
 		curpwd=$(pwd)
