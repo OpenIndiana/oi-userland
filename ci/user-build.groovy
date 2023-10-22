@@ -1,4 +1,7 @@
+import jenkins.model.Jenkins
+
 @Library("BuildLib") _
+
 pipeline {
     agent {
         node {
@@ -30,7 +33,10 @@ pipeline {
         stage('Gmake Publish') {
             steps {
                 withPublisher('openindiana.org', 'incremental') {
-                    sh './tools/jenkinshelper-main.ksh -s build_changed'
+                    script {
+                        def last_commit = Jenkins.instance.getItem('OpenIndiana/Userland').lastSuccessfulBuild.changeset[0].revision
+                    }
+                    sh './tools/jenkinshelper-main.ksh -s build_changed $last_commit'
                 }
             }
         }
@@ -42,6 +48,7 @@ pipeline {
         stage('update system') {
             steps {
                 update()
+                sh /opt/local/bin/cleanup_bootenvs.sh'
             }
         }
     }
