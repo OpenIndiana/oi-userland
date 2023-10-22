@@ -4,12 +4,11 @@ py$(PYV): commands[0]> python -m pytest tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 114 items
+collecting ... collected 145 items
 
 tests/test_assembling.py::test_add_command_with_group_kwargs_but_no_group_name PASSED
 tests/test_assembling.py::test_add_subcommands PASSED
 tests/test_assembling.py::test_add_subparsers_when_default_command_exists PASSED
-tests/test_assembling.py::test_annotation PASSED
 tests/test_assembling.py::test_arghparser_autocomplete_method PASSED
 tests/test_assembling.py::test_custom_argument_completer PASSED
 tests/test_assembling.py::test_custom_argument_completer_no_backend PASSED
@@ -17,13 +16,25 @@ tests/test_assembling.py::test_guess_action_from_default PASSED
 tests/test_assembling.py::test_guess_type_from_choices PASSED
 tests/test_assembling.py::test_guess_type_from_default PASSED
 tests/test_assembling.py::test_is_positional PASSED
-tests/test_assembling.py::test_kwonlyargs PASSED
+tests/test_assembling.py::test_kwonlyargs__policy_legacy PASSED
+tests/test_assembling.py::test_kwonlyargs__policy_modern PASSED
+tests/test_assembling.py::test_positional_with_default_bool PASSED
+tests/test_assembling.py::test_positional_with_default_int PASSED
+tests/test_assembling.py::test_set_add_commands_twice PASSED
 tests/test_assembling.py::test_set_default_command PASSED
-tests/test_assembling.py::test_set_default_command_deprecation_warnings PASSED
+tests/test_assembling.py::test_set_default_command__declared_vs_signature__names_mismatch PASSED
+tests/test_assembling.py::test_set_default_command__declared_vs_signature__same_name_pos_vs_opt PASSED
+tests/test_assembling.py::test_set_default_command__no_func_args PASSED
+tests/test_assembling.py::test_set_default_command__parser_error PASSED
+tests/test_assembling.py::test_set_default_command__varargs_vs_optional PASSED
+tests/test_assembling.py::test_set_default_command__varargs_vs_positional PASSED
+tests/test_assembling.py::test_set_default_command__varkwargs_sharing_prefix PASSED
+tests/test_assembling.py::test_set_default_command__varkwargs_vs_optional PASSED
+tests/test_assembling.py::test_set_default_command__varkwargs_vs_positional PASSED
 tests/test_assembling.py::test_set_default_command_docstring PASSED
-tests/test_assembling.py::test_set_default_command_infer_cli_arg_names_from_func_signature PASSED
+tests/test_assembling.py::test_set_default_command_infer_cli_arg_names_from_func_signature__policy_legacy PASSED
+tests/test_assembling.py::test_set_default_command_infer_cli_arg_names_from_func_signature__policy_modern PASSED
 tests/test_assembling.py::test_set_default_command_kwargs PASSED
-tests/test_assembling.py::test_set_default_command_mixed_arg_types PASSED
 tests/test_assembling.py::test_set_default_command_varargs PASSED
 tests/test_assembling.py::test_set_default_command_when_subparsers_exist PASSED
 tests/test_completion.py::test_disabled_with_bash PASSED
@@ -32,12 +43,18 @@ tests/test_completion.py::test_enabled PASSED
 tests/test_decorators.py::test_aliases PASSED
 tests/test_decorators.py::test_arg PASSED
 tests/test_decorators.py::test_expects_obj PASSED
+tests/test_decorators.py::test_naive_guess_func_arg_name PASSED
 tests/test_decorators.py::test_named PASSED
 tests/test_decorators.py::test_wrap_errors PASSED
 tests/test_decorators.py::test_wrap_errors_processor PASSED
 tests/test_dispatching.py::test_dispatch_command PASSED
+tests/test_dispatching.py::test_dispatch_command_two_stage PASSED
 tests/test_dispatching.py::test_dispatch_commands PASSED
 tests/test_dispatching.py::test_entrypoint PASSED
+tests/test_dto.py::test_make_from_kwargs_full PASSED
+tests/test_dto.py::test_make_from_kwargs_minimal PASSED
+tests/test_dto.py::test_update_empty_dto PASSED
+tests/test_dto.py::test_update_full_dto PASSED
 tests/test_integration.py::TestErrorWrapping::test_error_raised PASSED
 tests/test_integration.py::TestErrorWrapping::test_error_wrapped PASSED
 tests/test_integration.py::TestErrorWrapping::test_processor PASSED
@@ -47,13 +64,11 @@ tests/test_integration.py::test_action_count__only_arg_decorator PASSED
 tests/test_integration.py::test_add_commands_func_overrides1 PASSED
 tests/test_integration.py::test_add_commands_func_overrides2 PASSED
 tests/test_integration.py::test_add_commands_group_overrides1 PASSED
-tests/test_integration.py::test_add_commands_group_overrides1__deprecated PASSED
 tests/test_integration.py::test_add_commands_group_overrides2 PASSED
-tests/test_integration.py::test_add_commands_group_overrides2__deprecated PASSED
 tests/test_integration.py::test_add_commands_group_overrides3 PASSED
-tests/test_integration.py::test_add_commands_group_overrides3__deprecated PASSED
 tests/test_integration.py::test_add_commands_no_overrides1 PASSED
 tests/test_integration.py::test_add_commands_no_overrides2 PASSED
+tests/test_integration.py::test_add_commands_unknown_name_mapping_policy PASSED
 tests/test_integration.py::test_aliases PASSED
 tests/test_integration.py::test_all_specs_in_one PASSED
 tests/test_integration.py::test_arg_merged PASSED
@@ -64,10 +79,8 @@ tests/test_integration.py::test_arg_mismatch_positional_vs_flag PASSED
 tests/test_integration.py::test_arg_order PASSED
 tests/test_integration.py::test_argv PASSED
 tests/test_integration.py::test_bare_group_name PASSED
-tests/test_integration.py::test_bare_group_name__deprecated_arg PASSED
 tests/test_integration.py::test_bool_action PASSED
 tests/test_integration.py::test_class_members PASSED
-tests/test_integration.py::test_class_method_as_command XFAIL
 tests/test_integration.py::test_command_error PASSED
 tests/test_integration.py::test_command_not_chosen PASSED
 tests/test_integration.py::test_commands_not_defined PASSED
@@ -80,11 +93,11 @@ tests/test_integration.py::test_explicit_cmd_name PASSED
 tests/test_integration.py::test_function_under_group_name PASSED
 tests/test_integration.py::test_get_function_from_namespace_obj[ArghNamespace] PASSED
 tests/test_integration.py::test_get_function_from_namespace_obj[Namespace] PASSED
-tests/test_integration.py::test_help_alias PASSED
+tests/test_integration.py::test_help PASSED
 tests/test_integration.py::test_help_formatting_is_preserved PASSED
 tests/test_integration.py::test_invalid_choice PASSED
-tests/test_integration.py::test_kwonlyargs PASSED
-tests/test_integration.py::test_namespaced_function__deprecated_arg PASSED
+tests/test_integration.py::test_kwonlyargs__policy_legacy PASSED
+tests/test_integration.py::test_kwonlyargs__policy_modern PASSED
 tests/test_integration.py::test_normalized_keys PASSED
 tests/test_integration.py::test_output_file PASSED
 tests/test_integration.py::test_prog PASSED
@@ -93,8 +106,6 @@ tests/test_integration.py::test_set_default_command_integration PASSED
 tests/test_integration.py::test_set_default_command_integration_merging PASSED
 tests/test_integration.py::test_simple_function_defaults PASSED
 tests/test_integration.py::test_simple_function_kwargs PASSED
-tests/test_integration.py::test_simple_function_multiple XFAIL
-tests/test_integration.py::test_simple_function_nested XFAIL
 tests/test_integration.py::test_simple_function_no_args PASSED
 tests/test_integration.py::test_simple_function_positional PASSED
 tests/test_integration.py::test_simple_function_varargs PASSED
@@ -105,6 +116,23 @@ tests/test_interaction.py::test_keyboard_interrupt PASSED
 tests/test_interaction.py::test_prompt PASSED
 tests/test_interaction.py::test_simple PASSED
 tests/test_interaction.py::test_skip PASSED
+tests/test_mapping_policies.py::test_all_types_mixed_no_named_varargs[NameMappingPolicy.BY_NAME_IF_HAS_DEFAULT-usage: test [-h] [-b BETA] [-d DELTA] alpha gamma\n] PASSED
+tests/test_mapping_policies.py::test_all_types_mixed_no_named_varargs[NameMappingPolicy.BY_NAME_IF_KWONLY-usage: test [-h] -g GAMMA [-d DELTA] alpha [beta]\n] PASSED
+tests/test_mapping_policies.py::test_kwargs PASSED
+tests/test_mapping_policies.py::test_no_args[NameMappingPolicy.BY_NAME_IF_HAS_DEFAULT] PASSED
+tests/test_mapping_policies.py::test_no_args[NameMappingPolicy.BY_NAME_IF_KWONLY] PASSED
+tests/test_mapping_policies.py::test_one_positional[NameMappingPolicy.BY_NAME_IF_HAS_DEFAULT] PASSED
+tests/test_mapping_policies.py::test_one_positional[NameMappingPolicy.BY_NAME_IF_KWONLY] PASSED
+tests/test_mapping_policies.py::test_two_positionals[NameMappingPolicy.BY_NAME_IF_HAS_DEFAULT] PASSED
+tests/test_mapping_policies.py::test_two_positionals[NameMappingPolicy.BY_NAME_IF_KWONLY] PASSED
+tests/test_mapping_policies.py::test_two_positionals_one_with_default[NameMappingPolicy.BY_NAME_IF_HAS_DEFAULT-usage: test [-h] [-b BETA] alpha\n] PASSED
+tests/test_mapping_policies.py::test_two_positionals_one_with_default[NameMappingPolicy.BY_NAME_IF_KWONLY-usage: test [-h] alpha [beta]\n] PASSED
+tests/test_mapping_policies.py::test_varargs[NameMappingPolicy.BY_NAME_IF_HAS_DEFAULT] PASSED
+tests/test_mapping_policies.py::test_varargs[NameMappingPolicy.BY_NAME_IF_KWONLY] PASSED
+tests/test_mapping_policies.py::test_varargs_between_positional_and_kwonly__no_defaults[NameMappingPolicy.BY_NAME_IF_HAS_DEFAULT-usage: test [-h] alpha beta\n] PASSED
+tests/test_mapping_policies.py::test_varargs_between_positional_and_kwonly__no_defaults[NameMappingPolicy.BY_NAME_IF_KWONLY-usage: test [-h] -b BETA alpha\n] PASSED
+tests/test_mapping_policies.py::test_varargs_between_positional_and_kwonly__with_defaults[NameMappingPolicy.BY_NAME_IF_HAS_DEFAULT-usage: test [-h] [-a ALPHA] [-b BETA]\n] PASSED
+tests/test_mapping_policies.py::test_varargs_between_positional_and_kwonly__with_defaults[NameMappingPolicy.BY_NAME_IF_KWONLY-usage: test [-h] [-b BETA] [alpha]\n] PASSED
 tests/test_regressions.py::test_regression_issue104 PASSED
 tests/test_regressions.py::test_regression_issue12 PASSED
 tests/test_regressions.py::test_regression_issue12_help_flag PASSED
@@ -119,21 +147,19 @@ tests/test_utils.py::test_get_arg_spec__static_method PASSED
 tests/test_utils.py::test_get_arg_spec__wrapped PASSED
 tests/test_utils.py::test_get_arg_spec__wrapped_complex PASSED
 tests/test_utils.py::test_get_arg_spec__wrapped_nested PASSED
+tests/test_utils.py::test_get_subparsers_create PASSED
+tests/test_utils.py::test_get_subparsers_error PASSED
+tests/test_utils.py::test_get_subparsers_existing PASSED
 tests/test_utils.py::test_util_unindent PASSED
 
 =============================== warnings summary ===============================
-tests/test_integration.py::test_add_commands_group_overrides2__deprecated
-tests/test_integration.py::test_add_commands_group_overrides3__deprecated
-  $(@D)/src/argh/assembling.py:423: DeprecationWarning: Argument `namespace` is deprecated in add_commands(), it will be removed in Argh 0.30. Please use `group_name` instead.
-    warnings.warn(
-
-tests/test_integration.py::test_add_commands_group_overrides2__deprecated
-tests/test_integration.py::test_add_commands_group_overrides3__deprecated
-  $(@D)/src/argh/assembling.py:431: DeprecationWarning: Argument `namespace_kwargs` is deprecated in add_commands(), it will be removed in Argh 0.30. Please use `group_kwargs` instead.
+tests/test_decorators.py::test_expects_obj
+tests/test_integration.py::test_custom_argparse_namespace
+  $(@D)/src/argh/decorators.py:236: DeprecationWarning: The @expects_obj decorator is deprecated. Please update your code to use the standard approach AKA "Natural Way".
     warnings.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 111 passed, 3 xfailed, 4 warnings ========
+======== 145 passed, 2 warnings ========
   py$(PYV): OK
   congratulations :)
