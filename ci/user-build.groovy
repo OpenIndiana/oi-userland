@@ -2,6 +2,15 @@ import jenkins.model.Jenkins
 
 @Library("BuildLib") _
 
+/**
+ * Gets the commit hash from a Jenkins build object, if any
+ */
+@NonCPS
+def commitHashForBuild( build ) {
+  def scmAction = build?.actions.find { action -> action instanceof jenkins.scm.api.SCMRevisionAction }
+  return scmAction?.revision?.hash
+}
+
 pipeline {
     agent {
         node {
@@ -34,7 +43,8 @@ pipeline {
             steps {
                 withPublisher('openindiana.org', 'incremental') {
                     script {
-                        def last_commit = Jenkins.instance.getItem('OpenIndiana').getItem('Userland').lastSuccessfulBuild.changeset[0].revision
+                        def last_build = Jenkins.instance.getItem('OpenIndiana').getItem('Userland').lastSuccessfulBuild
+                        def last_commit = commitHashForBuild(last_build)
                     }
                     sh './tools/jenkinshelper-main.ksh -s build_changed $last_commit'
                 }
