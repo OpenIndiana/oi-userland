@@ -48,7 +48,7 @@ pipeline {
         stage('update system') {
             steps {
                 update()
-                sh /opt/local/bin/cleanup_bootenvs.sh'
+                sh '/opt/local/bin/cleanup_bootenvs.sh'
             }
         }
     }
