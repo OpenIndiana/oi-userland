@@ -46,9 +46,8 @@ pipeline {
                         def last_build = Jenkins.instance.getItem('OpenIndiana').getItem('Userland').lastSuccessfulBuild
                         def last_commit = commitHashForBuild(last_build)
                     
-                        echo "Last successfull build $last_commit"
-                        sh './tools/jenkinshelper-main.ksh -s build_changed $last_commit'
                     }
+                    sh './tools/jenkinshelper-main.ksh -s build_changed'
                 }
             }
         }
