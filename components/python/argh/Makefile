@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		argh
-HUMAN_VERSION =			0.29.4
+HUMAN_VERSION =			0.30.0
 COMPONENT_SUMMARY =		argh - An unobtrusive argparse wrapper with natural syntax
 COMPONENT_PROJECT_URL =		https://github.com/neithere/argh
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f9/7b/7f72a6b1ce8c5ceb3ca7541d1ec4e00508ef835cd6db5e9b7ce30c31bce1/argh-0.29.4.tar.gz
+	https://files.pythonhosted.org/packages/3a/18/52c0a3b3f306eefb65f652aefee9929c4ff06bb0858e1ab1bf8a1af1519c/argh-0.30.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:695c0ae4534270cae2697841b4a56f434a990694a00264ea10ebbbcdc02c13f7
+	sha256:1678dd244f2e361e5a57f6785c1bc8213ecf1b87373a7f651e21997e0394e0e5
 COMPONENT_LICENSE =		LGPL-3.0-only
 
 include $(WS_MAKE_RULES)/common.mk
