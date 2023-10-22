@@ -34,7 +34,7 @@ pipeline {
             steps {
                 withPublisher('openindiana.org', 'incremental') {
                     script {
-                        def last_commit = Jenkins.instance.getItem('Userland').lastSuccessfulBuild.changeset[0].revision
+                        def last_commit = Jenkins.instance.getItem('OpenIndiana').getItem('Userland').lastSuccessfulBuild.changeset[0].revision
                     }
                     sh './tools/jenkinshelper-main.ksh -s build_changed $last_commit'
                 }
