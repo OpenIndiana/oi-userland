@@ -1,0 +1,28 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m py.test
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 10 items
+
+tests/test_string.py::test_python_2_string_with_ascii_str SKIPPED (c...)
+tests/test_string.py::test_python_2_string_with_ascii_unicode SKIPPED
+tests/test_string.py::test_python_2_string_with_utf8_str SKIPPED (co...)
+tests/test_string.py::test_python_2_string_with_utf8_unicode SKIPPED
+tests/test_string.py::test_python_3_string_with_ascii_bytes PASSED
+tests/test_string.py::test_python_3_string_with_ascii_str PASSED
+tests/test_string.py::test_python_3_string_with_utf8_bytes PASSED
+tests/test_string.py::test_python_3_string_with_utf8_str PASSED
+tests/test_testscript.py::test_bad_symlink PASSED
+tests/test_testscript.py::test_testscript PASSED
+
+=============================== warnings summary ===============================
+scripttest.py:108
+  $(@D)/scripttest.py:108: PytestCollectionWarning: cannot collect test class 'TestFileEnvironment' because it has a __init__ constructor (from: tests/test_testscript.py)
+    class TestFileEnvironment(object):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 6 passed, 4 skipped, 1 warning ========
+  py$(PYV): OK
+  congratulations :)
