@@ -107,6 +107,7 @@ git checkout . > /dev/null 2>&1
 VERSION=
 HOMEPAGE=
 DOWNLOAD_URL=
+LICENSE_FILE=
 
 # Execute hook-begin snippet
 if [[ -f "$CONF" ]] ; then
@@ -307,7 +308,7 @@ function detect_license
 
 LICENSE=
 LICFILE=
-for f in $(get_PKGINFO_entry "License-File") LICENSE LICENSE.rst LICENSE.txt ; do
+for f in $LICENSE_FILE $(get_PKGINFO_entry "License-File") LICENSE LICENSE.rst LICENSE.txt ; do
 	[[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/$f" ]] || continue
 	LICFILE="$f"
 
