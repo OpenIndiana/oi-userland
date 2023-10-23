@@ -22,10 +22,13 @@
 #
 
 BUILD_BITS = 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gpgme
 COMPONENT_VERSION=	1.22.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GnuPG Made Easy
 COMPONENT_DESCRIPTION=	A library designed to make access to GnuPG easier for applications
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -69,7 +72,8 @@ CONFIGURE_OPTIONS  +=		--with-gpgsm=$(USRBINDIR)/gpgsm
 CONFIGURE_OPTIONS  +=		--with-gpgconf=$(USRBINDIR)/gpgconf
 CONFIGURE_OPTIONS  +=		--with-pic
 
-# Please see comments in patches/GNUPGHOME.patch
+# Note that the requested passphrase for alpha@example.com is "abc" (without quotation marks).
+# For the tests you will also need a configured gpg (eg. known passphrase for the default keyring).
 GNUPG_HOME_DIR = GNUPGHOME
 GNUPG_HOME_LINK = LINK
 COMPONENT_PRE_BUILD_ACTION += ( \
