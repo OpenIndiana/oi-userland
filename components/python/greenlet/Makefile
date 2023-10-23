@@ -19,21 +19,21 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		greenlet
-HUMAN_VERSION =			2.0.2
+HUMAN_VERSION =			3.0.0
 COMPONENT_SUMMARY =		greenlet - Lightweight in-process concurrent programming
 COMPONENT_PROJECT_URL =		https://greenlet.readthedocs.io/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1e/1e/632e55a04d732c8184201238d911207682b119c35cecbb9a573a6c566731/greenlet-2.0.2.tar.gz
+	https://files.pythonhosted.org/packages/b6/02/47dbd5e1c9782e6d3f58187fa10789e308403f3fc3a490b3646b2bff6d9f/greenlet-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e7c8dc13af7db097bed64a051d2dd49e9f0af495c26995c00a9ee842690d34c0
+	sha256:19834e3f91f485442adc1ee440171ec5d9a4840a1f7bd5ed97833544719ce10b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Make sure include files are included in right packages
+# Replace Python version in include file paths
 GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's|^.*usr/include/python\(3.[0-9]*\)[^0-9]|$$(PYTHON_\1_ONLY)&|'
+	$(GSED) -e 's|\(usr/include/python\)3.[0-9]\{1,\}/|\1$$(PYVER)/|' | uniq
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
