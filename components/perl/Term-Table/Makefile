@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Term::Table
-HUMAN_VERSION =			0.017
+HUMAN_VERSION =			0.018
 COMPONENT_SUMMARY =		Term::Table - Format a header and rows into a table
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f11db4268ad8044f6e1a1ac9534ca0cd3ad779c4006fff37fae500db98fac91a
+	sha256:9159b9131ee6b3f3956b74f45422985553574babbfaeba60be5c17bc114ac011
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
