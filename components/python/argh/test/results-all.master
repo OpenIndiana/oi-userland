@@ -1,10 +1,10 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest tests
+py$(PYV): commands[0]> python -m pytest --cov=argh --cov-report html --cov-fail-under 100 tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 145 items
+collecting ... collected 146 items
 
 tests/test_assembling.py::test_add_command_with_group_kwargs_but_no_group_name PASSED
 tests/test_assembling.py::test_add_subcommands PASSED
@@ -136,6 +136,7 @@ tests/test_mapping_policies.py::test_varargs_between_positional_and_kwonly__with
 tests/test_regressions.py::test_regression_issue104 PASSED
 tests/test_regressions.py::test_regression_issue12 PASSED
 tests/test_regressions.py::test_regression_issue12_help_flag PASSED
+tests/test_regressions.py::test_regression_issue204 PASSED
 tests/test_regressions.py::test_regression_issue27 PASSED
 tests/test_regressions.py::test_regression_issue31 PASSED
 tests/test_regressions.py::test_regression_issue47 PASSED
@@ -160,6 +161,7 @@ tests/test_integration.py::test_custom_argparse_namespace
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 145 passed, 2 warnings ========
+Required test coverage of 100% reached. Total coverage: 100.00%
+======== 146 passed, 2 warnings ========
   py$(PYV): OK
   congratulations :)
