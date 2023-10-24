@@ -1,15 +1,12 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests
-asyncio: mode=strict
-collecting ... collected 90 items
+collecting ... collected 100 items
 
 tests/drivers/test_configparser.py::test_parse PASSED
 tests/drivers/test_configupdater.py::test_parse PASSED
@@ -27,6 +24,7 @@ tests/plugins/test_setuptools_pep621.py::test_convert_directives PASSED
 tests/plugins/test_setuptools_pep621.py::test_data_files PASSED
 tests/plugins/test_setuptools_pep621.py::test_deps_with_line_continuation PASSED
 tests/plugins/test_setuptools_pep621.py::test_directives PASSED
+tests/plugins/test_setuptools_pep621.py::test_dynamic_dependecies PASSED
 tests/plugins/test_setuptools_pep621.py::test_empty PASSED
 tests/plugins/test_setuptools_pep621.py::test_entrypoints_and_split_subtables PASSED
 tests/plugins/test_setuptools_pep621.py::test_fix_extras_require PASSED
@@ -55,6 +53,9 @@ tests/test_cli.py::test_exceptions2exit PASSED
 tests/test_cli.py::test_guess_profile PASSED
 tests/test_cli.py::test_help PASSED
 tests/test_cli.py::test_parse_args PASSED
+tests/test_examples.py::test_examples_api[tests/examples/django/setup.cfg-tests/examples/django/pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[tests/examples/dynamic_extras/setup.cfg-tests/examples/dynamic_extras/pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[tests/examples/dynamic_extras_mixed/setup.cfg-tests/examples/dynamic_extras_mixed/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api[tests/examples/flask/setup.cfg-tests/examples/flask/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api[tests/examples/pandas/setup.cfg-tests/examples/pandas/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api[tests/examples/pluggy/setup.cfg-tests/examples/pluggy/pyproject.toml] PASSED
@@ -64,6 +65,9 @@ tests/test_examples.py::test_examples_api[tests/examples/setuptools_docs/setup.c
 tests/test_examples.py::test_examples_api[tests/examples/setuptools_scm/setup.cfg-tests/examples/setuptools_scm/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api[tests/examples/virtualenv/setup.cfg-tests/examples/virtualenv/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api[tests/examples/zipp/setup.cfg-tests/examples/zipp/pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api_lite[tests/examples/django/setup.cfg-tests/examples/django/pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api_lite[tests/examples/dynamic_extras/setup.cfg-tests/examples/dynamic_extras/pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api_lite[tests/examples/dynamic_extras_mixed/setup.cfg-tests/examples/dynamic_extras_mixed/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api_lite[tests/examples/flask/setup.cfg-tests/examples/flask/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api_lite[tests/examples/pandas/setup.cfg-tests/examples/pandas/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api_lite[tests/examples/pluggy/setup.cfg-tests/examples/pluggy/pyproject.toml] PASSED
@@ -73,6 +77,9 @@ tests/test_examples.py::test_examples_api_lite[tests/examples/setuptools_docs/se
 tests/test_examples.py::test_examples_api_lite[tests/examples/setuptools_scm/setup.cfg-tests/examples/setuptools_scm/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api_lite[tests/examples/virtualenv/setup.cfg-tests/examples/virtualenv/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api_lite[tests/examples/zipp/setup.cfg-tests/examples/zipp/pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[tests/examples/django/setup.cfg-tests/examples/django/pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[tests/examples/dynamic_extras/setup.cfg-tests/examples/dynamic_extras/pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[tests/examples/dynamic_extras_mixed/setup.cfg-tests/examples/dynamic_extras_mixed/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_cli[tests/examples/flask/setup.cfg-tests/examples/flask/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_cli[tests/examples/pandas/setup.cfg-tests/examples/pandas/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_cli[tests/examples/pluggy/setup.cfg-tests/examples/pluggy/pyproject.toml] PASSED
@@ -103,6 +110,6 @@ tests/test_translator.py::test_simple_example PASSED
 tests/test_translator.py::test_undefined_profile PASSED
 
 
-======== 90 passed ========
+======== 100 passed ========
   py$(PYV): OK
   congratulations :)
