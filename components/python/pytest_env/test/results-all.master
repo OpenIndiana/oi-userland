@@ -1,4 +1,3 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m coverage erase
 py$(PYV): commands[1]> python -m coverage run -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml tests
@@ -6,25 +5,39 @@ py$(PYV): commands[1]> python -m coverage run -m pytest --junitxml $(@D)/.tox/ju
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 14 items
+collecting ... collected 20 items
 
-tests/test_env.py::test_env[D exists - original val kept] PASSED
-tests/test_env.py::test_env[D flag - add to env] PASSED
-tests/test_env.py::test_env[R exists - not interpolate var] PASSED
-tests/test_env.py::test_env[curly exist - interpolate var] PASSED
-tests/test_env.py::test_env[empty ini works] PASSED
-tests/test_env.py::test_env[incremental interpolation] PASSED
-tests/test_env.py::test_env[key exists in env - overwrite] PASSED
-tests/test_env.py::test_env[lowercase flags] PASSED
-tests/test_env.py::test_env[new key - add to env] PASSED
-tests/test_env.py::test_env[two flags - reversed] PASSED
-tests/test_env.py::test_env[two flags] PASSED
-tests/test_env.py::test_env[two new keys - add to env] PASSED
-tests/test_env.py::test_env[whitespace is ignored] PASSED
-tests/test_version.py::test_version PASSED                               [100%]Clearing the cache
-
+tests/test_env.py::test_env_via_pytest[D exists - original val kept] PASSED
+tests/test_env.py::test_env_via_pytest[D flag - add to env] PASSED
+tests/test_env.py::test_env_via_pytest[R exists - not interpolate var] PASSED
+tests/test_env.py::test_env_via_pytest[curly exist - interpolate var] PASSED
+tests/test_env.py::test_env_via_pytest[empty ini works] PASSED
+tests/test_env.py::test_env_via_pytest[incremental interpolation] PASSED
+tests/test_env.py::test_env_via_pytest[key exists in env - overwrite] PASSED
+tests/test_env.py::test_env_via_pytest[lowercase flags] PASSED
+tests/test_env.py::test_env_via_pytest[new key - add to env] PASSED
+tests/test_env.py::test_env_via_pytest[two flags - reversed] PASSED
+tests/test_env.py::test_env_via_pytest[two flags] PASSED
+tests/test_env.py::test_env_via_pytest[two new keys - add to env] PASSED
+tests/test_env.py::test_env_via_pytest[whitespace is ignored] PASSED
+tests/test_env.py::test_env_via_toml[ini over toml ini_options] PASSED
+tests/test_env.py::test_env_via_toml[toml inline table] PASSED
+tests/test_env.py::test_env_via_toml[toml native over ini] PASSED
+tests/test_env.py::test_env_via_toml[toml native] PASSED
+tests/test_env.py::test_env_via_toml[toml via ini_options] PASSED
+tests/test_env.py::test_env_via_toml_bad PASSED
+tests/test_version.py::test_version PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 14 passed ========
+======== 20 passed ========
+py$(PYV): commands[2]> python -m coverage combine
+py$(PYV): commands[3]> python -m coverage report
+Name    Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------
+TOTAL     106      0     26      0   100%
+
+7 files skipped due to complete coverage.
+py$(PYV): commands[4]> python -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/htmlcov
+Wrote HTML report to $(@D)/.tox/py$(PYV)/tmp/htmlcov/index.html
   py$(PYV): OK
   congratulations :)
