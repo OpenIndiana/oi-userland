@@ -27,11 +27,11 @@ ESR =
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # CANDIDATE_BETA is the beta version found in the candidates directory.
 # Do not define either for final release build.
-# CANDIDATE_BUILD=2
-# CANDIDATE_BETA=9
+CANDIDATE_BUILD=2
+#CANDIDATE_BETA=9
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	118.0.2
+COMPONENT_VERSION =	119.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,7 +41,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ES
 else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
-COMPONENT_ARCHIVE_HASH= sha256:89626520f2f0f782f37c074b94690e0f08dcf416be2b992f4aad68df5d727b21
+COMPONENT_ARCHIVE_HASH= sha256:f63e44194548f246e1396508800739a24c0517e65e920002a6f67ee099be39dd
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -55,7 +55,7 @@ COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.71.0
+RUST_VERSION = 1.72.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -64,7 +64,7 @@ export ALLOW_UNVERIFIED_DOWNLOADS
 LANG_LIST= ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA en-GB \
  en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb \
  hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN \
- pl pt-BR pt-PT rm ro ru sc sco si sk sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
+ pl pt-BR pt-PT rm ro ru sat sc sco si sk sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
 
 ifdef CANDIDATE_BETA
 LANG_FILES_LOCATION= \
@@ -186,7 +186,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.24.3 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.26.0 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
@@ -239,7 +239,6 @@ clean::
 PYTHON_REQUIRED_PACKAGES += runtime/python
 PYTHON_REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += developer/clang-17
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += developer/lang/rustc
