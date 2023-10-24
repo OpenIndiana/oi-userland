@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.envs
-HUMAN_VERSION =			2.4.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			2.6.0
 COMPONENT_SUMMARY =		jaraco.envs - Classes for orchestrating Python (virtual) environments
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.envs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ae/4f/b7b863bc7fd43c81ce98bc5f00ed2713dc444462f3767a67e5ac372c33c3/jaraco.envs-2.4.0.tar.gz
+	https://files.pythonhosted.org/packages/a7/10/233134945fdba69d4b87224e8a76bd39c6770a5215c3056d592b936d96d7/jaraco.envs-2.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0d88351e2575d4fd8fd8039715572acee1cd074fbdfc1c017e4c1970b4af44f8
+	sha256:809195c406640db256ee01eebf4f6a369dd85759d8178c3921704308dd0360f5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,11 +37,11 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/tox
 PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
