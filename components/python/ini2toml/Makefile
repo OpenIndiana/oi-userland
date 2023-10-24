@@ -19,20 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ini2toml
-HUMAN_VERSION =			0.12
+HUMAN_VERSION =			0.13
 COMPONENT_SUMMARY =		ini2toml - Automatically conversion of .ini/.cfg files to TOML equivalents
 COMPONENT_PROJECT_URL =		https://github.com/abravalheri/ini2toml/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3a/ca/60ae0f9e348e0d13b2ec378f3af4cc7d448222b2e32361a12fb4d32dd546/ini2toml-0.12.tar.gz
+	https://files.pythonhosted.org/packages/fb/35/b499b4af9cc3250ec866545b0e1ffe8a9c263f12b836349688b1b46a7dd0/ini2toml-0.13.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d459d535878e0fb95cd0b0c3889f056b7ff3903e82e919d394e9f85b7167f5ec
+	sha256:c800b204b4b431ee4c7008da3d2688c91ce868c7994331e80b36ca54c3624978
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Testing fails with the checkdocs plugin installed
-PYTEST_ADDOPTS += -p no:checkdocs
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
@@ -41,6 +38,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/configupdater
+TEST_REQUIRED_PACKAGES.python += library/python/isort
 TEST_REQUIRED_PACKAGES.python += library/python/pyproject-fmt
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
