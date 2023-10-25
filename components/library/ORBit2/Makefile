@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ORBit2
 COMPONENT_VERSION=      2.14.19
-COMPONENT_REVISION=     4
+COMPONENT_REVISION=     5
 COMPONENT_PROJECT_URL=  https://projects.gnome.org/ORBit2/
 COMPONENT_SUMMARY=      High-performance CORBA Object Request Broker
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,7 +35,7 @@ PATH=$(PATH.gnu)
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         aclocal -I. && \
                                         autoheader && \
-                                        libtoolize --automake --copy --force && \
+					PATH="$(PATH)" libtoolize --automake --copy --force && \
                                         automake -a -f -c &&\
                                         autoconf )
 
