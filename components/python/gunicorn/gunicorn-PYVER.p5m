@@ -1,0 +1,74 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# This file was automatically generated using python-integrate-project
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/gunicorn-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn-$(HUMAN_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn-$(HUMAN_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn-$(HUMAN_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/app/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/app/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/app/pasterapp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/app/wsgiapp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/arbiter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/debug.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/errors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/glogging.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/http/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/http/body.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/http/errors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/http/message.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/http/parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/http/unreader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/http/wsgi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/instrument/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/instrument/statsd.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/pidfile.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/reloader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/sock.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/systemd.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/workers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/workers/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/workers/base_async.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/workers/geventlet.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/workers/ggevent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/workers/gthread.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/workers/gtornado.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/workers/sync.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gunicorn/workers/workertmp.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/packaging-$(PYV)
