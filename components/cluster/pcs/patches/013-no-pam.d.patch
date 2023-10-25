@@ -1,0 +1,14 @@
+We do not support /etc/pam.d directory.
+See https://www.illumos.org/issues/2947
+
+--- pcs-0.10.1/Makefile.orig
++++ pcs-0.10.1/Makefile
+@@ -247,8 +247,6 @@
+ 	# Copy files, not symlinks to files
+ 	cp -L -r pcsd ${DEST_LIB}
+ 	install -m 644 -D pcsd/pcsd.conf ${DEST_CONF}/pcsd
+-	install -d ${DESTDIR}/etc/pam.d
+-	install -m 644 pcsd/pcsd.pam ${DESTDIR}/etc/pam.d/pcsd
+ ifeq ($(IS_DEBIAN),true)
+ 	$(call use-debian-alternative,pcsd/settings.rb.debian,${DEST_LIB}/pcsd/settings.rb)
+ endif
