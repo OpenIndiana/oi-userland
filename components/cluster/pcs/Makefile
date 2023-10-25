@@ -13,11 +13,13 @@
 # Copyright 2022 Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
 #
 
+BUILD_STYLE= justmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pcs
 COMPONENT_VERSION= 0.10.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/pcs
@@ -103,16 +105,12 @@ COMPONENT_ARCHIVE_HASH_13= sha256:2a3be6c56a8cc6338203c02910e20e858664b633adb550
 COMPONENT_ARCHIVE_URL_13= https://rubygems.org/gems/$(COMPONENT_ARCHIVE_13)
 CACHED_GEM_FILES += $(COMPONENT_ARCHIVE_13)
 
+TEST_TARGET= $(NO_TESTS)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 include $(WS_MAKE_RULES)/ruby.mk
 
 PATH=$(PATH.gnu):/usr/ruby/$(RUBY_VERSION)/bin	
-
-PYTHON = /usr/bin/python3.7
-PYTHON_VENDOR_PACKAGES = /usr/lib/python3.7/vendor-packages
 
 COMPONENT_INSTALL_ENV += DESTDIR="$(PROTO_DIR)"
 COMPONENT_INSTALL_ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
@@ -121,9 +119,6 @@ COMPONENT_INSTALL_ENV += PYTHON_SITELIB=$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_INSTALL_ENV += PYTHON=$(PYTHON)
 COMPONENT_INSTALL_ENV += PATH=$(PATH)
 COMPONENT_INSTALL_ENV += BASH_COMPLETION_DIR=/usr/share/bash-completion/completions
-
-PKG_MACROS +=	RUBY_VERSION=$(RUBY_VERSION)
-PKG_MACROS += RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
 
 #
 # Unpack the pyagentx source into the build directory and pass its location to
@@ -145,29 +140,20 @@ COMPONENT_INSTALL_ENV += BUNDLE_CACHE_PATH=../../bundle_cache
 # beware of: the package has a combined build + install 
 COMPONENT_BUILD_ACTION = echo 'No build target'
 
-build:          $(BUILD_32)
-
 # pytthon installation class overwrites the shebang during installation
 COMPONENT_POST_INSTALL_ACTION=( \
     $(MKDIR)  $(PROTO_DIR)/usr/share/pcs/examples; \
-    $(MV) $(PROTO_DIR)/etc/logrotate.d $(PROTO_DIR)/usr/share/pcs/examples; \
-    grep -q python3.7 ${PROTO_DIR}/usr/sbin/pcs || \
-    gsed -i -- "s~/usr/bin/python~/usr/bin/python3.7~g" ${PROTO_DIR}/usr/sbin/pcs )
-
-install:        $(INSTALL_32)
-
-test:           $(TESTS_32)
+    $(MV) $(PROTO_DIR)/etc/logrotate.d $(PROTO_DIR)/usr/share/pcs/examples )
 
 # Build dependencies
 REQUIRED_PACKAGES += library/ruby/bundler
 REQUIRED_PACKAGES += system/font/truetype/liberation
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/importlib-metadata-37
-REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/ruby-23
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
