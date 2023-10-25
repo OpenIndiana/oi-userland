@@ -27,14 +27,13 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gpgme
-COMPONENT_VERSION=	1.22.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.23.0
 COMPONENT_SUMMARY=	GnuPG Made Easy
 COMPONENT_DESCRIPTION=	A library designed to make access to GnuPG easier for applications
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:9551e37081ad3bde81018a0d24f245c3f8206990549598fb31a97a68380a7b71
+COMPONENT_ARCHIVE_HASH=	sha256:043e2efe18b4ad22b96d434dde763fbed32cf8d6c220dc69df0d0ffb9dc66fc6
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/security/gpgme
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -42,7 +41,7 @@ COMPONENT_LICENSE=	GPLv2,LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && PATH=$(PATH.gnu) autoreconf -fi )
+COMPONENT_PREP_ACTION= ( cd $(@D) && PATH=$(PATH.gnu) autoreconf -fi )
 
 PATH = $(PATH.gnu)
 
@@ -52,25 +51,21 @@ CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(gcc_C99_ENABLE)
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
+CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-libgpg-error-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--enable-largefile
-CONFIGURE_OPTIONS  +=		--with-pth=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--enable-languages=cl
-CONFIGURE_OPTIONS  +=		--enable-gpg-test
-CONFIGURE_OPTIONS  +=		--enable-gpgsm-test
-CONFIGURE_OPTIONS  +=		--enable-gpgconf-test
-CONFIGURE_OPTIONS  +=		--with-gpg=$(USRBINDIR)/gpg
-CONFIGURE_OPTIONS  +=		--with-gpgsm=$(USRBINDIR)/gpgsm
-CONFIGURE_OPTIONS  +=		--with-gpgconf=$(USRBINDIR)/gpgconf
-CONFIGURE_OPTIONS  +=		--with-pic
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-libgpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --enable-largefile
+CONFIGURE_OPTIONS += --enable-languages=cl
+CONFIGURE_OPTIONS += --enable-gpg-test
+CONFIGURE_OPTIONS += --enable-gpgsm-test
+CONFIGURE_OPTIONS += --enable-gpgconf-test
+CONFIGURE_OPTIONS += --with-pic
 
 # Note that the requested passphrase for alpha@example.com is "abc" (without quotation marks).
 # For the tests you will also need a configured gpg (eg. known passphrase for the default keyring).
