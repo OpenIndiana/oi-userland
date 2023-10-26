@@ -128,7 +128,7 @@ refresh-patches: $(QUILT) patch
 		QUILT_PATCHES=$(PATCH_DIR) $(QUILT) import --quiltrc /dev/null -p 0 "$$p" ; \
 		QUILT_PATCHES=$(PATCH_DIR) $(QUILT) push --quiltrc /dev/null -q ; \
 		QUILT_PATCHES=$(PATCH_DIR) $(QUILT) refresh --quiltrc /dev/null -p 0 --no-timestamps --no-index ; \
-	done ; \
+	done
 	# final cleanup
 	$(RM) -r $(COMPONENT_DIR)/.pc
 	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
