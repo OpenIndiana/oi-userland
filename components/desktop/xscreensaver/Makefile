@@ -18,13 +18,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xscreensaver
-COMPONENT_VERSION=      6.4
-HUMAN_VERSION=      	6.04
-COMPONENT_REVISION =	3
+COMPONENT_VERSION=      6.8
+HUMAN_VERSION=      	6.08
 COMPONENT_PROJECT_URL=  https://www.jwz.org/xscreensaver/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:787014b29f0c5793ecc2d93e1109a049ff48ab0c29b851dab34f683ceef6b152
+COMPONENT_ARCHIVE_HASH= sha256:5cf52ba525ceecf94b2f2bd63485ebdf318e12fcc0f2adad7d4c106d855e76a3
 COMPONENT_ARCHIVE_URL=  https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         desktop/xscreensaver
 
@@ -88,22 +87,21 @@ COMPONENT_PRE_INSTALL_ACTION = ( \
 	)
 
 # Build dependencies
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+PERL_REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/perl-5/xml-parser
+REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += service/opengl/ogl-select
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu
