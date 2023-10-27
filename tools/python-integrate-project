@@ -262,8 +262,12 @@ git add Makefile
 ! $GMAKE patch > /dev/null 2>&1 && printf "FATAL: 'gmake patch' failed!\n" >&2 && exit 1
 
 # Refresh patches
-! $GMAKE refresh-patches > /dev/null 2>&1 && printf "FATAL: 'gmake refresh-patches' failed!\n" >&2 && exit 1
-git add patches 2>/dev/null
+if $GMAKE refresh-patches > /dev/null 2>&1 ; then
+	git add patches 2>/dev/null
+else
+	printf "ERROR: 'gmake refresh-patches' failed!\n" >&2
+	git checkout patches 2>/dev/null
+fi
 
 # Cleanup after patch refresh
 $GMAKE clobber > /dev/null 2>&1
