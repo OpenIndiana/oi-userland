@@ -12,40 +12,47 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_STYLE= meson
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dconf
-COMPONENT_VERSION=      0.24.0
-COMPONENT_REVISION=     3
-COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/dconf
+COMPONENT_MJR_VERSION=  0.40
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).0
 COMPONENT_SUMMARY=      GNOME Configuration Framework
+COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/dconf
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:4373e0ced1f4d7d68d518038796c073696280e22957babb29feb0267c630fec2
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.24/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      LGPLv2.1
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_ARCHIVE_HASH= sha256:cf7f22a4c9200421d8d3325c5c1b8b93a36843650c9f95d6451e20f0bcb24533
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         gnome/config/dconf
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH= $(PATH.gnu)
 
-CFLAGS += -std=c99
-CFLAGS += -D__EXTENSIONS__
+CC_PIC_MODE = $(CC_PIC_DISABLE)
+LD_Z_PIE_MODE = $(LD_Z_PIE_DISABLE)
 
-CONFIGURE_OPTIONS+=        --sysconfdir=/etc
-CONFIGURE_OPTIONS+=        --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+COMPONENT_INSTALL_ENV += PATH="$(PATH.gnu)"
+COMPONENT_BUILD_ENV += PATH="$(PATH.gnu)"
+CONFIGURE_OPTIONS += -Dgtk_doc=true
 
-COMPONENT_INSTALL_ENV+=        GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/[0-9]*\.[0-9]*s//" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/OK/p" '
+
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += developer/vala
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus
