@@ -19,13 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		outcome
-HUMAN_VERSION =			1.3.0
+HUMAN_VERSION =			1.3.0.post0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		outcome - Capture the outcome of Python function calls.
 COMPONENT_PROJECT_URL =		https://github.com/python-trio/outcome
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/64/1a/07e59b55f180506c72843d767a229c48084f5440005c646353742a4301bb/outcome-1.3.0.tar.gz
+	https://files.pythonhosted.org/packages/98/df/77698abfac98571e65ffeb0c1fba8ffd692ab8458d617a0eed7d9a8d38f2/outcome-1.3.0.post0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:588ef4dc10b64e8df160d8d1310c44e1927129a66d6d2ef86845cef512c5f24c
+	sha256:9dcf02e65f2971b80047b377468e72a268e15c0af3cf1238e6ff14f7f91143b8
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 
 TEST_STYLE = pytest
