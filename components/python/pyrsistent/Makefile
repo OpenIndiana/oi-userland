@@ -19,22 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyrsistent
-HUMAN_VERSION =			0.19.3
+HUMAN_VERSION =			0.20.0
 COMPONENT_SUMMARY =		pyrsistent - Persistent/Functional/Immutable data structures
 COMPONENT_PROJECT_URL =		https://github.com/tobgu/pyrsistent/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/bf/90/445a7dbd275c654c268f47fa9452152709134f61f09605cf776407055a89/pyrsistent-0.19.3.tar.gz
+	https://files.pythonhosted.org/packages/ce/3a/5031723c09068e9c8c2f0bc25c3a9245f2b1d1aea8396c787a408f2b95ca/pyrsistent-0.20.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1a2994773706bbb4995c31a97bc94f1418314923bd1048c6d964837040376440
+	sha256:4c48f78f62ab596c679086084d0dd13254ae4f3d6c72a83ffdf5ebdef8f265a4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.mit
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/tobgu/pyrsistent/issues/228
-PYTEST_ADDOPTS += -p no:randomly
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
