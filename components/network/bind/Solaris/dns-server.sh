@@ -21,6 +21,7 @@
 #
 # Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2016 Hans Rosenfeld <rosenfeld@grumpf.hope-2000.org>
+# Copyright 2023 Gary Mills
 #
 # smf_method(5) start/stop script required for server DNS
 
@@ -252,7 +253,37 @@ case "$method" in
 	result=$?
 	if [ $result -ne 0 ]; then
 	    echo "$I : start failed! Check syslog for further information." >&2
+	    exit ${result}
         fi
+	if [ "${cmduser}" != "" ]; then
+
+	    # Wait for the setuid to complete
+	    numsec=0
+	    for N in 1 1 2 2 4 4 9 9
+	    do
+		numsec=`/usr/bin/expr ${numsec} + $N`
+		if [ $N = 9 ]; then
+		    echo "$I: Process ${cmduser} did not appear"
+		    exit 0
+		fi
+		sleep ${numsec}
+		svrpid=`/usr/bin/pgrep -f -u ${cmduser} /usr/sbin/named`
+		numpids=`echo ${svrpid} | /usr/bin/wc -l`
+		if [ "${svrpid}" = "" ]; then
+		    continue
+		fi
+		if [ ${numpids} -eq 1 ]; then
+		    break
+		fi
+		if [ ${numpids} -gt 1 ]; then
+		    echo "$I: Nameserver is already running"
+		    exit 0
+		fi
+	    done
+
+	    # Set process privileges to allow binding to a privileged port
+	    /usr/bin/ppriv -s A+net_privaddr ${svrpid}
+	fi
     fi
     ;;
 'stop')
