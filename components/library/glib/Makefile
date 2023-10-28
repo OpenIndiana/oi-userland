@@ -15,14 +15,15 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS = 64_and_32
-BUILD_STYLE = meson
+BUILD_BITS= 64_and_32
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
 COMPONENT_MJR_VERSION=	2.74
 COMPONENT_MNR_VERSION=	7
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -87,13 +88,12 @@ COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^(Fail|Ok|Expected Fail|Unexpected Pass|Skipped|Timeout)/'"
 
-PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # dbus-daemon is needed for testing
-REQUIRED_PACKAGES += system/library/dbus
+TEST_REQUIRED_PACKAGES += system/library/dbus
 
 # update-desktop-database is needed for testing
-REQUIRED_PACKAGES += library/desktop/desktop-file-utils
+TEST_REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
