@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         wxwidgets-3
 COMPONENT_MAJOR_VERSION= 3.2
 COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).3
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_SRC_NAME=     wxWidgets
@@ -30,8 +31,13 @@ COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      wxWindows Library license
 COMPONENT_LICENSE_FILE= docs/licence.txt
 
-TEST_TARGET= $(NO_TESTS)
+#TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --with-gtk=3
 CONFIGURE_OPTIONS += --enable-gui
@@ -62,8 +68,7 @@ CONFIGURE_OPTIONS += --with-sdl
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer1
