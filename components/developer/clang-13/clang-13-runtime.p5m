@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/runtime/clang-13@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -28,8 +29,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # runtime link, needed for new mesa library.
 link path=usr/lib/$(MACH64)/libLLVM-13.so target=../../clang/13.0/lib/libLLVM-13.so
 
-link path=usr/clang/13.0/lib/libLLVM-$(COMPONENT_VERSION).so \
-    target=libLLVM-13.so
+link path=usr/clang/13.0/lib/libLLVM-$(HUMAN_VERSION).so target=libLLVM-13.so
 file path=usr/clang/13.0/lib/libLLVM-13.so
 link path=usr/clang/13.0/lib/libLLVM.so target=libLLVM-13.so
 link path=usr/clang/13.0/lib/libLTO.so target=libLTO.so.13
