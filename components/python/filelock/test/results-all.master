@@ -4,7 +4,7 @@ py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 94 items
+collecting ... collected 102 items
 
 tests/test_error.py::test_timeout_lock_file PASSED
 tests/test_error.py::test_timeout_pickle PASSED
@@ -84,6 +84,14 @@ tests/test_filelock.py::test_simple[new2/new3/c-PurePath-SoftFileLock] PASSED
 tests/test_filelock.py::test_simple[new2/new3/c-PurePath-UnixFileLock] PASSED
 tests/test_filelock.py::test_simple[new2/new3/c-str-SoftFileLock] PASSED
 tests/test_filelock.py::test_simple[new2/new3/c-str-UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_and_non_singleton_locks_are_distinct[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_and_non_singleton_locks_are_distinct[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_deleted_when_no_external_references_exist[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_deleted_when_no_external_references_exist[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_distinct_per_lock_file[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_distinct_per_lock_file[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_the_same[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_the_same[UnixFileLock] PASSED
 tests/test_filelock.py::test_soft_errors PASSED
 tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[SoftFileLock] PASSED
 tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[UnixFileLock] PASSED
@@ -107,7 +115,7 @@ tests/test_filelock.py::test_wrong_platform PASSED
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 76.0% reached. Total coverage: 98.55%
-======== 74 passed, 20 skipped ========
+Required test coverage of 76.0% reached. Total coverage: 98.66%
+======== 82 passed, 20 skipped ========
   py$(PYV): OK
   congratulations :)
