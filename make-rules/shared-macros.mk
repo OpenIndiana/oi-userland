@@ -622,7 +622,7 @@ export CCACHE := $(shell \
         fi; \
     fi)
 
-GCC_DEFAULT =	10
+GCC_DEFAULT =	13
 GCC_VERSION =	$(GCC_DEFAULT)
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
