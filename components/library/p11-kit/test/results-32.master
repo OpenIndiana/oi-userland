@@ -1,7 +1,9 @@
-/usr/gnu/bin/make  test-tests test-compat test-hash test-dict test-array test-constants test-attrs test-buffer test-url test-path test-lexer test-message test-argv test-runtime  test-progname test-util test-conf test-uri test-pin test-init test-modules test-deprecated test-proxy test-proxy3 test-iter test-rpc test-rpc-message  test-server test-virtual test-managed test-log test-log3 test-filter test-transport test-transport3  test-digest test-asn1 test-base64 test-pem test-oid test-utf8 test-x509 test-persist test-index test-parser test-builder test-token test-module test-save test-enumerate test-cer test-bundle test-openssl test-edk2 test-jks  common/frob-getauxval common/frob-getenv  common/frob-getprogname p11-kit/p11-kit-testable p11-kit/p11-kit-remote-testable p11-kit/p11-kit-server-testable p11-kit/print-messages p11-kit/frob-setuid fuzz/rpc_fuzzer frob-pow frob-token frob-nss-trust frob-cert frob-bc frob-ku frob-eku frob-ext frob-oid  libp11-test.la  libp11-kit-testable.la libp11-kit-pkcs11-gnu.la  mock-one.la mock-v3-one.la mock-two.la mock-v3-two.la mock-three.la mock-four.la mock-v3-four.la mock-five.la mock-seven.la mock-eight.la mock-nine.la mock-ten.la mock-eleven.la mock-six.la libtrust-testable.la  libtrust-test.la \
+/usr/gnu/bin/make  test-tests test-compat test-hash test-dict test-array test-constants test-attrs test-buffer test-url test-path test-lexer test-message test-argv test-runtime  test-asn1 test-oid  test-progname test-util test-conf test-uri test-pin test-init test-modules test-deprecated test-proxy test-proxy3 test-iter test-rpc test-rpc-message  test-server test-virtual test-managed test-log test-log3 test-filter test-transport test-transport3  test-digest test-base64 test-pem test-oid test-utf8 test-x509 test-persist test-index test-parser test-builder test-token test-module test-save test-enumerate test-cer test-bundle test-openssl test-edk2 test-jks  common/frob-getauxval common/frob-getenv  common/frob-getprogname p11-kit/p11-kit-testable p11-kit/p11-kit-remote-testable p11-kit/p11-kit-server-testable p11-kit/print-messages p11-kit/frob-setuid fuzz/rpc_fuzzer frob-pow frob-token frob-nss-trust frob-cert frob-bc frob-ku frob-eku frob-ext frob-oid  libp11-test.la  libp11-kit-testable.la libp11-kit-pkcs11-gnu.la  mock-one.la mock-v3-one.la mock-two.la mock-v3-two.la mock-three.la mock-four.la mock-v3-four.la mock-five.la mock-seven.la mock-eight.la mock-nine.la mock-ten.la mock-eleven.la mock-twelve.la mock-thirteen.la mock-six.la libtrust-testable.la  libtrust-test.la \
+  p11-kit/test-objects.sh p11-kit/test-lists.sh p11-kit/test-server.sh p11-kit/test-list-mechanisms.sh p11-kit/test-list-tokens.sh p11-kit/test-generate-keypair.sh  p11-kit/test-export-public.sh p11-kit/test-import-public.sh p11-kit/test-profiles.sh  p11-kit/test-messages.sh
+make[4]: Nothing to be done for '$(SOURCE_DIR)/p11-kit/test-list-tokens.sh'.
 PASS: test-tests 1 /test/success
-PASS: test-compat 1 /compat/getauxval
-PASS: test-compat 2 /compat/secure_getenv
+FAIL: test-compat 1 /compat/getauxval
+FAIL: test-compat 2 /compat/secure_getenv
 PASS: test-compat 3 /compat/mmap
 SKIP: test-compat 4 /compat/getprogname # SKIP cannot perform getprogname test
 PASS: test-hash 1 /hash/murmur3
@@ -39,7 +41,8 @@ PASS: test-constants 8 /constants/mechanisms
 PASS: test-constants 9 /constants/users
 PASS: test-constants 10 /constants/states
 PASS: test-constants 11 /constants/returns
-PASS: test-constants 12 /constants/profiles
+PASS: test-constants 12 /constants/hw-features
+PASS: test-constants 13 /constants/profiles
 PASS: test-attrs 1 /attrs/equal
 PASS: test-attrs 2 /attrs/hash
 PASS: test-attrs 3 /attrs/to-string
@@ -103,6 +106,11 @@ PASS: test-argv 3 /argv/parse_backslash
 PASS: test-runtime 1 /runtime/xdg-runtime-dir
 PASS: test-runtime 2 /runtime/bases
 PASS: test-runtime 3 /runtime/xdg-cache-home
+PASS: test-asn1 1 /asn1/tlv_length
+PASS: test-asn1 2 /asn1/asn1_cache
+PASS: test-asn1 3 /asn1/free
+PASS: test-oid 1 /oids/known
+PASS: test-oid 2 /oids/hash
 PASS: test-progname 1 /progname/test_progname_default
 PASS: test-progname 2 /progname/test_progname_set
 PASS: test-util 1 /util/space-strlen
@@ -121,7 +129,7 @@ PASS: test-conf 12 /conf/test_load_modules_no_user
 PASS: test-conf 13 /conf/test_load_modules_user_only
 PASS: test-conf 14 /conf/test_load_modules_user_none
 PASS: test-conf 15 /conf/test_parse_boolean
-PASS: test-conf 16 /conf/setuid
+FAIL: test-conf 16 /conf/setuid
 PASS: test-uri 1 /uri/test_uri_parse
 PASS: test-uri 2 /uri/test_uri_parse_case_insensitive
 PASS: test-uri 3 /uri/test_uri_parse_bad_scheme
@@ -342,36 +350,40 @@ PASS: test-iter 12 /iter/test_with_module
 PASS: test-iter 13 /iter/test_keep_session
 PASS: test-iter 14 /iter/test_token_match
 PASS: test-iter 14 /iter/test_token_match
-PASS: test-iter 15 /iter/test_token_mismatch
-PASS: test-iter 15 /iter/test_token_mismatch
-PASS: test-iter 16 /iter/token-info
-PASS: test-iter 16 /iter/token-info
-PASS: test-iter 17 /iter/test_token_only
-PASS: test-iter 17 /iter/test_token_only
-PASS: test-iter 18 /iter/test_slot_match
-PASS: test-iter 19 /iter/test_slot_mismatch
-PASS: test-iter 20 /iter/test_slot_match_by_id
-PASS: test-iter 21 /iter/test_slot_mismatch_by_id
-PASS: test-iter 22 /iter/slot-info
-PASS: test-iter 23 /iter/test_slot_only
-PASS: test-iter 24 /iter/test_module_match
-PASS: test-iter 25 /iter/test_module_mismatch
-PASS: test-iter 26 /iter/test_module_only
-PASS: test-iter 27 /iter/test_getslotlist_fail_first
-PASS: test-iter 28 /iter/test_getslotlist_fail_late
-PASS: test-iter 29 /iter/test_open_session_fail
-PASS: test-iter 30 /iter/test_find_init_fail
-PASS: test-iter 31 /iter/test_find_objects_fail
-PASS: test-iter 32 /iter/get-attributes
-PASS: test-iter 33 /iter/test_load_attributes
-PASS: test-iter 34 /iter/test_load_attributes_none
-PASS: test-iter 35 /iter/test_load_attributes_fail_first
-PASS: test-iter 36 /iter/test_load_attributes_fail_late
-PASS: test-iter 37 /iter/test-many
-PASS: test-iter 38 /iter/test-many-busy
-PASS: test-iter 39 /iter/destroy-object
-PASS: test-iter 40 /iter/test_exhaustive_match
-PASS: test-iter 41 /iter/test_profile
+PASS: test-iter 15 /iter/test_token_match_with_login
+PASS: test-iter 15 /iter/test_token_match_with_login
+PASS: test-iter 16 /iter/test_token_mismatch
+PASS: test-iter 16 /iter/test_token_mismatch
+PASS: test-iter 17 /iter/token-info
+PASS: test-iter 17 /iter/token-info
+PASS: test-iter 18 /iter/test_token_only
+PASS: test-iter 18 /iter/test_token_only
+PASS: test-iter 19 /iter/test_token_only_with_login
+PASS: test-iter 19 /iter/test_token_only_with_login
+PASS: test-iter 20 /iter/test_slot_match
+PASS: test-iter 21 /iter/test_slot_mismatch
+PASS: test-iter 22 /iter/test_slot_match_by_id
+PASS: test-iter 23 /iter/test_slot_mismatch_by_id
+PASS: test-iter 24 /iter/slot-info
+PASS: test-iter 25 /iter/test_slot_only
+PASS: test-iter 26 /iter/test_module_match
+PASS: test-iter 27 /iter/test_module_mismatch
+PASS: test-iter 28 /iter/test_module_only
+PASS: test-iter 29 /iter/test_getslotlist_fail_first
+PASS: test-iter 30 /iter/test_getslotlist_fail_late
+PASS: test-iter 31 /iter/test_open_session_fail
+PASS: test-iter 32 /iter/test_find_init_fail
+PASS: test-iter 33 /iter/test_find_objects_fail
+PASS: test-iter 34 /iter/get-attributes
+PASS: test-iter 35 /iter/test_load_attributes
+PASS: test-iter 36 /iter/test_load_attributes_none
+PASS: test-iter 37 /iter/test_load_attributes_fail_first
+PASS: test-iter 38 /iter/test_load_attributes_fail_late
+PASS: test-iter 39 /iter/test-many
+PASS: test-iter 40 /iter/test-many-busy
+PASS: test-iter 41 /iter/destroy-object
+PASS: test-iter 42 /iter/test_exhaustive_match
+PASS: test-iter 43 /iter/test_profile
 PASS: test-rpc 1 /rpc/initialize-fails-on-client
 PASS: test-rpc 2 /rpc/initialize-fails-on-server
 PASS: test-rpc 3 /rpc/initialize
@@ -789,16 +801,11 @@ PASS: test-transport3 54 /transport/unix/basic
 PASS: test-digest 1 /digest/sha1
 PASS: test-digest 2 /digest/sha1-long
 PASS: test-digest 3 /digest/md5
-PASS: test-asn1 1 /asn1/tlv_length
-PASS: test-asn1 2 /asn1/asn1_cache
-PASS: test-asn1 3 /asn1/free
 PASS: test-base64 1 /base64/decode-simple
 PASS: test-base64 2 /base64/decode-thawte
 PASS: test-pem 1 /pem/success
 PASS: test-pem 2 /pem/failure
 PASS: test-pem 3 /pem/write
-PASS: test-oid 1 /oids/known
-PASS: test-oid 2 /oids/hash
 PASS: test-utf8 1 /utf8/ucs2be
 PASS: test-utf8 2 /utf8/ucs2be_fail
 PASS: test-utf8 3 /utf8/ucs4be
@@ -1049,15 +1056,29 @@ PASS: test-openssl 13 /openssl/test_directory_empty
 PASS: test-edk2 1 /edk2/test_file_multiple
 PASS: test-jks 1 /jks/test_file_multiple
 PASS: test-jks 2 /jks/test_file_duplicated
-PASS: p11-kit/test-profiles.sh 1 /profiles/list
-PASS: p11-kit/test-server.sh 1 /server/start
-PASS: p11-kit/test-server.sh 2 /server/start-env
-ERROR: p11-kit/test-server.sh - too few tests run (expected 5, got 2)
-PASS: p11-kit/test-messages.sh 1 /messages/return-code
-# TOTAL: 997
-# PASS:  995
-# SKIP:  1
+PASS: p11-kit/test-objects.sh 1 test_list_all
+ERROR: p11-kit/test-objects.sh - too few tests run (expected 11, got 1)
+PASS: p11-kit/test-lists.sh 1 test_list_modules
+FAIL: p11-kit/test-server.sh 1 test_server_access
+PASS: p11-kit/test-list-mechanisms.sh 1 test_list_mechanisms_multi
+ERROR: p11-kit/test-list-mechanisms.sh - too few tests run (expected 3, got 1)
+PASS: p11-kit/test-list-tokens.sh 1 test_list_tokens_without_uri
+PASS: p11-kit/test-list-tokens.sh 1 test_list_tokens_without_uri
+ERROR: p11-kit/test-list-tokens.sh - too few tests run (expected 3, got 1)
+ERROR: p11-kit/test-list-tokens.sh - too few tests run (expected 3, got 1)
+SKIP: p11-kit/test-generate-keypair.sh 1 # SKIP test_generate_keypair_rsa: unable to resolve libsofthsm2.so
+ERROR: p11-kit/test-generate-keypair.sh - too few tests run (expected 3, got 1)
+PASS: p11-kit/test-export-public.sh 1 test_export_public_rsa
+ERROR: p11-kit/test-export-public.sh - too few tests run (expected 3, got 1)
+SKIP: p11-kit/test-import-public.sh 1 # SKIP test_import_cert: unable to resolve libsofthsm2.so
+ERROR: p11-kit/test-import-public.sh - too few tests run (expected 3, got 1)
+PASS: p11-kit/test-profiles.sh 1 test_list_profiles
+ERROR: p11-kit/test-profiles.sh - too few tests run (expected 19, got 1)
+PASS: p11-kit/test-messages.sh 1 test_messages
+# TOTAL: 1014
+# PASS:  1000
+# SKIP:  3
 # XFAIL: 0
-# FAIL:  0
+# FAIL:  4
 # XPASS: 0
-# ERROR: 1
+# ERROR: 7
