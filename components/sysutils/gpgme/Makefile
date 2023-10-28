@@ -27,13 +27,13 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gpgme
-COMPONENT_VERSION=	1.23.0
+COMPONENT_VERSION=	1.23.1
 COMPONENT_SUMMARY=	GnuPG Made Easy
 COMPONENT_DESCRIPTION=	A library designed to make access to GnuPG easier for applications
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:043e2efe18b4ad22b96d434dde763fbed32cf8d6c220dc69df0d0ffb9dc66fc6
+COMPONENT_ARCHIVE_HASH=	sha256:a0c316f7ab7d3bfb01a8753c3370dc906e5b61436021f3b54ff1483b513769bd
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/security/gpgme
 COMPONENT_CLASSIFICATION= System/Libraries
