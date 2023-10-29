@@ -17,14 +17,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         abseil-cpp
 COMPONENT_VERSION=      20230802.1
-COMPONENT_PROJECT_URL=  https://abseil.io
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Collection of C++ library code designed to augment the C++ standard library
-COMPONENT_FMRI=         library/c++/abseil-cpp
+COMPONENT_PROJECT_URL=  https://abseil.io
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:987ce98f02eefbaf930d6e38ab16aa05737234d7afbab2d5c4ea7adbe50c28ed
+COMPONENT_ARCHIVE_HASH= sha256:987ce98f02eefbaf930d6e38ab16aa05737234d7afbab2d5c4ea7adbe50c28ed
 COMPONENT_ARCHIVE_URL=	https://github.com/abseil/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=         library/c++/abseil-cpp
 COMPONENT_CLASSIFICATION=       Development/C++
 COMPONENT_LICENSE=      Apache
 COMPONENT_LICENSE_FILE= LICENSE
