@@ -21,15 +21,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icu
 COMPONENT_VERSION =		72.1
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		International Components for Unicode
 COMPONENT_SRC =			$(COMPONENT_NAME)
 COMPONENT_ARCHIVE =		icu4c-$(subst .,_,$(HUMAN_VERSION))-src.tgz
 COMPONENT_ARCHIVE_HASH =	sha256:a2d2d38217092a7ed56635e34467f92f976b370e20182ad325edea6681a71d68
 COMPONENT_PROJECT_URL =		https://icu.unicode.org/
 COMPONENT_ARCHIVE_URL =		https://github.com/unicode-org/icu/releases/download/release-$(subst .,-,$(HUMAN_VERSION))/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION =	System/Internationalization
 COMPONENT_FMRI =		library/icu
+COMPONENT_CLASSIFICATION =	System/Internationalization
 COMPONENT_LICENSE =		ICU
 COMPONENT_LICENSE_FILE =	LICENSE
 
