@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         double-conversion
 COMPONENT_VERSION=      3.3.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      binary-decimal and decimal-binary routines for IEEE doubles
 COMPONENT_PROJECT_URL=  https://github.com/google/double-conversion
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
