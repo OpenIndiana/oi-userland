@@ -11,7 +11,7 @@
 
 #
 # Copyright 2016-2017 Predrag Zečević.  All rights reserved.
-# Copyright 2020 Andreas Wacknitz
+# Copyright 2020, 2023 Andreas Wacknitz
 #
 
 BUILD_BITS= 64
@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany
 COMPONENT_VERSION=      2.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      A fast and lightweight IDE
 COMPONENT_DESCRIPTION=	Small and fast IDE, which has only a few dependencies from other package (independent on DE)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,16 +35,16 @@ COMPONENT_LICENSE_FILE= COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CFLAGS += -D_FILE_OFFSET_BITS=64
 
-CONFIGURE_OPTIONS    += --enable-vte
-CONFIGURE_OPTIONS    += --disable-html-docs
-CONFIGURE_OPTIONS    += --disable-pdf-docs
-CONFIGURE_OPTIONS    += --enable-api-docs
-CONFIGURE_OPTIONS    += --enable-gtkdoc-header
-CONFIGURE_OPTIONS    += --enable-the-force
+CONFIGURE_OPTIONS += --enable-vte
+CONFIGURE_OPTIONS += --disable-html-docs
+CONFIGURE_OPTIONS += --disable-pdf-docs
+CONFIGURE_OPTIONS += --enable-api-docs
+CONFIGURE_OPTIONS += --enable-gtkdoc-header
+CONFIGURE_OPTIONS += --enable-the-force
 
 # Manually added build dependencies:
 REQUIRED_PACKAGES += compress/bzip2
