@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hunspell
 COMPONENT_VERSION=        1.7.2
-COMPONENT_REVISION=       2
+COMPONENT_REVISION=       3
 COMPONENT_SUMMARY=        Hunspell is a free spell checker and morphological analyzer library and command-line tool
 COMPONENT_PROJECT_URL=    https://hunspell.github.io/
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
