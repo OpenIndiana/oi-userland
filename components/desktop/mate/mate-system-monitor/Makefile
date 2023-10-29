@@ -24,7 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-system-monitor
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		3
+COMPONENT_REVISION=		4
 COMPONENT_SUMMARY=	MATE system monitor
 COMPONENT_ARCHIVE_HASH= sha256:83472c3add79e52b2fb3c1bc55f33f968c71a2b90e2b62027ad688c1cecc338f
 COMPONENT_FMRI=				desktop/system-monitor/mate-system-monitor
@@ -37,7 +37,7 @@ include $(WS_MAKE_RULES)/common.mk
 LDFLAGS = -lnsl -lsocket
 
 # wnck is now optional, but previous versions had it, so enable:
-CONFIGURE_OPTIONS+=	--enable-wnck
+CONFIGURE_OPTIONS += --enable-wnck
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
