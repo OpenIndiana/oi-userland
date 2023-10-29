@@ -16,18 +16,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pan
 COMPONENT_VERSION=      0.149
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=  https://pan.rebelbase.com
 COMPONENT_SUMMARY=      A powerful Newsgroup Article reader
 COMPONENT_FMRI=         desktop/nntp/pan
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-    sha256:5d34d0d7dbb73ee53484ffe173f01d8b2c0732126ec21d8cf29d6baa5ecb85ea
+COMPONENT_ARCHIVE_HASH= sha256:5d34d0d7dbb73ee53484ffe173f01d8b2c0732126ec21d8cf29d6baa5ecb85ea
 COMPONENT_ARCHIVE_URL=	https://pan.rebelbase.com/download/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=       Applications/Internet
 COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE= pan.license
 
 LDFLAGS += -lsocket -lnsl
 
@@ -38,8 +36,10 @@ CONFIGURE_OPTIONS += --with-gnutls
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# SPARC needs math library, to publish.
+# SPARC needs math library
+ifeq ($(strip $(MACH)),sparc)
 REQUIRED_PACKAGES += system/library/math
+endif
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
