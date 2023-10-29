@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atkmm
 COMPONENT_VERSION=	2.28.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	atkmm - C++ Wrapper for the atk Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
