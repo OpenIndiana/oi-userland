@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         librevenge
 COMPONENT_VERSION=      0.0.5
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      librevenge - base library for writing document import filters
 COMPONENT_PROJECT_URL=  https://sourceforge.net/p/libwpd/wiki/librevenge/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
