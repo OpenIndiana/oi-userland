@@ -30,7 +30,7 @@ PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
 COMPONENT_VERSION=	1.14.2
-COMPONENT_REVISION =	2
+COMPONENT_REVISION =	3
 COMPONENT_PROJECT_URL=	https://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -148,7 +148,12 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
 
-# Build dependencies
+# SPARC needs math library
+ifeq ($(strip $(MACH)),sparc)
+REQUIRED_PACKAGES += system/library/math
+endif
+
+# Manually added build dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/py3c
 
 # Auto-generated dependencies
@@ -165,4 +170,3 @@ REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/magic
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
