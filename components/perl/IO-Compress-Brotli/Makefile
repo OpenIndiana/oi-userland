@@ -19,16 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::Compress::Brotli
-HUMAN_VERSION =			0.004001
+HUMAN_VERSION =			0.010
 COMPONENT_SUMMARY =		IO::Compress::Brotli - Write Brotli buffers/streams
-COMPONENT_CPAN_AUTHOR =		MGV
+COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8ba5c0167e966f487bde159c18bc1b3486528013b3235d39f2fcb375ca4bf410
+	sha256:9a38f1cc75b7d7ed81b9a7f2aec9991212effe36a7fb4baaa83caeeeac0f4b62
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/alien-cmake3
 PERL_REQUIRED_PACKAGES += library/perl-5/file-slurper
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
