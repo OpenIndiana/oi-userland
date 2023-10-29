@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libsigc++
 COMPONEN_MAJOR_VERSION=	2.10
 COMPONENT_VERSION= $(COMPONEN_MAJOR_VERSION).0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Libsigc++ - a library that implements a typesafe callback system for standard C++ (g++ - compiled)
 COMPONENT_PROJECT_URL = http://libsigc.sourceforge.net
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
