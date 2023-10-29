@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
 COMPONENT_VERSION=		9.0.0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
@@ -114,11 +114,11 @@ COMPONENT_POST_INSTALL_ACTION += \
 TEST_TARGET = $(NO_TESTS)
 
 # various build dependencies not detected automatically
-REQUIRED_PACKAGES += developer/java/openjdk8
+REQUIRED_PACKAGES += runtime/java/openjdk17
 #REQUIRED_PACKAGES += runtime/ocaml
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += web/php-81
-REQUIRED_PACKAGES += developer/golang-120
+REQUIRED_PACKAGES += developer/golang
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
