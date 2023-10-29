@@ -21,15 +21,17 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libsigc++
 COMPONEN_MAJOR_VERSION=	3.4
 COMPONENT_VERSION=      $(COMPONEN_MAJOR_VERSION).0
-COMPONENT_FMRI=         library/c++/sigcpp3
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Libsigc++ - a library that implements a typesafe callback system for standard C++
-COMPONENT_CLASSIFICATION=Development/C++ 
 COMPONENT_PROJECT_URL=  https://libsigc.sourceforge.net
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:02e2630ffb5ce93cd52c38423521dfe7063328863a6e96d41d765a6116b8707e
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/libsigc++/$(COMPONEN_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/c++/sigcpp3
+COMPONENT_CLASSIFICATION=Development/C++ 
 COMPONENT_LICENSE=      LGPLv3 
+COMPONENT_LICENSE_FILE= COPYING 
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -40,7 +42,7 @@ unexport SHELLOPTS
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
 
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*\.[0-9]*s/X.XXs/" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*\.[0-9]*s//" '
 COMPONENT_TEST_TRANSFORMS += '-e "/^Full log written.*/d" '
 
 # The tests need $(PROTOUSRLIBDIR) and $(PROTOUSRLIBDIR64) and pre-publish provides them:
