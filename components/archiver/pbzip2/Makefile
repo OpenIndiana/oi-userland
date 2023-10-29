@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pbzip2
 COMPONENT_VERSION=	1.1.13
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	parallel implementation of bzip2
 COMPONENT_PROJECT_URL=	http://compression.great-site.net
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -51,8 +51,9 @@ COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CXX="$(CXX)"
 COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
 
-# Manually added dependencies
+ifeq ($(strip $(MACH)),sparc)
 REQUIRED_PACKAGES += system/library/math
+endif
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
