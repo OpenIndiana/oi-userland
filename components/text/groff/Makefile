@@ -24,11 +24,12 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
 COMPONENT_VERSION=	1.23.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	GNU troff Text Formatting
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/groff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,8 +43,6 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 COMPONENT_FMRI.groff-core =	$(COMPONENT_FMRI)/groff-core
 COMPONENT_SUMMARY.groff-core =	$(COMPONENT_SUMMARY) (core system components)
-
-USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_TOP)/make-rules/common.mk
 
