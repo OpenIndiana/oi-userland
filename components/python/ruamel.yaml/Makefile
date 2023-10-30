@@ -19,13 +19,12 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ruamel.yaml
-HUMAN_VERSION =			0.18.2
+HUMAN_VERSION =			0.18.3
 COMPONENT_SUMMARY =		ruamel.yaml - ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order
-COMPONENT_PROJECT_URL =		https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree
 COMPONENT_ARCHIVE_URL =		\
 	https://sourceforge.net/projects/ruamel-dl-tagged-releases/files/$(COMPONENT_ARCHIVE)/download
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:75edb2882b6f3c0823a82a68829bbbad5e939196461ef93ffcf2782509f16f6c
+	sha256:b1b570eae23e923e4926c21315a6bdae6e7004621f02417be1d32f82ef575fbd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
