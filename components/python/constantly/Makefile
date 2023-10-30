@@ -14,26 +14,27 @@
 #   $WS_TOOLS/python-integrate-project constantly
 #
 
-BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		constantly
-HUMAN_VERSION =			15.1.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			23.10.4
 COMPONENT_SUMMARY =		constantly - Symbolic constants in Python
 COMPONENT_PROJECT_URL =		https://github.com/twisted/constantly
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/95/f1/207a0a478c4bb34b1b49d5915e2db574cadc415c9ac3a7ef17e29b2e8951/constantly-15.1.0.tar.gz
+	https://files.pythonhosted.org/packages/4d/6f/cb2a94494ff74aa9528a36c5b1422756330a75a8367bf20bd63171fc324d/constantly-23.10.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:586372eb92059873e29eba4f9dec8381541b4d3834660707faf8ba59146dfc35
+	sha256:aa92b70a33e2ac0bb33cd745eb61776594dc48764b06c35e0efd050b7f1c7cbd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/versioneer
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
