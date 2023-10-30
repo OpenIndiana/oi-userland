@@ -1,0 +1,10 @@
+--- aiohttp-3.8.6/tests/test_client_session.py.orig
++++ aiohttp-3.8.6/tests/test_client_session.py
+@@ -613,6 +613,7 @@
+             assert gathered_req_headers["Custom-Header"] == "Custom value"
+ 
+ 
++@pytest.mark.skip(reason="always fails: https://github.com/aio-libs/aiohttp/issues/7766")
+ async def test_request_tracing_url_params(loop: Any, aiohttp_client: Any) -> None:
+     async def root_handler(request):
+         return web.Response()
