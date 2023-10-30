@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
 COMPONENT_VERSION=	2.4.7
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
@@ -80,6 +80,9 @@ CONFIGURE_OPTIONS += --with-archflags="$(CC_BITS)"
 # Dynamically create the license file from its sources:
 cups.license: $(SOURCE_DIR)/LICENSE $(SOURCE_DIR)/NOTICE
 	cat $? > $@
+
+# IdleExitTimeout is unknown and throws an error.
+COMPONENT_POST_INSTALL_ACTION= $(GSED) -i -e "s:IdleExitTimeout 60:\#IdleExitTimeout 60:" $(PROTOETCDIR)/cups/cupsd.conf*
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += image/library/libpng16
