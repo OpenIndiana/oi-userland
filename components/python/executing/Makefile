@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		executing
-HUMAN_VERSION =			1.2.0
+HUMAN_VERSION =			2.0.1
 COMPONENT_SUMMARY =		executing - Get the currently executing AST node of a frame, and other information
 COMPONENT_PROJECT_URL =		https://github.com/alexmojaki/executing
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8f/ac/89ff37d8594b0eef176b7cec742ac868fef853b8e18df0309e3def9f480b/executing-1.2.0.tar.gz
+	https://files.pythonhosted.org/packages/08/41/85d2d28466fca93737592b7f3cc456d1cfd6bcd401beceeba17e8e792b50/executing-2.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:19da64c18d2d851112f09c287f8d3dbbdf725ab0e569077efb6cdcbd3497c107
+	sha256:35afe2ce3affba8ee97f2d69927fa823b08b472b7b994e36a52a964b93d16147
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -37,5 +37,8 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/asttokens
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/coverage-enable-subprocess
+TEST_REQUIRED_PACKAGES.python += library/python/ipython
 TEST_REQUIRED_PACKAGES.python += library/python/littleutils
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
