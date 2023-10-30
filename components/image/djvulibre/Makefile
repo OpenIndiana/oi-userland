@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= djvulibre
 COMPONENT_VERSION= 3.5.28
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= DjVu base libraries and utilities
 COMPONENT_PROJECT_URL= https://djvu.sourceforge.net/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
