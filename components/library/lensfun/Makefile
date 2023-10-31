@@ -12,12 +12,13 @@
 # Copyright 2017 Aurelien Larcher
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         lensfun
 COMPONENT_VERSION=      0.3.4
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Lensfun - library rectifying defects introduced by photographic equipment
 COMPONENT_PROJECT_URL=  https://lensfun.github.io/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -44,7 +45,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PYTHON) -m compileall $(PROTO_DIR)/usr/lib/python3.9/vendor-packages ; \
 	fi ;
 
-COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9. ]*sec//g"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
