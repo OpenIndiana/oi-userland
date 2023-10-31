@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jupyter_core
-HUMAN_VERSION =			5.4.0
+HUMAN_VERSION =			5.5.0
 COMPONENT_SUMMARY =		jupyter_core - Jupyter core package. A base package on which Jupyter projects rely.
 COMPONENT_PROJECT_URL =		https://jupyter.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/cc/df/ac7f3eba596110143561c1c9d57f288cf2df69643c9daf211c5f9c2dd85d/jupyter_core-5.4.0.tar.gz
+	https://files.pythonhosted.org/packages/5c/3d/c75bda485eaf15cd430383deb0c441aa822679ea88c5b32cfc2013f678e1/jupyter_core-5.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e4b98344bb94ee2e3e6c4519a97d001656009f9cb2b7f2baf15b3c205770011d
+	sha256:880b86053bf298a8724994f95e99b99130659022a4f7f45f563084b6223861d3
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
