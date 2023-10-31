@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yaml-cpp
 COMPONENT_VERSION=	0.7.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= A YAML parser and emitter in C++ matching the YAML 1.2 spec
 COMPONENT_PROJECT_URL=	https://github.com/jbeder/$(COMPONENT_SRC_NAME)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
