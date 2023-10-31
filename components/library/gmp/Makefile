@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gmp
 COMPONENT_VERSION=      6.3.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      GNU Multiple Precision Bignum Library
 COMPONENT_PROJECT_URL=  https://gmplib.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
