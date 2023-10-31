@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cleo
-HUMAN_VERSION =			2.0.1
+HUMAN_VERSION =			2.1.0
 COMPONENT_SUMMARY =		cleo - Cleo allows you to create beautiful and testable command-line interfaces.
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/cleo
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/python-poetry/cleo/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/3c/30/f7960ed7041b158301c46774f87620352d50a9028d111b4211187af13783/cleo-2.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cb9b60c9559d26a289b0536b134f9efe1b59632f51dc38b20c8a9076b99e0f07
+	sha256:0b2c880b5d13660a7ea651001fb4acb527696c01f15c9ee650f377aa543fd523
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

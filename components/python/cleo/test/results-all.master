@@ -1,12 +1,11 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 248 items
+configfile: pyproject.toml
+testpaths: tests
+collecting ... collected 256 items
 
-::project PASSED
 tests/commands/completion/test_completions_command.py::test_bash PASSED
 tests/commands/completion/test_completions_command.py::test_fish PASSED
 tests/commands/completion/test_completions_command.py::test_invalid_shell PASSED
@@ -159,6 +158,15 @@ tests/test_color.py::test_true_color_support[#fff-#000-options0-\x1b[38;2;255;25
 tests/test_color.py::test_true_color_support[#ffffff-#000000-options1-\x1b[38;2;255;255;255;48;2;0;0;0m \x1b[39;49m] SKIPPED
 tests/test_helpers.py::test_argument PASSED
 tests/test_helpers.py::test_option PASSED
+tests/test_terminal.py::test_columns_env[200-40-40] PASSED
+tests/test_terminal.py::test_columns_env[314-None-314] PASSED
+tests/test_terminal.py::test_columns_env[random-40-40] PASSED
+tests/test_terminal.py::test_columns_env[random-None-80] PASSED
+tests/test_terminal.py::test_lines_env[200-40-40] PASSED
+tests/test_terminal.py::test_lines_env[314-None-314] PASSED
+tests/test_terminal.py::test_lines_env[random-40-40] PASSED
+tests/test_terminal.py::test_lines_env[random-None-25] PASSED
+tests/test_terminal.py::test_size PASSED
 tests/test_utils.py::test_find_similar_names[-expected0] PASSED
 tests/test_utils.py::test_find_similar_names[bar1-expected3] PASSED
 tests/test_utils.py::test_find_similar_names[bar2-expected2] PASSED
@@ -255,4 +263,4 @@ tests/ui/test_table.py::test_render[headers8-rows8-default-] PASSED
 tests/ui/test_table.py::test_render[headers9-rows9-default-+---------------+----------------------------+-----------------+\n| ISBN          | Title                      | Author          |\n+---------------+----------------------------+-----------------+\n| 99921-58-10-7 | Divine                     | Dante Alighieri |\n|               | Comedy                     |                 |\n| 9971-5-0210-2 | Harry Potter               | Rowling         |\n|               | and the Chamber of Secrets | Joanne K.       |\n| 9971-5-0210-2 | Harry Potter               | Rowling         |\n|               | and the Chamber of Secrets | Joanne K.       |\n| 960-425-059-0 | The Lord of the Rings      | J. R. R.        |\n|               |                            | Tolkien         |\n+---------------+----------------------------+-----------------+\n] PASSED
 tests/ui/test_table.py::test_style_for_side_effects PASSED
 
-======== 245 passed, 3 skipped ========
+======== 253 passed, 3 skipped ========
