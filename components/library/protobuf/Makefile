@@ -24,24 +24,25 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-BUILD_STYLE = cmake
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         protobuf
 COMPONENT_VERSION=      24.4
-COMPONENT_FMRI=         library/c++/protobuf
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_REVISION=		1
+COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/google/protobuf/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:616bb3536ac1fff3fb1a141450fa28b875e985712170ea7f1bfe5e5fc41e2cd8
 COMPONENT_ARCHIVE_URL=  https://github.com/google/protobuf/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=         library/c++/protobuf
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= LICENSE
-COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 
 # Tests require Googletest which we don't have yet.
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS += -Dprotobuf_BUILD_TESTS=OFF
