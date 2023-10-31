@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libplist
 COMPONENT_VERSION= 2.2.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A library to handle Apple Property List format in binary or XML
 COMPONENT_PROJECT_URL = https://github.com/libimobiledevice/libplist
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,8 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION= \
-    ( cd  $(@D) && NOCONFIGURE=true PATH="$(PATH.gnu)" sh autogen.sh )
+COMPONENT_PREP_ACTION= ( cd  $(@D) && NOCONFIGURE=true PATH="$(PATH.gnu)" sh autogen.sh )
 
 CFLAGS += $($(COMPILER)_PIC)
 
