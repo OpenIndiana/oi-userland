@@ -13,36 +13,34 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS= 64_and_32
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libwnck3
-COMPONENT_MJR_VERSION=	3.32
+COMPONENT_NAME=		libwnck
+COMPONENT_MJR_VERSION=	43
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).0
-COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SUMMARY=	Window Navigator Construction Kit Library
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SRC=		libwnck-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:9595835cf28d0fc6af5526a18f77f2fcf3ca8c09e36741bb33915b6e69b8e3ca
+COMPONENT_ARCHIVE_HASH= sha256:905bcdb85847d6b8f8861e56b30cd6dc61eae67ecef4cd994a9f925a26a2c1fe
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libwnck/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	LGPLv2
+COMPONENT_FMRI=         library/desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_FMRI=         library/desktop/libwnck3
+COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
+CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
+CONFIGURE_OPTIONS += --sysconfdir=/etc
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--program-suffix=3
-
-# 
-COMPONENT_BUILD_ENV+=	CC="$(CC)"
-COMPONENT_BUILD_ENV+=	CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
