@@ -25,6 +25,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-notification-daemon
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Notification Daemon for Mate
 COMPONENT_ARCHIVE_HASH= sha256:0eae9296c48a3c71fd56f1931961f92d29e45a045fe5f1a05f83c7400c319924
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
@@ -41,7 +42,7 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/libwnck3
+REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
