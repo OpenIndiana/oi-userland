@@ -1,14 +1,11 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> $(PYTHON) -b -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
-collecting ... collected 90 items / 1 skipped
+collecting ... collected 91 items / 1 skipped
 
 tests/cli/test_convert.py::test_convert_egg PASSED
 tests/cli/test_convert.py::test_egg_re PASSED
@@ -38,6 +35,7 @@ tests/test_bdist_wheel.py::test_get_abi_tag_fallback PASSED
 tests/test_bdist_wheel.py::test_get_abi_tag_graalpy PASSED
 tests/test_bdist_wheel.py::test_get_abi_tag_pypy_new PASSED
 tests/test_bdist_wheel.py::test_get_abi_tag_pypy_old PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_windows PASSED
 tests/test_bdist_wheel.py::test_licenses_default PASSED
 tests/test_bdist_wheel.py::test_licenses_deprecated PASSED
 tests/test_bdist_wheel.py::test_licenses_disabled PASSED
@@ -102,6 +100,6 @@ tests/test_wheelfile.py::test_wheelfile_re[foo-2-py3-none-any.whl] PASSED
 tests/test_wheelfile.py::test_write_str PASSED
 
 =========================== short test summary info ============================
-======== 89 passed, 2 skipped ========
+======== 90 passed, 2 skipped ========
   py$(PYV): OK
   congratulations :)
