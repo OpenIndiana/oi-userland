@@ -13,13 +13,13 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS = 64
-BUILD_STYLE = cmake
+BUILD_BITS= 64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgAgent
 COMPONENT_VERSION= 	4.2.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY= 	pgAgent job scheduler for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-Source
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -32,12 +32,12 @@ COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
 # Don't depend on host default pg_config
-PATH=	$(PG_BINDIR.$(BITS)):/usr/bin/$(MACH64):/usr/bin
+PATH= $(PG_BINDIR.$(BITS)):/usr/bin/$(MACH64):/usr/bin
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CMAKE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CMAKE_ACTION= ( cp -a $(SOURCE_DIR)/* $(@D) )
 
 # Workaround for cmake to look for files in build directory
 $(BUILD_DIR)/%/.configured:     $(SOURCE_DIR)/.prep
