@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		MediaInfoLib
 COMPONENT_VERSION=	23.10
 #HUMAN_VERSION=		23.10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	MediaInfo(Lib) is a convenient unified display of the most relevant technical and tag data for video and audio files.
 COMPONENT_PROJECT_URL=	https://github.com/MediaArea/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
