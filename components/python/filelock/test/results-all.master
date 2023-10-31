@@ -4,7 +4,7 @@ py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 102 items
+collecting ... collected 103 items
 
 tests/test_error.py::test_timeout_lock_file PASSED
 tests/test_error.py::test_timeout_pickle PASSED
@@ -93,6 +93,7 @@ tests/test_filelock.py::test_singleton_locks_are_distinct_per_lock_file[UnixFile
 tests/test_filelock.py::test_singleton_locks_are_the_same[SoftFileLock] PASSED
 tests/test_filelock.py::test_singleton_locks_are_the_same[UnixFileLock] PASSED
 tests/test_filelock.py::test_soft_errors PASSED
+tests/test_filelock.py::test_subclass_compatibility PASSED
 tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[SoftFileLock] PASSED
 tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[UnixFileLock] PASSED
 tests/test_filelock.py::test_thrashing_with_thread_pool_lock_recreated_in_each_thread[SoftFileLock] PASSED
@@ -109,13 +110,29 @@ tests/test_filelock.py::test_umask PASSED
 tests/test_filelock.py::test_umask_soft PASSED
 tests/test_filelock.py::test_wrong_platform PASSED
 
+=============================== warnings summary ===============================
+tests/test_filelock.py::test_subclass_compatibility
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:78: PytestUnraisableExceptionWarning: Exception ignored in: <function BaseFileLock.__del__ at $(POINTER)>
+  
+  Traceback (most recent call last):
+    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 317, in __del__
+      self.release(force=True)
+    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 280, in release
+      if self.is_locked:
+    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 190, in is_locked
+      return self._context.lock_file_fd is not None
+  AttributeError: 'MySoftFileLock' object has no attribute '_context'
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
 5 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 76.0% reached. Total coverage: 98.66%
-======== 82 passed, 20 skipped ========
+Required test coverage of 76.0% reached. Total coverage: 98.67%
+======== 83 passed, 20 skipped, 1 warning ========
   py$(PYV): OK
   congratulations :)
