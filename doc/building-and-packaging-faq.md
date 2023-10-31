@@ -6,7 +6,6 @@ This page contains answers to the most common questions regarding building and p
 * [Why compiled python files are no longer automatically added to manifests?](#why-compiled-python-files-are-no-longer-automatically-added-to-manifests)
 * [How can I use COMPONENT_SUMMARY with PYVER components?](#how-can-i-use-component_summary-with-pyver-components)
 * [Why do I receive "mv: cannot access .deps/libsomething.Tpo" error during component build?](#why-do-i-receive-mv-cannot-access-depslibsomethingtpo-error-during-component-build)
-* [Why COMPONENT_AUTOGEN_MANIFEST is dangerous?](#why-component_autogen_manifest-is-dangerous)
 
 ## How to bypass checks for \*.pyc files in p5m manifest?
 
@@ -46,10 +45,3 @@ The most frequent reason for this error is a regeneration of `Makefile.in` files
 Generally, libtoolize, aclocal, automake and friends should be run as COMPONENT_PREP_ACTION  when $(@D) is $(SOURCE_DIR), before  changing $(@D) to $(BUILD_DIR_$(BITS)).
 $(CLONEY) should be run in COMPONENT_PRE_CONFIGURE_ACTION.
 Another possible reason is missing some step in configuration - e.g. libtoolize.
-
-## Why COMPONENT_AUTOGEN_MANIFEST is dangerous?
-
-Setting COMPONENT_AUTOGEN_MANIFEST=yes in your component's Makefile and adding empty *.p5m manifest you can make oi-userland build system to generate *.p5m manifest automatically.
-But it's not a very good idea: it hides manifest from you and so manifest can contain garbage.
-Even more, if you change component or its dependencies, the files can be missing from the package without any warning.
-The better alternative is to use "gmake sample-manifest", copy generated manifest to component directory and modify it as needed.
