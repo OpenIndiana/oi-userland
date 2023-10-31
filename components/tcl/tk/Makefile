@@ -29,9 +29,9 @@ include ../../../make-rules/shared-macros.mk
 
 USE_COMMON_TEST_MASTER=		yes
 COMPONENT_NAME=			tk
-COMPONENT_MAJOR_VERSION=	8.6
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).13
-COMPONENT_REVISION=		1
+COMPONENT_MJR_VERSION=	8.6
+COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).13
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=		Tk - TCL GUI Toolkit
 COMPONENT_DESCRIPTION=	Tk is an open source, cross-platform widget toolkit that provides a library of basic elements for building a graphical user interface
 COMPONENT_PROJECT_URL=	https://www.tcl-lang.org/
@@ -46,7 +46,7 @@ COMPONENT_LICENSE_FILE=	license.terms
 
 include $(WS_MAKE_RULES)/common.mk
 
-PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
+PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MJR_VERSION)
 
 COMPONENT_PREP_ACTION= \
 	(cd $(@D)/unix ; autoreconf -f)
