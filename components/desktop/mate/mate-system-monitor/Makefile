@@ -24,7 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-system-monitor
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		4
+COMPONENT_REVISION=		5
 COMPONENT_SUMMARY=	MATE system monitor
 COMPONENT_ARCHIVE_HASH= sha256:83472c3add79e52b2fb3c1bc55f33f968c71a2b90e2b62027ad688c1cecc338f
 COMPONENT_FMRI=				desktop/system-monitor/mate-system-monitor
@@ -49,7 +49,7 @@ REQUIRED_PACKAGES += library/desktop/c++/gtkmm3
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/libwnck3
+REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgtop
