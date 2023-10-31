@@ -22,7 +22,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=         mate-panel
 COMPONENT_MJR_VERSION=  1.26
 COMPONENT_MNR_VERSION=  3
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      The Panel of Mate
 COMPONENT_ARCHIVE_HASH= sha256:f33f10d527450ba7e98cc70ab255ac481330aa9e66dbcc7c511b6baa171de029
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -41,7 +41,7 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/libwnck3
+REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/mate/libmateweather
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/mate/mate-menus
