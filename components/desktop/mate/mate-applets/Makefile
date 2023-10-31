@@ -25,7 +25,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-applets
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	1
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=	Applets components for the MATE Desktop Environment
 COMPONENT_ARCHIVE_HASH= sha256:3ab8f61db376dc333ce4c18722c63a07fab3e8e1272b7e0e097ad4597b17c2c2
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
@@ -52,7 +52,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/gtksourceview3
-REQUIRED_PACKAGES += library/desktop/libwnck3
+REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/mate/libmateweather
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
