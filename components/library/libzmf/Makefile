@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libzmf
 COMPONENT_VERSION=	0.0.2
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libzmf
 COMPONENT_SUMMARY=      libzmf - library for reading Zoner Callisto/Draw documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,7 +38,7 @@ COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Fix threading detection issue introduced with boost 1.64
@@ -51,9 +51,9 @@ CONFIGURE_OPTIONS += --disable-werror
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/librevenge
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
