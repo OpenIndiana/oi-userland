@@ -13,11 +13,12 @@
 #
 
 BUILD_STYLE= cmake
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swipl
 COMPONENT_VERSION=	9.0.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Robust, mature, free. Prolog for the real world.
 COMPONENT_PROJECT_URL= https://www.swi-prolog.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -74,7 +75,7 @@ REQUIRED_PACKAGES += library/libyaml
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/java/openjdk8
