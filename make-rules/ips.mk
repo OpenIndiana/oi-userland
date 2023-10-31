@@ -96,12 +96,7 @@ endef
 $(foreach var, $(filter PY3_%_NAMING,$(.VARIABLES)), \
     $(eval $(call add-limiting-variable,$(var))))
 
-
-ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
-AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
-else
 AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/drop-all
-endif
 
 # For items defined as variables or that may contain whitespace, add
 # them to a list to be expanded into PKG_OPTIONS later.
@@ -474,28 +469,6 @@ $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
 	        $(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
-ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
-# auto-generate file/directory list
-$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
-	(cat $(METADATA_TEMPLATE); \
-	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR)) | \
-	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(AUTOGEN_MANIFEST_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) | \
-		cat $< - >$@
-
-# mogrify non-parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	%.generated $(MAKEFILE_PREREQ)
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
-		$(PUBLISH_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
-
-# mogrify parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated $(MAKEFILE_PREREQ)
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
-		$(PUBLISH_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
-else
-
 per-manifest-options = $(foreach var,$(PKG_VARS),$(if $($(var).$(1)),-D $(var)="$(strip $($(var).$(1)))")) \
 	$(if $(COMPONENT_CLASSIFICATION.$(1)),-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION.$(1)))")
 
@@ -510,7 +483,6 @@ $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR) $(MAKEFILE_PRE
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
-endif
 
 # mangle the file contents
 $(BUILD_DIR) $(MANGLED_DIR):
