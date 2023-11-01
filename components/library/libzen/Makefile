@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ZenLib
 COMPONENT_VERSION=	0.4.41
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Small C++ derivate classes to have an easier life
 COMPONENT_PROJECT_URL=	https://github.com/MediaArea/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
