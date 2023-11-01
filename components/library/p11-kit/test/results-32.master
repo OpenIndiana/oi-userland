@@ -1,4 +1,4 @@
-/usr/gnu/bin/make  test-tests test-compat test-hash test-dict test-array test-constants test-attrs test-buffer test-url test-path test-lexer test-message test-argv test-runtime  test-asn1 test-oid  test-progname test-util test-conf test-uri test-pin test-init test-modules test-deprecated test-proxy test-proxy3 test-iter test-rpc test-rpc-message  test-server test-virtual test-managed test-log test-log3 test-filter test-transport test-transport3  test-digest test-base64 test-pem test-oid test-utf8 test-x509 test-persist test-index test-parser test-builder test-token test-module test-save test-enumerate test-cer test-bundle test-openssl test-edk2 test-jks  common/frob-getauxval common/frob-getenv  common/frob-getprogname p11-kit/p11-kit-testable p11-kit/p11-kit-remote-testable p11-kit/p11-kit-server-testable p11-kit/print-messages p11-kit/frob-setuid fuzz/rpc_fuzzer frob-pow frob-token frob-nss-trust frob-cert frob-bc frob-ku frob-eku frob-ext frob-oid  libp11-test.la  libp11-kit-testable.la libp11-kit-pkcs11-gnu.la  mock-one.la mock-v3-one.la mock-two.la mock-v3-two.la mock-three.la mock-four.la mock-v3-four.la mock-five.la mock-seven.la mock-eight.la mock-nine.la mock-ten.la mock-eleven.la mock-twelve.la mock-thirteen.la mock-six.la libtrust-testable.la  libtrust-test.la \
+/usr/gnu/bin/make  test-tests test-compat test-hash test-dict test-array test-constants test-attrs test-buffer test-url test-path test-lexer test-message test-argv test-runtime  test-asn1 test-oid  test-progname test-util test-conf test-uri test-pin test-init test-modules test-deprecated test-proxy test-proxy3 test-iter test-rpc test-rpc-message  test-server test-virtual test-managed test-log test-log3 test-filter test-transport test-transport3  test-digest test-base64 test-pem test-oid test-utf8 test-x509 test-persist test-index test-parser test-builder test-token test-module test-save test-enumerate test-cer test-bundle test-openssl test-edk2 test-jks  common/frob-getauxval common/frob-getenv  common/frob-getprogname p11-kit/p11-kit-testable p11-kit/p11-kit-remote-testable p11-kit/p11-kit-server-testable p11-kit/print-messages p11-kit/frob-setuid fuzz/rpc_fuzzer frob-pow frob-token frob-nss-trust frob-cert frob-bc frob-ku frob-eku frob-ext frob-oid  libp11-test.la  libp11-kit-testable.la libp11-kit-pkcs11-gnu.la  mock-one.la mock-v3-one.la mock-two.la mock-v3-two.la mock-three.la mock-four.la mock-v3-four.la mock-five.la mock-seven.la mock-eight.la mock-nine.la mock-ten.la mock-eleven.la mock-twelve.la mock-thirteen.la mock-fourteen.la mock-six.la libtrust-testable.la  libtrust-test.la \
   p11-kit/test-objects.sh p11-kit/test-lists.sh p11-kit/test-server.sh p11-kit/test-list-mechanisms.sh p11-kit/test-list-tokens.sh p11-kit/test-generate-keypair.sh  p11-kit/test-export-public.sh p11-kit/test-import-public.sh p11-kit/test-profiles.sh  p11-kit/test-messages.sh
 make[4]: Nothing to be done for '$(SOURCE_DIR)/p11-kit/test-list-tokens.sh'.
 PASS: test-tests 1 /test/success
@@ -931,8 +931,10 @@ PASS: test-token 4 /token/label
 PASS: test-token 4 /token/label
 PASS: test-token 5 /token/slot
 PASS: test-token 5 /token/slot
-PASS: test-token 6 /token/not-writable
-PASS: test-token 6 /token/not-writable
+FAIL: test-token 6 /token/not-writable
+FAIL: test-token 6 /token/not-writable
+# test-token: assertion failed (!p11_token_is_writable (token))
+# test-token: in test_not_writable() at test-token.c:286
 PASS: test-token 7 /token/writable-no-exist
 PASS: test-token 7 /token/writable-no-exist
 PASS: test-token 8 /token/writable-exists
@@ -1066,19 +1068,19 @@ PASS: p11-kit/test-list-tokens.sh 1 test_list_tokens_without_uri
 PASS: p11-kit/test-list-tokens.sh 1 test_list_tokens_without_uri
 ERROR: p11-kit/test-list-tokens.sh - too few tests run (expected 3, got 1)
 ERROR: p11-kit/test-list-tokens.sh - too few tests run (expected 3, got 1)
-SKIP: p11-kit/test-generate-keypair.sh 1 # SKIP test_generate_keypair_rsa: unable to resolve libsofthsm2.so
-ERROR: p11-kit/test-generate-keypair.sh - too few tests run (expected 3, got 1)
+PASS: p11-kit/test-generate-keypair.sh 1 test_generate_keypair_mock
+ERROR: p11-kit/test-generate-keypair.sh - too few tests run (expected 4, got 1)
 PASS: p11-kit/test-export-public.sh 1 test_export_public_rsa
 ERROR: p11-kit/test-export-public.sh - too few tests run (expected 3, got 1)
-SKIP: p11-kit/test-import-public.sh 1 # SKIP test_import_cert: unable to resolve libsofthsm2.so
+PASS: p11-kit/test-import-public.sh 1 test_import_cert
 ERROR: p11-kit/test-import-public.sh - too few tests run (expected 3, got 1)
 PASS: p11-kit/test-profiles.sh 1 test_list_profiles
 ERROR: p11-kit/test-profiles.sh - too few tests run (expected 19, got 1)
 PASS: p11-kit/test-messages.sh 1 test_messages
 # TOTAL: 1014
-# PASS:  1000
-# SKIP:  3
+# PASS:  1001
+# SKIP:  1
 # XFAIL: 0
-# FAIL:  4
+# FAIL:  5
 # XPASS: 0
 # ERROR: 7
