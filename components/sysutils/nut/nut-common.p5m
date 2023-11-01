@@ -18,11 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016 Jim Klimov. All rights reserved.
+# Copyright (c) 2016-2023 Jim Klimov. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/$(COMPONENT_FMRI)/common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY) (Base accounts and dirs)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -40,9 +41,31 @@ user ftpuser=false gcos-field="Network UPS Tools Reserved UID" \
     group=nut group-list=root \
     password=NL username=nut uid=77
 
+# NUT service names are grouped as "system/power/nut*", hence the directory:
+dir group=sys owner=root mode=0755 path=lib/svc/manifest/system/power
+
 # These directories can hold some content generated or downloaded at runtime
 # and can become lost+found when you un/re-install the core packages (if these
 # pkg actions are delivered there instead)
 dir group=nut owner=root mode=0775 path=etc/nut
 dir group=nut owner=root mode=0770 path=var/db/nut
 file files/README-NUT-etc.txt path=etc/nut/README-NUT-etc.txt owner=root group=bin
+
+# Configuration report with details of this build
+file path=usr/share/nut/config.nut_report_feature.log
+
+# NUT umbrella service
+# Services for monitoring client (upsmon) generally does not have to be
+# present and running on the same system as a data server and drivers.
+# NUT should start generally after networking (if SNMP or NetXML is used,
+# or if this box is a client to remote upsd). Ending is trickier - could
+# want it to issue killpower late in shutdown, but have network to be able
+# to do so (for remote UPSes). This can be tuned in XML manifest by user.
+file path=usr/share/nut/solaris-smf/manifest/nut.xml
+link path=lib/svc/manifest/system/power/nut.xml \
+    target=../../../../../usr/share/nut/solaris-smf/manifest/nut.xml \
+    restart_fmri=svc:/system/manifest-import:default
+
+# Common to clients, server, drivers...
+file scripts/misc/nut.bash_completion path=usr/share/bash-completion/completions/nut
+file scripts/logrotate/nutlogd path=usr/share/nut/nutlogd.example

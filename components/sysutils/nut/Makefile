@@ -10,23 +10,24 @@
 #
 
 #
-# Copyright 2016 Jim Klimov
+# Copyright 2016-2023 Jim Klimov
 #
 
-BUILD_BITS= 64
+# NUT 2.8.0+ is diligently tested to benefit from parallel builds and succeed
+USE_PARALLEL_BUILD=	yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	nut
-COMPONENT_VERSION=	2.7.4
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	2.8.1
 COMPONENT_SUMMARY=	Network UPS Tools (NUT)
 COMPONENT_DESCRIPTION=	Network UPS Tools (NUT) is a versatile power-device monitoring toolkit to facilitate safe shutdowns
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:d580915fdf7090655c1c7c98eb116b61952553f06f0039b1f93c9f5a13e2d36b
+  sha256:7da48ee23b1f0d8d72560bb0af84f5c5ae4dbe35452b84cb49840132e47f099c
 COMPONENT_ARCHIVE_URL=	\
-  https://github.com/networkupstools/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
+  https://github.com/networkupstools/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://networkupstools.org
 COMPONENT_FMRI=	system/management/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
@@ -38,16 +39,15 @@ include $(WS_MAKE_RULES)/common.mk
 CXXFLAGS += $(CXXFLAGS.$(BITS))
 CFLAGS   += $(CFLAGS.$(BITS))
 
-# Document generation can fail with -jN
-COMPONENT_BUILD_ARGS=
-
-COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh )
+# Drop *.8 man pages (we patch to regenerate them into *.1m - see patches/07-man.patch)
+# Fix up upsmon.txt encoding that might have gone wrong into the 2.8.1 release tarball
+COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh && cd docs/man && rm -f *.8 && { dos2unix upsmon.txt > upsmon.txt.tmp && mv -f upsmon.txt.tmp upsmon.txt; }  )
 
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # We deliver only 64-bit binaries
-CONFIGURE_BINDIR.64 = $(USRBINDIR)
-CONFIGURE_SBINDIR.64 = $(USRSBINDIR)
+CONFIGURE_BINDIR.64 =	$(USRBINDIR)
+CONFIGURE_SBINDIR.64 =	$(USRSBINDIR)
 
 CONFIGURE_ENV     +=	LDFLAGS="$(LDFLAGS.64)"
 
@@ -56,6 +56,15 @@ CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS.64)"
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
 
+CONFIGURE_OPTIONS +=	--with-solaris-smf=yes
+CONFIGURE_OPTIONS +=	--with-solaris-init=no
+CONFIGURE_OPTIONS +=	--with-solaris-pkg-svr4=no
+CONFIGURE_OPTIONS +=	--with-solaris-pkg-ips=no
+
+CONFIGURE_OPTIONS +=	--with-systemdsystemunitdir=no
+CONFIGURE_OPTIONS +=	--with-systemdshutdowndir=no
+CONFIGURE_OPTIONS +=	--with-systemdtmpfilesdir=no
+
 CONFIGURE_OPTIONS +=	--with-user=nut
 CONFIGURE_OPTIONS +=	--with-group=nut
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc/nut
@@ -63,26 +72,40 @@ CONFIGURE_OPTIONS +=	--sharedstatedir=/usr/share/nut
 CONFIGURE_OPTIONS +=	--datarootdir=/usr/share/nut
 CONFIGURE_OPTIONS +=	--with-hotplug-dir=no
 CONFIGURE_OPTIONS +=	--with-udev-dir=no
+
+#  --with-statepath=PATH   path for ups state files (${STATEPATH}, typically
+#                          /var/state/ups)
+#  --with-altpidpath=PATH  path for NUT driver/upsd .pid files not running as
+#                          root (<statepath>)
+#  --with-pidpath=PATH     Path for root-owned .pid files (${PIDPATH},
+#                          typically /var/run)
+#  --with-powerdownflag=PATH
+#                          default path for upsmon POWERDOWNFLAG file
+#                          (${POWERDOWNFLAG}, typically /etc/killpower)
+CONFIGURE_OPTIONS +=	--with-pidpath=/var/run/nut
 CONFIGURE_OPTIONS +=	--with-altpidpath=/var/run/nut
+CONFIGURE_OPTIONS +=	--with-powerdownflag=/var/run/nut/killpower
 CONFIGURE_OPTIONS +=	--with-statepath=/var/db/nut
-CONFIGURE_OPTIONS +=	--with-systemdsystemunitdir=no
+
 CONFIGURE_OPTIONS +=	--with-dev
 CONFIGURE_OPTIONS +=	--with-libltdl
 CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-gd-includes=-I/usr/include/gd2
 
+CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/nut/bin
 CONFIGURE_OPTIONS +=	--with-drvpath=/usr/lib/nut/bin
 CONFIGURE_OPTIONS +=	--with-cgipath=/usr/lib/nut/cgi-bin
 CONFIGURE_OPTIONS +=	--with-gd-libs=-L/usr/lib/$(MACH64)
 
-# No separate toggle for this yet
-#CONFIGURE_OPTIONS +=	--with-nut-scanner=yes
+CONFIGURE_OPTIONS +=	--with-nut-scanner=yes
 
 # Minimize guesswork: these are features we can and do build and deliver in
 # package manifest, so the build host must have relevant packages installed
 CONFIGURE_OPTIONS +=	--with-serial=yes
-CONFIGURE_OPTIONS +=	--with-usb=yes
+#CONFIGURE_OPTIONS +=	--with-usb=yes
+CONFIGURE_OPTIONS +=	--with-usb=libusb-1.0
+CONFIGURE_OPTIONS +=	--with-modbus=yes
 CONFIGURE_OPTIONS +=	--with-neon=yes
 CONFIGURE_OPTIONS +=	--with-avahi=yes
 CONFIGURE_OPTIONS +=	--with-powerman=yes
@@ -101,27 +124,98 @@ CONFIGURE_OPTIONS +=	--with-net-snmp-config=$(USRBINDIR)/net-snmp-config-$(BITS)
 # Note: building the numerous documents of this projects is time-consuming
 # and we only need one copy. Also, we don't ship "dblatex" (needed here for
 # compiling PDFs) and probably don't require "html-chunked" chapters.
-CONFIGURE_OPTIONS +=        --with-doc="man=yes"
+CONFIGURE_OPTIONS +=	--with-doc="man=yes"
+
+# NUT-Monitor GUI client
+CONFIGURE_OPTIONS +=	--with-nut-monitor=yes
+CONFIGURE_OPTIONS +=	--with-pynut=yes
+CONFIGURE_OPTIONS +=	--with-python2=no
+CONFIGURE_OPTIONS +=	--with-python=python$(PYTHON_VERSION)
+
+# Be sure package is squeaky clean
+CONFIGURE_OPTIONS +=	--enable-Werror --enable-warnings --enable-Wcolor
+CONFIGURE_OPTIONS +=	--enable-keep_nut_report_feature
+CONFIGURE_OPTIONS +=	--enable-silent-rules
+
+# What do we run in case of `make check`?
+CONFIGURE_OPTIONS +=	--enable-spellcheck
+# NUT Integration Test suite, can take time and might fail due
+# to environment (busy ports, congested hsots and timeouts):
+#CONFIGURE_OPTIONS +=	--enable-check-NIT
+# No CPPCHECK here yet:
+CONFIGURE_OPTIONS +=	--disable-cppcheck
 
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
+
+# TOTHINK? variant.opensolaris.zone=global
+$(BUILD_DIR)/nut-usb-driver.p5m.include: $(BUILD_DIR)/$(MACH64)/scripts/udev/nut-usbups.rules
+	(echo "# NUT USB VID:PID pairs supported by some USB-capable driver"; \
+	 echo "# Parsed from $< during package build"; \
+	 echo "driver name=ugen \\" ; \
+	 grep -E 'ATTR.*idVendor.*idProduct' < "$<" | \
+	 $(GSED) 's/^.*ATTR{idVendor}=="0*\([a-fA-F0-9][a-fA-F0-9]*\)".*ATTR{idProduct}=="0*\([a-fA-F0-9][a-fA-F0-9]*\)".*$$/    alias="usb\1,\2.*" \\/' ; \
+	 echo '    perms="* 0664 root nut"' ; \
+	) > "$@"
+
+# Inject into build chain, to patch .mogrified file used to create .mangled and beyond
+$(BUILD_DIR)/.injected.nut-usb-driver.p5m.include: $(BUILD_DIR)/manifest-$(MACH)-nut-drivers-usb.mogrified $(BUILD_DIR)/nut-usb-driver.p5m.include
+	cat "$(BUILD_DIR)/nut-usb-driver.p5m.include" >> "$(BUILD_DIR)/manifest-$(MACH)-nut-drivers-usb.mogrified"
+	touch "$@"
+
+$(BUILD_DIR)/manifest-$(MACH)-nut-drivers-usb.mangled: $(BUILD_DIR)/nut-usb-driver.p5m.include $(BUILD_DIR)/.injected.nut-usb-driver.p5m.include
+
+# NUT-Monitor UI has two similar implementations, for py2gtk and py3qt5.
+# The PyNUT.py (general binding) module is written to work with both 2.x
+# and 3.x interpreters as the same source file (patched for shebang and
+# installed to different vendor/site locations several times in practice).
+# Fiddle with packaging:
+# * move man1m pages to target directory (see also patches/07-man.patch)
+# * move python stuff to vendor-packages
+# * make sure full python program name is in the shebang
+#   (and note we can not use ...\1${PYVER} because it is
+#    also numbers and SED gets confused about group \12 or so)
+# * pre-compile PYC files
+# * apply a little hack to comment away the import which
+#   confuses pkgdepend (it looks for "import" lines and
+#   disregards "try/except" around it)
+COMPONENT_POST_INSTALL_ACTION += \
+    $(MKDIR) $(PROTOUSRSHAREMANDIR)/man1m \
+        && $(MV) $(PROTOUSRSHAREMANDIR)/man1/*.1m $(PROTOUSRSHAREMANDIR)/man1m/ \
+        || { echo "FAILED to fix up man1m" >&2 ; exit 1; } ; \
+    for PYVER in $(PYTHON_VERSIONS) ; do \
+        $(MKDIR) "$(PROTOUSRLIBDIR)/python$${PYVER}/vendor-packages" \
+            && $(MV) "$(PROTOUSRLIBDIR)/python$${PYVER}/site-packages/"* "$(PROTOUSRLIBDIR)/python$${PYVER}/vendor-packages/" \
+            && find "$(PROTOUSRLIBDIR)/python$${PYVER}/vendor-packages/" -name '*.py' | while read F ; do \
+                $(GSED) '/^\(\#\!.*\/python\)$$/ s/$$/'"$${PYVER}"'/' -i "$$F" || exit ; \
+            done \
+        && python$${PYVER} -m compileall "$(PROTOUSRLIBDIR)/python$${PYVER}/vendor-packages" || exit ; \
+        case "$${PYVER}" in \
+        2.*) python$${PYVER} -c "import pygtk;pygtk.require('2.0');import pynotify" >/dev/null || { \
+                echo "Neutering import of pynotify in NUT-Monitor-py2gtk2 for this build with python$${PYVER}" >&2 ; \
+                $(GSED) -i "$(PROTOUSRSHAREDIR)/nut/nut-monitor/app/NUT-Monitor-py2gtk2" \
+                    -e 's,\(\s\)\(import pynotify\),\1return; \#\#\#NOT_HERE_\2,' || exit ; \
+            } ; \
+        esac ; \
+    done;
 
 # Manually added dependencies:
 REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += library/augeas-tools
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/gd
+REQUIRED_PACKAGES += library/libmodbus
 REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/neon
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/python/pyqt5
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/usb/libusb
 REQUIRED_PACKAGES += system/management/freeipmi
-#REQUIRED_PACKAGES += system/management/nut/libs
 REQUIRED_PACKAGES += system/management/powerman
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
