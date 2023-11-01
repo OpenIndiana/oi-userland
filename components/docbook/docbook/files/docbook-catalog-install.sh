@@ -748,6 +748,13 @@ Version=1.79.2
 Release=5.1
 
 CATALOG=/etc/xml/catalog
+
+if [ ! -s $CATALOG ]
+then
+	# Empty or missing file confuses further "add" operations
+	/usr/bin/xmlcatalog --create > $CATALOG
+fi
+
 /usr/bin/xmlcatalog --noout --add "rewriteSystem" \
  "http://docbook.sourceforge.net/release/xsl/${Version}" \
  "file:///usr/share/sgml/docbook/xsl-stylesheets-${Version}-${Release}" $CATALOG
