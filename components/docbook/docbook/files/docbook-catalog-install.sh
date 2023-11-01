@@ -749,10 +749,31 @@ Release=5.1
 
 CATALOG=/etc/xml/catalog
 
+# Normally the baseline file is delivered by the package and
+# then grows according to updates with new docbook releases.
+# This logic repeats what the package recipe does, to "revive"
+# the file if it gets corrupted or deleted on a deployed system.
 if [ ! -s $CATALOG ]
 then
 	# Empty or missing file confuses further "add" operations
 	/usr/bin/xmlcatalog --create > $CATALOG
+
+	# Now put the common DocBook entries in it
+	/usr/bin/xmlcatalog --noout --add "delegatePublic" \
+		"-//OASIS//ENTITIES DocBook XML" \
+		"file:///usr/share/sgml/docbook/xmlcatalog" $CATALOG
+	/usr/bin/xmlcatalog --noout --add "delegatePublic" \
+		"-//OASIS//DTD DocBook XML" \
+		"file:///usr/share/sgml/docbook/xmlcatalog" $CATALOG
+	/usr/bin/xmlcatalog --noout --add "delegatePublic" \
+		"ISO 8879:1986" \
+		"file:///usr/share/sgml/docbook/xmlcatalog" $CATALOG
+	/usr/bin/xmlcatalog --noout --add "delegateSystem" \
+		"http://www.oasis-open.org/docbook/" \
+		"file:///usr/share/sgml/docbook/xmlcatalog" $CATALOG
+	/usr/bin/xmlcatalog --noout --add "delegateURI" \
+		"http://www.oasis-open.org/docbook/" \
+		"file:///usr/share/sgml/docbook/xmlcatalog" $CATALOG
 fi
 
 /usr/bin/xmlcatalog --noout --add "rewriteSystem" \
