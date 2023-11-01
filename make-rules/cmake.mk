@@ -169,6 +169,7 @@ CMAKE =	cmake
 CMAKE_TEST_TRANSFORMS = \
 	' -e "s/[0-9]*\.[0-9]* sec//" ' \
 	' -n ' \
+	' -e "/Not Run/p" ' \
 	' -e "/Start/p" ' \
 	' -e "/Failed/p" ' \
 	' -e "/Passed/p" ' \
