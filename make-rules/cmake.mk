@@ -171,6 +171,7 @@ CMAKE_TEST_TRANSFORMS = \
 	' -n ' \
 	' -e "/Not Run/p" ' \
 	' -e "/Start/p" ' \
+	' -e "/Skipped/p" ' \
 	' -e "/Failed/p" ' \
 	' -e "/Passed/p" ' \
 	' -e "/failed/p" '
