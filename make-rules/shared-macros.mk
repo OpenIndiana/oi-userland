@@ -44,7 +44,7 @@ PATH = $(PATH.illumos)
 #EXTERNAL_ARCHIVE_MIRROR = \
 #	http://static.opensolaris.org/action/browse/userland/tarball/userland
 
-DLC_ARCHIVE_MIRROR = http://dlc.openindiana.org/oi-userland/source-archives
+DLC_ARCHIVE_MIRROR = https://dlc.openindiana.org/oi-userland/source-archives
 
 # Default to looking for source archives on the internal mirror and the external
 # mirror before we hammer on the community source archive repositories.
