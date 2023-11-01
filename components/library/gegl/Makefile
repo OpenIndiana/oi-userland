@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).46
+COMPONENT_REVISION= 11
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -55,17 +57,18 @@ CONFIGURE_OPTIONS+= -Dlibav=disabled
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# Without this we get issues with gobject-introspection
-#LD_B_DIRECT=
-#LD_Z_IGNORE=
-
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_64)/gegl
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += \
+	' -e "/OK/p" ' \
+	' -e "/SKIP/p" ' \
+	' -e "/FAIL/p" ' \
+	' -e "/Summary/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += image/library/babl
 REQUIRED_PACKAGES += image/library/lensfun
 REQUIRED_PACKAGES += image/library/libpng16
