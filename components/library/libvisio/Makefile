@@ -21,12 +21,12 @@
 # Copyright (c) 2017-2020, Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libvisio
 COMPONENT_VERSION=      0.1.7
-COMPONENT_REVISION=		3
+COMPONENT_REVISION=		4
 COMPONENT_SUMMARY=      libvisio - library for reading Microsoft Visio documents
 COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libvisio
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -51,8 +51,8 @@ unexport SHELLOPTS
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += library/c++/librevenge
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
