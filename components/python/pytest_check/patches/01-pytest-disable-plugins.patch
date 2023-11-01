@@ -1,0 +1,278 @@
+--- pytest_check-2.2.2/tests/test_alt_names.py.orig
++++ pytest_check-2.2.2/tests/test_alt_names.py
+@@ -12,7 +12,7 @@
+     """
+     pytester.copy_example("examples/test_example_alt_names.py")
+     pytester.makeini(ini_contents)
+-    result = pytester.runpytest()
++    result = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.stdout.fnmatch_lines(
+         [
+             "*FAILURE: assert 1 == 0*",
+--- pytest_check-2.2.2/tests/test_check_and_assert.py.orig
++++ pytest_check-2.2.2/tests/test_check_and_assert.py
+@@ -1,5 +1,5 @@
+ def test_check_and_assert(pytester):
+     pytester.copy_example("examples/test_example_check_and_assert.py")
+-    result = pytester.runpytest()
++    result = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=2)
+     result.stdout.fnmatch_lines(["* 2 failed *"])
+--- pytest_check-2.2.2/tests/test_check_check.py.orig
++++ pytest_check-2.2.2/tests/test_check_check.py
+@@ -1,4 +1,4 @@
+ def test_check_check(pytester):
+     pytester.copy_example("examples/test_example_check_check.py")
+-    result = pytester.runpytest()
++    result = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=0, passed=2)
+--- pytest_check-2.2.2/tests/test_check_context_manager.py.orig
++++ pytest_check-2.2.2/tests/test_check_context_manager.py
+@@ -1,6 +1,6 @@
+ def test_context_manager_pass(pytester):
+     pytester.copy_example("examples/test_example_context_manager_pass.py")
+-    result = pytester.runpytest()
++    result = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(passed=2)
+ 
+ 
+--- pytest_check-2.2.2/tests/test_functions.py.orig
++++ pytest_check-2.2.2/tests/test_functions.py
+@@ -1,10 +1,10 @@
+ def test_passing_check_functions(pytester):
+     pytester.copy_example("examples/test_example_functions_pass.py")
+-    result = pytester.runpytest()
++    result = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=0, passed=22)
+ 
+ 
+ def test_failing_check_functions(pytester):
+     pytester.copy_example("examples/test_example_functions_fail.py")
+-    result = pytester.runpytest()
++    result = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=22, passed=0)
+--- pytest_check-2.2.2/tests/test_logging.py.orig
++++ pytest_check-2.2.2/tests/test_logging.py
+@@ -28,7 +28,7 @@
+         assert 'five' in records[4].message
+     """)
+ 
+-    result = testdir.runpytest()
++    result = testdir.runpytest("-p", "no:black", "-p", "no:mypy", "-p", "no:randomly")
+     result.assert_outcomes(failed=1, passed=1)
+ 
+ 
+@@ -45,6 +45,6 @@
+             check.equal(1, 2, "four")
+             print('five')
+         """)
+-    result = testdir.runpytest()
++    result = testdir.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(["*one*", "*two*", "*three*", "*four*", "*five*"])
+--- pytest_check-2.2.2/tests/test_maxfail.py.orig
++++ pytest_check-2.2.2/tests/test_maxfail.py
+@@ -3,7 +3,7 @@
+     Should stop after first failed check
+     """
+     pytester.copy_example("examples/test_example_maxfail.py")
+-    result = pytester.runpytest("--maxfail=1")
++    result = pytester.runpytest("--maxfail=1", "-p", "no:black", "-p", "no:mypy", "-p", "no:randomly")
+     result.assert_outcomes(failed=1, passed=0)
+     result.stdout.fnmatch_lines(["*AssertionError: one*"])
+ 
+@@ -13,7 +13,7 @@
+     Should stop after 2 tests (not checks)
+     """
+     pytester.copy_example("examples/test_example_maxfail.py")
+-    result = pytester.runpytest("--maxfail=2")
++    result = pytester.runpytest("--maxfail=2", "-p", "no:black", "-p", "no:mypy", "-p", "no:randomly")
+     result.assert_outcomes(failed=2, passed=0)
+     result.stdout.fnmatch_lines(
+         [
+@@ -30,5 +30,5 @@
+     Should not stop on checks.
+     """
+     pytester.copy_example("examples/test_example_maxfail.py")
+-    result = pytester.runpytest("--maxfail=3")
++    result = pytester.runpytest("--maxfail=3", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=2, passed=1)
+--- pytest_check-2.2.2/tests/test_raises.py.orig
++++ pytest_check-2.2.2/tests/test_raises.py
+@@ -57,7 +57,7 @@
+ """,
+     )
+ 
+-    result = testdir.runpytest()
++    result = testdir.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1, passed=0)
+     result.stdout.re_match_lines(
+         [
+@@ -90,7 +90,7 @@
+ """,
+     )
+ 
+-    result = testdir.runpytest()
++    result = testdir.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1, passed=0)
+     result.stdout.re_match_lines(
+         [
+@@ -140,7 +140,7 @@
+     """,
+     )
+ 
+-    result = testdir.runpytest(run_flags)
++    result = testdir.runpytest(run_flags, "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(match_lines)
+ 
+@@ -150,7 +150,7 @@
+     You can mix checks and asserts, but a failing assert stops test execution.
+     """
+     pytester.copy_example("examples/test_example_mix_checks_and_assertions.py")
+-    result = pytester.runpytest()
++    result = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(
+         [
+@@ -175,7 +175,7 @@
+     """,
+     )
+ 
+-    result = testdir.runpytest()
++    result = testdir.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(["FAILURE: hello, world!"])
+ 
+@@ -209,6 +209,6 @@
+     """,
+     )
+ 
+-    result = testdir.runpytest()
++    result = testdir.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(["FAILURE: hello, world!"])
+--- pytest_check-2.2.2/tests/test_red.py.orig
++++ pytest_check-2.2.2/tests/test_red.py
+@@ -3,7 +3,7 @@
+     Should have red in failure.
+     """
+     pytester.copy_example("examples/test_example_simple.py")
+-    result = pytester.runpytest("--color=yes")
++    result = pytester.runpytest("--color=yes", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1, passed=1)
+     result.stdout.fnmatch_lines(
+         [
+@@ -20,7 +20,7 @@
+     Should NOT have red in failure.
+     """
+     pytester.copy_example("examples/test_example_simple.py")
+-    result = pytester.runpytest("--color=no")
++    result = pytester.runpytest("--color=no", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1, passed=1)
+     result.stdout.fnmatch_lines(
+         [
+--- pytest_check-2.2.2/tests/test_speedup_flags.py.orig
++++ pytest_check-2.2.2/tests/test_speedup_flags.py
+@@ -1,6 +1,6 @@
+ def test_baseline(pytester):
+     pytester.copy_example("examples/test_example_multiple_failures.py")
+-    result = pytester.runpytest("--check-max-tb=10")
++    result = pytester.runpytest("--check-max-tb=10", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(
+         [
+@@ -17,7 +17,7 @@
+ 
+ def test_no_tb(pytester):
+     pytester.copy_example("examples/test_example_multiple_failures.py")
+-    result = pytester.runpytest("--check-max-tb=0")
++    result = pytester.runpytest("--check-max-tb=0", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(
+         [
+@@ -32,7 +32,7 @@
+ 
+ def test_max_report(pytester):
+     pytester.copy_example("examples/test_example_multiple_failures.py")
+-    result = pytester.runpytest("--check-max-report=5")
++    result = pytester.runpytest("--check-max-report=5", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(
+         [
+@@ -49,7 +49,7 @@
+ 
+ def test_max_fail(pytester):
+     pytester.copy_example("examples/test_example_multiple_failures.py")
+-    result = pytester.runpytest("--check-max-fail=5")
++    result = pytester.runpytest("--check-max-fail=5", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(
+         [
+@@ -67,7 +67,7 @@
+ 
+ def test_max_tb(pytester):
+     pytester.copy_example("examples/test_example_multiple_failures.py")
+-    result = pytester.runpytest("--check-max-tb=2", "--show-capture=no")
++    result = pytester.runpytest("--check-max-tb=2", "--show-capture=no", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     num_tb = str(result.stdout).count("test_multiple_failures() -> check.equal(i, 100)")
+     assert num_tb == 2
+--- pytest_check-2.2.2/tests/test_tb_style.py.orig
++++ pytest_check-2.2.2/tests/test_tb_style.py
+@@ -3,7 +3,7 @@
+ 
+ def test_traceback_style_no(pytester):
+     pytester.copy_example("examples/test_example_tb_style.py")
+-    result = pytester.runpytest("--junitxml=output.xml", "--tb=no")
++    result = pytester.runpytest("--junitxml=output.xml", "--tb=no", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1, passed=0)
+     with open("output.xml") as f:
+         lines = LineMatcher(f.readlines())
+@@ -12,7 +12,7 @@
+ 
+ def test_traceback_style_default(pytester):
+     pytester.copy_example("examples/test_example_tb_style.py")
+-    result = pytester.runpytest("--junitxml=output.xml")
++    result = pytester.runpytest("--junitxml=output.xml", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1, passed=0)
+     with open("output.xml") as f:
+         lines = LineMatcher(f.readlines())
+--- pytest_check-2.2.2/tests/test_thread.py.orig
++++ pytest_check-2.2.2/tests/test_thread.py
+@@ -1,6 +1,6 @@
+ def test_failing_threaded_testcode(pytester):
+     pytester.copy_example("examples/test_example_fail_in_thread.py")
+-    result = pytester.runpytest()
++    result = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=2, passed=0)
+     result.stdout.fnmatch_lines(["*1 + 1 is 2, not 3*"])
+     result.stdout.fnmatch_lines(["*1 + 1 is 2, not 4*"])
+@@ -8,5 +8,5 @@
+ 
+ def test_passing_threaded_testcode(pytester):
+     pytester.copy_example("examples/test_example_pass_in_thread.py")
+-    result = pytester.runpytest()
++    result = pytester.runpytest("-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=0, passed=2)
+--- pytest_check-2.2.2/tests/test_speedup_functions.py.orig
++++ pytest_check-2.2.2/tests/test_speedup_functions.py
+@@ -76,7 +76,7 @@
+ 
+ def test_no_tb(pytester):
+     pytester.makepyfile(text_for_test_no_tb)
+-    result = pytester.runpytest("-k no_tb")
++    result = pytester.runpytest("-k no_tb", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(
+         [
+--- pytest_check-2.2.2/tests/test_stop_on_fail.py.orig
++++ pytest_check-2.2.2/tests/test_stop_on_fail.py
+@@ -1,6 +1,6 @@
+ def test_stop_on_fail(pytester):
+     pytester.copy_example("examples/test_example_stop_on_fail.py")
+-    result = pytester.runpytest("-x")
++    result = pytester.runpytest("-x", "-p", "no:black", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+     result.stdout.fnmatch_lines(["*> * check.equal(1, 2)*"])
+ 
