@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		spdlog
 COMPONENT_VERSION=	1.12.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      spdlog - Fast C++ logging library
 COMPONENT_PROJECT_URL=	https://github.com/gabime/spdlog
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,8 +44,6 @@ TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS += -DSPDLOG_BUILD_SHARED=ON
-
-#COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
