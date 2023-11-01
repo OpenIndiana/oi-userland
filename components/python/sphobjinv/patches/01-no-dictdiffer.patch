@@ -1,0 +1,30 @@
+We have no dictdiffer packaged yet.
+
+--- sphobjinv-2.3.1/tox.ini.orig
++++ sphobjinv-2.3.1/tox.ini
+@@ -63,7 +63,6 @@
+     jsch_latest:  jsonschema
+     jsch_dev:     git+https://github.com/Julian/jsonschema
+ 
+-    dictdiffer
+     pytest>=4.4.0
+     pytest-check>=1.1.2
+     pytest-ordering
+--- sphobjinv-2.3.1/tests/test_api_good.py.orig
++++ sphobjinv-2.3.1/tests/test_api_good.py
+@@ -34,7 +34,6 @@
+ import re
+ from numbers import Number
+ 
+-import dictdiffer
+ import pytest
+ 
+ import sphobjinv as soi
+@@ -514,6 +513,7 @@
+         sphinx_load_test(scr_fpath)
+ 
+     @pytest.mark.testall
++    @pytest.mark.skip(reason="no dictdiffer available")
+     def test_api_inventory_matches_sphinx_ifile(
+         self,
+         testall_inv_path,
