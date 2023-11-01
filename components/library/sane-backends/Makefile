@@ -24,18 +24,16 @@
 #
 
 BUILD_BITS= 64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
 COMPONENT_VERSION=	1.1.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY=      SANE library and backends
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:dd4b04c37a42f14c4619e8eea6a957f4c7c617fe59e32ae2872b373940a8b603
+COMPONENT_ARCHIVE_HASH=	sha256:dd4b04c37a42f14c4619e8eea6a957f4c7c617fe59e32ae2872b373940a8b603
 COMPONENT_ARCHIVE_URL=	https://gitlab.com/sane-project/backends/uploads/7d30fab4e115029d91027b6a58d64b43/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         image/scanner/xsane/sane-backends
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -51,11 +49,11 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--disable-locking
-CONFIGURE_OPTIONS +=	--enable-pthread
-CONFIGURE_OPTIONS +=	--with-gphoto2
-CONFIGURE_OPTIONS +=	--with-usb
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --disable-locking
+CONFIGURE_OPTIONS += --enable-pthread
+CONFIGURE_OPTIONS += --with-gphoto2
+CONFIGURE_OPTIONS += --with-usb
 
 COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
 
