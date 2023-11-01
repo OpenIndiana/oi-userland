@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::Compress::Brotli
-HUMAN_VERSION =			0.012
+HUMAN_VERSION =			0.017
 COMPONENT_SUMMARY =		IO::Compress::Brotli - Write Brotli buffers/streams
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:129ae07b4a812b58bed03edbd53e41a219d4663010012f8de027e78f02733cd4
+	sha256:10d22f27244754f338a366ca5ff7c348e89ecd8fff25231a9291886a5a80ebdd
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
