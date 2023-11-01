@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinx_autodoc_typehints
-HUMAN_VERSION =			1.24.0
+HUMAN_VERSION =			1.24.1
 COMPONENT_SUMMARY =		sphinx_autodoc_typehints - Type hints (PEP 484) support for the Sphinx autodoc extension
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/sphinx-autodoc-typehints
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3f/05/5bebfa7c11cb819dabd04707d7fedb889823ed883d3b75cdccbb42712291/sphinx_autodoc_typehints-1.24.0.tar.gz
+	https://files.pythonhosted.org/packages/10/a6/ba913b42a3dc6c2f8d1397f08f744e6b9dbe540e3623b4709c66171ce79d/sphinx_autodoc_typehints-1.24.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:94e440066941bb237704bb880785e2d05e8ae5406c88674feefbb938ad0dc6af
+	sha256:06683a2b76c3c7b1931b75e40e0211866fbb50ba4c4e802d0901d9b4e849add2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,8 +38,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/sphinx
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/diff-cover
-TEST_REQUIRED_PACKAGES.python += library/python/nptyping
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/sphobjinv
