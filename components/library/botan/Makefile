@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		botan
 COMPONENT_VERSION=	2.19.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY= 	Crypto and TLS for C++11
 COMPONENT_PROJECT_URL=	https://botan.randombit.net/
 COMPONENT_SRC=		Botan-$(COMPONENT_VERSION)
