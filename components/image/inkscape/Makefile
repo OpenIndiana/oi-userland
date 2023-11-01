@@ -15,11 +15,12 @@
 #
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
 COMPONENT_VERSION=	1.2.2
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 # COMPONENT_ITEM_NO is part of the download path
 # (find it on https://inkscape.org/release/inkscape-1.2.1/source/archive/xz/dl/ under "click here")
 # eg. https://inkscape.org/gallery/item/34673/inkscape-1.2.1.tar.xz
@@ -51,6 +52,7 @@ CMAKE_OPTIONS += -DLCMS2_INCLUDE_DIR=$(USRINCDIR)/lcms2
 CMAKE_OPTIONS += -DLCMS2_LIBRARY=$(USRLIBDIR.$(BITS))/liblcms2.so
 CMAKE_OPTIONS += -DCMAKE_ENABLE_LCMS=ON
 CMAKE_OPTIONS += -DCMAKE_ENABLE_POPPLER_CAIRO=ON
+# imagemagick version 6 is needed, falls back to graphicsmagick if not found:
 CMAKE_OPTIONS += -DWITH_IMAGE_MAGICK=ON
 CMAKE_OPTIONS += -DWITH_LIBCDR=ON
 CMAKE_OPTIONS += -DWITH_LIBVISIO=ON
@@ -60,17 +62,6 @@ CMAKE_OPTIONS += -DWITH_GNOME_VFS=ON
 CMAKE_OPTIONS += -DWITH_OPENMP=ON
 CMAKE_OPTIONS += -DJPEG_INCLUDE_DIR=$(JPEG_INCDIR)
 CMAKE_OPTIONS += -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
-
-COMPONENT_TEST_TRANSFORMS += \
-	' -e "s/[0-9]*\.[0-9]* sec//" ' \
-	' -n ' \
-	' -e "/passed/p" ' \
-	' -e "/Passed/p" ' \
-	' -e "/Failed/p" ' \
-	' -e "/FAILED/p" ' \
-	' -e "/Skipped/p" ' \
-	' -e "/not run/p" ' \
-	' -e "/Not Run/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
