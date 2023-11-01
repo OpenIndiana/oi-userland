@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		charset-normalizer
-HUMAN_VERSION =			3.3.1
+HUMAN_VERSION =			3.3.2
 COMPONENT_SUMMARY =		charset-normalizer - The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.
 COMPONENT_PROJECT_URL =		https://github.com/Ousret/charset_normalizer
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6d/b3/aa417b4e3ace24067f243e45cceaffc12dba6b8bd50c229b43b3b163768b/charset-normalizer-3.3.1.tar.gz
+	https://files.pythonhosted.org/packages/63/09/c1bc53dab74b1816a00d8d030de5bf98f724c52c1635e07681d312f20be8/charset-normalizer-3.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d9137a876020661972ca6eec0766d81aef8a5627df628b664b234b73396e727e
+	sha256:f30c3cb33b24454a82faecaf01b19c18562b1e89558fb6c56de4d9118a032fd5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
