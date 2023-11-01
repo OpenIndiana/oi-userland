@@ -1,11 +1,8 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-tempdir: /tmp/amd64-3.9
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 1963 items / 9 deselected / 1954 selected
+collecting ... collected 2028 items / 9 deselected / 2019 selected
 
 tests/constraints/generic/test_constraint.py::test_allows PASSED
 tests/constraints/generic/test_constraint.py::test_allows_all PASSED
@@ -696,6 +693,8 @@ tests/constraints/version/test_version_union.py::test_str[<1 || >=2-<1 || >=2] P
 tests/constraints/version/test_version_union.py::test_str[<1 || >=2.dev0-!=1.*] PASSED
 tests/constraints/version/test_version_union.py::test_str[<1.2 || >=2.3.dev0-<1.2 || >=2.3.dev0] PASSED
 tests/json/test_poetry_schema.py::test_bad_extra PASSED
+tests/json/test_poetry_schema.py::test_git_dependencies[git@github.com:example/example-repository.git] PASSED
+tests/json/test_poetry_schema.py::test_git_dependencies[https://github.com/example/example-repository.git] PASSED
 tests/json/test_poetry_schema.py::test_multi_url_dependencies PASSED
 tests/json/test_poetry_schema.py::test_multiline_description[Some multi-\nline string] PASSED
 tests/json/test_poetry_schema.py::test_multiline_description[Some multiline string\n] PASSED
@@ -762,11 +761,15 @@ tests/masonry/builders/test_sdist.py::test_with_c_extensions[extended_legacy_con
 tests/masonry/builders/test_sdist.py::test_with_c_extensions_src_layout PASSED
 tests/masonry/builders/test_sdist.py::test_with_src_module_dir PASSED
 tests/masonry/builders/test_sdist.py::test_with_src_module_file PASSED
+tests/masonry/builders/test_wheel.py::test_build_py_only_included PASSED
 tests/masonry/builders/test_wheel.py::test_default_src_with_excluded_data PASSED
 tests/masonry/builders/test_wheel.py::test_dist_info_file_permissions PASSED
+tests/masonry/builders/test_wheel.py::test_extended_editable_build_inplace PASSED
+tests/masonry/builders/test_wheel.py::test_extended_editable_wheel_build PASSED
 tests/masonry/builders/test_wheel.py::test_include_excluded_code PASSED
 tests/masonry/builders/test_wheel.py::test_tag[False] PASSED
 tests/masonry/builders/test_wheel.py::test_tag[True] PASSED
+tests/masonry/builders/test_wheel.py::test_wheel_build_script_creates_package PASSED
 tests/masonry/builders/test_wheel.py::test_wheel_epoch PASSED
 tests/masonry/builders/test_wheel.py::test_wheel_excluded_data PASSED
 tests/masonry/builders/test_wheel.py::test_wheel_excluded_nested_data PASSED
@@ -1844,6 +1847,14 @@ tests/version/test_markers.py::test_only[python_version >= "3.6" or extra == "fo
 tests/version/test_markers.py::test_only[python_version >= "3.6" or extra == "foo"-only5-] PASSED
 tests/version/test_markers.py::test_only[python_version >= "3.6"-only0-python_version >= "3.6"] PASSED
 tests/version/test_markers.py::test_only[python_version >= "3.6"-only1-] PASSED
+tests/version/test_markers.py::test_parse_marker[extra != "a" and extra != "b"] PASSED
+tests/version/test_markers.py::test_parse_marker[extra != "a" and extra == "b"] PASSED
+tests/version/test_markers.py::test_parse_marker[extra != "a" or extra != "b"] PASSED
+tests/version/test_markers.py::test_parse_marker[extra != "a" or extra == "b"] PASSED
+tests/version/test_markers.py::test_parse_marker[extra == "a" and extra != "b"] PASSED
+tests/version/test_markers.py::test_parse_marker[extra == "a" and extra == "b"] PASSED
+tests/version/test_markers.py::test_parse_marker[extra == "a" or extra != "b"] PASSED
+tests/version/test_markers.py::test_parse_marker[extra == "a" or extra == "b"] PASSED
 tests/version/test_markers.py::test_parse_marker[python_version < "3.9" or python_version >= "3.10" and sys_platform == "linux" or sys_platform == "win32"] PASSED
 tests/version/test_markers.py::test_parse_marker[python_version >= "3.6" and extra == "foo" or implementation_name == "pypy" and extra == "bar"] PASSED
 tests/version/test_markers.py::test_parse_marker[sys_platform == "linux" or sys_platform == "win32" or sys_platform == "darwin"] PASSED
@@ -1860,6 +1871,14 @@ tests/version/test_markers.py::test_parse_single_marker[sys_platform == "darwin"
 tests/version/test_markers.py::test_parse_version_like_markers[platform_release >= "9.0" and platform_release < "11.0"-env0] PASSED
 tests/version/test_markers.py::test_single_marker_intersect PASSED
 tests/version/test_markers.py::test_single_marker_intersect_compacts_constraints PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra != "a"-extra != "a"-extra != "a"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra != "a"-extra != "b"-extra != "a" and extra != "b"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra != "a"-extra == "a"-<empty>] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra != "a"-extra == "b"-extra != "a" and extra == "b"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a"-extra != "a"-<empty>] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a"-extra != "b"-extra == "a" and extra != "b"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a"-extra == "a"-extra == "a"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a"-extra == "b"-extra == "a" and extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_with_multi PASSED
 tests/version/test_markers.py::test_single_marker_intersect_with_multi_compacts_constraint PASSED
 tests/version/test_markers.py::test_single_marker_intersect_with_multi_with_duplicate PASSED
@@ -1869,6 +1888,14 @@ tests/version/test_markers.py::test_single_marker_normalisation PASSED
 tests/version/test_markers.py::test_single_marker_not_in_python_intersection PASSED
 tests/version/test_markers.py::test_single_marker_not_in_python_union PASSED
 tests/version/test_markers.py::test_single_marker_union PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra != "a"-extra != "a"-extra != "a"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra != "a"-extra != "b"-extra != "a" or extra != "b"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra != "a"-extra == "a"-] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra != "a"-extra == "b"-extra != "a" or extra == "b"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a"-extra != "a"-] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a"-extra != "b"-extra == "a" or extra != "b"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a"-extra == "a"-extra == "a"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a"-extra == "b"-extra == "a" or extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_union_is_any PASSED
 tests/version/test_markers.py::test_single_marker_union_is_single_marker[python_version < "3.6"-python_version < "3.4"-python_version < "3.6"] PASSED
 tests/version/test_markers.py::test_single_marker_union_is_single_marker[python_version < "3.6"-python_version > "3.6"-python_version != "3.6"] PASSED
@@ -1892,25 +1919,60 @@ tests/version/test_markers.py::test_union_of_multi_with_a_containing_single PASS
 tests/version/test_markers.py::test_union_should_drop_markers_if_their_complement_is_present[python_version >= "3.6" or python_version < "3.7" or python_version < "3.6"-python_version >= "3.6" or python_version < "3.7"] PASSED
 tests/version/test_markers.py::test_validate['2.7' in python_version-environment3-True] PASSED
 tests/version/test_markers.py::test_validate['2.7' not in python_version-environment4-False] PASSED
-tests/version/test_markers.py::test_validate[extra == 'security'-environment10-True] PASSED
-tests/version/test_markers.py::test_validate[extra == 'security'-environment9-False] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' and extra != 'b'-environment31-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' and extra != 'b'-environment44-False] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' and extra != 'b'-environment45-False] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' and extra != 'b'-environment46-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' and extra == 'b'-environment33-False] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' and extra == 'b'-environment50-False] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' and extra == 'b'-environment51-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' and extra == 'b'-environment52-False] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' or extra != 'b'-environment32-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' or extra != 'b'-environment47-False] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' or extra != 'b'-environment48-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' or extra != 'b'-environment49-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' or extra == 'b'-environment34-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' or extra == 'b'-environment53-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' or extra == 'b'-environment54-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a' or extra == 'b'-environment55-False] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a'-environment25-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a'-environment37-False] PASSED
+tests/version/test_markers.py::test_validate[extra != 'a'-environment38-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'b'-environment28-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'security'-environment21-True] PASSED
+tests/version/test_markers.py::test_validate[extra != 'security'-environment22-False] PASSED
+tests/version/test_markers.py::test_validate[extra == 'Security.1'-environment23-True] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a' and extra == 'b'-environment26-True] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a' and extra == 'b'-environment29-False] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a' and extra == 'b'-environment39-True] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a' and extra == 'b'-environment40-False] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a' or extra == 'b'-environment30-False] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a' or extra == 'b'-environment41-True] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a' or extra == 'b'-environment42-True] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a' or extra == 'b'-environment43-False] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a'-environment24-True] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a'-environment27-False] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a'-environment35-True] PASSED
+tests/version/test_markers.py::test_validate[extra == 'a'-environment36-False] PASSED
+tests/version/test_markers.py::test_validate[extra == 'security'-environment19-False] PASSED
+tests/version/test_markers.py::test_validate[extra == 'security'-environment20-True] PASSED
 tests/version/test_markers.py::test_validate[os.name == 'posix'-None-True] PASSED
 tests/version/test_markers.py::test_validate[os_name == 'foo' and python_version ~= '2.7.0'-environment5-True] PASSED
 tests/version/test_markers.py::test_validate[os_name == 'foo'-environment1-True] PASSED
 tests/version/test_markers.py::test_validate[os_name == 'foo'-environment2-False] PASSED
 tests/version/test_markers.py::test_validate[os_name == 'posix'-None-True] PASSED
-tests/version/test_markers.py::test_validate[platform.machine=='x86_64'-environment14-True] PASSED
-tests/version/test_markers.py::test_validate[platform.python_implementation=='Jython'-environment15-False] PASSED
-tests/version/test_markers.py::test_validate[platform.version in 'Ubuntu'-environment13-False] PASSED
-tests/version/test_markers.py::test_validate[platform_machine in 'x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32'-environment17-False] PASSED
-tests/version/test_markers.py::test_validate[platform_machine in 'x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32'-environment18-True] PASSED
-tests/version/test_markers.py::test_validate[platform_machine not in 'x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32'-environment19-True] PASSED
-tests/version/test_markers.py::test_validate[platform_machine not in 'x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32'-environment20-False] PASSED
-tests/version/test_markers.py::test_validate[python_version == '2.5' and platform.python_implementation!= 'Jython'-environment16-False] PASSED
+tests/version/test_markers.py::test_validate[platform.machine=='x86_64'-environment12-True] PASSED
+tests/version/test_markers.py::test_validate[platform.python_implementation=='Jython'-environment13-False] PASSED
+tests/version/test_markers.py::test_validate[platform.version in 'Ubuntu'-environment11-False] PASSED
+tests/version/test_markers.py::test_validate[platform_machine in 'x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32'-environment15-False] PASSED
+tests/version/test_markers.py::test_validate[platform_machine in 'x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32'-environment16-True] PASSED
+tests/version/test_markers.py::test_validate[platform_machine not in 'x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32'-environment17-True] PASSED
+tests/version/test_markers.py::test_validate[platform_machine not in 'x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32'-environment18-False] PASSED
+tests/version/test_markers.py::test_validate[python_version == '2.5' and platform.python_implementation!= 'Jython'-environment14-False] PASSED
 tests/version/test_markers.py::test_validate[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment6-True] PASSED
 tests/version/test_markers.py::test_validate[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment7-True] PASSED
 tests/version/test_markers.py::test_validate[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment8-False] PASSED
-tests/version/test_markers.py::test_validate[sys.platform == 'win32'-environment12-False] PASSED
+tests/version/test_markers.py::test_validate[sys.platform == 'win32'-environment10-False] PASSED
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version > "3.6" and python_full_version < "3.6.2"-python_version > "3.6" and python_version < "3.7"-python_version > "3.6" and python_version < "3.7"] PASSED
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.6" and python_full_version < "3.6.2"-python_full_version >= "3.6.2" and python_version < "3.7"-python_version >= "3.6" and python_version < "3.7"] PASSED
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.6" and python_full_version < "3.6.2"-python_version >= "3.6" and python_version < "3.7"-python_version >= "3.6" and python_version < "3.7"] PASSED
@@ -1930,7 +1992,7 @@ tests/version/test_markers.py::test_without_extras[python_version >= "3.6" and (
 tests/version/test_markers.py::test_without_extras[python_version >= "3.6" and (extra == "foo" or extra == "bar")-python_version >= "3.6"] PASSED
 tests/version/test_markers.py::test_without_extras[python_version >= "3.6" and extra == "foo" or implementation_name == "pypy" and extra == "bar"-python_version >= "3.6" or implementation_name == "pypy"] PASSED
 tests/version/test_markers.py::test_without_extras[python_version >= "3.6" and extra == "foo"-python_version >= "3.6"] PASSED
-tests/version/test_markers.py::test_without_extras[python_version >= "3.6" or extra == "foo" and implementation_name == "pypy" or extra == "bar"-] PASSED
+tests/version/test_markers.py::test_without_extras[python_version >= "3.6" or extra == "foo" and implementation_name == "pypy" or extra == "bar"-python_version >= "3.6" or implementation_name == "pypy"] PASSED
 tests/version/test_markers.py::test_without_extras[python_version >= "3.6"-python_version >= "3.6"] PASSED
 tests/version/test_requirements.py::test_invalid_requirement[foo (>=bar)-invalid version constraint ">=bar"] PASSED
 tests/version/test_requirements.py::test_invalid_requirement[foo!-Unexpected character at column 4\n\nfoo!\n   ^\n] PASSED
@@ -1962,4 +2024,4 @@ tests/version/test_requirements.py::test_requirement[name>=2,<3-expected12] PASS
 tests/version/test_requirements.py::test_requirement[name>=3-expected4] PASSED
 tests/version/test_requirements.py::test_requirement[name>=3.*-expected5] PASSED
 
-======== 1950 passed, 4 skipped, 9 deselected ========
+======== 2015 passed, 4 skipped, 9 deselected ========
