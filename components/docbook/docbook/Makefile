@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= docbook
 COMPONENT_VERSION= 2.30.0
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 6
 COMPONENT_SUMMARY= docbook SGML and XML stylesheets
 COMPONENT_FMRI= data/docbook
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Documentation
