@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 # This is NVIDIA Legacy GPU driver
 
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
-HUMAN_VERSION =			470.199.02
+HUMAN_VERSION =			470.223.02
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
 COMPONENT_MJR_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\..*//g')
 COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
@@ -31,7 +31,7 @@ COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:4db981710a8a40d0d43e0268ce7d21f2eb5995a63323b649c7f6ee3ddb553c49
+COMPONENT_ARCHIVE_HASH =	sha256:d8ba7d46035cf1d7a6bed346a86025f478c1b9c26b6e381fe70f26c6acc9809a
 COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
 COMPONENT_LICENSE_FILE =	nvidia.license
