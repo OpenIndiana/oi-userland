@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         fastcgi
 COMPONENT_VERSION=      2.4.2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      the FastCGI web server interface
 COMPONENT_PROJECT_URL=  https://fastcgi-archives.github.io/
 COMPONENT_SRC_NAME=		fcgi2
@@ -40,7 +41,7 @@ COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_LICENSE=      FastCGI
 COMPONENT_LICENSE_FILE= LICENSE.TERMS
 
-#TEST_TARGET= $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && \
