@@ -1,5 +1,5 @@
---- gtk+-2.13.4/gtk/gtkfilesel.c	2004-06-02 10:47:39.000000000 -0700
-+++ gtk+-2.13.4-new/gtk/gtkfilesel.c	2005-03-20 22:25:59.021661256 -0800
+--- gtk+-2.24.33/gtk/gtkfilesel.c.orig
++++ gtk+-2.24.33/gtk/gtkfilesel.c
 @@ -79,6 +79,9 @@
  #include "gtkdnd.h"
  #include "gtkeventbox.h"
@@ -10,7 +10,7 @@
  
  #define WANT_HPANED 1
  #include "gtkhpaned.h"
-@@ -319,6 +322,9 @@ static gint                cmpl_last_val
+@@ -318,6 +321,9 @@
   */
  static gchar*              cmpl_completion_fullname (const gchar*, CompletionState* cmpl_state);
  
@@ -20,7 +20,7 @@
  
  /* Directory operations. */
  static CompletionDir* open_ref_dir         (gchar* text_to_complete,
-@@ -663,6 +669,10 @@ gtk_file_selection_init (GtkFileSelectio
+@@ -627,6 +633,10 @@
    GtkWidget *spacer;
    GtkDialog *dialog;
  
@@ -31,7 +31,7 @@
    GtkListStore *model;
    GtkTreeViewColumn *column;
    
-@@ -676,18 +686,9 @@ gtk_file_selection_init (GtkFileSelectio
+@@ -640,18 +650,9 @@
    filesel->main_vbox = dialog->vbox;
    gtk_container_set_border_width (GTK_CONTAINER (filesel), 10);
  
@@ -51,7 +51,7 @@
    gtk_box_pack_start (GTK_BOX (filesel->main_vbox), pulldown_hbox, FALSE, FALSE, 0);
    gtk_widget_show (pulldown_hbox);
    
-@@ -699,14 +700,27 @@ gtk_file_selection_init (GtkFileSelectio
+@@ -663,14 +664,27 @@
      
    /*  The horizontal box containing the directory and file listboxes  */
  
@@ -81,7 +81,7 @@
    if (WANT_HPANED)
      list_container = g_object_new (GTK_TYPE_HPANED,
  				   "visible", TRUE,
-@@ -718,9 +732,81 @@ gtk_file_selection_init (GtkFileSelectio
+@@ -682,9 +696,81 @@
  
    spacer = gtk_hbox_new (FALSE, 0);
    gtk_widget_set_size_request (spacer, -1, 5);
@@ -164,7 +164,7 @@
    /* The directories list */
  
    model = gtk_list_store_new (1, G_TYPE_STRING);
-@@ -793,6 +879,15 @@ gtk_file_selection_init (GtkFileSelectio
+@@ -757,6 +843,15 @@
    gtk_widget_show (filesel->file_list);
    gtk_widget_show (scrolled_win);
  
@@ -180,7 +180,7 @@
    /* action area for packing buttons into. */
    filesel->action_area = gtk_hbox_new (TRUE, 0);
    gtk_box_pack_start (GTK_BOX (filesel->main_vbox), filesel->action_area, 
-@@ -1107,39 +1202,94 @@ gtk_file_selection_new (const gchar *tit
+@@ -1012,39 +1107,94 @@
  void
  gtk_file_selection_show_fileop_buttons (GtkFileSelection *filesel)
  {
@@ -289,7 +289,7 @@
        gtk_widget_show (filesel->fileop_ren_file);
      }
    
-@@ -1841,6 +1991,100 @@ gtk_file_selection_update_fileops (GtkFi
+@@ -1752,6 +1902,100 @@
      gtk_widget_set_sensitive (fs->fileop_ren_file, sensitive);
  }
  
@@ -390,8 +390,8 @@
  static gint
  gtk_file_selection_key_press (GtkWidget   *widget,
  			      GdkEventKey *event,
---- gtk+-2.4.14/gtk/stock-icons/sun-icons.h	1969-12-31 16:00:00.000000000 -0800
-+++ gtk+-2.4.14-new/gtk/stock-icons/sun-icons.h	2005-03-20 21:57:58.000000000 -0800
+--- /dev/null
++++ gtk+-2.24.33/gtk/stock-icons/sun-icons.h
 @@ -0,0 +1,823 @@
 +/* GdkPixbuf RGBA C-Source image dump 1-byte-run-length-encoded */
 +
