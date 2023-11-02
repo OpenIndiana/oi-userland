@@ -14,22 +14,23 @@
 #   $WS_TOOLS/python-integrate-project pymongo
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.4.1
+HUMAN_VERSION =			4.6.0
 COMPONENT_SUMMARY =		pymongo - Python driver for MongoDB <http://www.mongodb.org>
 COMPONENT_PROJECT_URL =		http://github.com/mongodb/mongo-python-driver
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/bf/1c/38b956d48667745f2f083937dd31b0467fa3f537480e30c692b1fc4fef3d/pymongo-4.4.1.tar.gz
+	https://github.com/mongodb/mongo-python-driver/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a4df87dbbd03ac6372d24f2a8054b4dc33de497d5227b50ec649f436ad574284
+	sha256:73063bd454999cab22b57bfde188a5e7a139802cb04ca9df095ac62a20d376ed
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+# Github tarball use different source directory than sdist
+COMPONENT_SRC =		mongo-python-driver-$(HUMAN_VERSION)
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
@@ -44,7 +45,13 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# For testing the svc:/application/database/mongodb-44:default service must be
+# online.
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/dnspython
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
