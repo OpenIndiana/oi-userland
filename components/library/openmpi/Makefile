@@ -14,6 +14,7 @@
 # Copyright 2023 Klaus Ziegler
 #
 
+USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
@@ -21,22 +22,19 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 COMPONENT_NAME =            openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR =     4.1
 COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).5
-COMPONENT_REVISION =        2
-COMPONENT_FMRI =            library/openmpi/$(COMPILER)
-COMPONENT_CLASSIFICATION =  Development/High Performance Computing
+COMPONENT_REVISION =        3
+COMPONENT_SUMMARY =         OpenMPI - High Performance Message Passing Library
 COMPONENT_PROJECT_URL =     https://www.open-mpi.org
 COMPONENT_SRC_NAME =        openmpi
 COMPONENT_SRC =             $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =         $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH =    sha256:c018b127619d2a2a30c1931f316fc8a245926d0f5b4ebed4711f9695e7f70925
 COMPONENT_ARCHIVE_URL =     https://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
-
-COMPONENT_SUMMARY =         OpenMPI - High Performance Message Passing Library
-COMPONENT_LICENSE_FILE =    $(COMPONENT_SRC_NAME).license
+COMPONENT_FMRI =            library/openmpi/$(COMPILER)
+COMPONENT_CLASSIFICATION =  Development/High Performance Computing
 COMPONENT_LICENSE      =    BSD 2-Clause
-COMPONENT_BUILD_ARGS      =    -j20
+COMPONENT_LICENSE_FILE =    $(COMPONENT_SRC_NAME).license
 
-USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -44,7 +42,7 @@ PATH=$(PATH.gnu)
 
 unexport SHELLOPTS
 
-CONFIGURE_PREFIX   =    $(MPI_PREFIX)
+CONFIGURE_PREFIX=    $(MPI_PREFIX)
 
 CONFIGURE_OPTIONS+= --bindir=$(MPI_BINDIR)
 CONFIGURE_OPTIONS+= --datadir=$(MPI_DATADIR)
