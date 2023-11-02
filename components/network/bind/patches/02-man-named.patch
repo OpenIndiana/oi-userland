@@ -1,6 +1,25 @@
---- bind-9.18.12/doc/man/named.8in	2023-02-03 12:27:09.125770285 +0100
-+++ bind-9.18.12/doc/man/named.8in.new	2023-02-25 18:46:41.520580373 +0100
-@@ -255,6 +255,100 @@
+--- bind-9.18.19/doc/man/named.8in-orig	Mon Sep 11 03:53:00 2023
++++ bind-9.18.19/doc/man/named.8in	Tue Oct 31 09:40:21 2023
+@@ -227,13 +227,11 @@
+ \fBNOTE:\fP
+ .INDENT 0.0
+ .INDENT 3.5
+-On Linux, \fBnamed\fP uses the kernel\(aqs capability mechanism to drop
+-all root privileges except the ability to \fBbind\fP to a
+-privileged port and set process resource limits. Unfortunately,
+-this means that the \fI\%\-u\fP option only works when \fBnamed\fP is run
+-on kernel 2.2.18 or later, or kernel 2.3.99\-pre3 or later, since
+-previous kernels did not allow privileges to be retained after
+-\fBsetuid\fP\&.
++On illumos-based distributions, including OpenIndiana, \fBnamed\fP
++uses the kernel\(aqs capability mechanism to drop
++all root privileges.
++The method script adds the privileges to \fBbind\fP to a privileged port.
++Basic privileges are still retained after \fBsetuid\fP\&.
+ .UNINDENT
+ .UNINDENT
+ .INDENT 0.0
+@@ -255,6 +253,100 @@
  Use of this option overrides the \fBlock\-file\fP option in
  \fI\%named.conf\fP\&. If set to \fBnone\fP, the lock file check is disabled.
  .UNINDENT
@@ -101,7 +120,7 @@
  .SH SIGNALS
  .sp
  In routine operation, signals should not be used to control the
-@@ -290,7 +384,8 @@
+@@ -290,7 +382,8 @@
  .UNINDENT
  .SH SEE ALSO
  .sp
