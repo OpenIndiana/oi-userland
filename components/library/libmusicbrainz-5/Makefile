@@ -14,20 +14,18 @@
 # Copyright 2019 Nona Hansel
 #
 
-BUILD_BITS=			32_and_64
-BUILD_STYLE=		cmake
+BUILD_BITS= 64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmusicbrainz
 COMPONENT_VERSION=	5.1.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Software library for accessing MusicBrainz servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:6749259e89bbb273f3f5ad7acdffb7c47a2cf8fcaeab4c4695484cef5f4c6b46
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/metabrainz/libmusicbrainz/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:6749259e89bbb273f3f5ad7acdffb7c47a2cf8fcaeab4c4695484cef5f4c6b46
+COMPONENT_ARCHIVE_URL=  https://github.com/metabrainz/libmusicbrainz/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://musicbrainz.org/doc/libmusicbrainz
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_FMRI=		library/musicbrainz/libmusicbrainz-5
