@@ -20,49 +20,40 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=64_and_32
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libe-book
 COMPONENT_VERSION=	0.1.3
-COMPONENT_REVISION=	3
-COMPONENT_FMRI=     	library/c++/libe-book
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libebook
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=      libe-book - library for import of reflowable e-book formats
+COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libebook
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:7e8d8ff34f27831aca3bc6f9cc532c2f90d2057c778963b884ff3d1e34dfe1f9
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libebook/files/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_FMRI=     	library/c++/libe-book
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
 # Fix threading detection issue introduced with boost 1.64
-CXXFLAGS+= -std=c++11 -pthread
+CXXFLAGS += -std=c++11 -pthread
 
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL:/p" ' \
-        '-e "/SKIP:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" ' \
-        '-e "/ERROR:/p" '
-
 # Build dependencies
-REQUIRED_PACKAGES += developer/cppunit
+TEST_REQUIRED_PACKAGES += developer/cppunit
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += library/c++/librevenge
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/liblangtag
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
