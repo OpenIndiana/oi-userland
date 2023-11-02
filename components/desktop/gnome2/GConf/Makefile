@@ -18,7 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         GConf
 COMPONENT_VERSION=      2.32.4
-COMPONENT_REVISION=     10
+COMPONENT_REVISION=     11
 COMPONENT_SUMMARY=      GNOME Configuration Framework
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -32,7 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf --install --force)
+COMPONENT_PREP_ACTION = (cd $(@D) && PATH="$(PATH)" autoreconf --install --force)
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT =$(@D)/configure
