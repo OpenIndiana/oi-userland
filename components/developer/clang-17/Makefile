@@ -26,6 +26,7 @@ COMPONENT_MJR_VERSION=	17
 COMPONENT_BASE_VERSION=	$(COMPONENT_MJR_VERSION).0
 COMPONENT_NAME=		clang-$(COMPONENT_MJR_VERSION)
 COMPONENT_VERSION=	$(COMPONENT_BASE_VERSION).4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	LLVM tools and Clang compiler
 COMPONENT_PROJECT_URL=	https://llvm.org/
 COMPONENT_SRC=		$(LLVM_NAME)-$(COMPONENT_VERSION).src
@@ -81,20 +82,6 @@ COMPONENT_POST_INSTALL_ACTION =  \
           sed -i -e 's:\#!/usr/bin/env.*:\#!$(PYTHON):' $$file; \
         done
 
-COMPONENT_TEST_CMD = $(GMAKE)
-COMPONENT_TEST_TARGETS = check-all
-COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
-
-# Do not change the order of these regexp transforms.
-COMPONENT_TEST_TRANSFORMS += \
-    '-e "/^Testing Time: .*$$/d" ' \
-    '-e "/^make.*$$/d" ' \
-    '-e "/^Failed Tests /,/Unexpected Passed:/p" ' \
-    '-e "" ' \
-    '-e "/.*/d" '
-
-TESTSUITE_MAKE = $(GMAKE)
-
 CMAKE_OPTIONS += -DCMAKE_C_COMPILER=$(CC)
 CMAKE_OPTIONS += -DCMAKE_CXX_COMPILER=$(CXX)
 CMAKE_OPTIONS += -DGCC_INSTALL_PREFIX=$(GCC_ROOT)
@@ -110,6 +97,22 @@ CMAKE_OPTIONS += -DCLANG_DEFAULT_RTLIB=libgcc
 CMAKE_OPTIONS += -DCLANG_DEFAULT_CXX_STDLIB=libstdc++
 CMAKE_OPTIONS += -DPYTHON_EXECUTABLE="$(PYTHON)"
 CMAKE_OPTIONS += -DCMAKE_MODULE_PATH="$(SOURCE_DIR)/$(COMPONENT_SRC)/cmake/Modules"
+
+unexport SHELLOPTS
+
+COMPONENT_TEST_CMD = $(GMAKE)
+COMPONENT_TEST_TARGETS = check-all
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
+
+# Do not change the order of these regexp transforms.
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "/^Testing Time: .*$$/d" ' \
+    '-e "/^make.*$$/d" ' \
+    '-e "/^Failed Tests /,/Unexpected Passed:/p" ' \
+    '-e "" ' \
+    '-e "/.*/d" '
+
+TESTSUITE_MAKE = $(GMAKE)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
