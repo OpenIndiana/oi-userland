@@ -18,15 +18,15 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         re2
 COMPONENT_VERSION=      2023.9.1
 HUMAN_VERSION=          2023-09-01
-COMPONENT_PROJECT_URL=  https://github.com/google/re2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Fast, safe, thread-friendly regular expression engine
-COMPONENT_FMRI=         library/re2
+COMPONENT_PROJECT_URL=  https://github.com/google/re2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:5bb6875ae1cd1e9fedde98018c346db7260655f86fdb8837e3075103acd3649b
+COMPONENT_ARCHIVE_HASH= sha256:5bb6875ae1cd1e9fedde98018c346db7260655f86fdb8837e3075103acd3649b
 COMPONENT_ARCHIVE_URL=	https://github.com/google/$(COMPONENT_NAME)/releases/download/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=       Development/C++
+COMPONENT_FMRI=         library/re2
+COMPONENT_CLASSIFICATION= Development/C++
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= LICENSE
 
