@@ -14,25 +14,26 @@
 #   $WS_TOOLS/python-integrate-project process-tests
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		process-tests
-COMPONENT_VERSION =		2.1.2
+HUMAN_VERSION =			3.0.0
 COMPONENT_SUMMARY =		process-tests - Tools for testing processes.
 COMPONENT_PROJECT_URL =		https://github.com/ionelmc/python-process-tests
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f1/da/2d09f51f8dd4c194b61144ad0410b12151411a12fcc5f5e5c798fb72d7e2/process-tests-2.1.2.tar.gz
+	https://files.pythonhosted.org/packages/23/61/f19c3474c8c87ebb13210e83391f156c971281773623f292fcab26b8c5be/process-tests-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a3747ad947bdfc93e5c986bdb17a6d718f3f26e8577a0807a00962f29e26deba
+	sha256:e5d57dea7161251e91cadb84bf3ecc85275fb121fd478e579f800777b1d424bd
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# https://github.com/ionelmc/python-process-tests/issues/2
-TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
