@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         olm
 COMPONENT_VERSION=      3.2.15
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Implementation of the olm and megolm cryptographic ratchets
 COMPONENT_PROJECT_URL=  https://gitlab.matrix.org/matrix-org/olm
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
