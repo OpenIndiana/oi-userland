@@ -12,11 +12,12 @@
 # Copyright 2016 Aurelien Larcher
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libraw
 COMPONENT_VERSION= 0.21.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libraw - library for reading RAW files obtained from digital photo cameras
 COMPONENT_PROJECT_URL= https://www.libraw.org/
 COMPONENT_SRC_NAME= LibRaw
