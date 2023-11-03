@@ -14,12 +14,12 @@
 # Copyright 2022 Friedrich Kink
 #
 
-USE_OPENSSL11=	yes
-
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cxxtools
 COMPONENT_VERSION=      3.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Cxxtools is a comprehensive C++ class library for Unix and Linux
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -34,6 +34,8 @@ COMPONENT_LICENSE_FILE= COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+CXXFLAGS += -std=c++11
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --with-ssl=yes
 CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
@@ -43,7 +45,7 @@ CONFIGURE_OPTIONS += PKG_CONFIG_PATH=$(OPENSSL_PKG_CONFIG_PATH)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
