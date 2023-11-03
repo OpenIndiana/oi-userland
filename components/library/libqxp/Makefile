@@ -25,8 +25,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libqxp
 COMPONENT_VERSION=	0.0.2
-COMPONENT_REVISION=	3
-COMPONENT_SUMMARY=      libqxp - library for reading QuarkXPress documents
+COMPONENT_REVISION=	4
+COMPONENT_SUMMARY=	libqxp - library for reading QuarkXPress documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libqxp
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -37,7 +37,7 @@ COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Fix threading detection issue introduced with boost 1.64
