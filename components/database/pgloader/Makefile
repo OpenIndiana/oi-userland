@@ -16,16 +16,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgloader
-COMPONENT_VERSION= 	3.6.9
+COMPONENT_VERSION= 	3.6.10
 COMPONENT_SUMMARY= 	Data loading tool for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:f61afa06d30d152412da9a9ae4aaa6a7d9c27df89de09bec7f08bedc7fb4587a
+COMPONENT_ARCHIVE_HASH= sha256:f86930190da80ae74e9603c2eabe6a2e4567b5aca1df34d98789a3761ae64b5d
 COMPONENT_ARCHIVE_URL=	https://github.com/dimitri/pgloader/archive/v$(COMPONENT_VERSION).zip
 COMPONENT_PROJECT_URL=	https://pgloader.io/
+COMPONENT_FMRI=		database/postgres/pgloader
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_LICENSE=		PostgreSQL
+COMPONENT_LICENSE_FILE=	LICENSE
 
 # Don't depend on host default pg_config
-PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
+PATH= $(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -42,15 +46,15 @@ $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
-$(BUILD_DIR)/%/.installed: $(BUILD_32)
+$(BUILD_DIR)/%/.installed: $(BUILD_64)
 	$(MKDIR) $(PROTO_DIR)/usr/bin \
 		$(PROTO_DIR)/usr/share/doc/pgloader
-	cp $(BUILD_DIR_32)/build/bin/pgloader $(PROTO_DIR)/usr/bin/pgloader
-	cp $(BUILD_DIR_32)/TODO.md $(BUILD_DIR_32)/README.md $(PROTO_DIR)/usr/share/doc/pgloader
+	cp $(BUILD_DIR_64)/build/bin/pgloader $(PROTO_DIR)/usr/bin/pgloader
+	cp $(BUILD_DIR_64)/TODO.md $(BUILD_DIR_64)/README.md $(PROTO_DIR)/usr/share/doc/pgloader
 	$(TOUCH) $@
 
 clean::
