@@ -30,12 +30,12 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libmemcached
 COMPONENT_MAJOR_VERSION=	1.0
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).18
+COMPONENT_REVISION=		1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:e22c0bb032fde08f53de9ffbc5a128233041d9f33b5de022c0978a2149885f82
 COMPONENT_ARCHIVE_URL=  https://launchpad.net/libmemcached/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_VERSION)/+download/${COMPONENT_ARCHIVE}
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
-COMPONENT_BUGDB=	database/memcached
 
 include $(WS_MAKE_RULES)/common.mk
 
