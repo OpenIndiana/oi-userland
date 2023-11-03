@@ -25,16 +25,17 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.42.0
+COMPONENT_VERSION=	2.42.1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:3278210e9fd2994b8484dd7e3ddd9ea8b940ef52170cdb606daa94d887c93b0d
+COMPONENT_ARCHIVE_HASH=	sha256:8e46fa96bf35a65625d85fde50391e39bc0620d1bb39afb70b96c4a237a1a4f7
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
@@ -44,7 +45,7 @@ COMPONENT_LICENSE=	GPLv2
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:03e0dc60a077ad31b10119e6619af8b50e652bd5c8a95c891523d73af1e573b9
+COMPONENT_ARCHIVE_HASH_1=	sha256:3d0495a10351b3541056a7923c63f3fd8a54992914cf56301809af8c69636b5d
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -56,11 +57,11 @@ LDFLAGS += -lnsl -lsocket
 
 CONFIGURE_PREFIX= /usr
 CONFIGURE_OPTIONS += --with-libpcre2
-CONFIGURE_OPTIONS += --without-openssl
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS += --with-perl=$(PERL)
 CONFIGURE_OPTIONS += --with-python=$(PYTHON)
-CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/pcre"
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/pcre -I$(OPENSSL_INCDIR)"
 
 COMPONENT_BUILD_ENV += NO_PERL_MAKEMAKER=1
 COMPONENT_BUILD_ENV += V=1
@@ -177,6 +178,7 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/pcre2
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash

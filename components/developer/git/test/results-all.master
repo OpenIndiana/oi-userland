@@ -360,8 +360,9 @@ ok 23 - git var -l lists config
 ok 24 - git var -l lists multiple global configs
 ok 25 - git var -l does not split multiline editors
 ok 26 - listing and asking for variables are exclusive
-# passed all 26 test(s)
-1..26
+ok 27 - `git var -l` works even without HOME
+# passed all 27 test(s)
+1..27
 *** t0008-ignores.sh ***
 ok 1 - setup
 ok 2 - . corner-case
@@ -12776,7 +12777,7 @@ ok 51 - rebase -i continue with only submodule staged
 ok 52 - rebase -i continue with unstaged submodule
 ok 53 - avoid unnecessary reset
 ok 54 - reword
-ok 55 - no uncommited changes when rewording the todo list is reloaded
+ok 55 - no uncommitted changes when rewording and the todo list is reloaded
 ok 56 - rebase -i can copy notes
 ok 57 - rebase -i can copy notes over a fixup
 ok 58 - rebase while detaching HEAD
@@ -13129,17 +13130,18 @@ ok 16 - rebase -i --continue remembers --rerere-autoupdate
 ok 17 - rebase -i --continue honors rerere.autoUpdate
 ok 18 - rebase -i --continue remembers --no-rerere-autoupdate
 ok 19 - the todo command "break" works
-ok 20 - --reschedule-failed-exec
-ok 21 - rebase.rescheduleFailedExec only affects `rebase -i`
-ok 22 - rebase.rescheduleFailedExec=true & --no-reschedule-failed-exec
-ok 23 - new rebase.rescheduleFailedExec=true setting in an ongoing rebase is ignored
-ok 24 - there is no --no-reschedule-failed-exec in an ongoing rebase
-ok 25 - rebase --apply sets ORIG_HEAD correctly
-ok 26 - rebase --apply <upstream> <branch> sets ORIG_HEAD correctly
-ok 27 - rebase --merge sets ORIG_HEAD correctly
-ok 28 - rebase --merge <upstream> <branch> sets ORIG_HEAD correctly
-# passed all 28 test(s)
-1..28
+ok 20 - patch file is removed before break command
+ok 21 - --reschedule-failed-exec
+ok 22 - rebase.rescheduleFailedExec only affects `rebase -i`
+ok 23 - rebase.rescheduleFailedExec=true & --no-reschedule-failed-exec
+ok 24 - new rebase.rescheduleFailedExec=true setting in an ongoing rebase is ignored
+ok 25 - there is no --no-reschedule-failed-exec in an ongoing rebase
+ok 26 - rebase --apply sets ORIG_HEAD correctly
+ok 27 - rebase --apply <upstream> <branch> sets ORIG_HEAD correctly
+ok 28 - rebase --merge sets ORIG_HEAD correctly
+ok 29 - rebase --merge <upstream> <branch> sets ORIG_HEAD correctly
+# passed all 29 test(s)
+1..29
 *** t3419-rebase-patch-id.sh ***
 ok 1 - setup
 ok 2 - setup: 500 lines
@@ -13457,8 +13459,9 @@ ok 29 - --rebase-merges with strategies
 ok 30 - --rebase-merges with commit that can generate bad characters for filename
 ok 31 - --rebase-merges with message matched with onto label
 ok 32 - progress shows the correct total
-# passed all 32 test(s)
-1..32
+ok 33 - truncate label names
+# passed all 33 test(s)
+1..33
 *** t3431-rebase-fork-point.sh ***
 ok 1 - setup
 ok 2 - git rebase 
@@ -15528,102 +15531,138 @@ ok 200 - format-patch --default-prefix overrides format.noprefix
 # passed all remaining 195 test(s)
 1..200
 *** t4015-diff-whitespace.sh ***
-ok 1 - Ray Lehtiniemi's example
-ok 2 - another test, without options
-ok 3 - ignore-blank-lines: only new lines
-ok 4 - ignore-blank-lines: only new lines with space
-ok 5 - ignore-blank-lines: after change
-ok 6 - ignore-blank-lines: before change
-ok 7 - ignore-blank-lines: between changes
-ok 8 - ignore-blank-lines: between changes (with interhunkctx)
-ok 9 - ignore-blank-lines: scattered spaces
-ok 10 - ignore-blank-lines: spaces coalesce
-ok 11 - ignore-blank-lines: mix changes and blank lines
-ok 12 - check mixed spaces and tabs in indent
-ok 13 - check mixed tabs and spaces in indent
-ok 14 - check with no whitespace errors
-ok 15 - check with trailing whitespace
-ok 16 - check with space before tab in indent
-ok 17 - --check and --exit-code are not exclusive
-ok 18 - --check and --quiet are not exclusive
-ok 19 - -w and --exit-code interact sensibly
-ok 20 - -I and --exit-code interact sensibly
-ok 21 - check staged with no whitespace errors
-ok 22 - check staged with trailing whitespace
-ok 23 - check staged with space before tab in indent
-ok 24 - check with no whitespace errors (diff-index)
-ok 25 - check with trailing whitespace (diff-index)
-ok 26 - check with space before tab in indent (diff-index)
-ok 27 - check staged with no whitespace errors (diff-index)
-ok 28 - check staged with trailing whitespace (diff-index)
-ok 29 - check staged with space before tab in indent (diff-index)
-ok 30 - check with no whitespace errors (diff-tree)
-ok 31 - check with trailing whitespace (diff-tree)
-ok 32 - check with space before tab in indent (diff-tree)
-ok 33 - check with ignored trailing whitespace attr (diff-tree)
-ok 34 - check trailing whitespace (trailing-space: off)
-ok 35 - check trailing whitespace (trailing-space: on)
-ok 36 - check space before tab in indent (space-before-tab: off)
-ok 37 - check space before tab in indent (space-before-tab: on)
-ok 38 - check spaces as indentation (indent-with-non-tab: off)
-ok 39 - check spaces as indentation (indent-with-non-tab: on)
-ok 40 - ditto, but tabwidth=9
-ok 41 - check tabs and spaces as indentation (indent-with-non-tab: on)
-ok 42 - ditto, but tabwidth=10
-ok 43 - ditto, but tabwidth=20
-ok 44 - check tabs as indentation (tab-in-indent: off)
-ok 45 - check tabs as indentation (tab-in-indent: on)
-ok 46 - check tabs and spaces as indentation (tab-in-indent: on)
-ok 47 - ditto, but tabwidth=1 (must be irrelevant)
-ok 48 - check tab-in-indent and indent-with-non-tab conflict
-ok 49 - check tab-in-indent excluded from wildcard whitespace attribute
-ok 50 - line numbers in --check output are correct
-ok 51 - checkdiff detects new trailing blank lines (1)
-ok 52 - checkdiff detects new trailing blank lines (2)
-ok 53 - checkdiff allows new blank lines
-ok 54 - whitespace-only changes not reported (diff)
-ok 55 - whitespace-only changes not reported (diffstat)
-ok 56 - whitespace changes with modification reported (diffstat)
-ok 57 - whitespace-only changes reported across renames (diffstat)
-ok 58 - whitespace-only changes reported across renames
-ok 59 - rename empty
-ok 60 - combined diff with autocrlf conversion
-ok 61 - setup diff colors
-ok 62 - diff that introduces a line with only tabs
-ok 63 - diff that introduces and removes ws breakages
-ok 64 - ws-error-highlight test setup
-ok 65 - test --ws-error-highlight option
-ok 66 - test diff.wsErrorHighlight config
-ok 67 - option overrides diff.wsErrorHighlight
-ok 68 - detect moved code, complete file
-ok 69 - detect malicious moved code, inside file
-ok 70 - plain moved code, inside file
-ok 71 - detect blocks of moved code
-ok 72 - detect permutations inside moved code -- dimmed-zebra
-ok 73 - zebra alternate color is only used when necessary
-ok 74 - short lines of opposite sign do not get marked as moved
-ok 75 - cmd option assumes configured colored-moved
-ok 76 - no effect on diff from --color-moved with --word-diff
-ok 77 - no effect on show from --color-moved with --word-diff
-ok 78 - set up whitespace tests
-ok 79 - move detection ignoring whitespace 
-ok 80 - move detection ignoring whitespace changes
-ok 81 - move detection ignoring whitespace at eol
-ok 82 - clean up whitespace-test colors
-ok 83 - --color-moved block at end of diff output respects MIN_ALNUM_COUNT
-ok 84 - --color-moved respects MIN_ALNUM_COUNT
-ok 85 - --color-moved treats adjacent blocks as separate for MIN_ALNUM_COUNT
-ok 86 - --color-moved rewinds for MIN_ALNUM_COUNT
-ok 87 - move detection with submodules
-ok 88 - only move detection ignores white spaces
-ok 89 - compare whitespace delta across moved blocks
-ok 90 - bogus settings in move detection erroring out
-ok 91 - compare whitespace delta incompatible with other space options
-ok 92 - compare mixed whitespace delta across moved blocks
-ok 93 - combine --ignore-blank-lines with --function-context
-ok 94 - combine --ignore-blank-lines with --function-context 2
-# passed all 94 test(s)
-1..94
+ok 1 - status with --patch (different)
+ok 2 - status with --patch (mode differs)
+ok 3 - status with --patch (removing an empty file)
+ok 4 - status with --patch (different but equivalent)
+ok 5 - status with --quiet (different)
+ok 6 - status with --quiet (mode differs)
+ok 7 - status with --quiet (removing an empty file)
+ok 8 - status with --quiet (different but equivalent)
+ok 9 - status with -s (different)
+ok 10 - status with -s (mode differs)
+ok 11 - status with -s (removing an empty file)
+ok 12 - status with -s (different but equivalent)
+ok 13 - status with --stat (different)
+ok 14 - status with --stat (mode differs)
+ok 15 - status with --stat (removing an empty file)
+ok 16 - status with --stat (different but equivalent)
+ok 17 - status with --shortstat (different)
+ok 18 - status with --shortstat (mode differs)
+ok 19 - status with --shortstat (removing an empty file)
+ok 20 - status with --shortstat (different but equivalent)
+ok 21 - status with --dirstat=lines (different)
+ok 22 - status with --dirstat=lines (mode differs)
+ok 23 - status with --dirstat=lines (removing an empty file)
+ok 24 - status with --dirstat=lines (different but equivalent)
+ok 25 - status with --raw (different)
+ok 26 - status with --raw (mode differs)
+ok 27 - status with --raw (removing an empty file)
+ok 28 - status with --raw (different but equivalent)
+ok 29 - status with --name-only (different)
+ok 30 - status with --name-only (mode differs)
+ok 31 - status with --name-only (removing an empty file)
+ok 32 - status with --name-only (different but equivalent)
+ok 33 - status with --name-status (different)
+ok 34 - status with --name-status (mode differs)
+ok 35 - status with --name-status (removing an empty file)
+ok 36 - status with --name-status (different but equivalent)
+ok 37 - Ray Lehtiniemi's example
+ok 38 - another test, without options
+ok 39 - ignore-blank-lines: only new lines
+ok 40 - ignore-blank-lines: only new lines with space
+ok 41 - ignore-blank-lines: after change
+ok 42 - ignore-blank-lines: before change
+ok 43 - ignore-blank-lines: between changes
+ok 44 - ignore-blank-lines: between changes (with interhunkctx)
+ok 45 - ignore-blank-lines: scattered spaces
+ok 46 - ignore-blank-lines: spaces coalesce
+ok 47 - ignore-blank-lines: mix changes and blank lines
+ok 48 - check mixed spaces and tabs in indent
+ok 49 - check mixed tabs and spaces in indent
+ok 50 - check with no whitespace errors
+ok 51 - check with trailing whitespace
+ok 52 - check with space before tab in indent
+ok 53 - --check and --exit-code are not exclusive
+ok 54 - --check and --quiet are not exclusive
+ok 55 - -w and --exit-code interact sensibly
+ok 56 - -I and --exit-code interact sensibly
+ok 57 - check staged with no whitespace errors
+ok 58 - check staged with trailing whitespace
+ok 59 - check staged with space before tab in indent
+ok 60 - check with no whitespace errors (diff-index)
+ok 61 - check with trailing whitespace (diff-index)
+ok 62 - check with space before tab in indent (diff-index)
+ok 63 - check staged with no whitespace errors (diff-index)
+ok 64 - check staged with trailing whitespace (diff-index)
+ok 65 - check staged with space before tab in indent (diff-index)
+ok 66 - check with no whitespace errors (diff-tree)
+ok 67 - check with trailing whitespace (diff-tree)
+ok 68 - check with space before tab in indent (diff-tree)
+ok 69 - check with ignored trailing whitespace attr (diff-tree)
+ok 70 - check trailing whitespace (trailing-space: off)
+ok 71 - check trailing whitespace (trailing-space: on)
+ok 72 - check space before tab in indent (space-before-tab: off)
+ok 73 - check space before tab in indent (space-before-tab: on)
+ok 74 - check spaces as indentation (indent-with-non-tab: off)
+ok 75 - check spaces as indentation (indent-with-non-tab: on)
+ok 76 - ditto, but tabwidth=9
+ok 77 - check tabs and spaces as indentation (indent-with-non-tab: on)
+ok 78 - ditto, but tabwidth=10
+ok 79 - ditto, but tabwidth=20
+ok 80 - check tabs as indentation (tab-in-indent: off)
+ok 81 - check tabs as indentation (tab-in-indent: on)
+ok 82 - check tabs and spaces as indentation (tab-in-indent: on)
+ok 83 - ditto, but tabwidth=1 (must be irrelevant)
+ok 84 - check tab-in-indent and indent-with-non-tab conflict
+ok 85 - check tab-in-indent excluded from wildcard whitespace attribute
+ok 86 - line numbers in --check output are correct
+ok 87 - checkdiff detects new trailing blank lines (1)
+ok 88 - checkdiff detects new trailing blank lines (2)
+ok 89 - checkdiff allows new blank lines
+ok 90 - whitespace-only changes not reported (diff)
+ok 91 - whitespace-only changes not reported (diffstat)
+ok 92 - whitespace changes with modification reported (diffstat)
+ok 93 - whitespace-only changes reported across renames (diffstat)
+ok 94 - whitespace-only changes reported across renames
+ok 95 - rename empty
+ok 96 - combined diff with autocrlf conversion
+ok 97 - setup diff colors
+ok 98 - diff that introduces a line with only tabs
+ok 99 - diff that introduces and removes ws breakages
+ok 100 - ws-error-highlight test setup
+ok 101 - test --ws-error-highlight option
+ok 102 - test diff.wsErrorHighlight config
+ok 103 - option overrides diff.wsErrorHighlight
+ok 104 - detect moved code, complete file
+ok 105 - detect malicious moved code, inside file
+ok 106 - plain moved code, inside file
+ok 107 - detect blocks of moved code
+ok 108 - detect permutations inside moved code -- dimmed-zebra
+ok 109 - zebra alternate color is only used when necessary
+ok 110 - short lines of opposite sign do not get marked as moved
+ok 111 - cmd option assumes configured colored-moved
+ok 112 - no effect on diff from --color-moved with --word-diff
+ok 113 - no effect on show from --color-moved with --word-diff
+ok 114 - set up whitespace tests
+ok 115 - move detection ignoring whitespace 
+ok 116 - move detection ignoring whitespace changes
+ok 117 - move detection ignoring whitespace at eol
+ok 118 - clean up whitespace-test colors
+ok 119 - --color-moved block at end of diff output respects MIN_ALNUM_COUNT
+ok 120 - --color-moved respects MIN_ALNUM_COUNT
+ok 121 - --color-moved treats adjacent blocks as separate for MIN_ALNUM_COUNT
+ok 122 - --color-moved rewinds for MIN_ALNUM_COUNT
+ok 123 - move detection with submodules
+ok 124 - only move detection ignores white spaces
+ok 125 - compare whitespace delta across moved blocks
+ok 126 - bogus settings in move detection erroring out
+ok 127 - compare whitespace delta incompatible with other space options
+ok 128 - compare mixed whitespace delta across moved blocks
+ok 129 - combine --ignore-blank-lines with --function-context
+ok 130 - combine --ignore-blank-lines with --function-context 2
+# passed all 130 test(s)
+1..130
 *** t4016-diff-quote.sh ***
 ok 1 - setup
 ok 2 - setup expected files
@@ -15657,8 +15696,9 @@ ok 21 - --check with --no-pager returns 2 for dirty difference
 ok 22 - check should test not just the last line
 ok 23 - check detects leftover conflict markers
 ok 24 - check honors conflict marker length
-# passed all 24 test(s)
-1..24
+ok 25 - option errors are not confused by --exit-code
+# passed all 25 test(s)
+1..25
 *** t4018-diff-funcname.sh ***
 ok 1 - setup
 ok 2 - setup: test-tool userdiff
@@ -16674,11 +16714,12 @@ ok 17 - diff --no-index normalizes mode: chmod +x
 ok 18 - diff --no-index normalizes: mode not like git mode
 ok 19 - diff --no-index normalizes: mode not like git mode (symlink)
 ok 20 - diff --no-index treats '-' as stdin
-ok 21 - diff --no-index refuses to diff stdin and a directory
-ok 22 - diff --no-index refuses to diff a named pipe and a directory
-ok 23 - diff --no-index reads from pipes
-# passed all 23 test(s)
-1..23
+ok 21 - diff --no-index -R treats '-' as stdin
+ok 22 - diff --no-index refuses to diff stdin and a directory
+ok 23 - diff --no-index refuses to diff a named pipe and a directory
+ok 24 - diff --no-index reads from pipes
+# passed all 24 test(s)
+1..24
 *** t4054-diff-bogus-tree.sh ***
 ok 1 - create bogus tree
 ok 2 - create tree with matching file
@@ -19634,26 +19675,27 @@ ok 78 - detect incorrect parent int-id
 ok 79 - detect extra parent int-id
 ok 80 - detect wrong parent
 ok 81 - detect incorrect generation number
-ok 82 - detect incorrect generation number
-ok 83 - detect incorrect commit date
-ok 84 - detect incorrect parent for octopus merge
-ok 85 - detect invalid checksum hash
-ok 86 - detect incorrect chunk count
-ok 87 - git fsck (checks commit-graph when config set to true)
-ok 88 - git fsck (ignores commit-graph when config set to false)
-ok 89 - git fsck (checks commit-graph when config unset)
-ok 90 - git fsck shows commit-graph output with --progress
-ok 91 - git fsck suppresses commit-graph output with --no-progress
-ok 92 - setup non-the_repository tests
-ok 93 - parse_commit_in_graph works for non-the_repository
-ok 94 - get_commit_tree_in_graph works for non-the_repository
-ok 95 - corrupt commit-graph write (broken parent)
-ok 96 - corrupt commit-graph write (missing tree)
-ok 97 - set up and verify repo with generation data overflow chunk
-ok 98 - check normal git operations: generation data overflow chunk repo
-ok 99 - overflow during generation version upgrade
-# passed all 99 test(s)
-1..99
+ok 82 - detect incorrect commit date
+ok 83 - detect incorrect parent for octopus merge
+ok 84 - detect invalid checksum hash
+ok 85 - detect incorrect chunk count
+ok 86 - detect mixed generation numbers (non-zero to zero)
+ok 87 - detect mixed generation numbers (zero to non-zero)
+ok 88 - git fsck (checks commit-graph when config set to true)
+ok 89 - git fsck (ignores commit-graph when config set to false)
+ok 90 - git fsck (checks commit-graph when config unset)
+ok 91 - git fsck shows commit-graph output with --progress
+ok 92 - git fsck suppresses commit-graph output with --no-progress
+ok 93 - setup non-the_repository tests
+ok 94 - parse_commit_in_graph works for non-the_repository
+ok 95 - get_commit_tree_in_graph works for non-the_repository
+ok 96 - corrupt commit-graph write (broken parent)
+ok 97 - corrupt commit-graph write (missing tree)
+ok 98 - set up and verify repo with generation data overflow chunk
+ok 99 - check normal git operations: generation data overflow chunk repo
+ok 100 - overflow during generation version upgrade
+# passed all 100 test(s)
+1..100
 *** t5319-multi-pack-index.sh ***
 ok 1 - setup
 ok 2 - don't write midx with no packs
@@ -20696,14 +20738,15 @@ ok 7 - git rebase -m
 ok 8 - git rebase -m --skip
 ok 9 - git rebase with implicit use of merge backend
 ok 10 - git rebase --skip with implicit use of merge backend
-ok 11 - git rebase -i (unchanged)
-ok 12 - git rebase -i (skip)
-ok 13 - git rebase -i (squash)
-ok 14 - git rebase -i (fixup without conflict)
-ok 15 - git rebase -i (double edit)
-ok 16 - git rebase -i (exec)
-# passed all 16 test(s)
-1..16
+ok 11 - git rebase with failed pick
+ok 12 - git rebase -i (unchanged)
+ok 13 - git rebase -i (skip)
+ok 14 - git rebase -i (squash)
+ok 15 - git rebase -i (fixup without conflict)
+ok 16 - git rebase -i (double edit)
+ok 17 - git rebase -i (exec)
+# passed all 17 test(s)
+1..17
 *** t5408-send-pack-stdin.sh ***
 ok 1 - setup refs
 ok 2 - refs on cmdline
@@ -21688,13 +21731,16 @@ ok 175 - fetching a one-level ref works
 ok 176 - fetching with auto-gc does not lock up
 ok 177 - fetch.hideRefs affects connectivity check
 ok 178 - transfer.hideRefs affects connectivity check
-ok 179 - --negotiation-tip limits "have" lines sent
-ok 180 - --negotiation-tip understands globs
-ok 181 - --negotiation-tip understands abbreviated SHA-1
-ok 182 - --negotiation-tip rejects missing OIDs
-# passed all 182 test(s)
+ok 179 - prepare source branch
+ok 180 - fetch trumps transfer limit
+ok 181 - fetch trumps transfer limit
+ok 182 - --negotiation-tip limits "have" lines sent
+ok 183 - --negotiation-tip understands globs
+ok 184 - --negotiation-tip understands abbreviated SHA-1
+ok 185 - --negotiation-tip rejects missing OIDs
+# passed all 185 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..182
+1..185
 *** t5511-refspec.sh ***
 ok 1 - push  (invalid)
 ok 2 - push :
@@ -22475,14 +22521,18 @@ ok 4 - setting receive.maxInputSize to 512 rejects push
 ok 5 - bumping limit to 4k allows push
 ok 6 - prepare destination repository (again)
 ok 7 - lifting the limit allows push
-ok 8 - prepare destination repository
-ok 9 - set unpacklimit to 10000
-ok 10 - setting receive.maxInputSize to 512 rejects push
-ok 11 - bumping limit to 4k allows push
-ok 12 - prepare destination repository (again)
-ok 13 - lifting the limit allows push
-# passed all 13 test(s)
-1..13
+ok 8 - prepare destination repository (once more)
+ok 9 - receive trumps transfer
+ok 10 - prepare destination repository
+ok 11 - set unpacklimit to 10000
+ok 12 - setting receive.maxInputSize to 512 rejects push
+ok 13 - bumping limit to 4k allows push
+ok 14 - prepare destination repository (again)
+ok 15 - lifting the limit allows push
+ok 16 - prepare destination repository (once more)
+ok 17 - receive trumps transfer
+# passed all 17 test(s)
+1..17
 *** t5547-push-quarantine.sh ***
 ok 1 - create picky dest repo
 ok 2 - accepted objects work
@@ -25326,76 +25376,77 @@ ok 293 - %(raw) with --shell must fail
 ok 294 - %(raw) with --shell and --sort=raw must fail
 ok 295 - %(raw:size) with --shell
 ok 296 - for-each-ref --format compare with cat-file --batch
-ok 297 - set up multiple-sort tags
-ok 298 - Verify sort with multiple keys
-ok 299 - equivalent sorts fall back on refname
-ok 300 - --no-sort cancels the previous sort keys
-ok 301 - do not dereference NULL upon %(HEAD) on unborn branch
-ok 302 - set up trailers for next test
-ok 303 - %(trailers:unfold) unfolds trailers
-ok 304 - %(trailers:only) shows only "key: value" trailers
-ok 305 - %(trailers:only=no,only=true) shows only "key: value" trailers
-ok 306 - %(trailers:only=yes) shows only "key: value" trailers
-ok 307 - %(trailers:only=no) shows all trailers
-ok 308 - %(trailers:only) and %(trailers:unfold) work together
-ok 309 - %(trailers:unfold) and %(trailers:only) work together
-ok 310 - %(trailers:key=foo) shows that trailer
-ok 311 - %(trailers:key=foo) is case insensitive
-ok 312 - %(trailers:key=foo:) trailing colon also works
-ok 313 - %(trailers:key=foo) multiple keys
-ok 314 - %(trailers:key=nonexistent) becomes empty
-ok 315 - %(trailers:key=foo) handles multiple lines even if folded
-ok 316 - %(trailers:key=foo,unfold) properly unfolds
-ok 317 - %(trailers:key=foo,only=no) also includes nontrailer lines
-ok 318 - %(trailers:key=foo,valueonly) shows only value
-ok 319 - %(trailers:separator) changes separator
-ok 320 - %(trailers:key_value_separator) changes key-value separator
-ok 321 - %(trailers:separator,key_value_separator) changes both separators
-ok 322 - %(trailers) rejects unknown trailers arguments
-ok 323 - %(trailers:key) without value is error
-ok 324 - if arguments, %(contents:trailers) shows error if colon is missing
-ok 325 - basic atom: head contents:trailers
-ok 326 - basic atom: rest must fail
-ok 327 - HEAD atom does not take arguments
-ok 328 - subject atom rejects unknown arguments
-ok 329 - refname atom rejects unknown arguments
-ok 330 - trailer parsing not fooled by --- line
-ok 331 - Add symbolic ref for the following tests
-ok 332 - Verify usage of %(symref) atom
-ok 333 - Verify usage of %(symref:short) atom
-ok 334 - Verify usage of %(symref:lstrip) atom
-ok 335 - Verify usage of %(symref:rstrip) atom
-ok 336 - :remotename and :remoteref
-ok 337 - for-each-ref --ignore-case ignores case
-ok 338 - for-each-ref --omit-empty works
-ok 339 - for-each-ref --ignore-case works on multiple sort keys
-ok 340 - for-each-ref reports broken tags
-ok 341 - set up tag with signature and no blank lines
-ok 342 # skip basic atom: refs/tags/fake-sig-no-blanks contents:subject (missing GPG)
-ok 343 # skip basic atom: refs/tags/fake-sig-no-blanks contents:body (missing GPG)
-ok 344 # skip basic atom: refs/tags/fake-sig-no-blanks contents:signature (missing GPG)
-ok 345 - set up tag with CRLF signature
-ok 346 # skip basic atom: refs/tags/fake-sig-crlf contents:subject (missing GPG)
-ok 347 # skip basic atom: refs/tags/fake-sig-crlf contents:body (missing GPG)
-ok 348 # skip basic atom: refs/tags/fake-sig-crlf contents:signature (missing GPG)
-ok 349 - git for-each-ref --stdin: empty
-ok 350 - git for-each-ref --stdin: fails if extra args
-ok 351 - git for-each-ref --stdin: matches
-ok 352 - git for-each-ref with non-existing refs
-ok 353 # skip setup for signature atom using gpg (missing GPG)
-ok 354 - setup for signature atom using ssh
-ok 355 # skip bare signature atom (missing GPG2)
-ok 356 # skip show good signature with custom format (missing GPG)
-ok 357 - show good signature with custom format
+ok 297 - verify sorts with contents:size
+ok 298 - set up multiple-sort tags
+ok 299 - Verify sort with multiple keys
+ok 300 - equivalent sorts fall back on refname
+ok 301 - --no-sort cancels the previous sort keys
+ok 302 - do not dereference NULL upon %(HEAD) on unborn branch
+ok 303 - set up trailers for next test
+ok 304 - %(trailers:unfold) unfolds trailers
+ok 305 - %(trailers:only) shows only "key: value" trailers
+ok 306 - %(trailers:only=no,only=true) shows only "key: value" trailers
+ok 307 - %(trailers:only=yes) shows only "key: value" trailers
+ok 308 - %(trailers:only=no) shows all trailers
+ok 309 - %(trailers:only) and %(trailers:unfold) work together
+ok 310 - %(trailers:unfold) and %(trailers:only) work together
+ok 311 - %(trailers:key=foo) shows that trailer
+ok 312 - %(trailers:key=foo) is case insensitive
+ok 313 - %(trailers:key=foo:) trailing colon also works
+ok 314 - %(trailers:key=foo) multiple keys
+ok 315 - %(trailers:key=nonexistent) becomes empty
+ok 316 - %(trailers:key=foo) handles multiple lines even if folded
+ok 317 - %(trailers:key=foo,unfold) properly unfolds
+ok 318 - %(trailers:key=foo,only=no) also includes nontrailer lines
+ok 319 - %(trailers:key=foo,valueonly) shows only value
+ok 320 - %(trailers:separator) changes separator
+ok 321 - %(trailers:key_value_separator) changes key-value separator
+ok 322 - %(trailers:separator,key_value_separator) changes both separators
+ok 323 - %(trailers) rejects unknown trailers arguments
+ok 324 - %(trailers:key) without value is error
+ok 325 - if arguments, %(contents:trailers) shows error if colon is missing
+ok 326 - basic atom: head contents:trailers
+ok 327 - basic atom: rest must fail
+ok 328 - HEAD atom does not take arguments
+ok 329 - subject atom rejects unknown arguments
+ok 330 - refname atom rejects unknown arguments
+ok 331 - trailer parsing not fooled by --- line
+ok 332 - Add symbolic ref for the following tests
+ok 333 - Verify usage of %(symref) atom
+ok 334 - Verify usage of %(symref:short) atom
+ok 335 - Verify usage of %(symref:lstrip) atom
+ok 336 - Verify usage of %(symref:rstrip) atom
+ok 337 - :remotename and :remoteref
+ok 338 - for-each-ref --ignore-case ignores case
+ok 339 - for-each-ref --omit-empty works
+ok 340 - for-each-ref --ignore-case works on multiple sort keys
+ok 341 - for-each-ref reports broken tags
+ok 342 - set up tag with signature and no blank lines
+ok 343 # skip basic atom: refs/tags/fake-sig-no-blanks contents:subject (missing GPG)
+ok 344 # skip basic atom: refs/tags/fake-sig-no-blanks contents:body (missing GPG)
+ok 345 # skip basic atom: refs/tags/fake-sig-no-blanks contents:signature (missing GPG)
+ok 346 - set up tag with CRLF signature
+ok 347 # skip basic atom: refs/tags/fake-sig-crlf contents:subject (missing GPG)
+ok 348 # skip basic atom: refs/tags/fake-sig-crlf contents:body (missing GPG)
+ok 349 # skip basic atom: refs/tags/fake-sig-crlf contents:signature (missing GPG)
+ok 350 - git for-each-ref --stdin: empty
+ok 351 - git for-each-ref --stdin: fails if extra args
+ok 352 - git for-each-ref --stdin: matches
+ok 353 - git for-each-ref with non-existing refs
+ok 354 # skip setup for signature atom using gpg (missing GPG)
+ok 355 - setup for signature atom using ssh
+ok 356 # skip bare signature atom (missing GPG2)
+ok 357 # skip show good signature with custom format (missing GPG)
+ok 358 - show good signature with custom format
 			    with ssh
-ok 358 # skip signature atom with grade option and bad signature (missing GPG)
-ok 359 # skip show untrusted signature with custom format (missing GPG)
-ok 360 # skip show untrusted signature with undefined trust level (missing GPG)
-ok 361 # skip show untrusted signature with ultimate trust level (missing GPG)
-ok 362 # skip show unknown signature with custom format (missing GPG)
-ok 363 # skip show lack of signature with custom format (missing GPG)
-# passed all 363 test(s)
-1..363
+ok 359 # skip signature atom with grade option and bad signature (missing GPG)
+ok 360 # skip show untrusted signature with custom format (missing GPG)
+ok 361 # skip show untrusted signature with undefined trust level (missing GPG)
+ok 362 # skip show untrusted signature with ultimate trust level (missing GPG)
+ok 363 # skip show unknown signature with custom format (missing GPG)
+ok 364 # skip show lack of signature with custom format (missing GPG)
+# passed all 364 test(s)
+1..364
 *** t6301-for-each-ref-errors.sh ***
 ok 1 - setup
 ok 2 - Broken refs are reported correctly
@@ -31418,8 +31469,9 @@ ok 9 - --no-single-branch clones all branches
 ok 10 # skip progress with tty (missing TTY)
 ok 11 - progress without tty
 ok 12 - scalar clone warns when background maintenance fails
-# passed all 12 test(s)
-1..12
+ok 13 - `scalar clone --no-src`
+# passed all 13 test(s)
+1..13
 *** t9300-fast-import.sh ***
 ok 1 - empty stream succeeds
 ok 2 - truncated stream complains
@@ -32299,7 +32351,7 @@ missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES ADD_OUT AUTOIDENT BUILT
 failed test(s): t0211 t1700 t2501 t3200 t3404 t4150 t4202 t7609 t9210 t9902
 
 fixed   1
-success 28164
+success 28216
 failed  20
 broken  270
-total   28965
+total   29017
