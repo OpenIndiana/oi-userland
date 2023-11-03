@@ -13,23 +13,23 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_STYLE= configure
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xmlrpc-c
 COMPONENT_VERSION=      1.39.12
-COMPONENT_REVISION=     2
-COMPONENT_FMRI=         library/xmlrpc-c
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_REVISION=     3
+COMPONENT_SUMMARY=      XMLRPC C/C++ Library
 COMPONENT_PROJECT_URL=  http://xmlrpc-c.sourceforge.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
 COMPONENT_ARCHIVE_HASH= sha256:d830f3264a832dfe09f629cc64036acfd08121692526d0fabe090f7ff881ce08
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/xmlrpc-c/files/Xmlrpc-c%20Super%20Stable/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/xmlrpc-c
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      BSD-like
 COMPONENT_LICENSE_FILE= doc/COPYING
-COMPONENT_SUMMARY=      XMLRPC C/C++ Library
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,7 +47,8 @@ COMMON_ENV += LADD="$(LDFLAGS)"
 
 # Note, this is not autoconf/automake-based package
 # Missing files in build dir during build without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+
 CONFIGURE_SCRIPT = $(@D)/configure
 
 COMPONENT_BUILD_ENV += $(COMMON_ENV)
