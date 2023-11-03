@@ -22,15 +22,13 @@
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-BUILD_BITS = 64
-
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
-
-GCC_VERSION= 10
-GNU_ARCH= x86_64-sun-solaris
 
 COMPONENT_NAME=		mozjs
 COMPONENT_VERSION=	60.8.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey
 COMPONENT_SRC=          mozjs-60.8.0
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -43,18 +41,18 @@ COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE= MPL v2.0
 COMPONENT_LICENSE_FILE= mozjs.license
 
+# Tests hook up need work
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
 CXXFLAGS += -std=c++11
+GNU_ARCH= x86_64-sun-solaris
 
 # Only used during build process.
 PYTHON_VERSIONS= 2.7
 PYTHON= $(PYTHON.2.7.$(BITS))
 
-# Tests hook up need work
-TEST_TARGET = $(SKIP_TEST)
-
-include $(WS_MAKE_RULES)/common.mk
-
-xCOMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
+#COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
   cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
@@ -103,17 +101,9 @@ endif
 
 unexport SHELLOPTS
 COMPONENT_TEST_ARGS =   -k -i
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL:/p" ' \
-        '-e "/SKIP:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" ' \
-        '-e "/ERROR:/p" '
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += developer/gcc-10
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
