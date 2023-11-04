@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		augeas
 COMPONENT_VERSION=	1.14.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Augeas is a utility for editing configuration files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
