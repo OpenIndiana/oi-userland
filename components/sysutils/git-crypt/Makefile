@@ -22,13 +22,12 @@
 #
 
 BUILD_STYLE= justmake
-# Alas this doesn't work yet:
-USE_OPENSSL11= Yes
+OPENSSL_VERSION= 1.0
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         git-crypt
 COMPONENT_VERSION=      0.7.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 	2
 COMPONENT_SUMMARY=      git-crypt - transparent file encryption in git
 COMPONENT_DESCRIPTION=	\
 	git-crypt enables transparent encryption and decryption of files in a git repository. \
@@ -49,6 +48,13 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+LDFLAGS += -L$(OPENSSL_LIBDIR)
+
+CPPFLAGS += -I$(OPENSSL_INCDIR)
+
+CONFIGURE_OPTIONS += LDFLAGS=$(LDFLAGS)
+CONFIGURE_OPTIONS += CPPFLAGS=$(CPPFLAGS)
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += library/libxslt
