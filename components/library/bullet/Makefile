@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bullet
 COMPONENT_VERSION=	2.83.5
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=  Bullet Physics Library
 COMPONENT_SRC=		bullet3-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://pybullet.org/wordpress/
