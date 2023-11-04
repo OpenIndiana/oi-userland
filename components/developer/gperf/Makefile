@@ -20,31 +20,32 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_STYLE=configure
-BUILD_BITS=64
+
+BUILD_STYLE= configure
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gperf
 COMPONENT_VERSION=      3.1
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=         developer/gperf
 COMPONENT_SUMMARY=      GNU gperf - a perfect hash function generator.
 COMPONENT_CLASSIFICATION=Development/GNU
-COMPONENT_PROJECT_URL=  http://www.gnu.org/software/gperf/
+COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gperf/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2
-COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/pub/gnu/gperf/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_ARCHIVE_HASH= sha256:588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/pub/gnu/gperf/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv3
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=	--docdir=/usr/share/doc/gperf
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --docdir=/usr/share/doc/gperf
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
