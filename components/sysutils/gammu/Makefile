@@ -17,9 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gammu
 COMPONENT_VERSION=	1.37.4
-COMPONENT_REVISION=	9
-COMPONENT_PROJECT_URL=	https://wammu.eu/gammu/
+COMPONENT_REVISION=	10
 COMPONENT_SUMMARY=	Command line utility to control your phone
+COMPONENT_PROJECT_URL=	https://wammu.eu/gammu/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=	https://dl.cihar.com/gammu/releases/$(COMPONENT_ARCHIVE)
@@ -39,7 +39,7 @@ LDFLAGS += -L$(MYSQL_LIBDIR) -R$(MYSQL_LIBDIR)
 LDFLAGS += -L$(PG_LIBDIR) -R$(PG_LIBDIR)
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CMAKE_OPTIONS += -DBUILD_PYTHON=$(PYTHON)
 CMAKE_OPTIONS += -DPYTHON_EXECUTABLE=$(PYTHON)
@@ -50,8 +50,6 @@ CMAKE_OPTIONS += -DINSTALL_GNAPPLET=OFF
 # Build dependencies
 REQUIRED_PACKAGES += utility/bash-completion
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
