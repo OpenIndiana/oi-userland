@@ -1,0 +1,17 @@
+perf-test.cc file is missing __STDC_WANT_LIB_EXT1__ option to have str???_s
+functions defined.
+
+This is a Solaris specific patch.
+
+--- a/test/perf-test.cc	2020-10-01 21:44:58.000000000 +0200
++++ b/test/perf-test.cc	2020-11-10 09:23:38.566053281 +0100
+@@ -18,6 +18,9 @@
+      of a previous run.
+ */
+ 
++// str*_s() functions needs this to be defined.
++#define __STDC_WANT_LIB_EXT1__ 1
++
+ #ifdef _MSC_VER
+ // this sucks but I don't know any other way
+ #    pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
