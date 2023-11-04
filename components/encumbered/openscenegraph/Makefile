@@ -12,12 +12,11 @@
 # Copyright (c) 2022 Jake Goerzen
 
 BUILD_STYLE=	cmake
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		OpenSceneGraph
 COMPONENT_VERSION=	3.6.5
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_PROJECT_URL=	https://www.openscenegraph.com
 COMPONENT_SUMMARY=	OpenSceneGraph - High performance 3D graphics toolkit.
 COMPONENT_SRC=		OpenSceneGraph-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,8 +34,14 @@ include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_CXX_FLAGS += -std=c++11
 
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
+
 # This is to get libraries to install into /usr/lib/$(MACH64)
 CMAKE_OPTIONS += -DLIB_POSTFIX=/$(MACH64)
+CMAKE_OPTIONS += -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
 
 # OpenSceneGraph doesn't yet support FFmpeg 5 or higher, we have FFmpeg 6, so disable it for now
 # https://github.com/openscenegraph/OpenSceneGraph/issues/1111
@@ -45,9 +50,8 @@ CMAKE_OPTIONS += -DCMAKE_DISABLE_FIND_PACKAGE_FFmpeg=1
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/jasper
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
