@@ -324,7 +324,7 @@ publish:		pre-publish update-metadata $(PUBLISH_STAMP)
 sample-manifest:	$(GENERATED).p5m
 
 $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
-	[ ! -d $(SAMPLE_MANIFEST_DIR) ] && $(MKDIR) $(SAMPLE_MANIFEST_DIR) || true
+	$(MKDIR) $(SAMPLE_MANIFEST_DIR)
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' \
