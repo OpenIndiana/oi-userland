@@ -153,7 +153,6 @@ MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
 SAMPLE_MANIFEST_DIR = 	$(COMPONENT_DIR)/manifests
 SAMPLE_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/sample-manifest.p5m
-GENERIC_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/generic-manifest.p5m
 
 CANONICAL_MANIFESTS =	$(filter-out dummy.p5m,$(wildcard *.p5m))
 ifneq ($(wildcard $(HISTORY)),)
@@ -218,7 +217,6 @@ endef
 
 VERSIONED_MANIFEST_TYPES =
 UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m, $(CANONICAL_MANIFESTS))
-GENERATE_GENERIC_TRANSFORMS=
 
 # Look for manifests which need to be duplicated for each version of python.
 ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
@@ -334,9 +332,6 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 		$(PKGFMT) | \
 		cat $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
-	if [ "$(GENERATE_GENERIC_TRANSFORMS)X" != "X" ]; \
-	then sed $(GENERATE_GENERIC_TRANSFORMS) $(SAMPLE_MANIFEST_FILE) \
-		| gawk '!seen[$$0]++' > $(GENERIC_MANIFEST_FILE); fi;
 
 # copy the canonical manifest(s) to the build tree
 $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
