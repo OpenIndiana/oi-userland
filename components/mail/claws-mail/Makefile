@@ -14,28 +14,28 @@
 # Copyright 2021 Gary Mills
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS= 64
+SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
 COMPONENT_VERSION=	4.1.1
-COMPONENT_PROJECT_URL=	https://www.claws-mail.org
-COMPONENT_FMRI=		mail/claws-mail
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
+COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:04a73a38899ee040c67dd81f7c3a4ad0bbc8efbd3ae804e5ceb91fa8b2d8602e
 COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/download.php?file=releases/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		mail/claws-mail
+COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=	GPL-3
 COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_CLASSIFICATION= Applications/Internet
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# Force dependency on a single python runtime:
-PYTHON_VERSIONS= $(PYTHON_VERSION)
+PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi )
 
@@ -72,6 +72,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/libetpan
+REQUIRED_PACKAGES += library/libical
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/nettle
@@ -81,7 +82,6 @@ REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus-glib
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
