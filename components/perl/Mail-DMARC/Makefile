@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::DMARC
 HUMAN_VERSION =			1.20230215
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mail::DMARC - Perl implementation of DMARC
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,18 +30,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# Testing with MySQL requires root account without password.
-# To set empty password for root you could run the following command:
-#
-# 	mysql -u root -e 'SET PASSWORD = ""'
-#
-COMPONENT_PRE_TEST_ACTION += \
-	$(MYSQL_BINDIR)/mysql -u root -e 'CREATE DATABASE dmarc_report' ; \
-	$(MYSQL_BINDIR)/mysql -u root dmarc_report < $(SOURCE_DIR)/share/mail_dmarc_schema.mysql ;
-COMPONENT_POST_TEST_ACTION += \
-	$(MYSQL_BINDIR)/mysql -u root -e 'DROP DATABASE dmarc_report' ;
-
 # PostgreSQL
 COMPONENT_PRE_TEST_ACTION += \
 	$(PG_BINDIR)/createdb -U postgres dmarc_report ; \
@@ -49,7 +38,6 @@ COMPONENT_POST_TEST_ACTION += \
 	$(PG_BINDIR)/dropdb -U postgres dmarc_report ;
 
 # Optional test dependencies missing from metadata
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/dbd-mysql
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/dbd-pg
 
 # Auto-generated dependencies
