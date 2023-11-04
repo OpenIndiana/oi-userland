@@ -38,6 +38,7 @@ COMPONENT_FULL_VERSION=$(COMPONENT_FULL_VERSION)-buildfix$(BUILD_FIX)
 endif
 # repology wants to use HUMAN_VERSION
 HUMAN_VERSION=          $(COMPONENT_FULL_VERSION)
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
@@ -348,8 +349,10 @@ REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
+REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer1
@@ -381,7 +384,6 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/liblangtag
 REQUIRED_PACKAGES += library/libpoppler
