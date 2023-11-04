@@ -12,13 +12,13 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_STYLE=cmake
-BUILD_BITS=64
+BUILD_STYLE= cmake
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         x265
 COMPONENT_VERSION=      3.5
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      High Efficiency Video Coding (HEVC)
 COMPONENT_PROJECT_URL=  https://x265.org/
 COMPONENT_FMRI=         library/video/x265
@@ -33,17 +33,17 @@ COMPONENT_LICENSE_FILE= COPYING
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-SOURCE_DIR =    $(COMPONENT_DIR)/$(COMPONENT_SRC)/source/
+SOURCE_DIR = $(COMPONENT_DIR)/$(COMPONENT_SRC)/source/
 
 CMAKE_OPTIONS += -DENABLE_PIC=ON
 CMAKE_OPTIONS += -DENABLE_TESTS=ON
 
 COMPONENT_TEST_CMD = test/TestBench
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/assembler/nasm
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
