@@ -32,6 +32,7 @@ COMPONENT_NAME=         ghostscript
 COMPONENT_VERSION=      10.1.2
 HUMAN_VERSION=			10.01.2
 NUMERICAL_VERSION=		$(subst .,,$(HUMAN_VERSION))
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Ghostscript is an interpreter for the PostScript language and PDF files
 COMPONENT_PROJECT_URL=	https://ghostscript.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -65,7 +66,7 @@ COMPONENT_POST_UNPACK_ACTION= ( \
 
 PATH= $(PATH.gnu)
 
-CFLAGS += $(CPP_XPG6MODE)
+CFLAGS += $(XPG6MODE)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
