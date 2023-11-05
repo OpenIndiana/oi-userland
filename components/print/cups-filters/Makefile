@@ -11,19 +11,19 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2022 Andreas Wacknitz
+# Copyright 2022, 2023 Andreas Wacknitz
 #
 
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	cups-filters
-COMPONENT_VERSION=	1.28.17
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=	2.0.0
 COMPONENT_SUMMARY=	Additional backends, filters and other software for CUPS
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:270a3752a960368aa99d431fb5d34f4039b2ac943c576d840612d1d8185c9bb9
+COMPONENT_ARCHIVE_HASH=	sha256:b5152e3dd148ed73835827ac2f219df7cf5808dbf9dbaec2aa0127b44de800d8
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/
 COMPONENT_ARCHIVE_URL=	https://github.com/OpenPrinting/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	print/$(COMPONENT_NAME)
@@ -35,90 +35,33 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION += (cd $(@D) ; \
-   PATH=$(PATH.gnu) $(CONFIG_SHELL) autogen.sh )
-
-# Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION = \
-   ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PREP_ACTION += ( cd $(@D) ; PATH=$(PATH.gnu) $(CONFIG_SHELL) autogen.sh )
 
 CPPFLAGS = -D_POSIX_PTHREAD_SEMANTICS
 CPPFLAGS += -I/usr/include/cups
 
-# Build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-LDFLAGS  += -lldap_r -lsocket
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+COMPONENT_BUILD_ENV   += PATH="$(PATH.gnu)"
+COMPONENT_INSTALL_ENV += PATH="$(PATH.gnu)"
 
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-# Ensure dynamic shared objects are linked using same LDFLAGS as executables.
-CONFIGURE_ENV += DSOFLAGS="$(LDFLAGS)"
-
-CONFIGURE_OPTIONS +=	--libdir=/usr/lib/cups/$(MACH64)
-CONFIGURE_OPTIONS +=	--localedir=$(USRSHARELOCALEDIR)
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
-#CONFIGURE_OPTIONS +=	--with-cups-rundir=/system/volatile/cups
-CONFIGURE_OPTIONS +=	--with-ldap-includes=/usr/include/openldap
-CONFIGURE_OPTIONS +=	--with-fontdir=$(USRSHAREFONTSDIR)
-CONFIGURE_OPTIONS +=	--disable-static
-# use pdftops (poppler) renderer instead
-CONFIGURE_OPTIONS +=	--with-pdftops=pdftops
-CONFIGURE_OPTIONS +=	--disable-mutool
-# gs has better collor management but crashes
-CONFIGURE_OPTIONS +=	--enable-poppler
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	--enable-driverless=no
-CONFIGURE_OPTIONS +=	ENABLE_DRIVERLESS_FALSE="Y"
-CONFIGURE_OPTIONS +=	--with-php=no
-CONFIGURE_OPTIONS +=	--with-test-font-path=/usr/share/fonts/TrueType/dejavu/DejaVuSans.ttf
-# Makefile.am files of this component are not compatible with Solaris make.
-# Use GNU make to avoid the configuration error when makefile fragments are processed.
-CONFIGURE_OPTIONS +=  MAKE=$(GMAKE)
-
-COMPONENT_BUILD_ENV  += PATH="$(PATH.gnu)"
-COMPONENT_INSTALL_ENV+= PATH="$(PATH.gnu)"
-
-COMPONENT_TEST_ENV +=   libtool_install_magic='%%%MAGIC variable%%%'
-COMPONENT_TEST_ENV +=   libtool_execute_magic='%%%MAGIC variable%%%'
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/ TOTAL:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/ SKIP:/p" ' \
-	'-e "/ XFAIL:/p" ' \
-	'-e "/ FAIL:/p" ' \
-	'-e "/ ERROR:/p" '
-
-$(SOURCE_DIR)/cups-filters.license:
-	cat	$(@D)/COPYING \
-		$(COMPONENT_DIR)/GPL-2.txt \
-		$(COMPONENT_DIR)/GPL-3.txt \
-		$(COMPONENT_DIR)/LGPL-2.0.txt \
-		$(COMPONENT_DIR)/LGPL-2.1.txt > $@
+CONFIGURE_OPTIONS += --libdir=/usr/lib/cups/$(MACH64)
+CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-mutool
+CONFIGURE_OPTIONS += --enable-poppler
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS += --enable-driverless=no
+CONFIGURE_OPTIONS += ENABLE_DRIVERLESS_FALSE="Y"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libexif
-REQUIRED_PACKAGES += image/library/libpng16
-REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libpoppler
-REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
+REQUIRED_PACKAGES += print/libcupsfilters
+REQUIRED_PACKAGES += print/libppd
 REQUIRED_PACKAGES += print/psutils
-REQUIRED_PACKAGES += print/qpdf
-REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/fontconfig
-REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/network/avahi
