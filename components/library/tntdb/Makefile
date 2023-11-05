@@ -19,14 +19,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tntdb
 COMPONENT_VERSION=      1.4
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      C++ library to access SQL databases, easy and robust
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:48cefd354acf2579c80b77d789d67f8b8162f1a02a3c2fb8157a9a32dc332859
-COMPONENT_ARCHIVE_URL=  \
-	http://www.tntnet.org/download/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.tntnet.org/tntdb.html
+COMPONENT_ARCHIVE_HASH= sha256:48cefd354acf2579c80b77d789d67f8b8162f1a02a3c2fb8157a9a32dc332859
+COMPONENT_PROJECT_URL=  https://web.archive.org/web/20230309070315/http://www.tntnet.org/tntdb.html
+COMPONENT_ARCHIVE_URL=  https://web.archive.org/web/20230309070345/http://www.tntnet.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      LGPLv2.1
@@ -64,15 +63,15 @@ CONFIGURE_OPTIONS += --with-replicate=yes
 CONFIGURE_OPTIONS += --with-oracle=no
 
 # We need mysql_config delivered by (mariadb-101|mysql|percona)/client :
-REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/client
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 # We need pg_config :
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/cxxtools
 REQUIRED_PACKAGES += system/library
