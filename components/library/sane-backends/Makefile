@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
 COMPONENT_VERSION=	1.1.1
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY=      SANE library and backends
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,11 +49,15 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
+# genesys backend needs c++11 support which is not properly detected, thus manually set the flag.
+CONFIGURE_ENV += ax_cv_cxx_compile_cxx11__std_cpp11=yes
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-locking
 CONFIGURE_OPTIONS += --enable-pthread
 CONFIGURE_OPTIONS += --with-gphoto2
 CONFIGURE_OPTIONS += --with-usb
+CONFIGURE_OPTIONS += --without-systemd
 
 COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
 
