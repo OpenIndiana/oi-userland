@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwps
 COMPONENT_VERSION=	0.4.14
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      libwps - library for reading Microsoft Works documents 
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwps
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
