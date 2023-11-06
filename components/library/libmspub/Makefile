@@ -20,12 +20,13 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS= 64_and_32
+
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmspub
 COMPONENT_VERSION=	0.1.4
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=      libmspub - library for reading Microsoft Publisher documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmspub
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,10 +41,10 @@ COMPONENT_LICENSE_FILE= COPYING.MPL
 include $(WS_MAKE_RULES)/common.mk
 
 # Fix threading detection issue with boost 1.64
-CXXFLAGS+= -pthread
+CXXFLAGS += -pthread
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
 # Build dependencies
 REQUIRED_PACKAGES += system/library/boost
@@ -51,8 +52,8 @@ REQUIRED_PACKAGES += system/library/boost
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += library/c++/librevenge
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
