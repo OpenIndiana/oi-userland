@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ixion
 COMPONENT_VERSION=	0.19.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      ixion - General purpose formula parser and interpreter
 COMPONENT_PROJECT_URL=	https://gitlab.com/ixion/ixion
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
