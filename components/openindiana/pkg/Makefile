@@ -122,3 +122,4 @@ REQUIRED_PACKAGES += library/python/cherrypy-39
 REQUIRED_PACKAGES += library/python/python-rapidjson-39
 REQUIRED_PACKAGES += library/python/jsonschema-39
 REQUIRED_PACKAGES += library/python/jsonrpclib-pelix-39
+REQUIRED_PACKAGES += library/python/six-39
