@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opal
 COMPONENT_VERSION= 3.16.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= OPAL - Open Phone Abstraction Library
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= library/libopal
@@ -30,18 +31,18 @@ COMPONENT_ARCHIVE_URL= \
   https://sourceforge.net/projects/opalvoip/files/V3.16%20Procyon/Stable%202/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= MPLv1.0 
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=           $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_BUILD_ARGS += VERBOSE=1
 
 OPAL_FFMPEG_PATCH = \
-       $(GSED) -e '/<< mime.PrintContents/ s/mime/(const std::string\&)&/' \
-       -i src/im/msrp.cxx
+	$(GSED) -e '/<< mime.PrintContents/ s/mime/(const std::string\&)&/' -i src/im/msrp.cxx
 
 COMPONENT_PREP_ACTION=( cd $(@D)/plugins && aclocal && autoconf && \
-               cd $(@D) && aclocal && autoconf && $(OPAL_FFMPEG_PATCH) )
+	cd $(@D) && aclocal && autoconf && $(OPAL_FFMPEG_PATCH) )
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =  ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR) $(@D) )
