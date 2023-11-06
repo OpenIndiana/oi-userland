@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwpg
 COMPONENT_VERSION=	0.3.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=   libwpg - library for importing and converting Corel WordPerfect(tm) Graphics images
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwpg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
