@@ -25,15 +25,14 @@
 
 BUILD_BITS = 64
 USE_PARALLEL_BUILD = yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = fossil
-COMPONENT_VERSION = 2.22
+COMPONENT_VERSION = 2.23
 COMPONENT_SUMMARY = Distributed SCM with bug tracking and wiki
 COMPONENT_SRC = $(COMPONENT_NAME)-src-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = sha256:b90c40beb75308b0eba46b5add6e54a7a9e65ac90ce86ec8d78ae2a4bb8bae60
+COMPONENT_ARCHIVE_HASH = sha256:a94aec2609331cd6890c6725b55aea43041011863f3d84fdc380415af75233e4
 COMPONENT_ARCHIVE_URL = https://fossil-scm.org/home/tarball/version-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.fossil-scm.org/
 COMPONENT_FMRI = developer/versioning/fossil
@@ -41,6 +40,7 @@ COMPONENT_CLASSIFICATION = Development/Source Code Management
 COMPONENT_LICENSE = BSD 2-clause
 COMPONENT_LICENSE_FILE = COPYRIGHT-BSD2.txt
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += CPPFLAGS=-I/usr/include/fuse
