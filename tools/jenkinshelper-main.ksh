@@ -56,6 +56,7 @@ stage_setup() {
 # the components Makefile also (to update COMPONENT_REVISION, etc)
 stage_build_changed() {
 	echo "Last successful commit $1"
+	worst=0
 	for f in $(git diff --name-only HEAD^1 | grep Makefile; exit 0); do
 		echo "jenkinshelper: building for ${f%/*}..."
 		curpwd=$(pwd)
@@ -63,7 +64,11 @@ stage_build_changed() {
 		rc=$?
 		cd "${curpwd}"
 		echo "jenkinshelper: done with ${f%/*} return code ${rc}"
+		if [ rc -ne 0 ] ; then
+			worst=$rc
+		fi
 	done
+	return $worst
 }
 
 # prepare the pkg.depotd server instance, if an instance already
