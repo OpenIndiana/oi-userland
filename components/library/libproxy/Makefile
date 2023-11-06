@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libproxy
 COMPONENT_VERSION=      0.4.18
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Libproxy is a library that provides automatic proxy configuration management
 COMPONENT_PROJECT_URL=  https://libproxy.github.io/libproxy/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,7 +40,7 @@ PATH = $(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CFLAGS += $(XPG6_MODE)
+CFLAGS += $(XPG6MODE)
 CXXFLAGS += -std=c++11
 
 # Our Perl is 64-bit, so don't deliver Perl bindings for 32-bit build.
@@ -85,4 +86,3 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus
