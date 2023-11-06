@@ -27,12 +27,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sg3_utils
-COMPONENT_VERSION= 1.47
+COMPONENT_VERSION= 1.48
 COMPONENT_SUMMARY= Utilities for devices that use SCSI command sets
+COMPONENT_DESCRIPTION= Collection of utilities for devices that use the SCSI command set. Includes utilities to copy data based \
+					   on "dd" syntax and semantics (called sg_dd, sgp_dd and sgm_dd); check INQUIRY data and VPD pages (sg_inq); \
+					   check mode and log pages (sginfo, sg_modes and sg_logs); spin up and down disks (sg_start); do self tests \
+					   (sg_senddiag); and various other functions. Warning: Some of these tools access the internals of your \
+					   system and the incorrect usage of them may render your system inoperable.
 COMPONENT_PROJECT_URL= https://sg.danny.cz/sg/sg3_utils.html
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha256:8673c7faca849b6b34764332d2aa91f72db05bff7382bb836d0688795199c3e1
+COMPONENT_ARCHIVE_HASH= sha256:d62b6c3cf20390fa7357044390084166d25f1d932a1135c450b69fe5c283d773
 COMPONENT_ARCHIVE_URL= https://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -41,7 +46,7 @@ COMPONENT_LICENSE= GPLv2+ and BSD
 include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
-CFLAGS += -std=c99 $(CPP_XPG6MODE)
+CFLAGS += -std=c99 $(XPG6MODE)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
