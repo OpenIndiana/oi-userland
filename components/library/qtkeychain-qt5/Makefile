@@ -12,20 +12,20 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-BUILD_STYLE = cmake
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         qtkeychain-qt5
 COMPONENT_VERSION=      0.14.1
-COMPONENT_PROJECT_URL=  https://github.com/frankosterfeld/qtkeychain
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Provides support for secure credentials storage
-COMPONENT_FMRI=         library/qt5/qtkeychain
+COMPONENT_PROJECT_URL=  https://github.com/frankosterfeld/qtkeychain
 COMPONENT_SRC=          qtkeychain-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:afb2d120722141aca85f8144c4ef017bd74977ed45b80e5d9e9614015dadd60c
+COMPONENT_ARCHIVE_HASH= sha256:afb2d120722141aca85f8144c4ef017bd74977ed45b80e5d9e9614015dadd60c
 COMPONENT_ARCHIVE_URL=  https://github.com/frankosterfeld/qtkeychain/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_CLASSIFICATION=       Desktop (GNOME)/Libraries
+COMPONENT_FMRI=         library/qt5/qtkeychain
+COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= COPYING
 
