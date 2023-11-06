@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= exiv2
 COMPONENT_VERSION= 0.27.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Image metadata library and tools
 COMPONENT_PROJECT_URL= https://www.exiv2.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
