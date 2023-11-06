@@ -30,13 +30,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.0.2073
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=	9.0.2092
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4981e9304613fac64fa0e8b0fd13ef0e10e0ab7778d3dae6689413a43c1d3acd
+COMPONENT_ARCHIVE_HASH=	sha256:8bad9733043aa8596ff4ed99b6b407efdebbddb8b6e023a1102cff94c8a09bc1
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -112,7 +111,6 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
