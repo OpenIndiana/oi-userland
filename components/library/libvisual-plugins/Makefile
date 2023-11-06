@@ -13,27 +13,24 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS=32_and_64
-
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libvisual-plugins
-COMPONENT_VERSION =		0.4.2
+COMPONENT_NAME=	libvisual-plugins
+COMPONENT_VERSION=	0.4.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= Visualization plugins for the Libvisual library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-	sha256:a1dd04eb3d311d68b4f43a5c707df7aba7a98a9cab820c58395a7f5d7d6d0157
-COMPONENT_ARCHIVE_URL= \
-	https://github.com/Libvisual/libvisual/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL =		http://libvisual.org/
-COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_LICENSE = GPLv2
-COMPONENT_FMRI = library/desktop/libvisual/plugins
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
+COMPONENT_ARCHIVE_HASH= sha256:a1dd04eb3d311d68b4f43a5c707df7aba7a98a9cab820c58395a7f5d7d6d0157
+COMPONENT_ARCHIVE_URL= 	https://github.com/Libvisual/libvisual/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://libvisual.org/
+COMPONENT_FMRI=	library/desktop/libvisual/plugins
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	GPLv2
 
-TEST_TARGET=$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
