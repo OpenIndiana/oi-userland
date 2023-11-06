@@ -12,12 +12,12 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         id3lib
 COMPONENT_VERSION=      3.8.3
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      id3lib - a software library for manipulating ID3v1/v1.1 and ID3v2 tags
 COMPONENT_PROJECT_URL=  https://id3lib.sourceforge.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
