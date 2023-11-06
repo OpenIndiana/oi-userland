@@ -16,11 +16,13 @@
 
 BUILD_BITS= 64
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gexiv2
 COMPONENT_MJR_VERSION=	0.14
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GObject wrapper around the Exiv2 photo metadata library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -36,7 +38,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
 
-CONFIGURE_OPTIONS    += -Dtests=true
+CONFIGURE_OPTIONS += -Dtests=true
 
 # gobject-introspection requires this
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -47,14 +49,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MV) $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/site-packages/* $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/; \
 	$(PYTHON) -m compileall $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages;
 
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/Ok:/p" ' \
-	'-e "/Expected Fail:/p" ' \
-	'-e "/^Fail:/p" ' \
-	'-e "/Unexpected Pass:/p" ' \
-	'-e "/Skip:/p" ' \
-	'-e "/Timeout:/p" ' \
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/vala
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
