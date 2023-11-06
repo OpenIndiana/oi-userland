@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jenkins
 COMPONENT_VERSION=	2.364
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		developer/jenkins
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_PROJECT_URL=	http://jenkins-ci.org/
