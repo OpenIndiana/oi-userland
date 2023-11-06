@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hyperscan
 COMPONENT_VERSION=	5.4.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Hyperscan is a high-performance multiple regex matching library.
 COMPONENT_PROJECT_URL=  https://www.hyperscan.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
