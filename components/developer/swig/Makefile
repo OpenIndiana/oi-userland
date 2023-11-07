@@ -21,46 +21,43 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2023 Friedrich Kink
 #
-BUILD_STYLE=configure
-BUILD_BITS=64
+
+BUILD_STYLE= configure
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         swig
 COMPONENT_VERSION=      4.1.1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Simplified Wrapper and Interface Generator
-COMPONENT_PROJECT_URL=  http://www.swig.org/
+COMPONENT_PROJECT_URL=  https://www.swig.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b
-COMPONENT_ARCHIVE_URL=  http://prdownloads.sourceforge.net/swig/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b
+COMPONENT_ARCHIVE_URL=  https://prdownloads.sourceforge.net/swig/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/swig
-COMPONENT_CLASSIFICATION=Development/Other Languages
+COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE=      GPLv3
 COMPONENT_LICENSE_FILE= COPYRIGHT
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION=3.9
-
 PATH=$(JAVA_HOME)/bin:/usr/bin
 
 # This is needed because the community provided 'check' target is not viewpath aware
-COMPONENT_PRE_CONFIGURE_ACTION =      ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 PHP=/usr/bin/php
-RUBY_VERSION=	2.6
+RUBY_VERSION= 2.6
 
 CONFIGURE_ENV += JAVA_HOME="$(JAVA11_HOME)"
-CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA11_HOME)/include"
-CONFIGURE_OPTIONS +=	--with-python="$(PYTHON)"
-CONFIGURE_OPTIONS +=	--with-perl="$(PERL)"
-CONFIGURE_OPTIONS +=	--with-php="$(PHP)"
-CONFIGURE_OPTIONS +=	--with-ruby="$(RUBY)"
+CONFIGURE_OPTIONS += --with-javaincl="$(JAVA11_HOME)/include"
+CONFIGURE_OPTIONS += --with-python="$(PYTHON)"
+CONFIGURE_OPTIONS += --with-perl="$(PERL)"
+CONFIGURE_OPTIONS += --with-php="$(PHP)"
+CONFIGURE_OPTIONS += --with-ruby="$(RUBY)"
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # The additional swig specific set of transforms to be applied to the
 # test results to try to normalize them.
@@ -93,6 +90,7 @@ REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/ocaml
 REQUIRED_PACKAGES += library/ocaml/ocaml-findlib
 REQUIRED_PACKAGES += runtime/ruby-26
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
