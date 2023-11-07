@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			re2c
 COMPONENT_VERSION=		3.1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		re2c is a free and open-source lexer generator for C, C++ and Go.
 COMPONENT_DESCRIPTION=	Its main goal is generating fast lexers: at least as \
 	fast as their reasonably optimized hand-coded counterparts. Instead of \
