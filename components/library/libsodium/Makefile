@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsodium
 COMPONENT_VERSION= 1.0.19
-COMPONENT_SUMMARY= Sodium crypto library
+COMPONENT_SUMMARY= Sodium is an easy-to-use software library for encryption, decryption, signatures, password hashing, and more
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:018d79fe0a045cca07331d37bd0cb57b2e838c51bc48fd837a1472e50068bbea
@@ -34,9 +34,6 @@ COMPONENT_LICENSE_FILE= LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_UNPACK_ACTION = ( $(MV) $(COMPONENT_NAME)-stable $(COMPONENT_SRC) )
-
-# pynacl tests dump core with -O3
-#gcc_OPT = -O2
 
 CONFIGURE_OPTIONS += --disable-static
 
