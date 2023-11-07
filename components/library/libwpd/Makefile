@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libwpd
 COMPONENT_VERSION=      0.10.3
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      libwpd - library for reading Corel WordPerfect(tm) documents 
 COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/libwpd
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
