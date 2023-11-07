@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		venusian
-HUMAN_VERSION =			3.0.0
+HUMAN_VERSION =			3.1.0
 COMPONENT_SUMMARY =		venusian - A library for deferring decorator actions
 COMPONENT_PROJECT_URL =		https://pylonsproject.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/53/d9/29816f12828a5ff539e66afe270a764d07bf4bb4cefc6613e331c9d38ba9/venusian-3.0.0.tar.gz
+	https://files.pythonhosted.org/packages/f8/39/7c0d9011ec465951aaf71c252effc7c031a04404887422c6f66ba26500e1/venusian-3.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f6842b7242b1039c0c28f6feef29016e7e7dd3caaeb476a193acf737db31ee38
+	sha256:eb72cdca6f3139a15dc80f9c95d3c10f8a54a0ba881eeef8e2ec5b42d3ee3a95
 COMPONENT_LICENSE =		BSD-3-Clause-Modification
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -33,6 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

@@ -1,11 +1,13 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest
+py$(PYV): commands[0]> python --version
+Python 3.9.16
+py$(PYV): commands[1]> python -mpytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg, testpaths: tests
-asyncio: mode=strict
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: tests
 collecting ... collected 47 items
 
 tests/test_advice.py::FrameInfoTest::testCallInfo PASSED
@@ -56,14 +58,7 @@ tests/test_venusian.py::TestScanner::test_subclassing PASSED
 tests/test_venusian.py::Test_lift::test_not_class PASSED
 tests/test_venusian.py::Test_onlyliftedfrom::test_not_class PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1294
-  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1294: PytestConfigWarning: Unknown config option: ignore
-  
-    self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
 
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 47 passed, 1 warning ========
+======== 47 passed ========
   py$(PYV): OK
   congratulations :)
