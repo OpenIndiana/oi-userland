@@ -14,11 +14,12 @@
 #
 
 BUILD_STYLE= cmake
-USE_COMMON_TEST_MASTER= no
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Imath
 COMPONENT_VERSION=	3.1.9
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	C++ representation of 2D and 3D vectors
 COMPONENT_PROJECT_URL=	https://github.com/AcademySoftwareFoundation/$(COMPONENT_NAME)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,10 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX=/usr
-CMAKE_OPTIONS.32 += -DCMAKE_INSTALL_LIBDIR=lib
 CMAKE_OPTIONS.64 += -DCMAKE_INSTALL_LIBDIR=lib/$(MACH64)
-
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*\.[0-9]* sec//" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
