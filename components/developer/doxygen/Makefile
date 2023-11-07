@@ -23,11 +23,13 @@
 #
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			doxygen
 COMPONENT_VERSION=		1.9.8
 COMPONENT_VERSION_=		$(subst .,_,$(COMPONENT_VERSION))
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Doxygen - Source Code Documentation Tool 
 COMPONENT_PROJECT_URL=	https://www.doxygen.nl
 COMPONENT_FILE=			Release_$(COMPONENT_VERSION_)
@@ -61,14 +63,6 @@ ASLR_MODE= $(ASLR_ENABLE)
 COMPONENT_TEST_ENV=		PATH="$(PROTO_DIR)/usr/bin:$(PATH)"
 COMPONENT_TEST_DIR=		$(BUILD_DIR_64)/testing
 COMPONENT_TEST_TARGETS=	tests
-
-# The additional doxygen specific set of transforms to be applied to the
-# test results to try to normalize them.
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/[0-9. ]*sec//g"' \
-	'-e "/Passed/d" ' \
-	'-e "/Total/d" ' \
-	'-e "/Start/d" ' 
 
 # common targets
 install:	$(INSTALL_64)
