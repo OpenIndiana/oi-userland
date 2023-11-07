@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xapian
 COMPONENT_VERSION=	1.4.23
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	An Open Source Search Engine Library
 COMPONENT_PROJECT_URL=	https://xapian.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-core-$(COMPONENT_VERSION)
