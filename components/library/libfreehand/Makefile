@@ -20,33 +20,37 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=64
+
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libfreehand
 COMPONENT_VERSION=      0.1.2
-COMPONENT_REVISION=     4
-COMPONENT_FMRI=         library/c++/libfreehand
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libfreehand
+COMPONENT_REVISION=     5
 COMPONENT_SUMMARY=      libfreehand - library for reading Aldus/Macromedia/Adobe FreeHand documents
+COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libfreehand
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:0e422d1564a6dbf22a9af598535425271e583514c0f7ba7d9091676420de34ac
 COMPONENT_ARCHIVE_URL=  http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/c++/libfreehand
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 # Fix threading detection issue introduced with boost 1.64
 CXXFLAGS+= -std=c++11 -pthread
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=     --without-docs
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --without-docs
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/cppunit
+REQUIRED_PACKAGES += system/library/boost
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
