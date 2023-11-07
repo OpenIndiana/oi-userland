@@ -3,17 +3,17 @@ Description: Filename buffer overflow fix
 Author: Roland Stigge <stigge@antcom.de>
 Bug-Debian: http://bugs.debian.org/645118
 
---- a/src/libjasper/include/jasper/jas_stream.h
-+++ b/src/libjasper/include/jasper/jas_stream.h
+--- jasper-4.1.0/src/libjasper/include/jasper/jas_stream.h.orig	2023-11-05 07:24:51.000000000 +0100
++++ jasper-4.1.0/src/libjasper/include/jasper/jas_stream.h	2023-11-07 07:25:12.340731017 +0100
 @@ -77,6 +77,7 @@
- #include <jasper/jas_config.h>
+ #include <jasper/jas_config.h> /* IWYU pragma: export */
  
  #include <stdio.h>
 +#include <limits.h>
  #if defined(JAS_HAVE_FCNTL_H)
  #include <fcntl.h>
  #endif
-@@ -99,6 +100,12 @@ extern "C" {
+@@ -100,6 +101,12 @@
  #define O_BINARY	0
  #endif
  
@@ -26,12 +26,12 @@ Bug-Debian: http://bugs.debian.org/645118
  /*
   * Stream open flags.
   */
-@@ -251,7 +258,7 @@ typedef struct {
- typedef struct {
- 	int fd;
- 	int flags;
+@@ -261,7 +268,7 @@
+ #if defined(JAS_WASI_LIBC)
+ #define L_tmpnam 4096
+ #endif
 -	char pathname[L_tmpnam + 1];
 +	char pathname[JAS_PATH_MAX + 1];
  } jas_stream_fileobj_t;
  
- #define	JAS_STREAM_FILEOBJ_DELONCLOSE	0x01
+ /* Delete underlying file object upon stream close. */
