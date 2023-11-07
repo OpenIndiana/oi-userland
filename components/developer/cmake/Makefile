@@ -24,12 +24,14 @@
 # Copyright 2016, 2022 Andreas Wacknitz <a.wacknitz@gmx.de>
 # Copyright 2023 Niklas Poslovski
 #
+
 USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION=3.27
+COMPONENT_MAJOR_VERSION= 3.27
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).7
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
