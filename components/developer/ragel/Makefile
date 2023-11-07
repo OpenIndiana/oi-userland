@@ -20,34 +20,33 @@
 #
 # Copyright (c) 2023 Friedrich Kink
 #
-BUILD_STYLE=configure
-BUILD_BITS=64
+BUILD_STYLE= configure
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ragel
 COMPONENT_VERSION=      6.10
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Ragel compiles executable finite state machines from regular languages.
 COMPONENT_PROJECT_URL=  https://www.colm.net/open-source/ragel/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:5f156edb65d20b856d638dd9ee2dfb43285914d9aa2b6ec779dac0270cd56c3f
+COMPONENT_ARCHIVE_HASH= sha256:5f156edb65d20b856d638dd9ee2dfb43285914d9aa2b6ec779dac0270cd56c3f
 COMPONENT_ARCHIVE_URL=  https://www.colm.net/files/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/ragel
 COMPONENT_CLASSIFICATION=Development/Other Languages
 COMPONENT_LICENSE=      GPLv2/MIT
 COMPONENT_LICENSE_FILE= COPYING
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # This is needed because the community provided 'check' target is not viewpath aware
-COMPONENT_PRE_CONFIGURE_ACTION =      ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 #CONFIGURE_OPTIONS +=	--enable-manual
 
-ASLR_MODE = $(ASLR_ENABLE)
-# no tests available
-TEST_TARGET= $(NO_TESTS)
+ASLR_MODE= $(ASLR_ENABLE)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
