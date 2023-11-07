@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatch_vcs
-HUMAN_VERSION =			0.3.0
+HUMAN_VERSION =			0.4.0
 COMPONENT_SUMMARY =		hatch_vcs - Hatch plugin for versioning with your preferred VCS
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/04/33/b68d68e532392d938472d16a03e4ce0ccd749ea31b42d18f8baa6547cbfd/hatch_vcs-0.3.0.tar.gz
+	https://files.pythonhosted.org/packages/f5/c9/54bb4fa27b4e4a014ef3bb17710cdf692b3aa2cbc7953da885f1bf7e06ea/hatch_vcs-0.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cec5107cfce482c67f8bc96f18bbc320c9aa0d068180e14ad317bbee5a153fee
+	sha256:093810748fe01db0d451fabcf2c1ac2688caefd232d4ede967090b1c1b07d9f7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -32,7 +32,12 @@ TEST_STYLE = pytest
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
+# - filelock (test bootstrap)
+# - iniconfig (test bootstrap)
 # - platformdirs (test bootstrap)
+# - pyproject_api (test bootstrap)
+# - tox (test bootstrap)
+# - virtualenv (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
