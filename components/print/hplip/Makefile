@@ -22,13 +22,12 @@
 # Copyright (c) 2011, 2023, Oracle and/or its affiliates.
 #
 
-BUILD_BITS=64
-# parallel build will not survive the build process atrocity 
-COMPONENT_MAKE_JOBS=1
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
 COMPONENT_VERSION=      3.22.10
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		hplip - HP Linux Printing
 COMPONENT_DESCRIPTION=  Support of HP InkJet, Laser printers for CUPS.
 COMPONENT_PROJECT_URL=	https://hplipopensource.com/
@@ -72,14 +71,13 @@ CONFIGURE_OPTIONS +=	--disable-scan-build
 CONFIGURE_CPPFLAGS += $(CC_PIC_ENABLE)
 
 # Generate configuration scripts
-COMPONENT_PREP_ACTION = (cd $(@D) ; \
+COMPONENT_PREP_ACTION = ( cd $(@D) ; \
     libtoolize --force ; \
     aclocal ; \
     automake --foreign --add-missing ; \
     autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # Do not use transform to create standard ABI version tagged .so files from Python 3 ABI
 PY3_CPYTHON_NAMING=\#
@@ -91,9 +89,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(call PYTHON_SCRIPT_SHEBANG_FIX_FUNC,"$$file") \
 	done;
 
+# Set actual python version
+COMPONENT_POST_INSTALL_ACTION += $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRLIBDIR)/cups/filter/psto* ;
 # Pre-compile python source code
-COMPONENT_POST_INSTALL_ACTION += \
-	$(PYTHON) -m compileall $(PROTO_DIR)/usr/share/hplip;
+COMPONENT_POST_INSTALL_ACTION += $(PYTHON) -m compileall $(PROTO_DIR)/usr/share/hplip;
 
 hplip.license:
 	cat $(SOURCE_DIR)/copyright >$@
