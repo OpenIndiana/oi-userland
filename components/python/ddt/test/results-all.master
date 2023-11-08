@@ -1,10 +1,15 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --cov=ddt --cov-report html
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 107 items
+collecting ... collected 111 items
 
+test/test_async.py::TestAsync::test_larger_than_two_1_3 PASSED
+test/test_async.py::TestAsync::test_larger_than_two_2_4 PASSED
+test/test_async.py::TestAsync::test_larger_than_two_3_12 PASSED
+test/test_async.py::TestAsync::test_larger_than_two_4_23 PASSED
 test/test_example.py::FooTestCase::test_dicts_extracted_into_kwargs_1 PASSED
 test/test_example.py::FooTestCase::test_dicts_extracted_into_kwargs_2 PASSED
 test/test_example.py::FooTestCase::test_doc_missing_args_1_3 PASSED
@@ -119,4 +124,8 @@ ddt.py:71
     @unique
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 107 passed, 1 warning ========
+
+======== 111 passed, 1 warning ========
+py$(PYV): commands[1]> flake8 --extend-ignore=B,D,YTT,E501,E231,W293,W391 ddt.py test
+  py$(PYV): OK
+  congratulations :)
