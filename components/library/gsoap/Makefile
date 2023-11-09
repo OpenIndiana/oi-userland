@@ -12,13 +12,13 @@
 # Copyright 2019 Michal Nowak
 #
 
-OPENSSL_VERSION= 1.0
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gsoap
 COMPONENT_MAJOR_VERSION= 2.8
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).124
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=      Toolkit for SOAP/REST-based C/C++ server and client web service applications
 COMPONENT_PROJECT_URL=  https://www.genivia.com/products.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)
@@ -31,6 +31,9 @@ COMPONENT_LICENSE=      GPLv2+ with exceptions
 COMPONENT_LICENSE_FILE= LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
+
+CXXFLAGS += -I$(OPENSSL_INCDIR)
+CFLAGS += -I$(OPENSSL_INCDIR)
 
 # Some samples need extra libraries, which are not autodetected
 LDFLAGS += -lsocket -lxnet -lnsl
@@ -83,6 +86,6 @@ REQUIRED_PACKAGES += system/extended-system-utilities
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
