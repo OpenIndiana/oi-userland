@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libwnck
 COMPONENT_MJR_VERSION=	43
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).0
+COMPONENT_REVISION = 	1
 COMPONENT_SUMMARY=	Window Navigator Construction Kit Library
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SRC=		libwnck-$(COMPONENT_VERSION)
