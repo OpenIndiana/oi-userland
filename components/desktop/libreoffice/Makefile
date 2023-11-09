@@ -26,7 +26,7 @@ BITS=64
 # BUILD_FIX=1
 
 COMPONENT_NAME=         libreoffice
-COMPONENT_VERSION=      7.6.2
+COMPONENT_VERSION=      7.6.3
 COMPONENT_RC_VERSION=	1
 ifndef BUILD_BETA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
@@ -38,14 +38,13 @@ COMPONENT_FULL_VERSION=$(COMPONENT_FULL_VERSION)-buildfix$(BUILD_FIX)
 endif
 # repology wants to use HUMAN_VERSION
 HUMAN_VERSION=          $(COMPONENT_FULL_VERSION)
-COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=  https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_ARCHIVE_HASH= sha256:e5d2733bd02ce24c30207795b77b9f5e2b5aba3a14773375fb5cc228ed2b9ca2
+COMPONENT_ARCHIVE_HASH= sha256:0727572eee27e849cb5db15a864e867d8231d9669b77e00722e00ccc14410091
 COMPONENT_FMRI=         desktop/office/libreoffice
 COMPONENT_CLASSIFICATION= Applications/Office
 COMPONENT_LICENSE=      MPL2.0
@@ -124,11 +123,11 @@ COMPONENT_ARCHIVE_HASH_18 = sha256:5f8dfbcb6d1e56bddd0b5ec2e00a3d0ca5342a9f57c24
 COMPONENT_ARCHIVE_URL_18 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_18)
 
 COMPONENT_ARCHIVE_19 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_19 = sha256:5b239fa6127e87b00b7990a5edef96b1fa522f80c1d96e3f8749d95190f6d60a
+COMPONENT_ARCHIVE_HASH_19 = sha256:01dfcb8e4ddcda0f3964b5991bd528c31486b3d421355fff228d51e82b3c2fd1
 COMPONENT_ARCHIVE_URL_19 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_19)
 
 COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_20 = sha256:ef127e3535d88928e670804279551d81570e570a203b7f295941def4573bc314
+COMPONENT_ARCHIVE_HASH_20 = sha256:dc4c698df3953091caa9df6cb377accf8db96a4f2b70c8c1ef00e0bc2c6ce7a8
 COMPONENT_ARCHIVE_URL_20 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_20)
 
 #COMPONENT_ARCHIVE_21 = boost_1_69_0.tar.bz2
@@ -156,8 +155,8 @@ COMPONENT_ARCHIVE_26 = skia-m111-a31e897fb3dcbc96b2b40999751611d029bf5404.tar.xz
 COMPONENT_ARCHIVE_HASH_26 = sha256:0d08a99ed46cde43b5ad2672b5d8770c8eb85d0d26cb8f1f85fd9befe1e9ceb9
 COMPONENT_ARCHIVE_URL_26 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_26)
 
-COMPONENT_ARCHIVE_27 = libcmis-0.5.2.tar.xz
-COMPONENT_ARCHIVE_HASH_27 = sha256:d7b18d9602190e10d437f8a964a32e983afd57e2db316a07d87477a79f5000a2
+COMPONENT_ARCHIVE_27 = libcmis-0.6.0.tar.xz
+COMPONENT_ARCHIVE_HASH_27 = sha256:56df575f78dacc21b4cec7cec73d671fd235f7c2010a8bb7940ef1413dc899fd
 COMPONENT_ARCHIVE_URL_27 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_27)
 
 COMPONENT_ARCHIVE_28 = gpgme-1.18.0.tar.bz2
@@ -237,6 +236,8 @@ CONFIGURE_OPTIONS += --with-myspell-dicts
 CONFIGURE_OPTIONS += --with-help=common
 CONFIGURE_OPTIONS += --enable-release-build
 CONFIGURE_OPTIONS += --enable-gstreamer-1-0
+CONFIGURE_OPTIONS += --enable-gtk3
+CONFIGURE_OPTIONS += --enable-qt5
 CONFIGURE_OPTIONS += --disable-odk
 CONFIGURE_OPTIONS += --with-system-cairo
 CONFIGURE_OPTIONS += --with-system-expat
@@ -246,7 +247,6 @@ CONFIGURE_OPTIONS += --with-system-poppler
 CONFIGURE_OPTIONS += --with-system-curl
 CONFIGURE_OPTIONS += --with-system-boost
 CONFIGURE_OPTIONS += --with-system-nss
-CONFIGURE_OPTIONS += --with-system-apr
 # library/libneon < 0.31.2
 # CONFIGURE_OPTIONS += --with-system-neon
 CONFIGURE_OPTIONS += --with-system-openssl
@@ -320,8 +320,8 @@ NSS_LIB_DIR=/usr/lib/mps/amd64
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in $(PROTO_DIR)$(LIBREOFFICE_PROGRAM_DIR)/*.so*; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR)"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR):$(QT5_LIBDIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR):$(QT5_LIBDIR)"' $$file ; \
     done ; 
 
 # Replace "#!/usr/bin/env ..." shebang line with properly versioned one
@@ -393,6 +393,7 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
@@ -409,7 +410,9 @@ REQUIRED_PACKAGES += x11/library/libepoxy
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/xcb-util-wm
