@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2016 Jim Klimov
+# Copyright 2016-2023 Jim Klimov
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY) - Groups all of NUT sub-packages"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,7 +25,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # For the core functionality we need libs, bins and drivers
 depend fmri=$(COMPONENT_FMRI)/libs@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-depend fmri=$(COMPONENT_FMRI)/bins@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+depend fmri=$(COMPONENT_FMRI)/clients@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+depend fmri=$(COMPONENT_FMRI)/server@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 depend fmri=$(COMPONENT_FMRI)/drivers@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
 # The following packages are optional - if installed, bind them to common version numbers
@@ -33,3 +35,9 @@ depend fmri=$(COMPONENT_FMRI)/cgi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type
 
 # If augtools are installed, then NUT packaging also requires its lenses to be installed
 depend fmri=$(COMPONENT_FMRI)/augeas@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=conditional predicate=library/augeas-tools
+
+# If python3+QT5 are installed, then NUT packaging also requires
+# its GUI client to be installed; similar for binding libs (used
+# by the GUI app, but standalone generally)
+depend fmri=$(COMPONENT_FMRI)/libs/pynut@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=conditional predicate=runtime/python-$(PYV)
+depend fmri=$(COMPONENT_FMRI)/nut-monitor-gui-py3qt5@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=conditional predicate=library/python/pyqt5
