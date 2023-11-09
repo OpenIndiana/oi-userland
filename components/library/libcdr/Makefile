@@ -22,14 +22,14 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcdr
 COMPONENT_VERSION=	0.1.7
-COMPONENT_REVISION=	2
-COMPONENT_SUMMARY=      libcdr - library for reading CorelDRAW documents
+COMPONENT_REVISION=	3
+COMPONENT_SUMMARY=	libcdr - library for reading CorelDRAW documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libcdr
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -56,8 +56,8 @@ REQUIRED_PACKAGES += developer/cppunit
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += library/c++/librevenge
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
