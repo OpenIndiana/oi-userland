@@ -90,6 +90,12 @@ for l in "$WS_TOOLS"/licenses/* ; do
 			| awk '/^#/{next}/^\$/{\$0="\n"}1' ORS=' ' \\
 			| sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d' \\
 	EOF
+	# Remove some reStructuredText markup
+	if [[ "${F%.rst}" != "$F" ]] ; then
+		cat <<#EOF >> "$TMPFILE"
+				| sed -e '/^\*\*\$/d' -e 's/^\*\*\([^*]\)/\1/' -e 's/\([^*]\)\*\*\$/\1/' -e 's/\([^*]\)\*\*\([^*]\)/\1\2/g' \\
+		EOF
+	fi
 	# Apply filter if any
 	[[ -x "$l.filter" ]] && printf '\t| LC_ALL=C %s \\\n' "$l.filter" >> "$TMPFILE"
 	cat <<#EOF >> "$TMPFILE"
