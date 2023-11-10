@@ -1,0 +1,31 @@
+https://github.com/datadriventests/ddt/issues/113
+
+--- /dev/null
++++ ddt-1.7.0/tox.ini
+@@ -0,0 +1,26 @@
++[tox]
++envlist = py27, py35
++
++[testenv]
++deps = 
++    pytest
++    pytest-cov
++    coverage
++    aiounittest
++    flake8
++    six>=1.4.0
++    PyYAML
++commands = 
++    pytest --cov=ddt --cov-report html
++    flake8 ddt.py test
++
++[testenv:py27]
++deps =
++    {[testenv]deps}
++    mock
++    Sphinx
++    sphinxcontrib-programoutput
++commands = 
++    pytest --cov=ddt --cov-report html
++    flake8 ddt.py test
++    sphinx-build -b html docs docs/_build
