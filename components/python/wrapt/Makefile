@@ -15,29 +15,21 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wrapt
-HUMAN_VERSION =			1.15.0
+HUMAN_VERSION =			1.16.0
 COMPONENT_SUMMARY =		wrapt - Module for decorators, wrappers and monkey patching.
 COMPONENT_PROJECT_URL =		https://github.com/GrahamDumpleton/wrapt
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f8/7d/73e4e3cdb2c780e13f9d87dc10488d7566d8fd77f8d68f0e416bfbd144c7/wrapt-1.15.0.tar.gz
+	https://files.pythonhosted.org/packages/95/4c/063a912e20bcef7124e0df97282a8af3ff3e4b603ce84c481d6d7346be0a/wrapt-1.16.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d06730c6aed78cee4126234cf2d071e01b44b915e725a6cb439a879ec9754a3a
+	sha256:5f370f952971e7d17c7d1ead40e49f32345a7f7a5373571ef44d800d06b1899d
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/GrahamDumpleton/wrapt/issues/229
-PYTEST_ADDOPTS += -p no:randomly
-
-# Revert back unneeded PYV normalizations
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(test_class_py\)\$$(PYV)/\1$(shell echo $(PYTHON_VERSION) | tr -d .)/'"
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(test_inheritance_py\)\$$(PYV)/\1$(shell echo $(PYTHON_VERSION) | tr -d .)/'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

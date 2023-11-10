@@ -1,13 +1,11 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m coverage run --rcfile $(@D)/setup.cfg -m pytest -v $(@D)/tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg
-asyncio: mode=strict
-collecting ... collected 433 items
+rootdir: $(@D)
+configfile: setup.cfg
+collecting ... collected 438 items
 
 tests/test_adapter.py::TestAdapterAttributes::test_doc_string PASSED
 tests/test_adapter.py::TestAdapterAttributes::test_module_name PASSED
@@ -55,6 +53,7 @@ tests/test_decorators.py::TestDecorator::test_instance_method_as_decorator PASSE
 tests/test_decorators.py::TestDecorator::test_no_parameters PASSED
 tests/test_descriptors_py36.py::TestObjectDescriptors::test_set_name PASSED
 tests/test_formatargspec_py35.py::TestFormatargspec35::test_formatargspec PASSED
+tests/test_formatargspec_py38.py::TestFormatargspec38::test_formatargspec PASSED
 tests/test_function.py::TestCallingFunction::test_call_function PASSED
 tests/test_function.py::TestNamingFunction::test_argspec PASSED
 tests/test_function.py::TestNamingFunction::test_doc_string PASSED
@@ -180,6 +179,9 @@ tests/test_monkey_patching.py::TestMonkeyPatching::test_function_wrapper_class_m
 tests/test_monkey_patching.py::TestMonkeyPatching::test_function_wrapper_instance_method PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_patch_function_module PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_patch_function_module_name PASSED
+tests/test_monkey_patching.py::TestMonkeyPatching::test_patch_function_module_name_enabled_callable PASSED
+tests/test_monkey_patching.py::TestMonkeyPatching::test_patch_function_module_name_enabled_literal_false PASSED
+tests/test_monkey_patching.py::TestMonkeyPatching::test_patch_function_module_name_enabled_literal_true PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_transient_function_wrapper PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_transient_function_wrapper_instance_method PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_wrap_class_method_inherited PASSED
@@ -371,6 +373,7 @@ tests/test_object_proxy.py::TestNamingObjectProxy::test_instance_doc_string PASS
 tests/test_object_proxy.py::TestNamingObjectProxy::test_instance_module_name PASSED
 tests/test_object_proxy.py::TestObjectRepresentationObjectProxy::test_repr PASSED
 tests/test_object_proxy.py::TestObjectRepresentationObjectProxy::test_str PASSED
+tests/test_object_proxy.py::TestOverridingSpecialAttributes::test_overriding_class_attribute PASSED
 tests/test_object_proxy.py::TestTypeObjectProxy::test_class_of_class PASSED
 tests/test_object_proxy.py::TestTypeObjectProxy::test_class_of_function PASSED
 tests/test_object_proxy.py::TestTypeObjectProxy::test_class_of_instance PASSED
@@ -443,13 +446,6 @@ tests/test_weak_function_proxy.py::TestWeakFunctionProxy::test_isinstance PASSED
 tests/test_weak_function_proxy.py::TestWeakFunctionProxy::test_no_callback PASSED
 tests/test_weak_function_proxy.py::TestWeakFunctionProxy::test_staticmethod PASSED
 
-=============================== warnings summary ===============================
-tests/conftest.py:16
-  $(@D)/tests/conftest.py:16: PytestRemovedIn8Warning: The (fspath: py.path.local) argument to DummyCollector is deprecated. Please use the (path: pathlib.Path) argument instead.
-  See https://docs.pytest.org/en/latest/deprecations.html#fspath-argument-for-node-constructors-replaced-with-pathlib-path
-    item = DummyCollector.from_parent(parent, fspath=path)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 433 passed, 1 warning ========
+======== 438 passed ========
   py$(PYV): OK
   congratulations :)
