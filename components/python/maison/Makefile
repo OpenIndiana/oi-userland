@@ -19,20 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		maison
-HUMAN_VERSION =			1.4.1
-COMPONENT_SUMMARY =		maison - Maison
+HUMAN_VERSION =			1.4.2
+COMPONENT_SUMMARY =		maison - Read settings from config files
 COMPONENT_PROJECT_URL =		https://github.com/dbatten5/maison
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/dbatten5/maison/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/04/76/3826c91968cc612128d89c38cff8161ed421aa79609620b23b48a79e1823/maison-1.4.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:27e0522b9faacf345e59344de70f713a116457eefebd2aac65b91feb2dcb9ecc
+	sha256:d2abac30a5c6a0749526d70ae95a63c6acf43461a1c10e51410b36734e053ec7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
 TEST_STYLE = pytest
-
-# https://github.com/dbatten5/maison/issues/291
-COMPONENT_SUMMARY =		maison - Read configuration settings from configuration files
 
 include $(WS_MAKE_RULES)/common.mk
 
