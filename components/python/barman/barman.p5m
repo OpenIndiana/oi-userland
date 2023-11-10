@@ -10,67 +10,23 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
-# Copyright 2021, 2022 Andreas Wacknitz
+# This file was automatically generated using python-integrate-project
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-group groupname=barman gid=91
-user ftpuser=false gcos-field="Barman User" group=barman login-shell=/usr/bin/pfksh password=NP \
-	username=barman uid=91 gid=91 home-dir="/var/barman"
-
-depend fmri=database/postgres-common type=require
-depend fmri=network/rsync type=require
-
-dir owner=barman group=barman path=var/barman
-dir owner=postgres group=postgres path=var/barman/backup
-dir owner=postgres group=postgres path=var/log/barman
-dir path=etc/barman.d mode=0755
-
-file files/exec_attr path=etc/security/exec_attr.d/barman
-file files/prof_attr path=etc/security/prof_attr.d/barman
-file files/user_attr path=etc/user_attr.d/barman
-file files/barman.conf path=etc/barman.conf mode=644 preserve=true
-file files/barman.conf.4 path=usr/lib/python$(PYVER)/vendor-packages/share/man/man4/barman.conf.4
-
-link path=usr/share/man/man1/barman.1 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/barman.1
-link path=usr/share/man/man1/barman-wal-archive.1 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/barman-wal-archive.1
-link path=usr/share/man/man1/barman-wal-restore.1 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/barman-wal-restore.1
-link path=usr/share/man/man4/barman.conf.4 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man4/barman.conf.4
-link path=usr/share/man/man5/barman.5 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man5/barman.5
-link path=usr/share/man/man1/barman-cloud-backup-delete.1 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-delete.1
-link path=usr/share/man/man1/barman-cloud-backup-keep.1 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-keep.1
-link path=usr/share/man/man1/barman-cloud-backup-list.1 \
-    target=../../..//lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-list.1
-link path=usr/share/man/man1/barman-cloud-backup-show.1 \
-    target=../../..//lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-show.1
-link path=usr/share/man/man1/barman-cloud-backup.1 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup.1
-link path=usr/share/man/man1/barman-cloud-check-wal-archive.1 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-check-wal-archive.1
-link path=usr/share/man/man1/barman-cloud-restore.1 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-restore.1
-link path=usr/share/man/man1/barman-cloud-wal-archive.1 \
-    target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-wal-archive.1
-link path=usr/share/man/man1/barman-cloud-wal-restore.1 \
-    target=../../..//lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-wal-restore.1
-
+file path=etc/barman.conf
+file path=etc/security/exec_attr.d/barman
+file path=etc/security/prof_attr.d/barman
+file path=etc/user_attr.d/barman
 file path=usr/bin/barman
 file path=usr/bin/barman-cloud-backup
 file path=usr/bin/barman-cloud-backup-delete
@@ -140,23 +96,24 @@ file path=usr/lib/python$(PYVER)/vendor-packages/barman/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/barman/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/barman/wal_archiver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/barman/xlog.py
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-delete.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-keep.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-list.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-show.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-check-wal-archive.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-restore.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-wal-archive.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-wal-restore.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-wal-archive.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-wal-restore.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man5/barman.5
 file path=usr/share/barman/barman.conf-example
 file path=usr/share/barman/passive-server.conf-example
 file path=usr/share/barman/ssh-server.conf-example
 file path=usr/share/barman/streaming-server.conf-example
+file path=usr/share/man/man1/barman-cloud-backup-delete.1
+file path=usr/share/man/man1/barman-cloud-backup-keep.1
+file path=usr/share/man/man1/barman-cloud-backup-list.1
+file path=usr/share/man/man1/barman-cloud-backup-show.1
+file path=usr/share/man/man1/barman-cloud-backup.1
+file path=usr/share/man/man1/barman-cloud-check-wal-archive.1
+file path=usr/share/man/man1/barman-cloud-restore.1
+file path=usr/share/man/man1/barman-cloud-wal-archive.1
+file path=usr/share/man/man1/barman-cloud-wal-restore.1
+file path=usr/share/man/man1/barman-wal-archive.1
+file path=usr/share/man/man1/barman-wal-restore.1
+file path=usr/share/man/man1/barman.1
+file path=usr/share/man/man4/barman.conf.4
+file path=usr/share/man/man5/barman.5
 
 # python modules are unusable without python runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
@@ -166,3 +123,19 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 depend type=require fmri=pkg:/library/python/argcomplete-$(PYV)
 depend type=require fmri=pkg:/library/python/psycopg2-$(PYV)
 depend type=require fmri=pkg:/library/python/python-dateutil-$(PYV)
+
+# Additional actions
+group groupname=barman gid=91
+user ftpuser=false gcos-field="Barman User" group=barman login-shell=/usr/bin/pfksh password=NP username=barman uid=91 gid=91 home-dir="/var/barman"
+
+depend fmri=database/postgres-common type=require
+depend fmri=network/rsync type=require
+
+dir owner=barman group=barman path=var/barman
+dir owner=postgres group=postgres path=var/barman/backup
+dir owner=postgres group=postgres path=var/log/barman
+dir path=etc/barman.d mode=0755
+
+# Transforms
+<transform file path=etc/barman.conf$ -> default mode 0644>
+<transform file path=etc/barman.conf$ -> default preserve true>

@@ -1,0 +1,59 @@
+We have no packages needed for cloud testing
+
+--- barman-release-3.9.0/tests/requirements_dev.txt.orig
++++ barman-release-3.9.0/tests/requirements_dev.txt
+@@ -1,8 +1,4 @@
+ .
+-.[cloud]
+-.[azure]
+-.[snappy]
+-.[google]
+ pytest
+ mock
+ py
+--- barman-release-3.9.0/tests/test_barman_cloud_backup.py.orig
++++ barman-release-3.9.0/tests/test_barman_cloud_backup.py
+@@ -134,6 +134,7 @@
+         )
+         assert expected_message in err
+ 
++    @pytest.mark.skip(reason="We have no packages needed for cloud testing")
+     @pytest.mark.parametrize(
+         ("snapshot_args", "expected_error"),
+         (
+@@ -314,6 +315,7 @@
+         # AND its backup function was called exactly once
+         mock_snapshot_backup.backup.assert_called_once()
+ 
++    @pytest.mark.skip(reason="We have no packages needed for cloud testing")
+     @pytest.mark.parametrize(
+         ("aws_cli_args", "expected_cloud_interface_kwargs"),
+         [
+@@ -363,6 +365,7 @@
+             **expected_cloud_interface_kwargs
+         )
+ 
++    @pytest.mark.skip(reason="We have no packages needed for cloud testing")
+     @pytest.mark.parametrize(
+         ("gcp_cli_args", "expected_cloud_interface_kwargs"),
+         [
+--- barman-release-3.9.0/tests/test_barman_cloud_restore.py.orig
++++ barman-release-3.9.0/tests/test_barman_cloud_restore.py
+@@ -93,6 +93,7 @@
+             mock_backup_info, recovery_dir, {}
+         )
+ 
++    @pytest.mark.skip(reason="We have no packages needed for cloud testing")
+     @pytest.mark.parametrize(
+         ("provider", "snapshot_args", "expected_error"),
+         (
+--- barman-release-3.9.0/tests/test_executor.py.orig
++++ barman-release-3.9.0/tests/test_executor.py
+@@ -1779,6 +1779,7 @@
+         # AND the exception message was logged
+         assert "test-message" in caplog.text
+ 
++    @pytest.mark.skip(reason="We have no packages needed for cloud testing")
+     @patch("barman.backup_executor.ExternalBackupExecutor.check")
+     def test_check_skipped_if_server_disabled(
+         self, mock_parent_check_fun, core_snapshot_options
