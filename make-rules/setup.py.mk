@@ -430,6 +430,7 @@ $(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to
 $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
 $(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
+$(eval $(call disable-pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))	# could cause tests to fail
 $(eval $(call disable-pytest-plugin,randomly,pytest-randomly))		# reorders tests
 $(eval $(call disable-pytest-plugin,relaxed,pytest-relaxed))		# runs extra test(s); produces different test report
 $(eval $(call disable-pytest-plugin,reporter,pytest-reporter))		# https://github.com/christiansandberg/pytest-reporter/issues/8
