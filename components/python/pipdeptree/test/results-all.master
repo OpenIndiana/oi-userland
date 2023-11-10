@@ -1,6 +1,5 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest tests
+py$(PYV): commands[0]> python -m pytest --cov pipdeptree --cov $(@D)/tests --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml --junitxml $(@D)/.tox/junit.py$(PYV).xml tests
 Error processing line 1 of $(PYTHON_DIR)/vendor-packages/coverage_enable_subprocess.pth:
 
   Traceback (most recent call last):
@@ -20,10 +19,8 @@ Remainder of file ignored
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 75 items
+collecting ... collected 72 items
 
 tests/_models/test_dag.py::test_package_dag_filter_fnmatch_exclude_a PASSED
 tests/_models/test_dag.py::test_package_dag_filter_fnmatch_exclude_c PASSED
@@ -61,11 +58,8 @@ tests/render/test_text.py::test_render_text[True-False-True-expected_output0] PA
 tests/render/test_text.py::test_render_text[True-True-False-expected_output5] PASSED
 tests/render/test_text.py::test_render_text[True-True-True-expected_output1] PASSED
 tests/render/test_text.py::test_render_text_encoding[0-utf-8-expected_output0] PASSED
-tests/render/test_text.py::test_render_text_encoding[0-utf-8-expected_output1] PASSED
-tests/render/test_text.py::test_render_text_encoding[2-ascii-expected_output3] PASSED
-tests/render/test_text.py::test_render_text_encoding[2-ascii-expected_output5] PASSED
-tests/render/test_text.py::test_render_text_encoding[2-utf-8-expected_output2] PASSED
-tests/render/test_text.py::test_render_text_encoding[2-utf-8-expected_output4] PASSED
+tests/render/test_text.py::test_render_text_encoding[2-ascii-expected_output2] PASSED
+tests/render/test_text.py::test_render_text_encoding[2-utf-8-expected_output1] PASSED
 tests/render/test_text.py::test_render_text_given_depth[False-0-expected_output1] PASSED
 tests/render/test_text.py::test_render_text_given_depth[False-2-expected_output3] PASSED
 tests/render/test_text.py::test_render_text_given_depth[True-0-expected_output0] PASSED
@@ -143,17 +137,19 @@ tests/test_validate.py::test_cyclic_deps[no-dependencies] PASSED
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871
-  $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zest')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: 15 warnings
   $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 74 passed, 1 skipped, 26 warnings ========
+- generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
+
+14 files skipped due to complete coverage.
+Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
+Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
+
+Required test coverage of 88.0% reached. Total coverage: 90.26%
+======== 71 passed, 1 skipped, 25 warnings ========
   py$(PYV): OK
   congratulations :)
