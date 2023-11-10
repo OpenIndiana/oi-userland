@@ -34,13 +34,13 @@ while read line ; do
 	if [ "${line:0:2}" == "-r" ] ; then
 		line=${line:2}
 		while [ "${line:0:1}" == " " ] ; do line=${line:1} ; done
-		dos2unix -ascii $line | $0
+		dos2unix -ascii $line | $0 "$@"
 		continue
 	fi
 	if [ "${line:0:13}" == "--requirement" ] ; then
 		line=${line:14}
 		while [ "${line:0:1}" == " " ] ; do line=${line:1} ; done
-		dos2unix -ascii $line | $0
+		dos2unix -ascii $line | $0 "$@"
 		continue
 	fi
 	echo "$line"
