@@ -1,15 +1,11 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m py.test
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 154 items
+collecting ... collected 151 items
 
-::project PASSED
 tests/test_async_generator.py::test_generator_to_async_generator PASSED
 tests/test_buffer.py::test_backspace PASSED
 tests/test_buffer.py::test_cursor_down PASSED
@@ -163,18 +159,17 @@ tests/test_yank_nth_arg.py::test_yank_nth_arg PASSED
 tests/test_yank_nth_arg.py::test_yank_nth_arg_with_arg PASSED
 
 =============================== warnings summary ===============================
-tests/test_key_binding.py::test_feed_several
 tests/test_key_binding.py::test_feed_simple
-tests/test_key_binding.py::test_previous_key_sequence
+tests/test_key_binding.py::test_feed_several
 tests/test_key_binding.py::test_control_square_closed_any
 tests/test_key_binding.py::test_common_prefix
+tests/test_key_binding.py::test_previous_key_sequence
   $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/prompt_toolkit/key_binding/key_processor.py:413: RuntimeWarning: coroutine 'KeyProcessor._start_timeout.<locals>.wait' was never awaited
     self._flush_wait_task = app.create_background_task(wait())
   Enable tracemalloc to get traceback where the object was allocated.
   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 151 passed, 1 xpassed, 5 warnings ========
+======== 150 passed, 1 xpassed, 5 warnings ========
   py$(PYV): OK
   congratulations :)
