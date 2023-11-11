@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1815 items
+collecting ... collected 1819 items
 
 Use a separate pytest run for tests like this with the "--exclusive-
 Use a separate pytest run for tests like this with the "--exclusive-
@@ -801,6 +801,8 @@ tests/providers/test_date_time.py::TestDateTime::test_datetimes_with_and_without
 tests/providers/test_date_time.py::TestDateTime::test_day PASSED
 tests/providers/test_date_time.py::TestDateTime::test_future_date PASSED
 tests/providers/test_date_time.py::TestDateTime::test_future_datetime PASSED
+tests/providers/test_date_time.py::TestDateTime::test_iso8601_fractional_seconds_non_win PASSED
+tests/providers/test_date_time.py::TestDateTime::test_iso8601_fractional_seconds_win SKIPPED
 tests/providers/test_date_time.py::TestDateTime::test_month PASSED
 tests/providers/test_date_time.py::TestDateTime::test_parse_date PASSED
 tests/providers/test_date_time.py::TestDateTime::test_parse_date_time PASSED
@@ -815,6 +817,8 @@ tests/providers/test_date_time.py::TestDateTime::test_time_series PASSED
 tests/providers/test_date_time.py::TestDateTime::test_timedelta PASSED
 tests/providers/test_date_time.py::TestDateTime::test_timezone_conversion PASSED
 tests/providers/test_date_time.py::TestDateTime::test_unix_time PASSED
+tests/providers/test_date_time.py::TestDateTime::test_unix_time_non_win PASSED
+tests/providers/test_date_time.py::TestDateTime::test_unix_time_win SKIPPED
 tests/providers/test_date_time.py::TestDeAt::test_day PASSED
 tests/providers/test_date_time.py::TestDeAt::test_month PASSED
 tests/providers/test_date_time.py::TestDeDe::test_day PASSED
@@ -1891,7 +1895,7 @@ tests/pytest/test_unique_clear.py: 15 warnings
     declare_namespace(pkg)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1806 passed, 9 skipped, 26 warnings ========
+======== 1808 passed, 11 skipped, 26 warnings ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -2243,8 +2247,8 @@ faker/providers/color/bg_BG/__init__.py               6      6     0%
 faker/providers/color/bg_BG/__init__.py               6      6     0%
 faker/providers/color/bn_BD/__init__.py               6      6     0%
 faker/providers/color/bn_BD/__init__.py               6      6     0%
-faker/providers/color/color.py                      136    105    23%
-faker/providers/color/color.py                      136    105    23%
+faker/providers/color/color.py                      137    105    23%
+faker/providers/color/color.py                      137    105    23%
 faker/providers/color/cs_CZ/__init__.py               3      3     0%
 faker/providers/color/cs_CZ/__init__.py               3      3     0%
 faker/providers/color/da_DK/__init__.py               6      6     0%
@@ -2427,8 +2431,8 @@ faker/providers/currency/th_TH/__init__.py            3      3     0%
 faker/providers/currency/th_TH/__init__.py            3      3     0%
 faker/providers/currency/tr_TR/__init__.py            5      5     0%
 faker/providers/currency/tr_TR/__init__.py            5      5     0%
-faker/providers/date_time/__init__.py               321    246    23%
-faker/providers/date_time/__init__.py               321    246    23%
+faker/providers/date_time/__init__.py               329    250    24%
+faker/providers/date_time/__init__.py               329    250    24%
 faker/providers/date_time/ar_AA/__init__.py          17     17     0%
 faker/providers/date_time/ar_AA/__init__.py          17     17     0%
 faker/providers/date_time/ar_EG/__init__.py           3      3     0%
@@ -3170,6 +3174,6 @@ faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      9    44%
 faker/utils/text.py                                  16      9    44%
 ---------------------------------------------------------------------
-TOTAL                                             19474  17052    12%
+TOTAL                                             19492  17060    12%
   py$(PYV): OK
   congratulations :)
