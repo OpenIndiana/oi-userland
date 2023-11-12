@@ -22,8 +22,15 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 depend fmri=runtime/perl-$(PLV) type=require
 
+# system-perl mediator
+dir path=usr/perl5/$(PERLVER)/bin
+dir path=usr/perl5/$(PERLVER)/man
+dir path=usr/perl5/$(PERLVER)/lib/pod
+link path=usr/perl5/bin target=$(PERLVER)/bin mediator=system-perl mediator-version=$(PERLVER).0
+link path=usr/perl5/man target=$(PERLVER)/man mediator=system-perl mediator-version=$(PERLVER).0
+link path=usr/perl5/pod target=$(PERLVER)/lib/pod mediator=system-perl mediator-version=$(PERLVER).0
+
 # These are temporary fake dir and vendor mediated symlinks used during
 # transition between Perl versions
 $(VENDOR_MEDIATOR)dir path=usr/perl5/$(PERLVER)
 $(VENDOR_MEDIATOR)link path=usr/perl5/transition-perl target=$(PERLVER) mediator=perl mediator-version=$(PERLVER) mediator-priority=vendor
-$(VENDOR_MEDIATOR)link path=usr/perl5/transition-system-perl target=$(PERLVER) mediator=system-perl mediator-version=$(PERLVER) mediator-priority=vendor
