@@ -147,7 +147,7 @@ endif
 
 # For pkg-based build style, assume there are no build, install, or test steps;
 # just a package to be published.  However, 'gmake sample-manifest' requires
-# build dir.  Since sample-manifest generation depends on install target we
+# proto dir.  Since sample-manifest generation depends on install target we
 # will abuse it to get the required dir created.
 ifeq ($(strip $(BUILD_STYLE)),pkg)
 BUILD_TARGET=
@@ -159,7 +159,7 @@ test system-test:	$(NO_TESTS)
 
 $(BUILD_DIR)/.installed:
 	$(RM) -r $(BUILD_DIR)
-	$(MKDIR) $(BUILD_DIR)
+	$(MKDIR) $(PROTO_DIR)
 	$(TOUCH) $@
 
 clean::
