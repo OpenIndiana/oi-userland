@@ -10,7 +10,8 @@
 #
 
 #
-# Copyright 2023 Niklas Poslovski
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project smartypants
 #
 
 BUILD_STYLE = setup.py
@@ -19,21 +20,21 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		smartypants
 HUMAN_VERSION =			2.0.1
-COMPONENT_SUMMARY =		smartypants is a Python fork of SmartyPants
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		smartypants - Python with the SmartyPants
 COMPONENT_PROJECT_URL =		https://github.com/leohemsted/smartypants.py
-COMPONENT_SRC =			smartypants.py-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_URL =		https://github.com/leohemsted/smartypants.py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH =	sha256:b98191911ff3b4144ef8ad53e776a2d0ad24bd508a905c6ce523597c40022773
-COMPONENT_LICENSE =		Custom
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/leohemsted/smartypants.py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:b98191911ff3b4144ef8ad53e776a2d0ad24bd508a905c6ce523597c40022773
+COMPONENT_LICENSE =		BSD-2-Clause AND BSD-3-Clause
 COMPONENT_LICENSE_FILE =	COPYING
 
-TEST_STYLE = setup.py
+TEST_STYLE = pytest
+
+COMPONENT_SRC =			smartypants.py-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Manually added dependencies
-TEST_REQUIRED_PACKAGES.python += library/python/docutils
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

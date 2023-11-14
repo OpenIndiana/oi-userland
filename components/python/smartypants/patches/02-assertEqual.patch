@@ -1,0 +1,78 @@
+https://github.com/leohemsted/smartypants.py/issues/18
+https://github.com/leohemsted/smartypants.py/pull/12
+
+--- smartypants.py-2.0.1/tests/test.py.orig
++++ smartypants.py-2.0.1/tests/test.py
+@@ -24,7 +24,7 @@
+ 
+         T = sp(TEXT)
+         E = '&#8220;foo&#8221; -- bar'
+-        self.assertEquals(T, E)
++        self.assertEqual(T, E)
+ 
+         attr = Attr.q | Attr.d
+         Attr.default = attr
+@@ -32,7 +32,7 @@
+ 
+         T = sp(TEXT)
+         E = '&#8220;foo&#8221; &#8212; bar'
+-        self.assertEquals(T, E)
++        self.assertEqual(T, E)
+ 
+     def test_dates(self):
+ 
+--- smartypants.py-2.0.1/tests/test_cli.py.orig
++++ smartypants.py-2.0.1/tests/test_cli.py
+@@ -34,7 +34,7 @@
+         E = '&#8220;foobar&#8221;'
+ 
+         output = self._p([CLI_SCRIPT], T)
+-        self.assertEquals(output, E)
++        self.assertEqual(output, E)
+ 
+     def test_pipe_attr(self):
+ 
+@@ -42,11 +42,11 @@
+ 
+         E = T
+         output = self._p([CLI_SCRIPT, '--attr', '0'], T)
+-        self.assertEquals(output, E)
++        self.assertEqual(output, E)
+ 
+         E = """"foo" &#8220;bar&#8221;"""
+         output = self._p([CLI_SCRIPT, '--attr', 'b'], T)
+-        self.assertEquals(output, E)
++        self.assertEqual(output, E)
+ 
+     def test_skipped_elements(self):
+ 
+@@ -54,19 +54,19 @@
+ 
+         E = '<a>&#8220;foo&#8221;</a> <b>&#8220;bar&#8221;</b>'
+         output = self._p([CLI_SCRIPT], T)
+-        self.assertEquals(output, E)
++        self.assertEqual(output, E)
+ 
+         E = '<a>"foo"</a> <b>&#8220;bar&#8221;</b>'
+         output = self._p([CLI_SCRIPT, '--skip', 'a'], T)
+-        self.assertEquals(output, E)
++        self.assertEqual(output, E)
+ 
+         E = '<a>&#8220;foo&#8221;</a> <b>"bar"</b>'
+         output = self._p([CLI_SCRIPT, '--skip', 'b'], T)
+-        self.assertEquals(output, E)
++        self.assertEqual(output, E)
+ 
+         E = T
+         output = self._p([CLI_SCRIPT, '--skip', 'a,b'], T)
+-        self.assertEquals(output, E)
++        self.assertEqual(output, E)
+ 
+     def test_file(self):
+ 
+@@ -81,4 +81,4 @@
+             output = self._p([CLI_SCRIPT, F])
+         finally:
+             os.remove(F)
+-        self.assertEquals(output, E)
++        self.assertEqual(output, E)
