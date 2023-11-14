@@ -15,11 +15,19 @@
 # Copyright 2022 Marcel Telka
 #
 
-sed -n \
+sed \
 	-e 's/`\{1,2\}/"/g' -e "s/'\{1,2\}/\"/g" \
 	-e 's/[12]\./*/g' \
 	-e 's/\* *//g' \
-	-e 's/\(THIS SOFTWARE IS PROVIDED BY\).*\("AS IS" AND ANY\).*\(OR IMPLIED WARRANTIES\)/\1 REPLACEABLE \2 REPLACEABLE \3/I' \
+	-e 's/THIS SOFTWARE/THIS/I' \
+	-e 's/^\(THIS IS PROVIDED BY\).*\("AS IS" AND ANY\).*\(OR IMPLIED WARRANTIES\)/\1 REPLACEABLE \2 REPLACEABLE \3/I' \
 	-e 's/\(IN NO EVENT SHALL\).*\(BE LIABLE\)/\1 REPLACEABLE \2/I' \
 	-e 's/^.*\(Redistribution and use\)/\1/I' \
-	-e '/^Redistribution and use/I,/^THIS SOFTWARE/Ip'
+| sed -n \
+	-e '{	1 {	N
+			N
+		}
+		N
+		/^Redistribution and use.*\n.*\n.*\nTHIS IS PROVIDED BY/Ip
+		D
+	}'
