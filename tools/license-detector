@@ -100,6 +100,7 @@ for l in "$WS_TOOLS"/licenses/* ; do
 	[[ -x "$l.filter" ]] && printf '\t| LC_ALL=C %s \\\n' "$l.filter" >> "$TMPFILE"
 	cat <<#EOF >> "$TMPFILE"
 			| LC_ALL=C tr '[:upper:]' '[:lower:]' \\
+			| sed -e 's|http://|https://|g' \
 			| tr ' ' '\\n' | fmt
 	EOF
 
