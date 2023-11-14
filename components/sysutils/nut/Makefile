@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	nut
 COMPONENT_VERSION=	2.8.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Network UPS Tools (NUT)
 COMPONENT_DESCRIPTION=	Network UPS Tools (NUT) is a versatile power-device monitoring toolkit to facilitate safe shutdowns
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -146,23 +147,6 @@ CONFIGURE_OPTIONS +=	--enable-spellcheck
 CONFIGURE_OPTIONS +=	--disable-cppcheck
 
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
-
-# TOTHINK? variant.opensolaris.zone=global
-$(BUILD_DIR)/nut-usb-driver.p5m.include: $(BUILD_DIR)/$(MACH64)/scripts/udev/nut-usbups.rules
-	(echo "# NUT USB VID:PID pairs supported by some USB-capable driver"; \
-	 echo "# Parsed from $< during package build"; \
-	 echo "driver name=ugen \\" ; \
-	 grep -E 'ATTR.*idVendor.*idProduct' < "$<" | \
-	 $(GSED) 's/^.*ATTR{idVendor}=="0*\([a-fA-F0-9][a-fA-F0-9]*\)".*ATTR{idProduct}=="0*\([a-fA-F0-9][a-fA-F0-9]*\)".*$$/    alias="usb\1,\2.*" \\/' ; \
-	 echo '    perms="* 0664 root nut"' ; \
-	) > "$@"
-
-# Inject into build chain, to patch .mogrified file used to create .mangled and beyond
-$(BUILD_DIR)/.injected.nut-usb-driver.p5m.include: $(BUILD_DIR)/manifest-$(MACH)-nut-drivers-usb.mogrified $(BUILD_DIR)/nut-usb-driver.p5m.include
-	cat "$(BUILD_DIR)/nut-usb-driver.p5m.include" >> "$(BUILD_DIR)/manifest-$(MACH)-nut-drivers-usb.mogrified"
-	touch "$@"
-
-$(BUILD_DIR)/manifest-$(MACH)-nut-drivers-usb.mangled: $(BUILD_DIR)/nut-usb-driver.p5m.include $(BUILD_DIR)/.injected.nut-usb-driver.p5m.include
 
 # NUT-Monitor UI has two similar implementations, for py2gtk and py3qt5.
 # The PyNUT.py (general binding) module is written to work with both 2.x
