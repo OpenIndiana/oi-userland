@@ -10,7 +10,8 @@
 #
 
 #
-# Copyright 2023 Niklas Poslovski
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project gi-docgen
 #
 
 BUILD_STYLE = pyproject
@@ -19,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gi-docgen
 HUMAN_VERSION =			2023.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		gi-docgen - Documentation tool for GObject-based libraries
 COMPONENT_PROJECT_URL =		https://gitlab.gnome.org/GNOME/gi-docgen
 COMPONENT_ARCHIVE_URL =		\
@@ -27,8 +29,6 @@ COMPONENT_ARCHIVE_HASH =	\
 	sha256:88adeda9cbf882569479701eada009afa5d94fa29d728653ec388c32035f7fa3
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSES/Apache-2.0.txt
-
-PYTHON_VERSIONS = 3.9
 
 TEST_STYLE = pytest
 
