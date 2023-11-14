@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 asyncio: mode=strict
-collecting ... collected 343 items / 2 skipped
+collecting ... collected 344 items / 2 skipped
 
 test_elasticsearch/test_async/test_server/test_clients.py::test_bulk_works_with_bytestring_body SKIPPED
 test_elasticsearch/test_async/test_server/test_clients.py::test_bulk_works_with_string_body SKIPPED
@@ -56,7 +56,7 @@ test_elasticsearch/test_async/test_transport.py::TestTransport::test_body_surrog
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_client_meta_header PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_client_meta_header_not_sent PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_failed_connection_will_be_marked_as_dead PASSED
-test_elasticsearch/test_async/test_transport.py::TestTransport::test_kwargs_passed_on_to_node_pool SKIPPED
+test_elasticsearch/test_async/test_transport.py::TestTransport::test_kwargs_passed_on_to_node_pool PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_opaque_id PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_request_timeout_extracted_from_params_and_passed PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_request_will_fail_after_x_retries PASSED
@@ -208,6 +208,7 @@ test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_params_merge[{"query": {"match_all": {}}}1] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_ignore_deprecated_options PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_parameter_aliases PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_positional_argument_error[AsyncElasticsearch] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_positional_argument_error[Elasticsearch] PASSED
 test_elasticsearch/test_client/test_serializers.py::TestSerializers::test_compat_mode_on_by_default PASSED
 test_elasticsearch/test_client/test_serializers.py::TestSerializers::test_compat_serializer_used_when_given_non_compat PASSED
@@ -411,12 +412,16 @@ test_elasticsearch/test_async/test_transport.py::TestTransport::test_client_meta
   $(@D)/test_elasticsearch/test_async/test_transport.py:227: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
     await client.info(headers={"CustoM": "header"})
 
+test_elasticsearch/test_async/test_transport.py::TestTransport::test_kwargs_passed_on_to_node_pool
+  test_elasticsearch/test_async/test_transport.py:262: PytestWarning: The test <Function test_kwargs_passed_on_to_node_pool> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove asyncio marker. If the test is not marked explicitly, check for global markers applied via 'pytestmark'.
+    def test_kwargs_passed_on_to_node_pool(self):
+
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_sniffing_disabled_on_elastic_cloud[kwargs1]
-  $(@D)/test_elasticsearch/test_async/test_transport.py:542: DeprecationWarning: The 'sniff_on_connection_fail' parameter is deprecated in favor of 'sniff_on_node_failure'
+  $(@D)/test_elasticsearch/test_async/test_transport.py:541: DeprecationWarning: The 'sniff_on_connection_fail' parameter is deprecated in favor of 'sniff_on_node_failure'
     AsyncElasticsearch(
 
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_sniffing_disabled_on_elastic_cloud[kwargs4]
-  $(@D)/test_elasticsearch/test_async/test_transport.py:542: DeprecationWarning: The 'sniffer_timeout' parameter is deprecated in favor of 'min_delay_between_sniffing'
+  $(@D)/test_elasticsearch/test_async/test_transport.py:541: DeprecationWarning: The 'sniffer_timeout' parameter is deprecated in favor of 'min_delay_between_sniffing'
     AsyncElasticsearch(
 
 test_elasticsearch/test_client/test_options.py::TestOptions::test_user_agent_override
@@ -429,4 +434,4 @@ test_elasticsearch/test_client/test_options.py::TestOptions::test_user_agent_ove
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 222 passed, 123 skipped, 22 warnings ========
+======== 224 passed, 122 skipped, 23 warnings ========
