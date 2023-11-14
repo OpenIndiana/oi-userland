@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		CGI::Fast
-HUMAN_VERSION =			2.16
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			2.17
 COMPONENT_SUMMARY =		CGI::Fast - CGI Interface for Fast CGI
 COMPONENT_CPAN_AUTHOR =		LEEJO
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0223d7f91b80037b9dff5f37360640b71f5dc8dbd989a0593d5d22f3f73cb3d4
+	sha256:8afa3a8fff8eb1b29d646ed188a2cc889b19d5a0fb3aa5ddad508ccb0c79bdf2
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
