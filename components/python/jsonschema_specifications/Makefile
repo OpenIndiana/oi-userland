@@ -19,22 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonschema_specifications
-HUMAN_VERSION =			2023.7.1
+HUMAN_VERSION =			2023.11.1
 COMPONENT_SUMMARY =		jsonschema_specifications - The JSON Schema meta-schemas and vocabularies, exposed as a Registry
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema-specifications
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/12/ce/eb5396b34c28cbac19a6a8632f0e03d309135d77285536258b82120198d8/jsonschema_specifications-2023.7.1.tar.gz
+	https://files.pythonhosted.org/packages/d4/84/8f5072792a260016048d3a5ae5186ec3be9e090480ddf5446484394dd8c3/jsonschema_specifications-2023.11.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c91a50404e88a1f6ba40636778e2ee08f6e24c5613fe4c53ac24578a5a7f72bb
+	sha256:c9b234904ffe02f079bf91b14d79987faa685fd4b39c377a0996954c0090b9ca
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
