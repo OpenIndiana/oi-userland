@@ -206,13 +206,16 @@ done
 
 
 # Makefile template
+GENERATE_CMD="\$WS_TOOLS/$THIS"
+[[ "$DIRECTORY" != "python/$DISTRIBUTION" ]] && GENERATE_CMD="$GENERATE_CMD -d $DIRECTORY"
+GENERATE_CMD="$GENERATE_CMD $PROJECT"
 (
 cat $WS_TOP/transforms/copyright-template | sed -e '/^$/,$d'
 cat <<EOF
 
 #
 # This file was automatically generated using the following command:
-#   \$WS_TOOLS/$THIS $PROJECT
+#   $GENERATE_CMD
 #
 
 BUILD_STYLE = pyproject
