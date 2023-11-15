@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		pgadmin3
 COMPONENT_VERSION= 		1.23
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY= 		pgAdminIII administration and development GUI for PostgreSQL
 COMPONENT_SRC= 			pgadmin3-lts-master-20220717
 COMPONENT_ARCHIVE= 		$(COMPONENT_SRC).tar.gz
