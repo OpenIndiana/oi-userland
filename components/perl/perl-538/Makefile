@@ -25,16 +25,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
-COMPONENT_VERSION =		5.38.0
-COMPONENT_VERSION_MAJOR =	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\(5\.[0-9]\{1,\}\)\..*/\1/g')
+COMPONENT_VERSION =		5.38.2
+COMPONENT_VERSION_MAJOR =	$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 COMPONENT_SUMMARY =		Perl $(COMPONENT_VERSION_MAJOR)
 COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eca551caec3bc549a4e590c0015003790bdd1a604ffe19cc78ee631d51f7072e
+	sha256:d91115e90b896520e83d4de6b52f8254ef2b70a8d545ffab33200ea9f1cf29e8
 COMPONENT_ARCHIVE_URL =		https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI =		runtime/perl-$(shell echo $(COMPONENT_VERSION_MAJOR) | tr -d '.')
+COMPONENT_FMRI =		runtime/perl-$(subst .,,$(COMPONENT_VERSION_MAJOR))
 COMPONENT_CLASSIFICATION =	Development/Perl
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
