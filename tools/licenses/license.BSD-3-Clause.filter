@@ -15,13 +15,25 @@
 # Copyright 2022 Marcel Telka
 #
 
-sed -n \
+sed \
 	-e 's/``/"/g' -e "s/''/\"/g" \
 	-e 's/[123]\./*/g' \
 	-e 's/- /* /g' \
+	-e 's/\(with or without modification,\) .* \(permitted provided\)/\1 REPLACEABLE \2/I' \
 	-e 's/^Neither/* &/I' \
-	-e 's/\*[^*]*\(be used to endorse or promote products\)/* REPLACEABLE \1/I' \
+	-e 's/\*[^*]*\(be used to endorse or promote products derived from this\) .* \(without\)/* REPLACEABLE \1 REPLACEABLE \2/I' \
 	-e 's/\* *//g' \
-	-e 's/\(THIS SOFTWARE IS PROVIDED BY\).*\("AS IS" AND ANY\).*\(OR IMPLIED WARRANTIES\)/\1 REPLACEABLE \2 REPLACEABLE \3/I' \
+	-e 's/^\(Redistributions of\) .* \(must retain the\) .* \(copyright notice,\)/\1 REPLACEABLE \2 REPLACEABLE \3/I' \
+	-e 's/\(binary form must reproduce the\) .* \(copyright notice,\)/\1 REPLACEABLE \2/I' \
+	-e 's/^THIS .* \(IS PROVIDED BY\).*\("AS IS" AND ANY\).*\(OR IMPLIED WARRANTIES\)/THIS REPLACEABLE \1 REPLACEABLE \2 REPLACEABLE \3/I' \
 	-e 's/\(IN NO EVENT SHALL\).*\(BE LIABLE\)/\1 REPLACEABLE \2/I' \
-	-e '/^Redistribution and use/I,/^THIS SOFTWARE/Ip'
+	-e 's/\(USE OF THIS\) .*\(, EVEN IF ADVISED\)/\1 REPLACEABLE \2/I' \
+| sed -n \
+	-e '{	1 {	N
+			N
+			N
+		}
+		N
+		/^Redistribution and use.*\n.*\n.*\n.*\nTHIS REPLACEABLE IS PROVIDED/Ip
+		D
+	}'
