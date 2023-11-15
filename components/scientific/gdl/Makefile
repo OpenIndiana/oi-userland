@@ -19,8 +19,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        gdl
 COMPONENT_VERSION=      1.0.3
-COMPONENT_PROJECT_URL=  https://gnudatalanguage.github.io/
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      A free/libre/open source incremental compiler compatible with IDL and to some extent with PV-WAVE.
+COMPONENT_PROJECT_URL=  https://gnudatalanguage.github.io/
 COMPONENT_SRC=	        $(COMPONENT_NAME)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:db72eeb84c54dba387d5474500ce005ff1dc605b070bd00f57a552d3bb6ab16c
