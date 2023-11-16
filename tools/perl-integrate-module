@@ -475,7 +475,7 @@ for o in $(echo $OBSOLETE $PERL_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
 	FMRI_T=$((FMRI_T + 1))
 	printf "%s.%s noincorporate\n" "$FMRI_H" "$FMRI_T" >> history
 
-	[[ -n "$OV" ]] && OV="$OV and " && OV_PLURAL="s"
+	[[ -n "$OV" ]] && OV="${OV/ and /, } and " && OV_PLURAL="s"
 	OV="$OV$o"
 done
 if [[ -f history ]] ; then
