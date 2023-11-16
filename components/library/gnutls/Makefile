@@ -26,27 +26,25 @@
 # Copyright (c) 2022, Niklas Poslovski
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
 COMPONENT_MJR_VERSION=	3.8
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).1
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).2
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_PROJECT_URL=  https://gnutls.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ba8b9e15ae20aba88f44661978f5b5863494316fe7e722ede9d069fe6294829c
+COMPONENT_ARCHIVE_HASH= sha256:e765e5016ffa9b9dd243e363a0460d577074444ee2491267db2e96c9c2adef77
 COMPONENT_ARCHIVE_URL=  https://www.gnupg.org/ftp/gcrypt/gnutls/v$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=		library/gnutls-3
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	GPLv3, LGPLv2.1, FDLv1.3
 
-TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I$(USRINCDIR)/idn2
@@ -55,8 +53,6 @@ CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --with-default-trust-store-file=/etc/certs/ca-certificates.crt
 CONFIGURE_OPTIONS += --with-default-trust-store-dir=/etc/certs/CA
 
-# Drop 32-bit binaries
-COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 # usr/share/info/dir is provided by text/texinfo
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
