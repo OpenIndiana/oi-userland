@@ -108,6 +108,7 @@ VERSION=
 HOMEPAGE=
 DOWNLOAD_URL=
 LICENSE_FILE=
+SUMMARY=
 
 # Execute hook-begin snippet
 if [[ -f "$CONF" ]] ; then
@@ -286,12 +287,14 @@ if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/pyproject.toml" ]] ; then
 	sed -i -e 's/^\(BUILD_STYLE = \).*$/\1setup.py/' Makefile
 fi
 
-# Get summary
-SUMMARY=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.summary')
-if (($? != 0)) || [[ -z "$SUMMARY" || "$SUMMARY" == "null" ]] ; then
-	printf "WARNING: Failed to get summary for project %s from pypi\n" "$PROJECT" >&2
-	SUMMARY=$(get_PKGINFO_entry "Summary")
-	[[ -z "$SUMMARY" ]] && SUMMARY="TODO"
+# Get summary if not already provided
+if [[ -z "$SUMMARY" ]] ; then
+	SUMMARY=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.summary')
+	if (($? != 0)) || [[ -z "$SUMMARY" || "$SUMMARY" == "null" ]] ; then
+		printf "WARNING: Failed to get summary for project %s from pypi\n" "$PROJECT" >&2
+		SUMMARY=$(get_PKGINFO_entry "Summary")
+		[[ -z "$SUMMARY" ]] && SUMMARY="TODO"
+	fi
 fi
 # Summary needs to be sanitized
 SUMMARY="${SUMMARY//\`/\\\\\`}"
