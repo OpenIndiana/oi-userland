@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: $(@D)/.tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)/tests
 configfile: pytest.ini
-collecting ... collected 818 items
+collecting ... collected 826 items
 
 tests/test_align.py::test_align_bottom PASSED
 tests/test_align.py::test_align_center PASSED
@@ -50,6 +50,9 @@ tests/test_box.py::test_str PASSED
 tests/test_card.py::test_card_render PASSED
 tests/test_cells.py::test_cell_len_long_string PASSED
 tests/test_cells.py::test_cell_len_short_string PASSED
+tests/test_cells.py::test_chop_cells PASSED
+tests/test_cells.py::test_chop_cells_double_width_boundary PASSED
+tests/test_cells.py::test_chop_cells_mixed_width PASSED
 tests/test_cells.py::test_set_cell_size PASSED
 tests/test_cells.py::test_set_cell_size_infinite PASSED
 tests/test_color.py::test_blend_rgb PASSED
@@ -761,12 +764,17 @@ tests/test_text.py::test_truncate_ellipsis_pad[Hello-5-Hello] PASSED
 tests/test_text.py::test_wrap_3 PASSED
 tests/test_text.py::test_wrap_4 PASSED
 tests/test_text.py::test_wrap_cjk PASSED
+tests/test_text.py::test_wrap_cjk_mixed PASSED
 tests/test_text.py::test_wrap_cjk_width_mid_character PASSED
 tests/test_text.py::test_wrap_invalid_style PASSED
+tests/test_text.py::test_wrap_leading_and_trailing_whitespace PASSED
 tests/test_text.py::test_wrap_long PASSED
+tests/test_text.py::test_wrap_long_word_preceeded_by_word_of_full_line_length PASSED
 tests/test_text.py::test_wrap_long_words PASSED
 tests/test_text.py::test_wrap_long_words_2 PASSED
+tests/test_text.py::test_wrap_long_words_followed_by_other_words PASSED
 tests/test_text.py::test_wrap_long_words_justify_left PASSED
+tests/test_text.py::test_wrap_multiple_consecutive_spaces PASSED
 tests/test_text.py::test_wrap_overflow PASSED
 tests/test_text.py::test_wrap_overflow_long PASSED
 tests/test_text.py::test_wrap_tabs PASSED
@@ -868,11 +876,6 @@ tests/test_syntax.py:6
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zest')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: 15 warnings
   $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
@@ -880,6 +883,6 @@ tests/test_syntax.py:6
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 795 passed, 23 skipped, 26 warnings ========
+======== 803 passed, 23 skipped, 25 warnings ========
   py$(PYV): OK
   congratulations :)
