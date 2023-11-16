@@ -22,25 +22,25 @@
 # Copyright (c) 2020 Michal Nowak
 #
 
-BUILD_BITS=		64
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           aria2
-COMPONENT_VERSION=        1.36.0
-COMPONENT_REVISION=       1
-COMPONENT_FMRI=           web/aria2
-COMPONENT_PROJECT_URL=    https://aria2.github.io/
-COMPONENT_CLASSIFICATION= Applications/Internet
-COMPONENT_SUMMARY=	aria2 - lightweight multi-protocol and multi-source download utility
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:58d1e7608c12404f0229a3d9a4953d0d00c18040504498b483305bcb3de907a5
+COMPONENT_NAME=			aria2
+COMPONENT_VERSION=		1.37.0
+COMPONENT_SUMMARY=		aria2 - lightweight multi-protocol and multi-source download utility
+COMPONENT_PROJECT_URL=	https://aria2.github.io/
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:60a420ad7085eb616cb6e2bdf0a7206d68ff3d37fb5a956dc44242eb2f79b66b
 COMPONENT_ARCHIVE_URL=	https://github.com/aria2/aria2/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv3
+COMPONENT_FMRI=			web/aria2
+COMPONENT_CLASSIFICATION= Applications/Internet
+COMPONENT_LICENSE=		GPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 LDFLAGS += -lsocket -lnsl
 
@@ -51,18 +51,6 @@ CONFIGURE_OPTIONS += --with-bashcompletiondir=/usr/share/bash-completion/complet
 CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
-
-# Tests may output some compilation lines, so just pull out the relevant test
-# output lines for the test results comparison.
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/XFAIL:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/XPASS:/p" ' \
-	'-e "/ERROR:/p" '
 
 # We have one failing test (from test-suite.log):
 # 09/26 19:19:47 [INFO] Processing metaurl group metaurl=README.torrent
@@ -76,8 +64,8 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nettle
