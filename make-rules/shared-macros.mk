@@ -871,7 +871,6 @@ $(foreach perlver,$(PERL_VERSIONS),$(eval $(call perl-path-rule,$(perlver))))
 PERL5BINDIR = 	$(PERL5BINDIR.$(PERL_VERSION))
 PERL =		$(PERL.$(PERL_VERSION))
 POD2MAN =	$(POD2MAN.$(PERL_VERSION))
-PATH.prepend +=	$(PERL5BINDIR)
 
 PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
