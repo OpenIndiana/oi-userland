@@ -15,37 +15,38 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
-COMPONENT_VERSION= 1.14.50
+COMPONENT_VERSION= 1.14.51
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:6e6c20d0778339069d583c0d63759d297e817ea10d0d897ebbe965f16e2e8e52
+COMPONENT_ARCHIVE_HASH= sha256:f0b83251f98b0fd5592b11895910cc0e19f798110b389aba7da1cb7c474017f5
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.14/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_FMRI= library/desktop/libgsf
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE= LGPLv2
-COMPONENT_LICENSE_FILE = COPYING.LIB
+COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION= ( cd $(@D)  && \
-                            libtoolize --copy --force &&\
-                            aclocal -I m4 &&\
-                            autoheader &&\
-                            automake -c -f -a &&\
-                            autoconf &&\
-                            cp /usr/share/gettext/config.rpath .)
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D) && \
+	libtoolize --copy --force && \
+	aclocal -I m4 && \
+	autoheader && \
+	automake -c -f -a && \
+	autoconf && \
+	cp /usr/share/gettext/config.rpath . )
 
 # Missing files in build dir without this.
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
