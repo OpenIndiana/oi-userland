@@ -30,13 +30,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	115.4.2
+COMPONENT_VERSION =	115.4.3
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:3c08e3ec5bc803bb81d329e090be0a60a668614d42176a904c5e7eb06d952ed2
+	 sha256:bf21b245b4451f402e48fc95ff72e72b91689cdbe98ec1d0fa3fac34e9abfc09
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
