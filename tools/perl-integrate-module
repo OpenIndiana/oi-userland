@@ -492,6 +492,8 @@ if [[ -f history ]] ; then
 	LC_ALL=C sort -u history > history.new
 	mv history.new history
 	git add history
+
+	awk '$2 == "noincorporate" {printf("WARNING: Unincorporated package: %s\n", $1)}' < history >&2
 fi
 
 
