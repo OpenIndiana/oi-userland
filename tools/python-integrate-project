@@ -69,13 +69,6 @@ BASE_DIR="$WS_TOP/components"
 [[ -d "$BASE_DIR" ]] || usage "Directory $BASE_DIR not found"
 
 
-# Get data from pypi
-PYPI_PROJECT=$($CURL "$APIURL/$PROJECT/json")
-if (($? != 0)) || [[ -z "$PYPI_PROJECT" ]] ; then
-	printf "FATAL: Failed to get data from pypi\n" >&2
-	exit 1
-fi
-
 # Distribution match project
 DISTRIBUTION="$PROJECT"
 
@@ -118,6 +111,17 @@ fi
 
 # Version specified as option takes precedence
 [[ -n "$OPT_VERSION" ]] && VERSION="$OPT_VERSION"
+
+
+# Get data from PyPI if needed
+if [[ -z "$VERSION" || -z "$HOMEPAGE" || -z "$SUMMARY" ]] ; then
+	PYPI_PROJECT=$($CURL "$APIURL/$PROJECT/json")
+	if (($? != 0)) || [[ -z "$PYPI_PROJECT" ]] ; then
+		printf 'WARNING: Failed to get data for project %s from PyPI\n' "$PROJECT" >&2
+		PYPI_PROJECT=
+	fi
+fi
+
 
 # Find the latest version if not already provided
 if [[ -z "$VERSION" ]] ; then
