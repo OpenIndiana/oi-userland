@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosquitto
 COMPONENT_VERSION=	2.0.18
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Eclipse Mosquitto - An open source MQTT broker
 COMPONENT_PROJECT_URL=	https://mosquitto.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
