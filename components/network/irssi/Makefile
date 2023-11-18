@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		irssi
 COMPONENT_VERSION=	1.4.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	irssi - a terminal based IRC client
 COMPONENT_PROJECT_URL=	https://irssi.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,9 +51,6 @@ COMPONENT_POST_INSTALL_ACTION += ( for x in COPYING AUTHORS ChangeLog ; do cp $(
 
 # PKGVERS is needed for manifest processing
 PKG_MACROS += PERLVER=$(PERL_VERSION)
-
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
