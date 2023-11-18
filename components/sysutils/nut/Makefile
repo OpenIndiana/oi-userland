@@ -187,6 +187,7 @@ REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += library/augeas-tools
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pyqt5
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
@@ -195,7 +196,6 @@ REQUIRED_PACKAGES += library/libmodbus
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/neon
-REQUIRED_PACKAGES += library/python/pyqt5
 REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
