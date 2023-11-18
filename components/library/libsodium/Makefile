@@ -14,12 +14,13 @@
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsodium
 COMPONENT_VERSION= 1.0.19
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Sodium is an easy-to-use software library for encryption, decryption, signatures, password hashing, and more
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
