@@ -107,6 +107,7 @@ git checkout . > /dev/null 2>&1
 # Following variables could be set by the hook-begin snippet
 VERSION=
 DOWNLOAD_URL=
+LICENSE_FILE=
 
 # Execute hook-begin snippet
 if [[ -f "$CONF" ]] ; then
@@ -321,7 +322,7 @@ function detect_license
 LICENSE=
 LICFILE=
 COPYRIGHT=
-for f in LICENSE LICENCE COPYING COPYRIGHT ; do
+for f in $LICENSE_FILE LICENSE LICENCE COPYING COPYRIGHT ; do
 	[[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/$f" ]] || continue
 	LICFILE="$SOURCE_DIR$COMPONENT_SUBDIR/$f"
 
