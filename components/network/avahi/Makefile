@@ -11,35 +11,37 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS = 32_and_64
-
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
 COMPONENT_VERSION= 0.7
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:57a99b5dfe7fdae794e3d1ee7a62973a368e91e414bd0dfa5d84434de5b14804
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/lathiat/avahi/releases/download/v0.7/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://avahi.org
+COMPONENT_ARCHIVE_HASH=	sha256:57a99b5dfe7fdae794e3d1ee7a62973a368e91e414bd0dfa5d84434de5b14804
+COMPONENT_ARCHIVE_URL=	https://github.com/lathiat/avahi/releases/download/v0.7/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://avahi.org
+COMPONENT_FMRI=			system/network/avahi
 COMPONENT_CLASSIFICATION = Applications/Internet
+COMPONENT_LICENSE=		LGPLv2.1
+COMPONENT_LICENSE_FILE=	LICENSE
 
-TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION += (cd $(@D) &&\
-	        aclocal -I common &&\
-		automake --add-missing &&\
-		autoconf)
+COMPONENT_PREP_ACTION += ( \
+	cd $(@D) && \
+	aclocal -I common && \
+	automake --add-missing && \
+	autoconf )
 
 # Need this to build service-type-database
-COMPONENT_PRE_CONFIGURE_ACTION = ( cp -r $(SOURCE_DIR)/* $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION= ( cp -r $(SOURCE_DIR)/* $(@D) )
 
 LDFLAGS += -ldns_sd
 
@@ -73,7 +75,9 @@ CONFIGURE_ENV += PYTHON="$(PYTHON)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
-# Build dependencies
+unexport SHELLOPTS
+
+# Manually added build dependencies
 REQUIRED_PACKAGES += text/xmltoman
 
 # Auto-generated dependencies
