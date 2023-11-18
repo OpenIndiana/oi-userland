@@ -14,7 +14,7 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libxml++
 COMPONENT_MJR_VERSION= 2.42
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Library for HTML support in GNOME
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -40,7 +41,7 @@ PATH= $(PATH.gnu)
 COMPONENT_TEST_ENV += LANG=C
 COMPONENT_TEST_ENV += LC_ALL=C
 
-# Build dependency
+# Manually added Build dependency
 REQUIRED_PACKAGES += developer/build/pkg-config
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/macro/gnu-m4
