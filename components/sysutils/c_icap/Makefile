@@ -11,8 +11,6 @@
 # Copyright 2022,2023 Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS= 64
-BUILD_STYLE= configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c_icap
@@ -33,10 +31,13 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
+# Build fails with GCC 11 or newer
+GCC_VERSION = 10
+
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION=( cd $(@D) && autoreconf -f -i -v -W all )
+COMPONENT_PREP_ACTION=( cd $(@D) && PATH="$(PATH)" autoreconf -f -i -v -W all )
 
 CONFIGURE_OPTIONS += CPPFLAGS=-I/usr/include/openldap
 CONFIGURE_OPTIONS += --sysconfdir=/etc
@@ -54,4 +55,3 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/gcc-10-compat-links
