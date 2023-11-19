@@ -31,12 +31,17 @@ COMPONENT_NAME=		psutils
 # At the homepage it is stated that development version is pre-2.0
 COMPONENT_VERSION= 1.17
 HUMAN_VERSION= p17
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
+COMPONENT_SUMMARY=	Collection of utilities for manipulating PostScript documents
 COMPONENT_PROJECT_URL= http://knackered.knackered.org/angus/psutils/
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:3853eb79584ba8fbe27a815425b65a9f7f15b258e0d43a05a856bdb75d588ae4
-COMPONENT_ARCHIVE_URL= ftp://ftp.knackered.org/pub/psutils/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL= http://knackered.knackered.org/angus/download/psutils/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=	System/Printing
+COMPONENT_FMRI=	print/psutils
+COMPONENT_LICENSE=	psutils
+COMPONENT_LICENSE_FILE=	LICENSE
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -44,11 +49,12 @@ include $(WS_MAKE_RULES)/common.mk
 # to stay compatible with nevada settings, letter is default paper size
 CFLAGS += -DPAPER=\\\"letter\\\" -DUNIX
 
-COMPONENT_BUILD_ENV += CC=$(CC)
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CCFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV += INCLUDEDIR=$(PROTO_DIR)/usr/share/psutils
-COMPONENT_BUILD_ENV += PERL=$(PERL)
+# We need to point to some Perl otherwise build is unable to find one.  Since
+# psutils does not depend on any particular Perl version we use generic
+# unversioned Perl.
+COMPONENT_BUILD_ENV += PERL=/usr/bin/perl
 
 # slightly hacky, since COMPONENT_BUILD_TARGETS are just arguments passed to
 # make
@@ -57,7 +63,6 @@ COMPONENT_BUILD_ARGS= -e -f Makefile.unix
 COMPONENT_INSTALL_ENV += BINDIR=$(PROTO_DIR)/usr/bin
 COMPONENT_INSTALL_ENV += INCLUDEDIR=$(PROTO_DIR)/usr/share/psutils
 COMPONENT_INSTALL_ENV += MANDIR=$(PROTO_DIR)/usr/share/man/man1
-COMPONENT_INSTALL_ENV += PERL=$(PERL)
 COMPONENT_INSTALL_ENV += INSTALL="$(INSTALL) -m 0555"
 COMPONENT_INSTALL_ENV += INSTALLMAN="$(INSTALL) -m 0444"
 
@@ -68,6 +73,6 @@ COMPONENT_INSTALL_ARGS= -e -f Makefile.unix
 $(INSTALL_$(MK_BITS)):	$(PROTOUSRSHAREMAN1DIR) $(PROTOUSRBINDIR)
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
