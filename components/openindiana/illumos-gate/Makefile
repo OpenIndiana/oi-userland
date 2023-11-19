@@ -164,6 +164,9 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)
 	echo '<transform depend fmri=runtime/java$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo '<transform depend fmri=runtime/java/runtime64$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
+	# Drop dependency on GCC compat links
+	echo '<transform depend fmri=pkg:/system/library/gcc-.*-compat-links -> drop>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
 	# Drop dependency on ignored packages
 	$(GSED) -e 's|^\(.*\)$$|<transform depend fmri=pkg:/\1@.* -> drop>|' $< >> $@
 
