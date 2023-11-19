@@ -27,31 +27,39 @@
 # Copyright 2023, Friedrich Kink
 #
 
+# This build is a mixture of configure and python style
+# it starts with configure for the initial setup 
+# the compiler build itself is intensively using python tools
+# therefor this patially python settings
+
 BUILD_BITS=		64
-USE_OPENSSL11=		yes
+OPENSSL_VERSION=	3.1
+TEST_STYLE=		none
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.70.0
+COMPONENT_VERSION=	1.71.1
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b2bfae000b7a5040e4ec4bbc50a09f21548190cb7570b0ed77358368413bd27c
+COMPONENT_ARCHIVE_HASH=	sha256:6fa90d50d1d529a75f6cc349784de57d7ec0ba2419b09bde7d335c25bd4e472e
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=	MIT or Apache-2.0
 COMPONENT_LICENSE_FILE=	LICENSE-APACHE
 
-RUST_PRE_VERSION=	$(COMPONENT_VERSION)
 RUST_BOOTSTRAP_PATH=	$(BUILD_DIR)/$(MACH64)
 RUST_ARCH=		x86_64-unknown-illumos
 
 TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+
+CLANG_VERSION=		17
 
 # Need some help to pick the correct ar binary
 GNUAR=$(GNUBIN)/ar
@@ -59,11 +67,9 @@ GNUAR=$(GNUBIN)/ar
 # Put the bits cargo downloads in a private directory.  This could be cached
 # somewhere more permanent, but it's important to make sure that a person's
 # $HOME/.cargo isn't used.
-RUST_VERSION=           $(COMPONENT_VERSION)
-RUSTUP_HOME=            $(@D)
-CARGO_HOME=             $(RUSTUP_HOME)
+CARGO_HOME=             $(@D)/.cargo
 
-PATH=                   $(CARGO_HOME)/bin:$(CLANG_PREFIX)/bin:$(GCC_BINDIR):$(PATH.gnu)
+PATH=                   $(PATH.gnu)
 
 RUSTC_BIN_POST=		cargo
 RUSTC_BIN_POST+=	clippy-driver
@@ -77,19 +83,7 @@ PKG_MACROS+=		RUST_ARCH="$(RUST_ARCH)"
 # Rust expects the library path to be /usr/lib and is broken otherwise 
 RUSTC_LIBDIR=		$(USRLIBDIR)
 
-#COMPONENT_TEST_ENV+=	CARGO_HOME=$(CARGO_HOME)
-#COMPONENT_TEST_ENV+=	RUSTUP_HOME=$(RUSTUP_HOME)
-
-COMPONENT_PRE_CONFIGURE_ACTION += ( \
-	CLONEY_MODE=hardlink $(CLONEY) $(SOURCE_DIR) $(@D); \
-	cd $(@D); \
-        export RUSTUP_HOME=$(RUSTUP_HOME); \
-        export CARGO_HOME=$(CARGO_HOME); \
-        export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --default-toolchain  stable-$(RUST_ARCH) -y; \
-        rustup component add rls; \
-        rustup show; \
-        );
+COMPONENT_PRE_CONFIGURE_ACTION += ( CLONEY_MODE=hardlink $(CLONEY) $(SOURCE_DIR) $(@D); )
 
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
@@ -98,13 +92,13 @@ CONFIGURE_OPTIONS += --libdir=$(RUSTC_LIBDIR)
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)/rust-$(COMPONENT_VERSION)
 CONFIGURE_OPTIONS += --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --local-rust-root=$(RUST_BOOTSTRAP_PATH)
+CONFIGURE_OPTIONS += --local-rust-root=/usr
 CONFIGURE_OPTIONS += --enable-extended       # Build and install cargo too.
 CONFIGURE_OPTIONS += --default-linker=$(CC)
-#CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).cc=$(CC)
-#CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).cxx=$(CXX)
-#CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).ar=$(GNUAR)
-#CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).linker=$(CC)
+CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).cc=$(CC)
+CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).cxx=$(CXX)
+CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).ar=$(GNUAR)
+CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).linker=$(CC)
 CONFIGURE_OPTIONS += --enable-rpath
 CONFIGURE_OPTIONS += --disable-codegen-tests
 CONFIGURE_OPTIONS += --disable-dist-src
@@ -121,10 +115,9 @@ CONFIGURE_OPTIONS += --enable-llvm-link-shared
 CONFIGURE_OPTIONS += --llvm-root=$(CLANG_PREFIX)
 CONFIGURE_OPTIONS += --llvm-config=$(CLANG_PREFIX)/bin
 
-COMPONENT_BUILD_CMD=	$(PYTHON)
-COMPONENT_BUILD_GMAKE_ARGS= 
-COMPONENT_BUILD_TARGETS= build
-COMPONENT_BUILD_ARGS=	./x.py -v
+COMPONENT_BUILD_CMD = $(PYTHON) x.py build 
+COMPONENT_INSTALL_CMD = $(PYTHON) x.py install
+COMPONENT_INSTALL_ARGS =
 
 # Cleanup standard environment!
 COMPONENT_BUILD_ENV =
@@ -137,36 +130,32 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CXX=$(CXX)
 COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_BUILD_ENV += AR=$(GNUAR)
-COMPONENT_BUILD_ENV += RUSTC=$(CARGO_HOME)/bin/rustc
+COMPONENT_BUILD_ENV += RUSTC=/usr/bin/rustc
 COMPONENT_BUILD_ENV += CARGO_HOME=$(CARGO_HOME)
-COMPONENT_BUILD_ENV += RUSTUP_HOME=$(RUSTUP_HOME)
-COMPONENT_BUILD_ENV += MAKE=$(PYTHON)
+COMPONENT_BUILD_ENV += GMAKE=
 # Enforce linker consistency
-COMPONENT_BUILD_ENV+=	RUSTFLAGS="-C linker=$(CC)"
-COMPONENT_BUILD_ENV+=	RUST_BACKTRACE=1
+COMPONENT_BUILD_ENV +=	RUSTFLAGS="-C linker=$(CC)"
+COMPONENT_BUILD_ENV +=	RUST_BACKTRACE=1
 
 COMPONENT_PRE_INSTALL_ACTION = mkdir -p $(PROTO_DIR)
+COMPONENT_POST_INSTALL_ACTION +=  $(TOUCH) $(BUILD_DIR)/META.depend-runtime.res
 
-COMPONENT_INSTALL_CMD = $(GMAKE)
-COMPONENT_INSTALL_ARGS = ./x.py 
 # Cleanup standard environment
 COMPONENT_INSTALL_ENV= 
 COMPONENT_INSTALL_ENV+=	$(COMPONENT_BUILD_ENV)
 COMPONENT_INSTALL_ENV+=	CARGO_HOME=$(CARGO_HOME)
-COMPONENT_INSTALL_ENV+=	RUSTUP_HOME=$(RUSTUP_HOME)
 # Set install path
 COMPONENT_INSTALL_ENV+=	DESTDIR=$(PROTO_DIR)
 
 TEST_TARGET=		$(NO_TESTS)
 
-# manually added
-REQUIRED_PACKAGES += system/library/gcc-10-compat-links
-REQUIRED_PACKAGES += developer/clang-15
+# manually added dependencies
+REQUIRED_PACKAGES += developer/lang/rustc # previous before build version
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
