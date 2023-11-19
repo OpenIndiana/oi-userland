@@ -1,10 +1,10 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 4155 items
+collecting ... collected 4227 items
 
 tests/contrast/test_contrasts.py::test_contrasts PASSED
 tests/examplefiles/abnf/abnf_example1.abnf:: PASSED
@@ -279,6 +279,7 @@ tests/examplefiles/json/pypi-dump.json:: PASSED
 tests/examplefiles/jsonld/example.jsonld:: PASSED
 tests/examplefiles/jsonnet/example.jsonnet:: PASSED
 tests/examplefiles/jsp/test.jsp:: PASSED
+tests/examplefiles/jsx/general.jsx:: PASSED
 tests/examplefiles/julia/string.jl:: PASSED
 tests/examplefiles/juttle/example.juttle:: PASSED
 tests/examplefiles/kal/example.kal:: PASSED
@@ -287,9 +288,12 @@ tests/examplefiles/kmsg/example.dmesg:: PASSED
 tests/examplefiles/koka/garcia-wachs.kk:: PASSED
 tests/examplefiles/kotlin/example.kt:: PASSED
 tests/examplefiles/kuin/example.kn:: PASSED
+tests/examplefiles/kusto/test.kusto:: PASSED
 tests/examplefiles/lagda/example.lagda:: PASSED
 tests/examplefiles/lasso/json.lasso9:: PASSED
 tests/examplefiles/lasso/json.lasso:: PASSED
+tests/examplefiles/ldaprc/ldaprc:: PASSED
+tests/examplefiles/ldif/rfc2849.ldif:: PASSED
 tests/examplefiles/lean/test.lean:: PASSED
 tests/examplefiles/lhs/DancingSudoku.lhs:: PASSED
 tests/examplefiles/lhs/Sudoku.lhs:: PASSED
@@ -414,6 +418,7 @@ tests/examplefiles/prolog/strings.prolog:: PASSED
 tests/examplefiles/promql/example.promql:: PASSED
 tests/examplefiles/properties/java.properties:: PASSED
 tests/examplefiles/protobuf/addressbook.proto:: PASSED
+tests/examplefiles/prql/example.prql:: PASSED
 tests/examplefiles/psql/psql_session.txt:: PASSED
 tests/examplefiles/psysh/psysh_test.psysh:: PASSED
 tests/examplefiles/puppet/example.pp:: PASSED
@@ -601,6 +606,11 @@ tests/examplefiles/vgl/example.rpf:: PASSED
 tests/examplefiles/vhdl/test.vhdl:: PASSED
 tests/examplefiles/vim/phpcomplete.vim:: PASSED
 tests/examplefiles/vim/vimrc:: PASSED
+tests/examplefiles/visualprolog/hanoi.pro:: PASSED
+tests/examplefiles/visualprolog/test.pro:: PASSED
+tests/examplefiles/visualprologgrammar/grammarDef.vipgrm:: PASSED
+tests/examplefiles/visualprologgrammar/test.vipgrm:: PASSED
+tests/examplefiles/vyper/test.txt:: PASSED
 tests/examplefiles/wat/fib.wat:: PASSED
 tests/examplefiles/wdiff/wdiff_example1.wdiff:: PASSED
 tests/examplefiles/wdiff/wdiff_example3.wdiff:: PASSED
@@ -813,6 +823,12 @@ tests/snippets/json/test_round_trip.txt:: PASSED
 tests/snippets/json/test_strings.txt:: PASSED
 tests/snippets/json/test_whitespace.txt:: PASSED
 tests/snippets/jsonld/test_json_ld.txt:: PASSED
+tests/snippets/jsx/test_aria_attribute.txt:: PASSED
+tests/snippets/jsx/test_arrow_function_attribute.txt:: PASSED
+tests/snippets/jsx/test_fragment.txt:: PASSED
+tests/snippets/jsx/test_multiple_attributes.txt:: PASSED
+tests/snippets/jsx/test_object_attribute.txt:: PASSED
+tests/snippets/jsx/test_short_syntax.txt:: PASSED
 tests/snippets/julia-repl/test_repl.txt:: PASSED
 tests/snippets/julia/test_keywords.txt:: PASSED
 tests/snippets/julia/test_macros.txt:: PASSED
@@ -831,6 +847,7 @@ tests/snippets/kotlin/test_can_cope_with_generics.txt:: PASSED
 tests/snippets/kotlin/test_modifier_keyword.txt:: PASSED
 tests/snippets/kotlin/test_should_cope_with_multiline_comments.txt:: PASSED
 tests/snippets/kotlin/test_string_interpolation.txt:: PASSED
+tests/snippets/kusto/test_kusto.txt:: PASSED
 tests/snippets/less/test_single_line_comments.txt:: PASSED
 tests/snippets/markdown/test_code.txt:: PASSED
 tests/snippets/markdown/test_headings.txt:: PASSED
@@ -887,6 +904,16 @@ tests/snippets/mips/deprecated_substrings.txt:: PASSED
 tests/snippets/mips/keyword_substrings.txt:: PASSED
 tests/snippets/mips/variable_substrings.txt:: PASSED
 tests/snippets/nasm/checkid.txt:: PASSED
+tests/snippets/nix/basic_values.txt:: PASSED
+tests/snippets/nix/built_in.txt:: PASSED
+tests/snippets/nix/comments.txt:: PASSED
+tests/snippets/nix/compound_values.txt:: PASSED
+tests/snippets/nix/computed_property_names.txt:: PASSED
+tests/snippets/nix/control_structures.txt:: PASSED
+tests/snippets/nix/floats.txt:: PASSED
+tests/snippets/nix/functions.txt:: PASSED
+tests/snippets/nix/operators.txt:: PASSED
+tests/snippets/nix/string_escape.txt:: PASSED
 tests/snippets/objectivec/test_literal_number_bool.txt:: PASSED
 tests/snippets/objectivec/test_literal_number_bool_expression.txt:: PASSED
 tests/snippets/objectivec/test_literal_number_expression.txt:: PASSED
@@ -941,6 +968,10 @@ tests/snippets/properties/test_just_key.txt:: PASSED
 tests/snippets/properties/test_just_key_with_space.txt:: PASSED
 tests/snippets/properties/test_leading_whitespace_comments.txt:: PASSED
 tests/snippets/properties/test_space_delimited_kv_pair.txt:: PASSED
+tests/snippets/prql/filename.txt:: PASSED
+tests/snippets/prql/fstring.txt:: PASSED
+tests/snippets/prql/rstring.txt:: PASSED
+tests/snippets/prql/sstring.txt:: PASSED
 tests/snippets/ptx/test_ptx_snippet.txt:: PASSED
 tests/snippets/pwsh-session/test_continuation.txt:: PASSED
 tests/snippets/pycon/broken_tb.txt:: PASSED
@@ -1100,6 +1131,14 @@ tests/snippets/terraform/test_types.txt:: PASSED
 tests/snippets/terraform/test_variable_declaration.txt:: PASSED
 tests/snippets/terraform/test_variable_read.txt:: PASSED
 tests/snippets/thingsdb/basic.txt:: PASSED
+tests/snippets/toml/bool-comment.txt:: PASSED
+tests/snippets/toml/comment-section-header.txt:: PASSED
+tests/snippets/toml/multiline-string-comment.txt:: PASSED
+tests/snippets/toml/number-keys.txt:: PASSED
+tests/snippets/toml/section-header-whitespace.txt:: PASSED
+tests/snippets/toml/string-escapes.txt:: PASSED
+tests/snippets/toml/strings-eager.txt:: PASSED
+tests/snippets/toml/table-header-string.txt:: PASSED
 tests/snippets/turtle/test_prefixed_name_starting_with_number.txt:: PASSED
 tests/snippets/typescript/test_function_definition.txt:: PASSED
 tests/snippets/unixconfig/etc_group.txt:: PASSED
@@ -1124,6 +1163,7 @@ tests/snippets/vbscript/test_invalid_character.txt:: PASSED
 tests/snippets/vbscript/test_names.txt:: PASSED
 tests/snippets/vbscript/test_reject_almost_float.txt:: PASSED
 tests/snippets/vbscript/test_unterminated_string.txt:: PASSED
+tests/snippets/vyper/test.txt:: PASSED
 tests/snippets/wat/test_align_and_offset_accept_hexadecimal_numbers.txt:: PASSED
 tests/snippets/wat/test_comment_with_open_paren.txt:: PASSED
 tests/snippets/wat/test_comment_with_semicolon.txt:: PASSED
@@ -1477,6 +1517,7 @@ tests/test_basic_api.py::test_lexer_classes[JsonLdLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[JsonLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[JsonnetLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[JspLexer] PASSED
+tests/test_basic_api.py::test_lexer_classes[JsxLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[JuliaConsoleLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[JuliaLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[JuttleLexer] PASSED
@@ -1487,13 +1528,16 @@ tests/test_basic_api.py::test_lexer_classes[KernelLogLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[KokaLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[KotlinLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[KuinLexer] PASSED
+tests/test_basic_api.py::test_lexer_classes[KustoLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[LSLLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[LassoCssLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[LassoHtmlLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[LassoJavascriptLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[LassoLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[LassoXmlLexer] PASSED
-tests/test_basic_api.py::test_lexer_classes[LeanLexer] PASSED
+tests/test_basic_api.py::test_lexer_classes[LdaprcLexer] PASSED
+tests/test_basic_api.py::test_lexer_classes[LdifLexer] PASSED
+tests/test_basic_api.py::test_lexer_classes[Lean3Lexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[LessCssLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[LighttpdConfLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[LilyPondLexer] PASSED
@@ -1615,6 +1659,7 @@ tests/test_basic_api.py::test_lexer_classes[PrologLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[PromQLLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[PropertiesLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[ProtoBufLexer] PASSED
+tests/test_basic_api.py::test_lexer_classes[PrqlLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[PsyshConsoleLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[PtxLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[PugLexer] PASSED
@@ -1767,6 +1812,9 @@ tests/test_basic_api.py::test_lexer_classes[VerifpalLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[VerilogLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[VhdlLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[VimLexer] PASSED
+tests/test_basic_api.py::test_lexer_classes[VisualPrologGrammarLexer] PASSED
+tests/test_basic_api.py::test_lexer_classes[VisualPrologLexer] PASSED
+tests/test_basic_api.py::test_lexer_classes[VyperLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[WDiffLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[WatLexer] PASSED
 tests/test_basic_api.py::test_lexer_classes[WebIDLLexer] PASSED
@@ -2044,6 +2092,7 @@ tests/test_basic_api.py::test_lexer_instantiate_all[JsonLdLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[JsonLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[JsonnetLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[JspLexer] PASSED
+tests/test_basic_api.py::test_lexer_instantiate_all[JsxLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[JuliaConsoleLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[JuliaLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[JuttleLexer] PASSED
@@ -2054,13 +2103,16 @@ tests/test_basic_api.py::test_lexer_instantiate_all[KernelLogLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[KokaLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[KotlinLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[KuinLexer] PASSED
+tests/test_basic_api.py::test_lexer_instantiate_all[KustoLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[LSLLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[LassoCssLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[LassoHtmlLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[LassoJavascriptLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[LassoLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[LassoXmlLexer] PASSED
-tests/test_basic_api.py::test_lexer_instantiate_all[LeanLexer] PASSED
+tests/test_basic_api.py::test_lexer_instantiate_all[LdaprcLexer] PASSED
+tests/test_basic_api.py::test_lexer_instantiate_all[LdifLexer] PASSED
+tests/test_basic_api.py::test_lexer_instantiate_all[Lean3Lexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[LessCssLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[LighttpdConfLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[LilyPondLexer] PASSED
@@ -2182,6 +2234,7 @@ tests/test_basic_api.py::test_lexer_instantiate_all[PrologLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[PromQLLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[PropertiesLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[ProtoBufLexer] PASSED
+tests/test_basic_api.py::test_lexer_instantiate_all[PrqlLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[PsyshConsoleLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[PtxLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[PugLexer] PASSED
@@ -2334,6 +2387,9 @@ tests/test_basic_api.py::test_lexer_instantiate_all[VerifpalLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[VerilogLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[VhdlLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[VimLexer] PASSED
+tests/test_basic_api.py::test_lexer_instantiate_all[VisualPrologGrammarLexer] PASSED
+tests/test_basic_api.py::test_lexer_instantiate_all[VisualPrologLexer] PASSED
+tests/test_basic_api.py::test_lexer_instantiate_all[VyperLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[WDiffLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[WatLexer] PASSED
 tests/test_basic_api.py::test_lexer_instantiate_all[WebIDLLexer] PASSED
@@ -2611,6 +2667,7 @@ tests/test_basic_api.py::test_lexer_options[JsonLdLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[JsonLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[JsonnetLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[JspLexer] PASSED
+tests/test_basic_api.py::test_lexer_options[JsxLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[JuliaConsoleLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[JuliaLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[JuttleLexer] PASSED
@@ -2621,13 +2678,16 @@ tests/test_basic_api.py::test_lexer_options[KernelLogLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[KokaLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[KotlinLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[KuinLexer] PASSED
+tests/test_basic_api.py::test_lexer_options[KustoLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[LSLLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[LassoCssLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[LassoHtmlLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[LassoJavascriptLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[LassoLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[LassoXmlLexer] PASSED
-tests/test_basic_api.py::test_lexer_options[LeanLexer] PASSED
+tests/test_basic_api.py::test_lexer_options[LdaprcLexer] PASSED
+tests/test_basic_api.py::test_lexer_options[LdifLexer] PASSED
+tests/test_basic_api.py::test_lexer_options[Lean3Lexer] PASSED
 tests/test_basic_api.py::test_lexer_options[LessCssLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[LighttpdConfLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[LilyPondLexer] PASSED
@@ -2749,6 +2809,7 @@ tests/test_basic_api.py::test_lexer_options[PrologLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[PromQLLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[PropertiesLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[ProtoBufLexer] PASSED
+tests/test_basic_api.py::test_lexer_options[PrqlLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[PsyshConsoleLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[PtxLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[PugLexer] PASSED
@@ -2901,6 +2962,9 @@ tests/test_basic_api.py::test_lexer_options[VerifpalLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[VerilogLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[VhdlLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[VimLexer] PASSED
+tests/test_basic_api.py::test_lexer_options[VisualPrologGrammarLexer] PASSED
+tests/test_basic_api.py::test_lexer_options[VisualPrologLexer] PASSED
+tests/test_basic_api.py::test_lexer_options[VyperLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[WDiffLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[WatLexer] PASSED
 tests/test_basic_api.py::test_lexer_options[WebIDLLexer] PASSED
@@ -3178,6 +3242,7 @@ tests/test_basic_api.py::test_random_input[JsonLdLexer] PASSED
 tests/test_basic_api.py::test_random_input[JsonLexer] PASSED
 tests/test_basic_api.py::test_random_input[JsonnetLexer] PASSED
 tests/test_basic_api.py::test_random_input[JspLexer] PASSED
+tests/test_basic_api.py::test_random_input[JsxLexer] PASSED
 tests/test_basic_api.py::test_random_input[JuliaConsoleLexer] PASSED
 tests/test_basic_api.py::test_random_input[JuliaLexer] PASSED
 tests/test_basic_api.py::test_random_input[JuttleLexer] PASSED
@@ -3188,13 +3253,16 @@ tests/test_basic_api.py::test_random_input[KernelLogLexer] PASSED
 tests/test_basic_api.py::test_random_input[KokaLexer] PASSED
 tests/test_basic_api.py::test_random_input[KotlinLexer] PASSED
 tests/test_basic_api.py::test_random_input[KuinLexer] PASSED
+tests/test_basic_api.py::test_random_input[KustoLexer] PASSED
 tests/test_basic_api.py::test_random_input[LSLLexer] PASSED
 tests/test_basic_api.py::test_random_input[LassoCssLexer] PASSED
 tests/test_basic_api.py::test_random_input[LassoHtmlLexer] PASSED
 tests/test_basic_api.py::test_random_input[LassoJavascriptLexer] PASSED
 tests/test_basic_api.py::test_random_input[LassoLexer] PASSED
 tests/test_basic_api.py::test_random_input[LassoXmlLexer] PASSED
-tests/test_basic_api.py::test_random_input[LeanLexer] PASSED
+tests/test_basic_api.py::test_random_input[LdaprcLexer] PASSED
+tests/test_basic_api.py::test_random_input[LdifLexer] PASSED
+tests/test_basic_api.py::test_random_input[Lean3Lexer] PASSED
 tests/test_basic_api.py::test_random_input[LessCssLexer] PASSED
 tests/test_basic_api.py::test_random_input[LighttpdConfLexer] PASSED
 tests/test_basic_api.py::test_random_input[LilyPondLexer] PASSED
@@ -3316,6 +3384,7 @@ tests/test_basic_api.py::test_random_input[PrologLexer] PASSED
 tests/test_basic_api.py::test_random_input[PromQLLexer] PASSED
 tests/test_basic_api.py::test_random_input[PropertiesLexer] PASSED
 tests/test_basic_api.py::test_random_input[ProtoBufLexer] PASSED
+tests/test_basic_api.py::test_random_input[PrqlLexer] PASSED
 tests/test_basic_api.py::test_random_input[PsyshConsoleLexer] PASSED
 tests/test_basic_api.py::test_random_input[PtxLexer] PASSED
 tests/test_basic_api.py::test_random_input[PugLexer] PASSED
@@ -3468,6 +3537,9 @@ tests/test_basic_api.py::test_random_input[VerifpalLexer] PASSED
 tests/test_basic_api.py::test_random_input[VerilogLexer] PASSED
 tests/test_basic_api.py::test_random_input[VhdlLexer] PASSED
 tests/test_basic_api.py::test_random_input[VimLexer] PASSED
+tests/test_basic_api.py::test_random_input[VisualPrologGrammarLexer] PASSED
+tests/test_basic_api.py::test_random_input[VisualPrologLexer] PASSED
+tests/test_basic_api.py::test_random_input[VyperLexer] PASSED
 tests/test_basic_api.py::test_random_input[WDiffLexer] PASSED
 tests/test_basic_api.py::test_random_input[WatLexer] PASSED
 tests/test_basic_api.py::test_random_input[WebIDLLexer] PASSED
@@ -4162,5 +4234,6 @@ tests/test_words.py::test_basic PASSED
 tests/test_words.py::test_bracket_escape PASSED
 tests/test_words.py::test_special_characters PASSED
 
-
-======== 4151 passed, 4 skipped ========
+======== 4223 passed, 4 skipped ========
+  py$(PYV): OK
+  congratulations :)
