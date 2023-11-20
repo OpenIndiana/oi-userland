@@ -19,18 +19,49 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyNUTClient
-HUMAN_VERSION =			2.8.1
+HUMAN_VERSION =			2.8.1.post1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PyNUTClient - Python client bindings for NUT
 COMPONENT_PROJECT_URL =		https://github.com/networkupstools/nut/tree/master/scripts/python/module
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ef/62/f8d1611d585dc38b7c13419ad4e64ef26a9443866f69b432f130b607b0a1/PyNUTClient-2.8.1.tar.gz
+	https://files.pythonhosted.org/packages/e1/2e/b78b0e65811b9b12a151074805da63199522d34514d70ffa72f5df5e4c3b/PyNUTClient-2.8.1.post1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:45b5063e676c6db05b737839a3a50ea2538a4dde8e5e53a47738e08bf3fb702c
+	sha256:f7b1c646950951fed8a0725d962c4324c2429c3f5f5b0d59762778c6a2dddd79
 COMPONENT_LICENSE =		GPL-3.0-only
-
-TEST_STYLE = setup.py
+COMPONENT_LICENSE_FILE =	LICENSE-GPL3
 
 include $(WS_MAKE_RULES)/common.mk
+
+#
+# To run tests you need:
+#
+# 1) to have this in /etc/nut/ups.conf (see PyNUTClient/test_nutclient.py):
+#
+#	[dummy]
+#		driver = dummy-ups
+#		desc = "Test device"
+#		port = /usr/share/nut/etc-samples/evolution500.seq.dummy-ups.sample
+#
+# 2) the svc:/system/power/nut-server:default service running:
+#
+# 	svcadm enable svc:/system/power/nut-server:default
+#
+# 3) start dummy-ups:
+#
+# 	/usr/lib/nut/bin/dummy-ups -a dummy
+
+# Remove colors from test output
+COMPONENT_TEST_TRANSFORMS += "-e 's/\x1b\[[0-9;]*m//g'"
+
+# Needed for:
+# 	/etc/nut/ups.conf
+# 	svc:/system/power/nut-server:default
+TEST_REQUIRED_PACKAGES += system/management/nut/server
+
+# Needed for:
+# 	/usr/lib/nut/bin/dummy-ups
+# 	/usr/share/nut/etc-samples/evolution500.seq.dummy-ups.sample
+TEST_REQUIRED_PACKAGES += system/management/nut/drivers/software
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

@@ -1,44 +1,82 @@
-running test
-WARNING: Testing via this command is deprecated and will be removed in a future version. Users looking for a generic test entry point independent of test runner are encouraged to use tox.
-$(PYTHON_DIR)/vendor-packages/setuptools/command/test.py:193: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
-!!
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python PyNUTClient/test_nutclient.py
+PyNUTClient test...
+[DEBUG] Class initialization...
+[DEBUG]  -> Host  = 127.0.0.1 (port 3493)
+[DEBUG]  -> Login = 'None' / 'None'
+[DEBUG] Connecting to host
+--------------------------------------------------------------------------------
+Testing 'GetUPSList' :
+[DEBUG] GetUPSList from server
+{b'dummy': b'Test device'}
 
-        ********************************************************************************
-        Requirements should be satisfied by a PEP 517 installer.
-        If you are using pip, you can try `pip install --use-pep517`.
-        ********************************************************************************
+--------------------------------------------------------------------------------
+Testing 'GetUPSVars' for 'dummy' (should be registered in upsd.conf) :
+[DEBUG] GetUPSVars called...
+{b'battery.charge': b'90', b'battery.charge.low': b'30', b'battery.runtime': b'3690', b'battery.voltage': b'230.0', b'device.mfr': b'MGE UPS SYSTEMS', b'device.model': b'Pulsar Evolution 500', b'device.serial': b'AV2G3300L', b'device.type': b'ups', b'driver.debug': b'0', b'driver.flag.allow_killpower': b'0', b'driver.name': b'dummy-ups', b'driver.parameter.mode': b'dummy', b'driver.parameter.pollinterval': b'2', b'driver.parameter.port': b'/usr/share/nut/etc-samples/evolution500.seq.dummy-ups.sample', b'driver.parameter.synchronous': b'auto', b'driver.state': b'quiet', b'driver.version': b'2.8.1', b'driver.version.internal': b'0.18', b'input.frequency': b'49.0', b'input.transfer.boost.low': b'184.0', b'input.transfer.high': b'294.0', b'input.transfer.low': b'160.0', b'input.transfer.trim.high': b'265.0', b'input.voltage': b'230.0', b'outlet.1.autoswitch.charge.low': b'0', b'outlet.1.delay.shutdown': b'-1', b'outlet.1.delay.start': b'-1', b'outlet.1.desc': b'PowerShare Outlet 1', b'outlet.1.id': b'1', b'outlet.1.switch': b'1', b'outlet.1.switchable': b'1', b'outlet.2.autoswitch.charge.low': b'0', b'outlet.2.delay.shutdown': b'-1', b'outlet.2.delay.start': b'-1', b'outlet.2.desc': b'PowerShare Outlet 2', b'outlet.2.id': b'2', b'outlet.2.switch': b'1', b'outlet.2.switchable': b'1', b'outlet.desc': b'Main Outlet', b'outlet.id': b'0', b'outlet.switchable': b'0', b'output.current': b'0.00', b'output.frequency': b'49.0', b'output.voltage': b'230.0', b'output.voltage.nominal': b'230.0', b'ups.delay.shutdown': b'-1', b'ups.delay.start': b'-10', b'ups.load': b'10', b'ups.mfr': b'MGE UPS SYSTEMS', b'ups.model': b'Pulsar Evolution 500', b'ups.power.nominal': b'500', b'ups.serial': b'AV2G3300L', b'ups.status': b'OL CHRG', b'ups.test.interval': b'604800', b'ups.test.result': b'Done and passed'}
 
-!!
-  ir_d = dist.fetch_build_eggs(dist.install_requires)
-$(PYTHON_DIR)/vendor-packages/setuptools/command/test.py:194: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
-!!
+--------------------------------------------------------------------------------
+Testing 'CheckUPSAvailable' :
+[DEBUG] CheckUPSAvailable called...
+True
 
-        ********************************************************************************
-        Requirements should be satisfied by a PEP 517 installer.
-        If you are using pip, you can try `pip install --use-pep517`.
-        ********************************************************************************
+--------------------------------------------------------------------------------
+Testing 'GetUPSCommands' :
+[DEBUG] GetUPSCommands called...
+{b'driver.killpower': b'Description unavailable', b'driver.reload': b'Description unavailable', b'driver.reload-or-error': b'Description unavailable', b'driver.reload-or-exit': b'Description unavailable', b'load.off': b'Description unavailable'}
 
-!!
-  tr_d = dist.fetch_build_eggs(dist.tests_require or [])
-$(PYTHON_DIR)/vendor-packages/setuptools/command/test.py:195: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
-!!
+--------------------------------------------------------------------------------
+Testing 'GetRWVars' :
+[DEBUG] GetUPSVars from 'dummy'...
+{b'battery.charge': b'90', b'battery.charge.low': b'30', b'battery.runtime': b'3690', b'battery.voltage': b'230.0', b'driver.debug': b'0', b'driver.flag.allow_killpower': b'0', b'input.frequency': b'49.0', b'input.transfer.boost.low': b'184.0', b'input.transfer.high': b'294.0', b'input.transfer.low': b'160.0', b'input.transfer.trim.high': b'265.0', b'input.voltage': b'230.0', b'outlet.1.autoswitch.charge.low': b'0', b'outlet.1.delay.shutdown': b'-1', b'outlet.1.delay.start': b'-1', b'outlet.1.desc': b'PowerShare Outlet 1', b'outlet.1.id': b'1', b'outlet.1.switch': b'1', b'outlet.1.switchable': b'1', b'outlet.2.autoswitch.charge.low': b'0', b'outlet.2.delay.shutdown': b'-1', b'outlet.2.delay.start': b'-1', b'outlet.2.desc': b'PowerShare Outlet 2', b'outlet.2.id': b'2', b'outlet.2.switch': b'1', b'outlet.2.switchable': b'1', b'outlet.desc': b'Main Outlet', b'outlet.id': b'0', b'outlet.switchable': b'0', b'output.current': b'0.00', b'output.frequency': b'49.0', b'output.voltage': b'230.0', b'output.voltage.nominal': b'230.0', b'ups.delay.shutdown': b'-1', b'ups.delay.start': b'-10', b'ups.load': b'10', b'ups.mfr': b'MGE UPS SYSTEMS', b'ups.model': b'Pulsar Evolution 500', b'ups.power.nominal': b'500', b'ups.serial': b'AV2G3300L', b'ups.status': b'OL CHRG', b'ups.test.interval': b'604800', b'ups.test.result': b'Done and passed'}
 
-        ********************************************************************************
-        Requirements should be satisfied by a PEP 517 installer.
-        If you are using pip, you can try `pip install --use-pep517`.
-        ********************************************************************************
+--------------------------------------------------------------------------------
+Testing 'RunUPSCommand' (Test front panel) :
+[DEBUG] RunUPSCommand called...
+EXCEPTION: ERR USERNAME-REQUIRED
+(anticipated error: no credentials were provided)
 
-!!
-  er_d = dist.fetch_build_eggs(
-running egg_info
-writing PyNUTClient.egg-info/PKG-INFO
-writing dependency_links to PyNUTClient.egg-info/dependency_links.txt
-writing top-level names to PyNUTClient.egg-info/top_level.txt
-reading manifest file 'PyNUTClient.egg-info/SOURCES.txt'
-writing manifest file 'PyNUTClient.egg-info/SOURCES.txt'
-running build_ext
+--------------------------------------------------------------------------------
+Testing 'SetUPSVar' (set ups.id to test):
+EXCEPTION: ERR USERNAME-REQUIRED
+(anticipated error: no credentials were provided)
 
-----------------------------------------------------------------------
-Ran 0 tests
+--------------------------------------------------------------------------------
+Testing 'ListClients' for 'dummy' (should be registered in upsd.conf) before test client is connected :
+[DEBUG] ListClients from server: dummy
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+{}
 
-OK
+--------------------------------------------------------------------------------
+Testing 'ListClients' for missing device (should raise an exception) :
+[DEBUG] ListClients from server: MissingBogusDummy
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+[DEBUG] ListClients: MissingBogusDummy is not a valid UPS
+EXCEPTION: ERR UNKNOWN-UPS
+(anticipated error: bogus device name was tested)
+
+--------------------------------------------------------------------------------
+Testing 'DeviceLogin' for 'dummy' (should be registered in upsd.conf; current credentials should have an upsmon role in upsd.users) :
+[DEBUG] DeviceLogin called...
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+EXCEPTION: ERR USERNAME-REQUIRED
+(anticipated error: no credentials were provided)
+
+--------------------------------------------------------------------------------
+Testing 'ListClients' for None (should list all devices and sessions to them, if any -- e.g. one established above) :
+[DEBUG] ListClients from server: None
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+[DEBUG] Recurse ListClients() because it did not specify one UPS to query
+[DEBUG] ListClients from server: dummy
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+{}
+
+--------------------------------------------------------------------------------
+Testing 'PyNUT' instance teardown (end of test script)
+  py$(PYV): OK
+  congratulations :)
