@@ -27,11 +27,11 @@ ESR =
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # CANDIDATE_BETA is the beta version found in the candidates directory.
 # Do not define either for final release build.
-# CANDIDATE_BUILD=1
+# CANDIDATE_BUILD=2
 # CANDIDATE_BETA=9
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	119.0.1
+COMPONENT_VERSION =	120.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,7 +41,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ES
 else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
-COMPONENT_ARCHIVE_HASH= sha256:48cc43cab060e97467e9a17617f511a177e7b91b7e77e408425351a2cbb07f70
+COMPONENT_ARCHIVE_HASH= sha256:e710058701074eda53ca9f5fd52c57254858a027984f735bdcd58d6906f6b574
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -262,9 +262,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/gcc-10-compat-links
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
