@@ -1,0 +1,30 @@
+--- librsvg-2.57.0/Makefile.am	2023-09-13 19:29:37.000000000 +0200
++++ librsvg-2.57.0/Makefile.am.new	2023-11-14 20:23:06.323182970 +0100
+@@ -226,11 +226,11 @@
+ # With the following, we shrink the final .so size; see issue #965.
+ #
+ # This will no longer be needed when we switch to cargo-cbuild, which does this automatically.
+-if OS_DARWIN
+-gc_linked_library_args="-Wl,-dead_strip"
+-else
+-gc_linked_library_args="-Wl,--gc-sections"
+-endif
++#if OS_DARWIN
++#gc_linked_library_args="-Wl,-dead_strip"
++#else
++#gc_linked_library_args="-Wl,--gc-sections"
++#endif
+ 
+ librsvg_@RSVG_API_MAJOR_VERSION@_la_LDFLAGS =	\
+ 	$(BSYMBOLIC_LDFLAG)			\
+--- librsvg-2.57.0/Makefile.in	2023-09-13 20:06:35.000000000 +0200
++++ librsvg-2.57.0/Makefile.in.new	2023-11-14 20:24:29.212161377 +0100
+@@ -664,7 +664,7 @@
+ RUST_LIB = $(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/liblibrsvg_c.a
+ librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = $(AM_CPPFLAGS)
+ librsvg_@RSVG_API_MAJOR_VERSION@_la_CFLAGS = $(AM_CFLAGS)
+-@OS_DARWIN_FALSE@gc_linked_library_args = "-Wl,--gc-sections"
++#@OS_DARWIN_FALSE@gc_linked_library_args = "-Wl,--gc-sections"
+ 
+ # This is not strictly needed, but since we are telling Cargo to build a staticlib, it puts in
+ # all of Rust's standard library and code from dependencies even when it is not needed.
