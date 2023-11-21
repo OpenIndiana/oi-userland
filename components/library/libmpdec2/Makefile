@@ -13,17 +13,16 @@
 # Copyright 2018 Jason Martin
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpdecimal
-COMPONENT_VERSION= 2.4.2
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.5.1
 COMPONENT_SUMMARY= Complete implementation of the General Decimal Arithmetic Specification
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:83c628b90f009470981cf084c5418329c88b19835d8af3691b930afccb7d79c7
+COMPONENT_ARCHIVE_HASH= sha256:9f9cd4c041f99b5c49ffb7b59d9f12d95b683d88585608aa56a6307667b2b21f
 COMPONENT_ARCHIVE_URL= https://www.bytereef.org/software/mpdecimal/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://www.bytereef.org/mpdecimal/
 COMPONENT_FMRI= library/math/libmpdec2
@@ -35,13 +34,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_POST_UNPACK_ACTION= ( \
-    $(MV) $(SOURCE_DIR)/examples/ $(SOURCE_DIR)/doc/ )
-
 COMPONENT_PRE_CONFIGURE_ACTION= ( cp -a $(SOURCE_DIR)/* $(@D) )
 
 COMPONENT_TEST_TRANSFORMS += '-e "/PASS/p" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
