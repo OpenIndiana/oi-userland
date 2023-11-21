@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	nut
 COMPONENT_VERSION=	2.8.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Network UPS Tools (NUT)
 COMPONENT_DESCRIPTION=	Network UPS Tools (NUT) is a versatile power-device monitoring toolkit to facilitate safe shutdowns
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,7 +42,7 @@ CFLAGS   += $(CFLAGS.$(BITS))
 
 # Drop *.8 man pages (we patch to regenerate them into *.1m - see patches/07-man.patch)
 # Fix up upsmon.txt encoding that might have gone wrong into the 2.8.1 release tarball
-COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh && cd docs/man && rm -f *.8 && { dos2unix upsmon.txt > upsmon.txt.tmp && mv -f upsmon.txt.tmp upsmon.txt; }  )
+COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && PATH="$(PATH)" ./autogen.sh && cd docs/man && rm -f *.8 && { dos2unix upsmon.txt > upsmon.txt.tmp && mv -f upsmon.txt.tmp upsmon.txt; }  )
 
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
@@ -129,7 +129,7 @@ CONFIGURE_OPTIONS +=	--with-doc="man=yes"
 
 # NUT-Monitor GUI client
 CONFIGURE_OPTIONS +=	--with-nut-monitor=yes
-CONFIGURE_OPTIONS +=	--with-pynut=yes
+CONFIGURE_OPTIONS +=	--with-pynut=no		# we use PyNUTClient from PyPI
 CONFIGURE_OPTIONS +=	--with-python2=no
 CONFIGURE_OPTIONS +=	--with-python=python$(PYTHON_VERSION)
 
@@ -148,45 +148,19 @@ CONFIGURE_OPTIONS +=	--disable-cppcheck
 
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
-# NUT-Monitor UI has two similar implementations, for py2gtk and py3qt5.
-# The PyNUT.py (general binding) module is written to work with both 2.x
-# and 3.x interpreters as the same source file (patched for shebang and
-# installed to different vendor/site locations several times in practice).
 # Fiddle with packaging:
 # * move man1m pages to target directory (see also patches/07-man.patch)
-# * move python stuff to vendor-packages
-# * make sure full python program name is in the shebang
-#   (and note we can not use ...\1${PYVER} because it is
-#    also numbers and SED gets confused about group \12 or so)
-# * pre-compile PYC files
-# * apply a little hack to comment away the import which
-#   confuses pkgdepend (it looks for "import" lines and
-#   disregards "try/except" around it)
 COMPONENT_POST_INSTALL_ACTION += \
     $(MKDIR) $(PROTOUSRSHAREMANDIR)/man1m \
         && $(MV) $(PROTOUSRSHAREMANDIR)/man1/*.1m $(PROTOUSRSHAREMANDIR)/man1m/ \
         || { echo "FAILED to fix up man1m" >&2 ; exit 1; } ; \
-    for PYVER in $(PYTHON_VERSIONS) ; do \
-        $(MKDIR) "$(PROTOUSRLIBDIR)/python$${PYVER}/vendor-packages" \
-            && $(MV) "$(PROTOUSRLIBDIR)/python$${PYVER}/site-packages/"* "$(PROTOUSRLIBDIR)/python$${PYVER}/vendor-packages/" \
-            && find "$(PROTOUSRLIBDIR)/python$${PYVER}/vendor-packages/" -name '*.py' | while read F ; do \
-                $(GSED) '/^\(\#\!.*\/python\)$$/ s/$$/'"$${PYVER}"'/' -i "$$F" || exit ; \
-            done \
-        && python$${PYVER} -m compileall "$(PROTOUSRLIBDIR)/python$${PYVER}/vendor-packages" || exit ; \
-        case "$${PYVER}" in \
-        2.*) python$${PYVER} -c "import pygtk;pygtk.require('2.0');import pynotify" >/dev/null || { \
-                echo "Neutering import of pynotify in NUT-Monitor-py2gtk2 for this build with python$${PYVER}" >&2 ; \
-                $(GSED) -i "$(PROTOUSRSHAREDIR)/nut/nut-monitor/app/NUT-Monitor-py2gtk2" \
-                    -e 's,\(\s\)\(import pynotify\),\1return; \#\#\#NOT_HERE_\2,' || exit ; \
-            } ; \
-        esac ; \
-    done;
 
 # Manually added dependencies:
 REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += library/augeas-tools
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pynutclient
 PYTHON_REQUIRED_PACKAGES += library/python/pyqt5
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
