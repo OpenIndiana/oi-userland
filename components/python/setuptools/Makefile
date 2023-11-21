@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			68.2.2
+HUMAN_VERSION =			69.0.1
 COMPONENT_SUMMARY =		setuptools - Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_PROJECT_URL =		https://github.com/pypa/setuptools
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ef/cc/93f7213b2ab5ed383f98ce8020e632ef256b406b8569606c3f160ed8e1c9/setuptools-68.2.2.tar.gz
+	https://files.pythonhosted.org/packages/fb/d0/d5744a7190a984ab728c7d2bd7e39bae2ff523538b233246fd34e2148566/setuptools-69.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4ac1475276d2f1c48684874089fefcd83bd7162ddaafb81fac866ba0db282a87
+	sha256:f25195d54deb649832182d6455bffba7ac3d8fe71d35185e738d2198a4310044
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,17 +35,19 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - calver (test bootstrap)
 # - chardet (test bootstrap)
 # - distlib (test bootstrap)
-# - editables (test bootstrap)
 # - importlib_metadata
 # - pluggy (test bootstrap)
 # - pytest (test bootstrap)
-# - setuptools_scm
+# - setuptools-scm
 # - tox-current-env (test bootstrap)
 # - trove-classifiers (test bootstrap)
 # - zipp
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/pypa/setuptools/issues/4050
+PYTEST_ADDOPTS += '-p no:perf'
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
