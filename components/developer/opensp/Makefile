@@ -23,10 +23,12 @@
 # Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         opensp
 COMPONENT_VERSION=      1.5.2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	The OpenJade group's SGML and XML parsing tools
 COMPONENT_PROJECT_URL=  https://openjade.sourceforge.net/
 COMPONENT_SRC=          OpenSP-$(COMPONENT_VERSION)
@@ -39,18 +41,16 @@ COMPONENT_CLASSIFICATION=	System/Text Tools
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
-USE_DEFAULT_TEST_TRANSFORMS = yes
-
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION += (cd $(@D); PATH="$(PATH)" autoreconf -fiv)
+COMPONENT_PREP_ACTION += ( cd $(@D); PATH="$(PATH)" autoreconf -fiv )
 
-CONFIGURE_OPTIONS +=	--disable-http
-CONFIGURE_OPTIONS +=	--disable-nls
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--enable-default-catalog="CATALOG:$(ETCDIR)/sgml/catalog:$(USRSHAREDIR)/sgml/CATALOG"
+CONFIGURE_OPTIONS += --disable-http
+CONFIGURE_OPTIONS += --disable-nls
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-default-catalog="CATALOG:$(ETCDIR)/sgml/catalog:$(USRSHAREDIR)/sgml/CATALOG"
 
 # Custom modifications
 COMPONENT_POST_INSTALL_ACTION += \
