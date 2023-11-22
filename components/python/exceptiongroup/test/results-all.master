@@ -1,20 +1,19 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-asyncio: mode=strict
-collecting ... collected 86 items
+collecting ... collected 89 items
 
+tests/test_apport_monkeypatching.py::test_apport_excepthook_monkeypatch_interaction SKIPPED
 tests/test_catch.py::test_async_handler PASSED
 tests/test_catch.py::test_bad_arg PASSED
 tests/test_catch.py::test_bad_handler PASSED
 tests/test_catch.py::test_bare_raise_in_handler PASSED
+tests/test_catch.py::test_bare_reraise_from_naked_exception PASSED
 tests/test_catch.py::test_catch_exceptiongroup[iterable_basegroup] PASSED
 tests/test_catch.py::test_catch_exceptiongroup[iterable_group] PASSED
 tests/test_catch.py::test_catch_exceptiongroup[naked_basegroup] PASSED
@@ -97,8 +96,9 @@ tests/test_formatting.py::test_print_exception[patched-oldstyle] PASSED
 tests/test_formatting.py::test_print_exception[unpatched-newstyle] PASSED
 tests/test_formatting.py::test_print_exception[unpatched-oldstyle] PASSED
 tests/test_formatting.py::test_works_around_httperror_bug PASSED
+tests/test_suppress.py::test_suppress_exception PASSED
 
 =========================== short test summary info ============================
-======== 82 passed, 4 skipped ========
+======== 84 passed, 5 skipped ========
   py$(PYV): OK
   congratulations :)
