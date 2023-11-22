@@ -39,12 +39,12 @@ TEST_STYLE=		none
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.71.1
+COMPONENT_VERSION=	1.72.1
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6fa90d50d1d529a75f6cc349784de57d7ec0ba2419b09bde7d335c25bd4e472e
+COMPONENT_ARCHIVE_HASH=	sha256:7f48845f6a52cdbb5d63fb0528fd5f520eb443275b55f98e328159f86568f895
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -146,8 +146,6 @@ COMPONENT_INSTALL_ENV+=	$(COMPONENT_BUILD_ENV)
 COMPONENT_INSTALL_ENV+=	CARGO_HOME=$(CARGO_HOME)
 # Set install path
 COMPONENT_INSTALL_ENV+=	DESTDIR=$(PROTO_DIR)
-
-TEST_TARGET=		$(NO_TESTS)
 
 # manually added dependencies
 REQUIRED_PACKAGES += developer/lang/rustc # previous before build version
