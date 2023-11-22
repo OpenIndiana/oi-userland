@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= desktop-cache
 COMPONENT_VERSION= 0.2.2
-COMPONENT_REVISION= 9
+COMPONENT_REVISION= 10
 COMPONENT_SUMMARY= desktop-cache is a set of SMF services used to update the various GNOME desktop caches.
 COMPONENT_SRC= desktop-cache-smf-services-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -38,5 +38,5 @@ CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
