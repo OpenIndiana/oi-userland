@@ -1,13 +1,10 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> $(PYTHON) -m pytest --cov humanize --cov tests --cov-report xml
+py$(PYV): commands[0]> $(PYTHON) -m pytest --cov humanize --cov tests --cov-report html --cov-report term --cov-report xml
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
 collecting ... collected 550 items
 
 tests/test_filesize.py::test_naturalsize[test_args0-300 Bytes] PASSED
@@ -561,13 +558,7 @@ tests/test_time.py::test_precisedelta_suppress_units[val8-microseconds-suppress8
 tests/test_time.py::test_precisedelta_suppress_units[val9-microseconds-suppress9-240 minutes, 30 seconds and 200 microseconds] PASSED
 tests/test_time.py::test_time_unit PASSED
 
-=============================== warnings summary ===============================
-tests/test_i18n.py::test_i18n
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/humanize/i18n.py:126: DeprecationWarning: Plural value must be an integer, got float
-    return get_translation().ngettext(message, plural, num)
 
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 550 passed, 1 warning ========
+======== 550 passed ========
   py$(PYV): OK
   congratulations :)
