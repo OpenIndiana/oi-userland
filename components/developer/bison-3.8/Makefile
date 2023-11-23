@@ -25,14 +25,14 @@
 # Copyright 2021, Andreas Wacknitz
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
 COMPONENT_MAJOR_VERSION=	3.8
 COMPONENT_MAJOR_VERSION_=   $(subst .,,$(COMPONENT_MAJOR_VERSION))
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).2
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	bison - A YACC Replacement
 COMPONENT_DESCRIPTION=  A general-purpose parser generator that converts an annotated context-free grammar into an LALR(1) or GLR parser for that grammar
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bison/
@@ -85,8 +85,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	' -e "/^\#/p" ' \
 	' -e "/^[\s]*[0-9][0-9]*:/p" ' \
 	' -e "/tests were/p" ' 
-
-$(INSTALL_32):	$(INSTALL_64)
 
 GENERATE_EXTRA_CMD += | \
 	$(GSED) -e 's/bison-$(shell echo $(COMPONENT_MAJOR_VERSION) | $(GSED) -e 's/\./\\./g')/bison-$$(COMPONENT_MAJOR_VERSION)/'

@@ -25,20 +25,14 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 #Add dependency on versioned package
 depend type=require fmri=developer/parser/bison-38
 
-# Drop dir files
-<transform file path=.+/info/dir -> drop>
-
 # Add links to the latest version
 link path=usr/gnu/lib/$(MACH64)/liby.so.1 target=bison-$(COMPONENT_MAJOR_VERSION)/liby.so.1 mediator=bison mediator-version=$(COMPONENT_MAJOR_VERSION)
-link path=usr/gnu/lib/liby.so.1 target=bison-$(COMPONENT_MAJOR_VERSION)/liby.so.1 mediator=bison mediator-version=$(COMPONENT_MAJOR_VERSION)
 
 # Install library files from the latest version
 file path=usr/gnu/lib/$(MACH64)/bison-$(COMPONENT_MAJOR_VERSION)/liby.so.1
-file path=usr/gnu/lib/bison-$(COMPONENT_MAJOR_VERSION)/liby.so.1
 
 # Install info files from the latest version
 file path=usr/share/info/bison.info
-file path=usr/share/info/dir
 
 # Install the locales files from the latest version
 file path=usr/share/locale/af/LC_MESSAGES/bison-gnulib.mo
