@@ -13,10 +13,12 @@
 #
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libayatana-indicator
 COMPONENT_VERSION=      0.9.4
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Ayatana Indicators shared library
 COMPONENT_PROJECT_URL=  https://github.com/AyatanaIndicators/libayatana-indicator
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,9 +32,10 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CMAKE_OPTIONS += -DENABLE_TESTS=On
+# /usr/lib/$(MACH64) needed to make dbus-daemon program available for tests
+PATH = $(PATH.illumos):/usr/lib:/usr/lib/$(MACH64)
 
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*\.[0-9]* sec/X.XX sec/" '
+CMAKE_OPTIONS += -DENABLE_TESTS=On
 
 # Manually added test dependency
 TEST_REQUIRED_PACKAGES += developer/dbus-test-runner
