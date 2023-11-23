@@ -23,6 +23,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Files in libexec should be executable
+<transform file path=usr/libexec/.+ ->default mode 0555>
+# Drop static libs
+<transform file path=.+/lib/.+\.a$ -> drop>
+
+
 file path=usr/include/libical-glib/i-cal-array.h
 file path=usr/include/libical-glib/i-cal-attach.h
 file path=usr/include/libical-glib/i-cal-comp-iter.h
