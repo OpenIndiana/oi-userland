@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libjpeg-turbo
 COMPONENT_VERSION= 3.0.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libjpeg -JPEG Turbo libraries
 COMPONENT_PROJECT_URL= https://www.libjpeg-turbo.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)

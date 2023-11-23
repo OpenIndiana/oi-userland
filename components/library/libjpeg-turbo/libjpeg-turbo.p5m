@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2023 Till Wegmueller
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,13 +23,143 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Require package with default JPEG API
-depend fmri=image/library/libjpeg8-turbo type=require
+<transform path=usr/share/man.* -> drop >
 
-# Dependency on libjpeg6 with removed docs and symlinks
-depend fmri=image/library/libjpeg6@6.0.2-2020.0.1.1 type=optional
-
-# Only shipped by libjpeg-turbo
+file path=usr/include/libjpeg6-turbo/jconfig.h
+file path=usr/include/libjpeg6-turbo/jerror.h
+file path=usr/include/libjpeg6-turbo/jmorecfg.h
+file path=usr/include/libjpeg6-turbo/jpeglib.h
+file path=usr/include/libjpeg6-turbo/turbojpeg.h
+file path=usr/include/libjpeg7-turbo/jconfig.h
+file path=usr/include/libjpeg7-turbo/jerror.h
+file path=usr/include/libjpeg7-turbo/jmorecfg.h
+file path=usr/include/libjpeg7-turbo/jpeglib.h
+file path=usr/include/libjpeg7-turbo/turbojpeg.h
+file path=usr/include/libjpeg8-turbo/jconfig.h
+file path=usr/include/libjpeg8-turbo/jerror.h
+file path=usr/include/libjpeg8-turbo/jmorecfg.h
+file path=usr/include/libjpeg8-turbo/jpeglib.h
+file path=usr/include/libjpeg8-turbo/turbojpeg.h
+file path=usr/lib/libjpeg6-turbo/bin/$(MACH64)/cjpeg
+file path=usr/lib/libjpeg6-turbo/bin/$(MACH64)/djpeg
+file path=usr/lib/libjpeg6-turbo/bin/$(MACH64)/jpegtran
+file path=usr/lib/libjpeg6-turbo/bin/$(MACH64)/rdjpgcom
+file path=usr/lib/libjpeg6-turbo/bin/$(MACH64)/tjbench
+file path=usr/lib/libjpeg6-turbo/bin/$(MACH64)/wrjpgcom
+file path=usr/lib/libjpeg6-turbo/bin/cjpeg
+file path=usr/lib/libjpeg6-turbo/bin/djpeg
+file path=usr/lib/libjpeg6-turbo/bin/jpegtran
+file path=usr/lib/libjpeg6-turbo/bin/rdjpgcom
+file path=usr/lib/libjpeg6-turbo/bin/tjbench
+file path=usr/lib/libjpeg6-turbo/bin/wrjpgcom
+file path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboConfig.cmake
+file path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboConfigVersion.cmake
+file path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboTargets-release.cmake
+file path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboTargets.cmake
+link path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/libjpeg.so target=libjpeg.so.62
+link path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/libjpeg.so.62 \
+    target=libjpeg.so.62.4.0
+file path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/libjpeg.so.62.4.0
+link path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/libturbojpeg.so \
+    target=libturbojpeg.so.0
+link path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/libturbojpeg.so.0 \
+    target=libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/pkgconfig/libjpeg.pc
+file path=usr/lib/libjpeg6-turbo/lib/$(MACH64)/pkgconfig/libturbojpeg.pc
+file path=usr/lib/libjpeg6-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboConfig.cmake
+file path=usr/lib/libjpeg6-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboConfigVersion.cmake
+file path=usr/lib/libjpeg6-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboTargets-release.cmake
+file path=usr/lib/libjpeg6-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboTargets.cmake
+link path=usr/lib/libjpeg6-turbo/lib/libjpeg.so target=libjpeg.so.62
+link path=usr/lib/libjpeg6-turbo/lib/libjpeg.so.62 target=libjpeg.so.62.4.0
+file path=usr/lib/libjpeg6-turbo/lib/libjpeg.so.62.4.0
+link path=usr/lib/libjpeg6-turbo/lib/libturbojpeg.so target=libturbojpeg.so.0
+link path=usr/lib/libjpeg6-turbo/lib/libturbojpeg.so.0 \
+    target=libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg6-turbo/lib/libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg6-turbo/lib/pkgconfig/libjpeg.pc
+file path=usr/lib/libjpeg6-turbo/lib/pkgconfig/libturbojpeg.pc
+file path=usr/lib/libjpeg7-turbo/bin/$(MACH64)/cjpeg
+file path=usr/lib/libjpeg7-turbo/bin/$(MACH64)/djpeg
+file path=usr/lib/libjpeg7-turbo/bin/$(MACH64)/jpegtran
+file path=usr/lib/libjpeg7-turbo/bin/$(MACH64)/rdjpgcom
+file path=usr/lib/libjpeg7-turbo/bin/$(MACH64)/tjbench
+file path=usr/lib/libjpeg7-turbo/bin/$(MACH64)/wrjpgcom
+file path=usr/lib/libjpeg7-turbo/bin/cjpeg
+file path=usr/lib/libjpeg7-turbo/bin/djpeg
+file path=usr/lib/libjpeg7-turbo/bin/jpegtran
+file path=usr/lib/libjpeg7-turbo/bin/rdjpgcom
+file path=usr/lib/libjpeg7-turbo/bin/tjbench
+file path=usr/lib/libjpeg7-turbo/bin/wrjpgcom
+file path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboConfig.cmake
+file path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboConfigVersion.cmake
+file path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboTargets-release.cmake
+file path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboTargets.cmake
+link path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/libjpeg.so target=libjpeg.so.7
+link path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/libjpeg.so.7 \
+    target=libjpeg.so.7.4.0
+file path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/libjpeg.so.7.4.0
+link path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/libturbojpeg.so \
+    target=libturbojpeg.so.0
+link path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/libturbojpeg.so.0 \
+    target=libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/pkgconfig/libjpeg.pc
+file path=usr/lib/libjpeg7-turbo/lib/$(MACH64)/pkgconfig/libturbojpeg.pc
+file path=usr/lib/libjpeg7-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboConfig.cmake
+file path=usr/lib/libjpeg7-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboConfigVersion.cmake
+file path=usr/lib/libjpeg7-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboTargets-release.cmake
+file path=usr/lib/libjpeg7-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboTargets.cmake
+link path=usr/lib/libjpeg7-turbo/lib/libjpeg.so target=libjpeg.so.7
+link path=usr/lib/libjpeg7-turbo/lib/libjpeg.so.7 target=libjpeg.so.7.4.0
+file path=usr/lib/libjpeg7-turbo/lib/libjpeg.so.7.4.0
+link path=usr/lib/libjpeg7-turbo/lib/libturbojpeg.so target=libturbojpeg.so.0
+link path=usr/lib/libjpeg7-turbo/lib/libturbojpeg.so.0 \
+    target=libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg7-turbo/lib/libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg7-turbo/lib/pkgconfig/libjpeg.pc
+file path=usr/lib/libjpeg7-turbo/lib/pkgconfig/libturbojpeg.pc
+file path=usr/lib/libjpeg8-turbo/bin/$(MACH64)/cjpeg
+file path=usr/lib/libjpeg8-turbo/bin/$(MACH64)/djpeg
+file path=usr/lib/libjpeg8-turbo/bin/$(MACH64)/jpegtran
+file path=usr/lib/libjpeg8-turbo/bin/$(MACH64)/rdjpgcom
+file path=usr/lib/libjpeg8-turbo/bin/$(MACH64)/tjbench
+file path=usr/lib/libjpeg8-turbo/bin/$(MACH64)/wrjpgcom
+file path=usr/lib/libjpeg8-turbo/bin/cjpeg
+file path=usr/lib/libjpeg8-turbo/bin/djpeg
+file path=usr/lib/libjpeg8-turbo/bin/jpegtran
+file path=usr/lib/libjpeg8-turbo/bin/rdjpgcom
+file path=usr/lib/libjpeg8-turbo/bin/tjbench
+file path=usr/lib/libjpeg8-turbo/bin/wrjpgcom
+file path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboConfig.cmake
+file path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboConfigVersion.cmake
+file path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboTargets-release.cmake
+file path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboTargets.cmake
+link path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/libjpeg.so target=libjpeg.so.8
+link path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/libjpeg.so.8 \
+    target=libjpeg.so.8.3.2
+file path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/libjpeg.so.8.3.2
+link path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/libturbojpeg.so \
+    target=libturbojpeg.so.0
+link path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/libturbojpeg.so.0 \
+    target=libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libjpeg.pc
+file path=usr/lib/libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libturbojpeg.pc
+file path=usr/lib/libjpeg8-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboConfig.cmake
+file path=usr/lib/libjpeg8-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboConfigVersion.cmake
+file path=usr/lib/libjpeg8-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboTargets-release.cmake
+file path=usr/lib/libjpeg8-turbo/lib/cmake/libjpeg-turbo/libjpeg-turboTargets.cmake
+link path=usr/lib/libjpeg8-turbo/lib/libjpeg.so target=libjpeg.so.8
+link path=usr/lib/libjpeg8-turbo/lib/libjpeg.so.8 target=libjpeg.so.8.3.2
+file path=usr/lib/libjpeg8-turbo/lib/libjpeg.so.8.3.2
+link path=usr/lib/libjpeg8-turbo/lib/libturbojpeg.so target=libturbojpeg.so.0
+link path=usr/lib/libjpeg8-turbo/lib/libturbojpeg.so.0 \
+    target=libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg8-turbo/lib/libturbojpeg.so.0.3.0
+file path=usr/lib/libjpeg8-turbo/lib/pkgconfig/libjpeg.pc
+file path=usr/lib/libjpeg8-turbo/lib/pkgconfig/libturbojpeg.pc
 file path=usr/share/doc/libjpeg-turbo/LICENSE.md
 file path=usr/share/doc/libjpeg-turbo/README.ijg
 file path=usr/share/doc/libjpeg-turbo/README.md
@@ -39,28 +169,8 @@ file path=usr/share/doc/libjpeg-turbo/structure.txt
 file path=usr/share/doc/libjpeg-turbo/tjexample.c
 file path=usr/share/doc/libjpeg-turbo/usage.txt
 file path=usr/share/doc/libjpeg-turbo/wizard.txt
-
-# Previously shipped by libjpeg6-ijg
 file path=usr/share/man/man1/cjpeg.1
 file path=usr/share/man/man1/djpeg.1
 file path=usr/share/man/man1/jpegtran.1
 file path=usr/share/man/man1/rdjpgcom.1
 file path=usr/share/man/man1/wrjpgcom.1
-
-# Add symlinks to default binaries
-link path=usr/bin/cjpeg target=../lib/libjpeg8-turbo/bin/$(MACH64)/cjpeg
-link path=usr/bin/djpeg target=../lib/libjpeg8-turbo/bin/$(MACH64)/djpeg
-link path=usr/bin/jpegtran target=../lib/libjpeg8-turbo/bin/$(MACH64)/jpegtran
-link path=usr/bin/rdjpgcom target=../lib/libjpeg8-turbo/bin/$(MACH64)/rdjpgcom
-link path=usr/bin/tjbench target=../lib/libjpeg8-turbo/bin/$(MACH64)/tjbench
-link path=usr/bin/wrjpgcom target=../lib/libjpeg8-turbo/bin/$(MACH64)/wrjpgcom
-
-# Add symlinks to default pkg-config files
-link path=usr/lib/pkgconfig/libjpeg.pc \
-	target=../libjpeg8-turbo/lib/pkgconfig/libjpeg.pc
-link path=usr/lib/pkgconfig/libturbojpeg.pc \
-	target=../libjpeg8-turbo/lib/pkgconfig/libturbojpeg.pc
-link path=usr/lib/$(MACH64)/pkgconfig/libjpeg.pc \
-	target=../../libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libjpeg.pc
-link path=usr/lib/$(MACH64)/pkgconfig/libturbojpeg.pc \
-	target=../../libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libturbojpeg.pc
