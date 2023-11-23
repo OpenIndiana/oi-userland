@@ -14,26 +14,36 @@
 #   $WS_TOOLS/python-integrate-project pytest-subtests
 #
 
-BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-subtests
-HUMAN_VERSION =			0.10.0
+HUMAN_VERSION =			0.11.0
 COMPONENT_SUMMARY =		pytest-subtests - unittest subTest() support and subtests fixture
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-subtests
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/10/ba/51115d999d70e1644adb38d5f7d2ab910fbc1b601b264a42ab3df9879116/pytest-subtests-0.10.0.tar.gz
+	https://files.pythonhosted.org/packages/f3/89/ba24ce1d1224e92901e1ceb2a3b45c2296cb71951f6fd50b7755e21a455f/pytest-subtests-0.11.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d9961a67c1791e8c1e32dce7a70ed1e54f3b1e641087f2094f2d37087ab7fb17
+	sha256:51865c88457545f51fb72011942f0a3c6901ee9e24cbfb6d1b9dc1348bafbe37
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/pytest-dev/pluggy/issues/457
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
+TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
