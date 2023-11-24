@@ -26,12 +26,12 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.44.1
-TARBALL_VERSION=		3440100
+COMPONENT_VERSION=      3.44.2
+TARBALL_VERSION=		3440200
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:52aa53c59ec9be4c28e2d2524676cb2938558f11c2b4c00d8b1a546000453919
+COMPONENT_ARCHIVE_HASH= sha256:73187473feb74509357e8fa6cb9fd67153b2d010d00aeb2fddb6ceeb18abaf27
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2023/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         database/sqlite-3
@@ -63,8 +63,7 @@ CFLAGS			+= -DSQLITE_ENABLE_STAT2
 CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 CFLAGS			+= -DSQLITE_ENABLE_COLUMN_METADATA
 
-CONFIGURE_OPTIONS.32	+= --disable-tcl
-CONFIGURE_OPTIONS.64	+= --with-tcl="$(USRLIBDIR64)"
+CONFIGURE_OPTIONS	+= --with-tcl="$(USRLIBDIR64)"
 CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS	+= --disable-static
 CONFIGURE_OPTIONS	+= --enable-readline
@@ -87,18 +86,17 @@ COMPONENT_INSTALL_ENV += PATH=$(PATH)
 # Install sqlite3(1) man page
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/
 
-COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TARGETS= test
 
-# remove clutter and timings from test results:
-COMPONENT_TEST_TRANSFORMS = \
-	' -e "s/[0-9]* ms//" ' \
-	' -e "s/ in [0-9]*\.[0-9]* seconds//" ' \
-	' -e "s/[0-9]* microseconds per iteration//" ' \
+COMPONENT_TEST_TRANSFORMS= \
+	' -e "s/in [0-9]*\.[0-9]* seconds//" ' \
+	' -e "s/tests on .*/tests/" ' \
 	' -n ' \
-	' -e "/^fuzzcheck/p" ' \
-	' -e "/^sessionfuzz/p" ' \
-	' -e "/^Time/p" ' \
-	' -e "/^Query/p" '
+	' -e "/errors out of/p" ' \
+	' -e "/memory allocations freed/p" ' \
+	' -e "/^Maximum memory usage:/p" ' \
+	' -e "/^Current memory usage:/p" ' \
+	' -e "/^Number of malloc/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libedit
