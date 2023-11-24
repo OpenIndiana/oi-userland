@@ -1,13 +1,10 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest test_pytest_rerunfailures.py
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 101 items
+collecting ... collected 103 items
 
 test_pytest_rerunfailures.py::test_error_when_run_with_pdb PASSED
 test_pytest_rerunfailures.py::test_execution_count_exposed PASSED
@@ -59,16 +56,19 @@ test_pytest_rerunfailures.py::test_rerun_except_flag[rerun_except_texts4-True] P
 test_pytest_rerunfailures.py::test_rerun_except_flag[rerun_except_texts5-False] PASSED
 test_pytest_rerunfailures.py::test_rerun_except_flag[rerun_except_texts6-True] PASSED
 test_pytest_rerunfailures.py::test_rerun_except_flag[rerun_except_texts7-False] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[AssertionError-None-False] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[AssertionError-ValueError-False] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[AssertionError: ERR-None-False] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[ValueError-AssertionError-True] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[ValueError-None-True] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except2-None-False] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except3-None-True] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except5-None-True] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except6-None-True] PASSED
-test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except7-None-False] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[AssertionError-None-AssertionError-False] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[AssertionError-ValueError-AssertionError-False] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[AssertionError: ERR-None-AssertionError-False] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[CustomFailure-None-AssertionError-True] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[CustomFailure-None-CustomFailure-False] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[ValueError-AssertionError-AssertionError-True] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[ValueError-None-AssertionError-True] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except2-None-AssertionError-False] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except3-None-AssertionError-True] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except5-None-AssertionError-True] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except6-None-AssertionError-True] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_flag_in_flaky_marker[marker_rerun_except7-None-AssertionError-False] PASSED
+test_pytest_rerunfailures.py::test_rerun_except_passes_setup_errors PASSED
 test_pytest_rerunfailures.py::test_rerun_fails_after_consistent_setup_failure PASSED
 test_pytest_rerunfailures.py::test_rerun_fails_after_consistent_test_failure PASSED
 test_pytest_rerunfailures.py::test_rerun_on_class_scope_fixture_with_error_with_reruns PASSED
@@ -81,7 +81,6 @@ test_pytest_rerunfailures.py::test_rerun_passes_after_temporary_test_crash PASSE
 test_pytest_rerunfailures.py::test_rerun_passes_after_temporary_test_failure PASSED
 test_pytest_rerunfailures.py::test_rerun_passes_after_temporary_test_failure_with_flaky_mark PASSED
 test_pytest_rerunfailures.py::test_rerun_report PASSED
-test_pytest_rerunfailures.py::test_rerun_with_resultslog SKIPPED (--...)
 test_pytest_rerunfailures.py::test_reruns_if_flaky_mark_is_called_with_positional_argument PASSED
 test_pytest_rerunfailures.py::test_reruns_if_flaky_mark_is_called_without_options PASSED
 test_pytest_rerunfailures.py::test_reruns_with_condition_marker[0-0] PASSED
@@ -112,12 +111,55 @@ test_pytest_rerunfailures.py::test_run_session_teardown_once_after_reruns PASSED
 test_pytest_rerunfailures.py::test_verbose PASSED
 
 =============================== warnings summary ===============================
+test_pytest_rerunfailures.py: 103 warnings
+  $(PYTHON_DIR)/vendor-packages/pytest_reporter/__init__.py:1: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    from pkg_resources import get_distribution, DistributionNotFound
+
+test_pytest_rerunfailures.py: 206 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+test_pytest_rerunfailures.py: 103 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+test_pytest_rerunfailures.py: 206 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+test_pytest_rerunfailures.py: 103 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+test_pytest_rerunfailures.py: 103 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2348: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+test_pytest_rerunfailures.py: 103 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+test_pytest_rerunfailures.py: 103 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+test_pytest_rerunfailures.py: 1545 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
 test_pytest_rerunfailures.py::test_rerun_passes_after_temporary_test_crash
   $(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:46: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
     warner(PytestBenchmarkWarning(text))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 100 passed, 1 skipped, 1 warning ========
+======== 103 passed, 2576 warnings ========
   py$(PYV): OK
   congratulations :)
