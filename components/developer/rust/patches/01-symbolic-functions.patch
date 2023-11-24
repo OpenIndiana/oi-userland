@@ -1,20 +1,6 @@
-Solaris linker does not like neither support -Bsymbolic-functions
-
---- rustc-1.66.0-src/src/llvm-project/clang/tools/clang-shlib/CMakeLists.txt	2022-10-18 14:04:00.000000000 +0000
-+++ rustc-1.66.0-src/src/llvm-project/clang/tools/clang-shlib/CMakeLists.txt.new	2022-12-29 19:31:13.466392947 +0000
-@@ -50,6 +50,6 @@
-                   ${_DEPS})
- # Optimize function calls for default visibility definitions to avoid PLT and
- # reduce dynamic relocations.
--if (NOT APPLE AND NOT MINGW)
--  target_link_options(clang-cpp PRIVATE LINKER:-Bsymbolic-functions)
--endif()
-+#if (NOT APPLE AND NOT MINGW)
-+#  target_link_options(clang-cpp PRIVATE LINKER:-Bsymbolic-functions)
-+#endif()
---- rustc-1.66.0-src/src/llvm-project/llvm/tools/llvm-shlib/CMakeLists.txt	2022-12-29 19:33:42.823009403 +0000
-+++ rustc-1.66.0-src/src/llvm-project/llvm/tools/llvm-shlib/CMakeLists.txt.new	2022-12-29 19:34:04.952911356 +0000
-@@ -50,13 +50,13 @@
+--- rustc-1.73.0-src/src/llvm-project/llvm/tools/llvm-shlib/CMakeLists.txt	2023-10-03 04:52:43.000000000 +0200
++++ rustc-1.73.0-src/src/llvm-project/llvm/tools/llvm-shlib/CMakeLists.txt.new	2023-11-24 11:02:10.507061505 +0100
+@@ -51,13 +51,13 @@
        # Solaris ld does not accept global: *; so there is no way to version *all* global symbols
        set(LIB_NAMES -Wl,--version-script,${LLVM_LIBRARY_DIR}/tools/llvm-shlib/simple_version_script.map ${LIB_NAMES})
      endif()
@@ -31,3 +17,18 @@ Solaris linker does not like neither support -Bsymbolic-functions
    elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
      set(LIB_NAMES -Wl,-all_load ${LIB_NAMES})
    endif()
+--- rustc-1.73.0-src/src/llvm-project/clang/tools/clang-shlib/CMakeLists.txt	2023-10-03 04:52:39.000000000 +0200
++++ rustc-1.73.0-src/src/llvm-project/clang/tools/clang-shlib/CMakeLists.txt.new	2023-11-24 11:04:12.544195252 +0100
+@@ -50,9 +50,9 @@
+                   ${_DEPS})
+ # Optimize function calls for default visibility definitions to avoid PLT and
+ # reduce dynamic relocations.
+-if (NOT APPLE AND NOT MINGW)
+-  target_link_options(clang-cpp PRIVATE LINKER:-Bsymbolic-functions)
+-endif()
++#if (NOT APPLE AND NOT MINGW)
++#  target_link_options(clang-cpp PRIVATE LINKER:-Bsymbolic-functions)
++#endif()
+ if (MINGW OR CYGWIN)
+   # The clang-cpp DLL is supposed to export all symbols (except for ones
+   # that are explicitly hidden). Normally, this is what happens anyway, but
