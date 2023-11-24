@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         gthumb
 # Later versions use symbolic icons
 COMPONENT_VERSION=      3.6.2
-COMPONENT_REVISION=     7
+COMPONENT_REVISION=     8
 COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -77,13 +77,9 @@ REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
-REQUIRED_PACKAGES += library/libsecret
-REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
