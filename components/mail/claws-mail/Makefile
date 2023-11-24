@@ -19,13 +19,12 @@ SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	4.1.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.2.0
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:04a73a38899ee040c67dd81f7c3a4ad0bbc8efbd3ae804e5ceb91fa8b2d8602e
+COMPONENT_ARCHIVE_HASH= sha256:446c89f27c2205277f08e776b53d9d151be013211d91e7d9da006bc95c051c60
 COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/download.php?file=releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -51,6 +50,7 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-jpilot
 CONFIGURE_OPTIONS += --disable-valgrind
 CONFIGURE_OPTIONS += --sysconfdir=/etc
+
 CONFIGURE_ENV += PATH=/usr/bin/$(MACH64):/usr/bin
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -64,7 +64,6 @@ REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/libgdata
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
