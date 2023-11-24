@@ -50,45 +50,6 @@ index c655a50..be6f1a4 100644
  constexpr size_t CeilingOnPageSize = 64 * KB;
  #elif OS(WINDOWS) || CPU(MIPS) || CPU(MIPS64) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64)
  constexpr size_t CeilingOnPageSize = 4 * KB;
-diff --git a/Source/WTF/wtf/PlatformCPU.h b/Source/WTF/wtf/PlatformCPU.h
-index 0e711de..62864ea 100644
---- a/Source/WTF/wtf/PlatformCPU.h
-+++ b/Source/WTF/wtf/PlatformCPU.h
-@@ -89,6 +89,26 @@
- #define WTF_CPU_KNOWN 1
- #endif
- 
-+/* CPU(SPARC32) - SPARC 32-bit */
-+#if defined(__sparc) && !defined(__arch64__) || defined(__sparcv8)
-+#define WTF_CPU_SPARC32 1
-+#define WTF_CPU_BIG_ENDIAN 1
-+#define WTF_CPU_KNOWN 1
-+#endif
-+
-+/* CPU(SPARC64) - SPARC 64-bit */
-+#if defined(__sparc__) && defined(__arch64__) || defined (__sparcv9)
-+#define WTF_CPU_SPARC64 1
-+#define WTF_CPU_BIG_ENDIAN 1
-+#define WTF_CPU_KNOWN 1
-+#endif
-+
-+/* CPU(SPARC) - any SPARC, true for CPU(SPARC32) and CPU(SPARC64) */
-+#if CPU(SPARC32) || CPU(SPARC64)
-+#define WTF_CPU_SPARC 1
-+#define WTF_CPU_KNOWN 1
-+#endif
-+
- /* CPU(X86) - i386 / x86 32-bit */
- #if   defined(__i386__) \
-     || defined(i386)     \
-@@ -281,7 +301,7 @@
- #define WTF_CPU_UNKNOWN 1
- #endif
- 
--#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN)
-+#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN) || CPU(SPARC)
- #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
- #endif
  
 diff --git a/Source/WTF/wtf/PlatformHave.h b/Source/WTF/wtf/PlatformHave.h
 index 41afbb4..9e5d453 100644
