@@ -19,21 +19,24 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-rerunfailures
-HUMAN_VERSION =			12.0
+HUMAN_VERSION =			13.0
 COMPONENT_SUMMARY =		pytest-rerunfailures - pytest plugin to re-run tests to eliminate flaky failures
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-rerunfailures
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/97/66/40f778791860c5234c5c677026d45c1a8708873b3dba8111de672bceac4f/pytest-rerunfailures-12.0.tar.gz
+	https://files.pythonhosted.org/packages/41/40/26684be329d127f0402144b731dea116e8bce27d0b04cd91e8e0bea4df4a/pytest-rerunfailures-13.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:784f462fa87fe9bdf781d0027d856b47a4bfe6c12af108f6bd887057a917b48e
+	sha256:e132dbe420bc476f544b96e7036edd0a69707574209b6677263c950d19b09199
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Testing fails with the following packages installed
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-black
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-mypy
+# https://github.com/pytest-dev/pluggy/issues/457
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
+TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
 # https://github.com/pytest-dev/pytest-rerunfailures/issues/218
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
 # https://github.com/pytest-dev/pytest-rerunfailures/issues/217
