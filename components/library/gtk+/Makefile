@@ -13,22 +13,19 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS = 32_and_64
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
 COMPONENT_VERSION= 2.24.33
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:ac2ac757f5942d318a311a54b0c80b5ef295f299c2a73c632f6bfb1ff49cc6da
 COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://www.gtk.org/
-
-TEST_TARGET= $(NO_TESTS)
-
-# Build fails with gcc-13
-GCC_VERSION = 10
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -43,8 +40,8 @@ COMPONENT_PREP_ACTION = \
           automake -a -f -c --gnu &&\
           autoconf )
 
-CONFIGURE_OPTIONS.32 = --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS.64 = --sysconfdir=$(ETCDIR)/$(MACH64)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+#CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/$(MACH64)
 CONFIGURE_OPTIONS += --enable-shm
 CONFIGURE_OPTIONS += --with-gdktarget=x11
 CONFIGURE_OPTIONS += --enable-explicit-deps=yes
@@ -62,6 +59,11 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 
 COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' $(PROTO_DIR)/usr/bin/gtk-builder-convert )
 
+COMPONENT_TEST_TRANSFORMS += \
+	' -e "/check in/p" ' \
+	' -e "/======/p" ' \
+	' -e "/summary/p" '
+
 # Manually added dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
@@ -74,7 +76,6 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/print/open-printing
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
