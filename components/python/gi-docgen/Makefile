@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gi-docgen
-HUMAN_VERSION =			2023.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2023.3
 COMPONENT_SUMMARY =		gi-docgen - Documentation tool for GObject-based libraries
 COMPONENT_PROJECT_URL =		https://gitlab.gnome.org/GNOME/gi-docgen
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/29/72/a319bce143e5d10677bc89b66e750c1511ec005c7a8bb098b415cc68ac68/gi-docgen-2023.1.tar.gz
+	https://files.pythonhosted.org/packages/ec/4e/7ae06ba557a1ef86abcf33c299bf955a4cf69f0b8f6268c6e97029b6329f/gi-docgen-2023.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:88adeda9cbf882569479701eada009afa5d94fa29d728653ec388c32035f7fa3
+	sha256:977616bcc0e2735bb596c71e8eb34533526680740c666e87f9dfc323acd488f0
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSES/Apache-2.0.txt
 
@@ -38,6 +37,7 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/jinja2
 PYTHON_REQUIRED_PACKAGES += library/python/markdown
 PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pygments
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
