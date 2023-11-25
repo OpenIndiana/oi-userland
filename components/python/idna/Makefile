@@ -19,13 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		idna
-HUMAN_VERSION =			3.4
+HUMAN_VERSION =			3.6
 COMPONENT_SUMMARY =		idna - Internationalized Domain Names in Applications (IDNA)
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8b/e1/43beb3d38dba6cb420cefa297822eac205a277ab43e5ba5d5c46faf96438/idna-3.4.tar.gz
+	https://files.pythonhosted.org/packages/bf/3f/ea4b9117521a1e9c50344b909be7886dd00a519552724809bb1f486986c2/idna-3.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4
+	sha256:9ecdbbd083b06798ae1e86adcbfe8ab1479cf864e4ee30fe4e46a003d12491ca
 COMPONENT_LICENSE =		BSD-3-Clause
+COMPONENT_LICENSE_FILE =	LICENSE.md
 
 TEST_STYLE = pytest
 
