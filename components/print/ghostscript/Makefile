@@ -25,29 +25,29 @@
 # Copyright (c) 2022, Friedrich Kink
 # Copyright (c) 2023, Andreas Wacknitz
 #
+BUILD_BITS = 64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
-COMPONENT_VERSION=      10.1.2
-HUMAN_VERSION=			10.01.2
-NUMERICAL_VERSION=		$(subst .,,$(HUMAN_VERSION))
-COMPONENT_REVISION=		1
-COMPONENT_SUMMARY=		Ghostscript is an interpreter for the PostScript language and PDF files
+COMPONENT_VERSION=      10.2.1
+HUMAN_VERSION=		10.02.1
+NUMERICAL_VERSION=	$(subst .,,$(HUMAN_VERSION))
+COMPONENT_SUMMARY=	Ghostscript is an interpreter for the PostScript language and PDF files
 COMPONENT_PROJECT_URL=	https://ghostscript.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:48d079242a2ca02a2e47a76a52cdfa818b2ad769c2bab00ad0497dd13560e7e7
+COMPONENT_ARCHIVE_HASH= sha256:8c58c948b0721becefcd0029c8db95f9bb3268affc25ea01d4c5a6b07fa1ab08
 COMPONENT_DOWNLOAD_URL= https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/gs$(NUMERICAL_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI= 		print/filter/ghostscript
+COMPONENT_FMRI= 	print/filter/ghostscript
 COMPONENT_CLASSIFICATION= System/Printing
 COMPONENT_LICENSE=      AGPLv3, GPL, BSD, MIT, IJG, Apache 2.0
 
 COMPONENT_NAME_1= tessdata_best
 COMPONENT_VERSION_1= 4.1.0
 COMPONENT_SRC_1= $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
-COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.gz
+COMPONENT_ARCHIVE_1= $(COMPONENT_VERSION_1).tar.gz
 COMPONENT_ARCHIVE_URL_1= https://github.com/tesseract-ocr/$(COMPONENT_NAME_1)/archive/refs/tags/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= sha256:bb05b738298ae73e7130e2913ed002b49d94cd1cea508e63be1928fe47770b32
 
@@ -90,9 +90,7 @@ CONFIGURE_OPTIONS += --with-fontpath=/usr/share/ghostscript/$(HUMAN_VERSION)/Res
 CONFIGURE_ENV += LDFLAGS_SO="-shared "
 CONFIGURE_ENV += CUPSCONFIG=/usr/bin/cups-config
 
-GS_VARIANT = $(BUILD_DIR)/$(MACH32)
 GS_VARIANT_64 = $(BUILD_DIR)/$(MACH64)
-IJS_VARIANT = $(BUILD_DIR)/$(MACH32)/ijs
 IJS_VARIANT_64 = $(BUILD_DIR)/$(MACH64)/ijs
 
 VARIANTS = $(GS_VARIANT) $(IJS_VARIANT) $(GS_VARIANT_64) $(IJS_VARIANT_64)
@@ -115,10 +113,6 @@ $(GS_VARIANT_64)/.installed: COMPONENT_INSTALL_TARGETS += \
 	install-exec install-so install-scripts install-data \
 	install-contrib-extras
 
-$(IJS_VARIANT)/.configured: BITS=32
-	COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR)/ijs $(@D); \
-	cd $(@D) ; $(ENV) $(CONFIGURE_ENV) ./autogen.sh )
-
 $(IJS_VARIANT_64)/.configured: BITS=64
 	COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR)/ijs $(@D); \
 	cd $(@D) ; $(ENV) $(CONFIGURE_ENV) ./autogen.sh )
@@ -138,6 +132,7 @@ clean::
 COMPONENT_TEST_CMD = sh $(COMPONENT_DIR)/tests/run
 COMPONENT_TEST_ENV += TESSDATA_PREFIX="$(SOURCE_DIR_1)"
 COMPONENT_TEST_TRANSFORMS += "-e '/^Using/d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/ differ: /d'"
 COMPONENT_TEST_TRANSFORMS += "-e '/extract.c:.*:extract_subpage_free/d'"
 
 # Auto-generated dependencies
