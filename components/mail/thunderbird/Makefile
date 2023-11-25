@@ -30,13 +30,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	115.4.3
+COMPONENT_VERSION =	115.5.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:bf21b245b4451f402e48fc95ff72e72b91689cdbe98ec1d0fa3fac34e9abfc09
+	 sha256:dc24886b2d2223d23141dbfb29855c0254de2603bd829d4cbc7dc4ea2ac711fa
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -47,7 +47,7 @@ COMPONENT_FMRI = mail/thunderbird
 COMPONENT_CLASSIFICATION = Applications/Internet
 COMPONENT_LICENSE = MPL v2.0
 
-RUST_VERSION = 1.71.0
+RUST_VERSION = 1.73.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
