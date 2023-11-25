@@ -15,12 +15,12 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus
 COMPONENT_VERSION=	1.12.28
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Simple IPC library based on messages
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/dbus/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
