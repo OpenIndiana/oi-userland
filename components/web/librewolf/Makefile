@@ -22,8 +22,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	librewolf
-COMPONENT_MAJOR_VERSION =	119.0.1
-COMPONENT_MINOR_VERSION =	1
+COMPONENT_MAJOR_VERSION =	120.0
+COMPONENT_MINOR_VERSION =	2
 COMPONENT_VERSION = $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 HUMAN_VERSION = $(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION)
 COMPONENT_SUMMARY=      LibreWolf Web browser
@@ -31,23 +31,23 @@ COMPONENT_PROJECT_URL =	https://librewolf.net
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME).source.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d5bfbf58a5da177aed5f2d5251b9e328e42a814d951b801aec6a5f3fece40b64
+COMPONENT_ARCHIVE_HASH= sha256:96c84da5fef980f61a0d3c53e78ea2f4be252596dda8321f16ee268a2fe1d19f
 COMPONENT_ARCHIVE_URL =	https://gitlab.com/api/v4/projects/32320088/packages/generic/librewolf-source/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/browser/librewolf
 COMPONENT_CLASSIFICATION =	Applications/Internet
 
-RUST_VERSION = 1.72.0
+RUST_VERSION= 1.73.0
 
-CONFIGURE_DEFAULT_DIRS=no
+CONFIGURE_DEFAULT_DIRS= no
 
 include $(WS_MAKE_RULES)/common.mk
 
 RUSTUP_HOME = $(BUILD_DIR)/.rust_up
 CARGO_HOME  = $(BUILD_DIR)/.cargo
 
-PATH = $(CARGO_HOME)/bin:$(PATH.gnu)
+PATH= $(CARGO_HOME)/bin:$(PATH.gnu)
 
-MOZCONFIG = $(SOURCE_DIR)/mozconfig
+MOZCONFIG= $(SOURCE_DIR)/mozconfig
 GNU_ARCH= x86_64-unknown-illumos
 
 ifdef DEBUG
@@ -192,9 +192,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/gcc-10-compat-links
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
