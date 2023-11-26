@@ -87,6 +87,7 @@ for l in "$WS_TOOLS"/licenses/* ; do
 	cat <<#EOF > "$TMPFILE"
 		dos2unix -ascii \\
 			| tr -d '\\014' \\
+			| sed -E -e 's/^[[:space:]]+\$//g' \\
 			| awk '/^#/{next}/^\$/{\$0="\n"}1' ORS=' ' \\
 			| sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d' \\
 	EOF
