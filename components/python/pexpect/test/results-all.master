@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 234 items
+collecting ... collected 257 items
 
 tests/test_FSM.py::FSMTestCase::test_run_fsm PASSED
 tests/test_ansi.py::ansiTestCase::test_decode_error PASSED
@@ -47,6 +47,9 @@ tests/test_expect.py::ExpectTestCase::test_before_after PASSED
 tests/test_expect.py::ExpectTestCase::test_before_after_exact PASSED
 tests/test_expect.py::ExpectTestCase::test_before_after_timeout PASSED
 tests/test_expect.py::ExpectTestCase::test_buffer_interface PASSED
+tests/test_expect.py::ExpectTestCase::test_coerce_expect_re_enc_ascii PASSED
+tests/test_expect.py::ExpectTestCase::test_coerce_expect_re_enc_none PASSED
+tests/test_expect.py::ExpectTestCase::test_coerce_expect_re_enc_utf8 PASSED
 tests/test_expect.py::ExpectTestCase::test_expect PASSED
 tests/test_expect.py::ExpectTestCase::test_expect_basic PASSED
 tests/test_expect.py::ExpectTestCase::test_expect_echo PASSED
@@ -60,6 +63,8 @@ tests/test_expect.py::ExpectTestCase::test_expect_index PASSED
 tests/test_expect.py::ExpectTestCase::test_expect_index_exact PASSED
 tests/test_expect.py::ExpectTestCase::test_expect_order PASSED
 tests/test_expect.py::ExpectTestCase::test_expect_order_exact PASSED
+tests/test_expect.py::ExpectTestCase::test_expect_regex_enc_none PASSED
+tests/test_expect.py::ExpectTestCase::test_expect_regex_enc_utf8 PASSED
 tests/test_expect.py::ExpectTestCase::test_expect_setecho_off SKIPPED
 tests/test_expect.py::ExpectTestCase::test_expect_setecho_off_exact SKIPPED
 tests/test_expect.py::ExpectTestCase::test_expect_timeout PASSED
@@ -149,6 +154,9 @@ tests/test_pxssh.py::PxsshTestCase::test_failed_custom_ssh_cmd PASSED
 tests/test_pxssh.py::PxsshTestCase::test_failed_custom_ssh_cmd_debug PASSED
 tests/test_pxssh.py::PxsshTestCase::test_failed_set_unique_prompt PASSED
 tests/test_pxssh.py::PxsshTestCase::test_fake_ssh PASSED
+tests/test_pxssh.py::PxsshTestCase::test_login_bash PASSED
+tests/test_pxssh.py::PxsshTestCase::test_login_tcsh PASSED
+tests/test_pxssh.py::PxsshTestCase::test_login_zsh PASSED
 tests/test_pxssh.py::PxsshTestCase::test_remote_ssh_tunnel_string PASSED
 tests/test_pxssh.py::PxsshTestCase::test_ssh_config_empty_user PASSED
 tests/test_pxssh.py::PxsshTestCase::test_ssh_config_no_user PASSED
@@ -169,6 +177,7 @@ tests/test_replwrap.py::REPLWrapTestCase::test_multiline PASSED
 tests/test_replwrap.py::REPLWrapTestCase::test_no_change_prompt PASSED
 tests/test_replwrap.py::REPLWrapTestCase::test_pager_as_cat PASSED
 tests/test_replwrap.py::REPLWrapTestCase::test_python PASSED
+tests/test_replwrap.py::REPLWrapTestCase::test_zsh PASSED
 tests/test_repr.py::TestCaseMisc::test_str_before_spawn PASSED
 tests/test_repr.py::TestCaseMisc::test_str_spawn PASSED
 tests/test_repr.py::TestCaseMisc::test_str_spawnu PASSED
@@ -204,15 +213,29 @@ tests/test_socket.py::ExpectTestCase::test_fd_isalive PASSED
 tests/test_socket.py::ExpectTestCase::test_fd_isalive_poll PASSED
 tests/test_socket.py::ExpectTestCase::test_fd_isatty PASSED
 tests/test_socket.py::ExpectTestCase::test_fd_isatty_poll PASSED
-tests/test_socket.py::ExpectTestCase::test_fileobj PASSED
 tests/test_socket.py::ExpectTestCase::test_interrupt PASSED
 tests/test_socket.py::ExpectTestCase::test_maxread PASSED
 tests/test_socket.py::ExpectTestCase::test_multiple_interrupts PASSED
-tests/test_socket.py::ExpectTestCase::test_not_file_descriptor PASSED
-tests/test_socket.py::ExpectTestCase::test_not_int PASSED
 tests/test_socket.py::ExpectTestCase::test_socket PASSED
 tests/test_socket.py::ExpectTestCase::test_socket_with_write PASSED
 tests/test_socket.py::ExpectTestCase::test_timeout PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_fd_isalive PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_fd_isalive_poll PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_fd_isatty PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_fd_isatty_poll PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_fileobj PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_interrupt PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_maxread PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_multiple_interrupts PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_not_file_descriptor PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_not_int PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_socket PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_socket_with_write PASSED
+tests/test_socket_fd.py::ExpectTestCase::test_timeout PASSED
+tests/test_socket_pexpect.py::ExpectTestCase::test_maxread PASSED
+tests/test_socket_pexpect.py::ExpectTestCase::test_socket PASSED
+tests/test_socket_pexpect.py::ExpectTestCase::test_socket_isalive PASSED
+tests/test_socket_pexpect.py::ExpectTestCase::test_socket_isatty PASSED
 tests/test_timeout_pattern.py::Exp_TimeoutTestCase::test_correctStackTrace PASSED
 tests/test_timeout_pattern.py::Exp_TimeoutTestCase::test_exp_timeout_notThrown PASSED
 tests/test_timeout_pattern.py::Exp_TimeoutTestCase::test_matches_exp_timeout PASSED
@@ -245,54 +268,5 @@ pexpect/ANSI.py:29
   $(@D)/pexpect/ANSI.py:29: UserWarning: pexpect.screen and pexpect.ANSI are deprecated. We recommend using pyte to emulate a terminal screen: https://pypi.python.org/pypi/pyte
     from . import screen
 
-tests/test_async.py::AsyncTests::test_async_and_gc
-  $(@D)/pexpect/_async.py:8: DeprecationWarning: "@coroutine" decorator is deprecated since Python 3.8, use "async def" instead
-    def expect_async(expecter, timeout=None):
-
-tests/test_async.py::AsyncTests::test_async_and_gc
-  $(@D)/pexpect/_async.py:31: DeprecationWarning: "@coroutine" decorator is deprecated since Python 3.8, use "async def" instead
-    def repl_run_command_async(repl, cmdlines, timeout=-1):
-
-tests/test_expect.py::ExpectTestCase::test_bad_arg
-  $(@D)/tests/test_expect.py:572: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(TypeError, '.*must be one of'):
-
-tests/test_expect.py::ExpectTestCase::test_bad_arg
-  $(@D)/tests/test_expect.py:574: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(TypeError, '.*must be one of'):
-
-tests/test_expect.py::ExpectTestCase::test_bad_arg
-  $(@D)/tests/test_expect.py:576: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(TypeError, '.*must be one of'):
-
-tests/test_expect.py::ExpectTestCase::test_bad_arg
-  $(@D)/tests/test_expect.py:578: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(TypeError, '.*must be one of'):
-
-tests/test_misc.py::TestCaseMisc::test_bad_arguments_suggest_fdpsawn
-  $(@D)/tests/test_misc.py:227: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(pexpect.ExceptionPexpect,
-
-tests/test_misc.py::TestCaseMisc::test_bad_child_pid
-  $(@D)/tests/test_misc.py:217: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(pexpect.ExceptionPexpect,
-
-tests/test_popen_spawn.py::ExpectTestCase::test_bad_arg
-  $(@D)/tests/test_popen_spawn.py:113: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(TypeError, '.*must be one of'):
-
-tests/test_popen_spawn.py::ExpectTestCase::test_bad_arg
-  $(@D)/tests/test_popen_spawn.py:115: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(TypeError, '.*must be one of'):
-
-tests/test_popen_spawn.py::ExpectTestCase::test_bad_arg
-  $(@D)/tests/test_popen_spawn.py:117: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(TypeError, '.*must be one of'):
-
-tests/test_popen_spawn.py::ExpectTestCase::test_bad_arg
-  $(@D)/tests/test_popen_spawn.py:119: DeprecationWarning: Please use assertRaisesRegex instead.
-    with self.assertRaisesRegexp(TypeError, '.*must be one of'):
-
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 223 passed, 11 skipped, 13 warnings ========
+======== 246 passed, 11 skipped, 1 warning ========
