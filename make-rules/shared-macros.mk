@@ -790,11 +790,9 @@ PYTHON_SCRIPTS_PROCESS= \
 COMPONENT_POST_INSTALL_ACTION += $(PYTHON_SCRIPTS_PROCESS)
 
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
-JAVA11_HOME =	/usr/jdk/instances/openjdk11.0.10
-JAVA17_HOME =	/usr/jdk/instances/openjdk17
-JAVA18_HOME =	/usr/jdk/instances/openjdk18
-JAVA19_HOME =	/usr/jdk/instances/openjdk19
-JAVA_HOME = $(JAVA8_HOME)
+JAVA17_HOME =	/usr/jdk/instances/openjdk17.0.8
+JAVA21_HOME =	/usr/jdk/instances/openjdk21
+JAVA_HOME = $(JAVA17_HOME)
 
 # QT macros
 # We deliver version 5 in 32- and 64-bit variants.
