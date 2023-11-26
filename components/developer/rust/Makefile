@@ -39,12 +39,12 @@ TEST_STYLE=		none
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.73.0
+COMPONENT_VERSION=	1.74.0
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:96d62e6d1f2d21df7ac8acb3b9882411f9e7c7036173f7f2ede9e1f1f6b1bb3a
+COMPONENT_ARCHIVE_HASH=	sha256:882b584bc321c5dcfe77cdaa69f277906b936255ef7808fcd5c7492925cf1049
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -92,6 +92,7 @@ CONFIGURE_OPTIONS += --libdir=$(RUSTC_LIBDIR)
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)/rust-$(COMPONENT_VERSION)
 CONFIGURE_OPTIONS += --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --enable-local-rust
 CONFIGURE_OPTIONS += --local-rust-root=/usr
 CONFIGURE_OPTIONS += --enable-extended       # Build and install cargo too.
 CONFIGURE_OPTIONS += --default-linker=$(CC)
