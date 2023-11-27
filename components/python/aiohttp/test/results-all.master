@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-collecting ... collected 2778 items / 4 deselected / 2774 selected
+collecting ... collected 2785 items / 4 deselected / 2781 selected
 
 Event loop present only in Windows)
 applied in DEBUG mode only)
@@ -269,6 +269,7 @@ tests/test_client_functional.py::test_read_from_closed_response2[pyloop] PASSED
 tests/test_client_functional.py::test_read_from_closed_response[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout_between_chunks[pyloop] PASSED
+tests/test_client_functional.py::test_read_timeout_closes_connection[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout_on_prepared_response[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout_on_reading_chunks[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout_on_write[pyloop] PASSED
@@ -312,6 +313,7 @@ tests/test_client_functional.py::test_timeout_on_reading_data[pyloop] PASSED
 tests/test_client_functional.py::test_timeout_on_reading_headers[pyloop] PASSED
 tests/test_client_functional.py::test_timeout_on_session_read_timeout[pyloop] PASSED
 tests/test_client_functional.py::test_timeout_with_full_buffer[pyloop] PASSED
+tests/test_client_functional.py::test_upgrade_connection_not_released_after_read[pyloop] PASSED
 tests/test_client_functional.py::test_wait_for[pyloop] PASSED
 tests/test_client_functional.py::test_yield_from_in_session_request[pyloop] PASSED
 tests/test_client_proto.py::test_client_proto_bad_message[pyloop] PASSED
@@ -1007,6 +1009,8 @@ tests/test_http_parser.py::test_bad_headers[py-parser-pyloop-Foo : bar] PASSED
 tests/test_http_parser.py::test_bad_headers[py-parser-pyloop-Foo: abc\rdef] PASSED
 tests/test_http_parser.py::test_bad_headers[py-parser-pyloop-Foo\t: bar] PASSED
 tests/test_http_parser.py::test_bad_headers[py-parser-pyloop-\xffoo: bar] PASSED
+tests/test_http_parser.py::test_bad_upgrade[c-parser-pyloop] PASSED
+tests/test_http_parser.py::test_bad_upgrade[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_c_parser_loaded PASSED
 tests/test_http_parser.py::test_compression_brotli[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_compression_brotli[py-parser-pyloop] PASSED
@@ -2759,6 +2763,9 @@ tests/test_websocket_parser.py::test_websocket_mask_cython_empty PASSED
 tests/test_websocket_parser.py::test_websocket_mask_python PASSED
 tests/test_websocket_parser.py::test_websocket_mask_python_empty PASSED
 tests/test_websocket_writer.py::test_close PASSED
+tests/test_websocket_writer.py::test_concurrent_messages[16-<lambda>] PASSED
+tests/test_websocket_writer.py::test_concurrent_messages[32-<lambda>] PASSED
+tests/test_websocket_writer.py::test_concurrent_messages[4096-<lambda>] PASSED
 tests/test_websocket_writer.py::test_ping PASSED
 tests/test_websocket_writer.py::test_pong PASSED
 tests/test_websocket_writer.py::test_send_binary PASSED
@@ -2789,4 +2796,4 @@ tests/test_worker.py::test_run_not_app[AsyncioWorker-pyloop] PASSED
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 2736 passed, 29 skipped, 4 deselected, 9 xfailed ========
+======== 2743 passed, 29 skipped, 4 deselected, 9 xfailed ========
