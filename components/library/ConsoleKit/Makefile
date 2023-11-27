@@ -13,18 +13,18 @@
 #
 
 BUILD_STYLE=configure
-BUILD_BITS=32
+BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ConsoleKit
-COMPONENT_VERSION=      0.4.1
-COMPONENT_REVISION=     4
+COMPONENT_VERSION=      0.4.6
+COMPONENT_REVISION=     0
 COMPONENT_PROJECT_URL=  http://www.freedesktop.org/wiki/Software/ConsoleKit
 COMPONENT_SUMMARY=      Framework for tracking users, login sessions, and seats
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:f032adc6146d745034315054c5822a7a09f30e20a40d6e802221fa977354403e
+	sha256:b41d17e06f80059589fbeefe96ad07bcc564c49e65516da1caf975146475565c
 COMPONENT_ARCHIVE_URL=  http://www.freedesktop.org/software/ConsoleKit/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_LICENSE=      GPLv2
@@ -46,12 +46,13 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
+MACHBITS=$(patsubst /i86,,/$(MACH$(BITS)))
+
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
+CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib$(MACHBITS)
 CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--enable-pam-module
-CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security
-CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security
+CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security$(MACHBITS)
 CONFIGURE_OPTIONS+=	--enable-rbac-shutdown=solaris.system.shutdown
 
 # Build dependencies
