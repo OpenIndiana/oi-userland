@@ -1,6 +1,6 @@
---- flake8-bugbear-23.9.16/tests/test_bugbear.py.orig
-+++ flake8-bugbear-23.9.16/tests/test_bugbear.py
-@@ -853,19 +853,8 @@
+--- flake8-bugbear-23.11.26/tests/test_bugbear.py.orig
++++ flake8-bugbear-23.11.26/tests/test_bugbear.py
+@@ -870,19 +870,8 @@
  
  
  class TestFuzz(unittest.TestCase):
@@ -21,7 +21,7 @@
      def test_does_not_crash_on_site_code(self):
          # Because the generator isn't perfect, we'll also test on all the code
          # we can easily find in our current Python environment - this includes
-@@ -876,6 +865,7 @@
+@@ -893,6 +882,7 @@
                      if f.endswith(".py"):
                          BugBearChecker(filename=str(Path(dirname) / f))
  
@@ -29,7 +29,7 @@
      def test_does_not_crash_on_tuple_expansion_in_except_statement(self):
          # akin to test_does_not_crash_on_any_valid_code
          # but targets a rare case that's not covered by hypothesmith.from_grammar
-@@ -890,6 +880,7 @@
+@@ -907,6 +897,7 @@
          )
          BugBearVisitor(filename="<string>", lines=[]).visit(syntax_tree)
  
@@ -37,8 +37,8 @@
      def test_does_not_crash_on_call_in_except_statement(self):
          # akin to test_does_not_crash_on_tuple_expansion_in_except_statement
          # see https://github.com/PyCQA/flake8-bugbear/issues/171
---- flake8-bugbear-23.9.16/tox.ini.orig
-+++ flake8-bugbear-23.9.16/tox.ini
+--- flake8-bugbear-23.11.26/tox.ini.orig
++++ flake8-bugbear-23.11.26/tox.ini
 @@ -16,7 +16,6 @@
  deps =
      coverage
