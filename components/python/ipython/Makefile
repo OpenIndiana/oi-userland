@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ipython
-HUMAN_VERSION =			8.17.2
+HUMAN_VERSION =			8.18.1
 COMPONENT_SUMMARY =		ipython - IPython: Productive Interactive Computing
 COMPONENT_PROJECT_URL =		https://ipython.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a9/e9/c83d1a5756bf44f1802045a54dacc910d3d254c5ec56040993978d8c1b8d/ipython-8.17.2.tar.gz
+	https://files.pythonhosted.org/packages/b1/b9/3ba6c45a6df813c09a48bac313c22ff83efa26cbb55011218d925a46e2ad/ipython-8.18.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:126bb57e1895594bb0d91ea3090bbd39384f6fe87c3d57fd558d0670f50339bb
+	sha256:ca6f079bb33457c66e233e4580ebfc4128855b4cf6370dddd73842a9563e8a27
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
