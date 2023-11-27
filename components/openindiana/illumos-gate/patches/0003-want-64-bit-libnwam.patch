@@ -1,0 +1,50 @@
+diff --git a/usr/src/lib/libnwam/Makefile b/usr/src/lib/libnwam/Makefile
+index 8fe46ff93f..08525b99cc 100644
+--- a/usr/src/lib/libnwam/Makefile
++++ b/usr/src/lib/libnwam/Makefile
+@@ -33,6 +33,7 @@ SRCS =		libnwam_audit.c libnwam_backend.c libnwam_enm.c \
+ 		libnwam_wlan.c
+ HDRDIR =	common
+ SUBDIRS=	$(MACH)
++$(BUILD64)SUBDIRS += $(MACH64)
+ POFILE =	libnwam.po
+ MSGFILES =	common/*.c
+ 
+diff --git a/usr/src/lib/libnwam/amd64/Makefile b/usr/src/lib/libnwam/amd64/Makefile
+new file mode 100644
+index 0000000000..d58d6d17b7
+--- /dev/null
++++ b/usr/src/lib/libnwam/amd64/Makefile
+@@ -0,0 +1,19 @@
++#
++# This file and its contents are supplied under the terms of the
++# Common Development and Distribution License ("CDDL"), version 1.0.
++# You may only use this file in accordance with the terms of version
++# 1.0 of the CDDL.
++#
++# A full copy of the text of the CDDL should have accompanied this
++# source.  A copy of the CDDL is also available via the Internet at
++# http://www.illumos.org/license/CDDL.
++#
++
++#
++# Copyright 2023, Hans Rosenfeld
++#
++
++include ../Makefile.com
++include ../../Makefile.lib.64
++
++install: all $(ROOTLIBS64) $(ROOTLINKS64)
+diff --git a/usr/src/pkg/manifests/system-library.p5m b/usr/src/pkg/manifests/system-library.p5m
+index 2636363511..a19dd88ead 100644
+--- a/usr/src/pkg/manifests/system-library.p5m
++++ b/usr/src/pkg/manifests/system-library.p5m
+@@ -164,6 +164,8 @@ link path=lib/$(ARCH64)/libnsl.so target=libnsl.so.1
+ file path=lib/$(ARCH64)/libnsl.so.1
+ link path=lib/$(ARCH64)/libnvpair.so target=libnvpair.so.1
+ file path=lib/$(ARCH64)/libnvpair.so.1
++link path=lib/$(ARCH64)/libnwam.so target=libnwam.so.1
++file path=lib/$(ARCH64)/libnwam.so.1
+ link path=lib/$(ARCH64)/libofmt.so target=libofmt.so.1
+ file path=lib/$(ARCH64)/libofmt.so.1
+ link path=lib/$(ARCH64)/libpam.so target=libpam.so.1
