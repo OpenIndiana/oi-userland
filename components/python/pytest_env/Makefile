@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_env
-HUMAN_VERSION =			1.1.1
+HUMAN_VERSION =			1.1.3
 COMPONENT_SUMMARY =		pytest_env - pytest plugin that allows you to add environment variables.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-env
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/16/8f/350f60802e2809457c792634ee45cb9b7c13810ecb7cc60addb81b7a1b7d/pytest_env-1.1.1.tar.gz
+	https://files.pythonhosted.org/packages/02/cc/df6940b2527bfa634c00940dfb6e3ec873bdfb7507b55894c93283fa3178/pytest_env-1.1.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1efb8acce1f6431196150f3b30673443ff05a6fabff64539a9495cd2248adf9e
+	sha256:fcd7dc23bb71efd3d35632bde1bbe5ee8c8dc4489d6617fb010674880d96216b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
