@@ -11,30 +11,24 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2023 Friedrich Kink.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         clutter
-COMPONENT_VERSION=      1.6.20
-COMPONENT_REVISION=     4
+COMPONENT_VERSION=      1.26.4
 COMPONENT_SUMMARY=      clutter - a library for creating fast, visually rich and animated graphical user interfaces
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Clutter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c5508856e51343ef0f5cf5a8526e4372ac96d31b740d6b09d37e890c653b4273
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.6/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:8b48fac159843f556d0a6be3dbfc6b083fc6d9c58a20a49a6b4919ab4263c4e6
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.26/$(COMPONENT_ARCHIVE)
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) && \
-					mkdir -p $(@D)/mesa/GL && \
-					ln -s /usr/include/mesa/*.h $(@D)/mesa/GL )
-
 PATH= $(PATH.gnu)
-
-CONFIGURE_SCRIPT=	$(@D)/configure
 
 CFLAGS+=	-I$(@D)/mesa
 CXXFLAGS+=	-I$(@D)/mesa
@@ -42,6 +36,7 @@ LDFLAGS.64 =	-L/usr/lib/mesa/$(MACH64) -L/usr/X11/lib/$(MACH64) -R/usr/X11/lib/$
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-egl-backend=no
 CONFIGURE_OPTIONS += --enable-gtk-doc
 
 # Tell g-ir-scanner about compiler
@@ -54,15 +49,15 @@ REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/cogl
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxdamage
-REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxi
