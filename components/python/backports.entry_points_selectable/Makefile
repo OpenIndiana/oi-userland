@@ -19,28 +19,26 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		backports.entry_points_selectable
-HUMAN_VERSION =			1.2.0
+HUMAN_VERSION =			1.3.0
 COMPONENT_SUMMARY =		backports.entry_points_selectable - Compatibility shim providing selectable entry points for older implementations
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/backports.entry_points_selectable
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a9/bf/2a7a454f330177a075a69ecfd56b4af66c086145f33fe25860597fecebb1/backports.entry_points_selectable-1.2.0.tar.gz
+	https://files.pythonhosted.org/packages/fc/25/dae014b114397a6f60578d7358bf5fcb103f71556e5363a50d7b42e9bc51/backports.entry_points_selectable-1.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4706f59179657ca7c1d325a543ee1370f8f46331f432bcac62fab242fdf0afa5
+	sha256:17a8b44ae700fba548686dd274ddc91c060371565cd63806c20a1d33911746e6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
