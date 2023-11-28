@@ -19,13 +19,15 @@
 # dependencies
 
 while read line ; do
-	# some projects specify extra dependencies in form of .[extra] in deps
+	# some projects specify extra dependencies in form of .[extras] in deps
 	# key instead of using separate extras key
-	extra=${line#.[}
-	extra=${extra%]}
-	if [ ".[$extra]" == "$line" ] ; then
-		# run the command passed in as argument(s) to handle extras
-		eval "$@" $extra
+	extras=${line#.[}
+	extras=${extras%]}
+	if [ ".[$extras]" == "$line" ] ; then
+		for extra in ${extras//,/ } ; do
+			# run the command passed in as argument(s) to handle extras
+			eval "$@" $extra
+		done
 		continue
 	fi
 
