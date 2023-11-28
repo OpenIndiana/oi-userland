@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cryptography_vectors
-HUMAN_VERSION =			41.0.5
+HUMAN_VERSION =			41.0.7
 COMPONENT_SUMMARY =		cryptography_vectors - Test vectors for the cryptography package.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/98/50/4ad39caf3614011bd31c1d058e67e29c1b0e01346058ee625ed7f7da0b92/cryptography_vectors-41.0.5.tar.gz
+	https://files.pythonhosted.org/packages/ef/64/10b3b5414fa10d1c0357f49f809ecba9f41beb4f9b5436d3fc7f5ff01be0/cryptography_vectors-41.0.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:75e82aea2982729312af735adb2983f347bb21fff88ad5dda3673ed70e1d1caf
+	sha256:7b36f976b6e58cc1801310e1c93c584c6539d371da7f8538edd8fc463dc80d5b
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
 TEST_STYLE = none
