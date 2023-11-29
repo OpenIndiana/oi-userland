@@ -20,13 +20,12 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bcrypt
-HUMAN_VERSION =			4.0.1
+HUMAN_VERSION =			4.1.1
 COMPONENT_SUMMARY =		bcrypt - Modern password hashing for your software and your servers
-COMPONENT_PROJECT_URL =		https://github.com/pyca/bcrypt/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8c/ae/3af7d006aacf513975fd1948a6b4d6f8b4a307f8a244e1a3d3774b297aad/bcrypt-4.0.1.tar.gz
+	https://files.pythonhosted.org/packages/df/56/be5fda8e6fc05123c8c9f526095e93d0802a0a0b2beaf995ee2cc20aa2f8/bcrypt-4.1.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:27d375903ac8261cfe4047f6709d16f7d18d39b1ec92aaf72af989552a650ebd
+	sha256:df37f5418d4f1cdcff845f60e747a015389fa4e63703c918330865e06ad80007
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
