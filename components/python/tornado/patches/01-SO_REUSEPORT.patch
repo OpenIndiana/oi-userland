@@ -1,0 +1,12 @@
+https://www.illumos.org/issues/12455
+
+--- tornado-6.4/tornado/test/tcpserver_test.py.orig
++++ tornado-6.4/tornado/test/tcpserver_test.py
+@@ -202,6 +202,7 @@
+         self.assertEqual("".join(sorted(out)), "012")
+         self.assertEqual(err, "")
+ 
++    @unittest.skip('No SO_REUSEPORT support')
+     def test_listen_multi_reuse_port(self):
+         code = textwrap.dedent(
+             """
