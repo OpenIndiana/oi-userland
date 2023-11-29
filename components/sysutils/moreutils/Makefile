@@ -27,13 +27,12 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		moreutils
-COMPONENT_VERSION=	0.67
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=	0.68
 COMPONENT_SUMMARY=	moreutils is a collection of the unix tools that nobody thought to write long ago when unix was young
 COMPONENT_PROJECT_URL=	https://joeyh.name/code/moreutils
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:03872f42c22943b21c62f711b693c422a4b8df9d1b8b2872ef9a34bd5d13ad10
+COMPONENT_ARCHIVE_HASH= sha256:5eb14bc7bc1407743478ebdbd83772bf3b927fd949136a2fbbde96fa6000b6e7
 COMPONENT_ARCHIVE_URL=	https://git.joeyh.name/index.cgi/moreutils.git/snapshot/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		utility/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
