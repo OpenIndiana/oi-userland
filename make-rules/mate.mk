@@ -26,7 +26,7 @@ TEST_TARGET=        $(NO_TESTS)
 PATH=$(PATH.gnu)
 
 ifeq   ($(strip $(BUILD_STYLE)),configure)
-COMPONENT_PREP_ACTION= cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION= cd $(@D) && PATH="$(PATH)" NOCONFIGURE=1 /usr/bin/bash ./autogen.sh
 endif
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
