@@ -1,0 +1,45 @@
+https://github.com/giampaolo/psutil/issues/2331
+
+--- psutil-5.9.6/psutil/tests/test_connections.py.orig
++++ psutil-5.9.6/psutil/tests/test_connections.py
+@@ -400,13 +400,13 @@
+         with create_sockets():
+             # tcp
+             cons = thisproc.connections(kind='tcp')
+-            self.assertEqual(len(cons), 2 if supports_ipv6() else 1)
++            self.assertEqual(len(cons), 3 if supports_ipv6() else 2)
+             for conn in cons:
+                 self.assertIn(conn.family, (AF_INET, AF_INET6))
+                 self.assertEqual(conn.type, SOCK_STREAM)
+             # tcp4
+             cons = thisproc.connections(kind='tcp4')
+-            self.assertEqual(len(cons), 1)
++            self.assertEqual(len(cons), 2)
+             self.assertEqual(cons[0].family, AF_INET)
+             self.assertEqual(cons[0].type, SOCK_STREAM)
+             # tcp6
+@@ -417,13 +417,13 @@
+                 self.assertEqual(cons[0].type, SOCK_STREAM)
+             # udp
+             cons = thisproc.connections(kind='udp')
+-            self.assertEqual(len(cons), 2 if supports_ipv6() else 1)
++            self.assertEqual(len(cons), 3 if supports_ipv6() else 2)
+             for conn in cons:
+                 self.assertIn(conn.family, (AF_INET, AF_INET6))
+                 self.assertEqual(conn.type, SOCK_DGRAM)
+             # udp4
+             cons = thisproc.connections(kind='udp4')
+-            self.assertEqual(len(cons), 1)
++            self.assertEqual(len(cons), 2)
+             self.assertEqual(cons[0].family, AF_INET)
+             self.assertEqual(cons[0].type, SOCK_DGRAM)
+             # udp6
+@@ -434,7 +434,7 @@
+                 self.assertEqual(cons[0].type, SOCK_DGRAM)
+             # inet
+             cons = thisproc.connections(kind='inet')
+-            self.assertEqual(len(cons), 4 if supports_ipv6() else 2)
++            self.assertEqual(len(cons), 6 if supports_ipv6() else 4)
+             for conn in cons:
+                 self.assertIn(conn.family, (AF_INET, AF_INET6))
+                 self.assertIn(conn.type, (SOCK_STREAM, SOCK_DGRAM))
