@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.10.36
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -46,11 +47,11 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 CONFIGURE_ENV += CPPFLAGS="$(JPEG_CPPFLAGS)"
 
-#äCONFIGURE_ENV += LIBDIR="$(USRLIBDIR64)"
+#CONFIGURE_ENV += LIBDIR="$(USRLIBDIR64)"
 #COMPONENT_BUILD_ENV += LIBDIR="$(USRLIBDIR64)"
 
 COMPONENT_PREP_ACTION =	( cd $(@D)  && \
-				libtoolize --force &&\
+				PATH="$(PATH)" libtoolize --force &&\
 				intltoolize --force --copy --automake &&\
 				aclocal -I. &&\
 				automake -a -c -f &&\
@@ -84,9 +85,6 @@ unexport SHELLOPTS
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
-REQUIRED_PACKAGES += library/mypaint-brushes
-REQUIRED_PACKAGES += library/python/pygobject
-REQUIRED_PACKAGES += library/python/pygtk2
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pygobject
