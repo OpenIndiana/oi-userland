@@ -25,7 +25,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-applets
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	1
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=	Applets components for the MATE Desktop Environment
 COMPONENT_ARCHIVE_HASH= sha256:3ab8f61db376dc333ce4c18722c63a07fab3e8e1272b7e0e097ad4597b17c2c2
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
@@ -37,12 +37,7 @@ CONFIGURE_OPTIONS+= --enable-stickynotes
 CONFIGURE_OPTIONS+= --disable-polkit
 CONFIGURE_OPTIONS+= --without-nl
 
-CONFIGURE_ENV+= PYTHON="$(PYTHON.3.5.64)"
-CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.3.5.VENDOR_PACKAGES.64)"
-CONFIGURE_ENV+= am_cv_python_pyexecdir="$(PYTHON.3.5.VENDOR_PACKAGES.64)"
 CONFIGURE_ENV+= LIBS="-lnsl -lsocket"
-
-REQUIRED_PACKAGES += library/python/pygobject-3-35
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/character-map/gucharmap
