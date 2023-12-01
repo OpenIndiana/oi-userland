@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		multitail
 COMPONENT_VERSION=	7.1.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Tail multiple files on console with ncurses
 COMPONENT_PROJECT_URL=	https://www.vanheusden.com/multitail/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,7 +37,8 @@ COMPONENT_ARCHIVE_URL=	https://github.com/folkertvanheusden/multitail/archive/re
 COMPONENT_ARCHIVE_HASH=	sha256:c8552e10093f0690b8baef84945753c878e234d7b3d0e3ff27e509ed5515998c
 COMPONENT_FMRI=				file/multitail
 COMPONENT_CLASSIFICATION= 	Applications/System Utilities
-COMPONENT_LICENSE=			GPLv3
+COMPONENT_LICENSE=			Apache 2.0
+COMPONENT_LIECENSE_FILE=	LICENSE
 
 TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
 include $(WS_MAKE_RULES)/common.mk
