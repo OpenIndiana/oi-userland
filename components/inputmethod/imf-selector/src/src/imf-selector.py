@@ -1,4 +1,4 @@
-#!/usr/bin/python3.5
+#!%%PYTHON%%
 #
 # CDDL HEADER START
 #
