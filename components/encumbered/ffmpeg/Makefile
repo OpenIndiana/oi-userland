@@ -18,17 +18,16 @@ OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=      6.0
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=      6.1
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
+COMPONENT_ARCHIVE_HASH= sha256:488c76e57dd9b3bee901f71d5c95eaf1db4a5a31fe46a28654e837144207c270
 COMPONENT_ARCHIVE_URL= https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org/
-COMPONENT_LICENSE=      GPLv2
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         video/ffmpeg
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
