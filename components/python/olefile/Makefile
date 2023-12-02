@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		olefile
-HUMAN_VERSION =			0.46
+HUMAN_VERSION =			0.47
 COMPONENT_SUMMARY =		olefile - Python package to parse, read and write Microsoft OLE2 files (Structured Storage or Compound Document, Microsoft Office)
 COMPONENT_PROJECT_URL =		https://www.decalage.info/python/olefileio
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/34/81/e1ac43c6b45b4c5f8d9352396a14144bba52c8fec72a80f425f6a4d653ad/olefile-0.46.zip
+	https://files.pythonhosted.org/packages/69/1b/077b508e3e500e1629d366249c3ccb32f95e50258b231705c09e3c7a4366/olefile-0.47.zip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:133b031eaf8fd2c9399b78b8bc5b8fcbe4c31e85295749bb17a87cba8f3c3964
+	sha256:599383381a0bf3dfbd932ca0ca6515acd174ed48870cbf7fee123d698c192c1c
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
