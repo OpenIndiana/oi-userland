@@ -14,27 +14,26 @@
 # Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS=		64
-BUILD_BITS=			32_and_64
-USE_OPENSSL11=		yes
+BUILD_BITS= 64
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pulseaudio
 COMPONENT_VERSION=	13.0
-COMPONENT_REVISION=	3
-COMPONENT_FMRI=		library/audio/pulseaudio
-COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Sample Rate Converter for audio
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:961b23ca1acfd28f2bc87414c27bb40e12436efcf2158d29721b1e89f3f28057
 COMPONENT_ARCHIVE_URL= https://freedesktop.org/software/pulseaudio/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/PulseAudio/
+COMPONENT_FMRI=		library/audio/pulseaudio
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=	LGPLv2.1,GPLv2,MIT,adrian-license,Sun Public Domain license
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 LDFLAGS += -lnsl -lsocket -lgobject-2.0
 
@@ -80,13 +79,15 @@ COMPONENT_BUILD_ARGS += V=0
 unexport SHELLOPTS
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
-$(INSTALL_32):	$(INSTALL_64)
-
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 
 # For tests
-REQUIRED_PACKAGES += developer/check
+TEST_REQUIRED_PACKAGES += developer/check
+
+# Manually added dependencies (needed by qpaeq)
+PYTHON_REQUIRED_PACKAGES += runtime/python
+PYTHON_REQUIRED_PACKAGES += library/python/sip
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/soxr
@@ -95,7 +96,7 @@ REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
