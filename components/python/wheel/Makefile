@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-HUMAN_VERSION =			0.42.0
+HUMAN_VERSION =			0.43.0
 COMPONENT_SUMMARY =		wheel - A built-package format for Python
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b0/b4/bc2baae3970c282fae6c2cb8e0f179923dceb7eaffb0e76170628f9af97b/wheel-0.42.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c45be39f7882c9d34243236f2d63cbd58039e360f85d0913425fbd7ceea617a8
+	sha256:465ef92c69fa5c5da2d1cf8ac40559a8c940886afcef87dcf14b9470862f1d85
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -40,6 +38,7 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 # - setuptools-scm
 # - tox-current-env (test bootstrap)
 # - trove-classifiers (test bootstrap)
+# - zipp
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
