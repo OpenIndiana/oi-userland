@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_dynamic_versioning
-HUMAN_VERSION =			1.1.1
+HUMAN_VERSION =			1.2.0
 COMPONENT_SUMMARY =		poetry_dynamic_versioning - Plugin for Poetry to enable dynamic versioning based on VCS tags
 COMPONENT_PROJECT_URL =		https://github.com/mtkennerly/poetry-dynamic-versioning
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8f/fc/dbcca62579bb7bd72c14b802b3d9723dd19aed2fb0d01859bb2c3fca1ae7/poetry_dynamic_versioning-1.1.1.tar.gz
+	https://files.pythonhosted.org/packages/02/f8/435ff55b5cfd4a17fe520b43ae327bb4337aabbc949fd7b0702291b7f027/poetry_dynamic_versioning-1.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:514583297394bcb6ca5b3b0cdd831229b1fc95e0d21e24b9302b5d1a677aa4ee
+	sha256:1a7bbdba2530499e73dfc6ac0af19de29020ab4aaa3e507573877114e6b71ed6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
