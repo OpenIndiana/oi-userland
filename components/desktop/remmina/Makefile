@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		remmina
 COMPONENT_VERSION=	1.4.31
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Remmina remote desktop client
 COMPONENT_PROJECT_URL=	https://remmina.org
 COMPONENT_FMRI=		desktop/remote-desktop/remmina
@@ -32,7 +33,6 @@ COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
 TEST_TARGET= $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS += -lnsl -lsocket
