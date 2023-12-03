@@ -1,5 +1,5 @@
---- importlib_metadata-6.9.0/tests/test_api.py.orig
-+++ importlib_metadata-6.9.0/tests/test_api.py
+--- importlib_metadata-7.0.0/tests/test_api.py.orig
++++ importlib_metadata-7.0.0/tests/test_api.py
 @@ -17,6 +17,8 @@
      version,
  )
@@ -19,8 +19,8 @@
      def test_files_egg_info(self):
          self._test_files(files('egginfo-pkg'))
          self._test_files(files('egg_with_module-pkg'))
---- importlib_metadata-6.9.0/tests/test_main.py.orig
-+++ importlib_metadata-6.9.0/tests/test_main.py
+--- importlib_metadata-7.0.0/tests/test_main.py.orig
++++ importlib_metadata-7.0.0/tests/test_main.py
 @@ -22,6 +22,8 @@
      version,
  )
@@ -50,3 +50,13 @@
      def test_packages_distributions_on_eggs(self):
          """
          Test old-style egg packages with a variation of 'top_level.txt',
+@@ -460,6 +468,9 @@
+ 
+ 
+ class EditableDistributionTest(fixtures.DistInfoPkgEditable, unittest.TestCase):
++    @pytest.mark.skip(
++        reason="always fails: https://github.com/python/importlib_metadata/issues/479"
++    )
+     def test_origin(self):
+         dist = Distribution.from_name('distinfo-pkg')
+         assert dist.origin.url.endswith('.whl')
