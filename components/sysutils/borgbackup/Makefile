@@ -20,12 +20,12 @@ SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			borgbackup
-COMPONENT_VERSION=		1.2.6
+COMPONENT_VERSION=		1.2.7
 COMPONENT_SUMMARY=		Deduplicating backup program with compression and authenticated encryption
 COMPONENT_PROJECT_URL=	https://borgbackup.readthedocs.org/en/stable/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b7a6f8f086039eeec79070b914f3c651ed7f3612c965374af910d277c7a2139d
+COMPONENT_ARCHIVE_HASH=	sha256:f63f28a3383c041971cec87b061ca39a815b5fd445db24aa8172cac417d9411a
 COMPONENT_ARCHIVE_URL=	https://github.com/borgbackup/borg/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			backup/borg
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
