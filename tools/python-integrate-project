@@ -468,7 +468,7 @@ if [[ -f history ]] ; then
 	mv history.new history
 	git add history
 
-	awk '$2 == "noincorporate" {printf("WARNING: Unincorporated package: %s\n", $1)}' < history >&2
+	awk '$NF == "noincorporate" {printf("WARNING: Unincorporated package: %s\n", $1)}' < history >&2
 fi
 
 
