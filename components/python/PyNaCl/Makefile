@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyNaCl
 HUMAN_VERSION =			1.5.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		PyNaCl - Python binding to the Networking and Cryptography (NaCl) library
 COMPONENT_PROJECT_URL =		https://github.com/pyca/pynacl/
 COMPONENT_ARCHIVE_URL =		\
