@@ -26,7 +26,7 @@ GCC_VERSION= 12
 gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      6.1.46
+COMPONENT_VERSION=      6.1.48
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
@@ -270,7 +270,7 @@ REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/sdl
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
