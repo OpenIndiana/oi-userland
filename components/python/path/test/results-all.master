@@ -1,19 +1,16 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
-py$(PYV): remove tox env folder .tox/py$(PYV)
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 147 items
+collecting ... collected 149 items
 
 ::project PASSED
-docs/conf.py::BLACK PASSED
+docs/conf.py::black PASSED
 docs/conf.py::mypy PASSED
-path/__init__.py::BLACK PASSED
+path/__init__.py::black PASSED
 path/__init__.py::path.ExtantFile PASSED
 path/__init__.py::path.ExtantPath PASSED
 path/__init__.py::path.Path.access PASSED
@@ -34,22 +31,22 @@ path/__init__.py::path.TempDir PASSED
 path/__init__.py::path.Traversal PASSED
 path/__init__.py::path._strip_newlines PASSED
 path/__init__.pyi::mypy PASSED
-path/classes.py::BLACK PASSED
+path/classes.py::black PASSED
 path/classes.pyi::mypy PASSED
-path/masks.py::BLACK PASSED
+path/masks.py::black PASSED
 path/masks.py::path.masks.Permissions PASSED
 path/masks.py::path.masks.compound PASSED
 path/masks.py::path.masks.gen_bit_values PASSED
 path/masks.py::path.masks.padded PASSED
 path/masks.py::path.masks.simple PASSED
 path/masks.pyi::mypy PASSED
-path/matchers.py::BLACK PASSED
+path/matchers.py::black PASSED
 path/matchers.pyi::mypy PASSED
-test_path.py::BLACK PASSED
 test_path.py::TestBasics::test_chmod_str PASSED
 test_path.py::TestBasics::test_chown PASSED
 test_path.py::TestBasics::test_construction_from_int PASSED
 test_path.py::TestBasics::test_construction_from_none PASSED
+test_path.py::TestBasics::test_construction_without_args PASSED
 test_path.py::TestBasics::test_expand PASSED
 test_path.py::TestBasics::test_expandvars PASSED
 test_path.py::TestBasics::test_explicit_module PASSED
@@ -91,6 +88,7 @@ test_path.py::TestLinks::test_readlinkabs_passthrough PASSED
 test_path.py::TestLinks::test_readlinkabs_rendered PASSED
 test_path.py::TestLinks::test_symlink_none PASSED
 test_path.py::TestMergeTree::test_copytree_parameters PASSED
+test_path.py::TestMergeTree::test_listdir PASSED
 test_path.py::TestMergeTree::test_nested PASSED
 test_path.py::TestMergeTree::test_only_newer PASSED
 test_path.py::TestMergeTree::test_with_existing_dst PASSED
@@ -104,18 +102,18 @@ test_path.py::TestOwnership::test_get_owner PASSED
 test_path.py::TestPatternMatching::test_fnmatch_custom_mod PASSED
 test_path.py::TestPatternMatching::test_fnmatch_custom_normcase PASSED
 test_path.py::TestPatternMatching::test_fnmatch_simple PASSED
-test_path.py::TestPatternMatching::test_listdir_case_insensitive PASSED
-test_path.py::TestPatternMatching::test_listdir_custom_module PASSED
-test_path.py::TestPatternMatching::test_listdir_empty_pattern PASSED
-test_path.py::TestPatternMatching::test_listdir_patterns PASSED
-test_path.py::TestPatternMatching::test_listdir_simple PASSED
+test_path.py::TestPatternMatching::test_iterdir_case_insensitive PASSED
+test_path.py::TestPatternMatching::test_iterdir_custom_module PASSED
+test_path.py::TestPatternMatching::test_iterdir_empty_pattern PASSED
+test_path.py::TestPatternMatching::test_iterdir_patterns PASSED
+test_path.py::TestPatternMatching::test_iterdir_simple PASSED
 test_path.py::TestPatternMatching::test_walk_case_insensitive PASSED
 test_path.py::TestPerformance::test_import_time PASSED
 test_path.py::TestReadWriteText::test_read_write PASSED
 test_path.py::TestReadWriteText::test_write_text_bytes PASSED
 test_path.py::TestScratchDir::test_chunks PASSED
 test_path.py::TestScratchDir::test_context_manager PASSED
-test_path.py::TestScratchDir::test_listdir_other_encoding PASSED
+test_path.py::TestScratchDir::test_iterdir_other_encoding PASSED
 test_path.py::TestScratchDir::test_listing PASSED
 test_path.py::TestScratchDir::test_makedirs PASSED
 test_path.py::TestScratchDir::test_patterns PASSED
@@ -151,6 +149,7 @@ test_path.py::TestTempDir::test_context_manager PASSED
 test_path.py::TestTempDir::test_context_manager_using_with PASSED
 test_path.py::TestTempDir::test_next_class PASSED
 test_path.py::TestUnicode::test_walkdirs_with_unicode_name PASSED
+test_path.py::black PASSED
 test_path.py::mypy PASSED
 test_path.py::mypy-status PASSED
 test_path.py::test_chroot PASSED
@@ -160,6 +159,6 @@ test_path.py::test_startfile SKIPPED (condition: not hasattr(Path, '...)
 ===================================== mypy =====================================
 
 Success: no issues found in 6 source files
-======== 145 passed, 1 skipped ========
+======== 147 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)
