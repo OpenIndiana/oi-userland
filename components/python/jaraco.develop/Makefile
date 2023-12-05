@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.develop
-HUMAN_VERSION =			8.3.0
+HUMAN_VERSION =			8.5.0
 COMPONENT_SUMMARY =		jaraco.develop - Development utilities by jaraco
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.develop
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b2/d8/dcc49884c07fad8e52806ecbfb277099ba3aaf2e2ac692734e624e05c3ef/jaraco.develop-8.3.0.tar.gz
+	https://files.pythonhosted.org/packages/e9/fe/91dc81ab9b22c81ac54003d6b4c99efc01438ccc87acdecbfb6861c5e343/jaraco.develop-8.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c74d9abd08e503ad21523a1179aed4a8eec68b39619fc961d438c67295c960cd
+	sha256:2d94fb72c78cc9155d78baf53c2ab1dc5703cb6b3f455da9b1eaa607f2931716
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,7 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/autocommand
 PYTHON_REQUIRED_PACKAGES += library/python/build
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-collections
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-ui
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-vcs
