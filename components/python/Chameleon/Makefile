@@ -19,14 +19,14 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Chameleon
-HUMAN_VERSION =			4.2.0
+HUMAN_VERSION =			4.3.0
 COMPONENT_SUMMARY =		Chameleon - Fast HTML/XML Template Compiler.
 COMPONENT_PROJECT_URL =		https://chameleon.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8f/54/241db142fe924cbdd06d3d9ba7628624cb46baf6e87ab6fb9bbe722fb33b/Chameleon-4.2.0.tar.gz
+	https://files.pythonhosted.org/packages/0a/c7/bf24207ad79a383c8105df50f5d32e075a97fb30a85e1123810ac2326ad8/Chameleon-4.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2a7bda67ba9f8fa31d1e17b8d1cefdae8687741293ffe0938e831e71843b4751
-COMPONENT_LICENSE =		PSF-2.0
+	sha256:5105991bc4f69f4f4061af5318528a6953c0427a30d7cde4cb9d94405f1aac23
+COMPONENT_LICENSE =		BSD-3-Clause OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
@@ -34,6 +34,12 @@ include $(WS_MAKE_RULES)/common.mk
 # Force no colors and more verbose output via tox posargs
 COMPONENT_TEST_TARGETS += -- -vv
 
+# Normalize timetstamps that change with every run
+COMPONENT_TEST_TRANSFORMS += "-e 's|\[../../.. ..:..:..\]|[XX/XX/XX XX:XX:XX]|'"
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/wheel
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
