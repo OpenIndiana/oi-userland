@@ -59,8 +59,116 @@ Running zope.testrunner.layer.UnitTests tests:
  test_umlaut_exc_to_string (chameleon.tests.test_exc.TestTemplateError)
  test_consecutive_loads (chameleon.tests.test_loader.LoadPageTests)
  test_load_abs (chameleon.tests.test_loader.LoadPageTests)
+ test_load_egg (chameleon.tests.test_loader.LoadPageTests)[XX/XX/XX XX:XX:XX] ERROR    listing git files failed - pretending there aren't any                                                                                                                                                      git.py:24
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` directly.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+$(PYTHON_DIR)/vendor-packages/setuptools/command/build_py.py:207: _Warning: Package 'chameleon_test_pkg.templates' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'chameleon_test_pkg.templates' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'chameleon_test_pkg.templates' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'chameleon_test_pkg.templates' to be distributed and are
+        already explicitly excluding 'chameleon_test_pkg.templates' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
+
  test_load_relative (chameleon.tests.test_loader.LoadPageTests)
  test_load_relative_badpath_in_searchpath (chameleon.tests.test_loader.LoadPageTests)
+ test_load_wheel (chameleon.tests.test_loader.LoadPageTests)[XX/XX/XX XX:XX:XX] ERROR    listing git files failed - pretending there aren't any                                                                                                                                                      git.py:24
+$(PYTHON_DIR)/vendor-packages/setuptools/command/build_py.py:207: _Warning: Package 'chameleon_test_pkg.templates' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'chameleon_test_pkg.templates' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'chameleon_test_pkg.templates' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'chameleon_test_pkg.templates' to be distributed and are
+        already explicitly excluding 'chameleon_test_pkg.templates' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` directly.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+
  test_build (chameleon.tests.test_loader.ModuleLoadTests)
  test_load_getitem_gets_xml_file (chameleon.tests.test_loader.ZPTLoadTests)
  test_load_text (chameleon.tests.test_loader.ZPTLoadTests)
@@ -121,7 +229,10 @@ Running zope.testrunner.layer.UnitTests tests:
  test_txt_files (chameleon.tests.test_templates.ZopeTemplatesTestSuite)
  test_sample_files (chameleon.tests.test_tokenizer.TokenizerTest)
  test_token (chameleon.tests.test_tokenizer.TokenizerTest)
-  Ran 117 tests with 0 failures, 0 errors and 0 skipped.
+ test_items (chameleon.tests.test_utils.ScopeTestCase)
+ test_keys (chameleon.tests.test_utils.ScopeTestCase)
+ test_values (chameleon.tests.test_utils.ScopeTestCase)
+  Ran 122 tests with 0 failures, 0 errors and 0 skipped.
 Tearing down left over layers:
   Tear down zope.testrunner.layer.UnitTests.
   py$(PYV): OK
