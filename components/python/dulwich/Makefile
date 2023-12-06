@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dulwich
-HUMAN_VERSION =			0.21.6
+HUMAN_VERSION =			0.21.7
 COMPONENT_SUMMARY =		dulwich - Python Git Library
 COMPONENT_PROJECT_URL =		https://www.dulwich.io/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/57/e0/1b5f95c2651284a5d4fdfb2cc5ecad57fb694084cce59d9d4acb7ac30ecf/dulwich-0.21.6.tar.gz
+	https://files.pythonhosted.org/packages/2b/e2/788910715b4910d08725d480278f625e315c3c011eb74b093213363042e0/dulwich-0.21.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:30fbe87e8b51f3813c131e2841c86d007434d160bd16db586b40d47f31dd05b0
+	sha256:a9e9c66833cea580c3ac12927e4b9711985d76afca98da971405d414de60e968
 COMPONENT_LICENSE =		Apache-2.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
