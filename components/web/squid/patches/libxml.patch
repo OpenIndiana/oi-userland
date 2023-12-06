@@ -1,0 +1,11 @@
+--- squid-6.5/src/esi/Libxml2Parser.cc	2023-11-06 04:41:43.000000000 +0100
++++ squid-6.5/src/esi/Libxml2Parser.cc.new	2023-12-05 20:21:46.334435132 +0100
+@@ -144,7 +144,7 @@
+ char const *
+ ESILibxml2Parser::errorString() const
+ {
+-    xmlErrorPtr error = xmlGetLastError();
++    const xmlError *error = xmlGetLastError();
+ 
+     if (error == nullptr)
+         return nullptr;
