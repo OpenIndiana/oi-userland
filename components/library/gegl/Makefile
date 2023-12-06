@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).46
-COMPONENT_REVISION= 11
+COMPONENT_REVISION= 12
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -59,6 +59,7 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_64)/gegl
 COMPONENT_TEST_TRANSFORMS += \
+	' -e "s/[0-9]*\.[0-9]*s//" ' \
 	' -e "/OK/p" ' \
 	' -e "/SKIP/p" ' \
 	' -e "/FAIL/p" ' \
@@ -81,6 +82,7 @@ REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/sdl2
