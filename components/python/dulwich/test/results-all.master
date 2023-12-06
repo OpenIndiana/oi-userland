@@ -16,6 +16,7 @@ test_config_no_proxy_custom_cls (dulwich.tests.test_client.DefaultUrllib3Manager
 test_config_no_ssl (dulwich.tests.test_client.DefaultUrllib3ManagerTest) ... ok
 test_config_no_verify_ssl (dulwich.tests.test_client.DefaultUrllib3ManagerTest) ... ok
 test_config_proxy (dulwich.tests.test_client.DefaultUrllib3ManagerTest) ... ok
+test_config_proxy_creds (dulwich.tests.test_client.DefaultUrllib3ManagerTest) ... ok
 test_config_proxy_custom_cls (dulwich.tests.test_client.DefaultUrllib3ManagerTest) ... ok
 test_config_ssl (dulwich.tests.test_client.DefaultUrllib3ManagerTest) ... ok
 test_environment_empty_proxy (dulwich.tests.test_client.DefaultUrllib3ManagerTest) ... ok
@@ -61,7 +62,9 @@ test_init_username_passwd_set (dulwich.tests.test_client.HttpGitClientTests) ...
 test_init_username_set_no_password (dulwich.tests.test_client.HttpGitClientTests) ... ok
 test_smart_request_content_type_with_directive_check (dulwich.tests.test_client.HttpGitClientTests) ... ok
 test_url_redirect_location (dulwich.tests.test_client.HttpGitClientTests) ... ok
-test_clone (dulwich.tests.test_client.LocalGitClientTests) ... ok
+test_clone (dulwich.tests.test_client.LocalGitClientTests) ... $(@D)/dulwich/repo.py:888: DeprecationWarning: use get_user_identity() rather than Repo._get_user_identity
+  warnings.warn(
+ok
 test_fetch_empty (dulwich.tests.test_client.LocalGitClientTests) ... ok
 test_fetch_into_empty (dulwich.tests.test_client.LocalGitClientTests) ... ok
 test_fetch_pack_none (dulwich.tests.test_client.LocalGitClientTests) ... ok
@@ -194,6 +197,7 @@ test_tab (dulwich.tests.test_config.ParseStringTests) ... ok
 test_default_backends (dulwich.tests.test_config.StackedConfigTests) ... ok
 test_windows_config_from_path (dulwich.tests.test_config.StackedConfigTests) ... skipped 'Windows specific config location.'
 test_windows_config_from_reg (dulwich.tests.test_config.StackedConfigTests) ... skipped 'Windows specific config location.'
+testMalformedSubmodules (dulwich.tests.test_config.SubmodulesTests) ... ok
 testSubmodules (dulwich.tests.test_config.SubmodulesTests) ... ok
 test_match_partial_url (dulwich.tests.test_credentials.TestCredentialHelpersUtils) ... ok
 test_match_urls (dulwich.tests.test_credentials.TestCredentialHelpersUtils) ... ok
@@ -317,6 +321,7 @@ test_multiple_lca (dulwich.tests.test_graph.FindMergeBaseTests) ... ok
 test_no_common_ancestor (dulwich.tests.test_graph.FindMergeBaseTests) ... ok
 test_octopus (dulwich.tests.test_graph.FindMergeBaseTests) ... ok
 test_three_way_merge_lca (dulwich.tests.test_graph.FindMergeBaseTests) ... ok
+test_WorkList (dulwich.tests.test_graph.WorkListTest) ... ok
 test_finder (dulwich.tests.test_greenthreads.TestGreenThreadsMissingObjectFinder) ... ok
 test_hook_commit_msg (dulwich.tests.test_hooks.ShellHookTests) ... ok
 test_hook_post_commit (dulwich.tests.test_hooks.ShellHookTests) ... ok
@@ -806,7 +811,9 @@ test_add_file_clrf_conversion (dulwich.tests.test_porcelain.AddTests) ... ok
 test_add_ignored (dulwich.tests.test_porcelain.AddTests) ... ok
 test_add_not_in_repo (dulwich.tests.test_porcelain.AddTests) ... ok
 test_simple (dulwich.tests.test_porcelain.ArchiveTests) ... ok
-test_branch_exists (dulwich.tests.test_porcelain.BranchCreateTests) ... ok
+test_branch_exists (dulwich.tests.test_porcelain.BranchCreateTests) ... $(@D)/dulwich/repo.py:888: DeprecationWarning: use get_user_identity() rather than Repo._get_user_identity
+  warnings.warn(
+ok
 test_new_branch (dulwich.tests.test_porcelain.BranchCreateTests) ... ok
 test_simple (dulwich.tests.test_porcelain.BranchDeleteTests) ... ok
 test_simple_unicode (dulwich.tests.test_porcelain.BranchDeleteTests) ... ok
@@ -858,6 +865,8 @@ test_empty (dulwich.tests.test_porcelain.DiffTreeTests) ... ok
 test_simple (dulwich.tests.test_porcelain.FetchTests) ... ok
 test_with_remote_name (dulwich.tests.test_porcelain.FetchTests) ... ok
 test_simple (dulwich.tests.test_porcelain.FindUniqueAbbrevTests) ... ok
+test_for_each_ref (dulwich.tests.test_porcelain.ForEachTests) ... ok
+test_for_each_ref_pattern (dulwich.tests.test_porcelain.ForEachTests) ... ok
 test_git_dir (dulwich.tests.test_porcelain.FsckTests) ... ok
 test_none (dulwich.tests.test_porcelain.FsckTests) ... ok
 test_encoding (dulwich.tests.test_porcelain.GetObjectByPathTests) ... ok
@@ -1151,7 +1160,7 @@ test_contains_object (dulwich.tests.test_repository.RepositoryRootTests) ... ok
 test_contains_ref (dulwich.tests.test_repository.RepositoryRootTests) ... ok
 test_delitem (dulwich.tests.test_repository.RepositoryRootTests) ... ok
 test_fetch (dulwich.tests.test_repository.RepositoryRootTests) ... ok
-test_fetch_ignores_missing_refs (dulwich.tests.test_repository.RepositoryRootTests) ... $(@D)/dulwich/refs.py:1281: UserWarning: ref refs/heads/blah points at non-present sha 1234566789123456789123567891234657373833
+test_fetch_ignores_missing_refs (dulwich.tests.test_repository.RepositoryRootTests) ... $(@D)/dulwich/refs.py:1280: UserWarning: ref refs/heads/blah points at non-present sha 1234566789123456789123567891234657373833
   warnings.warn(
 ok
 test_get_config (dulwich.tests.test_repository.RepositoryRootTests) ... ok
@@ -1326,12 +1335,12 @@ $(@D)/dulwich/tests/../../docs/tutorial/conclusion.txt
 Doctest: conclusion.txt ... ok
 test_archive (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... skipped 'exporting archives not supported over http'
 test_fetch_empty_pack (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_fetch_pack (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... $(PYTHON_DIR)/contextlib.py:457: ResourceWarning: unclosed <socket.socket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
-  _exit_wrapper = self._create_cb_wrapper(callback, *args, **kwds)
+test_fetch_pack (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_fetch_pack_depth (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_fetch_pack_no_side_band_64k (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... $(PYTHON_DIR)/contextlib.py:404: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
+  def _exit_wrapper(exc_type, exc, tb):
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ok
-test_fetch_pack_depth (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_fetch_pack_no_side_band_64k (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack_zero_sha (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_get_refs (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_incremental_fetch_pack (dulwich.tests.compat.test_client.DulwichHttpClientTest) ... ok
@@ -1517,9 +1526,9 @@ test_push_to_dulwich_issue_88_standard (dulwich.tests.compat.test_web.SmartWebTe
 test_push_to_dulwich_no_op (dulwich.tests.compat.test_web.SmartWebTestCase) ... ok
 test_push_to_dulwich_remove_branch (dulwich.tests.compat.test_web.SmartWebTestCase) ... ok
 test_shallow_clone_from_git_is_identical (dulwich.tests.compat.test_web.SmartWebTestCase) ... ok
-test_run_command_data_transfer (dulwich.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... skipped 'paramiko is not installed'
-test_run_command_password (dulwich.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... skipped 'paramiko is not installed'
-test_run_command_with_privkey (dulwich.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... skipped 'paramiko is not installed'
+test_run_command_data_transfer (dulwich.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... ok
+test_run_command_password (dulwich.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... ok
+test_run_command_with_privkey (dulwich.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... ok
 test_get_recent_tags (dulwich.contrib.test_release_robot.GetRecentTagsTest)
 Test get recent tags. ... ok
 test_tag_pattern (dulwich.contrib.test_release_robot.TagPatternTests)
@@ -1569,6 +1578,6 @@ test_init_no_data (dulwich.contrib.test_swift.TestSwiftRepo) ... skipped "Requir
 test_put_named_file (dulwich.contrib.test_swift.TestSwiftRepo) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 
 ----------------------------------------------------------------------
-Ran 1508 tests
+Ran 1513 tests
 
-OK (skipped=87, expected failures=1)
+OK (skipped=84, expected failures=1)
