@@ -25,17 +25,17 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS =			64_and_32
+BUILD_BITS =			64
 BUILD_STYLE =			waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_VERSION =		4.19.2
+COMPONENT_VERSION =		4.19.3
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:9e63f0505e1c631f1db0b7a9349a51e925c026ca03af3fd5d812228bb597d393
+COMPONENT_ARCHIVE_HASH = 	sha256:280553b90f131b1940580df293653c9e9bd8906201f5def6e5e8c160f0bfac96
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI =		service/network/samba
@@ -58,7 +58,6 @@ PKG_OPTIONS +=		-I$(COMPONENT_DIR)
 # Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 
-$(BUILD_DIR_32)/%:      MACHLIBDIR=
 $(BUILD_DIR_64)/%:      MACHLIBDIR=/$(MACH64)
 
 CFLAGS +=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto
@@ -92,7 +91,7 @@ CONFIGURE_ENV +=	CPP="$(CC) -E"
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
 CONFIGURE_ENV +=	PATH=$(GNUBIN.$(BITS)):$(USRBINDIR.$(BITS)):$(PATH.gnu)
-ONFIGURE_ENV +=	PYTHONARCHDIR=$(PYTHON_VENDOR_PACKAGES)/samba
+CONFIGURE_ENV +=	PYTHONARCHDIR=$(PYTHON_VENDOR_PACKAGES)/samba
 
 # --enable-fhs should not be on
 CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
@@ -123,9 +122,7 @@ CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--enable-cups
 CONFIGURE_OPTIONS +=	--without-systemd
 
-CONFIGURE_OPTIONS.64 +=	--python=$(PYTHON)
-CONFIGURE_OPTIONS.32 +=	--disable-python
-CONFIGURE_OPTIONS.32 +=	--without-ad-dc
+CONFIGURE_OPTIONS +=	--python=$(PYTHON)
 CONFIGURE_OPTIONS +=	--nopyo
 CONFIGURE_OPTIONS +=	--nopycache
 CONFIGURE_OPTIONS +=	--disable-rpath
@@ -133,28 +130,13 @@ CONFIGURE_OPTIONS +=	--bundled-libraries=ALL
 
 CONFIGURE_OPTIONS +=	--disable-spotlight
 
-$(BUILD_32):    COMPONENT_BUILD_TARGETS= --targets=nss_winbind,pamwinbind
-
-# do not do waf install for winbind only - override the recipe
-$(INSTALL_32): $(BUILD_32)
-	/bin/sh -c "cd $(@D)  &&\
-	$(INSTALL) -d $(PROTO_DIR)/usr/lib/samba$(MACHLIBDIR)  &&\
-	$(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba$(MACHLIBDIR) bin/plugins/!(pam_*).so* && \
-	$(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/security$(MACHLIBDIR) && \
-	$(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/security$(MACHLIBDIR) bin/plugins/pam_*.so* && \
-	$(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/private$(MACHLIBDIR) && \
-	$(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/private$(MACHLIBDIR) bin/shared/private/*.so*"
-	$(TOUCH) $@
-
 #
 # set everything for target build.
 #
-COMPONENT_POST_INSTALL_ACTION.64 += \
+COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTO_DIR)$(ETCDIR)/samba ; \
 	(sed -f $(COMPONENT_DIR)/Solaris/smbconf.sed \
 		> $(PROTO_DIR)$(ETCDIR)/samba/smb.conf.default $(BUILD_DIR_64)/examples/smb.conf.default) 
-
-install:        $(INSTALL_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += runtime/perl
