@@ -33,11 +33,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/share/doc/libcurl/html/(.+)$ -> \
     set action.hash curl-$(COMPONENT_VERSION)/docs/libcurl/%<\1> >
 
-# Drop 32-bit binaries
-<transform path=usr/bin/$(MACH32) -> drop>
-
-file path=usr/bin/$(MACH32)/curl
-file path=usr/bin/$(MACH32)/curl-config
 file path=usr/bin/curl
 file path=usr/bin/curl-config
 file path=usr/include/curl/curl.h
@@ -56,10 +51,6 @@ link path=usr/lib/$(MACH64)/libcurl.so target=libcurl.so.4.8.0
 link path=usr/lib/$(MACH64)/libcurl.so.4 target=libcurl.so.4.8.0
 file path=usr/lib/$(MACH64)/libcurl.so.4.8.0
 file path=usr/lib/$(MACH64)/pkgconfig/libcurl.pc
-link path=usr/lib/libcurl.so target=libcurl.so.4.8.0
-link path=usr/lib/libcurl.so.4 target=libcurl.so.4.8.0
-file path=usr/lib/libcurl.so.4.8.0
-file path=usr/lib/pkgconfig/libcurl.pc
 file path=usr/share/aclocal/libcurl.m4
 file path=usr/share/man/man1/curl-config.1
 file path=usr/share/man/man1/curl.1
