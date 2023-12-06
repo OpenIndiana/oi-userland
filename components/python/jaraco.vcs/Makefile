@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.vcs
-HUMAN_VERSION =			1.1.0
+HUMAN_VERSION =			2.0.0
 COMPONENT_SUMMARY =		jaraco.vcs - Facilities for working with VCS repositories
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.vcs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/98/cc/69165ff280444ca2876cac7ebca1340689738ec2b59a7ea30db8fae63d4f/jaraco.vcs-1.1.0.tar.gz
+	https://files.pythonhosted.org/packages/e9/b7/8956035d36a8fc92a5bda79d0381614bc40c6f68fc8e9983038ab277c47f/jaraco.vcs-2.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fe1a75fdd95a6dfc8a2b5011c7057c691cd3619f1c70505db7715ddd5af0501e
+	sha256:62d0353bd47732202ce1d3a3d666de15e7c0e854226d3e9fbd8e9bb481c6fbf6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
