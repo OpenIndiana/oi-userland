@@ -507,6 +507,23 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} slowest [0-9]\{1,\} durations =\{1,\
 # Remove short test summary info for projects that run pytest with -r option
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} short test summary info =\{1,\}$$/,/^=/{/^=/!d}'"
 
+# Normalize test results produced by pytest-xdist
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(filter library/python/pytest-xdist-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),"| ( \
+		$(GSED) -u \
+			-e '/^created: .* workers$$/d' \
+			-e 's/^[0-9]\{1,\}\( workers \[[0-9]\{1,\} items\]\)$$/X\1/' \
+			-e '/^scheduling tests via /q' ; \
+		$(GSED) -u -e '/^$$/q' ; \
+		$(GSED) -u -n -e '/^\[gw/p' -e '/^$$/Q' | ( $(GSED) \
+			-e 's/^\[gw[0-9]\{1,\}\] \[...%\] //' \
+			-e 's/ *$$//' \
+			-e 's/\([^ ]\{1,\}\) \(.*\)$$/\2 \1/' \
+			| $(SORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
+		) ; \
+		$(CAT) \
+	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
+
 # Normalize setup.py test results.  The setup.py testing could be used either
 # directly or via tox so add these transforms for all test styles
 # unconditionally.
