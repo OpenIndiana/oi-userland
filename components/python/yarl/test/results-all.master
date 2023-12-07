@@ -2,9 +2,11 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-configfile: setup.cfg
+configfile: pytest.ini
 testpaths: tests/
-collecting ... collected 1108 items
+X workers [1111 items]
+
+scheduling tests via LoadScheduling
 
 tests/test_cache.py::test_cache_clear PASSED
 tests/test_cache.py::test_cache_configure_None PASSED
@@ -535,8 +537,10 @@ tests/test_quoting.py::test_unquoting_bad_percent_escapes[py_unquoter-%\u20ac-%\
 tests/test_quoting.py::test_unquoting_bad_percent_escapes[py_unquoter-%x%3f-%x?] PASSED
 tests/test_quoting.py::test_unquoting_bad_percent_escapes[py_unquoter-%x-%x] PASSED
 tests/test_quoting.py::test_unquoting_bad_percent_escapes[py_unquoter-%xa-%xa] PASSED
-tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[c_unquoter] XFAIL
-tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[py_unquoter] XFAIL
+tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[c_unquoter-%AB%AB] XFAIL
+tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[c_unquoter-%AB] XFAIL
+tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[py_unquoter-%AB%AB] XFAIL
+tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[py_unquoter-%AB] XFAIL
 tests/test_quoting.py::test_unquoting_mixed_case_percent_escapes[c_unquoter] PASSED
 tests/test_quoting.py::test_unquoting_mixed_case_percent_escapes[py_unquoter] PASSED
 tests/test_quoting.py::test_unquoting_parts[c_unquoter] PASSED
@@ -950,7 +954,8 @@ tests/test_url_build.py::test_build_with_none_fragment PASSED
 tests/test_url_build.py::test_build_with_none_host PASSED
 tests/test_url_build.py::test_build_with_none_path PASSED
 tests/test_url_build.py::test_build_with_none_query_string PASSED
-tests/test_url_build.py::test_build_with_port PASSED
+tests/test_url_build.py::test_build_with_port[port-only] PASSED
+tests/test_url_build.py::test_build_with_port[port-str] PASSED
 tests/test_url_build.py::test_build_with_query_and_query_string PASSED
 tests/test_url_build.py::test_build_with_scheme PASSED
 tests/test_url_build.py::test_build_with_scheme_and_host PASSED
@@ -1115,5 +1120,9 @@ tests/test_url_update_netloc.py::test_with_user_ipv6 PASSED
 tests/test_url_update_netloc.py::test_with_user_non_ascii PASSED
 tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
+11 files skipped due to complete coverage.
 
-======== 1105 passed, 3 xfailed ========
+
+============================= slowest 10 durations =============================
+=========================== short test summary info ============================
+======== 1106 passed, 5 xfailed ========
