@@ -6,16 +6,16 @@ index 7d9025a399..63c6271e46 100644
 --- a/usr/src/lib/libnwam/common/libnwam.h
 +++ b/usr/src/lib/libnwam/common/libnwam.h
 @@ -966,6 +966,8 @@ typedef enum {
-        NWAM_OBJECT_TYPE_KNOWN_WLAN = 4
+ 	NWAM_OBJECT_TYPE_KNOWN_WLAN = 4
  } nwam_object_type_t;
  
 +#pragma pack(4)
 +
  typedef struct nwam_event *nwam_event_t;
  struct nwam_event {
-        int nwe_type;
+ 	int nwe_type;
 @@ -1040,6 +1042,8 @@ struct nwam_event {
-        } nwe_data;
+ 	} nwe_data;
  };
  
 +#pragma pack()
@@ -24,28 +24,30 @@ index 7d9025a399..63c6271e46 100644
  extern nwam_error_t nwam_events_init(void);
  extern void nwam_events_fini(void);
 diff --git a/usr/src/lib/libnwam/common/libnwam_priv.h b/usr/src/lib/libnwam/common/libnwam_priv.h
-index 14b92b2c3a..40c029e4e3 100644
+index 14b92b2c3a..368b914da2 100644
 --- a/usr/src/lib/libnwam/common/libnwam_priv.h
 +++ b/usr/src/lib/libnwam/common/libnwam_priv.h
-@@ -73,6 +73,7 @@ typedef enum {
+@@ -73,6 +73,8 @@ typedef enum {
  
- #define        NWAMD_MAX_NUM_WLANS     64
+ #define	NWAMD_MAX_NUM_WLANS	64
  
 +#pragma pack(4)
++
  typedef union {
-        /* Used for EVENT_[UN]REGISTER requests */
-        struct {
-@@ -133,10 +134,11 @@ typedef struct nwam_backend_door_arg {
-        nwam_backend_door_cmd_t nwbda_cmd;
-        char nwbda_dbname[MAXPATHLEN];                  /* config filename */
-        char nwbda_object[NWAM_MAX_NAME_LEN];           /* config object */
--       size_t nwbda_datalen;                           /* data follows arg */
-+       unsigned int nwbda_datalen;                             /* data follows arg */
-        nwam_error_t nwbda_result;                      /* return code */
-        uint64_t nwbda_flags;
+ 	/* Used for EVENT_[UN]REGISTER requests */
+ 	struct {
+@@ -133,11 +135,13 @@ typedef struct nwam_backend_door_arg {
+ 	nwam_backend_door_cmd_t nwbda_cmd;
+ 	char nwbda_dbname[MAXPATHLEN];			/* config filename */
+ 	char nwbda_object[NWAM_MAX_NAME_LEN];		/* config object */
+-	size_t nwbda_datalen;				/* data follows arg */
++	unsigned int nwbda_datalen;			/* data follows arg */
+ 	nwam_error_t nwbda_result;			/* return code */
+ 	uint64_t nwbda_flags;
  } nwam_backend_door_arg_t;
-+#pragma pack()
  
++#pragma pack()
++
  /*
   * Functions needed to initialize/stop processing of libnwam backend data
-
+  * (used in netcfgd).
