@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		referencing
-HUMAN_VERSION =			0.31.1
+HUMAN_VERSION =			0.32.0
 COMPONENT_SUMMARY =		referencing - JSON Referencing + Python
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/referencing
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/80/ce/e99def6196f53af8de12a9c36968de32f80b7871084d677d0dfcd2762d0b/referencing-0.31.1.tar.gz
+	https://files.pythonhosted.org/packages/96/71/0aabc36753b7f4ad18cbc3c97dea9d6a4f204cbba7b8e9804313366e1c8f/referencing-0.32.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:81a1471c68c9d5e3831c30ad1dd9815c45b558e596653db751a2bfdd17b3b9ec
+	sha256:689e64fe121843dcfd57b71933318ef1f91188ffb45367332700a86ac8fd6161
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
