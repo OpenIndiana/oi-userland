@@ -20,26 +20,23 @@ BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		webkitgtk
-COMPONENT_VERSION=	2.42.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.42.3
 COMPONENT_SUMMARY=	Web content engine library for GTK+
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:5720aa3e8627f1b9f63252187d4df0f8233ae71d697b1796ebfbe5ca750bd118
-COMPONENT_ARCHIVE_URL= \
-	http://webkitgtk.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:0a1a4630045628b3a6fe95da72dc47852cff20d66be1ac6fd0d669c88c13d8e2
+COMPONENT_ARCHIVE_URL=	https://webkitgtk.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://webkitgtk.org
 COMPONENT_FMRI=		library/desktop/webkitgtk2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	BSD,LGPLv2,CCASA3.0
 COMPONENT_LICENSE_FILE=	webkitgtk.license
 
-UNIFDEF_VER=2.12
-UNIFDEF_DIR=unifdef-$(UNIFDEF_VER)
-UNIFDEF_ARCHIVE=$(UNIFDEF_DIR).tar.gz
-UNIFDEF_URL=https://dotat.at/prog/unifdef/$(UNIFDEF_ARCHIVE)
-UNIFDEF_HASH=sha256:fba564a24db7b97ebe9329713ac970627b902e5e9e8b14e19e024eb6e278d10b
+UNIFDEF_VER= 2.12
+UNIFDEF_DIR= unifdef-$(UNIFDEF_VER)
+UNIFDEF_ARCHIVE= $(UNIFDEF_DIR).tar.gz
+UNIFDEF_URL= https://dotat.at/prog/unifdef/$(UNIFDEF_ARCHIVE)
+UNIFDEF_HASH= sha256:fba564a24db7b97ebe9329713ac970627b902e5e9e8b14e19e024eb6e278d10b
 
 ifeq ($(MACH), sparc)
 ADDITIONAL_PATCHES += patches/mapfile.$(MACH)
@@ -48,19 +45,18 @@ ifeq ($(MACH), i386)
 ADDITIONAL_PATCHES += patches/mapfile.$(MACH)
 endif
 
-TEST_TARGET=		$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 include $(WS_MAKE_RULES)/ninja.mk
 
-PATH=		$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_PRE_BUILD_ACTION += $(GSED) -i -e 's:/usr/bin/unifdef:$(COMPONENT_DIR)/$(UNIFDEF_DIR)/unifdef:' $(@D)/build.ninja
 
 # build with the distribution preferred libjpeg implementation
-CFLAGS            += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS          += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS           += $(JPEG_LDFLAGS)
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 LDFLAGS += -lm -lsocket
 
