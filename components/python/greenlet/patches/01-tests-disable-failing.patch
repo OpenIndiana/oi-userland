@@ -1,5 +1,5 @@
---- greenlet-3.0.1/src/greenlet/tests/test_leaks.py.orig
-+++ greenlet-3.0.1/src/greenlet/tests/test_leaks.py
+--- greenlet-3.0.2/src/greenlet/tests/test_leaks.py.orig
++++ greenlet-3.0.2/src/greenlet/tests/test_leaks.py
 @@ -18,6 +18,8 @@
  from .leakcheck import ignores_leakcheck
  from .leakcheck import RUNNING_ON_MANYLINUX
@@ -9,26 +9,11 @@
  # pylint:disable=protected-access
  
  assert greenlet.GREENLET_USE_GC # Option to disable this was removed in 1.0
-@@ -315,6 +317,7 @@
-     @ignores_leakcheck
-     # Because we're just trying to track raw memory, not objects, and running
-     # the leakcheck makes an already slow test slower.
-+    @unittest.skip("Always fails: https://github.com/python-greenlet/greenlet/issues/379")
-     def test_untracked_memory_doesnt_increase(self):
-         # See https://github.com/gevent/gevent/issues/1924
-         # and https://github.com/python-greenlet/greenlet/issues/328
-@@ -430,12 +433,14 @@
+@@ -430,6 +432,7 @@
      @ignores_leakcheck
      # Because we're just trying to track raw memory, not objects, and running
      # the leakcheck makes an already slow test slower.
 +    @unittest.skip("Always fails: https://github.com/python-greenlet/greenlet/issues/379")
      def test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_thread(self):
          self._check_untracked_memory_thread(deallocate_in_thread=True)
- 
-     @ignores_leakcheck
-     # Because the main greenlets from the background threads do not exit in a timely fashion,
-     # we fail the object-based leakchecks.
-+    @unittest.skip("Always fails: https://github.com/python-greenlet/greenlet/issues/379")
-     def test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_main(self):
-         self._check_untracked_memory_thread(deallocate_in_thread=False)
  
