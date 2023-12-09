@@ -33,14 +33,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Solaris-userland swaps both xslt-config apps
-# xslt-config contains embedded paths, so swap these around.
-#file usr/bin/xslt-config path=usr/bin/$(MACH64)/xslt-config facet.devel=true
-#file usr/bin/$(MACH32)/xslt-config path=usr/bin/xslt-config facet.devel=true
-# We prefer having the 32 bit app in usr/bin/$(MACH32) because we want to get rid of 32 bit.
-
-file path=usr/bin/$(MACH32)/xslt-config facet.devel=true
-#file path=usr/bin/$(MACH32)/xsltproc
 file path=usr/bin/xslt-config facet.devel=true
 file path=usr/bin/xsltproc
 file path=usr/include/libexslt/exslt.h
@@ -78,17 +70,6 @@ link path=usr/lib/$(MACH64)/libxslt.so.1 target=libxslt.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libexslt.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libxslt.pc
 file path=usr/lib/$(MACH64)/xsltConf.sh
-file path=usr/lib/cmake/libxslt/FindGcrypt.cmake
-file path=usr/lib/cmake/libxslt/libxslt-config.cmake
-link path=usr/lib/libexslt.so target=libexslt.so.0.8.21
-link path=usr/lib/libexslt.so.0 target=libexslt.so.0.8.21
-file path=usr/lib/libexslt.so.0.8.21
-link path=usr/lib/libxslt.so target=libxslt.so.$(HUMAN_VERSION)
-file path=usr/lib/libxslt.so.$(HUMAN_VERSION)
-link path=usr/lib/libxslt.so.1 target=libxslt.so.$(HUMAN_VERSION)
-file path=usr/lib/pkgconfig/libexslt.pc
-file path=usr/lib/pkgconfig/libxslt.pc
-file path=usr/lib/xsltConf.sh
 file path=usr/share/aclocal/libxslt.m4
 file path=usr/share/doc/libxslt/tutorial/images/callouts/1.png
 file path=usr/share/doc/libxslt/tutorial/images/callouts/10.png
