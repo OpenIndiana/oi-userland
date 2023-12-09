@@ -113,8 +113,26 @@ test_issue251_with_cleanup_disabled (greenlet.tests.test_leaks.TestLeaks) ... ok
 test_kwarg_refs (greenlet.tests.test_leaks.TestLeaks) ... ok
 test_threaded_adv_leak (greenlet.tests.test_leaks.TestLeaks) ... ok
 test_threaded_leak (greenlet.tests.test_leaks.TestLeaks) ... ok
-test_untracked_memory_doesnt_increase (greenlet.tests.test_leaks.TestLeaks) ... skipped 'Always fails: https://github.com/python-greenlet/greenlet/issues/379'
-test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_main (greenlet.tests.test_leaks.TestLeaks) ... skipped 'Always fails: https://github.com/python-greenlet/greenlet/issues/379'
+test_untracked_memory_doesnt_increase (greenlet.tests.test_leaks.TestLeaks) ... skipped 'uss not supported'
+test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_main (greenlet.tests.test_leaks.TestLeaks) ... Exception in thread Thread-251:
+Traceback (most recent call last):
+  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/__init__.py", line 200, in get_process_uss
+    return psutil.Process().memory_full_info().uss
+AttributeError: 'pmem' object has no attribute 'uss'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/threading.py", line 980, in _bootstrap_inner
+    self.run()
+  File "$(PYTHON_DIR)/threading.py", line 917, in run
+    self._target(*self._args, **self._kwargs)
+  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/test_leaks.py", line 386, in __call__
+    self.uss_before = test.get_process_uss()
+  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/__init__.py", line 202, in get_process_uss
+    raise unittest.SkipTest("uss not supported") from e
+unittest.case.SkipTest: uss not supported
+skipped 'uss not supported'
 test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_thread (greenlet.tests.test_leaks.TestLeaks) ... skipped 'Always fails: https://github.com/python-greenlet/greenlet/issues/379'
 test_stack_saved (greenlet.tests.test_stack_saved.Test) ... ok
 test_class (greenlet.tests.test_throw.ThrowTests) ... ok
@@ -138,14 +156,14 @@ test_version (greenlet.tests.test_version.VersionTests) ... ok
 test_dead_weakref (greenlet.tests.test_weakref.WeakRefTests) ... ok
 test_dealloc_weakref (greenlet.tests.test_weakref.WeakRefTests) ... ok
 test_inactive_weakref (greenlet.tests.test_weakref.WeakRefTests) ... ok
+Time limit exceeded.
+Threads: Waiting for only 1 --> 1
+MGlets : Waiting for only 4 --> 5
 
 ----------------------------------------------------------------------
 Ran 137 tests
 
 OK (skipped=4)
-Time limit exceeded.
-Threads: Waiting for only 1 --> 1
-MGlets : Waiting for only 2 --> 3
 py$(PYV): commands[2]> python -m sphinx.cmd.build -b doctest -d docs/_build/doctrees-py$(PYV) docs docs/_build/doctest-py$(PYV)
 Running Sphinx v7.2.6
 making output directory... done
@@ -160,23 +178,23 @@ building [doctest]: targets for 15 source files that are out of date
 updating environment: [new config] 15 added, 0 changed, 0 removed
 [2Kreading sources... [  7%] api[2Kreading sources... [ 13%] c_api[2Kreading sources... [ 20%] caveats[2Kreading sources... [ 27%] changes[2Kreading sources... [ 33%] contextvars[2Kreading sources... [ 40%] creating_executing_greenlets[2Kreading sources... [ 47%] development[2Kreading sources... [ 53%] greenlet[2Kreading sources... [ 60%] greenlet_gc[2Kreading sources... [ 67%] gui_example[2Kreading sources... [ 73%] history[2Kreading sources... [ 80%] index[2Kreading sources... [ 87%] python_threads[2Kreading sources... [ 93%] switching[2Kreading sources... [100%] tracing
 CHANGES.rst:3: WARNING: Duplicate explicit target name: "pr".
-CHANGES.rst:228: CRITICAL: Title level inconsistent:
+CHANGES.rst:238: CRITICAL: Title level inconsistent:
 
 Platforms
 ~~~~~~~~~
-CHANGES.rst:251: CRITICAL: Title level inconsistent:
+CHANGES.rst:261: CRITICAL: Title level inconsistent:
 
 Fixes
 ~~~~~
-CHANGES.rst:271: CRITICAL: Title level inconsistent:
+CHANGES.rst:281: CRITICAL: Title level inconsistent:
 
 Changes
 ~~~~~~~
-CHANGES.rst:378: CRITICAL: Title level inconsistent:
+CHANGES.rst:388: CRITICAL: Title level inconsistent:
 
 Supported Platforms
 ~~~~~~~~~~~~~~~~~~~
-CHANGES.rst:388: CRITICAL: Title level inconsistent:
+CHANGES.rst:398: CRITICAL: Title level inconsistent:
 
 Packaging Changes
 ~~~~~~~~~~~~~~~~~
