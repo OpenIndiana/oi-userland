@@ -24,17 +24,16 @@
 # Copyright (c) 2022, Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS=	64_and_32
-USEOPENSSL11= yes
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
-COMPONENT_VERSION=	1.1.38
+COMPONENT_VERSION=	1.1.39
 COMPONENT_SUMMARY=      XSLT support for libxml2 (XML toolkit from the GNOME project)
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:1f32450425819a09acaff2ab7a5a7f8a2ec7956e505d7beeb45e843d0e1ecab1
+COMPONENT_ARCHIVE_HASH=	sha256:2a20ad621148339b0759c4d4e96719362dee64c9a096dbba625ba053846349f0
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libxslt/1.1/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/libxslt
 COMPONENT_CLASSIFICATION= System/Libraries
