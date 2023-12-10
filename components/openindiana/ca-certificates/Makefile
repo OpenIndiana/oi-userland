@@ -23,13 +23,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 COMPONENT_VERSION_MAJOR= 3
-COMPONENT_VERSION_MINOR= 90
+COMPONENT_VERSION_MINOR= 95
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
-HUMAN_VERSION= 20230604
+HUMAN_VERSION=	20231117
 COMPONENT_SUMMARY=	Common CA certificates
 COMPONENT_SRC=		nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9acd6534c41d8ead19fca6fcb3fffed2f9f09c437c3d79fee6a4ee668aaa93b6
+COMPONENT_ARCHIVE_HASH=	sha256:469888e41e8a780051ce00edcd914e8a6bd38da88a82cfb84898dd388635822a
 COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/security/nss/releases/NSS_$(COMPONENT_VERSION_MAJOR)_$(COMPONENT_VERSION_MINOR)_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_FMRI=		crypto/ca-certificates
@@ -95,7 +95,8 @@ $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
            ln -fs ../../certs/CA/$${i} ../../openssl/certs/$${HASH}.0; \
 	done; 
 	touch $@
-	
+
+# Manually added dependencies
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl
@@ -103,5 +104,6 @@ REQUIRED_PACKAGES += library/perl-5/libwww-perl
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += system/library/iconv/utf-8
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/ca-certificates
