@@ -19,20 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		isort
-HUMAN_VERSION =			5.12.0
+HUMAN_VERSION =			5.13.0
 COMPONENT_SUMMARY =		isort - A Python utility / library to sort Python imports.
 COMPONENT_PROJECT_URL =		https://pycqa.github.io/isort/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a9/c4/dc00e42c158fc4dda2afebe57d2e948805c06d5169007f1724f0683010a9/isort-5.12.0.tar.gz
+	https://files.pythonhosted.org/packages/42/c5/e8a34dace89624d27c31c67140362cfe07562c450c52984419ee242f0fcb/isort-5.13.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8bef7dde241278824a6d83f44a544709b065191b95b6e50894bdc722fcba0504
+	sha256:d67f78c6a1715f224cca46b29d740037bdb6eea15323a133e897cda15876147b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
-
-# isort >= 5.12.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
