@@ -1,16 +1,17 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest -ra --cov=ansi2html --no-cov-on-fail --cov-append --cov-report=xml:$(@D)/.tox/coverage-py$(PYV).xml
+py$(PYV): commands[0]> python -m pytest -ra --cov=src/ --no-cov-on-fail --cov-append --cov-report=xml:$(@D)/.tox/coverage-py$(PYV).xml
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 collecting ... collected 37 items
 
+  self._warn("No data was collected.", slug="no-data-collected")
+PASSED
 tests/test_ansi2html.py::TestAnsi2HTML::test_256_color_malformed PASSED
 tests/test_ansi2html.py::TestAnsi2HTML::test_blinking_text PASSED
 tests/test_ansi2html.py::TestAnsi2HTML::test_command_input_output_encoding PASSED
-tests/test_ansi2html.py::TestAnsi2HTML::test_command_module PASSED
+tests/test_ansi2html.py::TestAnsi2HTML::test_command_module $(PYTHON_DIR)/vendor-packages/coverage/control.py:883: CoverageWarning: No data was collected. (no-data-collected)
 tests/test_ansi2html.py::TestAnsi2HTML::test_command_script PASSED
 tests/test_ansi2html.py::TestAnsi2HTML::test_conversion PASSED
 tests/test_ansi2html.py::TestAnsi2HTML::test_conversion_as_command PASSED
