@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		isort
-HUMAN_VERSION =			5.13.0
+HUMAN_VERSION =			5.13.1
 COMPONENT_SUMMARY =		isort - A Python utility / library to sort Python imports.
 COMPONENT_PROJECT_URL =		https://pycqa.github.io/isort/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/42/c5/e8a34dace89624d27c31c67140362cfe07562c450c52984419ee242f0fcb/isort-5.13.0.tar.gz
+	https://files.pythonhosted.org/packages/1e/59/98677f9085b607551b009833449c39bfc4ce8172b0d9545eece9b5e2f8e5/isort-5.13.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d67f78c6a1715f224cca46b29d740037bdb6eea15323a133e897cda15876147b
+	sha256:aaed790b463e8703fb1eddb831dfa8e8616bacde2c083bd557ef73c8189b7263
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
