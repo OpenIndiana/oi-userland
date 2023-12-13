@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		salt
-HUMAN_VERSION =			3006.4
+HUMAN_VERSION =			3006.5
 COMPONENT_SUMMARY =		salt - Portable, distributed, remote execution and configuration management system
 COMPONENT_PROJECT_URL =		https://saltproject.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/97/09/e25bf3e4a4a217045ab2defaec8d3a2f9bc916166b6aaccb7288e2b99712/salt-3006.4.tar.gz
+	https://files.pythonhosted.org/packages/6a/a3/6a7c402ea662fb551a76f7038eb2a02d78437b5afd1baeec99dc03d57b94/salt-3006.5.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d097885c33c2cfaa0ccdc627ca570d67690c8d037dc7801be88788bcca1036ae
+	sha256:6f9687f2542ddc8084b17cb47f0a4cafd48940123ba3ed5731f6aa81fe7f973e
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -76,13 +76,15 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += SUNWcs
+TEST_REQUIRED_PACKAGES.python += library/python/docker
 TEST_REQUIRED_PACKAGES.python += library/python/flaky
 TEST_REQUIRED_PACKAGES.python += library/python/mock
+TEST_REQUIRED_PACKAGES.python += library/python/more-itertools
+TEST_REQUIRED_PACKAGES.python += library/python/pyfakefs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-custom-exit-code
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-helpers-namespace
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-httpserver
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-salt-factories
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-subtests
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-tempdir
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
