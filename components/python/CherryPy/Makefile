@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project CherryPy
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CherryPy
-HUMAN_VERSION =			18.8.0
+HUMAN_VERSION =			18.9.0
 COMPONENT_SUMMARY =		CherryPy - Object-Oriented HTTP framework
 COMPONENT_PROJECT_URL =		https://www.cherrypy.dev
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/60/ea/6c4d16b0cd1f4f64a478bac8a37d75a585e854afb5693ce80a9711efdc4a/CherryPy-18.8.0.tar.gz
+	https://files.pythonhosted.org/packages/bd/5f/e265a49883bfcfb7f2c3d3d9e96197cfe8136783e96c5ce20e201550aaa0/CherryPy-18.9.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9b48cfba8a2f16d5b6419cc657e6d51db005ba35c5e3824e4728bb03bbc7ef9b
+	sha256:6b06c191ce71a86461f30572a1ab57ffc09f43143ba8e42c103c7b3347220eb1
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -33,11 +33,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cheroot
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-collections
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/portend
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += library/python/zc-lockfile
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/codecov
@@ -48,8 +49,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-forked
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-services
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-sugar
-TEST_REQUIRED_PACKAGES.python += library/python/python-memcached
 TEST_REQUIRED_PACKAGES.python += library/python/requests-toolbelt
 TEST_REQUIRED_PACKAGES.python += library/python/routes
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
