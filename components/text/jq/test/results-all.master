@@ -394,51 +394,56 @@ Test #392: '. - 10' at line number 1854
 Test #393: '.[0] - 10' at line number 1858
 Test #394: '.x - 10' at line number 1862
 Test #395: '. |= try . catch .' at line number 1866
-Test #396: 'abs' at line number 1871
-Test #397: 'map(abs)' at line number 1875
-Test #398: 'map(fabs == length) | unique' at line number 1879
-Test #399: 'map(abs)' at line number 1884
-Test #400: '123 as $label | $label' at line number 1890
-Test #401: '[ label $if | range(10) | ., (select(. == 5) | break $if) ]' at line number 1894
-Test #402: 'reduce .[] as $then (4 as $else | $else; . as $elif | . + $then * $elif)' at line number 1898
-Test #403: '1 as $foreach | 2 as $and | 3 as $or | { $foreach, $and, $or, a }' at line number 1902
-Test #404: '[ foreach .[] as $try (1 as $catch | $catch - 1; . + $try; .) ]' at line number 1906
-Test #405: '{ a, $__loc__, c }' at line number 1913
-Test #406: '1 as $x | "2" as $y | "3" as $z | { $x, as, $y: 4, ($z): 5, if: 6, foo: 7 }' at line number 1917
-Test #407: 'fromjson | isnan' at line number 1924
-Test #408: 'tojson | fromjson' at line number 1928
-Test #409: 'try input catch .' at line number 1935
-Test #410: 'debug' at line number 1939
-Test #411: '"foo" | try ((try . catch "caught too much") | error) catch "caught just right"' at line number 1944
-Test #412: '.[]|(try (if .=="hi" then . else error end) catch empty) | "\(.) there!"' at line number 1948
-Test #413: 'try (["hi","ho"]|.[]|(try . catch (if .=="ho" then "BROKEN"|error else empty end)) | if .=="ho" then error else "\(.) there!" end) catch "caught outside \(.)"' at line number 1952
-Test #414: '.[]|(try . catch (if .=="ho" then "BROKEN"|error else empty end)) | if .=="ho" then error else "\(.) there!" end' at line number 1957
-Test #415: 'try (try error catch "inner catch \(.)") catch "outer catch \(.)"' at line number 1961
-Test #416: 'try ((try error catch "inner catch \(.)")|error) catch "outer catch \(.)"' at line number 1965
-Test #417: 'first(.?,.?)' at line number 1970
-Test #418: '{foo: "bar"} | .foo |= .?' at line number 1975
-Test #419: '. |= try 2' at line number 1980
-Test #420: '. |= try 2 catch 3' at line number 1984
-Test #421: '.[] |= try tonumber' at line number 1988
-Test #422: 'any(keys[]|tostring?;true)' at line number 1993
-Test #423: 'implode|explode' at line number 2001
-Test #424: 'map(try implode catch .)' at line number 2005
-Test #425: 'walk(.)' at line number 2010
-Test #426: 'walk(1)' at line number 2014
-Test #427: '[walk(.,1)]' at line number 2019
-Test #428: 'walk(select(IN({}, []) | not))' at line number 2024
-Test #429: '[range(10)] | .[1.2:3.5]' at line number 2029
-Test #430: '[range(10)] | .[1.5:3.5]' at line number 2033
-Test #431: '[range(10)] | .[1.7:3.5]' at line number 2037
-Test #432: '[range(10)] | .[1.7:4294967295]' at line number 2041
-Test #433: '[range(10)] | .[1.7:-4294967296]' at line number 2045
-Test #434: '[[range(10)] | .[1.1,1.5,1.7]]' at line number 2049
-Test #435: '[range(5)] | .[1.1] = 5' at line number 2053
-Test #436: '[range(3)] | .[nan:1]' at line number 2057
-Test #437: '[range(3)] | .[1:nan]' at line number 2061
-Test #438: '[range(3)] | .[nan]' at line number 2065
-Test #439: 'try ([range(3)] | .[nan] = 9) catch .' at line number 2069
-Test #440: 'try ("foobar" | .[1.5:3.5] = "xyz") catch .' at line number 2073
-Test #441: 'try ([range(10)] | .[1.5:3.5] = ["xyz"]) catch .' at line number 2077
-Test #442: 'try ("foobar" | .[1.5]) catch .' at line number 2081
-441 of 442 tests passed (0 malformed, 0 skipped)
+Test #396: '.[] as $n | $n+0 | [., tostring, . == $n]' at line number 1871
+Test #397: 'abs' at line number 1880
+Test #398: 'map(abs)' at line number 1884
+Test #399: 'map(fabs == length) | unique' at line number 1888
+Test #400: 'map(abs)' at line number 1893
+Test #401: '123 as $label | $label' at line number 1899
+Test #402: '[ label $if | range(10) | ., (select(. == 5) | break $if) ]' at line number 1903
+Test #403: 'reduce .[] as $then (4 as $else | $else; . as $elif | . + $then * $elif)' at line number 1907
+Test #404: '1 as $foreach | 2 as $and | 3 as $or | { $foreach, $and, $or, a }' at line number 1911
+Test #405: '[ foreach .[] as $try (1 as $catch | $catch - 1; . + $try; .) ]' at line number 1915
+Test #406: '{ a, $__loc__, c }' at line number 1922
+Test #407: '1 as $x | "2" as $y | "3" as $z | { $x, as, $y: 4, ($z): 5, if: 6, foo: 7 }' at line number 1926
+Test #408: 'fromjson | isnan' at line number 1933
+Test #409: 'tojson | fromjson' at line number 1937
+Test #410: 'fromjson | isnan' at line number 1942
+Test #411: 'try input catch .' at line number 1949
+Test #412: 'debug' at line number 1953
+Test #413: '"foo" | try ((try . catch "caught too much") | error) catch "caught just right"' at line number 1958
+Test #414: '.[]|(try (if .=="hi" then . else error end) catch empty) | "\(.) there!"' at line number 1962
+Test #415: 'try (["hi","ho"]|.[]|(try . catch (if .=="ho" then "BROKEN"|error else empty end)) | if .=="ho" then error else "\(.) there!" end) catch "caught outside \(.)"' at line number 1966
+Test #416: '.[]|(try . catch (if .=="ho" then "BROKEN"|error else empty end)) | if .=="ho" then error else "\(.) there!" end' at line number 1971
+Test #417: 'try (try error catch "inner catch \(.)") catch "outer catch \(.)"' at line number 1975
+Test #418: 'try ((try error catch "inner catch \(.)")|error) catch "outer catch \(.)"' at line number 1979
+Test #419: 'first(.?,.?)' at line number 1984
+Test #420: '{foo: "bar"} | .foo |= .?' at line number 1989
+Test #421: '. |= try 2' at line number 1994
+Test #422: '. |= try 2 catch 3' at line number 1998
+Test #423: '.[] |= try tonumber' at line number 2002
+Test #424: 'any(keys[]|tostring?;true)' at line number 2007
+Test #425: 'implode|explode' at line number 2015
+Test #426: 'map(try implode catch .)' at line number 2019
+Test #427: 'walk(.)' at line number 2024
+Test #428: 'walk(1)' at line number 2028
+Test #429: '[walk(.,1)]' at line number 2033
+Test #430: 'walk(select(IN({}, []) | not))' at line number 2038
+Test #431: '[range(10)] | .[1.2:3.5]' at line number 2043
+Test #432: '[range(10)] | .[1.5:3.5]' at line number 2047
+Test #433: '[range(10)] | .[1.7:3.5]' at line number 2051
+Test #434: '[range(10)] | .[1.7:4294967295]' at line number 2055
+Test #435: '[range(10)] | .[1.7:-4294967296]' at line number 2059
+Test #436: '[[range(10)] | .[1.1,1.5,1.7]]' at line number 2063
+Test #437: '[range(5)] | .[1.1] = 5' at line number 2067
+Test #438: '[range(3)] | .[nan:1]' at line number 2071
+Test #439: '[range(3)] | .[1:nan]' at line number 2075
+Test #440: '[range(3)] | .[nan]' at line number 2079
+Test #441: 'try ([range(3)] | .[nan] = 9) catch .' at line number 2083
+Test #442: 'try ("foobar" | .[1.5:3.5] = "xyz") catch .' at line number 2087
+Test #443: 'try ([range(10)] | .[1.5:3.5] = ["xyz"]) catch .' at line number 2091
+Test #444: 'try ("foobar" | .[1.5]) catch .' at line number 2095
+Test #445: 'try ["ok", setpath([1]; 1)] catch ["ko", .]' at line number 2102
+Test #446: 'try ltrimstr(1) catch "x", try rtrimstr(1) catch "x" | "ok"' at line number 2109
+Test #447: 'try ltrimstr("x") catch "x", try rtrimstr("x") catch "x" | "ok"' at line number 2114
+446 of 447 tests passed (0 malformed, 0 skipped)
