@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python-rapidjson
-HUMAN_VERSION =			1.13
+HUMAN_VERSION =			1.14
 COMPONENT_SUMMARY =		python-rapidjson - Python wrapper around rapidjson
 COMPONENT_PROJECT_URL =		https://github.com/python-rapidjson/python-rapidjson
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e6/ad/471996e8c15243be240b81af77c29bdc049b916387088bc3ef8cc6560164/python-rapidjson-1.13.tar.gz
+	https://files.pythonhosted.org/packages/ee/2b/fe5d7f5547e06e9e6020739115419c905ac91099089176363dfc0efd567a/python-rapidjson-1.14.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ffe9d382be84ddcf197c188d2f49baa8b47270cec95a1dcb62496e2af3eb71d4
+	sha256:26806f0a658c34b48d2951d8d3f846ca9deb93a34e664ef436db632a188b6779
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
