@@ -489,7 +489,6 @@ PYTEST_ADDOPTS += $(PYTEST_FASTFAIL)
 COMPONENT_TEST_TRANSFORMS += \
 	"-e 's/^\(platform sunos5 -- Python \)$(shell echo $(PYTHON_VERSION) | $(GSED) -e 's/\./\\./g')\.[0-9]\{1,\}.*\( -- .*\)/\1\$$(PYTHON_VERSION).X\2/'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
-COMPONENT_TEST_TRANSFORMS += "-e '/^benchmark: /d'"				# line with version details
 COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins could vary
 COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} coverage: /,/^$$/d'"		# remove coverage report
 # sort list of pytest unit tests and drop percentage
@@ -506,6 +505,12 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} slowest [0-9]\{1,\} durations =\{1,\}$$/,/^=/{/^=/!d}'"
 # Remove short test summary info for projects that run pytest with -r option
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} short test summary info =\{1,\}$$/,/^=/{/^=/!d}'"
+
+# Normalize test results produced by pytest-benchmark
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(filter library/python/pytest-benchmark-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),"| ( \
+		$(GSED) -e '/^-\{1,\} benchmark/,/^=/{/^=/!d}' \
+	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
 
 # Normalize test results produced by pytest-xdist
 COMPONENT_TEST_TRANSFORMS += \
