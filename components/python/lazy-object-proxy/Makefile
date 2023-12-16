@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lazy-object-proxy
-HUMAN_VERSION =			1.9.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.10.0
 COMPONENT_SUMMARY =		lazy-object-proxy - A fast and thorough lazy object proxy.
 COMPONENT_PROJECT_URL =		https://github.com/ionelmc/python-lazy-object-proxy
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/20/c0/8bab72a73607d186edad50d0168ca85bd2743cfc55560c9d721a94654b20/lazy-object-proxy-1.9.0.tar.gz
+	https://files.pythonhosted.org/packages/2c/f0/f02e2d150d581a294efded4020094a371bbab42423fe78625ac18854d89b/lazy-object-proxy-1.10.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:659fb5809fa4629b8a1ac5106f669cfc7bef26fbb389dda53b3e010d1ac4ebae
+	sha256:78247b6d45f43a52ef35c25b5581459e85117225408a4128a3daf8bf9648ac69
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,8 +37,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
-TEST_REQUIRED_PACKAGES.python += library/python/django
-TEST_REQUIRED_PACKAGES.python += library/python/hunter
-TEST_REQUIRED_PACKAGES.python += library/python/objproxies
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
