@@ -18,15 +18,13 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libcanberra
-# Note that version 0.26 is the last version with support for GNOME-2.0 sessions. Later versions only support GNOME-3.0 session.
-COMPONENT_VERSION=      0.26
-COMPONENT_REVISION=     5
+COMPONENT_VERSION=      0.30
 COMPONENT_SUMMARY=      Event Sound API Using XDG Sound Theming Specification
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:4b5d8d2c2835133620adbc53745dd107b6e58b9a2963059e8f457143fee00982
-COMPONENT_ARCHIVE_URL=  https://0pointer.de/lennart/projects/libcanberra/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  https://0pointer.de/lennart/projects/libcanberra/
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:c2b671e67e0c288a69fc33dc1b6f1b534d07882c2aceed37004bf48c601afa72
+COMPONENT_ARCHIVE_URL=  http://0pointer.de/lennart/projects/libcanberra/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://0pointer.de/lennart/projects/libcanberra/
 COMPONENT_FMRI=         library/desktop/xdg/libcanberra
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1
@@ -50,11 +48,9 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --disable-static
 
-COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
