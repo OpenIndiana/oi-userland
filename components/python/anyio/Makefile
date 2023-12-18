@@ -19,25 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		anyio
-HUMAN_VERSION =			4.1.0
+HUMAN_VERSION =			4.2.0
 COMPONENT_SUMMARY =		anyio - High level compatibility layer for multiple asynchronous event loop implementations
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6e/57/075e07fb01ae2b740289ec9daec670f60c06f62d04b23a68077fd5d73fab/anyio-4.1.0.tar.gz
+	https://files.pythonhosted.org/packages/2d/b8/7333d87d5f03247215d86a86362fd3e324111788c6cdd8d2e6196a6ba833/anyio-4.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5a0bec7085176715be77df87fc66d6c9d70626bd752fcc85f57cdbee5b3760da
+	sha256:e1875bb4b4e2de1669f4bc7869b6d3f54231cdced71605e6e64c9be77e3be50f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# anyio --> anyio
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -51,14 +40,14 @@ PYTHON_REQUIRED_PACKAGES += library/python/idna
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/sniffio
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/anyio
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/exceptiongroup
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/tomli
 TEST_REQUIRED_PACKAGES.python += library/python/trustme
-TEST_REQUIRED_PACKAGES.python += library/python/uvloop
