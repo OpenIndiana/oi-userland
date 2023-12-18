@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		psutil
-HUMAN_VERSION =			5.9.6
+HUMAN_VERSION =			5.9.7
 COMPONENT_SUMMARY =		psutil - Cross-platform lib for process and system monitoring in Python.
 COMPONENT_PROJECT_URL =		https://github.com/giampaolo/psutil
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2d/01/beb7331fc6c8d1c49dd051e3611379bfe379e915c808e1301506027fce9d/psutil-5.9.6.tar.gz
+	https://files.pythonhosted.org/packages/a0/d0/c9ae661a302931735237791f04cb7086ac244377f78692ba3b3eae3a9619/psutil-5.9.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e4b92ddcd7dd4cdd3f900180ea1e104932c7bce234fb88976e2a3b296441225a
+	sha256:3f02134e82cfb5d089fddf20bb2e03fd5cd52395321d1c8458a9e58500ff417c
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
