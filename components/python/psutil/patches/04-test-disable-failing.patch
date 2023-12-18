@@ -1,5 +1,5 @@
---- psutil-5.9.6/psutil/tests/test_process.py.orig
-+++ psutil-5.9.6/psutil/tests/test_process.py
+--- psutil-5.9.7/psutil/tests/test_process.py.orig
++++ psutil-5.9.7/psutil/tests/test_process.py
 @@ -295,6 +295,7 @@
          time.strftime("%Y %m %d %H:%M:%S", time.localtime(p.create_time()))
  
@@ -16,8 +16,8 @@
      def test_nice(self):
          p = psutil.Process()
          self.assertRaises(TypeError, p.nice, "str")
---- psutil-5.9.6/psutil/tests/test_misc.py.orig
-+++ psutil-5.9.6/psutil/tests/test_misc.py
+--- psutil-5.9.7/psutil/tests/test_misc.py.orig
++++ psutil-5.9.7/psutil/tests/test_misc.py
 @@ -530,6 +530,7 @@
          with mock.patch('psutil._common.stat.S_ISREG', return_value=False):
              assert not isfile_strict(this_file)
@@ -26,8 +26,8 @@
      def test_debug(self):
          if PY3:
              from io import StringIO
---- psutil-5.9.6/psutil/tests/test_posix.py.orig
-+++ psutil-5.9.6/psutil/tests/test_posix.py
+--- psutil-5.9.7/psutil/tests/test_posix.py.orig
++++ psutil-5.9.7/psutil/tests/test_posix.py
 @@ -420,6 +420,7 @@
      # AIX can return '-' in df output instead of numbers, e.g. for /proc
      @unittest.skipIf(AIX, "unreliable on AIX")
@@ -36,8 +36,8 @@
      def test_disk_usage(self):
          def df(device):
              try:
---- psutil-5.9.6/psutil/tests/test_testutils.py.orig
-+++ psutil-5.9.6/psutil/tests/test_testutils.py
+--- psutil-5.9.7/psutil/tests/test_testutils.py.orig
++++ psutil-5.9.7/psutil/tests/test_testutils.py
 @@ -370,6 +370,7 @@
      @retry_on_failure()
      @unittest.skipIf(CI_TESTING, "skipped on CI")
@@ -46,8 +46,8 @@
      def test_leak_mem(self):
          ls = []
  
---- psutil-5.9.6/psutil/tests/test_unicode.py.orig
-+++ psutil-5.9.6/psutil/tests/test_unicode.py
+--- psutil-5.9.7/psutil/tests/test_unicode.py.orig
++++ psutil-5.9.7/psutil/tests/test_unicode.py
 @@ -243,6 +243,7 @@
                               os.path.normcase(self.funky_name))
  
@@ -64,8 +64,8 @@
      def test_memory_maps(self):
          # XXX: on Python 2, using ctypes.CDLL with a unicode path
          # opens a message box which blocks the test run.
---- psutil-5.9.6/psutil/tests/__init__.py.orig
-+++ psutil-5.9.6/psutil/tests/__init__.py
+--- psutil-5.9.7/psutil/tests/__init__.py.orig
++++ psutil-5.9.7/psutil/tests/__init__.py
 @@ -984,6 +984,7 @@
                      raise AssertionError(msg)
          proc.wait(timeout=0)  # assert not raise TimeoutExpired
