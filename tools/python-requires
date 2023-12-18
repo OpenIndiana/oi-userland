@@ -27,10 +27,7 @@ import sys
 import re
 
 try:
-    try:
-        from importlib.metadata import requires
-    except ImportError:
-        from importlib_metadata import requires
+    from importlib.metadata import requires
     from packaging.requirements import Requirement
     import subprocess
 except:
@@ -40,13 +37,6 @@ if len(sys.argv) < 2:
     exit()
 
 e = {'extra': sys.argv[2]} if len(sys.argv) > 2 else None
-# packaging up to 21.3 raises UndefinedEnvironmentName when extra is not
-# defined in environment, but marker contains it.  This should change in new
-# packaging once released.  See https://github.com/pypa/packaging/pull/550.  To
-# workaround this (so we do not need to handle exceptions) we pass empty extra
-# in environment when we do not want any extra.
-noe = {'extra': ''}
-
 reqs = requires(sys.argv[1]) if sys.argv[1] != "-" else sys.stdin.readlines()
 
 try:
@@ -56,7 +46,7 @@ try:
         except:
             continue
         m = r.marker
-        if (not m and not e) or m and ((not e and m.evaluate(noe)) or (e and not m.evaluate(noe) and m.evaluate(e))):
+        if (not m and not e) or (m and m.evaluate(e) and (not e or not m.evaluate())):
             print(re.sub(r"[-_.]+", "-", r.name).lower())
             for extra in r.extras:
                 subprocess.run([sys.argv[0], r.name, extra])
