@@ -1,0 +1,28 @@
+--- yt-dlp-2023.11.16/test/test_networking.py.orig
++++ yt-dlp-2023.11.16/test/test_networking.py
+@@ -539,6 +539,7 @@
+                 rh, Request(f'http://127.0.0.1:{self.http_port}/timeout_1', extensions={'timeout': 4}))
+ 
+     @pytest.mark.parametrize('handler', ['Urllib', 'Requests'], indirect=True)
++    @pytest.mark.skip(reason="always fails with 'Cannot assign requested address'")
+     def test_source_address(self, handler):
+         source_address = f'127.0.0.{random.randint(5, 255)}'
+         with handler(source_address=source_address) as rh:
+--- yt-dlp-2023.11.16/test/test_socks.py.orig
++++ yt-dlp-2023.11.16/test/test_socks.py
+@@ -299,6 +299,7 @@
+                 assert response['domain_address'] == 'localhost'
+ 
+     @pytest.mark.parametrize('handler,ctx', [('Urllib', 'http'), ('Requests', 'http')], indirect=True)
++    @pytest.mark.skip(reason="always fails with 'Cannot assign requested address'")
+     def test_ipv4_client_source_address(self, handler, ctx):
+         with ctx.socks_server(Socks4ProxyHandler) as server_address:
+             source_address = f'127.0.0.{random.randint(5, 255)}'
+@@ -414,6 +415,7 @@
+     # XXX: is there any feasible way of testing IPv6 source addresses?
+     # Same would go for non-proxy source_address test...
+     @pytest.mark.parametrize('handler,ctx', [('Urllib', 'http'), ('Requests', 'http')], indirect=True)
++    @pytest.mark.skip(reason="always fails with 'Cannot assign requested address'")
+     def test_ipv4_client_source_address(self, handler, ctx):
+         with ctx.socks_server(Socks5ProxyHandler) as server_address:
+             source_address = f'127.0.0.{random.randint(5, 255)}'
