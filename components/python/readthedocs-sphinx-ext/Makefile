@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		readthedocs-sphinx-ext
-HUMAN_VERSION =			2.2.4
+HUMAN_VERSION =			2.2.5
 COMPONENT_SUMMARY =		readthedocs-sphinx-ext - Sphinx extension for Read the Docs overrides
 COMPONENT_PROJECT_URL =		http://github.com/readthedocs/readthedocs-sphinx-ext
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/readthedocs/readthedocs-sphinx-ext/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d7b651b278a4bb33137587a5d9749f516ba61fbc9ba30a6f4a3403bac18b5a17
+	sha256:440570ad16900674931dd4a24843a4af8476ccffae460823be5e8efcb423774d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
