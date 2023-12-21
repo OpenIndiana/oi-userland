@@ -16,13 +16,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         qtkeychain-qt5
-COMPONENT_VERSION=      0.14.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      0.14.2
 COMPONENT_SUMMARY=      Provides support for secure credentials storage
 COMPONENT_PROJECT_URL=  https://github.com/frankosterfeld/qtkeychain
 COMPONENT_SRC=          qtkeychain-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:afb2d120722141aca85f8144c4ef017bd74977ed45b80e5d9e9614015dadd60c
+COMPONENT_ARCHIVE_HASH= sha256:cf2e972b783ba66334a79a30f6b3a1ea794a1dc574d6c3bebae5ffd2f0399571
 COMPONENT_ARCHIVE_URL=  https://github.com/frankosterfeld/qtkeychain/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/qt5/qtkeychain
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
@@ -33,6 +32,10 @@ TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS += -DQt5_DIR=$(QT5_LIBDIR)/cmake/Qt5
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/libsecret
+REQUIRED_PACKAGES += developer/build/pkg-config
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
