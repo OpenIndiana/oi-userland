@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      29.1
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -70,12 +70,6 @@ LD_MAP_NOEXDATA.sparc=
 # LDFLAGS is defined for emacs to detect ncurses
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
-# This code is built with gcc. The primary reason for this is that the
-# configure script has problems using a non-GNU cpp. I am not aware of
-# any reason Sun Studio could not be made to work, but simply made a
-# cost/benefit decision not to pursue it at this time
-COMPILER=	gcc
-
 # Uncomment this for debugging only. It configures emacs to run from the
 # local proto instead of from its final installed location.
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
@@ -91,7 +85,17 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=yes
 CONFIGURE_OPTIONS +=	--with-xaw3d=no
 CONFIGURE_OPTIONS +=	--with-mailutils
+CONFIGURE_OPTIONS +=	--with-modules
 CONFIGURE_OPTIONS +=	--with-imagemagick
+CONFIGURE_OPTIONS +=	--with-threads
+CONFIGURE_OPTIONS +=	--with-png
+CONFIGURE_OPTIONS +=	--with-rsvg
+CONFIGURE_OPTIONS +=	--with-sqlite3
+CONFIGURE_OPTIONS +=	--with-tiff
+CONFIGURE_OPTIONS +=	--with-toolkit-scroll-bars
+CONFIGURE_OPTIONS +=	--with-webp
+CONFIGURE_OPTIONS +=	--with-treesitter
+CONFIGURE_OPTIONS +=	--with-sound=oss
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
 # SPARC needs this to be set in order to publish correctly.
@@ -238,6 +242,7 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/tree-sitter
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
