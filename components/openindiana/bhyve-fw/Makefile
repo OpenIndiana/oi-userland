@@ -30,16 +30,20 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/illumos/$(COMPONENT_NAME)/releases/download/$(COMPONENT_TAG)/$(COMPONENT_ARCHIVE)
 
-COMPONENT_TAG_1=	il-edk2-stable202102-1
+COMPONENT_TAG_1=	il-edk2-stable202308-1
 COMPONENT_SRC_1=	$(COMPONENT_NAME)-$(COMPONENT_TAG_1)
 COMPONENT_ARCHIVE_1=	$(COMPONENT_NAME)-$(COMPONENT_TAG_1).tar.xz
 COMPONENT_ARCHIVE_HASH_1= \
-	sha256:ca26699ec8f8f7e45e01f2d5a23649997d33f0b8437405ca731f6e301d6a71a8
+	sha256:8aaacf4b7c6a875c78492ad74856802abcbce89ee8cf980efbd12c74946b3b79
 COMPONENT_ARCHIVE_URL_1= \
 	https://github.com/illumos/$(COMPONENT_NAME)/releases/download/$(COMPONENT_TAG_1)/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_PROJECT_URL=	https://github.com/illumos/uefi-edk2
 COMPONENT_LICENSE=	simplified-BSD
+
+#PYTHON = /usr/bin/amd64/python2.7
+GCC_VERSION= 10
+#PYTHON_VERSION= 2.7
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -53,10 +57,12 @@ COMPONENT_BUILD_ENV += GAS=/usr/bin/gas
 COMPONENT_BUILD_ENV += GAR=/usr/bin/gar
 COMPONENT_BUILD_ENV += GLD=/usr/bin/gld
 COMPONENT_BUILD_ENV += GOBJCOPY=/usr/bin/gobjcopy
+COMPONENT_BUILD_ENV += PYTHON=/usr/bin/amd64/python2.7
 
 # Four variants of the bhyve firmware are built;
 # DEBUG and RELEASE, and with and without CSM.
-VARIANTS =	DEBUG DEBUG.csm RELEASE RELEASE.csm
+# VARIANTS =	DEBUG DEBUG.csm RELEASE RELEASE.csm
+VARIANTS =	DEBUG RELEASE
 
 BUILD_64 =	$(VARIANTS:%=$(BUILD_DIR)/%/.built)
 INSTALL_64 =	$(VARIANTS:%=$(BUILD_DIR)/%/.installed)
@@ -75,11 +81,11 @@ $(BUILD_DIR)/DEBUG/.built: COMPONENT_BUILD_ENV += GCCPATH=$(GCC_ROOT)
 $(BUILD_DIR)/DEBUG/.built: COMPONENT_BUILD_ARGS =
 $(BUILD_DIR)/DEBUG/.built: COMPONENT_BUILD_TARGETS = DEBUG
 
-$(BUILD_DIR)/RELEASE.csm/.built: COMPONENT_BUILD_ENV += GCCPATH=/opt/gcc/4.4.4
+#$(BUILD_DIR)/RELEASE.csm/.built: COMPONENT_BUILD_ENV += GCCPATH=/opt/gcc/4.4.4
 $(BUILD_DIR)/RELEASE.csm/.built: COMPONENT_BUILD_ARGS = -csm
 $(BUILD_DIR)/RELEASE.csm/.built: COMPONENT_BUILD_TARGETS = RELEASE
 
-$(BUILD_DIR)/DEBUG.csm/.built: COMPONENT_BUILD_ENV += GCCPATH=/opt/gcc/4.4.4
+#$(BUILD_DIR)/DEBUG.csm/.built: COMPONENT_BUILD_ENV += GCCPATH=/opt/gcc/4.4.4
 $(BUILD_DIR)/DEBUG.csm/.built: COMPONENT_BUILD_ARGS = -csm
 $(BUILD_DIR)/DEBUG.csm/.built: COMPONENT_BUILD_TARGETS = DEBUG
 
@@ -125,5 +131,6 @@ test:		$(NO_TESTS)
 # Build dependencies
 REQUIRED_PACKAGES += developer/acpi
 REQUIRED_PACKAGES += developer/illumos-gcc
+REQUIRED_PACKAGES += runtime/python-27
 
 # Auto-generated dependencies
