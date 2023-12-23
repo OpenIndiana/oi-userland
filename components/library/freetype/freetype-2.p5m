@@ -24,10 +24,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Drop 32 bit apps:
-<transform file path=.*/bin/$(MACH32)/.+ -> drop>
-
-file path=usr/bin/$(MACH32)/freetype-config
 file path=usr/bin/freetype-config
 file path=usr/include/freetype2/freetype/config/ftconfig.h
 file path=usr/include/freetype2/freetype/config/ftheader.h
@@ -59,7 +55,6 @@ file path=usr/include/freetype2/freetype/ftimage.h
 file path=usr/include/freetype2/freetype/ftincrem.h
 file path=usr/include/freetype2/freetype/ftlcdfil.h
 file path=usr/include/freetype2/freetype/ftlist.h
-file path=usr/include/freetype2/freetype/ftlogging.h
 file path=usr/include/freetype2/freetype/ftlzw.h
 file path=usr/include/freetype2/freetype/ftmac.h
 file path=usr/include/freetype2/freetype/ftmm.h
@@ -88,9 +83,5 @@ link path=usr/lib/$(MACH64)/libfreetype.so target=libfreetype.so.6.20.1
 link path=usr/lib/$(MACH64)/libfreetype.so.6 target=libfreetype.so.6.20.1
 file path=usr/lib/$(MACH64)/libfreetype.so.6.20.1
 file path=usr/lib/$(MACH64)/pkgconfig/freetype2.pc
-link path=usr/lib/libfreetype.so target=libfreetype.so.6.20.1
-link path=usr/lib/libfreetype.so.6 target=libfreetype.so.6.20.1
-file path=usr/lib/libfreetype.so.6.20.1
-file path=usr/lib/pkgconfig/freetype2.pc
 file path=usr/share/aclocal/freetype2.m4
 file path=usr/share/man/man1/freetype-config.1
