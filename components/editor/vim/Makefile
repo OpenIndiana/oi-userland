@@ -30,17 +30,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.0.2181
+COMPONENT_VERSION=	9.0.2184
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:06f1e18823e39a63d9f627961d9c14eab66c6216ee1790789f3623bfa3c6351e
+COMPONENT_ARCHIVE_HASH=	sha256:de6b711a68fa105c70e5ed476e24143b98f1f83098722c231488c68264aeea98
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/configure  $(@D)/src/auto/configure $(@D)/src/configure $(@D)/src/mkinstalldirs ; \
-				  find $(@D) -name \*.sh  -exec chmod +x '{}' ';' ; rm $(@D)/src/po/{ko.po,zh_CN.po} ; )
+COMPONENT_POST_UNPACK_ACTION += ( \
+	chmod +x $(@D)/configure $(@D)/src/auto/configure $(@D)/src/configure $(@D)/src/mkinstalldirs ; \
+	find $(@D) -name \*.sh -exec chmod +x '{}' ';' ; \
+	rm $(@D)/src/po/{ko.po,zh_CN.po} ; )
 
 NOX_VARIANT = $(BUILD_DIR)/$(MACH64)-vim
 X_VARIANT =	$(BUILD_DIR)/$(MACH64)-gvim
@@ -55,11 +57,11 @@ INSTALL_64 = $(VARIANTS:%=%/.installed)
 TEST_64 = $(NOX_VARIANT)/.tested
 
 # vim uses self-defined INFINITY/NAN, which don't work well on illumos
-CFLAGS += -std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+CFLAGS += -std=c99 $(XPG6MODE)
 
 CONFIGURE_ENV += PATH=$(PATH.gnu)
 # Make sure we use a 64-bit, multithreaded perl
-CONFIGURE_ENV += vi_cv_path_perl=/usr/perl5/5.36/bin/perl
+CONFIGURE_ENV += vi_cv_path_perl=/usr/perl5/bin/perl
 # Vim's configure script looks for a "python3" executable, per PEP 394
 CONFIGURE_ENV += vi_cv_path_python3=/usr/bin/python$(PYTHON_VERSION)
 # zh_CN.cp936.po has invalid characters which GNU msgfmt seems to be able to ignore.
@@ -105,9 +107,6 @@ $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
 install:	$(INSTALL_64) $(BUILD_DIR)/license
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-# libssp is in $(GCC_RUNTIME_PKG) since gcc-10
-# Manually added dependency on python runtime
 PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
