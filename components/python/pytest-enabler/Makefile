@@ -19,26 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-enabler
-HUMAN_VERSION =			2.3.1
+HUMAN_VERSION =			3.0.0
 COMPONENT_SUMMARY =		pytest-enabler - Enable installed pytest plugins
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-enabler
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/bd/08/3a9516eeb3f8c8bd393347ad82688150d2a1e753edf1bc1565101ed0cd38/pytest-enabler-2.3.1.tar.gz
+	https://files.pythonhosted.org/packages/93/d8/f0032af0f705b9141c2baceb09275262a2b145de8be969a5374ffa15bcdc/pytest-enabler-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0b1afe2adcbc89f2425049ded0e6cb38c2952a88b14fed5d2cb1afd8a397b6f9
+	sha256:62376d2fdae65ee967849fa3586f8ce68506988e94c64030c8ff2b038d6422c5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# pytest-enabler --> pytest-enabler
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -52,9 +41,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/toml
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
 TEST_REQUIRED_PACKAGES.python += library/python/types-toml
