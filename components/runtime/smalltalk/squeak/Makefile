@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022 David Stes
+# Copyright 2020, 2021, 2022, 2023 David Stes
 #
 
 
@@ -20,10 +20,16 @@
 # squeak uses cmake and a custom configure script (not GNU autoconf)
 # in order to build this package, "cmake" must be installed
 #
-# squeak is built both in 32-bit and 64-bit mode
-# the squeak driver script checks the Smalltalk image (using ckformat),
+# squeak was built both in 32-bit and 64-bit mode
+# but since 2023 version 4.20.6 now only in 64 bit per OpenIndiana request
+# OpenIndiana is dropping 32bit libraries so we can't build 32bit any longer
+#
+# the squeak driver script was/is checking the Smalltalk image (using ckformat),
 # and depending on whether the image is 32bit or 64bit,
 # it launches the squeak virtual machine 32bit or 64bit for the image
+#
+# we now (since 4.20.6) try to use the 64bit executable to launch 32bit images
+# and for 64bit images simply fail (with an error message)
 #
 # for 32-bit : ckformat reports 6505
 # 6505: a 32-bit V3 image with closure support and float words stored 
@@ -33,6 +39,10 @@
 # 68000: a 64-bit V3 image with no closure support and 
 # no native platform float word order requirement
 #
+# note that since 4.20.6 the 64bit images (68000) are no longer working
+# but this is not much of a problem due to the fact that all images are 6502
+# or 6504 (32bit)
+#
 # squeak places its 64-bit shared object files in
 # usr/lib/squeak/<version>-<svnversion>_64bit/  with a _64bit suffix
 # which is unfortunately not conforming to the usr/lib/amd64 usage
@@ -40,8 +50,13 @@
 # so we deliver a patch and rename files
 # in order to put the 64-bit objects in their usual usr/lib/amd64 location
 
-BUILD_BITS=32_and_64
+BUILD_BITS=64
 USE_COMMON_TEST_MASTER=no
+
+# there is support for OpenSSL 1.1 and 3.x in the squeak SSL module
+# but the SUnit squeak images tests seem to be written for old ssl versions
+# this can be set before including shared-macros.mk
+USE_OPENSSL10=yes
 
 # the goal is to use libjpeg8-turbo but that links, but does not display
 # working jpeg images; needs to be fixed upstream by the Squeak team
@@ -55,15 +70,15 @@ include ../../../../make-rules/shared-macros.mk
 # it cannot be changed here randomly, it must match the VMMaker version
 
 COMPONENT_NAME=		squeak
-COMPONENT_VERSION=	4.20.3
+COMPONENT_VERSION=	4.20.6
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/smalltalk/squeak
 COMPONENT_CLASSIFICATION=	Development/Smalltalk
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=                3824
-SVN_HASH=  sha256:e85f1518e2ba6fc67d8bc16a7d580cc3a3f0acc8b62010b3aead5f3a9aafc7a2
+SVN_REV=                3828
+SVN_HASH=  sha256:2008c85a0bbf62fdb1812a0b21e77ed95910c6c0759ec0c14f59536ec6f63016
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -71,10 +86,11 @@ SVN_HASH=  sha256:e85f1518e2ba6fc67d8bc16a7d580cc3a3f0acc8b62010b3aead5f3a9aafc7
 COMPONENT_LICENSE=      Squeak4
 COMPONENT_LICENSE_FILE= squeak4.license
 
-# the tests are ran only on 32bit for Squeak classical VM
+# the tests are ran only on 32bit image for Squeak classical VM
 # because inisqueak downloads a 32 bit image (provided by squeak.org)
 # for OpenSmalltalk (see cog-spur and stack-spur) 32bit + 64bit
-COMPONENT_TEST_CMD=	$(COMPONENT_TEST_RESULTS_DIR)/testrunner.sh $(BITS) $(COMPONENT_DIR) $(BUILD_DIR_32)
+# since version 2023 4.20.6 we use a 64bit executable to run the 32image
+COMPONENT_TEST_CMD=	$(COMPONENT_TEST_RESULTS_DIR)/testrunner.sh $(BITS) $(COMPONENT_DIR) $(BUILD_DIR_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -99,7 +115,8 @@ gcc_OPT=	-O
 # add -D_FILE_OFFSET_BITS=64 to CPPFLAGS but unlike OpenSmalltalk,
 # must also add this to CFLAGS because Squeak configure is not using CPPFLAGS
 # (see CFLAGS += CPPFLAGS below)
-CPPFLAGS +=     $(CPP_LARGEFILES)
+# since 2023 4.20.6 compile 64bit without largefiles flags to open 32bit images
+# CPPFLAGS +=     $(CPP_LARGEFILES)
 
 # build against libjpeg (see Illumos feature request #7391 for libjpeg8-turbo)
 # use --link-shared-lib to avoid the Squeak copy of libjpeg
@@ -132,8 +149,11 @@ CONFIGURE_OPTIONS +=    --link-shared-lib
 
 # in the 64bit case the vm is called squeakvm64 (not squeakvm)
 # the plugin directory under usr/lib/squeak has a _64bit suffix
-CONFIGURE_OPTIONS.64+=	--image64
-CONFIGURE_OPTIONS.64+=	--vm-only
+# CONFIGURE_OPTIONS.64+=	--image64
+# CONFIGURE_OPTIONS.64+=	--vm-only
+# since 2023 4.20.6 we try to avoid CMakeLists.txt SET (SQ_VI_BYTES_PER_WORD 8)
+CONFIGURE_OPTIONS.64+=	-Dversionsuffix=_64bit
+CONFIGURE_OPTIONS.64+=	-Dscriptsuffix=64
 
 # Makefile install/strip doesn't work
 # the squeakvm is called either squeakvm or squeakvm64 in different directories
