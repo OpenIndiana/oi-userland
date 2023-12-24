@@ -21,7 +21,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.c a/readconf.c
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -1005,6 +1011,17 @@ parse_multistate_value(const char *arg,
+@@ -1011,6 +1017,17 @@ parse_multistate_value(const char *arg,
  	return -1;
  }
  
@@ -39,9 +39,9 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.c a/readconf.c
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2280,6 +2297,13 @@ parse_pubkey_algos:
- 		intptr = &options->required_rsa_size;
- 		goto parse_int;
+@@ -2353,6 +2370,13 @@ parse_pubkey_algos:
+ 		}
+ 		break;
  
 +#ifdef DISABLE_BANNER
 +	case oDisableBanner:
@@ -53,7 +53,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.c a/readconf.c
  	case oDeprecated:
  		debug("%s line %d: Deprecated option \"%s\"",
  		    filename, linenum, keyword);
-@@ -2516,6 +2540,9 @@ initialize_options(Options * options)
+@@ -2589,6 +2613,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -63,7 +63,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.c a/readconf.c
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2718,6 +2745,10 @@ fill_default_options(Options * options)
+@@ -2794,6 +2821,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -77,8 +77,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.c a/readconf.c
 diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.h a/readconf.h
 --- a~/readconf.h	1970-01-01 00:00:00
 +++ a/readconf.h	1970-01-01 00:00:00
-@@ -182,6 +182,9 @@ typedef struct {
- 	int	enable_escape_commandline;	/* ~C commandline */
+@@ -186,6 +186,9 @@ typedef struct {
+ 	u_int	num_channel_timeouts;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 +#ifdef DISABLE_BANNER
@@ -87,9 +87,9 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.h a/readconf.h
  }       Options;
  
  #define SSH_PUBKEY_AUTH_NO	0x00
-@@ -222,6 +225,12 @@ typedef struct {
- #define SSH_STRICT_HOSTKEY_YES	2
- #define SSH_STRICT_HOSTKEY_ASK	3
+@@ -231,6 +234,12 @@ typedef struct {
+ #define SSH_KEYSTROKE_CHAFF_MIN_MS		1024
+ #define SSH_KEYSTROKE_CHAFF_RNG_MS		2048
  
 +#ifdef DISABLE_BANNER
 +#define SSH_DISABLEBANNER_NO		0
@@ -99,11 +99,11 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.h a/readconf.h
 +
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
-     const char *portstr, const char *user);
+     const char *portstr, const char *user, const char *jump_host);
 diff -wpruN --no-dereference '--exclude=*.orig' a~/ssh_config.5 a/ssh_config.5
 --- a~/ssh_config.5	1970-01-01 00:00:00
 +++ a/ssh_config.5	1970-01-01 00:00:00
-@@ -633,6 +633,14 @@ If set to a time in seconds, or a time i
+@@ -700,6 +700,14 @@ If set to a time in seconds, or a time i
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -132,7 +132,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/sshconnect2.c a/sshconnect2.c
  /*
   * SSH2 key exchange
   */
-@@ -585,8 +589,28 @@ input_userauth_banner(int type, u_int32_
+@@ -586,8 +590,28 @@ input_userauth_banner(int type, u_int32_
  	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
  	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
  		goto out;
