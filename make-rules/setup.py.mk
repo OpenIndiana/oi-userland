@@ -425,6 +425,7 @@ $(eval $(call disable-pytest-plugin,checkdocs,pytest-checkdocs))	# runs extra te
 $(eval $(call disable-pytest-plugin,console-scripts,pytest-console-scripts))
 $(eval $(call disable-pytest-plugin,cov,pytest-cov))
 $(eval $(call disable-pytest-plugin,custom_exit_code,pytest-custom-exit-code))
+$(eval $(call disable-pytest-plugin,enabler,pytest-enabler))
 $(eval $(call disable-pytest-plugin,env,pytest-env))
 $(eval $(call disable-pytest-plugin,faker,faker))
 $(eval $(call disable-pytest-plugin,flake8,pytest-flake8))
@@ -439,7 +440,6 @@ $(eval $(call disable-pytest-plugin,lazy-fixture,pytest-lazy-fixture))
 $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
 $(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
-$(eval $(call disable-pytest-plugin,plugin-enabled options,pytest-enabler))
 $(eval $(call disable-pytest-plugin,pytest-datadir,pytest-datadir))
 $(eval $(call disable-pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))	# could cause tests to fail
 $(eval $(call disable-pytest-plugin,pytest-teamcity,teamcity-messages))
