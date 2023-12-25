@@ -1,18 +1,16 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 225 items
+collecting ... collected 234 items
 
-::project PASSED
 tests/test_distro.py::TestCli::test_cli SKIPPED (Irrelevant on non-l...)
 tests/test_distro.py::TestCli::test_cli_can_parse_root_dir_args SKIPPED
 tests/test_distro.py::TestCli::test_cli_for_coverage_yuch SKIPPED (I...)
 tests/test_distro.py::TestCli::test_cli_json SKIPPED (Irrelevant on ...)
 tests/test_distro.py::TestCli::test_cli_with_root_dir SKIPPED (Irrel...)
 tests/test_distro.py::TestCli::test_cli_with_root_dir_as_json SKIPPED
+tests/test_distro.py::TestDistroRelease::test_altlinux10_dist_release SKIPPED
 tests/test_distro.py::TestDistroRelease::test_arch_dist_release SKIPPED
 tests/test_distro.py::TestDistroRelease::test_centos5_dist_release SKIPPED
 tests/test_distro.py::TestDistroRelease::test_centos7_dist_release SKIPPED
@@ -56,14 +54,17 @@ tests/test_distro.py::TestLSBRelease::test_trailingblanks_lsb_release SKIPPED
 tests/test_distro.py::TestLSBRelease::test_ubuntu14nomodules_lsb_release SKIPPED
 tests/test_distro.py::TestLSBRelease::test_ubuntu14normal_lsb_release SKIPPED
 tests/test_distro.py::TestNonLinuxPlatform::test_cant_use_on_windows PASSED
+tests/test_distro.py::TestOSRelease::test_altlinux10_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_amazon2016_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_arch_os_release SKIPPED (I...)
+tests/test_distro.py::TestOSRelease::test_bttcb1_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_buildroot_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_centos7_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_cloudlinux7_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_coreos_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_debian10_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_debian8_os_release SKIPPED
+tests/test_distro.py::TestOSRelease::test_debiantesting_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_fedora19_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_fedora23_os_release SKIPPED
 tests/test_distro.py::TestOSRelease::test_fedora30_os_release SKIPPED
@@ -118,6 +119,7 @@ tests/test_distro.py::TestOSReleaseParsing::test_kv_29_single_quoted_word_with_e
 tests/test_distro.py::TestOSReleaseParsing::test_kx_01 SKIPPED (Irre...)
 tests/test_distro.py::TestOSReleaseParsing::test_kx_02 SKIPPED (Irre...)
 tests/test_distro.py::TestOverall::test_aix72_release SKIPPED (Irrel...)
+tests/test_distro.py::TestOverall::test_altlinux10_release SKIPPED (...)
 tests/test_distro.py::TestOverall::test_amazon2014_release SKIPPED (...)
 tests/test_distro.py::TestOverall::test_amazon2016_release SKIPPED (...)
 tests/test_distro.py::TestOverall::test_arch_release SKIPPED (Irrele...)
@@ -129,6 +131,7 @@ tests/test_distro.py::TestOverall::test_cloudlinux7_release SKIPPED
 tests/test_distro.py::TestOverall::test_coreos_release SKIPPED (Irre...)
 tests/test_distro.py::TestOverall::test_debian10_release SKIPPED (Ir...)
 tests/test_distro.py::TestOverall::test_debian8_release SKIPPED (Irr...)
+tests/test_distro.py::TestOverall::test_debiantesting_release SKIPPED
 tests/test_distro.py::TestOverall::test_exherbo_release SKIPPED (Irr...)
 tests/test_distro.py::TestOverall::test_fedora19_release SKIPPED (Ir...)
 tests/test_distro.py::TestOverall::test_fedora23_release SKIPPED (Ir...)
@@ -156,6 +159,7 @@ tests/test_distro.py::TestOverall::test_sles12_release SKIPPED (Irre...)
 tests/test_distro.py::TestOverall::test_ubuntu14_release SKIPPED (Ir...)
 tests/test_distro.py::TestOverall::test_ubuntu16_release SKIPPED (Ir...)
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_aix72_release SKIPPED
+tests/test_distro.py::TestOverallWithEtcNotReadable::test_altlinux10_release SKIPPED
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_amazon2014_release SKIPPED
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_amazon2016_release SKIPPED
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_arch_release SKIPPED
@@ -167,6 +171,7 @@ tests/test_distro.py::TestOverallWithEtcNotReadable::test_cloudlinux7_release SK
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_coreos_release SKIPPED
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_debian10_release SKIPPED
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_debian8_release SKIPPED
+tests/test_distro.py::TestOverallWithEtcNotReadable::test_debiantesting_release SKIPPED
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_exherbo_release SKIPPED
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_fedora19_release SKIPPED
 tests/test_distro.py::TestOverallWithEtcNotReadable::test_fedora23_release SKIPPED
@@ -200,14 +205,17 @@ tests/test_distro.py::TestSpecialRelease::test_empty_release SKIPPED
 tests/test_distro.py::TestSpecialRelease::test_empty_uname SKIPPED (...)
 tests/test_distro.py::TestSpecialRelease::test_unknowndistro_release SKIPPED
 tests/test_distro.py::TestSpecialRelease::test_usrlibosreleaseonly SKIPPED
+tests/test_distro.py::TestWithRootDir::test_altlinux10_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_amazon2016_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_arch_os_release SKIPPED
+tests/test_distro.py::TestWithRootDir::test_bttcb1_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_buildroot_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_centos7_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_cloudlinux7_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_coreos_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_debian10_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_debian8_os_release SKIPPED
+tests/test_distro.py::TestWithRootDir::test_debiantesting_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_fedora19_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_fedora23_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_fedora30_os_release SKIPPED
@@ -231,4 +239,4 @@ tests/test_distro.py::TestWithRootDir::test_sles12_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_ubuntu14_os_release SKIPPED
 tests/test_distro.py::TestWithRootDir::test_ubuntu16_os_release SKIPPED
 
-======== 2 passed, 222 skipped ========
+======== 1 passed, 233 skipped ========
