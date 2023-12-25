@@ -19,7 +19,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkgtree
 COMPONENT_VERSION=	1.1
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
+COMPONENT_SUMMARY=	pkgtree displays the IPS package dependency tree
 COMPONENT_PROJECT_URL=	https://github.com/msmark/pkgtree
 COMPONENT_FMRI=		developer/pkgtree
 COMPONENT_CLASSIFICATION= System/Packaging
@@ -45,11 +46,12 @@ $(BUILD_$(MK_BITS)): $(SOURCE_DIR)/.prep
 $(INSTALL_$(MK_BITS)): $(BUILD_$(MK_BITS))
 	$(MKDIR) $(PROTO_DIR) \
 		$(PROTOUSRBINDIR) \
-		$(PROTOUSRSHAREMAN1DIR)
-	$(MKDIR) $(foreach ver, $(PERL_VERSIONS), $(PROTO_DIR)/usr/perl5/vendor_perl/$(ver))
+		$(PROTOUSRSHAREMAN1DIR) \
+		$(PROTO_DIR)/usr/perl5/vendor_perl/$(PERL_VERSION)
 	$(CP) -a $(SOURCE_DIR)/bin/pkgtree $(PROTOUSRBINDIR)
+	$(GSED) -i -e '1s|^#!.*perl|#!$(PERL)|' $(PROTOUSRBINDIR)/pkgtree
 	$(POD2MAN) $(SOURCE_DIR)/bin/pkgtree $(PROTOUSRSHAREMAN1DIR)/pkgtree.1
-	$(foreach ver, $(PERL_VERSIONS), $(CP) -a $(SOURCE_DIR)/lib/perl5/* $(PROTO_DIR)/usr/perl5/vendor_perl/$(ver) ; )
+	$(CP) -a $(SOURCE_DIR)/lib/perl5/* $(PROTO_DIR)/usr/perl5/vendor_perl/$(PERL_VERSION)
 	$(TOUCH) $@
 
 $(TEST_$(MK_BITS)): $(INSTALL_$(MK_BITS))
@@ -58,4 +60,3 @@ $(TEST_$(MK_BITS)): $(INSTALL_$(MK_BITS))
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += runtime/perl
