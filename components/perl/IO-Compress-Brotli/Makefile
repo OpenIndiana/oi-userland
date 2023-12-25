@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::Compress::Brotli
 HUMAN_VERSION =			0.017
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IO::Compress::Brotli - Write Brotli buffers/streams
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,5 +33,4 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/alien-cmake3
 PERL_REQUIRED_PACKAGES += library/perl-5/file-slurper
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
