@@ -14,21 +14,21 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
+BUILD_BITS= 32_and_64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
 COMPONENT_VERSION= 0.7
-COMPONENT_REVISION= 6
+COMPONENT_REVISION= 7
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
+COMPONENT_PROJECT_URL=	https://avahi.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:57a99b5dfe7fdae794e3d1ee7a62973a368e91e414bd0dfa5d84434de5b14804
 COMPONENT_ARCHIVE_URL=	https://github.com/lathiat/avahi/releases/download/v0.7/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://avahi.org
+COMPONENT_ARCHIVE_HASH= sha256:57a99b5dfe7fdae794e3d1ee7a62973a368e91e414bd0dfa5d84434de5b14804
 COMPONENT_FMRI=			system/network/avahi
-COMPONENT_CLASSIFICATION = Applications/Internet
+COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=		LGPLv2.1
 COMPONENT_LICENSE_FILE=	LICENSE
 
@@ -41,7 +41,7 @@ COMPONENT_PREP_ACTION += ( \
 	autoconf )
 
 # Need this to build service-type-database
-COMPONENT_PRE_CONFIGURE_ACTION= ( cp -r $(SOURCE_DIR)/* $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CP) -r $(SOURCE_DIR)/* $(@D) )
 
 LDFLAGS += -ldns_sd
 
@@ -62,6 +62,9 @@ CONFIGURE_OPTIONS += --disable-compat-libdns_sd
 CONFIGURE_OPTIONS += --disable-autoipd
 CONFIGURE_OPTIONS += --disable-gdbm
 CONFIGURE_OPTIONS += --enable-dbm
+# We don't want 32 bit gui
+CONFIGURE_OPTIONS.32 += --disable-gtk
+CONFIGURE_OPTIONS.32 += --disable-gtk3
 CONFIGURE_OPTIONS.32 += --disable-pygobject
 
 CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
