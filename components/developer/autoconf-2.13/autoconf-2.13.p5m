@@ -13,54 +13,46 @@
 # Copyright (c) 2014 David Mackay. All rights reserved.
 #
 
-set name=pkg.fmri \
-    value=pkg:/developer/build/autoconf-213@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=pkg.summary value="GNU autoconf utility, legacy version"
-set name=com.oracle.info.description value="GNU autoconf, legacy version"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/GNU
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license	autoconf.license license="GPLv3, FDLv1.3"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-dir  path=usr
-dir  path=usr/bin
-file path=usr/bin/autoconf-$(COMPONENT_VERSION)
-file path=usr/bin/autoheader-$(COMPONENT_VERSION)
-file path=usr/bin/autoreconf-$(COMPONENT_VERSION)
-file path=usr/bin/autoscan-$(COMPONENT_VERSION)
-file path=usr/bin/autoupdate-$(COMPONENT_VERSION)
-file path=usr/bin/ifnames-$(COMPONENT_VERSION)
-dir  path=usr/share
-dir  path=usr/share/autoconf-$(COMPONENT_VERSION)
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/acconfig.h
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/acfunctions
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/acgeneral.m4
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/acheaders
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/acidentifiers
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/acmakevars
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/acoldnames.m4
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/acprograms
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/acspecific.m4
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/autoconf.m4
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/autoconf.m4f
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/autoheader.m4
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/autoheader.m4f
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/config.guess
-file path=usr/share/autoconf-$(COMPONENT_VERSION)/config.sub
-dir  path=usr/share/info
-file path=usr/share/info/autoconf-$(COMPONENT_VERSION).info
+file path=usr/bin/autoconf-$(HUMAN_VERSION)
+file path=usr/bin/autoheader-$(HUMAN_VERSION)
+file path=usr/bin/autoreconf-$(HUMAN_VERSION)
+file path=usr/bin/autoscan-$(HUMAN_VERSION)
+file path=usr/bin/autoupdate-$(HUMAN_VERSION)
+file path=usr/bin/ifnames-$(HUMAN_VERSION)
+file path=usr/share/autoconf-$(HUMAN_VERSION)/acconfig.h
+file path=usr/share/autoconf-$(HUMAN_VERSION)/acfunctions
+file path=usr/share/autoconf-$(HUMAN_VERSION)/acgeneral.m4
+file path=usr/share/autoconf-$(HUMAN_VERSION)/acheaders
+file path=usr/share/autoconf-$(HUMAN_VERSION)/acidentifiers
+file path=usr/share/autoconf-$(HUMAN_VERSION)/acmakevars
+file path=usr/share/autoconf-$(HUMAN_VERSION)/acoldnames.m4
+file path=usr/share/autoconf-$(HUMAN_VERSION)/acprograms
+file path=usr/share/autoconf-$(HUMAN_VERSION)/acspecific.m4
+file path=usr/share/autoconf-$(HUMAN_VERSION)/autoconf.m4
+file path=usr/share/autoconf-$(HUMAN_VERSION)/autoconf.m4f
+file path=usr/share/autoconf-$(HUMAN_VERSION)/autoheader.m4
+file path=usr/share/autoconf-$(HUMAN_VERSION)/autoheader.m4f
+file path=usr/share/autoconf-$(HUMAN_VERSION)/config.guess
+file path=usr/share/autoconf-$(HUMAN_VERSION)/config.sub
+file path=usr/share/info/autoconf-$(HUMAN_VERSION).info
 file usr/share/info/autoconf.info path=usr/share/info/autoconf-2.13-2.info
 file usr/share/info/standards.info path=usr/share/info/standards-ac-2.13.info
 
-link path=usr/sfw/bin/autoconf-$(COMPONENT_VERSION) target=../../bin/autoconf-$(COMPONENT_VERSION)
-link path=usr/sfw/bin/autoheader-$(COMPONENT_VERSION) target=../../bin/autoheader-$(COMPONENT_VERSION)
-link path=usr/sfw/bin/autoreconf-$(COMPONENT_VERSION) target=../../bin/autoreconf-$(COMPONENT_VERSION)
-link path=usr/sfw/bin/autoscan-$(COMPONENT_VERSION) target=../../bin/autoscan-$(COMPONENT_VERSION)
-link path=usr/sfw/bin/autoupdate-$(COMPONENT_VERSION) target=../../bin/autoupdate-$(COMPONENT_VERSION)
-link path=usr/sfw/bin/ifnames-$(COMPONENT_VERSION) target=../../bin/ifnames-$(COMPONENT_VERSION)
+link path=usr/sfw/bin/autoconf-$(HUMAN_VERSION) target=../../bin/autoconf-$(HUMAN_VERSION)
+link path=usr/sfw/bin/autoheader-$(HUMAN_VERSION) target=../../bin/autoheader-$(HUMAN_VERSION)
+link path=usr/sfw/bin/autoreconf-$(HUMAN_VERSION) target=../../bin/autoreconf-$(HUMAN_VERSION)
+link path=usr/sfw/bin/autoscan-$(HUMAN_VERSION) target=../../bin/autoscan-$(HUMAN_VERSION)
+link path=usr/sfw/bin/autoupdate-$(HUMAN_VERSION) target=../../bin/autoupdate-$(HUMAN_VERSION)
+link path=usr/sfw/bin/ifnames-$(HUMAN_VERSION) target=../../bin/ifnames-$(HUMAN_VERSION)
 
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/gm4 type=require

@@ -1,16 +1,26 @@
---- a/Makefile.in.orig	Sun Feb 27 08:18:10 2000
-+++ b/Makefile.in	Thu Apr  5 02:14:57 2007
-@@ -51,3 +51,3 @@
- datadir = @datadir@
+--- autoconf-2.13/Makefile.in.orig
++++ autoconf-2.13/Makefile.in
+@@ -49,7 +49,7 @@
+ 
+ # Directory in which to install library files.
+ datadir = $(DESTDIR)@datadir@
 -acdatadir = $(datadir)/autoconf
 +acdatadir = $(datadir)/autoconf-2.13
  
-@@ -70,3 +70,3 @@
+ # Directory in which to install documentation info files.
+ infodir = $(DESTDIR)@infodir@
+@@ -68,7 +68,7 @@
+ DISTFILES = AUTHORS COPYING ChangeLog ChangeLog.1 INSTALL \
+ 	Makefile.in NEWS README TODO $(M4FILES) \
  	acconfig.h acfunctions acheaders acidentifiers \
 -	acmakevars acprograms autoconf.info* \
 +	acmakevars acprograms autoconf-2.13.info* \
  	autoconf.sh autoconf.texi install.texi \
-@@ -108,6 +108,6 @@
+ 	autoheader.sh autoscan.pl autoreconf.sh autoupdate.sh ifnames.sh \
+ 	config.guess config.sub configure configure.in \
+@@ -106,10 +106,10 @@
+ autoconf.m4f: autoconf.m4 acgeneral.m4 acspecific.m4 acoldnames.m4
+ autoheader.m4f: autoheader.m4 acgeneral.m4 acspecific.m4 acoldnames.m4
  
 -info: autoconf.info @standards_info@ INSTALL
 +info: autoconf-2.13.info
@@ -19,18 +29,31 @@
 -autoconf.info: autoconf.texi install.texi
 +autoconf-2.13.info: autoconf.texi install.texi
  	$(MAKEINFO) -I$(srcdir) $(srcdir)/autoconf.texi --no-split --output=$@
-@@ -154,3 +154,3 @@
+ 
+ INSTALL: install.texi
+@@ -152,14 +152,14 @@
+ 	-if test -f autoscan; then \
+ 	$(INSTALL_PROGRAM) autoscan $(bindir)/`echo autoscan|sed '$(transform)'`; \
  	for i in acfunctions acheaders acidentifiers acprograms \
 -	  acmakevars; do \
 +	  acmakevars config.guess config.sub; do \
  	$(INSTALL_DATA) $(srcdir)/$$i $(acdatadir)/$$i; \
-@@ -161,3 +161,3 @@
+ 	done; \
+ 	else :; fi
+ 
+ # Don't cd, to avoid breaking install-sh references.
  install-info: info installdirs
 -	if test -f autoconf.info; then \
 +	if test -f autoconf-2.13.info; then \
  	  for i in *.info*; do \
-@@ -176,3 +176,3 @@
+ 	    $(INSTALL_DATA) $$i $(infodir)/$$i; \
+ 	  done; \
+@@ -174,7 +174,7 @@
+ 	  rm -f $(bindir)/`echo $$p|sed '$(transform)'`; \
+ 	done
  	rm -fr $(acdatadir)
 -	cd $(infodir) && rm -f autoconf.info*
 +	cd $(infodir) && rm -f autoconf-2.13.info*
  	if test -f standards.info || test -f $(srcdir)/standards.info; \
+ 	then cd $(infodir) && rm -f standards.info*; fi
+ 
