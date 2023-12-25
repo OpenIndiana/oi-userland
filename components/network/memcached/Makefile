@@ -21,40 +21,57 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2023, Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.6.2
+COMPONENT_VERSION=	1.6.22
+COMPONENT_SUMMARY=	The memcached memory object cache
+COMPONENT_DESCRIPTION=	Memcached is a high performance multithreaded event-based \
+			key/value cache store intended to be used in a distributed system.
+COMPONENT_FMRI=		service/memcached
+COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://memcached.org/
+COMPONENT_PROJECT_URL=	https://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:06720118c40689be0b85249b3dcb23c6e6d5e3ce53893aca9faced264145168b
-COMPONENT_ARCHIVE_URL=	http://www.memcached.org/files/$(COMPONENT_ARCHIVE)
+    sha256:34783a90a4ccf74c4107085fd92b688749d23b276cfdad9f04e4f725a05d1ca7
+COMPONENT_ARCHIVE_URL=	https://www.memcached.org/files/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+	(cd $(SOURCE_DIR); aclocal; autoconf; $(CLONEY) $(SOURCE_DIR) $(@D))
+
+# otherwise the link with ssl library does not work
+# standard linker path does not make sense anyway
+COMPONENT_POST_CONFIGURE_ACTION = \
+	($(GSED) -i -e 's:-L/usr/lib/amd64::' $(@D)/config.status)
 
 COMPONENT_TEST_TARGETS=	test
 
-CFLAGS += -D__ATTRIBUTE_DISABLED
+CFLAGS += -I/usr/include/libevent2
 
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib
-CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/${MACH64}
+CONFIGURE_OPTIONS +=	--with-libevent=/usr/lib/${MACH64}
 CONFIGURE_OPTIONS +=	--enable-dtrace
+CONFIGURE_OPTIONS +=	--disable-sasl
+CONFIGURE_OPTIONS +=	--enable-werror
+CONFIGURE_OPTIONS +=	--enable-64bit
+CONFIGURE_OPTIONS +=	--enable-large-client-flags
+CONFIGURE_OPTIONS +=	--enable-tls
 CONFIGURE_OPTIONS +=	--disable-docs
 CONFIGURE_OPTIONS +=	--disable-coverage
 # Exstore has too many failed tests. Disabling for now.
-CONFIGURE_OPTIONS +=	--disable-extstore
+#CONFIGURE_OPTIONS +=	--disable-extstore
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+COMPONENT_TEST_ARGS +=  -k -i
 # Just retain test result output that's useful.
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
@@ -64,7 +81,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^All tests/p" ' \
 	'-e "/^Result/p" '
 
-
-REQUIRED_PACKAGES += library/libevent
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libevent2
+REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
