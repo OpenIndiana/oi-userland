@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Math::Prime::Util
 HUMAN_VERSION =			0.73
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Math::Prime::Util - Utilities related to prime numbers, including fast sieves and factoring
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,7 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint-gmp
 PERL_REQUIRED_PACKAGES += library/perl-5/math-prime-util-gmp
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warn
