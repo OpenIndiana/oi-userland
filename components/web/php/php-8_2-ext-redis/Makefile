@@ -31,17 +31,9 @@ COMPONENT_LICENSE=	PHP3.01
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_CLASSIFICATION=	Development/PHP
 
+TEST_TARGET = $(NO_TESTS)
+
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_TEST_TARGETS = test
-
-COMPONENT_TEST_ENV += NO_INTERACTION=yes
-
-COMPONENT_TEST_TRANSFORMS += \
-    '-e "/^make/d" ' \
-    '-e "/^Time taken/d" ' \
-    '-e "/^TEST RESULT SUMMARY$$/,\$$p" ' \
-    '-e "/.*/d" '
 
 CLEAN_PATHS +=  package.xml
 
@@ -85,6 +77,8 @@ COMPONENT_INSTALL_ARGS		+=	INSTALL_ROOT=$(PROTO_DIR)
 
 # manually added dependencies
 REQUIRED_PACKAGES += web/php-82/php-common
+REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += library/lz4
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
