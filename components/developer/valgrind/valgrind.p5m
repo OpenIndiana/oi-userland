@@ -13,10 +13,11 @@
 # Copyright 2015-2017 Aurelien Larcher
 # Copyright 2019 Michal Nowak
 # Copyright 2021-2022 David Stes
-# Copyright 2022 Friedrich Kink
+# Copyright 2022,2023 Friedrich Kink
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -30,14 +31,15 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/callgrind_annotate
 file path=usr/bin/callgrind_control
-file path=usr/bin/cg_annotate
-file path=usr/bin/cg_diff
-file path=usr/bin/cg_merge
+file path=usr/bin/cg_annotate pkg.depend.bypass-generate=.*
+file path=usr/bin/cg_diff pkg.depend.bypass-generate=.*
+file path=usr/bin/cg_merge pkg.depend.bypass-generate=.*
 file path=usr/bin/ms_print
 file path=usr/bin/valgrind
 file path=usr/bin/valgrind-di-server
 file path=usr/bin/valgrind-listener
 file path=usr/bin/vgdb
+file path=usr/include/valgrind/cachegrind.h
 file path=usr/include/valgrind/callgrind.h
 file path=usr/include/valgrind/config.h
 file path=usr/include/valgrind/dhat.h
@@ -297,6 +299,8 @@ file path=usr/lib/$(MACH64)/valgrind/s390x-linux64-valgrind-s2.xml
 file path=usr/lib/$(MACH64)/valgrind/s390x-linux64.xml
 file path=usr/lib/$(MACH64)/valgrind/s390x-vx-linux-valgrind.xml
 file path=usr/lib/$(MACH64)/valgrind/s390x-vx-linux.xml
+file path=usr/lib/$(MACH64)/valgrind/valgrind-monitor-def.py
+file path=usr/lib/$(MACH64)/valgrind/valgrind-monitor.py
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_core-amd64-solaris.so
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_core-x86-solaris.so
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_dhat-amd64-solaris.so
@@ -309,6 +313,7 @@ file path=usr/lib/$(MACH64)/valgrind/vgpreload_massif-amd64-solaris.so
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_massif-x86-solaris.so
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_memcheck-amd64-solaris.so
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_memcheck-x86-solaris.so
+file path=usr/share/doc/valgrind/valgrind_manual.pdf
 file path=usr/share/man/man1/callgrind_annotate.1
 file path=usr/share/man/man1/callgrind_control.1
 file path=usr/share/man/man1/cg_annotate.1
