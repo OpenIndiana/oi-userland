@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonschema_specifications
-HUMAN_VERSION =			2023.11.2
+HUMAN_VERSION =			2023.12.1
 COMPONENT_SUMMARY =		jsonschema_specifications - The JSON Schema meta-schemas and vocabularies, exposed as a Registry
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema-specifications
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8c/ce/1eb873a0ba153cf327464c752412b42d11b9c889d208beca7ef75540d128/jsonschema_specifications-2023.11.2.tar.gz
+	https://files.pythonhosted.org/packages/f8/b9/cc0cc592e7c195fb8a650c1d5990b10175cf13b4c97465c72ec841de9e4b/jsonschema_specifications-2023.12.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9472fc4fea474cd74bea4a2b190daeccb5a9e4db2ea80efcf7a1b582fc9a81b8
+	sha256:48a76787b3e70f5ed53f1160d2b81f586e4ca6d1548c5de7085d1682674764cc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
