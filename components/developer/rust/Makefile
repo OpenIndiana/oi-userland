@@ -32,19 +32,17 @@
 # the compiler build itself is intensively using python tools
 # therefor this patially python settings
 
-BUILD_BITS=		64
-OPENSSL_VERSION=	3.1
 TEST_STYLE=		none
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.74.0
+COMPONENT_VERSION=	1.74.1
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:882b584bc321c5dcfe77cdaa69f277906b936255ef7808fcd5c7492925cf1049
+COMPONENT_ARCHIVE_HASH=	sha256:67db3e22fc9921c885baae5953ba144fc474cde29ec69ab56d43ce764206231d
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -152,6 +150,7 @@ COMPONENT_INSTALL_ENV+=	DESTDIR=$(PROTO_DIR)
 REQUIRED_PACKAGES += developer/lang/rustc # previous before build version
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/libgit2
