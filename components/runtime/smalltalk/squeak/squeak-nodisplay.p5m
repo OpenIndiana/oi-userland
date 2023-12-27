@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022 David Stes
+# Copyright 2020, 2021, 2022, 2023 David Stes
 #
 
 
@@ -26,12 +26,13 @@ license squeak.license license='MIT'
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # 32-bit objects in 64-bit multiarch build are rejected by lint
+# since 2023 version 4.20.6 we only deliver 64bit binaries
 <transform file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/* -> set pkg.linted.userland.action001.2 true>
 
+# since 2023 version 4.20.6 32bit do not provide 32bit binaries
 file inisqueak4 path=usr/bin/inisqueak4
-file usr/bin/squeak path=usr/bin/squeak4
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/ckformat mode=0555
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/squeakvm mode=0555
+file squeak.ips path=usr/bin/squeak4
+file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/ckformat path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/ckformat mode=0555
 file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/squeakvm64 path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/squeakvm64 mode=0555
 
 file usr/share/man/man1/squeak.1 path=usr/share/man/man1/squeak4.1
@@ -45,13 +46,8 @@ hardlink path=usr/bin/inisqueak target=inisqueak4 mediator=squeak \
 hardlink path=usr/share/man/man1/squeak.1 target=squeak4.1 mediator=squeak \
     mediator-version=4
 
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.AioPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.FileCopyPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.UnixOSProcessPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.vm-display-null
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.vm-sound-null
-file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/so.AioPlugin path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.AioPlugin
-file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/so.FileCopyPlugin path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.FileCopyPlugin
-file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/so.UnixOSProcessPlugin path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.UnixOSProcessPlugin
-file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/so.vm-display-null path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.vm-display-null
-file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/so.vm-sound-null path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.vm-sound-null
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.AioPlugin path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.AioPlugin
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.FileCopyPlugin path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.FileCopyPlugin
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.UnixOSProcessPlugin path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.UnixOSProcessPlugin
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.vm-display-null path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.vm-display-null
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.vm-sound-null path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.vm-sound-null

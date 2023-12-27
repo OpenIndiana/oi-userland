@@ -16,8 +16,8 @@ LOGFILE=testrunner-log.$BITS
 # we only test the 32bit VM because inisqueak downloads a 32bit image
 
 case $BITS in
- 32) ;;
- 64) echo "Squeak only tested in 32bit.  See OpenSmalltalk for 64bit.";exit 0;;
+ 32) echo "Squeak only tested in 64bit.  See OpenSmalltalk for 64bit.";exit 0;;
+ 64) ;;
   *) echo "Unknown BITS $BITS";exit 1;;
 esac
 
@@ -38,7 +38,7 @@ export SQUEAK_PLUGINS
 $COMPONENT_DIR/inisqueak4 -n >> $LOGFILE 2>&1
 
 # start squeak binary from the build dir
-$BUILD_DIR/squeakvm squeak.image $COMPONENT_DIR/test/testrunner.st >> $LOGFILE 2>&1
+$BUILD_DIR/squeakvm64 squeak.image $COMPONENT_DIR/test/testrunner.st >> $LOGFILE 2>&1
 
 # testrunner.st saves output in a file , dump that file as output
 cat results-32.vm
