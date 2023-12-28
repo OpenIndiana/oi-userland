@@ -20,13 +20,13 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycryptodome
-HUMAN_VERSION =			3.19.0
+HUMAN_VERSION =			3.19.1
 COMPONENT_SUMMARY =		pycryptodome - Cryptographic library for Python
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/Legrandin/pycryptodome/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/b1/38/42a8855ff1bf568c61ca6557e2203f318fb7afeadaf2eb8ecfdbde107151/pycryptodome-3.19.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:30354c769a508f644cf5c9647ef1f3a346b6fb3e64034fc3a8a364f6986beeb1
+	sha256:8ae0dd1bcfada451c35f9e29a3e5db385caabc190f98e4a80ad02a61098fb776
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
