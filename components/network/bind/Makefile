@@ -102,8 +102,8 @@ COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 COMPONENT_PRE_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh up )
 COMPONENT_POST_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh down )
 
-# required for tests
-TEST_REQUIRED_PACKAGES += library/cmocka
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/cmocka
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
