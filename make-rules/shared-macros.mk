@@ -193,7 +193,7 @@ PYTHON_64_ONLY_VERSIONS = $(PYTHON_VERSIONS)
 #
 # This list should be usually empty.  Intersection of
 # PYTHON_VERSIONS_OBSOLETING and PYTHON_VERSIONS lists MUST be always empty.
-PYTHON_VERSIONS_OBSOLETING = 2.7 3.5 3.7
+PYTHON_VERSIONS_OBSOLETING = 2.7 3.7
 
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
