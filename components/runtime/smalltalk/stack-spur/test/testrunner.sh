@@ -19,12 +19,13 @@ LOGFILE=testrunner-log.$BITS
 # export SQUEAK_PLUGINS
 
 # download squeak.image to current directory
+# since december 2023 we no longer test/include 32bit binaries
 case $BITS in
- 32) $COMPONENT_DIR/inisqueak5 -32 -n > $LOGFILE 2>&1 ;;
+# 32) $COMPONENT_DIR/inisqueak5 -32 -n > $LOGFILE 2>&1 ;;
+ 32) ;;
  64) $COMPONENT_DIR/inisqueak5 -n > $LOGFILE 2>&1 ;;
   *) echo "Unknown BITS $BITS";exit 1;;
 esac
-
 
 # start squeak binary from the build dir
 $BUILD_DIR/squeak squeak.image $COMPONENT_DIR/test/testrunner.st > $LOGFILE 2>&1
