@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tzdata
-HUMAN_VERSION =			2023.3
+HUMAN_VERSION =			2023.4
 COMPONENT_SUMMARY =		tzdata - Provider of IANA time zone data
 COMPONENT_PROJECT_URL =		https://github.com/python/tzdata
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/70/e5/81f99b9fced59624562ab62a33df639a11b26c582be78864b339dafa420d/tzdata-2023.3.tar.gz
+	https://files.pythonhosted.org/packages/4d/60/acd18ca928cc20eace3497b616b6adb8ce1abc810dd4b1a22bc6bdefac92/tzdata-2023.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:11ef1e08e54acb0d4f95bdb1be05da659673de4acbd21bf9c69e94cc5e907a3a
+	sha256:dd54c94f294765522c77399649b4fefd95522479a664a0cec87f41bebc6148c9
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
