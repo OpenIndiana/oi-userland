@@ -172,14 +172,6 @@ endif
 PYTHON_VERSION = 3.9
 PYTHON_VERSIONS = 3.9
 
-# These variables are for backward compatibility only.  Components should stop
-# to use them.  Once they do so these vars should be removed.
-PYTHON3_VERSION	= $(PYTHON_VERSION)
-PYTHON3_VERSIONS = $(PYTHON_VERSIONS)
-PYTHON3_RUNTIME_PKG = runtime/python-$(subst .,,$(PYTHON3_VERSION))
-PYTHON_ALL_VERSIONS = $(PYTHON_VERSIONS)
-PYTHON_VERSIONS_ALL= $(PYTHON_VERSIONS)
-
 # Python up to 2.7 was built both 32-bit and 64-bit.  Starting with Python 3.x
 # the python package is built 64-bit only.  So now all PYTHON_VERSIONS are
 # 64-bit only.
