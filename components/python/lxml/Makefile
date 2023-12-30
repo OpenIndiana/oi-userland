@@ -19,26 +19,23 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml
-HUMAN_VERSION =			4.9.4
+HUMAN_VERSION =			5.0.0
 COMPONENT_SUMMARY =		lxml - Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.
 COMPONENT_PROJECT_URL =		https://lxml.de/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/84/14/c2070b5e37c650198de8328467dd3d1681e80986f81ba0fea04fc4ec9883/lxml-4.9.4.tar.gz
+	https://files.pythonhosted.org/packages/80/2c/076fafd979728858829fb9ce2e13fa6367b6be9acc4da0cff6367aa6a1ce/lxml-5.0.0.zip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b1541e50b78e15fa06a2670157a1962ef06591d4c998b998047fff5e3236880e
+	sha256:2219cbf790e701acf9a21a31ead75f983e73daf0eceb9da6990212e4d20ebefe
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+COMPONENT_ARCHIVE =		$(COMPONENT_SRC).zip
 
 # This project uses custom test style.
 # See project's Makefile.
 TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Make sure we build with Cython
-# once https://bugs.launchpad.net/lxml/+bug/2047065 is fixed.  When it happens
-# we should change to --with-cython instead.
-COMPONENT_BUILD_ARGS =		--without-cython
 
 # This project uses custom test style.
 # See project's Makefile.
@@ -60,9 +57,6 @@ COMPONENT_TEST_TRANSFORMS += \
 		$(GSED) -u -e '/^$$/Q' | $(SORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
 		$(CAT) \
 	)"
-
-# Cython is required to build this project
-PYTHON_REQUIRED_PACKAGES += library/python/cython
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

@@ -54,7 +54,7 @@ Doctest: lxml.etree.FunctionNamespace ... ok
 Doctest: lxml.etree.Schematron ... ok
 Doctest: lxml.etree.XML ... ok
 Doctest: lxml.etree.__test__.FunctionNamespace (line 207) ... ok
-Doctest: lxml.etree.__test__.XML (line 3218) ... ok
+Doctest: lxml.etree.__test__.XML (line 3219) ... ok
 Doctest: lxml.html.Classes ... ok
 Doctest: lxml.html.HtmlMixin.drop_tag ... ok
 Doctest: lxml.html.XHTMLParser ... ok
@@ -125,7 +125,7 @@ Schematron (lxml.isoschematron)
 Test find methods (including xpath syntax). ... ok
 We don't have a guarantee that there will always be a path ... ok
 XHTMLParser (lxml.html)
-XML (line 3218) (lxml.etree.__test__)
+XML (line 3219) (lxml.etree.__test__)
 XML (lxml.etree)
 attrib (lxml.tests.selftest2)
 bad_find (lxml.tests.selftest)
@@ -255,6 +255,8 @@ test_addnext_pi (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addnext_root (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addnext_root_comment (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addnext_root_pi (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_addnext_tails (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_addnext_with_tail (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addprevious (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addprevious_comment (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addprevious_cycle (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -263,6 +265,8 @@ test_addprevious_noops (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addprevious_pi (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addprevious_root_comment (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addprevious_root_pi (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_addprevious_tails (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_addprevious_with_tail (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_allow_and_remove (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_allow_tags (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_anonymous_namespace (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
@@ -441,6 +445,7 @@ test_child_len (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_child_nonexistant (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_child_ns_nons (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_child_set_ro (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
+test_child_special (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_class_lookup (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_class_lookup_reentry (lxml.tests.test_classlookup.ClassLookupTestCase) ... ok
 test_class_lookup_type_mismatch (lxml.tests.test_classlookup.ClassLookupTestCase) ... ok
@@ -784,6 +789,9 @@ test_entity_append (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_append_parsed (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_error (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_parse (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_entity_parse_external (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_entity_parse_external_no_resolve (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_entity_parse_no_external_default (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_restructure (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_system_url (lxml.tests.test_dtd.ETreeDtdTestCase) ... ok
 test_entity_system_url_none (lxml.tests.test_dtd.ETreeDtdTestCase) ... ok
@@ -998,6 +1006,7 @@ test_html_parser_target_doctype_html (lxml.tests.test_htmlparser.HtmlParserTestC
 test_html_parser_target_doctype_html_full (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_parser_target_exceptions (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_parser_target_tag (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
+test_html_prefix_nsmap (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_html_subelement_name_colon (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_subelement_name_empty (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_subelement_name_quote (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
@@ -1133,6 +1142,7 @@ test_itertext (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_itertext_child (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_itertext_child (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_itertext_comment_pi (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_itertext_no_tails (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_iterwalk (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_iterwalk_attrib_ns (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_iterwalk_clear (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -2131,15 +2141,15 @@ xpath (lxml.tests.test_xpathevaluator)
 xpath_tokenizer (lxml.tests.selftest)
 
 ----------------------------------------------------------------------
-Ran 1982 tests
+Ran 1992 tests
 
 OK
 Skipping tests in lxml.cssselect - external cssselect package is not installed
 Comparing with ElementTree 1.3.0
 
-TESTED VERSION: 4.9.4
+TESTED VERSION: 5.0.0
     Python:           sys.version_info(major=3, minor=9, micro=16, releaselevel='final', serial=0)
-    lxml.etree:       (4, 9, 4, 0)
+    lxml.etree:       (5, 0, 0, 0)
     libxml used:      (2, 12, 3)
     libxml compiled:  (2, 12, 3)
     libxslt used:     (1, 1, 39)
