@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1843 items
+collecting ... collected 1844 items
 
 Use a separate pytest run for tests like this with the "--exclusive-
 Use a separate pytest run for tests like this with the "--exclusive-
@@ -894,6 +894,7 @@ tests/providers/test_enum.py::TestEnumProvider::test_enum PASSED
 tests/providers/test_enum.py::TestEnumProvider::test_enum_single PASSED
 tests/providers/test_enum.py::TestEnumProvider::test_incorrect_type_raises PASSED
 tests/providers/test_enum.py::TestEnumProvider::test_none_raises PASSED
+tests/providers/test_file.py::TestFile::test_file_name PASSED
 tests/providers/test_file.py::TestFile::test_file_path PASSED
 tests/providers/test_file.py::TestFile::test_unix_device PASSED
 tests/providers/test_file.py::TestFile::test_unix_partition PASSED
@@ -1918,8 +1919,12 @@ tests/pytest/test_unique_clear.py: 15 warnings
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
+tests/pytest/test_unique_clear.py::test_unique_clears
+  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:46: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
+    warner(PytestBenchmarkWarning(text))
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1812 passed, 31 skipped, 26 warnings ========
+======== 1813 passed, 31 skipped, 27 warnings ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -2545,8 +2550,8 @@ faker/providers/emoji/__init__.py                     6      1    83%
 faker/providers/emoji/__init__.py                     6      1    83%
 faker/providers/emoji/en_US/__init__.py               3      3     0%
 faker/providers/emoji/en_US/__init__.py               3      3     0%
-faker/providers/file/__init__.py                     49     22    55%
-faker/providers/file/__init__.py                     49     22    55%
+faker/providers/file/__init__.py                     53     26    51%
+faker/providers/file/__init__.py                     53     26    51%
 faker/providers/file/en_US/__init__.py                3      3     0%
 faker/providers/file/en_US/__init__.py                3      3     0%
 faker/providers/geo/__init__.py                      29     16    45%
@@ -3200,6 +3205,6 @@ faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      9    44%
 faker/utils/text.py                                  16      9    44%
 ---------------------------------------------------------------------
-TOTAL                                             19562  17130    12%
+TOTAL                                             19570  17138    12%
   py$(PYV): OK
   congratulations :)
