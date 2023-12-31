@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yt-dlp
-HUMAN_VERSION =			2023.11.16
+HUMAN_VERSION =			2023.12.30
 COMPONENT_SUMMARY =		yt-dlp - A youtube-dl fork with additional features and patches
 COMPONENT_PROJECT_URL =		https://github.com/yt-dlp/yt-dlp
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/93/f0/8d894dd24447945269d123f6a061520103fb790211c6846418c6ee1065ff/yt-dlp-2023.11.16.tar.gz
+	https://files.pythonhosted.org/packages/a9/a7/d8536993aed7569c5221f532e3ba01b09d5bdc893df3ef4e5b05d01582c4/yt-dlp-2023.12.30.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f0ccdaf12e08b15902601a4671c7ab12906d7b11de3ae75fa6506811c24ec5da
+	sha256:a11862e57721b0a0f0883dfeb5a4d79ba213a2d4c45e1880e9fd70f8e6570c38
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
 
