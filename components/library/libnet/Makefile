@@ -24,35 +24,32 @@
 # Copyright (c) 2023, Friedrich Kink
 #
 
-BUILD_BITS=	64_and_32
-
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libnet
-COMPONENT_VERSION=	1.2
+COMPONENT_VERSION=	1.3
 COMPONENT_SUMMARY=	libnet - a library for portable network packet construction
 COMPONENT_DESCRIPTION=	the libnet network packet construction library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/libnet/libnet
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:caa4868157d9e5f32e9c7eac9461efeff30cb28357f7f6bf07e73933fb4edaa7
+COMPONENT_ARCHIVE_HASH= sha256:ad1e2dd9b500c58ee462acd839d0a0ea9a2b9248a1287840bc601e774fb6b28f
 COMPONENT_ARCHIVE_URL=	https://github.com/libnet/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/library/libnet
-COMPONENT_BUGDB=	library/libnet
+COMPONENT_CLASSIFICATION=
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-doxygen-html
 CONFIGURE_OPTIONS += --enable-doxygen-pdf
 
-test:		$(NO_TESTS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
