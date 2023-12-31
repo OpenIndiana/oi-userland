@@ -70,15 +70,15 @@ include ../../../../make-rules/shared-macros.mk
 # it cannot be changed here randomly, it must match the VMMaker version
 
 COMPONENT_NAME=		squeak
-COMPONENT_VERSION=	4.20.6
+COMPONENT_VERSION=	4.20.7
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/smalltalk/squeak
 COMPONENT_CLASSIFICATION=	Development/Smalltalk
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=                3828
-SVN_HASH=  sha256:2008c85a0bbf62fdb1812a0b21e77ed95910c6c0759ec0c14f59536ec6f63016
+SVN_REV=                3829
+SVN_HASH=  sha256:a50c19767806f5b318259a27e004c4b9c7441381132aa9d1af1abd106cc1f703
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -118,7 +118,7 @@ gcc_OPT=	-O
 # since 2023 4.20.6 compile 64bit without largefiles flags to open 32bit images
 # CPPFLAGS +=     $(CPP_LARGEFILES)
 
-# build against libjpeg (see Illumos feature request #7391 for libjpeg8-turbo)
+# use libjpeg8 turbo (see Illumos feature request #7391 for libjpeg8-turbo)
 # use --link-shared-lib to avoid the Squeak copy of libjpeg
 CPPFLAGS +=     $(JPEG_CPPFLAGS)
 LDFLAGS  +=     $(JPEG_LDFLAGS)
