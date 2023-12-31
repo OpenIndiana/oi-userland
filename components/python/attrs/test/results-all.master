@@ -1,13 +1,15 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest
+py$(PYV): commands[0]> python -m pytest -n auto
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'patience' -> suppress_health_check=[HealthCheck.too_slow], database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml, testpaths: tests
-asyncio: mode=strict
-collecting ... collected 1377 items
+hypothesis profile 'patience' -> suppress_health_check=[HealthCheck.too_slow], database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests
+X workers [1405 items]
+
+scheduling tests via LoadScheduling
 
 tests/test_3rd_party.py::TestCloudpickleCompat::test_repr PASSED
 tests/test_abc.py::TestUpdateAbstractMethods::test_abc_implementation[False] SKIPPED
@@ -141,6 +143,7 @@ tests/test_cmp.py::TestNotImplementedIsPropagated::test_not_implemented_is_propa
 tests/test_cmp.py::TestTotalOrderingException::test_eq_must_specified PASSED
 tests/test_compat.py::TestMetadataProxy::test_immutable PASSED
 tests/test_compat.py::TestMetadataProxy::test_repr PASSED
+tests/test_compat.py::test_attrsinstance_subclass_protocol PASSED
 tests/test_config.py::TestConfig::test_default PASSED
 tests/test_config.py::TestConfig::test_get_run_validators PASSED
 tests/test_config.py::TestConfig::test_set_run_validators PASSED
@@ -302,6 +305,7 @@ tests/test_funcs.py::TestAsDict::test_dicts PASSED
 tests/test_funcs.py::TestAsDict::test_filter PASSED
 tests/test_funcs.py::TestAsDict::test_lists_tuples PASSED
 tests/test_funcs.py::TestAsDict::test_lists_tuples_retain_type PASSED
+tests/test_funcs.py::TestAsDict::test_named_tuple_retain_type PASSED
 tests/test_funcs.py::TestAsDict::test_nested_dicts PASSED
 tests/test_funcs.py::TestAsDict::test_nested_lists PASSED
 tests/test_funcs.py::TestAsDict::test_recurse PASSED
@@ -311,17 +315,20 @@ tests/test_funcs.py::TestAsDict::test_roundtrip PASSED
 tests/test_funcs.py::TestAsDict::test_sets_no_retain PASSED
 tests/test_funcs.py::TestAsDict::test_shallow PASSED
 tests/test_funcs.py::TestAsDict::test_tuple_keys PASSED
+tests/test_funcs.py::TestAsDict::test_type_error_with_retain_type PASSED
 tests/test_funcs.py::TestAsTuple::test_dicts PASSED
 tests/test_funcs.py::TestAsTuple::test_dicts_retain_type PASSED
 tests/test_funcs.py::TestAsTuple::test_filter PASSED
 tests/test_funcs.py::TestAsTuple::test_lists_tuples PASSED
 tests/test_funcs.py::TestAsTuple::test_lists_tuples_retain_type PASSED
+tests/test_funcs.py::TestAsTuple::test_named_tuple_retain_type PASSED
 tests/test_funcs.py::TestAsTuple::test_recurse PASSED
 tests/test_funcs.py::TestAsTuple::test_recurse_property PASSED
 tests/test_funcs.py::TestAsTuple::test_recurse_retain PASSED
 tests/test_funcs.py::TestAsTuple::test_roundtrip PASSED
 tests/test_funcs.py::TestAsTuple::test_sets_no_retain PASSED
 tests/test_funcs.py::TestAsTuple::test_shallow PASSED
+tests/test_funcs.py::TestAsTuple::test_type_error_with_retain_type PASSED
 tests/test_funcs.py::TestAssoc::test_change PASSED
 tests/test_funcs.py::TestAssoc::test_empty PASSED
 tests/test_funcs.py::TestAssoc::test_frozen PASSED
@@ -761,6 +768,7 @@ tests/test_hooks.py::TestTransformHook::test_hook_remove_field PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_with_inheritance PASSED
 tests/test_import.py::TestImportStar::test_from_attr_import_star PASSED
 tests/test_init_subclass.py::test_init_subclass_attrs PASSED
+tests/test_init_subclass.py::test_init_subclass_slots_workaround PASSED
 tests/test_init_subclass.py::test_init_subclass_vanilla[False] PASSED
 tests/test_init_subclass.py::test_init_subclass_vanilla[True] PASSED
 tests/test_make.py::TestAttributes::test_adds_all_by_default[__eq__] PASSED
@@ -778,6 +786,12 @@ tests/test_make.py::TestAttributes::test_post_init[False] PASSED
 tests/test_make.py::TestAttributes::test_post_init[True] PASSED
 tests/test_make.py::TestAttributes::test_pre_init[False] PASSED
 tests/test_make.py::TestAttributes::test_pre_init[True] PASSED
+tests/test_make.py::TestAttributes::test_pre_init_args[False] PASSED
+tests/test_make.py::TestAttributes::test_pre_init_args[True] PASSED
+tests/test_make.py::TestAttributes::test_pre_init_kwargs[False] PASSED
+tests/test_make.py::TestAttributes::test_pre_init_kwargs[True] PASSED
+tests/test_make.py::TestAttributes::test_pre_init_kwargs_only[False] PASSED
+tests/test_make.py::TestAttributes::test_pre_init_kwargs_only[True] PASSED
 tests/test_make.py::TestAttributes::test_pre_post_init_order[False] PASSED
 tests/test_make.py::TestAttributes::test_pre_post_init_order[True] PASSED
 tests/test_make.py::TestAttributes::test_repr_fake_qualname PASSED
@@ -970,6 +984,7 @@ tests/test_make.py::TestKeywordOnlyAttributes::test_keyword_only_attributes_pres
 tests/test_make.py::TestKeywordOnlyAttributes::test_keyword_only_attributes_unexpected PASSED
 tests/test_make.py::TestKeywordOnlyAttributes::test_keyword_only_class_level PASSED
 tests/test_make.py::TestKeywordOnlyAttributes::test_keyword_only_class_level_subclassing PASSED
+tests/test_make.py::TestMakeClass::test_additional_class_body PASSED
 tests/test_make.py::TestMakeClass::test_attr_args PASSED
 tests/test_make.py::TestMakeClass::test_bases PASSED
 tests/test_make.py::TestMakeClass::test_catches_wrong_attrs_type PASSED
@@ -983,12 +998,12 @@ tests/test_make.py::TestMakeClass::test_simple[list] PASSED
 tests/test_make.py::TestMakeClass::test_simple[tuple] PASSED
 tests/test_make.py::TestMakeOrder::test_subclasses_cannot_be_compared PASSED
 tests/test_make.py::TestMatchArgs::test_explicit_match_args SKIPPED
-tests/test_make.py::TestMatchArgs::test_make_class SKIPPED (Structur...)
-tests/test_make.py::TestMatchArgs::test_match_args SKIPPED (Structur...)
+tests/test_make.py::TestMatchArgs::test_make_class SKIPPED
+tests/test_make.py::TestMatchArgs::test_match_args SKIPPED
 tests/test_make.py::TestMatchArgs::test_match_args_argument SKIPPED
 tests/test_make.py::TestMatchArgs::test_match_args_attr_set[False] SKIPPED
 tests/test_make.py::TestMatchArgs::test_match_args_attr_set[True] SKIPPED
-tests/test_make.py::TestMatchArgs::test_match_args_kw_only SKIPPED (...)
+tests/test_make.py::TestMatchArgs::test_match_args_kw_only SKIPPED
 tests/test_make.py::TestMetadata::test_empty_countingattr_metadata_independent PASSED
 tests/test_make.py::TestMetadata::test_empty_metadata_singleton PASSED
 tests/test_make.py::TestMetadata::test_metadata PASSED
@@ -1152,8 +1167,8 @@ tests/test_packaging.py::TestLegacyMetadataHack::test_version[attr] PASSED
 tests/test_packaging.py::TestLegacyMetadataHack::test_version[attrs] PASSED
 tests/test_packaging.py::TestLegacyMetadataHack::test_version_info[attr] PASSED
 tests/test_packaging.py::TestLegacyMetadataHack::test_version_info[attrs] PASSED
-tests/test_pyright.py::test_pyright_attrsinstance_compat SKIPPED (Re...)
-tests/test_pyright.py::test_pyright_baseline SKIPPED (Requires pyright.)
+tests/test_pyright.py::test_pyright_attrsinstance_compat SKIPPED
+tests/test_pyright.py::test_pyright_baseline SKIPPED
 tests/test_setattr.py::TestSetAttr::test_change PASSED
 tests/test_setattr.py::TestSetAttr::test_docstring PASSED
 tests/test_setattr.py::TestSetAttr::test_frozen_attribute PASSED
@@ -1193,7 +1208,6 @@ tests/test_setattr.py::TestSetAttr::test_validator[wrapped_pipe] PASSED
 tests/test_slots.py::TestClosureCellRewriting::test_closure_cell_rewriting PASSED
 tests/test_slots.py::TestClosureCellRewriting::test_cls_static[False] PASSED
 tests/test_slots.py::TestClosureCellRewriting::test_cls_static[True] PASSED
-tests/test_slots.py::TestClosureCellRewriting::test_code_hack_failure SKIPPED
 tests/test_slots.py::TestClosureCellRewriting::test_inheritance PASSED
 tests/test_slots.py::TestPickle::test_getstate_set_state_force_true[cls0] PASSED
 tests/test_slots.py::TestPickle::test_getstate_set_state_force_true[cls1] PASSED
@@ -1206,7 +1220,7 @@ tests/test_slots.py::TestPickle::test_pickleable_by_default[3] PASSED
 tests/test_slots.py::TestPickle::test_pickleable_by_default[4] PASSED
 tests/test_slots.py::test_bare_inheritance_from_slots PASSED
 tests/test_slots.py::test_basic_attr_funcs PASSED
-tests/test_slots.py::test_implicitly_weakrefable SKIPPED (slots with...)
+tests/test_slots.py::test_implicitly_weakrefable SKIPPED
 tests/test_slots.py::test_inheritance_from_nonslots PASSED
 tests/test_slots.py::test_inheritance_from_slots PASSED
 tests/test_slots.py::test_inheritance_from_slots_with_attribute_override PASSED
@@ -1214,7 +1228,22 @@ tests/test_slots.py::test_inherited_slot_reuses_slot_descriptor PASSED
 tests/test_slots.py::test_nonslots_these PASSED
 tests/test_slots.py::test_not_weakrefable PASSED
 tests/test_slots.py::test_slots_being_used PASSED
+tests/test_slots.py::test_slots_cached_properties_work_independently PASSED
+tests/test_slots.py::test_slots_cached_property_allows_call PASSED
+tests/test_slots.py::test_slots_cached_property_called_independent_across_instances PASSED
+tests/test_slots.py::test_slots_cached_property_class_does_not_have__dict__ PASSED
+tests/test_slots.py::test_slots_cached_property_infers_type PASSED
+tests/test_slots.py::test_slots_cached_property_is_not_called_at_construction PASSED
+tests/test_slots.py::test_slots_cached_property_repeat_call_only_once PASSED
+tests/test_slots.py::test_slots_cached_property_with_empty_getattr_raises_attribute_error_of_requested PASSED
+tests/test_slots.py::test_slots_cached_property_with_getattr_calls_getattr_for_missing_attributes PASSED
+tests/test_slots.py::test_slots_cached_property_works_on_frozen_isntances PASSED
 tests/test_slots.py::test_slots_empty_cell PASSED
+tests/test_slots.py::test_slots_getattr_in_subclass_gets_superclass_cached_property PASSED
+tests/test_slots.py::test_slots_getattr_in_superclass__is_called_for_missing_attributes_when_cached_property_present PASSED
+tests/test_slots.py::test_slots_sub_class_avoids_duplicated_slots PASSED
+tests/test_slots.py::test_slots_sub_class_with_actual_slot PASSED
+tests/test_slots.py::test_slots_sub_class_with_independent_cached_properties_both_work PASSED
 tests/test_slots.py::test_slots_super_property_get PASSED
 tests/test_slots.py::test_slots_super_property_get_shortcut PASSED
 tests/test_slots.py::test_slots_unpickle_after_attr_added[False] PASSED
@@ -1222,6 +1251,7 @@ tests/test_slots.py::test_slots_unpickle_after_attr_added[True] PASSED
 tests/test_slots.py::test_slots_unpickle_after_attr_removed PASSED
 tests/test_slots.py::test_slots_unpickle_is_backward_compatible[False] PASSED
 tests/test_slots.py::test_slots_unpickle_is_backward_compatible[True] PASSED
+tests/test_slots.py::test_slots_with_multiple_cached_property_subclasses_works PASSED
 tests/test_slots.py::test_weakref_does_not_add_a_field PASSED
 tests/test_slots.py::test_weakrefable PASSED
 tests/test_slots.py::tests_weakref_does_not_add_when_inheriting_with_weakref PASSED
@@ -1388,6 +1418,6 @@ tests/test_version_info.py::TestVersionInfo::test_wrong_len[other1] PASSED
 tests/test_version_info.py::TestVersionInfo::test_wrong_type[other0] PASSED
 
 =========================== short test summary info ============================
-======== 1357 passed, 19 skipped, 1 xfailed ========
+======== 1386 passed, 18 skipped, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
