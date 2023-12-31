@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		attrs
 HUMAN_VERSION =			23.2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		attrs - Classes Without Boilerplate
 COMPONENT_ARCHIVE_URL =		\
 	https://files.pythonhosted.org/packages/e3/fc/f800d51204003fa8ae392c4e8278f256206e7a919b708eef054f5f4b650d/attrs-23.2.0.tar.gz
