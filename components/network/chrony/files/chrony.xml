@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ This file and its contents are supplied under the terms of the
+ Common Development and Distribution License ("CDDL"), version 1.0.
+ You may only use this file in accordance with the terms of version
+ 1.0 of the CDDL.
+
+ A full copy of the text of the CDDL should have accompanied this
+ source. A copy of the CDDL is also available via the Internet at
+ http://www.illumos.org/license/CDDL.
+
+ Copyright 2021 OmniOS Community Edition (OmniOSce) Association.
+-->
+<service_bundle type='manifest' name='chrony:default'>
+
+    <service name='network/chrony'
+             type='service'
+             version='1'>
+
+        <create_default_instance enabled='false' />
+
+        <dependency name='network'
+                    grouping='require_any'
+                    restart_on='error'
+                    type='service'>
+            <service_fmri value='svc:/network/service' />
+        </dependency>
+
+        <dependency name='filesystem'
+                    grouping='require_all'
+                    restart_on='error'
+                    type='service'>
+            <service_fmri value='svc:/system/filesystem/minimal' />
+        </dependency>
+
+        <dependency name='name-services'
+                    grouping='optional_all'
+                    restart_on='none'
+                    type='service'>
+            <service_fmri value='svc:/milestone/name-services' />
+        </dependency>
+
+        <dependency name='routing-setup'
+                    grouping='optional_all'
+                    restart_on='none'
+                    type='service'>
+            <service_fmri value='svc:/network/routing-setup' />
+        </dependency>
+
+        <dependency name='config-file'
+                    grouping='require_all'
+                    restart_on='refresh'
+                    type='path'>
+            <service_fmri value='file://localhost/etc/inet/chrony.conf' />
+        </dependency>
+
+        <dependency name='open-vm-tools'
+                    grouping='exclude_all'
+                    restart_on='none'
+                    type='service'>
+            <service_fmri value='svc:/system/virtualization/open-vm-tools:default' />
+        </dependency>
+
+        <!-- ntpsec/vmtoolsd also adjust the system time. Prevent chrony running at the same time. -->
+
+        <dependency name='ntpsec'
+                    grouping='exclude_all'
+                    restart_on='none'
+                    type='service'>
+            <service_fmri value='svc:/network/ntp:default' />
+        </dependency>
+
+        <exec_method type='method'
+                     name='start'
+                     exec='/usr/sbin/chronyd'
+                     timeout_seconds='600'>
+            <method_context security_flags='aslr'>
+                <method_credential user='root'
+                                   group='root'
+                                   privileges='basic,!file_link_any,!proc_info,!proc_session,file_chown_self,file_dac_search,file_dac_write,net_privaddr,proc_lock_memory,proc_priocntl,proc_setid,sys_time' />
+            </method_context>
+        </exec_method>
+
+        <exec_method type='method' name='stop' exec=':kill' timeout_seconds='60' />
+
+        <stability value='Unstable' />
+
+        <template>
+            <common_name>
+                <loctext xml:lang='C'>Network Time Protocol (NTP)</loctext>
+            </common_name>
+            <documentation>
+                <manpage title='chronyc' section='1' />
+                <manpage title='chronyd' section='8' />
+            </documentation>
+        </template>
+
+    </service>
+
+</service_bundle>
