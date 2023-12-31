@@ -430,7 +430,6 @@ $(eval $(call disable-pytest-plugin,env,pytest-env))
 $(eval $(call disable-pytest-plugin,faker,faker))
 $(eval $(call disable-pytest-plugin,flake8,pytest-flake8))
 $(eval $(call disable-pytest-plugin,flaky,flaky))
-$(eval $(call disable-pytest-plugin,freezegun,pytest-freezegun))
 $(eval $(call disable-pytest-plugin,freezer,pytest-freezer))
 $(eval $(call disable-pytest-plugin,helpers_namespace,pytest-helpers-namespace))
 $(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to test report header
