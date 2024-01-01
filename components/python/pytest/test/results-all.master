@@ -1,13 +1,13 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> pytest
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: testing
-collecting ... collected 3468 items
+collecting ... collected 3471 items
 
 testing/_py/test_local.py::TestBinaryAndTextMethods::test_default_encoding PASSED
 testing/_py/test_local.py::TestBinaryAndTextMethods::test_read_binwrite PASSED
@@ -99,7 +99,7 @@ testing/_py/test_local.py::TestLocalPath::test_listdir_fnmatchstring PASSED
 testing/_py/test_local.py::TestLocalPath::test_listdir_sorted PASSED
 testing/_py/test_local.py::TestLocalPath::test_load PASSED
 testing/_py/test_local.py::TestLocalPath::test_long_filenames XFAIL
-testing/_py/test_local.py::TestLocalPath::test_make_numbered_dir_multiprocess_safe PASSED
+testing/_py/test_local.py::TestLocalPath::test_make_numbered_dir_multiprocess_safe XPASS
 testing/_py/test_local.py::TestLocalPath::test_mkdir_and_remove PASSED
 testing/_py/test_local.py::TestLocalPath::test_mkdtemp_creation PASSED
 testing/_py/test_local.py::TestLocalPath::test_move_dir PASSED
@@ -1303,6 +1303,7 @@ testing/test_assertrewrite.py::TestAssertionPass::test_hook_not_called_without_c
 testing/test_assertrewrite.py::TestAssertionPass::test_hook_not_called_without_hookimpl PASSED
 testing/test_assertrewrite.py::TestAssertionPass::test_option_default PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_assert_already_has_message PASSED
+testing/test_assertrewrite.py::TestAssertionRewrite::test_assert_handling_raise_in__iter__ PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_assert_raising__bool__in_comparison PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_assertion_message PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_assertion_message_escape PASSED
@@ -1362,6 +1363,7 @@ testing/test_assertrewrite.py::TestIssue11028::test_assertion_walrus_operator_eq
 testing/test_assertrewrite.py::TestIssue11028::test_assertion_walrus_operator_gt_operand_function PASSED
 testing/test_assertrewrite.py::TestIssue11028::test_assertion_walrus_operator_in_operand PASSED
 testing/test_assertrewrite.py::TestIssue11028::test_assertion_walrus_operator_in_operand_json_dumps PASSED
+testing/test_assertrewrite.py::TestIssue11140::test_constant_not_picked_as_module_docstring PASSED
 testing/test_assertrewrite.py::TestIssue11239::test_assertion_walrus_different_test_cases PASSED
 testing/test_assertrewrite.py::TestIssue2121::test_rewrite_python_files_contain_subdirs PASSED
 testing/test_assertrewrite.py::TestIssue925::test_long_case PASSED
@@ -1643,6 +1645,7 @@ testing/test_collection.py::TestNodeKeywords::test_keyword_matching_is_case_inse
 testing/test_collection.py::TestNodeKeywords::test_no_under PASSED
 testing/test_collection.py::TestNodeKeywords::test_unpacked_marks_added_to_keywords PASSED
 testing/test_collection.py::TestPrunetraceback::test_collect_report_postprocessing XFAIL
+testing/test_collection.py::TestPrunetraceback::test_collection_error_traceback_is_clean PASSED
 testing/test_collection.py::TestPrunetraceback::test_custom_repr_failure PASSED
 testing/test_collection.py::TestSession::test_collect_custom_nodes_multi_id PASSED
 testing/test_collection.py::TestSession::test_collect_protocol_method PASSED
@@ -3490,6 +3493,7 @@ testing/test_terminal.py::TestProgressWithTeardown::test_xdist_normal
     warner(PytestBenchmarkWarning(text))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 3399 passed, 57 skipped, 12 xfailed, 7 warnings ========
+=========================== short test summary info ============================
+======== 3401 passed, 57 skipped, 12 xfailed, 1 xpassed, 7 warnings ========
   py$(PYV): OK
   congratulations :)
