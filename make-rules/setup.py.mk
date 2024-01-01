@@ -574,6 +574,7 @@ ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 COMPONENT_PRE_TEST_ACTION += \
 	for f in $(PROTOUSRBINDIR)/*-$(PYTHON_VERSION) ; do \
 		[ -f $$f ] || continue ; \
+		[ -L $${f%%-$(PYTHON_VERSION)} ] && $(RM) $${f%%-$(PYTHON_VERSION)} ; \
 		[ -e $${f%%-$(PYTHON_VERSION)} ] && continue ; \
 		$(SYMLINK) $$(basename $$f) $${f%%-$(PYTHON_VERSION)} ; \
 	done ;
