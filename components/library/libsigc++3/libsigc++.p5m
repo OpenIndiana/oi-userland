@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 Andreas Wacknitz
+# Copyright 2024 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -50,6 +50,7 @@ file path=usr/include/sigc++-3.0/sigc++/limit_reference.h
 file path=usr/include/sigc++-3.0/sigc++/member_method_trait.h
 file path=usr/include/sigc++-3.0/sigc++/reference_wrapper.h
 file path=usr/include/sigc++-3.0/sigc++/retype_return.h
+file path=usr/include/sigc++-3.0/sigc++/scoped_connection.h
 file path=usr/include/sigc++-3.0/sigc++/sigc++.h
 file path=usr/include/sigc++-3.0/sigc++/signal.h
 file path=usr/include/sigc++-3.0/sigc++/signal_base.h
@@ -68,11 +69,6 @@ link path=usr/lib/$(MACH64)/libsigc-3.0.so.0 target=libsigc-3.0.so.0.0.0
 file path=usr/lib/$(MACH64)/libsigc-3.0.so.0.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/sigc++-3.0.pc
 file path=usr/lib/$(MACH64)/sigc++-3.0/include/sigc++config.h
-link path=usr/lib/libsigc-3.0.so target=libsigc-3.0.so.0
-link path=usr/lib/libsigc-3.0.so.0 target=libsigc-3.0.so.0.0.0
-file path=usr/lib/libsigc-3.0.so.0.0.0
-file path=usr/lib/pkgconfig/sigc++-3.0.pc
-file path=usr/lib/sigc++-3.0/include/sigc++config.h
 file path=usr/share/devhelp/books/libsigc++-3.0/libsigc++-3.0.devhelp2
 file path=usr/share/doc/libsigc++-3.0/reference/html/annotated.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/bc_s.png
@@ -145,6 +141,7 @@ file path=usr/share/doc/libsigc++-3.0/reference/html/classsigc_1_1trackable__sig
 file path=usr/share/doc/libsigc++-3.0/reference/html/classsigc_1_1trackable__signal__with__accumulator__inherit__graph.map
 file path=usr/share/doc/libsigc++-3.0/reference/html/classsigc_1_1trackable__signal__with__accumulator__inherit__graph.md5
 file path=usr/share/doc/libsigc++-3.0/reference/html/classsigc_1_1trackable__signal__with__accumulator__inherit__graph.png
+file path=usr/share/doc/libsigc++-3.0/reference/html/clipboard.js
 file path=usr/share/doc/libsigc++-3.0/reference/html/closed.png
 file path=usr/share/doc/libsigc++-3.0/reference/html/deprecated.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/dir_0bd3c8d814eb03171de012519d7a2ccd.html
@@ -156,6 +153,7 @@ file path=usr/share/doc/libsigc++-3.0/reference/html/docd.svg
 file path=usr/share/doc/libsigc++-3.0/reference/html/doxygen-extra.css
 file path=usr/share/doc/libsigc++-3.0/reference/html/doxygen.css
 file path=usr/share/doc/libsigc++-3.0/reference/html/doxygen.svg
+file path=usr/share/doc/libsigc++-3.0/reference/html/doxygen_crawl.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/dynsections.js
 file path=usr/share/doc/libsigc++-3.0/reference/html/folderclosed.svg
 file path=usr/share/doc/libsigc++-3.0/reference/html/folderclosedd.svg
@@ -177,6 +175,7 @@ file path=usr/share/doc/libsigc++-3.0/reference/html/functions_n.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/functions_o.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/functions_p.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/functions_r.html
+file path=usr/share/doc/libsigc++-3.0/reference/html/functions_rela.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/functions_s.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/functions_t.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/functions_type.html
@@ -282,6 +281,9 @@ file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_31.png
 file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_32.map
 file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_32.md5
 file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_32.png
+file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_33.map
+file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_33.md5
+file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_33.png
 file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_4.map
 file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_4.md5
 file path=usr/share/doc/libsigc++-3.0/reference/html/inherit_graph_4.png
@@ -323,6 +325,7 @@ file path=usr/share/doc/libsigc++-3.0/reference/html/plusd.svg
 file path=usr/share/doc/libsigc++-3.0/reference/html/since_2_4.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/since_2_8.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/since_3_4.html
+file path=usr/share/doc/libsigc++-3.0/reference/html/since_3_6.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/splitbar.png
 file path=usr/share/doc/libsigc++-3.0/reference/html/splitbard.png
 file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1adaptor__base.html
@@ -403,6 +406,8 @@ file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1retype__retur
 file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1retype__return__functor__inherit__graph.map
 file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1retype__return__functor__inherit__graph.md5
 file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1retype__return__functor__inherit__graph.png
+file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1scoped__connection-members.html
+file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1scoped__connection.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1signal__base-members.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1signal__base.html
 file path=usr/share/doc/libsigc++-3.0/reference/html/structsigc_1_1signal__base__inherit__graph.map

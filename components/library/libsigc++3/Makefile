@@ -14,19 +14,18 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libsigc++
-COMPONEN_MAJOR_VERSION=	3.4
+COMPONEN_MAJOR_VERSION=	3.6
 COMPONENT_VERSION=      $(COMPONEN_MAJOR_VERSION).0
-COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Libsigc++ - a library that implements a typesafe callback system for standard C++
 COMPONENT_PROJECT_URL=  https://libsigc.sourceforge.net
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:02e2630ffb5ce93cd52c38423521dfe7063328863a6e96d41d765a6116b8707e
+COMPONENT_ARCHIVE_HASH= sha256:c3d23b37dfd6e39f2e09f091b77b1541fbfa17c4f0b6bf5c89baef7229080e17
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/libsigc++/$(COMPONEN_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/c++/sigcpp3
 COMPONENT_CLASSIFICATION=Development/C++ 
