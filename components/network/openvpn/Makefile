@@ -13,6 +13,7 @@
 # Copyright 2016 Jim Klimov
 # Copyright 2020 Michal Nowak
 # Copyright 2022 Niklas Poslovski
+# Copyright 2024 Stephan Althaus
 #
 
 OPENSSL_VERSION= 3.1
@@ -20,11 +21,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvpn
-COMPONENT_VERSION=	2.6.6
+COMPONENT_VERSION=	2.6.8
 COMPONENT_SUMMARY=	OpenVPN is a full-featured open source SSL VPN solution
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:3b074f392818b31aa529b84f76e8b5e4ad03fca764924f46d906bceaaf421034
+COMPONENT_ARCHIVE_HASH=	sha256:5ede1565c8a6d880100f7f235317a7ee9eea83d5052db5547f13a9e76af7805d
 COMPONENT_PROJECT_URL=	https://openvpn.net
 COMPONENT_ARCHIVE_URL=	https://build.openvpn.net/downloads/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/openvpn
