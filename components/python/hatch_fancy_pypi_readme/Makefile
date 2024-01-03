@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatch_fancy_pypi_readme
-HUMAN_VERSION =			23.2.0
+HUMAN_VERSION =			24.1.0
 COMPONENT_SUMMARY =		hatch_fancy_pypi_readme - Fancy PyPI READMEs with Hatch
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8a/94/a8dc6cd16a801e72758363f3c9df3b368b6e63dc6358037f9c6de9f4d110/hatch_fancy_pypi_readme-23.2.0.tar.gz
+	https://files.pythonhosted.org/packages/b4/c2/c9094283a07dd96c5a8f7a5f1910259d40d2e29223b95dd875a6ca13b58f/hatch_fancy_pypi_readme-24.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2762b31de2c78572f87d82986910ff46b89834d3743fa5fcdefc1d215ab21b24
+	sha256:44dd239f1a779b9dcf8ebc9401a611fd7f7e3e14578dcf22c265dfaf7c1514b8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
