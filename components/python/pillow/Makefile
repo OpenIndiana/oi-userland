@@ -11,21 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Pillow
+#   $WS_TOOLS/python-integrate-project pillow
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Pillow
-HUMAN_VERSION =			10.1.0
-COMPONENT_SUMMARY =		Pillow - Python Imaging Library (Fork)
+COMPONENT_NAME =		pillow
+HUMAN_VERSION =			10.2.0
+COMPONENT_SUMMARY =		pillow - Python Imaging Library (Fork)
 COMPONENT_PROJECT_URL =		https://python-pillow.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/80/d7/c4b258c9098b469c4a4e77b0a99b5f4fd21e359c2e486c977d231f52fc71/Pillow-10.1.0.tar.gz
+	https://files.pythonhosted.org/packages/f8/3e/32cbd0129a28686621434cbf17bb64bf1458bfb838f1f668262fefce145c/pillow-10.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e6bf8de6c36ed96c86ea3b6e1d5273c53f46ef518a062464cd7ef5dd2cf92e38
+	sha256:e87f0b2c78157e12d7686b27d63c070fd65d994e8ddae6f328e0dcf4a0cd007e
 COMPONENT_LICENSE =		HPND
 COMPONENT_LICENSE_FILE =	LICENSE
 
