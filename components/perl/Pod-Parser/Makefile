@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Pod::Parser
-HUMAN_VERSION =			1.66
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.67
 COMPONENT_SUMMARY =		Pod::Parser - base class for creating POD filters and translators
 COMPONENT_CPAN_AUTHOR =		MAREKR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:22928a7bffe61b452c05bbbb8f5216d4b9cf9fe2a849b776c25500d24d20df7c
+	sha256:5deccbf55d750ce65588cd211c1a03fa1ef3aaa15d1ac2b8d85383a42c1427ea
 COMPONENT_LICENSE =		Artistic-1.0-Perl
 
 include $(WS_MAKE_RULES)/common.mk
