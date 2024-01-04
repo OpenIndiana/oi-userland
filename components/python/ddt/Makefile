@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ddt
-HUMAN_VERSION =			1.7.0
+HUMAN_VERSION =			1.7.1
 COMPONENT_SUMMARY =		ddt - Data-Driven/Decorated Tests
 COMPONENT_PROJECT_URL =		https://github.com/datadriventests/ddt
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/29/2d/35e6b14795a950e788143add11c4fcc98a7e118e5bb384c1ea288f9eec8b/ddt-1.7.0.tar.gz
+	https://github.com/datadriventests/ddt/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d178d115abf25a1b8327e94f85a03ef09b1d7b0ca256f6203284b024f2fc70df
+	sha256:1ef6cadab02f5760d5cb4ea2c1d54a87780a9971639d2186c59798fc68a17728
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
