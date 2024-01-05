@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=  		Inconsolata
 COMPONENT_VERSION=		3.0.0
 HUMAN_VERSION=			3.000
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Open-source monospace font for code listings, originally by raphlinus
 COMPONENT_SRC_BASE=  	$(COMPONENT_NAME)
 COMPONENT_SRC=			$(COMPONENT_SRC_BASE)-v$(HUMAN_VERSION)
@@ -43,6 +44,7 @@ FONT_TYPE = TTF
 
 include $(WS_MAKE_RULES)/font.mk
 
+COMPONENT_FONT_PKG = inconsolata
 COMPONENT_FONT_SRC_DIR = fonts/ttf
 COMPONENT_FONT_FILES += *.ttf
 COMPONENT_FONTCONF_FILES =
