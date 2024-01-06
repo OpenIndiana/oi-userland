@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-paramiko
-HUMAN_VERSION =			3.4.0.20240103
+HUMAN_VERSION =			3.4.0.20240106
 COMPONENT_SUMMARY =		types-paramiko - Typing stubs for paramiko
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4a/8a/45779ebbf6dba05babc1b13bfb1e741fc9d28f816300b48049b944ab3be7/types-paramiko-3.4.0.20240103.tar.gz
+	https://files.pythonhosted.org/packages/3a/22/fd6873f1548c347f3a0bebc9861316a806590ded57576cfcf153cd999360/types-paramiko-3.4.0.20240106.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:245c08e2bbe1aa23f5faa1810e897013aba24f5319fb2f8292f8cb0f0fbceaa2
+	sha256:bc71aa64b75e1e230f51b43c358091e0e76c6f29fd91666d180b4486f7e4de63
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
 TEST_STYLE = setup.py
