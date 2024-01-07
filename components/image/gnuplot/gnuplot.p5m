@@ -26,6 +26,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # Install demos directly from the source directory
 <transform file path=usr/demo/gnuplot/(.+[.-].+)$ -> set action.hash demo/%<\1> >
+# Make sure all files in libexec are executable
+<transform file path=usr/libexec/.* -> default mode 0555>
 
 # force a dependency on the liberation font which we are using:
 depend type=require fmri=system/font/truetype/liberation
