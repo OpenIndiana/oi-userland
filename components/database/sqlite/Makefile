@@ -22,12 +22,13 @@
 # Copyright (c) 2020 Michal Nowak
 #
 
-BUILD_BITS= 64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
 COMPONENT_VERSION=      3.44.2
 TARBALL_VERSION=		3440200
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
