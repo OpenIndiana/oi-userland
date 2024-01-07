@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= desktop-cache
 COMPONENT_VERSION= 0.2.2
-COMPONENT_REVISION= 12
+COMPONENT_REVISION= 13
 COMPONENT_SUMMARY= desktop-cache is a set of SMF services used to update the various GNOME desktop caches.
 COMPONENT_SRC= desktop-cache-smf-services-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -27,6 +27,10 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:9cf7328ffddbf86945bef630d8b8fdd61ffcfcac3972b9d0af8668642735de0d
 COMPONENT_ARCHIVE_URL= \
   http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			service/gnome/desktop-cache
+COMPONENT_CLASSIFICATION=	System/Services
+COMPONENT_LICENSE=		CDDL
+COMPONENT_LICENSE_FILE=		COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
