@@ -604,7 +604,7 @@ print-package-names:	canonical-manifests $(MKGENERIC_SCRIPTS)
 		$(call ips-print-names-rule,$(m))) \
 	    $(foreach t,$(VERSIONED_MANIFEST_TYPES),\
 	        $(call ips-print-names-type-rule,$(t))) \
-	    | tr ' ' '\n'
+	    | tr ' ' '\n' | $(SORT) -u
 
 print-package-paths:	canonical-manifests
 	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
