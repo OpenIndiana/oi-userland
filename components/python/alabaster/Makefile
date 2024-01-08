@@ -14,20 +14,20 @@
 #   $WS_TOOLS/python-integrate-project alabaster
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		alabaster
-HUMAN_VERSION =			0.7.13
-COMPONENT_SUMMARY =		alabaster - A configurable sidebar-enabled Sphinx theme
-COMPONENT_PROJECT_URL =		https://alabaster.readthedocs.io
+HUMAN_VERSION =			0.7.15
+COMPONENT_SUMMARY =		alabaster - A light, configurable Sphinx theme
+COMPONENT_PROJECT_URL =		https://alabaster.readthedocs.io/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/94/71/a8ee96d1fd95ca04a0d2e2d9c4081dac4c2d2b12f7ddb899c8cb9bfd1532/alabaster-0.7.13.tar.gz
+	https://files.pythonhosted.org/packages/62/03/9365dc7e96ac2e3f9b5019c55eb5283aac96adffc0ca445ab6c80952fae6/alabaster-0.7.15.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a27a4a084d5e690e16e01e03ad2b2e552c61a65469419b907243193de1a84ae2
-COMPONENT_LICENSE =		BSD-like
-COMPONENT_LICENSE_FILE =	LICENSE
+	sha256:0127f4b1db0afc914883f930e3d40763131aebac295522fc4a04d9e77c703705
+COMPONENT_LICENSE =		BSD-3-Clause
+COMPONENT_LICENSE_FILE =	LICENSE.rst
 
 # This project does not contain tests
 TEST_STYLE = none
@@ -35,4 +35,5 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += runtime/python
