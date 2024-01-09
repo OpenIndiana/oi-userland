@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		X-incorporation
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	8
+COMPONENT_REVISION=	9
 COMPONENT_SUMMARY=	X consolidation incorporation
 COMPONENT_FMRI=		consolidation/X/X-incorporation
 
