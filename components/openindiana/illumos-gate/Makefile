@@ -138,6 +138,11 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)
 	echo "<transform set name=pkg.fmri -> emit set name=illumos-gate.info.git-rev value=$(shell cd $(COMPONENT_SRC); git rev-parse HEAD)>" >> \
 	  $(BUILD_DIR)/$(MACH)/publish.transforms
 
+	echo "<transform set name=pkg.fmri -> emit set name=pkg.human-version value=$(shell cd $(COMPONENT_SRC); git rev-parse HEAD | cut -c1-10)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=userland.info.component value=$(COMPONENT)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+
 	# Drop man pages for sun-solaris perl module to avoid conflicts between different versions
 	echo "<transform file path=usr/share/man/man3perl/.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
