@@ -1,4 +1,3 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> $(PYTHON) -m unittest -v
 test_call_once (tests.test_more.AdjacentTests)
@@ -58,6 +57,20 @@ Test when ``n`` does not divide evenly into the length of the ... ok
 test_duplicates (tests.test_more.CircularShiftsTests) ... ok
 test_empty (tests.test_more.CircularShiftsTests) ... ok
 test_simple_circular_shifts (tests.test_more.CircularShiftsTests) ... ok
+test_basic (tests.test_more.ClassifyUniqueTests) ... ok
+test_key_hashable (tests.test_more.ClassifyUniqueTests) ... ok
+test_key_non_hashable (tests.test_more.ClassifyUniqueTests) ... ok
+test_key_partially_hashable (tests.test_more.ClassifyUniqueTests) ... ok
+test_non_hashable (tests.test_more.ClassifyUniqueTests) ... ok
+test_partially_hashable (tests.test_more.ClassifyUniqueTests) ... ok
+test_vs_duplicates_everseen (tests.test_more.ClassifyUniqueTests) ... ok
+test_vs_duplicates_everseen_key (tests.test_more.ClassifyUniqueTests) ... ok
+test_vs_duplicates_justseen (tests.test_more.ClassifyUniqueTests) ... ok
+test_vs_duplicates_justseen_key (tests.test_more.ClassifyUniqueTests) ... ok
+test_vs_unique_everseen (tests.test_more.ClassifyUniqueTests) ... ok
+test_vs_unique_everseen_key (tests.test_more.ClassifyUniqueTests) ... ok
+test_vs_unique_justseen (tests.test_more.ClassifyUniqueTests) ... ok
+test_vs_unique_justseen_key (tests.test_more.ClassifyUniqueTests) ... ok
 test_invalid_large (tests.test_more.CombinationIndexTests) ... ok
 test_invalid_match (tests.test_more.CombinationIndexTests) ... ok
 test_invalid_order (tests.test_more.CombinationIndexTests) ... ok
@@ -131,8 +144,12 @@ test_multiple (tests.test_more.FilterExceptTests) ... ok
 test_no_exceptions_pass (tests.test_more.FilterExceptTests) ... ok
 test_no_exceptions_raise (tests.test_more.FilterExceptTests) ... ok
 test_raise (tests.test_more.FilterExceptTests) ... ok
+test_filter (tests.test_more.FilterMapTests) ... ok
+test_filter_map (tests.test_more.FilterMapTests) ... ok
+test_map (tests.test_more.FilterMapTests) ... ok
+test_no_iterables (tests.test_more.FilterMapTests) ... ok
 test_default (tests.test_more.FirstTests) ... ok
-test_empty_stop_iteration (tests.test_more.FirstTests) ... ok
+test_empty (tests.test_more.FirstTests) ... ok
 test_many (tests.test_more.FirstTests) ... ok
 test_one (tests.test_more.FirstTests) ... ok
 test_basic (tests.test_more.GrayProductTests) ... ok
@@ -188,6 +205,10 @@ test_invalid_slice (tests.test_more.IsliceExtendedTests) ... ok
 test_slicing (tests.test_more.IsliceExtendedTests) ... ok
 test_slicing_extensive (tests.test_more.IsliceExtendedTests) ... ok
 test_zero_step (tests.test_more.IsliceExtendedTests) ... ok
+test_early_suppression (tests.test_more.IterSuppressTests) ... ok
+test_no_error (tests.test_more.IterSuppressTests) ... ok
+test_raises_error (tests.test_more.IterSuppressTests) ... ok
+test_suppression (tests.test_more.IterSuppressTests) ... ok
 test_basic (tests.test_more.IterateTests) ... ok
 test_func_controls_iteration_stop (tests.test_more.IterateTests) ... ok
 test_basic (tests.test_more.LastTests) ... ok
@@ -293,7 +314,7 @@ Iterating a peekable without using ``peek()`` or ``prepend()`` ... ok
 test_peek_default (tests.test_more.PeekableTests)
 Make sure passing a default into ``peek()`` works. ... ok
 test_prepend (tests.test_more.PeekableTests)
-Tests intersperesed ``prepend()`` and ``next()`` calls ... ok
+Tests interspersed ``prepend()`` and ``next()`` calls ... ok
 test_prepend_after_stop (tests.test_more.PeekableTests)
 Test resuming iteration after a previous exhaustion ... ok
 test_prepend_indexing (tests.test_more.PeekableTests)
@@ -363,10 +384,10 @@ test_invariance_under_permutations_weighted (tests.test_more.SampleTests)
 The order of the data should not matter. This is a stochastic test, ... ok
 test_length (tests.test_more.SampleTests)
 Check that *k* elements are sampled. ... ok
-test_samling_entire_iterable (tests.test_more.SampleTests)
+test_sampling_entire_iterable (tests.test_more.SampleTests)
 If k=len(iterable), the sample contains the original elements. ... ok
 test_scale_invariance_of_weights (tests.test_more.SampleTests)
-The probabilit of chosing element a_i is w_i / sum(weights). ... ok
+The probability of choosing element a_i is w_i / sum(weights). ... ok
 test_unit_case (tests.test_more.SampleTests)
 Test against a fixed case by seeding the random module. ... ok
 test_elements (tests.test_more.SeekableTest) ... ok
@@ -578,6 +599,8 @@ chunked_even (more_itertools.more)
 Doctest: more_itertools.more.chunked_even ... ok
 circular_shifts (more_itertools.more)
 Doctest: more_itertools.more.circular_shifts ... ok
+classify_unique (more_itertools.more)
+Doctest: more_itertools.more.classify_unique ... ok
 collapse (more_itertools.more)
 Doctest: more_itertools.more.collapse ... ok
 combination_index (more_itertools.more)
@@ -612,6 +635,8 @@ exactly_n (more_itertools.more)
 Doctest: more_itertools.more.exactly_n ... ok
 filter_except (more_itertools.more)
 Doctest: more_itertools.more.filter_except ... ok
+filter_map (more_itertools.more)
+Doctest: more_itertools.more.filter_map ... ok
 first (more_itertools.more)
 Doctest: more_itertools.more.first ... ok
 gray_product (more_itertools.more)
@@ -636,6 +661,8 @@ is_sorted (more_itertools.more)
 Doctest: more_itertools.more.is_sorted ... ok
 islice_extended (more_itertools.more)
 Doctest: more_itertools.more.islice_extended ... ok
+iter_suppress (more_itertools.more)
+Doctest: more_itertools.more.iter_suppress ... ok
 iterate (more_itertools.more)
 Doctest: more_itertools.more.iterate ... ok
 last (more_itertools.more)
@@ -767,13 +794,14 @@ Not everything is identical, but everything is equal ... ok
 test_true (tests.test_recipes.AllEqualTests)
 Everything is equal ... ok
 test_basic (tests.test_recipes.BatchedTests) ... ok
+test_strict (tests.test_recipes.BatchedTests) ... ok
 test_empty (tests.test_recipes.BeforeAndAfterTests) ... ok
 test_nested_remainder (tests.test_recipes.BeforeAndAfterTests) ... ok
 test_never_false (tests.test_recipes.BeforeAndAfterTests) ... ok
 test_never_true (tests.test_recipes.BeforeAndAfterTests) ... ok
 test_some_true (tests.test_recipes.BeforeAndAfterTests) ... ok
 test_negative_consume (tests.test_recipes.ConsumeTests)
-Check that negative consumsion throws an error ... ok
+Check that negative consumption throws an error ... ok
 test_null_consume (tests.test_recipes.ConsumeTests)
 Check the null case ... ok
 test_sanity (tests.test_recipes.ConsumeTests)
@@ -817,13 +845,14 @@ test_uncaught_exception_is_raised (tests.test_recipes.IterExceptTests)
 ensure a non-specified exception is raised ... ok
 test_basic (tests.test_recipes.IterIndexTests) ... ok
 test_start (tests.test_recipes.IterIndexTests) ... ok
+test_stop (tests.test_recipes.IterIndexTests) ... ok
 test_m_by_n (tests.test_recipes.MatMulTests) ... ok
 test_n_by_n (tests.test_recipes.MatMulTests) ... ok
 test_happy_path (tests.test_recipes.NcyclesTests)
 cycle a sequence three times ... ok
 test_null_case (tests.test_recipes.NcyclesTests)
 asking for 0 cycles should return an empty iterator ... ok
-test_pathalogical_case (tests.test_recipes.NcyclesTests)
+test_pathological_case (tests.test_recipes.NcyclesTests)
 asking for negative cycles should return an empty iterator ... ok
 test_basic (tests.test_recipes.NthCombinationTests) ... ok
 test_invalid_index (tests.test_recipes.NthCombinationTests) ... ok
@@ -885,6 +914,9 @@ test_null_times (tests.test_recipes.RepeatfuncTests)
 repeat 0 should return an empty iterator ... ok
 test_simple_repeat (tests.test_recipes.RepeatfuncTests)
 test simple repeated functions ... ok
+test_basic (tests.test_recipes.ReshapeTests) ... ok
+test_empty (tests.test_recipes.ReshapeTests) ... ok
+test_zero (tests.test_recipes.ReshapeTests) ... ok
 test_even_groups (tests.test_recipes.RoundrobinTests)
 Ensure ordered output from evenly populated iterables ... ok
 test_uneven_groups (tests.test_recipes.RoundrobinTests)
@@ -919,6 +951,7 @@ test_simple_take (tests.test_recipes.TakeTests)
 Test basic usage ... ok
 test_take_too_much (tests.test_recipes.TakeTests)
 Taking more than an iterator has remaining should return what the ... ok
+test_basic (tests.test_recipes.TotientTests) ... ok
 test_basic (tests.test_recipes.TransposeTests) ... ok
 test_empty (tests.test_recipes.TransposeTests) ... ok
 test_incompatible_allow (tests.test_recipes.TransposeTests) ... skipped 'strict=True missing on 3.9'
@@ -996,6 +1029,8 @@ random_product (more_itertools.recipes)
 Doctest: more_itertools.recipes.random_product ... ok
 repeatfunc (more_itertools.recipes)
 Doctest: more_itertools.recipes.repeatfunc ... ok
+reshape (more_itertools.recipes)
+Doctest: more_itertools.recipes.reshape ... ok
 roundrobin (more_itertools.recipes)
 Doctest: more_itertools.recipes.roundrobin ... ok
 sieve (more_itertools.recipes)
@@ -1012,6 +1047,8 @@ tail (more_itertools.recipes)
 Doctest: more_itertools.recipes.tail ... ok
 take (more_itertools.recipes)
 Doctest: more_itertools.recipes.take ... ok
+totient (more_itertools.recipes)
+Doctest: more_itertools.recipes.totient ... ok
 transpose (more_itertools.recipes)
 Doctest: more_itertools.recipes.transpose ... ok
 triplewise (more_itertools.recipes)
@@ -1022,7 +1059,7 @@ unique_justseen (more_itertools.recipes)
 Doctest: more_itertools.recipes.unique_justseen ... ok
 
 ----------------------------------------------------------------------
-Ran 740 tests
+Ran 773 tests
 
 OK (skipped=3)
   py$(PYV): OK
