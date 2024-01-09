@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project lxml
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml
-HUMAN_VERSION =			5.0.1
+HUMAN_VERSION =			5.1.0
 COMPONENT_SUMMARY =		lxml - Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.
 COMPONENT_PROJECT_URL =		https://lxml.de/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/83/18/1d0c7cf3df839cc2827a0deee2e4b42f4048bc4c1c15612271e2db3928e5/lxml-5.0.1.tar.gz
+	https://files.pythonhosted.org/packages/2b/b4/bbccb250adbee490553b6a52712c46c20ea1ba533a643f1424b27ffc6845/lxml-5.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4432a1d89a9b340bc6bd1201aef3ba03112f151d3f340d9218247dc0c85028ab
+	sha256:3eea6ed6e6c918e468e693c41ef07f3c3acc310b70ddd9cc72d9ef84bc9564ca
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -57,6 +57,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	)"
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/cython
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
