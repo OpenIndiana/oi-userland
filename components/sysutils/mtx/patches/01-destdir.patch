@@ -1,0 +1,32 @@
+make install do not support DESTDIR variable
+
+diff --git a/Makefile.in b/Makefile.in
+index 6b967cf..d97319d 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -33,6 +33,7 @@ INSTALL_DOC = $(INSTALL) -m 644
+ INSTALL_BIN = $(INSTALL) -m 755
+ INSTALL_DIR = $(INSTALL) -m 755 -d
+ 
++DESTDIR =
+ prefix		= @prefix@
+ exec_prefix	= @exec_prefix@
+ sbindir		= @sbindir@
+@@ -109,13 +110,13 @@ all:	$(BINS)
+ dbgs: $(DBGS)
+ 
+ install: $(BINS)
+-	$(INSTALL_DIR) $(sbindir)
++	$(INSTALL_DIR) $(DESTDIR)$(sbindir)
+ 	for file in $(BINS); do \
+-	$(INSTALL_BIN) "$$file" $(sbindir) ; \
++	$(INSTALL_BIN) "$$file" $(DESTDIR)$(sbindir) ; \
+ 	done	
+-	$(INSTALL_DIR) $(mandir) $(mandir)/man1
++	$(INSTALL_DIR) $(mandir) $(DESTDIR)$(mandir)/man1
+ 	for file in mtx.1 tapeinfo.1 scsitape.1 scsieject.1 loaderinfo.1 ; do \
+-	$(INSTALL_DOC) "$$file"  $(mandir)/man1 ; \
++	$(INSTALL_DOC)  $(srcdir)/"$$file"  $(DESTDIR)$(mandir)/man1 ; \
+ 	done
+ 
+ clean:
