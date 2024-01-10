@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xset
 COMPONENT_VERSION=        1.2.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=        the xset X server configuration utility
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=   sha256:9f692d55635b3862cd63633b1222a87680ec283c7a8e8ed6dd698a3147f75e2f
@@ -31,4 +32,3 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxmuu
-REQUIRED_PACKAGES += x11/library/libxxf86misc
