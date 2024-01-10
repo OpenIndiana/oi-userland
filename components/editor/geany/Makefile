@@ -14,12 +14,11 @@
 # Copyright 2020, 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany
 COMPONENT_VERSION=      2.0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      A fast and lightweight IDE
 COMPONENT_DESCRIPTION=	Small and fast IDE, which has only a few dependencies from other package (independent on DE)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -64,7 +63,6 @@ REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxcursor
 REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxdmcp
-REQUIRED_PACKAGES += x11/library/libxevie
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxinerama
