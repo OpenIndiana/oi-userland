@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		alabaster
-HUMAN_VERSION =			0.7.15
+HUMAN_VERSION =			0.7.16
 COMPONENT_SUMMARY =		alabaster - A light, configurable Sphinx theme
 COMPONENT_PROJECT_URL =		https://alabaster.readthedocs.io/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/62/03/9365dc7e96ac2e3f9b5019c55eb5283aac96adffc0ca445ab6c80952fae6/alabaster-0.7.15.tar.gz
+	https://files.pythonhosted.org/packages/c9/3e/13dd8e5ed9094e734ac430b5d0eb4f2bb001708a8b7856cbf8e084e001ba/alabaster-0.7.16.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0127f4b1db0afc914883f930e3d40763131aebac295522fc4a04d9e77c703705
+	sha256:75a8b99c28a5dad50dd7f8ccdd447a121ddb3892da9e53d1ca5cca3106d58d65
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
