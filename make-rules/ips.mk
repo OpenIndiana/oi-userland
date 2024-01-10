@@ -154,17 +154,17 @@ MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 SAMPLE_MANIFEST_DIR = 	$(COMPONENT_DIR)/manifests
 SAMPLE_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/sample-manifest.p5m
 
-CANONICAL_MANIFESTS =	$(filter-out dummy.p5m,$(wildcard *.p5m))
+CANONICAL_MANIFESTS =	$(filter-out dummy.p5m %.ARCH.p5m,$(wildcard *.p5m))
 ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 endif
 
 # Support for arch specific manifests
 ARCH_MANIFESTS =	$(wildcard *.p5m.$(MACH))
-GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.p5m)
+GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.ARCH.p5m)
 CANONICAL_MANIFESTS +=  $(GENERATED_ARCH_MANIFESTS)
 
-%.p5m: 	%.p5m.$(MACH)
+%.ARCH.p5m: 	%.p5m.$(MACH)
 	$(CP) $< $@
 
 define ips-print-depend-require-rule
