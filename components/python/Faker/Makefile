@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Faker
-HUMAN_VERSION =			22.1.0
+HUMAN_VERSION =			22.2.0
 COMPONENT_SUMMARY =		Faker - Faker is a Python package that generates fake data for you.
 COMPONENT_PROJECT_URL =		https://github.com/joke2k/faker
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ac/7f/b793528be848e0031147fd9b436b688a1fec2f60f9adf643edc08b242b75/Faker-22.1.0.tar.gz
+	https://files.pythonhosted.org/packages/53/75/0a62047c615a202792da60a131aad0319e401377d69eafd5aa2744d80d4c/Faker-22.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3cd0e04ed7da1bb8037afc40d1127d19e0ac4afac247a1fe1d8dde9b5c6d6e5b
+	sha256:fab78f435d27fa7bd109b095eea3504477e4149051c903fd63f11ce252e3d9b7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
