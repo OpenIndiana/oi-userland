@@ -88,6 +88,8 @@ testSimpleInput (test_apis.TestMarkdownBasics)
 Test simple input. ... ok
 testWhitespaceOnly (test_apis.TestMarkdownBasics)
 Test input of only whitespace. ... ok
+testInlineProcessorDoesntCrashWithWrongAtomicString (test_apis.testAtomicString)
+Test that an `AtomicString` returned from a Pattern doesn't cause a crash. ... ok
 testNestedAtomicString (test_apis.testAtomicString)
 Test that a nested `AtomicString` is not parsed. ... ok
 testSimpleAtomicString (test_apis.testAtomicString)
@@ -444,6 +446,7 @@ test_amperstand (test_syntax.blocks.test_html_blocks.TestHTMLBlocks) ... ok
 test_auto_links_dont_break_parser (test_syntax.blocks.test_html_blocks.TestHTMLBlocks) ... ok
 test_blank_lines_in_raw (test_syntax.blocks.test_html_blocks.TestHTMLBlocks) ... ok
 test_bogus_comment (test_syntax.blocks.test_html_blocks.TestHTMLBlocks) ... ok
+test_bogus_comment_endtag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks) ... ok
 test_charref (test_syntax.blocks.test_html_blocks.TestHTMLBlocks) ... ok
 test_closed_startendtag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks) ... ok
 test_closed_startendtag_with_attrs (test_syntax.blocks.test_html_blocks.TestHTMLBlocks) ... ok
@@ -609,6 +612,7 @@ test_codehilite_set_lang (test_syntax.extensions.test_code_hilite.TestCodeHilite
 test_codehilite_startinline (test_syntax.extensions.test_code_hilite.TestCodeHiliteClass) ... skipped 'Pygments== is required'
 test_codehilite_use_pygments_false (test_syntax.extensions.test_code_hilite.TestCodeHiliteClass) ... skipped 'Pygments== is required'
 testBasicCodeHilite (test_syntax.extensions.test_code_hilite.TestCodeHiliteExtension) ... skipped 'Pygments== is required'
+testDoesntCrashWithEmptyCodeTag (test_syntax.extensions.test_code_hilite.TestCodeHiliteExtension) ... skipped 'Pygments== is required'
 testDoubleEscape (test_syntax.extensions.test_code_hilite.TestCodeHiliteExtension) ... skipped 'Pygments== is required'
 testEntitiesIntact (test_syntax.extensions.test_code_hilite.TestCodeHiliteExtension) ... skipped 'Pygments== is required'
 testFormatterLangStr (test_syntax.extensions.test_code_hilite.TestCodeHiliteExtension) ... skipped 'Pygments== is required'
@@ -699,6 +703,7 @@ test_amperstand (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML) ..
 test_auto_links_dont_break_parser (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML) ... ok
 test_blank_lines_in_raw (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML) ... ok
 test_bogus_comment (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML) ... ok
+test_bogus_comment_endtag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML) ... ok
 test_charref (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML) ... ok
 test_closed_startendtag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML) ... ok
 test_closed_startendtag_with_attrs (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML) ... ok
@@ -1014,9 +1019,9 @@ test_inline_html_angle_brackets (test_syntax.inline.test_raw_html.TestRawHtml) .
 test_inline_html_backslashes (test_syntax.inline.test_raw_html.TestRawHtml) ... ok
 
 ----------------------------------------------------------------------
-Ran 928 tests
+Ran 932 tests
 
-OK (skipped=61)
+OK (skipped=62)
 py$(PYV): commands[1]> python -m coverage xml
 Wrote XML report to coverage.xml
 py$(PYV): commands[2]> python -m coverage report --show-missing
@@ -1027,35 +1032,35 @@ markdown/__main__.py                     42      0   100%
 markdown/__meta__.py                     14      0   100%
 markdown/blockparser.py                  31      0   100%
 markdown/blockprocessors.py             302      8    97%   214, 219-220, 229, 247, 281, 624, 630
-markdown/core.py                        149      0   100%
+markdown/core.py                        148      0   100%
 markdown/extensions/__init__.py          29      1    97%   112
 markdown/extensions/abbr.py              43      0   100%
-markdown/extensions/admonition.py        86      0   100%
+markdown/extensions/admonition.py        87      0   100%
 markdown/extensions/attr_list.py         91      0   100%
-markdown/extensions/codehilite.py       110     94    15%   44-48, 112-129, 142-184, 208-243, 254-259, 263-279, 287-326, 330-334
+markdown/extensions/codehilite.py       115     97    16%   48-52, 116-133, 146-188, 212-247, 260-265, 269-288, 296-335, 339-343
 markdown/extensions/def_list.py          57      2    96%   105-106
 markdown/extensions/extra.py              9      0   100%
-markdown/extensions/fenced_code.py       90     10    89%   86, 106, 111-128, 151, 165
-markdown/extensions/footnotes.py        227      7    97%   137-138, 158, 165, 288, 396-397
-markdown/extensions/legacy_attrs.py      23      0   100%
+markdown/extensions/fenced_code.py       91     10    89%   90, 110, 115-132, 155, 169
+markdown/extensions/footnotes.py        227      7    97%   139-140, 160, 167, 290, 398-399
+markdown/extensions/legacy_attrs.py      24      0   100%
 markdown/extensions/legacy_em.py         13      0   100%
-markdown/extensions/md_in_html.py       207      0   100%
-markdown/extensions/meta.py              43      0   100%
+markdown/extensions/md_in_html.py       208      0   100%
+markdown/extensions/meta.py              44      0   100%
 markdown/extensions/nl2br.py              9      0   100%
-markdown/extensions/sane_lists.py        20      0   100%
-markdown/extensions/smarty.py            85      0   100%
-markdown/extensions/tables.py           144      0   100%
-markdown/extensions/toc.py              207      0   100%
-markdown/extensions/wikilinks.py         47      0   100%
-markdown/htmlparser.py                  135      0   100%
-markdown/inlinepatterns.py              383      2    99%   178, 855
+markdown/extensions/sane_lists.py        21      0   100%
+markdown/extensions/smarty.py            86      0   100%
+markdown/extensions/tables.py           145      0   100%
+markdown/extensions/toc.py              208      0   100%
+markdown/extensions/wikilinks.py         48      0   100%
+markdown/htmlparser.py                  140      0   100%
+markdown/inlinepatterns.py              384      2    99%   175, 852
 markdown/postprocessors.py               57      2    96%   140, 143
 markdown/preprocessors.py                28      0   100%
-markdown/serializers.py                  95      0   100%
+markdown/serializers.py                  96      0   100%
 markdown/test_tools.py                   82     10    88%   33-34, 131-143, 159-163, 165
 markdown/treeprocessors.py              228      5    98%   52, 112, 240-242
-markdown/util.py                        143      7    95%   105, 127-132, 247-252
+markdown/util.py                        143      7    95%   106, 128-133, 256-261
 -------------------------------------------------------------------
-TOTAL                                  3235    148    95%
+TOTAL                                  3256    151    95%
   py$(PYV): OK
   congratulations :)
