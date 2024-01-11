@@ -19,18 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml-stubs
-HUMAN_VERSION =			0.4.0
+HUMAN_VERSION =			0.5.1
 COMPONENT_SUMMARY =		lxml-stubs - Type annotations for the lxml package
+COMPONENT_PROJECT_URL =		https://github.com/lxml/lxml-stubs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0d/2f/9e1ce676e94fe929c668b20cc1a761fb26cb4654b7e7fb965da50a105212/lxml-stubs-0.4.0.tar.gz
+	https://files.pythonhosted.org/packages/99/da/1a3a3e5d159b249fc2970d73437496b908de8e4716a089c69591b4ffa6fd/lxml-stubs-0.5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1e464c16421d7607ccebaf3e876247e82b8362fccc7f38a0245397449281d05e
+	sha256:e0ec2aa1ce92d91278b719091ce4515c12adc1d564359dfaf81efa7d4feab79d
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# https://github.com/lxml/lxml-stubs/issues/90
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/lxml/lxml-stubs/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -39,5 +36,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy-plugins
+TEST_REQUIRED_PACKAGES.python += library/python/tomli
