@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytoolconfig
-HUMAN_VERSION =			1.2.6
+HUMAN_VERSION =			1.3.0
 COMPONENT_SUMMARY =		pytoolconfig - Python tool configuration
 COMPONENT_PROJECT_URL =		https://github.com/bageljrkhanofemus/pytoolconfig
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/78/ab/9e5168b7101e682e2916b5d028e9fcd857b79cbbc9a29e36b1597f3926d0/pytoolconfig-1.2.6.tar.gz
+	https://files.pythonhosted.org/packages/b6/89/8fe478af2162f042f8f4316ac7804cbcb55987e83eb71065c7790079cb81/pytoolconfig-1.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f2d00ea4f8cbdffd3006780ba51016618c835b338f634e3f7f8b2715b1710889
+	sha256:9201586c8f5c00fa2bb37d644f908f5fb9eadabc6be570ccf27f4e19a201a071
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
