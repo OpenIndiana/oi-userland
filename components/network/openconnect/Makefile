@@ -16,19 +16,20 @@
 #
 
 BUILD_BITS= 64
-OPENSSL_VERSION= 1.1
+OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openconnect
-COMPONENT_VERSION=	8.10
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	9.12
+COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=	An SSL VPN client (intended to be) compatible with Cisco AnyConnect and Juniper Pulse
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.infradead.org/openconnect
-COMPONENT_ARCHIVE_HASH=	sha256:ae99d87585388098510c837e3db5f0a9ad13998464a91bd30275de58c0c995f3
-COMPONENT_ARCHIVE_URL=	https://github.com/openconnect/openconnect/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:a2bedce3aa4dfe75e36e407e48e8e8bc91d46def5335ac9564fbf91bd4b2413e
+COMPONENT_ARCHIVE_URL=	https://www.infradead.org/openconnect/download/$(COMPONENT_ARCHIVE)
+# COMPONENT_ARCHIVE_URL=	https://github.com/openconnect/openconnect/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	LGPLv2.1
@@ -50,6 +51,7 @@ unexport SHELLOPTS
 # Use OpenSSL, it allows more options on OI/Hipster that openconnect uses
 CONFIGURE_OPTIONS += --with-system-cafile=/etc/certs/ca-certificates.crt
 CONFIGURE_OPTIONS += --without-gnutls
+CONFIGURE_OPTIONS += --without-libpcsclite
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib/$(MACH64)
 
 # Manually added dependencies
@@ -61,7 +63,8 @@ REQUIRED_PACKAGES += driver/network/header-tun
 REQUIRED_PACKAGES += library/libproxy
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
