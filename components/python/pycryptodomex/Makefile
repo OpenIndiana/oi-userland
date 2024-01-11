@@ -20,13 +20,13 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycryptodomex
-HUMAN_VERSION =			3.19.1
+HUMAN_VERSION =			3.20.0
 COMPONENT_SUMMARY =		pycryptodomex - Cryptographic library for Python
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3f/13/84f2aea851d75e12e7f32ccc11a00f1defc3d285b4ed710e5d049f31c5a6/pycryptodomex-3.19.1.tar.gz
+	https://files.pythonhosted.org/packages/31/a4/b03a16637574312c1b54c55aedeed8a4cb7d101d44058d46a0e5706c63e1/pycryptodomex-3.20.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0b7154aff2272962355f8941fd514104a88cb29db2d8f43a29af900d6398eb1c
+	sha256:7a710b79baddd65b806402e14766c721aee8fb83381769c27920f26476276c1e
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
