@@ -54,6 +54,9 @@ CFLAGS += -DHAVE_GETLINE=1
 CFLAGS += -DHAVE_INET_NTOP=1
 CFLAGS += -DCRYPTO_OPENSSL
 CFLAGS += -DOPENSSL_GPL_VIOLATION=yes
+CFLAGS += -I$(OPENSSL_INCDIR)
+
+LDFLAGS += -L$(OPENSSL_LIBDIR)
 
 # This also covers linking, even though "-m32"/"-m64" harmlessly
 # appears twice in command-line for compilation
@@ -63,7 +66,7 @@ COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
