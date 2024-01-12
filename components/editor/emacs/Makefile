@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      29.1
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -112,7 +112,7 @@ LD_OPTIONS+= $(ASLR_MODE)
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
-$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3
+$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3 --with-xwidgets
 
 # we need to build all variants, but only have to install one in order
 # to get the common files shared by all. We use COMPONENT_POST_INSTALL_ACTION
@@ -233,6 +233,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmp
