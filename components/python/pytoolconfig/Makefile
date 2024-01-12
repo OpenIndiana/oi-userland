@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytoolconfig
-HUMAN_VERSION =			1.3.0
+HUMAN_VERSION =			1.3.1
 COMPONENT_SUMMARY =		pytoolconfig - Python tool configuration
 COMPONENT_PROJECT_URL =		https://github.com/bageljrkhanofemus/pytoolconfig
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b6/89/8fe478af2162f042f8f4316ac7804cbcb55987e83eb71065c7790079cb81/pytoolconfig-1.3.0.tar.gz
+	https://files.pythonhosted.org/packages/18/dc/abf70d2c2bcac20e8c71a7cdf6d44e4ddba4edf65acb179248d554d743db/pytoolconfig-1.3.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9201586c8f5c00fa2bb37d644f908f5fb9eadabc6be570ccf27f4e19a201a071
+	sha256:51e6bd1a6f108238ae6aab6a65e5eed5e75d456be1c2bf29b04e5c1e7d7adbae
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,6 +36,3 @@ PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pdm-backend
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/platformdirs
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/tabulate
