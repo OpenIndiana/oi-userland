@@ -1,0 +1,31 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -X dev -X warn_default_encoding -m pytest --durations 25
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 6 items
+
+tests/test_htmlhelp.py::test_build_htmlhelp PASSED
+tests/test_htmlhelp.py::test_chm PASSED
+tests/test_htmlhelp.py::test_chm_htmlescape PASSED
+tests/test_htmlhelp.py::test_default_htmlhelp_basename PASSED
+tests/test_htmlhelp.py::test_default_htmlhelp_file_suffix PASSED
+tests/test_htmlhelp.py::test_htmlhelp_file_suffix PASSED
+
+=============================== warnings summary ===============================
+tests/test_htmlhelp.py::test_build_htmlhelp
+tests/test_htmlhelp.py::test_chm
+  $(@D)/sphinxcontrib/htmlhelp/__init__.py:183: PendingDeprecationWarning: nodes.Node.traverse() is obsoleted by Node.findall().
+    for node in doctree.traverse(nodes.reference):
+
+tests/test_htmlhelp.py::test_build_htmlhelp
+tests/test_htmlhelp.py::test_chm
+  $(@D)/sphinxcontrib/htmlhelp/__init__.py:246: PendingDeprecationWarning: nodes.Node.traverse() is obsoleted by Node.findall().
+    for node in toctree.traverse(matcher):  # type: addnodes.compact_paragraph
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================= slowest 25 durations =============================
+======== 6 passed, 4 warnings ========
+  py$(PYV): OK
+  congratulations :)
