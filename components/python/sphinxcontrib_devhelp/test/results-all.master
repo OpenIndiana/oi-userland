@@ -1,23 +1,14 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest --durations 25
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
 collecting ... collected 1 item
 
 tests/test_devhelp.py::test_basic PASSED
 
-=============================== warnings summary ===============================
-tests/test_devhelp.py::test_basic
-  $(@D)/sphinxcontrib/devhelp/__init__.py:96: PendingDeprecationWarning: nodes.Node.traverse() is obsoleted by Node.findall().
-    for node in tocdoc.traverse(matcher):  # type: addnodes.compact_paragraph
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ============================= slowest 25 durations =============================
-======== 1 passed, 1 warning ========
+======== 1 passed ========
   py$(PYV): OK
   congratulations :)
