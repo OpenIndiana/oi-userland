@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -59,25 +60,22 @@ file path=usr/bin/ck-history
 file path=usr/bin/ck-launch-session
 file path=usr/bin/ck-list-sessions
 file path=usr/include/ConsoleKit/ck-connector/ck-connector.h
+link path=usr/lib/$(MACH64)/libck-connector.so target=libck-connector.so.0.0.0
+link path=usr/lib/$(MACH64)/libck-connector.so.0 target=libck-connector.so.0.0.0
+file path=usr/lib/$(MACH64)/libck-connector.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/ck-connector.pc
 file path=usr/lib/ConsoleKit/scripts/ck-system-hibernate mode=0555
 file path=usr/lib/ConsoleKit/scripts/ck-system-hybridsleep mode=0555
 file path=usr/lib/ConsoleKit/scripts/ck-system-restart mode=0555
 file path=usr/lib/ConsoleKit/scripts/ck-system-stop mode=0555
 file path=usr/lib/ConsoleKit/scripts/ck-system-suspend mode=0555
-file path=usr/lib/ck-collect-session-info mode=0555
-file path=usr/lib/ck-get-x11-display-device mode=0555
-file path=usr/lib/ck-get-x11-server-pid mode=0555
 link path=usr/lib/libck-connector.so target=libck-connector.so.0.0.0
 link path=usr/lib/libck-connector.so.0 target=libck-connector.so.0.0.0
 file path=usr/lib/libck-connector.so.0.0.0
-file path=usr/lib/$(MACH64)/ck-collect-session-info mode=0555
-file path=usr/lib/$(MACH64)/ck-get-x11-display-device mode=0555
-file path=usr/lib/$(MACH64)/ck-get-x11-server-pid mode=0555
-link path=usr/lib/$(MACH64)/libck-connector.so target=libck-connector.so.0.0.0
-link path=usr/lib/$(MACH64)/libck-connector.so.0 target=libck-connector.so.0.0.0
-file path=usr/lib/$(MACH64)/libck-connector.so.0.0.0
-file path=usr/lib/$(MACH64)/pkgconfig/ck-connector.pc
 file path=usr/lib/pkgconfig/ck-connector.pc
+file path=usr/libexec/ck-collect-session-info
+file path=usr/libexec/ck-get-x11-display-device
+file path=usr/libexec/ck-get-x11-server-pid
 file path=usr/sbin/ck-log-system-restart
 file path=usr/sbin/ck-log-system-start
 file path=usr/sbin/ck-log-system-stop
@@ -87,3 +85,4 @@ file path=usr/share/dbus-1/interfaces/org.freedesktop.ConsoleKit.Manager.xml
 file path=usr/share/dbus-1/interfaces/org.freedesktop.ConsoleKit.Seat.xml
 file path=usr/share/dbus-1/interfaces/org.freedesktop.ConsoleKit.Session.xml
 file path=usr/share/dbus-1/system-services/org.freedesktop.ConsoleKit.service
+file path=usr/share/man/man8/pam_ck_connector.8
