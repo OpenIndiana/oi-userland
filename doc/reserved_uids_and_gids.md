@@ -53,6 +53,7 @@ UID   | User name
 71    | lp
 72    | dovecot
 73    | dovenull
+74    | pulse
 75    | openldap
 76    | p0f
 77    | nut
@@ -124,6 +125,7 @@ GID   | Group name
 70    | mysql
 72    | dovecot
 73    | dovenull
+74    | pulse
 75    | openldap
 76    | p0f
 77    | nut
