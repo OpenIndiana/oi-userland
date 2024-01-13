@@ -24,6 +24,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# pulseaudio-system.conf is referencing a user named pulse. dbus-daemon fails to start without it.
+group groupname=pulse gid=74
+user username=pulse gcos-field="pulseaudio daemon user" group=pulse home-dir=/var/empty login-shell=/bin/false uid=74
+
 <transform file path=etc/pulse/.* -> default preserve true>
 <transform file path=etc/pulse/.* -> default mode 0644>
 
