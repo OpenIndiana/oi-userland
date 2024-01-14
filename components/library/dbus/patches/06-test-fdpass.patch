@@ -1,0 +1,21 @@
+The tests expect themselves to be executed on Linux where you have maximally
+1024 allowable file descriptors. If executed in Solaris, the soft limit is set
+to 256 by default which makes the test fail.
+
+This patch increases the number of available file descriptors to a process.
+
+This is filed as https://bugs.freedesktop.org/show_bug.cgi?id=101221
+
+--- dbus-1.10.0/test/fdpass.c	2017-05-25 21:51:08.806467183 +0000
++++ dbus-1.10.0/test/fdpass.c	2017-05-25 21:50:46.967550466 +0000
+@@ -813,6 +813,10 @@ main (int argc,
+       if (getrlimit (RLIMIT_NOFILE, &lim) < 0)
+         g_error ("Failed to get RLIMIT_NOFILE limit: %s", g_strerror (errno));
+
++      lim.rlim_cur = 65535;
++      lim.rlim_max = 65535;
++      setrlimit(RLIMIT_NOFILE, &lim);
++
+       if (lim.rlim_cur != RLIM_INFINITY &&
+           /* only run if we have a fairly generous margin of error
+            * for stdout, stderr, duplicates, the D-Bus connection, etc. */
