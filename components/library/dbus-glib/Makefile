@@ -13,13 +13,15 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=	64_and_32
+# Make sure to build 32 bit first as we overwrite files in $(USRLIBEXECDIR)
+BUILD_BITS=	32_and_64
+PREFERRED_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dbus-glib
 COMPONENT_VERSION=      0.112
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_PROJECT_URL=  https://dbus.freedesktop.org/doc/dbus-glib/
 COMPONENT_SUMMARY=      D-Bus GLib bindings
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,20 +35,20 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--localstatedir=/var
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_ENV+=	GLIB_GENMARSHAL=/usr/bin/glib-genmarshal
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+#CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+#CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR.$(BITS))
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-tests
 
 # For tests to pass
 unexport SHELLOPTS
 
-COMPONENT_TEST_TRANSFORMS += \
-	' -e "/===/p" ' \
-	' -e "/Testsuite/p" '
+COMPONENT_TEST_ARGS += -k
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
