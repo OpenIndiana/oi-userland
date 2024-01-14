@@ -9,17 +9,17 @@ https://unicode-org.atlassian.net/browse/ICU-12378
 @@ -1507,8 +1507,16 @@
      const StringResource *left = *((const StringResource **)l);
      const StringResource *right = *((const StringResource **)r);
-     const char16_t *lStart = left->getBuffer();
-+    if (lStart == nullptr) {
+     const UChar *lStart = left->getBuffer();
++    if ( lStart == NULL ) {
 +        fprintf(stderr, "Could not allocate memory!!");
 +        exit(U_MEMORY_ALLOCATION_ERROR);
 +    }
-     const char16_t *lLimit = lStart + left->length();
-     const char16_t *rStart = right->getBuffer();
-+    if (rStart == nullptr) {
+     const UChar *lLimit = lStart + left->length();
+     const UChar *rStart = right->getBuffer();
++    if ( rStart == NULL ) {
 +        fprintf(stderr, "Could not allocate memory!!");
 +        exit(U_MEMORY_ALLOCATION_ERROR);
 +    }
-     const char16_t *rLimit = rStart + right->length();
+     const UChar *rLimit = rStart + right->length();
      int32_t diff;
      /* compare keys in reverse character order */
