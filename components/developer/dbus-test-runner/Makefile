@@ -12,12 +12,13 @@
 # Copyright 2023 Niklas Poslovski
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dbus-test-runner
 COMPONENT_VERSION=      19.0.4.0
 HUMAN_VERSION=          19.04.0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      A small little utility to run a couple of executables under a new DBus session for testing
 COMPONENT_PROJECT_URL=  https://launchpad.net/dbus-test-runner
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -29,7 +30,6 @@ COMPONENT_CLASSIFICATION=       Development/Distribution Tools
 COMPONENT_LICENSE=      GPLv3
 
 PATH= $(PATH.gnu)
-USE_DEFAULT_TEST_TRANSFORMS= yes
 
 include $(WS_MAKE_RULES)/common.mk
 
