@@ -19,17 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		service_identity
-HUMAN_VERSION =			23.1.0
+HUMAN_VERSION =			24.1.0
 COMPONENT_SUMMARY =		service_identity - Service identity verification for pyOpenSSL & cryptography.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3b/98/2a46c7414ffc1d06ba67d2c2dd62a207a70cb351028a8cd8c85b3dbd1cf7/service_identity-23.1.0.tar.gz
+	https://files.pythonhosted.org/packages/38/d2/2ac20fd05f1b6fce31986536da4caeac51ed2e1bb25d4a7d73ca4eccdfab/service_identity-24.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ecb33cd96307755041e978ab14f8b14e13b40f1fbd525a4dc78f46d2b986431d
+	sha256:6829c9d62fb832c2e1c435629b0a8c476e1929881f28bee4d20bc24161009221
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# service-identity >= 23.1.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -44,3 +41,4 @@ PYTHON_REQUIRED_PACKAGES += library/python/pyasn1-modules
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/tomli

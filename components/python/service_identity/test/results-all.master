@@ -1,18 +1,15 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m coverage run -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-OpenSSL: OpenSSL 1.0.2u  20 Dec 2019
-pyOpenSSL: 19.0.0
-cryptography: 3.2.1
+OpenSSL: OpenSSL 3.1.4 24 Oct 2023
+pyOpenSSL: 23.3.0
+cryptography: 41.0.7
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-asyncio: mode=strict
-collecting ... collected 132 items
+collecting ... collected 136 items
 
 tests/test_cryptography.py::TestExtractPatterns::test_cn_ids_are_ignored PASSED
 tests/test_cryptography.py::TestExtractPatterns::test_dns PASSED
@@ -21,6 +18,9 @@ tests/test_cryptography.py::TestExtractPatterns::test_ip PASSED
 tests/test_cryptography.py::TestExtractPatterns::test_uri PASSED
 tests/test_cryptography.py::TestPublicAPI::test_certificate_verify_hostname_fail PASSED
 tests/test_cryptography.py::TestPublicAPI::test_certificate_verify_hostname_ok PASSED
+tests/test_cryptography.py::TestPublicAPI::test_no_cert_patterns_hostname PASSED
+tests/test_cryptography.py::TestPublicAPI::test_no_cert_patterns_ip_address[2001:db8::] PASSED
+tests/test_cryptography.py::TestPublicAPI::test_no_cert_patterns_ip_address[203.0.113.0] PASSED
 tests/test_cryptography.py::TestPublicAPI::test_verify_certificate_ip_address_ok[1.1.1.1] PASSED
 tests/test_cryptography.py::TestPublicAPI::test_verify_certificate_ip_address_ok[::1] PASSED
 tests/test_cryptography.py::TestPublicAPI::test_verify_ip_address_fail[1.1.1.2] PASSED
@@ -125,6 +125,7 @@ tests/test_hazmat.py::TestVerifyServiceIdentity::test_contains_optional_and_matc
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_dns_id_success PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_integration_dns_id_fail PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_ip_address_success PASSED
+tests/test_hazmat.py::TestVerifyServiceIdentity::test_no_cert_patterns PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_obligatory_mismatch PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_obligatory_missing PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_optional_mismatch PASSED
@@ -147,6 +148,6 @@ tests/test_pyopenssl.py::TestPublicAPI::test_verify_ip_address_fail[::2] PASSED
 tests/test_pyopenssl.py::TestPublicAPI::test_verify_ip_address_ok[1.1.1.1] PASSED
 tests/test_pyopenssl.py::TestPublicAPI::test_verify_ip_address_ok[::1] PASSED
 
-======== 132 passed ========
+======== 136 passed ========
   py$(PYV): OK
   congratulations :)
