@@ -1,0 +1,51 @@
+Comment out Linux-specific sections on AppArmor & SELinux that do not apply on
+Solaris.   Remove comments that would be embedded inside these comments, since
+nested comments break the manpage generation.
+
+Need to figure out how to make configurable so we can submit upstream.
+
+--- dbus-1.10.0/doc/dbus-daemon.1.xml.in
++++ dbus-1.10.0/doc/dbus-daemon.1.xml.in
+@@ -765,6 +765,7 @@
+ almost certainly not what you intended.  Always use rules of
+ the form: &lt;deny send_interface="org.foo.Bar" send_destination="org.foo.Service"/&gt;</para>
+ 
++<!-- no SELinux or AppArmor support in Solaris
+ <itemizedlist remap='TP'>
+ 
+   <listitem><para><emphasis remap='I'>&lt;selinux&gt;</emphasis></para></listitem>
+@@ -786,7 +787,7 @@
+ creates a mapping. Right now only one kind of association is possible:</para>
+ <literallayout remap='.nf'>
+    &lt;associate own="org.freedesktop.Foobar" context="foo_t"/&gt;
+-</literallayout> <!-- .fi -->
++</literallayout>
+ 
+ 
+ <para>This means that if a connection asks to own the name
+@@ -803,7 +804,7 @@
+ we add this syntax it will look like:</para>
+ <literallayout remap='.nf'>
+    &lt;associate own="*" context="foo_t"/&gt;
+-</literallayout> <!-- .fi -->
++</literallayout>
+ <para>If you find a reason this is useful, let the developers know.
+ Right now the default will be the security context of the bus itself.</para>
+ 
+@@ -823,7 +824,7 @@
+ 
+ <literallayout remap='.nf'>
+    &lt;apparmor mode="(enabled|disabled|required)"/&gt;
+-</literallayout> <!-- .fi -->
++</literallayout>
+ 
+ <para>The default mode is "enabled". In "enabled" mode, AppArmor mediation
+ will be performed if AppArmor support is available in the kernel. If it is not
+@@ -931,6 +932,7 @@
+ <para>AppArmor rules for bus mediation are not stored in the bus configuration
+ files. They are stored in the application's AppArmor profile. Please see
+ <emphasis remap='I'>apparmor.d(5)</emphasis> for more details.</para>
++end SELinux / AppArmor support -->
+ 
+ </refsect1>
+ 
