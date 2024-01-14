@@ -14,21 +14,19 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS=64
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lightdm-gtk-greeter
-COMPONENT_VERSION=	2.0.7
-COMPONENT_REVISION=	1
+COMPONENT_MJR_VERSION=	2.0
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).7
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	LightDM GTK+ Greeter
+COMPONENT_PROJECT_URL=	https://launchpad.net/lightdm-gtk-greeter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:bae293f21286e93113ee7965a3a8734bbee6b94f3c74d8723dcae13dda60fcbc
-COMPONENT_ARCHIVE_URL= \
-	https://launchpad.net/lightdm-gtk-greeter/2.0/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://launchpad.net/lightdm-gtk-greeter/
+COMPONENT_ARCHIVE_HASH= sha256:bae293f21286e93113ee7965a3a8734bbee6b94f3c74d8723dcae13dda60fcbc
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/display-manager/lightdm/gtk-greeter
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Sessions
 COMPONENT_LICENSE=		GPLv3
@@ -39,8 +37,7 @@ COMPONENT_ARCHIVE_1= exo-csource.c
 COMPONENT_ARCHIVE_URL_1= https://github.com/xfce-mirror/exo/raw/$(EXO_COMMIT)/exo-csource/main.c
 COMPONENT_ARCHIVE_HASH_1= sha256:1942f5c2e649c83ad5739af7bb0de90bd9b874e9c5f300ff4551f9e8628a74aa
 
-TEST_TARGET=	$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # We need exo-csource to regenerate headers from glade file,
@@ -52,7 +49,7 @@ EXO_CSOURCE_CFLAGS += -D PACKAGE_TARNAME=\"unspecified\"  -DPACKAGE_BUGREPORT=\"
 EXO_CSOURCE_CFLAGS += $(CC_BITS) $(shell pkg-config --cflags glib-2.0)
 EXO_CSOURCE_LDFLAGS += $(CC_BITS) $(shell pkg-config --libs glib-2.0)
 
-PATH=$(PATH.gnu):$(BUILD_DIR)/exo-csource
+PATH= $(PATH.gnu):$(BUILD_DIR)/exo-csource
 
 $(BUILD_DIR)/exo-csource/exo-csource: $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
 	$(MKDIR) $(@D)
@@ -60,11 +57,11 @@ $(BUILD_DIR)/exo-csource/exo-csource: $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
 
 $(SOURCE_DIR)/.prep:	$(BUILD_DIR)/exo-csource/exo-csource
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION = (cd $(@D) && PATH="$(PATH)" autoreconf -fi)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
 CONFIGURE_OPTIONS += --disable-indicator-services-command
 CONFIGURE_OPTIONS += --disable-at-spi-command
 CONFIGURE_OPTIONS += --enable-maintainer-mode
