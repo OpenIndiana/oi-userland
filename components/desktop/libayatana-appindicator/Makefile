@@ -14,10 +14,12 @@
 #
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libayatana-appindicator
 COMPONENT_VERSION=      0.5.93
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Ayatana Application Indicators shared library
 COMPONENT_PROJECT_URL=  https://github.com/AyatanaIndicators/libayatana-appindicator
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,14 +37,6 @@ CFLAGS += -I/usr/include/libayatana-appindicator3-0.1
 
 CMAKE_OPTIONS += -DENABLE_TESTS=ON
 CMAKE_OPTIONS += -DENABLE_BINDINGS_MONO=Off
-
-COMPONENT_TEST_TRANSFORMS = \
-	' -e "s/[0-9]*\.[0-9]* sec//" ' \
-	' -n ' \
-	' -e "/Start/p" ' \
-	' -e "/Failed/p" ' \
-	' -e "/Passed/p" ' \
-	' -e "/failed/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/library/libayatana-indicator
