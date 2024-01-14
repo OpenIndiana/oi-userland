@@ -19,11 +19,11 @@ BUILD_BITS= 64
 BUILD_STYLE= setup.py
 TEST_STYLE= pytest
 USE_COMMON_TEST_MASTER= yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dbus-python
 COMPONENT_VERSION=      1.3.2
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/DBusBindings/
 COMPONENT_SUMMARY=      Python bindings for D-Bus
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,7 +35,7 @@ COMPONENT_CLASSIFICATTION= Development/Python
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= COPYING
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -52,12 +52,27 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTOUSRINCDIR)/dbus-1.0/dbus; \
 	$(CP) $(SOURCE_DIR)/include/dbus/dbus-python.h \
 	$(PROTOUSRINCDIR)/dbus-1.0/dbus/dbus-python.h-$(PYTHON_VERSION) ;
+
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTOUSRLIBDIR64)/pkgconfig; \
 	$(GSED) -e 's|^prefix=.*$$|prefix=$(USRDIR)|' \
-	$(GSED) -e 's|^Version:.*$$|Version: $(COMPONENT_VERSION)|' \
 	$(SOURCE_DIR)/dbus-python.pc.in \
 	> $(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i 's|^Version:.*$$|Version: $(COMPONENT_VERSION)|' \
+	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i 's|^exec_prefix=.*$$|exec_prefix=$$\{prefix\}|' \
+	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i 's|^includedir=.*$$|includedir=$$\{prefix\}/include/dbus-1.0/dbus/|' \
+	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i 's|^datarootdir=.*$$|datarootdir=$$\{prefix\}/share/|' \
+	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i 's|^datadir=.*$$|datadir=$$\{datarootdir\}|' \
+	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
 
 COMPONENT_TEST_ENV=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
