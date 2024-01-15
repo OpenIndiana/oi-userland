@@ -20,13 +20,13 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cmarkgfm
-HUMAN_VERSION =			2022.10.27
+HUMAN_VERSION =			2024.1.14
 COMPONENT_SUMMARY =		cmarkgfm - Minimal bindings to GitHub's fork of cmark
 COMPONENT_PROJECT_URL =		https://github.com/theacodes/cmarkgfm
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/94/29/b3c6f8bcaf9332e337f3ac178c3dd729e7148d2a478272779dd33f87b729/cmarkgfm-2022.10.27.tar.gz
+	https://files.pythonhosted.org/packages/7d/57/0480532cf04f77ff6f34985109079e87b9028444540731a5380abd0a3325/cmarkgfm-2024.1.14.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:93d9ac7716ea901ca0bfd18ae3b68f1f6bf51de0830c3f233ef734fcd52a0799
+	sha256:a208c1726e12ba385125cef2c6d375c41c5dea4cc2673a77af712b1dbf074e90
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
