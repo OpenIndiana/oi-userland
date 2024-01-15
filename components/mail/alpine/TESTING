@@ -1,0 +1,34 @@
+IMAP_HOST=imap.email.com # hostname of IMAP server
+SMTP_HOST=smtp.email.com # hostname of SMTP server
+IMAP_USERNAME=username # IMAP server username
+SMTP_USERNAME=username # SMTP server username
+EMAIL_DOMAIN=domain name portion of your email address
+HOST=your.server.com # your SMTP and IMAPS server
+# alpine can not run in read-only mode and support sending email
+# any email message changes affect the tested mailbox
+LD_PRELOAD=libumem.so \
+        UMEM_DEBUG=adi_precise,default \
+        UMEM_LOGGING=transaction \
+        alpine -inbox-path={IMAP_HOST/user=IMAP_USERNAME/ssl/NoRsh/IMAP}inbox \
+        -user-domain=EMAIL_DOMAIN \
+        -p /tmp/.pinerc
+
+1.  enter IMAP password
+2.  check emails in the INBOX
+3.  scroll (arrows up/down) and press enter to display an email
+4.  return to the main menu by pressing 'm'
+5.  press 's' for setup
+6.  press 'c' for config
+7.  press down arrow to SMTP Server (for sending)
+8.  press 'c' to change
+9.  enter SMTP_HOST/tls/user=SMTP_USERNAME and press enter
+10. press 'e' to exit setup
+11. press 'y' to confirm changes
+12. press 'c' to compose new email
+13. enter recipient email address (your email again probably)
+14. enter subject
+15. enter email body and press control-X
+16. press 'y' to send the email
+17. enter SMTP password (likely the same as IMAP one)
+18. check the email was sent and received
+19. press 'q' to leave alpine
