@@ -19,19 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		unearth
-HUMAN_VERSION =			0.12.1
+HUMAN_VERSION =			0.13.0
 COMPONENT_SUMMARY =		unearth - A utility to fetch and download python packages
 COMPONENT_PROJECT_URL =		https://github.com/frostming/unearth
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/07/0f/17dce4ecf6e1dc736bf6545ef6183d0a07284ced5ca0b8a38563d7148e29/unearth-0.12.1.tar.gz
+	https://files.pythonhosted.org/packages/de/0a/27a08dda9f2acdadcc0663f5a388a141f66a7ec39bdec2315cd73bc3b896/unearth-0.13.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4caad941b60f51e50fdc109866234d407910aef77f1233aa1b6b5d168c7427ee
+	sha256:a107e878d014114a815ecc621ac2901a7bf3c46ce5c8f49d81137d079ddc426e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-httpserver
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
