@@ -324,12 +324,13 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	$(MKDIR) $(SAMPLE_MANIFEST_DIR)
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' \
-		-e '/\.la$$/d' | \
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' \
+			-e '/\.la$$/d' \
+			-e 's/$(subst .,\.,$(GCC_GNU_TRIPLET))/$$(GCC_GNU_TRIPLET)/g' | \
 		$(PKGFMT) -u | \
 		uniq | \
 		$(PKGFMT) | \
-		cat $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \
+		$(CAT) $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
 
 # copy the canonical manifest(s) to the build tree
