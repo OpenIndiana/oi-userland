@@ -7,12 +7,12 @@ https://unicode-org.atlassian.net/browse/ICU-12378
 --- icu/source/common/caniter.cpp.orig
 +++ icu/source/common/caniter.cpp
 @@ -518,6 +518,10 @@
-         return nullptr;
+         return NULL;
      }
-     const char16_t *decomp=decompString.getBuffer();
-+    if (decomp == nullptr) {
+     const UChar *decomp=decompString.getBuffer();
++    if ( decomp == NULL ) {
 +        status = U_MEMORY_ALLOCATION_ERROR;
-+        return nullptr;
++        return NULL;
 +    }
      int32_t decompLen=decompString.length();
  
