@@ -20,20 +20,20 @@
 #
 
 #
-# Copyright (c) 2023, Jonathan Schleifer. All rights reserved.
+# Copyright (c) 2023-2024, Jonathan Schleifer. All rights reserved.
 #
 
-BUILD_BITS = 64_and_32
+BUILD_BITS = 64
 USE_PARALLEL_BUILD = yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = objfw
-COMPONENT_VERSION = 1.0.5
+COMPONENT_VERSION = 1.0.6
 COMPONENT_SUMMARY = A portable, lightweight framework for the Objective-C language
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = sha256:798bda0590970fea10d5c8064e98088bb9960b3bc0475d92db443b0df9f205c4
+COMPONENT_ARCHIVE_HASH = sha256:34eb6ee5be84d86a3de657ab17c9ee79fcfc8b3dc0d21f72917aa92378948d73
 COMPONENT_ARCHIVE_URL = https://objfw.nil.im/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://objfw.nil.im/
 COMPONENT_FMRI = library/objfw
@@ -50,8 +50,8 @@ CONFIGURE_OPTIONS += --with-tls=gnutls
 CONFIGURE_OPTIONS += OBJC="$(CLANG_PREFIX)/bin/clang -m$(BITS)"
 CONFIGURE_OPTIONS += LDFLAGS="-Wl,-rpath,$$(realpath $$(dirname $$(gcc -m$(BITS) --print-file-name=libgcc_s.so)))"
 
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
