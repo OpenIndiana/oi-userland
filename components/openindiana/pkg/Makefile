@@ -56,6 +56,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded
 	cd $(SOURCE_DIR)/src && \
 	PATH=$(PATH) $(MAKE) && PATH=$(PATH) $(MAKE) install && \
 	cd pkg && \
+	$(MAKE) clobber && \
 	$(MAKE) BUILD_VERSION=$(BUILD_VERSION) && \
 	$(MAKE) publish-pkgs BUILD_VERSION=$(BUILD_VERSION) && \
 	$(MAKE) repository-metadata && \
