@@ -24,10 +24,11 @@
 # Copyright (c) 2023, Friedrich Kink. All rights reserved.
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.6.22
+COMPONENT_VERSION=	1.6.23
 COMPONENT_SUMMARY=	The memcached memory object cache
 COMPONENT_DESCRIPTION=	Memcached is a high performance multithreaded event-based \
 			key/value cache store intended to be used in a distributed system.
@@ -36,8 +37,7 @@ COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:34783a90a4ccf74c4107085fd92b688749d23b276cfdad9f04e4f725a05d1ca7
+COMPONENT_ARCHIVE_HASH=	sha256:85b0334904f440296a685ccfda75f0f4517bf8922ab8efa6d0c4b3c92c354d4c
 COMPONENT_ARCHIVE_URL=	https://www.memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
@@ -56,7 +56,7 @@ COMPONENT_TEST_TARGETS=	test
 
 CFLAGS += -I/usr/include/libevent2
 
-CONFIGURE_OPTIONS +=	--with-libevent=/usr/lib/${MACH64}
+CONFIGURE_OPTIONS +=	--with-libevent=$(USRLIBDIR64)
 CONFIGURE_OPTIONS +=	--enable-dtrace
 CONFIGURE_OPTIONS +=	--disable-sasl
 CONFIGURE_OPTIONS +=	--enable-werror
@@ -65,8 +65,6 @@ CONFIGURE_OPTIONS +=	--enable-large-client-flags
 CONFIGURE_OPTIONS +=	--enable-tls
 CONFIGURE_OPTIONS +=	--disable-docs
 CONFIGURE_OPTIONS +=	--disable-coverage
-# Exstore has too many failed tests. Disabling for now.
-#CONFIGURE_OPTIONS +=	--disable-extstore
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 
 ASLR_MODE = $(ASLR_ENABLE)
@@ -76,10 +74,11 @@ COMPONENT_TEST_ARGS +=  -k -i
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/^ok/p" ' \
-	'-e "/ ok/p" ' \
-	'-e "/^not ok/p" ' \
 	'-e "/^All tests/p" ' \
 	'-e "/^Result/p" '
+
+# Manually added test dependency
+TEST_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl-538
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
