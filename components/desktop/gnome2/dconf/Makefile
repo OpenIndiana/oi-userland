@@ -20,6 +20,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         dconf
 COMPONENT_MJR_VERSION=  0.40
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME Configuration Framework
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/dconf
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
