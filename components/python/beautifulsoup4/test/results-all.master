@@ -1,12 +1,11 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 657 items
+collecting ... collected 664 items
 
-::project PASSED
 bs4/tests/test_builder.py::TestDetectsXMLParsedAsHTML::test_warn_if_markup_looks_like_xml[<?xml ><html>Actually XHTML</html>-False] PASSED
 bs4/tests/test_builder.py::TestDetectsXMLParsedAsHTML::test_warn_if_markup_looks_like_xml[<?xml ><no-html-tag>-True] PASSED
 bs4/tests/test_builder.py::TestDetectsXMLParsedAsHTML::test_warn_if_markup_looks_like_xml[<?xml>            <    html>Tricky XHTML</html>-False] PASSED
@@ -136,17 +135,24 @@ bs4/tests/test_formatter.py::TestFormatter::test_indent[abc-<a>\nabc<b>\nabcabct
 bs4/tests/test_formatter.py::TestFormatter::test_indent[bytes-<a>\n <b>\n  text\n </b>\n</a>\n] PASSED
 bs4/tests/test_formatter.py::TestFormatter::test_indent[indent8-<a>\n <b>\n  text\n </b>\n</a>\n] PASSED
 bs4/tests/test_formatter.py::TestFormatter::test_sort_attributes PASSED
-bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document[clusterfuzz-testcase-minimized-bs4_fuzzer-5167584867909632] PASSED
-bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document[clusterfuzz-testcase-minimized-bs4_fuzzer-5984173902397440] PASSED
-bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document[clusterfuzz-testcase-minimized-bs4_fuzzer-6124268085182464] PASSED
-bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document[clusterfuzz-testcase-minimized-bs4_fuzzer-6450958476902400] PASSED
-bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors[clusterfuzz-testcase-minimized-bs4_fuzzer-4818336571064320] SKIPPED
-bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors[clusterfuzz-testcase-minimized-bs4_fuzzer-4999465949331456] SKIPPED
-bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors[clusterfuzz-testcase-minimized-bs4_fuzzer-5843991618256896] SKIPPED
-bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors[clusterfuzz-testcase-minimized-bs4_fuzzer-6241471367348224] SKIPPED
-bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors[clusterfuzz-testcase-minimized-bs4_fuzzer-6600557255327744] SKIPPED
-bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors[crash-0d306a50c8ed8bcd0785b67000fcd5dea1d33f08] SKIPPED
-bs4/tests/test_fuzz.py::TestFuzz::test_rejected_markup[clusterfuzz-testcase-minimized-bs4_fuzzer-5703933063462912] PASSED
+bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document[clusterfuzz-testcase-minimized-bs4_fuzzer-5000587759190016] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document[clusterfuzz-testcase-minimized-bs4_fuzzer-5375146639360000] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document[clusterfuzz-testcase-minimized-bs4_fuzzer-5492400320282624] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document_without_css[clusterfuzz-testcase-minimized-bs4_fuzzer-5167584867909632] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document_without_css[clusterfuzz-testcase-minimized-bs4_fuzzer-5984173902397440] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document_without_css[clusterfuzz-testcase-minimized-bs4_fuzzer-6124268085182464] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_deeply_nested_document_without_css[clusterfuzz-testcase-minimized-bs4_fuzzer-6450958476902400] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors[clusterfuzz-testcase-minimized-bs4_fuzzer-6306874195312640] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors_without_css[clusterfuzz-testcase-minimized-bs4_fuzzer-4818336571064320] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors_without_css[clusterfuzz-testcase-minimized-bs4_fuzzer-4999465949331456] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors_without_css[clusterfuzz-testcase-minimized-bs4_fuzzer-5843991618256896] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors_without_css[clusterfuzz-testcase-minimized-bs4_fuzzer-6241471367348224] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors_without_css[clusterfuzz-testcase-minimized-bs4_fuzzer-6600557255327744] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_html5lib_parse_errors_without_css[crash-0d306a50c8ed8bcd0785b67000fcd5dea1d33f08] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_rejected_markup[clusterfuzz-testcase-minimized-bs4_fuzzer-5703933063462912] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_rejected_markup[crash-ffbdfa8a2b26f13537b68d3794b0478a4090ee4a] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_soupsieve_errors[clusterfuzz-testcase-minimized-bs4_fuzzer-4670634698080256] SKIPPED
+bs4/tests/test_fuzz.py::TestFuzz::test_soupsieve_errors[clusterfuzz-testcase-minimized-bs4_fuzzer-5270998950477824] SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_ampersand_in_attribute_value_gets_escaped SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_angle_brackets_in_attribute_values_are_escaped SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_apos_entity SKIPPED
@@ -513,6 +519,7 @@ bs4/tests/test_tag.py::TestMultiValuedAttributes::test_attributes_joined_into_st
 bs4/tests/test_tag.py::TestMultiValuedAttributes::test_cdata_attribute_applying_only_to_one_tag PASSED
 bs4/tests/test_tag.py::TestMultiValuedAttributes::test_customization PASSED
 bs4/tests/test_tag.py::TestMultiValuedAttributes::test_get_attribute_list PASSED
+bs4/tests/test_tag.py::TestMultiValuedAttributes::test_hidden_tag_is_invisible PASSED
 bs4/tests/test_tag.py::TestMultiValuedAttributes::test_multiple_values_becomes_list PASSED
 bs4/tests/test_tag.py::TestMultiValuedAttributes::test_multiple_values_separated_by_weird_whitespace PASSED
 bs4/tests/test_tag.py::TestMultiValuedAttributes::test_single_value_becomes_list PASSED
@@ -664,4 +671,6 @@ bs4/tests/test_tree.py::TestTreeModification::test_wrap PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_wrap_extracts_tag_from_elsewhere PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_wrap_puts_new_contents_at_the_end PASSED
 
-======== 568 passed, 89 skipped ========
+======== 563 passed, 101 skipped ========
+  py$(PYV): OK
+  congratulations :)

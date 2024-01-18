@@ -19,17 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		beautifulsoup4
-HUMAN_VERSION =			4.12.2
+HUMAN_VERSION =			4.12.3
 COMPONENT_SUMMARY =		beautifulsoup4 - Screen-scraping library
 COMPONENT_PROJECT_URL =		https://www.crummy.com/software/BeautifulSoup/bs4/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/af/0b/44c39cf3b18a9280950ad63a579ce395dda4c32193ee9da7ff0aed547094/beautifulsoup4-4.12.2.tar.gz
+	https://files.pythonhosted.org/packages/b3/ca/824b1195773ce6166d388573fc106ce56d4a805bd7427b624e063596ec58/beautifulsoup4-4.12.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:492bbc69dca35d12daac71c4db1bfff0c876c00ef4a2ffacce226d4638eb72da
+	sha256:74e3d1928edc070d21748185c46e3fb33490f22f52a3addee9aee0f4f7781051
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,3 +35,6 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/soupsieve
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/lxml
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/soupsieve
