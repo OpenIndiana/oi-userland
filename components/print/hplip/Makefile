@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
 COMPONENT_VERSION=      3.22.10
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=		hplip - HP Linux Printing
 COMPONENT_DESCRIPTION=  Support of HP InkJet, Laser printers for CUPS.
 COMPONENT_PROJECT_URL=	https://hplipopensource.com/
