@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flask
-HUMAN_VERSION =			3.0.0
+HUMAN_VERSION =			3.0.1
 COMPONENT_SUMMARY =		flask - A simple framework for building complex web applications.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d8/09/c1a7354d3925a3c6c8cfdebf4245bae67d633ffda1ba415add06ffc839c5/flask-3.0.0.tar.gz
+	https://files.pythonhosted.org/packages/b2/14/97b9137a02f57d2287f3a9731b3a339fda716d2d3a157d7d1d89c2bebf7b/flask-3.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cfadcdb638b609361d29ec22360d6070a77d7463dcb3ab08d2c2f2f168845f58
+	sha256:6489f51bb3666def6f314e15f19d50a1869a19ae0e8c9a3641ffe66c77d42403
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
