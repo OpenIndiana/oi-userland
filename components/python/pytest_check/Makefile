@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_check
-HUMAN_VERSION =			2.3.0
+HUMAN_VERSION =			2.3.1
 COMPONENT_SUMMARY =		pytest_check - A pytest plugin that allows multiple failures per test.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/06/bb/4766884834d2e03f3b95b76e25d857ce161227f45228556d0568ae2c63d5/pytest_check-2.3.0.tar.gz
+	https://files.pythonhosted.org/packages/87/9d/77750d005fe5746c29f2ed12ec383a7cd54c99bb7a7454ca86faaa8e71a1/pytest_check-2.3.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6e5a2dbbcef5b8865ac3ac3339fe86fb59013630410ac844ef88c9a1a45c3266
+	sha256:51b8f18a8ccaa426c5d913c4e0e46f014aaa7579481ea03d22d7e1f498f689b2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
