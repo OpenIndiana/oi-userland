@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project Chameleon
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Chameleon
-HUMAN_VERSION =			4.4.3
+HUMAN_VERSION =			4.5.0
 COMPONENT_SUMMARY =		Chameleon - Fast HTML/XML Template Compiler.
 COMPONENT_PROJECT_URL =		https://chameleon.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b2/de/a55e1ab06a2c4960ffe8233eaaa804f0422c3eb2f998d1c3156b36ae6760/Chameleon-4.4.3.tar.gz
+	https://files.pythonhosted.org/packages/7b/7e/75087dd97ff3fcab87daa7dae2e5c7f7ba52afe7cd33000f55547c8e524c/Chameleon-4.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7ebdb2f962cb1b755d6f263438073f0887f371af585a66d21ab9ea240b418369
+	sha256:b371b7ebaf9dc22c55cc42557d3225fed1f2f005b6d9aed8fefccfde40114bf6
 COMPONENT_LICENSE =		BSD-3-Clause OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -33,6 +33,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
