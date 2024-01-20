@@ -12,22 +12,21 @@
 # Copyright 2016 Till Wegmueller
 #
 
-BUILD_BITS =	NO_ARCH
+BUILD_STYLE = meson
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yelp-tools
-COMPONENT_VERSION=	3.18.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	42.1
+COMPONENT_VERSION_MAJOR=$(word 1,$(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Yelp Tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c6c1d65f802397267cdc47aafd5398c4b60766e0a7ad2190426af6c0d0716932
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/3.18/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+	sha256:3e496a4020d4145b99fd508a25fa09336a503a4e8900028421e72c6a4b11f905
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/gnome/$(COMPONENT_NAME)
 
@@ -35,15 +34,14 @@ TEST_TARGET =	$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/$(COMPONENT_NAME)
+PYTHON_SCRIPTS += usr/bin/yelp-build
+PYTHON_SCRIPTS += usr/bin/yelp-new
+PYTHON_SCRIPTS += usr/bin/yelp-check
 
+# Build dependencies
 REQUIRED_PACKAGES += text/itstool
-REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/gnome/yelp-xsl
-REGUIRED_PACKAGES += text/gawk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += shell/ksh93
+PYTHON_REQUIRED_PACKAGES += library/python/lxml
+PYTHON_REQUIRED_PACKAGES += runtime/python
