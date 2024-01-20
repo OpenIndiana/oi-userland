@@ -17,8 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         nheko
 COMPONENT_VERSION=      0.11.3
-COMPONENT_PROJECT_URL=  https://nheko-reborn.github.io/
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Desktop client for Matrix using Qt and C++20.
+COMPONENT_PROJECT_URL=  https://nheko-reborn.github.io/
 COMPONENT_FMRI=         communication/im/nheko
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
