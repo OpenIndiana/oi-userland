@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mtxclient
 COMPONENT_VERSION=      0.9.2
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      Client API library for the Matrix protocol
 COMPONENT_PROJECT_URL=  https://github.com/Nheko-Reborn/mtxclient
 COMPONENT_FMRI=         network/chat/mtxclient
