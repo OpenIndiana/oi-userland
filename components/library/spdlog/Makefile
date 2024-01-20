@@ -26,13 +26,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		spdlog
-COMPONENT_VERSION=	1.12.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.13.0
 COMPONENT_SUMMARY=      spdlog - Fast C++ logging library
 COMPONENT_PROJECT_URL=	https://github.com/gabime/spdlog
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4dccf2d10f410c1e2feaff89966bfc49a1abb29ef6f08246335b110e001e09a9
+COMPONENT_ARCHIVE_HASH=	sha256:534f2ee1a4dcbeb22249856edfb2be76a1cf4f708a20b0ac2ed090ee24cfdbc9
 COMPONENT_ARCHIVE_URL=	https://github.com/gabime/spdlog/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=     	library/c++/spdlog
 COMPONENT_CLASSIFICATION=System/Libraries
