@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 asyncio: mode=strict
-collecting ... collected 344 items / 2 skipped
+collecting ... collected 347 items / 2 skipped
 
 test_elasticsearch/test_async/test_server/test_clients.py::test_bulk_works_with_bytestring_body SKIPPED
 test_elasticsearch/test_async/test_server/test_clients.py::test_bulk_works_with_string_body SKIPPED
@@ -198,12 +198,15 @@ test_elasticsearch/test_client/test_requests_auth.py::test_requests_auth[CustomR
 test_elasticsearch/test_client/test_requests_auth.py::test_requests_auth[RequestsHttpNode] PASSED
 test_elasticsearch/test_client/test_requests_auth.py::test_requests_auth[requests] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_fields PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_fields_conflict PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_fields_merge PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_name PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_name_duplicate PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_name_using_body PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_default PASSED
-test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_body_merge[{"query": {"match_all": {}}}0] PASSED
-test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_body_merge[{"query": {"match_all": {}}}1] PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_default_params_conflict PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_body_merge[{"query": {"match_all": {}}}-kwargs0] PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_body_merge[{"query": {"match_all": {}}}-kwargs1] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_params_merge[{"query": {"match_all": {}}}0] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_params_merge[{"query": {"match_all": {}}}1] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_ignore_deprecated_options PASSED
@@ -440,6 +443,10 @@ test_elasticsearch/test_client/test_options.py::TestOptions::test_user_agent_ove
   $(@D)/test_elasticsearch/test_client/test_options.py:365: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
     client.indices.get(index="2", headers={"user-agent": "custom4"})
 
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_default_params_conflict
+  $(@D)/test_elasticsearch/test_client/test_rewrite_parameters.py:88: DeprecationWarning: The 'params' parameter is deprecated and will be removed in a future version. Instead use individual parameters.
+    self.wrapped_func_default(
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 224 passed, 122 skipped, 25 warnings ========
+======== 227 passed, 122 skipped, 26 warnings ========
