@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		MarkupSafe
-HUMAN_VERSION =			2.1.3
+HUMAN_VERSION =			2.1.4
 COMPONENT_SUMMARY =		MarkupSafe - Safely add untrusted strings to HTML/XML markup.
 COMPONENT_PROJECT_URL =		https://palletsprojects.com/p/markupsafe/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6d/7c/59a3248f411813f8ccba92a55feaac4bf360d29e2ff05ee7d8e1ef2d7dbf/MarkupSafe-2.1.3.tar.gz
+	https://files.pythonhosted.org/packages/fb/5a/fb1326fe32913e663c8e2d6bdf7cde6f472e51f9c21f0768d9b9080fe7c5/MarkupSafe-2.1.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:af598ed32d6ae86f1b747b82783958b1a4ab8f617b06fe68795c7f026abbdcad
+	sha256:3aae9af4cac263007fd6309c64c6ab4506dd2b79382d9d19a1994f9240b8db4f
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
