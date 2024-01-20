@@ -11,28 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project sphinx-issues
+#   $WS_TOOLS/python-integrate-project -d python/sphinx-issues sphinx_issues
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		sphinx-issues
-HUMAN_VERSION =			3.0.1
-COMPONENT_SUMMARY =		sphinx-issues - A Sphinx extension for linking to your project's issue tracker
-COMPONENT_PROJECT_URL =		https://github.com/sloria/sphinx-issues
+COMPONENT_NAME =		sphinx_issues
+HUMAN_VERSION =			4.0.0
+COMPONENT_SUMMARY =		sphinx_issues - A Sphinx extension for linking to your project's issue tracker
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/00/35/a50591c1242d3f3927bcfd0e967c2858fef8fdb50f25b742015b6c841e03/sphinx-issues-3.0.1.tar.gz
+	https://files.pythonhosted.org/packages/dd/8b/d0c10bb1a98273c08cbe6fe773bada84597d250960c91dbe7d1a97f6df7d/sphinx_issues-4.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b7c1dc1f4808563c454d11c1112796f8c176cdecfee95f0fd2302ef98e21e3d6
+	sha256:5b8fcc229ffaeaef53fef0dca88dc89bc14b4aa81f221d9682a64ecced02e25d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += library/python/sphinx
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
