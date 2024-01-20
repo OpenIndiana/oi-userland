@@ -19,26 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyfakefs
-HUMAN_VERSION =			5.3.2
+HUMAN_VERSION =			5.3.4
 COMPONENT_SUMMARY =		pyfakefs - pyfakefs implements a fake file system that mocks the Python file system modules.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pyfakefs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/80/cb/af1d1c9075a3b1b8b663a9acb026c07ea6c0b6203b6c9d59836afb933b35/pyfakefs-5.3.2.tar.gz
+	https://github.com/pytest-dev/pyfakefs/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a83776a3c1046d4d103f2f530029aa6cdff5f0386dffd59c15ee16926135493c
+	sha256:2c7103307fee0c29a80bbb1b4e4d7db370311f13f504b847a4acb9b79c2ac1d8
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
-TEST_STYLE = pytest
-
 include $(WS_MAKE_RULES)/common.mk
-
-# The following test file requires OpenTimelineIO.
-# We have no OpenTimelineIO packaged yet.
-COMPONENT_POST_UNPACK_ACTION += \
-	$(RM) $(SOURCE_DIR)/pyfakefs/pytest_tests/segfault_test.py ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pathlib2
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
