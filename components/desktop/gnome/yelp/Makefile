@@ -13,39 +13,40 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         yelp
-COMPONENT_VERSION=      3.20.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      42.2
+COMPONENT_VERSION_MAJOR=$(word 1,$(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY=      The GNOME Help Browser
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:dda0b051ad32908cb9d894d1db3ffdac69b21849b8a6a9a74d9669b017f608c2
+	sha256:a2c5fd0787a9089c722cc66bd0f85cdf7088d870e7b6cc85799f8e5bff9eac4b
 COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/yelp/3.20/$(COMPONENT_ARCHIVE)
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.gnome.org
 COMPONENT_FMRI=         gnome/help-viewer/yelp
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Documentation
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE=      GPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -if)
+# configure expects GNU make in PATH
+PATH = $(PATH.gnu)
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
-CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
+# We do not have appstream-glib so we cannot call autoreconf
+COMPONENT_PREP_ACTION = cd $(@D) && automake
+
+# illumos ld does not understand --no-as-needed, but configure is unable to
+# detect that properly
+CONFIGURE_ENV += ax_cv_check_cflags__Wl___no_as_needed=no
 
 # Build dependencies
 REQUIRED_PACKAGES += library/gnome/yelp-tools
 REQUIRED_PACKAGES += library/gnome/yelp-xsl
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
@@ -54,12 +55,10 @@ REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libsoup
+REQUIRED_PACKAGES += library/libhandy
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/man
-REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/groff/groff-core
