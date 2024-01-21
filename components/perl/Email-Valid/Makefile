@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Valid
-HUMAN_VERSION =			1.203
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			1.204
 COMPONENT_SUMMARY =		Email::Valid - Check validity of Internet email addresses
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2021bfbb1e2c279e5ebd84680e596f97344d429850b232267b76f49037522b93
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:1c37a9b1bc76304859572b150a82c26bd4f12ec63d2d0b76505ac392104cb47f
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
