@@ -1,32 +1,7 @@
-http://www.calculate-linux.org/packages/gnome-extra/yelp/files/yelp-3.16.0-man-compatibility.patch
+https://gitlab.gnome.org/GNOME/yelp/-/issues/50
 
-From fb83e8cea7e9e521599e73180ecff8f1374edb8d Mon Sep 17 00:00:00 2001
-From: Alexandre Rostovtsev <tetromino@gmail.com>
-Date: Sun, 1 May 2011 22:52:14 -0400
-Subject: [PATCH] Enable compatibility with traditional man (#648854)
-
-As of commit 46a82ade3e6f0fac8f08b18e7fc23d8665f6f728, Yelp runs
-"man -Z -Tutf8 -EUTF-8 [FILE]" to obtain the groff intermediate format
-of the man page. However, the only implementation of man that accepts
-these options is man-db (used by Debian, Fedora, SUSE & Ubuntu).
-The traditional Linux man used by other distros and man implementations
-on non-Linux Unixes (FreeBSD, Solaris) do not have command-line options
-for outputting groff intermediate format.
-Therefore, on systems that do not use man-db, we need to manually
-uncompress the nroff source file and feed it to groff. This is best done
-using a small shell script (/usr/libexec/yelp-groff), both for for
-clarity and for ease of modification on systems with weird man setups.
-
-Signed-off-by: Alexandre Rostovtsev <tetromino@gmail.com>
----
- libyelp/Makefile.am       |  2 ++
- libyelp/yelp-groff        | 49 +++++++++++++++++++++++++++++++++++++++++++++++
- libyelp/yelp-man-parser.c |  2 +-
- 3 files changed, 52 insertions(+), 1 deletion(-)
- create mode 100755 libyelp/yelp-groff
-
---- yelp-3.20.1/Makefile.am.1	2016-08-03 14:10:54.649167864 +0300
-+++ yelp-3.20.1/Makefile.am	2016-08-03 14:11:39.594235830 +0300
+--- yelp-42.2/Makefile.am.orig
++++ yelp-42.2/Makefile.am
 @@ -7,6 +7,8 @@
  
  lib_LTLIBRARIES = libyelp/libyelp.la
@@ -44,11 +19,8 @@ Signed-off-by: Alexandre Rostovtsev <tetromino@gmail.com>
  	-DYELP_ICON_PATH=\"$(YELP_ICON_PATH)\" \
  	-DYELP_WEB_EXTENSIONS_DIR=\""$(pkglibdir)/"web-extensions\" \
  	-I$(top_builddir)/libyelp
-diff --git a/libyelp/yelp-groff b/libyelp/yelp-groff
-new file mode 100755
-index 0000000..5348024
 --- /dev/null
-+++ b/libyelp/yelp-groff
++++ yelp-42.2/libyelp/yelp-groff
 @@ -0,0 +1,49 @@
 +#!/usr/bin/sh
 +#
@@ -99,11 +71,9 @@ index 0000000..5348024
 +# ... and run groff to get the intermediate format; preprocess with tbl
 +# unless MANROFFSEQ is defined.
 +${cat} ${filename} | groff -${MANROFFSEQ:-t} -man -Z -Tutf8
-diff --git a/libyelp/yelp-man-parser.c b/libyelp/yelp-man-parser.c
-index 46073a2..792e695 100644
---- a/libyelp/yelp-man-parser.c
-+++ b/libyelp/yelp-man-parser.c
-@@ -369,7 +369,7 @@ get_troff (gchar *path, GError **error)
+--- yelp-42.2/libyelp/yelp-man-parser.c.orig
++++ yelp-42.2/libyelp/yelp-man-parser.c
+@@ -369,7 +369,7 @@
  {
      gint ystdout;
      GError *err = NULL;
@@ -112,5 +82,3 @@ index 46073a2..792e695 100644
      gchar **my_argv;
  
      /* g_strdupv() should accept a "const gchar **". */
--- 
-2.3.6
