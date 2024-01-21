@@ -10,10 +10,8 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2024 <contributor>
 #
-
-<transform dir path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
@@ -24,14 +22,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-depend type=require fmri=library/gnome/yelp-tools
-depend type=require fmri=library/gnome/yelp-xsl
-
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/cut type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/grep type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/groff type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/man type=require
 
 link path=usr/bin/gnome-help target=yelp
 file path=usr/bin/yelp
@@ -58,10 +48,13 @@ link path=usr/lib/$(MACH64)/libyelp.so.0 target=libyelp.so.0.0.0
 file path=usr/lib/$(MACH64)/libyelp.so.0.0.0
 file path=usr/lib/$(MACH64)/yelp/web-extensions/libyelpwebextension.a
 file path=usr/lib/$(MACH64)/yelp/web-extensions/libyelpwebextension.so
-file path=usr/lib/yelp-groff mode=0555
-file path=usr/lib/yelp-manpath mode=0555
+file path=usr/libexec/yelp-groff
+file path=usr/libexec/yelp-manpath
 file path=usr/share/applications/yelp.desktop
 file path=usr/share/glib-2.0/schemas/org.gnome.yelp.gschema.xml
+file path=usr/share/icons/hicolor/scalable/apps/org.gnome.Yelp.svg
+file path=usr/share/icons/hicolor/symbolic/apps/org.gnome.Yelp-symbolic.svg
+file path=usr/share/locale/ab/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/af/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/am/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/an/LC_MESSAGES/yelp.mo
@@ -78,6 +71,7 @@ file path=usr/share/locale/br/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/bs/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/ca/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/ca@valencia/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ckb/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/crh/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/cs/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/cy/LC_MESSAGES/yelp.mo
@@ -165,6 +159,7 @@ file path=usr/share/locale/zh_CN/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/zh_HK/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/yelp.mo
 file path=usr/share/locale/zu/LC_MESSAGES/yelp.mo
+file path=usr/share/metainfo/yelp.appdata.xml
 file path=usr/share/yelp-xsl/xslt/common/domains/yelp.xml
 file path=usr/share/yelp/dtd/catalog
 file path=usr/share/yelp/dtd/docbookx.dtd
@@ -380,6 +375,7 @@ file path=usr/share/yelp/mathjax/jax/output/NativeMML/config.js
 file path=usr/share/yelp/mathjax/jax/output/NativeMML/jax.js
 file path=usr/share/yelp/xslt/db2html.xsl
 file path=usr/share/yelp/xslt/info2html.xsl
+file path=usr/share/yelp/xslt/links2html.xsl
 file path=usr/share/yelp/xslt/mal2html.xsl
 file path=usr/share/yelp/xslt/man2html.xsl
 file path=usr/share/yelp/xslt/yelp-common.xsl
