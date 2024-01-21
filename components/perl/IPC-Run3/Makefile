@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IPC::Run3
-HUMAN_VERSION =			0.048
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		IPC::Run3 - run a subprocess with input/ouput redirection
+HUMAN_VERSION =			0.049
+COMPONENT_SUMMARY =		IPC::Run3 - run a subprocess with input/output redirection
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3d81c3cc1b5cff69cca9361e2c6e38df0352251ae7b41e2ff3febc850e463565
+	sha256:9d048ae7b9ae63871bae976ba01e081d887392d904e5d48b04e22d35ed22011a
 COMPONENT_LICENSE =		BSD-2-Clause OR GPL-2.0 OR GPL-3.0 OR Artistic-1.0 OR Artistic-2.0
 
 include $(WS_MAKE_RULES)/common.mk
