@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip-run
-HUMAN_VERSION =			12.4.0
+HUMAN_VERSION =			12.5.0
 COMPONENT_SUMMARY =		pip-run - install packages and run Python with them
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pip-run
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d9/c9/8a098e4ab11d04f4c07e5d01490008fd8f077e12f23553120f0fe4184011/pip-run-12.4.0.tar.gz
+	https://files.pythonhosted.org/packages/7c/63/713ae0689b6eea185785204184eeca9b83a2016dec5f739eb75a826b83ce/pip-run-12.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:56f4ec37562c52c4fdd1e07f3c029c2f39514ad65b7c7a34041facc58848514a
+	sha256:8029122fb31e067a2504a53d100a7c25d2c44d55986afb0e487efcbe8243a004
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,6 +47,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/pip
 PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flit-core
@@ -55,7 +56,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
 TEST_REQUIRED_PACKAGES.python += library/python/nbformat
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
