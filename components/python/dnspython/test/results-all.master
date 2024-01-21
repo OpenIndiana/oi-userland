@@ -1,12 +1,9 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 1300 items
+collecting ... collected 1314 items
 
-::project PASSED
 tests/test_address.py::IPv4Tests::test_invalid PASSED
 tests/test_address.py::IPv4Tests::test_valid PASSED
 tests/test_address.py::IPv6Tests::test_invalid PASSED
@@ -215,6 +212,8 @@ tests/test_immutable.py::ImmutableTestCase::test_immutable_dict_hash PASSED
 tests/test_immutable.py::ImmutableTestCase::test_immutable_dict_hash_cache PASSED
 tests/test_message.py::MessageTestCase::test_CleanTruncated PASSED
 tests/test_message.py::MessageTestCase::test_EDNSVersionCoherence PASSED
+tests/test_message.py::MessageTestCase::test_EDNSVersionCoherenceWithDNSSEC PASSED
+tests/test_message.py::MessageTestCase::test_EDNSVersionCoherenceWithoutDNSSEC PASSED
 tests/test_message.py::MessageTestCase::test_EDNS_default_payload_is_1232 PASSED
 tests/test_message.py::MessageTestCase::test_EDNS_from_wire1 PASSED
 tests/test_message.py::MessageTestCase::test_EDNS_from_wire2 PASSED
@@ -269,10 +268,16 @@ tests/test_message.py::MessageTestCase::test_padding_various PASSED
 tests/test_message.py::MessageTestCase::test_padding_with_option PASSED
 tests/test_message.py::MessageTestCase::test_padding_with_tsig_and_option PASSED
 tests/test_message.py::MessageTestCase::test_payload_turns_on_edns PASSED
+tests/test_message.py::MessageTestCase::test_prefer_truncation_additional PASSED
+tests/test_message.py::MessageTestCase::test_prefer_truncation_answer PASSED
+tests/test_message.py::MessageTestCase::test_prefer_truncation_edns PASSED
 tests/test_message.py::MessageTestCase::test_question_only PASSED
 tests/test_message.py::MessageTestCase::test_read_no_content_message PASSED
 tests/test_message.py::MessageTestCase::test_repr PASSED
 tests/test_message.py::MessageTestCase::test_resolve_chaining_no_infinite_loop PASSED
+tests/test_message.py::MessageTestCase::test_response_padding PASSED
+tests/test_message.py::MessageTestCase::test_section_count PASSED
+tests/test_message.py::MessageTestCase::test_section_count_update PASSED
 tests/test_message.py::MessageTestCase::test_section_from_number PASSED
 tests/test_message.py::MessageTestCase::test_setting_flags PASSED
 tests/test_message.py::MessageTestCase::test_setting_id PASSED
@@ -450,7 +455,10 @@ tests/test_name.py::NameTestCase::testWild3 PASSED
 tests/test_name.py::NameTestCase::testWild4 PASSED
 tests/test_name.py::NameTestCase::testWild5 PASSED
 tests/test_name.py::NameTestCase::test_incompatible_relations PASSED
+tests/test_name.py::NameTestCase::test_pad_to_max_name PASSED
 tests/test_name.py::NameTestCase::test_pickle PASSED
+tests/test_name.py::NameTestCase::test_predecessor_and_successor_errors PASSED
+tests/test_name.py::NameTestCase::test_predecessors_and_successors PASSED
 tests/test_namedict.py::NameTestCase::testDepth PASSED
 tests/test_namedict.py::NameTestCase::testLookup1 PASSED
 tests/test_namedict.py::NameTestCase::testLookup2 PASSED
@@ -500,6 +508,9 @@ tests/test_ntoaaton.py::NtoAAtoNTestCase::test_bogus_family PASSED
 tests/test_ntoaaton.py::NtoAAtoNTestCase::test_do_not_ignore_scope PASSED
 tests/test_ntoaaton.py::NtoAAtoNTestCase::test_good_v4_aton PASSED
 tests/test_ntoaaton.py::NtoAAtoNTestCase::test_ignore_scope PASSED
+tests/test_ntoaaton.py::NtoAAtoNTestCase::test_inet_canonicalize PASSED
+tests/test_ntoaaton.py::NtoAAtoNTestCase::test_ipv4_canonicalize PASSED
+tests/test_ntoaaton.py::NtoAAtoNTestCase::test_ipv6_canonicalize PASSED
 tests/test_ntoaaton.py::NtoAAtoNTestCase::test_is_mapped PASSED
 tests/test_ntoaaton.py::NtoAAtoNTestCase::test_is_multicast PASSED
 tests/test_ntoaaton.py::NtoAAtoNTestCase::test_is_multicast_bad_input PASSED
@@ -622,6 +633,7 @@ tests/test_rdata.py::RdataTestCase::test_module_registration PASSED
 tests/test_rdata.py::RdataTestCase::test_module_registration_singleton PASSED
 tests/test_rdata.py::RdataTestCase::test_module_reregistration PASSED
 tests/test_rdata.py::RdataTestCase::test_no_replace_class_or_type PASSED
+tests/test_rdata.py::RdataTestCase::test_nsec3_next_name PASSED
 tests/test_rdata.py::RdataTestCase::test_opt_repr PASSED
 tests/test_rdata.py::RdataTestCase::test_opt_short_lengths PASSED
 tests/test_rdata.py::RdataTestCase::test_pickle PASSED
@@ -1270,6 +1282,7 @@ tests/test_zone.py::ZoneTestCase::testNodeReplaceRdatasetConvertsRRsets PASSED
 tests/test_zone.py::ZoneTestCase::testNotEqual1 PASSED
 tests/test_zone.py::ZoneTestCase::testNotEqual2 PASSED
 tests/test_zone.py::ZoneTestCase::testNotEqual3 PASSED
+tests/test_zone.py::ZoneTestCase::testRelativeNameLengthChecks PASSED
 tests/test_zone.py::ZoneTestCase::testReplaceRdataset1 PASSED
 tests/test_zone.py::ZoneTestCase::testReplaceRdataset2 PASSED
 tests/test_zone.py::ZoneTestCase::testTTLFromLast PASSED
@@ -1306,5 +1319,4 @@ tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_simple_absolute PASSED
 tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_unknown_hash_algorithm PASSED
 tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_unknown_scheme PASSED
 
-
-======== 1270 passed, 29 skipped ========
+======== 1285 passed, 29 skipped ========
