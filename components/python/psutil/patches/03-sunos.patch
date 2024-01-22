@@ -1,6 +1,6 @@
---- psutil-5.9.7/psutil/tests/__init__.py.orig
-+++ psutil-5.9.7/psutil/tests/__init__.py
-@@ -221,7 +221,7 @@
+--- psutil-5.9.8/psutil/tests/__init__.py.orig
++++ psutil-5.9.8/psutil/tests/__init__.py
+@@ -225,7 +225,7 @@
  HAS_SENSORS_FANS = hasattr(psutil, "sensors_fans")
  HAS_SENSORS_TEMPERATURES = hasattr(psutil, "sensors_temperatures")
  HAS_THREADS = hasattr(psutil.Process, "threads")
@@ -9,19 +9,9 @@
  
  # --- misc
  
---- psutil-5.9.7/psutil/tests/test_contracts.py.orig
-+++ psutil-5.9.7/psutil/tests/test_contracts.py
-@@ -433,6 +433,7 @@
-                 ls.append(proc_info(pid))
-             return ls
- 
-+    @unittest.skipIf(SUNOS and os.getuid() != 0, "test fails on SUNOS when run as non-root")
-     def test_all(self):
-         failures = []
-         for info in self.iter_proc_info():
---- psutil-5.9.7/psutil/tests/test_system.py.orig
-+++ psutil-5.9.7/psutil/tests/test_system.py
-@@ -600,7 +600,7 @@
+--- psutil-5.9.8/psutil/tests/test_system.py.orig
++++ psutil-5.9.8/psutil/tests/test_system.py
+@@ -645,7 +645,7 @@
              self.assertIsInstance(nt.opts, str)
              self.assertIsInstance(nt.maxfile, (int, type(None)))
              self.assertIsInstance(nt.maxpath, (int, type(None)))
