@@ -15,14 +15,13 @@
 # Copyright (c) 2021 Andreas Wacknitz
 # Copyright (c) 2023 Klaus Ziegler
 #
-BUILD_BITS= 64_and_32
-USE_COMMON_TEST_MASTER= no
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-keyring
-COMPONENT_MJR_VERSION=	42
-COMPONENT_MNR_VERSION=	1
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_VERSION=	42.1
+COMPONENT_REVISION=	1
+COMPONENT_MJR_VERSION=	$(word 1,$(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY=	GNOME Keyring is a collection of components that store secrets, passwords, keys, certificates and make them available to applications
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,19 +30,16 @@ COMPONENT_ARCHIVE_HASH= sha256:c7f4d040cc76a6b7fe67e08ef9106911c3c80d40fc88cbfc8
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Sessions
 COMPONENT_FMRI=		gnome/gnome-keyring
-COMPONENT_LICENSE=	GPLv2,LGPLv2
+COMPONENT_LICENSE=	GPL-2.0-only AND LGPL-2.1-only
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(PATH.gnu)
+# Required due to patches.
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf -fiv )
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
+PAM_MODULE_DIR = $(USRLIBDIR)/security/$(MACH64)
 
-PAM_MODULE_DIR.32 = $(USRLIBDIR)/security
-PAM_MODULE_DIR.64 = $(PAM_MODULE_DIR.32)/$(MACH64)
-PAM_MODULE_DIR = $(PAM_MODULE_DIR.$(BITS))
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-selinux
 CONFIGURE_OPTIONS += --disable-static
@@ -56,16 +52,18 @@ CONFIGURE_OPTIONS += --with-pic
 # Linux-specific capabilities support.
 CONFIGURE_OPTIONS += --without-libcap-ng
 
-# Required due to patches.
-COMPONENT_PREP_ACTION = ( cd $(@D); autoreconf -fiv )
-
-CONFIGURE_ENV += PATH=$(PATH.gnu)
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 COMPONENT_TEST_ARGS = -k -i
 
 COMPONENT_TEST_TRANSFORMS = \
 	'-e "s/scratch-test.*/scratch-test-import\*pkcs8/" ' \
 	'-e "s/glib.*\//GLIB2\//" ' \
+	"-e 's|$(SOURCE_DIR)|\$$(SOURCE_DIR)|g'" \
 	'-n ' \
 	'-e "/TOTAL:/p" ' \
 	'-e "/SKIP:/p" ' \
