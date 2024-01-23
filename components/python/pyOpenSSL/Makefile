@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyOpenSSL
-HUMAN_VERSION =			23.3.0
+HUMAN_VERSION =			24.0.0
 COMPONENT_SUMMARY =		pyOpenSSL - Python wrapper module around the OpenSSL library
 COMPONENT_PROJECT_URL =		https://pyopenssl.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/bf/a0/e667c3c43b65a188cc3041fa00c50655315b93be45182b2c94d185a2610e/pyOpenSSL-23.3.0.tar.gz
+	https://files.pythonhosted.org/packages/eb/81/022190e5d21344f6110064f6f52bf0c3b9da86e9e5a64fc4a884856a577d/pyOpenSSL-24.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6b2cba5cc46e822750ec3e5a81ee12819850b11303630d575e98108a079c2b12
+	sha256:6aa33039a93fffa4563e655b61d11364d01264be8ccb49906101e02a334530bf
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
