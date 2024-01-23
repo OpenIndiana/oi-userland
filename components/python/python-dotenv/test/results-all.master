@@ -1,15 +1,12 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest
+py$(PYV): commands[0]> python -m pytest --cov --cov-report=term-missing --cov-config setup.cfg
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests
-asyncio: mode=strict
-collecting ... collected 150 items
+collecting ... collected 152 items
 
 tests/test_cli.py::test_get_default_path PASSED
 tests/test_cli.py::test_get_existing_value PASSED
@@ -37,8 +34,8 @@ tests/test_cli.py::test_run_with_none_value PASSED
 tests/test_cli.py::test_run_with_other_env PASSED
 tests/test_cli.py::test_run_with_version PASSED
 tests/test_cli.py::test_run_without_cmd PASSED
-tests/test_cli.py::test_set_export[.nx_file-false-a-x-a='x'\n] PASSED
-tests/test_cli.py::test_set_export[.nx_file-true-a-x-export a='x'\n] PASSED
+tests/test_cli.py::test_set_export[dotenv_path0-true-a-x-export a='x'\n] PASSED
+tests/test_cli.py::test_set_export[dotenv_path1-false-a-x-a='x'\n] PASSED
 tests/test_cli.py::test_set_no_file PASSED
 tests/test_cli.py::test_set_non_existent_file PASSED
 tests/test_cli.py::test_set_quote_options[always-a-x-a='x'\n] PASSED
@@ -161,7 +158,15 @@ tests/test_variables.py::test_parse_variables[${a}-expected2] PASSED
 tests/test_variables.py::test_parse_variables[-expected0] PASSED
 tests/test_variables.py::test_parse_variables[a${b}c${d}e-expected5] PASSED
 tests/test_variables.py::test_parse_variables[a-expected1] PASSED
+tests/test_zip_imports.py::test_load_dotenv_gracefully_handles_zip_imports_when_no_env_file PASSED
+tests/test_zip_imports.py::test_load_dotenv_outside_zip_file_when_called_in_zipfile $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:298: CovReportWarning: Failed to generate report: No data to report.
 
-======== 150 passed ========
+  self.cov_controller.finish()
+PASSED [100%]WARNING: Failed to generate report: No data to report.
+
+
+
+
+======== 152 passed ========
   py$(PYV): OK
   congratulations :)
