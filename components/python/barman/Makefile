@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		barman
-HUMAN_VERSION =			3.9.0
+HUMAN_VERSION =			3.10.0
 COMPONENT_SUMMARY =		barman - Backup and Recovery Manager for PostgreSQL
 COMPONENT_PROJECT_URL =		https://www.pgbarman.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/EnterpriseDB/barman/archive/refs/tags/release/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0b6ee7b89e22d4d4361557c7be8f26828b3d31f90676fc4e35b35ead989215ea
+	sha256:171c61f24d0ffa0c96427043d91c218afff893a34bfd4ca1cd0c10b768943c8e
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
