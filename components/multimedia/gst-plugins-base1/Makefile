@@ -20,12 +20,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-base1
-COMPONENT_VERSION=      1.22.8
+COMPONENT_VERSION=      1.22.9
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME= 	gst-plugins-base
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:eb6792e5c73c6defb9159c36ea6e4b78a2f8af6512678b4bd3b02c8d2d492acf
+COMPONENT_ARCHIVE_HASH= sha256:fac3e0dd2d8e9370388b34bf8c21b89d5f63bc3cfc12cd7fdc8fc6c1cba03334
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/base
@@ -40,13 +40,12 @@ PATH= $(PATH.gnu)
 CFLAGS += -I/usr/X11/include -lsocket
 
 # build with the distribution preferred libjpeg implementation
-CFLAGS             +=           $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS           +=           $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS            +=           $(JPEG_LDFLAGS)
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
 CONFIGURE_OPTIONS += -Dalsa=disabled
 CONFIGURE_OPTIONS += -Dorc=enabled
 CONFIGURE_OPTIONS += -Dpango=enabled
@@ -54,8 +53,7 @@ CONFIGURE_OPTIONS += -Dgl_api=opengl
 CONFIGURE_OPTIONS += -Dgl_platform=glx,egl
 CONFIGURE_OPTIONS += -Dgl_winsys=x11,egl
 CONFIGURE_OPTIONS += -Dgl-graphene=disabled
-CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
-CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
+CONFIGURE_OPTIONS += -Dintrospection=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
