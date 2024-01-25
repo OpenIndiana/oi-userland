@@ -19,12 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::DKIM
-HUMAN_VERSION =			1.20230911
+HUMAN_VERSION =			1.20240124
 COMPONENT_SUMMARY =		Mail::DKIM - Signs/verifies Internet mail with DKIM/DomainKey signatures
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:91e7317282b724cfbd2c9b6e6630ef14328848b6fc5203efd70dec2fb87268ca
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:cc4d901a8f8a76fc133ae607ce6b9c668211fb09ff8c497d4206367f4901c80a
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
