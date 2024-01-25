@@ -1,13 +1,13 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
+benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
 rootdir: $(@D)
 configfile: tox.ini
 testpaths: testing
-collecting ... collected 104 items
+collecting ... collected 108 items
 
 testing/test_details.py::test_not_all_arguments_are_provided_issues_a_warning PASSED
 testing/test_details.py::test_parse_hookimpl_override PASSED
@@ -28,6 +28,7 @@ testing/test_hookcaller.py::test_adding_nonwrappers_trylast3 PASSED
 testing/test_hookcaller.py::test_adding_wrappers_complex PASSED
 testing/test_hookcaller.py::test_adding_wrappers_ordering PASSED
 testing/test_hookcaller.py::test_adding_wrappers_ordering_tryfirst PASSED
+testing/test_hookcaller.py::test_call_extra_hook_order PASSED
 testing/test_hookcaller.py::test_hook_conflict PASSED
 testing/test_hookcaller.py::test_hookimpl[False-hookwrapper] PASSED
 testing/test_hookcaller.py::test_hookimpl[False-optionalhook] PASSED
@@ -104,6 +105,8 @@ testing/test_pluginmanager.py::test_register_mismatch_arg[spec-is-instance] PASS
 testing/test_pluginmanager.py::test_register_mismatch_method[spec-is-class] PASSED
 testing/test_pluginmanager.py::test_register_mismatch_method[spec-is-instance] PASSED
 testing/test_pluginmanager.py::test_register_unknown_hooks PASSED
+testing/test_pluginmanager.py::test_register_while_calling[False] PASSED
+testing/test_pluginmanager.py::test_register_while_calling[True] PASSED
 testing/test_pluginmanager.py::test_set_blocked PASSED
 testing/test_pluginmanager.py::test_subset_hook_caller PASSED
 testing/test_pluginmanager.py::test_with_callbacks_immediately_executed PASSED
@@ -111,10 +114,10 @@ testing/test_pluginmanager.py::test_with_result_memorized[False] PASSED
 testing/test_pluginmanager.py::test_with_result_memorized[True] PASSED
 testing/test_tracer.py::test_indent PASSED
 testing/test_tracer.py::test_readable_output_dictargs PASSED
-testing/test_tracer.py::test_setprocessor PASSED                         [100%]Clearing the cache
+testing/test_tracer.py::test_setprocessor PASSED
 testing/test_tracer.py::test_simple PASSED
+testing/test_warnings.py::test_teardown_raised_warning PASSED
 
-
-======== 104 passed ========
+======== 108 passed ========
   py$(PYV): OK
   congratulations :)
