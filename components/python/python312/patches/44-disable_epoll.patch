@@ -1,0 +1,22 @@
+
+Without this patch, python detects and uses epoll which only exists in
+OmniOS for lx zones and Linux compatibility. It is not quite the same as
+the Linux implementation and can cause socket related failures in python.
+
+There is no nice way to tell configure that we don't have it
+(pkgsrc get around this by installing a broken epoll.h into the build
+ chroot area).
+
+--- Python-3.12.1/configure.ac.~4~	Sun Feb  4 20:16:58 2024
++++ Python-3.12.1/configure.ac	Sun Feb  4 20:26:03 2024
+@@ -4917,8 +4917,8 @@
+ PY_CHECK_FUNC([fchdir], [@%:@include <unistd.h>])
+ PY_CHECK_FUNC([fsync], [@%:@include <unistd.h>])
+ PY_CHECK_FUNC([fdatasync], [@%:@include <unistd.h>])
+-PY_CHECK_FUNC([epoll_create], [@%:@include <sys/epoll.h>], [HAVE_EPOLL])
+-PY_CHECK_FUNC([epoll_create1], [@%:@include <sys/epoll.h>])
++PY_CHECK_FUNC([epoll_create], [@%:@include <sys/NOTepoll.h>], [HAVE_EPOLL])
++PY_CHECK_FUNC([epoll_create1], [@%:@include <sys/NOTepoll.h>])
+ PY_CHECK_FUNC([kqueue],[
+ #include <sys/types.h>
+ #include <sys/event.h>

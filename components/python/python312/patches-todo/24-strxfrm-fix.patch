@@ -1,0 +1,47 @@
+This patch fixes limitation in python which expects strxfrm function to return
+string with characters with values lower than 10ffff. This is know issue:
+
+https://bugs.python.org/issue16258
+
+This is not for upstream as the idea is from the bug itself and was rejected
+for use on all platforms.
+
+--- Python-3.9.1/Modules/_localemodule.c
++++ Python-3.9.1/Modules/_localemodule.c
+@@ -363,9 +363,10 @@ Return a string that can be used as a ke
+ static PyObject*
+ PyLocale_strxfrm(PyObject* self, PyObject* args)
+ {
++    unsigned int i, j;
+     PyObject *str;
+     Py_ssize_t n1;
+-    wchar_t *s = NULL, *buf = NULL;
++    wchar_t *s = NULL, *buf = NULL, *solbuf = NULL;
+     size_t n2;
+     PyObject *result = NULL;
+ 
+@@ -409,8 +410,23 @@ PyLocale_strxfrm(PyObject* self, PyObjec
+             goto exit;
+         }
+     }
+-    result = PyUnicode_FromWideChar(buf, n2);
++
++    /* Split each character in resulting wide string in two
++       parts in order to prevent Python ValueErrors on Solaris. */
++    solbuf = PyMem_New(wchar_t, (n2*2) + 1);
++    if (!solbuf) {
++        PyErr_NoMemory();
++        goto exit;
++    }
++    for (i = 0, j = 0; i < n2; i ++, j+= 2) {
++        solbuf[j] = 0x10000 + (buf[i] >> 16);
++        solbuf[j+1] = buf[i] & 0xffff;
++    }
++    solbuf[j] = 0;
++
++    result = PyUnicode_FromWideChar(solbuf, n2*2);
+ exit:
++    PyMem_Free(solbuf);
+     PyMem_Free(buf);
+     PyMem_Free(s);
+     return result;

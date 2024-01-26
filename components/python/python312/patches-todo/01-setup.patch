@@ -1,0 +1,65 @@
+diff -wpruN '--exclude=*.orig' a~/setup.py a/setup.py
+--- a~/setup.py	1970-01-01 00:00:00
++++ a/setup.py	1970-01-01 00:00:00
+@@ -64,6 +64,7 @@ MS_WINDOWS = (HOST_PLATFORM == 'win32')
+ CYGWIN = (HOST_PLATFORM == 'cygwin')
+ MACOS = (HOST_PLATFORM == 'darwin')
+ AIX = (HOST_PLATFORM.startswith('aix'))
++ILLUMOS = (HOST_PLATFORM == 'sunos5')
+ VXWORKS = ('vxworks' in HOST_PLATFORM)
+ 
+ 
+@@ -731,7 +732,7 @@ class PyBuildExt(build_ext):
+         # Ensure that /usr/local is always used, but the local build
+         # directories (i.e. '.' and 'Include') must be first.  See issue
+         # 10520.
+-        if not CROSS_COMPILING:
++        if not ILLUMOS and not CROSS_COMPILING:
+             add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
+             add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
+         # only change this for cross builds for 3.3, issues on Mageia
+@@ -1045,6 +1046,14 @@ class PyBuildExt(build_ext):
+                                                      ['/usr/lib/termcap'],
+                                                      'termcap'):
+                 readline_libs.append('termcap')
++
++            if ILLUMOS:
++                # insert '-zrecord' before the readline libraries that we
++                # want to link with to avoid rl_insert() elimination
++                readline_extra_link_args = ('-Wl,-zrecord','-lreadline',
++		    '-lncurses')
++                readline_libs = ()
++
+             self.add(Extension('readline', ['readline.c'],
+                                library_dirs=['/usr/lib/termcap'],
+                                extra_link_args=readline_extra_link_args,
+@@ -1079,6 +1088,12 @@ class PyBuildExt(build_ext):
+ 
+         curses_enabled = True
+         if curses_library.startswith('ncurses'):
++
++            if ILLUMOS:
++                curses_defines.append(('HAVE_NCURSESW', '1'))
++                curses_defines.append(('_XOPEN_SOURCE_EXTENDED', '1'))
++                curses_includes.append('/usr/include/ncurses')
++
+             curses_libs = [curses_library]
+             self.add(Extension('_curses', ['_cursesmodule.c'],
+                                include_dirs=curses_includes,
+@@ -1106,10 +1121,15 @@ class PyBuildExt(build_ext):
+         skip_curses_panel = True if AIX else False
+         if (curses_enabled and not skip_curses_panel and
+                 self.compiler.find_library_file(self.lib_dirs, panel_library)):
++            panel_lib_dirs = []
++            if ILLUMOS:
++                panel_lib_dirs.append('/usr/gnu/lib/amd64')
+             self.add(Extension('_curses_panel', ['_curses_panel.c'],
+                            include_dirs=curses_includes,
+                            define_macros=curses_defines,
+-                           libraries=[panel_library, *curses_libs]))
++                           libraries=[panel_library, *curses_libs],
++                           library_dirs = panel_lib_dirs,
++                           runtime_library_dirs = panel_lib_dirs))
+         elif not skip_curses_panel:
+             self.missing.append('_curses_panel')
+ 

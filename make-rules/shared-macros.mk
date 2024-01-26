@@ -170,7 +170,7 @@ endif
 #
 
 PYTHON_VERSION = 3.9
-PYTHON_VERSIONS = 3.9
+PYTHON_VERSIONS = 3.9 3.12
 
 # Python up to 2.7 was built both 32-bit and 64-bit.  Starting with Python 3.x
 # the python package is built 64-bit only.  So now all PYTHON_VERSIONS are
@@ -701,6 +701,10 @@ PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES.32 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES = $(PYTHON.3.9.VENDOR_PACKAGES.$(BITS))
 
+PYTHON.3.12.VENDOR_PACKAGES.64 = /usr/lib/python3.12/vendor-packages
+PYTHON.3.12.VENDOR_PACKAGES.32 = /usr/lib/python3.12/vendor-packages
+PYTHON.3.12.VENDOR_PACKAGES = $(PYTHON.3.12.VENDOR_PACKAGES.$(BITS))
+
 CC =		$(CC.$(COMPILER).$(BITS))
 CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
@@ -752,6 +756,9 @@ PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
 PYTHON.3.9 =	/usr/bin/python3.9
 PYTHON.3.9.64 =	$(PYTHON.3.9)
+
+PYTHON.3.12 =	/usr/bin/python3.12
+PYTHON.3.12.64 = $(PYTHON.3.12)
 
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
 PYTHON =	$(PYTHON.$(PYTHON_VERSION))

@@ -1,0 +1,30 @@
+--- Python-3.12.1/Modules/Setup.stdlib.in.~1~	Thu Dec  7 12:45:44 2023
++++ Python-3.12.1/Modules/Setup.stdlib.in	Thu Jan 25 20:47:17 2024
+@@ -113,13 +113,13 @@
+ @MODULE_MMAP_TRUE@mmap mmapmodule.c
+ # FreeBSD: nis/yp APIs are in libc
+ # Linux: glibc has deprecated SUN RPC, APIs are in libnsl and libtirpc (bpo-32521)
+-@MODULE_NIS_TRUE@nis nismodule.c
++@MODULE_NIS_TRUE@nis nismodule.c -lsocket -lnsl
+ # needs sys/soundcard.h or linux/soundcard.h (Linux, FreeBSD)
+ @MODULE_OSSAUDIODEV_TRUE@ossaudiodev ossaudiodev.c
+ @MODULE__POSIXSUBPROCESS_TRUE@_posixsubprocess _posixsubprocess.c
+ @MODULE_RESOURCE_TRUE@resource resource.c
+ @MODULE_SELECT_TRUE@select selectmodule.c
+-@MODULE__SOCKET_TRUE@_socket socketmodule.c
++@MODULE__SOCKET_TRUE@_socket socketmodule.c -lresolv -lsocket -lnsl
+ # AIX has shadow passwords, but does not provide getspent API
+ @MODULE_SPWD_TRUE@spwd spwdmodule.c
+ @MODULE_SYSLOG_TRUE@syslog syslogmodule.c
+@@ -138,9 +138,9 @@
+ @MODULE__CTYPES_TRUE@_ctypes _ctypes/_ctypes.c _ctypes/callbacks.c _ctypes/callproc.c _ctypes/stgdict.c _ctypes/cfield.c @MODULE__CTYPES_MALLOC_CLOSURE@
+ 
+ # needs -lncurses[w], sometimes -ltermcap/tinfo
+-@MODULE__CURSES_TRUE@_curses _cursesmodule.c
++@MODULE__CURSES_TRUE@_curses _cursesmodule.c -Wl,-zrecord -lreadline -lncurses
+ # needs -lncurses[w] and -lpanel[w]
+-@MODULE__CURSES_PANEL_TRUE@_curses_panel _curses_panel.c
++@MODULE__CURSES_PANEL_TRUE@_curses_panel _curses_panel.c -Wl,-zrecord -L/usr/gnu/lib/amd64 -lpanel -lreadline -lncurses
+ 
+ @MODULE__SQLITE3_TRUE@_sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c _sqlite/util.c
+ 

@@ -1,0 +1,45 @@
+todo:
+	walk through patches that apply, checking that they all remain relevant.
+
+	walk through patches-todo, identifying which ones are still relevant.
+		work out how to replace the setup.py patches that add modules
+		(looks like patches to Setup.local?)
+		-> PY_STDLIB_MOD()?
+
+	01-setup:
+		- disable references to /usr/local
+			many of these scattered around.   search build logs.
+
+		- readline library linked as: -Wl,-zrecord -lreadline -lncurses
+			-> Modules/Setup??
+			-> MODULE_READLINE_LDFLAGS from READLINE_LIBS from LIBREADLINE_LIBS ? (check configure.ac)
+
+		- curses gets -DHAVE_NCURSESW=1, -D_XOPEN_SOURCE_EXTENDED=1
+		- curses_panel gets /usr/gnu/lib/amd64
+			-> fails to find -lpanel / -lpanelw in /usr/gnu/lib; configure.ac needs a patch
+
+	get tests passing
+		test_re failure
+
+	get packaging details right
+
+	build enough of the basics to try out some of my programs.
+
+-----
+done:
+	fix modules that aren't loading due to undefined symbols.
+
+----
+
+patches not needed:
+
+10-include.patch: distutils was removed from the core distribution and is not present in 3.12.1
+11-pic-compile.patch: distutils was removed from the core distribution and is not present in 3.12.1
+
+15-gethostname.patch; the spurious declaration of gethostname isn't present in 3.12.1
+
+42-mod-socket-xpg6.patch: specified options already on command line due to autoconf-based build of modules.
+
+45-system-64-libs.patch: library detection is via autoconf now and doesn't need help
+
+
