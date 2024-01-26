@@ -19,15 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mako
-HUMAN_VERSION =			1.3.1
+HUMAN_VERSION =			1.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mako - A super-fast templating language that borrows the best ideas from the existing templating languages.
 COMPONENT_PROJECT_URL =		https://www.makotemplates.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9c/cf/947dfd8475332b603dc8cb46170a7c333415f6ff1b161896ee76b4358435/Mako-1.3.1.tar.gz
+	https://files.pythonhosted.org/packages/a9/6e/6b41e654bbdcef90c6b9e7f280bf7cbd756dc2560ce76214f5cdbc4ddab5/Mako-1.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:baee30b9c61718e093130298e678abed0dbfa1b411fcc4c1ab4df87cd631a0f2
+	sha256:e3a9d388fd00e87043edbe8792f45880ac0114e9c4adc69f6e9bfb2c55e3b11b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# 1.3.1 was yanked, but IPS cannot downgrade
+COMPONENT_VERSION =		1.3.1
 
 include $(WS_MAKE_RULES)/common.mk
 
