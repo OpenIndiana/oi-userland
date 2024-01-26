@@ -17,12 +17,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libpsl
-COMPONENT_VERSION= 0.21.2
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 0.21.5
 COMPONENT_SUMMARY= Public Suffix List Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e35991b6e17001afa2c0ca3b10c357650602b92596209b7492802f3768a6285f
+COMPONENT_ARCHIVE_HASH= sha256:1dcc9ceae8b128f3c0b3f654decd0e1e891afc6ff81098f227ef260449dae208
 COMPONENT_ARCHIVE_URL= https://github.com/rockdaboot/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://github.com/rockdaboot/$(COMPONENT_NAME)
 COMPONENT_FMRI= library/libpsl
@@ -32,12 +31,17 @@ COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=i $(PATH.gnu)
+PATH= $(PATH.gnu)
+
 CONFIGURE_OPTIONS += --enable-static=no
+
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i "s|/usr/bin/env python|$(PYTHON)|" $(PROTO_DIR)/usr/bin/psl-make-dafsa
 
 unexport SHELLOPTS
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += system/library
