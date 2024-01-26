@@ -23,17 +23,17 @@
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpaper
-COMPONENT_VERSION=	2.1.2
+COMPONENT_VERSION=	2.1.3
 COMPONENT_SUMMARY=	The libpaper package enables users to indicate their preferred paper size
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/rrthomas/libpaper
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1fda0cf64efa46b9684a4ccc17df4386c4cc83254805419222c064bf62ea001f
+COMPONENT_ARCHIVE_HASH= sha256:b798be7c52036e684a90a68f0be954f173fea87886f8a1d25c6514a279216f4a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -42,7 +42,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_POST_UNPACK_ACTION= ( $(CHMOD) +x $(SOURCE_DIR)/tests/*.sh )
 
@@ -53,6 +53,7 @@ ASLR_MODE= $(ASLR_ENABLE)
 
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --enable-relocatable
+CONFIGURE_OPTIONS += --enable-year2038
 
 # At the moment all tests fail because of missing paper_test. It looks like the tests are outdated.
 
