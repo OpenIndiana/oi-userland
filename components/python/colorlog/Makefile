@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		colorlog
-HUMAN_VERSION =			6.8.0
+HUMAN_VERSION =			6.8.2
 COMPONENT_SUMMARY =		colorlog - Add colours to the output of Python's logging module.
 COMPONENT_PROJECT_URL =		https://github.com/borntyping/python-colorlog
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1f/b0/e4e3850d43f5429f9e53404056d705117fbb8a4d9e755425e762a9f68317/colorlog-6.8.0.tar.gz
+	https://files.pythonhosted.org/packages/db/38/2992ff192eaa7dd5a793f8b6570d6bbe887c4fbbf7e72702eb0a693a01c8/colorlog-6.8.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fbb6fdf9d5685f2517f388fb29bb27d54e8654dd31f58bc2a3b217e967a95ca6
+	sha256:3e3e079a41feb5a1b64f978b5ea4f46040a94f11f0e8bbb8261e3dbbeca64d44
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
