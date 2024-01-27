@@ -20,8 +20,8 @@ Fixes src/hotspot/cpu/zero/stubGenerator_zero.cpp
 illumos-zero-2.patch
 Adds the src/hotspot/os_cpu/solaris_zero directory and contents
 
-These are current and tested for jdk17u 17.0.7. They don't provide a
-proper zero port, as they still have x86 assembler that needs to be
+These are current and tested for jdk17u 17.0.9. They don't provide a
+proper zero port, as they still have assembler that needs to be
 removed.
 
 The two patches above are now applied by default, so we at least catch
