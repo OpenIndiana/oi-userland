@@ -12,6 +12,18 @@ rather than the current stub.
 * jshell doesn't work
 * illuminate doesn't work
 
+21.0.2
+
+A bit of shuffling in ProcessHandleImpl_unix.c
+
+21.0.1
+
+Now jdk21u.
+
+We need an implementation of os::can_trim_native_heap() and
+trim_native_heap(); simply add a stub in os_solaris.inline.hpp to
+return false like pretty much every other platform except linux does.
+
 21+34, 21+35
 
 No changes.
