@@ -21,9 +21,15 @@ illumos-zero-2.patch
 Adds the src/hotspot/os_cpu/solaris_zero directory and contents
 
 These are current and tested for a successful build (not necessarily
-fully working) as of jdk 22+8. They don't provide a proper zero port,
-as they still have x86 assembler that needs to be removed. But this
+fully working) as of jdk 22+22. They don't provide a proper zero port,
+as they still have assembler that needs to be removed. But this
 provides a starting point.
+
+There's a warning:
+
+OpenJDK 64-Bit Zero VM warning: Unsupported locking mode for this CPU.
+
+which you can gt around by passing -XX:LockingMode=0 or -XX:LockingMode=1
 
 The two patches above are now applied by default, so we at least catch
 any source incompatibilities early.
@@ -31,7 +37,7 @@ any source incompatibilities early.
 Configure:
 
 env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
---enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk20 \
+--enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk21 \
 --with-native-debug-symbols=none \
 --with-toolchain-type=gcc \
 --disable-dtrace \
