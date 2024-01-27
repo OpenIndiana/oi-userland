@@ -1,19 +1,17 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m py.test --cov --cov-report=
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: src/hupper, tests
-asyncio: mode=strict
-collecting ... collected 9 items
+collecting ... collected 10 items
 
 tests/test_cli.py::test_interval_parser PASSED
 tests/test_cli.py::test_interval_parser_errors[-1] PASSED
 tests/test_cli.py::test_interval_parser_errors[0] PASSED
+tests/test_ipc.py::test_ipc_close PASSED
 tests/test_it.py::test_myapp_reloads_when_touching_ini PASSED
 tests/test_it.py::test_myapp_reloads_when_touching_pyfile PASSED
 tests/test_reloader.py::test_ignore_files PASSED
@@ -21,6 +19,6 @@ tests/test_reloader.py::test_proxy_expands_paths PASSED
 tests/test_reloader.py::test_proxy_proxies PASSED
 tests/test_reloader.py::test_proxy_tracks_changes PASSED
 
-======== 9 passed ========
+======== 10 passed ========
   py$(PYV): OK
   congratulations :)
