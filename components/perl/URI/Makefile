@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		URI
-HUMAN_VERSION =			5.24
+HUMAN_VERSION =			5.25
 COMPONENT_SUMMARY =		URI - Uniform Resource Identifiers (absolute and relative)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:466dd5a40b2c8e99d53692dc49b971561d5d7c2a30814e5ff0b63a4a25e2aaef
+	sha256:ef61941da09fff2503cea3692c4f2fc48c0e4442486e2a28345cb32d44d0d271
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
