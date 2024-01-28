@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024 David Stes
 #
 
 
@@ -35,6 +35,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cog-spur
 COMPONENT_VERSION=	5.0.3339
+COMPONENT_REVISION=	1
 GIT_TAG=		sun-v5.0.61
 PLUGIN_REV=		5.0-202312211904-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
@@ -106,6 +107,10 @@ CONFIGURE_ENV    +=     LIBS="$(LIBS)"
 CONFIGURE_ENV.32 +=	TARGET_ARCH="-m32"
 CONFIGURE_ENV.64 +=	TARGET_ARCH="-m64"
 
+# for pkgsend generate (sample-manifest)
+# the actual manifest uses a mediator mediated hardlink for the squeak manpage
+PKG_HARDLINKS    += usr/share/man/man1/squeak.1
+
 # the opensmalltalk Makefile does not use DESTDIR
 COMPONENT_INSTALL_ARGS=  	ROOT=$(PROTO_DIR)
 COMPONENT_BUILD_TARGETS= 	getversion squeak plugins ckformat
@@ -136,7 +141,6 @@ REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += x11/library/libxevie
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/pulseaudio
