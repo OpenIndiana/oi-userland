@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-perf
-HUMAN_VERSION =			0.13.1
+HUMAN_VERSION =			0.14.0
 COMPONENT_SUMMARY =		pytest-perf - Run performance tests against the mainline code.
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-perf
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d2/74/8c112d99f595dc1718225ba50709ee3ed14a6f480bba7e5428a78ffaa94a/pytest-perf-0.13.1.tar.gz
+	https://files.pythonhosted.org/packages/83/a7/12fd7c5a21e45c5afa13a174755cc76a0e4ae97f915f4dc01c56b8d3a98a/pytest-perf-0.14.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0ec3bfeb0c8a6dcb8b1d3ea4ed1abb0b26685cfaff584e733395bd09608ab5a2
+	sha256:c8732821e3c2458d116539ab620836aa097c337c2b4c18206719d91e138a006d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
