@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-asyncio
-HUMAN_VERSION =			0.23.3
+HUMAN_VERSION =			0.23.4
 COMPONENT_SUMMARY =		pytest-asyncio - Pytest support for asyncio
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-asyncio
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1d/27/f036ec4bcbfd056c54572d7169ba3dbb54e7181f02f21caadd3aecb9cf5b/pytest-asyncio-0.23.3.tar.gz
+	https://files.pythonhosted.org/packages/84/bb/eb07ca1e79df7da714004fc25ddcffe4a6d9fcb70893eb77de5d504da8e4/pytest-asyncio-0.23.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:af313ce900a62fbe2b1aed18e37ad757f1ef9940c6b6a88e2954de38d6b1fb9f
+	sha256:2143d9d9375bf372a73260e4114541485e84fca350b0b6b92674ca56ff5f7ea2
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
