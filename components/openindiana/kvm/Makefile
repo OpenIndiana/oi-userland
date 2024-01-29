@@ -17,6 +17,8 @@
 # Copyright 2018, Michal Nowak
 #
 
+BUILD_STYLE = justmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-kvm
@@ -31,16 +33,22 @@ ifeq ($(MACH), sparc)
 PUBLISH_STAMP=
 endif
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+# Use the same gcc version as we use for building illumos-gate
+GCC_VERSION = 10
+
+include $(WS_TOP)/make-rules/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 
 COMPONENT_BUILD_ARGS += KERNEL_SOURCE=$(WS_TOP)/components/openindiana/illumos-gate/illumos-gate/
+COMPONENT_BUILD_ARGS += PROTO_AREA=$(WS_TOP)/components/openindiana/illumos-gate/illumos-gate/proto/root_i386
+COMPONENT_BUILD_ARGS += CC=$(CC)
+COMPONENT_BUILD_ARGS += CTFBINDIR=/opt/onbld/bin/i386
 
 COMPONENT_INSTALL_ARGS += DESTDIR=$(PROTO_DIR)
+
+COMPONENT_TEST_ARGS += KERNEL_SOURCE=$(WS_TOP)/components/openindiana/illumos-gate/illumos-gate/
 
 build_sparc:
 	@echo "Not available."
