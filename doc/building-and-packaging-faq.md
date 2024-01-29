@@ -22,23 +22,6 @@ If this needs to be achieved for the whole IPS manifest, it's better to use a tr
 <transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
 ```
 
-## Why compiled python files are no longer automatically added to manifests? 
-
-After introduction of Python 3.4 autopyc transform has to distinguish compiled files for python 2.x (*.pyc) and for python 3.x (__pycache__/*.cpython-3x.pyc).
-This is done on the base of file path. 
-Files in usr/lib/python2.x/*.py  are processed as earlier (following Python 2.x convention).
-Files in usr/lib/python3.x are processed according to Python 3.x convention.
-All other *.py files are not processed automatically. 
-
-## How can I use COMPONENT_SUMMARY with PYVER components?
-
-There's a known oi-userland build system issue that COMPONENT_SUMMARY and other PKG macroses, containing spaces, can work incorrectly with PYVER components.
-You can either specify such values in p5m file directly or use single quotation marks in Makefile, for example:
-
-```
-COMPONENT_SUMMARY= 'Cheroot - high-performance, pure-Python HTTP server'
-```
-
 ## Why do I receive "mv: cannot access .deps/libsomething.Tpo" error during component build?
 
 The most frequent reason for this error is a regeneration of `Makefile.in` files in the wrong directory (when you used $(CLONEY) to populate build directory with sources and then run automake).
