@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic
-HUMAN_VERSION =			1.10.13
+HUMAN_VERSION =			1.10.14
 COMPONENT_SUMMARY =		pydantic - Data validation using Python type hints
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/51/cd/721eb771f3f09f60de0807e240c3acf44c38828d0ced869fe8df7e79801b/pydantic-1.10.13.tar.gz
+	https://files.pythonhosted.org/packages/df/ab/67eda485b025e9253cce0eaede9b6158a08f62af7013a883b2c8775917b2/pydantic-1.10.14.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:32c8b48dcd3b2ac4e78b0ba4af3a2c2eb6048cb75202f0ea7b34feb740efc340
+	sha256:46f17b832fe27de7850896f3afee50ea682220dd218f7e9c88d436788419dca6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,8 +33,9 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/PyO3/setuptools-rust/issues/358
-TEST_CONFLICTING_PACKAGES.python += library/python/setuptools-rust
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
