@@ -12,6 +12,7 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2024 Carsten Grzemba
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -31,7 +32,7 @@ user username=pulse gcos-field="pulseaudio daemon user" group=pulse home-dir=/va
 <transform file path=etc/pulse/.* -> default preserve true>
 <transform file path=etc/pulse/.* -> default mode 0644>
 
-file path=etc/dbus-1/system.d/pulseaudio-system.conf
+file usr/share/dbus-1/system.d/pulseaudio-system.conf path=etc/dbus-1/system.d/pulseaudio-system.conf
 file path=etc/pulse/client.conf
 file path=etc/pulse/daemon.conf
 file path=etc/pulse/default.pa
@@ -41,6 +42,7 @@ file path=usr/bin/pa-info
 file path=usr/bin/pacat
 file path=usr/bin/pacmd
 file path=usr/bin/pactl
+file path=usr/bin/padsp
 link path=usr/bin/pamon target=pacat
 link path=usr/bin/paplay target=pacat
 link path=usr/bin/parec target=pacat
@@ -85,114 +87,116 @@ file path=usr/include/pulse/xmalloc.h
 file path=usr/lib/$(MACH64)/cmake/PulseAudio/PulseAudioConfig.cmake
 file path=usr/lib/$(MACH64)/cmake/PulseAudio/PulseAudioConfigVersion.cmake
 link path=usr/lib/$(MACH64)/libpulse-mainloop-glib.so \
-    target=libpulse-mainloop-glib.so.0.0.5
+    target=libpulse-mainloop-glib.so.0
 link path=usr/lib/$(MACH64)/libpulse-mainloop-glib.so.0 \
-    target=libpulse-mainloop-glib.so.0.0.5
-file path=usr/lib/$(MACH64)/libpulse-mainloop-glib.so.0.0.5
-link path=usr/lib/$(MACH64)/libpulse-simple.so target=libpulse-simple.so.0.1.1
+    target=libpulse-mainloop-glib.so.0.0.6
+file path=usr/lib/$(MACH64)/libpulse-mainloop-glib.so.0.0.6
+link path=usr/lib/$(MACH64)/libpulse-simple.so target=libpulse-simple.so.0
 link path=usr/lib/$(MACH64)/libpulse-simple.so.0 target=libpulse-simple.so.0.1.1
 file path=usr/lib/$(MACH64)/libpulse-simple.so.0.1.1
-link path=usr/lib/$(MACH64)/libpulse.so target=libpulse.so.0.21.1
-link path=usr/lib/$(MACH64)/libpulse.so.0 target=libpulse.so.0.21.1
-file path=usr/lib/$(MACH64)/libpulse.so.0.21.1
+link path=usr/lib/$(MACH64)/libpulse.so target=libpulse.so.0
+link path=usr/lib/$(MACH64)/libpulse.so.0 target=libpulse.so.0.24.3
+file path=usr/lib/$(MACH64)/libpulse.so.0.24.3
 file path=usr/lib/$(MACH64)/pkgconfig/libpulse-mainloop-glib.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libpulse-simple.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libpulse.pc
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/libavahi-wrap.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/libcli.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/liboss-util.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/libprotocol-cli.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/libprotocol-http.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/libprotocol-native.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/libprotocol-simple.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/libraop.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/librtp.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-allow-passthrough.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-always-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-always-source.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-augment-properties.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-card-restore.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-cli-protocol-tcp.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-cli-protocol-unix.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-cli.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-combine-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-combine.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-console-kit.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-dbus-protocol.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-default-device-restore.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-detect.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-device-manager.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-device-restore.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-echo-cancel.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-equalizer-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-filter-apply.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-filter-heuristics.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-gsettings.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-http-protocol-tcp.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-http-protocol-unix.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-intended-roles.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-ladspa-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-loopback.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-match.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-native-protocol-fd.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-native-protocol-tcp.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-native-protocol-unix.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-null-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-null-source.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-oss.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-pipe-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-pipe-source.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-position-event-sounds.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-raop-discover.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-raop-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-remap-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-remap-source.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-rescue-streams.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-role-cork.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-role-ducking.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-rtp-recv.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-rtp-send.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-rygel-media-server.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-simple-protocol-tcp.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-simple-protocol-unix.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-sine-source.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-sine.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-solaris.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-stream-restore.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-suspend-on-idle.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-switch-on-connect.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-switch-on-port-available.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-tunnel-sink-new.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-tunnel-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-tunnel-source-new.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-tunnel-source.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-virtual-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-virtual-source.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-virtual-surround-sink.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-volume-restore.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-x11-bell.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-x11-cork-request.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-x11-publish.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-x11-xsmp.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-zeroconf-discover.so
-file path=usr/lib/$(MACH64)/pulse-$(HUMAN_VERSION)/modules/module-zeroconf-publish.so
-file path=usr/lib/$(MACH64)/pulse/gsettings-helper mode=0555
 file path=usr/lib/$(MACH64)/pulseaudio/libpulsecommon-$(HUMAN_VERSION).so
 file path=usr/lib/$(MACH64)/pulseaudio/libpulsecore-$(HUMAN_VERSION).so
+file path=usr/lib/$(MACH64)/pulseaudio/libpulsedsp.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/libavahi-wrap.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/libcli.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/liboss-util.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/libprotocol-cli.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/libprotocol-http.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/libprotocol-native.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/libprotocol-simple.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/libraop.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/librtp.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-allow-passthrough.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-always-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-always-source.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-augment-properties.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-card-restore.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-cli-protocol-tcp.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-cli-protocol-unix.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-cli.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-combine-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-combine.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-console-kit.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-dbus-protocol.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-default-device-restore.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-detect.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-device-manager.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-device-restore.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-echo-cancel.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-equalizer-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-filter-apply.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-filter-heuristics.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-gsettings.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-http-protocol-tcp.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-http-protocol-unix.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-intended-roles.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-ladspa-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-loopback.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-match.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-native-protocol-fd.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-native-protocol-tcp.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-native-protocol-unix.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-null-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-null-source.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-oss.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-pipe-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-pipe-source.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-position-event-sounds.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-raop-discover.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-raop-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-remap-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-remap-source.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-rescue-streams.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-role-cork.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-role-ducking.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-rtp-recv.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-rtp-send.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-rygel-media-server.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-simple-protocol-tcp.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-simple-protocol-unix.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-sine-source.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-sine.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-stream-restore.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-suspend-on-idle.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-switch-on-connect.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-switch-on-port-available.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-tunnel-sink-new.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-tunnel-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-tunnel-source-new.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-tunnel-source.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-virtual-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-virtual-source.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-virtual-surround-sink.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-volume-restore.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-x11-bell.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-x11-cork-request.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-x11-publish.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-x11-xsmp.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-zeroconf-discover.so
+file path=usr/lib/$(MACH64)/pulseaudio/modules/module-zeroconf-publish.so
+file path=usr/libexec/pulse/gsettings-helper
 file path=usr/share/GConf/gsettings/pulseaudio.convert
-link path=usr/share/bash-completion/completions/pacat target=pulseaudio
-link path=usr/share/bash-completion/completions/pacmd target=pulseaudio
-link path=usr/share/bash-completion/completions/pactl target=pulseaudio
-link path=usr/share/bash-completion/completions/padsp target=pulseaudio
-link path=usr/share/bash-completion/completions/paplay target=pulseaudio
-link path=usr/share/bash-completion/completions/parec target=pulseaudio
-link path=usr/share/bash-completion/completions/parecord target=pulseaudio
-link path=usr/share/bash-completion/completions/pasuspender target=pulseaudio
-file path=usr/share/bash-completion/completions/pulseaudio
+link path=usr/share/bash-completion/completions/pacat target=pactl
+link path=usr/share/bash-completion/completions/pacmd target=pactl
+file path=usr/share/bash-completion/completions/pactl
+link path=usr/share/bash-completion/completions/padsp target=pactl
+link path=usr/share/bash-completion/completions/paplay target=pactl
+link path=usr/share/bash-completion/completions/parec target=pactl
+link path=usr/share/bash-completion/completions/parecord target=pactl
+link path=usr/share/bash-completion/completions/pasuspender target=pactl
+link path=usr/share/bash-completion/completions/pulseaudio target=pactl
+file path=usr/share/dbus-1/system.d/pulseaudio-system.conf
 file path=usr/share/glib-2.0/schemas/org.freedesktop.pulseaudio.gschema.xml
 file path=usr/share/locale/af/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/as/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/be/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/bg/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/bn_IN/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/ca/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/cs/LC_MESSAGES/pulseaudio.mo
@@ -200,7 +204,9 @@ file path=usr/share/locale/da/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/de/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/de_CH/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/el/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/eo/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/es/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/eu/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/fi/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/fr/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/gl/LC_MESSAGES/pulseaudio.mo
@@ -212,6 +218,8 @@ file path=usr/share/locale/hu/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/id/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/it/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/ja/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/ka/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/kk/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/kn/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/ko/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/lt/LC_MESSAGES/pulseaudio.mo
@@ -226,6 +234,7 @@ file path=usr/share/locale/pl/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/pt/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/ru/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/si/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/sk/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/sr/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/sr@latin/LC_MESSAGES/pulseaudio.mo
@@ -258,4 +267,4 @@ file path=usr/share/vala/vapi/libpulse-simple.deps
 file path=usr/share/vala/vapi/libpulse-simple.vapi
 file path=usr/share/vala/vapi/libpulse.deps
 file path=usr/share/vala/vapi/libpulse.vapi
-file path=usr/share/zsh/5.2/functions/Completion/Unix/_pulseaudio
+file path=usr/share/zsh/5.9/functions/Completion/Unix/_pulseaudio

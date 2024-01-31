@@ -15,16 +15,17 @@
 #
 
 BUILD_BITS= 64
+BUILD_STYLE=meson
 OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pulseaudio
-COMPONENT_VERSION=	13.0
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	17.0
+COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=	Sample Rate Converter for audio
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:961b23ca1acfd28f2bc87414c27bb40e12436efcf2158d29721b1e89f3f28057
+COMPONENT_ARCHIVE_HASH= sha256:053794d6671a3e397d849e478a80b82a63cb9d8ca296bd35b73317bb5ceb87b5
 COMPONENT_ARCHIVE_URL= https://freedesktop.org/software/pulseaudio/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/PulseAudio/
 COMPONENT_FMRI=		library/audio/pulseaudio
@@ -35,53 +36,41 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-LDFLAGS += -lnsl -lsocket -lgobject-2.0
+# MESON_BUILDTYPE = debug
+# COMPONENT_BUILD_ARGS += --verbose
+LDFLAGS += -lnsl -lsocket
 
-CPPFLAGS += -I/usr/include/gc
-CFLAGS += -std=c99
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --disable-esound
-CONFIGURE_OPTIONS += --disable-force-preopen
-# Solaris has native OSS; don't use PulseAudio wrapper.
-CONFIGURE_OPTIONS += --disable-oss-wrapper
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-avahi
-CONFIGURE_OPTIONS += --enable-dbus
-CONFIGURE_OPTIONS += --disable-gconf
-CONFIGURE_OPTIONS += --enable-glib2
-CONFIGURE_OPTIONS += --enable-hal-compat
-CONFIGURE_OPTIONS += --enable-ipv6
-CONFIGURE_OPTIONS += --enable-manpages
-CONFIGURE_OPTIONS += --enable-openssl
-CONFIGURE_OPTIONS += --enable-orc
-CONFIGURE_OPTIONS += --enable-oss-output
-CONFIGURE_OPTIONS += --enable-solaris
-CONFIGURE_OPTIONS += --with-database=gdbm
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --with-zsh-completion-dir=/usr/share/zsh/5.2/functions/Completion/Unix
-CONFIGURE_OPTIONS += --enable-tests
+CONFIGURE_OPTIONS += -Dhal-compat=true
+CONFIGURE_OPTIONS += -Dipv6=true
+CONFIGURE_OPTIONS += -Dopenssl=enabled
+CONFIGURE_OPTIONS += -Dorc=enabled
+CONFIGURE_OPTIONS += -Doss-output=enabled
+CONFIGURE_OPTIONS += -Ddatabase=gdbm
+CONFIGURE_OPTIONS += -Dzshcompletiondir=/usr/share/zsh/5.9/functions/Completion/Unix
+CONFIGURE_OPTIONS += -Dsystem_user=pulse
+CONFIGURE_OPTIONS += -Dsystem_group=pulse
+CONFIGURE_OPTIONS += -Djack=disabled
+CONFIGURE_OPTIONS += -Dlirc=disabled
+CONFIGURE_OPTIONS += -Dbluez5=disabled
+CONFIGURE_OPTIONS += -Dgstreamer=enabled
+CONFIGURE_OPTIONS += -Dbluez5-gstreamer=disabled
+CONFIGURE_OPTIONS += -Dgsettings=enabled
+CONFIGURE_OPTIONS += -Dgtk=disabled
+CONFIGURE_OPTIONS += -Dsoxr=enabled
+CONFIGURE_OPTIONS += -Dwebrtc-aec=disabled
+CONFIGURE_OPTIONS += -Dsystemd=disabled
+CONFIGURE_OPTIONS += -Dtests=true
 
 CONFIGURE_ENV	+= CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV	+= PERL=$(PERL)
 CONFIGURE_ENV	+= PYTHON=$(PYTHON)
 CONFIGURE_ENV	+= GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
 
-# Required due to patches; must use special bootstrap script and not standard
-# autoreconf due to use of both gettext and intltool in the same project! If
-# you use standard autoreconf, configure will fail.
-COMPONENT_PREP_ACTION += ( cd $(@D) ; NOCONFIGURE=1 $(CONFIG_SHELL) bootstrap.sh );
-
-COMPONENT_BUILD_ARGS += V=0
-
-unexport SHELLOPTS
-COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
+COMPONENT_TEST_TRANSFORMS = "'/Ok|Fail:|Skipped|Unexpected Pass|Timeout/'"
 
+# to prevent reconfigure before install
+COMPONENT_PRE_INSTALL_ACTION += ( cd $(@D) && touch build.ninja )
 # For tests
 TEST_REQUIRED_PACKAGES += developer/check
 
@@ -90,6 +79,8 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 PYTHON_REQUIRED_PACKAGES += library/python/sip
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/soxr
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/fftw-3
