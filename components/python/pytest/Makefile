@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
-HUMAN_VERSION =			7.4.4
+HUMAN_VERSION =			8.0.0
 COMPONENT_SUMMARY =		pytest - pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/80/1f/9d8e98e4133ffb16c90f3b405c43e38d3abb715bb5d7a63a5a684f7e46a3/pytest-7.4.4.tar.gz
+	https://files.pythonhosted.org/packages/50/fd/af2d835eed57448960c4e7e9ab76ee42f24bcdd521e967191bc26fa2dece/pytest-8.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2cf0005922c6ace4a3e2ec8b4080eb0d9753fdc93107415332f50ce9e7994280
+	sha256:249b1b0864530ba251b7438274c4d251c58d868edaaec8762893ad4a0d71c36c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -50,8 +50,8 @@ COMPONENT_TEST_ENV += _PYTEST_TOX_COVERAGE_RUN="python -m"
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-lazy-fixture
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-metadata
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-perf
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-reporter
