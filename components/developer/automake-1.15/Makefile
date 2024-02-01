@@ -24,38 +24,57 @@
 # Modified by Aurelien Larcher, 2015.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         automake
-COMPONENT_MAJOR_VERSION=1.15
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).1
-COMPONENT_REVISION=     2
-COMPONENT_FMRI=         developer/build/automake-115
+COMPONENT_VERSION=	1.15.1
+COMPONENT_REVISION=	3
+COMPONENT_SUMMARY=	A Makefile generator
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/automake/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	\
+	sha256:af6ba39142220687c500f79b4aa2f181d9b24e4f8d8ec497cea4ba26c64bedaf
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		developer/build/automake-115
 COMPONENT_CLASSIFICATION=Development/GNU
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:988e32527abe052307d21c8ca000aa238b914df363a617e38f4fb89f5abf6260
-COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=      A Makefile generator
-COMPONENT_PROJECT_URL=  http://www.gnu.org/software/automake/ 
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_LICENSE=      GPLv2 FDLv1.3
+COMPONENT_LICENSE=	GPL-2.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-PKG_MACROS+= COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
+# Testing expects GNU make
+PATH = $(PATH.gnu)
 
-CONFIGURE_OPTIONS  +=	--program-transform-name=s/$$/-$(COMPONENT_MAJOR_VERSION)/
-CONFIGURE_OPTIONS  +=	--docdir=$(CONFIGURE_PREFIX)/share/doc/$(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
+COMPONENT_VERSION_MAJOR = $(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
 
-COMPONENT_TEST_ENV += -i PATH=$(PATH.gnu)
+CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)/$(COMPONENT_NAME)-$(COMPONENT_VERSION_MAJOR)
+
+# Convert unversioned binary hardlinks and man page files to symlinks
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in aclocal automake ; do \
+		$(RM) $(PROTOUSRBINDIR)/$$f ; \
+		$(SYMLINK) $$f-$(COMPONENT_VERSION_MAJOR) $(PROTOUSRBINDIR)/$$f ; \
+		$(RM) $(PROTOUSRSHAREMAN1DIR)/$$f.1 ; \
+		$(SYMLINK) $$f-$(COMPONENT_VERSION_MAJOR).1 $(PROTOUSRSHAREMAN1DIR)/$$f.1 ; \
+	done ;
+
+# We do not want the info index file
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
+
+# Convert unversioned info files to versioned and create unversioned symlinks
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in automake-history.info automake.info automake.info-1 automake.info-2 ; do \
+		$(MV) $(PROTOUSRSHAREDIR)/info/$$f \
+			$(PROTOUSRSHAREDIR)/info/$${f%.*}-$(COMPONENT_VERSION_MAJOR).$${f\#\#*.} ; \
+		$(SYMLINK) $${f%.*}-$(COMPONENT_VERSION_MAJOR).$${f\#\#*.} $(PROTOUSRSHAREDIR)/info/$$f ; \
+	done ;
+
+# We do not want the README file in the aclocal directory
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/aclocal/README ;
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
