@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         automake
 COMPONENT_VERSION=      1.10.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY =	A Makefile generator
 COMPONENT_PROJECT_URL=  http://www.gnu.org/software/automake/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,16 +42,27 @@ COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_VERSION_MAJOR = $(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
+
+CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)/automake-$(COMPONENT_VERSION_MAJOR)
+
 # Convert unversioned hardlinks to symlinks
 COMPONENT_POST_INSTALL_ACTION += \
 	for f in aclocal automake ; do \
 		$(RM) $(PROTOUSRBINDIR)/$$f ; \
-		$(SYMLINK) $$f-1.10 $(PROTOUSRBINDIR)/$$f ; \
+		$(SYMLINK) $$f-$(COMPONENT_VERSION_MAJOR) $(PROTOUSRBINDIR)/$$f ; \
 	done ;
 
-# Remove documentation files we are not interrested in
-COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRSHAREDIR)/info ;
-COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRSHAREDOCDIR) ;
+# We do not want the info index file
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
+
+# Convert unversioned info files to versioned and create unversioned symlinks
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in automake.info automake.info-1 automake.info-2 ; do \
+		$(MV) $(PROTOUSRSHAREDIR)/info/$$f \
+			$(PROTOUSRSHAREDIR)/info/$${f%.*}-$(COMPONENT_VERSION_MAJOR).$${f\#\#*.} ; \
+		$(SYMLINK) $${f%.*}-$(COMPONENT_VERSION_MAJOR).$${f\#\#*.} $(PROTOUSRSHAREDIR)/info/$$f ; \
+	done ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl
