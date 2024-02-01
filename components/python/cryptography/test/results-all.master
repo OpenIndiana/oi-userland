@@ -6,7 +6,7 @@ OpenSSL: OpenSSL 3.1.4 24 Oct 2023
 FIPS Enabled: False
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 3244 items
+collecting ... collected 3250 items
 
 tests/bench/test_aead.py::test_aesccm_decrypt PASSED
 tests/bench/test_aead.py::test_aesccm_encrypt PASSED
@@ -719,6 +719,7 @@ tests/hazmat/primitives/test_dsa.py::TestDSASignature::test_dsa_signing PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSASignature::test_prehashed_digest_mismatch PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSASignature::test_prehashed_sign PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSASignature::test_sign PASSED
+tests/hazmat/primitives/test_dsa.py::TestDSASignature::test_sign_verify_buffer PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSAVerification::test_dsa_verification PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSAVerification::test_dsa_verify_invalid_asn1 PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSAVerification::test_prehashed_digest_mismatch PASSED
@@ -759,6 +760,7 @@ tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_load_invalid_public_e
 tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_sign PASSED
 tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_sign_prehashed PASSED
 tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_sign_prehashed_digest_mismatch PASSED
+tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_sign_verify_buffers PASSED
 tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_signature_failures PASSED
 tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_signatures PASSED
 tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_signing_with_example_keys PASSED
@@ -869,6 +871,7 @@ tests/hazmat/primitives/test_ed25519.py::TestEd25519Signing::test_round_trip_pri
 tests/hazmat/primitives/test_ed25519.py::TestEd25519Signing::test_round_trip_private_serialization[Encoding.DER-PrivateFormat.PKCS8-encryption4-\x00-load_der_private_key] PASSED
 tests/hazmat/primitives/test_ed25519.py::TestEd25519Signing::test_round_trip_private_serialization[Encoding.PEM-PrivateFormat.PKCS8-encryption0-password-load_pem_private_key] PASSED
 tests/hazmat/primitives/test_ed25519.py::TestEd25519Signing::test_round_trip_private_serialization[Encoding.PEM-PrivateFormat.PKCS8-encryption2-None-load_pem_private_key] PASSED
+tests/hazmat/primitives/test_ed25519.py::TestEd25519Signing::test_sign_verify_buffer PASSED
 tests/hazmat/primitives/test_ed25519.py::TestEd25519Signing::test_sign_verify_input PASSED
 tests/hazmat/primitives/test_ed25519.py::test_ed25519_unsupported SKIPPED
 tests/hazmat/primitives/test_ed25519.py::test_public_key_copy PASSED
@@ -905,6 +908,7 @@ tests/hazmat/primitives/test_ed448.py::TestEd448Signing::test_sign_input[vector5
 tests/hazmat/primitives/test_ed448.py::TestEd448Signing::test_sign_input[vector6] PASSED
 tests/hazmat/primitives/test_ed448.py::TestEd448Signing::test_sign_input[vector7] PASSED
 tests/hazmat/primitives/test_ed448.py::TestEd448Signing::test_sign_input[vector8] PASSED
+tests/hazmat/primitives/test_ed448.py::TestEd448Signing::test_sign_verify_buffer PASSED
 tests/hazmat/primitives/test_ed448.py::test_ed448_unsupported SKIPPED
 tests/hazmat/primitives/test_ed448.py::test_public_key_copy PASSED
 tests/hazmat/primitives/test_ed448.py::test_public_key_equality PASSED
@@ -1584,7 +1588,8 @@ tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_pss_signing_sha2[has
 tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_pss_signing_sha2[hash_alg1] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_pss_signing_sha2[hash_alg2] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_pss_signing_sha2[hash_alg3] PASSED
-tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_sign PASSED
+tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_sign[message1] PASSED
+tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_sign[one little message] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_unsupported_hash PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_unsupported_hash_pss_mgf1 PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSASignature::test_unsupported_padding PASSED
@@ -1607,7 +1612,8 @@ tests/hazmat/primitives/test_rsa.py::TestRSAVerification::test_pss_verify_digest
 tests/hazmat/primitives/test_rsa.py::TestRSAVerification::test_pss_verify_salt_length_too_long PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSAVerification::test_unsupported_padding PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSAVerification::test_unsupported_pss_mgf PASSED
-tests/hazmat/primitives/test_rsa.py::TestRSAVerification::test_verify PASSED
+tests/hazmat/primitives/test_rsa.py::TestRSAVerification::test_verify[message1] PASSED
+tests/hazmat/primitives/test_rsa.py::TestRSAVerification::test_verify[one little message] PASSED
 tests/hazmat/primitives/test_rsa.py::test_modular_inverse PASSED
 tests/hazmat/primitives/test_rsa.py::test_skip_pss_hash_algorithm_unsupported PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_already_finalized PASSED
@@ -3254,4 +3260,4 @@ tests/x509/verification/test_verification.py::TestStore::test_store_rejects_empt
 tests/x509/verification/test_verification.py::TestStore::test_store_rejects_non_certificates PASSED
 
 =========================== short test summary info ============================
-======== 3065 passed, 179 skipped ========
+======== 3071 passed, 179 skipped ========
