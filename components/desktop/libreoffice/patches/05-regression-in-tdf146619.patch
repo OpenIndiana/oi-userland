@@ -1,0 +1,38 @@
+Regressions in tdf#146619 Remove unused includes from sal/osl/unx 
+see commit https://github.com/LibreOffice/core/commit/252132d9752964a4aa82567b6a3ca8cd7df5ccfb
+
+problem 1
+libreoffice-dev/core-695390b08799af34b393c81c834d615bea330d89/sal/osl/unx/process.cxx:685:9: error: 'kill' was not declared in this scope
+  685 |     if (kill(static_cast<oslProcessImpl*>(Process)->m_pid, SIGKILL) != 0)
+      |         ^~~~
+
+problem 2
+libreoffice-dev/core-695390b08799af34b393c81c834d615bea330d89/sal/osl/unx/process_impl.cxx:338:31: error: 'rtl_stringbuffer_newFromStringBuffer' was not declared in this scope; did you mean 'rtl_string_newFromString'?
+  338 |         sal_Int32 nCapacity = rtl_stringbuffer_newFromStringBuffer( &pBuffer,
+      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                               rtl_string_newFromString
+
+--- core-695390b08799af34b393c81c834d615bea330d89/sal/osl/unx/process.cxx.~1~	2023-10-03 11:29:14.000000000 -0400
++++ core-695390b08799af34b393c81c834d615bea330d89/sal/osl/unx/process.cxx	2023-10-05 15:55:01.519220228 -0400
+@@ -27,6 +27,11 @@
+ #include <sys/wait.h>
+ #include <unistd.h>
+ 
++#if defined(__sun)
++#include <sys/types.h>
++#include <signal.h>
++#endif
++
+ /*
+  *   ToDo:
+  *      - cleanup of process status things
+--- core-695390b08799af34b393c81c834d615bea330d89/sal/osl/unx/process_impl.cxx.old	2023-10-05 14:41:21.898902427 -0400
++++ core-695390b08799af34b393c81c834d615bea330d89/sal/osl/unx/process_impl.cxx	2023-10-05 14:42:08.830757584 -0400
+@@ -33,6 +33,7 @@
+ #include <osl/thread.h>
+ #include <rtl/alloc.h>
+ #include <rtl/ustring.hxx>
++#include <rtl/strbuf.h>
+ #include <sal/log.hxx>
+ 
+ #include "file_path_helper.hxx"
