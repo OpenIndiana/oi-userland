@@ -1057,8 +1057,8 @@ else
 PKGLINT =	${WS_TOOLS}/pkglint
 endif
 
-ACLOCAL =	/usr/bin/aclocal-1.10
-AUTOMAKE =	/usr/bin/automake-1.10
+ACLOCAL =	/usr/bin/aclocal-1.16
+AUTOMAKE =	/usr/bin/automake-1.16
 AUTORECONF = 	/usr/bin/autoreconf
 
 KSH93 =         /usr/bin/ksh93
