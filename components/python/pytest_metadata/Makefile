@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_metadata
-HUMAN_VERSION =			3.0.0
+HUMAN_VERSION =			3.1.0
 COMPONENT_SUMMARY =		pytest_metadata - pytest plugin for test session metadata
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-metadata
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fa/0a/2d380e69561a2fea3f395ef2504461cdb52387fba780d13796bfddc6a416/pytest_metadata-3.0.0.tar.gz
+	https://files.pythonhosted.org/packages/03/ba/bda83d96bed99276a0b142baeb9a4b8b3183c0d3ae2d5470a0e2b1ebfe40/pytest_metadata-3.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:769a9c65d2884bd583bc626b0ace77ad15dbe02dd91a9106d47fd46d9c2569ca
+	sha256:53dcd8bbd101cf6ca97efb4a42a72fcbee5de173bddad4850f4ce9bb27e9f0f2
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,6 +36,13 @@ COMPONENT_TEST_TARGETS += --
 COMPONENT_TEST_TARGETS += --color=no
 # override -s in tox.ini to suppress annoying test output
 COMPONENT_TEST_TARGETS += --capture=fd
+
+# https://github.com/pytest-dev/pluggy/issues/457
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
+TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
