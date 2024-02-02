@@ -1,0 +1,29 @@
+--- fail2ban-1.0.2/config/action.d/ipfilter.conf.~1~	2022-11-09 10:46:15.000000000 -0500
++++ fail2ban-1.0.2/config/action.d/ipfilter.conf	2024-01-17 22:06:17.220116504 -0500
+@@ -13,7 +13,7 @@
+ # Values:  CMD
+ #
+ # enable IPF if not already enabled
+-actionstart = /sbin/ipf -E
++actionstart = /usr/sbin/ipf -E
+ 
+ 
+ # Option:  actionstop
+@@ -37,7 +37,7 @@
+ # Tags:    See jail.conf(5) man page
+ # Values:  CMD
+ #
+-actionban = echo block <blocktype> in quick from <ip>/32 | /sbin/ipf -f -
++actionban = echo block <blocktype> in quick from <ip>/32 | /usr/sbin/ipf -f -
+ 
+ 
+ # Option:  actionunban
+@@ -47,7 +47,7 @@
+ # Values:  CMD
+ #
+ # note -r option used to remove matching rule
+-actionunban = echo block <blocktype> in quick from <ip>/32 | /sbin/ipf -r -f -
++actionunban = echo block <blocktype> in quick from <ip>/32 | /usr/sbin/ipf -r -f -
+ 
+ [Init]
+ 

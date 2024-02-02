@@ -1,0 +1,20 @@
+--- fail2ban-1.0.2/README.Solaris.old	2024-01-17 16:38:53.107504489 -0500
++++ fail2ban-1.0.2/README.Solaris	2024-01-17 16:43:33.623667891 -0500
+@@ -120,3 +120,17 @@
+ * Fail2ban adds lines like these to /etc/hosts.deny:
+ 
+     sshd: 1.2.3.4
++
++* Solaris IP Filter uses a "last matching rule" algorithm.  If the packet
++  matches a rule containing the "quick" keyword, the action for that rule is
++  taken and no subsequent rules are checked.  This concept is not compatible
++  with fail2ban. It appends rules at the end of a rule set and will never match
++  (i.e. block a connection) if an earlier rule matches (i.e. pass a connection)
++  with quick.  If you want an incoming firewall on a system that only supports
++  incoming web connections, the rules would look like this to support fail2ban:
++
++    block in from any to any
++    pass in from any to any port = 80 keep state
++
++  fail2ban would then append to the end:
++    block in quick from x.x.x.x/32 to any
