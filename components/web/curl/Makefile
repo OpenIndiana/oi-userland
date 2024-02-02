@@ -29,19 +29,19 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      8.5.0
+COMPONENT_VERSION=      8.6.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:42ab8db9e20d8290a3b633e7fbb3cec15db34df65fd1015ef8ac1e4723750eeb
+COMPONENT_ARCHIVE_HASH= sha256:3ccd55d91af9516539df80625f818c734dc6f2ecf9bada33c76765e99121db15
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      CURL
-COMPONENT_LICENSE_FILE=      COPYING
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -69,7 +69,10 @@ CONFIGURE_ENV += CFLAGS="-I$(OPENSSL_INCDIR) $(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="-I$(OPENSSL_INCDIR) $(CPPFLAGS) -I/usr/include/openldap"
 
 CONFIGURE_OPTIONS += LDFLAGS="-L$(OPENSSL_LIBDIR.$(BITS)) $(LDFLAGS)"
-CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
+CONFIGURE_OPTIONS += --disable-dependency-tracking
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp
 CONFIGURE_OPTIONS += --enable-file --enable-dict
 CONFIGURE_OPTIONS += --enable-manual --disable-libgcc
