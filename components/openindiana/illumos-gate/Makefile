@@ -172,6 +172,10 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)
 	# Drop dependency on GCC compat links
 	echo '<transform depend fmri=pkg:/system/library/gcc-.*-compat-links -> drop>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
+	# Convert dependency on any version of Perl runtime to dependency on single unversioned runtime/perl
+	echo '<transform depend type=require-any fmri=pkg:/runtime/perl-5[0-9]+@ -> set fmri runtime/perl>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo '<transform depend type=require-any fmri=runtime/perl$$ -> set type require>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
 	# Drop dependency on ignored packages
 	$(GSED) -e 's|^\(.*\)$$|<transform depend fmri=pkg:/\1@.* -> drop>|' $< >> $@
 
