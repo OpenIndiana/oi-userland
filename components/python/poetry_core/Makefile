@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_core
-HUMAN_VERSION =			1.8.1
+HUMAN_VERSION =			1.9.0
 COMPONENT_SUMMARY =		poetry_core - Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/36/66/6af2891495d12020419c8447d0b29c1e96f3be16631faaed6bda5b886d5d/poetry_core-1.8.1.tar.gz
+	https://files.pythonhosted.org/packages/f2/db/20a9f9cae3f3c213a8c406deb4395698459fd96962cea8f2ccb230b1943c/poetry_core-1.9.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:67a76c671da2a70e55047cddda83566035b701f7e463b32a2abfeac6e2a16376
+	sha256:fa7a4001eae8aa572ee84f35feb510b321bd652e5cf9293249d62853e1f935a2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,6 +40,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # https://github.com/python-poetry/poetry/issues/7824
 # https://github.com/python-poetry/poetry/issues/7826
+
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
