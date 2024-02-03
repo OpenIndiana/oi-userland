@@ -26,7 +26,8 @@ COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
 # PyPA Core metadata specifications and PEP 503.
 COMPONENT_FMRI ?=		library/python/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z] | $(GSED) -e 's/[._-]\{1,\}/-/g')
 COMPONENT_PROJECT_URL ?=	https://pypi.org/project/$(COMPONENT_NAME)/
-COMPONENT_ARCHIVE_URL ?=	$(call pypi_url)
+# https://warehouse.pypa.io/api-reference/integration-guide.html#predictable-urls
+COMPONENT_ARCHIVE_URL ?=	https://files.pythonhosted.org/packages/source/$(shell echo $(COMPONENT_NAME) | cut -c 1)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PYPI ?=		$(COMPONENT_NAME)
 # Enable ASLR by default.  Component could disable ASLR by setting
 # COMPONENT_ASLR to 'no'.
