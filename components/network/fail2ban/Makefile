@@ -10,28 +10,26 @@
 #
 
 #
-# This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d multimedia/yt-dlp yt-dlp
+# Copyright 2024 Geoff Weiss
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		fail2ban
-HUMAN_VERSION =			1.0.2
-COMPONENT_SUMMARY =		ban hosts that cause multiple authentication errors
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE=		$(HUMAN_VERSION).tar.gz
-COMPONENT_PROJECT_URL =		https://www.fail2ban.org
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/fail2ban/fail2ban/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH =	sha256:ae8b0b41f27a7be12d40488789d6c258029b23a01168e3c0d347ee80b325ac23
-COMPONENT_LICENSE =		GPLv2
-COMPONENT_LICENSE_FILE =	COPYING
+COMPONENT_NAME= fail2ban
+COMPONENT_VERSION= 1.0.2
+COMPONENT_SUMMARY= Ban hosts that cause multiple authentication errors
+COMPONENT_PROJECT_URL= https://www.fail2ban.org
+COMPONENT_FMRI= network/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= System/Services
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_URL= https://github.com/fail2ban/fail2ban/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:ae8b0b41f27a7be12d40488789d6c258029b23a01168e3c0d347ee80b325ac23
+COMPONENT_LICENSE= GPLv2
 
-COMPONENT_FMRI =		network/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION =	System/Services
+COMPONENT_LICENSE_FILE =	COPYING
 
 # This is a standalone application.  Since no other Python project depends on
 # it we just provide single unversioned package.
@@ -49,7 +47,8 @@ COMPONENT_INSTALL_ARGS += --prefix=/usr
 COMPONENT_INSTALL_ARGS += --root=$(PROTO_DIR)
 COMPONENT_INSTALL_ARGS += --skip-build
 
-# Install SMF manifest files. Remove irrelevant files. Add openindiana paths file
+# Install SMF manifest files. Remove paths files for other OS's. 
+# Add openindiana paths file.
 COMPONENT_POST_INSTALL_ACTION += \
 	$(PYTHON) -mcompileall $(PROTO_DIR) ; \
 	$(MKDIR) $(PROTO_DIR)/lib/svc/method ; \
@@ -62,8 +61,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	rm -f $(PROTO_DIR)/etc/fail2ban/paths-fedora.conf ; \
 	rm -f $(PROTO_DIR)/etc/fail2ban/paths-freebsd.conf ; \
 	rm -f $(PROTO_DIR)/etc/fail2ban/paths-opensuse.conf ; \
-	rm -f $(PROTO_DIR)/etc/fail2ban/paths-osx.conf ; \
-	/usr/gnu/bin/find $(PROTO_DIR) -iname "*README*" -exec rm '{}' \+ ;
+	rm -f $(PROTO_DIR)/etc/fail2ban/paths-osx.conf ; 
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
