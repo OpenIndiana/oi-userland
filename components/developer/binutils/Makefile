@@ -33,22 +33,21 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.41
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.42
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:ae9a5789e23459e59606e6714723f2d3ffc31c03174191ef0d015bdf06007450
+COMPONENT_ARCHIVE_HASH= sha256:f6e4d41fd5fc778b06b7891457b3620da5ecea1006c6a4a41ae998109f85a800
 COMPONENT_FMRI=		developer/gnu-binutils
 COMPONENT_CLASSIFICATION=Development/GNU
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_PREFIX =	/usr/gnu
+CONFIGURE_PREFIX= /usr/gnu
 
 CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
@@ -80,6 +79,16 @@ COMPONENT_TEST_TRANSFORMS += \
 # Master test results are different between amd64 and SPARCV9.
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
+
+PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/ar
+PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/as
+PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/ld
+PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/nm
+PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/objcopy
+PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/objdump
+PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/ranlib
+PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/readelf
+PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/strip
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd

@@ -1,16 +1,17 @@
-From OmniOS
+imported from OmniOS
+Try to get more FILE's on 32bit systems, or limit itself to not cross the limit if it fails
 
-diff -wpruN '--exclude=*.orig' a~/bfd/cache.c a/bfd/cache.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/bfd/cache.c a/bfd/cache.c
 --- a~/bfd/cache.c	1970-01-01 00:00:00
 +++ a/bfd/cache.c	1970-01-01 00:00:00
-@@ -97,7 +97,24 @@ bfd_cache_max_open (void)
+@@ -99,7 +99,24 @@ bfd_cache_max_open (void)
  
        if (getrlimit (RLIMIT_NOFILE, &rlim) == 0
  	  && rlim.rlim_cur != (rlim_t) RLIM_INFINITY)
 +      {
-+#if defined(__sun__) && defined(_ILP32)
++#if defined(__illumos__) && defined(_ILP32)
 +	/*
-+	 * Solarish stdio for 32-bit has an ABI-constrained limit that
++	 * illumos stdio for 32-bit has an ABI-constrained limit that
 +	 * the UNIX file descriptor must be 255 or less.
 +	 *
 +	 * This can be corrected by enabling extended FILE stdio, which
@@ -22,7 +23,7 @@ diff -wpruN '--exclude=*.orig' a~/bfd/cache.c a/bfd/cache.c
 +	  /* Cap it at 250 to not break stdio. */
 +	  max = 250;
 +	} else
-+#endif /* __sun__ */
++#endif /* __illumos__ */
  	max = rlim.rlim_cur / 8;
 +      }
        else
