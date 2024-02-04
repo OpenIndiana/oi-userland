@@ -239,7 +239,7 @@ COMPONENT_REVISION =		$((PREV_REV + 1))
 COMPONENT_SUMMARY =		$PROJECT - TODO
 EOF
 [[ -n "$HOMEPAGE" ]] && printf "COMPONENT_PROJECT_URL =\t\t%s\n" "$HOMEPAGE"
-[[ -n "$DOWNLOAD_URL" ]] && printf 'COMPONENT_ARCHIVE_URL =\t\t\\\n\t%s\n' "$DOWNLOAD_URL"
+[[ -n "$DOWNLOAD_URL" ]] && printf 'DOWNLOAD_URL =\t\t\\\n\t%s\n' "$DOWNLOAD_URL"
 cat <<EOF
 COMPONENT_ARCHIVE_HASH =	\\
 	sha256:TODO
@@ -253,6 +253,25 @@ printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
 [[ -f "$CONF" ]] && cat "$CONF" | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\n"
 ) > Makefile
+
+# If the automatically constructed COMPONENT_ARCHIVE_URL points to the same
+# location as DOWNLOAD_URL then we should use it
+if [[ -n "$DOWNLOAD_URL" ]] ; then
+	COMPONENT_ARCHIVE_URL=$($GMAKE print-value-COMPONENT_ARCHIVE_URL)
+	[[ "$COMPONENT_ARCHIVE_URL" == "$DOWNLOAD_URL" ]] && DOWNLOAD_URL=
+fi
+# The default COMPONENT_ARCHIVE_URL usually redirects to DOWNLOAD_URL so check
+# that too
+if [[ -n "$DOWNLOAD_URL" ]] ; then
+	[[ $($CURL --head --write-out "%{redirect_url}\n" --output /dev/null \
+	    "$COMPONENT_ARCHIVE_URL") == "$DOWNLOAD_URL" ]] && DOWNLOAD_URL=
+fi
+# Use either DOWNLOAD_URL or default COMPONENT_ARCHIVE_URL
+if [[ -n "$DOWNLOAD_URL" ]] ; then
+	sed -i -e $'s/^DOWNLOAD_URL =/COMPONENT_ARCHIVE_URL =/' Makefile
+else
+	sed -i -e $'/^DOWNLOAD_URL =/,+1d' Makefile
+fi
 
 # Remove COMPONENT_REVISION if not needed
 COMPONENT_VERSION=$($GMAKE print-value-COMPONENT_VERSION)
