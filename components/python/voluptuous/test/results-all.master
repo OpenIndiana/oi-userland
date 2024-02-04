@@ -4,8 +4,8 @@ py$(PYV): commands[0]> python -m pytest --cov=voluptuous voluptuous/tests/
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: pytest.ini
-collecting ... collected 138 items
+configfile: pyproject.toml
+collecting ... collected 147 items
 
 voluptuous/tests/tests.md::tests.md PASSED
 voluptuous/tests/tests.py::test_IsDir PASSED
@@ -34,7 +34,8 @@ voluptuous/tests/tests.py::test_date_custom_format PASSED
 voluptuous/tests/tests.py::test_datetime PASSED
 voluptuous/tests/tests.py::test_description PASSED
 voluptuous/tests/tests.py::test_email_validation PASSED
-voluptuous/tests/tests.py::test_email_validation_with_bad_data PASSED
+voluptuous/tests/tests.py::test_email_validation_with_bad_data[john!@voluptuous.org!@($*!] PASSED
+voluptuous/tests/tests.py::test_email_validation_with_bad_data[john@voluptuous.com>] PASSED
 voluptuous/tests/tests.py::test_email_validation_with_empty_string PASSED
 voluptuous/tests/tests.py::test_email_validation_with_none PASSED
 voluptuous/tests/tests.py::test_email_validation_without_host PASSED
@@ -48,14 +49,15 @@ voluptuous/tests/tests.py::test_extra_empty_errors PASSED
 voluptuous/tests/tests.py::test_extra_with_required PASSED
 voluptuous/tests/tests.py::test_fix_157 PASSED
 voluptuous/tests/tests.py::test_fqdn_url_validation PASSED
-voluptuous/tests/tests.py::test_fqdn_url_without_domain_name PASSED
-voluptuous/tests/tests.py::test_fqdnurl_validation_with_empty_string PASSED
-voluptuous/tests/tests.py::test_fqdnurl_validation_with_none PASSED
-voluptuous/tests/tests.py::test_fqdnurl_validation_without_host PASSED
+voluptuous/tests/tests.py::test_fqdn_url_validation_with_bad_data[None] PASSED
+voluptuous/tests/tests.py::test_fqdn_url_validation_with_bad_data[empty host] PASSED
+voluptuous/tests/tests.py::test_fqdn_url_validation_with_bad_data[empty string] PASSED
+voluptuous/tests/tests.py::test_fqdn_url_validation_with_bad_data[without domain name] PASSED
 voluptuous/tests/tests.py::test_frozenset_of_integers PASSED
 voluptuous/tests/tests.py::test_frozenset_of_integers_and_strings PASSED
 voluptuous/tests/tests.py::test_humanize_error PASSED
 voluptuous/tests/tests.py::test_in PASSED
+voluptuous/tests/tests.py::test_in_unsortable_container PASSED
 voluptuous/tests/tests.py::test_inclusive PASSED
 voluptuous/tests/tests.py::test_inclusive_defaults PASSED
 voluptuous/tests/tests.py::test_inequality PASSED
@@ -79,6 +81,7 @@ voluptuous/tests/tests.py::test_named_tuples_validate_as_tuples PASSED
 voluptuous/tests/tests.py::test_nested_multiple_validation_errors PASSED
 voluptuous/tests/tests.py::test_new_required_test PASSED
 voluptuous/tests/tests.py::test_not_in PASSED
+voluptuous/tests/tests.py::test_not_in_unsortable_container PASSED
 voluptuous/tests/tests.py::test_number_validation_with_invalid_precision_invalid_scale PASSED
 voluptuous/tests/tests.py::test_number_validation_with_string PASSED
 voluptuous/tests/tests.py::test_number_validation_with_valid_precision_scale_yield_decimal_false PASSED
@@ -91,6 +94,13 @@ voluptuous/tests/tests.py::test_number_when_precision_scale_none_yield_decimal_t
 voluptuous/tests/tests.py::test_number_when_valid_precision_n_scale_none_yield_decimal_true PASSED
 voluptuous/tests/tests.py::test_object PASSED
 voluptuous/tests/tests.py::test_ordered_dict PASSED
+voluptuous/tests/tests.py::test_path_with_arbitrary_hashable_dict_key PASSED
+voluptuous/tests/tests.py::test_path_with_float_dict_key PASSED
+voluptuous/tests/tests.py::test_path_with_integer_dict_key PASSED
+voluptuous/tests/tests.py::test_path_with_list_index PASSED
+voluptuous/tests/tests.py::test_path_with_string PASSED
+voluptuous/tests/tests.py::test_path_with_tuple_dict_key PASSED
+voluptuous/tests/tests.py::test_path_with_tuple_index PASSED
 voluptuous/tests/tests.py::test_range_excludes_nan PASSED
 voluptuous/tests/tests.py::test_range_excludes_none PASSED
 voluptuous/tests/tests.py::test_range_excludes_string PASSED
@@ -137,16 +147,15 @@ voluptuous/tests/tests.py::test_sorting PASSED
 voluptuous/tests/tests.py::test_strip_util_handles_various_inputs PASSED
 voluptuous/tests/tests.py::test_subschema_extension PASSED
 voluptuous/tests/tests.py::test_title_util_handles_various_inputs PASSED
-voluptuous/tests/tests.py::test_unicode_as_key PASSED
 voluptuous/tests/tests.py::test_unordered PASSED
 voluptuous/tests/tests.py::test_upper_util_handles_various_inputs PASSED
 voluptuous/tests/tests.py::test_url_validation PASSED
-voluptuous/tests/tests.py::test_url_validation_with_empty_string PASSED
-voluptuous/tests/tests.py::test_url_validation_with_none PASSED
-voluptuous/tests/tests.py::test_url_validation_without_host PASSED
+voluptuous/tests/tests.py::test_url_validation_with_bad_data[None] PASSED
+voluptuous/tests/tests.py::test_url_validation_with_bad_data[empty host] PASSED
+voluptuous/tests/tests.py::test_url_validation_with_bad_data[empty string] PASSED
 voluptuous/tests/tests.py::test_validation_performance PASSED
 
 
-======== 138 passed ========
+======== 147 passed ========
   py$(PYV): OK
   congratulations :)
