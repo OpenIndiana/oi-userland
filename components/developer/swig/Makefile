@@ -22,13 +22,11 @@
 # Copyright (c) 2023 Friedrich Kink
 #
 
-BUILD_STYLE= configure
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         swig
 COMPONENT_VERSION=      4.1.1
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      Simplified Wrapper and Interface Generator
 COMPONENT_PROJECT_URL=  https://www.swig.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,7 +46,7 @@ PATH=$(JAVA_HOME)/bin:/usr/bin
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 PHP=/usr/bin/php
-RUBY_VERSION= 2.6
+RUBY_VERSION= 3.2
 
 CONFIGURE_ENV += JAVA_HOME="$(JAVA11_HOME)"
 CONFIGURE_OPTIONS += --with-javaincl="$(JAVA11_HOME)/include"
@@ -89,7 +87,7 @@ REQUIRED_PACKAGES += developer/parser/bison-37
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/ocaml
 REQUIRED_PACKAGES += library/ocaml/ocaml-findlib
-REQUIRED_PACKAGES += runtime/ruby-26
+REQUIRED_PACKAGES += runtime/ruby-32
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
