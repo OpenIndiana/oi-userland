@@ -706,7 +706,21 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =  2.3
+#
+# We will start to obsolete major Ruby versions according the following table:
+#
+# +--------------+----------------+
+# | Ruby version | Obsolete after |
+# +--------------+----------------+
+# |     2.3      |   2019-03-31   |
+# |     2.6      |   2022-04-12   |
+# |     3.2      |   2026-03-31   |
+# +--------------+----------------+
+#
+# See https://www.ruby-lang.org/en/downloads/branches/
+#
+
+RUBY_VERSION = 3.2
 
 RUBY_LIB_VERSION.2.3 = 2.3.0
 RUBY_LIB_VERSION.2.6 = 2.6.0
