@@ -194,13 +194,16 @@ done
 
 
 # Makefile template
+GENERATE_CMD="\$WS_TOOLS/$THIS"
+[[ "$DIRECTORY" != "perl/$DISTRIBUTION" ]] && GENERATE_CMD="$GENERATE_CMD -d $DIRECTORY"
+GENERATE_CMD="$GENERATE_CMD $MODULE"
 (
 cat $WS_TOP/transforms/copyright-template | sed -e '/^$/,$d'
 cat <<EOF
 
 #
 # This file was automatically generated using the following command:
-#   \$WS_TOOLS/$THIS $MODULE
+#   $GENERATE_CMD
 #
 
 BUILD_STYLE = makemaker
