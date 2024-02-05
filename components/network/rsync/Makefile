@@ -25,12 +25,11 @@
 # Copyright (c) 2020, 2022, Andreas Wacknitz
 #
 
-BUILD_BITS=			64
-#USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
 COMPONENT_VERSION=	3.2.7
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Utility that provides fast incremental file transfer and copy
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rsync.samba.org/
@@ -39,12 +38,10 @@ COMPONENT_ARCHIVE_HASH=	sha256:4e7d9d3f6ed10878c58c5fb724a67dacf4b6aac7340b13e48
 COMPONENT_ARCHIVE_URL=	https://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/rsync
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE=	GPL-3.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS  +=	--with-included-popt
 CONFIGURE_OPTIONS  +=	--enable-xattr-support
@@ -55,7 +52,7 @@ COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^PASS|^SKIP|^FAIL|^XFAIL/'"
 
 # Manually added; needed during tests
-REQUIRED_PACKAGES += developer/fakeroot
+TEST_REQUIRED_PACKAGES += developer/fakeroot
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
