@@ -5,14 +5,14 @@ On illumos, the os.utime() call raises:
 	OSError: [Errno 79] Value too large for defined data type
 
 diff -wpruN '--exclude=*.orig' a~/Lib/test/test_zipfile.py a/Lib/test/test_zipfile.py
---- a~/Lib/test/test_zipfile.py	1970-01-01 00:00:00
-+++ a/Lib/test/test_zipfile.py	1970-01-01 00:00:00
-@@ -616,7 +616,7 @@ class StoredTestsWithSourceFile(Abstract
+--- Python-3.12.1/Lib/test/test_zipfile/test_core.py.~1~	Thu Dec  7 12:45:44 2023
++++ Python-3.12.1/Lib/test/test_zipfile/test_core.py	Mon Feb  5 12:03:34 2024
+@@ -622,7 +622,7 @@
              self.skipTest(f'time.localtime({ts}) raises OverflowError')
          try:
              os.utime(TESTFN, (ts, ts))
 -        except OverflowError:
-+        except (OverflowError, OSError):
++        except (OverflowError, OSerror):
              self.skipTest('Host fs cannot set timestamp to required value.')
  
          mtime_ns = os.stat(TESTFN).st_mtime_ns

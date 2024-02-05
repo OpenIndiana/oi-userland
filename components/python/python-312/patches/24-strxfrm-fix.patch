@@ -6,21 +6,20 @@ https://bugs.python.org/issue16258
 This is not for upstream as the idea is from the bug itself and was rejected
 for use on all platforms.
 
---- Python-3.9.1/Modules/_localemodule.c
-+++ Python-3.9.1/Modules/_localemodule.c
-@@ -363,9 +363,10 @@ Return a string that can be used as a ke
- static PyObject*
- PyLocale_strxfrm(PyObject* self, PyObject* args)
+--- Python-3.12.1/Modules/_localemodule.c.~1~	Thu Dec  7 12:45:44 2023
++++ Python-3.12.1/Modules/_localemodule.c	Mon Feb  5 13:40:46 2024
+@@ -393,8 +393,9 @@
+ _locale_strxfrm_impl(PyObject *module, PyObject *str)
+ /*[clinic end generated code: output=3081866ebffc01af input=1378bbe6a88b4780]*/
  {
 +    unsigned int i, j;
-     PyObject *str;
      Py_ssize_t n1;
 -    wchar_t *s = NULL, *buf = NULL;
 +    wchar_t *s = NULL, *buf = NULL, *solbuf = NULL;
      size_t n2;
      PyObject *result = NULL;
  
-@@ -409,8 +410,23 @@ PyLocale_strxfrm(PyObject* self, PyObjec
+@@ -435,8 +436,23 @@
              goto exit;
          }
      }

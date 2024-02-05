@@ -27,18 +27,6 @@ https://github.com/python/cpython/commit/aa967ec4d4c2fc844f8f16b339140b050ae4d5e
 
 test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
 
---- Python-3.9.2/Lib/test/test_gdb.py
-+++ Python-3.9.2/Lib/test/test_gdb.py
-@@ -52,6 +52,9 @@ if gdb_major_version < 7:
-                             % (gdb_major_version, gdb_minor_version,
-                                gdb_version))
- 
-+if sys.platform.startswith("sunos"):
-+    raise unittest.SkipTest("test doesn't work well on Solaris")
-+
- if not sysconfig.is_python_build():
-     raise unittest.SkipTest("test_gdb only works on source builds at the moment.")
- 
 --- Python-3.9.2/Lib/test/test_unicodedata.py
 +++ Python-3.9.2/Lib/test/test_unicodedata.py
 @@ -324,6 +324,8 @@ class NormalizationTest(unittest.TestCas
@@ -50,33 +38,6 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
          # Hit the exception early
          try:
              testdata = open_urlresource(TESTDATAURL, encoding="utf-8",
---- Python-3.9.2/Lib/test/test_re.py
-+++ Python-3.9.2/Lib/test/test_re.py
-@@ -1,5 +1,6 @@
- from test.support import (gc_collect, bigmemtest, _2G,
-                           cpython_only, captured_stdout)
-+import sys
- import locale
- import re
- import sre_compile
-@@ -1918,6 +1919,8 @@ ELSE
-         self.assertTrue(re.match(b'(?Li)\xc5', b'\xe5'))
-         self.assertTrue(re.match(b'(?Li)\xe5', b'\xc5'))
- 
-+    @unittest.skipIf(sys.platform.startswith("sunos"),
-+                     "test doesn't work well on sparc Solaris")
-     def check_en_US_utf8(self):
-         locale.setlocale(locale.LC_CTYPE, 'en_US.utf8')
-         self.assertTrue(re.match(b'\xc5\xe5', b'\xc5\xe5', re.L|re.I))
-@@ -1927,6 +1930,8 @@ ELSE
-         self.assertIsNone(re.match(b'(?Li)\xc5', b'\xe5'))
-         self.assertIsNone(re.match(b'(?Li)\xe5', b'\xc5'))
- 
-+    @unittest.skipIf(sys.platform.startswith("sunos"),
-+                     "test doesn't work well on sparc Solaris")
-     def test_locale_compiled(self):
-         oldlocale = locale.setlocale(locale.LC_CTYPE)
-         self.addCleanup(locale.setlocale, locale.LC_CTYPE, oldlocale)
 --- Python-3.9.2/Lib/test/test_time.py
 +++ Python-3.9.2/Lib/test/test_time.py
 @@ -613,7 +613,7 @@ class _TestStrftimeYear:
@@ -131,19 +92,6 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
      @unittest.skipIf(AIX, "skipping, see issue #22397")
      def _testFDPassSeparateMinSpace(self):
          fd0, fd1 = self.newFDs(2)
---- Python-3.9.2/Lib/test/test_pyexpat.py
-+++ Python-3.9.2/Lib/test/test_pyexpat.py
-@@ -466,8 +466,8 @@ class HandlerExceptionTest(unittest.Test
-                                        "pyexpat.c", "StartElement")
-             self.check_traceback_entry(entries[2],
-                                        "test_pyexpat.py", "StartElementHandler")
--            if sysconfig.is_python_build() and not (sys.platform == 'win32' and platform.machine() == 'ARM'):
--                self.assertIn('call_with_frame("StartElement"', entries[1][3])
-+            #if sysconfig.is_python_build() and not (sys.platform == 'win32' and platform.machine() == 'ARM'):
-+            #    self.assertIn('call_with_frame("StartElement"', entries[1][3])
- 
- 
- # Test Current* members:
 --- Python-3.9.2/Lib/test/test_tcl.py
 +++ Python-3.9.2/Lib/test/test_tcl.py
 @@ -198,6 +198,7 @@ class TclTest(unittest.TestCase):
@@ -188,3 +136,35 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
          import pkg.subpkg
          self.addCleanup(unload, 'pkg.subpkg')
          self.assertEqual(len(pkg.subpkg.__path__), 2)
+--- Python-3.12.1/Lib/test/test_gdb/__init__.py.~1~	Thu Dec  7 12:45:44 2023
++++ Python-3.12.1/Lib/test/test_gdb/__init__.py	Mon Feb  5 11:44:20 2024
+@@ -15,6 +15,9 @@
+     # debug symbol files.
+     raise unittest.SkipTest("test_gdb doesn't work on Windows")
+ 
++if sys.platform.startswith("sunos"):
++    raise unittest.SkipTest("test doesn't work well on Solaris")
++
+ if support.PGO:
+     raise unittest.SkipTest("test_gdb is not useful for PGO")
+ 
+--- Python-3.12.1/Lib/test/test_re.py.~1~	Thu Dec  7 12:45:44 2023
++++ Python-3.12.1/Lib/test/test_re.py	Mon Feb  5 11:47:36 2024
+@@ -1952,6 +1952,8 @@
+         self.assertTrue(re.match(b'(?Li)\xc5', b'\xe5'))
+         self.assertTrue(re.match(b'(?Li)\xe5', b'\xc5'))
+ 
++    @unittest.skipIf(sys.platform.startswith("sunos"),
++                     "test doesn't work well on sparc Solaris")
+     def check_en_US_utf8(self):
+         locale.setlocale(locale.LC_CTYPE, 'en_US.utf8')
+         self.assertTrue(re.match(b'\xc5\xe5', b'\xc5\xe5', re.L|re.I))
+@@ -1965,6 +1967,8 @@
+         is_emscripten or is_wasi,
+         "musl libc issue on Emscripten/WASI, bpo-46390"
+     )
++    @unittest.skipIf(sys.platform.startswith("sunos"),
++                     "test doesn't work well on sparc Solaris")
+     def test_locale_compiled(self):
+         oldlocale = locale.setlocale(locale.LC_CTYPE)
+         self.addCleanup(locale.setlocale, locale.LC_CTYPE, oldlocale)
