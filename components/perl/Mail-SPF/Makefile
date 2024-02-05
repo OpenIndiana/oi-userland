@@ -14,32 +14,30 @@
 #   $WS_TOOLS/perl-integrate-module Mail::SPF
 #
 
-BUILD_STYLE = modulebuild
+BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::SPF
-HUMAN_VERSION =			2.9.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			3.20240205
 COMPONENT_SUMMARY =		Mail::SPF - An object-oriented implementation of Sender Policy Framework
-COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/J/JM/JMEHNLE/mail-spf/Mail-SPF-v2.9.0.tar.gz
+COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:61cb5915f1c7acc7a931ffc1bfc1291bdfac555e2a46eb2391b995ea9ecb6162
+	sha256:5f2fee25649bc97ecb7b7444d87110e50d0119f341d8b94ac3f9765fda120edf
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-COMPONENT_SRC =                 $(COMPONENT_NAME)-v$(HUMAN_VERSION)
-
 include $(WS_MAKE_RULES)/common.mk
 
+# Both are provided by library/libspf2 package
 GENERATE_EXTRA_CMD += | $(GNU_GREP) -v spfd
 GENERATE_EXTRA_CMD += | $(GNU_GREP) -v spfquery
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/error
-PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += library/perl-5/net-dns
-PERL_REQUIRED_PACKAGES += library/perl-5/net-dns-resolver-programmable
 PERL_REQUIRED_PACKAGES += library/perl-5/netaddr-ip
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns-resolver-programmable
