@@ -1,15 +1,15 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -mpytest
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -mpytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg, testpaths: tests
-collecting ... collected 806 items
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: tests
+collecting ... collected 807 items
 
 tests/test_adjustments.py::TestAdjustments::test_bad_port PASSED
 tests/test_adjustments.py::TestAdjustments::test_badvar PASSED
-tests/test_adjustments.py::TestAdjustments::test_clear_untrusted_proxy_headers PASSED
 tests/test_adjustments.py::TestAdjustments::test_default_listen PASSED
 tests/test_adjustments.py::TestAdjustments::test_deprecated_send_bytes PASSED
 tests/test_adjustments.py::TestAdjustments::test_dont_mix_forwarded_with_x_forwarded PASSED
@@ -419,6 +419,8 @@ tests/test_parser.py::TestHTTPRequestParserIntegration::testDuplicateHeaders PAS
 tests/test_parser.py::TestHTTPRequestParserIntegration::testProxyGET PASSED
 tests/test_parser.py::TestHTTPRequestParserIntegration::testSimpleGET PASSED
 tests/test_parser.py::TestHTTPRequestParserIntegration::testSpoofedHeadersDropped PASSED
+tests/test_parser.py::Test_crack_first_line::test_crack_first_line_bad_method PASSED
+tests/test_parser.py::Test_crack_first_line::test_crack_first_line_bad_version PASSED
 tests/test_parser.py::Test_crack_first_line::test_crack_first_line_lowercase_method PASSED
 tests/test_parser.py::Test_crack_first_line::test_crack_first_line_matchok PASSED
 tests/test_parser.py::Test_crack_first_line::test_crack_first_line_missing_version PASSED
@@ -599,7 +601,7 @@ tests/test_task.py::TestWSGITask::test_execute_app_calls_start_response_w_exc_in
 tests/test_task.py::TestWSGITask::test_execute_app_calls_start_response_w_excinf_headers_unwritten PASSED
 tests/test_task.py::TestWSGITask::test_execute_app_calls_start_response_w_excinf_headers_written PASSED
 tests/test_task.py::TestWSGITask::test_execute_app_calls_write PASSED
-tests/test_task.py::TestWSGITask::test_execute_app_do_not_warn_on_head PASSED
+tests/test_task.py::TestWSGITask::test_execute_app_head_with_content_length PASSED
 tests/test_task.py::TestWSGITask::test_execute_app_returns_closeable PASSED
 tests/test_task.py::TestWSGITask::test_execute_app_returns_empty_chunk_as_first PASSED
 tests/test_task.py::TestWSGITask::test_execute_app_returns_filewrapper_prepare_returns_True PASSED
@@ -815,37 +817,16 @@ tests/test_wasyncore.py::Test_write::test_non_reraised PASSED
 tests/test_wasyncore.py::Test_write::test_reraised PASSED
 
 =============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_configure_node uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_configure_node(self, node):
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_testnodedown uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_testnodedown(self, node, error):
+tests/test_adjustments.py::TestAdjustments::test_goodvars
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/waitress/adjustments.py:312: DeprecationWarning: send_bytes will be removed in a future release
+    warnings.warn(
 
 tests/test_regression.py::test_suite
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:199: PytestReturnNotNoneWarning: Expected None, but tests/test_regression.py::test_suite returned <doctest._DocTestSuite tests=[zombies_test (tests.test_regression)]>, which will be an error in a future version of pytest.  Did you mean to use `assert` instead of `return`?
-    warnings.warn(
-
-tests/test_adjustments.py: 15 warnings
-tests/test_parser.py: 50 warnings
-tests/test_server.py: 30 warnings
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/waitress/adjustments.py:449: DeprecationWarning: In future versions of Waitress clear_untrusted_proxy_headers will be set to True by default. You may opt-out by setting this value to False, or opt-in explicitly by setting this to True.
-    warnings.warn(
-
-tests/test_adjustments.py::TestAdjustments::test_goodvars
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/waitress/adjustments.py:318: DeprecationWarning: send_bytes will be removed in a future release
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:197: PytestReturnNotNoneWarning: Expected None, but tests/test_regression.py::test_suite returned <doctest._DocTestSuite tests=[zombies_test (tests.test_regression)]>, which will be an error in a future version of pytest.  Did you mean to use `assert` instead of `return`?
     warnings.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 794 passed, 12 skipped, 99 warnings ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 795 passed, 12 skipped, 2 warnings ========
+  py$(PYV): OK
   congratulations :)
