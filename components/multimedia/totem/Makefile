@@ -13,95 +13,50 @@
 # Copyright 2020 Alexander Pyhalov
 #
 
-BUILD_BITS=64
+BUILD_STYLE = meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= totem
-# Later versions require clutter-gtk-1.0
-COMPONENT_VERSION= 3.0.1
-COMPONENT_REVISION= 7
-COMPONENT_COMMIT= bfc537c4cdcd51e747611a37fc3583d26e4d634f
+COMPONENT_VERSION =		42.0
 COMPONENT_SUMMARY= Totem Multimedia Player
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_COMMIT)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e97fc66d925ff4bfcc6422486fc58c86fbdbccf2a56ec2e031e916104160a0fc
-COMPONENT_ARCHIVE_URL= https://github.com/OpenIndiana/totem/archive/$(COMPONENT_COMMIT).tar.gz
-COMPONENT_PROJECT_URL= https://www.gnome.org
+COMPONENT_ARCHIVE_HASH=		sha256:4af0491ddb95df8b33aee399d3a50f9c7ab17de88d3af63356567cf88f57e6ab
 COMPONENT_FMRI = gnome/media/totem
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
-COMPONENT_LICENSE = GPLv2 with plugins exception
+COMPONENT_LICENSE =		GPL-2.0-only WITH GStreamer-exception-2008
 COMPONENT_LICENSE_FILE = COPYING
 
-TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = (cd $(@D) &&\
-	intltoolize &&\
-	gtkdocize &&\
-	gnome-doc-prepare &&\
-	autoreconf -fi)
-
-COMPONENT_PRE_CONFIGURE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --disable-browser-plugins
-CONFIGURE_OPTIONS+= --disable-nautilus
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --with-pic
-
-CONFIGURE_OPTIONS+= --with-plugins='\
-		brasero-disc-recorder \
-		chapters \
-		dbusservice \
-		gromit \
-		im-status \
-		media-player-keys \
-		ontop \
-		opensubtitles \
-		properties \
-		pythonconsole \
-		samplepython \
-		sample-vala \
-		screensaver \
-		screenshot \
-		sidebar-test \
-		skipto \
-		thumbnail'
-
-CONFIGURE_ENV += PYTHON=$(PYTHON)
-
-# gobject-introspection
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Manually added dependencies
-REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 REQUIRED_PACKAGES += text/rarian
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/audio/gstreamer
-REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gnome-desktop
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libpeas
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/gnome/grilo
+REQUIRED_PACKAGES += library/libhandy
 REQUIRED_PACKAGES += library/media-player/totem-pl-parser
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/libice
-REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxrandr
-REQUIRED_PACKAGES += x11/library/libxtst
-REQUIRED_PACKAGES += x11/library/libxxf86vm
