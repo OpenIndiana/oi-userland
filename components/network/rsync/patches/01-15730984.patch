@@ -3,17 +3,17 @@ that builds are reproducible between workspaces.
 The patch is needed to avoid embedding path information from the build area
 in the compiled binares (in particular in error messages).
 
---- rsync-3.1.0/t_stub.c.orig	Tue Jun 11 18:06:53 2013
-+++ rsync-3.1.0/t_stub.c	Mon Mar 17 14:58:24 2014
+--- rsync-3.2.7/t_stub.c.orig
++++ rsync-3.2.7/t_stub.c
 @@ -20,6 +20,7 @@
   */
  
  #include "rsync.h"
 +#include <libgen.h>
  
- int modify_window = 0;
- int preallocate_files = 0;
-@@ -56,7 +57,7 @@
+ int do_fsync = 0;
+ int inplace = 0;
+@@ -60,7 +61,7 @@
   void _exit_cleanup(int code, const char *file, int line)
  {
  	fprintf(stderr, "exit(%d): %s(%d)\n",
@@ -22,8 +22,8 @@ in the compiled binares (in particular in error messages).
  	exit(code);
  }
  
---- rsync-3.1.0/log.c.orig	Tue Jun 11 13:36:44 2013
-+++ rsync-3.1.0/log.c	Mon Mar 17 14:58:51 2014
+--- rsync-3.2.7/log.c.orig
++++ rsync-3.2.7/log.c
 @@ -22,6 +22,7 @@
  #include "rsync.h"
  #include "itypes.h"
@@ -32,14 +32,13 @@ in the compiled binares (in particular in error messages).
  
  extern int dry_run;
  extern int am_daemon;
---- rsync-3.2.2/cleanup.c.orig	2020-06-28 08:14:35.000000000 +0000
-+++ rsync-3.2.2/cleanup.c	2020-07-23 18:13:38.184898463 +0000
+--- rsync-3.2.7/cleanup.c.orig
++++ rsync-3.2.7/cleanup.c
 @@ -21,6 +21,7 @@
   */
-
+ 
  #include "rsync.h"
 +#include <libgen.h>
-
+ 
  extern int dry_run;
  extern int am_server;
- 
