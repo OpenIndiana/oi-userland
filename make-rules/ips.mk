@@ -512,9 +512,12 @@ $(RESOLVE_DEPS):	Makefile $(BUILD_DIR) $(DEPENDED)
 $(BUILD_DIR)/runtime-perl.p5m: $(WS_TOOLS)/runtime-perl.p5m
 	$(CP) $< $@
 
+$(BUILD_DIR)/runtime-ruby.p5m: $(WS_TOOLS)/runtime-ruby.p5m
+	$(CP) $< $@
+
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime-perl.p5m
-	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime-perl.p5m $(BUILD_DIR)/runtime-ruby.p5m
+	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m $(BUILD_DIR)/runtime-ruby.p5m
 	$(TOUCH) $@
 
 # generate list of sed rules to filter out component's own packages from
