@@ -1328,22 +1328,17 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +testlink.unbind()
 +print("sap is %x" % testlink.get_sap())
 +print("state is: %d"  % testlink.get_state())
---- Python-3.12.1/configure.ac.~3~	Sun Feb  4 19:36:52 2024
-+++ Python-3.12.1/configure.ac	Sun Feb  4 19:59:34 2024
-@@ -7369,6 +7369,7 @@
- PY_STDLIB_MOD_SIMPLE([_xxinterpchannels])
- PY_STDLIB_MOD_SIMPLE([_zoneinfo])
+--- Python-3.12.1/configure.ac.~4~	Mon Feb  5 09:19:04 2024
++++ Python-3.12.1/configure.ac	Mon Feb  5 09:19:45 2024
+@@ -7567,3 +7567,4 @@
+ 
+ dnl Illumos Additions
  PY_STDLIB_MOD_SIMPLE([ucred])
 +PY_STDLIB_MOD_SIMPLE([dlpi])
+--- Python-3.12.1/Modules/Setup.stdlib.in.~4~	Mon Feb  5 09:19:04 2024
++++ Python-3.12.1/Modules/Setup.stdlib.in	Mon Feb  5 09:20:59 2024
+@@ -184,3 +184,4 @@
  
- dnl multiprocessing modules
- PY_STDLIB_MOD([_multiprocessing],
---- Python-3.12.1/Modules/Setup.stdlib.in.~3~	Sun Feb  4 19:36:52 2024
-+++ Python-3.12.1/Modules/Setup.stdlib.in	Sun Feb  4 20:00:22 2024
-@@ -182,3 +182,6 @@
- # Limited API template modules; must be built as shared modules.
- @MODULE_XXLIMITED_TRUE@xxlimited xxlimited.c
- @MODULE_XXLIMITED_35_TRUE@xxlimited_35 xxlimited_35.c
-+
-+# Illumos add-on
+ # Illumos additions
+ @MODULE_UCRED_TRUE@ucred ucred.c -ltsol
 +@MODULE_DLPI_TRUE@dlpi dlpimodule.c -ldlpi

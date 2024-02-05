@@ -1244,42 +1244,6 @@ new file mode 100644
 +	0,                            /* tp_free */
 +	0,                            /* tp_is_gc */
 +};
---- Python-3.9.1/setup.py
-+++ Python-3.9.1/setup.py
-@@ -1827,6 +1827,24 @@ class PyBuildExt(build_ext):
-         if dlpi_inc is not None:
-             self.add(Extension('dlpi', ['dlpimodule.c'], libraries=['dlpi']))
- 
-+    def detect_priv(self):
-+        # privileges module (Solaris)
-+        priv_inc = find_file('priv.h', [], self.inc_dirs)
-+        if priv_inc is not None:
-+            self.add(Extension('privileges', ['privileges.c']))
-+
-+    def detect_rbac(self):
-+        # rbac module (Solaris)
-+        secdb_inc = find_file('secdb.h', [], self.inc_dirs)
-+        aa_inc = find_file('auth_attr.h', [], self.inc_dirs)
-+        ea_inc = find_file('exec_attr.h', [], self.inc_dirs)
-+        ua_inc = find_file('user_attr.h', [], self.inc_dirs)
-+        if secdb_inc is not None and aa_inc is not None and \
-+            ea_inc is not None and ua_inc is not None:
-+            self.add(Extension('rbac', ['pyrbac.c', 'authattr.c', \
-+                               'execattr.c', 'userattr.c'],
-+                               libraries=['nsl', 'socket', 'secdb']))
-+
-     def detect_modules(self):
-         self.configure_compiler()
-         self.init_inc_lib_dirs()
-@@ -1849,6 +1867,8 @@ class PyBuildExt(build_ext):
-         self.detect_decimal()
-         self.detect_ucred()
-         self.detect_dlpi()
-+        self.detect_priv()
-+        self.detect_rbac()
-         self.detect_ctypes()
-         self.detect_multiprocessing()
-         if not self.detect_tkinter():
 --- Python-3.9.1/Lib/test/privrbactest.py
 +++ Python-3.9.1/Lib/test/privrbactest.py
 @@ -0,0 +1,289 @@
@@ -1572,3 +1536,19 @@ new file mode 100644
 +    or not test_getuseruid() or not test_userattr_iter():
 +    print("*** Failures detected in rbac.userattr\n")
 +    sys.exit(1)
+--- Python-3.12.1/configure.ac.~5~	Mon Feb  5 09:25:21 2024
++++ Python-3.12.1/configure.ac	Mon Feb  5 09:28:15 2024
+@@ -7568,3 +7568,5 @@
+ dnl Illumos Additions
+ PY_STDLIB_MOD_SIMPLE([ucred])
+ PY_STDLIB_MOD_SIMPLE([dlpi])
++PY_STDLIB_MOD_SIMPLE([privileges])
++PY_STDLIB_MOD_SIMPLE([rbac])
+--- Python-3.12.1/Modules/Setup.stdlib.in.~4~	Mon Feb  5 09:25:20 2024
++++ Python-3.12.1/Modules/Setup.stdlib.in	Mon Feb  5 09:27:42 2024
+@@ -185,3 +185,5 @@
+ # Illumos additions
+ @MODULE_UCRED_TRUE@ucred ucred.c -ltsol
+ @MODULE_DLPI_TRUE@dlpi dlpimodule.c -ldlpi
++@MODULE_PRIVILEGES_TRUE@privileges privileges.c
++@MODULE_RBAC_TRUE@rbac pyrbac.c authattr.c execattr.c userattr.c -lnsl -lsocket -lsecdb

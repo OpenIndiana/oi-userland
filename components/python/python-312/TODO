@@ -31,7 +31,39 @@ done:
 
 ----
 
+patches needing significant work:
+
+08-py_db.patch: reaches into python internals for stack traces.
+	Looks like PyFrameObject changed
+
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c: In function 'pydb_asciiobj_readdata':
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c:191:68: error: 'struct <anonymous>' has no member named 'ready'
+  191 |         if (!sobj.state.compact || !sobj.state.ascii || !sobj.state.ready) {
+      |                                                                    ^
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c: In function 'pydb_frameinfo':
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c:311:47: error: 'PyFrameObject' {aka 'struct _frame'} has no member named 'f_code'
+  311 |         if (ps_pread(py->pdb_ph, (uintptr_t)fo.f_code, &co,
+      |                                               ^
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c:328:48: error: 'PyCodeObject' has no member named 'co_lnotab'
+  328 |         *lineno = pydb_getlno(py, (uintptr_t)co.co_lnotab, co.co_firstlineno,
+      |                                                ^
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c:329:15: error: 'PyFrameObject' {aka 'struct _frame'} has no member named 'f_lasti'
+  329 |             fo.f_lasti);
+      |               ^
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c: In function 'pydb_frame_iter_init':
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c:503:42: error: 'PyThreadState' {aka 'struct _ts'} has no member named 'frame'; did you mean 'cframe'?
+  503 |         itr->pdi_current = (uintptr_t)ts.frame;
+      |                                          ^~~~~
+      |                                          cframe
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c: In function 'pydb_thread_iter_init':
+/z/ws/oi-userland/components/python/python-312/Python-3.12.1/py_db/libpython39_db.c:553:41: error: 'PyInterpreterState' {aka 'struct _is'} has no member named 'tstate_head'
+  553 |         itr->pdi_current = (uintptr_t)is.tstate_head;
+      |                                         ^
+
+
 patches not needed:
+
+09-ossaudiodev.patch: Not needed; upstream wraps all the exports in #ifdef so the missing ioctls are ok.
 
 10-include.patch: distutils was removed from the core distribution and is not present in 3.12.1
 11-pic-compile.patch: distutils was removed from the core distribution and is not present in 3.12.1
@@ -42,4 +74,6 @@ patches not needed:
 
 45-system-64-libs.patch: library detection is via autoconf now and doesn't need help
 
+
+-------
 

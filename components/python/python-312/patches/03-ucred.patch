@@ -458,23 +458,21 @@ new file mode 100644
 +    uc.getpid()
 +except OSError as e:
 +    print(e)
---- Python-3.12.1/configure.ac.~2~	Sun Feb  4 18:39:54 2024
-+++ Python-3.12.1/configure.ac	Sun Feb  4 18:42:49 2024
-@@ -7368,6 +7368,7 @@
- PY_STDLIB_MOD_SIMPLE([_xxsubinterpreters])
- PY_STDLIB_MOD_SIMPLE([_xxinterpchannels])
- PY_STDLIB_MOD_SIMPLE([_zoneinfo])
+--- Python-3.12.1/configure.ac.~5~	Mon Feb  5 08:45:39 2024
++++ Python-3.12.1/configure.ac	Mon Feb  5 09:14:50 2024
+@@ -7564,3 +7564,6 @@
+ Platform "$host" with compiler "$ac_cv_cc_name" is not supported by the
+ CPython core team, see https://peps.python.org/pep-0011/ for more information.
+ ])])
++
++dnl Illumos Additions
 +PY_STDLIB_MOD_SIMPLE([ucred])
- 
- dnl multiprocessing modules
- PY_STDLIB_MOD([_multiprocessing],
---- Python-3.12.1/Modules/Setup.stdlib.in.~2~	Sun Feb  4 18:43:59 2024
-+++ Python-3.12.1/Modules/Setup.stdlib.in	Sun Feb  4 18:53:53 2024
-@@ -44,6 +44,7 @@
- @MODULE__XXSUBINTERPRETERS_TRUE@_xxsubinterpreters _xxsubinterpretersmodule.c
- @MODULE__XXINTERPCHANNELS_TRUE@_xxinterpchannels _xxinterpchannelsmodule.c
- @MODULE__ZONEINFO_TRUE@_zoneinfo _zoneinfo.c
+--- Python-3.12.1/Modules/Setup.stdlib.in.~4~	Mon Feb  5 08:45:39 2024
++++ Python-3.12.1/Modules/Setup.stdlib.in	Mon Feb  5 09:17:32 2024
+@@ -181,3 +181,6 @@
+ # Limited API template modules; must be built as shared modules.
+ @MODULE_XXLIMITED_TRUE@xxlimited xxlimited.c
+ @MODULE_XXLIMITED_35_TRUE@xxlimited_35 xxlimited_35.c
++
++# Illumos additions
 +@MODULE_UCRED_TRUE@ucred ucred.c -ltsol
- 
- # needs libm
- @MODULE_AUDIOOP_TRUE@audioop audioop.c
