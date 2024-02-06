@@ -25,7 +25,7 @@
 # Copyright (c) 2021, Aurelien Larcher
 #
 
-USE_OPENSSL11= yes
+OPENSSL_VERSION=3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
@@ -201,7 +201,7 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
