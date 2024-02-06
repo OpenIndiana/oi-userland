@@ -93,15 +93,6 @@ signal occurred during an await.
          try:
              self._do_waitpid_all()
          except (SystemExit, KeyboardInterrupt):
-diff --git a/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
-new file mode 100644
-index 0000000000000..556e08c69d7a5
---- /dev/null
-+++ b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
-@@ -0,0 +1,2 @@
-+Fix rare cases with ``MultiLoopChildWatcher`` where the event loop can
-+fail to awaken in response to a :py:data:`SIGCHLD` signal.
-
 From 9618884446dc4a72e401b0f05b2992e34e39d700 Mon Sep 17 00:00:00 2001
 From: Chris Jerdonek <chris.jerdonek@gmail.com>
 Date: Sat, 16 May 2020 18:49:59 -0700
@@ -127,24 +118,4 @@ index d2a32cb879b6b..17614c23c984c 100644
          # Don't save the loop but initialize itself if called first time
          # The reason to do it here is that attach_loop() is called from
          # unix policy only for the main thread.
-
-From 4d4c147b9bfe4ce7bb51aa4745ead8a422e98c14 Mon Sep 17 00:00:00 2001
-From: Chris Jerdonek <chris.jerdonek@gmail.com>
-Date: Fri, 16 Oct 2020 16:37:11 -0700
-Subject: [PATCH 3/5] Address a couple review comments.
-
----
- Doc/library/asyncio-policy.rst                                | 2 +-
- .../next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst     | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
-index 556e08c69d7a5..e9401d6a2e486 100644
---- a/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
-+++ b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
-@@ -1,2 +1,2 @@
--Fix rare cases with ``MultiLoopChildWatcher`` where the event loop can
--fail to awaken in response to a :py:data:`SIGCHLD` signal.
-+Fix rare cases with :class:`asyncio.MultiLoopChildWatcher` where the event
-+loop can fail to awaken in response to a :py:data:`SIGCHLD` signal.
 
