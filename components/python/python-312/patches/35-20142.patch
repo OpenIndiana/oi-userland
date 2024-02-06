@@ -1,3 +1,12 @@
+Note: this patch was manually edited to remove two changes to the
+SubprocessWatcherMixin.tearDown() method found in
+Lib/test/test_asyncio/test_subprocess.py; the first change moved the
+super() call to the end of that function, while the second reverted
+the first change, resulting in no net change to the file.
+
+The function being patched was changed between Python 3.9 and 3.12
+such that the first patch failed to apply.
+
 From 5d1013256c133b61587b6a80a0f9d509ac11d123 Mon Sep 17 00:00:00 2001
 From: Chris Jerdonek <chris.jerdonek@gmail.com>
 Date: Sat, 16 May 2020 15:57:27 -0700
@@ -84,25 +93,6 @@ signal occurred during an await.
          try:
              self._do_waitpid_all()
          except (SystemExit, KeyboardInterrupt):
-diff --git a/Lib/test/test_asyncio/test_subprocess.py b/Lib/test/test_asyncio/test_subprocess.py
-index 6657a88e657c2..b11a31a34a2c6 100644
---- a/Lib/test/test_asyncio/test_subprocess.py
-+++ b/Lib/test/test_asyncio/test_subprocess.py
-@@ -672,12 +672,13 @@ def setUp(self):
-             policy.set_child_watcher(watcher)
-
-         def tearDown(self):
--            super().tearDown()
-             policy = asyncio.get_event_loop_policy()
-             watcher = policy.get_child_watcher()
-             policy.set_child_watcher(None)
-             watcher.attach_loop(None)
-             watcher.close()
-+            # Since setUp() does super().setUp() first, do tearDown() last.
-+            super().tearDown()
-
-     class SubprocessThreadedWatcherTests(SubprocessWatcherMixin,
-                                          test_utils.TestCase):
 diff --git a/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
 new file mode 100644
 index 0000000000000..556e08c69d7a5
@@ -157,33 +147,4 @@ index 556e08c69d7a5..e9401d6a2e486 100644
 -fail to awaken in response to a :py:data:`SIGCHLD` signal.
 +Fix rare cases with :class:`asyncio.MultiLoopChildWatcher` where the event
 +loop can fail to awaken in response to a :py:data:`SIGCHLD` signal.
-
-From 14f6cfc20e77a349a22ced05352afd3ee200b403 Mon Sep 17 00:00:00 2001
-From: Chris Jerdonek <chris.jerdonek@gmail.com>
-Date: Fri, 16 Oct 2020 16:46:49 -0700
-Subject: [PATCH 4/5] Revert tearDown() change.
-
----
- Lib/test/test_asyncio/test_subprocess.py | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/Lib/test/test_asyncio/test_subprocess.py b/Lib/test/test_asyncio/test_subprocess.py
-index b11a31a34a2c6..6657a88e657c2 100644
---- a/Lib/test/test_asyncio/test_subprocess.py
-+++ b/Lib/test/test_asyncio/test_subprocess.py
-@@ -672,13 +672,12 @@ def setUp(self):
-             policy.set_child_watcher(watcher)
-
-         def tearDown(self):
-+            super().tearDown()
-             policy = asyncio.get_event_loop_policy()
-             watcher = policy.get_child_watcher()
-             policy.set_child_watcher(None)
-             watcher.attach_loop(None)
-             watcher.close()
--            # Since setUp() does super().setUp() first, do tearDown() last.
--            super().tearDown()
-
-     class SubprocessThreadedWatcherTests(SubprocessWatcherMixin,
-                                          test_utils.TestCase):
 
