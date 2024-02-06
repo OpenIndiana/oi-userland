@@ -2,7 +2,7 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-collecting ... collected 397 items
+collecting ... collected 412 items
 
 tests/rules/test_anchors.py::AnchorsTestCase::test_disabled PASSED
 tests/rules/test_anchors.py::AnchorsTestCase::test_forbid_duplicated_anchors PASSED
@@ -158,6 +158,7 @@ tests/rules/test_indentation.py::ScalarIndentationTestCase::test_paragraph_plain
 tests/rules/test_indentation.py::ScalarIndentationTestCase::test_paragraph_single_quoted PASSED
 tests/rules/test_key_duplicates.py::KeyDuplicatesTestCase::test_disabled PASSED
 tests/rules/test_key_duplicates.py::KeyDuplicatesTestCase::test_enabled PASSED
+tests/rules/test_key_duplicates.py::KeyDuplicatesTestCase::test_forbid_duplicated_merge_keys PASSED
 tests/rules/test_key_duplicates.py::KeyDuplicatesTestCase::test_key_tokens_in_flow_sequences PASSED
 tests/rules/test_key_ordering.py::KeyOrderingTestCase::test_accents PASSED
 tests/rules/test_key_ordering.py::KeyOrderingTestCase::test_case PASSED
@@ -186,18 +187,31 @@ tests/rules/test_new_lines.py::NewLinesTestCase::test_unix_type_required_st_sp P
 tests/rules/test_octal_values.py::OctalValuesTestCase::test_disabled PASSED
 tests/rules/test_octal_values.py::OctalValuesTestCase::test_explicit_octal_values PASSED
 tests/rules/test_octal_values.py::OctalValuesTestCase::test_implicit_octal_values PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_allow_quoted_quotes PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_any_quotes_not_required PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_disabled PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_octal_values PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_only_when_needed PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_only_when_needed_corner_cases PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_only_when_needed_extras PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_only_when_needed_single_quotes PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_quote_type_any PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_quote_type_double PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_quote_type_single PASSED
-tests/rules/test_quoted_strings.py::QuotedTestCase::test_single_quotes_not_required PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_allow_quoted_quotes PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_any_quotes_not_required PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_default PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_disabled PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_octal_values PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_only_when_needed PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_only_when_needed_corner_cases PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_only_when_needed_extras PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_only_when_needed_single_quotes PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_quote_type_any PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_quote_type_double PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_quote_type_single PASSED
+tests/rules/test_quoted_strings.py::QuotedKeysTestCase::test_single_quotes_not_required PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_allow_quoted_quotes PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_any_quotes_not_required PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_disabled PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_octal_values PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_only_when_needed PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_only_when_needed_corner_cases PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_only_when_needed_extras PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_only_when_needed_single_quotes PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_quote_type_any PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_quote_type_double PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_quote_type_single PASSED
+tests/rules/test_quoted_strings.py::QuotedValuesTestCase::test_single_quotes_not_required PASSED
 tests/rules/test_trailing_spaces.py::TrailingSpacesTestCase::test_disabled PASSED
 tests/rules/test_trailing_spaces.py::TrailingSpacesTestCase::test_enabled PASSED
 tests/rules/test_trailing_spaces.py::TrailingSpacesTestCase::test_with_dos_new_lines PASSED
@@ -268,6 +282,7 @@ tests/test_config.py::SimpleConfigTestCase::test_invalid_ignore PASSED
 tests/test_config.py::SimpleConfigTestCase::test_invalid_locale PASSED
 tests/test_config.py::SimpleConfigTestCase::test_invalid_rule PASSED
 tests/test_config.py::SimpleConfigTestCase::test_invalid_rule_ignore PASSED
+tests/test_config.py::SimpleConfigTestCase::test_invalid_rule_ignore_from_file PASSED
 tests/test_config.py::SimpleConfigTestCase::test_invalid_yaml_files PASSED
 tests/test_config.py::SimpleConfigTestCase::test_missing_option PASSED
 tests/test_config.py::SimpleConfigTestCase::test_parse_config PASSED
@@ -402,4 +417,4 @@ tests/test_yamllint_directives.py::YamllintDirectivesTestCase::test_disable_line
 tests/test_yamllint_directives.py::YamllintDirectivesTestCase::test_disable_line_directive_with_rules PASSED
 tests/test_yamllint_directives.py::YamllintDirectivesTestCase::test_indented_directive PASSED
 
-======== 397 passed ========
+======== 412 passed ========
