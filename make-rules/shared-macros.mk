@@ -713,7 +713,6 @@ FC =		$(FC.$(COMPILER).$(BITS))
 # | Ruby version | Obsolete after |
 # +--------------+----------------+
 # |     2.3      |   2019-03-31   |
-# |     2.6      |   2022-04-12   |
 # |     3.2      |   2026-03-31   |
 # +--------------+----------------+
 #
@@ -723,11 +722,9 @@ FC =		$(FC.$(COMPILER).$(BITS))
 RUBY_VERSION = 3.2
 
 RUBY_LIB_VERSION.2.3 = 2.3.0
-RUBY_LIB_VERSION.2.6 = 2.6.0
 RUBY_LIB_VERSION.3.2 = 3.2.0
 
 RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
-RUBY.2.6 =	/usr/ruby/2.6/bin/ruby
 RUBY.3.2 =	/usr/ruby/3.2/bin/ruby
 
 RUBY =          $(RUBY.$(RUBY_VERSION))
