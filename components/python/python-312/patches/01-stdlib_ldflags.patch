@@ -1,0 +1,54 @@
+Add /usr/gnu/lib/amd64 to the library search path when looking for
+-lpanelw and when linking _curses_panel; it also needs to appear in
+the module's library runpath
+
+The nis module always needs -lnsl; the sockets module needs -lresolv for h_errno.
+
+Readline needs -Wl,-zrecord to "avoid rl_insert() elimination"
+
+--- Python-3.12.1/configure.ac.~1~	Thu Dec  7 12:45:44 2023
++++ Python-3.12.1/configure.ac	Tue Feb  6 11:14:01 2024
+@@ -3988,7 +3988,7 @@
+     ["none required"], [libnsl=""],
+     [libnsl="$ac_cv_search_yp_match"]
+   )
+-  LIBNSL_LIBS=${LIBNSL_LIBS-$libnsl}
++  LIBNSL_LIBS=-lnsl
+ ])
+ 
+ AS_VAR_IF([have_nis], [yes], [
+@@ -6102,7 +6102,7 @@
+         AC_CHECK_LIB([readline], [readline], [
+           LIBREADLINE=readline
+           READLINE_CFLAGS=${LIBREADLINE_CFLAGS-""}
+-          READLINE_LIBS=${LIBREADLINE_LIBS-"-lreadline"}
++          READLINE_LIBS=${LIBREADLINE_LIBS-"-Wl,-zrecord -lreadline -lncurses"}
+         ], [with_readline=no])
+       ], [with_readline=no])
+     ])
+@@ -6470,6 +6470,7 @@
+         have_panel=panelw
+       ], [
+         WITH_SAVE_ENV([
++          AS_VAR_APPEND([LDFLAGS], [" -L/usr/gnu/lib/amd64"])
+           AC_CHECK_LIB([panelw], [update_panels], [
+             have_panel=panelw
+             PANEL_CFLAGS=${PANEL_CFLAGS-""}
+@@ -7395,7 +7396,7 @@
+ PY_STDLIB_MOD([_socket],
+   [], m4_flatten([test "$ac_cv_header_sys_socket_h" = "yes"
+                     -a "$ac_cv_header_sys_types_h" = "yes"
+-                    -a "$ac_cv_header_netinet_in_h" = "yes"]))
++                    -a "$ac_cv_header_netinet_in_h" = "yes"]), [], [-lresolv -lnsl])
+ 
+ dnl platform specific extensions
+ PY_STDLIB_MOD([grp], [], [test "$ac_cv_func_getgrgid" = yes -o "$ac_cv_func_getgrgid_r" = yes])
+@@ -7453,7 +7454,7 @@
+ )
+ PY_STDLIB_MOD([_curses_panel],
+   [], [test "$have_panel" != "no"],
+-  [$PANEL_CFLAGS $CURSES_CFLAGS], [$PANEL_LIBS $CURSES_LIBS]
++  [$PANEL_CFLAGS $CURSES_CFLAGS], [-L/usr/gnu/lib/amd64 -Wl,-R/usr/gnu/lib/amd64 $PANEL_LIBS $CURSES_LIBS]
+ )
+ PY_STDLIB_MOD([_decimal], [], [], [$LIBMPDEC_CFLAGS], [$LIBMPDEC_LDFLAGS])
+ PY_STDLIB_MOD([_dbm],
