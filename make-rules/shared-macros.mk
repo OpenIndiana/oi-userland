@@ -626,7 +626,7 @@ export CCACHE := $(shell \
     fi)
 
 GCC_DEFAULT =	13
-GCC_VERSION =	$(GCC_DEFAULT)
+GCC_VERSION ?=	$(GCC_DEFAULT)
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
 # Define runtime package names to be used in dependencies
