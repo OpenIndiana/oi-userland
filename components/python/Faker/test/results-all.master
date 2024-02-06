@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1857 items
+collecting ... collected 1863 items
 
 Use a separate pytest run for tests like this with the "--exclusive-
 Use a separate pytest run for tests like this with the "--exclusive-
@@ -479,6 +479,12 @@ tests/providers/test_automotive.py::TestTlPh::test_protocol_plate PASSED
 tests/providers/test_automotive.py::TestTlPh::test_vin PASSED
 tests/providers/test_automotive.py::TestTrTr::test_license_plate PASSED
 tests/providers/test_automotive.py::TestTrTr::test_vin PASSED
+tests/providers/test_automotive.py::TestUkUa::test_diplomatic_plate PASSED
+tests/providers/test_automotive.py::TestUkUa::test_license_plate PASSED
+tests/providers/test_automotive.py::TestUkUa::test_prefix PASSED
+tests/providers/test_automotive.py::TestUkUa::test_region_code PASSED
+tests/providers/test_automotive.py::TestUkUa::test_temporary_plate PASSED
+tests/providers/test_automotive.py::TestUkUa::test_vin PASSED
 tests/providers/test_automotive.py::TestViVn::test_license_plate PASSED
 tests/providers/test_automotive.py::TestViVn::test_vin PASSED
 tests/providers/test_automotive.py::TestZhCn::test_license_plate PASSED
@@ -1882,10 +1888,6 @@ tests/utils/test_utils.py::UtilsTestCase::test_luhn_checksum PASSED
 tests/utils/test_utils.py::UtilsTestCase::test_valid_luhn PASSED
 
 =============================== warnings summary ===============================
-tests/test_providers_formats.py::test_no_invalid_formats[fr_QC]
-  $(@D)/faker/providers/person/fr_QC/__init__.py:10: UserWarning: fr_QC locale is deprecated. Please use fr_CA.
-    warnings.warn("fr_QC locale is deprecated. Please use fr_CA.")
-
 tests/pytest/test_unique_clear.py::test_unique_clears
   $(PYTHON_DIR)/vendor-packages/pytest_reporter/__init__.py:1: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
     from pkg_resources import get_distribution, DistributionNotFound
@@ -1936,8 +1938,12 @@ tests/pytest/test_unique_clear.py::test_unique_clears
   $(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:46: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
     warner(PytestBenchmarkWarning(text))
 
+tests/test_providers_formats.py::test_no_invalid_formats[fr_QC]
+  $(@D)/faker/providers/person/fr_QC/__init__.py:10: UserWarning: fr_QC locale is deprecated. Please use fr_CA.
+    warnings.warn("fr_QC locale is deprecated. Please use fr_CA.")
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1826 passed, 31 skipped, 27 warnings ========
+======== 1832 passed, 31 skipped, 27 warnings ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -2195,6 +2201,8 @@ faker/providers/automotive/tl_PH/__init__.py          3      3     0%
 faker/providers/automotive/tl_PH/__init__.py          3      3     0%
 faker/providers/automotive/tr_TR/__init__.py         10     10     0%
 faker/providers/automotive/tr_TR/__init__.py         10     10     0%
+faker/providers/automotive/uk_UA/__init__.py         43     43     0%
+faker/providers/automotive/uk_UA/__init__.py         43     43     0%
 faker/providers/automotive/vi_VN/__init__.py          8      8     0%
 faker/providers/automotive/vi_VN/__init__.py          8      8     0%
 faker/providers/automotive/zh_CN/__init__.py          6      6     0%
@@ -3224,6 +3232,6 @@ faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      9    44%
 faker/utils/text.py                                  16      9    44%
 ---------------------------------------------------------------------
-TOTAL                                             19656  17218    12%
+TOTAL                                             19742  17304    12%
   py$(PYV): OK
   congratulations :)
