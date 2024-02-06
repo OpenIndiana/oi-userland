@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yamllint
-HUMAN_VERSION =			1.33.0
+HUMAN_VERSION =			1.34.0
 COMPONENT_SUMMARY =		yamllint - A linter for YAML files.
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fd/98/ec541c8dff395b9e441d46ab678c9a0f00f5ca479f070a6ced3b425cce79/yamllint-1.33.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2dceab9ef2d99518a2fcf4ffc964d44250ac4459be1ba3ca315118e4a1a81f7d
+	sha256:7f0a6a41e8aab3904878da4ae34b6248b6bc74634e0d3a90f0fb2d7e723a3d4f
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,9 +33,6 @@ TEST_STYLE = pytest
 SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/adrienverge/yamllint/issues/605
-COMPONENT_TEST_ENV += HOME=/tmp
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pathspec
