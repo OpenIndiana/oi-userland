@@ -90,13 +90,6 @@ CFLAGS += $(CPP_XPG6MODE)
 # are based on Solaris 11 minimum supported system requirements.
 XPROFILE_DIR= $(BUILD_DIR_$(BITS))/.profile
 
-# PYTHONPATH in the environment can be harmful, but setting it to empty via
-# _INSTALL_ENV causes problems too, so just ignore the entire environment.
-# (see 20396493) Because of this, we have to explicitly specify PATH in
-# multiple places below. Also up the limit of maximum opened files for
-# testing purposes and pgo.
-ENV := ulimit -n 16384; $(ENV) -i
-
 # Configure script should look into sbin folder when looking for dtrace
 CONFIGURE_ENV += PATH="$(PATH):/usr/sbin"
 
