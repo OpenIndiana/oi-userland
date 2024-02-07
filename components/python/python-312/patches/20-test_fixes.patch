@@ -27,9 +27,9 @@ https://github.com/python/cpython/commit/aa967ec4d4c2fc844f8f16b339140b050ae4d5e
 
 test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
 
---- Python-3.9.2/Lib/test/test_unicodedata.py
-+++ Python-3.9.2/Lib/test/test_unicodedata.py
-@@ -324,6 +324,8 @@ class NormalizationTest(unittest.TestCas
+--- Python-3.12.1/Lib/test/test_unicodedata.py.orig
++++ Python-3.12.1/Lib/test/test_unicodedata.py
+@@ -359,6 +359,8 @@
          TESTDATAFILE = "NormalizationTest.txt"
          TESTDATAURL = f"http://www.pythontest.net/unicode/{unicodedata.unidata_version}/{TESTDATAFILE}"
  
@@ -38,9 +38,9 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
          # Hit the exception early
          try:
              testdata = open_urlresource(TESTDATAURL, encoding="utf-8",
---- Python-3.9.2/Lib/test/test_time.py
-+++ Python-3.9.2/Lib/test/test_time.py
-@@ -613,7 +613,7 @@ class _TestStrftimeYear:
+--- Python-3.12.1/Lib/test/test_time.py.orig
++++ Python-3.12.1/Lib/test/test_time.py
+@@ -642,7 +642,7 @@
              self.test_year('%04d', func=year4d)
  
      def skip_if_not_supported(y):
@@ -49,9 +49,9 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
          # Check that it doesn't crash for year > 9999
          try:
              time.strftime('%Y', (y,) + (0,) * 8)
---- Python-3.9.2/Lib/test/test_socket.py
-+++ Python-3.9.2/Lib/test/test_socket.py
-@@ -3355,7 +3355,7 @@ class CmsgMacroTests(unittest.TestCase):
+--- Python-3.12.1/Lib/test/test_socket.py.orig
++++ Python-3.12.1/Lib/test/test_socket.py
+@@ -3520,7 +3520,7 @@
          # Test CMSG_SPACE() with various valid and invalid values,
          # checking the assumptions used by sendmsg().
          toobig = self.socklen_t_limit - socket.CMSG_SPACE(1) + 1
@@ -60,7 +60,7 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
  
          last = socket.CMSG_SPACE(0)
          # struct cmsghdr has at least three members, two of which are ints
-@@ -3501,6 +3501,7 @@ class SCMRightsTest(SendrecvmsgServerTim
+@@ -3666,6 +3666,7 @@
          self.createAndSendFDs(1)
  
      @unittest.skipIf(sys.platform == "darwin", "skipping, see issue #12958")
@@ -68,7 +68,7 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
      @unittest.skipIf(AIX, "skipping, see issue #22397")
      @requireAttrs(socket, "CMSG_SPACE")
      def testFDPassSeparate(self):
-@@ -3512,6 +3513,7 @@ class SCMRightsTest(SendrecvmsgServerTim
+@@ -3677,6 +3678,7 @@
  
      @testFDPassSeparate.client_skip
      @unittest.skipIf(sys.platform == "darwin", "skipping, see issue #12958")
@@ -76,7 +76,7 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
      @unittest.skipIf(AIX, "skipping, see issue #22397")
      def _testFDPassSeparate(self):
          fd0, fd1 = self.newFDs(2)
-@@ -3525,6 +3527,7 @@ class SCMRightsTest(SendrecvmsgServerTim
+@@ -3690,6 +3692,7 @@
              len(MSG))
  
      @unittest.skipIf(sys.platform == "darwin", "skipping, see issue #12958")
@@ -84,7 +84,7 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
      @unittest.skipIf(AIX, "skipping, see issue #22397")
      @requireAttrs(socket, "CMSG_SPACE")
      def testFDPassSeparateMinSpace(self):
-@@ -3539,6 +3542,7 @@ class SCMRightsTest(SendrecvmsgServerTim
+@@ -3704,6 +3707,7 @@
  
      @testFDPassSeparateMinSpace.client_skip
      @unittest.skipIf(sys.platform == "darwin", "skipping, see issue #12958")
@@ -92,27 +92,27 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
      @unittest.skipIf(AIX, "skipping, see issue #22397")
      def _testFDPassSeparateMinSpace(self):
          fd0, fd1 = self.newFDs(2)
---- Python-3.9.2/Lib/test/test_tcl.py
-+++ Python-3.9.2/Lib/test/test_tcl.py
-@@ -198,6 +198,7 @@ class TclTest(unittest.TestCase):
+--- Python-3.12.1/Lib/test/test_tcl.py.orig
++++ Python-3.12.1/Lib/test/test_tcl.py
+@@ -181,6 +181,7 @@
          self.assertRaises((UnicodeEncodeError, ValueError, TclError),
                            tcl.getboolean, 'on\ud800')
  
 +    @unittest.skipIf(sys.platform.startswith("sunos"), "test doesn't work well on Solaris")
      def testEvalFile(self):
          tcl = self.interp
-         filename = support.TESTFN_ASCII
-@@ -212,6 +213,7 @@ class TclTest(unittest.TestCase):
+         filename = os_helper.TESTFN_ASCII
+@@ -195,6 +196,7 @@
          self.assertEqual(tcl.eval('set b'),'2')
          self.assertEqual(tcl.eval('set c'),'3')
  
 +    @unittest.skipIf(sys.platform.startswith("sunos"), "test doesn't work well on Solaris")
      def test_evalfile_null_in_result(self):
          tcl = self.interp
-         filename = support.TESTFN_ASCII
---- Python-3.9.4/Lib/test/test_float.py
-+++ Python-3.9.4/Lib/test/test_float.py
-@@ -144,7 +144,7 @@ class GeneralFloatCases(unittest.TestCas
+         filename = os_helper.TESTFN_ASCII
+--- Python-3.12.1/Lib/test/test_float.py.orig
++++ Python-3.12.1/Lib/test/test_float.py
+@@ -152,7 +152,7 @@
          # non-UTF-8 byte string
          check(b'123\xa0')
  
@@ -121,9 +121,9 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
      def test_float_with_comma(self):
          # set locale to something that doesn't use '.' for the decimal point
          # float must not accept the locale specific decimal point but
---- Python-3.9.4/Lib/test/test_pkgutil.py
-+++ Python-3.9.4/Lib/test/test_pkgutil.py
-@@ -479,7 +479,11 @@ class NestedNamespacePackageTest(unittes
+--- Python-3.12.1/Lib/test/test_pkgutil.py.orig
++++ Python-3.12.1/Lib/test/test_pkgutil.py
+@@ -520,7 +520,11 @@
          sys.path.insert(0, os.path.join(self.basedir, 'b'))
          import pkg
          self.addCleanup(unload, 'pkg')
@@ -136,8 +136,8 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
          import pkg.subpkg
          self.addCleanup(unload, 'pkg.subpkg')
          self.assertEqual(len(pkg.subpkg.__path__), 2)
---- Python-3.12.1/Lib/test/test_gdb/__init__.py.~1~	Thu Dec  7 12:45:44 2023
-+++ Python-3.12.1/Lib/test/test_gdb/__init__.py	Mon Feb  5 11:44:20 2024
+--- Python-3.12.1/Lib/test/test_gdb/__init__.py.orig
++++ Python-3.12.1/Lib/test/test_gdb/__init__.py
 @@ -15,6 +15,9 @@
      # debug symbol files.
      raise unittest.SkipTest("test_gdb doesn't work on Windows")
@@ -148,8 +148,8 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
  if support.PGO:
      raise unittest.SkipTest("test_gdb is not useful for PGO")
  
---- Python-3.12.1/Lib/test/test_re.py.~1~	Thu Dec  7 12:45:44 2023
-+++ Python-3.12.1/Lib/test/test_re.py	Mon Feb  5 11:47:36 2024
+--- Python-3.12.1/Lib/test/test_re.py.orig
++++ Python-3.12.1/Lib/test/test_re.py
 @@ -1952,6 +1952,8 @@
          self.assertTrue(re.match(b'(?Li)\xc5', b'\xe5'))
          self.assertTrue(re.match(b'(?Li)\xe5', b'\xc5'))

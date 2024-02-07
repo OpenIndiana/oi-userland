@@ -1,10 +1,8 @@
 This patch provides Python ucred support.  It may be contributed upstream at
 some point, but the suitability (or lack thereof) has not yet been determined.
 
-diff --git Python-2.6.4/Modules/ucred.c Python-2.6.4/Modules/ucred.c
-new file mode 100644
---- Python-3.9.1/Modules/ucred.c
-+++ Python-3.9.1/Modules/ucred.c
+--- /dev/null
++++ Python-3.12.1/Modules/ucred.c
 @@ -0,0 +1,404 @@
 +/*
 + * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -410,8 +408,8 @@ new file mode 100644
 +
 +	return m;
 +}
---- Python-3.9.1/Lib/test/ucredtest.py
-+++ Python-3.9.1/Lib/test/ucredtest.py
+--- /dev/null
++++ Python-3.12.1/Lib/test/ucredtest.py
 @@ -0,0 +1,45 @@
 +#!/usr/bin/python3.9
 +
@@ -458,17 +456,17 @@ new file mode 100644
 +    uc.getpid()
 +except OSError as e:
 +    print(e)
---- Python-3.12.1/configure.ac.~5~	Mon Feb  5 08:45:39 2024
-+++ Python-3.12.1/configure.ac	Mon Feb  5 09:14:50 2024
-@@ -7564,3 +7564,6 @@
+--- Python-3.12.1/configure.ac.orig
++++ Python-3.12.1/configure.ac
+@@ -7565,3 +7565,6 @@
  Platform "$host" with compiler "$ac_cv_cc_name" is not supported by the
  CPython core team, see https://peps.python.org/pep-0011/ for more information.
  ])])
 +
 +dnl Illumos Additions
 +PY_STDLIB_MOD_SIMPLE([ucred])
---- Python-3.12.1/Modules/Setup.stdlib.in.~4~	Mon Feb  5 08:45:39 2024
-+++ Python-3.12.1/Modules/Setup.stdlib.in	Mon Feb  5 09:17:32 2024
+--- Python-3.12.1/Modules/Setup.stdlib.in.orig
++++ Python-3.12.1/Modules/Setup.stdlib.in
 @@ -181,3 +181,6 @@
  # Limited API template modules; must be built as shared modules.
  @MODULE_XXLIMITED_TRUE@xxlimited xxlimited.c

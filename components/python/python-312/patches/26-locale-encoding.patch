@@ -9,9 +9,9 @@ breaks on Solaris when non UTF-8 locale is used. See bug 31790476.
 To fix this, we have to convert given wchar_t to utf32 each time locale is not
 UTF-8 encoded (or ASCII, which can safely be ignored).
 
---- Python-3.9.1/Include/unicodeobject.h
-+++ Python-3.9.1/Include/unicodeobject.h
-@@ -97,6 +97,11 @@ Copyright (c) Corporation for National R
+--- Python-3.12.1/Include/unicodeobject.h.orig
++++ Python-3.12.1/Include/unicodeobject.h
+@@ -97,6 +97,11 @@
  #  include <wchar.h>
  #endif
  
@@ -23,10 +23,10 @@ UTF-8 encoded (or ASCII, which can safely be ignored).
  /* Py_UCS4 and Py_UCS2 are typedefs for the respective
     unicode representations. */
  typedef uint32_t Py_UCS4;
---- Python-3.9.1/Objects/unicodeobject.c
-+++ Python-3.9.1/Objects/unicodeobject.c
-@@ -2187,6 +2187,15 @@ PyUnicode_FromUnicode(const Py_UNICODE *
-     return PyUnicode_FromWideChar(u, size);
+--- Python-3.12.1/Objects/unicodeobject.c.orig
++++ Python-3.12.1/Objects/unicodeobject.c
+@@ -1792,6 +1792,15 @@
+     return unicode;
  }
  
 +#if defined(__sun) && defined(__SVR4)
@@ -41,10 +41,11 @@ UTF-8 encoded (or ASCII, which can safely be ignored).
  PyObject *
  PyUnicode_FromWideChar(const wchar_t *u, Py_ssize_t size)
  {
-@@ -2210,6 +2219,58 @@ PyUnicode_FromWideChar(const wchar_t *u,
-     if (size == 0)
-         _Py_RETURN_UNICODE_EMPTY();
- 
+@@ -1828,6 +1837,58 @@
+         return unicode;
+     }
+ #endif
++
 +#if defined(__sun) && defined(__SVR4)
 +    /* Check whether current locale uses UTF to encode symbols */
 +    if (!codeset_is_utf8_compatible()) {
@@ -96,7 +97,6 @@ UTF-8 encoded (or ASCII, which can safely be ignored).
 +        return unicode;
 +    }
 +#endif
-+
+ 
      /* Single character Unicode objects in the Latin-1 range are
         shared when using this constructor */
-     if (size == 1 && (Py_UCS4)*u < 256)

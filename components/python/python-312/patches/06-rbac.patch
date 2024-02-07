@@ -1,10 +1,8 @@
 This patch provides Python RBAC support.  It may be contributed upstream at
 some point, but the suitability (or lack thereof) has not yet been determined.
 
-diff --git Python-2.6.4/Modules/authattr.c Python-2.6.4/Modules/authattr.c
-new file mode 100644
---- Python-3.9.1/Modules/authattr.c
-+++ Python-3.9.1/Modules/authattr.c
+--- /dev/null
++++ Python-3.12.1/Modules/authattr.c
 @@ -0,0 +1,254 @@
 +/*
 + * CDDL HEADER START
@@ -260,8 +258,8 @@ new file mode 100644
 +	0,                            /* tp_free */
 +	0,                            /* tp_is_gc */
 +};
---- Python-3.9.1/Modules/execattr.c
-+++ Python-3.9.1/Modules/execattr.c
+--- /dev/null
++++ Python-3.12.1/Modules/execattr.c
 @@ -0,0 +1,305 @@
 +/*
 + * CDDL HEADER START
@@ -568,8 +566,8 @@ new file mode 100644
 +	0,                            /* tp_free */
 +	0,                            /* tp_is_gc */
 +};
---- Python-3.9.1/Modules/privileges.c
-+++ Python-3.9.1/Modules/privileges.c
+--- /dev/null
++++ Python-3.12.1/Modules/privileges.c
 @@ -0,0 +1,237 @@
 +/*
 + * CDDL HEADER START
@@ -808,8 +806,8 @@ new file mode 100644
 +
 +       return m;
 +}
---- Python-3.9.1/Modules/pyrbac.c
-+++ Python-3.9.1/Modules/pyrbac.c
+--- /dev/null
++++ Python-3.12.1/Modules/pyrbac.c
 @@ -0,0 +1,81 @@
 +/*
 + * CDDL HEADER START
@@ -892,8 +890,8 @@ new file mode 100644
 +	return m;
 +
 +}
---- Python-3.9.1/Modules/pyrbac.h
-+++ Python-3.9.1/Modules/pyrbac.h
+--- /dev/null
++++ Python-3.12.1/Modules/pyrbac.h
 @@ -0,0 +1,45 @@
 +/*
 + * CDDL HEADER START
@@ -940,8 +938,8 @@ new file mode 100644
 +extern PyTypeObject UserattrType;
 +
 +#endif
---- Python-3.9.1/Modules/userattr.c
-+++ Python-3.9.1/Modules/userattr.c
+--- /dev/null
++++ Python-3.12.1/Modules/userattr.c
 @@ -0,0 +1,301 @@
 +/*
 + * CDDL HEADER START
@@ -1244,8 +1242,8 @@ new file mode 100644
 +	0,                            /* tp_free */
 +	0,                            /* tp_is_gc */
 +};
---- Python-3.9.1/Lib/test/privrbactest.py
-+++ Python-3.9.1/Lib/test/privrbactest.py
+--- /dev/null
++++ Python-3.12.1/Lib/test/privrbactest.py
 @@ -0,0 +1,289 @@
 +#!/usr/bin/python3.9
 +#
@@ -1536,16 +1534,16 @@ new file mode 100644
 +    or not test_getuseruid() or not test_userattr_iter():
 +    print("*** Failures detected in rbac.userattr\n")
 +    sys.exit(1)
---- Python-3.12.1/configure.ac.~5~	Mon Feb  5 09:25:21 2024
-+++ Python-3.12.1/configure.ac	Mon Feb  5 09:28:15 2024
-@@ -7568,3 +7568,5 @@
+--- Python-3.12.1/configure.ac.orig
++++ Python-3.12.1/configure.ac
+@@ -7569,3 +7569,5 @@
  dnl Illumos Additions
  PY_STDLIB_MOD_SIMPLE([ucred])
  PY_STDLIB_MOD_SIMPLE([dlpi])
 +PY_STDLIB_MOD_SIMPLE([privileges])
 +PY_STDLIB_MOD_SIMPLE([rbac])
---- Python-3.12.1/Modules/Setup.stdlib.in.~4~	Mon Feb  5 09:25:20 2024
-+++ Python-3.12.1/Modules/Setup.stdlib.in	Mon Feb  5 09:27:42 2024
+--- Python-3.12.1/Modules/Setup.stdlib.in.orig
++++ Python-3.12.1/Modules/Setup.stdlib.in
 @@ -185,3 +185,5 @@
  # Illumos additions
  @MODULE_UCRED_TRUE@ucred ucred.c -ltsol

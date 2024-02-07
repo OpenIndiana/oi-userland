@@ -27,9 +27,9 @@ signal occurred during an await.
  5 files changed, 44 insertions(+), 12 deletions(-)
  create mode 100644 Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
 
---- Python-3.9.2/Lib/asyncio/unix_events.py.orig	2021-02-19 13:31:44.000000000 +0000
-+++ Python-3.9.2/Lib/asyncio/unix_events.py	2021-02-27 22:27:23.974509830 +0000
-@@ -78,6 +78,8 @@
+--- Python-3.12.1/Lib/asyncio/unix_events.py.orig
++++ Python-3.12.1/Lib/asyncio/unix_events.py
+@@ -88,6 +88,8 @@
      def add_signal_handler(self, sig, callback, *args):
          """Add a handler for a signal.  UNIX only.
  
@@ -38,7 +38,7 @@ signal occurred during an await.
          Raise ValueError if the signal number is invalid or uncatchable.
          Raise RuntimeError if there is a problem setting up the handler.
          """
-@@ -1234,10 +1236,15 @@
+@@ -1253,10 +1255,15 @@
              return
  
          handler = signal.getsignal(signal.SIGCHLD)
@@ -55,7 +55,16 @@ signal occurred during an await.
          self._saved_sighandler = None
  
      def __enter__(self):
-@@ -1265,6 +1272,11 @@
+@@ -1280,10 +1287,20 @@
+             return False
+ 
+     def attach_loop(self, loop):
++        """
++        This registers the SIGCHLD signal handler.
++
++        This method can only be called from the main thread.
++        """
+         # Don't save the loop but initialize itself if called first time
          # The reason to do it here is that attach_loop() is called from
          # unix policy only for the main thread.
          # Main thread is required for subscription on SIGCHLD signal
@@ -67,7 +76,7 @@ signal occurred during an await.
          if self._saved_sighandler is not None:
              return
  
-@@ -1274,8 +1286,14 @@
+@@ -1293,8 +1310,14 @@
                             "restore to default handler on watcher close.")
              self._saved_sighandler = signal.SIG_DFL
  
@@ -84,7 +93,7 @@ signal occurred during an await.
  
      def _do_waitpid_all(self):
          for pid in list(self._callbacks):
-@@ -1318,7 +1336,7 @@
+@@ -1337,7 +1360,7 @@
                                   expected_pid, returncode)
                  loop.call_soon_threadsafe(callback, pid, returncode, *args)
  
@@ -93,29 +102,3 @@ signal occurred during an await.
          try:
              self._do_waitpid_all()
          except (SystemExit, KeyboardInterrupt):
-From 9618884446dc4a72e401b0f05b2992e34e39d700 Mon Sep 17 00:00:00 2001
-From: Chris Jerdonek <chris.jerdonek@gmail.com>
-Date: Sat, 16 May 2020 18:49:59 -0700
-Subject: [PATCH 2/5] Add docstring.
-
----
- Lib/asyncio/unix_events.py | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Lib/asyncio/unix_events.py b/Lib/asyncio/unix_events.py
-index d2a32cb879b6b..17614c23c984c 100644
---- a/Lib/asyncio/unix_events.py
-+++ b/Lib/asyncio/unix_events.py
-@@ -1266,6 +1266,11 @@ def remove_child_handler(self, pid):
-             return False
-
-     def attach_loop(self, loop):
-+        """
-+        This registers the SIGCHLD signal handler.
-+
-+        This method can only be called from the main thread.
-+        """
-         # Don't save the loop but initialize itself if called first time
-         # The reason to do it here is that attach_loop() is called from
-         # unix policy only for the main thread.
-
