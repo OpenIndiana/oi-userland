@@ -15,19 +15,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           pkgconf
-COMPONENT_VERSION=        2.1.0
+COMPONENT_VERSION=        2.1.1
 COMPONENT_SUMMARY=        Package compiler and linker metadata toolkit
 COMPONENT_PROJECT_URL=    http://pkgconf.org/
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=    https://distfiles.dereferenced.org/pkgconf/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=   sha256:266d5861ee51c52bc710293a1d36622ae16d048d71ec56034a02eb9cf9677761
+COMPONENT_ARCHIVE_HASH=   sha256:3a224f2accf091b77a5781316e27b9ee3ba82c083cc2e539e08940b68a44fec5
 COMPONENT_FMRI=           developer/build/pkgconf
 COMPONENT_CLASSIFICATION= Development/System
 COMPONENT_LICENSE=        ISC
 COMPONENT_LICENSE_FILE=   COPYING
 
-TEST_TARGET = $(NO_TESTS)
+# Tests depend upon kyua framework
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # do not build static library
