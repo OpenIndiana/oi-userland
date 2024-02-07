@@ -9,22 +9,3 @@
      content/browser/extension-linux-panel.css
  #endif
  #ifdef XP_MACOSX
---- gecko-dev-master/browser/components/extensions/ExtensionPopups.sys.mjs.old	2023-06-05 21:19:27.919203523 -0400
-+++ gecko-dev-master/browser/components/extensions/ExtensionPopups.sys.mjs	2023-06-05 21:21:53.084756280 -0400
-@@ -43,12 +43,16 @@
- XPCOMUtils.defineLazyGetter(lazy, "standaloneStylesheets", () => {
-   let stylesheets = [];
- 
-+/* Solaris and Illumos are "other" platform */
-+
-   if (AppConstants.platform === "macosx") {
-     stylesheets.push("chrome://browser/content/extension-mac-panel.css");
-   } else if (AppConstants.platform === "win") {
-     stylesheets.push("chrome://browser/content/extension-win-panel.css");
-   } else if (AppConstants.platform === "linux") {
-     stylesheets.push("chrome://browser/content/extension-linux-panel.css");
-+  } else if (AppConstants.platform === "other") {
-+    stylesheets.push("chrome://browser/content/extension-linux-panel.css");
-   }
-   return stylesheets;
- });

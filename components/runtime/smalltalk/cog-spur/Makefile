@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024 David Stes
 #
 
 
@@ -19,8 +19,13 @@
 #
 
 # opensmalltalk-vm can be built both in 32 and 64bit
-BUILD_BITS=32_and_64
+# since december 2023 version 5.0.3339 we only deliver ELF64 bit executables
+# because the required 32bit libraries are no longer available
+BUILD_BITS=64
 USE_COMMON_TEST_MASTER= no
+
+# the SSL module is supporting 1.1 and 3.x but SUnit testframework is not
+USE_OPENSSL10=yes
 
 include ../../../../make-rules/shared-macros.mk
 
@@ -29,9 +34,10 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		cog-spur
-COMPONENT_VERSION=	5.0.3328
-GIT_TAG=		sun-v5.0.60
-PLUGIN_REV=		5.0-202306181455-cog
+COMPONENT_VERSION=	5.0.3339
+COMPONENT_REVISION=	1
+GIT_TAG=		sun-v5.0.61
+PLUGIN_REV=		5.0-202312211904-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/cog-spur
@@ -45,7 +51,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:35ec9cc7ea6128e4d62b93cefd9555ffeaf03123c7e52f4a8025e1849e8f170e
+COMPONENT_ARCHIVE_HASH=	sha256:68bdf1b20c9eeed85b054e888fcf3fe56afab2f9976ad77cb770d115b9303593
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
@@ -101,6 +107,10 @@ CONFIGURE_ENV    +=     LIBS="$(LIBS)"
 CONFIGURE_ENV.32 +=	TARGET_ARCH="-m32"
 CONFIGURE_ENV.64 +=	TARGET_ARCH="-m64"
 
+# for pkgsend generate (sample-manifest)
+# the actual manifest uses a mediator mediated hardlink for the squeak manpage
+PKG_HARDLINKS    += usr/share/man/man1/squeak.1
+
 # the opensmalltalk Makefile does not use DESTDIR
 COMPONENT_INSTALL_ARGS=  	ROOT=$(PROTO_DIR)
 COMPONENT_BUILD_TARGETS= 	getversion squeak plugins ckformat
@@ -131,7 +141,6 @@ REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += x11/library/libxevie
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/pulseaudio

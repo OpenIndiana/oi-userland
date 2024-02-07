@@ -1,35 +1,35 @@
---- mariadb-10.3.8/sql/sql_class.h	2018-07-02 09:34:11.000000000 +0000
-+++ mariadb-10.3.8/sql/sql_class.h.new	2018-08-07 06:58:32.140512292 +0000
-@@ -6391,7 +6391,7 @@ inline int handler::ha_read_first_row(uc
+--- mariadb-10.6.16/sql/sql_class.h.orig
++++ mariadb-10.6.16/sql/sql_class.h
+@@ -7554,7 +7554,7 @@
  inline int handler::ha_write_tmp_row(uchar *buf)
  {
    int error;
 -  MYSQL_INSERT_ROW_START(table_share->db.str, table_share->table_name.str);
 +  MYSQL_INSERT_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
    increment_statistics(&SSV::ha_tmp_write_count);
-   TABLE_IO_WAIT(tracker, m_psi, PSI_TABLE_WRITE_ROW, MAX_KEY, 0,
-                 { error= write_row(buf); })
-@@ -6402,7 +6402,7 @@ inline int handler::ha_write_tmp_row(uch
+   TABLE_IO_WAIT(tracker, PSI_TABLE_WRITE_ROW, MAX_KEY, error,
+           { error= write_row(buf); })
+@@ -7565,7 +7565,7 @@
  inline int handler::ha_delete_tmp_row(uchar *buf)
  {
    int error;
 -  MYSQL_DELETE_ROW_START(table_share->db.str, table_share->table_name.str);
 +  MYSQL_DELETE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
    increment_statistics(&SSV::ha_tmp_delete_count);
-   TABLE_IO_WAIT(tracker, m_psi, PSI_TABLE_DELETE_ROW, MAX_KEY, 0,
+   TABLE_IO_WAIT(tracker, PSI_TABLE_DELETE_ROW, MAX_KEY, error,
                  { error= delete_row(buf); })
-@@ -6413,7 +6413,7 @@ inline int handler::ha_delete_tmp_row(uc
+@@ -7576,7 +7576,7 @@
  inline int handler::ha_update_tmp_row(const uchar *old_data, uchar *new_data)
  {
    int error;
 -  MYSQL_UPDATE_ROW_START(table_share->db.str, table_share->table_name.str);
 +  MYSQL_UPDATE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
    increment_statistics(&SSV::ha_tmp_update_count);
-   TABLE_IO_WAIT(tracker, m_psi, PSI_TABLE_UPDATE_ROW, active_index, 0,
-                 { error= update_row(old_data, new_data);})
---- mariadb-10.3.8/sql/filesort.cc	2018-07-02 09:34:11.000000000 +0000
-+++ mariadb-10.3.8/sql/filesort.cc.new	2018-08-07 07:30:45.020793273 +0000
-@@ -165,7 +165,7 @@ SORT_INFO *filesort(THD *thd, TABLE *tab
+   TABLE_IO_WAIT(tracker, PSI_TABLE_UPDATE_ROW, active_index, error,
+           { error= update_row(old_data, new_data);})
+--- mariadb-10.6.16/sql/filesort.cc.orig
++++ mariadb-10.6.16/sql/filesort.cc
+@@ -221,7 +221,7 @@
    SORT_INFO *sort;
    TABLE_LIST *tab= table->pos_in_table_list;
    Item_subselect *subselect= tab ? tab->containing_subselect() : 0;
@@ -37,10 +37,10 @@
 +  MYSQL_FILESORT_START((char*)table->s->db.str, (char*)table->s->table_name.str);
    DEBUG_SYNC(thd, "filesort_start");
  
-   if (!(sort= new SORT_INFO))
---- mariadb-10.3.8/storage/csv/ha_tina.cc	2018-07-02 09:34:11.000000000 +0000
-+++ mariadb-10.3.8/storage/csv/ha_tina.cc.new	2018-08-07 18:47:07.864867214 +0000
-@@ -1226,7 +1226,7 @@ int ha_tina::rnd_next(uchar *buf)
+   if (!(sort= new SORT_INFO))    // Note that this is not automatically freed!
+--- mariadb-10.6.16/storage/csv/ha_tina.cc.orig
++++ mariadb-10.6.16/storage/csv/ha_tina.cc
+@@ -1243,7 +1243,7 @@
  {
    int rc;
    DBUG_ENTER("ha_tina::rnd_next");
@@ -49,7 +49,7 @@
                         TRUE);
  
    if (share->crashed)
-@@ -1281,7 +1281,7 @@ int ha_tina::rnd_pos(uchar * buf, uchar
+@@ -1298,7 +1298,7 @@
  {
    int rc;
    DBUG_ENTER("ha_tina::rnd_pos");
@@ -58,9 +58,9 @@
                         FALSE);
    current_position= my_get_ptr(pos,ref_length);
    rc= find_current_row(buf);
---- mariadb-10.3.8/sql/handler.cc	2018-07-02 09:34:11.000000000 +0000
-+++ mariadb-10.3.8/sql/handler.cc.new	2018-08-07 19:04:42.437141903 +0000
-@@ -6099,18 +6099,18 @@ int handler::ha_external_lock(THD *thd,
+--- mariadb-10.6.16/sql/handler.cc.orig
++++ mariadb-10.6.16/sql/handler.cc
+@@ -7120,18 +7120,18 @@
    {
      if (lock_type == F_RDLCK)
      {
@@ -85,25 +85,25 @@
      }
    }
  
-@@ -6189,7 +6189,7 @@ int handler::ha_write_row(uchar *buf)
-   DBUG_ENTER("handler::ha_write_row");
-   DEBUG_SYNC_C("ha_write_row_start");
+@@ -7642,7 +7642,7 @@
+       DBUG_RETURN(error);
+   }
  
 -  MYSQL_INSERT_ROW_START(table_share->db.str, table_share->table_name.str);
 +  MYSQL_INSERT_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
    mark_trx_read_write();
    increment_statistics(&SSV::ha_write_count);
  
-@@ -6221,7 +6221,7 @@ int handler::ha_update_row(const uchar *
-   DBUG_ASSERT(new_data == table->record[0]);
-   DBUG_ASSERT(old_data == table->record[1]);
+@@ -7702,7 +7702,7 @@
+   if (error)
+     return error;
  
 -  MYSQL_UPDATE_ROW_START(table_share->db.str, table_share->table_name.str);
 +  MYSQL_UPDATE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
    mark_trx_read_write();
    increment_statistics(&SSV::ha_update_count);
  
-@@ -6277,7 +6277,7 @@ int handler::ha_delete_row(const uchar *
+@@ -7781,7 +7781,7 @@
    DBUG_ASSERT(buf == table->record[0] ||
                buf == table->record[1]);
  
@@ -112,16 +112,17 @@
    mark_trx_read_write();
    increment_statistics(&SSV::ha_delete_count);
  
-@@ -6311,6 +6311,7 @@ int handler::ha_direct_update_rows(ha_ro
+@@ -7838,7 +7838,8 @@
+ int handler::ha_direct_update_rows(ha_rows *update_rows, ha_rows *found_rows)
  {
    int error;
-+ 
 -  MYSQL_UPDATE_ROW_START(table_share->db.str, table_share->table_name.str);
++ 
 +  MYSQL_UPDATE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
    mark_trx_read_write();
  
-   error = direct_update_rows(update_rows);
-@@ -6338,7 +6338,7 @@ int handler::ha_direct_delete_rows(ha_ro
+   error= direct_update_rows(update_rows, found_rows);
+@@ -7865,7 +7866,7 @@
    /* Ensure we are not using binlog row */
    DBUG_ASSERT(!table->in_use->is_current_stmt_binlog_format_row());
  
@@ -130,9 +131,9 @@
    mark_trx_read_write();
  
    error = direct_delete_rows(delete_rows);
---- mariadb-10.3.8/sql/sp_head.cc	2018-07-02 09:34:11.000000000 +0000
-+++ mariadb-10.3.8/sql/sp_head.cc.new	2018-08-07 19:27:05.342039650 +0000
-@@ -3585,7 +3585,7 @@ sp_instr_stmt::exec_core(THD *thd, uint
+--- mariadb-10.6.16/sql/sp_head.cc.orig
++++ mariadb-10.6.16/sql/sp_head.cc
+@@ -3836,7 +3836,7 @@
  {
    MYSQL_QUERY_EXEC_START(thd->query(),
                           thd->thread_id,
@@ -141,9 +142,9 @@
                           &thd->security_ctx->priv_user[0],
                           (char *)thd->security_ctx->host_or_ip,
                           3);
---- mariadb-10.3.8/sql/sql_cursor.cc	2018-07-02 09:34:11.000000000 +0000
-+++ mariadb-10.3.8/sql/sql_cursor.cc.new	2018-08-07 19:31:10.441044534 +0000
-@@ -132,7 +132,7 @@ int mysql_open_cursor(THD *thd, select_r
+--- mariadb-10.6.16/sql/sql_cursor.cc.orig
++++ mariadb-10.6.16/sql/sql_cursor.cc
+@@ -125,7 +125,7 @@
  
    MYSQL_QUERY_EXEC_START(thd->query(),
                           thd->thread_id,
@@ -152,9 +153,9 @@
                           &thd->security_ctx->priv_user[0],
                           (char *) thd->security_ctx->host_or_ip,
                           2);
---- mariadb-10.3.8/sql/sql_parse.cc	2018-07-02 09:34:11.000000000 +0000
-+++ mariadb-10.3.8/sql/sql_parse.cc.new	2018-08-07 19:38:07.511539303 +0000
-@@ -1823,7 +1823,7 @@ bool dispatch_command(enum enum_server_c
+--- mariadb-10.6.16/sql/sql_parse.cc.orig
++++ mariadb-10.6.16/sql/sql_parse.cc
+@@ -1861,7 +1861,7 @@
      if (unlikely(alloc_query(thd, packet, packet_length)))
        break;					// fatal error is set
      MYSQL_QUERY_START(thd->query(), thd->thread_id,
@@ -163,7 +164,7 @@
                        &thd->security_ctx->priv_user[0],
                        (char *) thd->security_ctx->host_or_ip);
      char *packet_end= thd->query() + thd->query_length();
-@@ -1901,7 +1901,7 @@ bool dispatch_command(enum enum_server_c
+@@ -1947,7 +1947,7 @@
  
        /* DTRACE begin */
        MYSQL_QUERY_START(beginning_of_next_stmt, thd->thread_id,
@@ -172,7 +173,7 @@
                          &thd->security_ctx->priv_user[0],
                          (char *) thd->security_ctx->host_or_ip);
  
-@@ -7815,7 +7815,7 @@
+@@ -7835,7 +7835,7 @@
  
    /* DTRACE begin */
    MYSQL_QUERY_START(rawbuf, thd->thread_id,
@@ -181,7 +182,7 @@
                      &thd->security_ctx->priv_user[0],
                      (char *) thd->security_ctx->host_or_ip);
  
-@@ -8065,7 +8065,7 @@ void mysql_parse(THD *thd, char *rawbuf,
+@@ -8042,7 +8042,7 @@
            lex->set_trg_event_type_for_tables();
            MYSQL_QUERY_EXEC_START(thd->query(),
                                   thd->thread_id,
@@ -190,9 +191,9 @@
                                   &thd->security_ctx->priv_user[0],
                                   (char *) thd->security_ctx->host_or_ip,
                                   0);
---- a/sql/sql_prepare.cc	Wed May 18 08:34:16 2022
-+++ b/sql/sql_prepare.cc	Fri Jul 29 16:04:08 2022
-@@ -5199,7 +5199,7 @@
+--- mariadb-10.6.16/sql/sql_prepare.cc.orig
++++ mariadb-10.6.16/sql/sql_prepare.cc
+@@ -5243,7 +5243,7 @@
      if (query_cache_send_result_to_client(thd, thd->query(),
                                            thd->query_length()) <= 0)
      {

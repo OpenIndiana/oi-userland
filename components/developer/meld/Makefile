@@ -25,12 +25,12 @@
 
 BUILD_BITS=	64
 BUILD_STYLE= meson 
-
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
-COMPONENT_VERSION=	3.21.3
-COMPONENT_FMRI=		developer/$(COMPONENT_NAME)
+COMPONENT_MJR_VERSION=	3.22
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).0
 COMPONENT_SUMMARY=	meld - graphical diff and merge tool
 COMPONENT_DESCRIPTION=\
 Meld is a visual diff and merge tool. You can compare two or three files \
@@ -41,17 +41,16 @@ Bazaar-ng and Mercurial.
 COMPONENT_PROJECT_URL=	https://meld.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c5a9c628c68287a6cf576d8d82041e8080a5dd5c12cb4d709ac2994aa0b1b197
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/meld/3.21/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	meld.license
+COMPONENT_ARCHIVE_HASH= sha256:3fc107c98ef6e75358ffd2b0d14c85ddb48fe14a11e939a94322faaa8e90c40d
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/meld/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		developer/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Editors
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSIONS =	 3.9
-
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Don't build and package these, they need to be generated on install to
 # reflect all the other packages installed on the machine too, not just meld
@@ -60,26 +59,17 @@ COMPONENT_SETUP_ARGS += --no-update-icon-cache
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTOUSRLIBDIR)/python3.9/vendor-packages; \
-        $(MV) $(PROTOUSRLIBDIR)/python3.9/site-packages/* $(PROTOUSRLIBDIR)/python3.9/vendor-packages/; \
-	python3.9 -m compileall $(PROTOUSRLIBDIR)/python3.9/vendor-packages;
+	$(MV) $(PROTOUSRLIBDIR)/python3.9/site-packages/* $(PROTOUSRLIBDIR)/python3.9/vendor-packages/; \
+	$(PYTHON) -m compileall $(PROTOUSRLIBDIR)/python3.9/vendor-packages;
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*[0-9].[0-9][0-9]s//" '
-COMPONENT_TEST_TRANSFORMS += '-e "s/OK      [0-9]//" '
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/OK/p" ' \
-        '-e "/Ok/p" ' \
-        '-e "/Pass/p" ' \
-        '-e "/Fail/p" '
-
-# Runtime dependencies
+# Manually added dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pycairo
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/desktop/gtksourceview4
-REQUIRED_PACKAGES += library/python/pycairo-39
 REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/pygobject-3-39
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
+PYTHON_REQUIRED_PACKAGES += library/python/tkinter
+PYTHON_REQUIRED_PACKAGES += runtime/python

@@ -14,21 +14,21 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-OPENSSL_VERSION= 3.1
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=      6.0
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=      6.1.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
+COMPONENT_ARCHIVE_HASH= sha256:8684f4b00f94b85461884c3719382f1261f0d9eb3d59640a1f4ac0873616f968
 COMPONENT_ARCHIVE_URL= https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org/
-COMPONENT_LICENSE=      GPLv2
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         video/ffmpeg
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
@@ -58,6 +58,7 @@ CONFIGURE_OPTIONS += --enable-libxvid
 CONFIGURE_OPTIONS += --enable-libx264
 CONFIGURE_OPTIONS += --enable-libx265
 CONFIGURE_OPTIONS += --enable-libdav1d
+CONFIGURE_OPTIONS += --enable-libwebp
 # Don't enable it, resulting binary is not 
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
@@ -116,6 +117,7 @@ REQUIRED_PACKAGES += library/audio/libgsm
 REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/video/libass

@@ -24,17 +24,17 @@
 # Copyright 2023 Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS = 64_and_32
+BUILD_BITS = 64
 BUILD_STYLE = waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.19.2
+COMPONENT_VERSION=	4.19.4
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	https://www.samba.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9e63f0505e1c631f1db0b7a9349a51e925c026ca03af3fd5d812228bb597d393
+COMPONENT_ARCHIVE_HASH=	sha256:4026d93b866db198c8ca1685b0f5d52793f65c6e63cb364163af661fdff0968c
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL =     https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI=		library/samba/libsmbclient
@@ -51,11 +51,8 @@ WAF = PYTHONHASHSEED=1 $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf
 # Compiler settings
 CFLAGS	+=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto
 
-LDFLAGS.32 +=	-R/usr/lib/libsmbclient
-LDFLAGS.64 +=	-R/usr/lib/libsmbclient/$(MACH64)
-LDFLAGS.32 +=	-R/usr/lib/libsmbclient/private
-LDFLAGS.64 +=	-R/usr/lib/libsmbclient/private/$(MACH64)
-LDFLAGS +=	$(LDFLAGS.$(BITS))
+LDFLAGS +=	-R/usr/lib/libsmbclient/$(MACH64)
+LDFLAGS +=	-R/usr/lib/libsmbclient/private/$(MACH64)
 
 LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile
 LDFLAGS +=      -lldap-2.6 -lsendfile -lavahi-common -lavahi-core
@@ -77,29 +74,24 @@ CONFIGURE_PREFIX =      /usr/lib/libsmbclient
 
 # !!! Note, this is not a configure.mk-based Makefile !!!
 # --enable-fhs should not be on
-CONFIGURE_OPTIONS +=    --prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS +=    --exec-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS.32 += --bindir=$(CONFIGURE_PREFIX)/bin
-CONFIGURE_OPTIONS.64 += --bindir=$(CONFIGURE_PREFIX)/bin/$(MACH64)
-CONFIGURE_OPTIONS.32 += --sbindir=$(CONFIGURE_PREFIX)/sbin
-CONFIGURE_OPTIONS.64 += --sbindir=$(CONFIGURE_PREFIX)/sbin/$(MACH64)
-CONFIGURE_OPTIONS.32 += --libdir=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS.64 += --libdir=$(CONFIGURE_PREFIX)/$(MACH64)
-CONFIGURE_OPTIONS.32 += --with-privatelibdir=$(CONFIGURE_PREFIX)/private
-CONFIGURE_OPTIONS.64 += --with-privatelibdir=$(CONFIGURE_PREFIX)/private/$(MACH64)
-CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)/samba
-CONFIGURE_OPTIONS.32 += --with-pammodulesdir=$(CONFIGURE_PREFIX)/security
-CONFIGURE_OPTIONS.64 += --with-pammodulesdir=$(CONFIGURE_PREFIX)/security/$(MACH64)
-CONFIGURE_OPTIONS +=    --datarootdir=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS +=    --mandir=$(USRSHAREMANDIR)
-CONFIGURE_OPTIONS +=    --htmldir=/usr/share/samba/swat/help
-CONFIGURE_OPTIONS +=    --includedir=$(USRINCDIR)/libsmbclient
-CONFIGURE_OPTIONS +=    --with-privatedir=$(ETCDIR)/samba/private
-CONFIGURE_OPTIONS +=    --localstatedir=$(VARDIR)/samba
-CONFIGURE_OPTIONS +=    --with-logfilebase=$(VARDIR)/samba/log
-CONFIGURE_OPTIONS +=    --sharedstatedir=$(VARDIR)/samba/com
-CONFIGURE_OPTIONS +=    --libexecdir=$(CONFIGURE_PREFIX)/libexec/$(MACH64)
-CONFIGURE_OPTIONS +=    --with-bind-dns-dir=$(CONFIGURE_PREFIX)/bind-dns
+CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--exec-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--bindir=$(CONFIGURE_PREFIX)/bin/$(MACH64)
+CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_PREFIX)/sbin/$(MACH64)
+CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_PREFIX)/$(MACH64)
+CONFIGURE_OPTIONS +=	--with-privatelibdir=$(CONFIGURE_PREFIX)/private/$(MACH64)
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/samba
+CONFIGURE_OPTIONS +=	--with-pammodulesdir=$(CONFIGURE_PREFIX)/security/$(MACH64)
+CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--mandir=$(USRSHAREMANDIR)
+CONFIGURE_OPTIONS +=	--htmldir=/usr/share/samba/swat/help
+CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/libsmbclient
+CONFIGURE_OPTIONS +=	--with-privatedir=$(ETCDIR)/samba/private
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)/samba
+CONFIGURE_OPTIONS +=	--with-logfilebase=$(VARDIR)/samba/log
+CONFIGURE_OPTIONS +=	--sharedstatedir=$(VARDIR)/samba/com
+CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec/$(MACH64)
+CONFIGURE_OPTIONS +=	--with-bind-dns-dir=$(CONFIGURE_PREFIX)/bind-dns
 
 CONFIGURE_OPTIONS +=	--with-static-modules=
 CONFIGURE_OPTIONS +=	--with-shared-modules=
@@ -118,50 +110,6 @@ CONFIGURE_ENV +=        CPP="$(CC) -E"
 CONFIGURE_ENV +=        CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=        CUPS_CONFIG=$(USRBINDIR)/cups-config
 CONFIGURE_ENV +=        PATH=$(GNUBIN.$(BITS)):$(USRBINDIR.$(BITS)):$(PATH.gnu)
-
-# Build targets for WAF:
-# (motivation) Samba started to use WAF (build system from Google) from the 3.x
-# (as a parallel build system) but Samba4 discontinued the use of auto tools
-# definitively.
-# (note) .BDprep target is an additional step between .prep and .configure
-# targets. It was added because there were problems with libtool-like phase of
-# WAF when the not "prepared well". "waf distclean" on CLONEY'ed BUILD_DIR is
-# enough.
-
-# Prepare build dir for Samba
-$(BUILD_DIR_32)/.BDprep:	$(SOURCE_DIR)/.prep
-	# re-create configure dir
-	$(MKDIR) $(@D)
-	# Clone SOURCE_DIR
-	$(CLONEY) $(SOURCE_DIR) $(@D)
-	# cleanup of clone
-	(cd $(@D) ; $(ENV) $(WAF) distclean )
-	$(TOUCH) $@
-
-# Configure of Samba
-$(BUILD_DIR_32)/.configured:	$(BUILD_DIR_32)/.BDprep
-	(cd $(@D) ; $(ENV) $(CONFIGURE_ENV) \
-		$(CONFIGURE_ENV.32) $(WAF) configure $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.32) )
-	$(TOUCH) $@
-
-# Build of Samba + Winbind.
-$(BUILD_DIR_32)/.built:	$(BUILD_DIR_32)/.configured
-	(cd $(@D) ; \
-        $(GSED) -i -e 's:/usr/lib/amd64:/usr/lib:' bin/c4che/default_cache.py; \
-	 $(ENV) $(WAF) build --targets=smbclient)
-	$(TOUCH) $@
-
-# Install of Samba + Winbind.
-$(BUILD_DIR_32)/.installed:	$(BUILD_DIR_32)/.built
-	(cd $(@D) ; $(ENV) $(WAF) install --targets=smbclient --destdir=$(PROTO_DIR) )
-	$(TOUCH) $@
-
-$(BUILD_DIR)/.pc.fixed:	$(INSTALL_32)
-	$(GSED) -i -e '/^Libs/s:-L$${libdir}:-L$${libdir} -R$${libdir}:' $(PROTO_DIR)/usr/lib/libsmbclient/pkgconfig/*.pc
-	$(TOUCH) $@
-
-# common targets
-install:	$(INSTALL_32) $(BUILD_DIR)/.pc.fixed
 
 # manually added packages
 PERL_REQUIRED_PACKAGES +=library/perl-5/json

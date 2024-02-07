@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		intltool
 COMPONENT_VERSION=	0.51.0
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	2
 COMPONENT_FMRI=		text/intltool
 COMPONENT_PROJECT_URL=	https://freedesktop.org/wiki/Software/intltool/
 COMPONENT_SUMMARY=	Set of tools to centralize translation of many different file formats using GNU gettext-compatible PO files
@@ -36,6 +36,5 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93

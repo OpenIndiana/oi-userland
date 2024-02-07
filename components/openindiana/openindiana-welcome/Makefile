@@ -35,14 +35,9 @@ GIT_CHANGESET=	HEAD
 
 PATH=$(PATH.gnu)
 
-PYTHON_VERSION=3.5
-
 COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
-
-# Make sure the binaries will be in /usr/bin instead of /usr/bin/$(MACH64):
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
@@ -71,7 +66,7 @@ COMPONENT_BUILD_TARGETS = all
 $(SOURCE_DIR)/.prep: $(SOURCE_DIR)/.downloaded Makefile
 	cd $(@D) &&\
 		touch config.rpath src/config.h.in&&\
-		libtoolize --force &&\
+		PATH="$(PATH)" libtoolize --force &&\
 		aclocal -Im4  &&\
 		intltoolize --copy --force --automake &&\
 		automake --add-missing -f -i &&\
@@ -85,5 +80,5 @@ install: $(INSTALL_64)
 download:: $(SOURCE_DIR)/.downloaded
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/pygobject-3-35
-REQUIRED_PACKAGES += runtime/python-35
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += runtime/python

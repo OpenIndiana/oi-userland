@@ -138,6 +138,11 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)
 	echo "<transform set name=pkg.fmri -> emit set name=illumos-gate.info.git-rev value=$(shell cd $(COMPONENT_SRC); git rev-parse HEAD)>" >> \
 	  $(BUILD_DIR)/$(MACH)/publish.transforms
 
+	echo "<transform set name=pkg.fmri -> emit set name=pkg.human-version value=$(shell cd $(COMPONENT_SRC); git rev-parse HEAD | cut -c1-10)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=userland.info.component value=$(COMPONENT)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+
 	# Drop man pages for sun-solaris perl module to avoid conflicts between different versions
 	echo "<transform file path=usr/share/man/man3perl/.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
@@ -163,6 +168,13 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)
 	# Fix dependencies on renamed runtime/java and runtime/java/runtime64 packages
 	echo '<transform depend fmri=runtime/java$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo '<transform depend fmri=runtime/java/runtime64$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
+	# Drop dependency on GCC compat links
+	echo '<transform depend fmri=pkg:/system/library/gcc-.*-compat-links -> drop>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
+	# Convert dependency on any version of Perl runtime to dependency on single unversioned runtime/perl
+	echo '<transform depend type=require-any fmri=pkg:/runtime/perl-5[0-9]+@ -> set fmri runtime/perl>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo '<transform depend type=require-any fmri=runtime/perl$$ -> set type require>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	# Drop dependency on ignored packages
 	$(GSED) -e 's|^\(.*\)$$|<transform depend fmri=pkg:/\1@.* -> drop>|' $< >> $@

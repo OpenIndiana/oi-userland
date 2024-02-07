@@ -15,14 +15,13 @@
 # Copyright 2020 Marco van Wieringen
 #
 
-BUILD_BITS= 32_and_64
-USE_COMMON_TEST_MASTER= no
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gtk+
 COMPONENT_MJR_VERSION=	3.24
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).34
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -36,34 +35,29 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
 
-# fixes possible textiter test failure
-gcc_OPT = -O2
-LD_Z_IGNORE=
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D) && \
+	PATH="$(PATH)" libtoolize --force && \
+	aclocal -I ./m4 && \
+	gtkdocize && \
+	autoheader && \
+	automake -a -f -c --gnu && \
+	autoconf )
 
-# Uses isinf, etc. only available in c99 and newer
-CFLAGS.gcc += -std=gnu11
-
-COMPONENT_PREP_ACTION =	(cd $(@D) && \
-				libtoolize --force && \
-				aclocal -I ./m4 && \
-				gtkdocize && \
-				autoheader && \
-				automake -a -f -c --gnu && \
-				autoconf )
-
-COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
-CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+# When we had both, 32 and 64 bit we needed to distinguish between the configuration files.
+#CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS += --enable-explicit-deps=yes
 CONFIGURE_OPTIONS += --enable-cloudprint
-CONFIGURE_OPTIONS.64 += --enable-introspection
+CONFIGURE_OPTIONS += --enable-introspection
 CONFIGURE_OPTIONS += --enable-man
 CONFIGURE_OPTIONS += --disable-glibtest
 CONFIGURE_OPTIONS += --disable-papi
@@ -79,13 +73,10 @@ CONFIGURE_ENV    += GLIB_MKENUMS=/usr/bin/glib-mkenums
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
-# for tests to pass
 unexport SHELLOPTS
-COMPONENT_TEST_TRANSFORMER = grep
-COMPONENT_TEST_TRANSFORMS = '"^  /"'
 
 # Test dependencies
-REQUIRED_PACKAGES += gnome/theme/hicolor-icon-theme
+TEST_REQUIRED_PACKAGES += gnome/theme/hicolor-icon-theme
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
@@ -103,7 +94,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
-REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libepoxy
 REQUIRED_PACKAGES += x11/library/libx11

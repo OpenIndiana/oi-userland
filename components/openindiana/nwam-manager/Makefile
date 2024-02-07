@@ -14,8 +14,7 @@
 # Copyright 2017 Gary Mills
 #
 
-BUILD_BITS = 32
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nwam-manager

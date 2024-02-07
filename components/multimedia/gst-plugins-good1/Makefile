@@ -16,17 +16,17 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-good1
-COMPONENT_VERSION=      1.22.6
+COMPONENT_VERSION=      1.22.9
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=		gst-plugins-good
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b3b07fe3f1ce7fe93aa9be7217866044548f35c4a7792280eec7e108a32f9817
+COMPONENT_ARCHIVE_HASH= sha256:26959fcfebfff637d4ea08ef40316baf31b61bb7729820b0684e800c3a1478b6
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
@@ -47,7 +47,7 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 # almost everything is "auto" with meson
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dorc=enabled
 CONFIGURE_OPTIONS += -Dlame=enabled
 CONFIGURE_OPTIONS += -Doss=enabled
@@ -55,11 +55,8 @@ CONFIGURE_OPTIONS += -Doss4=enabled
 CONFIGURE_OPTIONS += -Dqt5=disabled
 CONFIGURE_OPTIONS += -Dqt6=disabled
 CONFIGURE_OPTIONS += -Dtwolame=enabled
-# Disable Soup and Tests on 32bit, because Soup3 is only available in 64bit and the tests want to link against Soup even with the Soup option disabled, breaking the build.
-CONFIGURE_OPTIONS.32 += -Dsoup=disabled
-CONFIGURE_OPTIONS.32 += -Dtests=disabled
-CONFIGURE_OPTIONS.64 += -Dsoup=enabled
-CONFIGURE_OPTIONS.64 += -Dtests=enabled
+CONFIGURE_OPTIONS += -Dsoup=enabled
+CONFIGURE_OPTIONS += -Dtests=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used

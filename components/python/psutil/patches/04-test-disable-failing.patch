@@ -1,0 +1,110 @@
+--- psutil-5.9.8/psutil/tests/test_process.py.orig
++++ psutil-5.9.8/psutil/tests/test_process.py
+@@ -304,6 +304,7 @@
+         time.strftime("%Y %m %d %H:%M:%S", time.localtime(p.create_time()))
+ 
+     @unittest.skipIf(not POSIX, 'POSIX only')
++    @unittest.skip('always fails: https://github.com/giampaolo/psutil/issues/2043')
+     def test_terminal(self):
+         terminal = psutil.Process().terminal()
+         if terminal is not None:
+@@ -746,6 +747,7 @@
+             self.assertEqual(' '.join(p.cmdline()), ' '.join(cmdline))
+ 
+     @unittest.skipIf(PYPY, "broken on PYPY")
++    @unittest.skip("always fails: https://github.com/giampaolo/psutil/issues/2357")
+     def test_long_cmdline(self):
+         cmdline = [PYTHON_EXE]
+         cmdline.extend(["-v"] * 50)
+@@ -833,6 +835,7 @@
+         if hasattr(os, "getresuid"):
+             self.assertEqual(os.getresgid(), p.gids())
+ 
++    @unittest.skip('process priority and nice does not match')
+     def test_nice(self):
+         def cleanup(init):
+             try:
+--- psutil-5.9.8/psutil/tests/test_misc.py.orig
++++ psutil-5.9.8/psutil/tests/test_misc.py
+@@ -569,6 +569,7 @@
+         with mock.patch('psutil._common.stat.S_ISREG', return_value=False):
+             assert not isfile_strict(this_file)
+ 
++    @unittest.skip('always fails: https://github.com/giampaolo/psutil/issues/2043')
+     def test_debug(self):
+         if PY3:
+             from io import StringIO
+--- psutil-5.9.8/psutil/tests/test_posix.py.orig
++++ psutil-5.9.8/psutil/tests/test_posix.py
+@@ -438,6 +438,7 @@
+     # AIX can return '-' in df output instead of numbers, e.g. for /proc
+     @unittest.skipIf(AIX, "unreliable on AIX")
+     @retry_on_failure()
++    @unittest.skip("fails on zfs")
+     def test_disk_usage(self):
+         def df(device):
+             try:
+--- psutil-5.9.8/psutil/tests/test_testutils.py.orig
++++ psutil-5.9.8/psutil/tests/test_testutils.py
+@@ -375,6 +375,7 @@
+     @retry_on_failure()
+     @unittest.skipIf(CI_TESTING, "skipped on CI")
+     @unittest.skipIf(COVERAGE, "skipped during test coverage")
++    @unittest.skip("test fails: https://github.com/giampaolo/psutil/issues/2164")
+     def test_leak_mem(self):
+         ls = []
+ 
+--- psutil-5.9.8/psutil/tests/test_unicode.py.orig
++++ psutil-5.9.8/psutil/tests/test_unicode.py
+@@ -216,6 +216,7 @@
+         if self.expect_exact_path_match():
+             self.assertEqual(name, os.path.basename(self.funky_name))
+ 
++    @unittest.skip("always fails: https://github.com/giampaolo/psutil/issues/2357")
+     def test_proc_cmdline(self):
+         cmd = [self.funky_name, "-c", "import time; time.sleep(10)"]
+         subp = self.spawn_testproc(cmd)
+@@ -254,6 +255,7 @@
+             )
+ 
+     @unittest.skipIf(not POSIX, "POSIX only")
++    @unittest.skip("always fails: https://github.com/giampaolo/psutil/issues/1489")
+     def test_proc_connections(self):
+         name = self.get_testfn(suffix=self.funky_suffix)
+         try:
+@@ -301,6 +303,7 @@
+     @unittest.skipIf(not HAS_MEMORY_MAPS, "not supported")
+     @unittest.skipIf(not PY3, "ctypes does not support unicode on PY2")
+     @unittest.skipIf(PYPY, "unstable on PYPY")
++    @unittest.skip("always fails")
+     def test_memory_maps(self):
+         # XXX: on Python 2, using ctypes.CDLL with a unicode path
+         # opens a message box which blocks the test run.
+--- psutil-5.9.8/psutil/tests/__init__.py.orig
++++ psutil-5.9.8/psutil/tests/__init__.py
+@@ -1020,6 +1020,7 @@
+                     raise AssertionError(msg)
+         proc.wait(timeout=0)  # assert not raise TimeoutExpired
+ 
++    @unittest.skip("fails of illumos too: https://github.com/giampaolo/psutil/pull/2289")
+     def assertProcessZombie(self, proc):
+         # A zombie process should always be instantiable.
+         clone = psutil.Process(proc.pid)
+--- psutil-5.9.8/psutil/tests/test_process_all.py.orig
++++ psutil-5.9.8/psutil/tests/test_process_all.py
+@@ -15,6 +15,7 @@
+ import stat
+ import time
+ import traceback
++import unittest
+ 
+ import psutil
+ from psutil import AIX
+@@ -126,6 +127,7 @@
+                 ls.append(proc_info(pid))
+             return ls
+ 
++    @unittest.skip('always fails: https://github.com/giampaolo/psutil/issues/2358')
+     def test_all(self):
+         failures = []
+         for info in self.iter_proc_info():

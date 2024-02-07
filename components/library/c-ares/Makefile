@@ -24,18 +24,18 @@
 # Copyright (c) 2021, Andreas Wacknitz.
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c-ares
-COMPONENT_VERSION=	1.21.0
+COMPONENT_VERSION=	1.26.0
 COMPONENT_SUMMARY=	c-ares - C library for asynchronous DNS requests
 COMPONENT_DESCRIPTION=	c-ares is a C library for asynchronous DNS requests including name resolves
 COMPONENT_PROJECT_URL=	https://c-ares.haxx.se/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cd7aa3af1d3ee780d6437039a7ddb7f1ec029f9c4f7aabb0197e384eb5bc2f2d
+COMPONENT_ARCHIVE_HASH= sha256:bed58c4f02b009080ebda6c2467ba469722ac6aebbf4497dc44a83d8c6194e50
 COMPONENT_ARCHIVE_URL=	https://c-ares.haxx.se/download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libcares
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -47,9 +47,7 @@ include $(WS_MAKE_RULES)/common.mk
 CFLAGS += $(XPG6MODE)
 
 CONFIGURE_OPTIONS += --enable-static=no
-
-# With SHELLOPTS tests will fail:
-unexport SHELLOPTS
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

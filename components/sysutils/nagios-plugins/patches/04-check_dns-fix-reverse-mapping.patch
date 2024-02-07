@@ -1,8 +1,8 @@
 https://github.com/nagios-plugins/nagios-plugins/pull/707
 
---- nagios-plugins-2.4.4/plugins/check_dns.c.orig
-+++ nagios-plugins-2.4.4/plugins/check_dns.c
-@@ -263,7 +263,7 @@ main (int argc, char **argv)
+--- nagios-plugins-2.4.8/plugins/check_dns.c.orig
++++ nagios-plugins-2.4.8/plugins/check_dns.c
+@@ -263,7 +263,7 @@
          /* needed for non-query ptr\reverse lookup checks */
          else if (strstr(chld_out.line[i], ".in-addr.arpa") && !query_set) {
              if ((temp_buffer = strstr(chld_out.line[i], "name = "))) {
@@ -11,7 +11,7 @@ https://github.com/nagios-plugins/nagios-plugins/pull/707
              }
              else {
                  xasprintf(&msg, "%s %s %s %s", _("Warning plugin error"));
-@@ -358,7 +358,7 @@ main (int argc, char **argv)
+@@ -358,7 +358,7 @@
      }
  
      /* compare query type to query found, if query type is ANY we can skip as any record is accepted*/
@@ -20,7 +20,7 @@ https://github.com/nagios-plugins/nagios-plugins/pull/707
          if (strncmp(query_type, query_found, 16) != 0) {
            if (verbose) {
                printf( "%s %s %s %s %s\n", _("Failed query for"), query_type, _("only found"), query_found, _(", or nothing"));
-@@ -634,7 +634,6 @@ validate_arguments ()
+@@ -634,7 +634,6 @@
          /*query_type = "-querytype=A";*/
          strcpy(query_type, "-querytype=");
          strcat(query_type, "A");

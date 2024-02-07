@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,55 +23,15 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=usr/include/decimal.hh
 file path=usr/include/mpdecimal.h
-file path=usr/lib/$(MACH64)/libmpdec.a
+link path=usr/lib/$(MACH64)/libmpdec++.so target=libmpdec++.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libmpdec++.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libmpdec++.so.4 \
+    target=libmpdec++.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libmpdec.so target=libmpdec.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libmpdec.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libmpdec.so.2 target=libmpdec.so.$(HUMAN_VERSION)
-file path=usr/lib/libmpdec.a
-link path=usr/lib/libmpdec.so target=libmpdec.so.$(HUMAN_VERSION)
-file path=usr/lib/libmpdec.so.$(HUMAN_VERSION)
-link path=usr/lib/libmpdec.so.2 target=libmpdec.so.$(HUMAN_VERSION)
-file path=usr/share/doc/mpdecimal/LICENSE.txt
-file path=usr/share/doc/mpdecimal/_static/ajax-loader.gif
-file path=usr/share/doc/mpdecimal/_static/basic.css
-file path=usr/share/doc/mpdecimal/_static/comment-bright.png
-file path=usr/share/doc/mpdecimal/_static/comment-close.png
-file path=usr/share/doc/mpdecimal/_static/comment.png
-file path=usr/share/doc/mpdecimal/_static/default.css
-file path=usr/share/doc/mpdecimal/_static/doctools.js
-file path=usr/share/doc/mpdecimal/_static/down-pressed.png
-file path=usr/share/doc/mpdecimal/_static/down.png
-file path=usr/share/doc/mpdecimal/_static/file.png
-file path=usr/share/doc/mpdecimal/_static/jquery.js
-file path=usr/share/doc/mpdecimal/_static/minus.png
-file path=usr/share/doc/mpdecimal/_static/mpdecimal-doc.css
-file path=usr/share/doc/mpdecimal/_static/plus.png
-file path=usr/share/doc/mpdecimal/_static/pygments.css
-file path=usr/share/doc/mpdecimal/_static/searchtools.js
-file path=usr/share/doc/mpdecimal/_static/sidebar.js
-file path=usr/share/doc/mpdecimal/_static/underscore.js
-file path=usr/share/doc/mpdecimal/_static/up-pressed.png
-file path=usr/share/doc/mpdecimal/_static/up.png
-file path=usr/share/doc/mpdecimal/_static/websupport.js
-file path=usr/share/doc/mpdecimal/arithmetic.html
-file path=usr/share/doc/mpdecimal/assign-convert.html
-file path=usr/share/doc/mpdecimal/attributes.html
-file path=usr/share/doc/mpdecimal/context.html
-file path=usr/share/doc/mpdecimal/decimals.html
-file path=usr/share/doc/mpdecimal/examples/README.txt
-file path=usr/share/doc/mpdecimal/examples/compare.c
-file path=usr/share/doc/mpdecimal/examples/div.c
-file path=usr/share/doc/mpdecimal/examples/divmod.c
-file path=usr/share/doc/mpdecimal/examples/multiply.c
-file path=usr/share/doc/mpdecimal/examples/pow.c
-file path=usr/share/doc/mpdecimal/examples/powmod.c
-file path=usr/share/doc/mpdecimal/examples/shift.c
-file path=usr/share/doc/mpdecimal/examples/sqrt.c
-file path=usr/share/doc/mpdecimal/functions.html
-file path=usr/share/doc/mpdecimal/index.html
-file path=usr/share/doc/mpdecimal/memory.html
-file path=usr/share/doc/mpdecimal/objects.inv
-file path=usr/share/doc/mpdecimal/search.html
-file path=usr/share/doc/mpdecimal/searchindex.js
-file path=usr/share/doc/mpdecimal/various.html
+link path=usr/lib/$(MACH64)/libmpdec.so.4 target=libmpdec.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/pkgconfig/libmpdec++.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libmpdec.pc
+file path=usr/share/doc/mpdecimal/COPYRIGHT.txt

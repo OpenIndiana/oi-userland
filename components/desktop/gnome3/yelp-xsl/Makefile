@@ -11,24 +11,22 @@
 #
 # Copyright 2017 Gary Mills
 # Copyright 2016 Till Wegmueller
+# Copyright 2023 Friedrich Kink
 #
-
-BUILD_BITS =    NO_ARCH
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yelp-xsl
-COMPONENT_VERSION=	3.20.1
-COMPONENT_REVISION =	1
+COMPONENT_VERSION=	42.1
+COMPONENT_VERSION_MAJOR=$(word 1,$(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Yelp Tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dc61849e5dca473573d32e28c6c4e3cf9c1b6afe241f8c26e29539c415f97ba0
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/3.20/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+	sha256:238be150b1653080ce139971330fd36d3a26595e0d6a040a2c030bf3d2005bcd
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPL-2.0-only AND LGPL-2.1-only AND BSD-3-Clause
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/gnome/$(COMPONENT_NAME)
 
@@ -36,11 +34,9 @@ TEST_TARGET =   $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/$(COMPONENT_NAME)
+CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS+=	--localstatedir=$(VARDIR)/lib
+CONFIGURE_OPTIONS+=	--libexecdir=$(USRLIBDIR)/$(COMPONENT_NAME)
 
 # Build dependencies
 REQUIRED_PACKAGES += text/itstool

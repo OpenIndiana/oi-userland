@@ -14,14 +14,15 @@
 #
 
 BUILD_BITS= 64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         faad2
-COMPONENT_VERSION=      2.10.1
+COMPONENT_VERSION=      2.11.1
 COMPONENT_SUMMARY=      Freeware Advanced Audio (AAC) Decoder including SBR decoding
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:4c16c71295ca0cbf7c3dfe98eb11d8fa8d0ac3042e41604cfd6cc11a408cf264
+COMPONENT_ARCHIVE_HASH= sha256:72dbc0494de9ee38d240f670eccf2b10ef715fd0508c305532ca3def3225bb06
 COMPONENT_PROJECT_URL=  https://github.com/knik0/faad2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_CLASSIFICATION=Applications/Sound and Video
@@ -33,14 +34,18 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if)
-COMPONENT_POST_CONFIGURE_ACTION = ( $(CP) -rp $(BUILD_DIR_$(BITS))/include/*.h $(SOURCE_DIR)/include/ )
+#COMPONENT_POST_CONFIGURE_ACTION = ( $(CP) -rp $(BUILD_DIR_$(BITS))/include/*.h $(SOURCE_DIR)/include/ )
 
 CFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --without-drm
-CONFIGURE_OPTIONS += --with-mpeg4ip
+CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
+
+# Two man pages are in the sources that need to be copied into the proto area
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTOUSRSHAREMAN1DIR) ; \
+	$(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
+	$(CP) $(SOURCE_DIR)/frontend/faad.man $(PROTOUSRSHAREMAN1DIR)/faad.1 ; \
+	$(CP) $(SOURCE_DIR)/docs/libfaad.3 $(PROTOUSRSHAREMAN3DIR)/
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

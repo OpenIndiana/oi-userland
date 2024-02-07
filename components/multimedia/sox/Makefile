@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sox
 COMPONENT_VERSION=	14.4.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Sound eXchange, the Swiss Army knife of audio manipulation
 COMPONENT_PROJECT_URL=	https://sox.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

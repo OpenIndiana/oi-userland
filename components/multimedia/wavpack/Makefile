@@ -13,27 +13,34 @@
 # Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wavpack
 COMPONENT_VERSION=	5.6.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	wavpack - Hybrid Lossless Audio Compression
 COMPONENT_PROJECT_URL=	https://www.wavpack.com/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:8cbfa15927d29bcf953db35c0cfca7424344ff43ebe4083daf161577fb839cc1
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=		BSD
 COMPONENT_FMRI=			audio/wavpack
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
+COMPONENT_LICENSE=		BSD
+COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET= $(NO_TESTS)
 include $(WS_TOP)/make-rules/common.mk
 
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--enable-legacy
-CONFIGURE_OPTIONS +=	--disable-asm
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-legacy
+
+COMPONENT_TEST_TRANSFORMS= \
+	' -n ' \
+	' -e "/PASS/p" ' \
+	' -e "/pass/p" ' \
+	' -e "/\*\*\*/p" ' \
+	' -e "/===/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

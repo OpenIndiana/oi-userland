@@ -172,14 +172,6 @@ endif
 PYTHON_VERSION = 3.9
 PYTHON_VERSIONS = 3.9
 
-# These variables are for backward compatibility only.  Components should stop
-# to use them.  Once they do so these vars should be removed.
-PYTHON3_VERSION	= $(PYTHON_VERSION)
-PYTHON3_VERSIONS = $(PYTHON_VERSIONS)
-PYTHON3_RUNTIME_PKG = runtime/python-$(subst .,,$(PYTHON3_VERSION))
-PYTHON_ALL_VERSIONS = $(PYTHON_VERSIONS)
-PYTHON_VERSIONS_ALL= $(PYTHON_VERSIONS)
-
 # Python up to 2.7 was built both 32-bit and 64-bit.  Starting with Python 3.x
 # the python package is built 64-bit only.  So now all PYTHON_VERSIONS are
 # 64-bit only.
@@ -193,7 +185,7 @@ PYTHON_64_ONLY_VERSIONS = $(PYTHON_VERSIONS)
 #
 # This list should be usually empty.  Intersection of
 # PYTHON_VERSIONS_OBSOLETING and PYTHON_VERSIONS lists MUST be always empty.
-PYTHON_VERSIONS_OBSOLETING = 2.7 3.5 3.7
+PYTHON_VERSIONS_OBSOLETING = 2.7 3.7
 
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
@@ -233,26 +225,30 @@ ARCHLIBSUBDIR32	=
 ARCHLIBSUBDIR64	= $(MACH64)
 ARCHLIBSUBDIR	= $(ARCHLIBSUBDIR$(BITS))
 
-ETCDIR =	/etc
-USRDIR =	/usr
-BINDIR =	/bin
-SBINDIR =	/sbin
-LIBDIR =	/lib
-VARDIR =	/var
-KERNELDRVDIR =	/kernel/drv
-KERNELDRVDIR32 =/kernel/drv
-KERNELDRVDIR64 =/kernel/drv/$(MACH64)
-USRBINDIR = 	$(USRDIR)/bin
-USRBINDIR32 =	$(USRDIR)/bin/$(MACH32)
-USRBINDIR64 =	$(USRDIR)/bin/$(MACH64)
-USRSBINDIR = 	$(USRDIR)/sbin
-USRSBINDIR32 =	$(USRDIR)/sbin/$(MACH32)
-USRSBINDIR64 =	$(USRDIR)/sbin/$(MACH64)
-USRLIBDIR = 	$(USRDIR)/lib
-USRLIBDIR32 =	$(USRDIR)/lib
-USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
-USRSHAREDIR =	$(USRDIR)/share
-USRINCDIR = 	$(USRDIR)/include
+ETCDIR =		/etc
+USRDIR =		/usr
+BINDIR =		/bin
+SBINDIR =		/sbin
+LIBDIR =		/lib
+LIBEXECDIR =		/libexec
+VARDIR =		/var
+KERNELDRVDIR =		/kernel/drv
+KERNELDRVDIR32 =	/kernel/drv
+KERNELDRVDIR64 =	/kernel/drv/$(MACH64)
+USRBINDIR = 		$(USRDIR)/bin
+USRBINDIR32 =		$(USRDIR)/bin/$(MACH32)
+USRBINDIR64 =		$(USRDIR)/bin/$(MACH64)
+USRSBINDIR = 		$(USRDIR)/sbin
+USRSBINDIR32 =		$(USRDIR)/sbin/$(MACH32)
+USRSBINDIR64 =		$(USRDIR)/sbin/$(MACH64)
+USRLIBDIR = 		$(USRDIR)/lib
+USRLIBDIR32 =		$(USRDIR)/lib
+USRLIBDIR64 =		$(USRDIR)/lib/$(MACH64)
+USRLIBEXECDIR =		$(USRDIR)/libexec
+USRLIBEXECDIR32 =	$(USRDIR)/libexec
+USRLIBEXECDIR64 =	$(USRDIR)/libexec/$(MACH64)
+USRSHAREDIR =		$(USRDIR)/share
+USRINCDIR = 		$(USRDIR)/include
 USRSHARELOCALEDIR =	$(USRSHAREDIR)/locale
 USRSHAREMANDIR =	$(USRSHAREDIR)/man
 USRSHAREDOCDIR =	$(USRSHAREDIR)/doc
@@ -270,20 +266,22 @@ USRKERNELDRVDIR64 =	$(USRDIR)/kernel/drv/$(MACH64)
 
 # The *.$(BITS) variables are different from those above (better suited for
 # isaexec wrapper), and allow for default 32-bit vs. nondefault 64-bit setups
-USRBINDIR.32 = 	$(USRBINDIR)
-USRBINDIR.64 = 	$(USRBINDIR64)
-USRSBINDIR.32 =	$(USRSBINDIR)
-USRSBINDIR.64 =	$(USRSBINDIR64)
-USRLIBDIR.32 = 	$(USRLIBDIR)
-USRLIBDIR.64 = 	$(USRLIBDIR64)
-
-PROTOETCDIR =	$(PROTO_DIR)/$(ETCDIR)
-PROTOETCSECDIR = $(PROTO_DIR)/$(ETCDIR)/security
-PROTOUSRDIR =	$(PROTO_DIR)/$(USRDIR)
-PROTOBINDIR =	$(PROTO_DIR)/$(BINDIR)
-PROTOSBINDIR =	$(PROTO_DIR)/$(SBINDIR)
-PROTOLIBDIR =	$(PROTO_DIR)/$(LIBDIR)
-PROTOVARDIR =	$(PROTO_DIR)/$(VARDIR)
+USRBINDIR.32 = 		$(USRBINDIR)
+USRBINDIR.64 = 		$(USRBINDIR64)
+USRSBINDIR.32 =		$(USRSBINDIR)
+USRSBINDIR.64 =		$(USRSBINDIR64)
+USRLIBDIR.32 = 		$(USRLIBDIR)
+USRLIBDIR.64 = 		$(USRLIBDIR64)
+USRLIBEXECDIR.32 =	$(USRLIBEXECDIR)
+USRLIBEXECDIR.64 =	$(USRLIBEXECDIR64)
+PROTOETCDIR =		$(PROTO_DIR)/$(ETCDIR)
+PROTOETCSECDIR = 	$(PROTO_DIR)/$(ETCDIR)/security
+PROTOUSRDIR =		$(PROTO_DIR)/$(USRDIR)
+PROTOBINDIR =		$(PROTO_DIR)/$(BINDIR)
+PROTOSBINDIR =		$(PROTO_DIR)/$(SBINDIR)
+PROTOLIBDIR =		$(PROTO_DIR)/$(LIBDIR)
+PROTOLIBEXECDIR =	$(PROTO_DIR)/$(LIBEXECDIR)
+PROTOVARDIR =		$(PROTO_DIR)/$(VARDIR)
 PROTOKERNELDRVDIR =  	$(PROTO_DIR)/$(KERNELDRVDIR)
 PROTOKERNELDRVDIR32 =	$(PROTO_DIR)/$(KERNELDRVDIR32)
 PROTOKERNELDRVDIR64 =	$(PROTO_DIR)/$(KERNELDRVDIR64)
@@ -296,6 +294,9 @@ PROTOUSRSBINDIR64 =	$(PROTO_DIR)/$(USRSBINDIR64)
 PROTOUSRLIBDIR =	$(PROTO_DIR)/$(USRLIBDIR)
 PROTOUSRLIBDIR32 =	$(PROTO_DIR)/$(USRLIBDIR32)
 PROTOUSRLIBDIR64 =	$(PROTO_DIR)/$(USRLIBDIR64)
+PROTOUSRLIBEXECDIR =	$(PROTO_DIR)/$(USRLIBEXECDIR)
+PROTOUSRLIBEXECDIR32 =	$(PROTO_DIR)/$(USRLIBEXECDIR32)
+PROTOUSRLIBEXECDIR64 =	$(PROTO_DIR)/$(USRLIBEXECDIR64)
 PROTOUSRINCDIR =	$(PROTO_DIR)/$(USRINCDIR)
 PROTOUSRSHAREDIR =	$(PROTO_DIR)/$(USRSHAREDIR)
 PROTOUSRSHARELIBDIR =	$(PROTO_DIR)/$(USRSHARELIBDIR)
@@ -318,6 +319,8 @@ PROTOUSRSBINDIR.32 =	$(PROTOUSRSBINDIR)
 PROTOUSRSBINDIR.64 =	$(PROTOUSRSBINDIR64)
 PROTOUSRLIBDIR.32 = 	$(PROTOUSRLIBDIR)
 PROTOUSRLIBDIR.64 = 	$(PROTOUSRLIBDIR64)
+PROTOUSRLIBEXECDIR.32 = $(PROTOUSRLIBEXECDIR)
+PROTOUSRLIBEXECDIR.64 = $(PROTOUSRLIBEXECDIR64)
 
 # NOTE: We do not build SFW contents
 # /usr/sfw/bin is just a historic artefact, containing symlinks
@@ -623,7 +626,7 @@ export CCACHE := $(shell \
     fi)
 
 GCC_DEFAULT =	13
-GCC_VERSION =	$(GCC_DEFAULT)
+GCC_VERSION ?=	$(GCC_DEFAULT)
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
 # Define runtime package names to be used in dependencies
@@ -694,10 +697,6 @@ REQUIRED_PACKAGES_SUBST += CLANG_RUNTIME_PKG
 PATH.prepend +=		$(CLANG_BINDIR)
 
 # Python definitions
-PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
-PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
-PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
-
 PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES.32 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES = $(PYTHON.3.9.VENDOR_PACKAGES.$(BITS))
@@ -707,14 +706,25 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =  2.3
+#
+# We will start to obsolete major Ruby versions according the following table:
+#
+# +--------------+----------------+
+# | Ruby version | Obsolete after |
+# +--------------+----------------+
+# |     2.3      |   2019-03-31   |
+# |     3.2      |   2026-03-31   |
+# +--------------+----------------+
+#
+# See https://www.ruby-lang.org/en/downloads/branches/
+#
+
+RUBY_VERSION = 3.2
 
 RUBY_LIB_VERSION.2.3 = 2.3.0
-RUBY_LIB_VERSION.2.6 = 2.6.0
 RUBY_LIB_VERSION.3.2 = 3.2.0
 
 RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
-RUBY.2.6 =	/usr/ruby/2.6/bin/ruby
 RUBY.3.2 =	/usr/ruby/3.2/bin/ruby
 
 RUBY =          $(RUBY.$(RUBY_VERSION))
@@ -740,14 +750,10 @@ PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 # python2 was built for both 32- and 64-bits.
 # python3 is built for 64-bits only.
 
-PYTHON.2.7 =	/usr/bin/python2.7
-PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
-
 PYTHON.3.9 =	/usr/bin/python3.9
 PYTHON.3.9.64 =	$(PYTHON.3.9)
 
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
-PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION))
 PYTHON =	$(PYTHON.$(PYTHON_VERSION))
 
 TOX.3.9 =	/usr/bin/tox-3.9
@@ -790,11 +796,9 @@ PYTHON_SCRIPTS_PROCESS= \
 COMPONENT_POST_INSTALL_ACTION += $(PYTHON_SCRIPTS_PROCESS)
 
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
-JAVA11_HOME =	/usr/jdk/instances/openjdk11.0.10
-JAVA17_HOME =	/usr/jdk/instances/openjdk17
-JAVA18_HOME =	/usr/jdk/instances/openjdk18
-JAVA19_HOME =	/usr/jdk/instances/openjdk19
-JAVA_HOME = $(JAVA8_HOME)
+JAVA17_HOME =	/usr/jdk/instances/openjdk17.0.8
+JAVA21_HOME =	/usr/jdk/instances/openjdk21
+JAVA_HOME = $(JAVA17_HOME)
 
 # QT macros
 # We deliver version 5 in 32- and 64-bit variants.
@@ -810,7 +814,7 @@ QT5_INCDIR = $(QT5_BASEDIR)/include
 QT5_PKG_CONFIG_PATH = $(QT5_LIBDIR)/pkgconfig
 
 # We deliver version 6 only in a 64-bit variant.
-QT6_VERSION = 6.3
+QT6_VERSION = 6.6
 QT6_BASEDIR = $(USRLIBDIR)/qt/$(QT6_VERSION)
 QT6_BINDIR = $(QT6_BASEDIR)/bin/$(MACH64)
 QT6_LIBDIR = $(QT6_BASEDIR)/lib/$(MACH64)
@@ -871,7 +875,6 @@ $(foreach perlver,$(PERL_VERSIONS),$(eval $(call perl-path-rule,$(perlver))))
 PERL5BINDIR = 	$(PERL5BINDIR.$(PERL_VERSION))
 PERL =		$(PERL.$(PERL_VERSION))
 POD2MAN =	$(POD2MAN.$(PERL_VERSION))
-PATH.prepend +=	$(PERL5BINDIR)
 
 PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
@@ -1039,7 +1042,8 @@ TCLSH.8.6.sparc.64 =	/usr/bin/sparcv9/tclsh8.6
 TCLSH =		$(TCLSH.$(TCL_VERSION).$(MACH).$(BITS))
 
 # ICU library
-ICU_LIBRARY_PKG =		library/icu
+ICU_VERSION =			74
+ICU_LIBRARY_PKG =		library/icu-$(ICU_VERSION)
 REQUIRED_PACKAGES_SUBST +=	ICU_LIBRARY_PKG
 
 
@@ -1064,8 +1068,8 @@ else
 PKGLINT =	${WS_TOOLS}/pkglint
 endif
 
-ACLOCAL =	/usr/bin/aclocal-1.10
-AUTOMAKE =	/usr/bin/automake-1.10
+ACLOCAL =	/usr/bin/aclocal-1.16
+AUTOMAKE =	/usr/bin/automake-1.16
 AUTORECONF = 	/usr/bin/autoreconf
 
 KSH93 =         /usr/bin/ksh93
@@ -1077,7 +1081,7 @@ MV =		/bin/mv -f
 LN =		/bin/ln
 CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
-ENV =		/usr/bin/env
+ENV =		/usr/bin/env -i
 FIND =		/usr/bin/find
 INSTALL =	/usr/bin/ginstall
 GNU_GREP =	/usr/gnu/bin/grep

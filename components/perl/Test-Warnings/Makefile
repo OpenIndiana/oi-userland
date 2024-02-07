@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Warnings
-HUMAN_VERSION =			0.032
+HUMAN_VERSION =			0.033
 COMPONENT_SUMMARY =		Test::Warnings - Test for warnings and the lack of them
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4727dae2416e9f07e41e2dc3a9143ba6affc1ec57652117c99d50038e313e9d9
+	sha256:b9c375719f2c61c5f97aa5ee6cf4c901a972347c415969379b0b51f67c48bbcb
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENCE
 

@@ -152,6 +152,7 @@ PYTHON_ENV =	CC="$(CC)"
 PYTHON_ENV +=	CFLAGS="$(CFLAGS)"
 PYTHON_ENV +=	CXX="$(CXX)"
 PYTHON_ENV +=	CXXFLAGS="$(CXXFLAGS)"
+PYTHON_ENV +=	LDFLAGS="$(LDFLAGS)"
 PYTHON_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 COMPONENT_BUILD_ENV += $(PYTHON_ENV)
@@ -345,8 +346,8 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  py\$$(PYV): OK\) (.* seconds)$$/\1/'"
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  congratulations :)\) (.* seconds)$$/\1/'"
 
 # Remove useless lines from the "coverage combine" output
-COMPONENT_TEST_TRANSFORMS += "-e '/^Combined data file \.tox\/\.coverage\.py/d'"
-COMPONENT_TEST_TRANSFORMS += "-e '/^Skipping duplicate data \.tox\/\.coverage\.py/d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^Combined data file .*\.coverage/d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^Skipping duplicate data .*\.coverage/d'"
 
 # sort list of Sphinx doctest results
 COMPONENT_TEST_TRANSFORMS += \
@@ -411,28 +412,47 @@ PYTEST_ADDOPTS += --verbose
 # Force pytest to not use colored output so the results normalization is unaffected
 PYTEST_ADDOPTS += --color=no
 
-#
-# Some pytest plugins are enabled automatically and could affect test results
-# or test output.  In a case a component does not expect such a plugin
-# installed (it is neither in REQUIRED_PACKAGES nor in TEST_REQUIRED_PACKAGES)
-# we simply disable the plugin to get consistent test results.
-#
+# Avoid loading of unexpected pytest plugins.
 define disable-pytest-plugin
-PYTEST_ADDOPTS += $$(if $$(filter library/python/$(2)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES) $$(COMPONENT_FMRI)-$$(subst .,,$$(PYTHON_VERSION))),,-p no:$(1))
+PYTEST_ADDOPTS += $$(if $$(filter library/python/$(2)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES) $$(COMPONENT_FMRI)-$$(subst .,,$$(PYTHON_VERSION))),,-p 'no:$(1)')
 endef
+$(eval $(call disable-pytest-plugin,anyio,anyio))
 $(eval $(call disable-pytest-plugin,asyncio,pytest-asyncio))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,benchmark,pytest-benchmark))	# adds line to test report header; adds benchmark report
 $(eval $(call disable-pytest-plugin,black,pytest-black))		# runs extra test(s)
+$(eval $(call disable-pytest-plugin,check,pytest-check))
 $(eval $(call disable-pytest-plugin,checkdocs,pytest-checkdocs))	# runs extra test(s)
+$(eval $(call disable-pytest-plugin,console-scripts,pytest-console-scripts))
 $(eval $(call disable-pytest-plugin,cov,pytest-cov))
+$(eval $(call disable-pytest-plugin,custom_exit_code,pytest-custom-exit-code))
+$(eval $(call disable-pytest-plugin,enabler,pytest-enabler))
+$(eval $(call disable-pytest-plugin,env,pytest-env))
+$(eval $(call disable-pytest-plugin,faker,faker))
+$(eval $(call disable-pytest-plugin,flake8,pytest-flake8))
 $(eval $(call disable-pytest-plugin,flaky,flaky))
+$(eval $(call disable-pytest-plugin,freezer,pytest-freezer))
+$(eval $(call disable-pytest-plugin,helpers_namespace,pytest-helpers-namespace))
 $(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to test report header
+$(eval $(call disable-pytest-plugin,jaraco.test.http,jaraco-test))
+$(eval $(call disable-pytest-plugin,kgb,kgb))
+$(eval $(call disable-pytest-plugin,lazy-fixture,pytest-lazy-fixture))
 $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
 $(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
+$(eval $(call disable-pytest-plugin,pytest-datadir,pytest-datadir))
+$(eval $(call disable-pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))	# could cause tests to fail
+$(eval $(call disable-pytest-plugin,pytest-teamcity,teamcity-messages))
+$(eval $(call disable-pytest-plugin,pytest_expect,pytest-expect))
+$(eval $(call disable-pytest-plugin,pytest_fakefs,pyfakefs))
+$(eval $(call disable-pytest-plugin,pytest_forked,pytest-forked))
+$(eval $(call disable-pytest-plugin,pytest_httpserver,pytest-httpserver))
+$(eval $(call disable-pytest-plugin,pytest_ignore_flaky,pytest-ignore-flaky))
+$(eval $(call disable-pytest-plugin,pytest_mock,pytest-mock))
 $(eval $(call disable-pytest-plugin,randomly,pytest-randomly))		# reorders tests
+$(eval $(call disable-pytest-plugin,regressions,pytest-regressions))
 $(eval $(call disable-pytest-plugin,relaxed,pytest-relaxed))		# runs extra test(s); produces different test report
 $(eval $(call disable-pytest-plugin,reporter,pytest-reporter))		# https://github.com/christiansandberg/pytest-reporter/issues/8
+$(eval $(call disable-pytest-plugin,rerunfailures,pytest-rerunfailures))
 $(eval $(call disable-pytest-plugin,salt-factories,pytest-salt-factories))			# requires salt
 $(eval $(call disable-pytest-plugin,salt-factories-event-listener,pytest-salt-factories))	# requires salt
 $(eval $(call disable-pytest-plugin,salt-factories-factories,pytest-salt-factories))		# requires salt
@@ -441,7 +461,19 @@ $(eval $(call disable-pytest-plugin,salt-factories-log-server,pytest-salt-factor
 $(eval $(call disable-pytest-plugin,salt-factories-markers,pytest-salt-factories))		# requires salt
 $(eval $(call disable-pytest-plugin,salt-factories-sysinfo,pytest-salt-factories))		# requires salt
 $(eval $(call disable-pytest-plugin,salt-factories-sysstats,pytest-salt-factories))		# requires salt
+$(eval $(call disable-pytest-plugin,shell-utilities,pytest-shell-utilities))
+$(eval $(call disable-pytest-plugin,skip-markers,pytest-skip-markers))
+$(eval $(call disable-pytest-plugin,socket,pytest-socket))
+$(eval $(call disable-pytest-plugin,subprocess,pytest-subprocess))
+$(eval $(call disable-pytest-plugin,subtests,pytest-subtests))
 $(eval $(call disable-pytest-plugin,tempdir,pytest-tempdir))		# adds line to test report header
+$(eval $(call disable-pytest-plugin,time_machine,time-machine))
+$(eval $(call disable-pytest-plugin,timeout,pytest-timeout))
+$(eval $(call disable-pytest-plugin,travis-fold,pytest-travis-fold))
+$(eval $(call disable-pytest-plugin,typeguard,typeguard))
+$(eval $(call disable-pytest-plugin,unittest_mock,backports-unittest-mock))
+$(eval $(call disable-pytest-plugin,xdist,pytest-xdist))
+$(eval $(call disable-pytest-plugin,xdist.looponfail,pytest-xdist))
 $(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminder line to test output
 
 # By default we are not interested in full list of test failures so exit on
@@ -456,7 +488,6 @@ PYTEST_ADDOPTS += $(PYTEST_FASTFAIL)
 COMPONENT_TEST_TRANSFORMS += \
 	"-e 's/^\(platform sunos5 -- Python \)$(shell echo $(PYTHON_VERSION) | $(GSED) -e 's/\./\\./g')\.[0-9]\{1,\}.*\( -- .*\)/\1\$$(PYTHON_VERSION).X\2/'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
-COMPONENT_TEST_TRANSFORMS += "-e '/^benchmark: /d'"				# line with version details
 COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins could vary
 COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} coverage: /,/^$$/d'"		# remove coverage report
 # sort list of pytest unit tests and drop percentage
@@ -473,6 +504,29 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} slowest [0-9]\{1,\} durations =\{1,\}$$/,/^=/{/^=/!d}'"
 # Remove short test summary info for projects that run pytest with -r option
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} short test summary info =\{1,\}$$/,/^=/{/^=/!d}'"
+
+# Normalize test results produced by pytest-benchmark
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(filter library/python/pytest-benchmark-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),"| ( \
+		$(GSED) -e '/^-\{1,\} benchmark/,/^=/{/^=/!d}' \
+	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
+
+# Normalize test results produced by pytest-xdist
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(filter library/python/pytest-xdist-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),"| ( \
+		$(GSED) -u \
+			-e '/^created: .* workers$$/d' \
+			-e 's/^[0-9]\{1,\}\( workers \[[0-9]\{1,\} items\]\)$$/X\1/' \
+			-e '/^scheduling tests via /q' ; \
+		$(GSED) -u -e '/^$$/q' ; \
+		$(GSED) -u -n -e '/^\[gw/p' -e '/^$$/Q' | ( $(GSED) \
+			-e 's/^\[gw[0-9]\{1,\}\] \[...%\] //' \
+			-e 's/ *$$//' \
+			-e 's/\([^ ]\{1,\}\) \(.*\)$$/\2 \1/' \
+			| $(SORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
+		) ; \
+		$(CAT) \
+	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
 
 # Normalize setup.py test results.  The setup.py testing could be used either
 # directly or via tox so add these transforms for all test styles
@@ -520,6 +574,7 @@ ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 COMPONENT_PRE_TEST_ACTION += \
 	for f in $(PROTOUSRBINDIR)/*-$(PYTHON_VERSION) ; do \
 		[ -f $$f ] || continue ; \
+		[ -L $${f%%-$(PYTHON_VERSION)} ] && $(RM) $${f%%-$(PYTHON_VERSION)} ; \
 		[ -e $${f%%-$(PYTHON_VERSION)} ] && continue ; \
 		$(SYMLINK) $$(basename $$f) $${f%%-$(PYTHON_VERSION)} ; \
 	done ;

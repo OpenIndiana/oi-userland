@@ -1,0 +1,82 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python PyNUTClient/test_nutclient.py
+PyNUTClient test...
+[DEBUG] Class initialization...
+[DEBUG]  -> Host  = 127.0.0.1 (port 3493)
+[DEBUG]  -> Login = 'None' / 'None'
+[DEBUG] Connecting to host
+--------------------------------------------------------------------------------
+Testing 'GetUPSList' :
+[DEBUG] GetUPSList from server
+{b'dummy': b'Test device'}
+
+--------------------------------------------------------------------------------
+Testing 'GetUPSVars' for 'dummy' (should be registered in upsd.conf) :
+[DEBUG] GetUPSVars called...
+{b'battery.charge': b'90', b'battery.charge.low': b'30', b'battery.runtime': b'3690', b'battery.voltage': b'230.0', b'device.mfr': b'MGE UPS SYSTEMS', b'device.model': b'Pulsar Evolution 500', b'device.serial': b'AV2G3300L', b'device.type': b'ups', b'driver.debug': b'0', b'driver.flag.allow_killpower': b'0', b'driver.name': b'dummy-ups', b'driver.parameter.mode': b'dummy', b'driver.parameter.pollinterval': b'2', b'driver.parameter.port': b'/usr/share/nut/etc-samples/evolution500.seq.dummy-ups.sample', b'driver.parameter.synchronous': b'auto', b'driver.state': b'quiet', b'driver.version': b'2.8.1', b'driver.version.internal': b'0.18', b'input.frequency': b'49.0', b'input.transfer.boost.low': b'184.0', b'input.transfer.high': b'294.0', b'input.transfer.low': b'160.0', b'input.transfer.trim.high': b'265.0', b'input.voltage': b'230.0', b'outlet.1.autoswitch.charge.low': b'0', b'outlet.1.delay.shutdown': b'-1', b'outlet.1.delay.start': b'-1', b'outlet.1.desc': b'PowerShare Outlet 1', b'outlet.1.id': b'1', b'outlet.1.switch': b'1', b'outlet.1.switchable': b'1', b'outlet.2.autoswitch.charge.low': b'0', b'outlet.2.delay.shutdown': b'-1', b'outlet.2.delay.start': b'-1', b'outlet.2.desc': b'PowerShare Outlet 2', b'outlet.2.id': b'2', b'outlet.2.switch': b'1', b'outlet.2.switchable': b'1', b'outlet.desc': b'Main Outlet', b'outlet.id': b'0', b'outlet.switchable': b'0', b'output.current': b'0.00', b'output.frequency': b'49.0', b'output.voltage': b'230.0', b'output.voltage.nominal': b'230.0', b'ups.delay.shutdown': b'-1', b'ups.delay.start': b'-10', b'ups.load': b'10', b'ups.mfr': b'MGE UPS SYSTEMS', b'ups.model': b'Pulsar Evolution 500', b'ups.power.nominal': b'500', b'ups.serial': b'AV2G3300L', b'ups.status': b'OL CHRG', b'ups.test.interval': b'604800', b'ups.test.result': b'Done and passed'}
+
+--------------------------------------------------------------------------------
+Testing 'CheckUPSAvailable' :
+[DEBUG] CheckUPSAvailable called...
+True
+
+--------------------------------------------------------------------------------
+Testing 'GetUPSCommands' :
+[DEBUG] GetUPSCommands called...
+{b'driver.killpower': b'Description unavailable', b'driver.reload': b'Description unavailable', b'driver.reload-or-error': b'Description unavailable', b'driver.reload-or-exit': b'Description unavailable', b'load.off': b'Description unavailable'}
+
+--------------------------------------------------------------------------------
+Testing 'GetRWVars' :
+[DEBUG] GetUPSVars from 'dummy'...
+{b'battery.charge': b'90', b'battery.charge.low': b'30', b'battery.runtime': b'3690', b'battery.voltage': b'230.0', b'driver.debug': b'0', b'driver.flag.allow_killpower': b'0', b'input.frequency': b'49.0', b'input.transfer.boost.low': b'184.0', b'input.transfer.high': b'294.0', b'input.transfer.low': b'160.0', b'input.transfer.trim.high': b'265.0', b'input.voltage': b'230.0', b'outlet.1.autoswitch.charge.low': b'0', b'outlet.1.delay.shutdown': b'-1', b'outlet.1.delay.start': b'-1', b'outlet.1.desc': b'PowerShare Outlet 1', b'outlet.1.id': b'1', b'outlet.1.switch': b'1', b'outlet.1.switchable': b'1', b'outlet.2.autoswitch.charge.low': b'0', b'outlet.2.delay.shutdown': b'-1', b'outlet.2.delay.start': b'-1', b'outlet.2.desc': b'PowerShare Outlet 2', b'outlet.2.id': b'2', b'outlet.2.switch': b'1', b'outlet.2.switchable': b'1', b'outlet.desc': b'Main Outlet', b'outlet.id': b'0', b'outlet.switchable': b'0', b'output.current': b'0.00', b'output.frequency': b'49.0', b'output.voltage': b'230.0', b'output.voltage.nominal': b'230.0', b'ups.delay.shutdown': b'-1', b'ups.delay.start': b'-10', b'ups.load': b'10', b'ups.mfr': b'MGE UPS SYSTEMS', b'ups.model': b'Pulsar Evolution 500', b'ups.power.nominal': b'500', b'ups.serial': b'AV2G3300L', b'ups.status': b'OL CHRG', b'ups.test.interval': b'604800', b'ups.test.result': b'Done and passed'}
+
+--------------------------------------------------------------------------------
+Testing 'RunUPSCommand' (Test front panel) :
+[DEBUG] RunUPSCommand called...
+EXCEPTION: ERR USERNAME-REQUIRED
+(anticipated error: no credentials were provided)
+
+--------------------------------------------------------------------------------
+Testing 'SetUPSVar' (set ups.id to test):
+EXCEPTION: ERR USERNAME-REQUIRED
+(anticipated error: no credentials were provided)
+
+--------------------------------------------------------------------------------
+Testing 'ListClients' for 'dummy' (should be registered in upsd.conf) before test client is connected :
+[DEBUG] ListClients from server: dummy
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+{}
+
+--------------------------------------------------------------------------------
+Testing 'ListClients' for missing device (should raise an exception) :
+[DEBUG] ListClients from server: MissingBogusDummy
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+[DEBUG] ListClients: MissingBogusDummy is not a valid UPS
+EXCEPTION: ERR UNKNOWN-UPS
+(anticipated error: bogus device name was tested)
+
+--------------------------------------------------------------------------------
+Testing 'DeviceLogin' for 'dummy' (should be registered in upsd.conf; current credentials should have an upsmon role in upsd.users) :
+[DEBUG] DeviceLogin called...
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+EXCEPTION: ERR USERNAME-REQUIRED
+(anticipated error: no credentials were provided)
+
+--------------------------------------------------------------------------------
+Testing 'ListClients' for None (should list all devices and sessions to them, if any -- e.g. one established above) :
+[DEBUG] ListClients from server: None
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+[DEBUG] Recurse ListClients() because it did not specify one UPS to query
+[DEBUG] ListClients from server: dummy
+[DEBUG] GetUPSNames from server
+[DEBUG] GetUPSList from server
+{}
+
+--------------------------------------------------------------------------------
+Testing 'PyNUT' instance teardown (end of test script)
+  py$(PYV): OK
+  congratulations :)

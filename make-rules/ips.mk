@@ -154,17 +154,17 @@ MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 SAMPLE_MANIFEST_DIR = 	$(COMPONENT_DIR)/manifests
 SAMPLE_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/sample-manifest.p5m
 
-CANONICAL_MANIFESTS =	$(filter-out dummy.p5m,$(wildcard *.p5m))
+CANONICAL_MANIFESTS =	$(filter-out dummy.p5m %.ARCH.p5m,$(wildcard *.p5m))
 ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 endif
 
 # Support for arch specific manifests
 ARCH_MANIFESTS =	$(wildcard *.p5m.$(MACH))
-GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.p5m)
+GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.ARCH.p5m)
 CANONICAL_MANIFESTS +=  $(GENERATED_ARCH_MANIFESTS)
 
-%.p5m: 	%.p5m.$(MACH)
+%.ARCH.p5m: 	%.p5m.$(MACH)
 	$(CP) $< $@
 
 define ips-print-depend-require-rule
@@ -299,7 +299,6 @@ RESOLVED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend.res)
 PRE_PUBLISHED=$(RESOLVED:%.depend.res=%.pre-published)
 PUBLISHED=$(RESOLVED:%.depend.res=%.published)
 
-HISTOGRIFIED =		$(HISTORICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.histogrified)
 PUBLISHED +=		$(HISTORICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
 
 COPYRIGHT_FILE ?=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
@@ -325,12 +324,13 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	$(MKDIR) $(SAMPLE_MANIFEST_DIR)
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' \
-		-e '/\.la$$/d' | \
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' \
+			-e '/\.la$$/d' \
+			-e 's/$(subst .,\.,$(GCC_GNU_TRIPLET))/$$(GCC_GNU_TRIPLET)/g' | \
 		$(PKGFMT) -u | \
 		uniq | \
 		$(PKGFMT) | \
-		cat $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \
+		$(CAT) $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
 
 # copy the canonical manifest(s) to the build tree
@@ -512,9 +512,12 @@ $(RESOLVE_DEPS):	Makefile $(BUILD_DIR) $(DEPENDED)
 $(BUILD_DIR)/runtime-perl.p5m: $(WS_TOOLS)/runtime-perl.p5m
 	$(CP) $< $@
 
+$(BUILD_DIR)/runtime-ruby.p5m: $(WS_TOOLS)/runtime-ruby.p5m
+	$(CP) $< $@
+
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime-perl.p5m
-	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime-perl.p5m $(BUILD_DIR)/runtime-ruby.p5m
+	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m $(BUILD_DIR)/runtime-ruby.p5m
 	$(TOUCH) $@
 
 # generate list of sed rules to filter out component's own packages from
@@ -605,7 +608,7 @@ print-package-names:	canonical-manifests $(MKGENERIC_SCRIPTS)
 		$(call ips-print-names-rule,$(m))) \
 	    $(foreach t,$(VERSIONED_MANIFEST_TYPES),\
 	        $(call ips-print-names-type-rule,$(t))) \
-	    | tr ' ' '\n'
+	    | tr ' ' '\n' | $(SORT) -u
 
 print-package-paths:	canonical-manifests
 	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \

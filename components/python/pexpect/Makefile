@@ -19,14 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pexpect
-HUMAN_VERSION =			4.8.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			4.9
 COMPONENT_SUMMARY =		pexpect - Pexpect allows easy control of interactive console applications.
 COMPONENT_PROJECT_URL =		https://pexpect.readthedocs.io/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pexpect/pexpect/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f2ea54a12cc893636a60421e8da0a36c40caad7825eb674697f1e25f5f91245e
+	sha256:13756b834dba0adf7603be77d943cc427011983ecd7c58b59b9bf122a1063e40
 COMPONENT_LICENSE =		ISC
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -43,5 +42,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/ptyprocess
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/coveralls
+TEST_REQUIRED_PACKAGES.python += library/python/ptyprocess
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

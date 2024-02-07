@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsndfile
 COMPONENT_VERSION=	1.2.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	libsndfile - a library for reading/writing sound files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://libsndfile.github.io/libsndfile/

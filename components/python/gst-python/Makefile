@@ -14,17 +14,15 @@
 #
 
 BUILD_STYLE= meson
-BUILD_BITS= 64
-SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-python
-COMPONENT_VERSION=	1.22.6
+COMPONENT_VERSION=	1.22.9
 COMPONENT_SUMMARY=	Python bindings for the GStreamer streaming media framework
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:51de2d6d13b12ce095eac97c0b94ee59c2aeba3712bb7462b78c4d57dde176c5
+COMPONENT_ARCHIVE_HASH= sha256:3f9d5c6ffefda268703744b592a6b3983aa6723273b1220ecbcb62c2a5800009
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_CLASSIFICATION= Development/Python
@@ -34,10 +32,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV += PYTHON=$(PYTHON)
-CONFIGURE_ENV += CPPFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_OPTIONS += -Dpygi-overrides-dir=$(PYTHON_VENDOR_PACKAGES)/gi/overrides
 
 # for the tests
 unexport SHELLOPTS
@@ -48,7 +43,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Ok:/,/^Timeout:/p" '
 
 # Build dependencies
-REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

@@ -12,15 +12,14 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_STYLE=		justmake
-
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		splix
 COMPONENT_VERSION=	2.0.0
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=	Driver for QPDL/SPL2 printers (Samsung and Xerox printers)
-COMPONENT_PROJECT_URL=	http://splix.sourceforge.net
+COMPONENT_PROJECT_URL=	https://splix.sourceforge.net
 COMPONENT_FMRI=		print/splix
 COMPONENT_CLASSIFICATION=	System/Printing
 SVN_HASH=  sha256:a66084478869b50549456aa931524804f32674836866395c6dbd75a061768458
@@ -30,9 +29,10 @@ COMPONENT_LICENSE_FILE=	splix-315/splix/COPYING
 SVN_REPO=		https://svn.code.sf.net/p/splix/code/
 SVN_REV=		315
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_BUILD_ENV = \
 	CC=$(CC) CXX=$(CXX) \
@@ -52,8 +52,6 @@ COMPONENT_INSTALL_ACTION = \
 	cd $(@D)/splix; \
 	$(GMAKE) $(COMPONENT_INSTALL_ARGS) $(COMPONENT_INSTALL_TARGETS)
 
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

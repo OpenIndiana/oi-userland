@@ -1,20 +1,23 @@
---- libreoffice-7.5.3.1/vcl/unx/generic/app/geninst.cxx.old	2023-04-22 20:44:29.692052052 -0400
-+++ libreoffice-7.5.3.1/vcl/unx/generic/app/geninst.cxx	2023-04-22 20:45:58.686866426 -0400
+--- core-92e5898fa9ffa4dd8742f5f26e790563feef286e/vcl/unx/generic/app/geninst.cxx.~1~	2023-11-14 18:32:13.000000000 -0500
++++ core-92e5898fa9ffa4dd8742f5f26e790563feef286e/vcl/unx/generic/app/geninst.cxx	2023-11-15 11:52:00.367591187 -0500
 @@ -22,7 +22,7 @@
  #if defined(LINUX)
  #  include <stdio.h>
  #endif
 -#if defined(__FreeBSD__)
-+#if defined(__FreeBSD__) || defined(__illumos__)
++#if defined(__FreeBSD__) || defined(__sun)
  #  include <sys/utsname.h>
  #endif
  
-@@ -72,7 +72,7 @@
-         }
-         fclose( pVersion );
+@@ -87,6 +92,11 @@
+             break;
      }
--#elif defined(__FreeBSD__)
-+#elif defined(__FreeBSD__) || defined(__illumos__)
-     struct utsname stName;
-     if ( uname( &stName ) != 0 )
-         return aKernelVer;
+     aKernelVer = OUString::createFromAscii(stName.sysname) + " " + aKernelVer.copy(0, nIndex);
++#elif defined(__sun)
++    struct utsname stName;
++    uname( &stName );
++
++    aKernelVer = OUString::createFromAscii( stName.sysname ) + " " + OUString::createFromAscii( stName.release )+ " " + OUString::createFromAscii( stName.version );
+ #elif defined(EMSCRIPTEN)
+ #define str(s) #s
+ #define xstr(s) str(s)

@@ -14,19 +14,19 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-USE_OPENSSL11=		yes
+OPENSSL_VERSION=	3.1
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.1
-COMPONENT_MNR_VERSION=	24
+COMPONENT_MNR_VERSION=	27
 COMPONENT_SUMMARY=      PHP 8.1
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:b0ae5804a9ad53a7e28d0a32629495f816f935b10830c71f4ec15827185a73c9
+COMPONENT_ARCHIVE_HASH= sha256:a15fd73ea44f2df30b07d24786e07d1948b0ea3eed0b8b845735d500dc28bff1
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-81
@@ -228,6 +228,7 @@ REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
@@ -235,7 +236,6 @@ REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
@@ -244,7 +244,7 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/uw-imap

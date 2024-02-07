@@ -13,63 +13,53 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS = 64_and_32
-
+BUILD_BITS= 64
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsoup
-COMPONENT_VERSION= 2.54.1
-COMPONENT_REVISION= 4
+COMPONENT_MJR_VERSION= 2.74
+COMPONENT_REVISION= 1
+COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).3
 COMPONENT_SUMMARY= Libsoup is an HTTP client/server library for GNOME
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:47b42c232034734d66e5f093025843a5d8cc4b2357c011085a2fd04ef02dd633
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.54/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
+COMPONENT_ARCHIVE_HASH= sha256:e4b77c41cfc4c8c5a035fcdc320c7bc6cfb75ef7c5a034153df1413fa1d92f13
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.gnome.org
 COMPONENT_FMRI = library/libsoup
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-CONFIGURE_FIX_LIBTOOL_RPATH=no
-
-DROP_STATIC_LIBRARIES = yes
-
-TEST_TARGET = $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+# Make sure apachectl and https will be found
+PATH= $(PATH.gnu):/usr/apache2/2.4/bin
 
+CFLAGS += $(XPG6MODE)
 LDFLAGS += -lz
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	$(CP) $(COMPONENT_DIR)/files/krb5-config $(BUILD_DIR) && \
 	chmod u+x $(BUILD_DIR)/krb5-config )
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --disable-gtk-doc
-CONFIGURE_OPTIONS += --disable-vala
-CONFIGURE_OPTIONS += --with-krb5-config=$(BUILD_DIR)/krb5-config
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR.$(BITS))
-CONFIGURE_OPTIONS.32 += --disable-tls-check
+CONFIGURE_OPTIONS += -Dkrb5_config=$(BUILD_DIR)/krb5-config
+CONFIGURE_OPTIONS += -Dsysprof=disabled
+CONFIGURE_OPTIONS += -Dgtk_doc=true
 
-CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
-
-COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-# Tell g-ir-scanner about compiler
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CC="$(CC)"
-
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += library/glib-networking
+TEST_REQUIRED_PACKAGES += service/network/samba
+TEST_REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss

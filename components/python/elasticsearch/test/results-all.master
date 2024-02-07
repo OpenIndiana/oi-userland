@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 asyncio: mode=strict
-collecting ... collected 343 items / 2 skipped
+collecting ... collected 347 items / 2 skipped
 
 test_elasticsearch/test_async/test_server/test_clients.py::test_bulk_works_with_bytestring_body SKIPPED
 test_elasticsearch/test_async/test_server/test_clients.py::test_bulk_works_with_string_body SKIPPED
@@ -56,7 +56,7 @@ test_elasticsearch/test_async/test_transport.py::TestTransport::test_body_surrog
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_client_meta_header PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_client_meta_header_not_sent PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_failed_connection_will_be_marked_as_dead PASSED
-test_elasticsearch/test_async/test_transport.py::TestTransport::test_kwargs_passed_on_to_node_pool SKIPPED
+test_elasticsearch/test_async/test_transport.py::TestTransport::test_kwargs_passed_on_to_node_pool PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_opaque_id PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_request_timeout_extracted_from_params_and_passed PASSED
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_request_will_fail_after_x_retries PASSED
@@ -198,16 +198,20 @@ test_elasticsearch/test_client/test_requests_auth.py::test_requests_auth[CustomR
 test_elasticsearch/test_client/test_requests_auth.py::test_requests_auth[RequestsHttpNode] PASSED
 test_elasticsearch/test_client/test_requests_auth.py::test_requests_auth[requests] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_fields PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_fields_conflict PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_fields_merge PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_name PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_name_duplicate PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_body_name_using_body PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_default PASSED
-test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_body_merge[{"query": {"match_all": {}}}0] PASSED
-test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_body_merge[{"query": {"match_all": {}}}1] PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_default_params_conflict PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_body_merge[{"query": {"match_all": {}}}-kwargs0] PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_body_merge[{"query": {"match_all": {}}}-kwargs1] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_params_merge[{"query": {"match_all": {}}}0] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_params_merge[{"query": {"match_all": {}}}1] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_ignore_deprecated_options PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_parameter_aliases PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_positional_argument_error[AsyncElasticsearch] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_positional_argument_error[Elasticsearch] PASSED
 test_elasticsearch/test_client/test_serializers.py::TestSerializers::test_compat_mode_on_by_default PASSED
 test_elasticsearch/test_client/test_serializers.py::TestSerializers::test_compat_serializer_used_when_given_non_compat PASSED
@@ -355,6 +359,14 @@ test_elasticsearch/test_transport.py:36
   $(@D)/test_elasticsearch/test_transport.py:36: DeprecationWarning: Importing from the 'elasticsearch.transport' module is deprecated. Instead import from 'elastic_transport'
     from elasticsearch.transport import get_host_info
 
+test_elasticsearch/test_async/test_transport.py:497
+  test_elasticsearch/test_async/test_transport.py:497: PytestDeprecationWarning: test_sniff_after_n_seconds is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+    async def test_sniff_after_n_seconds(self, event_loop):
+
+test_elasticsearch/test_async/test_transport.py:551
+  test_elasticsearch/test_async/test_transport.py:551: PytestDeprecationWarning: test_sniff_on_start_close_unlocks_async_calls is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+    async def test_sniff_on_start_close_unlocks_async_calls(self, event_loop):
+
 test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
 test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
 test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
@@ -411,12 +423,16 @@ test_elasticsearch/test_async/test_transport.py::TestTransport::test_client_meta
   $(@D)/test_elasticsearch/test_async/test_transport.py:227: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
     await client.info(headers={"CustoM": "header"})
 
+test_elasticsearch/test_async/test_transport.py::TestTransport::test_kwargs_passed_on_to_node_pool
+  test_elasticsearch/test_async/test_transport.py:262: PytestWarning: The test <Function test_kwargs_passed_on_to_node_pool> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_kwargs_passed_on_to_node_pool(self):
+
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_sniffing_disabled_on_elastic_cloud[kwargs1]
-  $(@D)/test_elasticsearch/test_async/test_transport.py:542: DeprecationWarning: The 'sniff_on_connection_fail' parameter is deprecated in favor of 'sniff_on_node_failure'
+  $(@D)/test_elasticsearch/test_async/test_transport.py:541: DeprecationWarning: The 'sniff_on_connection_fail' parameter is deprecated in favor of 'sniff_on_node_failure'
     AsyncElasticsearch(
 
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_sniffing_disabled_on_elastic_cloud[kwargs4]
-  $(@D)/test_elasticsearch/test_async/test_transport.py:542: DeprecationWarning: The 'sniffer_timeout' parameter is deprecated in favor of 'min_delay_between_sniffing'
+  $(@D)/test_elasticsearch/test_async/test_transport.py:541: DeprecationWarning: The 'sniffer_timeout' parameter is deprecated in favor of 'min_delay_between_sniffing'
     AsyncElasticsearch(
 
 test_elasticsearch/test_client/test_options.py::TestOptions::test_user_agent_override
@@ -427,6 +443,10 @@ test_elasticsearch/test_client/test_options.py::TestOptions::test_user_agent_ove
   $(@D)/test_elasticsearch/test_client/test_options.py:365: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
     client.indices.get(index="2", headers={"user-agent": "custom4"})
 
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_default_params_conflict
+  $(@D)/test_elasticsearch/test_client/test_rewrite_parameters.py:88: DeprecationWarning: The 'params' parameter is deprecated and will be removed in a future version. Instead use individual parameters.
+    self.wrapped_func_default(
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 222 passed, 123 skipped, 22 warnings ========
+======== 227 passed, 122 skipped, 26 warnings ========

@@ -10,12 +10,12 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2024 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -25,13 +25,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/pixman-1/pixman-version.h
 file path=usr/include/pixman-1/pixman.h
-link path=usr/lib/$(MACH64)/libpixman-1.so \
-    target=libpixman-1.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libpixman-1.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libpixman-1.so target=libpixman-1.so.0
+file path=usr/lib/$(MACH64)/libpixman-1.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libpixman-1.so.0 \
-    target=libpixman-1.so.$(COMPONENT_VERSION)
+    target=libpixman-1.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/pixman-1.pc
-link path=usr/lib/libpixman-1.so target=libpixman-1.so.$(COMPONENT_VERSION)
-file path=usr/lib/libpixman-1.so.$(COMPONENT_VERSION)
-link path=usr/lib/libpixman-1.so.0 target=libpixman-1.so.$(COMPONENT_VERSION)
-file path=usr/lib/pkgconfig/pixman-1.pc

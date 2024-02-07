@@ -1,65 +1,81 @@
 #
-# This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"), version 1.0.
-# You may only use this file in accordance with the terms of version
-# 1.0 of the CDDL.
+# CDDL HEADER START
 #
-# A full copy of the text of the CDDL should have accompanied this
-# source.  A copy of the CDDL is also available via the Internet at
-# http://www.illumos.org/license/CDDL.
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
-# Copyright 2019 Michal Nowak
-# Copyright 2020 Andreas Wacknitz
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 
 BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		dbus
-COMPONENT_VERSION=	1.12.28
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	Simple IPC library based on messages
-COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/dbus/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	https://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:9da1e3f2b73f75eec0a9e4509d64be43909d1f2853fe809528a0a53984d76420
-COMPONENT_FMRI=		system/library/dbus
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_LICENSE=	GPLv2,AFLv2.1
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_NAME= dbus
+COMPONENT_VERSION= 1.14.10
+COMPONENT_SUMMARY= Simple IPC library based on messages
+COMPONENT_PROJECT_URL= https://dbus.freedesktop.org
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:ba1f21d2bd9d339da2d4aa8780c09df32fea87998b73da24f49ab9df1e36a50f
+COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_FMRI= system/library/dbus
+COMPONENT_CLASSIFICATION= System/Services
+COMPONENT_LICENSE= dbus, GPLv2
+
+# https://release-monitoring.org/api/project/$(COMPONENT_ANITYA_ID) will answer a JSON object with project information
+COMPONENT_ANITYA_ID= 5356
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(PATH.gnu)
-
-COMPONENT_PREP_ACTION =	( cd $(@D) && PATH="$(PATH)" autoreconf --force --install )
-
-CPPFLAGS += -std=gnu89
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --with-dbus-user=root
-CONFIGURE_OPTIONS += --with-dbus-daemondir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --disable-static
-
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += PERL=$(PERL)
-CONFIGURE_ENV += PYTHON=$(PYTHON)
-
-COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
-
-# To prevent "libtool_install_magic: unbound variable"
+# Needed for "gmake test" to work successfully.
 unexport SHELLOPTS
 
-REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+# Will break parallel 32/64-bit builds; needs update when that happens.
+CONFIGURE_BINDIR.32 = $(CONFIGURE_PREFIX)/bin
+
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --with-dbus-daemondir=$(USRLIBEXECDIR)
+CONFIGURE_OPTIONS += --with-dbus-user=root
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-xml-docs		# needs text/xmlto
+CONFIGURE_OPTIONS += --enable-doxygen-docs	# needs developer/documentation-tool/doxygen 
+CONFIGURE_OPTIONS += --enable-evports
+CONFIGURE_OPTIONS += --enable-year2038
+# enable-tests activates more tests but is said to be unsafe for deployments. Thus, we don't use it here.
+#CONFIGURE_OPTIONS += --enable-tests
+
+# Makefile.am files of this component are not compatible with Solaris make.
+# Use GNU make to avoid the configuration error when makefile fragments are processed.
+CONFIGURE_OPTIONS += MAKE=$(GMAKE)
+
+# GNU Build System files have to be regenerated for automake 1.16.
+# It can be removed when the upstream starts to use a newer automake version.
+COMPONENT_PREP_ACTION= ( cd $(@D) && PATH="$(PATH)" autoreconf -fiv )
+
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-archive
-REQUIRED_PACKAGES += library/gnome/yelp-tools
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies

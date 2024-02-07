@@ -107,6 +107,7 @@ git checkout . > /dev/null 2>&1
 # Following variables could be set by the hook-begin snippet
 VERSION=
 DOWNLOAD_URL=
+LICENSE_FILE=
 
 # Execute hook-begin snippet
 if [[ -f "$CONF" ]] ; then
@@ -131,13 +132,11 @@ fi
 
 # Is this new module, or just a rebuild?
 NEW=1
-REBUILD=0
 PREV_VER=
 PREV_HVER=
 PREV_REV=0
 if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	NEW=0
-	REBUILD=1
 	PREV_VER=$($GMAKE print-value-COMPONENT_VERSION 2>/dev/null)
 	(($? != 0)) && printf "FATAL: 'gmake print-value-COMPONENT_VERSION' failed!\n" >&2 && exit 1
 	PREV_REV=$($GMAKE print-value-COMPONENT_REVISION 2>/dev/null)
@@ -176,6 +175,9 @@ if [[ -z "$DOWNLOAD_URL" ]] ; then
 fi
 
 
+# Remove everything that is not in git
+rm -rf *
+git checkout . > /dev/null 2>&1
 # Remove everything from git (except known patches, files, history, and $CONF)
 [[ -f "$CONF" ]] && grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
 [[ -f "$CONF" ]] && grep "^%file%" "$CONF" | while read TAG FILE ; do rm -f "files/$FILE" ; done
@@ -195,13 +197,16 @@ done
 
 
 # Makefile template
+GENERATE_CMD="\$WS_TOOLS/$THIS"
+[[ "$DIRECTORY" != "perl/$DISTRIBUTION" ]] && GENERATE_CMD="$GENERATE_CMD -d $DIRECTORY"
+GENERATE_CMD="$GENERATE_CMD $MODULE"
 (
 cat $WS_TOP/transforms/copyright-template | sed -e '/^$/,$d'
 cat <<EOF
 
 #
 # This file was automatically generated using the following command:
-#   \$WS_TOOLS/$THIS $MODULE
+#   $GENERATE_CMD
 #
 
 BUILD_STYLE = makemaker
@@ -237,11 +242,11 @@ if [[ -n "$DOWNLOAD_URL" ]] ; then
 	COMPONENT_ARCHIVE_URL=$($GMAKE print-value-COMPONENT_ARCHIVE_URL)
 	[[ "$COMPONENT_ARCHIVE_URL" == "$DOWNLOAD_URL" ]] && DOWNLOAD_URL=
 fi
-[[ -n "$DOWNLOAD_URL" ]] && sed -i -e $'s|^COMPONENT_CPAN_AUTHOR.*|COMPONENT_ARCHIVE_URL=\t\t'"$DOWNLOAD_URL"'|' Makefile
+[[ -n "$DOWNLOAD_URL" ]] && sed -i -e $'s|^COMPONENT_CPAN_AUTHOR.*|COMPONENT_ARCHIVE_URL =\t\t\\\\\\\n\t'"$DOWNLOAD_URL"'|' Makefile
 
 # Remove COMPONENT_REVISION if not needed
 COMPONENT_VERSION=$($GMAKE print-value-COMPONENT_VERSION)
-[[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && REBUILD=0 && sed -i -e '/^COMPONENT_REVISION/d' Makefile
+[[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && sed -i -e '/^COMPONENT_REVISION/d' Makefile
 git add Makefile
 
 # Calculate sham256 sum for source package
@@ -253,7 +258,21 @@ SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE")
 sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
 git add Makefile
 
-# Unpack sources
+# Unpack sources and apply patches
+! $GMAKE patch > /dev/null 2>&1 && printf "FATAL: 'gmake patch' failed!\n" >&2 && exit 1
+
+# Refresh patches
+if $GMAKE refresh-patches > /dev/null 2>&1 ; then
+	git add patches 2>/dev/null
+else
+	printf "ERROR: 'gmake refresh-patches' failed!\n" >&2
+	git checkout patches 2>/dev/null
+fi
+
+# Cleanup after patch refresh
+$GMAKE clobber > /dev/null 2>&1
+
+# Prepare sources
 ! $GMAKE prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
 SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
 COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
@@ -313,7 +332,7 @@ function detect_license
 LICENSE=
 LICFILE=
 COPYRIGHT=
-for f in LICENSE LICENCE COPYING COPYRIGHT ; do
+for f in $LICENSE_FILE LICENSE LICENCE COPYING COPYRIGHT ; do
 	[[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/$f" ]] || continue
 	LICFILE="$SOURCE_DIR$COMPONENT_SUBDIR/$f"
 
@@ -459,6 +478,36 @@ grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\
 ! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
 
 
+# Handle history
+COMPONENT_FMRI=$($GMAKE print-value-COMPONENT_FMRI)
+PERL_VERSIONS_OBSOLETING=$($GMAKE print-value-PERL_VERSIONS_OBSOLETING)
+OV=
+OV_PLURAL=
+for o in $(echo $OBSOLETE $PERL_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
+	PLV=${o//.}
+	FMRI=$(pkg list -nvH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -v '(o|r)$' | sed -e 's|^.*\('"$COMPONENT_FMRI"'\)|\1|g' -e 's/:[^:]*$//g' -e 's/\(-[^-]*\)$/,5.11\1/g')
+	[[ -n "$FMRI" ]] || continue
+	FMRI_H=${FMRI%.*}
+	FMRI_T=${FMRI##*.}
+	if [[ "$FMRI_H" == "$FMRI" ]] ; then
+		printf "WARNING: Wrong fmri format: %s\n" "$FMRI" >&2
+		continue
+	fi
+	FMRI_T=$((FMRI_T + 1))
+	printf "%s.%s noincorporate\n" "$FMRI_H" "$FMRI_T" >> history
+
+	[[ -n "$OV" ]] && OV="${OV/ and /, } and " && OV_PLURAL="s"
+	OV="$OV$o"
+done
+if [[ -f history ]] ; then
+	LC_ALL=C sort -u history > history.new
+	mv history.new history
+	git add history
+
+	awk '$2 == "noincorporate" {printf("WARNING: Unincorporated package: %s\n", $1)}' < history >&2
+fi
+
+
 # Cleanup before we try to publish to make sure there are no leftovers from
 # previous steps
 $GMAKE clobber > /dev/null 2>&1
@@ -527,42 +576,13 @@ if [[ "$common_results" == "yes" ]] ; then
 fi
 
 
-# Handle history
-COMPONENT_FMRI=$($GMAKE print-value-COMPONENT_FMRI)
-PERL_VERSIONS_OBSOLETING=$($GMAKE print-value-PERL_VERSIONS_OBSOLETING)
-OV=
-OV_PLURAL=
-for o in $(echo $OBSOLETE $PERL_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
-	PLV=${o//.}
-	FMRI=$(pkg list -nvH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -v '(o|r)$' | sed -e 's|^.*\('"$COMPONENT_FMRI"'\)|\1|g' -e 's/:[^:]*$//g' -e 's/\(-[^-]*\)$/,5.11\1/g')
-	[[ -n "$FMRI" ]] || continue
-	FMRI_H=${FMRI%.*}
-	FMRI_T=${FMRI##*.}
-	if [[ "$FMRI_H" == "$FMRI" ]] ; then
-		printf "WARNING: Wrong fmri format: %s\n" "$FMRI" >&2
-		continue
-	fi
-	FMRI_T=$((FMRI_T + 1))
-	printf "%s.%s noincorporate\n" "$FMRI_H" "$FMRI_T" >> history
-
-	[[ -n "$OV" ]] && OV="$OV and " && OV_PLURAL="s"
-	OV="$OV$o"
-done
-if [[ -f history ]] ; then
-	LC_ALL=C sort -u history > history.new
-	mv history.new history
-	git add history
-fi
-
-
 # Construct the commit message
 MSG=
 if ((NEW)) ; then
 	MSG="Add $MODULE Perl module"
 else
-	if ((REBUILD == 0)) ; then
-		[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION" || MSG="change version format"
-	fi
+	[[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && MSG="change version format"
+	[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION"
 
 	REBUILDMSG=
 

@@ -10,28 +10,26 @@
 
 #
 # Copyright (c) 2015 Alexander Pyhalov
+# Copyright (c) 2023 Friedrich Kink
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgnome-keyring
-COMPONENT_VERSION=	2.32.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.9.1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME keyring libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:56388c0d81ddfdb57d30e4963c83ecc1c18498aab99395420e0fff69929a0f0c
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+    sha256:8eaca3d4f04ba834acb6c5037b26c3f0837ee4b71ccb380e7810052f7cde381b
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/3.9/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	System/Security
 COMPONENT_FMRI=		library/gnome/gnome-keyring
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -45,9 +43,9 @@ CONFIGURE_OPTIONS+=	--disable-static
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64_and_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64_and_32)
 
 test:		$(NO_TESTS)
 
@@ -56,4 +54,3 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/security/libgcrypt
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

@@ -5,7 +5,7 @@ py$(PYV): commands[1]> python -m coverage run -m pytest tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 467 items
+collecting ... collected 473 items
 
 tests/cli_test.py::test_file_not_found PASSED
 tests/cli_test.py::test_identify_cli PASSED
@@ -18,6 +18,7 @@ tests/extensions_test.py::test_extensions_have_binary_or_text[apinotes] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[asar] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[asciidoc] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[avif] PASSED
+tests/extensions_test.py::test_extensions_have_binary_or_text[avsc] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[bash] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[bat] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[bats] PASSED
@@ -207,6 +208,7 @@ tests/extensions_test.py::test_extensions_have_binary_or_text[pxi] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[py] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[pyi] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[pyproj] PASSED
+tests/extensions_test.py::test_extensions_have_binary_or_text[pyt] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[pyx] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[pyz] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[pyzw] PASSED
@@ -333,6 +335,7 @@ tests/extensions_test.py::test_names_have_binary_or_text[.pdbrc] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[.prettierignore] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[.pypirc] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[.rstcheck.cfg] PASSED
+tests/extensions_test.py::test_names_have_binary_or_text[.salt-lint] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[.yamllint] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[.zlogin] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[.zlogout] PASSED
@@ -362,6 +365,7 @@ tests/extensions_test.py::test_names_have_binary_or_text[Pipfile.lock] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[Pipfile] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[README] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[Rakefile] PASSED
+tests/extensions_test.py::test_names_have_binary_or_text[Vagrantfile] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[WORKSPACE] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[config.ru] PASSED
 tests/extensions_test.py::test_names_have_binary_or_text[copy.bara.sky] PASSED
@@ -427,34 +431,36 @@ tests/identify_test.py::test_parse_shebang_from_file_does_not_exist PASSED
 tests/identify_test.py::test_parse_shebang_from_file_nonexecutable PASSED
 tests/identify_test.py::test_parse_shebang_from_file_simple PASSED
 tests/identify_test.py::test_parse_shebang_open_raises_einval PASSED
-tests/identify_test.py::test_tags_from_filename[-expected27] PASSED
-tests/identify_test.py::test_tags_from_filename[Containerfile-expected3] PASSED
-tests/identify_test.py::test_tags_from_filename[Dockerfile-expected4] PASSED
-tests/identify_test.py::test_tags_from_filename[Dockerfile.xenial-expected5] PASSED
-tests/identify_test.py::test_tags_from_filename[Gemfile-expected12] PASSED
-tests/identify_test.py::test_tags_from_filename[Gemfile.lock-expected13] PASSED
-tests/identify_test.py::test_tags_from_filename[Jenkinsfile-expected14] PASSED
-tests/identify_test.py::test_tags_from_filename[Makefile-expected2] PASSED
-tests/identify_test.py::test_tags_from_filename[Pipfile-expected7] PASSED
-tests/identify_test.py::test_tags_from_filename[Pipfile.lock-expected8] PASSED
-tests/identify_test.py::test_tags_from_filename[README.md-expected24] PASSED
-tests/identify_test.py::test_tags_from_filename[build.jenkins-expected15] PASSED
-tests/identify_test.py::test_tags_from_filename[build.jenkinsfile-expected16] PASSED
-tests/identify_test.py::test_tags_from_filename[config.ru-expected11] PASSED
-tests/identify_test.py::test_tags_from_filename[dockerfile.py-expected21] PASSED
-tests/identify_test.py::test_tags_from_filename[f.JPG-expected20] PASSED
-tests/identify_test.py::test_tags_from_filename[f.plist-expected19] PASSED
-tests/identify_test.py::test_tags_from_filename[meson.build-expected17] PASSED
-tests/identify_test.py::test_tags_from_filename[meson_options.txt-expected18] PASSED
-tests/identify_test.py::test_tags_from_filename[mod/Dockerfile-expected10] PASSED
-tests/identify_test.py::test_tags_from_filename[mod/test.py-expected9] PASSED
-tests/identify_test.py::test_tags_from_filename[setup.cfg-expected23] PASSED
-tests/identify_test.py::test_tags_from_filename[test-expected26] PASSED
-tests/identify_test.py::test_tags_from_filename[test.cfg-expected22] PASSED
-tests/identify_test.py::test_tags_from_filename[test.mk-expected1] PASSED
-tests/identify_test.py::test_tags_from_filename[test.py-expected0] PASSED
-tests/identify_test.py::test_tags_from_filename[test.weird-unrecognized-extension-expected25] PASSED
-tests/identify_test.py::test_tags_from_filename[xenial.Dockerfile-expected6] PASSED
+tests/identify_test.py::test_tags_from_filename[-expected29] PASSED
+tests/identify_test.py::test_tags_from_filename[.salt-lint-expected0] PASSED
+tests/identify_test.py::test_tags_from_filename[Containerfile-expected4] PASSED
+tests/identify_test.py::test_tags_from_filename[Dockerfile-expected5] PASSED
+tests/identify_test.py::test_tags_from_filename[Dockerfile.xenial-expected6] PASSED
+tests/identify_test.py::test_tags_from_filename[Gemfile-expected13] PASSED
+tests/identify_test.py::test_tags_from_filename[Gemfile.lock-expected14] PASSED
+tests/identify_test.py::test_tags_from_filename[Jenkinsfile-expected15] PASSED
+tests/identify_test.py::test_tags_from_filename[Makefile-expected3] PASSED
+tests/identify_test.py::test_tags_from_filename[Pipfile-expected8] PASSED
+tests/identify_test.py::test_tags_from_filename[Pipfile.lock-expected9] PASSED
+tests/identify_test.py::test_tags_from_filename[README.md-expected26] PASSED
+tests/identify_test.py::test_tags_from_filename[Vagrantfile-expected20] PASSED
+tests/identify_test.py::test_tags_from_filename[build.jenkins-expected16] PASSED
+tests/identify_test.py::test_tags_from_filename[build.jenkinsfile-expected17] PASSED
+tests/identify_test.py::test_tags_from_filename[config.ru-expected12] PASSED
+tests/identify_test.py::test_tags_from_filename[dockerfile.py-expected23] PASSED
+tests/identify_test.py::test_tags_from_filename[f.JPG-expected22] PASSED
+tests/identify_test.py::test_tags_from_filename[f.plist-expected21] PASSED
+tests/identify_test.py::test_tags_from_filename[meson.build-expected18] PASSED
+tests/identify_test.py::test_tags_from_filename[meson_options.txt-expected19] PASSED
+tests/identify_test.py::test_tags_from_filename[mod/Dockerfile-expected11] PASSED
+tests/identify_test.py::test_tags_from_filename[mod/test.py-expected10] PASSED
+tests/identify_test.py::test_tags_from_filename[setup.cfg-expected25] PASSED
+tests/identify_test.py::test_tags_from_filename[test-expected28] PASSED
+tests/identify_test.py::test_tags_from_filename[test.cfg-expected24] PASSED
+tests/identify_test.py::test_tags_from_filename[test.mk-expected2] PASSED
+tests/identify_test.py::test_tags_from_filename[test.py-expected1] PASSED
+tests/identify_test.py::test_tags_from_filename[test.weird-unrecognized-extension-expected27] PASSED
+tests/identify_test.py::test_tags_from_filename[xenial.Dockerfile-expected7] PASSED
 tests/identify_test.py::test_tags_from_interpreter[-expected6] PASSED
 tests/identify_test.py::test_tags_from_interpreter[/usr/bin/herpderpderpderpderp-expected4] PASSED
 tests/identify_test.py::test_tags_from_interpreter[/usr/bin/python3.5.2-expected3] PASSED
@@ -475,7 +481,7 @@ tests/identify_test.py::test_tags_from_path_simple_file PASSED
 tests/identify_test.py::test_tags_from_path_socket PASSED
 tests/identify_test.py::test_tags_from_path_symlink PASSED
 
-======== 467 passed ========
+======== 473 passed ========
 py$(PYV): commands[2]> python -m coverage report
 Name    Stmts   Miss Branch BrPart  Cover   Missing
 ---------------------------------------------------

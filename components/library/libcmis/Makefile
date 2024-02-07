@@ -21,21 +21,18 @@
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcmis
-COMPONENT_VERSION=	0.5.2
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	https://github.com/tdf/libcmis
+COMPONENT_VERSION=	0.6.2
 COMPONENT_SUMMARY=      libcmis - C++ client library for the CMIS interface
+COMPONENT_PROJECT_URL=	https://github.com/tdf/libcmis
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:d7b18d9602190e10d437f8a964a32e983afd57e2db316a07d87477a79f5000a2
-COMPONENT_ARCHIVE_URL=	\
-  https://github.com/tdf/libcmis/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:1b5c2d7258ff93eb5f9958ff0e4dfd7332dc75a071bb717dde2217a26602a644
+COMPONENT_ARCHIVE_URL=	https://github.com/tdf/libcmis/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     	library/c++/libcmis
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      GPLv2, LGPLv2.1, MPLv2
@@ -43,16 +40,14 @@ COMPONENT_LICENSE=      GPLv2, LGPLv2.1, MPLv2
 include $(WS_MAKE_RULES)/common.mk
 
 # Fix threading detection issue with boost 1.64
-CXXFLAGS+= -pthread
+CXXFLAGS += -pthread
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--enable-static-boost
-CONFIGURE_OPTIONS+=	--with-man=no
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-static-boost
+CONFIGURE_OPTIONS += --with-man=no
 
 unexport SHELLOPTS
-
-# Note that tests are broken at the mmoment
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/cppunit

@@ -1,12 +1,9 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 746 items
+collecting ... collected 755 items
 
-::project PASSED
 referencing/tests/test_core.py::TestOpaqueSpecification::test_no_anchors[37] PASSED
 referencing/tests/test_core.py::TestOpaqueSpecification::test_no_anchors[True] PASSED
 referencing/tests/test_core.py::TestOpaqueSpecification::test_no_anchors[foo] PASSED
@@ -23,6 +20,8 @@ referencing/tests/test_core.py::TestOpaqueSpecification::test_no_subresources[fo
 referencing/tests/test_core.py::TestOpaqueSpecification::test_no_subresources[thing0] PASSED
 referencing/tests/test_core.py::TestOpaqueSpecification::test_no_subresources[thing4] PASSED
 referencing/tests/test_core.py::TestRegistry::test_anchor_in_nonexistent_resource PASSED
+referencing/tests/test_core.py::TestRegistry::test_bool_empty PASSED
+referencing/tests/test_core.py::TestRegistry::test_bool_not_empty PASSED
 referencing/tests/test_core.py::TestRegistry::test_combine PASSED
 referencing/tests/test_core.py::TestRegistry::test_combine_conflicting_retrieve PASSED
 referencing/tests/test_core.py::TestRegistry::test_combine_self PASSED
@@ -99,6 +98,14 @@ referencing/tests/test_core.py::TestResource::test_pointer_to_mapping PASSED
 referencing/tests/test_core.py::TestResource::test_subresource_with_different_specification PASSED
 referencing/tests/test_core.py::TestResource::test_subresources_delegates_to_specification PASSED
 referencing/tests/test_core.py::TestSpecification::test_create_resource PASSED
+referencing/tests/test_core.py::TestSpecification::test_detect_from_json_schema PASSED
+referencing/tests/test_core.py::TestSpecification::test_detect_unneeded_default PASSED
+referencing/tests/test_core.py::TestSpecification::test_detect_with_fallback PASSED
+referencing/tests/test_core.py::TestSpecification::test_detect_with_no_discernible_information PASSED
+referencing/tests/test_core.py::TestSpecification::test_detect_with_no_discernible_information_and_default PASSED
+referencing/tests/test_core.py::TestSpecification::test_detect_with_non_URI_schema PASSED
+referencing/tests/test_core.py::TestSpecification::test_non_mapping_detect PASSED
+referencing/tests/test_core.py::TestSpecification::test_non_mapping_detect_with_default PASSED
 referencing/tests/test_core.py::TestSpecification::test_repr PASSED
 referencing/tests/test_core.py::test_nonsubclassable[Anchor] PASSED
 referencing/tests/test_core.py::test_nonsubclassable[PointerToNowhere] PASSED
@@ -149,6 +156,7 @@ referencing/tests/test_jsonschema.py::test_anchors_in_bool[True-specification0] 
 referencing/tests/test_jsonschema.py::test_anchors_in_bool[True-specification1] PASSED
 referencing/tests/test_jsonschema.py::test_anchors_in_bool[True-specification2] PASSED
 referencing/tests/test_jsonschema.py::test_anchors_in_bool[True-specification3] PASSED
+referencing/tests/test_jsonschema.py::test_empty_registry PASSED
 referencing/tests/test_jsonschema.py::test_id_of_bool[False-specification0] PASSED
 referencing/tests/test_jsonschema.py::test_id_of_bool[False-specification1] PASSED
 referencing/tests/test_jsonschema.py::test_id_of_bool[False-specification2] PASSED
@@ -197,640 +205,640 @@ referencing/tests/test_jsonschema.py::test_subresources_of_bool[True-specificati
 referencing/tests/test_jsonschema.py::test_subresources_of_bool[True-specification2] PASSED
 referencing/tests/test_jsonschema.py::test_subresources_of_bool[True-specification3] PASSED
 referencing/tests/test_jsonschema.py::test_unknown_dialect PASSED
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-bad-future-anchor] (test={'base_uri': 'http://example.com/', 'ref': '#foo', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-bad-future-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-bad-future-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-bad-future-id] (test={'ref': 'http://example.com/great-scott', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-bad-future-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-bad-future-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-empty-fragment] (test={'base_uri': 'http://example.com/foo', 'ref': '#', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-external-absolute-uri] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-external-absolute-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-external-absolute-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-ignored-siblings] (test={'ref': 'http://example.com/ignored-id.json', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-ignored-siblings] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-ignored-siblings] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalItems-boolean] (test={'ref': 'urn:example:foo', 'target': {'id': 'urn:example:foo'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalItems-boolean] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalItems-boolean] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalItems-schema] (test={'ref': 'http://example.com/oh-hey-an-additionalItems', 'target': {'id': 'http://example.com/oh-hey-an-additionalItems', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalItems-schema] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalItems-schema] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalProperties-boolean] (test={'ref': 'urn:example:foo', 'target': {'id': 'urn:example:foo'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalProperties-boolean] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalProperties-boolean] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalProperties-schema] (test={'ref': 'http://example.com/oh-hey-an-additionalProperties', 'target': {'id': 'http://example.com/oh-hey-an-additionalProperties', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalProperties-schema] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-additionalProperties-schema] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-dependencies-array] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-dependencies-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-dependencies-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-dependencies-object] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-dependencies-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-dependencies-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-extends] (test={'ref': 'http://example.com/0', 'target': {'id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-extends] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-extends] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-items-array] (test={'ref': 'http://example.com/0', 'target': {'id': 'http://example.com/0', 'title': 'Second!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-items-array] (test={'ref': 'http://example.com/1', 'target': {'id': 'http://example.com/1', 'title': 'Fourth!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-items-object] (test={'ref': 'http://example.com/oh-hey-an-items', 'target': {'id': 'http://example.com/oh-hey-an-items', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-patternProperties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-patternProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-patternProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-properties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-properties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-keywords-properties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}, then={'ref': '#/foo', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup-pointer] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup-pointer] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup-pointer] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'bar', 'target': {'baz': 'quux'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-multiple-lookup] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-nonreferencing-keywords-default] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-nonreferencing-keywords-default] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-nonreferencing-keywords-default] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-nonreferencing-keywords-enum] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-nonreferencing-keywords-enum] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-nonreferencing-keywords-enum] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-dependencies-object] (test={'ref': 'http://example.com/#/dependencies/foo/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-dependencies-object] (test={'ref': 'http://example.com/#/dependencies/foo/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-dependencies-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-dependencies-object] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-dependencies-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-object] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-id-in-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-non-keyword-id-in-subvalue] (test={'ref': 'http://example.com/#/properties/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-non-keyword-id-in-subvalue] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-non-keyword-id-in-subvalue] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-non-keyword-id] (test={'ref': 'http://example.com/#/additionalProperties/properties/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-non-keyword-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-pointer-crossing-non-keyword-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-array] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/1', 'target': 4}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/percent%25field', 'target': 'quux'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/slash~1field', 'target': 'baz'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/tilde~0field', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-escapes] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-escapes] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-object] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/bar', 'target': {'baz': 12}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-relative-pointer-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-unknown-keyword] (test={'ref': 'http://example.com/oh-hey-not-a-real-known-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-unknown-keyword] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-03-unknown-keyword] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'id': 'http://example.com/foo#', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-anchor] (test={'base_uri': 'http://example.com/', 'ref': '#foo', 'target': {'id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-bad-future-anchor] (test={'base_uri': 'http://example.com/', 'ref': '#foo', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-bad-future-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-bad-future-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-bad-future-id] (test={'ref': 'http://example.com/great-scott', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-bad-future-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-bad-future-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-empty-fragment] (test={'base_uri': 'http://example.com/foo', 'ref': '#', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-urn-anchor] (test={'ref': 'urn:example:schema#foo', 'target': {'id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-urn-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-urn-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-urn] (test={'ref': 'urn:example:schema', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-urn] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-absolute-urn] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-uri-with-nested-relative-uri-anchor] (test={'ref': 'http://example.com/foo#bar', 'target': {'id': '#bar', 'baz': 'quux'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-uri-with-nested-relative-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-external-uri-with-nested-relative-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-ignored-siblings] (test={'ref': 'http://example.com/ignored-id.json', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-ignored-siblings] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-ignored-siblings] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalItems-boolean] (test={'ref': 'urn:example:foo', 'target': {'id': 'urn:example:foo'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalItems-boolean] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalItems-boolean] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalItems-schema] (test={'ref': 'http://example.com/oh-hey-an-additionalItems', 'target': {'id': 'http://example.com/oh-hey-an-additionalItems', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalItems-schema] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalItems-schema] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalProperties-boolean] (test={'ref': 'urn:example:foo', 'target': {'id': 'urn:example:foo'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalProperties-boolean] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalProperties-boolean] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalProperties-schema] (test={'ref': 'http://example.com/oh-hey-an-additionalProperties', 'target': {'id': 'http://example.com/oh-hey-an-additionalProperties', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalProperties-schema] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-additionalProperties-schema] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-allOf] (test={'ref': 'http://example.com/0', 'target': {'id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-allOf] (test={'ref': 'http://example.com/1', 'target': {'id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-allOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-allOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-allOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-anyOf] (test={'ref': 'http://example.com/0', 'target': {'id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-anyOf] (test={'ref': 'http://example.com/1', 'target': {'id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-anyOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-anyOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-anyOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-definitions] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-definitions] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-definitions] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-dependencies-array] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-dependencies-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-dependencies-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-dependencies-object] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-dependencies-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-dependencies-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-items-array] (test={'ref': 'http://example.com/0', 'target': {'id': 'http://example.com/0', 'title': 'Second!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-items-array] (test={'ref': 'http://example.com/1', 'target': {'id': 'http://example.com/1', 'title': 'Fourth!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-items-object] (test={'ref': 'http://example.com/oh-hey-an-items', 'target': {'id': 'http://example.com/oh-hey-an-items', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-not] (test={'ref': 'http://example.com/oh-hey-a-not', 'target': {'id': 'http://example.com/oh-hey-a-not', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-not] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-not] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-oneOf] (test={'ref': 'http://example.com/0', 'target': {'id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-oneOf] (test={'ref': 'http://example.com/1', 'target': {'id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-oneOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-oneOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-oneOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-patternProperties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-patternProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-patternProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-properties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-properties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-keywords-properties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'definitions': {'foo': {'id': '#foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'id': '#foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'definitions': {'foo': {'id': '#foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'id': '#foo', 'bar': 'baz'}}}, then={'ref': '#foo', 'target': {'id': '#foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'id': 'http://example.org/foo', 'definitions': {'bar': {'id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'id': '#baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'id': 'http://example.org/foo', 'definitions': {'bar': {'id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'id': '#baz', 'quux': 'eggs'}}}, then={'ref': '#baz', 'target': {'id': '#baz', 'quux': 'eggs'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'id': 'http://example.org/foo', 'definitions': {'bar': {'id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'id': '#baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'id': 'http://example.org/foo', 'definitions': {'bar': {'id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'id': '#baz', 'quux': 'eggs'}}}, then={'ref': 'http://example.org/foo#baz', 'target': {'id': '#baz', 'quux': 'eggs'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}, then={'ref': '#/foo', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-pointer] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-pointer] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup-pointer] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'bar', 'target': {'baz': 'quux'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-multiple-lookup] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-absolute-id] (test={'base_uri': 'http://example.com/', 'ref': 'nested', 'target': {'id': 'http://example.com/nested', 'definitions': {'inner': {'foo': 'bar'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-absolute-id] (test={'base_uri': 'http://example.com/nested', 'ref': '#/definitions/inner', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-absolute-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-absolute-id] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-absolute-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-relative-id-only-retrieval-uri] (test={'ref': 'http://example.com/nested.json', 'target': {'id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-relative-id-only-retrieval-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-relative-id-only-retrieval-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-relative-id] (test={'ref': 'http://example.com/nested.json', 'target': {'id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-relative-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nested-relative-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nonreferencing-keywords-default] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nonreferencing-keywords-default] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nonreferencing-keywords-default] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nonreferencing-keywords-enum] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nonreferencing-keywords-enum] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-nonreferencing-keywords-enum] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-dependencies-object] (test={'ref': 'http://example.com/#/dependencies/foo/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-dependencies-object] (test={'ref': 'http://example.com/#/dependencies/foo/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-dependencies-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-dependencies-object] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-dependencies-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/definitions/foo', 'target': {'id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-object] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-id-in-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-non-keyword-id-in-subvalue] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-non-keyword-id-in-subvalue] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-non-keyword-id-in-subvalue] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-non-keyword-id] (test={'ref': 'http://example.com/#/additionalProperties/definitions/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-non-keyword-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-pointer-crossing-non-keyword-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-array] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/1', 'target': 4}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/percent%25field', 'target': 'quux'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/slash~1field', 'target': 'baz'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/tilde~0field', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-escapes] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-escapes] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-object] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/bar', 'target': {'baz': 12}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-relative-pointer-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-unknown-keyword] (test={'ref': 'http://example.com/oh-hey-not-a-real-known-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-unknown-keyword] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-04-unknown-keyword] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'$id': 'http://example.com/foo#', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-anchor] (test={'base_uri': 'http://example.com/', 'ref': '#foo', 'target': {'$id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-boolean-schemas] (test={'base_uri': 'http://example.com/', 'ref': 'bar', 'target': {'$id': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-boolean-schemas] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-boolean-schemas] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-empty-fragment] (test={'base_uri': 'http://example.com/foo', 'ref': '#', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'$id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'$id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-urn-anchor] (test={'ref': 'urn:example:schema#foo', 'target': {'$id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-urn-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-urn-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-urn] (test={'ref': 'urn:example:schema', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-urn] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-absolute-urn] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-uri-with-nested-relative-uri-anchor] (test={'ref': 'http://example.com/foo#bar', 'target': {'$id': '#bar', 'baz': 'quux'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-uri-with-nested-relative-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-external-uri-with-nested-relative-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-ignored-siblings] (test={'ref': 'http://example.com/ignored-id.json', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-ignored-siblings] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-ignored-siblings] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-additionalItems] (test={'ref': 'http://example.com/oh-hey-an-additionalItems', 'target': {'$id': 'http://example.com/oh-hey-an-additionalItems', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-additionalItems] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-additionalItems] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-additionalProperties] (test={'ref': 'http://example.com/oh-hey-an-additionalProperties', 'target': {'$id': 'http://example.com/oh-hey-an-additionalProperties', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-additionalProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-additionalProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-allOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-allOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-allOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-allOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-allOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-anyOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-anyOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-anyOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-anyOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-anyOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-contains] (test={'ref': 'http://example.com/oh-hey-a-contains', 'target': {'$id': 'http://example.com/oh-hey-a-contains', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-contains] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-contains] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-definitions] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-definitions] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-definitions] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-dependencies-array] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-dependencies-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-dependencies-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-dependencies-object] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-dependencies-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-dependencies-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-items-array] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'Second!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-items-array] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Fourth!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-items-object] (test={'ref': 'http://example.com/oh-hey-an-items', 'target': {'$id': 'http://example.com/oh-hey-an-items', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-not] (test={'ref': 'http://example.com/oh-hey-a-not', 'target': {'$id': 'http://example.com/oh-hey-a-not', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-not] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-not] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-oneOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-oneOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-oneOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-oneOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-oneOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-patternProperties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-patternProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-patternProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-properties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-properties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-properties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-propertyNames] (test={'ref': 'http://example.com/oh-hey-a-propertyNames', 'target': {'$id': 'http://example.com/oh-hey-a-propertyNames', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-propertyNames] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-keywords-propertyNames] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'definitions': {'foo': {'$id': '#foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'$id': '#foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'definitions': {'foo': {'$id': '#foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'$id': '#foo', 'bar': 'baz'}}}, then={'ref': '#foo', 'target': {'$id': '#foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'$id': 'http://example.org/foo', 'definitions': {'bar': {'$id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'$id': 'http://example.org/foo', 'definitions': {'bar': {'$id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}}, then={'ref': '#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'$id': 'http://example.org/foo', 'definitions': {'bar': {'$id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'$id': 'http://example.org/foo', 'definitions': {'bar': {'$id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}}, then={'ref': 'http://example.org/foo#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}, then={'ref': '#/foo', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-pointer] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-pointer] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup-pointer] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'bar', 'target': {'baz': 'quux'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-multiple-lookup] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-absolute-id] (test={'base_uri': 'http://example.com/', 'ref': 'nested', 'target': {'$id': 'http://example.com/nested', 'definitions': {'inner': {'foo': 'bar'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-absolute-id] (test={'base_uri': 'http://example.com/nested', 'ref': '#/definitions/inner', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-absolute-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-absolute-id] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-absolute-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-relative-id-only-retrieval-uri] (test={'ref': 'http://example.com/nested.json', 'target': {'$id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-relative-id-only-retrieval-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-relative-id-only-retrieval-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-relative-id] (test={'ref': 'http://example.com/nested.json', 'target': {'$id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-relative-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nested-relative-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-const] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-const] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-const] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-default] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-default] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-default] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-enum] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-enum] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-enum] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-examples] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-examples] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-nonreferencing-keywords-examples] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-dependencies-object] (test={'ref': 'http://example.com/#/dependencies/foo/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-dependencies-object] (test={'ref': 'http://example.com/#/dependencies/foo/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-dependencies-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-dependencies-object] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-dependencies-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-object] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-id-in-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-non-keyword-id-in-subvalue] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-non-keyword-id-in-subvalue] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-non-keyword-id-in-subvalue] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-non-keyword-id] (test={'ref': 'http://example.com/#/additionalProperties/definitions/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-non-keyword-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-pointer-crossing-non-keyword-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-array] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/1', 'target': 4}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/percent%25field', 'target': 'quux'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/slash~1field', 'target': 'baz'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/tilde~0field', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-escapes] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-escapes] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-object] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/bar', 'target': {'baz': 12}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-relative-pointer-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-unknown-keyword] (test={'ref': 'http://example.com/oh-hey-not-a-real-known-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-unknown-keyword] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-06-unknown-keyword] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'$id': 'http://example.com/foo#', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-anchor] (test={'base_uri': 'http://example.com/', 'ref': '#foo', 'target': {'$id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-bad-future-anchor] (test={'base_uri': 'http://example.com/', 'ref': '#foo', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-bad-future-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-bad-future-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-boolean-schemas] (test={'base_uri': 'http://example.com/', 'ref': 'bar', 'target': {'$id': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-boolean-schemas] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-boolean-schemas] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-empty-fragment] (test={'base_uri': 'http://example.com/foo', 'ref': '#', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'$id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'$id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-urn-anchor] (test={'ref': 'urn:example:schema#foo', 'target': {'$id': '#foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-urn-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-urn-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-urn] (test={'ref': 'urn:example:schema', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-urn] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-absolute-urn] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-uri-with-nested-relative-uri-anchor] (test={'ref': 'http://example.com/foo#bar', 'target': {'$id': '#bar', 'baz': 'quux'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-uri-with-nested-relative-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-external-uri-with-nested-relative-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-ignored-siblings] (test={'ref': 'http://example.com/ignored-id.json', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-ignored-siblings] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-ignored-siblings] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-additionalItems] (test={'ref': 'http://example.com/oh-hey-an-additionalItems', 'target': {'$id': 'http://example.com/oh-hey-an-additionalItems', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-additionalItems] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-additionalItems] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-additionalProperties] (test={'ref': 'http://example.com/oh-hey-an-additionalProperties', 'target': {'$id': 'http://example.com/oh-hey-an-additionalProperties', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-additionalProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-additionalProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-allOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-allOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-allOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-allOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-allOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-anyOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-anyOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-anyOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-anyOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-anyOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-contains] (test={'ref': 'http://example.com/oh-hey-a-contains', 'target': {'$id': 'http://example.com/oh-hey-a-contains', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-contains] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-contains] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-definitions] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-definitions] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-definitions] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-dependencies-array] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-dependencies-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-dependencies-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-dependencies-object] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-dependencies-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-dependencies-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-else] (test={'ref': 'http://example.com/oh-hey-an-else', 'target': {'$id': 'http://example.com/oh-hey-an-else', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-else] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-else] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-if] (test={'ref': 'http://example.com/oh-hey-an-if', 'target': {'$id': 'http://example.com/oh-hey-an-if', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-if] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-if] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-items-array] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'Second!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-items-array] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Fourth!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-items-object] (test={'ref': 'http://example.com/oh-hey-an-items', 'target': {'$id': 'http://example.com/oh-hey-an-items', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-not] (test={'ref': 'http://example.com/oh-hey-a-not', 'target': {'$id': 'http://example.com/oh-hey-a-not', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-not] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-not] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-oneOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-oneOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-oneOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-oneOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-oneOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-patternProperties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-patternProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-patternProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-properties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-properties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-properties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-propertyNames] (test={'ref': 'http://example.com/oh-hey-a-propertyNames', 'target': {'$id': 'http://example.com/oh-hey-a-propertyNames', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-propertyNames] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-propertyNames] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-then] (test={'ref': 'http://example.com/oh-hey-a-then', 'target': {'$id': 'http://example.com/oh-hey-a-then', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-then] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-keywords-then] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'definitions': {'foo': {'$id': '#foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'$id': '#foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'definitions': {'foo': {'$id': '#foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'$id': '#foo', 'bar': 'baz'}}}, then={'ref': '#foo', 'target': {'$id': '#foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'$id': 'http://example.org/foo', 'definitions': {'bar': {'$id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'$id': 'http://example.org/foo', 'definitions': {'bar': {'$id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}}, then={'ref': '#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'$id': 'http://example.org/foo', 'definitions': {'bar': {'$id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'$id': 'http://example.org/foo', 'definitions': {'bar': {'$id': '#baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}}, then={'ref': 'http://example.org/foo#baz', 'target': {'$id': '#baz', 'quux': 'eggs'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}, then={'ref': '#/foo', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-pointer] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-pointer] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup-pointer] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'bar', 'target': {'baz': 'quux'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-multiple-lookup] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-absolute-id] (test={'base_uri': 'http://example.com/', 'ref': 'nested', 'target': {'$id': 'http://example.com/nested', 'definitions': {'inner': {'foo': 'bar'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-absolute-id] (test={'base_uri': 'http://example.com/nested', 'ref': '#/definitions/inner', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-absolute-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-absolute-id] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-absolute-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-relative-id-only-retrieval-uri] (test={'ref': 'http://example.com/nested.json', 'target': {'$id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-relative-id-only-retrieval-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-relative-id-only-retrieval-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-relative-id] (test={'ref': 'http://example.com/nested.json', 'target': {'$id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-relative-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nested-relative-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-const] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-const] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-const] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-default] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-default] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-default] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-enum] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-enum] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-enum] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-examples] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-examples] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-nonreferencing-keywords-examples] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-dependencies-object] (test={'ref': 'http://example.com/#/dependencies/foo/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-dependencies-object] (test={'ref': 'http://example.com/#/dependencies/foo/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-dependencies-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-dependencies-object] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-dependencies-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/definitions/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-object] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-id-in-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-non-keyword-id-in-subvalue] (test={'ref': 'http://example.com/#/definitions/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-non-keyword-id-in-subvalue] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-non-keyword-id-in-subvalue] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-non-keyword-id] (test={'ref': 'http://example.com/#/additionalProperties/definitions/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-non-keyword-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-pointer-crossing-non-keyword-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-array] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/1', 'target': 4}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/percent%25field', 'target': 'quux'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/slash~1field', 'target': 'baz'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/tilde~0field', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-escapes] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-escapes] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-object] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/bar', 'target': {'baz': 12}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-relative-pointer-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-unknown-keyword] (test={'ref': 'http://example.com/oh-hey-not-a-real-known-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-unknown-keyword] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-07-unknown-keyword] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'$id': 'http://example.com/foo#', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-anchor] (test={'base_uri': 'http://example.com/', 'ref': '#foo', 'target': {'$anchor': 'foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-boolean-schemas] (test={'base_uri': 'http://example.com/', 'ref': 'bar', 'target': {'$id': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-boolean-schemas] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-boolean-schemas] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-empty-fragment] (test={'base_uri': 'http://example.com/foo', 'ref': '#', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'$anchor': 'foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'$anchor': 'foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-urn-anchor] (test={'ref': 'urn:example:schema#foo', 'target': {'$anchor': 'foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-urn-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-urn-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-urn] (test={'ref': 'urn:example:schema', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-urn] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-absolute-urn] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-uri-with-nested-relative-uri-anchor] (test={'ref': 'http://example.com/foo#bar', 'target': {'$anchor': 'bar', 'baz': 'quux'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-uri-with-nested-relative-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-external-uri-with-nested-relative-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-additionalItems] (test={'ref': 'http://example.com/oh-hey-an-additionalItems', 'target': {'$id': 'http://example.com/oh-hey-an-additionalItems', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-additionalItems] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-additionalItems] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-additionalProperties] (test={'ref': 'http://example.com/oh-hey-an-additionalProperties', 'target': {'$id': 'http://example.com/oh-hey-an-additionalProperties', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-additionalProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-additionalProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-allOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-allOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-allOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-allOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-allOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-anyOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-anyOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-anyOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-anyOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-anyOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-contains] (test={'ref': 'http://example.com/oh-hey-a-contains', 'target': {'$id': 'http://example.com/oh-hey-a-contains', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-contains] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-contains] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-contentSchema] (test={'ref': 'http://example.com/oh-hey-a-contentSchema', 'target': {'$id': 'http://example.com/oh-hey-a-contentSchema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-contentSchema] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-contentSchema] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-defs] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-defs] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-defs] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-dependentSchemas] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-dependentSchemas] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-dependentSchemas] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-else] (test={'ref': 'http://example.com/oh-hey-an-else', 'target': {'$id': 'http://example.com/oh-hey-an-else', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-else] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-else] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-if] (test={'ref': 'http://example.com/oh-hey-an-if', 'target': {'$id': 'http://example.com/oh-hey-an-if', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-if] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-if] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-items-array] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'Second!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-items-array] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Fourth!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-items-object] (test={'ref': 'http://example.com/oh-hey-an-items', 'target': {'$id': 'http://example.com/oh-hey-an-items', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-not] (test={'ref': 'http://example.com/oh-hey-a-not', 'target': {'$id': 'http://example.com/oh-hey-a-not', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-not] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-not] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-oneOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-oneOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-oneOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-oneOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-oneOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-patternProperties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-patternProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-patternProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-properties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-properties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-properties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-propertyNames] (test={'ref': 'http://example.com/oh-hey-a-propertyNames', 'target': {'$id': 'http://example.com/oh-hey-a-propertyNames', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-propertyNames] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-propertyNames] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-then] (test={'ref': 'http://example.com/oh-hey-a-then', 'target': {'$id': 'http://example.com/oh-hey-a-then', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-then] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-then] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-unevaluatedItems] (test={'ref': 'http://example.com/oh-hey-an-unevaluatedItems', 'target': {'$id': 'http://example.com/oh-hey-an-unevaluatedItems', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-unevaluatedItems] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-unevaluatedItems] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-unevaluatedProperties] (test={'ref': 'http://example.com/oh-hey-an-unevaluatedProperties', 'target': {'$id': 'http://example.com/oh-hey-an-unevaluatedProperties', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-unevaluatedProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-keywords-unevaluatedProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'$defs': {'foo': {'$anchor': 'foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'$anchor': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'$defs': {'foo': {'$anchor': 'foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'$anchor': 'foo', 'bar': 'baz'}}}, then={'ref': '#foo', 'target': {'$anchor': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'$id': 'http://example.org/foo', '$defs': {'bar': {'$anchor': 'baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'$id': 'http://example.org/foo', '$defs': {'bar': {'$anchor': 'baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}}, then={'ref': '#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'$id': 'http://example.org/foo', '$defs': {'bar': {'$anchor': 'baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'$id': 'http://example.org/foo', '$defs': {'bar': {'$anchor': 'baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}}, then={'ref': 'http://example.org/foo#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}, then={'ref': '#/foo', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-pointer] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-pointer] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup-pointer] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'bar', 'target': {'baz': 'quux'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-multiple-lookup] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-absolute-id] (test={'base_uri': 'http://example.com/', 'ref': 'nested', 'target': {'$id': 'http://example.com/nested', '$defs': {'inner': {'foo': 'bar'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-absolute-id] (test={'base_uri': 'http://example.com/nested', 'ref': '#/$defs/inner', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-absolute-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-absolute-id] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-absolute-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-relative-id-only-retrieval-uri] (test={'ref': 'http://example.com/nested.json', 'target': {'$id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-relative-id-only-retrieval-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-relative-id-only-retrieval-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-relative-id] (test={'ref': 'http://example.com/nested.json', 'target': {'$id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-relative-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nested-relative-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-const] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-const] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-const] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-default] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-default] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-default] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-enum] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-enum] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-enum] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-examples] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-examples] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-nonreferencing-keywords-examples] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/$defs/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-array] (test={'ref': 'http://example.com/#/items/0/$defs/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-array] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/$defs/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-object] (test={'ref': 'http://example.com/#/items/$defs/foo', 'target': {'$id': 'foo', 'bar': 'baz'}, 'then': {'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}}, then={'ref': '#', 'target': {'$id': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-object] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-id-in-items-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-non-keyword-id-in-subvalue] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-non-keyword-id-in-subvalue] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-non-keyword-id-in-subvalue] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-non-keyword-id] (test={'ref': 'http://example.com/#/additionalProperties/$defs/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-non-keyword-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-pointer-crossing-non-keyword-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-array] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/1', 'target': 4}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/percent%25field', 'target': 'quux'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/slash~1field', 'target': 'baz'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/tilde~0field', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-escapes] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-escapes] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-object] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/bar', 'target': {'baz': 12}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-relative-pointer-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-unignored-siblings] (test={'ref': 'http://example.com/not-ignored-id.json', 'target': {'$id': 'not-ignored-id.json', '$ref': 'foo.json'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-unignored-siblings] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-unignored-siblings] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-unknown-keyword] (test={'ref': 'http://example.com/oh-hey-not-a-real-known-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-unknown-keyword] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2019-09-unknown-keyword] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'$id': 'http://example.com/foo#', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-anchor] (test={'base_uri': 'http://example.com/', 'ref': '#foo', 'target': {'$anchor': 'foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-boolean-schemas] (test={'base_uri': 'http://example.com/', 'ref': 'bar', 'target': {'$id': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-boolean-schemas] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-boolean-schemas] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-empty-fragment] (test={'base_uri': 'http://example.com/foo', 'ref': '#', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'$anchor': 'foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri-empty-fragment] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri-empty-fragment] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri-empty-fragment] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#foo', 'target': {'$anchor': 'foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri] (test={'ref': 'http://example.com/foo', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-urn] (test={'ref': 'urn:example:schema', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-urn] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-absolute-urn] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-uri-with-nested-relative-uri-anchor] (test={'ref': 'http://example.com/foo#bar', 'target': {'$anchor': 'bar', 'baz': 'quux'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-uri-with-nested-relative-uri-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-uri-with-nested-relative-uri-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-urn-anchor] (test={'ref': 'urn:example:schema#foo', 'target': {'$anchor': 'foo', 'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-urn-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-external-urn-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-additionalProperties] (test={'ref': 'http://example.com/oh-hey-an-additionalProperties', 'target': {'$id': 'http://example.com/oh-hey-an-additionalProperties', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-additionalProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-additionalProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-allOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-allOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-allOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-allOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-allOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-anyOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-anyOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-anyOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-anyOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-anyOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-contains] (test={'ref': 'http://example.com/oh-hey-a-contains', 'target': {'$id': 'http://example.com/oh-hey-a-contains', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-contains] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-contains] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-contentSchema] (test={'ref': 'http://example.com/oh-hey-a-contentSchema', 'target': {'$id': 'http://example.com/oh-hey-a-contentSchema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-contentSchema] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-contentSchema] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-defs] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-defs] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-defs] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-dependentSchemas] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-dependentSchemas] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-dependentSchemas] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-else] (test={'ref': 'http://example.com/oh-hey-an-else', 'target': {'$id': 'http://example.com/oh-hey-an-else', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-else] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-else] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-if] (test={'ref': 'http://example.com/oh-hey-an-if', 'target': {'$id': 'http://example.com/oh-hey-an-if', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-if] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-if] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-items] (test={'ref': 'http://example.com/oh-hey-an-items', 'target': {'$id': 'http://example.com/oh-hey-an-items', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-items] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-items] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-not] (test={'ref': 'http://example.com/oh-hey-a-not', 'target': {'$id': 'http://example.com/oh-hey-a-not', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-not] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-not] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-oneOf] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'First!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-oneOf] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Second!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-oneOf] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-oneOf] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-oneOf] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-patternProperties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-patternProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-patternProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-prefixItems] (test={'ref': 'http://example.com/0', 'target': {'$id': 'http://example.com/0', 'title': 'Second!'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-prefixItems] (test={'ref': 'http://example.com/1', 'target': {'$id': 'http://example.com/1', 'title': 'Fourth!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-prefixItems] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-prefixItems] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-prefixItems] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-properties] (test={'ref': 'http://example.com/oh-hey-a-subschema', 'target': {'$id': 'http://example.com/oh-hey-a-subschema', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-properties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-properties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-propertyNames] (test={'ref': 'http://example.com/oh-hey-a-propertyNames', 'target': {'$id': 'http://example.com/oh-hey-a-propertyNames', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-propertyNames] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-propertyNames] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-then] (test={'ref': 'http://example.com/oh-hey-a-then', 'target': {'$id': 'http://example.com/oh-hey-a-then', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-then] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-then] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-unevaluatedItems] (test={'ref': 'http://example.com/oh-hey-an-unevaluatedItems', 'target': {'$id': 'http://example.com/oh-hey-an-unevaluatedItems', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-unevaluatedItems] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-unevaluatedItems] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-unevaluatedProperties] (test={'ref': 'http://example.com/oh-hey-an-unevaluatedProperties', 'target': {'$id': 'http://example.com/oh-hey-an-unevaluatedProperties', 'abc': 123}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-unevaluatedProperties] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-keywords-unevaluatedProperties] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'$defs': {'foo': {'$anchor': 'foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'$anchor': 'foo', 'bar': 'baz'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-anchor] (test={'ref': 'http://example.com/', 'target': {'$defs': {'foo': {'$anchor': 'foo', 'bar': 'baz'}}}, 'then': {'ref': '#foo', 'target': {'$anchor': 'foo', 'bar': 'baz'}}}, then={'ref': '#foo', 'target': {'$anchor': 'foo', 'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'$id': 'http://example.org/foo', '$defs': {'bar': {'$anchor': 'baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'$id': 'http://example.org/foo', '$defs': {'bar': {'$anchor': 'baz', 'quux': 'eggs'}}}, 'then': {'ref': '#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}}, then={'ref': '#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'$id': 'http://example.org/foo', '$defs': {'bar': {'$anchor': 'baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-external-absolute-uri-with-different-id-anchor] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'$id': 'http://example.org/foo', '$defs': {'bar': {'$anchor': 'baz', 'quux': 'eggs'}}}, 'then': {'ref': 'http://example.org/foo#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}}, then={'ref': 'http://example.org/foo#baz', 'target': {'$anchor': 'baz', 'quux': 'eggs'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-external-absolute-uri-with-different-id-anchor] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-external-absolute-uri-with-different-id-anchor] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-pointer] (test={'ref': 'http://example.com/foo/', 'target': {'foo': 'bar'}, 'then': {'ref': '#/foo', 'target': 'bar'}}, then={'ref': '#/foo', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-pointer] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-pointer] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup-pointer] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'bar', 'target': {'baz': 'quux'}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup] (test={'ref': 'http://example.com/', 'target': {}, 'then': {'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}}, then={'ref': 'foo/', 'target': {'foo': 'bar'}, 'then': {'ref': 'bar', 'target': {'baz': 'quux'}}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-multiple-lookup] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-absolute-id] (test={'base_uri': 'http://example.com/', 'ref': 'nested', 'target': {'$id': 'http://example.com/nested', '$defs': {'inner': {'foo': 'bar'}}}}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-absolute-id] (test={'base_uri': 'http://example.com/nested', 'ref': '#/$defs/inner', 'target': {'foo': 'bar'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-absolute-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-absolute-id] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-absolute-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-relative-id-only-retrieval-uri] (test={'ref': 'http://example.com/nested.json', 'target': {'$id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-relative-id-only-retrieval-uri] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-relative-id-only-retrieval-uri] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-relative-id] (test={'ref': 'http://example.com/nested.json', 'target': {'$id': 'nested.json', 'title': 'Hi!'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-relative-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nested-relative-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-const] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-const] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-const] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-default] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-default] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-default] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-enum] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-enum] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-enum] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-examples] (test={'ref': 'http://example.com/oh-hey-not-an-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-examples] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-nonreferencing-keywords-examples] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-pointer-crossing-non-keyword-id-in-subvalue] (test={'ref': 'http://example.com/#/$defs/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-pointer-crossing-non-keyword-id-in-subvalue] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-pointer-crossing-non-keyword-id-in-subvalue] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-pointer-crossing-non-keyword-id] (test={'ref': 'http://example.com/#/additionalProperties/$defs/foo', 'target': {'bar': 'baz'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-pointer-crossing-non-keyword-id] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-pointer-crossing-non-keyword-id] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-array] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/1', 'target': 4}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-array] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-array] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/percent%25field', 'target': 'quux'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/slash~1field', 'target': 'baz'}) SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-escapes] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/tilde~0field', 'target': 'bar'}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-escapes] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-escapes] SUBPASS
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-escapes] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-object] (test={'base_uri': 'http://example.com/foo', 'ref': '#/foo/bar', 'target': {'baz': 12}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-object] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-relative-pointer-object] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-unignored-siblings] (test={'ref': 'http://example.com/not-ignored-id.json', 'target': {'$id': 'not-ignored-id.json', '$ref': 'foo.json'}}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-unignored-siblings] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-unignored-siblings] SUBPASS
+referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-unknown-keyword] (test={'ref': 'http://example.com/oh-hey-not-a-real-known-id', 'error': True}) SUBPASS
 referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-unknown-keyword] PASSED
-referencing/tests/test_referencing_suite.py::test_referencing_suite[json-schema-draft-2020-12-unknown-keyword] SUBPASS
 referencing/tests/test_retrieval.py::TestToCachedResource::test_custom_cache PASSED
 referencing/tests/test_retrieval.py::TestToCachedResource::test_custom_from_contents PASSED
 referencing/tests/test_retrieval.py::TestToCachedResource::test_custom_loader PASSED
@@ -1114,8 +1122,4 @@ suite/test_sanity.py::test_tests_are_valid[test_path98] PASSED
 suite/test_sanity.py::test_tests_are_valid[test_path99] PASSED
 suite/test_sanity.py::test_tests_are_valid[test_path9] PASSED
 
-13 files skipped due to complete coverage.
-
-Required test coverage of 100.0% reached. Total coverage: 100.00%
-
-======== 745 passed, 362 subtests passed ========
+======== 755 passed, 362 subtests passed ========

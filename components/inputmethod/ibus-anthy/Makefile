@@ -13,45 +13,40 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ibus-anthy
-COMPONENT_VERSION=      1.5.11
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.5.15
 COMPONENT_CLASSIFICATION=System/Internationalization
 COMPONENT_SUMMARY=      iBus Japanese IME - anthy
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:809596b0d4630c5861a96fc28800ebaa1ab007787b22f5d7d3c7c0152fd78fff
+	sha256:58c4e6d5836a4ac9e33aa9e84e58c4deb67ada98f3b544b2440c5783237ed98b
 COMPONENT_ARCHIVE_URL=  \
 	https://github.com/ibus/ibus-anthy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://github.com/fujiwarat/ibus-anthy/wiki
 COMPONENT_FMRI=         system/input-method/ibus/anthy
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE=      GPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU make is expected
 PATH = $(PATH.gnu)
-PYTHON_VERSION = 3.5
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/ibus/$(MACH64)
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
-CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
-CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# Testing needs UTF-8 locale
+COMPONENT_TEST_ENV += LC_CTYPE=C.UTF-8
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += runtime/python-35
+PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2

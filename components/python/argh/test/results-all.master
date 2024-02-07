@@ -4,7 +4,7 @@ py$(PYV): commands[0]> python -m pytest --cov=argh --cov-report html --cov-fail-
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 156 items
+collecting ... collected 169 items
 
 tests/test_assembling.py::test_add_command_with_group_kwargs_but_no_group_name PASSED
 tests/test_assembling.py::test_add_subcommands PASSED
@@ -37,20 +37,30 @@ tests/test_assembling.py::test_set_default_command_infer_cli_arg_names_from_func
 tests/test_assembling.py::test_set_default_command_kwargs PASSED
 tests/test_assembling.py::test_set_default_command_varargs PASSED
 tests/test_assembling.py::test_set_default_command_when_subparsers_exist PASSED
+tests/test_assembling.py::test_typing_hints_bool__policy_by_name_if_has_default PASSED
+tests/test_assembling.py::test_typing_hints_bool__policy_by_name_if_kwonly PASSED
+tests/test_assembling.py::test_typing_hints_literal PASSED
+tests/test_assembling.py::test_typing_hints_only_used_when_arg_deco_not_used PASSED
+tests/test_assembling.py::test_typing_hints_overview PASSED
+tests/test_assembling.py::test_typing_hints_str__policy_by_name_if_has_default PASSED
+tests/test_assembling.py::test_typing_hints_str__policy_by_name_if_kwonly PASSED
 tests/test_completion.py::test_disabled_with_bash PASSED
 tests/test_completion.py::test_disabled_without_bash PASSED
 tests/test_completion.py::test_enabled PASSED
 tests/test_decorators.py::test_aliases PASSED
 tests/test_decorators.py::test_arg PASSED
-tests/test_decorators.py::test_expects_obj PASSED
 tests/test_decorators.py::test_naive_guess_func_arg_name PASSED
 tests/test_decorators.py::test_named PASSED
 tests/test_decorators.py::test_wrap_errors PASSED
 tests/test_decorators.py::test_wrap_errors_processor PASSED
 tests/test_dispatching.py::test_dispatch_command PASSED
+tests/test_dispatching.py::test_dispatch_command_naming_policy PASSED
 tests/test_dispatching.py::test_dispatch_command_two_stage PASSED
 tests/test_dispatching.py::test_dispatch_commands PASSED
+tests/test_dispatching.py::test_dispatch_commands_naming_policy PASSED
 tests/test_dispatching.py::test_entrypoint PASSED
+tests/test_dispatching.py::test_run_endpoint_function__always_flush[False] PASSED
+tests/test_dispatching.py::test_run_endpoint_function__always_flush[True] PASSED
 tests/test_dto.py::test_make_from_kwargs_full PASSED
 tests/test_dto.py::test_make_from_kwargs_minimal PASSED
 tests/test_dto.py::test_update_empty_dto PASSED
@@ -84,7 +94,6 @@ tests/test_integration.py::test_class_members PASSED
 tests/test_integration.py::test_command_error PASSED
 tests/test_integration.py::test_command_not_chosen PASSED
 tests/test_integration.py::test_commands_not_defined PASSED
-tests/test_integration.py::test_custom_argparse_namespace PASSED
 tests/test_integration.py::test_custom_argument_completer PASSED
 tests/test_integration.py::test_default_arg_values_in_help PASSED
 tests/test_integration.py::test_default_arg_values_in_help__regression PASSED
@@ -147,31 +156,34 @@ tests/test_regressions.py::test_regression_issue12 PASSED
 tests/test_regressions.py::test_regression_issue12_help_flag PASSED
 tests/test_regressions.py::test_regression_issue204 PASSED
 tests/test_regressions.py::test_regression_issue208 PASSED
+tests/test_regressions.py::test_regression_issue212_funcsig_centric_named PASSED
+tests/test_regressions.py::test_regression_issue212_funcsig_centric_positional PASSED
+tests/test_regressions.py::test_regression_issue212_orig_use_case PASSED
 tests/test_regressions.py::test_regression_issue27 PASSED
 tests/test_regressions.py::test_regression_issue31 PASSED
 tests/test_regressions.py::test_regression_issue47 PASSED
 tests/test_regressions.py::test_regression_issue76 PASSED
-tests/test_utils.py::test_get_arg_spec__decorated_func PASSED
-tests/test_utils.py::test_get_arg_spec__method PASSED
-tests/test_utils.py::test_get_arg_spec__plain_func PASSED
-tests/test_utils.py::test_get_arg_spec__static_method PASSED
-tests/test_utils.py::test_get_arg_spec__wrapped PASSED
-tests/test_utils.py::test_get_arg_spec__wrapped_complex PASSED
-tests/test_utils.py::test_get_arg_spec__wrapped_nested PASSED
+tests/test_typing_hints.py::test_list PASSED
+tests/test_typing_hints.py::test_literal PASSED
+tests/test_typing_hints.py::test_simple_types[bool] PASSED
+tests/test_typing_hints.py::test_simple_types[float] PASSED
+tests/test_typing_hints.py::test_simple_types[int] PASSED
+tests/test_typing_hints.py::test_simple_types[str] PASSED
+tests/test_typing_hints.py::test_unusable_types[dict] PASSED
+tests/test_typing_hints.py::test_unusable_types[tuple] PASSED
 tests/test_utils.py::test_get_subparsers_create PASSED
 tests/test_utils.py::test_get_subparsers_error PASSED
 tests/test_utils.py::test_get_subparsers_existing PASSED
 tests/test_utils.py::test_util_unindent PASSED
 
 =============================== warnings summary ===============================
-tests/test_decorators.py::test_expects_obj
-tests/test_integration.py::test_custom_argparse_namespace
-  $(@D)/src/argh/decorators.py:237: DeprecationWarning: The @expects_obj decorator is deprecated. Please update your code to use the standard approach AKA "Natural Way".
+tests/test_dispatching.py::test_dispatch_command_two_stage
+  $(@D)/src/argh/dispatching.py:167: DeprecationWarning: The argument `namespace` in `dispatch()` is deprecated. It will be removed in the next minor version after v0.31.
     warnings.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
 Required test coverage of 100% reached. Total coverage: 100.00%
-======== 156 passed, 2 warnings ========
+======== 169 passed, 1 warning ========
   py$(PYV): OK
   congratulations :)

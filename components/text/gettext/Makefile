@@ -24,17 +24,17 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
-COMPONENT_VERSION=	0.22.3
+COMPONENT_VERSION=	0.22.4
 COMPONENT_SUMMARY=	GNU gettext - message handling utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:b838228b3f8823a6c1eddf07297197c4db13f7e1b173b9ef93f3f945a63080b6
+COMPONENT_ARCHIVE_HASH=	sha256:29217f1816ee2e777fa9a01f9956a14139c0c23cc1b20368f06b2888e8a34116
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-gettext
 COMPONENT_CLASSIFICATION=	Development/GNU
@@ -49,13 +49,7 @@ CONFIGURE_OPTIONS += --disable-openmp
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --without-emacs
 
-# Drop 32-bit binaries
-COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRBINDIR32) $(PROTOUSRLIBDIR32)/gettext ;
 # Some files clash with those provided by illumos so move them to usr/gnu
-COMPONENT_POST_INSTALL_ACTION.32 += \
-	for f in gettext msgfmt xgettext ; do \
-		$(RM) $(PROTOUSRSHAREMAN1DIR)/$$f.1 ; \
-	done ;
 COMPONENT_POST_INSTALL_ACTION.64 += \
 	$(MKDIR) $(PROTOGNUBIN) $(PROTOGNUSHAREMAN1) ; \
 	for f in gettext msgfmt xgettext ; do \
@@ -67,10 +61,8 @@ COMPONENT_POST_INSTALL_ACTION.64 += \
 COMPONENT_TEST_ENV= -i PATH=${PATH}
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
 	'-e "/=========/p" ' \
 	'-e "/Testsuite summary for/p" '
-
 
 # Manually added dependencies
 REQUIRED_PACKAGES += library/libcroco

@@ -1,6 +1,6 @@
---- MediaInfoLib-23.09/Project/GNU/Library/Makefile.am.orig	2023-09-14 15:44:32.000000000 +0200
-+++ MediaInfoLib-23.09/Project/GNU/Library/Makefile.am	2023-09-15 20:43:21.949526628 +0200
-@@ -2,291 +2,291 @@
+--- MediaInfoLib-24.01/Project/GNU/Library/Makefile.am.orig	2024-01-31 17:18:50.000000000 +0100
++++ MediaInfoLib-24.01/Project/GNU/Library/Makefile.am	2024-02-07 11:04:09.994149142 +0100
+@@ -2,294 +2,294 @@
  
  lib_LTLIBRARIES = lib@MediaInfoLib_LibName@.la
  lib@MediaInfoLib_LibName@_la_SOURCES = \
@@ -184,6 +184,7 @@
 -                       ../../../Source/MediaInfo/Reader/Reader_libmms.cpp \
 -                       ../../../Source/MediaInfo/Tag/File__Tags.cpp \
 -                       ../../../Source/MediaInfo/Tag/File_ApeTag.cpp \
+-                       ../../../Source/MediaInfo/Tag/File_Icc.cpp \
 -                       ../../../Source/MediaInfo/Tag/File_Id3.cpp \
 -                       ../../../Source/MediaInfo/Tag/File_Id3v2.cpp \
 -                       ../../../Source/MediaInfo/Tag/File_Lyrics3.cpp \
@@ -235,9 +236,11 @@
 -                       ../../../Source/MediaInfo/Video/File_Vc3.cpp \
 -                       ../../../Source/MediaInfo/Video/File_Vp8.cpp \
 -                       ../../../Source/MediaInfo/Video/File_Vp9.cpp \
+-                       ../../../Source/MediaInfo/Video/File_Vvc.cpp \
 -                       ../../../Source/MediaInfo/Video/File_Y4m.cpp \
 -                       ../../../Source/MediaInfo/XmlUtils.cpp \
 -                       ../../../Source/MediaInfo/OutputHelpers.cpp \
+-                       ../../../Source/MediaInfo/ExternalCommandHelpers.cpp \
 -                       ../../../Source/ThirdParty/tfsxml/tfsxml.c
 +                       $(VPATH)/../../../Source/MediaInfo/File__Analyze.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/File__Analyze_Buffer.cpp \
@@ -419,6 +422,7 @@
 +                       $(VPATH)/../../../Source/MediaInfo/Reader/Reader_libmms.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File__Tags.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File_ApeTag.cpp \
++                       $(VPATH)/../../../Source/MediaInfo/Tag/File_Icc.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File_Id3.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File_Id3v2.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File_Lyrics3.cpp \
@@ -470,9 +474,11 @@
 +                       $(VPATH)/../../../Source/MediaInfo/Video/File_Vc3.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Video/File_Vp8.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Video/File_Vp9.cpp \
++                       $(VPATH)/../../../Source/MediaInfo/Video/File_Vvc.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Video/File_Y4m.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/XmlUtils.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/OutputHelpers.cpp \
++                       $(VPATH)/../../../Source/MediaInfo/ExternalCommandHelpers.cpp \
 +                       $(VPATH)/../../../Source/ThirdParty/tfsxml/tfsxml.c
  
  @MediaInfoLib_LibName@includedir = $(includedir)/MediaInfo
@@ -544,7 +550,7 @@
  endif
  
  lib@MediaInfoLib_LibName@_la_LDFLAGS     = -no-undefined -version-info 0:0:0
-@@ -295,7 +295,7 @@
+@@ -298,7 +298,7 @@
  pkgconfig_DATA = libmediainfo.pc
  
  AM_CXXFLAGS = -std=c++11

@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mysqlclient
-HUMAN_VERSION =			2.2.0
+HUMAN_VERSION =			2.2.3
 COMPONENT_SUMMARY =		mysqlclient - Python interface to MySQL
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/de/9c/b176826e8994551ce826404dab97e305a4bb76c8b0a4e016fabda2901c71/mysqlclient-2.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:04368445f9c487d8abb7a878e3d23e923e6072c04a6c320f9e0dc8a82efba14e
+	sha256:ee51656e36fc5a92920b807ee8b9e373e3b0e267c89cdc95d73b1dbe46863631
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,9 +36,6 @@ LD_OPTIONS += -R$(MYSQL_LIBDIR)
 # We need to make sure Python will not found modules distributed with source
 # package because there is missing compiled library.
 COMPONENT_TEST_DIR = $(@D)/tests
-
-# https://github.com/PyMySQL/mysqlclient/issues/628
-PYTEST_ADDOPTS += -p no:mypy
 
 #
 # Note:

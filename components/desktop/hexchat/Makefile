@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
 COMPONENT_VERSION=	2.16.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SUMMARY=	HexChat IRC client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,15 +43,18 @@ TEST_TARGET=           $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
+# Disable direct binding to allow the Python plugin to load.
+# Without this, you get:
+# ld.so.1: hexchat: fatal: relocation error: file .../python.so:
+#   symbol __iob: referenced symbol not found
+LD_B_DIRECT=
+
 PERL5_LIBDIR=/usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/CORE/
 COMPONENT_POST_INSTALL_ACTION = ( \
-	for file in `find $(PROTOUSRDIR) -name "*.so"`; do \
         /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(PERL5_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/perl.so; \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(PERL5_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/perl.so; \
-	/usr/bin/elfedit -e 'dyn:value -s NEEDED "libpython3.9.so.1.0"' $(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/python.so; \
-	done; )
-
-
+	/usr/bin/elfedit -e 'dyn:value -add -s NEEDED "libpython3.9.so.1.0"' \
+			$(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/python.so)
 
 CONFIGURE_OPTIONS += -Dwith-python=python-3.9
 CONFIGURE_OPTIONS += -Dwith-lua=false

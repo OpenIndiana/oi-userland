@@ -1,7 +1,6 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: zmq/tests
@@ -454,6 +453,33 @@ zmq/tests/test_zmqstream.py::test_shadow_socket PASSED
 zmq/tests/test_zmqstream.py::test_shadow_socket_close PASSED
 
 =============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:231
+  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:231: PytestDeprecationWarning: io_loop is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+    warnings.warn(
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:231
+  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:231: PytestDeprecationWarning: _async_setup is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+    warnings.warn(
+
+zmq/tests/test_auth.py:405
+  zmq/tests/test_auth.py:405: PytestDeprecationWarning: test_ioloop_authenticator is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+    async def test_ioloop_authenticator(context, event_loop, io_loop):
+
+zmq/tests/test_asyncio.py: 21 warnings
+zmq/tests/test_auth.py: 31 warnings
+zmq/tests/test_monitor.py: 6 warnings
+zmq/tests/test_zmqstream.py: 7 warnings
+  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:742: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
+  $(@D)/zmq/tests/conftest.py:73
+  Replacing the event_loop fixture with a custom implementation is deprecated
+  and will lead to errors in the future.
+  If you want to request an asyncio event loop with a scope other than function
+  scope, use the "scope" argument to the asyncio mark when marking the tests.
+  If you want to return different types of event loops, use the event_loop_policy
+  fixture.
+  
+    warnings.warn(
+
 zmq/tests/test_auth.py::test_ioloop_authenticator
   $(@D)/zmq/tests/test_auth.py:409: DeprecationWarning: zmq.auth.ioloop.IOLoopAuthenticator is deprecated. Use zmq.auth.asyncio.AsyncioAuthenticator
     from zmq.auth.ioloop import IOLoopAuthenticator
@@ -499,6 +525,5 @@ zmq/tests/test_socket.py::TestSocketGreen::test_mockable
     warnings.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
 ============================= slowest 10 durations =============================
-======== 416 passed, 28 skipped, 241 warnings ========
+======== 416 passed, 28 skipped, 309 warnings ========

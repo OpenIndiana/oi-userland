@@ -19,13 +19,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libebml
-COMPONENT_VERSION=      1.4.4
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      1.4.5
 COMPONENT_SUMMARY=      Extensible Binary Markup Language
 COMPONENT_PROJECT_URL=  https://matroska-org.github.io/libebml/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:82dc5f83356cc9340aee76ed7512210b3a4edf5f346bc9c2c7044f55052687a7
+COMPONENT_ARCHIVE_HASH=	sha256:4971640b0592da29c2d426f303e137a9b0b3d07e1b81d069c1e56a2f49ab221b
 COMPONENT_ARCHIVE_URL=	https://dl.matroska.org/downloads/libebml/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/libebml
 COMPONENT_CLASSIFICATION=	System/Libraries

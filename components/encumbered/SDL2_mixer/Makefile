@@ -26,16 +26,15 @@
 # This file (by default) provides the package with encumbered code
 # or inseparable run-time dependencies:
 USE_ENCUMBERED?=yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         SDL2_mixer
-COMPONENT_VERSION=      2.6.3
+COMPONENT_VERSION=      2.8.0
 COMPONENT_PROJECT_URL=  https://github.com/libsdl-org/SDL_mixer
 COMPONENT_SUMMARY=      SDL_mixer is a sample multi-channel audio mixer library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7a6ba86a478648ce617e3a5e9277181bc67f7ce9876605eea6affd4a0d6eea8f
+COMPONENT_ARCHIVE_HASH= sha256:1cfb34c87b26dbdbc7afd68c4f545c0116ab5f90bbfecc5aebe2a9cb4bb31549
 COMPONENT_ARCHIVE_URL=  https://github.com/libsdl-org/SDL_mixer/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/sdl2-mixer
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -46,15 +45,16 @@ ifeq ($(strip $(USE_ENCUMBERED)),yes)
 COMPONENT_SUMMARY:=$(COMPONENT_SUMMARY) (encumbered version)
 include $(WS_MAKE_RULES)/encumbered.mk
 endif
-TEST_TARGET=$(NO_TESTS)
+
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" ./autogen.sh )
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBEXECDIR)
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-music-cmd
 CONFIGURE_OPTIONS +=	--enable-music-wave
@@ -68,7 +68,7 @@ CONFIGURE_OPTIONS += --enable-music-mp3-mad-gpl
 
 REQUIRED_PACKAGES += library/audio/libmad
 else
-CONFIGURE_OPTIONS +=	--disable-music-mp3
+CONFIGURE_OPTIONS + --disable-music-mp3
 endif
 
 # Auto-generated dependencies

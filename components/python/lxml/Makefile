@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project lxml
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml
-HUMAN_VERSION =			4.9.3
+HUMAN_VERSION =			5.1.0
 COMPONENT_SUMMARY =		lxml - Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.
 COMPONENT_PROJECT_URL =		https://lxml.de/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/30/39/7305428d1c4f28282a4f5bdbef24e0f905d351f34cf351ceb131f5cddf78/lxml-4.9.3.tar.gz
+	https://files.pythonhosted.org/packages/2b/b4/bbccb250adbee490553b6a52712c46c20ea1ba533a643f1424b27ffc6845/lxml-5.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:48628bd53a426c9eb9bc066a923acaa0878d1e86129fd5359aee99285f4eed9c
+	sha256:3eea6ed6e6c918e468e693c41ef07f3c3acc310b70ddd9cc72d9ef84bc9564ca
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -34,9 +34,6 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Make sure we build with Cython
-COMPONENT_BUILD_ARGS =		--with-cython
 
 # This project uses custom test style.
 # See project's Makefile.
@@ -59,10 +56,10 @@ COMPONENT_TEST_TRANSFORMS += \
 		$(CAT) \
 	)"
 
-# Cython is required to build this project
-PYTHON_REQUIRED_PACKAGES += library/python/cython
-
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/cython
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt

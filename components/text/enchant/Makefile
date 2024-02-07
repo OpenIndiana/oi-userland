@@ -13,15 +13,15 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2022 Niklas Poslovski
 #
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= enchant
-COMPONENT_VERSION= 2.5.0
+COMPONENT_VERSION= 2.6.6
 COMPONENT_SUMMARY= GNOME spell checker component
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:149e224cdd2ca825d874639578b6246e07f37d5b8f3970658a377a1ef46f2e15
+COMPONENT_ARCHIVE_HASH=	sha256:ce9b40e22b3ee5e91ca35403487af03896f4deb1134efcf0b1b3ef9764d28295
 COMPONENT_ARCHIVE_URL=	https://github.com/AbiWord/enchant/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://abiword.github.io/enchant/
 COMPONENT_FMRI=			library/spell-checking/enchant

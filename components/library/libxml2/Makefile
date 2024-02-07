@@ -25,19 +25,18 @@
 # Copyright (c) 2022  Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS=64_and_32
+BUILD_BITS= 64_and_32
 USE_COMMON_TEST_MASTER=	no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-COMPONENT_VERSION=	2.10.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.12.5
 COMPONENT_SUMMARY=	Libxml2 is the XML C parser and toolkit developed for the Gnome project
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:ed0c91c5845008f1936739e4eee2035531c1c94742c6541f44ee66d885948d45
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libxml2/2.10/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:a972796696afd38073e0f59c283c3a2f5a560b5268b4babc391b286166526b21
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libxml2/2.12/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libxml2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	Copyright

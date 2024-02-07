@@ -69,13 +69,6 @@ BASE_DIR="$WS_TOP/components"
 [[ -d "$BASE_DIR" ]] || usage "Directory $BASE_DIR not found"
 
 
-# Get data from pypi
-PYPI_PROJECT=$($CURL "$APIURL/$PROJECT/json")
-if (($? != 0)) || [[ -z "$PYPI_PROJECT" ]] ; then
-	printf "FATAL: Failed to get data from pypi\n" >&2
-	exit 1
-fi
-
 # Distribution match project
 DISTRIBUTION="$PROJECT"
 
@@ -96,7 +89,6 @@ function get_PKGINFO_entry
 # Prepare the directory
 [[ -z "$DIRECTORY" ]] && DIRECTORY="python/$DISTRIBUTION"
 DIR="$BASE_DIR/$DIRECTORY"
-rm -rf "$DIR"/*
 mkdir -p "$DIR"
 cd "$DIR"
 git restore --staged . > /dev/null 2>&1
@@ -108,6 +100,7 @@ VERSION=
 HOMEPAGE=
 DOWNLOAD_URL=
 LICENSE_FILE=
+SUMMARY=
 
 # Execute hook-begin snippet
 if [[ -f "$CONF" ]] ; then
@@ -118,6 +111,17 @@ fi
 
 # Version specified as option takes precedence
 [[ -n "$OPT_VERSION" ]] && VERSION="$OPT_VERSION"
+
+
+# Get data from PyPI if needed
+if [[ -z "$VERSION" || -z "$HOMEPAGE" || -z "$SUMMARY" ]] ; then
+	PYPI_PROJECT=$($CURL "$APIURL/$PROJECT/json")
+	if (($? != 0)) || [[ -z "$PYPI_PROJECT" ]] ; then
+		printf 'WARNING: Failed to get data for project %s from PyPI\n' "$PROJECT" >&2
+		PYPI_PROJECT=
+	fi
+fi
+
 
 # Find the latest version if not already provided
 if [[ -z "$VERSION" ]] ; then
@@ -187,6 +191,9 @@ if [[ -z "$DOWNLOAD_URL" ]] ; then
 fi
 
 
+# Remove everything that is not in git
+rm -rf *
+git checkout . > /dev/null 2>&1
 # Remove everything from git (except known patches, files, history, and $CONF)
 [[ -f "$CONF" ]] && grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
 [[ -f "$CONF" ]] && grep "^%file%" "$CONF" | while read TAG FILE ; do rm -f "files/$FILE" ; done
@@ -206,13 +213,16 @@ done
 
 
 # Makefile template
+GENERATE_CMD="\$WS_TOOLS/$THIS"
+[[ "$DIRECTORY" != "python/$DISTRIBUTION" ]] && GENERATE_CMD="$GENERATE_CMD -d $DIRECTORY"
+GENERATE_CMD="$GENERATE_CMD $PROJECT"
 (
 cat $WS_TOP/transforms/copyright-template | sed -e '/^$/,$d'
 cat <<EOF
 
 #
 # This file was automatically generated using the following command:
-#   \$WS_TOOLS/$THIS $PROJECT
+#   $GENERATE_CMD
 #
 
 BUILD_STYLE = pyproject
@@ -229,7 +239,7 @@ COMPONENT_REVISION =		$((PREV_REV + 1))
 COMPONENT_SUMMARY =		$PROJECT - TODO
 EOF
 [[ -n "$HOMEPAGE" ]] && printf "COMPONENT_PROJECT_URL =\t\t%s\n" "$HOMEPAGE"
-[[ -n "$DOWNLOAD_URL" ]] && printf 'COMPONENT_ARCHIVE_URL =\t\t\\\n\t%s\n' "$DOWNLOAD_URL"
+[[ -n "$DOWNLOAD_URL" ]] && printf 'DOWNLOAD_URL =\t\t\\\n\t%s\n' "$DOWNLOAD_URL"
 cat <<EOF
 COMPONENT_ARCHIVE_HASH =	\\
 	sha256:TODO
@@ -243,6 +253,25 @@ printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
 [[ -f "$CONF" ]] && cat "$CONF" | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\n"
 ) > Makefile
+
+# If the automatically constructed COMPONENT_ARCHIVE_URL points to the same
+# location as DOWNLOAD_URL then we should use it
+if [[ -n "$DOWNLOAD_URL" ]] ; then
+	COMPONENT_ARCHIVE_URL=$($GMAKE print-value-COMPONENT_ARCHIVE_URL)
+	[[ "$COMPONENT_ARCHIVE_URL" == "$DOWNLOAD_URL" ]] && DOWNLOAD_URL=
+fi
+# The default COMPONENT_ARCHIVE_URL usually redirects to DOWNLOAD_URL so check
+# that too
+if [[ -n "$DOWNLOAD_URL" ]] ; then
+	[[ $($CURL --head --write-out "%{redirect_url}\n" --output /dev/null \
+	    "$COMPONENT_ARCHIVE_URL") == "$DOWNLOAD_URL" ]] && DOWNLOAD_URL=
+fi
+# Use either DOWNLOAD_URL or default COMPONENT_ARCHIVE_URL
+if [[ -n "$DOWNLOAD_URL" ]] ; then
+	sed -i -e $'s/^DOWNLOAD_URL =/COMPONENT_ARCHIVE_URL =/' Makefile
+else
+	sed -i -e $'/^DOWNLOAD_URL =/,+1d' Makefile
+fi
 
 # Remove COMPONENT_REVISION if not needed
 COMPONENT_VERSION=$($GMAKE print-value-COMPONENT_VERSION)
@@ -283,12 +312,14 @@ if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/pyproject.toml" ]] ; then
 	sed -i -e 's/^\(BUILD_STYLE = \).*$/\1setup.py/' Makefile
 fi
 
-# Get summary
-SUMMARY=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.summary')
-if (($? != 0)) || [[ -z "$SUMMARY" || "$SUMMARY" == "null" ]] ; then
-	printf "WARNING: Failed to get summary for project %s from pypi\n" "$PROJECT" >&2
-	SUMMARY=$(get_PKGINFO_entry "Summary")
-	[[ -z "$SUMMARY" ]] && SUMMARY="TODO"
+# Get summary if not already provided
+if [[ -z "$SUMMARY" ]] ; then
+	SUMMARY=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.summary')
+	if (($? != 0)) || [[ -z "$SUMMARY" || "$SUMMARY" == "null" ]] ; then
+		printf "WARNING: Failed to get summary for project %s from pypi\n" "$PROJECT" >&2
+		SUMMARY=$(get_PKGINFO_entry "Summary")
+		[[ -z "$SUMMARY" ]] && SUMMARY="TODO"
+	fi
 fi
 # Summary needs to be sanitized
 SUMMARY="${SUMMARY//\`/\\\\\`}"
@@ -456,7 +487,7 @@ if [[ -f history ]] ; then
 	mv history.new history
 	git add history
 
-	awk '$2 == "noincorporate" {printf("WARNING: Unincorporated package: %s\n", $1)}' < history >&2
+	awk '$NF == "noincorporate" {printf("WARNING: Unincorporated package: %s\n", $1)}' < history >&2
 fi
 
 

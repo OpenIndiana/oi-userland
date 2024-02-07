@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flac
 COMPONENT_VERSION=	1.4.3
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	An Open Source Lossless Audio Codec
 COMPONENT_PROJECT_URL=	https://xiph.org/flac
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

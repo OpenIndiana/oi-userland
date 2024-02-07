@@ -52,6 +52,22 @@ case $METHOD in
 		;;
 esac
 
+#
+# In February 2023 we stopped to create and update GIO module cache for 32-bit
+# modules at /usr/lib/gio/modules/giomodule.cache so this file is never created
+# on new installations.  However, if we are updating from an older installation
+# the file could be there occupying space and possibly create confusion.
+#
+# So let's cleanup that.
+#
+# The following two lines should be removed only after there are no modules
+# delivered to /usr/lib/gio/modules/ and some reasonable time passed so
+# everybody already updated their installations and there is no
+# /usr/lib/gio/modules lingering around.
+#
+rm -f /usr/lib/gio/modules/giomodule.cache
+rmdir /usr/lib/gio/modules 2> /dev/null
+
 NEED_COMPILE=0
 MODULE_DIR="/usr/lib/64/gio/modules"
 CACHE_FILE="${MODULE_DIR}/giomodule.cache"
@@ -68,6 +84,15 @@ elif [[ -n "$(find ${MODULE_DIR} -newer ${CACHE_FILE})" ]] ; then
 fi
 
 if [[ "${NEED_COMPILE}" -ne 0 ]] ; then
+	# In a case we uninstalled latest GIO module we need to cleanup the
+	# cache file because if there are no GIO modules installed then
+	# gio-querymodules below does nothing and succeeds silently.  If there
+	# are GIO modules installed the cleanup is harmless because the cache
+	# file will be created again by gio-querymodules call below.
+	rm -f "${CACHE_FILE}"
+	rmdir "${MODULE_DIR}" 2> /dev/null
+	[[ -d "${MODULE_DIR}" ]] || exit $SMF_EXIT_OK
+
 	umask 022
 	/usr/bin/gio-querymodules "${MODULE_DIR}"
 	result=$?

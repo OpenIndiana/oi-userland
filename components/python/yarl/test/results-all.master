@@ -1,25 +1,21 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-configfile: setup.cfg
+configfile: pytest.ini
 testpaths: tests/
-asyncio: mode=strict
-collecting ... collected 1115 items
+X workers [1111 items]
 
-tests/test_cache.py::mypy PASSED
-tests/test_cache.py::mypy-status PASSED
+scheduling tests via LoadScheduling
+
 tests/test_cache.py::test_cache_clear PASSED
 tests/test_cache.py::test_cache_configure_None PASSED
 tests/test_cache.py::test_cache_configure_default PASSED
 tests/test_cache.py::test_cache_configure_explicit PASSED
 tests/test_cache.py::test_cache_info PASSED
-tests/test_cached_property.py::mypy PASSED
 tests/test_cached_property.py::test_reify PASSED
 tests/test_cached_property.py::test_reify_assignment PASSED
 tests/test_cached_property.py::test_reify_class PASSED
-tests/test_normalize_path.py::mypy PASSED
 tests/test_normalize_path.py::test__normalize_path[-] PASSED
 tests/test_normalize_path.py::test__normalize_path[../path/to-path/to] PASSED
 tests/test_normalize_path.py::test__normalize_path[././path/to-path/to] PASSED
@@ -37,10 +33,8 @@ tests/test_normalize_path.py::test__normalize_path[path/./to-path/to] PASSED
 tests/test_normalize_path.py::test__normalize_path[path/to-path/to] PASSED
 tests/test_normalize_path.py::test__normalize_path[path/to/.-path/to/] PASSED
 tests/test_normalize_path.py::test__normalize_path[path/to/./.-path/to/] PASSED
-tests/test_pickle.py::mypy PASSED
 tests/test_pickle.py::test_default_style_state PASSED
 tests/test_pickle.py::test_pickle PASSED
-tests/test_quoting.py::mypy PASSED
 tests/test_quoting.py::test_default_quoting[c_quoter-"] PASSED
 tests/test_quoting.py::test_default_quoting[c_quoter-#] PASSED
 tests/test_quoting.py::test_default_quoting[c_quoter-<] PASSED
@@ -543,15 +537,16 @@ tests/test_quoting.py::test_unquoting_bad_percent_escapes[py_unquoter-%\u20ac-%\
 tests/test_quoting.py::test_unquoting_bad_percent_escapes[py_unquoter-%x%3f-%x?] PASSED
 tests/test_quoting.py::test_unquoting_bad_percent_escapes[py_unquoter-%x-%x] PASSED
 tests/test_quoting.py::test_unquoting_bad_percent_escapes[py_unquoter-%xa-%xa] PASSED
-tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[c_unquoter] XFAIL
-tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[py_unquoter] XFAIL
+tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[c_unquoter-%AB%AB] XFAIL
+tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[c_unquoter-%AB] XFAIL
+tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[py_unquoter-%AB%AB] XFAIL
+tests/test_quoting.py::test_unquoting_invalid_utf8_sequence[py_unquoter-%AB] XFAIL
 tests/test_quoting.py::test_unquoting_mixed_case_percent_escapes[c_unquoter] PASSED
 tests/test_quoting.py::test_unquoting_mixed_case_percent_escapes[py_unquoter] PASSED
 tests/test_quoting.py::test_unquoting_parts[c_unquoter] PASSED
 tests/test_quoting.py::test_unquoting_parts[py_unquoter] PASSED
 tests/test_quoting.py::test_unquoting_plus[c_unquoter] PASSED
 tests/test_quoting.py::test_unquoting_plus[py_unquoter] PASSED
-tests/test_update_query.py::mypy PASSED
 tests/test_update_query.py::test_update_query PASSED
 tests/test_update_query.py::test_update_query_multiple_keys PASSED
 tests/test_update_query.py::test_update_query_with_args_and_kwargs PASSED
@@ -627,7 +622,6 @@ tests/test_update_query.py::test_with_query_valid_type[custom str] PASSED
 tests/test_update_query.py::test_with_query_valid_type[float] PASSED
 tests/test_update_query.py::test_with_query_valid_type[int] PASSED
 tests/test_update_query.py::test_with_query_valid_type[str] PASSED
-tests/test_url.py::mypy PASSED
 tests/test_url.py::test_abs_cmp PASSED
 tests/test_url.py::test_abs_hash PASSED
 tests/test_url.py::test_absolute_url_without_host PASSED
@@ -652,6 +646,7 @@ tests/test_url.py::test_div_for_empty_url PASSED
 tests/test_url.py::test_div_for_relative_url PASSED
 tests/test_url.py::test_div_for_relative_url_started_with_slash PASSED
 tests/test_url.py::test_div_non_ascii PASSED
+tests/test_url.py::test_div_path_srting_subclass PASSED
 tests/test_url.py::test_div_path_starting_from_slash_is_forbidden PASSED
 tests/test_url.py::test_div_percent_encoded PASSED
 tests/test_url.py::test_div_root PASSED
@@ -694,7 +689,6 @@ tests/test_url.py::test_human_repr_ipv6 PASSED
 tests/test_url.py::test_human_repr_non_printable PASSED
 tests/test_url.py::test_inheritance PASSED
 tests/test_url.py::test_ipv4_zone PASSED
-tests/test_url.py::test_ipv6_zone PASSED
 tests/test_url.py::test_is PASSED
 tests/test_url.py::test_is_absolute_for_absolute_url PASSED
 tests/test_url.py::test_is_absolute_for_relative_url PASSED
@@ -750,11 +744,17 @@ tests/test_url.py::test_join_from_rfc_3986_normal[g;x?y#s-http://a/b/c/g;x?y#s] 
 tests/test_url.py::test_join_from_rfc_3986_normal[g?y#s-http://a/b/c/g?y#s] PASSED
 tests/test_url.py::test_join_from_rfc_3986_normal[g?y-http://a/b/c/g?y] PASSED
 tests/test_url.py::test_join_non_url PASSED
+tests/test_url.py::test_joinpath[base-slash-duplicate-slash] PASSED
+tests/test_url.py::test_joinpath[base-slash-empty-segments] PASSED
+tests/test_url.py::test_joinpath[base-slash-trailing-slash] PASSED
 tests/test_url.py::test_joinpath[cleanup-query-and-fragment] PASSED
+tests/test_url.py::test_joinpath[duplicate-slash] PASSED
+tests/test_url.py::test_joinpath[empty-segments] PASSED
 tests/test_url.py::test_joinpath[path-with-slash] PASSED
 tests/test_url.py::test_joinpath[path] PASSED
 tests/test_url.py::test_joinpath[root-with-slash] PASSED
 tests/test_url.py::test_joinpath[root] PASSED
+tests/test_url.py::test_joinpath[trailing-slash] PASSED
 tests/test_url.py::test_joinpath_edgecases[with-colon-and-at] PASSED
 tests/test_url.py::test_joinpath_edgecases[with-dots] PASSED
 tests/test_url.py::test_joinpath_encoding[encoded-percent-encoded] PASSED
@@ -762,9 +762,12 @@ tests/test_url.py::test_joinpath_encoding[non-ascii] PASSED
 tests/test_url.py::test_joinpath_encoding[percent-encoded] PASSED
 tests/test_url.py::test_joinpath_path_starting_from_slash_is_forbidden PASSED
 tests/test_url.py::test_joinpath_relative[absolute-path] PASSED
+tests/test_url.py::test_joinpath_relative[duplicate-slash] PASSED
 tests/test_url.py::test_joinpath_relative[empty-element] PASSED
+tests/test_url.py::test_joinpath_relative[empty-segments] PASSED
 tests/test_url.py::test_joinpath_relative[empty-url] PASSED
 tests/test_url.py::test_joinpath_relative[relative-path] PASSED
+tests/test_url.py::test_joinpath_relative[trailing-slash] PASSED
 tests/test_url.py::test_localhost PASSED
 tests/test_url.py::test_lowercase PASSED
 tests/test_url.py::test_lowercase_nonascii PASSED
@@ -929,7 +932,6 @@ tests/test_url.py::test_with_suffix_replace PASSED
 tests/test_url.py::test_with_suffix_with_slash PASSED
 tests/test_url.py::test_with_suffix_with_slash2 PASSED
 tests/test_url.py::test_with_suffix_without_dot PASSED
-tests/test_url_build.py::mypy PASSED
 tests/test_url_build.py::test_build_already_encoded PASSED
 tests/test_url_build.py::test_build_drop_dots PASSED
 tests/test_url_build.py::test_build_encode PASSED
@@ -952,7 +954,8 @@ tests/test_url_build.py::test_build_with_none_fragment PASSED
 tests/test_url_build.py::test_build_with_none_host PASSED
 tests/test_url_build.py::test_build_with_none_path PASSED
 tests/test_url_build.py::test_build_with_none_query_string PASSED
-tests/test_url_build.py::test_build_with_port PASSED
+tests/test_url_build.py::test_build_with_port[port-only] PASSED
+tests/test_url_build.py::test_build_with_port[port-str] PASSED
 tests/test_url_build.py::test_build_with_query_and_query_string PASSED
 tests/test_url_build.py::test_build_with_scheme PASSED
 tests/test_url_build.py::test_build_with_scheme_and_host PASSED
@@ -961,7 +964,6 @@ tests/test_url_build.py::test_build_with_user_password PASSED
 tests/test_url_build.py::test_build_without_arguments PASSED
 tests/test_url_build.py::test_query_dict PASSED
 tests/test_url_build.py::test_query_str PASSED
-tests/test_url_cmp_and_hash.py::mypy PASSED
 tests/test_url_cmp_and_hash.py::test_eq PASSED
 tests/test_url_cmp_and_hash.py::test_ge_eq PASSED
 tests/test_url_cmp_and_hash.py::test_ge_more PASSED
@@ -989,20 +991,17 @@ tests/test_url_parsing.py::TestHost::test_absolute_no_scheme_simple_host PASSED
 tests/test_url_parsing.py::TestHost::test_canonical PASSED
 tests/test_url_parsing.py::TestHost::test_ipv4 PASSED
 tests/test_url_parsing.py::TestHost::test_ipv6 PASSED
-tests/test_url_parsing.py::TestHost::test_masked_ipv4 PASSED
+tests/test_url_parsing.py::TestHost::test_ipvfuture_address PASSED
 tests/test_url_parsing.py::TestHost::test_no_scheme_no_host PASSED
 tests/test_url_parsing.py::TestHost::test_scheme_no_host PASSED
 tests/test_url_parsing.py::TestHost::test_scheme_no_host2 PASSED
-tests/test_url_parsing.py::TestHost::test_strange_ip PASSED
-tests/test_url_parsing.py::TestHost::test_strange_ip_2 PASSED
-tests/test_url_parsing.py::TestHost::test_strange_ip_3 PASSED
 tests/test_url_parsing.py::TestHost::test_weird_host PASSED
 tests/test_url_parsing.py::TestPort::test_another_bad_port PASSED
 tests/test_url_parsing.py::TestPort::test_bad_port PASSED
 tests/test_url_parsing.py::TestPort::test_bad_port_again PASSED
 tests/test_url_parsing.py::TestPort::test_canonical PASSED
 tests/test_url_parsing.py::TestPort::test_double_port PASSED
-tests/test_url_parsing.py::TestPort::test_no_host PASSED
+tests/test_url_parsing.py::TestPort::test_no_host XFAIL
 tests/test_url_parsing.py::TestPort::test_no_path PASSED
 tests/test_url_parsing.py::TestQuery_String::test_abs_url_path_query PASSED
 tests/test_url_parsing.py::TestQuery_String::test_abs_url_query PASSED
@@ -1042,8 +1041,6 @@ tests/test_url_parsing.py::TestUserInfo::test_user_pass PASSED
 tests/test_url_parsing.py::TestUserInfo::test_weird_user PASSED
 tests/test_url_parsing.py::TestUserInfo::test_weird_user2 PASSED
 tests/test_url_parsing.py::TestUserInfo::test_weird_user3 PASSED
-tests/test_url_parsing.py::mypy PASSED
-tests/test_url_query.py::mypy PASSED
 tests/test_url_query.py::test_query_basic_parsing[original_url0-expected_query0] PASSED
 tests/test_url_query.py::test_query_basic_parsing[original_url1-expected_query1] PASSED
 tests/test_url_query.py::test_query_basic_parsing[original_url2-expected_query2] PASSED
@@ -1085,7 +1082,6 @@ tests/test_url_query.py::test_query_separators_from_with_query[original_url2-1-1
 tests/test_url_query.py::test_query_separators_from_with_query[original_url3-1-10;b=20] PASSED
 tests/test_url_query.py::test_query_separators_from_with_query[original_url4-1-10&b=20] PASSED
 tests/test_url_query.py::test_query_separators_from_with_query[original_url5-1-10;b=20] PASSED
-tests/test_url_update_netloc.py::mypy PASSED
 tests/test_url_update_netloc.py::test_from_str_with_host_ipv4 PASSED
 tests/test_url_update_netloc.py::test_from_str_with_host_ipv6 PASSED
 tests/test_url_update_netloc.py::test_with_host PASSED
@@ -1124,7 +1120,9 @@ tests/test_url_update_netloc.py::test_with_user_ipv6 PASSED
 tests/test_url_update_netloc.py::test_with_user_non_ascii PASSED
 tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
-===================================== mypy =====================================
+11 files skipped due to complete coverage.
 
-Success: no issues found in 12 source files
-======== 1113 passed, 2 xfailed ========
+
+============================= slowest 10 durations =============================
+=========================== short test summary info ============================
+======== 1106 passed, 5 xfailed ========

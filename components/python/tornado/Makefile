@@ -20,21 +20,20 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tornado
-HUMAN_VERSION =			6.3.3
+HUMAN_VERSION =			6.4
 COMPONENT_SUMMARY =		tornado - Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed.
 COMPONENT_PROJECT_URL =		http://www.tornadoweb.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/48/64/679260ca0c3742e2236c693dc6c34fb8b153c14c21d2aa2077c5a01924d6/tornado-6.3.3.tar.gz
+	https://files.pythonhosted.org/packages/bd/a2/ea124343e3b8dd7712561fe56c4f92eda26865f5e1040b289203729186f2/tornado-6.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e7d8db41c0181c80d76c982aacc442c0783a2c54d6400fe028954201a2e032fe
+	sha256:72291fa6e6bc84e626589f1c29d90a5a6d593ef5ae68052ee2ef000dfd273dee
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# https://github.com/tornadoweb/tornado/issues/3095
-# https://github.com/tornadoweb/tornado/issues/3253
-TEST_STYLE = unittest
-
 include $(WS_MAKE_RULES)/common.mk
+
+# Force verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- --verbose
 
 # Remove timing from test results
 COMPONENT_TEST_TRANSFORMS += "-e 's/[^ ]*ms$$//'"

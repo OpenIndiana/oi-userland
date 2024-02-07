@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 <contributor>
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,6 +23,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=etc/barman.conf
+file path=etc/security/exec_attr.d/barman
+file path=etc/security/prof_attr.d/barman
+file path=etc/user_attr.d/barman
 file path=usr/bin/barman
 file path=usr/bin/barman-cloud-backup
 file path=usr/bin/barman-cloud-backup-delete
@@ -92,23 +96,24 @@ file path=usr/lib/python$(PYVER)/vendor-packages/barman/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/barman/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/barman/wal_archiver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/barman/xlog.py
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-delete.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-keep.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-list.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup-show.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-backup.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-check-wal-archive.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-restore.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-wal-archive.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-cloud-wal-restore.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-wal-archive.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman-wal-restore.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man1/barman.1
-file path=usr/lib/python$(PYVER)/vendor-packages/share/man/man5/barman.5
 file path=usr/share/barman/barman.conf-example
 file path=usr/share/barman/passive-server.conf-example
 file path=usr/share/barman/ssh-server.conf-example
 file path=usr/share/barman/streaming-server.conf-example
+file path=usr/share/man/man1/barman-cloud-backup-delete.1
+file path=usr/share/man/man1/barman-cloud-backup-keep.1
+file path=usr/share/man/man1/barman-cloud-backup-list.1
+file path=usr/share/man/man1/barman-cloud-backup-show.1
+file path=usr/share/man/man1/barman-cloud-backup.1
+file path=usr/share/man/man1/barman-cloud-check-wal-archive.1
+file path=usr/share/man/man1/barman-cloud-restore.1
+file path=usr/share/man/man1/barman-cloud-wal-archive.1
+file path=usr/share/man/man1/barman-cloud-wal-restore.1
+file path=usr/share/man/man1/barman-wal-archive.1
+file path=usr/share/man/man1/barman-wal-restore.1
+file path=usr/share/man/man1/barman.1
+file path=usr/share/man/man4/barman.conf.4
+file path=usr/share/man/man5/barman.5
 
 # python modules are unusable without python runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \

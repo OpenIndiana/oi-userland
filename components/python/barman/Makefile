@@ -10,42 +10,71 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
-# Copyright 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project barman
 #
 
-BUILD_STYLE= setup.py
-SINGLE_PYTHON_VERSION= yes
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	barman
-COMPONENT_VERSION= 	3.8.0
-COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
-COMPONENT_PROJECT_URL=	https://pgbarman.org/
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2c9a1571047d90d885b962b8167630c7cda6a2b892d09c2779baa6bd49f484ac
-COMPONENT_ARCHIVE_URL=	https://github.com/EnterpriseDB/barman/releases/download/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		database/postgres/barman
-COMPONENT_CLASSIFICATION=	System/Databases
-COMPONENT_LICENSE=	GPLv3
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_NAME =		barman
+HUMAN_VERSION =			3.10.0
+COMPONENT_SUMMARY =		barman - Backup and Recovery Manager for PostgreSQL
+COMPONENT_PROJECT_URL =		https://www.pgbarman.org/
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/EnterpriseDB/barman/archive/refs/tags/release/$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:171c61f24d0ffa0c96427043d91c218afff893a34bfd4ca1cd0c10b768943c8e
+COMPONENT_LICENSE =		GPL-3.0-only
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PKG_MACROS += PYVER=$(PYTHON_VERSION)
-PKG_MACROS += PYV=$(shell echo $(PYTHON_VERSION) | tr -d .)
+COMPONENT_FMRI =		database/postgres/barman
+COMPONENT_CLASSIFICATION =	System/Databases
 
-TEST_TARGET= $(NO_TESTS)
-include $(WS_TOP)/make-rules/common.mk
+# Github tarball use different source directory than sdist
+COMPONENT_SRC =			barman-release-$(HUMAN_VERSION)
+
+# This is a standalone application.  Since no other Python project depends on
+# it we just provide single unversioned package.
+SINGLE_PYTHON_VERSION = yes
+
+include $(WS_MAKE_RULES)/common.mk
+
+# Make sure man pages are installed at proper location
+PYTHON_DATA=$(USRDIR)
 
 # Install example configuration files
-DOC_DIR= $(PROTO_DIR)/usr/share/barman
-
 COMPONENT_POST_INSTALL_ACTION += \
-	$(MKDIR) $(DOC_DIR); \
-	$(CP) $(SOURCE_DIR)/doc/barman.conf $(DOC_DIR)/barman.conf-example; \
-	for file in $(SOURCE_DIR)/doc/barman.d/*.conf-template; do \
-		$(CP) $$file $(DOC_DIR)/$$(basename $$file| $(GSED) -e 's:template:example:g'); \
-	done
+	DOC_DIR=$(PROTO_DIR)/usr/share/barman ; \
+	$(MKDIR) $$DOC_DIR ; \
+	$(CP) $(SOURCE_DIR)/doc/barman.conf $$DOC_DIR/barman.conf-example ; \
+	for file in $(SOURCE_DIR)/doc/barman.d/*.conf-template ; do \
+		$(CP) $$file $$DOC_DIR/$$(basename $$file | $(GSED) -e 's:template:example:g') ; \
+	done ;
+
+# Install additional /etc files
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) -d $(PROTOETCSECDIR)/exec_attr.d ; \
+	$(INSTALL) $(COMPONENT_DIR)/files/exec_attr $(PROTOETCSECDIR)/exec_attr.d/barman ; \
+	$(INSTALL) -d $(PROTOETCSECDIR)/prof_attr.d ; \
+	$(INSTALL) $(COMPONENT_DIR)/files/prof_attr $(PROTOETCSECDIR)/prof_attr.d/barman ; \
+	$(INSTALL) -d $(PROTOETCDIR)/user_attr.d/prof_attr.d ; \
+	$(INSTALL) $(COMPONENT_DIR)/files/user_attr $(PROTOETCDIR)/user_attr.d/barman ; \
+	$(INSTALL) $(COMPONENT_DIR)/files/barman.conf $(PROTOETCDIR)/barman.conf ;
+
+# Install additional man page
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) -d $(PROTOUSRSHAREMAN4DIR) ; \
+	$(INSTALL) $(COMPONENT_DIR)/files/barman.conf.4 $(PROTOUSRSHAREMAN4DIR) ;
+
+# We have no packages needed for cloud testing so we need to skip following tests
+PYTEST_ADDOPTS += --ignore tests/test_barman_cloud_backup_show.py
+PYTEST_ADDOPTS += --ignore tests/test_barman_cloud_wal_archive.py
+PYTEST_ADDOPTS += --ignore tests/test_cloud.py
+PYTEST_ADDOPTS += --ignore tests/test_cloud_snapshot_interface.py
+PYTEST_ADDOPTS += --ignore tests/test_infofile.py
+PYTEST_ADDOPTS += --ignore tests/test_output.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/argcomplete
@@ -54,3 +83,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/psycopg2
 PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/mock
+TEST_REQUIRED_PACKAGES.python += library/python/py
+TEST_REQUIRED_PACKAGES.python += library/python/pytest

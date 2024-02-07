@@ -19,13 +19,15 @@
 # dependencies
 
 while read line ; do
-	# some projects specify extra dependencies in form of .[extra] in deps
+	# some projects specify extra dependencies in form of .[extras] in deps
 	# key instead of using separate extras key
-	extra=${line#.[}
-	extra=${extra%]}
-	if [ ".[$extra]" == "$line" ] ; then
-		# run the command passed in as argument(s) to handle extras
-		eval "$@" $extra
+	extras=${line#.[}
+	extras=${extras%]}
+	if [ ".[$extras]" == "$line" ] ; then
+		for extra in ${extras//,/ } ; do
+			# run the command passed in as argument(s) to handle extras
+			eval "$@" $extra
+		done
 		continue
 	fi
 
@@ -34,13 +36,13 @@ while read line ; do
 	if [ "${line:0:2}" == "-r" ] ; then
 		line=${line:2}
 		while [ "${line:0:1}" == " " ] ; do line=${line:1} ; done
-		dos2unix -ascii $line | $0
+		dos2unix -ascii $line | $0 "$@"
 		continue
 	fi
 	if [ "${line:0:13}" == "--requirement" ] ; then
 		line=${line:14}
 		while [ "${line:0:1}" == " " ] ; do line=${line:1} ; done
-		dos2unix -ascii $line | $0
+		dos2unix -ascii $line | $0 "$@"
 		continue
 	fi
 	echo "$line"

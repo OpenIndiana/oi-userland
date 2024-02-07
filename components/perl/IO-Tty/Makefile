@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::Tty
-HUMAN_VERSION =			1.17
+HUMAN_VERSION =			1.20
 COMPONENT_SUMMARY =		IO::Tty - Low-level allocate a pseudo-Tty, import constants.
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a5f1a83020bc5b5dd6c1b570f48c7546e0a8f7fac10a068740b03925ad9e14e8
+	sha256:b15309fc85623893289cb9b2b88dfa9ed1e69156b75f29938553a45be6d730af
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk

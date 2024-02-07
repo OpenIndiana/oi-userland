@@ -19,21 +19,21 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS=		64
 BUILD_STYLE=		justmake
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_perl
-COMPONENT_VERSION=	2.0.12
+COMPONENT_VERSION=	2.0.13
 COMPONENT_PROJECT_URL=	https://perl.apache.org/
 COMPONENT_SUMMARY=	Perl plugin for Apache Web Server V2.4
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f5b821b59b0fdc9670e46ed0fcf32d8911f25126189a8b68c1652f9221eee269
+COMPONENT_ARCHIVE_HASH=	sha256:ade3be31c447b8448869fecdfcace258d6d587b8c6c773c5f22735f70d82d6da
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/perl/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 COMPONENT_FMRI=		web/server/apache-24/module/apache-perl
@@ -63,7 +63,7 @@ COMPONENT_PRE_BUILD_ACTION= ( \
 	INSTALLSCRIPT=$(AP_PERL5BIN) \
 	LINKTYPE=dynamic \
 	MP_APXS=$(APACHE_USR_PREFIX)/bin/apxs \
-	MP_APR_CONFIG=/usr/apr/bin/$(MACH64)/apr-1-config) 
+	MP_APR_CONFIG=/usr/apr/bin/$(MACH64)/apr-1-config)
 
 COMPONENT_TEST_TARGETS=	test
 

@@ -12,25 +12,25 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-BUILD_STYLE = cmake
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mtxclient
 COMPONENT_VERSION=      0.9.2
-COMPONENT_PROJECT_URL=  https://github.com/Nheko-Reborn/mtxclient
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      Client API library for the Matrix protocol
+COMPONENT_PROJECT_URL=  https://github.com/Nheko-Reborn/mtxclient
 COMPONENT_FMRI=         network/chat/mtxclient
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:f55827fdba226c6fc409cf000c72b13cc6d069ec1300283a7239aa19c90c5f56
+COMPONENT_ARCHIVE_HASH= sha256:f55827fdba226c6fc409cf000c72b13cc6d069ec1300283a7239aa19c90c5f56
 COMPONENT_ARCHIVE_URL=	https://github.com/Nheko-Reborn/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_CLASSIFICATION=       Applications/Internet
+COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= LICENSE
 
 # Tests require Googletest which we don't have yet.
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS += -DBUILD_LIB_TESTS=OFF

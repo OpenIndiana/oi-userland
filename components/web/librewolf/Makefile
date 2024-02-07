@@ -22,7 +22,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	librewolf
-COMPONENT_MAJOR_VERSION =	118.0.2
+COMPONENT_MAJOR_VERSION =	120.0
 COMPONENT_MINOR_VERSION =	2
 COMPONENT_VERSION = $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 HUMAN_VERSION = $(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION)
@@ -31,23 +31,23 @@ COMPONENT_PROJECT_URL =	https://librewolf.net
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME).source.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:79517de41cb62b2858981c591487af1b5d771553a1b594b71a8327efefc0633d
+COMPONENT_ARCHIVE_HASH= sha256:96c84da5fef980f61a0d3c53e78ea2f4be252596dda8321f16ee268a2fe1d19f
 COMPONENT_ARCHIVE_URL =	https://gitlab.com/api/v4/projects/32320088/packages/generic/librewolf-source/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/browser/librewolf
 COMPONENT_CLASSIFICATION =	Applications/Internet
 
-RUST_VERSION = 1.71.0
+RUST_VERSION= 1.73.0
 
-CONFIGURE_DEFAULT_DIRS=no
+CONFIGURE_DEFAULT_DIRS= no
 
 include $(WS_MAKE_RULES)/common.mk
 
 RUSTUP_HOME = $(BUILD_DIR)/.rust_up
 CARGO_HOME  = $(BUILD_DIR)/.cargo
 
-PATH = $(CARGO_HOME)/bin:$(PATH.gnu)
+PATH= $(CARGO_HOME)/bin:$(PATH.gnu)
 
-MOZCONFIG = $(SOURCE_DIR)/mozconfig
+MOZCONFIG= $(SOURCE_DIR)/mozconfig
 GNU_ARCH= x86_64-unknown-illumos
 
 ifdef DEBUG
@@ -125,7 +125,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.24.3 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.26.0 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
@@ -192,9 +192,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/gcc-10-compat-links
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb

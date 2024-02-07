@@ -16,11 +16,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgtcl
-COMPONENT_VERSION= 	3.0.0
+COMPONENT_VERSION= 	3.0.1
 COMPONENT_SUMMARY= 	A Tcl client library for PostgreSQL
 COMPONENT_SRC= 		Pgtcl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8ba4914410eff28eaea6e7f4334ea699f63474615c047a31b53a8fa84fa232a7
+COMPONENT_ARCHIVE_HASH=	sha256:d25e3caafeb31197571f3ae77737887af8f54d5ad176bae837e54fa7292fbe2d
 COMPONENT_ARCHIVE_URL=	https://github.com/flightaware/Pgtcl/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	https://flightaware.github.io/Pgtcl/
 COMPONENT_FMRI=	database/postgres/pgtcl

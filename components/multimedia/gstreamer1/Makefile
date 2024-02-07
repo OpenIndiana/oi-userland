@@ -16,18 +16,18 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gstreamer1
-COMPONENT_VERSION=      1.22.6
+COMPONENT_VERSION=      1.22.9
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC_NAME=		gstreamer
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:f500e6cfddff55908f937711fc26a0840de28a1e9ec49621c0b6f1adbd8f818e
+COMPONENT_ARCHIVE_HASH= sha256:1e7124d347e8cdc80f08ec1d370c201be513002af1102bb20e83c5279cb48ebd
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -40,11 +40,10 @@ PATH = $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
 CONFIGURE_OPTIONS += -Dexamples=disabled
-CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
-CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
+CONFIGURE_OPTIONS += -Dintrospection=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
@@ -60,8 +59,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/^Ok:/,/^Timeout:/p" '
 
-# not picked up by REQUIRED_PACKAGES but probably still needed
-# for the 64 bit build to do introspection
+# not picked up by REQUIRED_PACKAGES but still needed
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 
 # gmp & gsl needed only for the test suite
@@ -69,6 +67,7 @@ TEST_REQUIRED_PACKAGES += library/gmp
 TEST_REQUIRED_PACKAGES += developer/gsl
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

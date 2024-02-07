@@ -15,24 +15,27 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ddt
-COMPONENT_VERSION =		1.6.0
+HUMAN_VERSION =			1.7.1
 COMPONENT_SUMMARY =		ddt - Data-Driven/Decorated Tests
 COMPONENT_PROJECT_URL =		https://github.com/datadriventests/ddt
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c2/b2/20cfe16303e0bef0b2fb54024118ff97fa752414763ab626486794dab072/ddt-1.6.0.tar.gz
+	https://github.com/datadriventests/ddt/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f71b348731b8c78c3100bffbd951a769fbd439088d1fdbb3841eee019af80acd
+	sha256:1ef6cadab02f5760d5cb4ea2c1d54a87780a9971639d2186c59798fc68a17728
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.md
-
-TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
+TEST_REQUIRED_PACKAGES.python += library/python/six

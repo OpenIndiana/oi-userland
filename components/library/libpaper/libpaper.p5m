@@ -23,21 +23,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# We iusually don't deliver 32 bit apps
-<transform file path=.*/bin/$(MACH32)/.+ -> drop>
-
-file path=usr/bin/$(MACH32)/paper
-file path=usr/bin/$(MACH32)/paperconf
-file path=usr/bin/paper  pkg.linted.userland.action001.3=true
+file path=usr/bin/paper pkg.linted.userland.action001.3=true
 file path=usr/bin/paperconf
 file path=usr/etc/paperspecs
 file path=usr/include/paper.h
 link path=usr/lib/$(MACH64)/libpaper.so target=libpaper.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libpaper.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libpaper.so.2 target=libpaper.so.$(HUMAN_VERSION)
-link path=usr/lib/libpaper.so target=libpaper.so.$(HUMAN_VERSION)
-file path=usr/lib/libpaper.so.$(HUMAN_VERSION)
-link path=usr/lib/libpaper.so.2 target=libpaper.so.$(HUMAN_VERSION)
 file path=usr/share/doc/libpaper/README
 file path=usr/share/man/man1/paper.1
 file path=usr/share/man/man5/paperspecs.5

@@ -1,0 +1,11 @@
+--- core-aea53c0ed1527ed1f8233972a27128e14d645e8f/sal/osl/unx/backtraceapi.cxx.old	2023-11-12 14:08:32.888524315 -0500
++++ core-aea53c0ed1527ed1f8233972a27128e14d645e8f/sal/osl/unx/backtraceapi.cxx	2023-11-12 14:08:54.384277907 -0500
+@@ -43,7 +43,7 @@
+     return std::unique_ptr<BacktraceState>(new BacktraceState{ b1, n });
+ }
+ 
+-#if OSL_DEBUG_LEVEL > 0 && (defined LINUX || defined MACOSX || defined FREEBSD || defined NETBSD || defined OPENBSD || defined(DRAGONFLY))
++#if OSL_DEBUG_LEVEL > 0 && (defined LINUX || defined MACOSX || defined FREEBSD || defined NETBSD || defined OPENBSD || defined(DRAGONFLY)) || defined (__sun)
+ // The backtrace_symbols() function is unreliable, it requires -rdynamic and even then it cannot resolve names
+ // of many functions, such as those with hidden ELF visibility. Libunwind doesn't resolve names for me either,
+ // boost::stacktrace doesn't work properly, the best result I've found is addr2line. Using addr2line is relatively

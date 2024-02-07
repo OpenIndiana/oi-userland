@@ -1,0 +1,11 @@
+--- webkitgtk-2.42.1/Source/JavaScriptCore/heap/BlockDirectory.cpp	2023-09-19 10:27:45.315785400 +0200
++++ webkitgtk-2.42.1/Source/JavaScriptCore/heap/BlockDirectory.cpp.new	2023-11-03 16:49:53.019682578 +0100
+@@ -77,7 +77,7 @@
+         auto markedBlockSizeInBytes = handle->backingStorageSize();
+         RELEASE_ASSERT(markedBlockSizeInBytes / pageSize <= numberOfPagesInMarkedBlock);
+         // We could cache this in bulk (e.g. 25 MB chunks) but we haven't seen any data that it actually matters.
+-        auto result = mincore(pageStart, markedBlockSizeInBytes, pagedBits.data());
++        auto result = mincore((char *) pageStart, markedBlockSizeInBytes, pagedBits.data());
+         RELEASE_ASSERT(!result);
+         constexpr unsigned pageIsResidentAndNotCompressed = 1;
+         for (unsigned i = 0; i < numberOfPagesInMarkedBlock; ++i)

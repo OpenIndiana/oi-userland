@@ -13,23 +13,23 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2023 Niklas Poslovski
+# Copyright 2023-2024 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	22
-OPENJDK_PATCH=	11
+OPENJDK_PATCH=	33
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION)
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=	jdk-jdk-$(OPENJDK_VERSION)-$(OPENJDK_PATCH)
+COMPONENT_SRC=	jdk22u-jdk-$(OPENJDK_VERSION)-$(OPENJDK_PATCH)
 COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION)+$(OPENJDK_PATCH).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:be3092eea01223598d24def014ff76f485c5b5df878c435738b4561bb97fd5a7
+	sha256:3e9f1a3b414e3cc33446a38deb4c8adab5237080d2ac057dc4b53c3638f5dc0a
 COMPONENT_ARCHIVE_URL= \
-	https://github.com/openjdk/jdk/archive/$(COMPONENT_ARCHIVE)
+	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_LICENSE=	GPLv2 with Classpath Exception

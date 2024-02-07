@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyzmq
-HUMAN_VERSION =			25.1.1
+HUMAN_VERSION =			25.1.2
 COMPONENT_SUMMARY =		pyzmq - Python bindings for 0MQ
 COMPONENT_PROJECT_URL =		https://pyzmq.readthedocs.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3f/7c/69d31a75a3fe9bbab349de7935badac61396f22baf4ab53179a8d940d58e/pyzmq-25.1.1.tar.gz
+	https://files.pythonhosted.org/packages/3a/33/1a3683fc9a4bd64d8ccc0290da75c8f042184a1a49c146d28398414d3341/pyzmq-25.1.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:259c22485b71abacdfa8bf79720cd7bcf4b9d128b30ea554f01ae71fdbfdaa23
+	sha256:93f1aa311e8bb912e34f004cf186407a4e90eec4f0ecc0efd26056bf7eda0226
 COMPONENT_LICENSE =		BSD-3-Clause AND LGPL-3.0-only
 
 TEST_STYLE = pytest
@@ -61,16 +61,6 @@ COMPONENT_PRE_TEST_ACTION +=	$(MKDIR) $(@D)/zmq ;
 COMPONENT_PRE_TEST_ACTION +=	$(SYMLINK) ../zmq-RENAMED/tests $(@D)/zmq/tests ;
 COMPONENT_POST_TEST_ACTION +=	$(RM) -r $(@D)/zmq ;
 COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/zmq-RENAMED $(@D)/zmq ;
-
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:checkdocs
-PYTEST_ADDOPTS += -p no:mypy
-PYTEST_ADDOPTS += -p no:randomly
-
-# Testing of pyzmq fails if there is flaky installed.  See
-# https://github.com/zeromq/pyzmq/issues/1802 for details.
-TEST_CONFLICTING_PACKAGES.python += library/python/flaky
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cython

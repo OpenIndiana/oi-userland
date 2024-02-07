@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sub::Exporter
-HUMAN_VERSION =			0.990
+HUMAN_VERSION =			0.991
 COMPONENT_SUMMARY =		Sub::Exporter - a sophisticated exporter for custom-built routines
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bc64ec5a06865f9cc676215c06a9448b3a0c8b3974ffb23a24f8e2ad090544fc
+	sha256:2a95695d35c5d0d5373a7e145c96b9b016113b74e94116835ac05450cae4d445
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 

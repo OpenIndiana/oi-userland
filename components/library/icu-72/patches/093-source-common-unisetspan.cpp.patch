@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+Add NULL checks to getBuffer calls
+https://unicode-org.atlassian.net/browse/ICU-12378
+
+--- icu/source/common/unisetspan.cpp.orig
++++ icu/source/common/unisetspan.cpp
+@@ -660,6 +660,8 @@
+                 }
+                 const UnicodeString &string=*(const UnicodeString *)strings.elementAt(i);
+                 const UChar *s16=string.getBuffer();
++		if (s16 == NULL)
++		    continue;
+                 int32_t length16=string.length();
+                 U_ASSERT(length>0);
+ 
+@@ -1373,6 +1375,8 @@
+             }
+             const UnicodeString &string=*(const UnicodeString *)strings.elementAt(i);
+             const UChar *s16=string.getBuffer();
++	    if (s16 == NULL)
++		continue;
+             int32_t length16=string.length();
+             U_ASSERT(length>0);
+             if(length16<=rest && matches16CPB(s, pos, length, s16, length16)) {
+@@ -1417,6 +1421,8 @@
+             }
+             const UnicodeString &string=*(const UnicodeString *)strings.elementAt(i);
+             const UChar *s16=string.getBuffer();
++	    if (s16 == NULL)
++		continue;
+             int32_t length16=string.length();
+             U_ASSERT(length>0);
+             if(length16<=pos && matches16CPB(s, pos-length16, length, s16, length16)) {
