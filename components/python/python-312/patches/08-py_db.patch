@@ -18,7 +18,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  
 +SHLIB_FLAGS = -shared -fpic
  
-+libpython$(LDVERSION)_db.so.1.0:        $(srcdir)/py_db/libpython39_db.c
++libpython$(LDVERSION)_db.so.1.0:        $(srcdir)/py_db/libpython312_db.c
 +	$(CC) -o $@ $(CFLAGS) $(PY_CPPFLAGS) $(CPPFLAGS) $(SHLIB_FLAGS) $<
 +
 +build-py_db:   libpython$(LDVERSION)_db.so.1.0
@@ -38,9 +38,127 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  	if test "x$(ENSUREPIP)" != "xno"  ; then \
  		case $(ENSUREPIP) in \
  			upgrade) ensurepip="--upgrade" ;; \
---- Python-3.9.1/py_db/libpython312_db.c
-+++ Python-3.9.1/py_db/libpython312_db.c
-@@ -0,0 +1,596 @@
+--- Python-3.9.1/py_db/libpython312_db.h
++++ Python-3.9.1/py_db/libpython312_db.h
+@@ -0,0 +1,73 @@
++/*
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ */
++/*
++ * Copyright (c) 2012, 2020, Oracle and/or its affiliates.
++ */
++
++#ifndef	_LIBPYTHON312_DB_H
++#define	_LIBPYTHON312_DB_H
++
++#include <proc_service.h>
++
++#ifdef	__cplusplus
++extern "C" {
++#endif
++
++/* Agent is opaque to library's consumers.  */
++typedef struct pydb_agent pydb_agent_t;
++
++/*
++ * Library's debug version is 1.  Changes to interface should increase this
++ * number.
++ */
++#define	PYDB_VERSION	1
++
++/* Agent creation/destruction routines */
++extern	pydb_agent_t	*pydb_agent_create(struct ps_prochandle *P, int vers);
++extern	void		pydb_agent_destroy(pydb_agent_t *py);
++
++/* Used by callers that know they are looking at a PyFrameObject */
++extern	int	pydb_get_frameinfo(pydb_agent_t *py, uintptr_t frame_addr,
++    char *fbuf, size_t bufsz, int verbose);
++
++/*
++ * Used by callers that don't know if they're looking at PyFrameObject.
++ * Checks PC for traceable functions.
++ */
++extern	int	pydb_pc_frameinfo(pydb_agent_t *py, uintptr_t pc,
++    uintptr_t frame_addr, char *fbuf, size_t bufsz);
++
++/* Iterator functions */
++typedef struct pydb_iter pydb_iter_t;
++
++extern	pydb_iter_t	*pydb_frame_iter_init(pydb_agent_t *py, uintptr_t addr);
++extern	pydb_iter_t	*pydb_interp_iter_init(pydb_agent_t *py,
++    uintptr_t addr);
++extern	pydb_iter_t	*pydb_thread_iter_init(pydb_agent_t *py,
++    uintptr_t addr);
++extern	void		pydb_iter_fini(pydb_iter_t *iter);
++extern	uintptr_t	pydb_iter_next(pydb_iter_t *iter);
++
++#ifdef	__cplusplus
++}
++#endif
++
++#endif	/* _LIBPYTHON312_DB_H */
+--- Python-3.9.1/py_db/mapfile-vers
++++ Python-3.9.1/py_db/mapfile-vers
+@@ -0,0 +1,39 @@
++#
++# CDDL HEADER START
++#
++# The contents of this file are subject to the terms of the
++# Common Development and Distribution License (the "License").
++# You may not use this file except in compliance with the License.
++#
++# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++# or http://www.opensolaris.org/os/licensing.
++# See the License for the specific language governing permissions
++# and limitations under the License.
++#
++# When distributing Covered Code, include this CDDL HEADER in each
++# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++# If applicable, add the following below this CDDL HEADER, with the
++# fields enclosed by brackets "[]" replaced with your own identifying
++# information: Portions Copyright [yyyy] [name of copyright owner]
++#
++# CDDL HEADER END
++#
++
++#
++# Copyright (c) 2012, 2020, Oracle and/or its affiliates.
++#
++
++SUNWprivate_1.1 {
++    global:
++	pydb_agent_create;
++	pydb_agent_destroy;
++	pydb_frame_iter_init;
++	pydb_get_frameinfo;
++	pydb_pc_frameinfo;
++	pydb_interp_iter_init;
++	pydb_thread_iter_init;
++	pydb_iter_fini;
++	pydb_iter_next;
++    local:
++	*;
++};
+--- Python-3.12.1/py_db/libpython312_db.c	Tue Feb  6 19:26:27 2024
++++ Python-3.12.1/py_db/libpython312_db.c	Tue Feb  6 19:25:54 2024
+@@ -0,0 +1,611 @@
 +/*
 + * CDDL HEADER START
 + *
@@ -221,7 +339,6 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +	 * as follows:
 +	 * - sobj.state.compact == 1
 +	 * - sobj.state.ascii == 1
-+	 * - sobj.state.ready == 1
 +	 * The length of the string is stored in sobj.length.  The string
 +	 * itself follows the PyASCIIObject.
 +	 */
@@ -231,7 +348,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +		return (-1);
 +	}
 +
-+	if (!sobj.state.compact || !sobj.state.ascii || !sobj.state.ready) {
++	if (!sobj.state.compact || !sobj.state.ascii) {
 +		return (-1);
 +	}
 +
@@ -343,15 +460,22 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +    size_t funcnm_sz, char *filenm, size_t filenm_sz, int *lineno)
 +{
 +	PyFrameObject fo;
++	_PyInterpreterFrame ifo;
 +	PyCodeObject co;
 +	ssize_t rc;
++	int lasti;
 +
 +	if (ps_pread(py->pdb_ph, addr, &fo, sizeof (PyFrameObject))
 +	    != PS_OK) {
 +		return (-1);
 +	}
 +
-+	if (ps_pread(py->pdb_ph, (uintptr_t)fo.f_code, &co,
++	if (ps_pread(py->pdb_ph, (uintptr_t)fo.f_frame, &ifo, sizeof (_PyInterpreterFrame))
++	    != PS_OK) {
++		return (-1);
++	}
++
++	if (ps_pread(py->pdb_ph, (uintptr_t)ifo.f_code, &co,
 +	    sizeof (PyCodeObject)) != PS_OK) {
 +		return (-1);
 +	}
@@ -368,8 +492,10 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +		return (-1);
 +	}
 +
-+	*lineno = pydb_getlno(py, (uintptr_t)co.co_lnotab, co.co_firstlineno,
-+	    fo.f_lasti);
++	lasti = (int)(ifo.prev_instr - (_Py_CODEUNIT *)co.co_code_adaptive);
++
++	*lineno = pydb_getlno(py, (uintptr_t)co.co_linetable, co.co_firstlineno,
++	    lasti);
 +	if (*lineno < 0) {
 +		return (-1);
 +	}
@@ -531,11 +657,18 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +{
 +	pydb_iter_t *itr;
 +	PyThreadState ts;
++	_PyCFrame cf;
 +
 +	if (ps_pread(py->pdb_ph, (uintptr_t)addr, &ts, sizeof (PyThreadState))
 +	    != PS_OK) {
 +		return (NULL);
 +	}
++
++	if (ps_pread(py->pdb_ph, (uintptr_t)ts.cframe, &cf, sizeof (_PyCFrame))
++	    != PS_OK) {
++		return (NULL);
++	}
++
 +
 +	itr = malloc(sizeof (pydb_iter_t));
 +	if (itr == NULL) {
@@ -543,7 +676,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +	}
 +
 +	itr->pdi_ph = py->pdb_ph;
-+	itr->pdi_current = (uintptr_t)ts.frame;
++	itr->pdi_current = (uintptr_t)cf.current_frame;
 +	itr->pdi_nextf = pydb_frame_iter_next;
 +
 +	return (itr);
@@ -593,7 +726,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +	}
 +
 +	itr->pdi_ph = py->pdb_ph;
-+	itr->pdi_current = (uintptr_t)is.tstate_head;
++	itr->pdi_current = (uintptr_t)is.threads.head;
 +	itr->pdi_nextf = pydb_thread_iter_next;
 +
 +	return (itr);
@@ -637,121 +770,3 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +
 +	free(iter);
 +}
---- Python-3.9.1/py_db/libpython312_db.h
-+++ Python-3.9.1/py_db/libpython312_db.h
-@@ -0,0 +1,73 @@
-+/*
-+ * CDDL HEADER START
-+ *
-+ * The contents of this file are subject to the terms of the
-+ * Common Development and Distribution License (the "License").
-+ * You may not use this file except in compliance with the License.
-+ *
-+ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-+ * or http://www.opensolaris.org/os/licensing.
-+ * See the License for the specific language governing permissions
-+ * and limitations under the License.
-+ *
-+ * When distributing Covered Code, include this CDDL HEADER in each
-+ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-+ * If applicable, add the following below this CDDL HEADER, with the
-+ * fields enclosed by brackets "[]" replaced with your own identifying
-+ * information: Portions Copyright [yyyy] [name of copyright owner]
-+ *
-+ * CDDL HEADER END
-+ */
-+/*
-+ * Copyright (c) 2012, 2020, Oracle and/or its affiliates.
-+ */
-+
-+#ifndef	_LIBPYTHON39_DB_H
-+#define	_LIBPYTHON39_DB_H
-+
-+#include <proc_service.h>
-+
-+#ifdef	__cplusplus
-+extern "C" {
-+#endif
-+
-+/* Agent is opaque to library's consumers.  */
-+typedef struct pydb_agent pydb_agent_t;
-+
-+/*
-+ * Library's debug version is 1.  Changes to interface should increase this
-+ * number.
-+ */
-+#define	PYDB_VERSION	1
-+
-+/* Agent creation/destruction routines */
-+extern	pydb_agent_t	*pydb_agent_create(struct ps_prochandle *P, int vers);
-+extern	void		pydb_agent_destroy(pydb_agent_t *py);
-+
-+/* Used by callers that know they are looking at a PyFrameObject */
-+extern	int	pydb_get_frameinfo(pydb_agent_t *py, uintptr_t frame_addr,
-+    char *fbuf, size_t bufsz, int verbose);
-+
-+/*
-+ * Used by callers that don't know if they're looking at PyFrameObject.
-+ * Checks PC for traceable functions.
-+ */
-+extern	int	pydb_pc_frameinfo(pydb_agent_t *py, uintptr_t pc,
-+    uintptr_t frame_addr, char *fbuf, size_t bufsz);
-+
-+/* Iterator functions */
-+typedef struct pydb_iter pydb_iter_t;
-+
-+extern	pydb_iter_t	*pydb_frame_iter_init(pydb_agent_t *py, uintptr_t addr);
-+extern	pydb_iter_t	*pydb_interp_iter_init(pydb_agent_t *py,
-+    uintptr_t addr);
-+extern	pydb_iter_t	*pydb_thread_iter_init(pydb_agent_t *py,
-+    uintptr_t addr);
-+extern	void		pydb_iter_fini(pydb_iter_t *iter);
-+extern	uintptr_t	pydb_iter_next(pydb_iter_t *iter);
-+
-+#ifdef	__cplusplus
-+}
-+#endif
-+
-+#endif	/* _LIBPYTHON39_DB_H */
---- Python-3.9.1/py_db/mapfile-vers
-+++ Python-3.9.1/py_db/mapfile-vers
-@@ -0,0 +1,39 @@
-+#
-+# CDDL HEADER START
-+#
-+# The contents of this file are subject to the terms of the
-+# Common Development and Distribution License (the "License").
-+# You may not use this file except in compliance with the License.
-+#
-+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-+# or http://www.opensolaris.org/os/licensing.
-+# See the License for the specific language governing permissions
-+# and limitations under the License.
-+#
-+# When distributing Covered Code, include this CDDL HEADER in each
-+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-+# If applicable, add the following below this CDDL HEADER, with the
-+# fields enclosed by brackets "[]" replaced with your own identifying
-+# information: Portions Copyright [yyyy] [name of copyright owner]
-+#
-+# CDDL HEADER END
-+#
-+
-+#
-+# Copyright (c) 2012, 2020, Oracle and/or its affiliates.
-+#
-+
-+SUNWprivate_1.1 {
-+    global:
-+	pydb_agent_create;
-+	pydb_agent_destroy;
-+	pydb_frame_iter_init;
-+	pydb_get_frameinfo;
-+	pydb_pc_frameinfo;
-+	pydb_interp_iter_init;
-+	pydb_thread_iter_init;
-+	pydb_iter_fini;
-+	pydb_iter_next;
-+    local:
-+	*;
-+};
