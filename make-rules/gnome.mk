@@ -15,8 +15,7 @@
 
 # Defaults suitable for most GNOME projects
 COMPONENT_VERSION ?=		$(HUMAN_VERSION)
-GNOME_MAJOR ?=			1	# how many numbers from the version constitutes major version
-COMPONENT_VERSION_MAJOR ?=	$(subst $(space),.,$(wordlist 1,$(GNOME_MAJOR),$(subst ., ,$(COMPONENT_VERSION))))
+COMPONENT_VERSION_MAJOR ?=	$(basename $(HUMAN_VERSION))
 COMPONENT_PROJECT_URL ?=	https://gitlab.gnome.org/GNOME/$(COMPONENT_NAME)
 COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.xz
