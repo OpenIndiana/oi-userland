@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXvMC
-COMPONENT_VERSION= 1.0.13
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.0.14
 COMPONENT_FMRI=    x11/library/libxvmc
 COMPONENT_SUMMARY= libXvMC - X Video Motion Compensation library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:0a9ebe6dea7888a747e5aca1b891d53cd7d3a5f141a9645f77d9b6a12cee657c
+COMPONENT_ARCHIVE_HASH= sha256:e4be9eb6b6bafdbbf81f47f7163047215376e45e2dc786d0ea6181c930725ed9
 
 include $(WS_MAKE_RULES)/common.mk
 
