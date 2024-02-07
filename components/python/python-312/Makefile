@@ -120,10 +120,6 @@ COMPONENT_BUILD_ENV += DFLAGS="-$(BITS)"
 COMPONENT_BUILD_ENV += XPROFILE_DIR="$(XPROFILE_DIR)"
 COMPONENT_BUILD_ENV += PATH="$(PATH)"
 
-# Some tests have non-ASCII characters encoded for international domain names;
-# the publish step will fail in 'pkgdepend generate' without this:
-COMPONENT_PUBLISH_ENV += LC_ALL=en_US.UTF-8
-
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python$(COMPONENT_PYVER)/lib-dynload
 
