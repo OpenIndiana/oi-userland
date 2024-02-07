@@ -111,7 +111,6 @@ CONFIGURE_OPTIONS += --enable-optimizations
 CONFIGURE_OPTIONS += --enable-loadable-sqlite-extensions
 CONFIGURE_OPTIONS += --with-dtrace
 CONFIGURE_OPTIONS += --with-system-expat
-#CONFIGURE_OPTIONS += --with-system-ffi
 CONFIGURE_OPTIONS += --without-ensurepip
 CONFIGURE_OPTIONS += --enable-ipv6
 CONFIGURE_OPTIONS += --with-c-locale-coercion
