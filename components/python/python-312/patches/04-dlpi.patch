@@ -1328,17 +1328,40 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +testlink.unbind()
 +print("sap is %x" % testlink.get_sap())
 +print("state is: %d"  % testlink.get_state())
---- Python-3.12.1/configure.ac.orig
-+++ Python-3.12.1/configure.ac
-@@ -7568,3 +7568,4 @@
+--- Python-3.12.1/configure.ac.~3~	Wed Feb  7 13:18:38 2024
++++ Python-3.12.1/configure.ac	Wed Feb  7 13:19:18 2024
+@@ -7517,6 +7517,7 @@
  
  dnl Illumos Additions
- PY_STDLIB_MOD_SIMPLE([ucred])
-+PY_STDLIB_MOD_SIMPLE([dlpi])
+ PY_STDLIB_MOD([ucred], [], [], [-Werror], [-ltsol])
++PY_STDLIB_MOD([dlpi], [], [], [-Werror], [-ldlpi])
+ 
+ # substitute multiline block, must come after last PY_STDLIB_MOD()
+ AC_SUBST([MODULE_BLOCK])
 --- Python-3.12.1/Modules/Setup.stdlib.in.orig
 +++ Python-3.12.1/Modules/Setup.stdlib.in
 @@ -184,3 +184,4 @@
  
  # Illumos additions
- @MODULE_UCRED_TRUE@ucred ucred.c -ltsol
-+@MODULE_DLPI_TRUE@dlpi dlpimodule.c -ldlpi
+ @MODULE_UCRED_TRUE@ucred ucred.c
++@MODULE_DLPI_TRUE@dlpi dlpimodule.c
+--- Python-3.12.1/Modules/dlpimodule.c.~2~	Wed Feb  7 13:47:48 2024
++++ Python-3.12.1/Modules/dlpimodule.c	Wed Feb  7 14:37:11 2024
+@@ -376,7 +376,7 @@
+ 		    Py_None);
+ 	}
+ 
+-	result = PyEval_CallObject(cd->pyfunc, arglist);
++	result = PyObject_Call(cd->pyfunc, arglist, NULL);
+ 	Py_DECREF(arglist);
+ 	if (result == NULL) {
+ 		PyErr_Clear(); /* cannot raise error */
+@@ -584,8 +584,6 @@
+ static PyObject *
+ link_get_bcastaddr(pylink_t *link)
+ {
+-	char *addr[DLPI_PHYSADDR_MAX];
+-	size_t addrlen = 0;
+ 	dlpi_info_t info;
+ 	int rval;
+ 
