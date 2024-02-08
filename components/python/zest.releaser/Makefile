@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zest.releaser
-HUMAN_VERSION =			9.1.2
+HUMAN_VERSION =			9.1.3
 COMPONENT_SUMMARY =		zest.releaser - Software releasing made easy and repeatable
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3d0c832a452176a1767c6cc137f64a0e8f093cd330bfd9fb2251a633a8de5be4
+	sha256:7ef1fb259a7f6b3e103d799f4d7092614c9daa1be491d28c08063353c1ad6001
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.GPL
 
@@ -30,9 +30,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
 COMPONENT_TEST_TARGETS += -- -vv
-
-# Normalize random temporary directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|\(/testtemp\)......../|\1XXXXXXXX/|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/build
