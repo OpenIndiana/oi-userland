@@ -68,8 +68,6 @@ CPPFLAGS += -IPython
 
 # to find the ncurses headers
 CPPFLAGS += -I/usr/include/ncurses
-# enable large files how they did in JDS
-CPPFLAGS += -D_LARGEFILE64_SOURCE
 
 # libffi for _ctypes
 CPPFLAGS += $(shell pkg-config --cflags-only-I libffi)
