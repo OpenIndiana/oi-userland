@@ -25,7 +25,8 @@
 # Copyright (c) 2021, Aurelien Larcher
 #
 
-OPENSSL_VERSION=3.1
+# hold at openssl 1.1 until test failures with 3.1 are root-caused.
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
@@ -200,7 +201,7 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
