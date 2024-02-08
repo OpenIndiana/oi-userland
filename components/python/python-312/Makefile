@@ -100,12 +100,6 @@ ENV := ulimit -n 16384; $(ENV) -i
 # Configure script should look into sbin folder when looking for dtrace
 CONFIGURE_ENV += PATH="$(PATH):/usr/sbin"
 
-# Disable epoll on illumos
-CONFIGURE_ENV += ac_cv_func_epoll_ctl=no
-CONFIGURE_ENV += ac_cv_func_epoll_create1=no
-
-CONFIGURE_ENV += ac_cv_func_getentropy=no
-
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-optimizations
@@ -116,8 +110,6 @@ CONFIGURE_OPTIONS += --without-ensurepip
 CONFIGURE_OPTIONS += --enable-ipv6
 CONFIGURE_OPTIONS += --with-c-locale-coercion
 CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
-# https://bugs.python.org/issue25003
-# CONFIGURE_OPTIONS  +=         "ac_cv_func_getentropy=no"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -DSKIP_ZIP_PATH "
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
