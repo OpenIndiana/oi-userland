@@ -67,7 +67,7 @@
 <transform dir file link hardlink \
 	path=usr/perl5/.*/\.packlist$ -> drop>
 
-# python support
+# Python support
 <transform dir file link hardlink path=usr\/lib\/python2\.7\/.*\.pyc$ -> drop>
 <transform dir file link hardlink path=usr\/lib\/python2\.7\/.*\.pyo$ -> drop>
 <transform dir file link hardlink path=usr\/lib\/python3\.\d+\/(.*\/)?__pycache__\/ -> drop>
@@ -94,7 +94,9 @@
 <transform dir file link hardlink -> \
 	edit path "^(usr/lib/python3\.\d+/vendor-packages/[^/]+-py)3\.\d+(-nspkg\.pth)$" "\1$!(PYVER)\2">
 <transform dir file link hardlink -> \
-	edit path "^(usr/lib/python)3\.\d+(/vendor-packages/)" "\1$!(PYVER)\2">
+	edit path "^(usr/lib/python)3\.\d+(/.*)?$" "\1$!(PYVER)\2">
+<transform dir file link hardlink -> \
+	edit path "^(usr/include/python)3\.\d+(/.*)?$" "\1$!(PYVER)\2">
 
 <transform dir file link hardlink -> \
 	edit target "/(sparcv9|amd64)$" "/$!(MACH64)">
