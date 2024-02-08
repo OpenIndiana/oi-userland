@@ -129,7 +129,7 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
          self.addCleanup(unload, 'pkg')
 -        self.assertEqual(len(pkg.__path__), 2)
 +        # Solaris has its own pkg package that breaks this test
-+        if os.path.exists("/usr/lib/python3.9/vendor-packages/pkg/"):
++        if os.path.exists("/usr/lib/python3.12/vendor-packages/pkg/"):
 +            self.assertEqual(len(pkg.__path__), 3)
 +        else:
 +            self.assertEqual(len(pkg.__path__), 2)
@@ -168,3 +168,13 @@ test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
      def test_locale_compiled(self):
          oldlocale = locale.setlocale(locale.LC_CTYPE)
          self.addCleanup(locale.setlocale, locale.LC_CTYPE, oldlocale)
+--- Python-3.12.1/Lib/test/test_gdb/__init__.py.~2~	Wed Feb  7 07:26:40 2024
++++ Python-3.12.1/Lib/test/test_gdb/__init__.py	Wed Feb  7 08:02:24 2024
+@@ -4,6 +4,7 @@
+ # Lib/test/test_jit_gdb.py
+ 
+ import os
++import sys
+ import sysconfig
+ import unittest
+ from test import support
