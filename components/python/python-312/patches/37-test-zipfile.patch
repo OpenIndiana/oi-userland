@@ -11,7 +11,7 @@ On illumos, the os.utime() call raises:
          try:
              os.utime(TESTFN, (ts, ts))
 -        except OverflowError:
-+        except (OverflowError, OSerror):
++        except (OverflowError, OSError):
              self.skipTest('Host fs cannot set timestamp to required value.')
  
          mtime_ns = os.stat(TESTFN).st_mtime_ns
