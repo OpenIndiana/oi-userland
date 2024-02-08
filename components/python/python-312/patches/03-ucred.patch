@@ -456,15 +456,18 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +    uc.getpid()
 +except OSError as e:
 +    print(e)
---- Python-3.12.1/configure.ac.orig
-+++ Python-3.12.1/configure.ac
-@@ -7565,3 +7565,6 @@
- Platform "$host" with compiler "$ac_cv_cc_name" is not supported by the
- CPython core team, see https://peps.python.org/pep-0011/ for more information.
- ])])
-+
+--- Python-3.12.1/configure.ac.~6~	Wed Feb  7 13:03:25 2024
++++ Python-3.12.1/configure.ac	Wed Feb  7 13:16:47 2024
+@@ -7515,6 +7515,9 @@
+ PY_STDLIB_MOD([xxlimited], [test "$with_trace_refs" = "no"], [test "$ac_cv_func_dlopen" = yes])
+ PY_STDLIB_MOD([xxlimited_35], [test "$with_trace_refs" = "no"], [test "$ac_cv_func_dlopen" = yes])
+ 
 +dnl Illumos Additions
-+PY_STDLIB_MOD_SIMPLE([ucred])
++PY_STDLIB_MOD([ucred], [], [], [-Werror], [-ltsol])
++
+ # substitute multiline block, must come after last PY_STDLIB_MOD()
+ AC_SUBST([MODULE_BLOCK])
+ 
 --- Python-3.12.1/Modules/Setup.stdlib.in.orig
 +++ Python-3.12.1/Modules/Setup.stdlib.in
 @@ -181,3 +181,6 @@
@@ -473,4 +476,4 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  @MODULE_XXLIMITED_35_TRUE@xxlimited_35 xxlimited_35.c
 +
 +# Illumos additions
-+@MODULE_UCRED_TRUE@ucred ucred.c -ltsol
++@MODULE_UCRED_TRUE@ucred ucred.c
