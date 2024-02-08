@@ -151,8 +151,8 @@ TESTOPTS_PYTHON_TEST=
 # The "-v" ensures verbose mode.
 COMPONENT_TEST_ENV += EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
 
-# Prevent the tests from getting stuck waiting for input.
-COMPONENT_TEST_TARGETS= test < /dev/null
+# Override default test target.  See README.rst.
+COMPONENT_TEST_TARGETS = test
 
 # The test output contains details from each test, in whatever order they
 # complete.  The default _TRANSFORMER is not powerful enough to deal with
