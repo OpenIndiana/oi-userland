@@ -990,7 +990,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +PyObject*
 +pyrbac_getuseruidnamattr(PyObject* self, void* arg, int mode, char* filename) {
 +	
-+	userattr_t *ret_userattr;
++	userattr_t *ret_userattr = NULL;
 +
 +	if (mode == PYRBAC_ATTR_MODE) {
 +	    if (filename != NULL) {
@@ -1534,19 +1534,176 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +    or not test_getuseruid() or not test_userattr_iter():
 +    print("*** Failures detected in rbac.userattr\n")
 +    sys.exit(1)
---- Python-3.12.1/configure.ac.orig
-+++ Python-3.12.1/configure.ac
-@@ -7569,3 +7569,5 @@
+--- Python-3.12.1/configure.ac.~4~	Wed Feb  7 13:21:02 2024
++++ Python-3.12.1/configure.ac	Wed Feb  7 13:21:31 2024
+@@ -7518,6 +7518,8 @@
  dnl Illumos Additions
- PY_STDLIB_MOD_SIMPLE([ucred])
- PY_STDLIB_MOD_SIMPLE([dlpi])
-+PY_STDLIB_MOD_SIMPLE([privileges])
-+PY_STDLIB_MOD_SIMPLE([rbac])
+ PY_STDLIB_MOD([ucred], [], [], [-Werror], [-ltsol])
+ PY_STDLIB_MOD([dlpi], [], [], [-Werror], [-ldlpi])
++PY_STDLIB_MOD([privileges], [], [], [-Werror], [])
++PY_STDLIB_MOD([rbac], [], [], [-Werror], [-lnsl -lsocket -lsecdb])
+ 
+ # substitute multiline block, must come after last PY_STDLIB_MOD()
+ AC_SUBST([MODULE_BLOCK])
 --- Python-3.12.1/Modules/Setup.stdlib.in.orig
 +++ Python-3.12.1/Modules/Setup.stdlib.in
 @@ -185,3 +185,5 @@
  # Illumos additions
- @MODULE_UCRED_TRUE@ucred ucred.c -ltsol
- @MODULE_DLPI_TRUE@dlpi dlpimodule.c -ldlpi
+ @MODULE_UCRED_TRUE@ucred ucred.c
+ @MODULE_DLPI_TRUE@dlpi dlpimodule.c
 +@MODULE_PRIVILEGES_TRUE@privileges privileges.c
-+@MODULE_RBAC_TRUE@rbac pyrbac.c authattr.c execattr.c userattr.c -lnsl -lsocket -lsecdb
++@MODULE_RBAC_TRUE@rbac pyrbac.c authattr.c execattr.c userattr.c
+--- Python-3.12.1/Modules/privileges.c.~2~	Wed Feb  7 13:47:48 2024
++++ Python-3.12.1/Modules/privileges.c	Wed Feb  7 14:02:34 2024
+@@ -90,7 +90,7 @@
+ 	set_str = priv_set_to_str(set, ',', PRIV_STR_LIT);
+ 	priv_freeset(set);
+ 	
+-	PyObject* set_list = PyList_New(NULL);
++	PyObject* set_list = PyList_New(0);
+ 	char* saveptr;
+ 	char* item = strtok_r(set_str, ",", &saveptr);
+ 	PyList_Append(set_list, PyBytes_FromString(item));
+@@ -115,8 +115,8 @@
+ 	PyObject* set_string = PyList_GetItem(set_list_in, 0);
+ 	int i;
+ 	for (i = 1; i < PyList_Size(set_list_in); ++i) {
+-		PyBytes_Concat(set_string, PyBytes_FromString(","));
+-		PyBytes_Concat(set_string, PyList_GetItem(set_list_in, i));
++		PyBytes_ConcatAndDel(&set_string, PyBytes_FromString(","));
++		PyBytes_Concat(&set_string, PyList_GetItem(set_list_in, i));
+ 	}
+ 
+ 	priv_set_t * set = priv_str_to_set(PyBytes_AsString(set_string), ",", NULL);
+@@ -125,8 +125,8 @@
+ 	priv_inverse(set);
+ 	char * ret_str = priv_set_to_str(set, ',', PRIV_STR_LIT);
+ 	priv_freeset(set);
+-	
+-	PyObject* set_list_out = PyList_New(NULL);
++
++	PyObject* set_list_out = PyList_New(0);
+ 	char* saveptr;
+ 	char* item = strtok_r(ret_str, ",", &saveptr);
+ 	PyList_Append(set_list_out, PyBytes_FromString(item));
+--- Python-3.12.1/Modules/execattr.c.~2~	Wed Feb  7 13:47:48 2024
++++ Python-3.12.1/Modules/execattr.c	Wed Feb  7 14:38:41 2024
+@@ -75,7 +75,7 @@
+ 			for(len = 0; len < execprof->attr->length; len++) {
+ 				kv_t current = execprof->attr->data[len];
+ 
+-				PyObject* set = PyList_New(NULL);
++				PyObject* set = PyList_New(0);
+ 				char* saveptr;
+ 				char* item = strtok_r(current.value, ",", &saveptr);
+ 				PyList_Append(set, PyBytes_FromString(item));
+--- Python-3.12.1/Modules/userattr.c.~2~	Wed Feb  7 13:47:48 2024
++++ Python-3.12.1/Modules/userattr.c	Wed Feb  7 14:38:23 2024
+@@ -82,7 +82,7 @@
+ 		for(len = 0; len < ret_userattr->attr->length; len++) {
+ 			kv_t current = ret_userattr->attr->data[len];
+ 
+-			PyObject* set = PyList_New(NULL);
++			PyObject* set = PyList_New(0);
+ 			char* saveptr;
+ 			char* item = strtok_r(current.value, ",", &saveptr);
+ 			PyList_Append(set, PyBytes_FromString(item));
+--- Python-3.12.1/Modules/authattr.c.~2~	Wed Feb  7 14:55:38 2024
++++ Python-3.12.1/Modules/authattr.c	Wed Feb  7 15:00:50 2024
+@@ -63,7 +63,7 @@
+ 		for(len = 0; len < ret_authattr->attr->length; len++) {
+ 			kv_t current = ret_authattr->attr->data[len];
+ 
+-			PyObject* set = PyList_New(NULL);
++			PyObject* set = PyList_New(0);
+ 			char* saveptr;
+ 			char* item = strtok_r(current.value, ",", &saveptr);
+ 			PyList_Append(set, PyBytes_FromString(item));
+@@ -118,8 +118,8 @@
+ }
+ 
+ static PyObject*
+-pyrbac_authattr_next(PyObject* self, PyObject* args) {
+-	PyObject* retval = pyrbac_getauthattr(self, args);
++pyrbac_authattr_next(PyObject* self) {
++	PyObject* retval = pyrbac_getauthattr(self, Py_None);
+ 	if( retval == Py_None ) {
+ 		setauthattr();
+ 		return NULL;
+@@ -127,7 +127,7 @@
+ 	return retval;
+ }
+ static PyObject*
+-pyrbac_authattr__iter__(PyObject* self, PyObject* args) {
++pyrbac_authattr__iter__(PyObject* self) {
+ 	return self;
+ }
+ 
+--- Python-3.12.1/Modules/execattr.c.~2~	Wed Feb  7 14:55:38 2024
++++ Python-3.12.1/Modules/execattr.c	Wed Feb  7 15:01:51 2024
+@@ -153,8 +153,8 @@
+ }
+ 
+ static PyObject*
+-pyrbac_execattr_next(PyObject* self, PyObject* args) {
+-	PyObject* retval = pyrbac_getexecattr(self, args);
++pyrbac_execattr_next(PyObject* self) {
++	PyObject* retval = pyrbac_getexecattr(self, Py_None);
+ 	if( retval == Py_None ) {
+ 		setexecattr();
+ 		return NULL;
+@@ -162,7 +162,7 @@
+ 	return retval;
+ }
+ static PyObject*
+-pyrbac_execattr__iter__(PyObject* self, PyObject* args) {
++pyrbac_execattr__iter__(PyObject* self) {
+ 	return self;
+ }
+ 
+--- Python-3.12.1/Modules/userattr.c.~2~	Wed Feb  7 14:55:38 2024
++++ Python-3.12.1/Modules/userattr.c	Wed Feb  7 15:04:31 2024
+@@ -51,15 +51,15 @@
+ 
+ 	if (mode == PYRBAC_ATTR_MODE) {
+ 	    if (filename != NULL) {
+-            FILE* file = fopen(filename, "r");
+-            if (file == NULL)
+-                return NULL;
+-	        ret_userattr = fgetuserattr(file);
+-	        if (fclose(file))
+-                return NULL;
+-	    }
+-	    else
++		FILE* file = fopen(filename, "r");
++		if (file == NULL)
++		    return NULL;
++		ret_userattr = fgetuserattr(file);
++		if (fclose(file))
++		    return NULL;
++	    } else {
+ 	    	ret_userattr = getuserattr();
++	    }
+ 	}
+ 	else if (mode == PYRBAC_NAM_MODE)
+ 		ret_userattr = getusernam((char*) arg);
+@@ -144,8 +144,8 @@
+ }
+ 
+ static PyObject*
+-pyrbac_userattr_next(PyObject* self, PyObject* args) {
+-	PyObject* retval = pyrbac_getuserattr(self, args);
++pyrbac_userattr_next(PyObject* self) {
++	PyObject* retval = pyrbac_getuserattr(self, Py_None);
+ 	if( retval == Py_None ) {
+ 		setuserattr();
+ 		return NULL;
+@@ -153,7 +153,7 @@
+ 	return retval;
+ }
+ static PyObject*
+-pyrbac_userattr__iter__(PyObject* self, PyObject* args) {
++pyrbac_userattr__iter__(PyObject* self) {
+ 	return self;
+ }
+ 
