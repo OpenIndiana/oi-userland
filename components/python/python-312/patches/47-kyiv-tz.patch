@@ -1,12 +1,12 @@
 Illumos timezone code returns EET as the timezone name for Europe/Kyiv even
 in 1984; this bears investigation but is not a Python bug.
 
---- Python-3.12.1/Lib/test/test_email/test_utils.py.~1~	Thu Dec  7 12:45:44 2023
-+++ Python-3.12.1/Lib/test/test_email/test_utils.py	Wed Feb  7 10:02:32 2024
+--- Python-3.12.2/Lib/test/test_email/test_utils.py.~1~	Wed Feb  7 22:30:07 2024
++++ Python-3.12.2/Lib/test/test_email/test_utils.py	Wed Feb  7 22:31:48 2024
 @@ -149,7 +149,7 @@
-     def test_variable_tzname(self):
-         t0 = datetime.datetime(1984, 1, 1, tzinfo=datetime.timezone.utc)
          t1 = utils.localtime(t0)
+         if t1.tzname() in ('Europe', 'UTC'):
+             self.skipTest("Can't find a Kyiv timezone database")
 -        self.assertEqual(t1.tzname(), 'MSK')
 +        self.assertEqual(t1.tzname(), 'EET')
          t0 = datetime.datetime(1994, 1, 1, tzinfo=datetime.timezone.utc)
