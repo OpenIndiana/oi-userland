@@ -27,6 +27,8 @@
 
 # hold at openssl 1.1 until test failures with 3.1 are root-caused.
 USE_OPENSSL11= yes
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
