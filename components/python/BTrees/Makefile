@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		BTrees
-HUMAN_VERSION =			5.1
+HUMAN_VERSION =			5.2
 COMPONENT_SUMMARY =		BTrees - Scalable persistent object containers
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/BTrees
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3e/fa/e111f2a2676aa489e7b181c03a1adf82fc9ee691d648fbeb783638375fcc/BTrees-5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ada0f31e9325a04795d1d24e027ed9b2b65da4d66acff8b87955b3528d7fc369
+	sha256:6e4a0af01a4bbec95a9f931baf5c545979f4341a13a7661ff8a497af4f3d8381
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
