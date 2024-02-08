@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.testrunner
-HUMAN_VERSION =			6.2.1
+HUMAN_VERSION =			6.3
 COMPONENT_SUMMARY =		zope.testrunner - Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/af/4d/72e7b5bdd7af39d08387aa14a44392412f07678813438d4d3a06e0b894e9/zope.testrunner-6.2.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c9ecdcc9ceedbc3577246c902aafa27f2a7f6a20d79ca408458c7c90c877235f
+	sha256:2ecde677999f3080b2f8053340dd7f1952181b7df6e66903c72653de089b79cf
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
