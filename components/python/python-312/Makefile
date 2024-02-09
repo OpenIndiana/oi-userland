@@ -142,7 +142,18 @@ COMPONENT_POST_INSTALL_ACTION= \
     (cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
      $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
     -e 's|$(SPRO_VROOT)/bin/||g' _sysconfigdata__sunos5_.py config-$(PYTHON_VERSION)/Makefile; \
-    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) $(PROTO_DIR)$(PYTHON.$(PYTHON_VERSION).$(BITS)) -m py_compile _sysconfigdata__sunos5_.py)
+    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) $(PROTO_DIR)$(PYTHON.$(PYTHON_VERSION).$(BITS)) -m py_compile _sysconfigdata__sunos5_.py) ;
+
+# Create symlinks without ending '3' for binaries
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in idle pydoc python python-config ; do \
+		$(SYMLINK) $${f}$(PYTHON_VERSION) $(PROTOUSRBINDIR)/$$f ; \
+	done ;
+
+# Allow mediated libpython3.so stable ABI
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MV) $(PROTOUSRLIBDIR.$(BITS))/libpython3.so $(PROTOUSRLIBDIR.$(BITS))/libpython$(subst .,,$(PYTHON_VERSION)).so ; \
+	$(SYMLINK) libpython$(subst .,,$(PYTHON_VERSION)).so $(PROTOUSRLIBDIR.$(BITS))/libpython3.so ;
 
 # You can set TESTOPTS_PYTHON_TEST to a particular test if you want to run just
 # one test.  For example:
