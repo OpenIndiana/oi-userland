@@ -1,0 +1,62 @@
+--- importlib_metadata-7.0.1/tests/test_api.py.orig
++++ importlib_metadata-7.0.1/tests/test_api.py
+@@ -17,6 +17,8 @@
+     version,
+ )
+ 
++import pytest
++
+ 
+ @contextlib.contextmanager
+ def suppress_known_deprecation():
+@@ -198,6 +200,9 @@
+     def test_files_dist_info(self):
+         self._test_files(files('distinfo-pkg'))
+ 
++    @pytest.mark.skip(
++        reason="always fails: https://github.com/python/importlib_metadata/issues/463"
++    )
+     def test_files_egg_info(self):
+         self._test_files(files('egginfo-pkg'))
+         self._test_files(files('egg_with_module-pkg'))
+--- importlib_metadata-7.0.1/tests/test_main.py.orig
++++ importlib_metadata-7.0.1/tests/test_main.py
+@@ -22,6 +22,8 @@
+     version,
+ )
+ 
++import pytest
++
+ 
+ @contextlib.contextmanager
+ def suppress_known_deprecation():
+@@ -192,6 +194,9 @@
+     fixtures.DistInfoPkg,
+     unittest.TestCase,
+ ):
++    @pytest.mark.skip(
++        reason="always fails: https://github.com/python/importlib_metadata/issues/479"
++    )
+     def test_package_discovery(self):
+         dists = list(distributions())
+         assert all(isinstance(dist, Distribution) for dist in dists)
+@@ -429,6 +434,9 @@
+     fixtures.EggInfoPkgSourcesFallback,
+     unittest.TestCase,
+ ):
++    @pytest.mark.skip(
++        reason="always fails: https://github.com/python/importlib_metadata/issues/463"
++    )
+     def test_packages_distributions_on_eggs(self):
+         """
+         Test old-style egg packages with a variation of 'top_level.txt',
+@@ -460,6 +468,9 @@
+ 
+ 
+ class EditableDistributionTest(fixtures.DistInfoPkgEditable, unittest.TestCase):
++    @pytest.mark.skip(
++        reason="always fails: https://github.com/python/importlib_metadata/issues/479"
++    )
+     def test_origin(self):
+         dist = Distribution.from_name('distinfo-pkg')
+         assert dist.origin.url.endswith('.whl')

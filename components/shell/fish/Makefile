@@ -17,15 +17,16 @@
 
 BUILD_BITS= 64
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	3.6.1
+COMPONENT_VERSION=	3.7.0
 COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:55402bb47ca6739d8aba25e41780905b5ce1bce0a5e0dd17dca908b5bc0b49b2
+COMPONENT_ARCHIVE_HASH=	sha256:df1b7378b714f0690b285ed9e4e58afe270ac98dbc9ca5839589c1afcca33ab1
 COMPONENT_ARCHIVE_URL=	https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/fish
 COMPONENT_CLASSIFICATION=	System/Shells
@@ -39,14 +40,9 @@ CMAKE_OPTIONS += -DSYS_PCRE2_INCLUDE_DIR=/usr/include/pcre
 CMAKE_OPTIONS += -DFISH_USE_SYSTEM_PCRE2=ON
 CMAKE_OPTIONS += -DWITH_GETTEXT=ON
 
+COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 COMPONENT_TEST_CMD= gmake
 COMPONENT_TEST_TARGETS= test
-# Just keep the failing test results, even it doesn't make the results reproducable:
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/[0-9]*\.[0-9]* sec//" ' \
-	'-e "s/[0-9]*\/[0-9]*//" ' \
-	'-n' \
-	'-e "/Failed/p"'
 
 # Manually added dependencies (for tests)
 PYTHON_REQUIRED_PACKAGES += library/python/pexpect

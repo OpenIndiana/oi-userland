@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= jasper
-COMPONENT_VERSION= 4.1.0
+COMPONENT_VERSION= 4.2.0
 COMPONENT_SUMMARY= A free software-based reference implementation of the JPEG-2000 Part-1 CODEC
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=  sha256:ffe1543d87f7ffc5039d2415afd48c314a7cc0b0c750b4982cd881d6ed4b5743
+COMPONENT_ARCHIVE_HASH=	sha256:69f0b08a0cc281a06eaf7feed510736854bbff9af89ab1d01b77382ad57ec957
 COMPONENT_PROJECT_URL=	https://www.ece.uvic.ca/~frodo/jasper
 COMPONENT_ARCHIVE_URL=	https://github.com/jasper-software/$(COMPONENT_NAME)/releases/download/version-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= codec/jasper

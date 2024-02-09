@@ -4,7 +4,7 @@ py$(PYV): commands[0]> python -m py.test tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 1140 items
+collecting ... collected 1270 items
 
 tests/storage/test_file_stats.py::TestFileStats::test_file_exists_false PASSED
 tests/storage/test_local_file_manager.py::TestLocalFileManager::test_file_exist_true PASSED
@@ -119,10 +119,12 @@ tests/test_barman_cloud_backup.py::TestCloudBackup::test_unsupported_snapshot_ar
 tests/test_barman_cloud_backup.py::TestCloudBackup::test_unsupported_snapshot_args[snapshot_args4---gcp-project option must be set for snapshot backups when cloud provider is google-cloud-storage] SKIPPED
 tests/test_barman_cloud_backup.py::TestCloudBackup::test_unsupported_snapshot_args[snapshot_args5---azure-subscription-id option must be set for snapshot backups when cloud provider is azure-blob-storage] SKIPPED
 tests/test_barman_cloud_backup.py::TestCloudBackup::test_unsupported_snapshot_args[snapshot_args6-Incomplete options for snapshot backup - missing: azure_resource_group] SKIPPED
-tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args0-107374182400-None] PASSED
-tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args1-10737418240-None] PASSED
-tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args2-107374182400-52428800] PASSED
-tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args3-10737418240-52428800] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args0-107374182400-None-None] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args1-10737418240-None-None] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args2-107374182400-52428800-None] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args3-10737418240-52428800-None] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args4-107374182400-None-83886080] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_postgres_backup_uploader[barman_cloud_args5-10737418240-52428800-83886080] PASSED
 tests/test_barman_cloud_backup.py::TestCloudBackup::test_uses_snapshot_backup_uploader PASSED
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_backup_dir_not_provided PASSED
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_backup_id_not_provided PASSED
@@ -130,10 +132,12 @@ tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_back
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_backup_status_is_not_DONE PASSED
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_running_as_unsupported_hook PASSED
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_running_as_unsupported_phase PASSED
-tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args0-107374182400-None] PASSED
-tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args1-10737418240-None] PASSED
-tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args2-107374182400-52428800] PASSED
-tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args3-10737418240-52428800] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args0-107374182400-None-None] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args1-10737418240-None-None] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args2-107374182400-52428800-None] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args3-10737418240-52428800-None] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args4-107374182400-None-83886080] PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_hook[barman_cloud_args5-10737418240-52428800-83886080] PASSED
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_uses_barman_backup_uploader_when_running_as_retry_hook PASSED
 tests/test_barman_cloud_backup_delete.py::TestCloudBackupDelete::test_backup_wal_preserved_when_oldest_is_keep_standalone_deletion_by_retention PASSED
 tests/test_barman_cloud_backup_delete.py::TestCloudBackupDelete::test_delete_additional_files[20210723T095432] PASSED
@@ -289,12 +293,28 @@ tests/test_cli.py::TestCli::test_backup_immediate_checkpoint[True-None-True] PAS
 tests/test_cli.py::TestCli::test_backup_immediate_checkpoint[True-True-True] PASSED
 tests/test_cli.py::TestCli::test_check_target_action PASSED
 tests/test_cli.py::TestCli::test_generate_manifest PASSED
+tests/test_cli.py::TestCli::test_get_model PASSED
+tests/test_cli.py::TestCli::test_get_models_list_invalid_args PASSED
+tests/test_cli.py::TestCli::test_get_models_list_none_args PASSED
+tests/test_cli.py::TestCli::test_get_models_list_valid_args PASSED
 tests/test_cli.py::TestCli::test_get_server PASSED
 tests/test_cli.py::TestCli::test_get_server_global_error_list PASSED
 tests/test_cli.py::TestCli::test_get_server_inactive PASSED
 tests/test_cli.py::TestCli::test_get_server_list PASSED
 tests/test_cli.py::TestCli::test_get_server_list_global_error_continue PASSED
+tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[False-ws_conninfo-w_conninfo-s_conninfo-conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[True-None-None-s_conninfo-conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[True-None-w_conninfo-s_conninfo-conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[True-ws_conninfo-None-ws_conninfo-ws_conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[True-ws_conninfo-w_conninfo-ws_conninfo-w_conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_wal_streaming[False-ws_conninfo-w_conninfo-s_conninfo-conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_wal_streaming[True-None-None-s_conninfo-conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_wal_streaming[True-None-w_conninfo-s_conninfo-conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_wal_streaming[True-ws_conninfo-None-ws_conninfo-ws_conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_wal_streaming[True-ws_conninfo-w_conninfo-ws_conninfo-w_conninfo] PASSED
 tests/test_cli.py::TestCli::test_get_server_with_conflicts PASSED
+tests/test_cli.py::TestCli::test_manage_model_command[None] PASSED
+tests/test_cli.py::TestCli::test_manage_model_command[model1] PASSED
 tests/test_cli.py::TestCli::test_manage_server_command PASSED
 tests/test_cli.py::TestCli::test_parse_backup_id[20221109T120000-20221109T120000] PASSED
 tests/test_cli.py::TestCli::test_parse_backup_id[first-20221106T120000] PASSED
@@ -342,7 +362,14 @@ tests/test_cli.py::TestCli::test_recover_snapshots[snapshots_info1-snapshot_reco
 tests/test_cli.py::TestCli::test_recover_snapshots[snapshots_info2-snapshot_recovery_args2-extra_recovery_args2-Backup backup_id is a snapshot backup therefore tablespace relocation rules cannot be used] PASSED
 tests/test_cli.py::TestCli::test_recover_snapshots[snapshots_info3-snapshot_recovery_args3-extra_recovery_args3-None] PASSED
 tests/test_cli.py::TestCli::test_replication_status PASSED
+tests/test_cli.py::TestCli::test_replication_status_source[backup-host-False] PASSED
+tests/test_cli.py::TestCli::test_replication_status_source[wal-host-True] PASSED
 tests/test_cli.py::TestCliHelp::test_help_output PASSED
+tests/test_cli.py::TestConfigSwitchCli::test_config_switch_invalid_args PASSED
+tests/test_cli.py::TestConfigSwitchCli::test_config_switch_model_apply_model_no_model PASSED
+tests/test_cli.py::TestConfigSwitchCli::test_config_switch_model_apply_model_ok PASSED
+tests/test_cli.py::TestConfigSwitchCli::test_config_switch_model_reset_model PASSED
+tests/test_cli.py::TestConfigSwitchCli::test_config_switch_no_server PASSED
 tests/test_cli.py::TestKeepCli::test_barman_keep PASSED
 tests/test_cli.py::TestKeepCli::test_barman_keep_backup_not_done PASSED
 tests/test_cli.py::TestKeepCli::test_barman_keep_fails_if_no_target_release_or_status_provided PASSED
@@ -532,8 +559,23 @@ tests/test_compressor.py::TestZSTDPgBaseBackupCompressionOption::test_validate[1
 tests/test_compressor.py::TestZSTDPgBaseBackupCompressionOption::test_validate[15-15000-compression_options0-expected_errors0] PASSED
 tests/test_compressor.py::TestZSTDPgBaseBackupCompressionOption::test_validate[15-15000-compression_options3-expected_errors3] PASSED
 tests/test_compressor.py::TestZSTDPgBaseBackupCompressionOption::test_validate[15-15000-compression_options4-expected_errors4] PASSED
+tests/test_config.py::TestBaseConfig::test_invoke_parser_csv_option_parser_exception PASSED
+tests/test_config.py::TestBaseConfig::test_invoke_parser_csv_option_parser_ok PASSED
+tests/test_config.py::TestBaseConfig::test_invoke_parser_func_parser_exception PASSED
+tests/test_config.py::TestBaseConfig::test_invoke_parser_func_parser_ok PASSED
+tests/test_config.py::TestBaseConfig::test_invoke_parser_no_new_value PASSED
+tests/test_config.py::TestConfig::test__apply_models_file_not_found PASSED
+tests/test_config.py::TestConfig::test__apply_models_file_with_bogus_content PASSED
+tests/test_config.py::TestConfig::test__apply_models_model_does_not_exist PASSED
+tests/test_config.py::TestConfig::test__apply_models_model_ok PASSED
+tests/test_config.py::TestConfig::test__is_model_exception PASSED
+tests/test_config.py::TestConfig::test__is_model_missing_model PASSED
+tests/test_config.py::TestConfig::test__is_model_not_model PASSED
+tests/test_config.py::TestConfig::test__is_model_ok PASSED
 tests/test_config.py::TestConfig::test_config PASSED
 tests/test_config.py::TestConfig::test_config_file_existence PASSED
+tests/test_config.py::TestConfig::test_get_config_source PASSED
+tests/test_config.py::TestConfig::test_global_config_to_json PASSED
 tests/test_config.py::TestConfig::test_interpolation PASSED
 tests/test_config.py::TestConfig::test_missing_barman_home PASSED
 tests/test_config.py::TestConfig::test_parse_backup_compression[1-False] PASSED
@@ -559,12 +601,22 @@ tests/test_config.py::TestConfig::test_parse_snapshot_disks[disk0,disk1,disk2-Tr
 tests/test_config.py::TestConfig::test_parse_snapshot_disks[disk0,disk1-True] PASSED
 tests/test_config.py::TestConfig::test_parse_snapshot_disks[disk0-True] PASSED
 tests/test_config.py::TestConfig::test_parse_time_interval PASSED
-tests/test_config.py::TestConfig::test_populate_servers PASSED
-tests/test_config.py::TestConfig::test_populate_servers_following_symlink PASSED
+tests/test_config.py::TestConfig::test_populate_servers_and_models PASSED
+tests/test_config.py::TestConfig::test_populate_servers_and_models_following_symlink PASSED
 tests/test_config.py::TestConfig::test_primary_ssh_command PASSED
 tests/test_config.py::TestConfig::test_quotes PASSED
 tests/test_config.py::TestConfig::test_server_conflict_paths PASSED
 tests/test_config.py::TestConfig::test_server_list PASSED
+tests/test_config.py::TestConfigChange::test_from_dict_invalid PASSED
+tests/test_config.py::TestConfigChange::test_from_dict_valid PASSED
+tests/test_config.py::TestConfigChange::test_init PASSED
+tests/test_config.py::TestConfigChangeQueue::test_config_changes_queue PASSED
+tests/test_config.py::TestConfigChangeSet::test_config_change_set_from_dict PASSED
+tests/test_config.py::TestConfigChangesProcessor::test_process_conf_changes_queue PASSED
+tests/test_config.py::TestConfigChangesProcessor::test_receive_config_changes_existing_config PASSED
+tests/test_config.py::TestConfigChangesProcessor::test_receive_config_changes_warnings PASSED
+tests/test_config.py::TestConfigMapping::test_read_config_config_parser PASSED
+tests/test_config.py::TestConfigMapping::test_read_config_mapping PASSED
 tests/test_config.py::TestCsvParsing::test_backup_option_parser PASSED
 tests/test_config.py::TestCsvParsing::test_csv_values_global_concurrent PASSED
 tests/test_config.py::TestCsvParsing::test_csv_values_global_conflict PASSED
@@ -574,6 +626,54 @@ tests/test_config.py::TestCsvParsing::test_csv_values_multikey_invalid_server_va
 tests/test_config.py::TestCsvParsing::test_csv_values_recovery_options PASSED
 tests/test_config.py::TestCsvParsing::test_invalid_option_output PASSED
 tests/test_config.py::TestCsvParsing::test_recovery_option_parser PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-None-None-None-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-None-None-None-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-None-None-SOME_CLUSTER-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-None-None-SOME_CLUSTER-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-None-SOME_CONNINFO-None-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-None-SOME_CONNINFO-None-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-None-SOME_CONNINFO-SOME_CLUSTER-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-None-SOME_CONNINFO-SOME_CLUSTER-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-SOME_PRIMARY_CONNINFO-None-None-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-SOME_PRIMARY_CONNINFO-None-None-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-SOME_PRIMARY_CONNINFO-None-SOME_CLUSTER-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-SOME_PRIMARY_CONNINFO-None-SOME_CLUSTER-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-SOME_PRIMARY_CONNINFO-SOME_CONNINFO-None-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-SOME_PRIMARY_CONNINFO-SOME_CONNINFO-None-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-SOME_PRIMARY_CONNINFO-SOME_CONNINFO-SOME_CLUSTER-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[None-SOME_PRIMARY_CONNINFO-SOME_CONNINFO-SOME_CLUSTER-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-None-None-None-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-None-None-None-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-None-None-SOME_CLUSTER-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-None-None-SOME_CLUSTER-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-None-SOME_CONNINFO-None-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-None-SOME_CONNINFO-None-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-None-SOME_CONNINFO-SOME_CLUSTER-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-None-SOME_CONNINFO-SOME_CLUSTER-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-SOME_PRIMARY_CONNINFO-None-None-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-SOME_PRIMARY_CONNINFO-None-None-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-SOME_PRIMARY_CONNINFO-None-SOME_CLUSTER-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-SOME_PRIMARY_CONNINFO-None-SOME_CLUSTER-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-SOME_PRIMARY_CONNINFO-SOME_CONNINFO-None-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-SOME_PRIMARY_CONNINFO-SOME_CONNINFO-None-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-SOME_PRIMARY_CONNINFO-SOME_CONNINFO-SOME_CLUSTER-None] PASSED
+tests/test_config.py::TestModelConfig::test_get_override_options[SOME_STREAMING_CONNINFO-SOME_PRIMARY_CONNINFO-SOME_CONNINFO-SOME_CLUSTER-SOME_MODEL] PASSED
+tests/test_config.py::TestModelConfig::test_get_wal_conninfo[None-None-expected_response0] PASSED
+tests/test_config.py::TestModelConfig::test_get_wal_conninfo[None-w_conninfo-expected_response1] PASSED
+tests/test_config.py::TestModelConfig::test_get_wal_conninfo[ws_conninfo-None-expected_response2] PASSED
+tests/test_config.py::TestModelConfig::test_get_wal_conninfo[ws_conninfo-w_conninfo-expected_response3] PASSED
+tests/test_config.py::TestModelConfig::test_to_json PASSED
+tests/test_config.py::TestModelConfig::test_to_json_with_config_source PASSED
+tests/test_config.py::TestServerConfig::test_apply_model_already_active[False] PASSED
+tests/test_config.py::TestServerConfig::test_apply_model_already_active[True] PASSED
+tests/test_config.py::TestServerConfig::test_apply_model_cluster_mismatch PASSED
+tests/test_config.py::TestServerConfig::test_apply_model_ok[False] PASSED
+tests/test_config.py::TestServerConfig::test_apply_model_ok[True] PASSED
+tests/test_config.py::TestServerConfig::test_reset_model[None-False] PASSED
+tests/test_config.py::TestServerConfig::test_reset_model[None-True] PASSED
+tests/test_config.py::TestServerConfig::test_reset_model[mock_model-False] PASSED
+tests/test_config.py::TestServerConfig::test_reset_model[mock_model-True] PASSED
+tests/test_config.py::TestServerConfig::test_to_json PASSED
 tests/test_config.py::TestServerConfig::test_update_msg_list_and_disable_server PASSED
 tests/test_copy_controller.py::TestRsyncCopyController::test_analyze_directory PASSED
 tests/test_copy_controller.py::TestRsyncCopyController::test_analyze_directory_empty_dst PASSED
@@ -606,6 +706,7 @@ tests/test_copy_controller.py::TestRsyncCopyController::test_statistics[16] PASS
 tests/test_copy_controller.py::TestRsyncCopyController::test_statistics[1] PASSED
 tests/test_copy_controller.py::TestRsyncCopyController::test_statistics[4] PASSED
 tests/test_diagnose.py::TestDiagnose::test_diagnose_json PASSED
+tests/test_diagnose.py::TestDiagnose::test_diagnose_json_with_models PASSED
 tests/test_diagnose.py::TestDiagnose::test_diagnose_json_with_password PASSED
 tests/test_diagnose.py::TestDiagnose::test_diagnose_rerun PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_backup PASSED
@@ -760,6 +861,11 @@ tests/test_postgres.py::TestPostgres::test_get_synchronous_standby_names PASSED
 tests/test_postgres.py::TestPostgres::test_get_systemid PASSED
 tests/test_postgres.py::TestPostgres::test_get_tablespaces PASSED
 tests/test_postgres.py::TestPostgres::test_has_checkpoint_privileges PASSED
+tests/test_postgres.py::TestPostgres::test_has_monitoring_privileges[False-query_response2-False] PASSED
+tests/test_postgres.py::TestPostgres::test_has_monitoring_privileges[False-query_response3-True] PASSED
+tests/test_postgres.py::TestPostgres::test_has_monitoring_privileges[True-query_response0-True] PASSED
+tests/test_postgres.py::TestPostgres::test_has_monitoring_privileges[True-query_response1-True] PASSED
+tests/test_postgres.py::TestPostgres::test_has_monitoring_privileges_exception PASSED
 tests/test_postgres.py::TestPostgres::test_int_version_to_string_version[102200-10.0] PASSED
 tests/test_postgres.py::TestPostgres::test_int_version_to_string_version[140000-14.0] PASSED
 tests/test_postgres.py::TestPostgres::test_int_version_to_string_version[150000-15.0] PASSED
@@ -911,6 +1017,16 @@ tests/test_server.py::TestServer::test_check_standby[db=primary-False-True-fake_
 tests/test_server.py::TestServer::test_check_standby[db=primary-False-True-fake_id_primary-fake_id_standby-primary_conninfo and conninfo should point to primary and standby servers which share the same system identifier] PASSED
 tests/test_server.py::TestServer::test_check_standby[db=primary-True-True-fake_id-fake_id-primary_conninfo should point to a primary server, not a standby] PASSED
 tests/test_server.py::TestServer::test_check_systemid PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming_with_different_connections[pg_remote_status0-streaming_remote_status0-None] PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming_with_different_connections[pg_remote_status1-streaming_remote_status1-no access to monitoring functions: FAILED (privileges for PostgreSQL monitoring functions are required (see documentation))] PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming_with_different_connections[pg_remote_status2-streaming_remote_status2-PostgreSQL streaming (WAL streaming): FAILED] PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming_with_different_connections[pg_remote_status3-streaming_remote_status3-PostgreSQL streaming (WAL streaming): FAILED (test error)] PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming_with_different_connections[pg_remote_status4-streaming_remote_status4-wal_level (WAL streaming): FAILED (please set it to a higher level than 'minimal')] PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming_with_different_connections[pg_remote_status5-streaming_remote_status5-systemid coherence (WAL streaming): FAILED (is the streaming DSN targeting the same server of the PostgreSQL connection string?)] PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming_with_different_connections[pg_remote_status6-streaming_remote_status6-systemid coherence (WAL streaming): FAILED (is the streaming DSN targeting the same server of the PostgreSQL connection string?)] PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming_with_different_connections[pg_remote_status7-streaming_remote_status7-replication slot (WAL streaming): FAILED (slot 'test_slot' not initialised: is 'receive-wal' running?)] PASSED
+tests/test_server.py::TestServer::test_check_wal_streaming_with_different_connections[pg_remote_status8-streaming_remote_status8-replication slot (WAL streaming): FAILED (slot 'test_slot' not active: is 'receive-wal' running?)] PASSED
 tests/test_server.py::TestServer::test_check_wal_validity_exceeds_maximum_age PASSED
 tests/test_server.py::TestServer::test_check_wal_validity_no_maximum_age PASSED
 tests/test_server.py::TestServer::test_check_wal_validity_no_wals PASSED
@@ -947,6 +1063,13 @@ tests/test_server.py::TestServer::test_put_wal_fail[file_absent-Checksum without
 tests/test_server.py::TestServer::test_put_wal_fail[sum_absent-Missing checksum for file] PASSED
 tests/test_server.py::TestServer::test_put_wal_fail[sum_mismatch-Bad file checksum] PASSED
 tests/test_server.py::TestServer::test_put_wal_fsync PASSED
+tests/test_server.py::TestServer::test_receive_wal_checks[remote_status0-None] PASSED
+tests/test_server.py::TestServer::test_receive_wal_checks[remote_status1-Check 'no access to monitoring functions' failed for server 'main'] PASSED
+tests/test_server.py::TestServer::test_receive_wal_checks[remote_status2-Check 'PostgreSQL streaming (WAL streaming)' failed for server 'main'] PASSED
+tests/test_server.py::TestServer::test_receive_wal_checks[remote_status3-Check 'PostgreSQL streaming (WAL streaming)' failed for server 'main'] PASSED
+tests/test_server.py::TestServer::test_receive_wal_checks[remote_status4-Check 'wal_level (WAL streaming)' failed for server 'main'] PASSED
+tests/test_server.py::TestServer::test_receive_wal_checks[remote_status5-Check 'systemid coherence (WAL streaming)' failed for server 'main'] PASSED
+tests/test_server.py::TestServer::test_receive_wal_checks[remote_status6-Check 'systemid coherence (WAL streaming)' failed for server 'main'] PASSED
 tests/test_server.py::TestServer::test_replication_status PASSED
 tests/test_server.py::TestServer::test_rerun_init PASSED
 tests/test_server.py::TestServer::test_standby_init PASSED
@@ -1022,6 +1145,10 @@ tests/test_utils.py::TestConfigureLogging::test_file_level_call PASSED
 tests/test_utils.py::TestConfigureLogging::test_simple_call PASSED
 tests/test_utils.py::TestDropPrivileges::test_change_user PASSED
 tests/test_utils.py::TestDropPrivileges::test_same_user PASSED
+tests/test_utils.py::TestEditConfig::test_edit_config_existing_option PASSED
+tests/test_utils.py::TestEditConfig::test_edit_config_existing_section PASSED
+tests/test_utils.py::TestEditConfig::test_edit_config_new_file PASSED
+tests/test_utils.py::TestEditConfig::test_edit_config_new_section PASSED
 tests/test_utils.py::TestForceText::test_force_text PASSED
 tests/test_utils.py::TestForceText::test_force_text_exception PASSED
 tests/test_utils.py::TestGetLogLevels::test_get_log_levels PASSED
@@ -1035,6 +1162,9 @@ tests/test_utils.py::TestHumanReadableDelta::test_seven_days PASSED
 tests/test_utils.py::TestHumanReadableDelta::test_two_days PASSED
 tests/test_utils.py::TestHumanReadableDelta::test_two_hours PASSED
 tests/test_utils.py::TestHumanReadableDelta::test_two_minutes PASSED
+tests/test_utils.py::TestLocksCleanup::test_auto_clean_disabled PASSED
+tests/test_utils.py::TestLocksCleanup::test_busy_lock_skip PASSED
+tests/test_utils.py::TestLocksCleanup::test_locks_cleanup PASSED
 tests/test_utils.py::TestMkpath::test_path_error PASSED
 tests/test_utils.py::TestMkpath::test_path_exists PASSED
 tests/test_utils.py::TestMkpath::test_path_not_exists PASSED
@@ -1148,6 +1278,10 @@ tests/test_xlog.py::TestCheckArchiveUsable::test_passes_if_timeline_gt_wal_file_
 tests/test_xlog.py::TestCheckArchiveUsable::test_passes_if_timeline_with_no_wals PASSED
 
 =============================== warnings summary ===============================
+tests/test_lockfile.py:240
+  $(@D)/tests/test_lockfile.py:240: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(1)
+
 tests/test_command_wrappers.py: 28 warnings
   $(@D)/barman/command_wrappers.py:767: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("9.3"):
@@ -1232,11 +1366,11 @@ tests/test_executor.py::TestSnapshotBackupExecutor::test_find_missing_and_unmoun
     logging.warn("Error resolving mount point: {}".format(exc))
 
 tests/test_utils.py::TestBarmanEncoder::test_version_objects
-  $(@D)/tests/test_utils.py:547: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/tests/test_utils.py:552: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     json_dump = json.dumps(LooseVersion("9.5.3"), cls=barman.utils.BarmanEncoder)
 
 tests/test_utils.py::TestBarmanEncoderV2::test_version_objects
-  $(@D)/tests/test_utils.py:638: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/tests/test_utils.py:643: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     json_dump = json.dumps(LooseVersion("9.5.3"), cls=barman.utils.BarmanEncoderV2)
 
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
@@ -1248,11 +1382,6 @@ tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_
     pg_version = Version(pg_version)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1117 passed, 23 skipped, 285 warnings ========
-Forcing StreamingConnection cleanup during process shut down.
-Forcing StreamingConnection cleanup during process shut down.
-Forcing StreamingConnection cleanup during process shut down.
-Forcing StreamingConnection cleanup during process shut down.
-Forcing StreamingConnection cleanup during process shut down.
+======== 1247 passed, 23 skipped, 286 warnings ========
   py$(PYV): OK
   congratulations :)

@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		paramiko
-HUMAN_VERSION =			3.3.1
+HUMAN_VERSION =			3.4.0
 COMPONENT_SUMMARY =		paramiko - SSH2 protocol library
 COMPONENT_PROJECT_URL =		https://paramiko.org
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/paramiko/paramiko/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b32399fc1e21201b09f3c13db825260cd17ac7707ce040068f5d19e3720dd09d
+	sha256:36a34a9bd0b1f4fca89c0d880fad7af69f4dc5f8f0fb8c795938bdf880694c1f
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 

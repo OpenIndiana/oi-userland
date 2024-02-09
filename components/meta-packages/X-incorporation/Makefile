@@ -12,33 +12,16 @@
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
 
+BUILD_STYLE = pkg
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		X-incorporation
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	7
+COMPONENT_REVISION=	9
 COMPONENT_SUMMARY=	X consolidation incorporation
+COMPONENT_FMRI=		consolidation/X/X-incorporation
 
-include ../../../make-rules/ips.mk
-
-#PKGLINT=/bin/true
-
-download:
-
-prep:
-
-build:
-
-install:
-	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
-
-clean:
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/motif/libdpstkxm
-REQUIRED_PACKAGES += system/kernel/hardware-cursor
-REQUIRED_PACKAGES += x11/library/dps
-REQUIRED_PACKAGES += x11/library/libowconfig
-REQUIRED_PACKAGES += x11/network/rstart
-REQUIRED_PACKAGES += x11/network/x11-network-proxies

@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 <contributor>
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -2059,6 +2059,7 @@ file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/generate_bad_imports.tx
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/generate_env.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/generate_goroot_PATH.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/generate_invalid.txt
+file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/generate_workspace.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/get_404_meta.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/get_brace.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/get_custom_domain_wildcard.txt
@@ -2123,6 +2124,7 @@ file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/install_cmd_gobin.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/install_cross_gobin.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/install_dep_version.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/install_goroot_targets.txt
+file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/install_modcacherw_issue64282.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/install_move_not_stale.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/install_msan_and_race_and_asan_require_cgo.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/install_rebuild_removed.txt
@@ -2228,6 +2230,7 @@ file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_domain_root.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_dot.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_download.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_download_concurrent_read.txt
+file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_download_exec_toolchain.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_download_git_bareRepository.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_download_git_decorate_full.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_download_hash.txt
@@ -2355,6 +2358,7 @@ file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_init_glide.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_init_invalid_major.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_init_path.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_init_tidy.txt
+file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_insecure_issue63845.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_install_hint.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_install_pkg_version.txt
 file path=usr/lib/golang/1.21/src/cmd/go/testdata/script/mod_install_versioned.txt
@@ -7911,6 +7915,8 @@ file path=usr/lib/golang/1.21/src/runtime/testdata/testprogcgo/sigpanic.go
 file path=usr/lib/golang/1.21/src/runtime/testdata/testprogcgo/sigstack.go
 file path=usr/lib/golang/1.21/src/runtime/testdata/testprogcgo/sigthrow.go
 file path=usr/lib/golang/1.21/src/runtime/testdata/testprogcgo/stack_windows.go
+file path=usr/lib/golang/1.21/src/runtime/testdata/testprogcgo/stackswitch.c
+file path=usr/lib/golang/1.21/src/runtime/testdata/testprogcgo/stackswitch.go
 file path=usr/lib/golang/1.21/src/runtime/testdata/testprogcgo/threadpanic.go
 file path=usr/lib/golang/1.21/src/runtime/testdata/testprogcgo/threadpanic_unix.c
 file path=usr/lib/golang/1.21/src/runtime/testdata/testprogcgo/threadpanic_windows.c
@@ -11034,12 +11040,16 @@ file path=usr/lib/golang/1.21/test/fixedbugs/issue6295.dir/p1.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6295.dir/p2.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6295.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6298.go
+file path=usr/lib/golang/1.21/test/fixedbugs/issue63657.go
+file path=usr/lib/golang/1.21/test/fixedbugs/issue63955.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6399.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6402.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6403.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6405.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6406.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6428.go
+file path=usr/lib/golang/1.21/test/fixedbugs/issue64565.go
+file path=usr/lib/golang/1.21/test/fixedbugs/issue64565.out
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6500.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6513.dir/a.go
 file path=usr/lib/golang/1.21/test/fixedbugs/issue6513.dir/b.go

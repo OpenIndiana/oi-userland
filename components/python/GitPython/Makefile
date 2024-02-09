@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		GitPython
-HUMAN_VERSION =			3.1.40
+HUMAN_VERSION =			3.1.41
 COMPONENT_SUMMARY =		GitPython - GitPython is a Python library used to interact with Git repositories
 COMPONENT_PROJECT_URL =		https://github.com/gitpython-developers/GitPython
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/gitpython-developers/GitPython/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:701479f3dfa4aa5e254324380d017fcbac3d29c117b26384f6f490f8af799135
+	sha256:57398a80964bf9f1d4738ab0c53dc3af522e965fb9b9f66e4b0d2f99141a6c38
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -53,6 +53,9 @@ COMPONENT_PRE_TEST_ACTION += $(RM) -r /tmp/repos ;
 # Force no colors to override defaults in tox.ini
 COMPONENT_TEST_TARGETS += -- --color=no
 
+# https://github.com/gitpython-developers/GitPython/issues/1797
+PYTEST_ADDOPTS += --ignore test/test_index.py
+
 # Manually added test dependencies
 TEST_REQUIRED_PACKAGES += developer/versioning/git
 
@@ -68,4 +71,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-subtests
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/tomli

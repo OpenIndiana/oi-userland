@@ -1,0 +1,67 @@
+--- httpx-0.26.0/httpx/_transports/default.py.orig
++++ httpx-0.26.0/httpx/_transports/default.py
+@@ -172,7 +172,7 @@
+             except ImportError:  # pragma: no cover
+                 raise ImportError(
+                     "Using SOCKS proxy, but the 'socksio' package is not installed. "
+-                    "Make sure to install httpx using `pip install httpx[socks]`."
++                    "Please install 'socksio' using `pkg install library/python/socksio`."
+                 ) from None
+ 
+             self._pool = httpcore.SOCKSProxy(
+@@ -312,7 +312,7 @@
+             except ImportError:  # pragma: no cover
+                 raise ImportError(
+                     "Using SOCKS proxy, but the 'socksio' package is not installed. "
+-                    "Make sure to install httpx using `pip install httpx[socks]`."
++                    "Please install 'socksio' using `pkg install library/python/socksio`."
+                 ) from None
+ 
+             self._pool = httpcore.AsyncSOCKSProxy(
+--- httpx-0.26.0/httpx/_client.py.orig
++++ httpx-0.26.0/httpx/_client.py
+@@ -668,7 +668,7 @@
+             except ImportError:  # pragma: no cover
+                 raise ImportError(
+                     "Using http2=True, but the 'h2' package is not installed. "
+-                    "Make sure to install httpx using `pip install httpx[http2]`."
++                    "Please install 'h2' using `pkg install library/python/h2`."
+                 ) from None
+ 
+         if proxies:
+@@ -1408,7 +1408,7 @@
+             except ImportError:  # pragma: no cover
+                 raise ImportError(
+                     "Using http2=True, but the 'h2' package is not installed. "
+-                    "Make sure to install httpx using `pip install httpx[http2]`."
++                    "Please install 'h2' using `pkg install library/python/h2`."
+                 ) from None
+ 
+         if proxies:
+--- httpx-0.26.0/httpx/__init__.py.orig
++++ httpx-0.26.0/httpx/__init__.py
+@@ -54,7 +54,8 @@
+         print(
+             "The httpx command line client could not run because the required "
+             "dependencies were not installed.\nMake sure you've installed "
+-            "everything with: pip install 'httpx[cli]'"
++            "everything with: pkg install library/python/click "
++            "library/python/pygments library/python/rich"
+         )
+         sys.exit(1)
+ 
+--- httpx-0.26.0/httpx/_decoders.py.orig
++++ httpx-0.26.0/httpx/_decoders.py
+@@ -97,9 +97,9 @@
+     def __init__(self) -> None:
+         if brotli is None:  # pragma: no cover
+             raise ImportError(
+-                "Using 'BrotliDecoder', but neither of the 'brotlicffi' or 'brotli' "
+-                "packages have been installed. "
+-                "Make sure to install httpx using `pip install httpx[brotli]`."
++                "Using 'BrotliDecoder', but no 'brotli' "
++                "package has been installed. "
++                "Make sure to install 'brotli' using `pkg install library/python/brotli`."
+             ) from None
+ 
+         self.decompressor = brotli.Decompressor()

@@ -14,32 +14,27 @@
 #   $WS_TOOLS/python-integrate-project dogpile.cache
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dogpile.cache
-HUMAN_VERSION =			1.2.2
+HUMAN_VERSION =			1.3.1
 COMPONENT_SUMMARY =		dogpile.cache - A caching front-end based on the Dogpile lock.
 COMPONENT_PROJECT_URL =		https://github.com/sqlalchemy/dogpile.cache
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d2/f8/f3e877361372737d83f6592d6ba2126b2018d2208472a5dcb82773694281/dogpile.cache-1.2.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fd9022c0d9cbadadf20942391a95adaf296be80b42daa8e202f8de1c21f198b2
+	sha256:47d780a09cb7affe8d056ff97fd5ccc7f249e37ef911beca7e819ef7bf164358
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
-PYTEST_ADDOPTS += -p no:randomly
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/decorator
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/stevedore
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/decorator
 TEST_REQUIRED_PACKAGES.python += library/python/mako

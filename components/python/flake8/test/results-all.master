@@ -1,16 +1,12 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m coverage run -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 466 items
+collecting ... collected 463 items
 
-::project PASSED
 tests/integration/test_aggregator.py::test_aggregate_options_when_isolated PASSED
 tests/integration/test_aggregator.py::test_aggregate_options_with_config PASSED
 tests/integration/test_api_legacy.py::test_legacy_api PASSED
@@ -475,9 +471,30 @@ tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa: E111,W1
 tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa:E111, W123,F821-True] PASSED
 tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa:E111,W123,F821-True] PASSED
 
-41 files skipped due to complete coverage.
+======== 463 passed ========
+py$(PYV): commands[1]> python -m coverage report
+Name                                                                                                                                         Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/__init__.py                 24      2      6      1    90%   58-59
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/api/legacy.py               71      2      8      0    97%   211-212
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/checker.py                 294     22     88      7    92%   70-77, 81, 211-212, 240-241, 338-339, 365-374, 376->413, 400->411, 441, 517-518, 549
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/formatting/base.py          63      0     24      1    99%   193->195
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/main/application.py        129      7     18      1    95%   104-107, 210-211, 215
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/options/aggregator.py       22      3      4      1    85%   42-44
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/options/manager.py         120      1     40      1    99%   198
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/plugins/pycodestyle.py      75      2     10      2    95%   100, 106
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/plugins/pyflakes.py         27      1      4      1    94%   97
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/processor.py               222      0     66      2    99%   213->219, 262->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/style_guide.py             143      0     40      2    99%   172->exit, 173->exit
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                         3718     40    577     19    99%
 
+59 files skipped due to complete coverage.
+py$(PYV): commands[2]> python -m coverage report --fail-under 100 --include 'tests/*'
+Name    Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------
+TOTAL    1857      0     60      0   100%
 
-======== 464 passed ========
+38 files skipped due to complete coverage.
   py$(PYV): OK
   congratulations :)

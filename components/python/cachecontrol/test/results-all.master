@@ -1,13 +1,10 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
-collecting ... collected 98 items
+collecting ... collected 99 items
 
-::project PASSED
 tests/test_adapter.py::TestSessionActions::test_close PASSED
 tests/test_adapter.py::TestSessionActions::test_delete_invalidates_cache[use_adapter] PASSED
 tests/test_adapter.py::TestSessionActions::test_delete_invalidates_cache[use_wrapper] PASSED
@@ -47,6 +44,8 @@ tests/test_chunked_response.py::TestChunkedResponses::test_stream_is_cached PASS
 tests/test_chunked_response.py::TestChunkedResponses::test_stream_is_not_cached_when_content_is_not_read PASSED
 tests/test_etag.py::TestDisabledETags::test_expired_etags_if_none_match_response PASSED
 tests/test_etag.py::TestETag::test_etags_get_example PASSED
+tests/test_etag.py::TestETag::test_etags_get_no_cache PASSED
+tests/test_etag.py::TestETag::test_etags_get_with_range PASSED
 tests/test_etag.py::TestReleaseConnection::test_not_modified_releases_connection PASSED
 tests/test_expires_heuristics.py::TestExpiresAfter::test_expires_after_one_day PASSED
 tests/test_expires_heuristics.py::TestHeuristicWith3xxResponse::test_heuristic_applies_to_301 PASSED
@@ -107,4 +106,52 @@ tests/test_storage_redis.py::TestRedisCache::test_set_expiration_int PASSED
 tests/test_vary.py::TestVary::test_vary_example PASSED
 
 
-======== 98 passed ========
+=============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/cherrypy/__init__.py:60
+  $(PYTHON_DIR)/vendor-packages/cherrypy/__init__.py:60: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2348
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2348: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: 15 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2868: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 99 passed, 25 warnings ========

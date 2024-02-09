@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyQt-builder
-HUMAN_VERSION =			1.15.3
+HUMAN_VERSION =			1.15.4
 COMPONENT_SUMMARY =		PyQt-builder - The PEP 517 compliant PyQt build system
 COMPONENT_PROJECT_URL =		https://www.riverbankcomputing.com/software/pyqt-builder/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/21/e9/5ee4d76d3f4c566b090924e36da067748db948a5faeff4142d149a4d5a15/PyQt-builder-1.15.3.tar.gz
+	https://files.pythonhosted.org/packages/c0/75/a3384eea8770c17e77821368618a5140c4ae0c37f9c05a84ef55f4807172/PyQt-builder-1.15.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5b33e99edcb77d4a63a38605f4457a04cff4e254c771ed529ebc9589906ccdb1
+	sha256:39f8c75db17d9ce17cb6bbf3df1650b5cebc1ea4e5bd73843d21cc96612b2ae1
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE-GPL3
 

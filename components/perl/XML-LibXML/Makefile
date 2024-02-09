@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		XML::LibXML
-HUMAN_VERSION =			2.0209
+HUMAN_VERSION =			2.0210
 COMPONENT_SUMMARY =		XML::LibXML - Interface to Gnome libxml2 xml parsing and DOM library
 COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b4a5abbcd689aa2fbbc8b7b45339e961c4984e48108494eb6c282b4748222425
+	sha256:a29bf3f00ab9c9ee04218154e0afc8f799bf23674eb99c1a9ed4de1f4059a48d
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk

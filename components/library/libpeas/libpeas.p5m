@@ -15,6 +15,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,7 +25,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 depend type=require fmri=library/lua/lgi-52
 
 depend type=conditional fmri=$(COMPONENT_FMRI)/libpeas-python3loader \
-    predicate=runtime/python-35
+    predicate=runtime/python-$(PYV)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 

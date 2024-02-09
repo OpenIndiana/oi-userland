@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libdbusmenu
 COMPONENT_VERSION=      16.0.4.0
 HUMAN_VERSION=          16.04.0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=      Library for passing menus over DBus
 COMPONENT_PROJECT_URL=  https://launchpad.net/libdbusmenu
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -34,7 +34,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --with-gtk=2
+CONFIGURE_OPTIONS += --with-gtk=3
 
 # pkgdepend doesn't like the first line of a Python script to be '#!/usr/bin/env python'
 # so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
@@ -53,6 +53,7 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2

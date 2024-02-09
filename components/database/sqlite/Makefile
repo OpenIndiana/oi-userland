@@ -22,18 +22,18 @@
 # Copyright (c) 2020 Michal Nowak
 #
 
-BUILD_BITS= 64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.44.2
-TARBALL_VERSION=		3440200
+COMPONENT_VERSION=      3.45.1
+TARBALL_VERSION=		3450100
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:73187473feb74509357e8fa6cb9fd67153b2d010d00aeb2fddb6ceeb18abaf27
+COMPONENT_ARCHIVE_HASH= sha256:7f7b14a68edbcd4a57df3a8c4dbd56d2d3546a6e7cdd50de40ceb03af33d34ba
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2023/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2024/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         database/sqlite-3
 COMPONENT_CLASSIFICATION=	Development/Databases
 COMPONENT_LICENSE=      Public Domain
@@ -63,19 +63,20 @@ CFLAGS			+= -DSQLITE_ENABLE_STAT2
 CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 CFLAGS			+= -DSQLITE_ENABLE_COLUMN_METADATA
 
-CONFIGURE_OPTIONS	+= --with-tcl="$(USRLIBDIR64)"
-CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS	+= --disable-static
-CONFIGURE_OPTIONS	+= --enable-readline
-CONFIGURE_OPTIONS	+= --enable-fts3
-CONFIGURE_OPTIONS	+= --enable-fts4
-CONFIGURE_OPTIONS	+= --enable-fts5
-CONFIGURE_OPTIONS	+= --enable-json1
-CONFIGURE_OPTIONS	+= --enable-update-limit
-CONFIGURE_OPTIONS	+= --enable-rtree
-CONFIGURE_OPTIONS	+= --enable-threadsafe 
-CONFIGURE_OPTIONS	+= --enable-shared
-CONFIGURE_OPTIONS	+= --enable-dynamic-extensions
+CONFIGURE_OPTIONS.32	+= --disable-tcl
+CONFIGURE_OPTIONS.64	+= --with-tcl="$(USRLIBDIR64)"
+CONFIGURE_OPTIONS		+= --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS		+= --disable-static
+CONFIGURE_OPTIONS		+= --enable-readline
+CONFIGURE_OPTIONS		+= --enable-fts3
+CONFIGURE_OPTIONS		+= --enable-fts4
+CONFIGURE_OPTIONS		+= --enable-fts5
+CONFIGURE_OPTIONS		+= --enable-json1
+CONFIGURE_OPTIONS		+= --enable-update-limit
+CONFIGURE_OPTIONS		+= --enable-rtree
+CONFIGURE_OPTIONS		+= --enable-threadsafe 
+CONFIGURE_OPTIONS		+= --enable-shared
+CONFIGURE_OPTIONS		+= --enable-dynamic-extensions
 
 CONFIGURE_ENV.64 += TCLLIBDIR=$(USRLIBDIR)/tcl8.6/sqlite3/$(MACH64)
 

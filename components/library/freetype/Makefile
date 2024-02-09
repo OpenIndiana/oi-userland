@@ -15,11 +15,12 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         freetype
 COMPONENT_VERSION=      2.13.2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=  	FreeType 2 font engine
 COMPONENT_SRC=      	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz

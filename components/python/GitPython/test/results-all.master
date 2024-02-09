@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
-collecting ... collected 528 items
+collecting ... collected 548 items
 
 test/performance/test_commit.py::TestPerformance::test_commit_iteration PASSED
 test/performance/test_commit.py::TestPerformance::test_commit_serialization PASSED
@@ -280,7 +280,12 @@ test/test_git.py::TestGit::test_it_accepts_environment_variables PASSED
 test/test_git.py::TestGit::test_it_accepts_stdin PASSED
 test/test_git.py::TestGit::test_it_avoids_upcasing_unrelated_environment_variable_names SKIPPED
 test/test_git.py::TestGit::test_it_executes_git_and_returns_result PASSED
-test/test_git.py::TestGit::test_it_executes_git_not_from_cwd PASSED
+test/test_git.py::TestGit::test_it_executes_git_not_from_cwd_1__False__False____git____version____False_ PASSED
+test/test_git.py::TestGit::test_it_executes_git_not_from_cwd_2__False__True___git_version___False_ PASSED
+test/test_git.py::TestGit::test_it_executes_git_not_from_cwd_3__False__True___git_version___True_ PASSED
+test/test_git.py::TestGit::test_it_executes_git_not_from_cwd_4__True__False____git____version____False_ PASSED
+test/test_git.py::TestGit::test_it_executes_git_not_from_cwd_5__True__True___git_version___False_ PASSED
+test/test_git.py::TestGit::test_it_executes_git_not_from_cwd_6__True__True___git_version___True_ PASSED
 test/test_git.py::TestGit::test_it_ignores_false_kwargs PASSED
 test/test_git.py::TestGit::test_it_logs_if_it_uses_a_shell_1__None__False_ PASSED
 test/test_git.py::TestGit::test_it_logs_if_it_uses_a_shell_2__None__True_ PASSED
@@ -305,24 +310,6 @@ test/test_git.py::TestGit::test_persistent_options PASSED
 test/test_git.py::TestGit::test_refresh PASSED
 test/test_git.py::TestGit::test_single_char_git_options_are_passed_to_git PASSED
 test/test_git.py::TestGit::test_version PASSED
-test/test_index.py::TestIndex::test__to_relative_path_at_root PASSED
-test/test_index.py::TestIndex::test_add_a_file_with_wildcard_chars PASSED
-test/test_index.py::TestIndex::test_add_utf8P_path PASSED
-test/test_index.py::TestIndex::test_commit_msg_hook_fail PASSED
-test/test_index.py::TestIndex::test_commit_msg_hook_success PASSED
-test/test_index.py::TestIndex::test_compare_write_tree PASSED
-test/test_index.py::TestIndex::test_index_add_pathlike PASSED
-test/test_index.py::TestIndex::test_index_bare_add PASSED
-test/test_index.py::TestIndex::test_index_file_base PASSED
-test/test_index.py::TestIndex::test_index_file_diffing PASSED
-test/test_index.py::TestIndex::test_index_file_from_tree PASSED
-test/test_index.py::TestIndex::test_index_lock_handling PASSED
-test/test_index.py::TestIndex::test_index_merge_tree PASSED
-test/test_index.py::TestIndex::test_index_mutation PASSED
-test/test_index.py::TestIndex::test_index_new PASSED
-test/test_index.py::TestIndex::test_index_single_addremove PASSED
-test/test_index.py::TestIndex::test_pre_commit_hook_fail PASSED
-test/test_index.py::TestIndex::test_pre_commit_hook_success PASSED
 test/test_installation.py::TestInstallation::test_installation PASSED
 test/test_quick_doc.py::QuickDoc::test_cloned_repo_object PASSED
 test/test_quick_doc.py::QuickDoc::test_init_repo_object PASSED
@@ -425,7 +412,8 @@ test/test_repo.py::TestRepo::test_is_valid_object PASSED
 test/test_repo.py::TestRepo::test_leaking_password_in_clone_logs SKIPPED
 test/test_repo.py::TestRepo::test_max_chunk_size PASSED
 test/test_repo.py::TestRepo::test_merge_base PASSED
-test/test_repo.py::TestRepo::test_new_should_raise_on_invalid_repo_location SKIPPED
+test/test_repo.py::TestRepo::test_new_should_raise_on_invalid_repo_location PASSED
+test/test_repo.py::TestRepo::test_new_should_raise_on_invalid_repo_location_within_repo PASSED
 test/test_repo.py::TestRepo::test_new_should_raise_on_non_existent_path PASSED
 test/test_repo.py::TestRepo::test_pickleable PASSED
 test/test_repo.py::TestRepo::test_rebasing PASSED
@@ -457,6 +445,8 @@ test/test_submodule.py::TestSubmodule::test_first_submodule PASSED
 test/test_submodule.py::TestSubmodule::test_git_submodule_compatibility PASSED
 test/test_submodule.py::TestSubmodule::test_git_submodules_and_add_sm_with_new_commit PASSED
 test/test_submodule.py::TestSubmodule::test_ignore_non_submodule_file PASSED
+test/test_submodule.py::TestSubmodule::test_iter_items_from_invalid_hash PASSED
+test/test_submodule.py::TestSubmodule::test_iter_items_from_nonexistent_hash PASSED
 test/test_submodule.py::TestSubmodule::test_list_only_valid_submodules PASSED
 test/test_submodule.py::TestSubmodule::test_remove_norefs PASSED
 test/test_submodule.py::TestSubmodule::test_rename PASSED
@@ -474,52 +464,88 @@ test/test_submodule.py::TestSubmodule::test_update_clone_multi_options_argument 
 test/test_submodule.py::TestSubmodule::test_update_no_clone_multi_options_argument PASSED
 test/test_tree.py::TestTree::test_serializable PASSED
 test/test_tree.py::TestTree::test_traverse PASSED
+test/test_util.py::TestCygpath::test_cygpath_invalids[C:Relative] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_invalids[C:] SKIPPED (P...)
+test/test_util.py::TestCygpath::test_cygpath_invalids[D:Apps/123] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_invalids[D:Apps\\123] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_invalids[\\\\?\\a:rel] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_invalids[\\\\share\\a:rel] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_norm_ok[../bar-../bar] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_norm_ok[../bar/.\\foo/../chu-../bar/chu] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_norm_ok[..\\bar-../bar] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_norm_ok[./bar-bar] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_norm_ok[.\\bar-bar] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[C:\\-/cygdrive/c/] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[C:\\Users-/cygdrive/c/Users] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[C:\\d/e-/cygdrive/c/d/e] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[D:/Apps-/cygdrive/d/Apps] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[D:/Apps\\fOO-/cygdrive/d/Apps/fOO] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[D:\\Apps/123-/cygdrive/d/Apps/123] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[\\\\?\\UNC\\server\\D$\\Apps-//server/D$/Apps] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[\\\\?\\a:/com-/cygdrive/a/com] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[\\\\?\\a:\\com-/cygdrive/a/com] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[\\\\server\\BAR/-//server/BAR/] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[\\\\server\\C$-//server/C$] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[\\\\server\\C$\\Users-//server/C$/Users] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[\\\\server\\c$\\-//server/c$/] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[foo/bar-foo/bar] SKIPPED
+test/test_util.py::TestCygpath::test_cygpath_ok[foo\\bar-foo/bar] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[C:\\-/cygdrive/c/] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[C:\\Users-/cygdrive/c/Users] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[C:\\d/e-/cygdrive/c/d/e] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[D:/Apps-/cygdrive/d/Apps] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[D:/Apps\\fOO-/cygdrive/d/Apps/fOO] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[D:\\Apps/123-/cygdrive/d/Apps/123] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[\\\\server\\BAR/-//server/BAR/] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[\\\\server\\C$-//server/C$] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[\\\\server\\C$\\Users-//server/C$/Users] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[\\\\server\\c$\\-//server/c$/] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[foo/bar-foo/bar] SKIPPED
+test/test_util.py::TestCygpath::test_decygpath[foo\\bar-foo/bar] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS- -False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS- no  -False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS- yes  -True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS--False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-0-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-1-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-False-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-NO-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-None-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-True-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-YES-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-false-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-no-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-true-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_FREEZE_ERRORS-yes-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS- -False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS- no  -False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS- yes  -True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS--False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-0-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-1-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-False-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-NO-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-None-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-True-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-YES-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-false-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-no-False] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-true-True] SKIPPED
+test/test_util.py::TestEnvParsing::test_env_vars_for_windows_tests[HIDE_WINDOWS_KNOWN_ERRORS-yes-True] SKIPPED
+test/test_util.py::TestRmtree::test_avoids_changing_permissions_outside_tree PASSED
+test/test_util.py::TestRmtree::test_deletes_dir_with_readonly_files PASSED
+test/test_util.py::TestRmtree::test_deletes_nested_dir_with_files PASSED
+test/test_util.py::TestRmtree::test_does_not_wrap_other_errors[False] PASSED
+test/test_util.py::TestRmtree::test_does_not_wrap_other_errors[True] PASSED
+test/test_util.py::TestRmtree::test_does_not_wrap_perm_error_unless_enabled[False] PASSED
+test/test_util.py::TestRmtree::test_does_not_wrap_perm_error_unless_enabled[True] PASSED
+test/test_util.py::TestRmtree::test_wraps_perm_error_if_enabled SKIPPED
 test/test_util.py::TestUtils::test_actor PASSED
 test/test_util.py::TestUtils::test_actor_from_string PASSED
 test/test_util.py::TestUtils::test_actor_get_uid_laziness_called PASSED
 test/test_util.py::TestUtils::test_actor_get_uid_laziness_not_called PASSED
 test/test_util.py::TestUtils::test_altz_to_utctz_str PASSED
 test/test_util.py::TestUtils::test_blocking_lock_file PASSED
-test/test_util.py::TestUtils::test_cygpath_invalids_1_C_ SKIPPED (Pa...)
-test/test_util.py::TestUtils::test_cygpath_invalids_2_C_Relative SKIPPED
-test/test_util.py::TestUtils::test_cygpath_invalids_3_D_Apps_123 SKIPPED
-test/test_util.py::TestUtils::test_cygpath_invalids_4_D_Apps_123 SKIPPED
-test/test_util.py::TestUtils::test_cygpath_invalids_5_____a_rel SKIPPED
-test/test_util.py::TestUtils::test_cygpath_invalids_6___share_a_rel SKIPPED
-test/test_util.py::TestUtils::test_cygpath_norm_ok_1_____bar____bar__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_norm_ok_2______bar____bar__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_norm_ok_3______bar_______bar__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_norm_ok_4_______bar_______bar__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_norm_ok_5______bar____foo____chu_______bar_chu__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_01___foo__bar____foo_bar__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_02___foo_bar____foo_bar__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_03___C___Users_____cygdrive_c_Users__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_04___C___d_e_____cygdrive_c_d_e__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_05___C________cygdrive_c___ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_06_______server__C___Users______server_C__Users__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_07_______server__C_______server_C___ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_08_______server__c_________server_c____ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_09_______server__BAR_______server_BAR___ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_10___D__Apps_____cygdrive_d_Apps__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_11___D__Apps__fOO_____cygdrive_d_Apps_fOO__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_12___D___Apps_123_____cygdrive_d_Apps_123__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_13__________a___com_____cygdrive_a_com__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_14__________a__com_____cygdrive_a_com__ SKIPPED
-test/test_util.py::TestUtils::test_cygpath_ok_15__________UNC__server__D___Apps______server_D__Apps__ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_01___foo__bar____foo_bar__ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_02___foo_bar____foo_bar__ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_03___C___Users_____cygdrive_c_Users__ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_04___C___d_e_____cygdrive_c_d_e__ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_05___C________cygdrive_c___ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_06_______server__C___Users______server_C__Users__ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_07_______server__C_______server_C___ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_08_______server__c_________server_c____ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_09_______server__BAR_______server_BAR___ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_10___D__Apps_____cygdrive_d_Apps__ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_11___D__Apps__fOO_____cygdrive_d_Apps_fOO__ SKIPPED
-test/test_util.py::TestUtils::test_decygpath_12___D___Apps_123_____cygdrive_d_Apps_123__ SKIPPED
-test/test_util.py::TestUtils::test_env_vars_for_windows_tests_1_HIDE_WINDOWS_KNOWN_ERRORS PASSED
-test/test_util.py::TestUtils::test_env_vars_for_windows_tests_2_HIDE_WINDOWS_FREEZE_ERRORS PASSED
 test/test_util.py::TestUtils::test_from_timestamp PASSED
 test/test_util.py::TestUtils::test_it_should_dashify PASSED
 test/test_util.py::TestUtils::test_iterable_list_1___name______ PASSED
@@ -528,16 +554,11 @@ test/test_util.py::TestUtils::test_lock_file PASSED
 test/test_util.py::TestUtils::test_parse_date PASSED
 test/test_util.py::TestUtils::test_pickle_tzoffset PASSED
 test/test_util.py::TestUtils::test_remove_password_from_command_line PASSED
-test/test_util.py::TestUtils::test_rmtree_can_wrap_exceptions PASSED
-test/test_util.py::TestUtils::test_rmtree_deletes_dir_with_readonly_files PASSED
-test/test_util.py::TestUtils::test_rmtree_deletes_nested_dir_with_files PASSED
-test/test_util.py::TestUtils::test_rmtree_does_not_wrap_unless_called_for_1 PASSED
-test/test_util.py::TestUtils::test_rmtree_does_not_wrap_unless_called_for_2 PASSED
-test/test_util.py::TestUtils::test_rmtree_does_not_wrap_unless_called_for_3 PASSED
 test/test_util.py::TestUtils::test_user_id PASSED
 test/test_util.py::TestUtils::test_utctz_to_altz PASSED
 
 
-======== 484 passed, 43 skipped, 1 xfailed, 2 warnings ========
+=========================== short test summary info ============================
+======== 474 passed, 73 skipped, 1 xfailed, 2 warnings ========
   py$(PYV): OK
   congratulations :)

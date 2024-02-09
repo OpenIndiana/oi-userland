@@ -1,0 +1,18 @@
+--- inkscape-1.2_2022-05-15_dc2aedaf03/src/svg/svg-length.cpp.old	2022-05-17 12:42:24.481453485 +0000
++++ inkscape-1.2_2022-05-15_dc2aedaf03/src/svg/svg-length.cpp	2022-05-17 12:46:40.242900440 +0000
+@@ -82,13 +82,13 @@
+     /* Determine the actual number of fractional digits */
+     fprec = MAX(static_cast<int>(fprec), static_cast<int>(tprec) - idigits);
+     /* Round value */
+-    val += 0.5 / pow(10.0, fprec);
++    val += 0.5 / pow(10.0, static_cast<int>(fprec));
+     /* Extract integral and fractional parts */
+     double dival = floor(val);
+     double fval = val - dival;
+     /* Write integra */
+     if (idigits > (int)tprec) {
+-        buf.append(std::to_string((unsigned int)floor(dival/pow(10.0, idigits-tprec) + .5)));
++        buf.append(std::to_string((unsigned int)floor(dival/pow(10.0, static_cast<double>(idigits-tprec)) + .5)));
+         for(unsigned int j=0; j<(unsigned int)idigits-tprec; j++) {
+             buf.append("0");
+         }

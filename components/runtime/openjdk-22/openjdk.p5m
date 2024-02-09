@@ -12,7 +12,7 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2023 Niklas Poslovski
+# Copyright 2024 Niklas Poslovski
 #
 
 <transform path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/.*\.so -> default pkg.linted.userland.action001.2 true>
@@ -150,6 +150,8 @@ file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.crypto.cryptoki.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.crypto.ec.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.dynalink.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.editpad.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.graal.compiler.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.graal.compiler.management.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.hotspot.agent.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.httpserver.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.incubator.vector.jmod
@@ -158,8 +160,6 @@ file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.jvmstat.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.le.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.opt.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.vm.ci.jmod
-file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.vm.compiler.jmod
-file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.vm.compiler.management.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jartool.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.javadoc.jmod
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jcmd.jmod
@@ -462,6 +462,24 @@ link \
 link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.editpad/LICENSE \
     target=../java.base/LICENSE
 link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.graal.compiler.management/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.graal.compiler.management/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.graal.compiler.management/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.graal.compiler/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.graal.compiler/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.graal.compiler/LICENSE \
+    target=../java.base/LICENSE
+link \
     path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.hotspot.agent/ADDITIONAL_LICENSE_INFO \
     target=../java.base/ADDITIONAL_LICENSE_INFO
 link \
@@ -534,24 +552,6 @@ link \
     target=../java.base/ASSEMBLY_EXCEPTION
 link \
     path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.ci/LICENSE \
-    target=../java.base/LICENSE
-link \
-    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler.management/ADDITIONAL_LICENSE_INFO \
-    target=../java.base/ADDITIONAL_LICENSE_INFO
-link \
-    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler.management/ASSEMBLY_EXCEPTION \
-    target=../java.base/ASSEMBLY_EXCEPTION
-link \
-    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler.management/LICENSE \
-    target=../java.base/LICENSE
-link \
-    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler/ADDITIONAL_LICENSE_INFO \
-    target=../java.base/ADDITIONAL_LICENSE_INFO
-link \
-    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler/ASSEMBLY_EXCEPTION \
-    target=../java.base/ASSEMBLY_EXCEPTION
-link \
-    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler/LICENSE \
     target=../java.base/LICENSE
 link \
     path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jartool/ADDITIONAL_LICENSE_INFO \

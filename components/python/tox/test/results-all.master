@@ -1,11 +1,13 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config=$(@D)/pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests --durations 5 --run-integration
+py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config=$(@D)/pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml -n=auto tests --durations 5 --run-integration
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1679 items
+X workers [1682 items]
+
+scheduling tests via LoadScheduling
 
 tests/config/cli/test_cli_env_var.py::test_bad_env_var PASSED
 tests/config/cli/test_cli_env_var.py::test_env_var_exhaustive_parallel_values PASSED
@@ -1172,6 +1174,8 @@ tests/session/cmd/test_list_envs.py::test_list_envs_help PASSED
 tests/session/cmd/test_parallel.py::test_keyboard_interrupt PASSED
 tests/session/cmd/test_parallel.py::test_parallel_general PASSED
 tests/session/cmd/test_parallel.py::test_parallel_legacy_accepts_no_arg PASSED
+tests/session/cmd/test_parallel.py::test_parallel_no_spinner PASSED
+tests/session/cmd/test_parallel.py::test_parallel_no_spinner_legacy PASSED
 tests/session/cmd/test_parallel.py::test_parallel_requires_arg PASSED
 tests/session/cmd/test_parallel.py::test_parallel_run_live_out PASSED
 tests/session/cmd/test_parallel.py::test_parallel_show_output_with_pkg PASSED
@@ -1319,7 +1323,7 @@ tests/test_run.py::test_exit_code_minus_2_on_expected_exit[KeyboardInterrupt] PA
 tests/test_run.py::test_re_raises_on_unexpected_exit PASSED
 tests/test_version.py::test_version PASSED
 tests/test_version.py::test_version_with_plugin PASSED
-tests/test_version.py::test_version_without_plugin SKIPPED (tox-curr...)
+tests/test_version.py::test_version_without_plugin SKIPPED
 tests/tox_env/python/pip/req/test_file.py::test_bad_hash[sha256:a] PASSED
 tests/tox_env/python/pip/req/test_file.py::test_bad_hash[sha256:xxxxxxxxxx123456789012345678901234567890123456789012345678901234] PASSED
 tests/tox_env/python/pip/req/test_file.py::test_bad_hash[sha512:thisshouldfail8525e477385ef5ee6cecdc8f8fcc2a79d1b35a9f57ad15c814dada670026f41fdd62e5e10b3fd75d6112704a9521c3df105f0b6f3bb11b128a] PASSED
@@ -1564,6 +1568,7 @@ tests/tox_env/python/virtual_env/package/test_package_cmd_builder.py::test_build
 tests/tox_env/python/virtual_env/package/test_package_cmd_builder.py::test_build_wheel_external_fail_no_pkg PASSED
 tests/tox_env/python/virtual_env/package/test_package_cmd_builder.py::test_install_pkg_via[le] PASSED
 tests/tox_env/python/virtual_env/package/test_package_cmd_builder.py::test_install_pkg_via[p] PASSED
+tests/tox_env/python/virtual_env/package/test_package_cmd_builder.py::test_run_installpkg_targz PASSED
 tests/tox_env/python/virtual_env/package/test_package_cmd_builder.py::test_tox_install_pkg_bad_wheel PASSED
 tests/tox_env/python/virtual_env/package/test_package_cmd_builder.py::test_tox_install_pkg_sdist PASSED
 tests/tox_env/python/virtual_env/package/test_package_cmd_builder.py::test_tox_install_pkg_wheel PASSED
@@ -1687,6 +1692,19 @@ tests/util/test_spinner.py::test_td_human_readable[42.12345-42.12 seconds] PASSE
 tests/util/test_spinner.py::test_td_human_readable[60-1 minute] PASSED
 tests/util/test_spinner.py::test_td_human_readable[61-1 minute 1 second] PASSED
 
+=============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
+  $(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252: DeprecationWarning: The --rsyncdir command line argument and rsyncdirs config variable are deprecated.
+  The rsync feature will be removed in pytest-xdist 4.0.
+    config.issue_config_time_warning(warning, 2)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
 173 files skipped due to complete coverage.
@@ -1696,6 +1714,6 @@ Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 Required test coverage of 88.0% reached. Total coverage: 98.71%
 ============================= slowest 5 durations ==============================
 =========================== short test summary info ============================
-======== 1678 passed, 1 skipped ========
+======== 1681 passed, 1 skipped, 7 warnings ========
   py$(PYV): OK
   congratulations :)

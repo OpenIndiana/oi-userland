@@ -1,0 +1,56 @@
+--- libsoup-2.74.3/libsoup/soup-xmlrpc-old.c.orig	2022-10-11 20:27:22.000000000 +0200
++++ libsoup-2.74.3/libsoup/soup-xmlrpc-old.c	2023-11-29 13:41:20.510779598 +0100
+@@ -11,6 +11,7 @@
+ 
+ #include <string.h>
+ 
++#include <libxml/parser.h>
+ #include <libxml/tree.h>
+ 
+ #include "soup-xmlrpc-old.h"
+@@ -509,7 +510,7 @@
+ 	gboolean success = FALSE;
+ 	GValue value;
+ 
+-	doc = xmlParseMemory (method_call,
++	doc = (xmlDoc *)xmlParseMemory (method_call,
+ 			      length == -1 ? strlen (method_call) : length);
+ 	if (!doc)
+ 		return FALSE;
+@@ -626,7 +627,7 @@
+ 	xmlNode *node;
+ 	gboolean success = FALSE;
+ 
+-	doc = xmlParseMemory (method_response,
++	doc = (xmlDoc *)xmlParseMemory (method_response,
+ 			      length == -1 ? strlen (method_response) : length);
+ 	if (!doc)
+ 		return FALSE;
+--- libsoup-2.74.3/libsoup/soup-xmlrpc.c.orig	2022-10-11 20:27:22.000000000 +0200
++++ libsoup-2.74.3/libsoup/soup-xmlrpc.c	2023-11-29 13:37:57.539508436 +0100
+@@ -17,6 +17,7 @@
+ 
+ #include <string.h>
+ #include <errno.h>
++#include <libxml/parser.h>
+ #include <libxml/tree.h>
+ #include "soup-xmlrpc.h"
+ #include "soup.h"
+@@ -1203,7 +1204,7 @@
+ 	xmlChar *xmlMethodName = NULL;
+ 	char *method_name = NULL;
+ 
+-	doc = xmlParseMemory (method_call, length == -1 ? strlen (method_call) : length);
++	doc = (xmlDoc *)xmlParseMemory (method_call, length == -1 ? strlen (method_call) : length);
+ 	if (!doc) {
+ 		g_set_error (error, SOUP_XMLRPC_ERROR, SOUP_XMLRPC_ERROR_ARGUMENTS,
+ 			     "Could not parse XML document");
+@@ -1283,7 +1284,7 @@
+ 
+ 	g_return_val_if_fail (!signature || g_variant_type_string_is_valid (signature), NULL);
+ 
+-	doc = xmlParseMemory (method_response,
++	doc = (xmlDoc *)xmlParseMemory (method_response,
+ 				  length == -1 ? strlen (method_response) : length);
+ 	if (!doc) {
+ 		g_set_error (error, SOUP_XMLRPC_ERROR, SOUP_XMLRPC_ERROR_ARGUMENTS,

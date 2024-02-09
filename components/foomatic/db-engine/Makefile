@@ -20,45 +20,47 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-db-engine
-COMPONENT_VERSION=	3.0-20080903
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.0.13
+COMPONENT_SUMMARY=	Foomatic Database Engine
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:668f2020eb136359523090cc17151e6aad0c56bce0e4ae91217a9eba19eec917
-COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
-COMPONENT_BUGDB=	utility/foomatic
+	sha256:b5c89027aa26967d2e6db62e2af7db0c4039d2480d4fbf2476a6ddcf609a5faf
+COMPONENT_ARCHIVE_URL=	https://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://openprinting.github.io/projects/02-foomatic/
+COMPONENT_FMRI=		print/cups/filter/foomatic-db-engine
+COMPONENT_CLASSIFICATION=	System/Printing
+COMPONENT_LICENSE=	GPL-2.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET = $(NO_TESTS)
 
-include ../../../make-rules/common.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
-CONFIGURE_OPTIONS +=	PERL=$(PERL)
-CONFIGURE_OPTIONS +=	FILEUTIL=/bin/true
-CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)/gnu
+# Force known Perl version
+CONFIGURE_OPTIONS += PERL=$(PERL)
+
+# configure is not happy with /usr/bin/file and asks for astron file
+CONFIGURE_OPTIONS += FILEUTIL=/usr/bin/gfile
 
 # the build system does not support building outside of the source tree
-COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D) ;
+COMPONENT_PRE_CONFIGURE_ACTION += $(CLONEY) $(SOURCE_DIR) $(@D) ;
 
 # setup perl build
-COMPONENT_PRE_CONFIGURE_ACTION += cd $(@D)/lib ; $(PERL) Makefile.PL
+COMPONENT_PRE_CONFIGURE_ACTION += cd $(@D)/lib ; $(PERL) Makefile.PL ;
 
-# the perl .packlist contains the path to the file as built rather than
-# as installed. Fix to be installed path, ie remove PROTO_DIR.
-VENDORARCH= $(shell $(PERL) -e 'use Config; print $$Config{vendorarch}')
-PACKLIST=   $(VENDORARCH)/auto/Foomatic/.packlist
-COMPONENT_POST_INSTALL_ACTION = \
- sed -e "s/$(subst /,\\/,$(PROTO_DIR))//g" $(PROTO_DIR)/$(PACKLIST) \
-     >> $(PROTO_DIR)/$(PACKLIST).fixed ; \
- $(MV) $(PROTO_DIR)/$(PACKLIST).fixed $(PROTO_DIR)/$(PACKLIST)
+# Defaults.pm is not built by the perl module, but by external utility, so it's in wrong place
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) $(@D)/lib/Foomatic/Defaults.pm $(PROTOUSRDIR)/perl5/vendor_perl/$(PERL_VERSION)/Foomatic ;
 
-# PKGVERS is needed for manifest processing
-PKG_MACROS += PERLVER=$(PERL_VERSION)
+# Convert absolute symlink to relative one
+COMPONENT_POST_INSTALL_ACTION += \
+	$(RM) $(PROTOUSRLIBDIR)/cups/driver/foomatic ; \
+	$(SYMLINK) ../../../bin/foomatic-ppdfile $(PROTOUSRLIBDIR)/cups/driver/foomatic ;
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl

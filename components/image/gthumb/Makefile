@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gthumb
 COMPONENT_VERSION=      3.12.4
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,8 +31,6 @@ COMPONENT_FMRI=         image/viewer/gthumb
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
-
-TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -48,6 +47,10 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+
+COMPONENT_TEST_TRANSFORMS = \
+        '-e "s/OK.*$$/OK/" ' \
+        '-e "/^Full log written to/d" '
 
 # Build dependencies
 REQUIRED_PACKAGES += library/gnome/yelp-tools
@@ -66,8 +69,11 @@ REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/clutter
+REQUIRED_PACKAGES += library/desktop/clutter/clutter-gtk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/libchamplain
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/glib2

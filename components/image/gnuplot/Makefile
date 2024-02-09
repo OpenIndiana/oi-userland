@@ -28,13 +28,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnuplot
-COMPONENT_VERSION=	5.4.10
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	6.0.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	gnuplot - plotting utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  https://gnuplot.info/
+COMPONENT_PROJECT_URL=  http://www.gnuplot.info/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:975d8c1cc2c41c7cedc4e323aff035d977feb9a97f0296dd2a8a66d197a5b27c
+COMPONENT_ARCHIVE_HASH=	sha256:635a28f0993f6ab0d1179e072ad39b8139d07f51237f841d93c6c2ff4b1758ec
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=	image/gnuplot
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -50,19 +50,28 @@ CPPFLAGS += -I/usr/include/gd2
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-PATH= $(USRBINDIR.64):$(PATH.gnu)
+QT5_ROOT=/usr/lib/qt/5.15
+PATH=$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
+PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT5_ROOT)/lib/$(MACH64)/pkgconfig
+LD_OPTIONS += -L$(QT5_LIBDIR) -R$(QT5_LIBDIR)
 
-CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.64)
+#CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.64)
 CONFIGURE_OPTIONS  += --sysconfdir=/etc/gnu
 CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.64)
 CONFIGURE_OPTIONS  += --without-libcerf
-# qt5 is not yet properly detected and qt4 doesn't work:
-CONFIGURE_OPTIONS  += --with-qt=no
+CONFIGURE_OPTIONS  += --enable-year2038
 CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
 
-# Build dependencies
+# We want to deploy the demo files
+DEMOSOURCES=	$(SOURCE_DIR)/demo
+DEMODEST=		$(PROTO_DIR)/usr/demo/gnuplot
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(DEMODEST) && \
+	$(CP) -Rp $(DEMOSOURCES)/* $(DEMODEST)/
+
+# Manually added dependencies
 REQUIRED_PACKAGES += editor/gnu-emacs
 
 # Auto-generated dependencies
@@ -74,9 +83,10 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/wxwidgets-3
+REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

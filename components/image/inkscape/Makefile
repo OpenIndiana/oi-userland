@@ -19,21 +19,21 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
-COMPONENT_VERSION=	1.2.2
-COMPONENT_REVISION=	6
+COMPONENT_VERSION=	1.3.2
+COMPONENT_REVISION=	1
 # COMPONENT_ITEM_NO is part of the download path
-# (find it on https://inkscape.org/release/inkscape-1.2.1/source/archive/xz/dl/ under "click here")
-# eg. https://inkscape.org/gallery/item/34673/inkscape-1.2.1.tar.xz
-COMPONENT_ITEM_NO=	37360
+# (find it on https://inkscape.org/release/1.3/platforms/ under "Download")
+# eg. https://inkscape.org/gallery/item/42328/inkscape-1.3.tar.xz
+COMPONENT_ITEM_NO=	44615
 # COMPONENT_DATE and COMPONENT_HASH are part of the resulting source path:
-COMPONENT_DATE=		2022-12-01
-COMPONENT_HASH=		b0a8486541
+COMPONENT_DATE=		2023-11-25
+COMPONENT_HASH=		091e20ef0f
 COMPONENT_SUMMARY=	Opensource professional vector graphics editor
 COMPONENT_PROJECT_URL=	https://www.inkscape.org/
 COMPONENT_SRC_BASE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_SRC_BASE)_$(COMPONENT_DATE)_$(COMPONENT_HASH)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC_BASE).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:a0c7fd0d03c0a21535e648ef301dcf80dd7cfc1f3545e51065fbf1ba3ee8a5c4
+COMPONENT_ARCHIVE_HASH=	sha256:dbd1844dc443fe5e10d3e9a887144e5fb7223852fff191cfb5ef7adeab0e086b
 COMPONENT_ARCHIVE_URL=	https://inkscape.org/gallery/item/$(COMPONENT_ITEM_NO)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/editor/inkscape
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -41,6 +41,9 @@ COMPONENT_LICENSE=	GPLv2, GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+PYV = $(subst .,,$(PYTHON_VERSION))
+PKG_MACROS += PYV=$(PYV)
 
 PATH = $(PATH.gnu)
 
@@ -86,6 +89,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gspell
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/gtksourceview4
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += library/glib2
@@ -101,4 +105,5 @@ REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libepoxy
 REQUIRED_PACKAGES += x11/library/libx11

@@ -13,13 +13,13 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= soxr
 COMPONENT_VERSION= 0.1.3
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= The SoX Resampler library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)-Source
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -37,7 +37,7 @@ CMAKE_OPTIONS += -DLIB_INSTALL_DIR=$(CMAKE_LIBDIR.$(BITS))
 CMAKE_OPTIONS += -DBIN_INSTALL_DIR=$(CMAKE_BINDIR.$(BITS))
 
 COMPONENT_TEST_TRANSFORMS += \
-        '-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec/ SEC sec/"' \
+        '-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec//"' \
         '-e "/Test project/d"' \
         '-e "/^[mM]ake/d"' \
         '-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \

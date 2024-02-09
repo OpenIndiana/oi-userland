@@ -15,14 +15,13 @@
 # Copyright 2020 Marco van Wieringen
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gtk+
 COMPONENT_MJR_VERSION=	3.24
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).34
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -42,7 +41,7 @@ CFLAGS += -I/usr/X11/include
 
 COMPONENT_PREP_ACTION= ( \
 	cd $(@D) && \
-	libtoolize --force && \
+	PATH="$(PATH)" libtoolize --force && \
 	aclocal -I ./m4 && \
 	gtkdocize && \
 	autoheader && \
@@ -95,7 +94,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
-REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libepoxy
 REQUIRED_PACKAGES += x11/library/libx11

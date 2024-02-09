@@ -30,13 +30,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	115.5.0
+COMPONENT_VERSION =	115.7.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:dc24886b2d2223d23141dbfb29855c0254de2603bd829d4cbc7dc4ea2ac711fa
+	 sha256:19f483d4c26e47daaeabb8fb99605b12f4e842aec2814dfb92d78b1a73459f43
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -47,7 +47,7 @@ COMPONENT_FMRI = mail/thunderbird
 COMPONENT_CLASSIFICATION = Applications/Internet
 COMPONENT_LICENSE = MPL v2.0
 
-RUST_VERSION = 1.73.0
+RUST_VERSION = 1.75.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -218,13 +218,12 @@ COMPONENT_TEST_TRANSFORMS = \
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += developer/clang-15
+REQUIRED_PACKAGES += developer/clang-17
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
 REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += system/header/header-audio
-REQUIRED_PACKAGES += system/library/gcc-10-compat-links
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

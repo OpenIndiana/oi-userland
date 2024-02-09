@@ -18,13 +18,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geoip-database
-COMPONENT_VERSION= 20231029
+COMPONENT_VERSION= 20240128
 COMPONENT_SUMMARY= GeoLite geolocation databases compiled by MaxMind
 COMPONENT_PROJECT_URL= https://mailfud.org/geoip-legacy
 COMPONENT_FMRI= database/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_DOWNLOAD_BASE=https://github.com/dbh201/geoip-database/raw/$(COMPONENT_VERSION)/
 COMPONENT_LICENSE= CC-BY-SA-4.0
+
+# Note for updates: Make sure to not only update the component version but also update the hashes in hashes/sha256sums.txt
+# Plus, remove all former downloaded files.
 
 HASH_DIR=$(COMPONENT_DIR)/hashes
 export HASH_DIR
@@ -64,8 +67,6 @@ $(foreach suffix,1 2 3 4 5,$(eval $(call switch-source-dir,_$(suffix))) )
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-
 
 CLEAN_PATHS+= $(BUILD_DIR)
 

@@ -23,22 +23,23 @@
 
 BUILD_BITS = 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
-USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gpgme
-COMPONENT_VERSION=	1.23.1
+COMPONENT_VERSION=	1.23.2
 COMPONENT_SUMMARY=	GnuPG Made Easy
 COMPONENT_DESCRIPTION=	A library designed to make access to GnuPG easier for applications
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:a0c316f7ab7d3bfb01a8753c3370dc906e5b61436021f3b54ff1483b513769bd
+COMPONENT_ARCHIVE_HASH=	sha256:9499e8b1f33cccb6815527a1bc16049d35a6198a6c5fae0185f2bd561bce5224
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/security/gpgme
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	GPLv2,LGPLv2
 
+# Only test the 64 bit variant
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && PATH=$(PATH.gnu) autoreconf -fi )

@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+Add NULL checks to getBuffer calls
+https://unicode-org.atlassian.net/browse/ICU-12378
+
+--- icu/source/common/uts46.cpp.orig
++++ icu/source/common/uts46.cpp
+@@ -934,7 +934,12 @@
+     UBool disallowNonLDHDot=(options&UIDNA_USE_STD3_RULES)!=0;
+     UBool isASCII=true;
+     UBool onlyLDH=true;
+-    const UChar *label=dest.getBuffer()+labelStart;
++    const UChar *l=dest.getBuffer();
++    if(l==NULL) {
++        info.labelErrors|=UIDNA_ERROR_LABEL_TOO_LONG;
++        return 0;
++    }
++    const UChar *label=l+labelStart;
+     const UChar *limit=label+labelLength;
+     // Start after the initial "xn--".
+     // Ok to cast away const because we own the UnicodeString.

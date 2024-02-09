@@ -18,22 +18,25 @@
 #
 
 BUILD_STYLE= cmake
-OPENSSL_VERSION= 3.1
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
-COMPONENT_MAJOR_VERSION=10.6
-COMPONENT_MINOR_VERSION=15
-COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	10.6.16
+COMPONENT_MAJOR_VERSION=$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b2f6bdba17ead4d91c4d254fafc34a728ac6b027dd1d7178bc26758dce694335
+COMPONENT_ARCHIVE_HASH=	sha256:5ef83843e796dcda9aea47b24690ddf6d848f43f43e11f9d9a0cc21c78fbb9cf
 COMPONENT_PROJECT_URL=	https://www.mariadb.org/
-COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/3371915/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
-#COMPONENT_SIG_URL=	https://dlm.mariadb.com/3371914/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
+COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/3588628/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+#COMPONENT_SIG_URL=	https://dlm.mariadb.com/3588623/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
+COMPONENT_LICENSE=	GPL-2.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+MARIADBV = $(subst .,,$(COMPONENT_MAJOR_VERSION))
 
 JAVA_HOME=/usr/jdk/openjdk1.8.0
 AR=/usr/bin/gar
@@ -85,7 +88,7 @@ CMAKE_OPTIONS+= -DWITH_PCRE=system
 CMAKE_OPTIONS+= -DWITH_SSL=system
 CMAKE_OPTIONS+= -DINSTALL_SUPPORTFILESDIR=share/mysql
 CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
-CMAKE_OPTIONS+= -DCMAKE_REQUIRED_INCLUDES=$(PCRE_INCLUDE) $(OPENSSL_PREFIX)/include
+CMAKE_OPTIONS+= -DCMAKE_REQUIRED_INCLUDES="$(PCRE_INCLUDE) $(OPENSSL_INCDIR)"
 CMAKE_OPTIONS+= -DWITH_INNOBASE_STORAGE_ENGINE=1
 CMAKE_OPTIONS+= -DWITH_INNODB_MEMCACHED=ON
 CMAKE_OPTIONS+= -DWITH_COMMENT="OpenIndiana MariaDB"
@@ -95,33 +98,46 @@ CMAKE_OPTIONS+= -DCOMPILATION_COMMENT="OpenIndiana package"
 CMAKE_OPTIONS+= -DJAVA_INCLUDE_PATH=$(JAVA_HOME)/include
 CMAKE_OPTIONS+= -DJAVA_AWT_LIBRARY=/usr/java/jre/lib/$(MACH64)/libjawt.so
 CMAKE_OPTIONS+= -DJAVA_JVM_LIBRARY=/usr/java/jre/lib/$(MACH64)/server/libjvm.so
+CMAKE_OPTIONS+= -DMARIADB_UNIX_ADDR=/tmp/mariadb$(MARIADBV).sock
+CMAKE_OPTIONS+= -DMYSQL_UNIX_ADDR=/tmp/mariadb$(MARIADBV).sock
+CMAKE_OPTIONS+= -DPLUGIN_ROCKSDB=NO
 
-CMAKE_ENV += CPPFLAGS="$(CPPFLAGS) -I$(OPENSSL_PREFIX)/include"
+CMAKE_ENV += CPPFLAGS="$(CPPFLAGS) -I$(OPENSSL_INCDIR)"
 
-COMPONENT_TEST_TRANSFORMS= \
-	'-n ' \
-	'-e "s/ \].*/ \]/"' \
-	'-e "s/ w[0-9] //"' \
-	'-e "s/\[//"' \
-	'-e "s/\]//"' \
-	'-e "s/  */ /g"' \
-	'-e "s/ $$//"' \
-	'-e "/pass$$/p"' \
-	'-e "/fail$$/p"'
+# Testing
+COMPONENT_TEST_DIR = $(@D)/mysql-test
+COMPONENT_TEST_CMD = ./mtr
+COMPONENT_TEST_ARGS += --parallel=$(PARALLEL_JOBS)
+COMPONENT_TEST_ARGS += --mem
+COMPONENT_TEST_ARGS += --force
+COMPONENT_TEST_ARGS += --retry=0
+COMPONENT_TEST_ARGS += --force-restart
+COMPONENT_TEST_ARGS += --max-test-fail=0
+COMPONENT_TEST_ARGS += --skip-test-list=$(COMPONENT_DIR)/files/disabled-tests
 
-COMPONENT_TEST_CMD=	mysql-test/mtr \
-				--parallel=$(shell getconf NPROCESSORS_ONLN) \
-				--mem \
-				--force \
-				--retry=0 \
-				--mysqld=--binlog-format=mixed \
-				--mysqld=--innodb-flush-method=O_DSYNC \
-				--force-restart \
-				--max-test-fail=0 \
-				--skip-test-list=unstable-tests | sort 
+MARIADB_TEST_TRANSFORMS += -n
+MARIADB_TEST_TRANSFORMS += -e 's/  */ /g'			# Collapse spaces
+MARIADB_TEST_TRANSFORMS += -e 's/ \] [0-9]*$$/ \]/'		# Timing
+MARIADB_TEST_TRANSFORMS += -e 's/ w[0-9]\{1,\} / /'		# Worker number
+MARIADB_TEST_TRANSFORMS += -e '/\[ [^ ]\{1,\} \]/p'		# Print test results only
 
-REQUIRED_PACKAGES += web/curl
-REQUIRED_PACKAGES += compress/zstd
+# Mangle test results and sort them
+COMPONENT_TEST_TRANSFORMS += \
+	"| ( \
+		$(GSED) -u -n -e '/^-\{32\}/q' ; \
+		$(GSED) -u $(MARIADB_TEST_TRANSFORMS) -e '/^-\{32\}/Q' | $(SORT) ; \
+		print "--------------------------------" ; \
+		$(CAT) \
+	) | $(COMPONENT_TEST_TRANSFORMER) -e '/^Spent /d'"
+# Skipped tests that require debug build could vary
+COMPONENT_TEST_TRANSFORMS += "-e '/\[ skipped \] Requires debug build$$/d'"
+# Because of above the final stat of skipped tests could vary as well
+COMPONENT_TEST_TRANSFORMS += "-e '/^[0-9]\{1,\} tests were skipped/d'"
+
+# Manually added test dependencies
+TEST_REQUIRED_PACKAGES += library/perl-5/dbd-mariadb
+TEST_REQUIRED_PACKAGES += library/perl-5/dbi
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

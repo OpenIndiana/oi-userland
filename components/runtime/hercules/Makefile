@@ -14,32 +14,33 @@
 # Copyright 2019 Nona Hansel
 #
 
-BUILD_BITS = 32
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hercules
-COMPONENT_VERSION=	3.13
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://hercules-390.eu
+COMPONENT_VERSION=	4.6
+COMPONENT_PROJECT_URL=	https://sdl-hercules-390.github.io/html/
 COMPONENT_FMRI=		emulator/hercules
-COMPONENT_SRC=		hercules-$(COMPONENT_VERSION)
+COMPONENT_SRC=		hyperion-Release_$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:890c57c558d58708e55828ae299245bd2763318acf53e456a48aac883ecfe67d
-COMPONENT_ARCHIVE_URL=	http://downloads.hercules-390.eu/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	Q
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+	sha256:e3116fb1833ca093292bb6d150e5f2316b14e6eb3a4bbdb7e6a26b30e08bca5a
+COMPONENT_ARCHIVE_URL=	\
+	https://github.com/SDL-Hercules-390/hyperion/archive/refs/tags/Release_$(HUMAN_VERSION).tar.gz
+COMPONENT_LICENSE=	QPL-1.0
+COMPONENT_LICENSE_FILE=	COPYRIGHT
 COMPONENT_SUMMARY=	The Hercules S/370, ESA/390, and z/Architecture Emulator
-COMPONENT_CLASSIFICATION=org.opensolaris.category.2008:System/Virtualization
+COMPONENT_CLASSIFICATION=System/Virtualization
 
 include $(WS_MAKE_RULES)/common.mk
+
+# configure expects GNU make
+PATH = $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --disable-ipv6
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

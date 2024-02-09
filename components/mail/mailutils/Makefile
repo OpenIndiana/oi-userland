@@ -26,12 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mailutils
-COMPONENT_VERSION=	3.16
+COMPONENT_VERSION=	3.17
 COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU-mailutils provides IMAP4D LMTPD MDA POP3D servers and various mail programs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:041d158d308c0376184388e9c936cfa841a51cdc25d4db75984a771a3fa002c0
+COMPONENT_ARCHIVE_HASH=	sha256:fa49bacec37566fe52f88221d3871673a633aeee0cd923cc3a8e65bbef2b84e9
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://mailutils.org/
 COMPONENT_FMRI=		mail/mailutils
@@ -55,12 +55,12 @@ CONFIGURE_ENV += LIBS="-lldap-2.6"
 CONFIGURE_ENV += MYSQL_LIB="$(MYSQL_LIBDIR)"
 CONFIGURE_ENV += PG_LIB="$(PG_LIBDIR)"
 
-CONFIGURE_OPTIONS  +=		--libexecdir=/usr/gnu/libexec
-CONFIGURE_OPTIONS  +=		--enable-static=no
-CONFIGURE_OPTIONS  +=		--with-ldap
-CONFIGURE_OPTIONS  +=		--with-mysql
-CONFIGURE_OPTIONS  +=		--with-postgres
-CONFIGURE_OPTIONS  +=		--with-pythondir=$(PYTHON_LIB)
+CONFIGURE_OPTIONS += --libexecdir=/usr/libexec
+CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --with-ldap
+CONFIGURE_OPTIONS += --with-mysql
+CONFIGURE_OPTIONS += --with-postgres
+CONFIGURE_OPTIONS += --with-pythondir=$(PYTHON_LIB)
 
 COMPONENT_POST_INSTALL_ACTION = \
 	( cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/mailutils ; \
@@ -68,9 +68,39 @@ COMPONENT_POST_INSTALL_ACTION = \
 	  cd $(PROTOUSRSHAREDIR)/info ; rm dir )
 
 COMPONENT_TEST_TRANSFORMS= \
-	'-e "/^\/usr\/gnu\/bin\/make/d" ' \
-	'-e "/^make/d" ' \
-	'-e "/^Making/d" '
+	' -n ' \
+	' -e "/^Auxiliary/p" ' \
+	' -e "/^Basic/p" ' \
+	' -e "/^Conversions/p" ' \
+	' -e "/^Word/p" ' \
+	' -e "/^Command/p" ' \
+	' -e "/^Standard/p" ' \
+	' -e "/^Stream/p" ' \
+	' -e "/^List/p" ' \
+	' -e "/^Email/p" ' \
+	' -e "/^Variable/p" ' \
+	' -e "/^URL/p" ' \
+	' -e "/^Reconstructed/p" ' \
+	' -e "/^Mailcap/p" ' \
+	' -e "/^Wicket/p" ' \
+	' -e "/^Property/p" ' \
+	' -e "/^File/p" ' \
+	' -e "/^Base64/p" ' \
+	' -e "/^RFC/p" ' \
+	' -e "/^Filters/p" ' \
+	' -e "/^crlf/p" ' \
+	' -e "/^Debug/p" ' \
+	' -e "/^IMAP/p" ' \
+	' -e "/^Message/p" ' \
+	' -e "/^mu_scan/p" ' \
+	' -e "/^mu_c/p" ' \
+	' -e "/^Globbing/p" ' \
+	' -e "/^Line/p" ' \
+	' -e "/^Locking/p" ' \
+	' -e "/ok/p" ' \
+	' -e "/FAILED/p" ' \
+	' -e "/failed/p" ' \
+	' -e "/^ERROR/p" '
 
 # build dependencies.
 REQUIRED_PACKAGES += editor/gnu-emacs

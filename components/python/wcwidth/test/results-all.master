@@ -3,10 +3,12 @@ py$(PYV): commands[0]> $(PYTHON) -m pytest --cov-config=$(@D)/tox.ini --verbose 
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
+benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
 rootdir: $(@D)
 configfile: tox.ini
-collecting ... collected 36 items
+collecting ... collected 39 items
 
+only with a single version of python)
 tests/test_core.py::test_balinese_script PASSED
 tests/test_core.py::test_combining_cafe PASSED
 tests/test_core.py::test_combining_enclosing PASSED
@@ -17,11 +19,13 @@ tests/test_core.py::test_empty_string PASSED
 tests/test_core.py::test_hello_jp PASSED
 tests/test_core.py::test_kannada_script PASSED
 tests/test_core.py::test_kannada_script_2 PASSED
+tests/test_core.py::test_kr_jamo PASSED
 tests/test_core.py::test_kr_jamo_filler PASSED
 tests/test_core.py::test_null_width_0 PASSED
 tests/test_core.py::test_package_version PASSED
 tests/test_core.py::test_tamil_script PASSED
 tests/test_core.py::test_wcswidth_substr PASSED
+tests/test_core.py::test_zero_wide_conflict PASSED
 tests/test_emojis.py::test_another_emoji_zwj_sequence PASSED
 tests/test_emojis.py::test_longer_emoji_zwj_sequence PASSED
 tests/test_emojis.py::test_non_recommended_zwj_sequence PASSED
@@ -30,6 +34,7 @@ tests/test_emojis.py::test_recommended_variation_16_sequences PASSED
 tests/test_emojis.py::test_unfinished_zwj_sequence PASSED
 tests/test_emojis.py::test_unicode_8_vs16 PASSED
 tests/test_emojis.py::test_unicode_9_vs16 PASSED
+tests/test_table_integrity.py::test_verify_table_integrity SKIPPED (Test
 tests/test_ucslevel.py::test_exact_410_str PASSED
 tests/test_ucslevel.py::test_exact_410_unicode PASSED
 tests/test_ucslevel.py::test_latest PASSED
@@ -47,6 +52,6 @@ tests/test_ucslevel.py::test_nonint_unicode PASSED
 - generated xml file: $(@D)/.tox/results.py$(PYV).xml -
 
 ============================= slowest 3 durations ==============================
-======== 36 passed ========
+======== 38 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)

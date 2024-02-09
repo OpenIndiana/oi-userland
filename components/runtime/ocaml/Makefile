@@ -28,44 +28,42 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ocaml
-COMPONENT_FMRI=			runtime/ocaml
 COMPONENT_VERSION_MAJOR=	5.1
-COMPONENT_VERSION=		$(COMPONENT_VERSION_MAJOR).0
-IPS_COMPONENT_VERSION=		$(COMPONENT_VERSION)
+COMPONENT_VERSION=		$(COMPONENT_VERSION_MAJOR).1
+COMPONENT_SUMMARY=		Objective Caml compiler and programming environment
+COMPONENT_DESCRIPTION=	Objective Caml is a high-level, strongly-typed, functional and object-oriented programming language \
+from the ML family of languages. This package comprises two batch compilers \
+(a fast bytecode compiler and an optimizing native-code compiler), an interactive toplevel system, \
+parsing tools (Lex,Yacc,Camlp4), a replay debugger,  documentation generator, and a comprehensive library.
 COMPONENT_PROJECT_URL=		https://ocaml.org
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_SRC=		$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=		sha256:43a3ac7aab7f8880f2bb6221317be55319b356e517622fdc28359fe943e6a450
+COMPONENT_ARCHIVE_HASH=		sha256:57f7b382b3d71198413ede405d95ef3506f1cdc480cda1dca1e26b37cb090e17
 COMPONENT_ARCHIVE_URL=		https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE_SRC)
-COMPONENT_SUMMARY=		Objective Caml compiler and programming environment
-COMPONENT_LICENSE=		QPLv1, GPLv2
-COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
+COMPONENT_FMRI=			runtime/ocaml
 COMPONENT_CLASSIFICATION=	Development/System
-COMPONENT_DESCRIPTION= Objective Caml is a high-level, strongly-typed, functional and \
-object-oriented programming language from the ML family of languages. This package comprises \
-two batch compilers (a fast bytecode compiler and an optimizing native-code compiler), \
-an interactive toplevel system, parsing tools (Lex,Yacc,Camlp4), a replay debugger, \
-a documentation generator, and a comprehensive library.
+COMPONENT_LICENSE=		QPLv1, GPLv2
+COMPONENT_LICENSE_FILE=	LICENSE
 
 # Documentation sources
 #
 COMPONENT_ARCHIVE_1=		ocaml-$(COMPONENT_VERSION_MAJOR)-refman-html.tar.gz
-COMPONENT_ARCHIVE_HASH_1=	sha256:7fde7eea5281a649dd3abe55f2e853ebafe487f21cad6aaa8f56ae1de4808d90
+COMPONENT_ARCHIVE_HASH_1=	sha256:ef07f27e1556ab783972fb3e06afce64a270bf24f620a258c7651febc20f5ec3
 COMPONENT_ARCHIVE_URL_1=	https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_ARCHIVE_2=		ocaml-$(COMPONENT_VERSION_MAJOR)-refman.pdf
-COMPONENT_ARCHIVE_HASH_2=	sha256:5ffbaf414cb3f8a2ae14a9a03b5d3d8092bcd025e9383801cb5c3ec05269a33a
+COMPONENT_ARCHIVE_HASH_2=	sha256:d8b1501b356242ef83240144f940887fb17154e94c20acbaad1b2e28897dbd76
 COMPONENT_ARCHIVE_URL_2=	https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_2)
 
 COMPONENT_ARCHIVE_3=		ocaml-$(COMPONENT_VERSION_MAJOR)-refman.info.tar.gz
-COMPONENT_ARCHIVE_HASH_3=	sha256:88e2d18d807713b31f3c5eadf6274290da0db0c01fd666b71f957c1594854ae8
+COMPONENT_ARCHIVE_HASH_3=	sha256:d7faad8769682b2f361c79c6a3fb727b4e2016026ce718704c969ccc15b96575
 COMPONENT_ARCHIVE_URL_3=	https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_3)
 
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ARGS += -j1
+COMPONENT_BUILD_ARGS= -j1
 
 # Set up some environment variables to make things look nicer.
 # We make an 64 build and use /usr/bin/ for the commands

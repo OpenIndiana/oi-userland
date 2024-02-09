@@ -152,6 +152,7 @@ PYTHON_ENV =	CC="$(CC)"
 PYTHON_ENV +=	CFLAGS="$(CFLAGS)"
 PYTHON_ENV +=	CXX="$(CXX)"
 PYTHON_ENV +=	CXXFLAGS="$(CXXFLAGS)"
+PYTHON_ENV +=	LDFLAGS="$(LDFLAGS)"
 PYTHON_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 COMPONENT_BUILD_ENV += $(PYTHON_ENV)
@@ -345,8 +346,8 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  py\$$(PYV): OK\) (.* seconds)$$/\1/'"
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  congratulations :)\) (.* seconds)$$/\1/'"
 
 # Remove useless lines from the "coverage combine" output
-COMPONENT_TEST_TRANSFORMS += "-e '/^Combined data file \.coverage/d'"
-COMPONENT_TEST_TRANSFORMS += "-e '/^Skipping duplicate data \.coverage/d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^Combined data file .*\.coverage/d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^Skipping duplicate data .*\.coverage/d'"
 
 # sort list of Sphinx doctest results
 COMPONENT_TEST_TRANSFORMS += \
@@ -424,11 +425,11 @@ $(eval $(call disable-pytest-plugin,checkdocs,pytest-checkdocs))	# runs extra te
 $(eval $(call disable-pytest-plugin,console-scripts,pytest-console-scripts))
 $(eval $(call disable-pytest-plugin,cov,pytest-cov))
 $(eval $(call disable-pytest-plugin,custom_exit_code,pytest-custom-exit-code))
+$(eval $(call disable-pytest-plugin,enabler,pytest-enabler))
 $(eval $(call disable-pytest-plugin,env,pytest-env))
 $(eval $(call disable-pytest-plugin,faker,faker))
 $(eval $(call disable-pytest-plugin,flake8,pytest-flake8))
 $(eval $(call disable-pytest-plugin,flaky,flaky))
-$(eval $(call disable-pytest-plugin,freezegun,pytest-freezegun))
 $(eval $(call disable-pytest-plugin,freezer,pytest-freezer))
 $(eval $(call disable-pytest-plugin,helpers_namespace,pytest-helpers-namespace))
 $(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to test report header
@@ -438,7 +439,6 @@ $(eval $(call disable-pytest-plugin,lazy-fixture,pytest-lazy-fixture))
 $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
 $(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
-$(eval $(call disable-pytest-plugin,plugin-enabled options,pytest-enabler))
 $(eval $(call disable-pytest-plugin,pytest-datadir,pytest-datadir))
 $(eval $(call disable-pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))	# could cause tests to fail
 $(eval $(call disable-pytest-plugin,pytest-teamcity,teamcity-messages))
@@ -488,7 +488,6 @@ PYTEST_ADDOPTS += $(PYTEST_FASTFAIL)
 COMPONENT_TEST_TRANSFORMS += \
 	"-e 's/^\(platform sunos5 -- Python \)$(shell echo $(PYTHON_VERSION) | $(GSED) -e 's/\./\\./g')\.[0-9]\{1,\}.*\( -- .*\)/\1\$$(PYTHON_VERSION).X\2/'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
-COMPONENT_TEST_TRANSFORMS += "-e '/^benchmark: /d'"				# line with version details
 COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins could vary
 COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} coverage: /,/^$$/d'"		# remove coverage report
 # sort list of pytest unit tests and drop percentage
@@ -505,6 +504,29 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} slowest [0-9]\{1,\} durations =\{1,\}$$/,/^=/{/^=/!d}'"
 # Remove short test summary info for projects that run pytest with -r option
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} short test summary info =\{1,\}$$/,/^=/{/^=/!d}'"
+
+# Normalize test results produced by pytest-benchmark
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(filter library/python/pytest-benchmark-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),"| ( \
+		$(GSED) -e '/^-\{1,\} benchmark/,/^=/{/^=/!d}' \
+	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
+
+# Normalize test results produced by pytest-xdist
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(filter library/python/pytest-xdist-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),"| ( \
+		$(GSED) -u \
+			-e '/^created: .* workers$$/d' \
+			-e 's/^[0-9]\{1,\}\( workers \[[0-9]\{1,\} items\]\)$$/X\1/' \
+			-e '/^scheduling tests via /q' ; \
+		$(GSED) -u -e '/^$$/q' ; \
+		$(GSED) -u -n -e '/^\[gw/p' -e '/^$$/Q' | ( $(GSED) \
+			-e 's/^\[gw[0-9]\{1,\}\] \[...%\] //' \
+			-e 's/ *$$//' \
+			-e 's/\([^ ]\{1,\}\) \(.*\)$$/\2 \1/' \
+			| $(SORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
+		) ; \
+		$(CAT) \
+	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
 
 # Normalize setup.py test results.  The setup.py testing could be used either
 # directly or via tox so add these transforms for all test styles
@@ -552,6 +574,7 @@ ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 COMPONENT_PRE_TEST_ACTION += \
 	for f in $(PROTOUSRBINDIR)/*-$(PYTHON_VERSION) ; do \
 		[ -f $$f ] || continue ; \
+		[ -L $${f%%-$(PYTHON_VERSION)} ] && $(RM) $${f%%-$(PYTHON_VERSION)} ; \
 		[ -e $${f%%-$(PYTHON_VERSION)} ] && continue ; \
 		$(SYMLINK) $$(basename $$f) $${f%%-$(PYTHON_VERSION)} ; \
 	done ;

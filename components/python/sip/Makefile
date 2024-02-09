@@ -20,13 +20,13 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sip
-HUMAN_VERSION =			6.7.12
+HUMAN_VERSION =			6.8.2
 COMPONENT_SUMMARY =		sip - A Python bindings generator for C/C++ libraries
 COMPONENT_PROJECT_URL =		https://www.riverbankcomputing.com/software/sip/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a6/4e/c34eee70109e9a8110672f074fc18b5022bf4b9b4c92641245c73ae0b21a/sip-6.7.12.tar.gz
+	https://files.pythonhosted.org/packages/b1/29/06e5036c035f17e0e874d71d4f5968d70aa879b155335d46f645757ff649/sip-6.8.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:08e66f742592eb818ac8fda4173e2ed64c9f2d40b70bee11db1c499127d98450
+	sha256:2e65a423037422ccfde095c257703a8ff45cc1c89bdaa294d7819bc836c87639
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE-GPL3
 
@@ -36,9 +36,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/ply
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += system/library

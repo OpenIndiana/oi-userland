@@ -15,10 +15,12 @@
 #
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keepassxc
 COMPONENT_VERSION=	2.7.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Cross-platform community-driven port of Keepass password manager
 COMPONENT_PROJECT_URL=	https://keepassxc.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -44,8 +46,6 @@ CMAKE_OPTIONS += -DWITH_XC_DOCS=off
 CMAKE_OPTIONS += -DQt5_DIR=$(QT5_LIBDIR)/cmake/Qt5/
 CMAKE_OPTIONS += -DCMAKE_INSTALL_RPATH=$(QT5_LIBDIR)
 CMAKE_OPTIONS += -DCMAKE_LIBRARY_PATH=$(QT5_LIBDIR)
-
-COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

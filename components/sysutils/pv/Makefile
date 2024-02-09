@@ -27,13 +27,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pv
-COMPONENT_VERSION=	1.8.0
+COMPONENT_VERSION=	1.8.5
 COMPONENT_SUMMARY=	Pipe Viewer
 COMPONENT_DESCRIPTION=	pv - a terminal-based tool for monitoring the progress of data through a pipeline.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.ivarch.com/programs/pv.shtml
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:5cec4f737826a0eddab471dd3b75a587bd29a2e7cfa30068d57f29439a251fdf
+COMPONENT_ARCHIVE_HASH= sha256:d22948d06be06a5be37336318de540a2215be10ab0163f8cd23a20149647b780
 COMPONENT_ARCHIVE_URL=	https://www.ivarch.com/programs/sources/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/pipe-viewer
 COMPONENT_CLASSIFICATION= Applications/System Utilities

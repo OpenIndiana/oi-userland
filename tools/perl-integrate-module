@@ -175,6 +175,9 @@ if [[ -z "$DOWNLOAD_URL" ]] ; then
 fi
 
 
+# Remove everything that is not in git
+rm -rf *
+git checkout . > /dev/null 2>&1
 # Remove everything from git (except known patches, files, history, and $CONF)
 [[ -f "$CONF" ]] && grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
 [[ -f "$CONF" ]] && grep "^%file%" "$CONF" | while read TAG FILE ; do rm -f "files/$FILE" ; done
@@ -194,13 +197,16 @@ done
 
 
 # Makefile template
+GENERATE_CMD="\$WS_TOOLS/$THIS"
+[[ "$DIRECTORY" != "perl/$DISTRIBUTION" ]] && GENERATE_CMD="$GENERATE_CMD -d $DIRECTORY"
+GENERATE_CMD="$GENERATE_CMD $MODULE"
 (
 cat $WS_TOP/transforms/copyright-template | sed -e '/^$/,$d'
 cat <<EOF
 
 #
 # This file was automatically generated using the following command:
-#   \$WS_TOOLS/$THIS $MODULE
+#   $GENERATE_CMD
 #
 
 BUILD_STYLE = makemaker
@@ -236,7 +242,7 @@ if [[ -n "$DOWNLOAD_URL" ]] ; then
 	COMPONENT_ARCHIVE_URL=$($GMAKE print-value-COMPONENT_ARCHIVE_URL)
 	[[ "$COMPONENT_ARCHIVE_URL" == "$DOWNLOAD_URL" ]] && DOWNLOAD_URL=
 fi
-[[ -n "$DOWNLOAD_URL" ]] && sed -i -e $'s|^COMPONENT_CPAN_AUTHOR.*|COMPONENT_ARCHIVE_URL=\t\t'"$DOWNLOAD_URL"'|' Makefile
+[[ -n "$DOWNLOAD_URL" ]] && sed -i -e $'s|^COMPONENT_CPAN_AUTHOR.*|COMPONENT_ARCHIVE_URL =\t\t\\\\\\\n\t'"$DOWNLOAD_URL"'|' Makefile
 
 # Remove COMPONENT_REVISION if not needed
 COMPONENT_VERSION=$($GMAKE print-value-COMPONENT_VERSION)

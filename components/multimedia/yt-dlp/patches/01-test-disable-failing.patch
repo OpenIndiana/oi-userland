@@ -1,0 +1,38 @@
+--- yt-dlp-2023.12.30/test/test_networking.py.orig
++++ yt-dlp-2023.12.30/test/test_networking.py
+@@ -536,6 +536,7 @@
+                 rh, Request(f'http://127.0.0.1:{self.http_port}/timeout_1', extensions={'timeout': 4}))
+ 
+     @pytest.mark.parametrize('handler', ['Urllib', 'Requests'], indirect=True)
++    @pytest.mark.skip(reason="always fails: https://github.com/yt-dlp/yt-dlp/issues/8890")
+     def test_source_address(self, handler):
+         source_address = f'127.0.0.{random.randint(5, 255)}'
+         with handler(source_address=source_address) as rh:
+--- yt-dlp-2023.12.30/test/test_socks.py.orig
++++ yt-dlp-2023.12.30/test/test_socks.py
+@@ -323,6 +323,7 @@
+                 assert response['domain_address'] == 'localhost'
+ 
+     @pytest.mark.parametrize('handler,ctx', [('Urllib', 'http'), ('Requests', 'http'), ('Websockets', 'ws')], indirect=True)
++    @pytest.mark.skip(reason="always fails: https://github.com/yt-dlp/yt-dlp/issues/8890")
+     def test_ipv4_client_source_address(self, handler, ctx):
+         with ctx.socks_server(Socks4ProxyHandler) as server_address:
+             source_address = f'127.0.0.{random.randint(5, 255)}'
+@@ -438,6 +439,7 @@
+     # XXX: is there any feasible way of testing IPv6 source addresses?
+     # Same would go for non-proxy source_address test...
+     @pytest.mark.parametrize('handler,ctx', [('Urllib', 'http'), ('Requests', 'http'), ('Websockets', 'ws')], indirect=True)
++    @pytest.mark.skip(reason="always fails: https://github.com/yt-dlp/yt-dlp/issues/8890")
+     def test_ipv4_client_source_address(self, handler, ctx):
+         with ctx.socks_server(Socks5ProxyHandler) as server_address:
+             source_address = f'127.0.0.{random.randint(5, 255)}'
+--- yt-dlp-2023.12.30/test/test_websockets.py.orig
++++ yt-dlp-2023.12.30/test/test_websockets.py
+@@ -225,6 +225,7 @@
+             ws.close()
+ 
+     @pytest.mark.parametrize('handler', ['Websockets'], indirect=True)
++    @pytest.mark.skip(reason="always fails: https://github.com/yt-dlp/yt-dlp/issues/8890")
+     def test_source_address(self, handler):
+         source_address = f'127.0.0.{random.randint(5, 255)}'
+         with handler(source_address=source_address) as rh:

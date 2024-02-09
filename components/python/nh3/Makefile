@@ -20,12 +20,12 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nh3
-HUMAN_VERSION =			0.2.14
-COMPONENT_SUMMARY =		nh3 - Ammonia HTML sanitizer Python binding
+HUMAN_VERSION =			0.2.15
+COMPONENT_SUMMARY =		nh3 - Python bindings to the ammonia HTML sanitization library.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b0/bb/e967b7bc659cd1fd87f845d02194a08ea8da88d7d9dcc28164ee513f76f3/nh3-0.2.14.tar.gz
+	https://files.pythonhosted.org/packages/08/03/506eb477d723da0db7c46d6259ee06bc68243ef40f5626eb66ab72ae4d69/nh3-0.2.15.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a0c509894fd4dccdff557068e5074999ae3b75f4c5a2d6fb5415e782e25679c4
+	sha256:d1e30ff2d8d58fb2a14961f7aac1bbb1c51f9bdd7da727be35c63826060b0bf3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

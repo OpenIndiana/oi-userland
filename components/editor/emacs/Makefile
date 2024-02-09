@@ -27,12 +27,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
-COMPONENT_VERSION=      29.1
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      29.2
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:d2f881a5cc231e2f5a03e86f4584b0438f83edd7598a09d24a21bd8d003e2e01
+COMPONENT_ARCHIVE_HASH= sha256:7d3d2448988720bf4bf57ad77a5a08bf22df26160f90507a841ba986be2670dc
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			editor/gnu-emacs
 COMPONENT_CLASSIFICATION=	Development/Editors
@@ -70,12 +69,6 @@ LD_MAP_NOEXDATA.sparc=
 # LDFLAGS is defined for emacs to detect ncurses
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
-# This code is built with gcc. The primary reason for this is that the
-# configure script has problems using a non-GNU cpp. I am not aware of
-# any reason Sun Studio could not be made to work, but simply made a
-# cost/benefit decision not to pursue it at this time
-COMPILER=	gcc
-
 # Uncomment this for debugging only. It configures emacs to run from the
 # local proto instead of from its final installed location.
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
@@ -91,7 +84,17 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=yes
 CONFIGURE_OPTIONS +=	--with-xaw3d=no
 CONFIGURE_OPTIONS +=	--with-mailutils
+CONFIGURE_OPTIONS +=	--with-modules
 CONFIGURE_OPTIONS +=	--with-imagemagick
+CONFIGURE_OPTIONS +=	--with-threads
+CONFIGURE_OPTIONS +=	--with-png
+CONFIGURE_OPTIONS +=	--with-rsvg
+CONFIGURE_OPTIONS +=	--with-sqlite3
+CONFIGURE_OPTIONS +=	--with-tiff
+CONFIGURE_OPTIONS +=	--with-toolkit-scroll-bars
+CONFIGURE_OPTIONS +=	--with-webp
+CONFIGURE_OPTIONS +=	--with-treesitter
+CONFIGURE_OPTIONS +=	--with-sound=oss
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
 # SPARC needs this to be set in order to publish correctly.
@@ -108,7 +111,7 @@ LD_OPTIONS+= $(ASLR_MODE)
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
-$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3
+$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3 --with-xwidgets
 
 # we need to build all variants, but only have to install one in order
 # to get the common files shared by all. We use COMPONENT_POST_INSTALL_ACTION
@@ -229,6 +232,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmp
@@ -238,6 +242,7 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/tree-sitter
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

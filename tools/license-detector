@@ -19,17 +19,19 @@
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
-	printf "Usage: license-detector [-d] LICENSE_FILE\n" >&2
+	printf "Usage: license-detector [-d] [-l LICENSE] LICENSE_FILE\n" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
 
 
 DEBUG=0
-while getopts ":hd" OPT ; do
+LICENSE="*"
+while getopts ":hdl:" OPT ; do
 	case "$OPT" in
 	"?"|"h")	usage ;;
 	"d")		DEBUG=1 ;;
+	"l")		LICENSE="*.$OPTARG" ;;
 	esac
 done
 shift $((OPTIND - 1))
@@ -69,7 +71,7 @@ TMPFILE=$(mktemp -q)
 [[ -z "$TMPFILE" ]] && printf "ERROR: Temporary file creation failed\n" >&2 && exit 1
 
 typeset -A matched
-for l in "$WS_TOOLS"/licenses/* ; do
+for l in "$WS_TOOLS"/licenses/$LICENSE ; do
 	[[ -f "$l" ]] || continue
 	# skip filters
 	[[ "$l" != "${l%.filter}" ]] && continue
@@ -87,9 +89,9 @@ for l in "$WS_TOOLS"/licenses/* ; do
 	cat <<#EOF > "$TMPFILE"
 		dos2unix -ascii \\
 			| tr -d '\\014' \\
-			| sed -E -e 's/^[[:space:]]+\$//g' \\
+			| LC_ALL=C sed -E -e 's/^[[:space:]]+\$//g' \\
 			| awk '/^#/{next}/^\$/{\$0="\n"}1' ORS=' ' \\
-			| sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d' \\
+			| LC_ALL=C sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d' \\
 	EOF
 	# Remove some reStructuredText markup
 	if [[ "${F%.rst}" != "$F" ]] ; then

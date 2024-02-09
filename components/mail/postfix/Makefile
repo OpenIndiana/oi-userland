@@ -20,13 +20,14 @@ OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
-COMPONENT_VERSION=	3.8.3
+COMPONENT_VERSION=	3.8.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	https://www.postfix.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://de.postfix.org/ftpmirror/official/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:16946c9874a786a09f53b17d1c83dc1faae35cbf80bab34ab01798b70420968b
+COMPONENT_ARCHIVE_HASH=	sha256:f3e827a2b2e410359ad25d31341970434ab07e36139f9a2ef93981b0ec564c85
 COMPONENT_FMRI=		service/network/smtp/postfix
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_LICENSE=	IBM PUBLIC LICENSE, Eclipse Public License 2.0
@@ -70,11 +71,11 @@ PKG_HARDLINKS += usr/lib/postfix/qmgr
 PKG_HARDLINKS += usr/lib/postfix/lmtp
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/security/openssl-31

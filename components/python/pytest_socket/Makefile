@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_socket
-HUMAN_VERSION =			0.6.0
+HUMAN_VERSION =			0.7.0
 COMPONENT_SUMMARY =		pytest_socket - Pytest Plugin to disable socket calls during tests
 COMPONENT_PROJECT_URL =		https://pypi.org/project/pytest-socket/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/03/be/908339cd5734b4fc2e12c8f2c30b1d0d2e032db8e85807028cea4ec15229/pytest_socket-0.6.0.tar.gz
+	https://files.pythonhosted.org/packages/05/ff/90c7e1e746baf3d62ce864c479fd53410b534818b9437413903596f81580/pytest_socket-0.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:363c1d67228315d4fc7912f1aabfd570de29d0e3db6217d61db5728adacd7138
+	sha256:71ab048cbbcb085c15a4423b73b619a8b35d6a307f46f78ea46be51b1b7e11b3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

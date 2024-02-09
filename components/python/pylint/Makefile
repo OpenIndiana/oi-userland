@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pylint
-HUMAN_VERSION =			3.0.2
+HUMAN_VERSION =			3.0.3
 COMPONENT_SUMMARY =		pylint - python code static checker
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pylint-dev/pylint/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:05323c5c40aa2fdd4bba714bea079bb096539a015b43513f396d9b471a4fb762
+	sha256:2880998fc9f3a53fab8989f373faba3f47a3097df0ff2e201ec286bdef0c3aa5
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 

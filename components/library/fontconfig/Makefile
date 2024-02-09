@@ -13,18 +13,16 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS= 32_and_64
-USE_COMMON_TEST_MASTER= no
+BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fontconfig
-COMPONENT_REVISION=	2
-COMPONENT_VERSION=	2.14.2
+COMPONENT_VERSION=	2.15.0
 COMPONENT_SUMMARY=	Fontconfig - Font configuration and customization library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:dba695b57bce15023d2ceedef82062c2b925e51f5d4cc4aef736cf13f60a468b
+COMPONENT_ARCHIVE_HASH= sha256:63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/fontconfig/
 COMPONENT_ARCHIVE_URL= 	https://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/library/$(COMPONENT_NAME)
@@ -36,21 +34,19 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-gcc_OPT= -O2
-
 COMPONENT_PREP_ACTION=  ( cd $(@D); autoreconf )
 
 # Gperf files should be regenerated
 # https://bugs.freedesktop.org/show_bug.cgi?id=101280
-COMPONENT_PRE_CONFIGURE_ACTION= ($(RM) $(SOURCE_DIR)/src/fcobjshash.h)
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(RM) $(SOURCE_DIR)/src/fcobjshash.h )
 
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS+= --with-baseconfigdir=$(ETCDIR)/fonts
-CONFIGURE_OPTIONS+= --with-default-fonts='/usr/share/fonts'
-CONFIGURE_OPTIONS+= --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript/fonts,/usr/X11/lib/X11/fonts'
-CONFIGURE_OPTIONS+= --with-cache-dir=/var/cache/fontconfig
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --with-baseconfigdir=$(ETCDIR)/fonts
+CONFIGURE_OPTIONS += --with-default-fonts='/usr/share/fonts'
+CONFIGURE_OPTIONS += --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript/fonts,/usr/X11/lib/X11/fonts'
+CONFIGURE_OPTIONS += --with-cache-dir=/var/cache/fontconfig
 
-$(BUILD_DIR)/.fonts_installed: $(INSTALL_32_and_64)
+$(BUILD_DIR)/.fonts_installed:	$(INSTALL_64)
 	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.d 
 	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.avail
 	$(MKDIR) $(PROTO_DIR)/etc/fonts/conf.d
@@ -60,7 +56,7 @@ $(BUILD_DIR)/.fonts_installed: $(INSTALL_32_and_64)
 	done
 	$(TOUCH) $@
 
-install:	$(INSTALL_32_and_64) $(BUILD_DIR)/.fonts_installed
+install:	$(INSTALL_64) $(BUILD_DIR)/.fonts_installed
 
 # This is necessary to pass tests
 unexport SHELLOPTS
@@ -69,8 +65,8 @@ unexport SHELLOPTS
 REQUIRED_PACKAGES += developer/gperf
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
