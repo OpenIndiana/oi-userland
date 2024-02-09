@@ -11,29 +11,27 @@
 # Copyright 2022, Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS=             64
-BUILD_STYLE=            configure
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c_icap_modules
-COMPONENT_VERSION=	0.5.5
+COMPONENT_VERSION=	0.5.7
 COMPONENT_SUMMARY=	An antivirus services for the c-icap ICAP server
-COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6a42f1fdd8c35ad38d29f7d3c10f925471977f217086352e146cf95e45f2b5b5
+COMPONENT_ARCHIVE_HASH=	sha256:80bc0af10be171c0c73cd5886533a397c4d55211756fb6279f245ee7e5dd3814
 COMPONENT_PROJECT_URL=	http://c-icap.sourceforge.net/
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/c-icap/files/c-icap-modules/0.5.x/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_FMRI= 		antivirus/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
-test:		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += antivirus/c_icap
