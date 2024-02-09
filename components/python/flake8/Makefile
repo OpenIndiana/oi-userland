@@ -19,26 +19,23 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8
-HUMAN_VERSION =			6.1.0
+HUMAN_VERSION =			7.0.0
 COMPONENT_SUMMARY =		flake8 - the modular source code checker: pep8 pyflakes and co
 COMPONENT_PROJECT_URL =		https://github.com/pycqa/flake8
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/PyCQA/flake8/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bcb01efc0c83d3c9362e200b5359fe22e11b859962dd27e5bebf3ada7620ae2f
+	sha256:9b649d29d4bc2562e2d814ffdc63b90828e3f43b50bc146021901b4446bae7fb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
-
 # Testing expects there are no additional flake8 plugins installed otherwise
 # some tests will fail.
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-2020
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-bugbear
+TEST_CONFLICTING_PACKAGES.python += library/python/flake8-docstrings
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-noqa
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-typing-imports
 TEST_CONFLICTING_PACKAGES.python += library/python/teamcity-messages
@@ -49,5 +46,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/pycodestyle
 PYTHON_REQUIRED_PACKAGES += library/python/pyflakes
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

@@ -30,6 +30,7 @@ COMPONENT_TEST_DIR = $(@D)/tests
 
 COMPONENT_NAME=		bind
 COMPONENT_VERSION=	9.18.21
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -61,9 +62,14 @@ CFLAGS += $(CPP_XPG6MODE)
 # that was overriden by setting CONFIGARGS to hide build server
 # pathnames.
 
+# default LD_OPTION $(LD_B_DIRECT) causes problems with tests which
+# interpose on functions in shared libraries
+LD_B_DIRECT=
+
 # DNS libraries are in usr/lib/dns - Override settings from configure.mk
 CONFIGURE_LIBDIR.64= $(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
@@ -101,6 +107,16 @@ COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 # The user running the test needs an profiles=Network Management entry in /etc/user_attr in order to successfully run the following ifconfig.sh up script:
 COMPONENT_PRE_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh up )
 COMPONENT_POST_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh down )
+
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
+# Fix the hard link direction
+PKG_HARDLINKS += usr/bin/named-checkzone
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += library/cmocka

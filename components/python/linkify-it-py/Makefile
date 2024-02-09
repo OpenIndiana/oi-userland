@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		linkify-it-py
-HUMAN_VERSION =			2.0.2
+HUMAN_VERSION =			2.0.3
 COMPONENT_SUMMARY =		linkify-it-py - Links recognition library with FULL unicode support.
 COMPONENT_PROJECT_URL =		https://github.com/tsutsu3/linkify-it-py
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8d/fd/73bb30ec2b3cd952fe139a79a40ce5f5fd0280dd2cc1de94c93ea6a714d2/linkify-it-py-2.0.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:19f3060727842c254c808e99d465c80c49d2c7306788140987a1a7a29b0d6ad2
+	sha256:68cda27e162e9215c17d786649d1da0021a451bdc436ef9e0fa0ba5234b9b048
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

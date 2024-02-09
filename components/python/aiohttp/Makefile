@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.9.1
+HUMAN_VERSION =			3.9.3
 COMPONENT_SUMMARY =		aiohttp - Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/54/07/9467d3f8dae29b14f423b414d9e67512a76743c5bb7686fb05fe10c9cc3e/aiohttp-3.9.1.tar.gz
+	https://files.pythonhosted.org/packages/18/93/1f005bbe044471a0444a82cdd7356f5120b9cf94fe2c50c0cdbf28f1258b/aiohttp-3.9.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8fc49a87ac269d4529da45871e2ffb6874e87779c3d0e2ccd813c0899221239d
+	sha256:90842933e5d1ff760fae6caca4b2b3edba53ba8f4b71e95dacf2818a2aca06f7
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -80,6 +80,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/async-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/brotli
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/freezegun
 TEST_REQUIRED_PACKAGES.python += library/python/frozenlist
 TEST_REQUIRED_PACKAGES.python += library/python/gunicorn
 TEST_REQUIRED_PACKAGES.python += library/python/multidict
@@ -88,7 +89,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/re-assert
-TEST_REQUIRED_PACKAGES.python += library/python/time-machine
 TEST_REQUIRED_PACKAGES.python += library/python/trustme
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/yarl

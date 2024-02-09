@@ -2,7 +2,7 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-collecting ... collected 2028 items / 9 deselected / 2019 selected
+collecting ... collected 2050 items / 9 deselected / 2041 selected
 
 tests/constraints/generic/test_constraint.py::test_allows PASSED
 tests/constraints/generic/test_constraint.py::test_allows_all PASSED
@@ -695,10 +695,23 @@ tests/constraints/version/test_version_union.py::test_str[<1.2 || >=2.3.dev0-<1.
 tests/json/test_poetry_schema.py::test_bad_extra PASSED
 tests/json/test_poetry_schema.py::test_git_dependencies[git@github.com:example/example-repository.git] PASSED
 tests/json/test_poetry_schema.py::test_git_dependencies[https://github.com/example/example-repository.git] PASSED
+tests/json/test_poetry_schema.py::test_invalid_mode PASSED
 tests/json/test_poetry_schema.py::test_multi_url_dependencies PASSED
 tests/json/test_poetry_schema.py::test_multiline_description[Some multi-\nline string] PASSED
 tests/json/test_poetry_schema.py::test_multiline_description[Some multiline string\n] PASSED
 tests/json/test_poetry_schema.py::test_multiline_description[\nSome multi-line string] PASSED
+tests/json/test_poetry_schema.py::test_non_package_mode_no_metadata PASSED
+tests/json/test_poetry_schema.py::test_non_package_mode_with_metadata PASSED
+tests/json/test_poetry_schema.py::test_package_mode[-False] PASSED
+tests/json/test_poetry_schema.py::test_package_mode[-True] PASSED
+tests/json/test_poetry_schema.py::test_package_mode[authors-False] PASSED
+tests/json/test_poetry_schema.py::test_package_mode[authors-True] PASSED
+tests/json/test_poetry_schema.py::test_package_mode[description-False] PASSED
+tests/json/test_poetry_schema.py::test_package_mode[description-True] PASSED
+tests/json/test_poetry_schema.py::test_package_mode[name-False] PASSED
+tests/json/test_poetry_schema.py::test_package_mode[name-True] PASSED
+tests/json/test_poetry_schema.py::test_package_mode[version-False] PASSED
+tests/json/test_poetry_schema.py::test_package_mode[version-True] PASSED
 tests/json/test_poetry_schema.py::test_path_dependencies PASSED
 tests/masonry/builders/test_builder.py::test_builder_convert_entry_points[script_callable_legacy_string-result1] PASSED
 tests/masonry/builders/test_builder.py::test_builder_convert_entry_points[script_callable_legacy_table-result0] PASSED
@@ -711,6 +724,7 @@ tests/masonry/builders/test_builder.py::test_builder_convert_script_files[script
 tests/masonry/builders/test_builder.py::test_builder_find_case_sensitive_excluded_files PASSED
 tests/masonry/builders/test_builder.py::test_builder_find_excluded_files PASSED
 tests/masonry/builders/test_builder.py::test_builder_find_invalid_case_sensitive_excluded_files PASSED
+tests/masonry/builders/test_builder.py::test_building_not_possible_in_non_package_mode PASSED
 tests/masonry/builders/test_builder.py::test_entrypoint_scripts_legacy_warns[script_callable_legacy_table] PASSED
 tests/masonry/builders/test_builder.py::test_get_metadata_content PASSED
 tests/masonry/builders/test_builder.py::test_invalid_script_files_definition PASSED
@@ -812,6 +826,9 @@ tests/masonry/test_builder.py::test_builder_creates_places_built_files_in_specif
 tests/masonry/test_builder.py::test_builder_creates_places_built_files_in_specified_directory[sdist] PASSED
 tests/masonry/test_builder.py::test_builder_creates_places_built_files_in_specified_directory[wheel] PASSED
 tests/masonry/test_builder.py::test_builder_factory_raises_error_when_format_is_not_valid PASSED
+tests/masonry/test_builder.py::test_builder_raises_error_in_non_package_mode[all] PASSED
+tests/masonry/test_builder.py::test_builder_raises_error_in_non_package_mode[sdist] PASSED
+tests/masonry/test_builder.py::test_builder_raises_error_in_non_package_mode[wheel] PASSED
 tests/masonry/utils/test_helpers.py::test_escape_name[FOO-bAr-foo_bar] PASSED
 tests/masonry/utils/test_helpers.py::test_escape_name[foo-bar-foo_bar] PASSED
 tests/masonry/utils/test_helpers.py::test_escape_name[foo-foo] PASSED
@@ -923,6 +940,7 @@ tests/packages/test_dependency_group.py::test_dependency_group_remove_dependency
 tests/packages/test_directory_dependency.py::test_directory_dependency_does_not_exist PASSED
 tests/packages/test_directory_dependency.py::test_directory_dependency_is_file PASSED
 tests/packages/test_directory_dependency.py::test_directory_dependency_is_not_a_python_project PASSED
+tests/packages/test_directory_dependency.py::test_directory_dependency_minimal PASSED
 tests/packages/test_directory_dependency.py::test_directory_dependency_non_poetry_pep517[project_with_pep517_non_poetry-PEP 517] PASSED
 tests/packages/test_directory_dependency.py::test_directory_dependency_non_poetry_pep517[project_with_setup_cfg_only-setup.cfg] PASSED
 tests/packages/test_directory_dependency.py::test_directory_dependency_pep_508_extras PASSED
@@ -1192,6 +1210,7 @@ tests/packages/utils/test_utils.py::test_is_python_project[project_with_setup_cf
 tests/packages/utils/test_utils.py::test_is_python_project[project_without_pep517-False] PASSED
 tests/packages/utils/test_utils.py::test_is_python_project[simple_project-True] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_hash PASSED
+tests/packages/utils/test_utils_link.py::test_package_link_hashes PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_is_checks[cp36-cp36m-manylinux1_x86_64.whl-wheel] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_is_checks[egg-egg] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_is_checks[tar.gz-sdist] PASSED
@@ -1202,14 +1221,15 @@ tests/packages/utils/test_utils_link.py::test_package_link_pep592_yanked[-True-]
 tests/packages/utils/test_utils_link.py::test_package_link_pep592_yanked[False-False-] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_pep592_yanked[True-True-] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_pep592_yanked[the reason-True-the reason] PASSED
-tests/packages/utils/test_utils_link.py::test_package_link_pep653_non_hash_metadata_value[-False] PASSED
-tests/packages/utils/test_utils_link.py::test_package_link_pep653_non_hash_metadata_value[false-False] PASSED
-tests/packages/utils/test_utils_link.py::test_package_link_pep653_non_hash_metadata_value[true-True] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_pep658[egg-False] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_pep658[tar.gz-True] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_pep658[whl-True] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_pep658[zip-True] PASSED
 tests/packages/utils/test_utils_link.py::test_package_link_pep658_no_default_metadata PASSED
+tests/packages/utils/test_utils_link.py::test_package_link_pep658_non_hash_metadata_value[-False] PASSED
+tests/packages/utils/test_utils_link.py::test_package_link_pep658_non_hash_metadata_value[false-False] PASSED
+tests/packages/utils/test_utils_link.py::test_package_link_pep658_non_hash_metadata_value[true-True] PASSED
+tests/packages/utils/test_utils_link.py::test_package_link_pep691 PASSED
 tests/packages/utils/test_utils_urls.py::test_path_to_url_unix PASSED
 tests/packages/utils/test_utils_urls.py::test_path_to_url_win SKIPPED
 tests/packages/utils/test_utils_urls.py::test_url_to_path[file:///c:/tmp/file-C:\\tmp\\file-/c:/tmp/file] PASSED
@@ -1253,6 +1273,8 @@ tests/test_factory.py::test_create_dependency_marker_variants[constraint7-<4.0 >
 tests/test_factory.py::test_create_dependency_marker_variants[constraint8-*-<empty>] PASSED
 tests/test_factory.py::test_create_poetry PASSED
 tests/test_factory.py::test_create_poetry_fails_on_invalid_configuration PASSED
+tests/test_factory.py::test_create_poetry_fails_on_invalid_mode PASSED
+tests/test_factory.py::test_create_poetry_non_package_mode PASSED
 tests/test_factory.py::test_create_poetry_omits_dev_dependencies_iff_with_dev_is_false PASSED
 tests/test_factory.py::test_create_poetry_with_dependencies_with_subdirectory PASSED
 tests/test_factory.py::test_create_poetry_with_groups_and_explicit_main PASSED
@@ -1280,7 +1302,7 @@ tests/utils/test_helpers.py::test_utils_helpers_readme_content_type[readme4-text
 tests/utils/test_helpers.py::test_utils_helpers_readme_content_type[readme5-text/plain] PASSED
 tests/utils/test_helpers.py::test_utils_helpers_temporary_directory_readonly_file PASSED
 tests/vcs/test_vcs.py::test_ensure_absolute_path_to_git SKIPPED (Ret...)
-tests/vcs/test_vcs.py::test_ensure_existing_git_executable_is_found SKIPPED
+tests/vcs/test_vcs.py::test_get_vcs_encoding PASSED
 tests/vcs/test_vcs.py::test_git_checkout_raises_error_on_invalid_repository PASSED
 tests/vcs/test_vcs.py::test_git_clone_raises_error_on_invalid_repository PASSED
 tests/vcs/test_vcs.py::test_git_rev_parse_raises_error_on_invalid_repository PASSED
@@ -2024,4 +2046,4 @@ tests/version/test_requirements.py::test_requirement[name>=2,<3-expected12] PASS
 tests/version/test_requirements.py::test_requirement[name>=3-expected4] PASSED
 tests/version/test_requirements.py::test_requirement[name>=3.*-expected5] PASSED
 
-======== 2015 passed, 4 skipped, 9 deselected ========
+======== 2038 passed, 3 skipped, 9 deselected ========

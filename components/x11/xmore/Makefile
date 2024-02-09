@@ -17,12 +17,13 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=     xmore
-COMPONENT_VERSION=  1.0.3
-COMPONENT_FMRI=     x11/xmore
-COMPONENT_SUMMARY=  xmore - a plain text display program for the X Window System
-COMPONENT_ARCHIVE_HASH= \
-  sha256:644a1e0d5182d7708d413722d0579a587dc56b9a8cb60640df076d302e09251b
+COMPONENT_NAME=         xmore
+COMPONENT_VERSION=      1.0.4
+COMPONENT_SUMMARY=      xmore - a plain text display program for the X Window System
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:7eb560dbc1de4e43c64fe491ad73907a29d734cca82a9ad82c7d3feb9cdb0a9a
+COMPONENT_FMRI=         x11/$(COMPONENT_NAME)
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 

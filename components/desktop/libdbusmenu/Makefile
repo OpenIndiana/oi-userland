@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libdbusmenu
 COMPONENT_VERSION=      16.0.4.0
 HUMAN_VERSION=          16.04.0
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=      Library for passing menus over DBus
 COMPONENT_PROJECT_URL=  https://launchpad.net/libdbusmenu
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)

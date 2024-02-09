@@ -15,26 +15,27 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pan
-COMPONENT_VERSION=      0.149
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      0.155
 COMPONENT_PROJECT_URL=  https://pan.rebelbase.com
 COMPONENT_SUMMARY=      A powerful Newsgroup Article reader
 COMPONENT_FMRI=         desktop/nntp/pan
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=          $(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:5d34d0d7dbb73ee53484ffe173f01d8b2c0732126ec21d8cf29d6baa5ecb85ea
-COMPONENT_ARCHIVE_URL=	https://pan.rebelbase.com/download/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=       Applications/Internet
+COMPONENT_ARCHIVE_HASH= sha256:3624ac3171fa8089825ce55b62b053db4f86d592f717c4d874c48ce0e885dff2
+COMPONENT_ARCHIVE_URL=	https://gitlab.gnome.org/GNOME/pan/-/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-LDFLAGS += -lsocket -lnsl
-
-CONFIGURE_OPTIONS += --with-gmime2
-CONFIGURE_OPTIONS += --with-gtk3
+CONFIGURE_OPTIONS += --enable-gkr
 CONFIGURE_OPTIONS += --with-gnutls
 
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf --force --install )
+
+LDFLAGS += -lsocket -lnsl
 
 # SPARC needs math library
 ifeq ($(strip $(MACH)),sparc)
@@ -50,8 +51,10 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/gtkspell3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gmime
+REQUIRED_PACKAGES += library/gmime3
+REQUIRED_PACKAGES += library/gnome/gcr
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

@@ -51,14 +51,3 @@
      static_assert(
          sizeof (test::codemaker::cppumaker::AlignmentDerivedStruct) ==
  #if defined X86_64 || defined PPC
---- a/cppcanvas/qa/unit/test.cxx	Fri May  6 16:49:44 2022
-+++ b/cppcanvas/qa/unit/test.cxx	Fri Oct 28 16:26:37 2022
-@@ -34,7 +34,7 @@
- 
- void CanvasTest::testComposite()
- {
--#ifdef LINUX
-+#if defined(LINUX) || defined(SUN)
-     ScopedVclPtrInstance<WorkWindow> pWin( nullptr, WB_STDWORK );
- 
-     uno::Reference<rendering::XCanvas> xCanvas = pWin->GetOutDev()->GetCanvas ();

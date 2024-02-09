@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		path
-HUMAN_VERSION =			16.9.0
+HUMAN_VERSION =			16.10.0
 COMPONENT_SUMMARY =		path - A module wrapper for os.path
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/path
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8d/50/2a1a3287715c87d135dd1dcbd9f7bca4200302cfcc8c28ced1a8035d7894/path-16.9.0.tar.gz
+	https://files.pythonhosted.org/packages/19/a1/d1c9a2b4c1bbec0d0a22c7eb4c025c4de7a06dd6890c13fc3810262a2ce5/path-16.10.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dfd31c2af60e8889a13538bef302ade7adacdb5351836be22638e2349ddd5d7b
+	sha256:b32b22b76fe810a8ded6d136268cc8b6698ae7c47c29b94a9ea12623f3051e46
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,7 +44,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/more-itertools
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler

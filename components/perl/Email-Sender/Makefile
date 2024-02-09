@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Sender
-HUMAN_VERSION =			2.600
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.601
 COMPONENT_SUMMARY =		Email::Sender - a library for sending email
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ecc675d030d79d9a4fb064567ea885c66b17c3862379ad30f8205a281cd8ee29
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:dead783d62a968a5104c962e5562172d1e4dfebfa07a323ca62a4f9b455d000d
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk

@@ -20,11 +20,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		LWP
 COMPONENT_PERL_DISTRIBUTION =	libwww-perl
-HUMAN_VERSION =			6.72
+HUMAN_VERSION =			6.76
 COMPONENT_SUMMARY =		LWP - The World-Wide Web library for Perl
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e9b8354fd5e20be207afe23ddd584fcd59bf82998dc077decf684ba1dae5a05d
+	sha256:75c2e57d6102eea540f3611b56fd86268a59b022dd00ea6562ac36412fcdf8e1
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,7 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/encode-locale
 PERL_REQUIRED_PACKAGES += library/perl-5/file-listing
 PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
-PERL_REQUIRED_PACKAGES += library/perl-5/http-cookiejar
 PERL_REQUIRED_PACKAGES += library/perl-5/http-cookies
 PERL_REQUIRED_PACKAGES += library/perl-5/http-date
 PERL_REQUIRED_PACKAGES += library/perl-5/http-message
@@ -46,6 +45,7 @@ PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += library/perl-5/www-robotrules
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/data-dump
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-cookiejar
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-daemon
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/lwp-protocol-https
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal

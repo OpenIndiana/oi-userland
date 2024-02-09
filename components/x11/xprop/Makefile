@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xprop
-COMPONENT_VERSION=        1.2.6
+COMPONENT_VERSION=        1.2.7
 COMPONENT_SUMMARY=        xprop - utility for displaying X11 window and font properties
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:580b8525b12ecc0144aa16c88b0aafa76d2e799b44c8c6c50f9ce92788b5586e
+COMPONENT_ARCHIVE_HASH=   sha256:4436e3148bb91a162406230d9f736a49ca8b50b74790015dc15d78d6ce8e825f
 COMPONENT_FMRI=           x11/xprop
+COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 

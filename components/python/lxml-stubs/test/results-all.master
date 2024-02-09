@@ -1,21 +1,21 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test-data
-asyncio: mode=strict
-collecting ... collected 17 items
+collecting ... collected 20 items
 
+test-data/test-etree.yml::etree_HTMLPullParser PASSED
 test-data/test-etree.yml::etree_HTML_returns_element PASSED
+test-data/test-etree.yml::etree_XMLPullParser PASSED
 test-data/test-etree.yml::etree_XML_returns_element PASSED
 test-data/test-etree.yml::etree_element_find PASSED
 test-data/test-etree.yml::etree_element_get PASSED
 test-data/test-etree.yml::etree_element_iterchildren PASSED
+test-data/test-etree.yml::etree_from_empty_string_with_parser_recovery_returns_none PASSED
 test-data/test-etree.yml::etree_from_string_returns_element PASSED
 test-data/test-etree.yml::etree_htmlparser_makeelement PASSED
 test-data/test-etree.yml::etree_tostring_encoding_default_or_type[kwd=None,rt=builtins.bytes] PASSED
@@ -29,6 +29,6 @@ test-data/test-etree.yml::etree_xmlparser_makeelement PASSED
 test-data/test_objectify.yml::etree_from_string_returns_element PASSED
 test-data/test_objectify.yml::etree_from_string_returns_element PASSED
 
-======== 17 passed ========
+======== 20 passed ========
   py$(PYV): OK
   congratulations :)

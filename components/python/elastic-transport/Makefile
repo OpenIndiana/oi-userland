@@ -19,20 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elastic-transport
-HUMAN_VERSION =			8.11.0
+HUMAN_VERSION =			8.12.0
 COMPONENT_SUMMARY =		elastic-transport - Transport classes and utilities shared among Python Elastic client libraries
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elastic-transport-python
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/elastic/elastic-transport-python/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/f1/5e/9d697ca2511c2ecb3a239be91d5186a14fdbc97e15369c4ca6524c2929e8/elastic-transport-8.12.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8b73854dd39b1c282abfb0680f064edb84c6905a3d210f88d84c8fbdd80f289c
+	sha256:48839b942fcce199eece1558ecea6272e116c58da87ca8d495ef12eb61effaf7
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
-
-# Github tarball use different source directory than sdist
-COMPONENT_SRC =		elastic-transport-python-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 

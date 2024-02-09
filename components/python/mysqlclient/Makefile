@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mysqlclient
-HUMAN_VERSION =			2.2.1
+HUMAN_VERSION =			2.2.3
 COMPONENT_SUMMARY =		mysqlclient - Python interface to MySQL
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/37/fb/d9a8f763c84f1e789c027af0ffc7dbf94c9a38db961484f253f0552cbb47/mysqlclient-2.2.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2c7ad15b87293b12fd44b47c46879ec95ec647f4567e866ccd70b8337584e9b2
+	sha256:ee51656e36fc5a92920b807ee8b9e373e3b0e267c89cdc95d73b1dbe46863631
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 

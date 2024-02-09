@@ -1,0 +1,22 @@
+Previously absolute symlinks would be used which made the installed files not
+relocatable.
+
+https://gitlab.gnome.org/GNOME/yelp-tools/-/issues/13
+
+--- yelp-tools-42.1/tools/yelp.m4.orig
++++ yelp-tools-42.1/tools/yelp.m4
+@@ -182,7 +182,13 @@
+ 	    elif test "x$$lc" != "xC"; then \
+ 	      if test "x$(YELP_LC_MEDIA_LINKS)" != "x"; then \
+ 	        echo "$(LN_S) -f $(HELP_DIR)/C/$(HELP_ID)/$$f $$helpdir$$f"; \
+-	        $(LN_S) -f "$(HELP_DIR)/C/$(HELP_ID)/$$f" "$$helpdir$$f" || exit 1; \
++	        dname="$$f"; \
++	        pars="../"; \
++	        while test "$$dname" != "." -a "$$dname" != "/"; do \
++	          pars="../$$pars"; \
++	          dname=$$(dirname "$$dname"); \
++	        done; \
++	        $(LN_S) -f $$pars"C/$(HELP_ID)/$$f" "$$helpdir$$f" || exit 1; \
+ 	      fi; \
+ 	    fi; \
+ 	  done; \

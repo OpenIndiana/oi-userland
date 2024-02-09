@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 <contributor>
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -85,6 +85,7 @@ file path=usr/include/unicode/fieldpos.h
 file path=usr/include/unicode/filteredbrk.h
 file path=usr/include/unicode/fmtable.h
 file path=usr/include/unicode/format.h
+file path=usr/include/unicode/formattednumber.h
 file path=usr/include/unicode/formattedvalue.h
 file path=usr/include/unicode/fpositer.h
 file path=usr/include/unicode/gender.h
@@ -130,6 +131,7 @@ file path=usr/include/unicode/scientificnumberformatter.h
 file path=usr/include/unicode/search.h
 file path=usr/include/unicode/selfmt.h
 file path=usr/include/unicode/simpleformatter.h
+file path=usr/include/unicode/simplenumberformatter.h
 file path=usr/include/unicode/simpletz.h
 file path=usr/include/unicode/smpdtfmt.h
 file path=usr/include/unicode/sortkey.h
@@ -181,6 +183,7 @@ file path=usr/include/unicode/udisplayoptions.h
 file path=usr/include/unicode/uenum.h
 file path=usr/include/unicode/ufieldpositer.h
 file path=usr/include/unicode/uformattable.h
+file path=usr/include/unicode/uformattednumber.h
 file path=usr/include/unicode/uformattedvalue.h
 file path=usr/include/unicode/ugender.h
 file path=usr/include/unicode/uidna.h
@@ -188,6 +191,8 @@ file path=usr/include/unicode/uiter.h
 file path=usr/include/unicode/uldnames.h
 file path=usr/include/unicode/ulistformatter.h
 file path=usr/include/unicode/uloc.h
+file path=usr/include/unicode/ulocale.h
+file path=usr/include/unicode/ulocbuilder.h
 file path=usr/include/unicode/ulocdata.h
 file path=usr/include/unicode/umachine.h
 file path=usr/include/unicode/umisc.h
@@ -203,6 +208,7 @@ file path=usr/include/unicode/unorm.h
 file path=usr/include/unicode/unorm2.h
 file path=usr/include/unicode/unum.h
 file path=usr/include/unicode/unumberformatter.h
+file path=usr/include/unicode/unumberoptions.h
 file path=usr/include/unicode/unumberrangeformatter.h
 file path=usr/include/unicode/unumsys.h
 file path=usr/include/unicode/uobject.h
@@ -218,6 +224,7 @@ file path=usr/include/unicode/usearch.h
 file path=usr/include/unicode/uset.h
 file path=usr/include/unicode/usetiter.h
 file path=usr/include/unicode/ushape.h
+file path=usr/include/unicode/usimplenumberformatter.h
 file path=usr/include/unicode/uspoof.h
 file path=usr/include/unicode/usprep.h
 file path=usr/include/unicode/ustdio.h
@@ -244,25 +251,25 @@ link path=usr/lib/$(MACH64)/icu/current target=$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/icu/pkgdata.inc target=current/pkgdata.inc
 link path=usr/lib/$(MACH64)/libicudata.so target=libicudata.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libicudata.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libicudata.so.72 \
+link path=usr/lib/$(MACH64)/libicudata.so.$(COMPONENT_VERSION_MAJOR) \
     target=libicudata.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicui18n.so target=libicui18n.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libicui18n.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libicui18n.so.72 \
+link path=usr/lib/$(MACH64)/libicui18n.so.$(COMPONENT_VERSION_MAJOR) \
     target=libicui18n.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicuio.so target=libicuio.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libicuio.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libicuio.so.72 target=libicuio.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicuio.so.$(COMPONENT_VERSION_MAJOR) target=libicuio.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicutest.so target=libicutest.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libicutest.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libicutest.so.72 \
+link path=usr/lib/$(MACH64)/libicutest.so.$(COMPONENT_VERSION_MAJOR) \
     target=libicutest.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicutu.so target=libicutu.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libicutu.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libicutu.so.72 target=libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicutu.so.$(COMPONENT_VERSION_MAJOR) target=libicutu.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicuuc.so target=libicuuc.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libicuuc.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libicuuc.so.72 target=libicuuc.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicuuc.so.$(COMPONENT_VERSION_MAJOR) target=libicuuc.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/icu-i18n.pc
 file path=usr/lib/$(MACH64)/pkgconfig/icu-io.pc
 file path=usr/lib/$(MACH64)/pkgconfig/icu-uc.pc
@@ -273,22 +280,22 @@ link path=usr/lib/icu/current target=$(HUMAN_VERSION)
 link path=usr/lib/icu/pkgdata.inc target=current/pkgdata.inc
 link path=usr/lib/libicudata.so target=libicudata.so.$(HUMAN_VERSION)
 file path=usr/lib/libicudata.so.$(HUMAN_VERSION)
-link path=usr/lib/libicudata.so.72 target=libicudata.so.$(HUMAN_VERSION)
+link path=usr/lib/libicudata.so.$(COMPONENT_VERSION_MAJOR) target=libicudata.so.$(HUMAN_VERSION)
 link path=usr/lib/libicui18n.so target=libicui18n.so.$(HUMAN_VERSION)
 file path=usr/lib/libicui18n.so.$(HUMAN_VERSION)
-link path=usr/lib/libicui18n.so.72 target=libicui18n.so.$(HUMAN_VERSION)
+link path=usr/lib/libicui18n.so.$(COMPONENT_VERSION_MAJOR) target=libicui18n.so.$(HUMAN_VERSION)
 link path=usr/lib/libicuio.so target=libicuio.so.$(HUMAN_VERSION)
 file path=usr/lib/libicuio.so.$(HUMAN_VERSION)
-link path=usr/lib/libicuio.so.72 target=libicuio.so.$(HUMAN_VERSION)
+link path=usr/lib/libicuio.so.$(COMPONENT_VERSION_MAJOR) target=libicuio.so.$(HUMAN_VERSION)
 link path=usr/lib/libicutest.so target=libicutest.so.$(HUMAN_VERSION)
 file path=usr/lib/libicutest.so.$(HUMAN_VERSION)
-link path=usr/lib/libicutest.so.72 target=libicutest.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutest.so.$(COMPONENT_VERSION_MAJOR) target=libicutest.so.$(HUMAN_VERSION)
 link path=usr/lib/libicutu.so target=libicutu.so.$(HUMAN_VERSION)
 file path=usr/lib/libicutu.so.$(HUMAN_VERSION)
-link path=usr/lib/libicutu.so.72 target=libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutu.so.$(COMPONENT_VERSION_MAJOR) target=libicutu.so.$(HUMAN_VERSION)
 link path=usr/lib/libicuuc.so target=libicuuc.so.$(HUMAN_VERSION)
 file path=usr/lib/libicuuc.so.$(HUMAN_VERSION)
-link path=usr/lib/libicuuc.so.72 target=libicuuc.so.$(HUMAN_VERSION)
+link path=usr/lib/libicuuc.so.$(COMPONENT_VERSION_MAJOR) target=libicuuc.so.$(HUMAN_VERSION)
 file path=usr/lib/pkgconfig/icu-i18n.pc
 file path=usr/lib/pkgconfig/icu-io.pc
 file path=usr/lib/pkgconfig/icu-uc.pc

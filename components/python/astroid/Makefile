@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		astroid
-HUMAN_VERSION =			3.0.2
+HUMAN_VERSION =			3.0.3
 COMPONENT_SUMMARY =		astroid - An abstract syntax tree for Python with inference support.
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/58/03/c44924529da62cfa77a4a8f8fd5b0ac687f6f17dc68afd24d783d2046dfa/astroid-3.0.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4a61cf0a59097c7bb52689b0fd63717cd2a8a14dc9f1eee97b82d814881c8c91
+	sha256:4148645659b08b70d72460ed1921158027a9e53ae8b7234149b1400eddacbb93
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,10 +38,8 @@ TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/nose
-TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
 TEST_REQUIRED_PACKAGES.python += library/python/pylint
-TEST_REQUIRED_PACKAGES.python += library/python/pyqt6
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil

@@ -12,40 +12,16 @@
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
 
+BUILD_STYLE = pkg
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xorg-video
-COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION= 3
+COMPONENT_VERSION=	1
 COMPONENT_SUMMARY=	Xorg server video drivers group
+COMPONENT_CLASSIFICATION=	System/X11
+COMPONENT_FMRI=			x11/server/xorg/driver/xorg-video
 
-include ../../../make-rules/ips.mk
-
-download:
-
-prep:
-
-build:
-
-install:
-	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
-
-clean:
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += consolidation/X/X-incorporation
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-ast
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-ati
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-cirrus
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-intel
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-mach64
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-mga
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-nv
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-openchrome
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-r128
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-savage
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-trident
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-vboxvideo
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-vesa
-REQUIRED_PACKAGES += x11/server/xorg/driver/xorg-video-vmware

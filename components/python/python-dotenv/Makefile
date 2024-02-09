@@ -19,22 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python-dotenv
-HUMAN_VERSION =			1.0.0
+HUMAN_VERSION =			1.0.1
 COMPONENT_SUMMARY =		python-dotenv - Read key-value pairs from a .env file and set them as environment variables
 COMPONENT_PROJECT_URL =		https://github.com/theskumar/python-dotenv
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/31/06/1ef763af20d0572c032fa22882cfbfb005fba6e7300715a37840858c919e/python-dotenv-1.0.0.tar.gz
+	https://files.pythonhosted.org/packages/bc/57/e84d88dfe0aec03b7a2d4327012c1627ab5f03652216c63d49846d7a6c58/python-dotenv-1.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a8df96034aae6d2d50a4ebe8216326c61c3eb64836776504fcca410e5937a3ba
+	sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Testing needs access to dotenv binary
-COMPONENT_PRE_TEST_ACTION += $(LN) -s dotenv-$(PYTHON_VERSION) $(PROTO_DIR)/usr/bin/dotenv ;
-COMPONENT_POST_TEST_ACTION += $(RM) $(PROTO_DIR)/usr/bin/dotenv ;
-COMPONENT_TEST_ENV += PATH=$(PROTO_DIR)/usr/bin:$(PATH)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata

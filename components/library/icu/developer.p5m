@@ -14,9 +14,9 @@
 # Copyright 2020 Till Wegmüller
 #
 
-set name=pkg.fmri value=pkg:/developer/icu@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY) (development files)"
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -89,6 +89,7 @@ file path=usr/include/unicode/fieldpos.h
 file path=usr/include/unicode/filteredbrk.h
 file path=usr/include/unicode/fmtable.h
 file path=usr/include/unicode/format.h
+file path=usr/include/unicode/formattednumber.h
 file path=usr/include/unicode/formattedvalue.h
 file path=usr/include/unicode/fpositer.h
 file path=usr/include/unicode/gender.h
@@ -134,6 +135,7 @@ file path=usr/include/unicode/scientificnumberformatter.h
 file path=usr/include/unicode/search.h
 file path=usr/include/unicode/selfmt.h
 file path=usr/include/unicode/simpleformatter.h
+file path=usr/include/unicode/simplenumberformatter.h
 file path=usr/include/unicode/simpletz.h
 file path=usr/include/unicode/smpdtfmt.h
 file path=usr/include/unicode/sortkey.h
@@ -185,6 +187,7 @@ file path=usr/include/unicode/udisplayoptions.h
 file path=usr/include/unicode/uenum.h
 file path=usr/include/unicode/ufieldpositer.h
 file path=usr/include/unicode/uformattable.h
+file path=usr/include/unicode/uformattednumber.h
 file path=usr/include/unicode/uformattedvalue.h
 file path=usr/include/unicode/ugender.h
 file path=usr/include/unicode/uidna.h
@@ -192,6 +195,8 @@ file path=usr/include/unicode/uiter.h
 file path=usr/include/unicode/uldnames.h
 file path=usr/include/unicode/ulistformatter.h
 file path=usr/include/unicode/uloc.h
+file path=usr/include/unicode/ulocale.h
+file path=usr/include/unicode/ulocbuilder.h
 file path=usr/include/unicode/ulocdata.h
 file path=usr/include/unicode/umachine.h
 file path=usr/include/unicode/umisc.h
@@ -207,6 +212,7 @@ file path=usr/include/unicode/unorm.h
 file path=usr/include/unicode/unorm2.h
 file path=usr/include/unicode/unum.h
 file path=usr/include/unicode/unumberformatter.h
+file path=usr/include/unicode/unumberoptions.h
 file path=usr/include/unicode/unumberrangeformatter.h
 file path=usr/include/unicode/unumsys.h
 file path=usr/include/unicode/uobject.h
@@ -222,6 +228,7 @@ file path=usr/include/unicode/usearch.h
 file path=usr/include/unicode/uset.h
 file path=usr/include/unicode/usetiter.h
 file path=usr/include/unicode/ushape.h
+file path=usr/include/unicode/usimplenumberformatter.h
 file path=usr/include/unicode/uspoof.h
 file path=usr/include/unicode/usprep.h
 file path=usr/include/unicode/ustdio.h
@@ -250,7 +257,12 @@ link path=usr/lib/$(MACH64)/libicudata.so target=libicudata.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicui18n.so target=libicui18n.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicuio.so target=libicuio.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicutest.so target=libicutest.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libicutest.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicutest.so.$(COMPONENT_VERSION_MAJOR) \
+    target=libicutest.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicutu.so target=libicutu.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicutu.so.$(COMPONENT_VERSION_MAJOR) target=libicutu.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libicuuc.so target=libicuuc.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/icu-i18n.pc
 file path=usr/lib/$(MACH64)/pkgconfig/icu-io.pc
@@ -264,7 +276,11 @@ link path=usr/lib/libicudata.so target=libicudata.so.$(HUMAN_VERSION)
 link path=usr/lib/libicui18n.so target=libicui18n.so.$(HUMAN_VERSION)
 link path=usr/lib/libicuio.so target=libicuio.so.$(HUMAN_VERSION)
 link path=usr/lib/libicutest.so target=libicutest.so.$(HUMAN_VERSION)
+file path=usr/lib/libicutest.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutest.so.$(COMPONENT_VERSION_MAJOR) target=libicutest.so.$(HUMAN_VERSION)
 link path=usr/lib/libicutu.so target=libicutu.so.$(HUMAN_VERSION)
+file path=usr/lib/libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutu.so.$(COMPONENT_VERSION_MAJOR) target=libicutu.so.$(HUMAN_VERSION)
 link path=usr/lib/libicuuc.so target=libicuuc.so.$(HUMAN_VERSION)
 file path=usr/lib/pkgconfig/icu-i18n.pc
 file path=usr/lib/pkgconfig/icu-io.pc

@@ -5,10 +5,10 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 181 items
+collecting ... collected 190 items
 
   self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
-$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/sphinx_autodoc_typehints was never imported. (module-not-imported)
+$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:503: CoverageWarning: Module $(PYTHON_DIR)/site-packages/sphinx_autodoc_typehints was never imported. (module-not-imported)
 tests/test_integration.py::test_integration[ClassWithTypehintsNotInline] PASSED
 tests/test_integration.py::test_integration[ClassWithTypehints] PASSED
 tests/test_integration.py::test_integration[Class] PASSED
@@ -47,6 +47,14 @@ tests/test_integration.py::test_integration[typehints_use_signature] PASSED
 tests/test_integration.py::test_integration[undocumented_function] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_always_document_param_types[doc_param_type] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_always_document_param_types[no_doc_param_type] PASSED
+tests/test_sphinx_autodoc_typehints.py::test_always_use_bars_union[Optional[Union[int, float]]-:py:class:`int` | :py:class:`float` | :py:obj:`None`] SKIPPED
+tests/test_sphinx_autodoc_typehints.py::test_always_use_bars_union[Optional[int | float]-:py:class:`int` | :py:class:`float` | :py:obj:`None`] SKIPPED
+tests/test_sphinx_autodoc_typehints.py::test_always_use_bars_union[Union[int | float, str]-:py:class:`int` | :py:class:`float` | :py:class:`str`] SKIPPED
+tests/test_sphinx_autodoc_typehints.py::test_always_use_bars_union[Union[int, float, None]-:py:class:`int` | :py:class:`float` | :py:obj:`None`] SKIPPED
+tests/test_sphinx_autodoc_typehints.py::test_always_use_bars_union[Union[int, float] | str-:py:class:`int` | :py:class:`float` | :py:class:`str`] SKIPPED
+tests/test_sphinx_autodoc_typehints.py::test_always_use_bars_union[Union[int, float]-:py:class:`int` | :py:class:`float`] SKIPPED
+tests/test_sphinx_autodoc_typehints.py::test_always_use_bars_union[int | float | None-:py:class:`int` | :py:class:`float` | :py:obj:`None`] SKIPPED
+tests/test_sphinx_autodoc_typehints.py::test_always_use_bars_union[int | float-:py:class:`int` | :py:class:`float`] SKIPPED
 tests/test_sphinx_autodoc_typehints.py::test_bound_class_method[from_magic] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_bound_class_method[method] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_default_annotation_without_typehints PASSED
@@ -175,6 +183,7 @@ tests/test_sphinx_autodoc_typehints.py::test_parse_annotation[str] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_process_docstring_slot_wrapper PASSED
 tests/test_sphinx_autodoc_typehints.py::test_resolve_typing_guard_attrs_imports PASSED
 tests/test_sphinx_autodoc_typehints.py::test_resolve_typing_guard_imports PASSED
+tests/test_sphinx_autodoc_typehints.py::test_sphinx_output_default_role PASSED
 tests/test_sphinx_autodoc_typehints.py::test_sphinx_output_defaults[None-("int") -- bar] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_sphinx_output_defaults[braces-("int" (default: "1")) -- bar] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_sphinx_output_defaults[braces-after-("int") -- bar (default: "1")] PASSED
@@ -197,12 +206,12 @@ tests/conftest.py:10
     from sphinx.testing.path import path
 
 tests/test_integration.py: 26 warnings
-tests/test_sphinx_autodoc_typehints.py: 64 warnings
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/sphinx_autodoc_typehints/__init__.py:796: DeprecationWarning: The frontend.OptionParser class will be replaced by a subclass of argparse.ArgumentParser in Docutils 0.21 or later.
-    settings = OptionParser(components=(RstParser,)).get_default_values()
+tests/test_sphinx_autodoc_typehints.py: 82 warnings
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/sphinx_autodoc_typehints/__init__.py:804: DeprecationWarning: The frontend.OptionParser class will be replaced by a subclass of argparse.ArgumentParser in Docutils 0.21 or later.
+    settings = OptionParser(components=(RSTParser,)).get_default_values()
 
 tests/test_integration.py: 1794 warnings
-tests/test_sphinx_autodoc_typehints.py: 4416 warnings
+tests/test_sphinx_autodoc_typehints.py: 5658 warnings
   $(PYTHON_DIR)/optparse.py:1000: DeprecationWarning: The frontend.Option class will be removed in Docutils 0.21 or later.
     option = self.option_class(*args, **kwargs)
 
@@ -213,7 +222,7 @@ tests/test_sphinx_autodoc_typehints.py: 4416 warnings
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 85.0% reached. Total coverage: 88.49%
-======== 181 passed, 6301 warnings ========
+Required test coverage of 85.0% reached. Total coverage: 88.08%
+======== 182 passed, 8 skipped, 7561 warnings ========
   py$(PYV): OK
   congratulations :)

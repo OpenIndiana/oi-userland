@@ -15,17 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
-PYTHON3_SOABI = abi3
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cryptography
-HUMAN_VERSION =			41.0.7
+HUMAN_VERSION =			42.0.2
 COMPONENT_SUMMARY =		cryptography - cryptography is a package which provides cryptographic recipes and primitives to Python developers.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ce/b3/13a12ea7edb068de0f62bac88a8ffd92cc2901881b391839851846b84a81/cryptography-41.0.7.tar.gz
+	https://files.pythonhosted.org/packages/0f/6f/40f1b5c6bafc809dd21a9e577458ecc1d8062a7e10148d140f402b535eaa/cryptography-42.0.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:13f93ce9bea8016c253b34afc6bd6a75993e5c40672ed5405a9c832f0d4a00bc
+	sha256:e0ec52ba3c7f1b7d813cd52649a5b3ef1fc0d433219dc8c93827c57eab6cf888
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
 TEST_STYLE = pytest
@@ -38,6 +37,8 @@ LD_Z_IGNORE=
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS_EXTRAS += test
+# https://github.com/pyca/cryptography/issues/10242
+TEST_REQUIRED_PACKAGES.python += library/python/cryptography-vectors
 
 # https://github.com/pyca/cryptography/issues/9111
 TEST_CONFLICTING_PACKAGES.python += library/python/coverage-enable-subprocess
@@ -51,6 +52,7 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/certifi
 TEST_REQUIRED_PACKAGES.python += library/python/pretend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark

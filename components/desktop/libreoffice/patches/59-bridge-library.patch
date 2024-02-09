@@ -1,14 +1,11 @@
---- libreoffice-6.4.7.2/bridges/Library_cpp_uno.mk.orig	Wed Oct  7 09:23:42 2020
-+++ libreoffice-6.4.7.2/bridges/Library_cpp_uno.mk	Tue Feb  1 22:56:38 2022
-@@ -172,6 +172,11 @@
- bridges_SELECTED_BRIDGE := gcc3_macosx_x86-64
- bridge_exception_objects := abi call cpp2uno except uno2cpp
+--- core-aea53c0ed1527ed1f8233972a27128e14d645e8f/bridges/Library_cpp_uno.mk.~1~	2023-11-08 16:50:26.000000000 -0500
++++ core-aea53c0ed1527ed1f8233972a27128e14d645e8f/bridges/Library_cpp_uno.mk	2023-11-11 05:26:54.075165147 -0500
+@@ -169,7 +169,7 @@
+ 
+ else ifeq ($(CPUNAME),X86_64)
+ 
+-ifneq ($(filter ANDROID DRAGONFLY FREEBSD LINUX NETBSD OPENBSD HAIKU,$(OS)),)
++ifneq ($(filter ANDROID DRAGONFLY FREEBSD LINUX NETBSD OPENBSD HAIKU SOLARIS ,$(OS)),)
+ bridges_SELECTED_BRIDGE := gcc3_linux_x86-64
+ bridge_asm_objects := call
  bridge_noncallexception_noopt_objects := callvirtualmethod
-+else ifeq ($(OS),SOLARIS)
-+bridges_SELECTED_BRIDGE := gcc3_solaris_x86-64
-+bridge_exception_objects := cpp2uno except uno2cpp struct
-+bridge_asm_objects := call
-+bridge_noncallexception_objects := callvirtualmethod
- else ifeq ($(COM),MSC)
- bridges_SELECTED_BRIDGE := msvc_win32_x86-64
- bridge_exception_objects := cpp2uno dllinit uno2cpp

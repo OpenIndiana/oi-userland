@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
-HUMAN_VERSION =			7.4.3
+HUMAN_VERSION =			8.0.0
 COMPONENT_SUMMARY =		pytest - pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/38/d4/174f020da50c5afe9f5963ad0fc5b56a4287e3586e3de5b3c8bce9c547b4/pytest-7.4.3.tar.gz
+	https://files.pythonhosted.org/packages/50/fd/af2d835eed57448960c4e7e9ab76ee42f24bcdd521e967191bc26fa2dece/pytest-8.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d989d136982de4e3b29dabcc838ad581c64e8ed52c11fbe86ddebd9da0818cd5
+	sha256:249b1b0864530ba251b7438274c4d251c58d868edaaec8762893ad4a0d71c36c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,10 +36,30 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# In a case the pytest-xprocess is installed we need the following workaround
-COMPONENT_PRE_TEST_ACTION +=	$(RM) $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)/py ;
-COMPONENT_PRE_TEST_ACTION +=	$(SYMLINK) $(PYTHON_VENDOR_PACKAGES)/py $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)/py ;
-COMPONENT_POST_TEST_ACTION +=	$(RM) $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)/py ;
+# Workaround to run pytest indirectly (see tox.ini).
+#
+# This is needed because tox is unable to find pytest in proto area due to the
+# following bug in tox-current-env:
+# https://github.com/fedora-python/tox-current-env/issues/68
+COMPONENT_TEST_ENV += _PYTEST_TOX_COVERAGE_RUN="python -m"
+
+# https://github.com/pytest-dev/pluggy/issues/457
+# https://github.com/bitprophet/pytest-relaxed/issues/28
+# https://github.com/christiansandberg/pytest-reporter/issues/8
+# https://github.com/jaraco/pytest-enabler/issues/10
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-lazy-fixture
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-metadata
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-reporter
+TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
+
+# This is needed to get consistent test results.
+# See also https://github.com/pytest-dev/pytest/issues/11761
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup

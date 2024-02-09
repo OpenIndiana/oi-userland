@@ -14,21 +14,21 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-OPENSSL_VERSION=	3.1
+OPENSSL_VERSION= 3.1
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.2
-COMPONENT_MNR_VERSION=	14
+COMPONENT_MNR_VERSION=	15
 COMPONENT_SUMMARY=      PHP 8.2
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:f871e131333d60ae6c537b1adddbc2aea54c436c562af986fb8309c060040b9e
+COMPONENT_ARCHIVE_HASH= sha256:50c3e220b7aa63a85716233c902eb44cc0a4667ed0b8335722ae2391b1355e7a
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
-#COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
+COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-82
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
 COMPONENT_LICENSE=      PHP License

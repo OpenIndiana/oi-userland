@@ -9,7 +9,7 @@ rootdir: $(@D)
 configfile: setup.cfg
 testpaths: docs/source, tests
 asyncio: mode=auto
-collecting ... collected 159 items
+collecting ... collected 166 items
 
 docs/source/concepts_function_scope_example.py::test_runs_in_a_loop PASSED
 docs/source/concepts_module_scope_example.py::test_remember_loop PASSED
@@ -69,6 +69,7 @@ tests/markers/test_function_scope.py::test_asyncio_mark_provides_function_scoped
 tests/markers/test_function_scope.py::test_asyncio_mark_respects_parametrized_loop_policies PASSED
 tests/markers/test_function_scope.py::test_asyncio_mark_respects_the_loop_policy PASSED
 tests/markers/test_function_scope.py::test_function_scope_supports_explicit_event_loop_fixture_request PASSED
+tests/markers/test_module_scope.py::test_allows_combining_module_scoped_asyncgen_fixture_with_function_scoped_test PASSED
 tests/markers/test_module_scope.py::test_asyncio_mark_allows_combining_module_scoped_fixture_with_class_scoped_test PASSED
 tests/markers/test_module_scope.py::test_asyncio_mark_allows_combining_module_scoped_fixture_with_function_scoped_test PASSED
 tests/markers/test_module_scope.py::test_asyncio_mark_handles_missing_event_loop_triggered_by_fixture PASSED
@@ -87,6 +88,7 @@ tests/markers/test_package_scope.py::test_asyncio_mark_provides_package_scoped_l
 tests/markers/test_package_scope.py::test_asyncio_mark_respects_parametrized_loop_policies PASSED
 tests/markers/test_package_scope.py::test_asyncio_mark_respects_the_loop_policy PASSED
 tests/markers/test_package_scope.py::test_raise_when_event_loop_fixture_is_requested_in_addition_to_scoped_loop PASSED
+tests/markers/test_session_scope.py::test_allows_combining_session_scoped_asyncgen_fixture_with_function_scoped_test PASSED
 tests/markers/test_session_scope.py::test_asyncio_mark_allows_combining_session_scoped_fixture_with_class_scoped_test PASSED
 tests/markers/test_session_scope.py::test_asyncio_mark_allows_combining_session_scoped_fixture_with_function_scoped_test PASSED
 tests/markers/test_session_scope.py::test_asyncio_mark_allows_combining_session_scoped_fixture_with_module_scoped_test PASSED
@@ -143,6 +145,9 @@ tests/test_explicit_event_loop_fixture_request.py::test_emit_warning_when_event_
 tests/test_explicit_event_loop_fixture_request.py::test_emit_warning_when_event_loop_is_explicitly_requested_in_coroutine_fixture PASSED
 tests/test_explicit_event_loop_fixture_request.py::test_emit_warning_when_event_loop_is_explicitly_requested_in_coroutine_method PASSED
 tests/test_explicit_event_loop_fixture_request.py::test_emit_warning_when_event_loop_is_explicitly_requested_in_coroutine_staticmethod PASSED
+tests/test_import.py::test_does_not_import_unrelated_packages PASSED
+tests/test_import.py::test_import_warning_does_not_cause_internal_error PASSED
+tests/test_import.py::test_import_warning_in_package_does_not_cause_internal_error PASSED
 tests/test_is_async_test.py::test_returns_false_for_sync_item PASSED
 tests/test_is_async_test.py::test_returns_false_for_unmarked_coroutine_item_in_strict_mode PASSED
 tests/test_is_async_test.py::test_returns_true_for_marked_coroutine_item_in_strict_mode PASSED
@@ -154,11 +159,6 @@ tests/test_port_factories.py::test_unused_tcp_port_selects_unused_port PASSED
 tests/test_port_factories.py::test_unused_udp_port_factory_duplicate PASSED
 tests/test_port_factories.py::test_unused_udp_port_factory_selects_unused_port PASSED
 tests/test_port_factories.py::test_unused_udp_port_selects_unused_port PASSED
-tests/test_pytest_skip.py::test_asyncio_auto_mode_module_level_skip PASSED
-tests/test_pytest_skip.py::test_asyncio_auto_mode_skip PASSED
-tests/test_pytest_skip.py::test_asyncio_auto_mode_wrong_skip_usage PASSED
-tests/test_pytest_skip.py::test_asyncio_strict_mode_module_level_skip PASSED
-tests/test_pytest_skip.py::test_asyncio_strict_mode_skip PASSED
 tests/test_simple.py::TestEventLoopStartedBeforeFixtures::test_event_loop_after_fixture PASSED
 tests/test_simple.py::TestEventLoopStartedBeforeFixtures::test_event_loop_before_fixture PASSED
 tests/test_simple.py::TestEventLoopStartedBeforeFixtures::test_no_event_loop PASSED
@@ -169,8 +169,15 @@ tests/test_simple.py::test_asyncio_marker_compatibility_with_xfail PASSED
 tests/test_simple.py::test_asyncio_marker_with_default_param PASSED
 tests/test_simple.py::test_event_loop_fixture PASSED
 tests/test_simple.py::test_invalid_asyncio_mode PASSED
+tests/test_skips.py::test_asyncio_auto_mode_module_level_skip PASSED
+tests/test_skips.py::test_asyncio_auto_mode_skip PASSED
+tests/test_skips.py::test_asyncio_auto_mode_wrong_skip_usage PASSED
+tests/test_skips.py::test_asyncio_strict_mode_module_level_skip PASSED
+tests/test_skips.py::test_asyncio_strict_mode_skip PASSED
+tests/test_skips.py::test_skip_in_module_does_not_skip_package PASSED
+tests/test_skips.py::test_unittest_skiptest_compatibility PASSED
 tests/test_subprocess.py::test_subprocess PASSED
 
-======== 159 passed ========
+======== 166 passed ========
   py$(PYV): OK
   congratulations :)

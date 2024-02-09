@@ -14,11 +14,12 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-OPENSSL_VERSION= 3.1
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
 COMPONENT_VERSION=      6.1.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -57,6 +58,7 @@ CONFIGURE_OPTIONS += --enable-libxvid
 CONFIGURE_OPTIONS += --enable-libx264
 CONFIGURE_OPTIONS += --enable-libx265
 CONFIGURE_OPTIONS += --enable-libdav1d
+CONFIGURE_OPTIONS += --enable-libwebp
 # Don't enable it, resulting binary is not 
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
@@ -115,6 +117,7 @@ REQUIRED_PACKAGES += library/audio/libgsm
 REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/video/libass

@@ -11,23 +11,25 @@
 #
 # Copyright (c) 2017 Dariusz Sendkowski
 #
+
 BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         global
-COMPONENT_VERSION=	6.6.10
+COMPONENT_VERSION=	6.6.11
 COMPONENT_SUMMARY=	A source code tagging system.
 COMPONENT_DESCRIPTION=	GNU GLOBAL is a source code tagging system that works the same way across diverse environments, such as Emacs editor, Vi editor, Less viewer, Bash shell, various web browsers, etc.
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/global
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2dd1e6a945e93c01390fb941a4e694f4c71bbd7569d64149c04e927bbf4dcce8
+COMPONENT_ARCHIVE_HASH= sha256:0533319f78d3860b81668dfaeaa507901541e5dda8cfc30d52dfc6ce9489f5e3
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/global/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/global
 COMPONENT_CLASSIFICATION=Development/Editors
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV=	DEST_DIR=$(PROTO_DIR)

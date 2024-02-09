@@ -1,6 +1,12 @@
 PASS: test-dbus-daemon-fork.sh 1 - normal dbus-daemon
 PASS: test-dbus-daemon-fork.sh 2 - dbus-daemon with stdin closed
 PASS: test-dbus-daemon-fork.sh 3 - dbus-daemon with stdin, stdout, stderr closed
+SKIP: test-atomic 1 # SKIP unable to determine whether initial nss query leaked memory (not compiled with memory instrumentation)
+PASS: test-atomic 2 - atomic_inc/dec
+PASS: test-atomic 3 - atomic_set_[non]zero
+SKIP: test-hash 1 # SKIP unable to determine whether initial nss query leaked memory (not compiled with memory instrumentation)
+PASS: test-hash 2 - hash
+SKIP: test-hash 3 # SKIP unable to determine whether hash leaked memory (not compiled with memory instrumentation)
 PASS: test-shell 1
 PASS: test-shell 2
 PASS: test-shell 3
@@ -12,6 +18,21 @@ PASS: test-shell 8
 PASS: test-shell 9
 PASS: test-shell 10
 PASS: test-shell 11
+SKIP: test-misc-internals 1 # SKIP unable to determine whether initial nss query leaked memory (not compiled with memory instrumentation)
+PASS: test-misc-internals 2 - misc
+SKIP: test-misc-internals 3 # SKIP unable to determine whether misc leaked memory (not compiled with memory instrumentation)
+PASS: test-misc-internals 4 - address
+SKIP: test-misc-internals 5 # SKIP unable to determine whether address leaked memory (not compiled with memory instrumentation)
+PASS: test-misc-internals 6 - server
+SKIP: test-misc-internals 7 # SKIP unable to determine whether server leaked memory (not compiled with memory instrumentation)
+PASS: test-misc-internals 8 - signature
+SKIP: test-misc-internals 9 # SKIP unable to determine whether signature leaked memory (not compiled with memory instrumentation)
+PASS: test-misc-internals 10 - mem-pool
+SKIP: test-misc-internals 11 # SKIP unable to determine whether mem-pool leaked memory (not compiled with memory instrumentation)
+PASS: test-misc-internals 12 - list
+SKIP: test-misc-internals 13 # SKIP unable to determine whether list leaked memory (not compiled with memory instrumentation)
+PASS: test-misc-internals 14 - userdb
+SKIP: test-misc-internals 15 # SKIP unable to determine whether userdb leaked memory (not compiled with memory instrumentation)
 PASS: test-printf 1
 PASS: test-printf 2
 PASS: test-printf 3
@@ -19,6 +40,11 @@ PASS: test-printf 4
 PASS: test-printf 5
 PASS: test-printf 6
 PASS: test-printf 7
+SKIP: test-assertions 1 /assertions/assert # SKIP Assertions disabled
+SKIP: test-assertions 2 /assertions/assert_error_is_set # SKIP Assertions or checks disabled
+SKIP: test-assertions 3 /assertions/assert_error_is_clear # SKIP Assertions or checks disabled
+SKIP: test-assertions 4 /assertions/assert_error_xor_true # SKIP Assertions or checks disabled
+SKIP: test-assertions 5 /assertions/assert_error_xor_false # SKIP Assertions or checks disabled
 PASS: test-corrupt 1 /corrupt/tcp
 PASS: test-corrupt 2 /corrupt/unix
 PASS: test-corrupt 3 /corrupt/byte-order/tcp
@@ -37,26 +63,56 @@ PASS: test-dbus-daemon 11 /limits/max-replies-per-connection
 PASS: test-dbus-daemon 12 /limits/max-match-rules-per-connection
 PASS: test-dbus-daemon 13 /limits/max-names-per-connection
 PASS: test-dbus-daemon 14 /limits/pending-fd-timeout
-PASS: test-dbus-daemon 15 /peer/ping
-PASS: test-dbus-daemon 16 /peer/get-machine-id
-PASS: test-dbus-daemon 17 /properties/get-invalid-iface
-PASS: test-dbus-daemon 18 /properties/get-invalid-path
-PASS: test-dbus-daemon 19 /properties/get-invalid
-PASS: test-dbus-daemon 20 /properties/get-all-invalid-iface
-PASS: test-dbus-daemon 21 /properties/get-all-invalid-path
-PASS: test-dbus-daemon 22 /properties/set-invalid-iface
-PASS: test-dbus-daemon 23 /properties/set-invalid-path
-PASS: test-dbus-daemon 24 /properties/set-invalid
-PASS: test-dbus-daemon 25 /properties/set
-PASS: test-dbus-daemon 26 /properties/features
-PASS: test-dbus-daemon 27 /properties/interfaces
-PASS: test-dbus-daemon 28 /properties/get-all
-PASS: test-dbus-daemon 29 /policy/count-fds
-SKIP: test-dbus-daemon 30 /fd-limit/session # SKIP prlimit() not supported on this platform
-SKIP: test-dbus-daemon 31 /fd-limit/system # SKIP cannot use alternative uid when not uid 0
+PASS: test-dbus-daemon 15 /match/remove/fails
+PASS: test-dbus-daemon 16 /match/remove/succeeds
+PASS: test-dbus-daemon 17 /peer/ping
+PASS: test-dbus-daemon 18 /peer/get-machine-id
+PASS: test-dbus-daemon 19 /properties/get-invalid-iface
+PASS: test-dbus-daemon 20 /properties/get-invalid-path
+PASS: test-dbus-daemon 21 /properties/get-invalid
+PASS: test-dbus-daemon 22 /properties/get-all-invalid-iface
+PASS: test-dbus-daemon 23 /properties/get-all-invalid-path
+PASS: test-dbus-daemon 24 /properties/set-invalid-iface
+PASS: test-dbus-daemon 25 /properties/set-invalid-path
+PASS: test-dbus-daemon 26 /properties/set-invalid
+PASS: test-dbus-daemon 27 /properties/set
+PASS: test-dbus-daemon 28 /properties/features
+PASS: test-dbus-daemon 29 /properties/interfaces
+PASS: test-dbus-daemon 30 /properties/get-all
+PASS: test-dbus-daemon 31 /policy/count-fds
+SKIP: test-dbus-daemon 32 /fd-limit/session # SKIP prlimit() not supported on this platform
+SKIP: test-dbus-daemon 33 /fd-limit/system # SKIP cannot use alternative uid when not uid 0
+PASS: test-dbus-daemon 34 /activation/forking
+PASS: test-dbus-daemon 35 /system-policy/allow-signals
+PASS: test-dbus-daemon 36 /system-policy/send-destination/prefix
 PASS: test-dbus-daemon-eavesdrop 1 /eavedrop/match_keyword/broadcast
 PASS: test-dbus-daemon-eavesdrop 2 /eavedrop/match_keyword/unicast_to_receiver
 PASS: test-dbus-daemon-eavesdrop 3 /eavedrop/match_keyword/unicast_to_sender
+PASS: test-desktop-file 1 /desktop-file/valid/newlines
+PASS: test-desktop-file 2 /desktop-file/valid/spaces
+PASS: test-desktop-file 3 /desktop-file/valid/normal
+PASS: test-desktop-file 4 /desktop-file/valid/empty value
+PASS: test-desktop-file 5 /desktop-file/valid/empty section
+PASS: test-desktop-file 6 /desktop-file/valid/empty section with newline
+PASS: test-desktop-file 7 /desktop-file/valid/odd whitespace
+PASS: test-desktop-file 8 /desktop-file/valid/Misc printable ASCII in section heading
+PASS: test-desktop-file 9 /desktop-file/valid/Backslash in section heading
+PASS: test-desktop-file 10 /desktop-file/valid/empty
+PASS: test-desktop-file 11 /desktop-file/invalid/unterminated section heading
+PASS: test-desktop-file 12 /desktop-file/invalid/newline in section heading
+PASS: test-desktop-file 13 /desktop-file/invalid/tab in section heading
+PASS: test-desktop-file 14 /desktop-file/invalid/junk after section heading
+PASS: test-desktop-file 15 /desktop-file/invalid/opening square bracket in section heading
+PASS: test-desktop-file 16 /desktop-file/invalid/closing square bracket in section heading
+PASS: test-desktop-file 17 /desktop-file/invalid/control character in section heading
+PASS: test-desktop-file 18 /desktop-file/invalid/backspace in section heading
+PASS: test-desktop-file 19 /desktop-file/invalid/NUL in section heading
+PASS: test-desktop-file 20 /desktop-file/invalid/non-ASCII in section heading
+PASS: test-desktop-file 21 /desktop-file/invalid/bare string not in section
+PASS: test-desktop-file 22 /desktop-file/invalid/key-value not in section
+PASS: test-desktop-file 23 /desktop-file/invalid/contains control character
+PASS: test-desktop-file 24 /desktop-file/invalid/contains nul
+PASS: test-desktop-file 25 /desktop-file/invalid/empty section name
 PASS: test-fdpass 1 /unsupported
 PASS: test-fdpass 2 /relay
 PASS: test-fdpass 3 /limit
@@ -72,6 +128,11 @@ PASS: test-fdpass 12 /odd-limit/minus1
 PASS: test-fdpass 13 /odd-limit/at
 PASS: test-fdpass 14 /odd-limit/plus1
 PASS: test-fdpass 15 /odd-limit/plus2
+PASS: test-header-fields 1 /message/weird-header-field/none
+PASS: test-header-fields 2 /message/weird-header-field/append
+PASS: test-header-fields 3 /message/weird-header-field/change
+PASS: test-header-fields 4 /message/weird-header-field/prepend
+PASS: test-header-fields 5 /message/weird-header-field/multi
 PASS: test-message 1 /message/fd
 PASS: test-message 2 /message/zero-iter
 PASS: test-message 3 /message/array/array
@@ -103,18 +164,19 @@ PASS: test-monitor 15 /monitor/no-rule
 PASS: test-monitor 16 /monitor/eavesdrop
 PASS: test-monitor 17 /monitor/no-eavesdrop
 PASS: test-monitor 18 /monitor/activation
-PASS: test-loopback 1 /connect/tcp
-PASS: test-loopback 2 /connect/nonce-tcp
-PASS: test-loopback 3 /connect/unix/tmpdir
-PASS: test-loopback 4 /connect/unix/dir
-PASS: test-loopback 5 /connect/unix/runtime
-PASS: test-loopback 6 /connect/unix/no-runtime
-PASS: test-loopback 7 /message/tcp
-PASS: test-loopback 8 /message/nonce-tcp
-PASS: test-loopback 9 /message/bad-guid/tcp
-PASS: test-loopback 10 /message/bad-guid/unix
-PASS: test-loopback 11 /message/unix/tmpdir
-PASS: test-loopback 12 /message/unix/dir
+PASS: test-loopback 1 /builtin-filters
+PASS: test-loopback 2 /connect/tcp
+PASS: test-loopback 3 /connect/nonce-tcp
+PASS: test-loopback 4 /connect/unix/tmpdir
+PASS: test-loopback 5 /connect/unix/dir
+PASS: test-loopback 6 /connect/unix/runtime
+PASS: test-loopback 7 /connect/unix/no-runtime
+PASS: test-loopback 8 /message/tcp
+PASS: test-loopback 9 /message/nonce-tcp
+PASS: test-loopback 10 /message/bad-guid/tcp
+PASS: test-loopback 11 /message/bad-guid/unix
+PASS: test-loopback 12 /message/unix/tmpdir
+PASS: test-loopback 13 /message/unix/dir
 PASS: test-marshal 1 /demarshal/le
 PASS: test-marshal 2 /demarshal/be
 PASS: test-marshal 3 /demarshal/needed/le
@@ -142,22 +204,50 @@ PASS: test-syntax 5 /syntax/bus-name
 PASS: test-syntax 6 /syntax/signature
 PASS: test-syntax 7 /syntax/single-signature
 PASS: test-syntax 8 /syntax/utf8
+PASS: test-sysdeps 1 /sysdeps/command_for_pid
 PASS: test-syslog 1 /syslog/normal
 SKIP: test-uid-permissions 1 /uid-permissions/uae/other # SKIP cannot use alternative uid when not uid 0
 SKIP: test-uid-permissions 2 /uid-permissions/monitor/root # SKIP cannot use alternative uid when not uid 0
 SKIP: test-uid-permissions 3 /uid-permissions/monitor/messagebus # SKIP cannot use alternative uid when not uid 0
 SKIP: test-uid-permissions 4 /uid-permissions/monitor/other # SKIP cannot use alternative uid when not uid 0
+PASS: test-userdb 1 /userdb/groups_from_uid
 PASS: test-variant 1 /variant/simple
 PASS: test-variant 2 /variant/oom
+PASS: test-containers 1 /containers/get-supported-arguments
+SKIP: test-containers 2 /containers/basic # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 3 /containers/wrong-uid # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 4 /containers/metadata # SKIP Containers or gio-unix-2.0 not supported
+PASS: test-containers 5 /containers/invalid-metadata-getters
+SKIP: test-containers 6 /containers/unsupported-parameter # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 7 /containers/invalid-type-name # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 8 /containers/invalid-nesting # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 9 /containers/max-containers # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 10 /containers/max-containers-per-user # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 11 /containers/max-connections-per-container # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 12 /containers/max-container-metadata-bytes # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 13 /containers/stop-server/explicitly # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 14 /containers/stop-server/disconnect-first # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 15 /containers/stop-server/never-connected # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 16 /containers/stop-server/force # SKIP Containers or gio-unix-2.0 not supported
+SKIP: test-containers 17 /containers/stop-server/with-manager # SKIP Containers or gio-unix-2.0 not supported
 PASS: test-sd-activation 1 /sd-activation/activation
 PASS: test-sd-activation 2 /sd-activation/uae
 PASS: test-sd-activation 3 /sd-activation/deny-send/com.example.SendDenied
-PASS: test-sd-activation 4 /sd-activation/deny-receive/com.example.ReceiveDenied
-PASS: test-sd-activation 5 /sd-activation/transient-services/later
-PASS: test-sd-activation 6 /sd-activation/transient-services/in-advance
-# TOTAL: 157
-# PASS:  151
-# SKIP:  6
+PASS: test-sd-activation 4 /sd-activation/deny-send/com.example.SendPrefixDenied
+PASS: test-sd-activation 5 /sd-activation/deny-send/com.example.SendPrefixDenied.internal
+PASS: test-sd-activation 6 /sd-activation/deny-receive/com.example.ReceiveDenied
+PASS: test-sd-activation 7 /sd-activation/transient-services/later
+PASS: test-sd-activation 8 /sd-activation/transient-services/in-advance
+# TOTAL: 240
+# PASS:  203
+# SKIP:  37
+# XFAIL: 0
+# FAIL:  0
+# XPASS: 0
+# ERROR: 0
+# TOTAL: 0
+# PASS:  0
+# SKIP:  0
 # XFAIL: 0
 # FAIL:  0
 # XPASS: 0
