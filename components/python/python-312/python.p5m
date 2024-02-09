@@ -48,6 +48,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
     add pkg.linted.userland.action001.2 true>
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=.*/(idle_)?tests?/.* -> default facet.optional.test true>
+<transform file path=.*/test/test_lib2to3/data/.*\.py -> default pkg.tmp.autopyc false>
+<transform file path=.*/test/tokenizedata/bad.*\.py -> default pkg.tmp.autopyc false>
+<transform file path=.*/python-config\.py -> default pkg.tmp.autopyc false>
+<transform file path=.*/badsyntax.*\.py -> default pkg.tmp.autopyc false>
 
 link path=usr/bin/2to3 target=2to3-3.12 mediator=python mediator-version=3.12
 file path=usr/bin/2to3-$(PYVER)
@@ -383,7 +387,7 @@ file path=usr/lib/python$(PYVER)/config-3.12/config.c.in
 file path=usr/lib/python$(PYVER)/config-3.12/install-sh
 file path=usr/lib/python$(PYVER)/config-3.12/libpython3.12.a
 file path=usr/lib/python$(PYVER)/config-3.12/makesetup
-file path=usr/lib/python$(PYVER)/config-3.12/python-config.py pkg.tmp.autopyc=false
+file path=usr/lib/python$(PYVER)/config-3.12/python-config.py
 file path=usr/lib/python$(PYVER)/config-3.12/python.o \
     pkg.linted.userland.action001.2=true
 file path=usr/lib/python$(PYVER)/configparser.py
@@ -1092,7 +1096,7 @@ file path=usr/lib/python$(PYVER)/test/audiotest.au
 file path=usr/lib/python$(PYVER)/test/audiotests.py
 file path=usr/lib/python$(PYVER)/test/audit-tests.py
 file path=usr/lib/python$(PYVER)/test/autotest.py
-file path=usr/lib/python$(PYVER)/test/badsyntax_pep3120.py pkg.tmp.autopyc=false
+file path=usr/lib/python$(PYVER)/test/badsyntax_pep3120.py
 file path=usr/lib/python$(PYVER)/test/bisect_cmd.py
 file path=usr/lib/python$(PYVER)/test/certdata/allsans.pem
 file path=usr/lib/python$(PYVER)/test/certdata/badcert.pem
@@ -1447,6 +1451,7 @@ file path=usr/lib/python$(PYVER)/test/support/logging_helper.py
 file path=usr/lib/python$(PYVER)/test/support/os_helper.py
 file path=usr/lib/python$(PYVER)/test/support/pty_helper.py
 file path=usr/lib/python$(PYVER)/test/support/script_helper.py
+file path=usr/lib/python$(PYVER)/test/support/smtpd.py
 file path=usr/lib/python$(PYVER)/test/support/socket_helper.py
 file path=usr/lib/python$(PYVER)/test/support/testcase.py
 file path=usr/lib/python$(PYVER)/test/support/threading_helper.py
@@ -1807,14 +1812,14 @@ file path=usr/lib/python$(PYVER)/test/test_ftplib.py
 file path=usr/lib/python$(PYVER)/test/test_funcattrs.py
 file path=usr/lib/python$(PYVER)/test/test_functools.py
 file path=usr/lib/python$(PYVER)/test/test_future_stmt/__init__.py
-file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future10.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future3.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future4.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future5.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future6.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future7.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future8.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future9.py pkg.tmp.autopyc=false
+file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future10.py
+file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future3.py
+file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future4.py
+file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future5.py
+file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future6.py
+file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future7.py
+file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future8.py
+file path=usr/lib/python$(PYVER)/test/test_future_stmt/badsyntax_future9.py
 file path=usr/lib/python$(PYVER)/test/test_future_stmt/future_test1.py
 file path=usr/lib/python$(PYVER)/test/test_future_stmt/future_test2.py
 file path=usr/lib/python$(PYVER)/test/test_future_stmt/test_future.py
@@ -2043,22 +2048,22 @@ file path=usr/lib/python$(PYVER)/test/test_launcher.py
 file path=usr/lib/python$(PYVER)/test/test_lib2to3/__init__.py
 file path=usr/lib/python$(PYVER)/test/test_lib2to3/__main__.py
 file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/README
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/bom.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/crlf.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/different_encoding.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/false_encoding.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/bad_order.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/__init__.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_explicit.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_first.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_last.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_parrot.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_preorder.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/no_fixer_cls.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/parrot_example.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/infinite_recursion.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/py2_test_grammar.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/py3_test_grammar.py pkg.tmp.autopyc=false
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/bom.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/crlf.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/different_encoding.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/false_encoding.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/bad_order.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/__init__.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_explicit.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_first.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_last.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_parrot.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/myfixes/fix_preorder.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/no_fixer_cls.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/fixers/parrot_example.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/infinite_recursion.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/py2_test_grammar.py
+file path=usr/lib/python$(PYVER)/test/test_lib2to3/data/py3_test_grammar.py
 file path=usr/lib/python$(PYVER)/test/test_lib2to3/pytree_idempotency.py
 file path=usr/lib/python$(PYVER)/test/test_lib2to3/support.py
 file path=usr/lib/python$(PYVER)/test/test_lib2to3/test_all_fixers.py
@@ -2481,9 +2486,9 @@ file path=usr/lib/python$(PYVER)/test/testtar.tar.xz
 file path=usr/lib/python$(PYVER)/test/tf_inherit_check.py
 file path=usr/lib/python$(PYVER)/test/time_hashlib.py
 file path=usr/lib/python$(PYVER)/test/tokenizedata/__init__.py
-file path=usr/lib/python$(PYVER)/test/tokenizedata/bad_coding.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/tokenizedata/bad_coding2.py pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/test/tokenizedata/badsyntax_3131.py pkg.tmp.autopyc=false
+file path=usr/lib/python$(PYVER)/test/tokenizedata/bad_coding.py
+file path=usr/lib/python$(PYVER)/test/tokenizedata/bad_coding2.py
+file path=usr/lib/python$(PYVER)/test/tokenizedata/badsyntax_3131.py
 file path=usr/lib/python$(PYVER)/test/tokenizedata/coding20731.py
 file path=usr/lib/python$(PYVER)/test/tokenizedata/tokenize_tests-latin1-coding-cookie-and-utf8-bom-sig.txt
 file path=usr/lib/python$(PYVER)/test/tokenizedata/tokenize_tests-no-coding-cookie-and-utf8-bom-sig-only.txt
@@ -2704,8 +2709,6 @@ file path=usr/lib/python$(PYVER)/zoneinfo/__init__.py
 file path=usr/lib/python$(PYVER)/zoneinfo/_common.py
 file path=usr/lib/python$(PYVER)/zoneinfo/_tzpath.py
 file path=usr/lib/python$(PYVER)/zoneinfo/_zoneinfo.py
-
-# note that this is the section 1 manpage for python 3.12
-file path=usr/share/man/man1/python3.12.1
 link path=usr/share/man/man1/python3.1 target=python3.12.1 mediator=python \
     mediator-version=3.12
+file path=usr/share/man/man1/python3.12.1
