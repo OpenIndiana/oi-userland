@@ -33,22 +33,25 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
 COMPONENT_VERSION=      3.12.2
-COMPONENT_VERSION_MAJOR =	$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
+PYTHON_VERSION =	$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:be28112dac813d2053545c14bf13a16401a21877f1a69eb6ea5d84c4a0f3d870
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI =		runtime/python-$(subst .,,$(COMPONENT_VERSION_MAJOR))
+COMPONENT_FMRI =		runtime/python-$(subst .,,$(PYTHON_VERSION))
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_LICENSE=      PSF-2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/common.mk
+COMPONENT_FMRI.idle =		library/python/idle-$(subst .,,$(PYTHON_VERSION))
+COMPONENT_SUMMARY.idle =	Python $(PYTHON_VERSION) IDLE (Integrated Development and Learning Environment)
 
-# Force proper PYTHON_VERSION
-PYTHON_VERSION = $(COMPONENT_VERSION_MAJOR)
+COMPONENT_FMRI.tkinter =	library/python/tkinter-$(subst .,,$(PYTHON_VERSION))
+COMPONENT_SUMMARY.tkinter =	Python $(PYTHON_VERSION) bindings to tcl/tk
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
