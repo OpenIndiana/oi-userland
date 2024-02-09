@@ -1,0 +1,14 @@
+--- Python-3.12.2/Python/ceval_macros.h.~1~	Tue Feb  6 12:19:44 2024
++++ Python-3.12.2/Python/ceval_macros.h	Thu Feb  8 22:23:45 2024
+@@ -281,6 +281,11 @@
+ #define BUILTINS() frame->f_builtins
+ #define LOCALS() frame->f_locals
+ 
++#define DTRACE_FUNCTION_EXIT() \
++    if (PyDTrace_FUNCTION_RETURN_ENABLED()) { \
++        dtrace_function_return(frame); \
++    }
++
+ #define DTRACE_FUNCTION_ENTRY()  \
+     if (PyDTrace_FUNCTION_ENTRY_ENABLED()) { \
+         dtrace_function_entry(frame); \
