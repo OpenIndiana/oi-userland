@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.proxy
-HUMAN_VERSION =			5.1
+HUMAN_VERSION =			5.2
 COMPONENT_SUMMARY =		zope.proxy - Generic Transparent Proxies
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.proxy
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/92/97/2741828b69a23752af21bdc3aaf8792ce8b5cf07be74232deb9ad06f1f34/zope.proxy-5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7777bd3f8f7cea74521726202e1a6d5153dbf649f204e250058ad03af46a4318
+	sha256:f777d56c2ab2fcf40d026ada1e67f1e39cf6318e3deeb9a1cd5087fccb1f286e
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
