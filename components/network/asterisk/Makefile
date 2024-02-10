@@ -20,11 +20,11 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	21.0.2
+COMPONENT_VERSION=	21.1.0
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:dd121d0614088567f8434aa241b17229acc6a3462989c9257ffbc171aaecf98f
+COMPONENT_ARCHIVE_HASH=	sha256:488100fe1d5648f629e22b52c87d9133892bf556f0c544eea659185cea6e8a69
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk
@@ -35,9 +35,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET= $(NO_TESTS) 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
-PATCH_LEVEL = 0
+PATCH_LEVEL= 0
 
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
@@ -77,8 +77,8 @@ COMPONENT_POST_CONFIGURE_ACTION += ( \
 CONFIGURE_BINDIR=	/usr/bin
 CONFIGURE_SBINDIR=	/usr/sbin
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=    --with-gnu-ld=no
 CONFIGURE_OPTIONS +=	--with-crypto=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	--with-ssl=$(OPENSSL_PREFIX)
@@ -110,7 +110,7 @@ CONFIGURE_OPTIONS +=	--with-mysqlclient=$(MYSQL_HOME)
 #CONFIGURE_OPTIONS +=	--with-avcodec
 CONFIGURE_OPTIONS +=	--with-postgres=$(PG_HOME)
 CONFIGURE_OPTIONS +=	NOISY_BUILD=yes
-CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
+CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS))
 CONFIGURE_OPTIONS +=	LDFLAGS="-m64 -lldap-2.6 -L$(JPEG_LIBDIR)"
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap"
 # HAVE_OPENSSL_BIO_METHOD not properly recognised by configure therefore expiclitly set
@@ -132,7 +132,7 @@ REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/freetds
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gmime
+REQUIRED_PACKAGES += library/gmime3
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libical
