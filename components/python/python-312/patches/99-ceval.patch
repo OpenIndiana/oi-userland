@@ -108,3 +108,106 @@
  /* Implement Py_EnterRecursiveCall() and Py_LeaveRecursiveCall() as functions
     for the limited API. */
  
+--- Python-3.12.2/Python/ceval.c.~2~	Fri Feb  9 11:40:42 2024
++++ Python-3.12.2/Python/ceval.c	Fri Feb  9 14:06:39 2024
+@@ -2800,7 +2800,7 @@
+     funcname = PyUnicode_AsUTF8(code->co_name);
+     lineno = PyUnstable_InterpreterFrame_GetLine(frame),
+ 
+-    PyDTrace_FUNCTION_ENTRY(filename, funcname, lineno);
++    PyDTrace_FUNCTION_ENTRY((char *)filename, (char *)funcname, lineno);
+ }
+ 
+ static void
+@@ -2846,8 +2860,10 @@
+             if (!co_name) {
+                 co_name = "?";
+             }
+-            PyDTrace_LINE(co_filename, co_name, line);
++            PyDTrace_LINE((char *)co_filename, (char *)co_name, line);
++#if 0
+         }
++#endif	
+     }
+ }
+ 
+--- Python-3.12.2/Python/ceval.c.~2~	Fri Feb  9 14:09:48 2024
++++ Python-3.12.2/Python/ceval.c	Fri Feb  9 14:13:58 2024
+@@ -182,9 +182,7 @@
+ }
+ #endif
+ 
+-#if 0
+-static void maybe_dtrace_line(_PyInterpreterFrame *, PyTraceInfo *, int);
+-#endif
++static void maybe_dtrace_line(_PyInterpreterFrame* frame, _Py_CODEUNIT *instr);
+ static void dtrace_function_entry(_PyInterpreterFrame *);
+ static void dtrace_function_return(_PyInterpreterFrame *);
+ 
+@@ -2817,29 +2815,38 @@
+     funcname = PyUnicode_AsUTF8(code->co_name);
+     lineno = PyUnstable_InterpreterFrame_GetLine(frame),
+ 
+-    PyDTrace_FUNCTION_RETURN(filename, funcname, lineno);
++    PyDTrace_FUNCTION_RETURN((char *)filename, (char *)funcname, lineno);
+ }
+-#if 0
++
+ /* DTrace equivalent of maybe_call_line_trace. */
+ static void
+-maybe_dtrace_line(_PyInterpreterFrame *frame,
+-                  PyTraceInfo *trace_info,
+-                  int instr_prev)
++maybe_dtrace_line(_PyInterpreterFrame* frame, _Py_CODEUNIT *instr)
+ {
+     const char *co_filename, *co_name;
++    PyCodeObject *code = frame->f_code; /* XXX use this below as well */
+ 
+     /* If the last instruction executed isn't in the current
+        instruction window, reset the window.
+     */
+-    initialize_trace_info(trace_info, frame);
+-    int lastline = _PyCode_CheckLineNumber(instr_prev*sizeof(_Py_CODEUNIT), &trace_info->bounds);
+-    int addr = _PyInterpreterFrame_LASTI(frame) * sizeof(_Py_CODEUNIT);
+-    int line = _PyCode_CheckLineNumber(addr, &trace_info->bounds);
++    int last_index = (int)(frame->prev_instr - _PyCode_CODE(code));
++    int lastline = _Py_Instrumentation_GetLine(code, last_index);
++    int next_index = (int)(instr - _PyCode_CODE(code));
++    int line = _Py_Instrumentation_GetLine(code, next_index);
++
++    printf("dtrace_line! %p %p %d %p %d\n",
++	_PyCode_CODE(code),
++	frame->prev_instr,
++	lastline,
++	instr,
++	line);
++
+     if (line != -1) {
++#if 0
+         /* Trace backward edges or first instruction of a new line */
+         if (_PyInterpreterFrame_LASTI(frame) < instr_prev ||
+             (line != lastline && addr == trace_info->bounds.ar_start))
+         {
++#endif
+             co_filename = PyUnicode_AsUTF8(frame->f_code->co_filename);
+             if (!co_filename) {
+                 co_filename = "?";
+@@ -2851,7 +2858,7 @@
+             PyDTrace_LINE((char *)co_filename, (char *)co_name, line);
+ #if 0
+         }
+-#endif	
++#endif
+     }
+ }
+ #endif
+--- Python-3.12.2/Python/ceval.c.~2~	Fri Feb  9 14:16:02 2024
++++ Python-3.12.2/Python/ceval.c	Fri Feb  9 14:28:47 2024
+@@ -2861,7 +2861,6 @@
+ #endif
+     }
+ }
+-#endif
+ 
+ /* Implement Py_EnterRecursiveCall() and Py_LeaveRecursiveCall() as functions
+    for the limited API. */

@@ -83,6 +83,8 @@ LDFLAGS = $(CC_BITS) $(CC_PIC)
 # build pic
 CFLAGS += $(CC_PIC)
 CFLAGS += $(CFLAGS.$(MACH))
+CFLAGS += -msave-args
+CFLAGS += -g -gdwarf-2 -gstrict-dwarf
 
 # XPG6
 CFLAGS += $(CPP_XPG6MODE)
