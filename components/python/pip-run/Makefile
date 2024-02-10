@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip-run
 HUMAN_VERSION =			12.6.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pip-run - install packages and run Python with them
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pip-run
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,12 @@ COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Remove misplaced docs and tests files
+# https://github.com/jaraco/pip-run/issues/98
+COMPONENT_POST_INSTALL_ACTION += \
+	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/docs ; \
+	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/tests ;
 
 # Revert back unneeded PYV normalizations
 COMPONENT_TEST_TRANSFORMS += "-e 's/py\$$(PYV)compat/py$(subst .,,$(PYTHON_VERSION))compat/'"
