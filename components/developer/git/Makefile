@@ -29,13 +29,13 @@ OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.43.0
+COMPONENT_VERSION=	2.43.1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5446603e73d911781d259e565750dcd277a42836c8e392cac91cf137aa9b76ec
+COMPONENT_ARCHIVE_HASH=	sha256:2234f37b453ff8e4672c21ad40d41cc7393c9a8dcdfe640bec7ac5b5358f30d2
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
@@ -45,7 +45,7 @@ COMPONENT_LICENSE=	GPLv2
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:ef18df09444a60c70be996a481fde093928996055f61a585e9ea07b5bdc6d4d8
+COMPONENT_ARCHIVE_HASH_1=	sha256:8d93efedcbffb538b6f4284a38423cff7132934420840632af3e5ef454676b8c
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -57,7 +57,7 @@ LDFLAGS += -lnsl -lsocket
 
 CONFIGURE_PREFIX= /usr
 CONFIGURE_OPTIONS += --with-libpcre2
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
 CONFIGURE_OPTIONS += --with-perl=$(PERL)
 CONFIGURE_OPTIONS += --with-python=$(PYTHON)
 CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
@@ -78,12 +78,12 @@ COMPONENT_PRE_CONFIGURE_ACTION= \
 	(chmod u+x $(COMPONENT_SRC)/t/*.sh  && $(CLONEY) $(SOURCE_DIR) $(@D) && \
 	$(RM) -r $(@D)/t && $(CP) -rp $(COMPONENT_SRC)/t $(@D))
 
-PKG_HARDLINKS += usr/lib/git-core/git
-PKG_HARDLINKS += usr/lib/git-core/git-cvsserver
-PKG_HARDLINKS += usr/lib/git-core/git-gui
-PKG_HARDLINKS += usr/lib/git-core/git-remote-ftps
-PKG_HARDLINKS += usr/lib/git-core/git-shell
-PKG_HARDLINKS += usr/lib/git-core/scalar
+PKG_HARDLINKS += usr/libexec/git-core/git
+PKG_HARDLINKS += usr/libexec/git-core/git-cvsserver
+PKG_HARDLINKS += usr/libexec/git-core/git-gui
+PKG_HARDLINKS += usr/libexec/git-core/git-remote-ftps
+PKG_HARDLINKS += usr/libexec/git-core/git-shell
+PKG_HARDLINKS += usr/libexec/git-core/scalar
 
 # We want the perl modules to install the vendor_perl directory, and their
 # manpages to install in the normal perl manpage directory, but the default
