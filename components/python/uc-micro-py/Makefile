@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		uc-micro-py
-HUMAN_VERSION =			1.0.2
+HUMAN_VERSION =			1.0.3
 COMPONENT_SUMMARY =		uc-micro-py - Micro subset of unicode data files for linkify-it-py projects.
 COMPONENT_PROJECT_URL =		https://github.com/tsutsu3/uc.micro-py
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/75/db/241444fe6df6970a4c18d227193cad77fab7cec55d98e296099147de017f/uc-micro-py-1.0.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:30ae2ac9c49f39ac6dce743bd187fcd2b574b16ca095fa74cd9396795c954c54
+	sha256:d321b92cff673ec58027c04015fcaa8bb1e005478643ff4a500882eaab88c48a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
