@@ -123,7 +123,7 @@ ok 27 - init creates a new deep directory
 ok 28 - init creates a new deep directory (umask vs. shared)
 ok 29 - init notices EEXIST (1)
 ok 30 - init notices EEXIST (2)
-ok 31 - init notices EPERM
+ok 31 # skip init notices EPERM (missing SANITY of POSIXPERM,SANITY)
 ok 32 - init creates a new bare directory with global --bare
 ok 33 - init prefers command line to GIT_DIR
 ok 34 - init with separate gitdir
@@ -131,7 +131,7 @@ ok 35 - explicit bare & --separate-git-dir incompatible
 ok 36 - implicit bare & --separate-git-dir incompatible
 ok 37 - bare & --separate-git-dir incompatible within worktree
 ok 38 - init in long base path
-ok 39 # skip init in long restricted base path (missing GETCWD_IGNORES_PERMS)
+ok 39 - init in long restricted base path
 ok 40 - re-init on .git file
 ok 41 - re-init to update git link
 ok 42 - re-init to move gitdir
@@ -223,14 +223,14 @@ ok 45 # skip large attributes file ignored in index (missing EXPENSIVE)
 1..45
 *** t0004-unwritable.sh ***
 ok 1 - setup
-ok 2 - write-tree should notice unwritable repository
-ok 3 - write-tree output on unwritable repository
-ok 4 - commit should notice unwritable repository
-ok 5 - commit output on unwritable repository
-ok 6 - update-index should notice unwritable repository
-ok 7 - update-index output on unwritable repository
-ok 8 - add should notice unwritable repository
-ok 9 - add output on unwritable repository
+ok 2 # skip write-tree should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 3 # skip write-tree output on unwritable repository (missing WRITE_TREE_OUT)
+ok 4 # skip commit should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 5 # skip commit output on unwritable repository (missing COMMIT_OUT)
+ok 6 # skip update-index should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 7 # skip update-index output on unwritable repository (missing UPDATE_INDEX_OUT)
+ok 8 # skip add should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 9 # skip add output on unwritable repository (missing ADD_OUT)
 # passed all 9 test(s)
 1..9
 *** t0005-signals.sh ***
@@ -4233,7 +4233,7 @@ ok 6 - run_command can run a script without a #! line
 ok 7 - run_command does not try to execute a directory
 ok 8 - run_command passes over non-executable file
 ok 9 - run_command reports EACCES
-ok 10 - unreadable directory in PATH
+ok 10 # skip unreadable directory in PATH (missing SANITY of POSIXPERM,SANITY)
 ok 11 - run_command runs in parallel with more jobs available than tasks
 ok 12 - run_command runs ungrouped in parallel with more jobs available than tasks
 ok 13 - run_command runs in parallel with as many jobs as tasks
@@ -4295,8 +4295,8 @@ ok 2 - dir-iterator should iterate through all files
 ok 3 - dir-iterator should list files in the correct order
 ok 4 - begin should fail upon inexistent paths
 ok 5 - begin should fail upon non directory paths
-ok 6 - advance should not fail on errors by default
-ok 7 - advance should fail on errors, w/ pedantic flag
+ok 6 # skip advance should not fail on errors by default (missing SANITY of POSIXPERM,SANITY)
+ok 7 # skip advance should fail on errors, w/ pedantic flag (missing SANITY of POSIXPERM,SANITY)
 ok 8 - setup dirs with symlinks
 ok 9 - dir-iterator should not follow symlinks by default
 ok 10 - dir-iterator does not resolve top-level symlinks
@@ -4328,14 +4328,18 @@ ok 2 - oidtree each
 *** t0070-fundamental.sh ***
 ok 1 - character classes (isspace, isalpha etc.)
 ok 2 - mktemp to nonexistent directory prints filename
-ok 3 - mktemp to unwritable directory prints filename
+ok 3 # skip mktemp to unwritable directory prints filename (missing SANITY of POSIXPERM,SANITY)
 ok 4 - git_mkstemps_mode does not fail if fd 0 is not open
 ok 5 - check for a bug in the regex routines
 ok 6 - incomplete sideband messages are reassembled
 ok 7 - eof on sideband message is reported
 ok 8 - missing sideband designator is reported
-# passed all 8 test(s)
-1..8
+ok 9 - unpack-sideband: --no-chomp-newline
+ok 10 - unpack-sideband: --chomp-newline (default)
+ok 11 - unpack-sideband: packet_reader_read() consumes sideband, no chomp payload
+ok 12 - unpack-sideband: packet_reader_read() consumes sideband, chomp payload
+# passed all 12 test(s)
+1..12
 *** t0071-sort.sh ***
 ok 1 - DEFINE_LIST_SORT_DEBUG
 # passed all 1 test(s)
@@ -4515,8 +4519,9 @@ ok 9 - bug messages without explicit BUG_if_bug() are written to trace2
 ok 10 - bug messages followed by BUG() are written to trace2
 ok 11 - using global config, normal stream, return code 0
 ok 12 - using global config with include
-# passed all 12 test(s)
-1..12
+ok 13 - unsafe URLs are redacted by default
+# passed all 13 test(s)
+1..13
 *** t0211-trace2-perf.sh ***
 ok 1 - perf stream, return code 0
 ok 2 - perf stream, return code 1
@@ -4557,8 +4562,9 @@ not ok 9 - global counter test/test2
 #		# And we should have a single event with the total across all threads.
 #		have_counter_event "main" "counter" "test" "test2" 60 actual
 #	
-# failed 2 among 9 test(s)
-1..9
+ok 10 - unsafe URLs are redacted by default
+# failed 2 among 10 test(s)
+1..10
 *** t0212-trace2-event.sh ***
 ok 1 - event stream, error event
 ok 2 - event stream, return code 0
@@ -4567,8 +4573,12 @@ ok 4 - event stream, list env vars
 ok 5 - basic trace2_data
 ok 6 - using global config, event stream, error event
 ok 7 - discard traces when there are too many files
-# passed all 7 test(s)
-1..7
+ok 8 - unsafe URLs are redacted by default in cmd_start events
+ok 9 - unsafe URLs are redacted by default in child_start events
+ok 10 - unsafe URLs are redacted by default in exec events
+ok 11 - unsafe URLs are redacted by default in def_param events
+# passed all 11 test(s)
+1..11
 *** t0300-credentials.sh ***
 ok 1 - setup helper scripts
 ok 2 - credential_fill invokes helper
@@ -4721,7 +4731,7 @@ ok 52 - helper (store) not confused by long header
 ok 53 - if custom xdg file exists, home and xdg files not created
 ok 54 - get: use home file if both home and xdg files have matches
 ok 55 - get: use xdg file if home file has no matches
-ok 56 - get: use xdg file if home file is unreadable
+ok 56 # skip get: use xdg file if home file is unreadable (missing SANITY of POSIXPERM,SANITY)
 ok 57 - store: if both xdg and home files exist, only store in home file
 ok 58 - erase: erase matching credentials from both xdg and home files
 ok 59 - get: ignore credentials without scheme as invalid
@@ -5658,7 +5668,7 @@ ok 9 - 3-way not overwriting local changes (setup)
 ok 10 - 3-way not overwriting local changes (our side)
 ok 11 - 3-way not overwriting local changes (their side)
 ok 12 - funny symlink in work tree
-ok 13 - funny symlink in work tree, un-unlink-able
+ok 13 # skip funny symlink in work tree, un-unlink-able (missing SANITY)
 ok 14 - D/F setup
 ok 15 - D/F
 ok 16 - D/F resolve
@@ -5918,19 +5928,20 @@ ok 239 - set up object list for --batch-all-objects tests
 ok 240 - cat-file --batch="%(objectname)" with --batch-all-objects will work
 ok 241 - cat-file --batch="%(rest)" with --batch-all-objects will work
 ok 242 - cat-file --batch="batman" with --batch-all-objects will work
-ok 243 - set up replacement object
-ok 244 - cat-file --batch respects replace objects
-ok 245 - cat-file --batch-check respects replace objects
-ok 246 - cat-file --batch-all-objects --batch ignores replace
-ok 247 - cat-file --batch-all-objects --batch-check ignores replace
-ok 248 - batch-command empty command
-ok 249 - batch-command whitespace before command
-ok 250 - batch-command unknown command
-ok 251 - batch-command missing arguments
-ok 252 - batch-command flush with arguments
-ok 253 - batch-command flush without --buffer
-# passed all 253 test(s)
-1..253
+ok 243 - cat-file %(objectsize:disk) with --batch-all-objects
+ok 244 - set up replacement object
+ok 245 - cat-file --batch respects replace objects
+ok 246 - cat-file --batch-check respects replace objects
+ok 247 - cat-file --batch-all-objects --batch ignores replace
+ok 248 - cat-file --batch-all-objects --batch-check ignores replace
+ok 249 - batch-command empty command
+ok 250 - batch-command whitespace before command
+ok 251 - batch-command unknown command
+ok 252 - batch-command missing arguments
+ok 253 - batch-command flush with arguments
+ok 254 - batch-command flush without --buffer
+# passed all 254 test(s)
+1..254
 *** t1007-hash-object.sh ***
 ok 1 - setup
 ok 2 - multiple '--stdin's are rejected
@@ -6838,7 +6849,7 @@ ok 30 - find value with highest priority from a configset
 ok 31 - find value_list for a key from a configset
 ok 32 - proper error on non-existent files
 ok 33 - proper error on directory "files"
-ok 34 - proper error on non-accessible files
+ok 34 # skip proper error on non-accessible files (missing SANITY of POSIXPERM,SANITY)
 ok 35 - proper error on error in default config files
 ok 36 - proper error on error in custom config files
 ok 37 - check line errors for malformed values
@@ -6930,144 +6941,145 @@ ok 52 - Query "main@{2005-05-26 23:33:01}" (middle of history with gap)
 ok 53 - Query "main@{2005-05-26 23:38:00}" (middle of history)
 ok 54 - Query "main@{2005-05-26 23:43:00}" (exact end of history)
 ok 55 - Query "main@{2005-05-28}" (past end of history)
-ok 56 - creating initial files
-ok 57 - git commit logged updates
-ok 58 - git cat-file blob main:F (expect OTHER)
-ok 59 - git cat-file blob main@{2005-05-26 23:30}:F (expect TEST)
-ok 60 - git cat-file blob main@{2005-05-26 23:42}:F (expect OTHER)
-ok 61 - given old value for missing pseudoref, do not create
-ok 62 - create pseudoref
-ok 63 - overwrite pseudoref with no old value given
-ok 64 - overwrite pseudoref with correct old value
-ok 65 - do not overwrite pseudoref with wrong old value
-ok 66 - delete pseudoref
-ok 67 - do not delete pseudoref with wrong old value
-ok 68 - delete pseudoref with correct old value
-ok 69 - create pseudoref with old OID zero
-ok 70 - do not overwrite pseudoref with old OID zero
-ok 71 - stdin test setup
-ok 72 - -z fails without --stdin
-ok 73 - stdin works with no input
-ok 74 - stdin fails on empty line
-ok 75 - stdin fails on only whitespace
-ok 76 - stdin fails on leading whitespace
-ok 77 - stdin fails on unknown command
-ok 78 - stdin fails on unbalanced quotes
-ok 79 - stdin fails on invalid escape
-ok 80 - stdin fails on junk after quoted argument
-ok 81 - stdin fails create with no ref
-ok 82 - stdin fails create with no new value
-ok 83 - stdin fails create with too many arguments
-ok 84 - stdin fails update with no ref
-ok 85 - stdin fails update with no new value
-ok 86 - stdin fails update with too many arguments
-ok 87 - stdin fails delete with no ref
-ok 88 - stdin fails delete with too many arguments
-ok 89 - stdin fails verify with too many arguments
-ok 90 - stdin fails option with unknown name
-ok 91 - stdin fails with duplicate refs
-ok 92 - stdin create ref works
-ok 93 - stdin does not create reflogs by default
-ok 94 - stdin creates reflogs with --create-reflog
-ok 95 - stdin succeeds with quoted argument
-ok 96 - stdin succeeds with escaped character
-ok 97 - stdin update ref creates with zero old value
-ok 98 - stdin update ref creates with empty old value
-ok 99 - stdin create ref works with path with space to blob
-ok 100 - stdin update ref fails with wrong old value
-ok 101 - stdin update ref fails with bad old value
-ok 102 - stdin create ref fails with bad new value
-ok 103 - stdin create ref fails with zero new value
-ok 104 - stdin update ref works with right old value
-ok 105 - stdin delete ref fails with wrong old value
-ok 106 - stdin delete ref fails with zero old value
-ok 107 - stdin update symref works option no-deref
-ok 108 - stdin delete symref works option no-deref
-ok 109 - stdin update symref works flag --no-deref
-ok 110 - stdin delete symref works flag --no-deref
-ok 111 - stdin delete ref works with right old value
-ok 112 - stdin update/create/verify combination works
-ok 113 - stdin verify succeeds for correct value
-ok 114 - stdin verify succeeds for missing reference
-ok 115 - stdin verify treats no value as missing
-ok 116 - stdin verify fails for wrong value
-ok 117 - stdin verify fails for mistaken null value
-ok 118 - stdin verify fails for mistaken empty value
-ok 119 - stdin update refs works with identity updates
-ok 120 - stdin update refs fails with wrong old value
-ok 121 - stdin delete refs works with packed and loose refs
-ok 122 - stdin -z works on empty input
-ok 123 - stdin -z fails on empty line
-ok 124 - stdin -z fails on empty command
-ok 125 - stdin -z fails on only whitespace
-ok 126 - stdin -z fails on leading whitespace
-ok 127 - stdin -z fails on unknown command
-ok 128 - stdin -z fails create with no ref
-ok 129 - stdin -z fails create with no new value
-ok 130 - stdin -z fails create with too many arguments
-ok 131 - stdin -z fails update with no ref
-ok 132 - stdin -z fails update with too few args
-ok 133 - stdin -z emits warning with empty new value
-ok 134 - stdin -z fails update with no new value
-ok 135 - stdin -z fails update with no old value
-ok 136 - stdin -z fails update with too many arguments
-ok 137 - stdin -z fails delete with no ref
-ok 138 - stdin -z fails delete with no old value
-ok 139 - stdin -z fails delete with too many arguments
-ok 140 - stdin -z fails verify with too many arguments
-ok 141 - stdin -z fails verify with no old value
-ok 142 - stdin -z fails option with unknown name
-ok 143 - stdin -z fails with duplicate refs
-ok 144 - stdin -z create ref works
-ok 145 - stdin -z update ref creates with zero old value
-ok 146 - stdin -z update ref creates with empty old value
-ok 147 - stdin -z create ref works with path with space to blob
-ok 148 - stdin -z update ref fails with wrong old value
-ok 149 - stdin -z update ref fails with bad old value
-ok 150 - stdin -z create ref fails when ref exists
-ok 151 - stdin -z create ref fails with bad new value
-ok 152 - stdin -z create ref fails with empty new value
-ok 153 - stdin -z update ref works with right old value
-ok 154 - stdin -z delete ref fails with wrong old value
-ok 155 - stdin -z delete ref fails with zero old value
-ok 156 - stdin -z update symref works option no-deref
-ok 157 - stdin -z delete symref works option no-deref
-ok 158 - stdin -z delete ref works with right old value
-ok 159 - stdin -z update/create/verify combination works
-ok 160 - stdin -z verify succeeds for correct value
-ok 161 - stdin -z verify succeeds for missing reference
-ok 162 - stdin -z verify treats no value as missing
-ok 163 - stdin -z verify fails for wrong value
-ok 164 - stdin -z verify fails for mistaken null value
-ok 165 - stdin -z verify fails for mistaken empty value
-ok 166 - stdin -z update refs works with identity updates
-ok 167 - stdin -z update refs fails with wrong old value
-ok 168 - stdin -z delete refs works with packed and loose refs
-ok 169 - fails with duplicate HEAD update
-ok 170 - fails with duplicate ref update via symref
-ok 171 - large transaction creating branches does not burst open file limit
-ok 172 - large transaction deleting branches does not burst open file limit
-ok 173 - handle per-worktree refs in refs/bisect
-ok 174 - transaction handles empty commit
-ok 175 - transaction handles empty commit with missing prepare
-ok 176 - transaction handles sole commit
-ok 177 - transaction handles empty abort
-ok 178 - transaction exits on multiple aborts
-ok 179 - transaction exits on start after prepare
-ok 180 - transaction handles empty abort with missing prepare
-ok 181 - transaction handles sole abort
-ok 182 - transaction can handle commit
-ok 183 - transaction can handle abort
-ok 184 - transaction aborts by default
-ok 185 - transaction with prepare aborts by default
-ok 186 - transaction can commit multiple times
-ok 187 - transaction can create and delete
-ok 188 - transaction can commit after abort
-ok 189 - transaction cannot restart ongoing transaction
-ok 190 - transaction flushes status updates
-ok 191 - directory not created deleting packed ref
-# passed all 191 test(s)
-1..191
+ok 56 - query reflog with gap
+ok 57 - creating initial files
+ok 58 - git commit logged updates
+ok 59 - git cat-file blob main:F (expect OTHER)
+ok 60 - git cat-file blob main@{2005-05-26 23:30}:F (expect TEST)
+ok 61 - git cat-file blob main@{2005-05-26 23:42}:F (expect OTHER)
+ok 62 - given old value for missing pseudoref, do not create
+ok 63 - create pseudoref
+ok 64 - overwrite pseudoref with no old value given
+ok 65 - overwrite pseudoref with correct old value
+ok 66 - do not overwrite pseudoref with wrong old value
+ok 67 - delete pseudoref
+ok 68 - do not delete pseudoref with wrong old value
+ok 69 - delete pseudoref with correct old value
+ok 70 - create pseudoref with old OID zero
+ok 71 - do not overwrite pseudoref with old OID zero
+ok 72 - stdin test setup
+ok 73 - -z fails without --stdin
+ok 74 - stdin works with no input
+ok 75 - stdin fails on empty line
+ok 76 - stdin fails on only whitespace
+ok 77 - stdin fails on leading whitespace
+ok 78 - stdin fails on unknown command
+ok 79 - stdin fails on unbalanced quotes
+ok 80 - stdin fails on invalid escape
+ok 81 - stdin fails on junk after quoted argument
+ok 82 - stdin fails create with no ref
+ok 83 - stdin fails create with no new value
+ok 84 - stdin fails create with too many arguments
+ok 85 - stdin fails update with no ref
+ok 86 - stdin fails update with no new value
+ok 87 - stdin fails update with too many arguments
+ok 88 - stdin fails delete with no ref
+ok 89 - stdin fails delete with too many arguments
+ok 90 - stdin fails verify with too many arguments
+ok 91 - stdin fails option with unknown name
+ok 92 - stdin fails with duplicate refs
+ok 93 - stdin create ref works
+ok 94 - stdin does not create reflogs by default
+ok 95 - stdin creates reflogs with --create-reflog
+ok 96 - stdin succeeds with quoted argument
+ok 97 - stdin succeeds with escaped character
+ok 98 - stdin update ref creates with zero old value
+ok 99 - stdin update ref creates with empty old value
+ok 100 - stdin create ref works with path with space to blob
+ok 101 - stdin update ref fails with wrong old value
+ok 102 - stdin update ref fails with bad old value
+ok 103 - stdin create ref fails with bad new value
+ok 104 - stdin create ref fails with zero new value
+ok 105 - stdin update ref works with right old value
+ok 106 - stdin delete ref fails with wrong old value
+ok 107 - stdin delete ref fails with zero old value
+ok 108 - stdin update symref works option no-deref
+ok 109 - stdin delete symref works option no-deref
+ok 110 - stdin update symref works flag --no-deref
+ok 111 - stdin delete symref works flag --no-deref
+ok 112 - stdin delete ref works with right old value
+ok 113 - stdin update/create/verify combination works
+ok 114 - stdin verify succeeds for correct value
+ok 115 - stdin verify succeeds for missing reference
+ok 116 - stdin verify treats no value as missing
+ok 117 - stdin verify fails for wrong value
+ok 118 - stdin verify fails for mistaken null value
+ok 119 - stdin verify fails for mistaken empty value
+ok 120 - stdin update refs works with identity updates
+ok 121 - stdin update refs fails with wrong old value
+ok 122 - stdin delete refs works with packed and loose refs
+ok 123 - stdin -z works on empty input
+ok 124 - stdin -z fails on empty line
+ok 125 - stdin -z fails on empty command
+ok 126 - stdin -z fails on only whitespace
+ok 127 - stdin -z fails on leading whitespace
+ok 128 - stdin -z fails on unknown command
+ok 129 - stdin -z fails create with no ref
+ok 130 - stdin -z fails create with no new value
+ok 131 - stdin -z fails create with too many arguments
+ok 132 - stdin -z fails update with no ref
+ok 133 - stdin -z fails update with too few args
+ok 134 - stdin -z emits warning with empty new value
+ok 135 - stdin -z fails update with no new value
+ok 136 - stdin -z fails update with no old value
+ok 137 - stdin -z fails update with too many arguments
+ok 138 - stdin -z fails delete with no ref
+ok 139 - stdin -z fails delete with no old value
+ok 140 - stdin -z fails delete with too many arguments
+ok 141 - stdin -z fails verify with too many arguments
+ok 142 - stdin -z fails verify with no old value
+ok 143 - stdin -z fails option with unknown name
+ok 144 - stdin -z fails with duplicate refs
+ok 145 - stdin -z create ref works
+ok 146 - stdin -z update ref creates with zero old value
+ok 147 - stdin -z update ref creates with empty old value
+ok 148 - stdin -z create ref works with path with space to blob
+ok 149 - stdin -z update ref fails with wrong old value
+ok 150 - stdin -z update ref fails with bad old value
+ok 151 - stdin -z create ref fails when ref exists
+ok 152 - stdin -z create ref fails with bad new value
+ok 153 - stdin -z create ref fails with empty new value
+ok 154 - stdin -z update ref works with right old value
+ok 155 - stdin -z delete ref fails with wrong old value
+ok 156 - stdin -z delete ref fails with zero old value
+ok 157 - stdin -z update symref works option no-deref
+ok 158 - stdin -z delete symref works option no-deref
+ok 159 - stdin -z delete ref works with right old value
+ok 160 - stdin -z update/create/verify combination works
+ok 161 - stdin -z verify succeeds for correct value
+ok 162 - stdin -z verify succeeds for missing reference
+ok 163 - stdin -z verify treats no value as missing
+ok 164 - stdin -z verify fails for wrong value
+ok 165 - stdin -z verify fails for mistaken null value
+ok 166 - stdin -z verify fails for mistaken empty value
+ok 167 - stdin -z update refs works with identity updates
+ok 168 - stdin -z update refs fails with wrong old value
+ok 169 - stdin -z delete refs works with packed and loose refs
+ok 170 - fails with duplicate HEAD update
+ok 171 - fails with duplicate ref update via symref
+ok 172 - large transaction creating branches does not burst open file limit
+ok 173 - large transaction deleting branches does not burst open file limit
+ok 174 - handle per-worktree refs in refs/bisect
+ok 175 - transaction handles empty commit
+ok 176 - transaction handles empty commit with missing prepare
+ok 177 - transaction handles sole commit
+ok 178 - transaction handles empty abort
+ok 179 - transaction exits on multiple aborts
+ok 180 - transaction exits on start after prepare
+ok 181 - transaction handles empty abort with missing prepare
+ok 182 - transaction handles sole abort
+ok 183 - transaction can handle commit
+ok 184 - transaction can handle abort
+ok 185 - transaction aborts by default
+ok 186 - transaction with prepare aborts by default
+ok 187 - transaction can commit multiple times
+ok 188 - transaction can create and delete
+ok 189 - transaction can commit after abort
+ok 190 - transaction cannot restart ongoing transaction
+ok 191 - transaction flushes status updates
+ok 192 - directory not created deleting packed ref
+# passed all 192 test(s)
+1..192
 *** t1401-symbolic-ref.sh ***
 ok 1 - setup
 ok 2 - symbolic-ref read/write roundtrip
@@ -8306,7 +8318,7 @@ ok 21 - check splitIndex.sharedIndexExpire set to "never" and "now"
 ok 22 - same mode for index & split index
 ok 23 - split index respects core.sharedrepository 0666
 ok 24 - split index respects core.sharedrepository 0642
-ok 25 - graceful handling when splitting index is not allowed
+ok 25 # skip graceful handling when splitting index is not allowed (missing SANITY of POSIXPERM,SANITY)
 ok 26 - writing split index with null sha1 does not write cache tree
 ok 27 - do not refresh null base index
 not ok 28 - reading split index at alternate location
@@ -9391,7 +9403,7 @@ ok 1 - initialize
 ok 2 - worktree prune on normal repo
 ok 3 - prune files inside $GIT_DIR/worktrees
 ok 4 - prune directories without gitdir
-ok 5 - prune directories with unreadable gitdir
+ok 5 # skip prune directories with unreadable gitdir (missing SANITY)
 ok 6 - prune directories with invalid gitdir
 ok 7 - prune directories with gitdir pointing to nowhere
 ok 8 - not prune locked checkout
@@ -14146,7 +14158,7 @@ ok 11 - Test that "git rm bar" succeeds
 ok 12 - Post-check that bar does not exist and is not in index after "git rm -f bar"
 ok 13 - Test that "git rm -- -q" succeeds (remove a file that looks like an option)
 ok 14 - Test that "git rm -f" succeeds with embedded space, tab, or newline characters.
-ok 15 - Test that "git rm -f" fails if its rm fails
+ok 15 # skip Test that "git rm -f" fails if its rm fails (missing SANITY)
 ok 16 - When the rm in "git rm -f" fails, it should not remove the file from the index
 ok 17 - Remove nonexistent file with --ignore-unmatch
 ok 18 - "rm" command printed
@@ -14267,11 +14279,11 @@ ok 22 - git add with filemode=0, symlinks=0 prefers stage 2 over stage 1
 ok 23 - git add --refresh
 ok 24 - git add --refresh with pathspec
 ok 25 - git add --refresh correctly reports no match error
-ok 26 - git add should fail atomically upon an unreadable file
-ok 27 - git add --ignore-errors
-ok 28 - git add (add.ignore-errors)
-ok 29 - git add (add.ignore-errors = false)
-ok 30 - --no-ignore-errors overrides config
+ok 26 # skip git add should fail atomically upon an unreadable file (missing SANITY of POSIXPERM,SANITY)
+ok 27 # skip git add --ignore-errors (missing SANITY of POSIXPERM,SANITY)
+ok 28 # skip git add (add.ignore-errors) (missing SANITY of POSIXPERM,SANITY)
+ok 29 # skip git add (add.ignore-errors = false) (missing SANITY of POSIXPERM,SANITY)
+ok 30 # skip --no-ignore-errors overrides config (missing SANITY of POSIXPERM,SANITY)
 ok 31 - git add 'fo\[ou\]bar' ignores foobar
 ok 32 - git add to resolve conflicts on otherwise ignored path
 ok 33 - "add non-existent" should fail
@@ -16825,7 +16837,7 @@ ok 9 - -U0 is valid, so is diff.context=0
 ok 1 - setup
 ok 2 - no order (=tree object order)
 ok 3 - missing orderfile
-ok 4 - unreadable orderfile
+ok 4 # skip unreadable orderfile (missing SANITY of POSIXPERM,SANITY)
 ok 5 - orderfile using option from subdir with --output
 ok 6 - orderfile using option (1)
 ok 7 - orderfile is fifo (1)
@@ -18637,42 +18649,11 @@ ok 137 - Bloom generation is limited by --max-new-filters
 ok 138 - Bloom generation backfills previously-skipped filters
 ok 139 - --max-new-filters overrides configuration
 ok 140 - Bloom generation backfills empty commits
-not ok 141 - Bloom reader notices too-small data chunk
-#	
-#		check_corrupt_graph BDAT clear 00000000 &&
-#		echo "warning: ignoring too-small changed-path chunk" \
-#			"(4 < 12) in commit-graph file" >expect.err &&
-#		test_cmp expect.err err
-#	
-not ok 142 - Bloom reader notices out-of-bounds filter offsets
-#	
-#		check_corrupt_graph BIDX 12 FFFFFFFF &&
-#		# use grep to avoid depending on exact chunk size
-#		grep "warning: ignoring out-of-range offset (4294967295) for changed-path filter at pos 3 of .git/objects/info/commit-graph" err
-#	
-not ok 143 - Bloom reader notices too-small index chunk
-#	
-#		# replace the index with a single entry, making most
-#		# lookups out-of-bounds
-#		check_corrupt_graph BIDX clear 00000000 &&
-#		echo "warning: commit-graph changed-path index chunk" \
-#			"is too small" >expect.err &&
-#		test_cmp expect.err err
-#	
-not ok 144 - Bloom reader notices out-of-order index offsets
-#	
-#		# we do not know any real offsets, but we can pick
-#		# something plausible; we should not get to the point of
-#		# actually reading from the bogus offsets anyway.
-#		corrupt_graph BIDX 4 0000000c00000005 &&
-#		echo "warning: ignoring decreasing changed-path index offsets" \
-#			"(12 > 5) for positions 1 and 2 of .git/objects/info/commit-graph" >expect.err &&
-#		git -c core.commitGraph=false log -- A/B/file2 >expect.out &&
-#		git -c core.commitGraph=true log -- A/B/file2 >out 2>err &&
-#		test_cmp expect.out out &&
-#		test_cmp expect.err err
-#	
-# failed 4 among 144 test(s)
+ok 141 - Bloom reader notices too-small data chunk
+ok 142 - Bloom reader notices out-of-bounds filter offsets
+ok 143 - Bloom reader notices too-small index chunk
+ok 144 - Bloom reader notices out-of-order index offsets
+# passed all 144 test(s)
 1..144
 *** t4217-log-limit.sh ***
 ok 1 - setup test
@@ -18821,7 +18802,7 @@ ok 28 - Check conflicted oids and modes without messages
 ok 29 - NUL terminated conflicted file "lines"
 ok 30 - error out by default for unrelated histories
 ok 31 - can override merge of unrelated histories
-ok 32 - merge-ort fails gracefully in a read-only repository
+ok 32 # skip merge-ort fails gracefully in a read-only repository (missing SANITY)
 ok 33 - --stdin with both a successful and a conflicted merge
 ok 34 - --merge-base is incompatible with --stdin
 ok 35 - specify merge-base as parent of branch2
@@ -18830,94 +18811,96 @@ ok 36 - check the input format when --stdin is passed
 1..36
 *** t5000-tar-tree.sh ***
 ok 1 - setup
-ok 2 - populate workdir
-ok 3 - add ignored file
-ok 4 - add files to repository
-ok 5 - setup export-subst
-ok 6 - create bare clone
-ok 7 - remove ignored file
-ok 8 - git archive
-ok 9 -  extract tar archive
-ok 10 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
-ok 11 -  validate filenames
-ok 12 -  validate file contents
-ok 13 -  validate mtime of a/a
-ok 14 - git archive --mtime
-ok 15 -  extract tar archive
-ok 16 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
-ok 17 -  validate filenames
-ok 18 -  validate file contents
-ok 19 -  validate mtime of a/a
-ok 20 - git archive --prefix=prefix/
-ok 21 -  extract tar archive
-ok 22 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
-ok 23 -  validate filenames
-ok 24 -  validate file contents
-ok 25 - git-archive --prefix=olde-
-ok 26 -  extract tar archive
-ok 27 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
-ok 28 -  validate filenames
-ok 29 -  validate file contents
-ok 30 - git archive --add-file
-ok 31 -  extract tar archive
-ok 32 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
-ok 33 -  validate filenames
-ok 34 -  validate file contents
-ok 35 -  validate extra file untracked
-ok 36 - git archive --add-file twice
-ok 37 -  extract tar archive
-ok 38 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
-ok 39 -  validate filenames
-ok 40 -  validate file contents
-ok 41 -  validate extra file one/untracked
-ok 42 -  validate extra file two/untracked
-ok 43 - git archive on large files
-ok 44 - git archive in a bare repo
-ok 45 - git archive vs. the same in a bare repo
-ok 46 - git archive with --output
-ok 47 - git archive --remote
-ok 48 - git archive --remote with configured remote
-ok 49 - git get-tar-commit-id
-ok 50 - git archive with --output, override inferred format
-ok 51 - git archive with --output and --remote creates .tgz
-ok 52 - git archive --list outside of a git repo
-ok 53 - git archive --remote outside of a git repo
-ok 54 - clients cannot access unreachable commits
-ok 55 - upload-archive can allow unreachable commits
-ok 56 - setup tar filters
-ok 57 - archive --list mentions user filter
-ok 58 - archive --list shows only enabled remote filters
-ok 59 - invoke tar filter by format
-ok 60 - invoke tar filter by extension
-ok 61 - default output format remains tar
-ok 62 - extension matching requires dot
-ok 63 - only enabled filters are available remotely
-ok 64 - invalid filter is reported only once
-ok 65 - git archive --format=tgz
-ok 66 - git archive --format=tar.gz
-ok 67 - infer tgz from .tgz filename
-ok 68 - infer tgz from .tar.gz filename
-ok 69 - extract tgz file
-ok 70 - remote tar.gz is allowed by default
-ok 71 - remote tar.gz can be disabled
-ok 72 - git archive --format=tgz (external gzip)
-ok 73 - git archive --format=tar.gz (external gzip)
-ok 74 - extract tgz file (external gzip)
-ok 75 - archive and :(glob)
-ok 76 - catch non-matching pathspec
-ok 77 - reject paths outside the current directory
-ok 78 - allow pathspecs that resolve to the current directory
-ok 79 - set up repository with huge blob
-ok 80 - generate tar with huge size
-ok 81 - system tar can read our huge size
-ok 82 - set up repository with far-future (2^34 - 1) commit
-ok 83 - generate tar with far-future mtime
-ok 84 - system tar can read our future mtime
-ok 85 - set up repository with far-far-future (2^36 + 1) commit
-ok 86 - generate tar with far-far-future mtime
-ok 87 - system tar can read our future mtime
-# passed all 87 test(s)
-1..87
+ok 2 - --list notices extra parameters
+ok 3 - end-of-options is correctly eaten
+ok 4 - populate workdir
+ok 5 - add ignored file
+ok 6 - add files to repository
+ok 7 - setup export-subst
+ok 8 - create bare clone
+ok 9 - remove ignored file
+ok 10 - git archive
+ok 11 -  extract tar archive
+ok 12 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
+ok 13 -  validate filenames
+ok 14 -  validate file contents
+ok 15 -  validate mtime of a/a
+ok 16 - git archive --mtime
+ok 17 -  extract tar archive
+ok 18 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
+ok 19 -  validate filenames
+ok 20 -  validate file contents
+ok 21 -  validate mtime of a/a
+ok 22 - git archive --prefix=prefix/
+ok 23 -  extract tar archive
+ok 24 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
+ok 25 -  validate filenames
+ok 26 -  validate file contents
+ok 27 - git-archive --prefix=olde-
+ok 28 -  extract tar archive
+ok 29 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
+ok 30 -  validate filenames
+ok 31 -  validate file contents
+ok 32 - git archive --add-file
+ok 33 -  extract tar archive
+ok 34 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
+ok 35 -  validate filenames
+ok 36 -  validate file contents
+ok 37 -  validate extra file untracked
+ok 38 - git archive --add-file twice
+ok 39 -  extract tar archive
+ok 40 # skip  interpret pax headers (missing TAR_NEEDS_PAX_FALLBACK)
+ok 41 -  validate filenames
+ok 42 -  validate file contents
+ok 43 -  validate extra file one/untracked
+ok 44 -  validate extra file two/untracked
+ok 45 - git archive on large files
+ok 46 - git archive in a bare repo
+ok 47 - git archive vs. the same in a bare repo
+ok 48 - git archive with --output
+ok 49 - git archive --remote
+ok 50 - git archive --remote with configured remote
+ok 51 - git get-tar-commit-id
+ok 52 - git archive with --output, override inferred format
+ok 53 - git archive with --output and --remote creates .tgz
+ok 54 - git archive --list outside of a git repo
+ok 55 - git archive --remote outside of a git repo
+ok 56 - clients cannot access unreachable commits
+ok 57 - upload-archive can allow unreachable commits
+ok 58 - setup tar filters
+ok 59 - archive --list mentions user filter
+ok 60 - archive --list shows only enabled remote filters
+ok 61 - invoke tar filter by format
+ok 62 - invoke tar filter by extension
+ok 63 - default output format remains tar
+ok 64 - extension matching requires dot
+ok 65 - only enabled filters are available remotely
+ok 66 - invalid filter is reported only once
+ok 67 - git archive --format=tgz
+ok 68 - git archive --format=tar.gz
+ok 69 - infer tgz from .tgz filename
+ok 70 - infer tgz from .tar.gz filename
+ok 71 - extract tgz file
+ok 72 - remote tar.gz is allowed by default
+ok 73 - remote tar.gz can be disabled
+ok 74 - git archive --format=tgz (external gzip)
+ok 75 - git archive --format=tar.gz (external gzip)
+ok 76 - extract tgz file (external gzip)
+ok 77 - archive and :(glob)
+ok 78 - catch non-matching pathspec
+ok 79 - reject paths outside the current directory
+ok 80 - allow pathspecs that resolve to the current directory
+ok 81 - set up repository with huge blob
+ok 82 - generate tar with huge size
+ok 83 - system tar can read our huge size
+ok 84 - set up repository with far-future (2^34 - 1) commit
+ok 85 - generate tar with far-future mtime
+ok 86 - system tar can read our future mtime
+ok 87 - set up repository with far-far-future (2^36 + 1) commit
+ok 88 - generate tar with far-far-future mtime
+ok 89 - system tar can read our future mtime
+# passed all 89 test(s)
+1..89
 *** t5001-archive-attr.sh ***
 ok 1 - setup
 ok 2 - git archive
@@ -19135,8 +19118,10 @@ ok 47 - mailinfo -b separated double [PATCH]
 ok 48 - mailinfo handles unusual header whitespace
 ok 49 - split base64 email with quoted-cr
 ok 50 - mailinfo warn CR in base64 encoded email
-# passed all 50 test(s)
-1..50
+ok 51 - from line with unterminated quoted string
+ok 52 - from line with unterminated comment
+# passed all 52 test(s)
+1..52
 *** t5150-request-pull.sh ***
 ok 1 - setup
 ok 2 - setup: two scripts for reading pull requests
@@ -19774,7 +19759,7 @@ ok 60 - replace-objects invalidates commit-graph
 ok 61 - warn on improper hash version
 ok 62 - lower layers have overflow chunk
 ok 63 - git commit-graph verify
-ok 64 - detect permission problem
+ok 64 # skip detect permission problem (missing SANITY of POSIXPERM,SANITY)
 ok 65 - detect too small
 ok 66 - detect bad signature
 ok 67 - detect bad version
@@ -19811,68 +19796,15 @@ ok 97 - corrupt commit-graph write (missing tree)
 ok 98 - set up and verify repo with generation data overflow chunk
 ok 99 - check normal git operations: generation data overflow chunk repo
 ok 100 - overflow during generation version upgrade
-not ok 101 - reader notices too-small oid fanout chunk
-#	
-#		# make it big enough that the graph file is plausible,
-#		# otherwise we hit an earlier check
-#		check_corrupt_chunk OIDF clear $(printf "000000%02x" $(test_seq 250)) &&
-#		cat >expect.err <<-\EOF &&
-#		error: commit-graph oid fanout chunk is wrong size
-#		error: commit-graph is missing the OID Fanout chunk
-#		EOF
-#		test_cmp expect.err err
-#	
-not ok 102 - reader notices fanout/lookup table mismatch
-#	
-#		check_corrupt_chunk OIDF 1020 "FFFFFFFF" &&
-#		cat >expect.err <<-\EOF &&
-#		error: commit-graph oid table and fanout disagree on size
-#		EOF
-#		test_cmp expect.err err
-#	
-not ok 103 - reader notices out-of-bounds fanout
-#	
-#		# Rather than try to corrupt a specific hash, we will just
-#		# wreck them all. But we cannot just set them all to 0xFFFFFFFF or
-#		# similar, as they are used for hi/lo starts in a binary search (so if
-#		# they are identical, that indicates that the search should abort
-#		# immediately). Instead, we will give them high values that differ by
-#		# 2^24, ensuring that any that are used would cause an out-of-bounds
-#		# read.
-#		check_corrupt_chunk OIDF 0 $(printf "%02x000000" $(test_seq 0 254)) &&
-#		cat >expect.err <<-\EOF &&
-#		error: commit-graph fanout values out of order
-#		EOF
-#		test_cmp expect.err err
-#	
-not ok 104 - reader notices too-small commit data chunk
-#	
-#		check_corrupt_chunk CDAT clear 00000000 &&
-#		cat >expect.err <<-\EOF &&
-#		error: commit-graph commit data chunk is wrong size
-#		error: commit-graph is missing the Commit Data chunk
-#		EOF
-#		test_cmp expect.err err
-#	
-not ok 105 - reader notices out-of-bounds extra edge
-#	
-#		check_corrupt_chunk EDGE clear &&
-#		cat >expect.err <<-\EOF &&
-#		error: commit-graph extra-edges pointer out of bounds
-#		EOF
-#		test_cmp expect.err err
-#	
-not ok 106 - reader notices too-small generations chunk
-#	
-#		check_corrupt_chunk GDA2 clear 00000000 &&
-#		cat >expect.err <<-\EOF &&
-#		error: commit-graph generations chunk is wrong size
-#		EOF
-#		test_cmp expect.err err
-#	
+ok 101 - reader notices too-small oid fanout chunk
+ok 102 - reader notices fanout/lookup table mismatch
+ok 103 - reader notices out-of-bounds fanout
+ok 104 - reader notices too-small commit data chunk
+ok 105 - reader notices out-of-bounds extra edge
+ok 106 - reader notices too-small generations chunk
 ok 107 - stale commit cannot be parsed when given directly
 ok 108 - stale commit cannot be parsed when traversing graph
-# failed 6 among 108 test(s)
+# passed all 108 test(s)
 1..108
 *** t5319-multi-pack-index.sh ***
 ok 1 - setup
@@ -20765,16 +20697,8 @@ ok 2 - check normal git operations: overflow
 ok 3 - set up and verify repo with generation data overflow chunk
 ok 4 - check normal git operations: overflow 2
 ok 5 - single commit with generation data exceeding UINT32_MAX
-not ok 6 - reader notices out-of-bounds generation overflow
-#	
-#		graph=.git/objects/info/commit-graph &&
-#		test_when_finished "rm -rf $graph" &&
-#		git commit-graph write --reachable &&
-#		corrupt_chunk_file $graph GDO2 clear &&
-#		test_must_fail git log 2>err &&
-#		grep "commit-graph overflow generation data is too small" err
-#	
-# failed 1 among 6 test(s)
+ok 6 - reader notices out-of-bounds generation overflow
+# passed all 6 test(s)
 1..6
 *** t5329-pack-objects-cruft.sh ***
 ok 1 - unreachable loose objects are packed (expire never)
@@ -22652,7 +22576,7 @@ ok 10 - fetch --update-shallow
 ok 11 - fetch --update-shallow into a repo with submodules
 ok 12 - fetch --update-shallow a commit that is also a shallow point into a repo with submodules
 ok 13 - fetch --update-shallow (with fetch.writeCommitGraph)
-ok 14 - shallow fetch from a read-only repo
+ok 14 # skip shallow fetch from a read-only repo (missing SANITY of POSIXPERM,SANITY)
 ok 15 - .git/shallow is edited by repack
 # passed all 15 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
@@ -23002,17 +22926,19 @@ ok 16 # skip pull commit into unborn branch with untrusted signature and --verif
 ok 1 - fetch with invalid output format configuration
 ok 2 - fetch aligned output
 ok 3 - fetch compact output
-ok 4 - fetch porcelain output
-ok 5 - fetch porcelain with multiple remotes
-ok 6 - fetch porcelain refuses to work with submodules
-ok 7 - fetch porcelain overrides fetch.output config
-ok 8 - fetch --no-porcelain overrides previous --porcelain
-ok 9 - fetch output with HEAD
-ok 10 - fetch porcelain output with HEAD
-ok 11 - fetch output with object ID
-ok 12 - --no-show-forced-updates
-# passed all 12 test(s)
-1..12
+ok 4 - setup for fetch porcelain output
+ok 5 - fetch porcelain output 
+ok 6 - fetch porcelain output (atomic)
+ok 7 - fetch porcelain with multiple remotes
+ok 8 - fetch porcelain refuses to work with submodules
+ok 9 - fetch porcelain overrides fetch.output config
+ok 10 - fetch --no-porcelain overrides previous --porcelain
+ok 11 - fetch output with HEAD
+ok 12 - fetch porcelain output with HEAD
+ok 13 - fetch output with object ID
+ok 14 - --no-show-forced-updates
+# passed all 14 test(s)
+1..14
 *** t5580-unc-paths.sh ***
 1..0 # SKIP skipping Windows-only path tests
 *** t5581-http-curl-verbose.sh ***
@@ -24230,19 +24156,20 @@ ok 2 - Ilari's test
 ok 1 - setup
 ok 2 - one is ancestor of others and should not be shown
 ok 3 - setup roots, merges and octopuses
-ok 4 - rev-list roots
-ok 5 - rev-list no merges
-ok 6 - rev-list no octopuses
-ok 7 - rev-list no roots
-ok 8 - rev-list merges
-ok 9 - rev-list octopus
-ok 10 - rev-list ordinary commits
-ok 11 - rev-list --merges --no-merges yields empty set
-ok 12 - rev-list override and infinities
-ok 13 - dodecapus
-ok 14 - ancestors with the same commit time
-# passed all 14 test(s)
-1..14
+ok 4 - parse --max-parents & --min-parents
+ok 5 - rev-list roots
+ok 6 - rev-list no merges
+ok 7 - rev-list no octopuses
+ok 8 - rev-list no roots
+ok 9 - rev-list merges
+ok 10 - rev-list octopus
+ok 11 - rev-list ordinary commits
+ok 12 - rev-list --merges --no-merges yields empty set
+ok 13 - rev-list override and infinities
+ok 14 - dodecapus
+ok 15 - ancestors with the same commit time
+# passed all 15 test(s)
+1..15
 *** t6010-merge-base.sh ***
 ok 1 - setup
 ok 2 - set up G and H
@@ -24619,92 +24546,93 @@ ok 8 - bisect reset: back in a branch checked out also elsewhere
 ok 9 - bisect reset: back in the main branch
 ok 10 - bisect reset: back in another branch
 ok 11 - bisect reset when not bisecting
-ok 12 - bisect reset removes packed refs
-ok 13 - bisect reset removes bisect state after --no-checkout
-ok 14 - bisect start: back in good branch
-ok 15 - bisect start: no ".git/BISECT_START" created if junk rev
-ok 16 - bisect start: existing ".git/BISECT_START" not modified if junk rev
-ok 17 - bisect start: no ".git/BISECT_START" if mistaken rev
-ok 18 - bisect start: no ".git/BISECT_START" if checkout error
-ok 19 - bisect skip: successful result
-ok 20 - bisect skip: cannot tell between 3 commits
-ok 21 - bisect skip: cannot tell between 2 commits
-ok 22 - bisect skip: with commit both bad and skipped
-ok 23 - git bisect run: args, stdout and stderr with no arguments
-ok 24 - git bisect run: args, stdout and stderr: "--" argument
-ok 25 - git bisect run: args, stdout and stderr: "--log foo --no-log bar" arguments
-ok 26 - git bisect run: args, stdout and stderr: "--bisect-start" argument
-ok 27 - git bisect run: negative exit code
-ok 28 - git bisect run: unable to verify on good
-ok 29 - "git bisect run" simple case
+ok 12 - bisect reset cleans up even when not bisecting
+ok 13 - bisect reset removes packed refs
+ok 14 - bisect reset removes bisect state after --no-checkout
+ok 15 - bisect start: back in good branch
+ok 16 - bisect start: no ".git/BISECT_START" created if junk rev
+ok 17 - bisect start: existing ".git/BISECT_START" not modified if junk rev
+ok 18 - bisect start: no ".git/BISECT_START" if mistaken rev
+ok 19 - bisect start: no ".git/BISECT_START" if checkout error
+ok 20 - bisect skip: successful result
+ok 21 - bisect skip: cannot tell between 3 commits
+ok 22 - bisect skip: cannot tell between 2 commits
+ok 23 - bisect skip: with commit both bad and skipped
+ok 24 - git bisect run: args, stdout and stderr with no arguments
+ok 25 - git bisect run: args, stdout and stderr: "--" argument
+ok 26 - git bisect run: args, stdout and stderr: "--log foo --no-log bar" arguments
+ok 27 - git bisect run: args, stdout and stderr: "--bisect-start" argument
+ok 28 - git bisect run: negative exit code
+ok 29 - git bisect run: unable to verify on good
 ok 30 - "git bisect run" simple case
-ok 31 - "git bisect run" with more complex "git bisect start"
-ok 32 - bisect run accepts exit code 126 as bad
-ok 33 - bisect run fails with non-executable test script
-ok 34 - bisect run accepts exit code 127 as bad
-ok 35 - bisect run fails with missing test script
-ok 36 - bisect skip: add line and then a new test
-ok 37 - bisect skip and bisect replay
-ok 38 - bisect run & skip: cannot tell between 2
-ok 39 - bisect run & skip: find first bad
-ok 40 - bisect skip only one range
-ok 41 - bisect skip many ranges
-ok 42 - bisect starting with a detached HEAD
-ok 43 - bisect errors out if bad and good are mistaken
-ok 44 - bisect does not create a "bisect" branch
-ok 45 - side branch creation
-ok 46 - good merge base when good and bad are siblings
-ok 47 - skipped merge base when good and bad are siblings
-ok 48 - bad merge base when good and bad are siblings
-ok 49 - many merge bases creation
-ok 50 - "git bisect run --first-parent" simple case
-ok 51 - good merge bases when good and bad are siblings
-ok 52 - optimized merge base checks
-ok 53 - "parallel" side branch creation
-ok 54 - restricting bisection on one dir
-ok 55 - restricting bisection on one dir and a file
-ok 56 - skipping away from skipped commit
-ok 57 - erroring out when using bad path arguments
-ok 58 - test bisection on bare repo - --no-checkout specified
-ok 59 - test bisection on bare repo - --no-checkout defaulted
-ok 60 - broken branch creation
-ok 61 - bisect fails if tree is broken on start commit
-ok 62 - bisect fails if tree is broken on trial commit
-ok 63 - bisect: --no-checkout - start commit bad
-ok 64 - bisect: --no-checkout - trial commit bad
-ok 65 - bisect: --no-checkout - target before breakage
-ok 66 - bisect: --no-checkout - target in breakage
-ok 67 - bisect: --no-checkout - target after breakage
-ok 68 - bisect: demonstrate identification of damage boundary
-ok 69 - bisect log: successful result
-ok 70 - bisect log: only skip commits left
-ok 71 - "git bisect bad HEAD" behaves as "git bisect bad"
-ok 72 - bisect starts with only one new
-ok 73 - bisect does not start with only one old
-ok 74 - bisect start with one new and old
-ok 75 - bisect replay with old and new
-ok 76 - bisect replay with CRLF log
-ok 77 - bisect cannot mix old/new and good/bad
-ok 78 - bisect terms needs 0 or 1 argument
-ok 79 - bisect terms shows good/bad after start
-ok 80 - bisect start with one term1 and term2
-ok 81 - bogus command does not start bisect
-ok 82 - bisect replay with term1 and term2
-ok 83 - bisect start term1 term2
-ok 84 - bisect cannot mix terms
-ok 85 - bisect terms rejects invalid terms
-ok 86 - bisect start --term-* does store terms
-ok 87 - bisect start takes options and revs in any order
-ok 88 - bisect skip works with --term*
-ok 89 - git bisect reset cleans bisection state properly
-ok 90 - bisect handles annotated tags
-ok 91 - bisect run fails with exit code equals or greater than 128
-ok 92 - bisect visualize with a filename with dash and space
-ok 93 - bisect state output with multiple good commits
-ok 94 - bisect state output with bad commit
-ok 95 - verify correct error message
-# passed all 95 test(s)
-1..95
+ok 31 - "git bisect run" simple case
+ok 32 - "git bisect run" with more complex "git bisect start"
+ok 33 - bisect run accepts exit code 126 as bad
+ok 34 - bisect run fails with non-executable test script
+ok 35 - bisect run accepts exit code 127 as bad
+ok 36 - bisect run fails with missing test script
+ok 37 - bisect skip: add line and then a new test
+ok 38 - bisect skip and bisect replay
+ok 39 - bisect run & skip: cannot tell between 2
+ok 40 - bisect run & skip: find first bad
+ok 41 - bisect skip only one range
+ok 42 - bisect skip many ranges
+ok 43 - bisect starting with a detached HEAD
+ok 44 - bisect errors out if bad and good are mistaken
+ok 45 - bisect does not create a "bisect" branch
+ok 46 - side branch creation
+ok 47 - good merge base when good and bad are siblings
+ok 48 - skipped merge base when good and bad are siblings
+ok 49 - bad merge base when good and bad are siblings
+ok 50 - many merge bases creation
+ok 51 - "git bisect run --first-parent" simple case
+ok 52 - good merge bases when good and bad are siblings
+ok 53 - optimized merge base checks
+ok 54 - "parallel" side branch creation
+ok 55 - restricting bisection on one dir
+ok 56 - restricting bisection on one dir and a file
+ok 57 - skipping away from skipped commit
+ok 58 - erroring out when using bad path arguments
+ok 59 - test bisection on bare repo - --no-checkout specified
+ok 60 - test bisection on bare repo - --no-checkout defaulted
+ok 61 - broken branch creation
+ok 62 - bisect fails if tree is broken on start commit
+ok 63 - bisect fails if tree is broken on trial commit
+ok 64 - bisect: --no-checkout - start commit bad
+ok 65 - bisect: --no-checkout - trial commit bad
+ok 66 - bisect: --no-checkout - target before breakage
+ok 67 - bisect: --no-checkout - target in breakage
+ok 68 - bisect: --no-checkout - target after breakage
+ok 69 - bisect: demonstrate identification of damage boundary
+ok 70 - bisect log: successful result
+ok 71 - bisect log: only skip commits left
+ok 72 - "git bisect bad HEAD" behaves as "git bisect bad"
+ok 73 - bisect starts with only one new
+ok 74 - bisect does not start with only one old
+ok 75 - bisect start with one new and old
+ok 76 - bisect replay with old and new
+ok 77 - bisect replay with CRLF log
+ok 78 - bisect cannot mix old/new and good/bad
+ok 79 - bisect terms needs 0 or 1 argument
+ok 80 - bisect terms shows good/bad after start
+ok 81 - bisect start with one term1 and term2
+ok 82 - bogus command does not start bisect
+ok 83 - bisect replay with term1 and term2
+ok 84 - bisect start term1 term2
+ok 85 - bisect cannot mix terms
+ok 86 - bisect terms rejects invalid terms
+ok 87 - bisect start --term-* does store terms
+ok 88 - bisect start takes options and revs in any order
+ok 89 - bisect skip works with --term*
+ok 90 - git bisect reset cleans bisection state properly
+ok 91 - bisect handles annotated tags
+ok 92 - bisect run fails with exit code equals or greater than 128
+ok 93 - bisect visualize with a filename with dash and space
+ok 94 - bisect state output with multiple good commits
+ok 95 - bisect state output with bad commit
+ok 96 - verify correct error message
+# passed all 96 test(s)
+1..96
 *** t6040-tracking-info.sh ***
 ok 1 - setup
 ok 2 - branch -v
@@ -27434,8 +27362,9 @@ ok 34 - disambiguation (4)
 ok 35 - reset with paths accepts tree
 ok 36 - reset -N keeps removed files as intent-to-add
 ok 37 - reset --mixed sets up work tree
-# passed all 37 test(s)
-1..37
+ok 38 - reset handles --end-of-options
+# passed all 38 test(s)
+1..38
 *** t7103-reset-bare.sh ***
 ok 1 - setup non-bare
 ok 2 - "hard" reset requires a worktree
@@ -27729,11 +27658,11 @@ ok 24 - clean.requireForce
 ok 25 - clean.requireForce and -n
 ok 26 - clean.requireForce and -f
 ok 27 - core.excludesfile
-ok 28 - removal failure
+ok 28 # skip removal failure (missing SANITY)
 ok 29 - nested git work tree
 ok 30 - should clean things that almost look like git but are not
 ok 31 - should not clean submodules
-ok 32 - should avoid cleaning possible submodules
+ok 32 # skip should avoid cleaning possible submodules (missing SANITY of POSIXPERM,SANITY)
 ok 33 - nested (empty) git should be kept
 ok 34 - nested bare repositories should be cleaned
 not ok 35 - nested (empty) bare repositories should be cleaned even when in .git # TODO known breakage
@@ -27743,7 +27672,7 @@ ok 38 - giving path to nested .git will not remove it
 ok 39 - giving path to nested .git/ will NOT remove contents
 ok 40 - force removal of nested git work tree
 ok 41 - git clean -e
-ok 42 - git clean -d with an unreadable empty directory
+ok 42 # skip git clean -d with an unreadable empty directory (missing SANITY)
 ok 43 - git clean -d respects pathspecs (dir is prefix of pathspec)
 ok 44 - git clean -d respects pathspecs (pathspec is prefix of dir)
 ok 45 - git clean -d skips untracked dirs containing ignored files
@@ -28732,7 +28661,7 @@ ok 62 - status submodule summary (clean submodule): commit
 ok 63 - status -s submodule summary (clean submodule)
 ok 64 - status -z implies porcelain
 ok 65 - commit --dry-run submodule summary (--amend)
-ok 66 - status succeeds in a read-only repository
+ok 66 # skip status succeeds in a read-only repository (missing SANITY of POSIXPERM,SANITY)
 ok 67 - --ignore-submodules=untracked suppresses submodules with untracked content
 ok 68 - .gitmodules ignore=untracked suppresses submodules with untracked content
 ok 69 - .git/config ignore=untracked suppresses submodules with untracked content
@@ -28890,26 +28819,27 @@ ok 24 - status in an am session: file already exists
 ok 25 - status in an am session: file does not exist
 ok 26 - status in an am session: empty patch
 ok 27 - status when bisecting
-ok 28 - status when rebase --apply conflicts with statushints disabled
-ok 29 - prepare for cherry-pick conflicts
-ok 30 - status when cherry-picking before resolving conflicts
-ok 31 - status when cherry-picking after resolving conflicts
-ok 32 - status when cherry-picking multiple commits
-ok 33 - status when cherry-picking after committing conflict resolution
-ok 34 - status shows cherry-pick with invalid oid
-ok 35 - status does not show error if .git/sequencer is a file
-ok 36 - status showing detached at and from a tag
-ok 37 - status while reverting commit (conflicts)
-ok 38 - status while reverting commit (conflicts resolved)
-ok 39 - status after reverting commit
-ok 40 - status while reverting after committing conflict resolution
-ok 41 - prepare for different number of commits rebased
-ok 42 - status: one command done nothing remaining
-ok 43 - status: two commands done with some white lines in done file
-ok 44 - status: two remaining commands with some white lines in todo file
-ok 45 - status: handle not-yet-started rebase -i gracefully
-# passed all 45 test(s)
-1..45
+ok 28 - status when bisecting while rebasing
+ok 29 - status when rebase --apply conflicts with statushints disabled
+ok 30 - prepare for cherry-pick conflicts
+ok 31 - status when cherry-picking before resolving conflicts
+ok 32 - status when cherry-picking after resolving conflicts
+ok 33 - status when cherry-picking multiple commits
+ok 34 - status when cherry-picking after committing conflict resolution
+ok 35 - status shows cherry-pick with invalid oid
+ok 36 - status does not show error if .git/sequencer is a file
+ok 37 - status showing detached at and from a tag
+ok 38 - status while reverting commit (conflicts)
+ok 39 - status while reverting commit (conflicts resolved)
+ok 40 - status after reverting commit
+ok 41 - status while reverting after committing conflict resolution
+ok 42 - prepare for different number of commits rebased
+ok 43 - status: one command done nothing remaining
+ok 44 - status: two commands done with some white lines in done file
+ok 45 - status: two remaining commands with some white lines in todo file
+ok 46 - status: handle not-yet-started rebase -i gracefully
+# passed all 46 test(s)
+1..46
 *** t7513-interpret-trailers.sh ***
 ok 1 - setup
 ok 2 - with cmd
@@ -28952,7 +28882,7 @@ ok 38 - in-place editing with basic patch
 ok 39 - in-place editing with additional trailer
 ok 40 - in-place editing on stdin disallowed
 ok 41 - in-place editing on non-existing file
-ok 42 - in-place editing doesn't clobber original file on error
+ok 42 # skip in-place editing doesn't clobber original file on error (missing SANITY of POSIXPERM,SANITY)
 ok 43 - using "where = before"
 ok 44 - overriding configuration with "--where after"
 ok 45 - using "--where after" with "--no-where"
@@ -32131,9 +32061,10 @@ ok 48 - delete refspec
 ok 49 - when using -C, do not declare copy when source of copy is also modified
 ok 50 - merge commit gets exported with --import-marks
 ok 51 - fast-export --first-parent outputs all revisions output by revision walk
+ok 52 - fast-export handles --end-of-options
 # still have 1 known breakage(s)
-# passed all remaining 50 test(s)
-1..51
+# passed all remaining 51 test(s)
+1..52
 *** t9351-fast-export-anonymize.sh ***
 ok 1 - setup simple repo
 ok 2 - export anonymized stream
@@ -32700,13 +32631,13 @@ ok 67 - prompt - conflict indicator
 # passed all 67 test(s)
 1..67
 
-missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM JGIT LONG_REF MINGW NATIVE_CRLF RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UTF8_NFD_TO_NFC WINDOWS
+missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES ADD_OUT AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE FSMONITOR_DAEMON GPG GPG2 GPGSM JGIT LONG_REF MINGW NATIVE_CRLF RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
 
 
-failed test(s): t0211 t1700 t2501 t3200 t3404 t4150 t4202 t4216 t5318 t5328 t7609 t9001 t9210 t9902
+failed test(s): t0211 t1700 t2501 t3200 t3404 t4150 t4202 t7609 t9001 t9210 t9902
 
 fixed   1
-success 28471
-failed  32
+success 28473
+failed  21
 broken  271
-total   29254
+total   29277
