@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
 COMPONENT_VERSION=	4.2.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,6 +43,7 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 CPPFLAGS += $(CPPFLAGS.$(BITS))
 
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --disable-fancy-plugin
 CONFIGURE_OPTIONS += --disable-ldap
 CONFIGURE_OPTIONS += --disable-perl-plugin
@@ -49,7 +51,6 @@ CONFIGURE_OPTIONS += --disable-rssyl-plugin
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-jpilot
 CONFIGURE_OPTIONS += --disable-valgrind
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV += PATH=/usr/bin/$(MACH64):/usr/bin
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
@@ -84,3 +85,4 @@ REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
