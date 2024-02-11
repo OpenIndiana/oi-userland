@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tqdm
-HUMAN_VERSION =			4.66.1
+HUMAN_VERSION =			4.66.2
 COMPONENT_SUMMARY =		tqdm - Fast, Extensible Progress Meter
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/62/06/d5604a70d160f6a6ca5fd2ba25597c24abd5c5ca5f437263d177ac242308/tqdm-4.66.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d88e651f9db8d8551a62556d3cff9e3034274ca5d66e93197cf2490e2dcb69c7
+	sha256:6cd52cdf0fef0e0f543299cfc96fec90d7b8a7e88745f411ec33eb44d5ed3531
 COMPONENT_LICENSE =		MIT AND MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENCE
 
@@ -39,11 +37,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/codecov
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/coveralls
 TEST_REQUIRED_PACKAGES.python += library/python/cython
-TEST_REQUIRED_PACKAGES.python += library/python/dask
-TEST_REQUIRED_PACKAGES.python += library/python/ipywidgets
-TEST_REQUIRED_PACKAGES.python += library/python/matplotlib
-TEST_REQUIRED_PACKAGES.python += library/python/numpy
-TEST_REQUIRED_PACKAGES.python += library/python/pandas
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
