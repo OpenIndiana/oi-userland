@@ -795,9 +795,10 @@ PYTHON_SCRIPTS_PROCESS= \
 # and re-add $(PYTHON_SCRIPTS_PROCESS)
 COMPONENT_POST_INSTALL_ACTION += $(PYTHON_SCRIPTS_PROCESS)
 
-JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
-JAVA17_HOME =	/usr/jdk/instances/openjdk17.0.8
-JAVA21_HOME =	/usr/jdk/instances/openjdk21
+JAVA8_HOME =	/usr/jdk/openjdk1.8.0
+JAVA11_HOME =	/usr/jdk/openjdk11
+JAVA17_HOME =	/usr/jdk/openjdk17
+JAVA21_HOME =	/usr/jdk/openjdk21
 JAVA_HOME = $(JAVA17_HOME)
 
 # QT macros
