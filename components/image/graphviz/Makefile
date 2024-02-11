@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
 COMPONENT_VERSION=		9.0.0
-COMPONENT_REVISION=		3
+COMPONENT_REVISION=		4
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
@@ -47,16 +47,19 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=		EPL1.0
 COMPONENT_LICENSE_FILE=	COPYING
 
+# no usable tests available
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-RUBY_VERSION =         3.2
-RUBY=		       /usr/bin/ruby32
+RUBY_VERSION= 3.2
+RUBY= /usr/bin/ruby32
 
-COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
-				aclocal && \
-				autoconf -f -I m4 && \
-				autoheader && \
-				automake --add-missing)
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D) && libtoolize -cf && \
+	aclocal && \
+	autoconf -f -I m4 && \
+	autoheader && \
+	automake --add-missing)
 
 # configure
 CONFIGURE_ENV +=	LIBPOSTFIX="/$(MACH64)"
@@ -66,6 +69,8 @@ CONFIGURE_ENV +=	PERL=$(PERL)
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)
 CONFIGURE_ENV +=	RUBY=$(RUBY)
 CONFIGURE_ENV +=	RUBY_VER=$(RUBY_VERSION)
+
+CONFIGURE_OPTIONS +=	--disable-dependency-tracking
 CONFIGURE_OPTIONS +=	--disable-man-pdfs
 CONFIGURE_OPTIONS +=	--disable-sharp
 #CONFIGURE_OPTIONS +=	--disable-go
@@ -109,9 +114,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
 	$(RM) -r vendor-packages ; \
 	$(MV) site-packages vendor-packages ;
-
-# no usable tests available
-TEST_TARGET = $(NO_TESTS)
 
 # various build dependencies not detected automatically
 REQUIRED_PACKAGES += runtime/java/openjdk17
