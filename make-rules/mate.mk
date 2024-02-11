@@ -21,20 +21,20 @@ COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
-TEST_TARGET=        $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 ifeq   ($(strip $(BUILD_STYLE)),configure)
 COMPONENT_PREP_ACTION= cd $(@D) && PATH="$(PATH)" NOCONFIGURE=1 /usr/bin/bash ./autogen.sh
 endif
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
+CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBEXECDIR.$(BITS))/mate
 ifeq   ($(strip $(BUILD_STYLE)),configure)
 CONFIGURE_OPTIONS+= --disable-static
 endif
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
+CONFIGURE_OPTIONS+= --localstatedir=$(VARDIR)
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
