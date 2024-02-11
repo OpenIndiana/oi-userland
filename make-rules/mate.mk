@@ -29,8 +29,14 @@ ifeq   ($(strip $(BUILD_STYLE)),configure)
 COMPONENT_PREP_ACTION= cd $(@D) && PATH="$(PATH)" NOCONFIGURE=1 /usr/bin/bash ./autogen.sh
 endif
 
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBEXECDIR.$(BITS))/mate
+# We cannot override libexecdir thus we have to set them here
+CONFIGURE_DEFAULT_DIRS= no
+CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
+CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBEXECDIR.$(BITS))/mate
+CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 ifeq   ($(strip $(BUILD_STYLE)),configure)
 CONFIGURE_OPTIONS+= --disable-static
 endif
