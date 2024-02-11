@@ -146,9 +146,10 @@ COMPONENT_POST_INSTALL_ACTION= \
 
 # Create symlinks without ending '3' for binaries
 COMPONENT_POST_INSTALL_ACTION += \
-	for f in idle pydoc python python-config ; do \
+	for f in idle pydoc python ; do \
 		$(SYMLINK) $${f}$(PYTHON_VERSION) $(PROTOUSRBINDIR)/$$f ; \
-	done ;
+	done ; \
+	$(SYMLINK) python$(PYTHON_VERSION)-config $(PROTOUSRBINDIR)/python-config ;
 
 # Allow mediated libpython3.so stable ABI
 COMPONENT_POST_INSTALL_ACTION += \
