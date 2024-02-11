@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnome-doc-utils
 COMPONENT_VERSION=      0.20.10
-COMPONENT_REVISION=     4
+COMPONENT_REVISION=     5
 COMPONENT_SUMMARY=      Documentation utilities for GNOME
 COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,20 +30,18 @@ COMPONENT_LICENSE=		GPLv2, LGPLv2
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PKG_MACROS += PYVER=$(PYTHON_VERSION)
-
 PATH=$(PATH.gnu)
 
 # Missing files in build dir for xml2po without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
-
-CONFIGURE_ENV+=  PERL=$(PERL)
-CONFIGURE_ENV+=  PYTHON=$(PYTHON)
-CONFIGURE_ENV+=  am_cv_python_pythondir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)"
-
 COMPONENT_BUILD_ARGS += V=1
+
+# Move Python modules from site-packages directory to vendor-packages directory
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
+
+PYTHON_SCRIPTS += usr/bin/xml2po
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
