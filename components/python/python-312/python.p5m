@@ -53,20 +53,22 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=.*/python-config\.py -> default pkg.tmp.autopyc false>
 <transform file path=.*/badsyntax.*\.py -> default pkg.tmp.autopyc false>
 
-link path=usr/bin/2to3 target=2to3-3.12 mediator=python mediator-version=3.12
+# All symlinks with unversioned path should be mediated
+<transform link path=(?!.*3\.12) -> default mediator python>
+<transform link path=(?!.*3\.12) -> default mediator-version 3.12>
+
+link path=usr/bin/2to3 target=2to3-3.12
 file path=usr/bin/2to3-$(PYVER)
-#link path=usr/bin/idle target=idle3.12 mediator=python mediator-version=3.12
-#link path=usr/bin/idle3 target=idle3.12 mediator=python mediator-version=3.12
+#link path=usr/bin/idle target=idle3.12
+#link path=usr/bin/idle3 target=idle3.12
 #file path=usr/bin/idle3.12
-link path=usr/bin/pydoc target=pydoc3.12 mediator=python mediator-version=3.12
-link path=usr/bin/pydoc3 target=pydoc3.12 mediator=python mediator-version=3.12
+link path=usr/bin/pydoc target=pydoc3.12
+link path=usr/bin/pydoc3 target=pydoc3.12
 file path=usr/bin/pydoc3.12
-link path=usr/bin/python target=python3.12 mediator=python mediator-version=3.12
-link path=usr/bin/python-config target=python3.12-config mediator=python \
-    mediator-version=3.12
-link path=usr/bin/python3 target=python3.12 mediator=python mediator-version=3.12
-link path=usr/bin/python3-config target=python3.12-config mediator=python \
-    mediator-version=3.12
+link path=usr/bin/python target=python3.12
+link path=usr/bin/python-config target=python3.12-config
+link path=usr/bin/python3 target=python3.12
+link path=usr/bin/python3-config target=python3.12-config
 file path=usr/bin/python3.12
 file path=usr/bin/python3.12-config
 
@@ -287,13 +289,13 @@ file path=usr/include/python$(PYVER)/weakrefobject.h
 link path=usr/lib/$(MACH64)/libpython3.12.so target=libpython3.12.so.1.0
 file path=usr/lib/$(MACH64)/libpython3.12.so.1.0
 file path=usr/lib/$(MACH64)/libpython3.12_db.so.1.0
-link path=usr/lib/$(MACH64)/libpython3.so target=libpython312.so mediator=python mediator-version=3.12
+link path=usr/lib/$(MACH64)/libpython3.so target=libpython312.so
 file path=usr/lib/$(MACH64)/libpython312.so
 file path=usr/lib/$(MACH64)/pkgconfig/python-3.12-embed.pc
 file path=usr/lib/$(MACH64)/pkgconfig/python-3.12.pc
 link path=usr/lib/$(MACH64)/pkgconfig/python3-embed.pc \
-    target=python-3.12-embed.pc mediator=python mediator-version=3.12
-link path=usr/lib/$(MACH64)/pkgconfig/python3.pc target=python-3.12.pc mediator=python mediator-version=3.12
+    target=python-3.12-embed.pc
+link path=usr/lib/$(MACH64)/pkgconfig/python3.pc target=python-3.12.pc
 file path=usr/lib/python$(PYVER)/LICENSE.txt
 file path=usr/lib/python$(PYVER)/__future__.py
 file path=usr/lib/python$(PYVER)/__hello__.py
@@ -2707,6 +2709,5 @@ file path=usr/lib/python$(PYVER)/zoneinfo/__init__.py
 file path=usr/lib/python$(PYVER)/zoneinfo/_common.py
 file path=usr/lib/python$(PYVER)/zoneinfo/_tzpath.py
 file path=usr/lib/python$(PYVER)/zoneinfo/_zoneinfo.py
-link path=usr/share/man/man1/python3.1 target=python3.12.1 mediator=python \
-    mediator-version=3.12
+link path=usr/share/man/man1/python3.1 target=python3.12.1
 file path=usr/share/man/man1/python3.12.1

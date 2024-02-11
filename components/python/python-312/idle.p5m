@@ -39,10 +39,12 @@ depend fmri=pkg:/library/python/tkinter-312 type=require
 <transform file path=.+/idle_test/example_noext$ -> \
     default pkg.depend.bypass-generate .* >
 
-link path=usr/bin/idle3 target=idle3.12 mediator=python mediator-version=3.12
+# All symlinks with unversioned path should be mediated
+<transform link path=(?!.*3\.12) -> default mediator python>
+<transform link path=(?!.*3\.12) -> default mediator-version 3.12>
 
-link path=usr/bin/idle target=idle3.12 mediator=python mediator-version=3.12
-link path=usr/bin/idle3 target=idle3.12 mediator=python mediator-version=3.12
+link path=usr/bin/idle target=idle3.12
+link path=usr/bin/idle3 target=idle3.12
 file path=usr/bin/idle3.12
 file path=usr/lib/python$(PYVER)/idlelib/CREDITS.txt
 file path=usr/lib/python$(PYVER)/idlelib/ChangeLog
