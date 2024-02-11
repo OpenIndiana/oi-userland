@@ -484,6 +484,9 @@ $(BUILD_DIR) $(MANGLED_DIR):
 	$(MKDIR) $@
 
 PKGMANGLE_OPTIONS = -D $(MANGLED_DIR) $(PKG_PROTO_DIRS:%=-d %)
+ifeq ($(strip $(USE_CTF)),yes)
+PKGMANGLE_OPTIONS += -c $(CTFCONVERT)
+endif
 $(MANIFEST_BASE)-%.mangled:	$(MANIFEST_BASE)-%.mogrified $(MANGLED_DIR)
 	$(PKGMANGLE) $(PKGMANGLE_OPTIONS) -m $< >$@
 
