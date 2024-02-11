@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.10.36
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,13 +57,12 @@ COMPONENT_PREP_ACTION =	( cd $(@D)  && \
 				automake -a -c -f &&\
 				autoconf)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-CONFIGURE_OPTIONS+=	--enable-mp
-CONFIGURE_OPTIONS+=	--enable-default-binary
-CONFIGURE_OPTIONS+=	--enable-mmx=no
-CONFIGURE_OPTIONS+=	--with-lcms=2
+CONFIGURE_OPTIONS += --datarootdir=$(USRSHAREDIR)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --enable-mp
+CONFIGURE_OPTIONS += --enable-default-binary
+CONFIGURE_OPTIONS += --enable-mmx=no
+CONFIGURE_OPTIONS += --with-lcms=2
 
 CONFIGURE_ENV+= PYTHON=$(PYTHON)
 
@@ -79,8 +78,6 @@ COMPONENT_POST_INSTALL_ACTION = \
         /usr/bin/find $(PROTO_DIR) -name *.py \
                 -exec $(GSED) -i -e '1s|env python.*|$(MACH64)/python$(PYTHON_VERSION)|' "{}" \; ;
 
-# Tests need this
-unexport SHELLOPTS
 # Tests need a display and some fail.
 
 # Build dependencies
