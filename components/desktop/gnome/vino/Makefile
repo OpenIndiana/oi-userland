@@ -13,42 +13,37 @@
 #
 
 BUILD_BITS=		64
-
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vino
 COMPONENT_MJR_VERSION=	3.22
 COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=     2
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Vino
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=	Vino is the GNOME desktop sharing server
+COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Vino
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:2911c779b6a2c46e5bc8e5a0c94c2a4d5bd4a1ee7e35f2818702cb13d9d23bab
+COMPONENT_ARCHIVE_HASH=	sha256:2911c779b6a2c46e5bc8e5a0c94c2a4d5bd4a1ee7e35f2818702cb13d9d23bab
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		gnome/vino
 COMPONENT_CLASSIFICATION=	System/X11
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=		$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--enable-ipv6=yes
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--with-gcrypt
+CONFIGURE_OPTIONS +=	--enable-ipv6=yes
+CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS +=	--with-gcrypt
 CONFIGURE_OPTIONS +=	--with-gnutls
 CONFIGURE_OPTIONS +=	--with-jpeg
 CONFIGURE_OPTIONS +=	--with-pic
@@ -56,7 +51,8 @@ CONFIGURE_OPTIONS +=	--with-secret
 CONFIGURE_OPTIONS +=	--with-x
 CONFIGURE_OPTIONS +=	--with-zlib
 
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
