@@ -24,27 +24,21 @@
 # Copyright (c) 2022, Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
-COMPONENT_VERSION=	1.1.39
+HUMAN_VERSION=		1.1.39
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      XSLT support for libxml2 (XML toolkit from the GNOME project)
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:2a20ad621148339b0759c4d4e96719362dee64c9a096dbba625ba053846349f0
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libxslt/1.1/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/libxslt
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= Copyright
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
-
-PYV= $(shell echo $(PYTHON_VERSIONS) | tr -d .)
-PKG_MACROS += PYVER=$(PYTHON_VERSION)
-PKG_MACROS += PYV=$(PYV)
 
 LINT_FLAGS += -I/usr/include/libxml2 
 
@@ -53,36 +47,35 @@ LDFLAGS += $(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS.64 += --with-python=$(PYTHON)
-CONFIGURE_OPTIONS.32 += --with-python=no
+CONFIGURE_OPTIONS += --with-python=$(PYTHON)
 CONFIGURE_OPTIONS += --with-crypto
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
-CONFIGURE_ENV.64     += PYTHON=$(PYTHON.$(PYTHON_VERSION))
-COMPONENT_INSTALL_ARGS.64 += pythondir=$(PYTHON_VENDOR_PACKAGES)
-COMPONENT_INSTALL_ARGS.64 += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
-COMPONENT_BUILD_ARGS.64 += pythondir=$(PYTHON_VENDOR_PACKAGES)
-COMPONENT_BUILD_ARGS.64 += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+COMPONENT_INSTALL_ARGS += pythondir=$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_INSTALL_ARGS += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_BUILD_ARGS += pythondir=$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_BUILD_ARGS += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 
-CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
+CONFIGURE_ENV += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; cp ../mapfile.xslt libxslt/libxslt.syms ; \
 		    $(RM) libxslt/xsltconfig.h libexslt/exsltconfig.h ; \
-		    libtoolize --force --copy ; aclocal ; \
+		    PATH="$(PATH)" libtoolize --force --copy ; aclocal ; \
 		    automake -f -a --copy ; autoconf)
 
 # After we have built/installed libxml2, build/install the python
 # support for python (only 64 bit is available)
-COMPONENT_POST_INSTALL_ACTION.64 = ( \
+COMPONENT_POST_INSTALL_ACTION = ( \
         cd $(@D)/python; \
          $(GMAKE) pythondir=$(PYTHON_VENDOR_PACKAGES) \
         pyexecdir=$(PYTHON_VENDOR_PACKAGES) \
         DESTDIR=$(PROTO_DIR) \
         install ; \
-        $(MV) $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/libxsltmod.so $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/libxsltmod.cpython-$(PYV).so; \
+        $(MV) $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/libxsltmod.so $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/libxsltmod.cpython-$(subst .,,$(PYTHON_VERSION)).so; \
         $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES); \
 );
 
@@ -90,7 +83,7 @@ COMPONENT_POST_INSTALL_ACTION.64 = ( \
 COMPONENT_PRE_SYSTEM_TEST_ACTION = ($(RM) $(@D)/libxslt/.libs/*)
 
 # It's nice to test also python modules (LC_ALL is set to avoid test failure).
-COMPONENT_POST_TEST_ACTION.64 = \
+COMPONENT_POST_TEST_ACTION = \
     cd $(@D)/python; \
     LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) check
 
