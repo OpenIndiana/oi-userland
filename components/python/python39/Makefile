@@ -26,11 +26,13 @@
 #
 
 USE_OPENSSL11= yes
+USE_PARALLEL_BUILD=	yes
+USE_CTF=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
 COMPONENT_VERSION=      3.9.18
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 PYTHON_VERSION =	$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_PROJECT_URL=  https://python.org/
