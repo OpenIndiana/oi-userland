@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		twine
-HUMAN_VERSION =			4.0.2
+HUMAN_VERSION =			5.0.0
 COMPONENT_SUMMARY =		twine - Collection of utilities for publishing packages on PyPI
 COMPONENT_PROJECT_URL =		https://twine.readthedocs.io/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b7/1a/a7884359429d801cd63c2c5512ad0a337a509994b0e42d9696d4778d71f6/twine-4.0.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9e102ef5fdd5a20661eb88fad46338806c3bd32cf1db729603fe3697b1bc83c8
+	sha256:89b0cc7d370a4b66421cc6102f269aa910fe0f1861c124f573cf2ddedbc10cf4
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -50,3 +48,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pretend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-socket
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
