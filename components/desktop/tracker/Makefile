@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tracker
 COMPONENT_VERSION=      1.8.3
-COMPONENT_REVISION=     13
+COMPONENT_REVISION=     14
 COMPONENT_SUMMARY=      Desktop search tool
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -35,7 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-CFLAGS += -std=gnu89 -D_XOPEN_SOURCE=500 -D__EXTENSIONS__
+CFLAGS += -std=gnu89 $(XPG6MODE)
 
 # Use default libjpeg
 CPPFLAGS += $(JPEG_CPPFLAGS)
@@ -47,8 +47,7 @@ COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fi)
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=/usr/bin
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-libstemmer
 CONFIGURE_OPTIONS += --disable-maemo
 CONFIGURE_OPTIONS += --disable-schemas-compile
@@ -66,7 +65,7 @@ CONFIGURE_OPTIONS += --enable-hal
 CONFIGURE_OPTIONS += --enable-icon
 CONFIGURE_OPTIONS += --enable-icu-charset-detection
 # Required for other components.
-CONFIGURE_OPTIONS.64 += --enable-introspection
+CONFIGURE_OPTIONS += --enable-introspection
 CONFIGURE_OPTIONS += --enable-journal
 CONFIGURE_OPTIONS += --enable-libexif
 CONFIGURE_OPTIONS += --enable-libflac
@@ -98,7 +97,7 @@ CONFIGURE_OPTIONS += --with-unicode-support=libicu
 CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
 
 
-CONFIGURE_ENV    += PERL=$(PERL)
+CONFIGURE_ENV += PERL=$(PERL)
 
 COMPONENT_BUILD_ENV += CC=$(CC)
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -112,6 +111,7 @@ REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += database/sqlite-3
@@ -127,7 +127,6 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libgsf
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/libxml2
