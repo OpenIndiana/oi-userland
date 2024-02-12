@@ -142,7 +142,7 @@ COMPONENT_POST_INSTALL_ACTION= \
     (cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
      $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
     -e 's|$(SPRO_VROOT)/bin/||g' _sysconfigdata__sunos5_.py config-$(PYTHON_VERSION)/Makefile; \
-    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) $(PROTO_DIR)$(PYTHON.$(PYTHON_VERSION).$(BITS)) -m py_compile _sysconfigdata__sunos5_.py) ;
+    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) $(PROTO_DIR)$(PYTHON) -m py_compile _sysconfigdata__sunos5_.py) ;
 
 # Create symlinks without ending '3' for binaries
 COMPONENT_POST_INSTALL_ACTION += \
