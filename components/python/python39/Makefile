@@ -30,6 +30,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
 COMPONENT_VERSION=      3.9.18
+COMPONENT_REVISION=	1
+PYTHON_VERSION =	$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,9 +44,6 @@ COMPONENT_LICENSE=      PSFv2
 COMPONENT_LICENSE_FILE=	python39.license
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
-
-# Define to avoid modifications at each major bump
-COMPONENT_PYVER= 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -133,7 +132,7 @@ COMPONENT_BUILD_ENV += PATH="$(PATH)"
 COMPONENT_PUBLISH_ENV += LC_ALL=en_US.UTF-8
 
 # 64 bit shared objects need to go in a 64-bit directory
-COMPONENT_INSTALL_ARGS += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python$(COMPONENT_PYVER)/lib-dynload
+COMPONENT_INSTALL_ARGS += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python$(PYTHON_VERSION)/lib-dynload
 
 # Simplify the definitions of CC, CXX, CFLAGS and LDFLAGS so they hard-code
 # neither paths from our build systems nor Studio-specific options.
@@ -158,10 +157,10 @@ COMPONENT_INSTALL_ARGS += -e
 # machines, then the LD_LIBRARY_PATH setting and PROTO_DIR prefix below
 # can both be removed.
 COMPONENT_POST_INSTALL_ACTION= \
-    (cd $(PROTOUSRLIBDIR)/python$(COMPONENT_PYVER) ; \
+    (cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
      $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
-    -e 's|$(SPRO_VROOT)/bin/||g' _sysconfigdata__sunos5_.py config-$(COMPONENT_PYVER)/Makefile; \
-    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) $(PROTO_DIR)$(PYTHON.$(COMPONENT_PYVER).$(BITS)) -m py_compile _sysconfigdata__sunos5_.py)
+    -e 's|$(SPRO_VROOT)/bin/||g' _sysconfigdata__sunos5_.py config-$(PYTHON_VERSION)/Makefile; \
+    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) $(PROTO_DIR)$(PYTHON) -m py_compile _sysconfigdata__sunos5_.py)
 
 # You can set TESTOPTS_PYTHON_TEST to a particular test if you want to run just
 # one test.  For example:
@@ -183,9 +182,6 @@ COMPONENT_TEST_TARGETS= test < /dev/null
 # with "tests OK." and end with "Re-running failed tests..." for comparison.
 COMPONENT_TEST_TRANSFORMER= $(NAWK)
 COMPONENT_TEST_TRANSFORMS= "'/tests OK./ {results = 1}; /Total duration/ {results = 0}; /Re-running failed tests in verbose mode/ {results = 0} {if (results) print $0 }'"
-
-# Proper PYVER is needed for manifest processing
-PKG_MACROS += PYVER=$(COMPONENT_PYVER)
 
 # Required for dump(1)
 REQUIRED_PACKAGES += developer/object-file
