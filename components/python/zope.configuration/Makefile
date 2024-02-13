@@ -19,20 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.configuration
-HUMAN_VERSION =			5.0
+HUMAN_VERSION =			5.0.1
 COMPONENT_SUMMARY =		zope.configuration - Zope Configuration Markup Language (ZCML)
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.configuration
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f7/ef/06e1600ed7102e1a8c81993c028d90d6da1e1283c25e99a618c353194244/zope.configuration-5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:234b4a18c71f6b3b9bf6bcf225264bae0149ac68dea07b072f0f699a4cec26e7
+	sha256:f35877ead5e998036385d2ddc46919eabc998e699c05987964f171ad8dd9271b
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
@@ -40,9 +38,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/zope-i18nmessageid
 PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
 PYTHON_REQUIRED_PACKAGES += library/python/zope-schema
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/manuel
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/zope-schema
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
