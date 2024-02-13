@@ -1097,6 +1097,7 @@ JQ =		/usr/bin/jq
 DOS2UNIX =	/usr/bin/dos2unix
 TAC =		/usr/bin/tac
 QUILT =		/usr/bin/quilt
+CTFCONVERT =	/opt/onbld/bin/$(MACH)/ctfconvert
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
@@ -1243,6 +1244,31 @@ CFLAGS +=	$(CC_BITS)
 
 # Add compiler specific 'default' features
 CFLAGS +=	$(CFLAGS.$(COMPILER))
+
+# Per-compiler CFLAGS to use when building for CTF.  Currently only defined
+# for gcc; could be made to work with other compilers.
+
+# -gdwarf-4 is the newest DWARF revision understood by illumos libctf
+#
+# -gstrict-dwarf prevents the compiler from including newer DWARF features
+CTF_CFLAGS.gcc = -g -gdwarf-4 -gstrict-dwarf
+# -msave-args makes it possible for debugging tools (specifically pstack and
+# mdb) to retrieve function arguments, and is required for the python pstack
+# hooks.
+CTF_CFLAGS.gcc += -msave-args
+# By default, GCC may put parts of functions in different named sub-sections
+# of .text based on their presumed or measured calling frequency.  This is not
+# currently handled by libctf and other illumos tools which assume that a
+# function's text lies in a single contiguous range of virtual addresses.
+# Disable this optimization if building with CTF.
+CTF_CFLAGS.gcc += -fno-reorder-functions -fno-reorder-blocks-and-partition
+
+# Enable CTF if desired
+ifeq ($(strip $(USE_CTF)),yes)
+CFLAGS += $(if $(CTF_CFLAGS.$(COMPILER)), \
+	$(CTF_CFLAGS.$(COMPILER)), \
+	$(error Error: CTF_CFLAGS.$(COMPILER) must be defined to use CTF with $(COMPILER)))
+endif
 
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
