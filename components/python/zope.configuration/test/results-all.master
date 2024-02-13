@@ -1,4 +1,3 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m zope.testrunner --test-path=src -vv
 Running tests at level 1
@@ -137,7 +136,34 @@ Running zope.testrunner.layer.UnitTests tests:
  test_w_field_missing_no_default (zope.configuration.tests.test_config.Test_toargs)
  test_w_invalid_value (zope.configuration.tests.test_config.Test_toargs)
  test_w_keyword_sub (zope.configuration.tests.test_config.Test_toargs)
- test_docs (zope.configuration.tests.test_docs.test_suite.<locals>.SkippedDocTests) (skipped)
+ ComplexStackItem (zope.configuration.config)
+ ConfigurationAdapterRegistry (zope.configuration.config)
+ action (zope.configuration.config.ConfigurationContext)
+ checkDuplicate (zope.configuration.config.ConfigurationContext)
+ hasFeature (zope.configuration.config.ConfigurationContext)
+ path (zope.configuration.config.ConfigurationContext)
+ processFile (zope.configuration.config.ConfigurationContext)
+ resolve (zope.configuration.config.ConfigurationContext)
+ ConfigurationMachine (zope.configuration.config)
+ execute_actions (zope.configuration.config.ConfigurationMachine)
+ GroupingStackItem (zope.configuration.config)
+ defineGroupingDirective (zope.configuration.config)
+ defineSimpleDirective (zope.configuration.config)
+ provides (zope.configuration.config)
+ toargs (zope.configuration.config)
+ wrap (zope.configuration.docutils)
+ fromUnicode (zope.configuration.fields.Bool)
+ GlobalInterface (zope.configuration.fields)
+ fromUnicode (zope.configuration.fields.GlobalObject)
+ fromUnicode (zope.configuration.fields.MessageID)
+ fromUnicode (zope.configuration.fields.Path)
+ PythonIdentifier (zope.configuration.fields)
+ fromUnicode (zope.configuration.fields.Tokens)
+ evaluateCondition (zope.configuration.xmlconfig.ConfigurationHandler)
+ ParserInfo (zope.configuration.xmlconfig)
+ ZopeSAXParseException (zope.configuration.xmlconfig)
+ ZopeXMLConfigurationError (zope.configuration.xmlconfig)
+ openInOrPlain (zope.configuration.xmlconfig)
  test_empty (zope.configuration.tests.test_docutils.Test_makeDocStructures)
  test_w_parents (zope.configuration.tests.test_docutils.Test_makeDocStructures)
  test_wo_parents (zope.configuration.tests.test_docutils.Test_makeDocStructures)
@@ -263,8 +289,44 @@ Running zope.testrunner.layer.UnitTests tests:
  test___str___uses_repr_of_info (zope.configuration.tests.test_xmlconfig.ZopeXMLConfigurationErrorTests)
  test_ctor_w_package (zope.configuration.tests.test_zopeconfigure.ZopeConfigureTests)
  test_ctor_wo_package (zope.configuration.tests.test_zopeconfigure.ZopeConfigureTests)
-  Ran 258 tests with 0 failures, 0 errors and 1 skipped.
+  Ran 285 tests with 0 failures, 0 errors and 0 skipped.
 Tearing down left over layers:
   Tear down zope.testrunner.layer.UnitTests.
+py$(PYV): commands[1]> python -m sphinx.cmd.build -b doctest -d $(@D)/.tox/py$(PYV)/.cache/doctrees docs $(@D)/.tox/py$(PYV)/.cache/doctest
+Running Sphinx v7.2.6
+making output directory... done
+WARNING: html_static_path entry '_static' does not exist
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [doctest]: targets for 12 source files that are out of date
+updating environment: [new config] 12 added, 0 changed, 0 removed
+[2Kreading sources... [  8%] api[2Kreading sources... [ 17%] api/config[2Kreading sources... [ 25%] api/docutils[2Kreading sources... [ 33%] api/exceptions[2Kreading sources... [ 42%] api/fields[2Kreading sources... [ 50%] api/interfaces[2Kreading sources... [ 58%] api/name[2Kreading sources... [ 67%] api/xmlconfig[2Kreading sources... [ 75%] api/zopeconfigure[2Kreading sources... [ 83%] hacking[2Kreading sources... [ 92%] index[2Kreading sources... [100%] narr
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+running tests...
+
+Document: narr
+--------------
+1 items passed all tests:
+ 166 tests in default
+166 tests in 1 items.
+166 passed and 0 failed.
+Test passed.
+1 items passed all tests:
+   2 tests in default (cleanup code)
+2 tests in 1 items.
+2 passed and 0 failed.
+Test passed.
+
+Doctest summary
+===============
+  166 tests
+    0 failures in tests
+    0 failures in setup code
+    0 failures in cleanup code
+build succeeded, 1 warning.
+
+Testing of doctests in the sources finished, look at the results in .tox/py$(PYV)/.cache/doctest/output.txt.
   py$(PYV): OK
   congratulations :)
