@@ -25,16 +25,16 @@
 # Copyright 2023, Niklas Poslovski
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
-COMPONENT_VERSION=      3.2.1
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      3.2.2
 COMPONENT_SUMMARY=      OpenEXR header files and libraries used to read and write OpenEXR images
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.openexr.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:61e175aa2203399fb3c8c2288752fbea3c2637680d50b6e306ea5f8ffdd46a9b
+COMPONENT_ARCHIVE_HASH= sha256:65de6459c245a4977ce4d7777e70b30d7ef48ec38e0cfb10205706ca50a8bf2e
 COMPONENT_ARCHIVE_URL=  https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/openexr
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -43,19 +43,12 @@ COMPONENT_LICENSE_FILE= LICENSE.md
 
 include $(WS_MAKE_RULES)/common.mk
 
-CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX=/usr
+CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX=$(USRDIR)
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=None
 CMAKE_OPTIONS += -DOPENEXR_FORCE_INTERNAL_IMATH=OFF
 CMAKE_OPTIONS += -DOPENEXR_FORCE_INTERNAL_ZLIB=OFF
 CMAKE_OPTIONS += -DOPENEXR_USE_DEFAULT_VISIBILITY=OFF
 CMAKE_OPTIONS += -DCMAKE_INSTALL_BINDIR=bin/$(MACH64)
-
-COMPONENT_TEST_TRANSFORMS= \
-	'-e "s/[0-9]*\.[0-9]* sec//" ' \
-	'-n ' \
-    '-e "/Passed/p" ' \
-    '-e "/Failed/p" ' \
-    '-e "/Skipped/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
