@@ -22,11 +22,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
 COMPONENT_MJR_VERSION=	1.51
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).1
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).2
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:4530d79350a4663b1dee3401ad64c0d41aee08833452b318220d1f355cf31f42
+COMPONENT_ARCHIVE_HASH= sha256:d6d3d606c92b7f30e0671f34e6924bc917e7f768a7ed5727b4ea131e4abffdc1
 COMPONENT_ARCHIVE_URL=  https://gitlab.gnome.org/GNOME/pango/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
@@ -50,9 +50,6 @@ COMPONENT_POST_INSTALL_ACTION.64 = ( $(RM) -fr $(PROTO_DIR)/etc/$(MACH64)/pango 
 	  > $(PROTO_DIR)/etc/$(MACH64)/pango/pango.modules )
 
 COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
-
-# For test suites to pass
-unexport SHELLOPTS
 
 # cp boundaries.utf8 to tests directory in the build area
 COMPONENT_PRE_TEST_ACTION += \
