@@ -23,7 +23,11 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license COPYING license="BSD, BSD-like"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# snmpcheck needs additional Perl modules
+depend type=require fmri=library/perl-5/termreadkey-$(PLV)
+depend type=require fmri=library/perl-5/tk-$(PLV)
 
 file $(MACH64)/sun/snmpd.conf path=etc/net-snmp/snmp/snmpd.conf mode=0600 \
     overlay=allow preserve=renamenew
@@ -729,6 +733,7 @@ file path=usr/share/doc/net-snmp/html/cert__util_8h_source.html
 file path=usr/share/doc/net-snmp/html/check__varbind_8c_source.html
 file path=usr/share/doc/net-snmp/html/check__varbind_8h_source.html
 file path=usr/share/doc/net-snmp/html/classes.html
+file path=usr/share/doc/net-snmp/html/clipboard.js
 file path=usr/share/doc/net-snmp/html/closed.png
 file path=usr/share/doc/net-snmp/html/closedir_8c_source.html
 file path=usr/share/doc/net-snmp/html/config__api_8h_source.html
@@ -774,6 +779,7 @@ file path=usr/share/doc/net-snmp/html/doc.svg
 file path=usr/share/doc/net-snmp/html/docd.svg
 file path=usr/share/doc/net-snmp/html/doxygen.css
 file path=usr/share/doc/net-snmp/html/doxygen.svg
+file path=usr/share/doc/net-snmp/html/doxygen_crawl.html
 file path=usr/share/doc/net-snmp/html/ds__agent_8h_source.html
 file path=usr/share/doc/net-snmp/html/dummy_8c_source.html
 file path=usr/share/doc/net-snmp/html/dynsections.js

@@ -1,6 +1,6 @@
---- net-snmp-5.9.1/snmplib/scapi.c.orig	2021-05-26 00:19:35.000000000 +0000
-+++ net-snmp-5.9.1/snmplib/scapi.c	2022-12-25 14:11:22.618794767 +0000
-@@ -204,6 +204,16 @@
+--- net-snmp-5.9.4/snmplib/scapi.c.orig
++++ net-snmp-5.9.4/snmplib/scapi.c
+@@ -205,6 +205,16 @@
  };
  
  
@@ -17,7 +17,7 @@
  /*
   * sc_get_priv_alg(oid *privoid, u_int len)
   *
-@@ -780,7 +790,6 @@
+@@ -781,7 +791,6 @@
      if (NULL == hashfn) {
          QUITFUN(SNMPERR_GENERR, sc_generate_keyed_hash_quit);
      }
@@ -25,7 +25,7 @@
      HMAC(hashfn, key, keylen, message, msglen, buf, &buf_len);
      if (buf_len != properlength) {
          QUITFUN(rval, sc_generate_keyed_hash_quit);
-@@ -1262,43 +1271,10 @@
+@@ -1263,43 +1272,10 @@
  
  #ifndef NETSNMP_DISABLE_DES
      if (USM_CREATE_USER_PRIV_DES == (pai->type & USM_PRIV_MASK_ALG)) {
@@ -73,7 +73,7 @@
          }
      }
  #endif
-@@ -1517,13 +1493,11 @@
+@@ -1518,13 +1494,11 @@
      memset(my_iv, 0, sizeof(my_iv));
  #ifndef NETSNMP_DISABLE_DES
      if (USM_CREATE_USER_PRIV_DES == (pai->type & USM_PRIV_MASK_ALG)) {
@@ -92,7 +92,7 @@
      }
  #endif
  #if defined(NETSNMP_USE_OPENSSL) && defined(HAVE_AES)
-@@ -1850,4 +1824,87 @@
+@@ -1851,4 +1825,87 @@
      return rc;
  }
  #endif /* NETSNMP_USE_INTERNAL_CRYPTO */
