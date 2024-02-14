@@ -20,15 +20,12 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sip
-HUMAN_VERSION =			6.8.2
+HUMAN_VERSION =			6.8.3
 COMPONENT_SUMMARY =		sip - A Python bindings generator for C/C++ libraries
 COMPONENT_PROJECT_URL =		https://www.riverbankcomputing.com/software/sip/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b1/29/06e5036c035f17e0e874d71d4f5968d70aa879b155335d46f645757ff649/sip-6.8.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2e65a423037422ccfde095c257703a8ff45cc1c89bdaa294d7819bc836c87639
-COMPONENT_LICENSE =		GPL-3.0-only
-COMPONENT_LICENSE_FILE =	LICENSE-GPL3
+	sha256:888547b018bb24c36aded519e93d3e513d4c6aa0ba55b7cc1affbd45cf10762c
+COMPONENT_LICENSE =		BSD-like AND GPL-2.0-only AND GPL-3.0-only
 
 TEST_STYLE = setup.py
 
