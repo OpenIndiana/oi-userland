@@ -47,9 +47,7 @@ PATCH_PATTERN ?=	*.patch*
 
 PATCH_DIR ?=		patches
 
-PATCHES =	$(shell find $(PATCH_DIR) -type f \
-			 -name '$(PATCH_PATTERN)' 2>/dev/null | \
-				LC_COLLATE=C sort)
+PATCHES =	$(wildcard $(PATCH_DIR)/$(PATCH_PATTERN))
 
 PCH_SUFFIXES = $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES))))
 
