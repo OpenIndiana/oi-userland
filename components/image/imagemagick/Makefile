@@ -30,14 +30,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
 COMPONENT_VERSION=		7.1.1
-COMPONENT_SUBVERSION=		27
+COMPONENT_SUBVERSION=		28
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
 COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
 COMPONENT_PROJECT_URL=	https://imagemagick.org
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:51114819ebed50b9f62403b6f7618ec3251dcaea1b1f5893728fbee02ceb3cfa
+COMPONENT_ARCHIVE_HASH=	sha256:691b6fe35aa39df351678fb626779bede8ba1b2f08ce1d95d421b9840a27a582
 COMPONENT_ARCHIVE_URL=	https://github.com/ImageMagick/ImageMagick/archive/$(HUMAN_VERSION).tar.gz
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
@@ -81,18 +81,11 @@ CONFIGURE_OPTIONS += --with-gs-font-dir="/usr/share/ghostscript/fonts"
 CONFIGURE_OPTIONS += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
 CONFIGURE_OPTIONS += --with-perl=$(PERL)
 CONFIGURE_OPTIONS += --with-perl-options="INSTALLDIRS=vendor"
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
 # As of version 7.1.0-34, a "Linux-compatible sendfile()" is detected;
 # override thiis.
 CONFIGURE_OPTIONS += ac_cv_have_linux_sendfile=no
-
-# Needed for "gmake test" to work successfully.  If SHELLOPTS is exported (as
-# it is by the Userland Makefiles), then all shell options get exported to
-# child invocations of bash, which results in test failures due to nounset and
-# xtrace being set unexpectedly, and errors such as "$1: unbound variable" and
-# diffs failing due to script tracing in output files.
-unexport SHELLOPTS
 
 # Tests hang waiting for input unless stdin is redirected.
 COMPONENT_TEST_TARGETS = check < /dev/null

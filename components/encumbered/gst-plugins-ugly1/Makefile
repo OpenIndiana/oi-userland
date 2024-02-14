@@ -21,12 +21,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly1
-COMPONENT_VERSION=      1.22.9
+COMPONENT_VERSION=      1.22.10
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=	gst-plugins-ugly
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:0bf685d66015a01dd3fc1671b64a1c8acb321dd9d4ab9e05a29ab19782aa6236
+COMPONENT_ARCHIVE_HASH= sha256:cc80a81a22c0b3b31ab7f1b8bf18dda23c72d2791b86cc6264923a68336329ea
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL= 	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
@@ -57,8 +57,6 @@ COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CXXFLAGS="$(CXXFLAGS)"
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-unexport SHELLOPTS
 
 # As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \

@@ -20,6 +20,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-screensaver
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY= mate-screensaver is a screen saver and locker that aims to have simple, sane, secure defaults and be well integrated with the desktop
 COMPONENT_ARCHIVE_HASH=	sha256:da9700ce24145bd55d24927eecfe6d31d0a52eae86e563b2c65054b356a5ff7e
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -31,15 +32,16 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION= ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh)
+COMPONENT_PREP_ACTION= ( cd $(@D) && PATH="$(PATH)" NOCONFIGURE=1 ./autogen.sh )
 
-CONFIGURE_OPTIONS+=	--with-console-kit
-CONFIGURE_OPTIONS+=	--enable-locking
-CONFIGURE_OPTIONS+=	--enable-pam
-CONFIGURE_OPTIONS+=	--enable-authentication-scheme=helper
-CONFIGURE_OPTIONS_DBG+=	--enable-debug
-CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS_$(FLAVOUR))
+CONFIGURE_OPTIONS += --with-console-kit
+CONFIGURE_OPTIONS += --enable-locking
+CONFIGURE_OPTIONS += --enable-pam
+CONFIGURE_OPTIONS += --enable-authentication-scheme=helper
+CONFIGURE_OPTIONS_DBG += --enable-debug
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS_$(FLAVOUR))
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-archive
 REQUIRED_PACKAGES += gnome/theme/background/os-backgrounds
 REQUIRED_PACKAGES += library/desktop/mate/libmatekbd

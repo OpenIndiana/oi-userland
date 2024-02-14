@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipenv
 HUMAN_VERSION =			2023.12.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pipenv - Python Development Workflow for Humans.
 COMPONENT_PROJECT_URL =		https://github.com/pypa/pipenv
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,6 +31,12 @@ COMPONENT_LICENSE_FILE =	LICENSE
 TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Remove misplaced docs and examples files
+# https://github.com/pypa/pipenv/issues/5937
+COMPONENT_POST_INSTALL_ACTION += \
+	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/docs ; \
+	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/examples ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/certifi

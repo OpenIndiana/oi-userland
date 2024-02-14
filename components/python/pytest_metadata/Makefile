@@ -19,23 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_metadata
-HUMAN_VERSION =			3.1.0
+HUMAN_VERSION =			3.1.1
 COMPONENT_SUMMARY =		pytest_metadata - pytest plugin for test session metadata
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-metadata
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/03/ba/bda83d96bed99276a0b142baeb9a4b8b3183c0d3ae2d5470a0e2b1ebfe40/pytest_metadata-3.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:53dcd8bbd101cf6ca97efb4a42a72fcbee5de173bddad4850f4ce9bb27e9f0f2
+	sha256:d2a29b0355fbc03f168aa96d41ff88b1a3b44a3b02acbe491801c98a048017c8
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_TARGETS += --
 # Force no colors via tox posargs to override defaults in tox.ini
-COMPONENT_TEST_TARGETS += --color=no
+TOX_POSARGS += --color=no
 # override -s in tox.ini to suppress annoying test output
-COMPONENT_TEST_TARGETS += --capture=fd
+TOX_POSARGS += --capture=fd
 
 # https://github.com/pytest-dev/pluggy/issues/457
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs

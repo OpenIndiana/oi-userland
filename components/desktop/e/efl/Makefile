@@ -31,7 +31,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		efl
 COMPONENT_VERSION=	1.18.5
-COMPONENT_REVISION=	7
+COMPONENT_REVISION=	8
 COMPONENT_SUMMARY=	Enlightenment Foundation Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.enlightenment.org

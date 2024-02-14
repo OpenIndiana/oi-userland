@@ -17,12 +17,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     goffice
-COMPONENT_VERSION=  0.10.56
+COMPONENT_VERSION=  0.10.57
 COMPONENT_SUMMARY=  goffice - Document centric set of APIs
 COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b8640a2fee0c0a57784b2a5b92944a2932c789db1039ddf5a269ad634796e7e2
+COMPONENT_ARCHIVE_HASH= sha256:66bfd7e31d2f6756d5a62c3670383cbba02b3cb4c1042950192a801b72a3c9ab
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.10/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     library/desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=  Development/System
@@ -39,19 +39,15 @@ COMPONENT_PREP_ACTION= ( cd $(@D)  && \
     automake -c -f -a &&\
     autoconf )
 
-CFLAGS += $(CPP_XPG6MODE) -std=c99
+CFLAGS += $(XPG6MODE) -std=c99
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 COMPONENT_TEST_ENV += CC=$(CC)
-
-# To prevent "libtool_install_magic: unbound variable"
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg

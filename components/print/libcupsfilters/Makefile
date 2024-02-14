@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	libcupsfilters
 COMPONENT_VERSION= 2.0.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libcupsfilters contains all the code of the filters of the former cups-filters package as library functions
 COMPONENT_DESCRIPTION= The filter functions are principally intended to be used for the data format conversion tasks needed in \
 					   Printer Applications. They are already in use (together with libppd and pappl-retrofit) by the CUPS-driver \
@@ -57,9 +58,6 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --enable-poppler
 CONFIGURE_OPTIONS += --with-test-font-path=/usr/share/fonts/TrueType/dejavu/DejaVuSans.ttf
 # We don't have mutool (https://mupdf.readthedocs.io/en/latest/mupdf-command-line.html).

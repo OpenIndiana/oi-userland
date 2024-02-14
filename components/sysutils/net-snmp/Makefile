@@ -33,6 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.9.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,15 +42,12 @@ COMPONENT_ARCHIVE_HASH=	sha256:8b4de01391e74e3c7014beb43961a2d6d6fa03acc34280b95
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/net-snmp/files/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/management/snmp/net-snmp
 COMPONENT_CLASSIFICATION= System/Enterprise Management
+COMPONENT_LICENSE=	BSD, BSD-like
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Our build server doesn't like parallel builds of this package:
-COMPONENT_BUILD_ARGS=-j1
-
-PKG_MACROS += PERL_ARCH=$(PERL_ARCH)
-
-PATH= $(VPATH):$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 DOXYGEN= /usr/bin/doxygen
 
@@ -155,4 +153,3 @@ REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
-REQUIRED_PACKAGES += system/library/math

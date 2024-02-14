@@ -307,7 +307,7 @@ COMPONENT_TEST_CMD =		$(TOX)
 COMPONENT_TEST_ARGS =		--current-env --no-provision
 COMPONENT_TEST_ARGS +=		--recreate
 COMPONENT_TEST_ARGS +=		$(TOX_TESTENV)
-COMPONENT_TEST_TARGETS =
+COMPONENT_TEST_TARGETS =	$(if $(strip $(TOX_POSARGS)),-- $(TOX_POSARGS))
 
 TOX_TESTENV = -e py$(subst .,,$(PYTHON_VERSION))
 
@@ -439,6 +439,7 @@ $(eval $(call disable-pytest-plugin,lazy-fixture,pytest-lazy-fixture))
 $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
 $(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
+$(eval $(call disable-pytest-plugin,pytest home,pytest-home))
 $(eval $(call disable-pytest-plugin,pytest-datadir,pytest-datadir))
 $(eval $(call disable-pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))	# could cause tests to fail
 $(eval $(call disable-pytest-plugin,pytest-teamcity,teamcity-messages))
@@ -501,7 +502,7 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_TRANSFORMS += \
 	"-e 's/^=\{1,\} \(.*\) in [0-9]\{1,\}\.[0-9]\{1,\}s \(([^)]*) \)\?=\{1,\}$$/======== \1 ========/'"	# remove timing
 # Remove slowest durations report for projects that run pytest with --durations option
-COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} slowest [0-9]\{1,\} durations =\{1,\}$$/,/^=/{/^=/!d}'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} slowest [0-9 ]*durations =\{1,\}$$/,/^=/{/^=/!d}'"
 # Remove short test summary info for projects that run pytest with -r option
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} short test summary info =\{1,\}$$/,/^=/{/^=/!d}'"
 

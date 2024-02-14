@@ -21,12 +21,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-good1
-COMPONENT_VERSION=      1.22.9
+COMPONENT_VERSION=      1.22.10
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=		gst-plugins-good
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:26959fcfebfff637d4ea08ef40316baf31b61bb7729820b0684e800c3a1478b6
+COMPONENT_ARCHIVE_HASH= sha256:f748feae922cad62f20102a84ade8f42b78e1e44a34866aa3ea766f9172e1c7f
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
@@ -34,10 +34,10 @@ COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET = $(TEST_64)
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
 
@@ -64,8 +64,6 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-unexport SHELLOPTS
 
 # As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \

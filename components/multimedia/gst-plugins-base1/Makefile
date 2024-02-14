@@ -20,12 +20,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-base1
-COMPONENT_VERSION=      1.22.9
+COMPONENT_VERSION=      1.22.10
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME= 	gst-plugins-base
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:fac3e0dd2d8e9370388b34bf8c21b89d5f63bc3cfc12cd7fdc8fc6c1cba03334
+COMPONENT_ARCHIVE_HASH= sha256:843a3a2da28e1ee6aeea56dd2be9bffcc3b4bbcd0f974eba4abfc3aa31f0399c
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/base
@@ -61,8 +61,6 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CC="$(CC)"
-
-unexport SHELLOPTS
 
 # As test results keep only everything between the lines containing Ok: and Timeout:
 # Note that the tests need to run in a graphical environment.

@@ -300,8 +300,15 @@ def mangle_cddl(manifest, action, text):
                              re.MULTILINE|re.DOTALL)
         return cddl_re.sub('', text)
 
-def mangle_path(manifest, action, src, dest):
+def do_ctfconvert(converter, file):
+        args = [converter, '-i', '-m', '-k', file]
+        print(*args, file=sys.stderr)
+        subprocess.call(args)
+
+def mangle_path(manifest, action, src, dest, ctfconvert):
         if elf.is_elf_object(src):
+                if ctfconvert is not None:
+                        do_ctfconvert(ctfconvert, src)
                 mangle_elf(manifest, action, src, dest)
         else:
                 # a 'text' document (script, man page, config file, ...
@@ -329,7 +336,7 @@ def mangle_path(manifest, action, src, dest):
 #
 # mangler.bypass = (true|false)
 #
-def mangle_paths(manifest, search_paths, destination):
+def mangle_paths(manifest, search_paths, destination, ctfconvert):
         for action in manifest.gen_actions_by_type("file"):
                 bypass = action.attrs.pop('mangler.bypass', 'false').lower()
                 if bypass == 'true':
@@ -351,7 +358,8 @@ def mangle_paths(manifest, search_paths, destination):
                         if directory != destination:
                                 src = os.path.join(directory, path)
                                 if os.path.isfile(src):
-                                        mangle_path(manifest, action, src, dest)
+                                        mangle_path(manifest, action,
+                                                    src, dest, ctfconvert)
                                         break
 
 def load_manifest(manifest_file):
@@ -372,10 +380,11 @@ def main():
         search_paths = []
         destination = None
         manifests = []
+        ctfconvert = None
 
         try:
-                opts, args = getopt.getopt(sys.argv[1:], "D:d:m:",
-                        ["destination=", "search-directory=", "manifest="])
+                opts, args = getopt.getopt(sys.argv[1:], "c:D:d:m:",
+                        ["ctf=", "destination=", "search-directory=", "manifest="])
         except getopt.GetoptError as err:
                 print(str(err))
                 usage()
@@ -393,6 +402,8 @@ def main():
                                 usage()
                         else:
                                 manifests.append(manifest)
+                elif opt in [ "-c", "--ctf" ]:
+                        ctfconvert = arg
                 else:
                         usage()
 
@@ -400,7 +411,7 @@ def main():
                 usage()
 
         for manifest in manifests:
-                mangle_paths(manifest, search_paths, destination)
+                mangle_paths(manifest, search_paths, destination, ctfconvert)
                 print(manifest)
 
         sys.exit(0)

@@ -76,8 +76,17 @@ CMAKE_SBINDIR.64 =	sbin/$(MACH64)
 endif
 CMAKE_LIBDIR.32 =	lib
 CMAKE_LIBDIR.64 =	lib/$(MACH64)
-CMAKE_LIBEXECDIR.32 =	lib
-CMAKE_LIBEXECDIR.64 =	lib/$(MACH64)
+# If the component prefers 64-bit binaries, then ensure builds deliver 64-bit
+# binaries to the standard directories and 32-bit binaries to the non-standard
+# location.  This allows simplification of package manifests and makes it
+# easier to deliver the 64-bit binaries as the default.
+ifeq ($(strip $(PREFERRED_BITS)),64)
+CMAKE_LIBEXECDIR.32 =	libexec/$(MACH32)
+CMAKE_LIBEXECDIR.64 =	libexec
+else
+CMAKE_LIBEXECDIR.32 =	libexec
+CMAKE_LIBEXECDIR.64 =	libexec/$(MACH64)
+endif
 CMAKE_INCLUDEDIR =	include
 CMAKE_DATAROOTDIR =	share
 CMAKE_DATADIR =		$(CMAKE_DATAROOTDIR)

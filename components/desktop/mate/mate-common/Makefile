@@ -20,6 +20,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		mate-common
 COMPONENT_MJR_VERSION=	1.27
 COMPONENT_MNR_VERSION=	1
+COMPONENT_REVISION=		1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY=	Common automake macros for MATE
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
@@ -38,10 +39,6 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib/mate
-CONFIGURE_OPTIONS += --localstatedir=/var/lib
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 

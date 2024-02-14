@@ -5,8 +5,8 @@
 # -zdefs, which should work. One such example is FMA in ON gate. 
 # Solaris-specific; not suitable for upstream
 #
---- net-snmp-5.9.3/agent/Makefile.in.~1~	2022-07-13 23:14:14.000000000 +0000
-+++ net-snmp-5.9.3/agent/Makefile.in	2022-12-25 14:36:34.896892074 +0000
+--- net-snmp-5.9.4/agent/Makefile.in.orig
++++ net-snmp-5.9.4/agent/Makefile.in
 @@ -280,9 +280,13 @@
  FTOBJS		= $(LLIBAGENTFTS)  $(FTMIBOBJS) $(FTAGENTOBJS) \
  		  mib_modules.ft auto_nlist.ft
@@ -33,8 +33,8 @@
  miblib: $(MIBLIB)
  
  libs: $(AGENTLIB) $(MIBLIB)
---- net-snmp-5.9.3/agent/helpers/Makefile.in.orig	2022-12-25 14:36:34.898238825 +0000
-+++ net-snmp-5.9.3/agent/helpers/Makefile.in	2022-12-25 14:41:23.387064549 +0000
+--- net-snmp-5.9.4/agent/helpers/Makefile.in.orig
++++ net-snmp-5.9.4/agent/helpers/Makefile.in
 @@ -29,8 +29,11 @@
  
  LOBJS = dummy.lo
@@ -49,8 +49,8 @@
 -	$(RANLIB) $@
 +	$(LIB_LD_CMD) $@ $(LIB_LD_ADD_PATH) $(LOBJS) $(LDFLAGS) $(LIB_LD_LIBS) $(LIB_LD_ADD)
 +	$(RANLIB) $@ $(LIB_LD_ADD)
---- net-snmp-5.9.3/snmplib/Makefile.in.~1~	2022-07-13 23:14:14.000000000 +0000
-+++ net-snmp-5.9.3/snmplib/Makefile.in	2022-12-25 14:36:34.899875158 +0000
+--- net-snmp-5.9.4/snmplib/Makefile.in.orig
++++ net-snmp-5.9.4/snmplib/Makefile.in
 @@ -221,6 +221,9 @@
  # just in case someone wants to remove libtool, change this to OBJS.
  TOBJS=$(LOBJS)

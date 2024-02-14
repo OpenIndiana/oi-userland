@@ -275,7 +275,7 @@ NORUBY_MANIFESTS = $(filter-out %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBY_MANIFESTS = $(filter %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBYV_VALUES = $(RUBY_VERSIONS)
 RUBYV_FMRI_VERSION = RUBYV
-RUBYV_MANIFESTS = $(foreach v,$(RUBY_VERSIONS),$(RUBY_MANIFESTS:-RUBYVER.p5m=-$(shell echo $(v) | cut -d. -f1,2 | tr -d .).p5m))
+RUBYV_MANIFESTS = $(foreach v,$(RUBY_VERSIONS),$(RUBY_MANIFESTS:-RUBYVER.p5m=-$(subst $(space),,$(wordlist 1,2,$(subst ., ,$(v)))).p5m))
 RUBYNV_MANIFESTS = $(RUBY_MANIFESTS:-RUBYVER.p5m=.p5m)
 else
 NORUBY_MANIFESTS = $(NOPERL_MANIFESTS)
@@ -442,8 +442,7 @@ $(MANIFEST_BASE)-%-$(subst .,,$(1)).p5m: %-RUBYVER.p5m
 	    -D RUBYV=$(subst .,,$(1)) $$< > $$@
 endef
 $(foreach ver,$(RUBY_VERSIONS),\
-        $(eval $(call ruby-manifest-rule,$(shell echo $(ver) | \
-            cut -d. -f1,2),$(ver))))
+        $(eval $(call ruby-manifest-rule,$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(ver)))),$(ver))))
 
 # A rule to create a helper transform package for ruby, that will insert the
 # appropriate conditional dependencies into a ruby library's
@@ -452,9 +451,8 @@ $(foreach ver,$(RUBY_VERSIONS),\
 $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ)
 	$(RM) $@
 	$(foreach ver,$(RUBY_VERSIONS),\
-	        $(call mkgeneric,runtime/ruby,$(shell echo $(ver) | \
-	            cut -d. -f1,2 | tr -d .)))
-	$(call mkgenericdep,runtime/ruby,$(shell echo $(RUBY_VERSIONS) | cut -d. -f1,2 | tr -d .))
+	        $(call mkgeneric,runtime/ruby,$(subst $(space),,$(wordlist 1,2,$(subst ., ,$(ver))))))
+	$(call mkgenericdep,runtime/ruby,$(subst $(space),,$(wordlist 1,2,$(subst ., ,$(RUBY_VERSIONS)))))
 
 # Build Ruby version-wrapping manifests from the generic version.
 # Creates build/manifest-*-modulename.p5m file.
@@ -484,6 +482,9 @@ $(BUILD_DIR) $(MANGLED_DIR):
 	$(MKDIR) $@
 
 PKGMANGLE_OPTIONS = -D $(MANGLED_DIR) $(PKG_PROTO_DIRS:%=-d %)
+ifeq ($(strip $(USE_CTF)),yes)
+PKGMANGLE_OPTIONS += -c $(CTFCONVERT)
+endif
 $(MANIFEST_BASE)-%.mangled:	$(MANIFEST_BASE)-%.mogrified $(MANGLED_DIR)
 	$(PKGMANGLE) $(PKGMANGLE_OPTIONS) -m $< >$@
 

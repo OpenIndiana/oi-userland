@@ -1,0 +1,24 @@
+
+Binutils 2.41 reports: Error: operand size mismatch for `push'
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/BhyvePkg/Csm/BhyveCsm16/BhyveCsm16Asm.S a/BhyvePkg/Csm/BhyveCsm16/BhyveCsm16Asm.S
+--- a~/BhyvePkg/Csm/BhyveCsm16/BhyveCsm16Asm.S	1970-01-01 00:00:00
++++ a/BhyvePkg/Csm/BhyveCsm16/BhyveCsm16Asm.S	1970-01-01 00:00:00
+@@ -461,7 +461,7 @@ CsmEntry:
+         lgdt    (GDT.Pointer64)
+         /* Load CS with 16 bit segment and flush the instruction cache. */
+         push    $CODE16_SEL
+-        push    $(2f - 0xf0000)
++        pushq   $(2f - 0xf0000)
+         retfq
+ 
+         .code16
+@@ -700,7 +700,7 @@ LongToReal:
+ 
+         /* Load CS with 16 bit segment and flush the instruction cache. */
+         push    $CODE16_SEL
+-        push    $(2f - 0xf0000)
++        pushq   $(2f - 0xf0000)
+         retfq
+ 
+         .code16
