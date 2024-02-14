@@ -29,8 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_TEST_DIR = $(@D)/tests
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.18.21
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	9.18.24
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -38,7 +37,7 @@ COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain N
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:a556be22505d9ea4f9c6717aee9c549739c68498aff3ca69035787ecc648fec5
+COMPONENT_ARCHIVE_HASH=	sha256:709d73023c9115ddad3bab65b6c8c79a590196d0d114f5d0ca2533dbd52ddf66
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
