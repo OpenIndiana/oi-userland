@@ -32,10 +32,10 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
+COMPONENT_ENV  =	PATH="$(PATH)"
 COMPONENT_ENV +=	GNUMAKE=$(GMAKE)
 COMPONENT_ENV +=	CC="$(CC)"
-COMPONENT_BUILD_ARGS  =	--prefix=/usr
+COMPONENT_BUILD_ARGS  =	--prefix=$(USRDIR)
 COMPONENT_BUILD_ARGS +=	--arch=x86-64
 # This is currently --with-sb-thread --with-sb-core-compression
 # --with-sb-xref-internals and :sb-after-xc-core as a build feature.
@@ -55,8 +55,8 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 $(BUILD_DIR)/%/.tested:		$(BUILD_DIR)/%/.installed
 	(cd $(@D)/tests; $(ENV) $(COMPONENT_ENV) BUILD_ROOT=$(PROTO_DIR) /usr/gnu/bin/sh run-tests.sh)
 
-clean::
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+# Pre-installed sbcl is needed to build sbcl
+REQUIRED_PACKAGES += runtime/sbcl
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
