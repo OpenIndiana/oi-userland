@@ -18,12 +18,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-devtools1
-COMPONENT_VERSION=      1.22.9
+COMPONENT_VERSION=      1.22.10
 COMPONENT_SUMMARY=      Multimedia graph framework - devtools
 COMPONENT_SRC_NAME=		gst-devtools
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:02e29400b44e9cc603aa6444dee5726b57edabef6455e6d0921ffed6f13840ee
+COMPONENT_ARCHIVE_HASH= sha256:0e1ec0d0b8f2d3d314a397399cd01dfc50c02ac088176996f934758119075ea9
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/devtools
@@ -45,9 +45,6 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_POST_INSTALL_ACTION += \
     $(GSED) -i -e 's?env python3?python$(PYTHON_VERSION)?' \
 	$(PROTOUSRBINDIR)/gst-validate-launcher;
-
-# Test fail because we are missing gst-validate
-unexport SHELLOPTS
 
 # As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \
