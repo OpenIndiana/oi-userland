@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		httpcore
-HUMAN_VERSION =			1.0.2
+HUMAN_VERSION =			1.0.3
 COMPONENT_SUMMARY =		httpcore - A minimal low-level HTTP client.
 COMPONENT_PROJECT_URL =		https://www.encode.io/httpcore/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/18/56/78a38490b834fa0942cbe6d39bd8a7fd76316e8940319305a98d2b320366/httpcore-1.0.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9fc092e4799b26174648e54b74ed5f683132a464e95643b226e00c2ed2fa6535
+	sha256:5c0f9546ad17dac4d0772b0808856eb616eb8b48ce94f49ed819fd6982a8a544
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
