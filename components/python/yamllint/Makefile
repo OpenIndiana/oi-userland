@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yamllint
-HUMAN_VERSION =			1.34.0
+HUMAN_VERSION =			1.35.0
 COMPONENT_SUMMARY =		yamllint - A linter for YAML files.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7f0a6a41e8aab3904878da4ae34b6248b6bc74634e0d3a90f0fb2d7e723a3d4f
+	sha256:9bc99c3e9fe89b4c6ee26e17aa817cf2d14390de6577cb6e2e6ed5f72120c835
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
