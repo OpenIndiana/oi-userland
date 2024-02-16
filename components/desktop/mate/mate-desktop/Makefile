@@ -22,10 +22,10 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-desktop
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	0
 COMPONENT_SUMMARY=	Additional UI API for MATE Desktop
-COMPONENT_ARCHIVE_HASH= sha256:5ed03f7c52d7b7ece49ca1e736aa766aefeb5c639eab3e68c7090c530d02376a
+COMPONENT_ARCHIVE_HASH= sha256:3ac74a2ea28e4cc7ab212c23f10ebef573b3eb3ad93d0cbacb4f3f02f0be0447
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
 include $(WS_MAKE_RULES)/common.mk
@@ -39,7 +39,6 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
