@@ -14801,9 +14801,12 @@ ok 119 - git stash succeeds despite directory/file change
 ok 120 - git stash can pop file -> directory saved changes
 ok 121 - git stash can pop directory -> file saved changes
 ok 122 - restore untracked files even when we hit conflicts
+ok 123 - stash create reports a locked index
+ok 124 - stash push reports a locked index
+ok 125 - stash apply reports a locked index
 # still have 2 known breakage(s)
-# passed all remaining 120 test(s)
-1..122
+# passed all remaining 123 test(s)
+1..125
 *** t3904-stash-patch.sh ***
 ok 1 - setup
 ok 2 - saying "n" does nothing
@@ -14988,8 +14991,9 @@ ok 19 - rename pretty print with common prefix and suffix
 ok 20 - rename pretty print common prefix and suffix overlap
 ok 21 - diff-tree -l0 defaults to a big rename limit, not zero
 ok 22 - basename similarity vs best similarity
-# passed all 22 test(s)
-1..22
+ok 23 - last line matters too
+# passed all 23 test(s)
+1..23
 *** t4002-diff-basic.sh ***
 ok 1 - adding test file NN and Z/NN
 ok 2 - adding test file ND and Z/ND
@@ -15395,8 +15399,9 @@ ok 216 - diff respects diff.noprefix
 ok 217 - diff --default-prefix overrides diff.noprefix
 ok 218 - diff respects diff.mnemonicprefix
 ok 219 - diff --default-prefix overrides diff.mnemonicprefix
-# passed all 219 test(s)
-1..219
+ok 220 - diff --no-renames cannot be abbreviated
+# passed all 220 test(s)
+1..220
 *** t4014-format-patch.sh ***
 ok 1 - setup
 ok 2 - format-patch --ignore-if-in-upstream
@@ -16797,13 +16802,14 @@ ok 16 - diff --no-index normalizes mode: no changes
 ok 17 - diff --no-index normalizes mode: chmod +x
 ok 18 - diff --no-index normalizes: mode not like git mode
 ok 19 - diff --no-index normalizes: mode not like git mode (symlink)
-ok 20 - diff --no-index treats '-' as stdin
-ok 21 - diff --no-index -R treats '-' as stdin
-ok 22 - diff --no-index refuses to diff stdin and a directory
-ok 23 - diff --no-index refuses to diff a named pipe and a directory
-ok 24 - diff --no-index reads from pipes
-# passed all 24 test(s)
-1..24
+ok 20 - external diff with mode-only change
+ok 21 - diff --no-index treats '-' as stdin
+ok 22 - diff --no-index -R treats '-' as stdin
+ok 23 - diff --no-index refuses to diff stdin and a directory
+ok 24 - diff --no-index refuses to diff a named pipe and a directory
+ok 25 - diff --no-index reads from pipes
+# passed all 25 test(s)
+1..25
 *** t4054-diff-bogus-tree.sh ***
 ok 1 - create bogus tree
 ok 2 - create tree with matching file
@@ -32637,7 +32643,7 @@ missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES ADD_OUT AUTOIDENT BUILT
 failed test(s): t0211 t1700 t2501 t3200 t3404 t4150 t4202 t7609 t9001 t9210 t9902
 
 fixed   1
-success 28473
+success 28479
 failed  21
 broken  271
-total   29277
+total   29283
