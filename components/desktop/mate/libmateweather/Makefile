@@ -22,10 +22,10 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		libmateweather
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	3
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	0
 COMPONENT_SUMMARY=	Library to accessing online weather information
-COMPONENT_ARCHIVE_HASH=	sha256:5e6cd24418847cb45acf17da5b435a7131cb4ec2acff68e828f342a1bf13ef4a
+COMPONENT_ARCHIVE_HASH=	sha256:554373deb5b393b9d84b275dd2ca66c9a4a2d0e6ec92044fab8aa53e3032d2b5
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
 include $(WS_MAKE_RULES)/common.mk
