@@ -19,20 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zodbpickle
-HUMAN_VERSION =			3.1
+HUMAN_VERSION =			3.2
 COMPONENT_SUMMARY =		zodbpickle - Fork of Python 3 pickle module.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zodbpickle
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/95/30/7f60f6f4382d472b7303255adea8fd877d2a9580d1f819102f40b694f0aa/zodbpickle-3.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b9ec32e706c7b808b79a53a7ad96609117e94283772b400ee76552107aabcc11
+	sha256:eb9c0ee389b3266aa8f41945b62a99815d261f69d1f42977150912aa6796ab0c
 COMPONENT_LICENSE =		PSF-2.0 OR ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
