@@ -25,6 +25,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		caja
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	File manager for the MATE desktop
 COMPONENT_ARCHIVE_HASH= sha256:813edf08a36f995ec3c1504131ff8afbbd021f6e1586643fe5dced5e73e5790d
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -40,7 +41,6 @@ COMPONENT_PREP_ACTION=	\
 # tests in different dirs, keep going if early tests fail
 COMPONENT_TEST_ARGS += -k -i
 # minimal tests
-unexport SHELLOPTS
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/^\(PASS|SKIP|FAIL\): /p" ' \
