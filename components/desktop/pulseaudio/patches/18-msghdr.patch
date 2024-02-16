@@ -1,0 +1,56 @@
+diff --git a/src/modules/rtp/sap.c b/src/modules/rtp/sap.c
+index 00a6480..070d099 100644
+--- a/src/modules/rtp/sap.c
++++ b/src/modules/rtp/sap.c
+@@ -120,9 +120,6 @@ int pa_sap_send(pa_sap_context *c, bool goodbye) {
+     m.msg_namelen = 0;
+     m.msg_iov = iov;
+     m.msg_iovlen = 4;
+-    m.msg_control = NULL;
+-    m.msg_controllen = 0;
+-    m.msg_flags = 0;
+ 
+     if ((k = sendmsg(c->fd, &m, MSG_DONTWAIT)) < 0)
+         pa_log_warn("sendmsg() failed: %s\n", pa_cstrerror(errno));
+@@ -176,9 +173,6 @@ int pa_sap_recv(pa_sap_context *c, bool *goodbye) {
+     m.msg_namelen = 0;
+     m.msg_iov = &iov;
+     m.msg_iovlen = 1;
+-    m.msg_control = NULL;
+-    m.msg_controllen = 0;
+-    m.msg_flags = 0;
+ 
+     if ((size = recvmsg(c->fd, &m, 0)) < 0) {
+         pa_log_warn("recvmsg() failed: %s", pa_cstrerror(errno));
+diff --git a/src/modules/rtp/rtp-native.c b/src/modules/rtp/rtp-native.c
+index d1a3911..4c4d153 100644
+--- a/src/modules/rtp/rtp-native.c
++++ b/src/modules/rtp/rtp-native.c
+@@ -34,6 +34,7 @@
+ #ifdef HAVE_SYS_UIO_H
+ #include <sys/uio.h>
+ #endif
++#include <sys/socket.h>
+ 
+ #include <pulsecore/core-error.h>
+ #include <pulsecore/log.h>
+@@ -137,9 +138,6 @@ int pa_rtp_send(pa_rtp_context *c, pa_memblockq *q) {
+                 m.msg_namelen = 0;
+                 m.msg_iov = iov;
+                 m.msg_iovlen = (size_t) iov_idx;
+-                m.msg_control = NULL;
+-                m.msg_controllen = 0;
+-                m.msg_flags = 0;
+ 
+                 k = sendmsg(c->fd, &m, MSG_DONTWAIT);
+ 
+@@ -266,9 +264,6 @@ int pa_rtp_recv(pa_rtp_context *c, pa_memchunk *chunk, pa_mempool *pool, uint32_
+     m.msg_namelen = 0;
+     m.msg_iov = &iov;
+     m.msg_iovlen = 1;
+-    m.msg_control = aux;
+-    m.msg_controllen = sizeof(aux);
+-    m.msg_flags = 0;
+ 
+     size = recvmsg(c->fd, &m, 0);
+ 
