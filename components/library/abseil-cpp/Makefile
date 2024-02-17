@@ -16,12 +16,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         abseil-cpp
-COMPONENT_VERSION=      20240116.0
+COMPONENT_VERSION=      20240116.1
 COMPONENT_SUMMARY=      Collection of C++ library code designed to augment the C++ standard library
 COMPONENT_PROJECT_URL=  https://abseil.io
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:338420448b140f0dfd1a1ea3c3ce71b3bc172071f24f4d9a57d59b45037da440
+COMPONENT_ARCHIVE_HASH= sha256:3c743204df78366ad2eaf236d6631d83f6bc928d1705dd0000b872e53b73dc6a
 COMPONENT_ARCHIVE_URL=	https://github.com/abseil/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/c++/abseil-cpp
 COMPONENT_CLASSIFICATION=       Development/C++
