@@ -2,7 +2,7 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-collecting ... collected 1314 items
+collecting ... collected 1337 items
 
 tests/test_address.py::IPv4Tests::test_invalid PASSED
 tests/test_address.py::IPv4Tests::test_valid PASSED
@@ -14,7 +14,6 @@ tests/test_async.py::AsyncTests::testCanonicalNameCNAME PASSED
 tests/test_async.py::AsyncTests::testCanonicalNameDangling PASSED
 tests/test_async.py::AsyncTests::testCanonicalNameNoCNAME PASSED
 tests/test_async.py::AsyncTests::testDOHGetRequest PASSED
-tests/test_async.py::AsyncTests::testDOHGetRequestHttp1 PASSED
 tests/test_async.py::AsyncTests::testDOHPostRequest PASSED
 tests/test_async.py::AsyncTests::testQueryTCP PASSED
 tests/test_async.py::AsyncTests::testQueryTCPWithSocket PASSED
@@ -39,6 +38,16 @@ tests/test_async.py::AsyncTests::testZoneForName2 PASSED
 tests/test_async.py::AsyncTests::testZoneForName3 PASSED
 tests/test_async.py::AsyncTests::testZoneForName4 PASSED
 tests/test_async.py::AsyncioOnlyTests::testUseAfterTimeout PASSED
+tests/test_async.py::IgnoreErrors::test_bad_address PASSED
+tests/test_async.py::IgnoreErrors::test_bad_address_not_ignored PASSED
+tests/test_async.py::IgnoreErrors::test_bad_id PASSED
+tests/test_async.py::IgnoreErrors::test_bad_id_not_ignored PASSED
+tests/test_async.py::IgnoreErrors::test_bad_wire PASSED
+tests/test_async.py::IgnoreErrors::test_bad_wire_not_ignored PASSED
+tests/test_async.py::IgnoreErrors::test_good_mock PASSED
+tests/test_async.py::IgnoreErrors::test_not_response_not_ignored_udp_level PASSED
+tests/test_async.py::IgnoreErrors::test_trailing_wire PASSED
+tests/test_async.py::IgnoreErrors::test_trailing_wire_not_ignored PASSED
 tests/test_async.py::MiscBackend::test_bogus_backend PASSED
 tests/test_async.py::MiscBackend::test_sniff_without_run_loop PASSED
 tests/test_async.py::MiscQuery::test_source_tuple PASSED
@@ -134,7 +143,6 @@ tests/test_dnssecalgs.py::DNSSECAlgorithmPrivateAlgorithm::test_register_canonic
 tests/test_dnssecalgs.py::DNSSECAlgorithmPrivateAlgorithm::test_register_private_without_prefix PASSED
 tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_build_url_from_ip PASSED
 tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_get_request PASSED
-tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_get_request_http1 PASSED
 tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_new_session PASSED
 tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_padded_get PASSED
 tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_post_request PASSED
@@ -152,6 +160,7 @@ tests/test_edns.py::OptionTestCase::testEDEOption PASSED
 tests/test_edns.py::OptionTestCase::testEDEOption_from_wire PASSED
 tests/test_edns.py::OptionTestCase::testEDEOption_invalid PASSED
 tests/test_edns.py::OptionTestCase::testGenericOption PASSED
+tests/test_edns.py::OptionTestCase::testNSIDOption PASSED
 tests/test_edns.py::OptionTestCase::test_basic_relations PASSED
 tests/test_edns.py::OptionTestCase::test_incompatible_relations PASSED
 tests/test_edns.py::OptionTestCase::test_option_registration PASSED
@@ -165,6 +174,10 @@ tests/test_exceptions.py::ExceptionTestCase::test_formatted_error PASSED
 tests/test_exceptions.py::ExceptionTestCase::test_implicit_message PASSED
 tests/test_exceptions.py::ExceptionTestCase::test_kwargs_only PASSED
 tests/test_exceptions.py::ExceptionTestCase::test_kwargs_unsupported PASSED
+tests/test_features.py::test_force PASSED
+tests/test_features.py::test_have PASSED
+tests/test_features.py::test_tuple_from_text PASSED
+tests/test_features.py::test_version_check PASSED
 tests/test_flags.py::FlagsTestCase::test_flags1 PASSED
 tests/test_flags.py::FlagsTestCase::test_flags2 PASSED
 tests/test_flags.py::FlagsTestCase::test_rcode1 PASSED
@@ -555,6 +568,16 @@ tests/test_query.py::DestinationAndSourceTests::test_source_port_but_no_af_infer
 tests/test_query.py::DestinationAndSourceTests::test_v4_wildcard_source_set PASSED
 tests/test_query.py::DestinationAndSourceTests::test_v6_wildcard_source_set PASSED
 tests/test_query.py::DestinationAndSourceTests::test_where_must_be_an_address PASSED
+tests/test_query.py::IgnoreErrors::test_bad_address PASSED
+tests/test_query.py::IgnoreErrors::test_bad_address_not_ignored PASSED
+tests/test_query.py::IgnoreErrors::test_bad_id PASSED
+tests/test_query.py::IgnoreErrors::test_bad_id_not_ignored PASSED
+tests/test_query.py::IgnoreErrors::test_bad_wire PASSED
+tests/test_query.py::IgnoreErrors::test_bad_wire_not_ignored PASSED
+tests/test_query.py::IgnoreErrors::test_good_mock PASSED
+tests/test_query.py::IgnoreErrors::test_not_response_not_ignored_udp_level PASSED
+tests/test_query.py::IgnoreErrors::test_trailing_wire PASSED
+tests/test_query.py::IgnoreErrors::test_trailing_wire_not_ignored PASSED
 tests/test_query.py::LowLevelWaitTests::test_wait_for PASSED
 tests/test_query.py::MiscTests::test_matches_destination PASSED
 tests/test_query.py::QueryTests::testQueryTCP PASSED
@@ -1319,4 +1342,4 @@ tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_simple_absolute PASSED
 tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_unknown_hash_algorithm PASSED
 tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_unknown_scheme PASSED
 
-======== 1285 passed, 29 skipped ========
+======== 1308 passed, 29 skipped ========
