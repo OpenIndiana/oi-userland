@@ -18,7 +18,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yara
-COMPONENT_VERSION=	4.4.0
+COMPONENT_VERSION=	4.5.0
 COMPONENT_SUMMARY=	YARA is a tool aimed at (but not limited to) helping malware \
 	researchers to identify and classify malware samples.
 COMPONENT_DESCRIPTION=	With YARA you can create descriptions of malware families \
@@ -27,7 +27,7 @@ COMPONENT_DESCRIPTION=	With YARA you can create descriptions of malware families
 	which determine its logic.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:301ddefefddba352022da8982f4c86f898827cd2c8c3394e2db08110c4caf7aa
+COMPONENT_ARCHIVE_HASH=	sha256:f6db34bd102703bf56cc2878ddfb249c3fb2e09c9194d3adb78c3ab79282c827
 COMPONENT_PROJECT_URL=	https://virustotal.github.io/yara/
 COMPONENT_ARCHIVE_URL=	https://github.com/VirusTotal/yara/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
@@ -46,11 +46,11 @@ CFLAGS += $(CPP_LARGEFILES) -I$(OPENSSL_INCDIR)
 
 LDFLAGS += -L$(OPENSSL_LIBDIR)
 
-CONFIGURE_OPTION+=	--enable-cuckoo
-CONFIGURE_OPTION+=	--enable-magic
-CONFIGURE_OPTION+=	--enable-macho
-CONFIGURE_OPTION+=	--enable-dex
-CONFIGURE_OPTION+=	--enable-pb-tests
+CONFIGURE_OPTION += --enable-cuckoo
+CONFIGURE_OPTION += --enable-magic
+CONFIGURE_OPTION += --enable-macho
+CONFIGURE_OPTION += --enable-dex
+CONFIGURE_OPTION += --enable-pb-tests
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl-31
