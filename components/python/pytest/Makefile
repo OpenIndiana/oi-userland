@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
-HUMAN_VERSION =			8.0.0
+HUMAN_VERSION =			8.0.1
 COMPONENT_SUMMARY =		pytest - pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/50/fd/af2d835eed57448960c4e7e9ab76ee42f24bcdd521e967191bc26fa2dece/pytest-8.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:249b1b0864530ba251b7438274c4d251c58d868edaaec8762893ad4a0d71c36c
+	sha256:267f6563751877d772019b13aacbe4e860d73fe8f651f28112e9ac37de7513ae
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
