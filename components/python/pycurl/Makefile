@@ -14,19 +14,20 @@
 #   $WS_TOOLS/python-integrate-project pycurl
 #
 
+BUILD_STYLE = pyproject
+# Force setup.py build style because we need to pass additional --openssl-dir
+# and there seems to be no way how to do that with the default pyproject build
+# style.
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycurl
-HUMAN_VERSION =			7.45.2
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			7.45.3
 COMPONENT_SUMMARY =		pycurl - PycURL -- A Python Interface To The cURL library
 COMPONENT_PROJECT_URL =		http://pycurl.io/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a8/af/24d3acfa76b867dbd8f1166853c18eefc890fc5da03a48672b38ea77ddae/pycurl-7.45.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5730590be0271364a5bddd9e245c9cc0fb710c4cbacbdd95264a3122d23224ca
+	sha256:8c2471af9079ad798e1645ec0b0d3d4223db687379d17dd36a70637449f81d6b
 COMPONENT_LICENSE =		LGPL-2.1-only
 
 TEST_STYLE = pytest
@@ -36,7 +37,7 @@ PYTHON_DATA = $(USRDIR)
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Make sure we link with proper openssl version
+# Make sure we compile and link with proper openssl version
 LDFLAGS += -L$(OPENSSL_LIBDIR)
 LDFLAGS += -R$(OPENSSL_LIBDIR)
 COMPONENT_BUILD_SETUP_PY_ARGS += --openssl-dir=$(OPENSSL_PREFIX)
@@ -46,7 +47,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MV) $(PROTOUSRSHAREDOCDIR)/pycurl $(PROTOUSRSHAREDOCDIR)/pycurl-$(PYTHON_VERSION) ;
 
 # Compile extra libraries for tests
-COMPONENT_PRE_TEST_ACTION += make -C $(@D)/tests/fake-curl/libcurl ;
+COMPONENT_PRE_TEST_ACTION += PATH=$(PATH.gnu) make -C $(@D)/tests/fake-curl/libcurl ;
 
 # Replace Python version in pycurl documentation directory name
 GENERATE_EXTRA_CMD += | \
