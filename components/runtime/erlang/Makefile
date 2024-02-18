@@ -23,71 +23,56 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 # Copyright 2023 Carsten Grzemba
+# Copyright 2024 Goetz Fischer, R-A-C. All rights reserved.
 #
-# Built in SFW with gcc and builds cleanly now only with gcc
 
 BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
-PATH=$(JAVA_HOME)/bin:$(USRBINDIR)
-
-COMPONENT_FMRI=           runtime/erlang
-COMPONENT_NAME=     erlang
-COMPONENT_VERSION=    24.2.2
-COMPONENT_PROJECT_URL=  http://www.erlang.org/
+COMPONENT_FMRI= runtime/erlang
+COMPONENT_NAME= erlang
+COMPONENT_VERSION= 26.2.2
+COMPONENT_PROJECT_URL= https://erlang.org/
 COMPONENT_SRC_NAME= otp_src
-COMPONENT_SRC=    $(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= OTP-${COMPONENT_VERSION}.tar.gz
+COMPONENT_SRC= $(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= ${COMPONENT_SRC}.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:b6adfc0bf14d94348146ae26cc38d09dca545f8e14ebab7ddcf9482a6e8d1162
-COMPONENT_ARCHIVE_URL=  https://github.com/erlang/otp/archive/${COMPONENT_ARCHIVE}
-COMPONENT_POST_UNPACK_ACTION= ( $(MV) otp-OTP-$(COMPONENT_VERSION) $(COMPONENT_SRC))
-COMPONENT_PREP_ACTION = (cd $(@D); ./otp_build update_configure --no-commit)
-COMPONENT_VERSION_SHORT= $(shell echo $(COMPONENT_VERSION) | cut -d'.' -f1-2)
+	sha256:d537ff4ac5d8c1cb507aedaf7198fc1f155ea8aa65a8d83edb35c2802763cc28
+COMPONENT_ARCHIVE_URL= https://github.com/erlang/otp/releases/download/OTP-${COMPONENT_VERSION}/${COMPONENT_ARCHIVE}
+COMPONENT_VERSION_SHORT= 26.2
 COMPONENT_CLASSIFICATION= Development/Other Languages
-COMPONENT_LICENSE=        Apache-2.0
-COMPONENT_LICENSE_FILE=   LICENSE.txt
+COMPONENT_LICENSE= Apache-2.0
+COMPONENT_LICENSE_FILE= LICENSE.txt
 COMPONENT_SUMMARY= Erlang/OTP
 COMPONENT_DESCRIPTION= Erlang programming language and OTP libraries
 
 # manpages
+# no 26.2 available as of 16.02.2024. hence using 26.1.
 COMPONENT_NAME_1= otp_doc_man
-COMPONENT_SRC_1=  $(COMPONENT_NAME_1)_$(COMPONENT_VERSION_SHORT)
-COMPONENT_ARCHIVE_1=  $(COMPONENT_SRC_1).tar.gz
+COMPONENT_SRC_1= $(COMPONENT_NAME_1)_26.1
+COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:56ae4b13fc7c003f4dd9951a9ff2a0bae0b38473df2c078d79c8553c277c5f4c
-COMPONENT_ARCHIVE_URL_1=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_1)
-UNPACK_ARGS_1=  -r $(COMPONENT_SRC_1)
-PKG_PROTO_DIRS += $(COMPONENT_SRC_1)
-
-# HTML documentation
-COMPONENT_NAME_2= otp_doc_html
-COMPONENT_SRC_2=  $(COMPONENT_NAME_2)_$(COMPONENT_VERSION_SHORT)
-COMPONENT_ARCHIVE_2=  $(COMPONENT_SRC_2).tar.gz
-COMPONENT_ARCHIVE_HASH_2= \
-    sha256:f479cbc8a28532fd6a0a55fc26684b4e79312da4f86ee0735d0757f936672bbc
-COMPONENT_ARCHIVE_URL_2=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_2)
-UNPACK_ARGS_2=  -r $(COMPONENT_SRC_2)
-PKG_PROTO_DIRS += $(COMPONENT_SRC_2)
+    sha256:2320a0af58119497bc3c0e6d8f08fbb0c6db5778a841b96a7f984e40c321b3ee
+COMPONENT_ARCHIVE_URL_1= $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_1)
+UNPACK_ARGS_1= -r $(COMPONENT_SRC_1)
 
 include $(WS_MAKE_RULES)/common.mk
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 
-CFLAGS += -DOPENSSL_NO_MD4 -DOPENSSL_NO_RC2 -DOPENSSL_NO_RC4
-
 # Fix 64-bit linking.
 LDFLAGS += $(CC_BITS)
+CFLAGS += -finline-functions -funroll-loops
+CXXFLAGS += -finline-functions -funroll-loops -fno-exceptions -fno-rtti
 
-CXXFLAGS += -std=c++11
-
-CONFIGURE_OPTIONS.64 += --with-wx-config=/usr/bin/$(MACH64)/wx-config
-CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
+CONFIGURE_OPTIONS += --with-ssl-lib-subdir=/amd64
 CONFIGURE_OPTIONS += --enable-fips
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
+CONFIGURE_OPTIONS += --disable-silent-rules
+CONFIGURE_OPTIONS += --without-javac
 
 # The HiPE portion is a bit sensitive, and only seems to work 64-bit on
 # amd64 (thus the variant.arch tagging in erlang.p5m). erts/config.log
@@ -110,36 +95,17 @@ ASLR_MODE =	$(ASLR_DISABLE)
 # erlang version 17.5.
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CP) -rp $(SOURCE_DIR)/. $(@D))
-
-CONFIGURE_SCRIPT =		$(@D)/configure
-
-# We need to re-run the nested configure script for the wx sub-component so
-# that it will properly detect wxWidgets support by adding -std=c++11 to $(CXX)
-# (workaround for the configure script ignoring CXXFLAGS) and with ERL_TOP set
-# so that the wx component knows we're building inside the erlang source tree.
-COMPONENT_POST_CONFIGURE_ACTION = \
-	(cd $(@D)/lib/wx; $(ENV) $(CONFIGURE_ENV) \
-		CXX="$(CXX) -std=c++11" \
-		ERL_TOP="$(@D)" \
-		$(CONFIG_SHELL) \
-		./configure $(CONFIGURE_OPTIONS))
-
-# Always show the build and link lines for easier debugging.
-COMPONENT_BUILD_ARGS +=	V=1
+CONFIGURE_SCRIPT = $(@D)/configure
 
 # fix build on jenkins
 COMPONENT_BUILD_ENV += HOME=/tmp
 COMPONENT_INSTALL_ENV += HOME=/tmp
 COMPONENT_TEST_ENV += HOME=/tmp
-
 COMPONENT_INSTALL_ARGS += INSTALL_PREFIX=$(PROTO_DIR)
-
-COMPONENT_TEST_ENV +=		ERL_TOP=$(BUILD_DIR_64)
-COMPONENT_TEST_TARGETS =	tests
-
-COMPONENT_SYSTEM_TEST_ENV +=	ERL_TOP=$(BUILD_DIR_64)
+COMPONENT_TEST_ENV += ERL_TOP=$(BUILD_DIR_64)
+COMPONENT_TEST_TARGETS = tests
+COMPONENT_SYSTEM_TEST_ENV += ERL_TOP=$(BUILD_DIR_64)
 COMPONENT_SYSTEM_TEST_TARGETS =	tests
-
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^gmake.*release_tests_spec/d" '
 
@@ -148,16 +114,12 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(PERL) -pi -e "s|$(PROTO_DIR)||g" \
 		$(PROTOUSRLIBDIR64)/erlang/bin/erl \
 		$(PROTOUSRLIBDIR64)/erlang/releases/RELEASES
+COMPONENT_POST_INSTALL_ACTION += ;( $(MV) $(COMPONENT_SRC_1)/man $(PROTO_DIR)/usr/ )
 
 # common targets
 build:    $(BUILD_64)
-
 install:  $(INSTALL_64)
-
 test:     $(TEST_64)
-
-# manually added
-REQUIRED_PACKAGES += runtime/java/openjdk8
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
