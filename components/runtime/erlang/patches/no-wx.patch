@@ -1,0 +1,239 @@
+diff -Nuraw otp_src_26.2.2_O/configure otp_src_26.2.2/configure
+--- otp_src_26.2.2_O/configure	2024-02-07 15:00:00.000000000 +0100
++++ otp_src_26.2.2/configure	2024-02-20 02:08:26.000000000 +0100
+@@ -321,7 +321,7 @@
+ if test $bootstrap_only = no; then
+     check_conf_dirs=`echo lib/*`
+ else
+-    check_conf_dirs=" lib/asn1 lib/compiler lib/erl_interface lib/kernel lib/jinterface lib/parsetools lib/sasl lib/snmp lib/stdlib lib/syntax_tools lib/wx"
++    check_conf_dirs=" lib/asn1 lib/compiler lib/erl_interface lib/kernel lib/jinterface lib/parsetools lib/sasl lib/snmp lib/stdlib lib/syntax_tools"
+ fi
+ 
+ # 'erts' *needs* to be last in app_dirs! Any apps
+diff -Nuraw otp_src_26.2.2_O/lib/et/test/Makefile otp_src_26.2.2/lib/et/test/Makefile
+--- otp_src_26.2.2_O/lib/et/test/Makefile	2024-02-07 15:00:00.000000000 +0100
++++ otp_src_26.2.2/lib/et/test/Makefile	2024-02-20 02:08:26.000000000 +0100
+@@ -27,7 +27,6 @@
+ MODULES= \
+ 	ett \
+ 	et_SUITE \
+-	et_wx_SUITE \
+ 	et_test_lib
+ 
+ 
+diff -Nuraw otp_src_26.2.2_O/lib/et/test/et_test_lib.erl otp_src_26.2.2/lib/et/test/et_test_lib.erl
+--- otp_src_26.2.2_O/lib/et/test/et_test_lib.erl	2024-02-07 15:00:00.000000000 +0100
++++ otp_src_26.2.2/lib/et/test/et_test_lib.erl	2024-02-20 02:18:16.000000000 +0100
+@@ -85,50 +85,6 @@
+     end.
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+-wx_init_per_suite(Config) ->
+-    {_Pid, Ref} = 
+-	spawn_monitor(fun() ->
+-			      %% Avoid test case crash if wx master process dies
+-			      process_flag(trap_exit, true),
+-			      try 
+-				  case os:type() of
+-				      {unix,darwin} ->
+-					  exit({skipped, "Can not test on MacOSX"});
+-				      {unix, _} ->
+-					  io:format("DISPLAY ~s~n", [os:getenv("DISPLAY")]),
+-					  case ct:get_config(xserver, none) of
+-					      none   -> ignore;
+-					      Server -> os:putenv("DISPLAY", Server)
+-					  end;
+-				      _ -> 
+-					  ignore
+-				  end,
+-				  wx:new(),
+-				  wx:destroy()
+-			      catch 
+-				  error:undef ->
+-				      exit({skipped, "No wx compiled for this platform"});
+-				    _:Reason ->
+-				      exit({skipped, lists:flatten(io_lib:format("Start wx failed: ~p", [Reason]))})
+-			      end,
+-			      exit(normal)			      
+-		      end),
+-    receive
+-	{'DOWN', Ref, _, _, normal} ->
+-	    init_per_suite(Config);	    
+-	{'DOWN', Ref, _, _, {skipped, _} = Skipped} ->
+-	    Skipped;
+-	{'DOWN', Ref, _, _, Reason} ->
+-	    exit({wx_init_per_suite, Reason})
+-    after timer:minutes(1) ->
+-	    exit({wx_init_per_suite, timeout})
+-    end.
+-
+-wx_end_per_suite(Config) ->
+-    end_per_suite(Config).
+-
+-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-
+ init_per_testcase(_Func, Config) when is_list(Config) ->
+     set_kill_timer(Config),
+     global:register_name(et_global_logger, group_leader()),
+@@ -206,42 +162,6 @@
+ user_available(Config) ->
+     false /= proplists:get_value(user, Config, false).
+    	
+-
+-wx_destroy(Frame, Config) ->
+-    case proplists:get_value(user, Config, false) of
+-	false ->
+-	    timer:sleep(100),
+-	    ?m(ok, wxFrame:destroy(Frame)),
+-	    ?m(ok, wx:destroy());
+-	true ->
+-	    timer:sleep(500),
+-	    ?m(ok, wxFrame:destroy(Frame)),
+-	    ?m(ok, wx:destroy());	
+-	step -> %% Wait for user to close window
+-	    ?m(ok, wxEvtHandler:connect(Frame, close_window, [{skip,true}])),
+-	    wait_for_close()
+-    end.
+-
+-wait_for_close() ->
+-    receive 
+-	#wx{event=#wxClose{}} ->
+-	    ?log("Got close~n",[]),
+-	    ?m(ok, wx:destroy());
+-	#wx{obj=Obj, event=Event} ->
+-	    try 
+-		Name = wxTopLevelWindow:getTitle(Obj),
+-		?log("~p Event: ~p~n", [Name, Event])
+-	    catch _:_ ->
+-		?log("Event: ~p~n", [Event])
+-	    end,
+-	    wait_for_close();
+-	Other ->
+-	    ?log("Unexpected: ~p~n", [Other]),
+-	    wait_for_close()
+-    end.
+-
+-
+-
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %% A small test server, which can be run standalone in a shell
+ 
+diff -Nuraw otp_src_26.2.2_O/lib/et/test/et_test_lib.hrl otp_src_26.2.2/lib/et/test/et_test_lib.hrl
+--- otp_src_26.2.2_O/lib/et/test/et_test_lib.hrl	2024-02-07 15:00:00.000000000 +0100
++++ otp_src_26.2.2/lib/et/test/et_test_lib.hrl	2024-02-20 02:10:53.000000000 +0100
+@@ -17,8 +17,6 @@
+ %%
+ %% %CopyrightEnd%
+ 
+--include_lib("wx/include/wx.hrl").
+-
+ -define(log(Format,Args), et_test_lib:log(Format,Args,?FILE,?LINE)).
+ -define(warning(Format,Args), ?log("<WARNING>\n " ++ Format,Args)).
+ -define(error(Format,Args), et_test_lib:error(Format,Args,?FILE,?LINE)).
+diff -Nuraw otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.erl otp_src_26.2.2/lib/reltool/test/reltool_test_lib.erl
+--- otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.erl	2024-02-07 15:00:00.000000000 +0100
++++ otp_src_26.2.2/lib/reltool/test/reltool_test_lib.erl	2024-02-20 02:30:18.000000000 +0100
+@@ -95,50 +95,6 @@
+     end.
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+-wx_init_per_suite(Config) ->
+-    {_Pid, Ref} = 
+-	spawn_monitor(fun() ->
+-			      %% Avoid test case crash if wx master process dies
+-			      process_flag(trap_exit, true),
+-			      try 
+-				  case os:type() of
+-				      {unix,darwin} ->
+-					  exit({skipped, "Can not test on MacOSX"});
+-				      {unix, _} ->
+-					  io:format("DISPLAY ~s~n", [os:getenv("DISPLAY")]),
+-					  case ct:get_config(xserver, none) of
+-					      none   -> ignore;
+-					      Server -> os:putenv("DISPLAY", Server)
+-					  end;
+-				      _ -> 
+-					  ignore
+-				  end,
+-				  wx:new(),
+-				  wx:destroy()
+-			      catch 
+-				  error:undef ->
+-				      exit({skipped, "No wx compiled for this platform"});
+-				    _:Reason ->
+-				      exit({skipped, lists:flatten(io_lib:format("Start wx failed: ~p", [Reason]))})
+-			      end,
+-			      exit(normal)			      
+-		      end),
+-    receive
+-	{'DOWN', Ref, _, _, normal} ->
+-	    init_per_suite(Config);	    
+-	{'DOWN', Ref, _, _, {skipped, _} = Skipped} ->
+-	    Skipped;
+-	{'DOWN', Ref, _, _, Reason} ->
+-	    exit({wx_init_per_suite, Reason})
+-    after timer:minutes(1) ->
+-	    exit({wx_init_per_suite, timeout})
+-    end.
+-
+-wx_end_per_suite(Config) ->
+-    end_per_suite(Config).
+-
+-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-
+ init_per_testcase(_Func, Config) when is_list(Config) ->
+     set_kill_timer(Config),
+     Config.
+@@ -210,40 +166,6 @@
+ user_available(Config) ->
+     false /= proplists:get_value(user, Config, false).
+    	
+-
+-wx_destroy(Frame, Config) ->
+-    case proplists:get_value(user, Config, false) of
+-	false ->
+-	    timer:sleep(100),
+-	    ?m(ok, wxFrame:destroy(Frame)),
+-	    ?m(ok, wx:destroy());
+-	true ->
+-	    timer:sleep(500),
+-	    ?m(ok, wxFrame:destroy(Frame)),
+-	    ?m(ok, wx:destroy());	
+-	step -> %% Wait for user to close window
+-	    ?m(ok, wxEvtHandler:connect(Frame, close_window, [{skip,true}])),
+-	    wait_for_close()
+-    end.
+-
+-wait_for_close() ->
+-    receive 
+-	#wx{event=#wxClose{}} ->
+-	    ?log("Got close~n",[]),
+-	    ?m(ok, wx:destroy());
+-	#wx{obj=Obj, event=Event} ->
+-	    try 
+-		Name = wxTopLevelWindow:getTitle(Obj),
+-		?log("~p Event: ~p~n", [Name, Event])
+-	    catch _:_ ->
+-		?log("Event: ~p~n", [Event])
+-	    end,
+-	    wait_for_close();
+-	Other ->
+-	    ?log("Unexpected: ~p~n", [Other]),
+-	    wait_for_close()
+-    end.
+-
+ erl_libs() ->
+     [filename:absname(P) || P<-reltool_utils:erl_libs()].
+ 
+diff -Nuraw otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.hrl otp_src_26.2.2/lib/reltool/test/reltool_test_lib.hrl
+--- otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.hrl	2024-02-07 15:00:00.000000000 +0100
++++ otp_src_26.2.2/lib/reltool/test/reltool_test_lib.hrl	2024-02-20 02:29:47.000000000 +0100
+@@ -17,8 +17,6 @@
+ %%
+ %% %CopyrightEnd%
+ 
+--include_lib("wx/include/wx.hrl").
+-
+ -define(log(Format,Args), reltool_test_lib:log(Format,Args,?FILE,?LINE)).
+ -define(error(Format,Args), reltool_test_lib:error(Format,Args,?FILE,?LINE)).
+ -define(verbose(Format,Args), reltool_test_lib:verbose(Format,Args,?FILE,?LINE)).
