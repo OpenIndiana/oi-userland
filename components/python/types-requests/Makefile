@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-requests
-HUMAN_VERSION =			2.31.0.20240125
+HUMAN_VERSION =			2.31.0.20240218
 COMPONENT_SUMMARY =		types-requests - Typing stubs for requests
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d9/7f/fb937e67e242dc191716860f6f16c6b57d2b20896e98a15ca5c298bd18b4/types-requests-2.31.0.20240125.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:03a28ce1d7cd54199148e043b2079cdded22d6795d19a2c2a6791a4b2b5e2eb5
+	sha256:f1721dba8385958f504a5386240b92de4734e047a08a40751c1654d1ac3349c5
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
 TEST_STYLE = setup.py
