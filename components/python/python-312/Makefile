@@ -28,6 +28,7 @@
 # hold at openssl 1.1 until test failures with 3.1 are root-caused.
 USE_OPENSSL11= yes
 USE_PARALLEL_BUILD = yes
+USE_CTF=yes
 
 include ../../../make-rules/shared-macros.mk
 
@@ -83,8 +84,6 @@ LDFLAGS = $(CC_BITS) $(CC_PIC)
 # build pic
 CFLAGS += $(CC_PIC)
 CFLAGS += $(CFLAGS.$(MACH))
-CFLAGS += -msave-args
-CFLAGS += -g -gdwarf-2 -gstrict-dwarf
 
 # XPG6
 CFLAGS += $(CPP_XPG6MODE)
