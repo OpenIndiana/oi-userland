@@ -27,6 +27,7 @@
 #
 
 BUILD_BITS= 64
+USE_OPENSSL31= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_FMRI= runtime/erlang
@@ -39,6 +40,7 @@ COMPONENT_ARCHIVE= ${COMPONENT_SRC}.tar.gz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:d537ff4ac5d8c1cb507aedaf7198fc1f155ea8aa65a8d83edb35c2802763cc28
 COMPONENT_ARCHIVE_URL= https://github.com/erlang/otp/releases/download/OTP-${COMPONENT_VERSION}/${COMPONENT_ARCHIVE}
+COMPONENT_POST_UNPACK_ACTION= ( $(RM) -r $(COMPONENT_SRC)/lib/wx )
 COMPONENT_VERSION_SHORT= 26.2
 COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE= Apache-2.0
