@@ -27,23 +27,25 @@ ESR =
 
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # CANDIDATE_BETA is the beta version found in the candidates directory.
-# Do not define either for final release build.
-# CANDIDATE_BUILD=1
+# CANDIDATE_NIGHTLY is the nightly release hosted on github
+# Do not define any for final release build.
+# CANDIDATE_BUILD=3
 # CANDIDATE_BETA=9
+# CANDIDATE_NIGHTLY=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	122.0.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION =	123.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
+
 ifdef CANDIDATE_BETA
 COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR).source.tar.xz
 else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
+# CANDIDATE_BETA
 endif
-COMPONENT_ARCHIVE_HASH= sha256:36f19c9a748eec2fd6d3a1594d0f1d7b715eaa1d9ed6d7eeda9db8478dcf36d6
+
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -53,11 +55,22 @@ MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPON
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR)-candidates/build$(CANDIDATE_BUILD)
   endif
 endif
+
+ifdef CANDIDATE_NIGHTLY
+COMPONENT_GIT_HASH=     c130c69b7b863d5e28ab9524b65c27c7a9507c48
+COMPONENT_SRC=          gecko-dev-$(COMPONENT_GIT_HASH)
+COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
+COMPONENT_ARCHIVE_URL=  https://github.com/mozilla/gecko-dev/archive/$(COMPONENT_ARCHIVE)
+else
+COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
+endif
+
+COMPONENT_ARCHIVE_HASH= sha256:9e885abdaddb14cd4f313c1575282fec6af5901f445e9744fe24e2ea837d4cb7
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.74.0
+RUST_VERSION = 1.75.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -68,19 +81,23 @@ LANG_LIST= ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb
  hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN \
  pl pt-BR pt-PT rm ro ru sat sc sco si sk sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
 
-ifdef CANDIDATE_BETA
+ifdef CANDIDATE_NIGHTLY
+FIREFOX_UPDATE_CHANNEL=nightly
+else
+  ifdef CANDIDATE_BETA
 LANG_FILES_LOCATION= \
 	https://ftp.mozilla.org/pub/firefox/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
 FIREFOX_UPDATE_CHANNEL=beta
 else
-  ifdef CANDIDATE_BUILD
+    ifdef CANDIDATE_BUILD
 LANG_FILES_LOCATION= \
 	https://ftp.mozilla.org/pub/firefox/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
 FIREFOX_UPDATE_CHANNEL=default
-  else
+    else
 LANG_FILES_LOCATION= \
 	https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
 FIREFOX_UPDATE_CHANNEL=default
+    endif
   endif
 endif
 
@@ -203,6 +220,8 @@ CONFIGURE_ENV =	$(ENV)
 COMPONENT_BUILD_ENV =	$(ENV)
 COMPONENT_INSTALL_ENV += HOME=/tmp
 
+# language support is more complex on nightly release, support on beta and later
+ifndef CANDIDATE_NIGHTLY
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
 CLEAN_PATHS += $(LANG_FILES)
@@ -211,6 +230,7 @@ $(LANG_FILES):
 	$(FETCH) --file $@  --url $(LANG_FILES_LOCATION)/$@
 
 download prep:: $(LANG_FILES)
+endif
 
 COMPONENT_POST_BUILD_ACTION = \
 	(cd $(@D)/browser/installer ; $(ENV) $(COMPONENT_BUILD_ENV) \
