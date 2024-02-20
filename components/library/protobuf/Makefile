@@ -25,11 +25,12 @@
 #
 
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         protobuf
 COMPONENT_VERSION=      24.4
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/google/protobuf/
