@@ -142,8 +142,8 @@ COMPONENT_INSTALL_ARGS += -e
 COMPONENT_POST_INSTALL_ACTION= \
     (cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
      $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
-    -e 's|$(SPRO_VROOT)/bin/||g' _sysconfigdata__sunos5_.py config-$(PYTHON_VERSION)/Makefile; \
-    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) $(PROTO_DIR)$(PYTHON) -m py_compile _sysconfigdata__sunos5_.py) ;
+    -e 's|$(SPRO_VROOT)/bin/||g' _sysconfigdata__sunos5_$(GCC_GNU_SHORT_TRIPLET).py config-$(PYTHON_VERSION)-$(GCC_GNU_SHORT_TRIPLET)/Makefile; \
+    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) $(PROTO_DIR)$(PYTHON) -m py_compile _sysconfigdata__sunos5_$(GCC_GNU_SHORT_TRIPLET).py) ;
 
 # Create symlinks without ending '3' for binaries
 COMPONENT_POST_INSTALL_ACTION += \
