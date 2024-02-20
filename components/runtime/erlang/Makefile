@@ -71,7 +71,6 @@ CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --with-ssl-lib-subdir=/amd64
-CONFIGURE_OPTIONS += --enable-fips
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 CONFIGURE_OPTIONS += --disable-silent-rules
 CONFIGURE_OPTIONS += --without-javac
