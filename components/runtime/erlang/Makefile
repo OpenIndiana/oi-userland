@@ -116,7 +116,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(PERL) -pi -e "s|$(PROTO_DIR)||g" \
 		$(PROTOUSRLIBDIR64)/erlang/bin/erl \
 		$(PROTOUSRLIBDIR64)/erlang/releases/RELEASES
-COMPONENT_POST_INSTALL_ACTION += ;( $(MV) $(COMPONENT_SRC_1)/man $(PROTO_DIR)/usr/ )
+COMPONENT_POST_INSTALL_ACTION += ;( $(MV) $(COMPONENT_SRC_1)/man $(PROTO_DIR)/usr/share/ )
 
 # common targets
 build:    $(BUILD_64)
