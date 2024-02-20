@@ -448,6 +448,7 @@ $(eval $(call disable-pytest-plugin,pytest_fakefs,pyfakefs))
 $(eval $(call disable-pytest-plugin,pytest_forked,pytest-forked))
 $(eval $(call disable-pytest-plugin,pytest_httpserver,pytest-httpserver))
 $(eval $(call disable-pytest-plugin,pytest_ignore_flaky,pytest-ignore-flaky))
+$(eval $(call disable-pytest-plugin,pytest_lazyfixture,pytest-lazy-fixtures))
 $(eval $(call disable-pytest-plugin,pytest_mock,pytest-mock))
 $(eval $(call disable-pytest-plugin,randomly,pytest-randomly))		# reorders tests
 $(eval $(call disable-pytest-plugin,regressions,pytest-regressions))
