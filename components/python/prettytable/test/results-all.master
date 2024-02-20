@@ -1,10 +1,10 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> $(PYTHON) -m pytest --cov prettytable --cov tests --cov-report xml
+py$(PYV): commands[0]> $(PYTHON) -m pytest --cov prettytable --cov tests --cov-report html --cov-report term --cov-report xml
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 164 items
+collecting ... collected 166 items
 
 tests/test_colortable.py::TestColorTable::test_theme_setter PASSED
 tests/test_colortable.py::TestColorTable::test_themeless PASSED
@@ -43,14 +43,14 @@ tests/test_prettytable.py::TestBasic::test_no_blank_lines_with_title PASSED
 tests/test_prettytable.py::TestBasic::test_no_blank_lines_without_border PASSED
 tests/test_prettytable.py::TestBasic::test_no_blank_lines_without_header PASSED
 tests/test_prettytable.py::TestBasic::test_table_rows PASSED
-tests/test_prettytable.py::TestBreakLine::test_break_line_ASCII[rows0-1-\n+---------+-------------+\n| Field 1 |   Field 2   |\n+---------+-------------+\n| value 1 |    value2   |\n|         | second line |\n+---------+-------------+\n| value 3 |    value4   |\n+---------+-------------+\n] PASSED
-tests/test_prettytable.py::TestBreakLine::test_break_line_ASCII[rows1-1-\n+------------+-------------+\n|  Field 1   |   Field 2   |\n+------------+-------------+\n|  value 1   |    value2   |\n|            | second line |\n+------------+-------------+\n|  value 3   |    value4   |\n|            |             |\n| other line |             |\n|            |    value5   |\n+------------+-------------+\n] PASSED
-tests/test_prettytable.py::TestBreakLine::test_break_line_ASCII[rows2-0-\n+------------+-------------+\n|  Field 1   |   Field 2   |\n+------------+-------------+\n|  value 1   |    value2   |\n|            | second line |\n|  value 3   |    value4   |\n|            |             |\n| other line |             |\n|            |    value5   |\n+------------+-------------+\n] PASSED
-tests/test_prettytable.py::TestBreakLine::test_break_line_HTML PASSED
-tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_ASCII[row_prettytable-col_prettytable] PASSED
-tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_ASCII[row_prettytable-mix_prettytable] PASSED
-tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_HTML[row_prettytable-col_prettytable] PASSED
-tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_HTML[row_prettytable-mix_prettytable] PASSED
+tests/test_prettytable.py::TestBreakLine::test_break_line_ascii[rows0-1-\n+---------+-------------+\n| Field 1 |   Field 2   |\n+---------+-------------+\n| value 1 |    value2   |\n|         | second line |\n+---------+-------------+\n| value 3 |    value4   |\n+---------+-------------+\n] PASSED
+tests/test_prettytable.py::TestBreakLine::test_break_line_ascii[rows1-1-\n+------------+-------------+\n|  Field 1   |   Field 2   |\n+------------+-------------+\n|  value 1   |    value2   |\n|            | second line |\n+------------+-------------+\n|  value 3   |    value4   |\n|            |             |\n| other line |             |\n|            |    value5   |\n+------------+-------------+\n] PASSED
+tests/test_prettytable.py::TestBreakLine::test_break_line_ascii[rows2-0-\n+------------+-------------+\n|  Field 1   |   Field 2   |\n+------------+-------------+\n|  value 1   |    value2   |\n|            | second line |\n|  value 3   |    value4   |\n|            |             |\n| other line |             |\n|            |    value5   |\n+------------+-------------+\n] PASSED
+tests/test_prettytable.py::TestBreakLine::test_break_line_html PASSED
+tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_ascii[row_prettytable-col_prettytable] PASSED
+tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_ascii[row_prettytable-mix_prettytable] PASSED
+tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_html[row_prettytable-col_prettytable] PASSED
+tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_html[row_prettytable-mix_prettytable] PASSED
 tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_latex[row_prettytable-col_prettytable] PASSED
 tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_latex[row_prettytable-mix_prettytable] PASSED
 tests/test_prettytable.py::TestClearing::test_clear PASSED
@@ -71,32 +71,33 @@ tests/test_prettytable.py::TestEmptyTable::test_interaction_with_border PASSED
 tests/test_prettytable.py::TestEmptyTable::test_print_empty_false PASSED
 tests/test_prettytable.py::TestEmptyTable::test_print_empty_true PASSED
 tests/test_prettytable.py::TestFieldNameLessTable::test_add_field_names_later PASSED
-tests/test_prettytable.py::TestFieldNameLessTable::test_can_string_ASCII PASSED
-tests/test_prettytable.py::TestFieldNameLessTable::test_can_string_HTML PASSED
+tests/test_prettytable.py::TestFieldNameLessTable::test_can_string_ascii PASSED
+tests/test_prettytable.py::TestFieldNameLessTable::test_can_string_html PASSED
 tests/test_prettytable.py::TestFieldNameLessTable::test_can_string_latex PASSED
 tests/test_prettytable.py::TestFloatFormat::test_no_decimals PASSED
-tests/test_prettytable.py::TestFloatFormat::test_pad_with_2Zeroes PASSED
-tests/test_prettytable.py::TestFloatFormat::test_round_to_5DP PASSED
+tests/test_prettytable.py::TestFloatFormat::test_pad_with_2zeroes PASSED
+tests/test_prettytable.py::TestFloatFormat::test_round_to_5dp PASSED
 tests/test_prettytable.py::TestFromDB::test_non_select_cursor PASSED
+tests/test_prettytable.py::TestGeneralOutput::test_copy PASSED
 tests/test_prettytable.py::TestGeneralOutput::test_csv PASSED
 tests/test_prettytable.py::TestGeneralOutput::test_html PASSED
 tests/test_prettytable.py::TestGeneralOutput::test_invalid PASSED
 tests/test_prettytable.py::TestGeneralOutput::test_json PASSED
 tests/test_prettytable.py::TestGeneralOutput::test_latex PASSED
 tests/test_prettytable.py::TestGeneralOutput::test_text PASSED
-tests/test_prettytable.py::TestHtmlConstructor::test_HtmlAndBack PASSED
-tests/test_prettytable.py::TestHtmlConstructor::test_HtmlOneAndBack PASSED
-tests/test_prettytable.py::TestHtmlConstructor::test_HtmlOneFailOnMany PASSED
-tests/test_prettytable.py::TestHtmlOutput::test_HtmlOutput PASSED
-tests/test_prettytable.py::TestHtmlOutput::test_HtmlOutputFormatted PASSED
-tests/test_prettytable.py::TestHtmlOutput::test_HtmlOutputFormattedWithTitle PASSED
-tests/test_prettytable.py::TestHtmlOutput::test_HtmlOutputWithTitle PASSED
-tests/test_prettytable.py::TestJSONConstructor::test_JSONAndBack PASSED
-tests/test_prettytable.py::TestJSONOutput::test_JSON_output PASSED
-tests/test_prettytable.py::TestJSONOutput::test_JSON_output_options PASSED
-tests/test_prettytable.py::TestLatexOutput::testLatexOutput PASSED
-tests/test_prettytable.py::TestLatexOutput::testLatexOutputFormatted PASSED
-tests/test_prettytable.py::TestLatexOutput::testLatexOutputHeader PASSED
+tests/test_prettytable.py::TestHtmlConstructor::test_html_and_back PASSED
+tests/test_prettytable.py::TestHtmlConstructor::test_html_one_and_back PASSED
+tests/test_prettytable.py::TestHtmlConstructor::test_html_one_fail_on_many PASSED
+tests/test_prettytable.py::TestHtmlOutput::test_html_output PASSED
+tests/test_prettytable.py::TestHtmlOutput::test_html_output_formatted PASSED
+tests/test_prettytable.py::TestHtmlOutput::test_html_output_formatted_with_title PASSED
+tests/test_prettytable.py::TestHtmlOutput::test_html_output_with_title PASSED
+tests/test_prettytable.py::TestJSONConstructor::test_json_and_back PASSED
+tests/test_prettytable.py::TestJSONOutput::test_json_output PASSED
+tests/test_prettytable.py::TestJSONOutput::test_json_output_options PASSED
+tests/test_prettytable.py::TestLatexOutput::test_latex_output PASSED
+tests/test_prettytable.py::TestLatexOutput::test_latex_output_formatted PASSED
+tests/test_prettytable.py::TestLatexOutput::test_latex_output_header PASSED
 tests/test_prettytable.py::TestMaxTableWidth::test_max_table_width PASSED
 tests/test_prettytable.py::TestMinTableWidth::test_min_table_width[15-fields0-20-True-False] PASSED
 tests/test_prettytable.py::TestMinTableWidth::test_min_table_width[16-fields1-21-True-False] PASSED
@@ -135,13 +136,13 @@ tests/test_prettytable.py::TestOptionOverride::test_border PASSED
 tests/test_prettytable.py::TestOptionOverride::test_header PASSED
 tests/test_prettytable.py::TestOptionOverride::test_hrules_all PASSED
 tests/test_prettytable.py::TestOptionOverride::test_hrules_none PASSED
-tests/test_prettytable.py::TestPositionalJunctions::test_Default PASSED
-tests/test_prettytable.py::TestPositionalJunctions::test_HruleAll PASSED
-tests/test_prettytable.py::TestPositionalJunctions::test_NoHeader PASSED
-tests/test_prettytable.py::TestPositionalJunctions::test_VrulesFrameWithTitle PASSED
-tests/test_prettytable.py::TestPositionalJunctions::test_VrulesNone PASSED
-tests/test_prettytable.py::TestPositionalJunctions::test_WithTitle PASSED
-tests/test_prettytable.py::TestPositionalJunctions::test_WithTitleNoHeader PASSED
+tests/test_prettytable.py::TestPositionalJunctions::test_default PASSED
+tests/test_prettytable.py::TestPositionalJunctions::test_hrule_all PASSED
+tests/test_prettytable.py::TestPositionalJunctions::test_no_header PASSED
+tests/test_prettytable.py::TestPositionalJunctions::test_vrules_frame_with_title PASSED
+tests/test_prettytable.py::TestPositionalJunctions::test_vrules_none PASSED
+tests/test_prettytable.py::TestPositionalJunctions::test_with_title PASSED
+tests/test_prettytable.py::TestPositionalJunctions::test_with_title_no_header PASSED
 tests/test_prettytable.py::TestPreservingInternalBorders::test_internal_border_preserved PASSED
 tests/test_prettytable.py::TestPreservingInternalBorders::test_internal_border_preserved_html PASSED
 tests/test_prettytable.py::TestPreservingInternalBorders::test_internal_border_preserved_latex PASSED
@@ -170,18 +171,9 @@ tests/test_prettytable.py::TestUnpaddedTable::test_unbordered PASSED
 tests/test_prettytable.py::test_add_rows PASSED
 tests/test_prettytable.py::test_autoindex PASSED
 tests/test_prettytable.py::test_paginate PASSED
+tests/test_prettytable.py::test_version PASSED
 
 
-======== 164 passed ========
-py$(PYV): commands[1]> python -m coverage report
-Name                                                                                                                                           Stmts   Miss  Cover
-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/prettytable/__init__.py          5      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/prettytable/colortable.py       45      2    96%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/prettytable/prettytable.py    1406    118    92%
-tests/test_colortable.py                                                                                                                          59      0   100%
-tests/test_prettytable.py                                                                                                                        845      0   100%
-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                           2360    120    95%
+======== 166 passed ========
   py$(PYV): OK
   congratulations :)
