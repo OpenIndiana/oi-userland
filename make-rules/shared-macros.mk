@@ -651,6 +651,9 @@ FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 GCC_FULL_VERSION = $(shell $(GCC_ROOT)/bin/gcc -dumpversion)
 # Since gcc-9 the GNU triplet is x86_64-pc-solaris2.11 instead of i386-pc-solaris2.11
 GCC_GNU_TRIPLET  = $(shell $(GCC_ROOT)/bin/gcc -dumpmachine)
+GCC_GNU_TRIPLET  = $(shell $(GCC_ROOT)/bin/gcc -dumpmachine)
+# GCC triplet with shorter version ( ..-solaris2 rather than ..-solaris2.11)
+GCC_GNU_SHORT_TRIPLET = $(shell $(GCC_ROOT)/bin/gcc -dumpmachine | /usr/bin/sed -E 's/\.[0-9]+$$//')
 GCC_BINDIR =	$(GCC_ROOT)/bin
 GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
 GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
