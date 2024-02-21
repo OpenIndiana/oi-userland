@@ -1,4 +1,3 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> $(PYTHON) -m mypy
 Success: no issues found in 10 source files
@@ -7,7 +6,6 @@ py$(PYV): commands[1]> $(PYTHON) -m pytest --cov wcmatch --cov-append tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: tox.ini
 collecting ... collected 1322 items
 
 tests/test_fnmatch.py::TestExcludes::test_exclude PASSED
@@ -1333,8 +1331,22 @@ tests/test_wcparse.py::TestWcparse::test_translate_expansion_okay PASSED
 tests/test_wcparse.py::TestWcparse::test_translate_unique_optimization_okay PASSED
 tests/test_wcparse.py::TestWcparse::test_unc_pattern PASSED
 
+=============================== warnings summary ===============================
+tests/test_glob.py: 18 warnings
+  $(@D)/tests/test_glob.py:1386: DeprecationWarning: 'raw_escape' is deprecated. This function will be removed in 9.0.
+    self.assertEqual(glob.raw_escape(arg, unix=unix, raw_chars=raw_chars), expected)
 
-======== 1171 passed, 151 skipped ========
+tests/test_glob.py: 18 warnings
+  $(@D)/tests/test_glob.py:1387: DeprecationWarning: 'raw_escape' is deprecated. This function will be removed in 9.0.
+    self.assertEqual(glob.raw_escape(os.fsencode(arg), unix=unix, raw_chars=raw_chars), os.fsencode(expected))
+
+tests/test_glob.py: 18 warnings
+  $(@D)/tests/test_glob.py:1392: DeprecationWarning: 'raw_escape' is deprecated. This function will be removed in 9.0.
+    glob.raw_escape(arg, unix=unix, raw_chars=raw_chars),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+======== 1171 passed, 151 skipped, 54 warnings ========
 py$(PYV): commands[2]> $(PYTHON) -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/coverage
 Wrote HTML report to $(@D)/.tox/py$(PYV)/tmp/coverage/index.html
 py$(PYV): commands[3]> $(PYTHON) -m coverage xml
@@ -1345,14 +1357,14 @@ Name                  Stmts   Miss  Cover   Missing
 wcmatch/__init__.py       1      0   100%
 wcmatch/__meta__.py      70      0   100%
 wcmatch/_wcmatch.py     143      1    99%   179
-wcmatch/_wcparse.py    1013      2    99%   368, 392
+wcmatch/_wcparse.py    1016      2    99%   368, 392
 wcmatch/fnmatch.py       40      0   100%
-wcmatch/glob.py         513     28    95%   113-115, 177-179, 224-226, 257-258, 308-320, 337-338, 814, 832-833
+wcmatch/glob.py         514     28    95%   113-115, 178-180, 225-227, 258-259, 309-321, 338-339, 816, 834-835
 wcmatch/pathlib.py      103      6    94%   88, 102, 173, 182-184
 wcmatch/posix.py          8      0   100%
 wcmatch/util.py          96      4    96%   61, 222-224
 wcmatch/wcmatch.py      165      4    98%   103-106, 135
 ---------------------------------------------------
-TOTAL                  2152     45    98%
+TOTAL                  2156     45    98%
   py$(PYV): OK
   congratulations :)
