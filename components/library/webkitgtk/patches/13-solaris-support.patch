@@ -55,7 +55,27 @@ diff --git a/Source/WTF/wtf/PlatformHave.h b/Source/WTF/wtf/PlatformHave.h
 index 41afbb4..9e5d453 100644
 --- a/Source/WTF/wtf/PlatformHave.h
 +++ b/Source/WTF/wtf/PlatformHave.h
-@@ -328,7 +328,7 @@
+@@ -229,16 +229,16 @@
+ #define HAVE_HOSTED_CORE_ANIMATION 1
+ #endif
+ 
+-#if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)))
++#if OS(DARWIN) || OS(FUCHSIA) || OS(SOLARIS) || ((OS(FREEBSD) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)))
+ #define HAVE_MACHINE_CONTEXT 1
+ #endif
+ 
+-#if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
++#if OS(DARWIN) || OS(SOLARIS) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
+ #define HAVE_BACKTRACE 1
+ #define HAVE_BACKTRACE_SYMBOLS 1
+ #endif
+ 
+-#if OS(DARWIN) || OS(LINUX)
++#if OS(DARWIN) || OS(LINUX) || OS(SOLARIS)
+ #define HAVE_DLADDR 1
+ #endif
+ 
+@@ -376,7 +376,7 @@
  #define HAVE_URL_FORMATTING 1
  #endif
  
@@ -134,3 +154,58 @@ index 6577423..b882b9e 100644
  #else
      return "unknown"_s;
  #endif
+--- webkitgtk-2.42.5/Source/JavaScriptCore/runtime/MachineContext.h.~1~	2023-09-19 04:27:45.475782200 -0400
++++ webkitgtk-2.42.5/Source/JavaScriptCore/runtime/MachineContext.h	2024-02-18 01:24:47.690986457 -0500
+@@ -33,6 +33,7 @@
+ #include <wtf/PlatformRegisters.h>
+ #include <wtf/PointerPreparations.h>
+ #include <wtf/StdLibExtras.h>
++#include <sys/regset.h>
+ 
+ namespace JSC {
+ namespace MachineContext {
+@@ -193,7 +194,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ #if CPU(X86)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_ESP]);
+@@ -338,7 +339,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86)
+@@ -496,7 +497,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86)
+@@ -652,7 +653,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86)
+@@ -787,7 +788,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86)
