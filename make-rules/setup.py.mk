@@ -435,7 +435,6 @@ $(eval $(call disable-pytest-plugin,helpers_namespace,pytest-helpers-namespace))
 $(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to test report header
 $(eval $(call disable-pytest-plugin,jaraco.test.http,jaraco-test))
 $(eval $(call disable-pytest-plugin,kgb,kgb))
-$(eval $(call disable-pytest-plugin,lazy-fixture,pytest-lazy-fixture))
 $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
 $(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
