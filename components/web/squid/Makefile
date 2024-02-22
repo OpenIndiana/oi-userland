@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2023, Friedrich Kink
+# Copyright (c) 2023,2024 Friedrich Kink
 #
 
 BUILD_BITS=             64
@@ -30,18 +30,17 @@ OPENSSL_VERSION=	3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      6.6
+COMPONENT_VERSION=      6.7
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
-#No https connection available at all
-COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
+COMPONENT_PROJECT_URL=  https://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v6/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:55bd7f9f4898153161ea1228998acb551bf840832b9e5b90fc8ecd2942420318
-COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME)-langpack-20230225.tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:e14daa4eae41925d1ae3f08e64439a6aaa3011bdced686628b8de697d5ab8428
+COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME)-langpack-20231227.tar.gz
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_PROJECT_URL)Versions/langpack/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_HASH_1= sha256:1532b796f20a65b9f4e7040306172477f7bbaacfce3c5f402fe1a5f9464b92be
+COMPONENT_ARCHIVE_HASH_1= sha256:43f98e15759f193e56fedeff9fab5d31a6b326df1ebe9bf77cb9a26ae6674a74
 COMPONENT_FMRI=         web/proxy/squid
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_LICENSE=      GPLv2
@@ -133,10 +132,6 @@ CONFIGURE_OPTIONS += --without-gnutls
 # These are needed for Cisco integration
 CONFIGURE_OPTIONS += --enable-wccp
 CONFIGURE_OPTIONS += --enable-wccpv2
-# Native instructions need to be disabled for zones as reported in #5221
-# This is described in detail in
-#   http://wiki.squid-cache.org/KnowledgeBase/IllegalInstructionError
-CONFIGURE_OPTIONS += --disable-arch-native
 
 COMPONENT_TEST_TARGETS = -k check
 COMPONENT_TEST_TRANSFORMS += \
