@@ -1,13 +1,10 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 1144 items
+collecting ... collected 1143 items
 
-::project PASSED
 tests/test_future/test_backports.py::CountTest::test_count PASSED
 tests/test_future/test_backports.py::CountTest::test_own_count PASSED
 tests/test_future/test_backports.py::TestChainMap::test_basics PASSED
@@ -646,6 +643,7 @@ tests/test_future/test_standard_library.py::TestFutureMoves::test_future_moves P
 tests/test_future/test_standard_library.py::TestFutureMoves::test_future_moves_dbm PASSED
 tests/test_future/test_standard_library.py::TestFutureMoves::test_future_moves_urllib_request PASSED
 tests/test_future/test_standard_library.py::TestStandardLibraryReorganization::test_ChainMap PASSED
+tests/test_future/test_standard_library.py::TestStandardLibraryReorganization::test_SimpleQueue PASSED
 tests/test_future/test_standard_library.py::TestStandardLibraryReorganization::test_builtins PASSED
 tests/test_future/test_standard_library.py::TestStandardLibraryReorganization::test_bytesio PASSED
 tests/test_future/test_standard_library.py::TestStandardLibraryReorganization::test_can_import_several PASSED
@@ -1152,10 +1150,6 @@ tests/test_past/test_translation.py::TestTranslate::test_print_statement PASSED
 tests/test_past/test_translation.py::TestTranslate::test_xrange PASSED
 
 =============================== warnings summary ===============================
-../prototype/i386$(PYTHON_DIR)/vendor-packages/future/standard_library/__init__.py:65
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/future/standard_library/__init__.py:65: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
-    import imp
-
 tests/test_future/test_builtins.py:266
   $(@D)/tests/test_future/test_builtins.py:266: DeprecationWarning: invalid escape sequence \u
     (str(b'\u0663\u0661\u0664 ','raw-unicode-escape'), 314),
@@ -1200,48 +1194,44 @@ tests/test_future/test_urllib_toplevel.py:626
   $(@D)/tests/test_future/test_urllib_toplevel.py:626: DeprecationWarning: invalid escape sequence \^
     should_quote.append('<>#%"{}|\^[]`')
 
-tests/test_future/test_standard_library.py::TestStandardLibraryReorganization::test_reload
-  $(PYTHON_DIR)/importlib/__init__.py:169: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
-    _bootstrap._exec(spec, module)
-
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1209: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1211: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user', 'ab'),urllib_parse.splitpasswd('user:ab'))
 
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1210: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1212: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user', 'a\nb'),urllib_parse.splitpasswd('user:a\nb'))
 
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1211: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1213: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user', 'a\tb'),urllib_parse.splitpasswd('user:a\tb'))
 
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1212: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1214: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user', 'a\rb'),urllib_parse.splitpasswd('user:a\rb'))
 
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1213: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1215: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user', 'a\fb'),urllib_parse.splitpasswd('user:a\fb'))
 
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1214: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1216: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user', 'a\vb'),urllib_parse.splitpasswd('user:a\vb'))
 
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1215: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1217: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user', 'a:b'),urllib_parse.splitpasswd('user:a:b'))
 
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1216: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1218: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user', 'a b'),urllib_parse.splitpasswd('user:a b'))
 
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1217: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1219: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user 2', 'ab'),urllib_parse.splitpasswd('user 2:ab'))
 
 tests/test_future/test_urllib_toplevel.py::Utility_Tests::test_splitpasswd
-  $(@D)/tests/test_future/test_urllib_toplevel.py:1218: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
+  $(@D)/tests/test_future/test_urllib_toplevel.py:1220: DeprecationWarning: urllib.parse.splitpasswd() is deprecated as of 3.8, use urllib.parse.urlparse() instead
     self.assertEqual(('user+1', 'a+b'),urllib_parse.splitpasswd('user+1:a+b'))
 
 tests/test_future/test_urllibnet.py::urlopenNetworkTests::test_getcode
@@ -1249,13 +1239,9 @@ tests/test_future/test_urllibnet.py::test_main
   $(@D)/tests/test_future/test_urllibnet.py:103: DeprecationWarning: FancyURLopener style of invoking requests is deprecated. Use newer urlopen functions/methods
     open_url = urllib_request.FancyURLopener().open(URL)
 
-tests/test_future/test_utils.py::TestUtils::test_raise_
-  $(@D)/tests/test_future/test_utils.py:153: DeprecationWarning: Please use assertRaisesRegex instead.
-    self.assertRaisesRegexp(
-
 tests/test_past/test_oldstr.py::TestOldStr::test_unescape
   $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/past/types/oldstr.py:37: DeprecationWarning: invalid escape sequence '\c'
     return s.encode().decode('unicode_escape')
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1060 passed, 37 skipped, 46 xfailed, 27 warnings ========
+======== 1060 passed, 37 skipped, 46 xfailed, 24 warnings ========

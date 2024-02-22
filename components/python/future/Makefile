@@ -15,27 +15,21 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		future
-HUMAN_VERSION =			0.18.3
+HUMAN_VERSION =			1.0.0
 COMPONENT_SUMMARY =		future - Clean single-source support for Python 3 and 2
 COMPONENT_PROJECT_URL =		https://python-future.org
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8f/2e/cf6accf7415237d6faeeebdc7832023c90e0282aa16fd3263db0eb4715ec/future-0.18.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:34a17436ed1e96697a86f9de3d15a3b0be01d8bc8de9c1dffd59fb8234ed5307
+	sha256:bd2968309307861edae1458a4f8a4f3598c03be43b97521076aebf5d94c07b05
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/PythonCharmers/python-future/issues/593
-PYTEST_ADDOPTS += -p no:randomly
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
