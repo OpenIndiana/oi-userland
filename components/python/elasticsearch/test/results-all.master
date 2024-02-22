@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 asyncio: mode=strict
-collecting ... collected 347 items / 2 skipped
+collecting ... collected 349 items / 2 skipped
 
 test_elasticsearch/test_async/test_server/test_clients.py::test_bulk_works_with_bytestring_body SKIPPED
 test_elasticsearch/test_async/test_server/test_clients.py::test_bulk_works_with_string_body SKIPPED
@@ -211,6 +211,8 @@ test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_error_on_params_merge[{"query": {"match_all": {}}}1] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_ignore_deprecated_options PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_parameter_aliases PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_parameter_aliases_body PASSED
+test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_parameter_aliases_body_param PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_positional_argument_error[AsyncElasticsearch] PASSED
 test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters::test_positional_argument_error[Elasticsearch] PASSED
 test_elasticsearch/test_client/test_serializers.py::TestSerializers::test_compat_mode_on_by_default PASSED
@@ -355,9 +357,10 @@ test_elasticsearch/test_transport.py::test_warning_header[headers0] PASSED
 test_elasticsearch/test_transport.py::test_warning_header[headers1] PASSED
 
 =============================== warnings summary ===============================
-test_elasticsearch/test_transport.py:36
-  $(@D)/test_elasticsearch/test_transport.py:36: DeprecationWarning: Importing from the 'elasticsearch.transport' module is deprecated. Instead import from 'elastic_transport'
-    from elasticsearch.transport import get_host_info
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/fixtures.py:1322
+  $(PYTHON_DIR)/vendor-packages/_pytest/fixtures.py:1322: PytestRemovedIn9Warning: Marks applied to fixtures have no effect
+  See docs: https://docs.pytest.org/en/stable/deprecations.html#applying-a-mark-to-a-fixture-function
+    return fixture_marker(fixture_function)
 
 test_elasticsearch/test_async/test_transport.py:497
   test_elasticsearch/test_async/test_transport.py:497: PytestDeprecationWarning: test_sniff_after_n_seconds is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
@@ -367,41 +370,9 @@ test_elasticsearch/test_async/test_transport.py:551
   test_elasticsearch/test_async/test_transport.py:551: PytestDeprecationWarning: test_sniff_on_start_close_unlocks_async_calls is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
     async def test_sniff_on_start_close_unlocks_async_calls(self, event_loop):
 
-test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
-test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
-test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
-test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
-test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
-  $(@D)/test_elasticsearch/test_transport.py:169: DeprecationWarning: The 'get_host_info' function is deprecated. Instead use the 'sniff_node_callback' parameter on the client
-    if get_host_info(node_info, i) is not None
-
-test_elasticsearch/test_transport.py::TestTransport::test_request_timeout_extracted_from_params_and_passed
-  $(@D)/test_elasticsearch/test_transport.py:180: DeprecationWarning: The 'params' parameter is deprecated and will be removed in a future version. Instead use individual parameters.
-    client.info(params={"request_timeout": 42})
-
-test_elasticsearch/test_transport.py::TestTransport::test_request_timeout_extracted_from_params_and_passed
-  $(@D)/test_elasticsearch/test_transport.py:180: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
-    client.info(params={"request_timeout": 42})
-
-test_elasticsearch/test_transport.py::TestTransport::test_opaque_id
-  $(@D)/test_elasticsearch/test_transport.py:201: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
-    client.info(opaque_id="request-2")
-
-test_elasticsearch/test_transport.py::TestTransport::test_request_with_custom_user_agent_header
-  $(@D)/test_elasticsearch/test_transport.py:220: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
-    client.info(headers={"User-Agent": "my-custom-value/1.2.3"})
-
-test_elasticsearch/test_transport.py::TestTransport::test_client_meta_header
-  $(@D)/test_elasticsearch/test_transport.py:255: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
-    client.info(headers={"CustoM": "header"})
-
-test_elasticsearch/test_transport.py::TestTransport::test_sniffing_disabled_on_elastic_cloud[kwargs1]
-  $(@D)/test_elasticsearch/test_transport.py:503: DeprecationWarning: The 'sniff_on_connection_fail' parameter is deprecated in favor of 'sniff_on_node_failure'
-    Elasticsearch(
-
-test_elasticsearch/test_transport.py::TestTransport::test_sniffing_disabled_on_elastic_cloud[kwargs4]
-  $(@D)/test_elasticsearch/test_transport.py:503: DeprecationWarning: The 'sniffer_timeout' parameter is deprecated in favor of 'min_delay_between_sniffing'
-    Elasticsearch(
+test_elasticsearch/test_transport.py:36
+  $(@D)/test_elasticsearch/test_transport.py:36: DeprecationWarning: Importing from the 'elasticsearch.transport' module is deprecated. Instead import from 'elastic_transport'
+    from elasticsearch.transport import get_host_info
 
 test_elasticsearch/test_async/test_transport.py::TestTransport::test_request_timeout_extracted_from_params_and_passed
   $(@D)/test_elasticsearch/test_async/test_transport.py:172: DeprecationWarning: The 'params' parameter is deprecated and will be removed in a future version. Instead use individual parameters.
@@ -447,6 +418,42 @@ test_elasticsearch/test_client/test_rewrite_parameters.py::TestRewriteParameters
   $(@D)/test_elasticsearch/test_client/test_rewrite_parameters.py:88: DeprecationWarning: The 'params' parameter is deprecated and will be removed in a future version. Instead use individual parameters.
     self.wrapped_func_default(
 
+test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
+test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
+test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
+test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
+test_elasticsearch/test_transport.py::TestHostsInfoCallback::test_master_only_nodes_are_ignored
+  $(@D)/test_elasticsearch/test_transport.py:169: DeprecationWarning: The 'get_host_info' function is deprecated. Instead use the 'sniff_node_callback' parameter on the client
+    if get_host_info(node_info, i) is not None
+
+test_elasticsearch/test_transport.py::TestTransport::test_request_timeout_extracted_from_params_and_passed
+  $(@D)/test_elasticsearch/test_transport.py:180: DeprecationWarning: The 'params' parameter is deprecated and will be removed in a future version. Instead use individual parameters.
+    client.info(params={"request_timeout": 42})
+
+test_elasticsearch/test_transport.py::TestTransport::test_request_timeout_extracted_from_params_and_passed
+  $(@D)/test_elasticsearch/test_transport.py:180: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
+    client.info(params={"request_timeout": 42})
+
+test_elasticsearch/test_transport.py::TestTransport::test_opaque_id
+  $(@D)/test_elasticsearch/test_transport.py:201: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
+    client.info(opaque_id="request-2")
+
+test_elasticsearch/test_transport.py::TestTransport::test_request_with_custom_user_agent_header
+  $(@D)/test_elasticsearch/test_transport.py:220: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
+    client.info(headers={"User-Agent": "my-custom-value/1.2.3"})
+
+test_elasticsearch/test_transport.py::TestTransport::test_client_meta_header
+  $(@D)/test_elasticsearch/test_transport.py:255: DeprecationWarning: Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.
+    client.info(headers={"CustoM": "header"})
+
+test_elasticsearch/test_transport.py::TestTransport::test_sniffing_disabled_on_elastic_cloud[kwargs1]
+  $(@D)/test_elasticsearch/test_transport.py:503: DeprecationWarning: The 'sniff_on_connection_fail' parameter is deprecated in favor of 'sniff_on_node_failure'
+    Elasticsearch(
+
+test_elasticsearch/test_transport.py::TestTransport::test_sniffing_disabled_on_elastic_cloud[kwargs4]
+  $(@D)/test_elasticsearch/test_transport.py:503: DeprecationWarning: The 'sniffer_timeout' parameter is deprecated in favor of 'min_delay_between_sniffing'
+    Elasticsearch(
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 227 passed, 122 skipped, 26 warnings ========
+======== 229 passed, 122 skipped, 27 warnings ========
