@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		httpx
-HUMAN_VERSION =			0.26.0
+HUMAN_VERSION =			0.27.0
 COMPONENT_SUMMARY =		httpx - The next generation HTTP client.
 COMPONENT_PROJECT_URL =		https://github.com/encode/httpx
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/encode/httpx/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c2c2db4a2d83420f96e48c80dacae4f079a02e7cf67a98bb85db6fdd70517c87
+	sha256:b7ad539016912567002a5358ad8f0dbf5873d963467f9bd2af6ba37eddc13c6e
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -34,7 +34,7 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Random temporary directory name
-# see also https://github.com/encode/httpx/pull/3015
+# see also https://github.com/encode/httpx/discussions/3016
 COMPONENT_TEST_TRANSFORMS += "-e '/\/tmp\/.*garbage/d'"
 
 # This project does not support tox so we need to provide test requirements
