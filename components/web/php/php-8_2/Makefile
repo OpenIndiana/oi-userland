@@ -10,25 +10,24 @@
 
 #
 # Copyright 2013, EveryCity Ltd. All rights reserved.
-# Copyright 2022 Friedrich Kink. All rights reserved.
 # Copyright 2022 Niklas Poslovski
+# Copyright 2022,2024 Friedrich Kink. All rights reserved.
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.2
-COMPONENT_MNR_VERSION=	15
+COMPONENT_MNR_VERSION=	16
 COMPONENT_SUMMARY=      PHP 8.2
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:50c3e220b7aa63a85716233c902eb44cc0a4667ed0b8335722ae2391b1355e7a
+COMPONENT_ARCHIVE_HASH= sha256:2658c1b8935ab6b53a7f209354602761ab07066e66920bc472b8815fd1b43f71
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
+#COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-82
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
 COMPONENT_LICENSE=      PHP License
@@ -230,6 +229,7 @@ REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
