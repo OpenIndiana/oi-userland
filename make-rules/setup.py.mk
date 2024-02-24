@@ -234,8 +234,6 @@ COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PYTHON_VE
 # See below for test style specific transforms.
 COMPONENT_TEST_TRANSFORMS += "-e 's|$(PYTHON_DIR)|\$$(PYTHON_DIR)|g'"
 
-# Make sure the test environment is prepared before we start tests
-COMPONENT_TEST_DEP +=	component-test-environment-prep
 # Testing depends on install target because we want to test installed modules
 COMPONENT_TEST_DEP +=	$(BUILD_DIR)/%/.installed
 # Point Python to the proto area so it is able to find installed modules there

@@ -553,6 +553,11 @@ COMPONENT_TEST_TARGETS =	check
 # set the default directory for test of the component
 COMPONENT_TEST_DIR =	$(@D)
 
+# prepare the testing environment before we run tests
+COMPONENT_TEST_DEP += component-test-environment-prep
+# we test built components
+COMPONENT_TEST_DEP += $(BUILD_DIR)/%/.built
+
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
 TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.tested
