@@ -19,13 +19,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpg123
-COMPONENT_VERSION= 1.32.4
+COMPONENT_VERSION= 1.32.5
 COMPONENT_SUMMARY= Fast console MPEG Audio Player and decoder library
 COMPONENT_PROJECT_URL= https://mpg123.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:5a99664338fb2f751b662f40ee25804d0c9db6b575dcb5ce741c6dc64224a08a
+COMPONENT_ARCHIVE_HASH= sha256:af908cdf6cdb6544b97bc706a799f79894e69468af5881bf454a0ebb9171ed63
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI= audio/mpg123
 COMPONENT_CLASSIFICATION= Applications/Sound and Video
@@ -48,9 +48,6 @@ ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS += --with-cpu=x86-64
 endif
 CONFIGURE_OPTIONS += --with-default-audio=pulse
-
-# We need to run tests in clean environment
-COMPONENT_TEST_ENV_CMD = $(ENV) -
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/openal
