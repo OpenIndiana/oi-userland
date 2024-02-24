@@ -206,7 +206,7 @@ COMPONENT_TEST_TRANSFORMS+= $(CONFIGURE_TEST_TRANSFORMS)
 endif
 
 # test the built source
-$(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
@@ -223,7 +223,7 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	$(TOUCH) $@
 
 $(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
-$(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
