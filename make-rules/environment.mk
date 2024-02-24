@@ -82,6 +82,17 @@ component-test-environment-prep::
 		  [ $$RETVAL -ne 7 ] && echo "pkg install returned $$RETVAL" && exit 1; \
 		  sleep 10; \
 		done; }
+	@for p in $(TEST_CONFLICTING_PACKAGES) ; do \
+		/usr/bin/pkg list -q /$$p || continue ; \
+		echo "Removing conflicting packages from testing environment..." ; \
+		while true ; do \
+		  $(PFEXEC) /usr/bin/pkg uninstall -v --deny-new-be --ignore-missing $(TEST_CONFLICTING_PACKAGES:%=/%) ; \
+		  RETVAL=$$? ; \
+		  [ $$RETVAL -eq 0 ] && exit 0 ; \
+		  [ $$RETVAL -ne 7 ] && echo "pkg uninstall returned $$RETVAL" && exit 1 ; \
+		  sleep 10 ; \
+		done ; \
+	done
 
 ZONENAME_PREFIX = bz
 ZONENAME_ID = $(shell echo "$(WS_TOP)" | sha1sum | cut -c0-7)-$(COMPONENT_NAME)
