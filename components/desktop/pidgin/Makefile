@@ -15,20 +15,21 @@
 # Copyright 2022 Niklas Poslovski
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pidgin
-COMPONENT_VERSION=      2.14.12
+COMPONENT_VERSION=      2.14.13
 COMPONENT_SUMMARY=      Multiprotocol Instant Messaging Client
 COMPONENT_PROJECT_URL=  https://www.pidgin.im
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:2b05246be208605edbb93ae9edc079583d449e2a9710db6d348d17f59020a4b7
+COMPONENT_ARCHIVE_HASH= sha256:120049dc8e17e09a2a7d256aff2191ff8491abb840c8c7eb319a161e2df16ba8
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=         communication/im/pidgin
 COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE= pidgin.license
+COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -51,7 +52,7 @@ COMPONENT_PRE_CONFIGURE_ACTION= ( cp -rp $(SOURCE_DIR)/* $(@D) && \
 
 CONFIGURE_SCRIPT=	$(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS+=	--enable-gnutls=no
 CONFIGURE_OPTIONS+=	--with-nss-includes=/usr/include/mps
 CONFIGURE_OPTIONS+=	--with-nss-libs=/usr/lib/mps/64
