@@ -23,21 +23,20 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-applets
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	1
-COMPONENT_REVISION=		4
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	0
 COMPONENT_SUMMARY=	Applets components for the MATE Desktop Environment
-COMPONENT_ARCHIVE_HASH= sha256:3ab8f61db376dc333ce4c18722c63a07fab3e8e1272b7e0e097ad4597b17c2c2
+COMPONENT_ARCHIVE_HASH= sha256:1b6bef6bd5d326fb9dc828ff910e4b1b9294b4660c311dc1c90310fd9c356686
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION= System/Libraries
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+= --enable-stickynotes 
-CONFIGURE_OPTIONS+= --disable-polkit
-CONFIGURE_OPTIONS+= --without-nl
+CONFIGURE_OPTIONS += --enable-stickynotes 
+CONFIGURE_OPTIONS += --disable-polkit
+CONFIGURE_OPTIONS += --without-nl
 
-CONFIGURE_ENV+= LIBS="-lnsl -lsocket"
+CONFIGURE_ENV += LIBS="-lnsl -lsocket"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/character-map/gucharmap
@@ -46,9 +45,10 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/gtksourceview3
+REQUIRED_PACKAGES += library/desktop/gtksourceview4
 REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/mate/libmateweather
+REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgtop
