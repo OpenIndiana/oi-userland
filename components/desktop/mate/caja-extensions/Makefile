@@ -22,11 +22,10 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		caja-extensions
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	1
-COMPONENT_REVISION=	1
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	0
 COMPONENT_SUMMARY=	Set of extensions for Caja, the MATE file manager
-COMPONENT_ARCHIVE_HASH=	sha256:589c19e3fa10242d6239a5ccb9585598436a56ebe94d2eb2a50b5950cce1d520
+COMPONENT_ARCHIVE_HASH=	sha256:d2986c5e0740835fe271cfbd5823eeeaf03291af1763203f4700abb8109e3175
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_FMRI=		desktop/mate/caja/$(COMPONENT_NAME)
 COMPONENT_LICENSE=	GPLv2
@@ -39,6 +38,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/caja
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
