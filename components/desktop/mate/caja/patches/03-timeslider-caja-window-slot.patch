@@ -1,0 +1,26 @@
+--- caja-1.28.0/src/caja-window-slot.h.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/caja-window-slot.h	2024-02-26 08:42:41.082428896 +0100
+@@ -113,6 +113,7 @@
+     gpointer open_callback_user_data;
+ 
+     GCancellable *find_mount_cancellable;
++    GCancellable *find_zfs_snapshots_cancellable;
+ 
+     gboolean visible;
+ };
+--- caja-1.28.0/src/caja-window-slot.c.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/caja-window-slot.c	2024-02-26 08:42:41.082244159 +0100
+@@ -686,6 +686,13 @@
+         slot->find_mount_cancellable = NULL;
+     }
+ 
++    if (slot->find_zfs_snapshots_cancellable)
++    {
++        g_cancellable_cancel (slot->find_zfs_snapshots_cancellable);
++        g_object_unref (slot->find_zfs_snapshots_cancellable);
++        slot->find_zfs_snapshots_cancellable = NULL;
++    }
++
+     slot->pane = NULL;
+ 
+     g_free (slot->title);

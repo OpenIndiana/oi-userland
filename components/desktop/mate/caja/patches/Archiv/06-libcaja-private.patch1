@@ -1,0 +1,17 @@
+--- caja-1.28.0/libcaja-private/caja-column-utilities.c.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/libcaja-private/caja-column-utilities.c	2024-02-26 08:42:41.074153382 +0100
+@@ -182,6 +182,14 @@
+ 
+     caja_module_extension_list_free (providers);
+ 
++    columns = g_list_append (columns,
++	                     g_object_new (CAJA_TYPE_COLUMN,
++                                           "name", "restore_info",
++                                           "attribute", "restore_info",
++                                           "label", _("Restore information"),
++                                           "description", _("Restore information of the file."),
++                                           NULL));
++
+     return columns;
+ }
+ 

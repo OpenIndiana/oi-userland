@@ -1,0 +1,967 @@
+--- caja-1.28.0/libcaja-private/caja-file.c.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/libcaja-private/caja-file.c	2024-02-26 08:42:41.077938703 +0100
+@@ -71,6 +71,7 @@
+ #include "caja-ui-utilities.h"
+ #include "caja-vfs-file.h"
+ #include "caja-saved-search-file.h"
++#include "caja-zfs.h"
+ 
+ #ifdef HAVE_SELINUX
+ #include <selinux/selinux.h>
+@@ -149,7 +150,8 @@
+ 	attribute_where_q,
+ 	attribute_link_target_q,
+ 	attribute_volume_q,
+-	attribute_free_space_q;
++	attribute_free_space_q,
++        attribute_restore_info_q;;
+ 
+ static void     caja_file_info_iface_init                (CajaFileInfoIface *iface);
+ static char *   caja_file_get_owner_as_string            (CajaFile          *file,
+@@ -159,6 +161,7 @@
+ 							      GFileInfo             *info);
+ static const char * caja_file_peek_display_name (CajaFile *file);
+ static const char * caja_file_peek_display_name_collation_key (CajaFile *file);
++static void invalidate_restore_info (CajaFile *file);
+ static void file_mount_unmounted (GMount *mount,  gpointer data);
+ static void metadata_hash_free (GHashTable *hash);
+ 
+@@ -497,6 +500,15 @@
+ 	g_clear_pointer (&file->details->filesystem_id, g_ref_string_release);
+ 	file->details->filesystem_id = NULL;
+ 
++        g_free (file->details->restore_info);
++        file->details->restore_info = NULL;
++        invalidate_restore_info (file);
++        g_free (file->details->snapshot_directory);
++        file->details->snapshot_directory = NULL;
++        file->details->has_snap_versions_in_progress = FALSE;
++        file->details->has_snap_versions_is_up_to_date = FALSE;
++        file->details->has_snap_versions = FALSE;
++
+ 	clear_metadata (file);
+ }
+ 
+@@ -815,6 +827,11 @@
+ 	g_free (file->details->activation_uri);
+ 	g_free (file->details->compare_by_emblem_cache);
+ 
++        g_free (file->details->restore_info);
++        if (file->details->snapshot_directory) {
++                g_free (file->details->snapshot_directory);
++        }
++
+ 	if (file->details->thumbnail) {
+ 		g_object_unref (file->details->thumbnail);
+ 	}
+@@ -4835,6 +4852,242 @@
+ 	NULL
+ };
+ 
++/* Following code is copied from Rhythmbox rb-cut-and-paste-code.c */
++
++/* Legal conversion specifiers, as specified in the C standard. */
++#define C_STANDARD_STRFTIME_CHARACTERS "aAbBcdHIjmMpSUwWxXyYZ"
++#define C_STANDARD_NUMERIC_STRFTIME_CHARACTERS "dHIjmMSUwWyY"
++#define SUS_EXTENDED_STRFTIME_MODIFIERS "EO"
++
++/**
++ * eel_strdup_strftime:
++ *
++ * Cover for standard date-and-time-formatting routine strftime that returns
++ * a newly-allocated string of the correct size. The caller is responsible
++ * for g_free-ing the returned string.
++ *
++ * Besides the buffer management, there are two differences between this
++ * and the library strftime:
++ *
++ *   1) The modifiers "-" and "_" between a "%" and a numeric directive
++ *      are defined as for the GNU version of strftime. "-" means "do not
++ *      pad the field" and "_" means "pad with spaces instead of zeroes".
++ *   2) Non-ANSI extensions to strftime are flagged at runtime with a
++ *      warning, so it's easy to notice use of the extensions without
++ *      testing with multiple versions of the library.
++ *
++ * @format: format string to pass to strftime. See strftime documentation
++ * for details.
++ * @time_pieces: date/time, in struct format.
++ *
++ * Return value: Newly allocated string containing the formatted time.
++ **/
++
++static char *
++eel_strdup_strftime (const char *format, struct tm *time_pieces)
++{
++  g_autoptr(GString) string = NULL;
++  const char *remainder, *percent;
++  char code[4], buffer[512];
++  char *piece, *result;
++  g_autofree gchar *converted = NULL;
++  size_t string_length;
++  gboolean strip_leading_zeros, turn_leading_zeros_to_spaces;
++  char modifier;
++  int i;
++
++  /* Format could be translated, and contain UTF-8 chars,
++   * so convert to locale encoding which strftime uses */
++  converted = g_locale_from_utf8 (format, -1, NULL, NULL, NULL);
++  if (!converted)
++    converted = g_strdup (format);
++
++  string = g_string_new ("");
++  remainder = converted;
++
++  /* Walk from % character to % character. */
++  for (;;) {
++    percent = strchr (remainder, '%');
++    if (percent == NULL) {
++      g_string_append (string, remainder);
++      break;
++    }
++    g_string_append_len (string, remainder,
++                         percent - remainder);
++
++    /* Handle the "%" character. */
++    remainder = percent + 1;
++    switch (*remainder) {
++      case '-':
++        strip_leading_zeros = TRUE;
++        turn_leading_zeros_to_spaces = FALSE;
++        remainder++;
++        break;
++      case '_':
++        strip_leading_zeros = FALSE;
++        turn_leading_zeros_to_spaces = TRUE;
++        remainder++;
++        break;
++      case '%':
++        g_string_append_c (string, '%');
++        remainder++;
++        continue;
++      case '\0':
++        g_warning ("Trailing %% passed to eel_strdup_strftime");
++        g_string_append_c (string, '%');
++        continue;
++      default:
++        strip_leading_zeros = FALSE;
++        turn_leading_zeros_to_spaces = FALSE;
++        break;
++    }
++
++    modifier = 0;
++    if (strchr (SUS_EXTENDED_STRFTIME_MODIFIERS, *remainder) != NULL) {
++      modifier = *remainder;
++      remainder++;
++
++      if (*remainder == 0) {
++        g_warning ("Unfinished %%%c modifier passed to eel_strdup_strftime", modifier);
++        break;
++      }
++    }
++
++    if (strchr (C_STANDARD_STRFTIME_CHARACTERS, *remainder) == NULL) {
++      g_warning ("eel_strdup_strftime does not support "
++                 "non-standard escape code %%%c",
++                 *remainder);
++    }
++
++    /* Convert code to strftime format. We have a fixed
++     * limit here that each code can expand to a maximum
++     * of 512 bytes, which is probably OK. There's no
++     * limit on the total size of the result string.
++     */
++    i = 0;
++    code[i++] = '%';
++    if (modifier != 0) {
++#ifdef HAVE_STRFTIME_EXTENSION
++      code[i++] = modifier;
++#endif
++    }
++    code[i++] = *remainder;
++    code[i++] = '\0';
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wformat-nonliteral"
++    /* Format string under control of caller, since this is a wrapper for strftime. */
++    string_length = strftime (buffer, sizeof (buffer),
++                              code, time_pieces);
++#pragma GCC diagnostic pop
++    if (string_length == 0) {
++      /* We could put a warning here, but there's no
++       * way to tell a successful conversion to
++       * empty string from a failure.
++       */
++      buffer[0] = '\0';
++    }
++
++    /* Strip leading zeros if requested. */
++    piece = buffer;
++    if (strip_leading_zeros || turn_leading_zeros_to_spaces) {
++      if (strchr (C_STANDARD_NUMERIC_STRFTIME_CHARACTERS, *remainder) == NULL) {
++        g_warning ("eel_strdup_strftime does not support "
++                   "modifier for non-numeric escape code %%%c%c",
++                   remainder[-1],
++                   *remainder);
++      }
++      if (*piece == '0') {
++        do {
++          piece++;
++        } while (*piece == '0');
++        if (!g_ascii_isdigit (*piece)) {
++          piece--;
++        }
++      }
++      if (turn_leading_zeros_to_spaces) {
++        memset (buffer, ' ', piece - buffer);
++        piece = buffer;
++      }
++    }
++    remainder++;
++
++    /* Add this piece. */
++    g_string_append (string, piece);
++  }
++
++  /* Convert the string back into utf-8. */
++  result = g_locale_to_utf8 (string->str, -1, NULL, NULL, NULL);
++
++  return result;
++}
++
++char *
++caja_date_as_string (time_t time_raw, gboolean use_smallest)
++{
++    struct tm *ttime;
++    const char **formats;
++    const char *width_template;
++    const char *format;
++    char *date_string;
++    char *result;
++    GDate *today;
++    GDate *date;
++    guint32 date_age;
++    int i;
++
++    ttime = localtime (&time_raw);
++
++    if (!use_smallest) {
++        if (date_format_pref == CAJA_DATE_FORMAT_LOCALE) {
++          return eel_strdup_strftime ("%c", ttime);
++        } else if (date_format_pref == CAJA_DATE_FORMAT_ISO) {
++          return eel_strdup_strftime ("%Y-%m-%d %H:%M:%S",ttime);
++        }
++    }
++    
++    date = g_date_new ();
++    g_date_set_time_t (date, time_raw);
++    
++    today = g_date_new ();
++    g_date_set_time_t (today, time (NULL));
++
++    /* Overflow results in a large number; fine for our purposes. */
++    date_age = (g_date_get_julian (today) -
++                g_date_get_julian (date));
++
++    g_date_free (date);
++    g_date_free (today);
++
++    /* Format varies depending on how old the date is. This minimizes
++     * the length (and thus clutter & complication) of typical dates
++     * while providing sufficient detail for recent dates to make
++     * them maximally understandable at a glance. Keep all format
++     * strings separate rather than combining bits & pieces for
++     * internationalization's sake.
++     */
++
++    if (date_age == 0) {
++        formats = TODAY_TIME_FORMATS;
++    } else if (date_age == 1) {
++        formats = YESTERDAY_TIME_FORMATS;
++    } else if (date_age < 7) {
++        formats = CURRENT_WEEK_TIME_FORMATS;
++    } else {
++        formats = CURRENT_WEEK_TIME_FORMATS;
++    }
++
++    if (!use_smallest)
++      format = _(formats[1]);
++    else
++      {
++        int i=0; 
++        while (formats[i] != NULL) 
++          i++;
++        format = _(formats[i-3]);
++      }
++    return eel_strdup_strftime (format, ttime);
++}
++
+ static char *
+ caja_file_fit_date_as_string (CajaFile *file,
+ 				  CajaDateType date_type,
+@@ -6608,6 +6861,9 @@
+ 	if (attribute_q == attribute_free_space_q) {
+ 		return caja_file_get_volume_free_space (file);
+ 	}
++	if (attribute_q == attribute_restore_info_q) {
++                return caja_file_get_restore_info_async (file);
++        }
+ 
+ 	extension_attribute = NULL;
+ 
+@@ -7654,6 +7910,616 @@
+ 
+ }
+ 
++
++gboolean                
++caja_file_is_in_snapshot (CajaFile *file)
++{
++  char *file_uri = caja_file_get_uri (file);
++  gboolean result = ts_is_in_snapshot (file_uri);
++  g_free (file_uri);
++  return result;
++}
++
++static gboolean caja_file_in_snap_exist_in_current (CajaFile *file, GCancellable *cancel)
++{
++  /* get path without /.zfs/snapshot/blah/ */
++  /* test is file exist */
++  char *file_uri = caja_file_get_uri (file);
++  char *file_uri_without_snap = NULL;
++  gboolean result = FALSE;
++
++  if (g_cancellable_is_cancelled (cancel))
++    {
++      g_free (file_uri);
++      return FALSE;
++    }
++
++  file_uri_without_snap = ts_remove_snapshot_dir (file_uri);
++
++  if (file_uri_without_snap)
++    {
++      GFile* root_file = g_file_new_for_uri (file_uri_without_snap);
++      char *path = g_file_get_path (root_file);
++      
++      if (path)
++    {
++      result =  g_file_test (path, G_FILE_TEST_EXISTS);
++      g_free (path);
++    }
++      g_object_unref (root_file);
++      g_free (file_uri_without_snap);
++
++    }
++  
++  g_free (file_uri);
++
++  return result;
++}
++
++
++char * caja_file_in_snapshot_get_info (CajaFile *file, GCancellable *cancel)
++{
++  char *info = NULL;
++  GFile *then_gfile = caja_file_get_location (file);
++  char *then_path = g_file_get_path (then_gfile);
++  g_object_unref (then_gfile);
++
++  if (g_cancellable_is_cancelled (cancel))
++    {
++      g_free (then_gfile);
++      g_free (then_path);
++      return g_strdup ("cancelled");
++    }
++  if (then_path)
++    {
++      struct stat64 now;
++      struct stat64 then;
++      char *now_path = ts_remove_snapshot_dir (then_path);
++
++      if (lstat64 (now_path, &now) == 0)
++    {
++      if (lstat64 (then_path, &then) == 0)
++        {
++
++          if (now.st_mtime != then.st_mtime)
++        {
++          if (now.st_size == then.st_size)
++            /* SUN_BRANDING */
++            info = g_strdup (_("different date, same size as latest version"));
++          else if (now.st_size > then.st_size)
++            /* SUN_BRANDING */
++            info = g_strdup (_("different date, smaller than latest version"));
++          else if ( now.st_size < then.st_size)
++            /* SUN_BRANDING */
++            info = g_strdup (_("different date, bigger than latest version"));
++        }
++          else
++        /* SUN_BRANDING */
++        info = g_strdup (_("identical to latest version"));
++        }
++      else
++        info = g_strdup_printf ("FIXME no then %s", then_path);
++    }
++      else
++    /* SUN_BRANDING */
++    info = g_strdup (_("not present in latest version"));
++
++      g_free (now_path);
++      g_free (then_path);
++    }
++
++  return info;
++}
++
++static char * restore_string (char *str, GCancellable *cancel)
++{
++  if (g_cancellable_is_cancelled (cancel))
++    {
++      g_free (str);
++      return g_strdup (_("unknown"));
++    }
++  else
++    return str;
++}
++
++gint time_cmp (time_t *a,
++           time_t *b)
++{
++  if (*a == *b)
++    return 0;
++  if (*a > *b)
++    return 1;
++  if (*a < *b)
++    return -1;
++
++}
++
++char *            
++caja_file_get_num_snapshot_version (CajaFile *file, 
++                                        GCancellable *cancel,
++                                        gboolean stop_at_first)
++{
++  GList *tmp = NULL;
++  GList *tmp2 = NULL;
++  GList *time = NULL;
++  time_t* now_time = NULL;
++  char *result = NULL;
++  int version = 0;
++  CajaFile *parent = NULL;
++  CajaDirectory *dir = NULL;
++  char *snapdir = NULL;
++
++  if (CAJA_IS_FILE (file))
++    {
++      parent = caja_file_get_parent (file);
++      if (parent)
++    {
++      dir = caja_directory_get_for_file (parent);
++      g_object_unref (parent);
++    }
++    }
++  if (dir)
++    {
++      struct stat64 now;
++      struct stat64 then;
++      char snap_name[PATH_MAX+1];
++      char *name = caja_file_get_name (file);
++      
++      g_object_ref (dir);
++      tmp = caja_directory_get_snapshots (dir);
++      
++      GFile *now_gfile = caja_file_get_location (file);
++      char *now_path = g_file_get_path (now_gfile);
++      g_object_unref (now_gfile);
++
++      if (now_path)
++    {
++      if (lstat64 (now_path, &now) != 0)
++        {
++          g_free (now_path);
++          g_object_unref (dir);
++          return NULL;
++        }
++    }
++      
++      g_free (now_path);
++
++      time = NULL;
++
++      /* get list of mtime for all files in snapshots */
++
++      now_time = g_new0 (time_t, 1);
++      *now_time = now.st_mtim.tv_sec;
++      time = g_list_prepend (time, now_time);
++
++
++      for (tmp; tmp; tmp = tmp->next)
++    {
++      g_snprintf (snap_name, sizeof(snap_name), "%s/%s", 
++             ((ZfsDataSet *) tmp->data)->mountpoint, 
++             name);
++      if (g_cancellable_is_cancelled (cancel))
++        goto cancel;
++      if (lstat64 (snap_name, &then) == 0)
++        {
++          if (g_list_find_custom (time, &then.st_mtim.tv_sec, (GCompareFunc) time_cmp) == NULL)
++        { /*insert in list only is unique */
++          time_t* snap_time = g_new0 (time_t, 1);
++          *snap_time = then.st_mtim.tv_sec;
++          time = g_list_prepend (time, snap_time);
++                  if (stop_at_first)
++                    {
++                      snapdir = g_strdup (((ZfsDataSet *) tmp->data)->mountpoint);
++                      goto cancel;
++                    }
++        }
++        }
++
++    }
++cancel:
++      g_free (name);
++      g_object_unref (dir);
++    }
++
++
++  for (tmp = time; tmp; tmp = tmp->next)
++    {
++      g_free ((time_t*) tmp->data);
++      version++;
++    }
++
++  /* remove current version */
++  version--;
++
++  g_list_free (time);
++
++  if (version == 0)
++    {
++      if (stop_at_first)
++        return NULL;
++      else /*SUN_BRANDING*/
++        return restore_string (g_strdup_printf (_("no other version")), cancel);
++    }
++
++  if (stop_at_first)
++    return snapdir;
++  else
++    return restore_string (g_strdup_printf ("%d %s", version,
++                                            /* SUN_BRANDING */
++                                            version > 1 ? _("other versions") : /* SUN_BRANDING */ _("other version")),
++                           cancel);
++}
++
++static gboolean worker_thread_started = FALSE;
++
++typedef void (*ReadyCallback) (gpointer          data,
++                   GCancellable      *cancellable);
++typedef void (*WorkerFunction) (gpointer          data,
++                   GCancellable      *cancellable);
++typedef struct {
++  gpointer        data;
++  gpointer        return_data;
++  ReadyCallback        ready_callback;
++  WorkerFunction    worker_func;
++  GCancellable        *cancellable;
++} QueryData;
++
++static void         
++caja_file_get_restore_info (gpointer data,
++                GCancellable       *cancellable)
++{
++  QueryData *qdata = (QueryData*) data;
++  CajaFile *file = CAJA_FILE (qdata->data);
++  char *result = NULL;
++
++  /*{
++    struct timespec ts;
++    ts.tv_sec = 1;
++    ts.tv_nsec = 0;
++    nanosleep (&ts, NULL);
++  }
++
++    {
++      GFile *f = caja_file_get_location (file);
++      char *path = g_file_get_uri (f);
++      printf ("start restore info for %s", path);
++      g_free (path);
++      g_object_unref (f);
++    }*/
++  if (!g_cancellable_is_cancelled (cancellable))
++    {
++
++      if (caja_file_is_directory (file))
++    {
++      CajaDirectory *dir = caja_directory_get_for_file (file);
++      g_object_ref (dir);
++      if (caja_directory_is_in_snapshot (dir))
++        {
++          if (!caja_file_in_snap_exist_in_current (file, cancellable))
++        /* SUN_BRANDING */
++        result = g_strdup (_("not present in latest version"));
++          else
++        /* SUN_BRANDING */
++        result = g_strdup (_("present in latest version"));
++        }
++      else
++        {
++          int version = caja_directory_get_num_snapshots (dir);
++
++          if (version == 0)
++        /* SUN_BRANDING */
++        result = g_strdup (_("no version"));
++          else
++        result = g_strdup_printf ("%d %s",version,
++                      /* SUN_BRANDING */
++                      version > 1 ? _("versions") : /* SUN_BRANDING */ _("version"));
++        }
++      g_object_unref (dir);
++    }
++      else
++    {
++      if (caja_file_is_in_snapshot (file))
++          result = caja_file_in_snapshot_get_info (file, cancellable);
++      else
++          result = caja_file_get_num_snapshot_version (file, cancellable, FALSE);
++    }
++    }
++
++/*    {
++      printf ("is %s\n", result);
++    }*/
++
++
++  qdata->return_data = restore_string (result, cancellable);
++}
++
++
++static void restore_information_ready_callback (gpointer data,
++                        GCancellable *cancellable)
++{
++  QueryData *qdata = (QueryData*) data;
++  CajaFile *file = (CajaFile*) qdata->data;
++  char *return_data = qdata->return_data;
++
++  if (!CAJA_IS_FILE (file))
++    return;
++
++  file->details->restore_info_in_progress = FALSE;
++
++  if (g_cancellable_is_cancelled (cancellable))
++    {
++      file->details->restore_info = g_strdup (_("unknown"));
++      invalidate_restore_info (file);
++      if (return_data)
++    g_free (return_data);
++    }
++  else
++    {
++      file->details->restore_info_is_up_to_date = TRUE;
++      file->details->restore_info = return_data;
++    }
++
++  caja_file_changed (file);
++  caja_file_unref (file);
++}
++
++
++static gboolean
++complete_in_idle_cb (gpointer data)
++{
++  QueryData *qdata = (QueryData*)data;
++  qdata->ready_callback (data, qdata->cancellable);
++  g_free (qdata);
++  return FALSE;
++}
++
++static void
++worker_queue_finished_callback (GObject *source_object,
++                GAsyncResult *res,
++                gpointer user_data)
++{
++  GSimpleAsyncResult *simple = G_SIMPLE_ASYNC_RESULT (res);
++  GCancellable *cancel = (GCancellable*) user_data;
++
++  worker_thread_started = FALSE;
++
++  if (g_cancellable_is_cancelled (cancel))
++    {
++      return;
++    }
++
++  g_simple_async_result_get_op_res_gpointer (simple);
++
++}
++
++static void
++worker_queue_func (GSimpleAsyncResult *res,
++           GObject            *object,
++           GCancellable       *cancellable)
++{
++  QueryData *data = NULL;
++
++  GTimeVal timeout;
++  GAsyncQueue *queue = (GAsyncQueue*) g_simple_async_result_get_op_res_gpointer (res);
++  g_async_queue_ref (queue);
++
++  g_get_current_time (&timeout);
++  g_time_val_add (&timeout, 3000000);
++
++  data = g_async_queue_timed_pop (queue, &timeout);
++
++  while (data)
++    {
++      GSource *source;
++
++      /* only call the worker fct if not cancel 
++       * but execute ready function anyway */
++      if (!g_cancellable_is_cancelled (data->cancellable))
++    data->worker_func (data, data->cancellable);
++
++      /*call ready callback in main loop/thread */
++      source = g_idle_source_new ();
++      g_source_set_priority (source, G_PRIORITY_DEFAULT);
++      g_source_set_callback (source, complete_in_idle_cb, data, NULL);
++      g_source_attach (source, NULL);
++      g_source_unref (source);
++
++      /* pop next one */
++      g_get_current_time (&timeout);
++      g_time_val_add (&timeout, 3000000);
++      data = g_async_queue_timed_pop (queue, &timeout);
++    }
++
++  g_async_queue_unref (queue);
++}
++
++char * caja_file_get_restore_info_async (CajaFile *file)
++{
++  if (!caja_is_time_slider_enabled ())
++    return NULL;
++
++  if (!ts_is_restore_column_enabled ())
++    return NULL;
++
++  if (file->details->restore_info_is_up_to_date)
++    {
++      /*if ( file->details->restore_info == NULL)
++    return g_strdup ("null cached info");*/
++      return g_strdup (file->details->restore_info);
++    }
++
++  if (file->details->restore_info_in_progress)
++    return g_strdup ("...");
++  else
++    {
++      static GAsyncQueue *queue = NULL;
++      QueryData *data  = NULL;
++
++      if (!file->details->directory)
++    return g_strdup ("no directory element\n");
++
++      if (!caja_directory_has_snapshots (file->details->directory) && !caja_file_is_in_snapshot (file))
++    return g_strdup ("doesn't have snap nor is in snap\n");
++
++      if (!file->details->directory->details->restore_cancel)
++    {
++      file->details->directory->details->restore_cancel = g_cancellable_new ();
++    }
++      else
++    {
++      if (g_cancellable_is_cancelled (file->details->directory->details->restore_cancel))
++        return NULL;
++    }
++
++      g_free (file->details->restore_info);
++      file->details->restore_info = NULL;
++      file->details->restore_info_in_progress = TRUE;
++
++      if (!queue)
++    queue = g_async_queue_new ();
++
++      data = g_new0 (QueryData, 1);
++      data->data = file;
++      caja_file_ref (file);
++      data->cancellable = file->details->directory->details->restore_cancel;
++      data->ready_callback = restore_information_ready_callback;
++      data->worker_func = caja_file_get_restore_info;
++
++      g_async_queue_push (queue, data);
++
++      if (!worker_thread_started)
++    {
++      GSimpleAsyncResult *res;
++      worker_thread_started = TRUE;
++
++      res = g_simple_async_result_new (G_OBJECT (file), 
++                       worker_queue_finished_callback, 
++                       NULL, 
++                       (gpointer) worker_queue_func);
++
++      g_simple_async_result_set_op_res_gpointer (res, queue, NULL);
++      g_simple_async_result_run_in_thread (res, 
++                           worker_queue_func, 
++                           G_PRIORITY_DEFAULT, 
++                           data->cancellable);
++    }
++
++      return g_strdup ("...");
++    }
++}
++
++HasSnapshotResult
++caja_file_has_snapshot_version (CajaFile *file)
++{
++    if (file->details->has_snap_versions_is_up_to_date)
++        return (file->details->has_snap_versions);
++    return UNKNOWN_STATE;
++}
++
++typedef struct {
++  CajaFile              *file;
++  GCancellable              *cancel;
++  FileHasSnapshotCallback    callback;
++  gpointer             callback_user_data;
++  char                      *snap_dir;
++} HasSnapshotAsyncData;
++
++typedef void (*HasSnapReadyCallback) (CajaDirectory *file,
++                                      GCancellable    *cancel,
++                                      gpointer           callback_data);
++
++
++static void has_snapshot_ready_callback (GObject *source_object,
++                                         GAsyncResult *res,
++                                         gpointer user_data)
++{
++  GSimpleAsyncResult *simple = G_SIMPLE_ASYNC_RESULT (res);
++  HasSnapshotAsyncData *data = (HasSnapshotAsyncData*) user_data;
++
++  if (g_cancellable_is_cancelled (data->cancel))
++    {
++      data->file->details->has_snap_versions_in_progress = FALSE;
++      data->file->details->has_snap_versions_is_up_to_date = FALSE;
++      if (data->file->details->snapshot_directory)
++        g_free (data->file->details->snapshot_directory);
++      
++      data->file->details->has_snapshot_cancel = NULL;
++    }
++  else
++    {
++      data->file->details->has_snap_versions_in_progress = FALSE;
++      data->file->details->has_snap_versions_is_up_to_date = TRUE;
++      if (data->file->details->snapshot_directory)
++        g_free (data->file->details->snapshot_directory);
++      data->file->details->snapshot_directory = g_simple_async_result_get_op_res_gpointer (simple);
++      if (data->file->details->snapshot_directory)
++        data->file->details->has_snap_versions = TRUE;
++      else
++        data->file->details->has_snap_versions = FALSE;
++    }
++  data->callback (data->callback_user_data);
++}
++char *
++caja_file_get_snapshot_dir (CajaFile *file)
++{
++  return file->details->snapshot_directory;
++}
++void caja_file_real_get_snapshot_version (GSimpleAsyncResult *res,
++                                  GObject            *object,
++                              GCancellable       *cancellable)
++{
++  CajaFile *file = CAJA_FILE (object);
++  char *snap_info = caja_file_get_num_snapshot_version (file, cancellable, TRUE);
++
++  if (!snap_info) /* scan for .zfs directory*/
++    snap_info = ts_get_not_zfs_snapshot_dir (caja_file_get_location (file));
++/*
++  {
++    struct timespec ts;
++    ts.tv_sec = 4;
++    ts.tv_nsec = 0;
++    nanosleep (&ts, NULL);
++  }
++*/
++  if (snap_info)
++    g_simple_async_result_set_op_res_gpointer (res, snap_info, (GDestroyNotify) NULL);
++  else
++    g_simple_async_result_set_op_res_gpointer (res, NULL, (GDestroyNotify) NULL);
++}
++
++void caja_file_get_snapshot_version (CajaFile *file,
++                                         FileHasSnapshotCallback callback,
++                                         GCancellable *cancel,
++                                         gpointer user_data)
++{
++    HasSnapshotAsyncData *data;
++    GSimpleAsyncResult *res;
++
++    if (file->details->has_snap_versions_in_progress)
++    {
++        g_cancellable_cancel(file->details->has_snapshot_cancel);
++        file->details->has_snapshot_cancel = NULL;
++        file->details->has_snap_versions_in_progress = FALSE;        
++    }
++
++    file->details->has_snapshot_cancel = cancel;
++    file->details->has_snap_versions_in_progress = TRUE;
++    file->details->has_snap_versions_is_up_to_date  = FALSE;
++
++    data = g_new0 (HasSnapshotAsyncData, 1);
++    data->file = file;
++    data->cancel = cancel;
++    data->callback = callback;
++    data->callback_user_data = user_data;
++
++    res = g_simple_async_result_new (G_OBJECT (file),
++                                     has_snapshot_ready_callback,
++                                     data,
++                                    (gpointer) caja_file_real_get_snapshot_version);
++    g_simple_async_result_run_in_thread (res, caja_file_real_get_snapshot_version,
++                                         G_PRIORITY_DEFAULT, cancel);
++}
++
+ void
+ caja_file_mark_gone (CajaFile *file)
+ {
+@@ -7920,6 +8786,12 @@
+ 	file->details->mount_is_up_to_date = FALSE;
+ }
+ 
++static void
++invalidate_restore_info (CajaFile *file)
++{
++        file->details->restore_info_is_up_to_date = FALSE;
++}
++
+ void
+ caja_file_invalidate_extension_info_internal (CajaFile *file)
+ {
+@@ -7974,6 +8846,9 @@
+ 	if (REQUEST_WANTS_TYPE (request, REQUEST_THUMBNAIL)) {
+ 		invalidate_thumbnail (file);
+ 	}
++        if (REQUEST_WANTS_TYPE (request, REQUEST_RESTORE_INFO)) {
++                invalidate_restore_info (file);
++        }
+ 	if (REQUEST_WANTS_TYPE (request, REQUEST_MOUNT)) {
+ 		invalidate_mount (file);
+ 	}
+@@ -8054,7 +8929,8 @@
+ 		CAJA_FILE_ATTRIBUTE_LARGE_TOP_LEFT_TEXT |
+ 		CAJA_FILE_ATTRIBUTE_EXTENSION_INFO |
+ 		CAJA_FILE_ATTRIBUTE_THUMBNAIL |
+-		CAJA_FILE_ATTRIBUTE_MOUNT;
++		CAJA_FILE_ATTRIBUTE_MOUNT | 
++                CAJA_FILE_ATTRIBUTE_RESTORE_INFO ;
+ }
+ 
+ void
+@@ -8621,6 +9497,7 @@
+ 	attribute_link_target_q = g_quark_from_static_string ("link_target");
+ 	attribute_volume_q = g_quark_from_static_string ("volume");
+ 	attribute_free_space_q = g_quark_from_static_string ("free_space");
++        attribute_restore_info_q = g_quark_from_static_string ("restore_info");
+ 
+ 	G_OBJECT_CLASS (class)->finalize = finalize;
+ 	G_OBJECT_CLASS (class)->constructor = caja_file_constructor;

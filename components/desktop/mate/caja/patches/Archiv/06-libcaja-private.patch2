@@ -1,0 +1,57 @@
+--- caja-1.28.0/libcaja-private/caja-directory-async.c.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/libcaja-private/caja-directory-async.c	2024-02-26 08:46:37.475055194 +0100
+@@ -767,6 +767,11 @@
+         REQUEST_SET_TYPE (request, REQUEST_FILESYSTEM_INFO);
+     }
+ 
++    if (file_attributes & CAJA_FILE_ATTRIBUTE_FILESYSTEM_INFO)
++    {
++        REQUEST_SET_TYPE (request, REQUEST_RESTORE_INFO);
++    }
++
+     return request;
+ }
+ 
+@@ -5161,6 +5166,19 @@
+     }
+ }
+ 
++void
++caja_directory_cancel_restore_info (CajaDirectory *directory)
++{
++    if (CAJA_IS_DIRECTORY (directory))
++    {
++        if (directory->details->restore_cancel)
++        {
++            g_cancellable_cancel (directory->details->restore_cancel);
++            directory->details->restore_cancel = NULL;
++        }
++    }
++}
++
+ static void
+ cancel_loading_attributes (CajaDirectory *directory,
+                            CajaFileAttributes file_attributes)
+@@ -5213,6 +5231,11 @@
+         mount_cancel (directory);
+     }
+ 
++    if (REQUEST_WANTS_TYPE (request, REQUEST_RESTORE_INFO))
++    {
++        caja_directory_cancel_restore_info (directory);
++    }
++
+     caja_directory_async_state_changed (directory);
+ }
+ 
+@@ -5263,6 +5286,10 @@
+     {
+         cancel_mount_for_file (directory, file);
+     }
++    if (REQUEST_WANTS_TYPE (request, REQUEST_RESTORE_INFO))
++    {
++        caja_directory_cancel_restore_info (directory);
++    }
+ 
+     caja_directory_async_state_changed (directory);
+ }
