@@ -1,0 +1,1242 @@
+--- caja-1.28.0/libcaja-private/caja-zfs.c.orig	2024-02-26 08:42:41.078919123 +0100
++++ caja-1.28.0/libcaja-private/caja-zfs.c	2024-02-26 08:42:41.078857872 +0100
+@@ -0,0 +1,1239 @@
++/* 
++ * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
++ *
++ */
++
++
++#include <stdio.h>
++#include <strings.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include "caja-zfs.h"
++#include <time.h>
++#include <locale.h>
++#include <langinfo.h>
++#include <stdint.h>
++#include <glib.h>
++#include <glib/gi18n.h>
++#include <glib/gstdio.h>
++#include <eel/eel-glib-extensions.h>
++#include <sys/mnttab.h>
++#include <sys/mkdev.h>
++#include <libscf.h>
++#include <dirent.h>
++#include <sys/utsname.h>
++#include  "caja-global-preferences.h"
++#define ZFS_SNAPSHOT_DIR ".zfs/snapshot/"
++#define ZFS_BACKUP_DIR ".time-slider/rsync"
++
++#ifndef ZFS_MAXNAMELEN
++#ifdef ZFS_MAX_DATASET_NAME_LEN
++#define ZFS_MAXNAMELEN ZFS_MAX_DATASET_NAME_LEN
++#else
++#define ZFS_MAXNAMELEN 256
++#endif
++#endif
++
++
++char* ts_realpath (char * dir, char *resolved_name)
++{
++  char real_dir[PATH_MAX+1]; 
++  char real_path[PATH_MAX+1];
++  gboolean  found = FALSE;
++  struct stat64 dir_stat64;
++  char *result;
++  
++  result = realpath(dir, real_dir);
++  
++  if (!result)
++    return NULL;
++
++  if (stat64 (real_dir, &dir_stat64) == 0)
++    { 
++      if (strcmp (dir_stat64.st_fstype, "lofs") == 0)
++    {
++      FILE            *fp;
++      struct extmnttab   mtab;
++      int             status;
++      fp = fopen (MNTTAB,"r");
++
++      resetmnttab(fp);
++      while ((status = getextmntent(fp, &mtab, sizeof (struct extmnttab))) == 0) 
++        {
++          if (strcmp (mtab.mnt_fstype, "lofs") == 0)
++        {
++          dev_t dev = NODEV;
++          dev = makedev(mtab.mnt_major, mtab.mnt_minor);
++          if (dev == dir_stat64.st_dev)
++            {
++              if (strcmp (real_dir, mtab.mnt_mountp) == 0)
++            strcpy (real_path, mtab.mnt_special);
++              else
++            {
++              gchar **split;
++              split = g_strsplit (real_dir, mtab.mnt_mountp, 2);
++              /*split 2nd part contains path without mount point */
++              g_snprintf (real_path,sizeof(real_path),"%s%s",mtab.mnt_special,split[1]);
++              g_strfreev (split);
++            }
++              found = TRUE;
++              break;
++            }
++        }
++        }
++      (void) fclose(fp);
++    }
++    }
++  if (found)
++      return strcpy (resolved_name, real_path);
++  else
++      return strcpy (resolved_name, real_dir);
++}
++
++static void ts_set_snapshot_used_space (zfs_handle_t *zhp, ZfsDataSet *snap)
++{
++  gchar buf[ZFS_MAXNAMELEN];
++  if (zfs_prop_get(zhp, ZFS_PROP_USED, buf, sizeof (buf), NULL, NULL, 0, B_FALSE) == 0)
++    {
++      char unit[10];
++      char format_float[5] = "%f%s";
++      char format_int[5] = "%d%s";
++      char *format = format_int;
++      int   used_space_int = 0;
++      gboolean success = FALSE;
++
++      snap->used_space_str = g_strdup (buf);
++
++      if (strchr (buf, '.'))
++    {
++      format = format_float;
++      if (sscanf(buf, format,&snap->used_space,unit) == 2)
++        success = TRUE;
++    }
++      else
++    {
++      if (sscanf(buf, format,&used_space_int,unit) == 2)
++        {
++          success = TRUE;
++          snap->used_space = (float) used_space_int;
++        }
++    }
++      if (strcmp (buf, "0") == 0)
++    {
++      g_free (snap->used_space_str);
++      snap->used_space_str = g_strdup ("0 K");
++      success = TRUE;
++    }
++
++      if (success)
++    {
++      if (strcmp (unit, "M") == 0)
++        snap->used_space *= 1024; 
++      if (strcmp (unit, "G") == 0)
++        snap->used_space *= 1024 * 1024; 
++    }
++      else
++    {
++      g_free (snap->used_space_str);
++      /* SUN_BRANDING */
++      snap->used_space_str = g_strdup (_("Unknown"));
++    }
++    }
++  else
++    {
++      g_free (snap->used_space_str);
++      /* SUN_BRANDING */
++      snap->used_space_str = g_strdup (_("Unknown"));
++    }
++}
++
++static void ts_set_snapshot_mtime_and_time_diff (zfs_handle_t *zhp, ZfsDataSet *snap)
++{
++  GDate now;
++  GDate then;
++  time_t time_now;
++  gint days_diff;
++  const gchar *format;
++  gchar *locale_format = NULL;
++  gchar buf[ZFS_MAXNAMELEN];
++  gchar *date_str = NULL;
++
++  if (zfs_prop_get(zhp, ZFS_PROP_CREATION, buf, sizeof (buf), NULL, NULL, 0, B_TRUE) == 0)
++    {
++      struct tm tms;
++
++      sscanf (buf, "%llu", &snap->mtime);
++      snap->mtime_str = caja_date_as_string (snap->mtime, FALSE);
++    }
++
++}
++
++void print_snap_list (char *dir, GList *snap_list)
++{
++  GList *tmp;
++  printf ("list of snapshots for %s :\n", dir);
++  for (tmp = snap_list; tmp->next; tmp = tmp->next)
++    {
++      ZfsDataSet *snap = (ZfsDataSet*) tmp->data;
++      printf (" name: %s\n mountpoint: %s\n mtime_str :%s\n space used : %s\n size in kilobytes : %f\n",
++          snap->name, snap->mountpoint, snap->mtime_str, snap->used_space_str, snap->used_space);
++
++    }
++  printf ("\n");
++}
++
++static GString *
++dump_zds (ZfsDataSet *zds)
++{
++  GString *msg;
++  gchar *type;
++
++  if (!zds)
++    return NULL;
++
++  msg = g_string_new ("");
++  g_string_printf (msg, 
++           "\tname: %s\n"
++           "\tmountpoint: %s\n"
++           "\ttype: %s\n",
++           zds->name,zds->mountpoint, zfs_type_to_name(zds->type));
++  if (zds->snapshots)
++    {
++      GList *tmp;
++      g_string_append_printf(msg,"\tsnapshots :\n");
++      for (tmp=zds->snapshots;tmp;tmp = tmp->next)
++    { 
++      ZfsDataSet *tmp_zds= (ZfsDataSet*) tmp->data;
++      g_string_append_printf (msg,"\t\tname: %s\n\t\tpath: %s\n",
++                  tmp_zds->name,
++                  tmp_zds->mountpoint);
++    }
++    }
++  g_string_append_printf (msg, "\n");
++  return msg;
++}
++
++
++static void
++dump_sds (SearchDataSet *sds)
++{
++  GString *msg;
++  gchar *type;
++  GList *tmp;
++
++  if (!sds)
++    {
++      printf ("Search DataSet is empty\n");
++      return;
++    }
++
++  msg = g_string_new ("");
++  g_string_printf (msg, "DDS Dump:\n"
++           "\tsearched_path: %s\n",
++           sds->searched_path);
++
++  g_string_append_printf (msg, "Zfs Data set :\n");
++  for (tmp=sds->datasets;tmp;tmp=tmp->next)
++    {
++      GString * zds_dump = dump_zds ((ZfsDataSet *)tmp->data);
++      g_string_append_printf (msg,"%s",zds_dump->str); 
++      g_string_free (zds_dump, TRUE);
++    }
++  g_string_append_printf (msg, "\n");
++  printf ("%s", msg->str);
++  g_string_free (msg, TRUE);
++}
++
++static ZfsDataSet*
++ts_new_zfs_dataset (SearchDataSet* sds)
++{
++    ZfsDataSet *zds;
++    zds = g_new0 (ZfsDataSet, 1);
++    zds->search_dataset = sds;
++    return zds;
++}
++
++void
++ts_free_zfs_dataset (ZfsDataSet* zds)
++{
++    if (!zds)
++      return;
++    if (zds->name)
++      g_free (zds->name);
++    if (zds->mountpoint)
++      g_free (zds->mountpoint);
++    if (zds->mtime_str)
++      g_free (zds->mtime_str);
++    if (zds->used_space_str)
++      g_free (zds->used_space_str);
++
++    if (zds->snapshots)
++      {
++        GList *tmp;
++        for (tmp = zds->snapshots;tmp;tmp = tmp->next)
++          ts_free_zfs_dataset ((ZfsDataSet*)tmp->data);
++      }
++    g_free (zds);
++}
++
++static SearchDataSet *
++ts_new_search_dataset (GCancellable *cancel)
++{
++    SearchDataSet *sds;
++    sds = g_new0 (SearchDataSet, 1);
++    sds->cancel = cancel;
++    return sds;
++}
++static void
++ts_free_search_dataset (SearchDataSet *sds)
++{
++    if (!sds)
++      return;
++    if (sds->searched_path)
++      g_free (sds->searched_path);
++    if (sds->mountpoint)
++      g_free (sds->mountpoint);
++    if (sds->datasets)
++      {
++        GList *tmp;
++        for (tmp = sds->datasets;tmp;tmp = tmp->next)
++          ts_free_zfs_dataset ((ZfsDataSet*)tmp->data);
++      }
++    g_free (sds);
++}
++
++static char* construct_check_snapshot_path (SearchDataSet *sds, char* mountpoint, const char *name, char *searched_path)
++{
++  gchar *result = NULL;
++  gchar **split;
++  gchar **split2;
++
++  gchar *snap_name = NULL;
++  gchar *remaining_path = NULL;
++  
++  /* get the snapshot name part pool@snap-name we are only interested in snap-name split[1] */
++  split = g_strsplit (name,"@",2);
++  /* get the path after the mountpoint */
++  split2 = g_strsplit (searched_path, mountpoint, 2);
++
++  if (split && split[1])
++      snap_name = split[1];
++
++  if (split2 && split2[1])
++      remaining_path = split2[1];
++  
++/*  printf ("mountpoint : %s \nname : %s \nsearched_path: %s\n", mountpoint, name, searched_path);
++  printf ("split %s at @ = [%s] [%s]\n", name, split[0],split[1]); 
++  printf ("split %s at [%s] = [%s] [%s]\n", searched_path, mountpoint, split2[0],split2[1]); 
++  printf ("%s/.zfs/snapshot/%s/%s\n\n", mountpoint, split[1], split2[1]);*/
++
++  if (snap_name && remaining_path)
++    if (strcmp(mountpoint, "/") == 0) 
++      result = g_strdup_printf ("/.zfs/snapshot/%s/%s", snap_name, remaining_path);
++    else
++      result = g_strdup_printf ("%s/.zfs/snapshot/%s/%s", mountpoint, snap_name, remaining_path);
++  
++  g_strfreev (split);
++  g_strfreev (split2);
++  
++  /* don't test for file presence if searched path is the same as the mount point */
++  if (sds->searched_path_match_mp)
++      return result;
++      
++  if (result && g_file_test (result, G_FILE_TEST_IS_DIR))
++      {
++    char real_dir[PATH_MAX+1]; 
++    if (!ts_realpath(result, real_dir))
++      {
++        g_free (result);
++        result = NULL;
++      }
++    else
++      {
++        g_free (result);
++        result = g_strdup (real_dir);
++      }
++    return result;
++      }
++
++  g_free (result);
++  return NULL;
++}
++
++static int
++snapshot_callback (zfs_handle_t *zhp, void *data)
++{
++  ZfsDataSet *main_zds = (ZfsDataSet*) data;
++
++  /* only add snapshot dir that exist */
++
++  if (zfs_get_type (zhp) == ZFS_TYPE_SNAPSHOT && !g_cancellable_is_cancelled (main_zds->search_dataset->cancel)) 
++    {
++      const char* name = zfs_get_name (zhp);
++      char *snap_path = construct_check_snapshot_path (main_zds->search_dataset,
++                               main_zds->mountpoint, 
++                               name, 
++                               main_zds->search_dataset->searched_path);
++      if (snap_path)
++    {
++      ZfsDataSet *zds = ts_new_zfs_dataset (main_zds->search_dataset);
++      zds->name = g_strdup (name);
++      zds->type = ZFS_TYPE_SNAPSHOT;
++      zds->mountpoint = snap_path;
++      ts_set_snapshot_mtime_and_time_diff (zhp, zds);
++      ts_set_snapshot_used_space (zhp, zds);
++      main_zds->snapshots = g_list_append (main_zds->snapshots,zds);
++    }
++    }
++  zfs_close (zhp);
++  return 0;
++}
++
++
++static struct mnttab *
++mygetmntent(FILE *f)
++{
++  static struct mnttab mt;
++  int status;
++
++  if ((status = getmntent(f, &mt)) == 0)
++    return (&mt);
++
++  return (NULL);
++}
++
++static char *
++is_fs_mounted (const char *fs_name)
++{
++  FILE           *mnttab;
++  struct mnttab    *mntp;
++
++
++  mnttab = fopen (MNTTAB,"r");
++
++  while ((mntp = mygetmntent(mnttab)) != NULL) 
++    {
++      if (mntp->mnt_fstype == (char *)0 || strcmp(mntp->mnt_fstype, "zfs") != 0)
++    continue;
++      if (strcmp (mntp->mnt_special, fs_name) == 0)
++    {
++      fclose (mnttab);
++      return g_strdup (mntp->mnt_mountp);
++    }
++  }
++  fclose (mnttab);
++  return NULL;
++}
++
++static char* rsync_get_smf_dir()
++{
++  char data_store[MAXPATHLEN];
++
++  int retval = -1;
++
++  scf_handle_t    *handle = NULL;
++  scf_scope_t    *sc = NULL;
++  scf_service_t    *svc = NULL;
++  scf_instance_t *inst = NULL;
++  scf_propertygroup_t    *pg = NULL;
++  scf_property_t    *prop = NULL;
++  scf_value_t    *value = NULL;
++  scf_iter_t    *value_iter = NULL;
++
++
++  /* connect to the current SMF global repository */
++  handle = scf_handle_create(SCF_VERSION);
++
++  /* allocate scf resources */
++  sc = scf_scope_create(handle);
++  svc = scf_service_create(handle);
++  inst = scf_instance_create (handle);
++  pg = scf_pg_create(handle);
++  prop = scf_property_create(handle);
++  value = scf_value_create(handle);
++  value_iter = scf_iter_create(handle);
++
++  char *result = NULL;
++
++  /* if failed to allocate resources, exit */
++  if (handle == NULL || sc == NULL || svc == NULL || pg == NULL ||
++      prop == NULL || value == NULL || value_iter == NULL) {
++    /* scf handles allocation failed. */
++    goto out;
++  }
++
++  /* bind scf handle to the running svc.configd daemon */
++  if (scf_handle_bind(handle) == -1) {
++    /* scf binding failed. */
++    goto out;
++  }
++
++  /* get the scope of the localhost in the current repository */
++  if (scf_handle_get_scope(handle, SCF_SCOPE_LOCAL, sc) == -1) {
++    /* Getting scf scope failed.*/
++    goto out;
++  }
++
++  /* get the service within the scope */
++  if (scf_scope_get_service(sc, "application/time-slider/plugin", svc) == -1) {
++    /* failed getting service */
++    goto out;
++  }
++
++  /* get the instance within the service */
++  if (scf_service_get_instance(svc, "rsync", inst) == -1)
++    goto out;
++
++
++  /* get the property group within the instance */
++  if (scf_instance_get_pg(inst, "rsync", pg) == -1) {
++      /* Getting property group failed.  */
++    goto out;
++  }
++
++  /*
++   * Now get the properties.
++   */
++  if (scf_pg_get_property(pg, "target_dir", prop) == -1) {
++    goto out;
++  }
++
++  if (scf_property_get_value(prop, value) == -1) {
++    goto out;
++  }
++
++  data_store[0] = 0;
++  if (scf_value_get_astring(value, data_store, MAXPATHLEN) == -1) {
++    goto out;
++  }
++  else {
++    result = strdup (data_store);
++  }
++
++out:
++  /* destroy scf pointers */
++  if (value != NULL) 
++    scf_value_destroy(value);
++  if (value_iter != NULL) 
++    scf_iter_destroy(value_iter);
++  if (prop != NULL) 
++    scf_property_destroy(prop);
++  if (pg != NULL) 
++    scf_pg_destroy(pg);
++  if (inst != NULL)
++    scf_instance_destroy (inst);
++  if (svc != NULL) 
++    scf_service_destroy(svc);
++  if (sc != NULL) 
++    scf_scope_destroy(sc);
++  if (handle != NULL) 
++    scf_handle_destroy(handle);
++
++  return result;
++}
++
++static char *rsync_get_dir (zfs_handle_t *zhp)
++{
++  nvlist_t *propval;
++
++  if (nvlist_lookup_nvlist(zfs_get_user_props(zhp),
++               "org.opensolaris:time-slider-rsync", &propval) == 0) 
++    {
++      boolean_t ret_bool = FALSE;
++      char *strval;
++      char *dir;
++      nvlist_lookup_string(propval, ZPROP_VALUE, &strval);
++
++      if (strcmp (strval, "true") == 0)
++    {
++      dir = rsync_get_smf_dir ();
++      if (dir)
++        return dir;
++    }
++    }
++  return NULL;
++}
++
++void sync_backups_add (zfs_handle_t *zhp, ZfsDataSet *main_zds)
++{
++  char *rsync_dir = rsync_get_dir (zhp);
++  DIR *d;
++  struct dirent *dir;
++  char *fs_rsync_dir;
++  struct utsname machine;
++
++  if (!rsync_dir)
++    return;
++
++  /* format SMF backup dir , TIMESLIDER, nodename from uname, path, .time-slider/rsync */
++  if (uname (&machine) == -1)
++    return;
++
++  fs_rsync_dir = g_strdup_printf ("%s/TIMESLIDER/%s/%s/%s/",
++                  rsync_dir,
++                  machine.nodename,
++                  main_zds->name,
++                  ZFS_BACKUP_DIR);
++
++  if (!g_file_test (fs_rsync_dir, G_FILE_TEST_IS_DIR))
++    {
++      g_free (rsync_dir);
++      g_free (fs_rsync_dir);
++      return;
++    }
++
++  d = opendir (fs_rsync_dir);
++
++  if (!d)
++    {
++      g_free (rsync_dir);
++      g_free (fs_rsync_dir);
++      return;
++    }
++
++  while ((dir = readdir (d)))
++    {
++      if (strstr (dir->d_name, "zfs-auto-snap_"))
++    { /* got a snap copy dir */
++      char **comma_split = NULL;
++      char **freq_split = NULL;
++      struct tm tms;
++      ZfsDataSet *zds = NULL;
++
++      /* extract creation time from dir name */
++      comma_split = g_strsplit (dir->d_name, "_", 2);
++      /* printf ("comma_split[1] = %s\n", comma_split[1]); */
++      freq_split = g_strsplit (comma_split[1], "-", 2);
++      /* printf ("freq_split[1] = %s\n", freq_split[1]);  */
++
++      /* parse time string */
++      if (strptime (freq_split[1], "%Y-%m-%d-%Hh%M", &tms) != NULL)
++        { 
++          zds = ts_new_zfs_dataset (main_zds->search_dataset);
++          zds->name = g_strdup (dir->d_name);
++          zds->type = 0;
++          zds->mountpoint = g_strdup_printf ("%s%s/", fs_rsync_dir, dir->d_name);
++          zds->mtime = mktime (&tms);
++          zds->mtime_str =  caja_date_as_string (zds->mtime, FALSE);
++          zds->used_space_str = g_strdup (_("Separate Backup"));
++          main_zds->snapshots = g_list_append (main_zds->snapshots,zds);
++          /* printf ("in sync_backups_add adding %s %s\n", zds->name, zds->mountpoint); */
++        }
++      if (comma_split)
++        g_strfreev (comma_split);
++      if (freq_split)
++        g_strfreev (freq_split);
++    }
++    }
++
++  closedir (d);
++  g_free (rsync_dir);
++}
++
++static int
++zfs_callback (zfs_handle_t *zhp, void *data)
++{
++  char buf[ZFS_MAXPROPLEN];
++  char mounted[ZFS_MAXPROPLEN];
++  SearchDataSet *sds = (SearchDataSet*) data;
++
++  if (sds->match_found)
++    {
++      zfs_close (zhp);
++      return 0;
++    }
++
++  if (zfs_get_type (zhp) & sds->type & !g_cancellable_is_cancelled (sds->cancel))
++    {
++/*      struct timespec ts;
++      ts.tv_sec = 3;
++      ts.tv_nsec = 100000000; 
++      nanosleep (&ts, NULL);*/
++
++      if (sds->prop >= ZFS_PROP_TYPE && sds->prop < ZFS_NUM_PROPS) 
++    {
++      zfs_prop_get(zhp, sds->prop, buf, sizeof (buf), NULL, NULL,  0, TRUE);
++
++      zfs_prop_get(zhp, ZFS_PROP_MOUNTED, mounted, sizeof (mounted), NULL, NULL,  0, TRUE);
++      
++      if ((strcmp (sds->mountpoint, buf) == 0) && (strcmp (mounted, "yes") == 0))
++        {
++          ZfsDataSet *zds = ts_new_zfs_dataset (sds);
++          zds->type = zfs_get_type (zhp);
++          zds->name = g_strdup (zfs_get_name(zhp));
++          zds->mountpoint = g_strdup (buf);
++          zfs_iter_snapshots (zhp, B_FALSE, snapshot_callback, zds);
++          sync_backups_add (zhp, zds);
++          sds->datasets = g_list_append (sds->datasets, zds);
++          sds->match_found = TRUE;
++        }
++      else if (strcmp ("legacy", buf) == 0)
++        { /* parse /etc/mnttab to get the mount point */
++          char *mountp = is_fs_mounted (zfs_get_name(zhp));
++          if (mountp)
++        {
++          if (strcmp (sds->mountpoint, mountp) == 0)
++            {
++              ZfsDataSet *zds = ts_new_zfs_dataset (sds);
++              zds->type = zfs_get_type (zhp);
++              zds->name = g_strdup (zfs_get_name(zhp));
++              zds->mountpoint = mountp;
++              zfs_iter_snapshots (zhp, B_FALSE, snapshot_callback, zds);
++              sync_backups_add (zhp, zds);
++              sds->datasets = g_list_append (sds->datasets, zds);
++              sds->match_found = TRUE;
++            }
++          else
++            g_free (mountp);
++        }
++        }
++    }
++      if (!sds->match_found)
++    zfs_iter_filesystems (zhp, zfs_callback, sds); 
++    }
++  zfs_close (zhp);
++  return 0;
++}
++
++static SearchDataSet *
++ts_get_data_from_mountpoint (const char* searched_path, const char *mountpoint, GCancellable *cancel)
++{
++  static libzfs_handle_t *zfs_handle = NULL;
++  SearchDataSet *sds;
++
++  sds = ts_new_search_dataset (cancel);
++
++  sds->prop = ZFS_PROP_MOUNTPOINT;
++  sds->type = ZFS_TYPE_FILESYSTEM;
++  sds->searched_path = g_strdup (searched_path);
++  sds->mountpoint = g_strdup (mountpoint);
++
++  if (strcmp (searched_path, mountpoint) == 0)
++    sds->searched_path_match_mp = TRUE;
++
++  if (!zfs_handle)
++    {
++      if ((zfs_handle = libzfs_init()) == NULL) {
++    g_warning ("internal error: failed to initialize ZFS library\n");
++    ts_free_search_dataset (sds);
++    return NULL;
++      }
++    }
++  zfs_iter_root (zfs_handle, zfs_callback, sds);
++
++  return sds;
++}
++static gint
++snap_sort_by_age (gconstpointer a,
++          gconstpointer b)
++{
++  const ZfsDataSet *snap1 = a;
++  const ZfsDataSet *snap2 = b;
++
++  if (snap1->mtime == snap2->mtime)
++    return 0;
++  if (snap1->mtime < snap2->mtime)
++    return -1;
++  if (snap1->mtime > snap2->mtime)
++    return 1;
++
++}
++
++char* 
++ts_get_zfs_filesystem (char *dir)
++{
++  char real_dir[PATH_MAX+1]; 
++  char filesystem[PATH_MAX+1];
++  gboolean  found_fs= FALSE;
++  struct stat64 dir_stat64;
++
++  if (!ts_realpath(dir, real_dir))
++    {
++      return NULL;
++    }
++    if (stat64 (real_dir, &dir_stat64) == 0)
++    { /* check is fs is zfs */
++      if (strcmp (dir_stat64.st_fstype, "zfs") == 0)
++    {
++      FILE            *fp;
++      struct extmnttab   mtab;
++      int             status;
++
++      /* get mount point */
++
++      fp = fopen (MNTTAB,"r");
++
++      resetmnttab(fp);
++      while ((status = getextmntent(fp, &mtab, sizeof (struct extmnttab))) == 0) 
++        {
++          dev_t dev = NODEV;
++          dev = makedev(mtab.mnt_major, mtab.mnt_minor);
++          if (dev == dir_stat64.st_dev)
++        {
++          strcpy (filesystem, mtab.mnt_special);
++          found_fs = TRUE;
++          break;
++        }
++        }
++      (void) fclose(fp);
++    }
++    }
++    if (found_fs)
++      return g_strdup(filesystem);
++
++    return NULL;
++}
++
++static char * get_zfs_mountpoint (char *dir)
++{
++  char real_dir[PATH_MAX+1]; 
++  char mountpoint[PATH_MAX+1];
++  gboolean  found_mount_point = FALSE;
++  struct stat64 dir_stat64;
++
++  if (!ts_realpath(dir, real_dir))
++    {
++      return NULL;
++    }
++    if (stat64 (real_dir, &dir_stat64) == 0)
++    { /* check is fs is zfs */
++      if (strcmp (dir_stat64.st_fstype, "zfs") == 0)
++    {
++      FILE            *fp;
++      struct extmnttab   mtab;
++      int             status;
++
++      /* get mount point */
++
++      fp = fopen (MNTTAB,"r");
++
++      resetmnttab(fp);
++      while ((status = getextmntent(fp, &mtab, sizeof (struct extmnttab))) == 0) 
++        {
++          dev_t dev = NODEV;
++          dev = makedev(mtab.mnt_major, mtab.mnt_minor);
++          if (dev == dir_stat64.st_dev)
++        {
++          strcpy (mountpoint, mtab.mnt_mountp);
++          found_mount_point = TRUE;
++          break;
++        }
++        }
++      (void) fclose(fp);
++    }
++    }
++    if (found_mount_point)
++      return g_strdup(mountpoint);
++
++    return NULL;
++}
++
++
++char *ts_get_snapshot_dir (char *dir)
++{
++  char *zfs_dir = get_zfs_mountpoint (dir);
++  if (zfs_dir)
++    {
++      char *snapshot_dir = g_strdup_printf ("%s/.zfs/snapshot", zfs_dir);
++      g_free (zfs_dir);
++      return snapshot_dir;
++    }
++  else
++    return NULL;
++}
++
++
++
++static void ts_get_snapshots_for_dir (GSimpleAsyncResult *res,
++                      GObject            *object,
++                      GCancellable       *cancellable)
++{
++  char *mountpoint = NULL; 
++  char real_dir[PATH_MAX+1]; 
++  SearchDataSet *sds;
++  GList* snap_result = NULL;
++  GFile *file = G_FILE (object);
++  char *dir = g_file_get_path (file);
++
++  mountpoint = get_zfs_mountpoint (dir);
++  
++
++  if (!mountpoint)
++    {
++      g_simple_async_result_set_op_res_gpointer (res, snap_result, (GDestroyNotify) NULL);
++      g_free (dir);
++      return;
++    }
++
++  ts_realpath(dir, real_dir);
++
++  sds = ts_get_data_from_mountpoint (real_dir, mountpoint, cancellable);
++
++  g_free (mountpoint);
++
++  if (g_cancellable_is_cancelled (cancellable))
++    {
++      /* printf ("ts_get_snapshots_for_dir %s cancelled\n", dir); */
++      if (sds)
++    {
++      ts_free_search_dataset (sds);
++      sds = NULL;
++    }
++    }
++
++  if (sds)
++    {
++      GList *tmp;
++      for (tmp=sds->datasets;tmp;tmp=tmp->next)
++    {
++      ZfsDataSet *zds = (ZfsDataSet*) tmp->data;
++      if (zds->snapshots)
++        {
++          snap_result = g_list_concat (snap_result, zds->snapshots);
++          zds->snapshots = NULL;
++        }
++    }
++      ts_free_search_dataset (sds);
++    }
++
++  if (snap_result) 
++    {
++      snap_result = g_list_sort (snap_result, (GCompareFunc)snap_sort_by_age);
++      /* print_snap_list (dir, snap_result);  */
++    }
++
++  g_free (dir);
++  g_simple_async_result_set_op_res_gpointer (res, snap_result, (GDestroyNotify) NULL);
++}
++
++
++GList *ts_get_snapshots_for_dir_async (GFile *file, 
++                       GAsyncReadyCallback result_ready, 
++                       GCancellable *cancel,
++                       gpointer  user_data)
++{
++   GSimpleAsyncResult *res;
++
++   res = g_simple_async_result_new (G_OBJECT (file), result_ready, user_data, (gpointer) ts_get_snapshots_for_dir);
++   g_simple_async_result_run_in_thread (res, ts_get_snapshots_for_dir, G_PRIORITY_DEFAULT, cancel);
++   return NULL;
++}
++
++
++void ts_free_snapshots (GList *snaps)
++{
++  if (snaps)
++    {
++      GList *tmp;
++      for (tmp=snaps;tmp;tmp=tmp->next)
++    ts_free_zfs_dataset ((ZfsDataSet*) tmp->data);
++      g_list_free (snaps);
++    }
++}
++
++gboolean ts_is_in_remote_backup (char *str)
++{
++    if (str != NULL)
++    {
++      if (g_strrstr (str, ZFS_BACKUP_DIR))
++    return TRUE;
++    }
++  return FALSE;
++}
++
++
++gboolean ts_is_in_snapshot (char * str)
++{
++  if (str != NULL)
++    {
++      if (g_strrstr (str, ZFS_SNAPSHOT_DIR))
++    return TRUE;
++      if (g_strrstr (str, ZFS_BACKUP_DIR))
++    return TRUE;
++    }
++  return FALSE;
++}
++
++char* ts_remove_snapshot_dir (char *str)
++{
++  if (ts_is_in_snapshot (str))
++    {
++      char *snap_root;
++      char *zfs, *iter, point;
++      int count = 0;
++
++      /*remove .zfs/snapshot/blah/ */
++      zfs = g_strrstr (str, ZFS_SNAPSHOT_DIR);
++      iter = zfs;
++
++      if (iter)
++    {
++      iter += sizeof (ZFS_SNAPSHOT_DIR);
++      while (*iter != '/' && *iter != '\0')
++        iter++;
++
++      if (*iter == '/')
++        iter++;
++
++      point = *zfs;
++      *zfs = '\0';
++      snap_root = g_strdup_printf ("%s%s", str, iter);
++
++      *zfs = point;
++      return snap_root;
++    }
++    }
++  return NULL;
++}
++
++
++static gboolean restore_col_enabled = FALSE;
++
++gboolean 
++ts_is_restore_column_enabled ()
++{
++  return restore_col_enabled;
++}
++
++void ts_is_restore_column_enabled_init ();
++
++static void
++visible_columns_changed (gpointer callback_data)
++{
++  ts_is_restore_column_enabled_init ();
++}
++
++
++void ts_is_restore_column_enabled_init ()
++{
++  char **visible_columns;
++  static gboolean init = FALSE;
++  int i = 0;
++
++  if (!init)
++  {
++      g_signal_connect_swapped ( caja_list_view_preferences,
++                                 g_strconcat ("changed::", CAJA_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS, NULL),
++                                 G_CALLBACK ( visible_columns_changed ),
++                                 NULL);
++      init = TRUE;
++  }
++  
++  restore_col_enabled = FALSE;
++
++  visible_columns = g_settings_get_strv (caja_list_view_preferences,
++            		         	 CAJA_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
++
++  while (visible_columns[i])
++    {
++      if (strcmp (visible_columns [i], "restore_info") == 0)
++    {
++      restore_col_enabled = TRUE;
++      break;
++    }
++      i++;
++    }
++  g_strfreev (visible_columns);
++}
++
++
++static GList * get_dir_entries (char *dir_path)
++{
++  const char *entry_name;
++  GDir *dir;
++  GList *dir_entries = NULL;
++  dir = g_dir_open (dir_path, 0, NULL);
++
++  while ((entry_name = g_dir_read_name (dir)) != NULL)
++    dir_entries = g_list_prepend (dir_entries, g_strdup (entry_name));
++
++  g_dir_close (dir);
++
++  return dir_entries;
++}
++
++static void free_dir_entries (GList *entries)
++{
++  g_list_foreach (entries, (GFunc)g_free, NULL);
++  g_list_free (entries);
++}
++
++static gboolean are_entries_identical (GList *old, GList *new)
++{
++  if (g_list_length (old) != g_list_length (new))
++    return FALSE;
++
++  for (old; old; old = old->next)
++    {
++      gboolean found = FALSE;
++      for (new; new; new = new->next)
++    {
++      if (strcmp (old->data, new->data) == 0)
++        {
++          found = TRUE;
++          break;
++        }
++    }
++      if (!found)
++    return FALSE;
++    }
++  return TRUE;
++}
++
++void monitor_zfs_snap_directory_cancel (ZfsSnapDirMonitor *monitor_data)
++{
++  if (monitor_data)
++    {
++      /* printf ("in monitor_zfs_snap_directory_cancel %s\n", monitor_data->path); */
++      g_source_remove (monitor_data->timeout_id);
++      free_dir_entries (monitor_data->entries);
++      g_free (monitor_data->path);
++      g_free (monitor_data);
++    }
++}
++
++static gboolean        
++monitor_snap_dir (ZfsSnapDirMonitor *monitor_data)
++{
++  GList *new_entries;
++
++  if (!g_file_test (monitor_data->path, G_FILE_TEST_IS_DIR))
++    {
++      monitor_zfs_snap_directory_cancel (monitor_data);
++      return TRUE;
++    }
++
++  new_entries = get_dir_entries (monitor_data->path);
++
++  if (are_entries_identical (monitor_data->entries, new_entries))
++    {
++      free_dir_entries (new_entries);
++    }
++  else
++    {
++      free_dir_entries (monitor_data->entries);
++      monitor_data->entries = new_entries;
++      monitor_data->change_callback (monitor_data, monitor_data->user_data);
++    }
++
++  if (monitor_data->backup_path)
++    {
++      if (!g_file_test (monitor_data->backup_path, G_FILE_TEST_IS_DIR))
++    {
++      monitor_zfs_snap_directory_cancel (monitor_data);
++      return TRUE;
++    }
++
++      new_entries = get_dir_entries (monitor_data->backup_path);
++      
++      if (are_entries_identical (monitor_data->backup_entries, new_entries))
++    {
++      free_dir_entries (new_entries);
++    }
++      else
++    {
++      free_dir_entries (monitor_data->backup_entries);
++      monitor_data->backup_entries = new_entries;
++      monitor_data->change_callback (monitor_data, monitor_data->user_data);
++    }
++    }
++  return TRUE;
++}
++
++  
++ZfsSnapDirMonitor *monitor_zfs_snap_directory (char *path, 
++                           char *backup_path,
++                           ZfsDirChangeCallback change_callback,
++                           gpointer data)
++{
++  ZfsSnapDirMonitor *monitor_data = g_new0 (ZfsSnapDirMonitor, 1);
++
++  /* printf ("start monitoring %s\n", path); */
++
++  monitor_data->path = g_strdup (path);
++  monitor_data->entries = get_dir_entries (path);
++  if (backup_path)
++    {
++      monitor_data->backup_path = g_strdup (backup_path);
++      monitor_data->backup_entries = get_dir_entries (backup_path);
++    }
++  monitor_data->change_callback = change_callback;
++  monitor_data->user_data = data;
++
++  monitor_data->timeout_id = g_timeout_add_seconds (5, (GSourceFunc)monitor_snap_dir, monitor_data);
++  return monitor_data;
++}
++
++char *
++ts_get_not_zfs_snapshot_dir (GFile *file)
++{
++  char tmp_path[PATH_MAX + 1];
++  gboolean found = FALSE;
++  gboolean end_path = FALSE;
++  GFile *d = g_file_get_parent(file);
++  GFile *tmp;
++  char *full_path = g_file_get_path (file);
++  char *stripped_path = g_file_get_path (d);
++  struct stat64 dir_stat64;
++
++  if (!full_path)
++     return NULL;
++
++  if (stat64 (full_path, &dir_stat64) == 0)
++    { /* check is fs is zfs if so don't try to check for nfs mounted .zfs dir*/
++      if (strcmp (dir_stat64.st_fstype, "zfs") == 0)
++        end_path = TRUE;
++    }
++
++  while (!found && !end_path)
++    {
++      g_snprintf (tmp_path, sizeof(tmp_path), "%s/.zfs/snapshot", stripped_path);
++      if (g_file_test (tmp_path, G_FILE_TEST_IS_DIR))
++        {
++          GList *entries = get_dir_entries (tmp_path);
++          if (entries != NULL)
++            {
++              char *after_snap_path = full_path + strlen (stripped_path);
++
++              for (entries; entries; entries = entries->next)
++                {
++                  char test_path[PATH_MAX +1];
++                  g_sprintf (test_path, "%s/%s/%s", tmp_path, 
++                             entries->data,
++                             after_snap_path);
++                  if (g_file_test (test_path, G_FILE_TEST_EXISTS))
++                    {
++                      found = TRUE;
++                      break;
++                    }
++                }
++              free_dir_entries (entries);
++            }
++        }
++      tmp = d;
++      d = g_file_get_parent (tmp);
++      g_object_unref (tmp);
++      g_free (stripped_path);
++      stripped_path=NULL;
++      if (d == NULL)
++        {
++          end_path = TRUE;
++        }
++      else
++        {
++          stripped_path = g_file_get_path (d);
++        }
++    }
++
++  g_free (full_path);
++
++  if (stripped_path)
++    g_free (stripped_path);
++
++  if (found)
++    return g_strdup (tmp_path);
++  else
++    return NULL;
++
++}
++

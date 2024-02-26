@@ -1,0 +1,38 @@
+--- caja-1.28.0/libcaja-private/caja-file.h.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/libcaja-private/caja-file.h	2024-02-26 08:42:41.078215891 +0100
+@@ -194,6 +194,7 @@
+         const char                     *mime_type);
+ gboolean                caja_file_is_launchable                     (CajaFile                   *file);
+ gboolean                caja_file_is_symbolic_link                  (CajaFile                   *file);
++gboolean                caja_file_is_in_snapshot                    (CajaFile                   *file);
+ gboolean                caja_file_is_mountpoint                     (CajaFile                   *file);
+ GMount *                caja_file_get_mount                         (CajaFile                   *file);
+ char *                  caja_file_get_volume_free_space             (CajaFile                   *file);
+@@ -250,6 +251,27 @@
+ 
+ CajaFile *          caja_file_get_trash_original_file           (CajaFile                   *file);
+ 
++/* Time slider */
++char *                  caja_file_get_num_snapshot_version          (CajaFile                   *file,
++                                                                     GCancellable               *cancel,
++                                                                     gboolean                    stop_at_first);
++char *                  caja_file_get_restore_info_async            (CajaFile                   *file);
++
++typedef enum {
++    NO,
++    YES,
++    UNKNOWN_STATE
++} HasSnapshotResult;
++
++HasSnapshotResult       caja_file_has_snapshot_version              (CajaFile                   *file);
++char *                  caja_file_get_snapshot_dir                  (CajaFile                   *file);
++typedef void (*FileHasSnapshotCallback)    (gpointer user_data);
++
++void                    caja_file_get_snapshot_version              (CajaFile                   *file,
++                                                                     FileHasSnapshotCallback     callback,
++                                                                     GCancellable               *cancel,
++                                                                     gpointer                    user_data);
++
+ /* Permissions. */
+ gboolean                caja_file_can_get_permissions               (CajaFile                   *file);
+ gboolean                caja_file_can_set_permissions               (CajaFile                   *file);

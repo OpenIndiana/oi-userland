@@ -1,0 +1,49 @@
+--- caja-1.28.0/src/caja-window.c.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/caja-window.c	2024-02-26 08:42:41.082802543 +0100
+@@ -424,6 +424,18 @@
+                      set_allow_up, (window, allow));
+ }
+ 
++void
++caja_window_allow_restore (CajaWindow *window, gboolean enable)
++{
++    GtkAction *action;
++    
++    g_assert (CAJA_IS_WINDOW (window));
++
++    action = gtk_action_group_get_action (window->details->main_action_group,
++                                          CAJA_ACTION_RESTORE);
++    gtk_action_set_sensitive (action, enable);
++}
++
+ static void
+ update_cursor (CajaWindow *window)
+ {
+@@ -431,7 +443,7 @@
+ 
+     slot = window->details->active_pane->active_slot;
+ 
+-    if (slot->allow_stop)
++    if (slot && slot->allow_stop)
+     {
+         GdkDisplay *display;
+         GdkCursor * cursor;
+@@ -468,7 +480,18 @@
+         if (slot == window->details->active_pane->active_slot)
+         {
+             G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
++            if (!slot->allow_stop && slot->find_zfs_snapshots_cancellable != NULL)
++            { 
++                /* if slot want to stop and snap find is finished/cancel then disable */
++                if (g_cancellable_is_cancelled (slot->find_zfs_snapshots_cancellable))
++                {
++                    gtk_action_set_sensitive (action, slot->allow_stop);
++                }
++            }
++            else
++            {
+             gtk_action_set_sensitive (action, slot->allow_stop);
++	    }
+             G_GNUC_END_IGNORE_DEPRECATIONS;
+         }
+ 

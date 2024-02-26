@@ -1,0 +1,913 @@
+--- caja-1.28.0/src/caja-zfs-bar.h.orig	2024-02-26 08:42:41.083373824 +0100
++++ caja-1.28.0/src/caja-zfs-bar.h	2024-02-26 08:42:41.083327328 +0100
+@@ -0,0 +1,56 @@
++#ifndef __CAJA_ZFS_BAR_H
++#define __CAJA_ZFS_BAR_H
++
++#include <gtk/gtk.h>
++#include <libcaja-private/caja-directory.h>
++#include "caja-window-slot.h"
++
++G_BEGIN_DECLS
++
++#define CAJA_TYPE_ZFS_BAR         (caja_zfs_bar_get_type ())
++#define CAJA_ZFS_BAR(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), CAJA_TYPE_ZFS_BAR, CajaZfsBar))
++#define CAJA_ZFS_BAR_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), CAJA_TYPE_ZFS_BAR, CajaZfsBarClass))
++#define CAJA_IS_ZFS_BAR(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), CAJA_TYPE_ZFS_BAR))
++#define CAJA_IS_ZFS_BAR_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), CAJA_TYPE_ZFS_BAR))
++#define CAJA_ZFS_BAR_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), CAJA_TYPE_ZFS_BAR, CajaZfsBarClass))
++
++typedef struct CajaZfsBarPrivate CajaZfsBarPrivate;
++
++typedef struct
++{
++  GtkEventBox eventbox;
++  CajaZfsBarPrivate *priv;
++} CajaZfsBar;
++
++typedef struct
++{
++  GtkEventBoxClass parent_class;
++} CajaZfsBarClass;
++
++GType						caja_zfs_bar_get_type (void) G_GNUC_CONST;
++
++GtkWidget *			caja_zfs_bar_new ();
++
++void    		    caja_zfs_bar_setup (CajaZfsBar* bar,
++            								        CajaDirectory *dir,
++           												  CajaWindowSlot *active_slot,
++                    		 						GtkToggleAction* action);
++
++void    		    caja_zfs_bar_display (CajaZfsBar *bar,
++            							            CajaWindow *window,
++                		      						CajaDirectory *new_dir,
++                    		   						GCancellable* cancellable);
++
++void        		caja_zfs_set_snap (CajaZfsBar *bar,
++            						           CajaDirectory *dir);
++void       			caja_zfs_bar_remove_and_skip_snap 
++            				          (CajaZfsBar *bar, char *path);
++
++void        		caja_zfs_bar_hide (CajaZfsBar *bar);                      
++
++void        		caja_zfs_bar_cancel_tasks (CajaWindow *window);
++CajaDirectory * caja_zfs_bar_get_dir (CajaZfsBar* bar);
++
++G_END_DECLS
++
++#endif /* __CAJA_ZFS_BAR_H */
+--- caja-1.28.0/src/caja-zfs-bar.c.orig	2024-02-26 08:42:41.083214681 +0100
++++ caja-1.28.0/src/caja-zfs-bar.c	2024-02-26 08:42:41.083165019 +0100
+@@ -0,0 +1,851 @@
++/* 
++ * Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
++ *
++ */
++
++#include "config.h"
++#include <strings.h>
++#include <glib/gi18n-lib.h>
++#include <gtk/gtk.h>
++
++#include "caja-zfs-bar.h"
++#include "caja-window.h"
++#include "caja-window-private.h"
++#include "timescale.h"
++#include <libcaja-private/caja-zfs.h>
++#include <libcaja-private/caja-file.h>
++#include <libcaja-private/caja-global-preferences.h>
++#include "caja-window-slot.h"
++#include "caja-navigation-window.h"
++
++#define CAJA_ZFS_BAR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), CAJA_TYPE_ZFS_BAR, CajaZfsBarPrivate))
++
++struct CajaZfsBarPrivate
++{
++    CajaDirectory     *dir;
++    GtkWidget         *scale;
++    GtkWidget         *delete_button;
++    GdkColor           in_snapshot;
++    GtkToggleAction   *action;
++    CajaWindowSlot    *slot;
++    int                num_range_items;
++    gboolean           is_setup;
++    gboolean           set_only;
++    char              *current_path;
++    ZfsSnapDirMonitor *zfs_dir_monitor_data;
++    gboolean           in_snapshot_dir;
++    GtkWidget         *camera_image;
++    GtkWidget         *delete_image;
++    gboolean           explicit_user_hide;
++};
++
++G_DEFINE_TYPE (CajaZfsBar, caja_zfs_bar, GTK_TYPE_EVENT_BOX)
++
++static void
++close_clicked_callback (GtkWidget *widget,
++                        CajaZfsBar *bar);
++static void 
++slider_moved_callback (TimeScale *ts,
++        CajaZfsBar *bar);
++static void 
++update_delete_or_snap_button (CajaZfsBar *bar, 
++        gboolean in_snap);
++
++static void
++caja_zfs_bar_class_init (CajaZfsBarClass *klass)
++{
++    GObjectClass *object_class;
++
++    object_class = G_OBJECT_CLASS (klass);
++
++    g_type_class_add_private (klass, sizeof (CajaZfsBarPrivate));
++}
++
++static void 
++set_scale_range (CajaZfsBar *bar, gboolean set_initial_position)
++{
++    int i;
++    GList *tmp;
++
++    if (bar->priv->dir)
++    {
++        i = caja_directory_get_num_snapshots (bar->priv->dir);   
++
++        if (i==0)
++            return;
++
++        bar->priv->num_range_items = i;
++
++        tmp = caja_directory_get_snapshots (bar->priv->dir);
++
++        if (set_initial_position)
++            timescale_set_snapshots (TIMESCALE (bar->priv->scale), tmp, -1);
++        else
++            timescale_set_snapshots (TIMESCALE (bar->priv->scale), tmp, bar->priv->num_range_items);
++    }
++}
++
++static void 
++update_range (CajaZfsBar *bar)
++{
++    if (caja_directory_get_snapshots (bar->priv->dir))
++    {
++        set_scale_range (bar, FALSE);
++        slider_moved_callback (TIMESCALE (bar->priv->scale), bar);
++    }
++    else
++        close_clicked_callback (NULL, bar);
++}
++
++static int
++match_func (ZfsDataSet *set, char *dir)
++{
++    /* remove trailing slash from dir */
++    char mountp[PATH_MAX+1];
++    int length = strlen (set->mountpoint);
++
++    if (set->mountpoint[length-1] == '/')
++    {
++        memcpy (mountp, set->mountpoint, length - 1);
++        mountp[length-1] = NULL;
++        return strcmp (mountp, dir);
++    }
++    else
++        return strcmp (set->mountpoint, dir);
++}
++
++void 
++caja_zfs_bar_remove_and_skip_snap (CajaZfsBar *bar, char *path)
++{
++    GList* match = NULL;
++    GList* snap_list = NULL;
++    ZfsDataSet *snap;
++
++    snap_list = caja_directory_get_snapshots (bar->priv->dir);
++    match = g_list_find_custom (snap_list, path, (GCompareFunc)match_func);
++
++    if (match)
++    {
++        snap = (ZfsDataSet*) match->data;
++        caja_directory_remove_snapshot (bar->priv->dir, snap);
++        update_range (bar);
++    }
++}
++
++static void 
++update_delete_or_snap_button (CajaZfsBar *bar, gboolean in_snap)
++{
++    if (in_snap)
++    {
++        if (!bar->priv->in_snapshot_dir)
++        { /*in main dir to snap */
++            bar->priv->in_snapshot_dir = TRUE;
++            g_object_ref (bar->priv->camera_image);
++            gtk_button_set_image (GTK_BUTTON (bar->priv->delete_button),
++                    bar->priv->delete_image);
++            gtk_widget_set_tooltip_text (bar->priv->delete_button,
++                    /* SUN_BRANDING */
++                    _("Delete this snapshot"));
++        }
++    }
++    else
++    {
++        if (bar->priv->in_snapshot_dir)
++        { /* in snap to main dir */
++            bar->priv->in_snapshot_dir = FALSE;
++            g_object_ref (bar->priv->delete_image);
++            gtk_button_set_image (GTK_BUTTON (bar->priv->delete_button),
++                    bar->priv->camera_image);
++            gtk_widget_set_tooltip_text (bar->priv->delete_button,
++                    /* SUN_BRANDING */
++                    _("Take a zfs snapshot of this directory now"));
++        }
++    }
++}
++
++static void 
++slider_moved_callback (TimeScale *ts,
++                         CajaZfsBar *bar)
++{
++    GList *tmp;
++    ZfsDataSet *snap;
++    GFile *snap_file;
++    int pos = timescale_get_position (ts);
++
++    if (pos < bar->priv->num_range_items)
++    {
++        tmp = caja_directory_get_snapshots (bar->priv->dir);
++
++        snap = g_list_nth_data (tmp, pos);
++
++        snap_file = g_file_new_for_path (snap->mountpoint);
++    }
++    else
++    {
++        snap_file = caja_directory_get_location (bar->priv->dir);
++        pos = bar->priv->num_range_items;
++    }
++
++    if (!bar->priv->set_only)
++    {
++        gboolean in_snap = FALSE;
++        char *path = g_file_get_path (snap_file);
++
++        if (g_file_test (path, G_FILE_TEST_IS_DIR))
++        {
++            caja_window_slot_go_to (bar->priv->slot,
++                    snap_file,
++                    FALSE);
++            if (bar->priv->current_path)
++                g_free (bar->priv->current_path);
++            bar->priv->current_path = path;
++        }
++        else
++        { /* the snapshot diappeared try the next one */
++            g_free (path);
++            g_object_unref (snap_file);
++            /* remove snap from list */
++            caja_directory_remove_snapshot (bar->priv->dir, snap);
++            update_range (bar);
++            return;
++        }
++
++        in_snap = ts_is_in_snapshot (path);
++        update_delete_or_snap_button (bar, ts_is_in_snapshot (path));
++
++    }
++
++    g_object_unref (snap_file);
++
++}
++
++static void
++delete_clicked_callback (GtkWidget *widget,
++        CajaZfsBar *bar)
++{
++    GList *tmp;
++    ZfsDataSet *snap;
++    GFile *snap_file;
++    char *path;
++    char *full_command;
++    int pos = timescale_get_position (TIMESCALE (bar->priv->scale));
++
++    if (bar->priv->in_snapshot_dir)
++    {
++        tmp = caja_directory_get_snapshots (bar->priv->dir);
++        snap = g_list_nth_data (tmp, pos);
++        snap_file = g_file_new_for_path (snap->mountpoint);
++        path = g_file_get_path (snap_file);
++
++        g_object_unref (snap_file);
++        if (snap->type)
++        {
++            /*printf ("path %s snapshot to delete %s\n", path, snap->name);*/
++            full_command = g_strdup_printf ("/usr/lib/time-slider-delete '%s'", snap->name);
++        }
++        else
++        {
++            /*printf ("path %s backup to delete %s\n", path, snap->name);*/
++            full_command = g_strdup_printf ("/usr/lib/time-slider-delete '%s'", path);
++        }
++
++        mate_gdk_spawn_command_line_on_screen (gtk_widget_get_screen (widget),
++                full_command, NULL);
++    }
++    else
++    {
++        path = g_file_get_path (caja_directory_get_location (bar->priv->dir));
++        char *fs = ts_get_zfs_filesystem (path);
++        /* printf ("take a snapshot of zfs fs %s for dir %s\n", fs, path); */
++        full_command = g_strdup_printf ("/usr/lib/time-slider-snapshot '%s' '%s'", path, fs);
++        mate_gdk_spawn_command_line_on_screen (gtk_widget_get_screen (widget),
++                full_command, NULL);
++        g_free (fs);
++    }
++
++    g_free (full_command);
++    g_free (path);
++}
++
++static void
++close_clicked_callback (GtkWidget *widget,
++        CajaZfsBar *bar)
++{
++    GFile *snap_file = caja_directory_get_location (bar->priv->dir);
++
++    caja_window_slot_go_to (bar->priv->slot,
++            snap_file,
++            FALSE);
++    g_object_unref (snap_file);
++
++    bar->priv->is_setup = FALSE;
++
++    gtk_widget_hide (GTK_WIDGET (bar));
++    gtk_toggle_action_set_active (bar->priv->action, FALSE);
++
++}
++
++static void
++caja_zfs_bar_init (CajaZfsBar *bar)
++{
++    GtkWidget *hbox, *toolbar, *close, *delete, *image, *button_vbox;
++    GtkToolItem *item;
++    char *path;
++
++    bar->priv = CAJA_ZFS_BAR_GET_PRIVATE (bar);
++
++    bar->priv->dir = NULL;
++    bar->priv->num_range_items = 0;
++    bar->priv->action = NULL;
++    bar->priv->slot = NULL;
++    bar->priv->is_setup = FALSE;
++    bar->priv->set_only = FALSE;
++
++    /* GUI init */
++
++    toolbar = gtk_toolbar_new ();
++    gtk_widget_show (toolbar);
++
++    item = gtk_tool_item_new ();
++    gtk_widget_show (GTK_WIDGET (item));
++    gtk_tool_item_set_expand (item, TRUE);
++
++    hbox = gtk_hbox_new (FALSE, 2);
++    gtk_widget_show (GTK_WIDGET (hbox));
++
++    gtk_container_add (GTK_CONTAINER (item),hbox);
++
++    gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
++    gtk_container_add (GTK_CONTAINER (bar),toolbar);
++    gtk_container_set_border_width (GTK_CONTAINER (bar), 0);
++
++    /* buttons */
++
++    button_vbox = gtk_vbox_new (FALSE, 0);
++    gtk_widget_show (button_vbox);
++
++    close = gtk_button_new ();
++    gtk_button_set_relief (GTK_BUTTON (close), GTK_RELIEF_NONE);
++    gtk_widget_set_tooltip_text (close,
++            /* SUN_BRANDING */
++            _("Close Time Slider and return to original directory"));
++    gtk_widget_show (close);
++
++    g_signal_connect (close,
++            "clicked",
++            G_CALLBACK (close_clicked_callback),
++            bar);
++
++    image = gtk_image_new_from_stock (GTK_STOCK_CLOSE,
++            GTK_ICON_SIZE_MENU);
++    gtk_widget_show (image);
++
++    gtk_container_add (GTK_CONTAINER (close), image);
++
++    gtk_box_pack_start (GTK_BOX (button_vbox), close, FALSE, FALSE, 0);
++
++    delete = gtk_button_new ();
++    gtk_button_set_relief (GTK_BUTTON (delete), GTK_RELIEF_NONE);
++    gtk_widget_set_tooltip_text (delete,
++            /* SUN_BRANDING */
++            _("Take a zfs snapshot of this directory now"));
++    gtk_widget_show (delete);
++
++    g_signal_connect (delete,
++            "clicked",
++            G_CALLBACK (delete_clicked_callback),
++            bar);
++
++    {
++        GtkIconTheme *it =  gtk_icon_theme_get_default ();
++        GdkPixbuf * pb = gtk_icon_theme_load_icon (it,
++                "user-trash-full.png",
++                16,
++                GTK_ICON_LOOKUP_GENERIC_FALLBACK,
++                NULL);
++        bar->priv->delete_image = gtk_image_new_from_pixbuf (pb);
++        g_object_unref (pb);
++    }
++
++    path = caja_pixmap_file ("camera.png");
++    bar->priv->camera_image = gtk_image_new_from_file (path);
++    g_free (path);
++
++    gtk_widget_show (bar->priv->delete_image);
++    gtk_widget_show (bar->priv->camera_image);
++
++    gtk_container_add (GTK_CONTAINER (delete), bar->priv->camera_image);
++
++    gtk_box_pack_end (GTK_BOX (button_vbox), delete, FALSE, FALSE, 0);
++    gtk_box_pack_end (GTK_BOX (hbox), button_vbox, FALSE, FALSE, 0);
++
++    bar->priv->delete_button = delete;
++
++    bar->priv->scale = timescale_new();
++
++    g_signal_connect (bar->priv->scale,
++            "value-changed",
++            G_CALLBACK (slider_moved_callback),
++            bar);
++
++    gtk_widget_show (bar->priv->scale);
++
++    gtk_box_pack_start (GTK_BOX (hbox), bar->priv->scale, TRUE, TRUE, 0);
++
++}
++
++    CajaDirectory * 
++caja_zfs_bar_get_dir (CajaZfsBar* bar)
++{
++    g_return_val_if_fail (CAJA_IS_ZFS_BAR (bar), NULL);
++    return bar->priv->dir;
++}
++
++static void
++snapshot_data_ready (CajaDirectory *dir, 
++                     GCancellable  *cancellable,
++                     gpointer callback_data)
++{
++    CajaWindowSlot *slot;
++    GFile *location;
++    GFile *dir_location;
++    CajaWindow *window = (CajaWindow*)callback_data;
++
++    g_return_if_fail (CAJA_IS_WINDOW (window));
++
++    slot = caja_window_get_active_slot (window);
++    location = caja_window_slot_get_location (slot);
++    dir_location = caja_directory_get_location (dir);
++
++    if (g_cancellable_is_cancelled (cancellable) && g_file_equal (location, dir_location))
++    {
++        caja_navigation_window_set_spinner_active (CAJA_NAVIGATION_WINDOW (window), FALSE);
++        caja_navigation_window_set_restore_icon ( CAJA_NAVIGATION_WINDOW (window), RESTORE_NO);
++    }
++    else if (g_file_equal (location, dir_location))
++    {
++        char *path = g_file_get_path (dir_location);
++        g_cancellable_cancel (cancellable);
++        caja_window_slot_set_allow_stop (slot, FALSE);
++        caja_navigation_window_set_restore_icon ( CAJA_NAVIGATION_WINDOW (window), 
++                caja_directory_has_snapshots (dir) ? RESTORE_NORMAL : RESTORE_NO);
++        if (caja_directory_has_snapshots (dir))
++            caja_window_allow_restore (window, TRUE);
++        else
++            caja_window_allow_restore (window, FALSE);
++        g_free (path);
++    }
++    else
++    {
++        caja_window_slot_set_allow_stop (slot, FALSE);
++    }
++    g_object_unref (location);
++    g_object_unref (dir_location);
++}
++
++
++void
++caja_zfs_bar_cancel_tasks (CajaWindow *window)
++{
++    if (CAJA_IS_WINDOW (window))
++    {
++        if (CAJA_IS_WINDOW_SLOT (window->details->active_pane->active_slot))
++        {
++            CajaDirectory *directory = NULL;
++            g_cancellable_cancel (window->details->active_pane->active_slot->find_zfs_snapshots_cancellable);
++            g_object_unref (window->details->active_pane->active_slot->find_zfs_snapshots_cancellable);
++            window->details->active_pane->active_slot->find_zfs_snapshots_cancellable = NULL;
++            directory = caja_directory_get (window->details->active_pane->active_slot->location);
++            if (directory)
++            {
++                caja_directory_cancel_restore_info (directory);
++                caja_directory_unref (directory);
++            }
++        }
++        if (CAJA_IS_NAVIGATION_WINDOW (window))
++        {
++            CajaZfsBar *bar = CAJA_ZFS_BAR (CAJA_NAVIGATION_WINDOW (window)->zfs_bar);
++            monitor_zfs_snap_directory_cancel (bar->priv->zfs_dir_monitor_data);
++            bar->priv->zfs_dir_monitor_data = NULL;
++        }
++    }
++}
++
++void
++caja_zfs_bar_hide (CajaZfsBar *bar)
++{
++    bar->priv->explicit_user_hide = TRUE;
++    close_clicked_callback (NULL, bar);
++}
++
++
++/* Display AND Scan */
++
++void         
++caja_zfs_bar_display (CajaZfsBar *bar,
++                      CajaWindow *window,
++                      CajaDirectory *new_dir,
++                      GCancellable *cancellable)
++{
++    gboolean show = FALSE;
++    gboolean time_slider_enabled = g_settings_get_boolean (caja_preferences,
++                                                        CAJA_PREFERENCES_ENABLE_TIME_SLIDER);
++    gboolean visible = gtk_widget_get_visible (GTK_WIDGET (bar));
++    gboolean enable_button = FALSE;
++    gboolean do_scan = FALSE;
++    gboolean do_cancel = FALSE;
++
++
++    /* if bar visible
++     *    if feature disabled
++     *      close bar
++     *      disable button
++     *    if in root dir
++     *      enable button
++     * else
++     *    if bar was previously displayed and in same tab
++     *       if in snapshot
++     *         redisplay 
++     *         re-align
++     *         disable button
++     *       if root dir 
++     *         redisplay 
++     *         re-align
++     *         enable button
++     *       else
++     *          scan
++     *    else
++     *      if feature enabled 
++     *        scan
++     *        disable button
++     *
++     *
++     *  NOTE : action_restore_callback display bar when enabled
++     */
++
++    if (visible)
++    {
++        if (!time_slider_enabled)
++        {
++            close_clicked_callback (NULL, bar);
++            return;
++        }
++        if (new_dir == bar->priv->dir)
++            enable_button = TRUE;
++        if (caja_directory_is_a_snapshot_dir_of (new_dir, bar->priv->dir) || new_dir == bar->priv->dir)
++        {
++            show = TRUE;
++            do_cancel = TRUE;
++            enable_button = TRUE;
++        }
++        else
++            do_scan = TRUE;
++    }
++    else
++    { /* bar is not visible */
++        CajaWindowSlot *slot = caja_window_get_active_slot (window);
++
++        if (bar->priv->is_setup && slot == bar->priv->slot && time_slider_enabled) /* check if we can redisplay the bar */
++        {
++            if (caja_directory_is_a_snapshot_dir_of (new_dir, bar->priv->dir) && !bar->priv->explicit_user_hide)
++                show = TRUE;
++
++            if (bar->priv->explicit_user_hide)
++                enable_button = FALSE;
++
++            if (new_dir == bar->priv->dir)
++            {
++                show = TRUE;
++                enable_button = TRUE;
++            }
++            else
++                do_scan = TRUE;
++        }
++        else
++        { /* icon and throbber set is snapshot_data_ready */
++            if (time_slider_enabled)
++                do_scan = TRUE;
++        }
++
++    }
++
++    if (enable_button) /* if button enabled set the icon to normal */
++        caja_navigation_window_set_restore_icon (CAJA_NAVIGATION_WINDOW (window), RESTORE_NORMAL);
++
++    caja_window_allow_restore (window, enable_button); 
++
++
++    if (show)
++    {
++        gtk_widget_show (GTK_WIDGET (bar));
++        caja_zfs_set_snap (bar, new_dir);
++    }
++    else
++    {
++        gtk_widget_hide (GTK_WIDGET (bar));
++        if (bar->priv->action)
++            gtk_toggle_action_set_active (bar->priv->action, FALSE);
++    }
++
++    if (do_cancel)
++        g_cancellable_cancel (cancellable);
++
++    if (do_scan)
++    {
++        g_cancellable_reset (cancellable);
++        caja_navigation_window_set_restore_icon (CAJA_NAVIGATION_WINDOW (window), RESTORE_SEARCH);
++        caja_window_slot_set_allow_stop (caja_window_get_active_slot (window), TRUE);
++        caja_directory_get_snapshots_async (new_dir,
++                snapshot_data_ready, 
++                cancellable, 
++                window);
++    }
++
++    /* {
++       GFile *file = caja_directory_get_location (new_dir);
++       char *path = g_file_get_path (file);
++
++       printf ("caja_zfs_bar_display %s\nenable_button : %s, show : %s, do_cancel : %s, do_scan : %s\n\n",
++       path,
++       enable_button ? "true" : "false",
++       show ? "true" : "false",
++       do_cancel ? "true" : "false",
++       do_scan ? "true" : "false");
++       g_free (path);
++       }*/
++
++}
++
++void
++caja_zfs_set_snap (CajaZfsBar *bar,
++                   CajaDirectory *dir)
++{
++    GList* match = NULL;
++    GList* snap_list = NULL;
++    gboolean in_snap = FALSE;
++    char real_path [PATH_MAX+1];
++    GFile *file;
++    char* path;
++    int pos;
++    int set_pos = -2;
++
++    if (!bar->priv->is_setup)
++        return;
++
++    file = caja_directory_get_location (dir);
++    path = g_file_get_path (file);
++    ts_realpath (path, real_path);
++
++
++    if (ts_is_in_remote_backup (real_path))
++    { 
++	/*FIXME: we do not have it */
++        //mate_vfs_init();
++        g_object_ref (dir); 
++    }
++
++    in_snap = ts_is_in_snapshot (real_path);
++
++    if (in_snap)
++    {
++        snap_list = caja_directory_get_snapshots (bar->priv->dir);
++        match = g_list_find_custom (snap_list, real_path, (GCompareFunc)match_func);
++    }
++    g_free (path);
++    g_object_unref (file);
++
++    timescale_set_position (TIMESCALE (bar->priv->scale), match ? ((ZfsDataSet*)match->data)->mountpoint : NULL);
++    update_delete_or_snap_button (bar, in_snap);
++
++    /*  printf ("caja_zfs_set_snap current_path %s real_path %s match %s\n", bar->priv->current_path, real_path,
++        match ? "found" : "not found");*/
++
++    if (bar->priv->current_path && (strcmp (bar->priv->current_path, real_path) != 0))
++    {
++        bar->priv->set_only = TRUE;
++        bar->priv->set_only = FALSE;
++
++    }
++}
++
++static void
++snapshot_data_ready_from_change (CajaDirectory *dir, 
++                                 GCancellable  *cancellable,
++                                 gpointer       callback_data)
++{
++    CajaZfsBar *bar = CAJA_ZFS_BAR (callback_data);
++
++    snapshot_data_ready (dir, cancellable, bar->priv->slot->pane->window);
++    update_range (bar);
++    gtk_widget_set_sensitive (bar->priv->scale, TRUE);
++}
++
++static void
++zfs_dir_change_callback (ZfsSnapDirMonitor *monitor_data,
++                         CajaZfsBar *bar)
++{
++    gtk_widget_set_sensitive (bar->priv->scale, FALSE);
++
++    g_cancellable_reset (bar->priv->slot->find_zfs_snapshots_cancellable);
++    caja_navigation_window_set_restore_icon (CAJA_NAVIGATION_WINDOW (bar->priv->slot->pane->window), RESTORE_SEARCH);
++    caja_window_slot_set_allow_stop (bar->priv->slot, TRUE);
++    caja_directory_get_snapshots_async (bar->priv->dir,
++            snapshot_data_ready_from_change, 
++            bar->priv->slot->find_zfs_snapshots_cancellable,
++            bar);
++}
++
++static char* 
++get_backup_dir (GList *snaplist)
++{
++    GList *tmp = snaplist;
++
++    while (tmp)
++    {
++        ZfsDataSet *snap = (ZfsDataSet*) tmp->data;
++        if (snap->type == 0)
++        {
++            char **root_split = NULL;
++            char *result = NULL;
++            root_split = g_strsplit (snap->mountpoint, snap->name, 2);
++            /*printf (" name: %s\n mountpoint: %s\n mtime_str :%s\n space used : %s\n size in kilobytes : %f\n",
++              snap->name, snap->mountpoint, snap->mtime_str, snap->used_space_str, snap->used_space); */
++            result = g_strdup (root_split[0]);
++            if (root_split)
++                g_strfreev (root_split);
++            return result;
++        }
++        tmp = tmp->next;
++    }
++    return NULL;
++}
++
++void        
++caja_zfs_bar_setup (CajaZfsBar* bar,
++                    CajaDirectory *dir,    
++                    CajaWindowSlot *active_slot,
++                    GtkToggleAction* action)
++{
++    GFile *file;
++    char *path, *zfs_dir, *backup_dir = NULL;
++    bar->priv->dir = dir;
++    g_object_ref (dir);
++    bar->priv->slot = active_slot;
++    g_object_ref (active_slot);
++
++    bar->priv->action = action;
++    set_scale_range (bar, TRUE);  
++    bar->priv->is_setup = TRUE;
++    bar->priv->explicit_user_hide = FALSE;
++
++    file = caja_directory_get_location (dir);
++    path = g_file_get_path (file);
++    zfs_dir = ts_get_snapshot_dir (path);
++    backup_dir = get_backup_dir (caja_directory_get_snapshots (dir));
++
++    bar->priv->zfs_dir_monitor_data = monitor_zfs_snap_directory (zfs_dir, 
++            backup_dir,
++            (ZfsDirChangeCallback) zfs_dir_change_callback, 
++            bar);
++    caja_zfs_set_snap (bar, dir);
++    g_free (path);
++    g_free (zfs_dir);
++    if (backup_dir)
++        g_free(backup_dir);
++    g_object_unref (file);
++}
++
++static void 
++zfs_bar_show_column (GtkWidget *widget, gpointer user_data)
++{
++    char **visible_columns;
++    gboolean restore_col_visible = FALSE;
++    int i = 0;
++    GPtrArray *ret = NULL;
++
++    visible_columns = g_settings_get_strv (caja_list_view_preferences,
++                                     CAJA_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
++
++    ret = g_ptr_array_new ();
++
++    /* convert visible_columns in ptr array without "restore_info" */
++    while (visible_columns[i])
++    {
++        if (strcmp (visible_columns [i], "restore_info") == 0)
++        {
++            restore_col_visible = TRUE;
++            break;
++        }
++        else
++            g_ptr_array_add (ret, g_strdup (visible_columns [i]));
++        i++;
++    }
++
++    g_strfreev (visible_columns);
++
++    if (restore_col_visible)
++    {
++        if (!gtk_widget_get_visible (widget)) /* hide bar remove pref */
++        {
++            char **col_array;
++            g_ptr_array_add (ret, NULL);
++            col_array = (char **)g_ptr_array_free (ret, FALSE);
++            g_settings_set_strv (caja_list_view_preferences,
++                             CAJA_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS,
++                                 (const char * const *)col_array);
++            g_strfreev (col_array);
++            ret = NULL;
++        }
++    }
++    else
++    {
++        if (gtk_widget_get_visible (widget))
++        {
++            char **col_array;
++            g_ptr_array_add (ret,strdup ("restore_info"));
++            g_ptr_array_add (ret,NULL);
++            col_array = (char **)g_ptr_array_free (ret, FALSE);
++            g_settings_set_strv (caja_list_view_preferences,
++                             CAJA_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS,
++                                 (const char * const *)col_array);
++            g_strfreev (col_array);
++            ret = NULL;
++        }
++
++    }
++
++    if (ret)
++        g_ptr_array_free (ret, TRUE);
++
++}
++
++static void 
++zfs_bar_hidden (GtkWidget *widget, gpointer user_data)
++{
++    CajaZfsBar *bar = CAJA_ZFS_BAR (user_data);
++    monitor_zfs_snap_directory_cancel (bar->priv->zfs_dir_monitor_data);
++    bar->priv->zfs_dir_monitor_data = NULL;
++    caja_directory_cancel_restore_info (bar->priv->dir);
++}
++
++GtkWidget *
++caja_zfs_bar_new ()
++{
++    GObject *bar;
++    CajaZfsBar *zfs_bar;
++
++    bar = g_object_new (CAJA_TYPE_ZFS_BAR, NULL);
++
++    g_signal_connect_object (bar, "show", G_CALLBACK (zfs_bar_show_column), bar, 0);
++    g_signal_connect_object (bar, "hide", G_CALLBACK (zfs_bar_show_column), bar, 0);
++    g_signal_connect_object (bar, "hide", G_CALLBACK (zfs_bar_hidden), bar, 0);
++
++    zfs_bar_show_column (GTK_WIDGET (bar), NULL); 
++
++    ts_is_restore_column_enabled_init ();
++
++    zfs_bar = CAJA_ZFS_BAR (bar);
++
++    return GTK_WIDGET (bar);
++}
++

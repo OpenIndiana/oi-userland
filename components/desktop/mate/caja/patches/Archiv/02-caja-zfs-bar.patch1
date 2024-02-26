@@ -1,0 +1,59 @@
+--- caja-1.28.0/src/caja-zfs-bar.h.orig	2024-02-26 08:42:41.083373824 +0100
++++ caja-1.28.0/src/caja-zfs-bar.h	2024-02-26 08:42:41.083327328 +0100
+@@ -0,0 +1,56 @@
++#ifndef __CAJA_ZFS_BAR_H
++#define __CAJA_ZFS_BAR_H
++
++#include <gtk/gtk.h>
++#include <libcaja-private/caja-directory.h>
++#include "caja-window-slot.h"
++
++G_BEGIN_DECLS
++
++#define CAJA_TYPE_ZFS_BAR         (caja_zfs_bar_get_type ())
++#define CAJA_ZFS_BAR(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), CAJA_TYPE_ZFS_BAR, CajaZfsBar))
++#define CAJA_ZFS_BAR_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), CAJA_TYPE_ZFS_BAR, CajaZfsBarClass))
++#define CAJA_IS_ZFS_BAR(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), CAJA_TYPE_ZFS_BAR))
++#define CAJA_IS_ZFS_BAR_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), CAJA_TYPE_ZFS_BAR))
++#define CAJA_ZFS_BAR_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), CAJA_TYPE_ZFS_BAR, CajaZfsBarClass))
++
++typedef struct CajaZfsBarPrivate CajaZfsBarPrivate;
++
++typedef struct
++{
++  GtkEventBox eventbox;
++  CajaZfsBarPrivate *priv;
++} CajaZfsBar;
++
++typedef struct
++{
++  GtkEventBoxClass parent_class;
++} CajaZfsBarClass;
++
++GType						caja_zfs_bar_get_type (void) G_GNUC_CONST;
++
++GtkWidget *			caja_zfs_bar_new ();
++
++void    		    caja_zfs_bar_setup (CajaZfsBar* bar,
++            								        CajaDirectory *dir,
++           												  CajaWindowSlot *active_slot,
++                    		 						GtkToggleAction* action);
++
++void    		    caja_zfs_bar_display (CajaZfsBar *bar,
++            							            CajaWindow *window,
++                		      						CajaDirectory *new_dir,
++                    		   						GCancellable* cancellable);
++
++void        		caja_zfs_set_snap (CajaZfsBar *bar,
++            						           CajaDirectory *dir);
++void       			caja_zfs_bar_remove_and_skip_snap 
++            				          (CajaZfsBar *bar, char *path);
++
++void        		caja_zfs_bar_hide (CajaZfsBar *bar);                      
++
++void        		caja_zfs_bar_cancel_tasks (CajaWindow *window);
++CajaDirectory * caja_zfs_bar_get_dir (CajaZfsBar* bar);
++
++G_END_DECLS
++
++#endif /* __CAJA_ZFS_BAR_H */

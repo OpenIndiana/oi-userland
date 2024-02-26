@@ -1,0 +1,31 @@
+--- caja-1.28.0/src/caja-navigation-window.h.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/caja-navigation-window.h	2024-02-26 09:27:56.105335195 +0100
+@@ -67,10 +67,18 @@
+     /** UI stuff **/
+     CajaSidePane *sidebar;
+ 
++    GtkWidget    *zfs_bar;
++
+     /* Current views stuff */
+     GList *sidebar_panels;
+ };
+ 
++typedef enum {
++  RESTORE_NORMAL,
++  RESTORE_SEARCH,
++  RESTORE_NO
++} CajaNavigationRestoreIconType;
++
+ struct _CajaNavigationWindowClass
+ {
+     CajaWindowClass parent_spot;
+@@ -91,6 +99,9 @@
+ void     caja_navigation_window_hide_sidebar         (CajaNavigationWindow *window);
+ void     caja_navigation_window_show_sidebar         (CajaNavigationWindow *window);
+ gboolean caja_navigation_window_sidebar_showing      (CajaNavigationWindow *window);
++gboolean Caja_navigation_window_zfs_bar_showing      (CajaNavigationWindow *window);
++void     Caja_navigation_window_set_restore_icon     (CajaNavigationWindow* window,
++                                                      CajaNavigationRestoreIconType type);
+ void     caja_navigation_window_add_sidebar_panel    (CajaNavigationWindow *window,
+         CajaSidebar          *sidebar_panel);
+ void     caja_navigation_window_remove_sidebar_panel (CajaNavigationWindow *window,

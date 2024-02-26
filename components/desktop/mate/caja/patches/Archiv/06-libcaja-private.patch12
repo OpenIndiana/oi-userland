@@ -1,0 +1,78 @@
+--- caja-1.28.0/libcaja-private/caja-zfs.h.orig	2024-02-26 08:42:41.079103041 +0100
++++ caja-1.28.0/libcaja-private/caja-zfs.h	2024-02-26 08:42:41.079046173 +0100
+@@ -0,0 +1,75 @@
++#ifndef CAJA_ZFS_H
++#define CAJA_ZFS_H
++
++#include <glib.h>
++#include <libzfs.h>
++#include <gio/gio.h>
++
++typedef struct 
++{
++  zfs_type_t    type;
++  zfs_prop_t    prop;
++  char           *searched_path;
++  char         *mountpoint;
++  GList        *datasets;
++  GCancellable *cancel;
++  gboolean    match_found;
++  gboolean    searched_path_match_mp;
++
++} SearchDataSet;
++
++typedef struct
++{
++  char          *name;    
++  char          *mountpoint;    
++  char          *mtime_str;
++  time_t       mtime;
++  float           used_space;
++  char          *used_space_str;
++  zfs_type_t       type;
++  GList          *snapshots;
++  SearchDataSet      *search_dataset;
++} ZfsDataSet;
++
++
++GList *ts_get_snapshots_for_dir_async    (GFile *file, 
++                     GAsyncReadyCallback result_ready, 
++                     GCancellable *cancel,
++                     gpointer  user_data);
++void ts_free_snapshots            (GList *snaps);
++void ts_free_zfs_dataset        (ZfsDataSet* zds);
++
++gboolean ts_is_in_snapshot        (char * str);
++gboolean ts_is_in_remote_backup        (char *str);
++char* ts_remove_snapshot_dir        (char *str);
++char *ts_get_snapshot_dir        (char *dir);
++char *ts_get_zfs_filesystem        (char *dir);
++char * ts_get_not_zfs_snapshot_dir      (GFile *file);
++gboolean ts_is_restore_column_enabled    ();
++void ts_is_restore_column_enabled_init    ();
++void print_snap_list            (char *dir, GList *snap_list);
++char* ts_realpath            (char * dir, char *resolved_name);
++
++char *
++caja_date_as_string            (time_t time_raw, gboolean use_smallest);
++
++typedef void (*ZfsDirChangeCallback)    (gpointer monitor_data, 
++                     gpointer user_data);
++
++typedef struct 
++{
++  char    *        path;
++  GList            *entries;
++  char    *        backup_path;
++  GList            *backup_entries;
++  guint            timeout_id;
++  ZfsDirChangeCallback    change_callback;
++  gpointer        user_data;
++} ZfsSnapDirMonitor;
++
++void monitor_zfs_snap_directory_cancel (ZfsSnapDirMonitor *monitor_data);
++ZfsSnapDirMonitor *monitor_zfs_snap_directory (char            *path, 
++                           char            *backup_path,
++                           ZfsDirChangeCallback change_callback,
++                           gpointer            data);
++#endif /* CAJA_ZFS_H */

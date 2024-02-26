@@ -1,0 +1,184 @@
+--- caja-1.28.0/src/caja-window-manage-views.c.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/caja-window-manage-views.c	2024-02-26 08:42:41.081708726 +0100
+@@ -30,6 +30,7 @@
+ #include <gtk/gtk.h>
+ #include <gdk/gdkx.h>
+ #include <glib/gi18n.h>
++#include <stdlib.h>
+ 
+ #include <eel/eel-accessibility.h>
+ #include <eel/eel-debug.h>
+@@ -71,6 +72,7 @@
+ #include "caja-trash-bar.h"
+ #include "caja-x-content-bar.h"
+ #include "caja-navigation-window-pane.h"
++#include "caja-zfs-bar.h"
+ 
+ /* FIXME bugzilla.gnome.org 41243:
+  * We should use inheritance instead of these special cases
+@@ -942,12 +944,48 @@
+ 
+     end_location_change (slot);
+ 
++    GFile *old_file = NULL;
++    old_file = caja_window_slot_get_location (slot);
++
++    if (old_file)
++    {
++        directory = caja_directory_get (old_file);
++        if (directory)
++        {
++            caja_directory_cancel_restore_info (directory);
++            g_object_unref (directory);
++            directory = NULL;
++        }
++        g_object_unref (old_file);
++        old_file = NULL;
++    }
++
+     caja_window_slot_set_allow_stop (slot, TRUE);
+     caja_window_slot_set_status (slot, " ");
+ 
+     g_assert (slot->pending_location == NULL);
+     g_assert (slot->pending_selection == NULL);
+ 
++    directory = caja_directory_get (location);
++
++    /* if snap and (ts is enabled and displayed )
++     *  check if the directory exist 
++     *    if it doesn't move to the next available one */
++    if (caja_directory_is_in_snapshot (directory) && caja_is_time_slider_enabled ())
++    {
++        if (gtk_widget_get_visible (GTK_WIDGET (CAJA_NAVIGATION_WINDOW (window)->zfs_bar)))
++        {
++            char *path = g_file_get_path (location);
++            if (!g_file_test (path, G_FILE_TEST_IS_DIR))
++            {
++                caja_zfs_bar_remove_and_skip_snap (CAJA_ZFS_BAR (CAJA_NAVIGATION_WINDOW (window)->zfs_bar), path);
++                g_free (path);
++                return;
++            }
++            g_free (path);
++        }
++    }
++
+     slot->pending_location = g_object_ref (location);
+     slot->location_change_type = type;
+     slot->location_change_distance = distance;
+@@ -959,8 +997,6 @@
+     slot->open_callback = callback;
+     slot->open_callback_user_data = user_data;
+ 
+-    directory = caja_directory_get (location);
+-
+     /* The code to force a reload is here because if we do it
+      * after determining an initial view (in the components), then
+      * we end up fetching things twice.
+@@ -1255,8 +1291,20 @@
+         if (slot->location_change_type != CAJA_LOCATION_CHANGE_FALLBACK)
+         {
+             /* Look in metadata for view */
+-            view_id = caja_file_get_metadata
+-                      (file, CAJA_METADATA_KEY_DEFAULT_VIEW, NULL);
++            if (caja_file_is_in_snapshot (file))
++            {
++                CajaDirectory* root_dir = caja_zfs_bar_get_dir (CAJA_ZFS_BAR (CAJA_NAVIGATION_WINDOW (window)->zfs_bar));
++                if (root_dir)
++                {
++                    view_id = caja_file_get_metadata (caja_directory_get_corresponding_file (root_dir), 
++                                                          CAJA_METADATA_KEY_DEFAULT_VIEW, NULL);
++                }
++            }
++            if (view_id == NULL)
++            {
++                view_id = caja_file_get_metadata (file, CAJA_METADATA_KEY_DEFAULT_VIEW, NULL);
++            }
++
+             if (view_id != NULL &&
+                     !caja_view_factory_view_supports_uri (view_id,
+                             location,
+@@ -1804,6 +1852,7 @@
+ static void
+ update_for_new_location (CajaWindowSlot *slot)
+ {
++    CajaDirectory *directory;
+     CajaWindow *window;
+     GFile *new_location;
+     CajaFile *file;
+@@ -1857,6 +1906,30 @@
+         caja_window_load_extension_menus (window);
+     }
+ 
++    /* time slider pref can be just enabled so we need 
++     * to rescan for snapshots */
++    directory = caja_directory_get (slot->location);
++
++    if (CAJA_IS_NAVIGATION_WINDOW (window))
++    {
++        if (slot->find_zfs_snapshots_cancellable != NULL)
++        {
++            g_cancellable_cancel (slot->find_zfs_snapshots_cancellable);
++            slot->find_zfs_snapshots_cancellable = NULL;
++        }
++        slot->find_zfs_snapshots_cancellable = g_cancellable_new ();
++        caja_zfs_bar_display (CAJA_ZFS_BAR (CAJA_NAVIGATION_WINDOW (window)->zfs_bar),
++                                  window,
++                                  directory,
++                                  slot->find_zfs_snapshots_cancellable);
++
++    }
++    else
++    {
++        caja_window_allow_restore (window, FALSE);
++    }
++    caja_directory_unref (directory);
++
+     if (location_really_changed)
+     {
+         CajaDirectory *directory;
+@@ -2227,12 +2300,22 @@
+ caja_window_slot_stop_loading (CajaWindowSlot *slot)
+ {
+     CajaWindow *window;
++    CajaDirectory *directory;
+ 
+     window = CAJA_WINDOW (slot->pane->window);
+     g_assert (CAJA_IS_WINDOW (window));
+ 
+     caja_view_stop_loading (slot->content_view);
+ 
++    if (slot->find_zfs_snapshots_cancellable)
++    {
++        g_cancellable_cancel (slot->find_zfs_snapshots_cancellable);
++    }
++    
++    directory = caja_directory_get (slot->location);
++    caja_directory_cancel_restore_info (directory);
++    caja_directory_unref (directory);
++
+     if (slot->new_content_view != NULL)
+     {
+         window->details->temporarily_ignore_view_signals = TRUE;
+@@ -2293,11 +2376,22 @@
+ caja_window_manage_views_close_slot (CajaWindowPane *pane,
+                                      CajaWindowSlot *slot)
+ {
++    CajaDirectory *directory;
++
+     if (slot->content_view != NULL)
+     {
+         caja_window_slot_disconnect_content_view (slot, slot->content_view);
+     }
+ 
++    if (slot->find_zfs_snapshots_cancellable)
++    {
++        g_cancellable_cancel (slot->find_zfs_snapshots_cancellable);
++    }
++ 
++    directory = caja_directory_get (slot->location);
++    caja_directory_cancel_restore_info (directory);
++    caja_directory_unref (directory);
++
+     free_location_change (slot);
+     cancel_viewed_file_changed_callback (slot);
+ }
