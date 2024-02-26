@@ -19,23 +19,24 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sniffio
-COMPONENT_VERSION =		1.3.0
+HUMAN_VERSION =			1.3.1
 COMPONENT_SUMMARY =		sniffio - Sniff out which async library your code is running under
 COMPONENT_PROJECT_URL =		https://github.com/python-trio/sniffio
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/cd/50/d49c388cae4ec10e8109b1b833fd265511840706808576df3ada99ecb0ac/sniffio-1.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e60305c5e5d314f5389259b7f22aaa33d8f7dee49763119234af3755c55b9101
+	sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_INSTALL_ACTION += $(CAT) $(@D)/test-requirements.txt >> $(@D)/.depend-test ;
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += test-requirements.txt
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/curio
