@@ -22,11 +22,10 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		atril
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	2
-COMPONENT_REVISION=	1
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	0
 COMPONENT_SUMMARY=	MATE PDF document viewer
-COMPONENT_ARCHIVE_HASH= sha256:c305b9d5f5713f42626aee0382091303422b3d71a56ddd65932ccdb23c7ce926
+COMPONENT_ARCHIVE_HASH= sha256:ced4725f6e9b71c4ea63676bfc3cc3be09d29dba08aa7a7ab97964e0b4355162
 COMPONENT_FMRI=		desktop/pdf-viewer/atril
 COMPONENT_CLASSIFICATION=	Applications/Office
 COMPONENT_LICENSE=	GPLv3
@@ -56,6 +55,7 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libarchive
