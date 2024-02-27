@@ -4,8 +4,8 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: setup.cfg
-collecting ... collected 1218 items
+configfile: pyproject.toml
+collecting ... collected 1228 items
 
 tests/test_decorators.py::TestPassOriginal::test_pass_original_many PASSED
 tests/test_decorators.py::TestPassOriginal::test_pass_original_single PASSED
@@ -1137,10 +1137,16 @@ tests/test_validate.py::test_url_absolute_invalid[foo://example.org] PASSED
 tests/test_validate.py::test_url_absolute_invalid[ftp:///example.com/] PASSED
 tests/test_validate.py::test_url_absolute_invalid[ftps:///example.com/] PASSED
 tests/test_validate.py::test_url_absolute_invalid[http//example.org] PASSED
+tests/test_validate.py::test_url_absolute_invalid[http://%0G@example.com] PASSED
+tests/test_validate.py::test_url_absolute_invalid[http://%@example.com] PASSED
 tests/test_validate.py::test_url_absolute_invalid[http:///] PASSED
 tests/test_validate.py::test_url_absolute_invalid[http:///example.com/] PASSED
 tests/test_validate.py::test_url_absolute_invalid[http://2001:db8::ff00:42:8329] PASSED
+tests/test_validate.py::test_url_absolute_invalid[http://@@example.com] PASSED
+tests/test_validate.py::test_url_absolute_invalid[http://@pass@example.com] PASSED
 tests/test_validate.py::test_url_absolute_invalid[http://[192.168.1.1]:8329] PASSED
+tests/test_validate.py::test_url_absolute_invalid[http://^@example.com] PASSED
+tests/test_validate.py::test_url_absolute_invalid[http://user@pass@example.com] PASSED
 tests/test_validate.py::test_url_absolute_invalid[http:/example.org] PASSED
 tests/test_validate.py::test_url_absolute_invalid[https:///example.com/] PASSED
 tests/test_validate.py::test_url_absolute_invalid[https://example.org\\] PASSED
@@ -1149,6 +1155,9 @@ tests/test_validate.py::test_url_absolute_valid[ftp://example.org] PASSED
 tests/test_validate.py::test_url_absolute_valid[ftps://example.org] PASSED
 tests/test_validate.py::test_url_absolute_valid[http://123.45.67.8/] PASSED
 tests/test_validate.py::test_url_absolute_valid[http://123.45.67.8:8329/] PASSED
+tests/test_validate.py::test_url_absolute_valid[http://:pass@example.com] PASSED
+tests/test_validate.py::test_url_absolute_valid[http://@example.com] PASSED
+tests/test_validate.py::test_url_absolute_valid[http://AZaz09-._~%2A!$&'()*+,;=:@example.com] PASSED
 tests/test_validate.py::test_url_absolute_valid[http://[2001::1]:8329] PASSED
 tests/test_validate.py::test_url_absolute_valid[http://[2001:db8::ff00:42]:8329] PASSED
 tests/test_validate.py::test_url_absolute_valid[http://example.co.jp] PASSED
@@ -1225,7 +1234,8 @@ tests/test_validate.py::test_url_relative_valid[http://example.com/g?y/./x] PASS
 tests/test_validate.py::test_url_relative_valid[http://example.org] PASSED
 tests/test_validate.py::test_url_relative_valid[https://example.com/../icons/logo.gif] PASSED
 tests/test_validate.py::test_url_repr PASSED
+tests/test_version_attributes.py::test_version_attributes_deprecated PASSED
 
-======== 1218 passed ========
+======== 1228 passed ========
   py$(PYV): OK
   congratulations :)
