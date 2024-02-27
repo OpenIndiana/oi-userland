@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Inter
-HUMAN_VERSION =			1.10
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.11
 COMPONENT_SUMMARY =		Test::Inter - framework for more readable interactive test scripts
 COMPONENT_CPAN_AUTHOR =		SBECK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:71ec115eac26fb668919bd6640b41c37322752ebd48c1c76db66b73baefd3b5d
+	sha256:2b9845212547cd6056753f87866d19368efc67c080146bcbb929a51ab055da37
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
