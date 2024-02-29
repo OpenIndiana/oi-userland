@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libjpeg6-ijg
 COMPONENT_VERSION=	6.0.2
 LIBJPEG_API_VERSION= 6b
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI= 	image/library/libjpeg6-ijg
 COMPONENT_PROJECT_URL=	http://www.ijg.org/
 COMPONENT_SUMMARY=	libjpeg - Independent JPEG Group library version 6b
