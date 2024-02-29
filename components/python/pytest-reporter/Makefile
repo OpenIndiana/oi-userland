@@ -19,19 +19,25 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-reporter
-HUMAN_VERSION =			0.5.2
+HUMAN_VERSION =			0.5.3
 COMPONENT_SUMMARY =		pytest-reporter - Generate Pytest reports with templates
 COMPONENT_PROJECT_URL =		https://github.com/christiansandberg/pytest-reporter
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f3/9a/28d9c68cfd8e7981d4616b71dba9760001f972fcf4a3dd4564a2ef0a45bd/pytest-reporter-0.5.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5418505ca48e9bf8a40bf28eda33a9b189a3add57422b722cb8d23f8ecf2edba
+	sha256:426ae38f3c5304659635eff1d4080c8acf4dc6cd833469caed427a9a80bb41aa
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/pytest-dev/pluggy/issues/457
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
+TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist

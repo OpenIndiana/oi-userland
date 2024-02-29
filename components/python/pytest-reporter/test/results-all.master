@@ -1,32 +1,23 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest .
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest .
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 6 items
+collecting ... collected 5 items
 
-::project PASSED
 test_pytest_reporter.py::test_file_is_saved PASSED
 test_pytest_reporter.py::test_status PASSED
 test_pytest_reporter.py::test_tests PASSED
 test_pytest_reporter.py::test_top_level_context PASSED
+test_pytest_reporter.py::test_xdist_loadgroup PASSED
 
 =============================== warnings summary ===============================
-test_pytest_reporter.py::test_top_level_context
-test_pytest_reporter.py::test_tests
-test_pytest_reporter.py::test_status
-test_pytest_reporter.py::test_file_is_saved
-  $(PYTHON_DIR)/vendor-packages/pytest_travis_fold.py:186: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(trylast=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.trylast  # to let 'terminalreporter' be registered first
+test_pytest_reporter.py::test_xdist_loadgroup
+  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:46: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
+    warner(PytestBenchmarkWarning(text))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 5 passed, 4 warnings ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 5 passed, 1 warning ========
+  py$(PYV): OK
   congratulations :)
