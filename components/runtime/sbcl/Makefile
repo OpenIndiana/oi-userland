@@ -17,12 +17,12 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	2.4.1
+COMPONENT_VERSION=	2.4.2
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 COMPONENT_PROJECT_URL=	https://sbcl.sourceforge.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:da4f9486fad413d3af7abb1b09269325fdb4bff7e7b88f2195ddee743263cf7e
+COMPONENT_ARCHIVE_HASH=	sha256:fc03cb52d12aafe8759e6328450a201bbddf89b17071a4e83f39e80b43ddef0f
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_CLASSIFICATION=	Development/Other Languages
