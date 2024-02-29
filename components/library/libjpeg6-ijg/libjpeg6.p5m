@@ -13,7 +13,8 @@
 # Copyright 2015 Aurelien Larcher
 #
 
-set name=pkg.fmri value=pkg:/image/library/libjpeg6@6.0.2,$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/image/library/libjpeg6@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -26,6 +27,14 @@ depend fmri=image/library/libjpeg6-ijg type=require
 
 # Documentation and executables should default to libjpeg-turbo
 depend fmri=image/library/libjpeg-turbo type=require
+
+# Make development files mediated so we can easily switch to different libjpeg version
+<transform link path=usr/include -> default mediator jpeg>
+<transform link path=usr/include -> default mediator-version 6>
+<transform link path=usr/include -> default mediator-implementation ijg>
+<transform link path=usr/lib/.*\.so$ -> default mediator jpeg>
+<transform link path=usr/lib/.*\.so$ -> default mediator-version 6>
+<transform link path=usr/lib/.*\.so$ -> default mediator-implementation ijg>
 
 # Only provide headers and libraries for backward compatibility
 link path=usr/include/jconfig.h      target=$(COMPONENT_NAME)/jconfig.h
