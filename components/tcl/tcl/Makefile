@@ -29,15 +29,14 @@ USE_COMMON_TEST_MASTER= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tcl
-COMPONENT_VERSION=      8.6.13
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      8.6.14
 COMPONENT_MINOR_VERSION= $(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.\([0-9]\+\)\.[0-9]\+/\1.\2/')
 COMPONENT_SUMMARY=		Tcl - portable scripting environment
 COMPONENT_DESCRIPTION=	Tcl is a dynamic programming language used in web and desktop applications, networking, administration, testing and many more applications
 COMPONENT_PROJECT_URL=	https://core.tcl-lang.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-core$(COMPONENT_VERSION)-src.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c61f0d6699e2bc7691f119b41963aaa8dc980f23532c4e937739832a5f4a6642
+COMPONENT_ARCHIVE_HASH= sha256:ff604f43862a778827d7ecd1ad7686950ac2ef48d9cf69d3424cea9de08d9a72
 COMPONENT_ARCHIVE_URL=  https://prdownloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/tcl-8
 COMPONENT_CLASSIFICATION=	Development/Other Languages
