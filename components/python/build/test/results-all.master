@@ -1,14 +1,15 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest -ra --cov --cov-config pyproject.toml --cov-report=html:$(@D)/.tox/py$(PYV)/htmlcov --cov-context=test --cov-report=xml:$(@D)/.tox/coverage.py$(PYV).xml
+py$(PYV): commands[0]> python -m pytest -ra --cov --cov-config pyproject.toml --cov-report=html:$(@D)/.tox/py$(PYV)/htmlcov --cov-context=test --cov-report=xml:$(@D)/.tox/coverage.py$(PYV).xml -n auto
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-installed packages of interest: build==1.0.3 colorama==0.4.6 filelock==3.12.3 packaging==23.1 pip==23.2.1 pyproject_hooks==1.0.0 setuptools==68.1.2 tomli==2.0.1 virtualenv==20.24.4 wheel==0.41.2
+installed packages of interest: build==1.1.1 colorama==0.4.6 filelock==3.13.1 packaging==23.2 pip==24.0 pyproject_hooks==1.0.0 setuptools==69.1.0 tomli==2.0.1 virtualenv==20.25.1 wheel==0.42.0
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 158 items
+X workers [158 items]
+
+scheduling tests via LoadScheduling
 
 tests/test_env.py::test_can_get_venv_paths_with_conflicting_default_scheme SKIPPED
 tests/test_env.py::test_can_get_venv_paths_with_posix_local_default_scheme SKIPPED
@@ -35,7 +36,7 @@ tests/test_integration.py::test_build[Solaar-isolated-module] SKIPPED
 tests/test_integration.py::test_build[Solaar-no_isolation-code] SKIPPED
 tests/test_integration.py::test_build[Solaar-no_isolation-entrypoint] SKIPPED
 tests/test_integration.py::test_build[Solaar-no_isolation-module] SKIPPED
-tests/test_integration.py::test_build[build-isolated-code] SKIPPED (...)
+tests/test_integration.py::test_build[build-isolated-code] SKIPPED
 tests/test_integration.py::test_build[build-isolated-entrypoint] SKIPPED
 tests/test_integration.py::test_build[build-isolated-module] SKIPPED
 tests/test_integration.py::test_build[build-no_isolation-code] SKIPPED
@@ -47,19 +48,19 @@ tests/test_integration.py::test_build[dateutil-isolated-module] SKIPPED
 tests/test_integration.py::test_build[dateutil-no_isolation-code] SKIPPED
 tests/test_integration.py::test_build[dateutil-no_isolation-entrypoint] SKIPPED
 tests/test_integration.py::test_build[dateutil-no_isolation-module] SKIPPED
-tests/test_integration.py::test_build[flit-isolated-code] SKIPPED (i...)
+tests/test_integration.py::test_build[flit-isolated-code] SKIPPED
 tests/test_integration.py::test_build[flit-isolated-entrypoint] SKIPPED
 tests/test_integration.py::test_build[flit-isolated-module] SKIPPED
 tests/test_integration.py::test_build[flit-no_isolation-code] SKIPPED
 tests/test_integration.py::test_build[flit-no_isolation-entrypoint] SKIPPED
 tests/test_integration.py::test_build[flit-no_isolation-module] SKIPPED
-tests/test_integration.py::test_build[pip-isolated-code] SKIPPED (in...)
+tests/test_integration.py::test_build[pip-isolated-code] SKIPPED
 tests/test_integration.py::test_build[pip-isolated-entrypoint] SKIPPED
-tests/test_integration.py::test_build[pip-isolated-module] SKIPPED (...)
+tests/test_integration.py::test_build[pip-isolated-module] SKIPPED
 tests/test_integration.py::test_build[pip-no_isolation-code] SKIPPED
 tests/test_integration.py::test_build[pip-no_isolation-entrypoint] SKIPPED
 tests/test_integration.py::test_build[pip-no_isolation-module] SKIPPED
-tests/test_integration.py::test_isolation SKIPPED (integration tests...)
+tests/test_integration.py::test_isolation SKIPPED
 tests/test_main.py::test_build_isolated PASSED
 tests/test_main.py::test_build_no_isolation_check_deps_empty PASSED
 tests/test_main.py::test_build_no_isolation_with_check_deps[missing_deps0-\n\tfoo] PASSED
@@ -166,11 +167,11 @@ tests/test_self_packaging.py::test_build_wheel[direct] PASSED
 tests/test_self_packaging.py::test_build_wheel[from_sdist] PASSED
 tests/test_util.py::test_wheel_metadata[False] PASSED
 tests/test_util.py::test_wheel_metadata[True] PASSED
-tests/test_util.py::test_wheel_metadata_isolation XFAIL (flit_core i...)
+tests/test_util.py::test_wheel_metadata_isolation SKIPPED
 tests/test_util.py::test_with_get_requires PASSED
 
 
 =========================== short test summary info ============================
-======== 124 passed, 33 skipped, 1 xfailed ========
+======== 124 passed, 34 skipped ========
   py$(PYV): OK
   congratulations :)
