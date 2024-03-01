@@ -25,19 +25,18 @@
 # Copyright (c) 2023, Klaus Ziegler
 #
 
+USE_COMMON_TEST_MASTER= yes
 include ../../../make-rules/shared-macros.mk
 
-USE_COMMON_TEST_MASTER=		yes
 COMPONENT_NAME=			tk
 COMPONENT_MJR_VERSION=	8.6
-COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).13
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).14
 COMPONENT_SUMMARY=		Tk - TCL GUI Toolkit
 COMPONENT_DESCRIPTION=	Tk is an open source, cross-platform widget toolkit that provides a library of basic elements for building a graphical user interface
 COMPONENT_PROJECT_URL=	https://www.tcl-lang.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-src.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2e65fa069a23365440a3c56c556b8673b5e32a283800d8d9b257e3f584ce0675
+COMPONENT_ARCHIVE_HASH= sha256:8ffdb720f47a6ca6107eac2dd877e30b0ef7fac14f3a84ebbd0b3612cee41a94
 COMPONENT_ARCHIVE_URL=	https://prdownloads.sourceforge.net/tcl/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/tk-8
 COMPONENT_CLASSIFICATION=	Development/Other Languages
