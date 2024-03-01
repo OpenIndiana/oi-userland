@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-mypy-plugins
-HUMAN_VERSION =			3.0.0
+HUMAN_VERSION =			3.1.0
 COMPONENT_SUMMARY =		pytest-mypy-plugins - pytest plugin for writing tests for mypy plugins
 COMPONENT_PROJECT_URL =		https://github.com/TypedDjango/pytest-mypy-plugins
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/82/31/554d273f99538df58e87a97d93853af5556000a229f9022782153fa2a829/pytest-mypy-plugins-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:05a728c7cbc4f33610f97fe9266b2c3eb209e41c28935011b4fc9531662625f6
+	sha256:8146115f9b4bed02b299465a2c2b9326b367ea64b155e9d77562769af963d01b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/decorator
 PYTHON_REQUIRED_PACKAGES += library/python/jinja2
+PYTHON_REQUIRED_PACKAGES += library/python/jsonschema
 PYTHON_REQUIRED_PACKAGES += library/python/mypy
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
