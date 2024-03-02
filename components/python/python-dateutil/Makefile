@@ -19,11 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python-dateutil
-HUMAN_VERSION =			2.9.0
+HUMAN_VERSION =			2.9.0.post0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		python-dateutil - Extensions to the standard Python datetime module
 COMPONENT_PROJECT_URL =		https://github.com/dateutil/dateutil
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:78e73e19c63f5b20ffa567001531680d939dc042bf7850431877645523c66709
+	sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
