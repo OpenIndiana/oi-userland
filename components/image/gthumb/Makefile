@@ -14,18 +14,16 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_STYLE=		meson
-
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gthumb
-COMPONENT_VERSION=      3.12.4
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      3.12.5
 COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:add693ac0aeb9a30d829ba03a06208289d3f6868dc3b02573549e88190c794e8
+COMPONENT_ARCHIVE_HASH= sha256:f6385df45fe8c7262ec349e13f81512e90e99798dd2377932e4291d63359f3ab
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.12/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         image/viewer/gthumb
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
@@ -43,8 +41,8 @@ CPPFLAGS += $(JPEG_CPPFLAGS)
 CFLAGS += $(JPEG_CFLAGS)
 LDFLAGS += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
