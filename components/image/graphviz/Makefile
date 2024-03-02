@@ -24,11 +24,11 @@
 # Copyright 2023 Friedrich Kink
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
-COMPONENT_VERSION=		9.0.0
-COMPONENT_REVISION=		4
+COMPONENT_VERSION=		10.0.1
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
@@ -39,9 +39,8 @@ COMPONENT_SUMMARY=		Graph visualization software
 COMPONENT_PROJECT_URL=	https://www.graphviz.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:6c9afda06a732af7658c2619ee713d2545818c3ff19b7b8fd48effcd06d57bf6
-COMPONENT_ARCHIVE_URL= \
-    https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:7bd8064a94bc178862aa0fbb0ed2236f49c188b2fd656487247c58db3019fe21
+COMPONENT_ARCHIVE_URL=	https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			image/graphviz
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=		EPL1.0
@@ -62,33 +61,33 @@ COMPONENT_PREP_ACTION= ( \
 	automake --add-missing)
 
 # configure
-CONFIGURE_ENV +=	LIBPOSTFIX="/$(MACH64)"
+CONFIGURE_ENV += LIBPOSTFIX="/$(MACH64)"
 # --with-javaincludedir allows for only one directory and we need two
-CONFIGURE_ENV +=	JAVA_INCLUDES="-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris"
-CONFIGURE_ENV +=	PERL=$(PERL)
-CONFIGURE_ENV +=	PYTHON=$(PYTHON)
-CONFIGURE_ENV +=	RUBY=$(RUBY)
-CONFIGURE_ENV +=	RUBY_VER=$(RUBY_VERSION)
+CONFIGURE_ENV += JAVA_INCLUDES="-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris"
+CONFIGURE_ENV += PERL=$(PERL)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+CONFIGURE_ENV += RUBY=$(RUBY)
+CONFIGURE_ENV += RUBY_VER=$(RUBY_VERSION)
 
-CONFIGURE_OPTIONS +=	--disable-dependency-tracking
-CONFIGURE_OPTIONS +=	--disable-man-pdfs
-CONFIGURE_OPTIONS +=	--disable-sharp
-#CONFIGURE_OPTIONS +=	--disable-go
-CONFIGURE_OPTIONS +=	--disable-ocaml
-CONFIGURE_OPTIONS +=	--enable-php
-CONFIGURE_OPTIONS +=	--disable-python
-CONFIGURE_OPTIONS +=	--enable-python3
-CONFIGURE_OPTIONS +=	--disable-r
-CONFIGURE_OPTIONS +=	--enable-lefty
-CONFIGURE_OPTIONS +=	--without-included-ltdl
-CONFIGURE_OPTIONS +=	--without-devil
-CONFIGURE_OPTIONS +=	--without-visio
-CONFIGURE_OPTIONS +=	--without-lasi
-CONFIGURE_OPTIONS +=	--without-gtkgl
-CONFIGURE_OPTIONS +=	--without-gtkglext
-CONFIGURE_OPTIONS +=	--without-ann
-CONFIGURE_OPTIONS +=	--without-qt
-CONFIGURE_OPTIONS +=	--without-smyrna
+CONFIGURE_OPTIONS += --disable-dependency-tracking
+CONFIGURE_OPTIONS += --disable-man-pdfs
+CONFIGURE_OPTIONS += --disable-sharp
+#CONFIGURE_OPTIONS += --disable-go
+CONFIGURE_OPTIONS += --disable-ocaml
+CONFIGURE_OPTIONS += --enable-php
+CONFIGURE_OPTIONS += --disable-python
+CONFIGURE_OPTIONS += --enable-python3
+CONFIGURE_OPTIONS += --disable-r
+CONFIGURE_OPTIONS += --enable-lefty
+CONFIGURE_OPTIONS += --without-included-ltdl
+CONFIGURE_OPTIONS += --without-devil
+CONFIGURE_OPTIONS += --without-visio
+CONFIGURE_OPTIONS += --without-lasi
+CONFIGURE_OPTIONS += --without-gtkgl
+CONFIGURE_OPTIONS += --without-gtkglext
+CONFIGURE_OPTIONS += --without-ann
+CONFIGURE_OPTIONS += --without-qt
+CONFIGURE_OPTIONS += --without-smyrna
 
 # fix java, lua, ocaml, python, ruby man pages
 COMPONENT_POST_INSTALL_ACTION += \
@@ -119,7 +118,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 REQUIRED_PACKAGES += runtime/java/openjdk17
 #REQUIRED_PACKAGES += runtime/ocaml
 REQUIRED_PACKAGES += runtime/tcl-8
-REQUIRED_PACKAGES += web/php-81
+REQUIRED_PACKAGES += web/php-82
 REQUIRED_PACKAGES += developer/golang
 
 # Auto-generated dependencies
