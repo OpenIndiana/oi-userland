@@ -40,10 +40,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		stack-spur
-COMPONENT_VERSION=	5.0.3339
-COMPONENT_REVISION=	1
-GIT_TAG=		sun-v5.0.61
-PLUGIN_REV=		5.0-202312211904
+COMPONENT_VERSION=	5.0.3351
+GIT_TAG=		sun-v5.0.62
+PLUGIN_REV=		5.0-202402252018
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/stack-spur
@@ -57,7 +56,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:68bdf1b20c9eeed85b054e888fcf3fe56afab2f9976ad77cb770d115b9303593
+COMPONENT_ARCHIVE_HASH=	sha256:3eec084e9620a9552a8ab87e4eb19a98b5f6b639f6907dba0e047103c033ff2d
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
@@ -114,6 +113,10 @@ CONFIGURE_ENV    +=     CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV    +=     LIBS="$(LIBS)"
 CONFIGURE_ENV.32 +=	TARGET_ARCH="-m32"
 CONFIGURE_ENV.64 +=	TARGET_ARCH="-m64"
+
+# for pkgsend generate (sample-manifest)
+# the actual manifest uses a mediator mediated hardlink for the squeak manpage
+PKG_HARDLINKS    += usr/share/man/man1/squeak.1
 
 # the opensmalltalk Makefile does not use DESTDIR
 COMPONENT_INSTALL_ARGS=  	ROOT=$(PROTO_DIR)
