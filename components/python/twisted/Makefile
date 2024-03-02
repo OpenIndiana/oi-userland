@@ -19,17 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		twisted
-HUMAN_VERSION =			23.10.0
+HUMAN_VERSION =			24.3.0
 COMPONENT_SUMMARY =		twisted - An asynchronous networking framework written in Python
 COMPONENT_PROJECT_URL =		https://twistedmatrix.com/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6e/d3/077ece8f12cd82419bd68bb34cf4538c4df5bb9202835e7a18358223e537/twisted-23.10.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:987847a0790a2c597197613686e2784fd54167df3a55d0fb17c8412305d76ce5
+	sha256:6b38b6ece7296b5e122c9eb17da2eeab3d98a198f50ca9efd00fb03e5b4fd4ae
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Testing fails with coverage-enable-subprocess installed
+TEST_CONFLICTING_PACKAGES.python += library/python/coverage-enable-subprocess
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
