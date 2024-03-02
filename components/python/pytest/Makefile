@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
-HUMAN_VERSION =			8.0.1
+HUMAN_VERSION =			8.0.2
 COMPONENT_SUMMARY =		pytest - pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:267f6563751877d772019b13aacbe4e860d73fe8f651f28112e9ac37de7513ae
+	sha256:d4051d623a2e0b7e51960ba963193b09ce6daeb9759a451844a21e4ddedfc1bd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -48,7 +48,6 @@ COMPONENT_TEST_ENV += _PYTEST_TOX_COVERAGE_RUN="python -m"
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-lazy-fixture
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-metadata
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
