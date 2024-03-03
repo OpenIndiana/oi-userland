@@ -1,0 +1,63 @@
+#!/sbin/sh
+#
+# Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# Copyright 2016 Hans Rosenfeld <rosenfeld@grumpf.hope-2000.org>
+# Copyright 2023 Klaus Ziegler
+#
+
+. /lib/svc/share/ipf_include.sh
+. /lib/svc/share/smf_include.sh
+
+SSHDIR=/etc/hpnssh
+
+create_ipf_rules()
+{
+	FMRI=$1
+	ipf_file=`fmri_to_file ${FMRI} $IPF_SUFFIX`
+	ipf6_file=`fmri_to_file ${FMRI} $IPF6_SUFFIX`
+	policy=`get_policy ${FMRI}`
+
+	#
+	# Get port from the sshd_config file
+	#
+	tports=`grep "^Port" "$SSHDIR/sshd_config" 2>/dev/null | \
+	    awk '{print $2}'`
+
+	echo "# $FMRI" >$ipf_file
+	echo "# $FMRI" >$ipf6_file
+	for port in $tports; do
+		generate_rules $FMRI $policy "tcp" $port $ipf_file
+		generate_rules $FMRI $policy "tcp" $port $ipf6_file _6
+	done
+}
+
+# This script is being used as part of an SMF
+# start/stop/refresh method for HPN-SSH server.
+# Note: there is no refresh/restart switch defined,
+# because this is done by the SMF restarter property.
+#
+
+case $1 in
+
+'ipfilter')
+	create_ipf_rules $2
+	;;
+
+'start')
+	#
+	# If host keys don't exist when the service is started, create them.
+	#
+	/usr/bin/hpnssh-keygen -A
+
+	/usr/sbin/hpnsshd
+	;;
+
+*)
+	echo "Usage: $0 { start | restart }"
+	exit 1
+	;;
+esac
+
+exit $?

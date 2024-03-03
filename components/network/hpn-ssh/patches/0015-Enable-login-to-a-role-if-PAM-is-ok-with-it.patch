@@ -1,0 +1,135 @@
+--- hpn-ssh-hpn-18.3.1/auth-pam.c.orig
++++ hpn-ssh-hpn-18.3.1/auth-pam.c
+@@ -1213,6 +1213,20 @@
+ 	return (sshpam_account_status);
+ }
+ 
++#ifdef HAVE_PAM_AUSER
++void
++do_pam_set_auser(const char* auser)
++{
++	if (auser != NULL) {
++		debug("PAM: setting PAM_AUSER to \"%s\"", auser);
++		sshpam_err = pam_set_item(sshpam_handle, PAM_AUSER, auser);
++		if (sshpam_err != PAM_SUCCESS)
++			error("PAM: failed to set PAM_AUSER: %s",
++			    pam_strerror(sshpam_handle, sshpam_err));
++	}
++}
++#endif
++
+ void
+ do_pam_setcred(int init)
+ {
+--- hpn-ssh-hpn-18.3.1/auth-pam.h.orig
++++ hpn-ssh-hpn-18.3.1/auth-pam.h
+@@ -44,4 +44,9 @@
+ void sshpam_set_maxtries_reached(int);
+ int is_pam_session_open(void);
+ 
++#ifdef HAVE_PAM_AUSER
++void do_pam_set_auser(const char *);
++#endif
++void do_pam_set_tty(const char *);
++
+ #endif /* USE_PAM */
+--- hpn-ssh-hpn-18.3.1/auth.h.orig
++++ hpn-ssh-hpn-18.3.1/auth.h
+@@ -98,6 +98,9 @@
+ #ifdef PAM_ENHANCEMENT
+ 	char		*authmethod_name;
+ #endif
++#ifdef HAVE_PAM_AUSER
++	char		*auser;
++#endif
+ };
+ 
+ /*
+--- hpn-ssh-hpn-18.3.1/auth2-hostbased.c.orig
++++ hpn-ssh-hpn-18.3.1/auth2-hostbased.c
+@@ -80,6 +80,9 @@
+ 	debug("signature:");
+ 	sshbuf_dump_data(sig, slen, stderr);
+ #endif
++#ifdef HAVE_PAM_AUSER
++	authctxt->auser = NULL;
++#endif
+ 	pktype = sshkey_type_from_name(pkalg);
+ 	if (pktype == KEY_UNSPEC) {
+ 		/* this is perfectly legal */
+@@ -151,6 +154,13 @@
+ 	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL)) == 0)
+ 		authenticated = 1;
+ 
++#ifdef HAVE_PAM_AUSER
++	if (authenticated) {
++		authctxt->auser = cuser;
++		cuser = NULL;
++	}
++#endif
++
+ 	auth2_record_key(authctxt, authenticated, key);
+ 	sshbuf_free(b);
+ done:
+--- hpn-ssh-hpn-18.3.1/auth2.c.orig
++++ hpn-ssh-hpn-18.3.1/auth2.c
+@@ -427,6 +427,14 @@
+ #endif
+ 	}
+ 
++#ifdef HAVE_PAM_AUSER
++	if (!use_privsep) {
++		do_pam_set_auser(authctxt->auser);
++		free(authctxt->auser);
++		authctxt->auser = NULL;	
++	}
++#endif
++
+ 	if (authenticated && options.num_auth_methods != 0) {
+ 
+ #if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
+--- hpn-ssh-hpn-18.3.1/monitor.c.orig
++++ hpn-ssh-hpn-18.3.1/monitor.c
+@@ -391,6 +391,12 @@
+ 		}
+ 	}
+ 
++#if defined(HAVE_PAM_AUSER) && defined(USE_PAM)
++	if (hostbased_cuser != NULL) {
++		free(hostbased_cuser);
++		hostbased_cuser = NULL;
++	}
++#endif
+ 	if (!authctxt->valid)
+ 		fatal_f("authenticated invalid user");
+ 	if (strcmp(auth_method, "unknown") == 0)
+@@ -594,14 +600,16 @@
+ {
+ 	/* reset state */
+ 	free(key_blob);
++#if !defined(HAVE_PAM_AUSER) || !defined(USE_PAM)
+ 	free(hostbased_cuser);
++	hostbased_cuser = NULL;
++#endif
+ 	free(hostbased_chost);
+ 	sshauthopt_free(key_opts);
+ 	key_blob = NULL;
+ 	key_bloblen = 0;
+ 	key_blobtype = MM_NOKEY;
+ 	key_opts = NULL;
+-	hostbased_cuser = NULL;
+ 	hostbased_chost = NULL;
+ }
+ 
+@@ -1074,6 +1082,11 @@
+ 	if (!options.use_pam)
+ 		fatal("%s: PAM not enabled", __func__);
+ 
++#ifdef HAVE_PAM_AUSER
++	if (hostbased_cuser != NULL)
++		do_pam_set_auser(hostbased_cuser);
++#endif
++
+ 	ret = do_pam_account();
+ 
+ 	if ((r = sshbuf_put_u32(m, ret)) != 0 ||

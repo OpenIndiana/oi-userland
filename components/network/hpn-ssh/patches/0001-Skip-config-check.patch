@@ -1,0 +1,28 @@
+#
+# This change is to remove some misleading error messages when running
+# "gmake install". OpenSSH mixes the building and running together. Some
+# system setup checking for running the program needs to be removed, because
+# they are not suitable in a build system.  This is for OpenIndiana only, so we
+# will not contribute back this change to the upstream community.
+#
+
+--- hpn-ssh-hpn-18.3.1/Makefile.in.orig
++++ hpn-ssh-hpn-18.3.1/Makefile.in
+@@ -424,7 +424,16 @@
+ install-nosysconf: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files
+ 
+ check-config:
+-	-$(DESTDIR)$(sbindir)/hpnsshd -t -f $(DESTDIR)$(sysconfdir)/sshd_config
++# On OpenIndiana, to workaround OpenSSH's unlucky mixing of 'building ssh' and
++# 'running ssh', on build machine the following requisites shouldn't be
++# enforced:
++#     1) existence of privsep user hpnsshd
++#     2) existence of privsep directory /var/empty
++#     3) read permissions for /etc/hpnssh/ssh_host_[rsa,dsa]_key
++#
++#	-$(DESTDIR)$(sbindir)/hpnsshd -t -f $(DESTDIR)$(sysconfdir)/sshd_config
++#
++	@echo 'OpenIndiana: skipping check-config'
+ 
+ install-files:
+ 	$(MKDIR_P) $(DESTDIR)$(bindir)
