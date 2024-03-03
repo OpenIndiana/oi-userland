@@ -1,0 +1,33 @@
+--- postgresql-16.2/src/pl/plpython/Makefile.orig	2024-02-05 22:41:37.000000000 +0100
++++ postgresql-16.2/src/pl/plpython/Makefile	2024-03-02 16:18:33.733576065 +0100
+@@ -13,7 +13,7 @@
+ 
+ override CPPFLAGS := -I. -I$(srcdir) $(python_includespec) $(CPPFLAGS)
+ 
+-rpathdir = $(python_libdir)
++#rpathdir = $(python_libdir)
+ 
+ PGFILEDESC = "PL/Python - procedural language"
+ 
+--- postgresql-16.2/contrib/ltree_plpython/Makefile.orig	2024-02-05 22:41:37.000000000 +0100
++++ postgresql-16.2/contrib/ltree_plpython/Makefile	2024-03-02 16:18:33.733371926 +0100
+@@ -31,7 +31,7 @@
+ # ... see silliness in plpython Makefile ...
+ SHLIB_LINK_INTERNAL += $(sort $(wildcard ../../src/pl/plpython/libpython*.a))
+ else
+-rpathdir = $(python_libdir)
++#rpathdir = $(python_libdir)
+ SHLIB_LINK += $(python_libspec) $(python_additional_libs)
+ endif
+ 
+--- postgresql-16.2/contrib/hstore_plpython/Makefile.orig	2024-02-05 22:41:37.000000000 +0100
++++ postgresql-16.2/contrib/hstore_plpython/Makefile	2024-03-02 16:18:33.733750445 +0100
+@@ -31,7 +31,7 @@
+ # ... see silliness in plpython Makefile ...
+ SHLIB_LINK_INTERNAL += $(sort $(wildcard ../../src/pl/plpython/libpython*.a))
+ else
+-rpathdir = $(python_libdir)
++#rpathdir = $(python_libdir)
+ SHLIB_LINK += $(python_libspec) $(python_additional_libs)
+ endif
+ 

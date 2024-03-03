@@ -906,6 +906,7 @@ PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 # |         12         |   2024-11-14   |
 # |         14         |   2026-11-12   |
 # |         15         |   2027-11-11   |
+# |         16         |   2028-11-09   |
 # +--------------------+----------------+
 #
 # See https://www.postgresql.org/support/versioning/
@@ -915,7 +916,7 @@ PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 # Default DB version should be the newest one we do have so we detect any
 # incompatibilities as soon as possible.  Components could override this when
 # they are not ready yet to compile with so new version.
-PG_VERSION ?=   15
+PG_VERSION ?=   16
 PG_IMPLEM ?=    postgres
 PG_VERNUM =     $(subst .,,$(PG_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed
