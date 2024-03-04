@@ -26,13 +26,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxcb
-COMPONENT_VERSION=		1.16
+COMPONENT_VERSION=		1.16.1
 COMPONENT_FMRI=			x11/library/libxcb
 COMPONENT_SUMMARY=		The X protocol C-language Binding (XCB): Libraries
 COMPONENT_PROJECT_URL=	https://xcb.freedesktop.org
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL=	https://xorg.freedesktop.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:4348566aa0fbf196db5e0a576321c65966189210cb51328ea2bb2be39c711d71
+COMPONENT_ARCHIVE_HASH=	sha256:f24d187154c8e027b358fc7cb6588e35e33e6a92f11c668fe77396a7ae66e311
 COMPONENT_LICENSE_FILE=	COPYING
 
 
@@ -68,9 +68,7 @@ CONFIGURE_OPTIONS += --enable-xvmc
 CONFIGURE_OPTIONS += --with-queue-size=32768 
 CONFIGURE_OPTIONS += --with-pic
 
-unexport SHELLOPTS
-
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/check
 REQUIRED_PACKAGES += x11/header/xcb-protocols
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
