@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2020 <contributor>
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,43 +23,166 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=etc/bash_completion.d/000_bash_completion_compat.bash
 file path=etc/profile.d/bash_completion.sh
 file path=usr/share/bash-completion/bash_completion
 file path=usr/share/bash-completion/completions/2to3
 file path=usr/share/bash-completion/completions/7z
 link path=usr/share/bash-completion/completions/7za target=7z
+link path=usr/share/bash-completion/completions/7zr target=7z
+link path=usr/share/bash-completion/completions/7zz target=7z
+link path=usr/share/bash-completion/completions/7zzs target=7z
 file path=usr/share/bash-completion/completions/_adb
+link path=usr/share/bash-completion/completions/_airflow target=_nox
+link path=usr/share/bash-completion/completions/_allero target=_golangci-lint
+link path=usr/share/bash-completion/completions/_ansible target=_nox
+link path=usr/share/bash-completion/completions/_ansible-config target=_nox
+link path=usr/share/bash-completion/completions/_ansible-console target=_nox
+link path=usr/share/bash-completion/completions/_ansible-doc target=_nox
+link path=usr/share/bash-completion/completions/_ansible-galaxy target=_nox
+link path=usr/share/bash-completion/completions/_ansible-inventory target=_nox
+link path=usr/share/bash-completion/completions/_ansible-playbook target=_nox
+link path=usr/share/bash-completion/completions/_ansible-pull target=_nox
+link path=usr/share/bash-completion/completions/_ansible-vault target=_nox
+link path=usr/share/bash-completion/completions/_arduino-cli \
+    target=_golangci-lint
+link path=usr/share/bash-completion/completions/_black target=_pipenv
+link path=usr/share/bash-completion/completions/_blackd target=_pipenv
+link path=usr/share/bash-completion/completions/_buf target=_golangci-lint
 file path=usr/share/bash-completion/completions/_cal
+file path=usr/share/bash-completion/completions/_cargo
+link path=usr/share/bash-completion/completions/_chezmoi target=_golangci-lint
 file path=usr/share/bash-completion/completions/_chfn
 file path=usr/share/bash-completion/completions/_chsh
+link path=usr/share/bash-completion/completions/_cilium target=_golangci-lint
+link path=usr/share/bash-completion/completions/_cloudquery \
+    target=_golangci-lint
+link path=usr/share/bash-completion/completions/_conda target=_nox
+link path=usr/share/bash-completion/completions/_constellation \
+    target=_golangci-lint
+link path=usr/share/bash-completion/completions/_consul target=_vault
+link path=usr/share/bash-completion/completions/_crc target=_golangci-lint
+link path=usr/share/bash-completion/completions/_cz target=_nox
+link path=usr/share/bash-completion/completions/_datree target=_golangci-lint
+link path=usr/share/bash-completion/completions/_deno target=_mdbook
+link path=usr/share/bash-completion/completions/_diesel target=_mdbook
 file path=usr/share/bash-completion/completions/_dmesg
+link path=usr/share/bash-completion/completions/_docker target=_golangci-lint
+link path=usr/share/bash-completion/completions/_dprint target=_mdbook
 file path=usr/share/bash-completion/completions/_eject
+file path=usr/share/bash-completion/completions/_flamegraph
+link path=usr/share/bash-completion/completions/_flask target=_pipenv
+file path=usr/share/bash-completion/completions/_gaiacli
+link path=usr/share/bash-completion/completions/_gaiad target=_gaiacli
+link path=usr/share/bash-completion/completions/_gardenctl target=_golangci-lint
+file path=usr/share/bash-completion/completions/_gh
+link path=usr/share/bash-completion/completions/_gh-label target=_golangci-lint
+link path=usr/share/bash-completion/completions/_git-bump target=_golangci-lint
+link path=usr/share/bash-completion/completions/_go-licenses \
+    target=_golangci-lint
+file path=usr/share/bash-completion/completions/_golangci-lint
+link path=usr/share/bash-completion/completions/_gopherjs target=_golangci-lint
+link path=usr/share/bash-completion/completions/_goreleaser \
+    target=_golangci-lint
+file path=usr/share/bash-completion/completions/_gsctl
+link path=usr/share/bash-completion/completions/_helm target=_golangci-lint
 file path=usr/share/bash-completion/completions/_hexdump
+link path=usr/share/bash-completion/completions/_httpx target=_pipenv
+link path=usr/share/bash-completion/completions/_hugo target=_golangci-lint
 file path=usr/share/bash-completion/completions/_hwclock
+link path=usr/share/bash-completion/completions/_ignite target=_golangci-lint
+link path=usr/share/bash-completion/completions/_infracost target=_gh
 file path=usr/share/bash-completion/completions/_ionice
+link path=usr/share/bash-completion/completions/_istioctl target=_golangci-lint
+file path=usr/share/bash-completion/completions/_jungle
+link path=usr/share/bash-completion/completions/_k3s target=_golangci-lint
+file path=usr/share/bash-completion/completions/_keyring
+link path=usr/share/bash-completion/completions/_kn target=_golangci-lint
+file path=usr/share/bash-completion/completions/_kontena
+link path=usr/share/bash-completion/completions/_kool target=_golangci-lint
+link path=usr/share/bash-completion/completions/_kratos target=_golangci-lint
+link path=usr/share/bash-completion/completions/_kubeadm target=_golangci-lint
+link path=usr/share/bash-completion/completions/_kubectl target=_golangci-lint
+link path=usr/share/bash-completion/completions/_kubescape target=_golangci-lint
+link path=usr/share/bash-completion/completions/_lefthook target=_golangci-lint
+link path=usr/share/bash-completion/completions/_linkerd target=_golangci-lint
 file path=usr/share/bash-completion/completions/_look
+link path=usr/share/bash-completion/completions/_mattermost \
+    target=_golangci-lint
+file path=usr/share/bash-completion/completions/_mdbook
+link path=usr/share/bash-completion/completions/_metalctl target=_golangci-lint
+link path=usr/share/bash-completion/completions/_minikube target=_golangci-lint
+link path=usr/share/bash-completion/completions/_mise target=_golangci-lint
+link path=usr/share/bash-completion/completions/_mmctl target=_golangci-lint
 file path=usr/share/bash-completion/completions/_mock
 file path=usr/share/bash-completion/completions/_modules
+link path=usr/share/bash-completion/completions/_moldy target=_golangci-lint
 file path=usr/share/bash-completion/completions/_mount
 file path=usr/share/bash-completion/completions/_mount.linux
+link path=usr/share/bash-completion/completions/_multi-gitter \
+    target=_golangci-lint
 file path=usr/share/bash-completion/completions/_newgrp
+link path=usr/share/bash-completion/completions/_nfpm target=_golangci-lint
 file path=usr/share/bash-completion/completions/_nmcli
+link path=usr/share/bash-completion/completions/_nomad target=_vault
+file path=usr/share/bash-completion/completions/_nox
+link path=usr/share/bash-completion/completions/_npm target=_gaiacli
+file path=usr/share/bash-completion/completions/_nvm
+link path=usr/share/bash-completion/completions/_oc target=_golangci-lint
+link path=usr/share/bash-completion/completions/_okteto target=_golangci-lint
+link path=usr/share/bash-completion/completions/_op target=_golangci-lint
+link path=usr/share/bash-completion/completions/_ory target=_golangci-lint
+link path=usr/share/bash-completion/completions/_packer target=_vault
+file path=usr/share/bash-completion/completions/_pip
+link path=usr/share/bash-completion/completions/_pip3 target=_pip
+file path=usr/share/bash-completion/completions/_pipenv
+link path=usr/share/bash-completion/completions/_polygon-edge \
+    target=_golangci-lint
+link path=usr/share/bash-completion/completions/_pulumi target=_golangci-lint
+link path=usr/share/bash-completion/completions/_px target=_golangci-lint
+link path=usr/share/bash-completion/completions/_qrpc target=_golangci-lint
+link path=usr/share/bash-completion/completions/_random target=_golangci-lint
+link path=usr/share/bash-completion/completions/_rclone target=_golangci-lint
 file path=usr/share/bash-completion/completions/_renice
 file path=usr/share/bash-completion/completions/_repomanage
 file path=usr/share/bash-completion/completions/_reptyr
 file path=usr/share/bash-completion/completions/_rfkill
 file path=usr/share/bash-completion/completions/_rtcwake
+file path=usr/share/bash-completion/completions/_ruff
 file path=usr/share/bash-completion/completions/_runuser
+file path=usr/share/bash-completion/completions/_rustup
+link path=usr/share/bash-completion/completions/_skaffold target=_golangci-lint
+file path=usr/share/bash-completion/completions/_slackpkg
+link path=usr/share/bash-completion/completions/_ssh-inscribe \
+    target=_golangci-lint
+link path=usr/share/bash-completion/completions/_sshi target=_golangci-lint
+link path=usr/share/bash-completion/completions/_starship target=_mdbook
 file path=usr/share/bash-completion/completions/_su
 file path=usr/share/bash-completion/completions/_svn
 file path=usr/share/bash-completion/completions/_svnadmin
 file path=usr/share/bash-completion/completions/_svnlook
+link path=usr/share/bash-completion/completions/_tanzu target=_golangci-lint
+link path=usr/share/bash-completion/completions/_tanzu-core \
+    target=_golangci-lint
+link path=usr/share/bash-completion/completions/_tendermint target=_gaiacli
+link path=usr/share/bash-completion/completions/_terraform target=_vault
+link path=usr/share/bash-completion/completions/_tkn target=_golangci-lint
+link path=usr/share/bash-completion/completions/_tkn-pac target=_golangci-lint
+file path=usr/share/bash-completion/completions/_tokio-console
+link path=usr/share/bash-completion/completions/_trivy target=_golangci-lint
 file path=usr/share/bash-completion/completions/_udevadm
 file path=usr/share/bash-completion/completions/_umount
 file path=usr/share/bash-completion/completions/_umount.linux
+link path=usr/share/bash-completion/completions/_upctl target=_golangci-lint
+link path=usr/share/bash-completion/completions/_vacuum target=_golangci-lint
+file path=usr/share/bash-completion/completions/_vault
+link path=usr/share/bash-completion/completions/_virtctl target=_golangci-lint
+link path=usr/share/bash-completion/completions/_watchexec target=_flamegraph
 file path=usr/share/bash-completion/completions/_write
 file path=usr/share/bash-completion/completions/_xm
+file path=usr/share/bash-completion/completions/_yq
 file path=usr/share/bash-completion/completions/_yum
+link path=usr/share/bash-completion/completions/_zitadel target=_golangci-lint
 file path=usr/share/bash-completion/completions/a2x
 file path=usr/share/bash-completion/completions/abook
 file path=usr/share/bash-completion/completions/aclocal
@@ -83,6 +207,7 @@ link path=usr/share/bash-completion/completions/apropos target=man
 file path=usr/share/bash-completion/completions/apt-build
 file path=usr/share/bash-completion/completions/apt-cache
 file path=usr/share/bash-completion/completions/apt-get
+file path=usr/share/bash-completion/completions/apt-mark
 file path=usr/share/bash-completion/completions/aptitude
 link path=usr/share/bash-completion/completions/aptitude-curses target=aptitude
 file path=usr/share/bash-completion/completions/arch
@@ -108,7 +233,11 @@ file path=usr/share/bash-completion/completions/autorpm
 file path=usr/share/bash-completion/completions/autoscan
 link path=usr/share/bash-completion/completions/autossh target=ssh
 link path=usr/share/bash-completion/completions/autoupdate target=autoscan
+file path=usr/share/bash-completion/completions/avahi-browse
+link path=usr/share/bash-completion/completions/avahi-browse-domains \
+    target=avahi-browse
 file path=usr/share/bash-completion/completions/avctrl
+link path=usr/share/bash-completion/completions/b2sum target=sha256sum
 file path=usr/share/bash-completion/completions/badblocks
 file path=usr/share/bash-completion/completions/beadm
 file path=usr/share/bash-completion/completions/bind
@@ -131,6 +260,7 @@ file path=usr/share/bash-completion/completions/carton
 link path=usr/share/bash-completion/completions/cc target=gcc
 file path=usr/share/bash-completion/completions/ccache
 file path=usr/share/bash-completion/completions/ccze
+file path=usr/share/bash-completion/completions/cd
 link path=usr/share/bash-completion/completions/cdrecord target=wodim
 file path=usr/share/bash-completion/completions/cfagent
 file path=usr/share/bash-completion/completions/cfrun
@@ -182,7 +312,7 @@ file path=usr/share/bash-completion/completions/cvs
 file path=usr/share/bash-completion/completions/cvsps
 link path=usr/share/bash-completion/completions/dcop target=qdbus
 file path=usr/share/bash-completion/completions/dd
-link path=usr/share/bash-completion/completions/declare target=function
+file path=usr/share/bash-completion/completions/declare
 file path=usr/share/bash-completion/completions/deja-dup
 file path=usr/share/bash-completion/completions/desktop-file-validate
 link path=usr/share/bash-completion/completions/dfutool target=hcitool
@@ -231,6 +361,7 @@ file path=usr/share/bash-completion/completions/find
 file path=usr/share/bash-completion/completions/find_member
 file path=usr/share/bash-completion/completions/fio
 file path=usr/share/bash-completion/completions/firefox
+link path=usr/share/bash-completion/completions/firefox-esr target=firefox
 file path=usr/share/bash-completion/completions/flake8
 file path=usr/share/bash-completion/completions/freebsd-update
 file path=usr/share/bash-completion/completions/freeciv
@@ -302,14 +433,18 @@ file path=usr/share/bash-completion/completions/groupmems
 file path=usr/share/bash-completion/completions/groupmod
 file path=usr/share/bash-completion/completions/growisofs
 file path=usr/share/bash-completion/completions/grpck
+link path=usr/share/bash-completion/completions/gssdp-device-sniffer \
+    target=gssdp-discover
 file path=usr/share/bash-completion/completions/gssdp-discover
 link path=usr/share/bash-completion/completions/gtar target=tar
 file path=usr/share/bash-completion/completions/gzip
+file path=usr/share/bash-completion/completions/hash
 link path=usr/share/bash-completion/completions/hciattach target=hcitool
 link path=usr/share/bash-completion/completions/hciconfig target=hcitool
 file path=usr/share/bash-completion/completions/hcitool
 link path=usr/share/bash-completion/completions/hd target=_hexdump
 file path=usr/share/bash-completion/completions/hddtemp
+file path=usr/share/bash-completion/completions/help
 file path=usr/share/bash-completion/completions/hid2hci
 link path=usr/share/bash-completion/completions/host target=nslookup
 file path=usr/share/bash-completion/completions/hostname
@@ -410,7 +545,27 @@ file path=usr/share/bash-completion/completions/lsof
 file path=usr/share/bash-completion/completions/lsscsi
 file path=usr/share/bash-completion/completions/lsusb
 file path=usr/share/bash-completion/completions/lua
+link path=usr/share/bash-completion/completions/lua5.0 target=lua
+link path=usr/share/bash-completion/completions/lua5.1 target=lua
+link path=usr/share/bash-completion/completions/lua5.2 target=lua
+link path=usr/share/bash-completion/completions/lua5.3 target=lua
+link path=usr/share/bash-completion/completions/lua5.4 target=lua
+link path=usr/share/bash-completion/completions/lua50 target=lua
+link path=usr/share/bash-completion/completions/lua51 target=lua
+link path=usr/share/bash-completion/completions/lua52 target=lua
+link path=usr/share/bash-completion/completions/lua53 target=lua
+link path=usr/share/bash-completion/completions/lua54 target=lua
 file path=usr/share/bash-completion/completions/luac
+link path=usr/share/bash-completion/completions/luac5.0 target=luac
+link path=usr/share/bash-completion/completions/luac5.1 target=luac
+link path=usr/share/bash-completion/completions/luac5.2 target=luac
+link path=usr/share/bash-completion/completions/luac5.3 target=luac
+link path=usr/share/bash-completion/completions/luac5.4 target=luac
+link path=usr/share/bash-completion/completions/luac50 target=luac
+link path=usr/share/bash-completion/completions/luac51 target=luac
+link path=usr/share/bash-completion/completions/luac52 target=luac
+link path=usr/share/bash-completion/completions/luac53 target=luac
+link path=usr/share/bash-completion/completions/luac54 target=luac
 file path=usr/share/bash-completion/completions/luseradd
 file path=usr/share/bash-completion/completions/luserdel
 link path=usr/share/bash-completion/completions/lusermod target=luseradd
@@ -439,6 +594,7 @@ file path=usr/share/bash-completion/completions/makepkg
 file path=usr/share/bash-completion/completions/man
 file path=usr/share/bash-completion/completions/mc
 file path=usr/share/bash-completion/completions/mcrypt
+link path=usr/share/bash-completion/completions/md5sum target=sha256sum
 file path=usr/share/bash-completion/completions/mdadm
 link path=usr/share/bash-completion/completions/mdecrypt target=mcrypt
 file path=usr/share/bash-completion/completions/mdtool
@@ -477,6 +633,7 @@ file path=usr/share/bash-completion/completions/mysqladmin
 file path=usr/share/bash-completion/completions/nc
 link path=usr/share/bash-completion/completions/ncal target=_cal
 file path=usr/share/bash-completion/completions/ncftp
+link path=usr/share/bash-completion/completions/neomutt target=mutt
 file path=usr/share/bash-completion/completions/nethogs
 file path=usr/share/bash-completion/completions/newlist
 file path=usr/share/bash-completion/completions/newusers
@@ -487,7 +644,6 @@ file path=usr/share/bash-completion/completions/nslookup
 file path=usr/share/bash-completion/completions/nsupdate
 file path=usr/share/bash-completion/completions/ntpdate
 file path=usr/share/bash-completion/completions/oggdec
-file path=usr/share/bash-completion/completions/op
 file path=usr/share/bash-completion/completions/openssl
 file path=usr/share/bash-completion/completions/opera
 file path=usr/share/bash-completion/completions/optipng
@@ -497,6 +653,7 @@ file path=usr/share/bash-completion/completions/passwd
 file path=usr/share/bash-completion/completions/patch
 link path=usr/share/bash-completion/completions/pbzip2 target=bzip2
 link path=usr/share/bash-completion/completions/pccardctl target=cardctl
+file path=usr/share/bash-completion/completions/pdftoppm
 file path=usr/share/bash-completion/completions/pdftotext
 link path=usr/share/bash-completion/completions/pdlzip target=lzip
 file path=usr/share/bash-completion/completions/perl
@@ -511,6 +668,7 @@ link path=usr/share/bash-completion/completions/pigz target=gzip
 file path=usr/share/bash-completion/completions/pine
 link path=usr/share/bash-completion/completions/pinfo target=info
 file path=usr/share/bash-completion/completions/ping
+link path=usr/share/bash-completion/completions/ping4 target=ping
 link path=usr/share/bash-completion/completions/ping6 target=ping
 file path=usr/share/bash-completion/completions/pkg
 file path=usr/share/bash-completion/completions/pkg-config
@@ -519,6 +677,7 @@ link path=usr/share/bash-completion/completions/pkg_deinstall target=pkg_delete
 file path=usr/share/bash-completion/completions/pkg_delete
 link path=usr/share/bash-completion/completions/pkg_info target=pkg_delete
 file path=usr/share/bash-completion/completions/pkgadd
+link path=usr/share/bash-completion/completions/pkgconf target=pkg-config
 file path=usr/share/bash-completion/completions/pkgrm
 file path=usr/share/bash-completion/completions/pkgtool
 file path=usr/share/bash-completion/completions/pkgutil
@@ -547,6 +706,7 @@ link path=usr/share/bash-completion/completions/ppc-koji target=koji
 file path=usr/share/bash-completion/completions/prelink
 file path=usr/share/bash-completion/completions/printenv
 file path=usr/share/bash-completion/completions/protoc
+file path=usr/share/bash-completion/completions/ps
 file path=usr/share/bash-completion/completions/psql
 file path=usr/share/bash-completion/completions/puppet
 link path=usr/share/bash-completion/completions/puppetca target=puppet
@@ -555,6 +715,7 @@ link path=usr/share/bash-completion/completions/puppetdoc target=puppet
 link path=usr/share/bash-completion/completions/puppetmasterd target=puppet
 link path=usr/share/bash-completion/completions/puppetqd target=puppet
 link path=usr/share/bash-completion/completions/puppetrun target=puppet
+link path=usr/share/bash-completion/completions/pushd target=cd
 file path=usr/share/bash-completion/completions/pv
 link path=usr/share/bash-completion/completions/pvchange target=lvm
 link path=usr/share/bash-completion/completions/pvcreate target=lvm
@@ -581,6 +742,8 @@ link path=usr/share/bash-completion/completions/pylint-2 target=pylint
 link path=usr/share/bash-completion/completions/pylint-3 target=pylint
 link path=usr/share/bash-completion/completions/pypy target=python
 link path=usr/share/bash-completion/completions/pypy3 target=python
+link path=usr/share/bash-completion/completions/pyston target=python
+link path=usr/share/bash-completion/completions/pyston3 target=python
 file path=usr/share/bash-completion/completions/pytest
 link path=usr/share/bash-completion/completions/pytest-2 target=pytest
 link path=usr/share/bash-completion/completions/pytest-3 target=pytest
@@ -588,18 +751,26 @@ file path=usr/share/bash-completion/completions/python
 link path=usr/share/bash-completion/completions/python2 target=python
 link path=usr/share/bash-completion/completions/python2.7 target=python
 link path=usr/share/bash-completion/completions/python3 target=python
+link path=usr/share/bash-completion/completions/python3.10 target=python
+link path=usr/share/bash-completion/completions/python3.11 target=python
+link path=usr/share/bash-completion/completions/python3.12 target=python
 link path=usr/share/bash-completion/completions/python3.3 target=python
 link path=usr/share/bash-completion/completions/python3.4 target=python
 link path=usr/share/bash-completion/completions/python3.5 target=python
 link path=usr/share/bash-completion/completions/python3.6 target=python
 link path=usr/share/bash-completion/completions/python3.7 target=python
 link path=usr/share/bash-completion/completions/python3.8 target=python
+link path=usr/share/bash-completion/completions/python3.9 target=python
 file path=usr/share/bash-completion/completions/pyvenv
+link path=usr/share/bash-completion/completions/pyvenv-3.10 target=pyvenv
+link path=usr/share/bash-completion/completions/pyvenv-3.11 target=pyvenv
+link path=usr/share/bash-completion/completions/pyvenv-3.12 target=pyvenv
 link path=usr/share/bash-completion/completions/pyvenv-3.4 target=pyvenv
 link path=usr/share/bash-completion/completions/pyvenv-3.5 target=pyvenv
 link path=usr/share/bash-completion/completions/pyvenv-3.6 target=pyvenv
 link path=usr/share/bash-completion/completions/pyvenv-3.7 target=pyvenv
 link path=usr/share/bash-completion/completions/pyvenv-3.8 target=pyvenv
+link path=usr/share/bash-completion/completions/pyvenv-3.9 target=pyvenv
 file path=usr/share/bash-completion/completions/qdbus
 file path=usr/share/bash-completion/completions/qemu
 link path=usr/share/bash-completion/completions/qemu-kvm target=qemu
@@ -650,10 +821,15 @@ file path=usr/share/bash-completion/completions/secret-tool
 link path=usr/share/bash-completion/completions/setquota target=quota
 link path=usr/share/bash-completion/completions/sftp target=ssh
 file path=usr/share/bash-completion/completions/sh
+link path=usr/share/bash-completion/completions/sha1sum target=sha256sum
+link path=usr/share/bash-completion/completions/sha224sum target=sha256sum
+file path=usr/share/bash-completion/completions/sha256sum
+link path=usr/share/bash-completion/completions/sha384sum target=sha256sum
+link path=usr/share/bash-completion/completions/sha512sum target=sha256sum
+link path=usr/share/bash-completion/completions/shasum target=sha256sum
 file path=usr/share/bash-completion/completions/shellcheck
 link path=usr/share/bash-completion/completions/sidedoor target=ssh
 file path=usr/share/bash-completion/completions/sitecopy
-file path=usr/share/bash-completion/completions/slackpkg
 file path=usr/share/bash-completion/completions/slapt-get
 file path=usr/share/bash-completion/completions/slapt-src
 link path=usr/share/bash-completion/completions/slogin target=ssh
@@ -674,6 +850,7 @@ file path=usr/share/bash-completion/completions/ssh
 file path=usr/share/bash-completion/completions/ssh-add
 file path=usr/share/bash-completion/completions/ssh-copy-id
 file path=usr/share/bash-completion/completions/ssh-keygen
+file path=usr/share/bash-completion/completions/ssh-keyscan
 file path=usr/share/bash-completion/completions/sshfs
 file path=usr/share/bash-completion/completions/sshmitm
 file path=usr/share/bash-completion/completions/sshow
@@ -699,10 +876,12 @@ file path=usr/share/bash-completion/completions/tipc
 file path=usr/share/bash-completion/completions/tox
 file path=usr/share/bash-completion/completions/tracepath
 link path=usr/share/bash-completion/completions/tracepath6 target=tracepath
+file path=usr/share/bash-completion/completions/tree
+file path=usr/share/bash-completion/completions/truncate
 file path=usr/share/bash-completion/completions/tshark
 file path=usr/share/bash-completion/completions/tsig-keygen
 file path=usr/share/bash-completion/completions/tune2fs
-link path=usr/share/bash-completion/completions/typeset target=function
+link path=usr/share/bash-completion/completions/typeset target=declare
 file path=usr/share/bash-completion/completions/ulimit
 file path=usr/share/bash-completion/completions/unace
 file path=usr/share/bash-completion/completions/unpack200
@@ -746,6 +925,9 @@ link path=usr/share/bash-completion/completions/whatis target=man
 file path=usr/share/bash-completion/completions/wine
 link path=usr/share/bash-completion/completions/wine-development target=wine
 link path=usr/share/bash-completion/completions/wine-stable target=wine
+link path=usr/share/bash-completion/completions/wine64 target=wine
+link path=usr/share/bash-completion/completions/wine64-development target=wine
+link path=usr/share/bash-completion/completions/wine64-stable target=wine
 file path=usr/share/bash-completion/completions/withlist
 file path=usr/share/bash-completion/completions/wodim
 file path=usr/share/bash-completion/completions/wol
@@ -754,6 +936,7 @@ file path=usr/share/bash-completion/completions/wtf
 file path=usr/share/bash-completion/completions/wvdial
 file path=usr/share/bash-completion/completions/xdg-mime
 file path=usr/share/bash-completion/completions/xdg-settings
+file path=usr/share/bash-completion/completions/xev
 file path=usr/share/bash-completion/completions/xfreerdp
 file path=usr/share/bash-completion/completions/xgamma
 file path=usr/share/bash-completion/completions/xhost
@@ -778,6 +961,7 @@ file path=usr/share/bash-completion/completions/zones
 file path=usr/share/bash-completion/completions/zopfli
 file path=usr/share/bash-completion/completions/zopflipng
 file path=usr/share/bash-completion/completions/zpool
+file path=usr/share/bash-completion/helpers/make-extract-targets.awk
 file path=usr/share/bash-completion/helpers/perl
 file path=usr/share/bash-completion/helpers/python
 file path=usr/share/cmake/bash-completion/bash-completion-config-version.cmake
