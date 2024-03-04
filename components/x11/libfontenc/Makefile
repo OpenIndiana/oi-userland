@@ -18,18 +18,20 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     libfontenc
-COMPONENT_VERSION=  1.1.7
-COMPONENT_FMRI=     x11/library/libfontenc
+COMPONENT_VERSION=  1.1.8
 COMPONENT_SUMMARY=  libfontenc - font encoding table parser and mapping library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c0d36991faee06551ddbaf5d99266e97becdc05edfae87a833c3ff7bf73cfec2
+COMPONENT_ARCHIVE_HASH= sha256:7b02c3d405236e0d86806b1de9d6868fe60c313628b38350b032914aa4fd14c6
+COMPONENT_FMRI=     x11/library/libfontenc
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_DEFAULT_DIRS=no
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --libdir=$(XORG_LIBDIR)
+CONFIGURE_DEFAULT_DIRS= no
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --libdir=$(XORG_LIBDIR)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
