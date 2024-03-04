@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pkginfo
-HUMAN_VERSION =			1.9.6
+HUMAN_VERSION =			1.10.0
 COMPONENT_SUMMARY =		pkginfo - Query metadata from sdists / bdists / installed packages.
 COMPONENT_PROJECT_URL =		https://code.launchpad.net/~tseaver/pkginfo/trunk
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b4/1c/89b38e431c20d6b2389ed8b3926c2ab72f58944733ba029354c6d9f69129/pkginfo-1.9.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8fd5896e8718a4372f0ea9cc9d96f6417c9b986e23a4d116dda26b62cc29d046
+	sha256:5df73835398d10db79f8eecd5cd86b1f6d29317589ea70796994d49399af6297
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -37,3 +35,4 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/wheel

@@ -1,15 +1,11 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest --cov=pkginfo --cov-append --cov-report=
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 180 items
+collecting ... collected 176 items
 
-::project PASSED
 pkginfo/tests/test_bdist.py::BDistTests::test_ctor_w_bogus_filename PASSED
 pkginfo/tests/test_bdist.py::BDistTests::test_ctor_w_egg PASSED
 pkginfo/tests/test_bdist.py::BDistTests::test_ctor_w_egg_and_metadata_version PASSED
@@ -66,6 +62,7 @@ pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Versi
 pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_1_2 PASSED
 pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_2_1 PASSED
 pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_2_2 PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_2_3 PASSED
 pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_override PASSED
 pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_unknown PASSED
 pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Name PASSED
@@ -186,18 +183,6 @@ pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_valid_wheel_w_description_b
 pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_valid_wheel_w_description_header PASSED
 pkginfo/tests/test_wheel.py::WheelTests::test_ctor_wo_dist_info PASSED
 
-=============================== warnings summary ===============================
-pkginfo/tests/test_installed.py::InstalledTests::test_namespaced_pkg_installed_via_pth
-  $(@D)/pkginfo/tests/manky/namespaced/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('namespaced')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    pkg_resources.declare_namespace(__name__)
-
-pkginfo/tests/test_installed.py::InstalledTests::test_namespaced_pkg_installed_via_setuptools
-  $(@D)/pkginfo/tests/wonky/namespaced/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('namespaced')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    pkg_resources.declare_namespace(__name__)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 176 passed, 2 warnings ========
+======== 176 passed ========
   py$(PYV): OK
   congratulations :)
