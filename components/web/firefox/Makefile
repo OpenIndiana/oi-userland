@@ -29,12 +29,12 @@ ESR =
 # CANDIDATE_BETA is the beta version found in the candidates directory.
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=3
+# CANDIDATE_BUILD=1
 # CANDIDATE_BETA=9
 # CANDIDATE_NIGHTLY=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	123.0
+COMPONENT_VERSION =	123.0.1
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -66,7 +66,7 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:9e885abdaddb14cd4f313c1575282fec6af5901f445e9744fe24e2ea837d4cb7
+COMPONENT_ARCHIVE_HASH= sha256:d5dcb955b65e0f164a90cac0760724486e36e896221b98f244801dfd045d741c
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
