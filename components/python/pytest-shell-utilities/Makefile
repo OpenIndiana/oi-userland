@@ -19,19 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-shell-utilities
-HUMAN_VERSION =			1.8.0
+HUMAN_VERSION =			1.9.0
 COMPONENT_SUMMARY =		pytest-shell-utilities - Pytest plugin to simplify running shell commands against the system
 COMPONENT_PROJECT_URL =		https://github.com/saltstack/pytest-shell-utilities
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/63/9d/9ce26090f104441d2441473c5802d07b127560261baf4ac78eb7fb8aeafa/pytest-shell-utilities-1.8.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7f9a1aac43fad962da11e0ba1ae771eb3b84b73fc4bee94a8f563159231e1920
+	sha256:e9ae85f8c64dd2b95e35ed1f110a90e25d498cb1af946be7cf1b7f069c089499
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements/tests.txt
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
@@ -42,6 +44,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/pytest-skip-markers
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-declarative-requirements
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-skip-markers
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-subtests
