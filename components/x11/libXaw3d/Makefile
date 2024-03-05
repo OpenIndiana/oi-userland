@@ -17,13 +17,13 @@ X11_CATEGORY= LIB
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=    libXaw3d
-COMPONENT_VERSION= 1.6.5
-COMPONENT_SUMMARY= libXaw3d - X Athena Widgets library with 3-D styled widgets
+COMPONENT_NAME=              libXaw3d
+COMPONENT_VERSION=           1.6.6
+COMPONENT_SUMMARY=           libXaw3d - X Athena Widgets library with 3-D styled widgets
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:3481ee4b6753b88e18856ea265cb84f2b0339ee8c3bbec966b156b38b5841833
-COMPONENT_FMRI=    x11/library/toolkit/libxaw3d
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_ARCHIVE_HASH=      sha256:a41c3e37135ad616b1f28bbde70002afbf3cb59a30df34141f829d32eadc8646
+COMPONENT_FMRI=              x11/library/toolkit/libxaw3d
+COMPONENT_LICENSE_FILE=	     COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
