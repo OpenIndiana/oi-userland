@@ -1,13 +1,10 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 1666 items
+collecting ... collected 1679 items
 
 tests/test_diagram.py::TestRailroadDiagrams::test_complete_combine_element PASSED
 tests/test_diagram.py::TestRailroadDiagrams::test_create_diagram PASSED
@@ -21,6 +18,7 @@ tests/test_diagram.py::TestRailroadDiagrams::test_none_name PASSED
 tests/test_diagram.py::TestRailroadDiagrams::test_none_name2 PASSED
 tests/test_examples.py::TestExamples::test_booleansearchparser PASSED
 tests/test_examples.py::TestExamples::test_delta_time PASSED
+tests/test_examples.py::TestExamples::test_email_parser PASSED
 tests/test_examples.py::TestExamples::test_eval_arith PASSED
 tests/test_examples.py::TestExamples::test_excelExpr PASSED
 tests/test_examples.py::TestExamples::test_lucene_grammar PASSED
@@ -109,6 +107,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testExprSplitter PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testExpressionDefaultStrings PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testFollowedBy PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testForwardExceptionText PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testForwardExceptionText2 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testForwardReferenceException PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testForwardsDoProperStreamlining PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testGetNameBehavior PASSED
@@ -320,6 +319,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordMinOfZero PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordWithIdentChars PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testZeroOrMoreStop PASSED
+tests/test_unit.py::Test02_WithoutPackrat::test_exception_messages PASSED
 tests/test_unit.py::Test03_EnablePackratParsing::runTest PASSED
 tests/test_unit.py::Test04_WithPackrat::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test04_WithPackrat::testAddCondition PASSED
@@ -379,6 +379,7 @@ tests/test_unit.py::Test04_WithPackrat::testExprSplitter PASSED
 tests/test_unit.py::Test04_WithPackrat::testExpressionDefaultStrings PASSED
 tests/test_unit.py::Test04_WithPackrat::testFollowedBy PASSED
 tests/test_unit.py::Test04_WithPackrat::testForwardExceptionText PASSED
+tests/test_unit.py::Test04_WithPackrat::testForwardExceptionText2 PASSED
 tests/test_unit.py::Test04_WithPackrat::testForwardReferenceException PASSED
 tests/test_unit.py::Test04_WithPackrat::testForwardsDoProperStreamlining PASSED
 tests/test_unit.py::Test04_WithPackrat::testGetNameBehavior PASSED
@@ -590,6 +591,7 @@ tests/test_unit.py::Test04_WithPackrat::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordMinOfZero PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordWithIdentChars PASSED
 tests/test_unit.py::Test04_WithPackrat::testZeroOrMoreStop PASSED
+tests/test_unit.py::Test04_WithPackrat::test_exception_messages PASSED
 tests/test_unit.py::Test05_EnableBoundedPackratParsing::runTest PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testAddCondition PASSED
@@ -649,6 +651,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testExprSplitter PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testExpressionDefaultStrings PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testFollowedBy PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testForwardExceptionText PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testForwardExceptionText2 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testForwardReferenceException PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testForwardsDoProperStreamlining PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testGetNameBehavior PASSED
@@ -860,6 +863,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordMinOfZero PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordWithIdentChars PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testZeroOrMoreStop PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::test_exception_messages PASSED
 tests/test_unit.py::Test07_EnableUnboundedPackratParsing::runTest PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testAddCondition PASSED
@@ -919,6 +923,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testExprSplitter PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testExpressionDefaultStrings PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testFollowedBy PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testForwardExceptionText PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testForwardExceptionText2 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testForwardReferenceException PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testForwardsDoProperStreamlining PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testGetNameBehavior PASSED
@@ -1130,6 +1135,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordMinOfZero PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordWithIdentChars PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testZeroOrMoreStop PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::test_exception_messages PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testAddCondition PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testAssertParseAndCheckDict PASSED
@@ -1188,6 +1194,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testExprSplitter PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testExpressionDefaultStrings PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testFollowedBy PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testForwardExceptionText PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testForwardExceptionText2 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testForwardReferenceException PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testForwardsDoProperStreamlining PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testGetNameBehavior PASSED
@@ -1399,6 +1406,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordMinMaxExactArgs PAS
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordMinOfZero PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordWithIdentChars PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testZeroOrMoreStop PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::test_exception_messages PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testAddCondition PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testAssertParseAndCheckDict PASSED
@@ -1457,6 +1465,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testExprSplitter
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testExpressionDefaultStrings PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testFollowedBy PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testForwardExceptionText PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testForwardExceptionText2 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testForwardReferenceException PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testForwardsDoProperStreamlining PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testGetNameBehavior PASSED
@@ -1668,6 +1677,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordMinMaxEx
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordMinOfZero PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordWithIdentChars PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testZeroOrMoreStop PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::test_exception_messages PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_add_sub PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_binary_associative PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_binary_recursive PASSED
@@ -1676,7 +1686,6 @@ tests/test_unit.py::Test11_LR1_Recursion::test_non_peg PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_repeat_as_recurse PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_terminate_empty PASSED
 
-
-======== 1666 passed ========
+======== 1679 passed ========
   py$(PYV): OK
   congratulations :)
