@@ -15,8 +15,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libjpeg
-COMPONENT_VERSION=	6.0.2
-COMPONENT_SUMMARY=	Joint Photographic Experts Group library
+COMPONENT_VERSION=	8.3.2
+COMPONENT_SUMMARY=	Metapackage to install the current jpeg library
 
 include ../../../make-rules/ips.mk
 
@@ -31,3 +31,4 @@ install:
 
 clean:
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+# Auto-generated dependencies
