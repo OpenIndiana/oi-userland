@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 <contributor>
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,6 +25,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/botan
 file path=usr/include/botan-3/botan/aead.h
+file path=usr/include/botan-3/botan/allocator.h
 file path=usr/include/botan-3/botan/argon2.h
 file path=usr/include/botan-3/botan/argon2fmt.h
 file path=usr/include/botan-3/botan/asn1_obj.h
@@ -82,6 +83,8 @@ file path=usr/include/botan-3/botan/ffi.h
 file path=usr/include/botan-3/botan/filter.h
 file path=usr/include/botan-3/botan/filters.h
 file path=usr/include/botan-3/botan/fpe_fe1.h
+file path=usr/include/botan-3/botan/frodo_mode.h
+file path=usr/include/botan-3/botan/frodokem.h
 file path=usr/include/botan-3/botan/gost_3410.h
 file path=usr/include/botan-3/botan/hash.h
 file path=usr/include/botan-3/botan/hex.h
@@ -115,6 +118,7 @@ file path=usr/include/botan-3/botan/pgp_s2k.h
 file path=usr/include/botan-3/botan/pipe.h
 file path=usr/include/botan-3/botan/pk_algs.h
 file path=usr/include/botan-3/botan/pk_keys.h
+file path=usr/include/botan-3/botan/pk_ops.h
 file path=usr/include/botan-3/botan/pk_ops_fwd.h
 file path=usr/include/botan-3/botan/pkcs10.h
 file path=usr/include/botan-3/botan/pkcs11.h
@@ -191,9 +195,12 @@ file path=usr/include/botan-3/botan/xmss_parameters.h
 file path=usr/include/botan-3/botan/xof.h
 file path=usr/include/botan-3/botan/zfec.h
 file path=usr/include/botan-3/botan/zlib.h
-link path=usr/lib/$(MACH64)/libbotan-3.so target=libbotan-3.so.2.2.0
-link path=usr/lib/$(MACH64)/libbotan-3.so.2 target=libbotan-3.so.2.2.0
-file path=usr/lib/$(MACH64)/libbotan-3.so.2.2.0
+file path=usr/lib/$(MACH64)/cmake/Botan-$(HUMAN_VERSION)/botan-config-version.cmake
+file path=usr/lib/$(MACH64)/cmake/Botan-$(HUMAN_VERSION)/botan-config.cmake
+link path=usr/lib/$(MACH64)/libbotan-3.so target=libbotan-3.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libbotan-3.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libbotan-3.so.3 \
+    target=libbotan-3.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/botan-3.pc
 file path=usr/lib/python$(PYVER)/vendor-packages/botan3.py
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/authors.txt
@@ -220,6 +227,7 @@ file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/api_ref/otp.do
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/api_ref/passhash.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/api_ref/pbkdf.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/api_ref/pkcs11.doctree
+file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/api_ref/providers.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/api_ref/psk_db.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/api_ref/pubkey.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/api_ref/python.doctree
@@ -253,9 +261,11 @@ file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/dev_ref/test_f
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/dev_ref/todo.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/environment.pickle
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/goals.doctree
+file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/hardware_acceleration.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/index.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/migration_guide.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/old_news.doctree
+file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/openssl_migration_guide.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/packaging.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/roadmap.doctree
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/.doctrees/security.doctree
@@ -284,6 +294,7 @@ file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/api_ref/otp.rst
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/api_ref/passhash.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/api_ref/pbkdf.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/api_ref/pkcs11.rst.txt
+file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/api_ref/providers.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/api_ref/psk_db.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/api_ref/pubkey.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/api_ref/python.rst.txt
@@ -316,9 +327,11 @@ file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/dev_ref/release
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/dev_ref/test_framework.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/dev_ref/todo.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/goals.rst.txt
+file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/hardware_acceleration.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/index.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/migration_guide.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/old_news.rst.txt
+file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/openssl_migration_guide.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/packaging.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/roadmap.rst.txt
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/_sources/security.rst.txt
@@ -360,6 +373,7 @@ file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/api_ref/otp.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/api_ref/passhash.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/api_ref/pbkdf.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/api_ref/pkcs11.html
+file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/api_ref/providers.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/api_ref/psk_db.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/api_ref/pubkey.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/api_ref/python.html
@@ -393,10 +407,12 @@ file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/dev_ref/test_framework.h
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/dev_ref/todo.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/genindex.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/goals.html
+file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/hardware_acceleration.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/index.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/migration_guide.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/objects.inv
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/old_news.html
+file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/openssl_migration_guide.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/packaging.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/py-modindex.html
 file path=usr/share/doc/botan-$(HUMAN_VERSION)/handbook/roadmap.html

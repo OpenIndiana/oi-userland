@@ -10,18 +10,18 @@
 
 #
 # Copyright 2015 Adam Stevko
-# Copyright 2021, 2023 Andreas Wacknitz
+# Copyright 2021, 2024 Andreas Wacknitz
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= botan
-COMPONENT_VERSION= 3.2.0
+COMPONENT_VERSION= 3.3.0
 COMPONENT_SUMMARY= Crypto and TLS for Modern C++
 COMPONENT_PROJECT_URL= https://botan.randombit.net/
 COMPONENT_SRC= Botan-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:049c847835fcf6ef3a9e206b33de05dd38999c325e247482772a5598d9e5ece3
+COMPONENT_ARCHIVE_HASH= sha256:368f11f426f1205aedb9e9e32368a16535dc11bd60351066e6f6664ec36b85b9
 COMPONENT_ARCHIVE_URL= https://botan.randombit.net/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/security/botan
 COMPONENT_CLASSIFICATION= System/Security
@@ -47,7 +47,7 @@ CONFIGURE_SCRIPT= $(SOURCE_DIR)/configure.py
 # cleanup CONFIGURE_OPTIONS presettings to prevent 
 # ERROR:root:Unhandled option(s): CC= CXX= F77= FC= CFLAGS= CXXFLAGS= FFLAGS= FCFLAGS= LDFLAGS= PKG_CONFIG_PATH=
 CONFIGURE_OPTIONS= 
-CONFIGURE_OPTIONS += --prefix=/usr
+CONFIGURE_OPTIONS += --prefix=$(USRDIR)
 ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS += --cpu=x86_64
 else
