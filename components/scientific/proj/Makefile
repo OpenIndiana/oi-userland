@@ -13,18 +13,19 @@
 #
 
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        proj
-COMPONENT_VERSION=      9.3.1
+COMPONENT_VERSION=      9.4.0
 COMPONENT_SUMMARY=      PROJ is a generic coordinate transformation software that transforms geospatial coordinates from \
 	one coordinate reference system (CRS) to another
 COMPONENT_PROJECT_URL=  https://proj.org/
 COMPONENT_SRC=	        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://download.osgeo.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:b0f919cb9e1f42f803a3e616c2b63a78e4d81ecfaed80978d570d3a5e29d10bc
+COMPONENT_ARCHIVE_HASH=	sha256:3643b19b1622fe6b2e3113bdb623969f5117984b39f173b4e3fb19a8833bd216
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      MIT
