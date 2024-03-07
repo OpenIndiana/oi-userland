@@ -481,6 +481,14 @@ $(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminde
 PYTEST_FASTFAIL = -x
 PYTEST_ADDOPTS += $(PYTEST_FASTFAIL)
 
+# By default we are not interested to see the default long tracebacks.
+# Detailed tracebacks are shown either for failures or xfails.  We aim to see
+# testing passed so there should be no failures.  Since xfails are expected
+# failures we are not interested in detailed tracebacks here at all since they
+# could contain random data, like pointers, temporary file names, etc.
+PYTEST_TRACEBACK = --tb=line
+PYTEST_ADDOPTS += $(PYTEST_TRACEBACK)
+
 # Normalize pytest test results.  The pytest framework could be used either
 # directly or via tox or setup.py so add these transforms for all test styles
 # unconditionally.
