@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Tk
 HUMAN_VERSION =			804.036
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Tk - a Graphical User Interface Toolkit
 COMPONENT_CPAN_AUTHOR =		SREZIC
 COMPONENT_ARCHIVE_HASH =	\
@@ -43,8 +43,8 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^Stack moved/d'"
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
