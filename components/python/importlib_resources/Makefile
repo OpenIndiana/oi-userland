@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_resources
-HUMAN_VERSION =			6.1.2
+HUMAN_VERSION =			6.1.3
 COMPONENT_SUMMARY =		importlib_resources - Read resources from Python packages
 COMPONENT_PROJECT_URL =		https://github.com/python/importlib_resources
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:308abf8474e2dba5f867d279237cd4076482c3de7104a40b41426370e891549b
+	sha256:56fb4525197b78544a3354ea27793952ab93f935bb4bf746b846bb1015020f2b
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,6 +35,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += library/python/zipp
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-collections
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
