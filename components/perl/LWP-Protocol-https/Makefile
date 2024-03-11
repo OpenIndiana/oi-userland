@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		LWP::Protocol::https
-HUMAN_VERSION =			6.13
+HUMAN_VERSION =			6.14
 COMPONENT_SUMMARY =		LWP::Protocol::https - Provide https support for LWP::UserAgent
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:598bd131f7546af63561f61e398506857e8ee69e5ac116936c344fecb98c38bb
+	sha256:59cdeabf26950d4f1bef70f096b0d77c5b1c5a7b5ad1b66d71b681ba279cbb2a
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
