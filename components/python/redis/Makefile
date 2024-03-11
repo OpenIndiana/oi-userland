@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		redis
-HUMAN_VERSION =			5.0.2
+HUMAN_VERSION =			5.0.3
 COMPONENT_SUMMARY =		redis - Python client for Redis database and key-value store
 COMPONENT_PROJECT_URL =		https://github.com/redis/redis-py
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3f82cc80d350e93042c8e6e7a5d0596e4dd68715babffba79492733e1f367037
+	sha256:4973bae7444c0fbed64a06b87446f79361cb7e4ec1538c022d696ed7a5015580
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
