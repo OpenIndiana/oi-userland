@@ -1,0 +1,43 @@
+https://github.com/python/mypy/issues/17005
+
+--- mypy-1.9.0/mypy/test/teststubtest.py.orig
++++ mypy-1.9.0/mypy/test/teststubtest.py
+@@ -1882,38 +1882,6 @@
+         )
+ 
+     @collect_cases
+-    def test_runtime_typing_objects(self) -> Iterator[Case]:
+-        yield Case(
+-            stub="from typing_extensions import Protocol, TypedDict",
+-            runtime="from typing_extensions import Protocol, TypedDict",
+-            error=None,
+-        )
+-        yield Case(
+-            stub="""
+-            class X(Protocol):
+-                bar: int
+-                def foo(self, x: int, y: bytes = ...) -> str: ...
+-            """,
+-            runtime="""
+-            class X(Protocol):
+-                bar: int
+-                def foo(self, x: int, y: bytes = ...) -> str: ...
+-            """,
+-            error=None,
+-        )
+-        yield Case(
+-            stub="""
+-            class Y(TypedDict):
+-                a: int
+-            """,
+-            runtime="""
+-            class Y(TypedDict):
+-                a: int
+-            """,
+-            error=None,
+-        )
+-
+-    @collect_cases
+     def test_named_tuple(self) -> Iterator[Case]:
+         yield Case(
+             stub="from typing import NamedTuple",
