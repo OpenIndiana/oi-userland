@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-decorator
-HUMAN_VERSION =			5.1.8.20240106
+HUMAN_VERSION =			5.1.8.20240310
 COMPONENT_SUMMARY =		types-decorator - Typing stubs for decorator
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/86/e0/64205e5d25ffe47862ca7d5efc962cebfa34bb2465816e61827cb9fa703f/types-decorator-5.1.8.20240106.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:32ff92b33615060d23b9d3760124bdb3506c4aa8d9eb50963cf1a3c20b9ecbbf
+	sha256:52e316b03783886a8a2abdc228f7071680ba65894545cd2085ebe3cf88684a0e
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
 TEST_STYLE = setup.py
