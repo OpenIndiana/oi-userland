@@ -2,27 +2,27 @@ py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> openssl version
 OpenSSL 1.0.2u  20 Dec 2019
 py$(PYV): commands[1]> python -m coverage run --parallel -m OpenSSL.debug
-pyOpenSSL: 24.0.0
-cryptography: 41.0.7
+pyOpenSSL: 24.1.0
+cryptography: 42.0.5
 cffi: 1.16.0
-cryptography's compiled against OpenSSL: OpenSSL 3.1.4 24 Oct 2023
-cryptography's linked OpenSSL: OpenSSL 3.1.4 24 Oct 2023
+cryptography's compiled against OpenSSL: OpenSSL 3.1.5 30 Jan 2024
+cryptography's linked OpenSSL: OpenSSL 3.1.5 30 Jan 2024
 Python's OpenSSL: OpenSSL 1.1.1w  11 Sep 2023
 Python executable: $(@D)/.tox/py$(PYV)/bin/python
-Python version: 3.9.16 (main, Feb 19 2023, 15:42:40) 
-[GCC 10.4.0]
+Python version: 3.9.18 (main, Feb 16 2024, 14:45:38) 
+[GCC 13.2.0]
 Platform: sunos5
 sys.path: ['$(@D)', '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages', '/usr/lib/python39.zip', '$(PYTHON_DIR)', '$(PYTHON_DIR)/lib-dynload', '$(PYTHON_DIR)/site-packages', '$(PYTHON_DIR)/vendor-packages']
 py$(PYV): commands[2]> python -m coverage run --parallel -m pytest -v
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-OpenSSL: b'OpenSSL 3.1.4 24 Oct 2023'
-cryptography: 41.0.7
+OpenSSL: b'OpenSSL 3.1.5 30 Jan 2024'
+cryptography: 42.0.5
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 527 items
+collecting ... collected 504 items
 
 fails: https://github.com/pyca/pyopenssl/issues/1192)
 tests/test_crypto.py::TestCRL::test_add_revoked_keyword PASSED
@@ -106,29 +106,6 @@ tests/test_crypto.py::TestLoadPublicKey::test_invalid_key_format PASSED
 tests/test_crypto.py::TestLoadPublicKey::test_invalid_type PASSED
 tests/test_crypto.py::TestLoadPublicKey::test_loading_works PASSED
 tests/test_crypto.py::TestLoadPublicKey::test_tolerates_unicode_strings PASSED
-tests/test_crypto.py::TestNetscapeSPKI::test_b64_encode PASSED
-tests/test_crypto.py::TestNetscapeSPKI::test_construction PASSED
-tests/test_crypto.py::TestNetscapeSPKI::test_invalid_attribute PASSED
-tests/test_crypto.py::TestNetscapeSPKI::test_sign PASSED
-tests/test_crypto.py::TestNetscapeSPKI::test_sign_with_public_key PASSED
-tests/test_crypto.py::TestNetscapeSPKI::test_sign_with_ungenerated PASSED
-tests/test_crypto.py::TestNetscapeSPKI::test_sign_with_unknown_digest PASSED
-tests/test_crypto.py::TestNetscapeSPKI::test_type PASSED
-tests/test_crypto.py::TestPKCS12::test_cert_only PASSED
-tests/test_crypto.py::TestPKCS12::test_empty_construction PASSED
-tests/test_crypto.py::TestPKCS12::test_export_without_args PASSED
-tests/test_crypto.py::TestPKCS12::test_export_without_bytes PASSED
-tests/test_crypto.py::TestPKCS12::test_export_without_mac PASSED
-tests/test_crypto.py::TestPKCS12::test_friendly_name PASSED
-tests/test_crypto.py::TestPKCS12::test_key_cert_mismatch PASSED
-tests/test_crypto.py::TestPKCS12::test_key_only PASSED
-tests/test_crypto.py::TestPKCS12::test_load_without_mac PASSED
-tests/test_crypto.py::TestPKCS12::test_removing_ca_cert PASSED
-tests/test_crypto.py::TestPKCS12::test_replace PASSED
-tests/test_crypto.py::TestPKCS12::test_type PASSED
-tests/test_crypto.py::TestPKCS12::test_type_errors PASSED
-tests/test_crypto.py::TestPKCS12::test_various_empty_passphrases PASSED
-tests/test_crypto.py::TestPKCS12::test_zero_len_list_for_ca PASSED
 tests/test_crypto.py::TestPKey::test_check_pr_897 PASSED
 tests/test_crypto.py::TestPKey::test_check_public_key PASSED
 tests/test_crypto.py::TestPKey::test_construction PASSED
@@ -563,18 +540,11 @@ tests/test_crypto.py:21
     from OpenSSL.crypto import (
 
 tests/test_ssl.py::TestContext::test_set_cipher_list[hello world:AES128-SHA1]
-  $(@D)/tests/test_ssl.py:500: DeprecationWarning: str for cipher_list is no longer accepted, use bytes
+  $(@D)/tests/test_ssl.py:499: DeprecationWarning: str for cipher_list is no longer accepted, use bytes
     context.set_cipher_list(cipher_string)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-===Flaky Test Report===
-
-test_gmtime_adj_notBefore passed 1 out of the required 1 times. Success!
-test_gmtime_adj_notAfter passed 1 out of the required 1 times. Success!
-test_set_cipher_list_no_cipher_match passed 1 out of the required 1 times. Success!
-
-===End Flaky Test Report===
 =========================== short test summary info ============================
-======== 525 passed, 2 skipped, 3 warnings ========
+======== 502 passed, 2 skipped, 3 warnings ========
   py$(PYV): OK
   congratulations :)
