@@ -11,21 +11,18 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d multimedia/yt-dlp yt-dlp
+#   $WS_TOOLS/python-integrate-project -d multimedia/yt-dlp yt_dlp
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		yt-dlp
-HUMAN_VERSION =			2023.12.30
-COMPONENT_SUMMARY =		yt-dlp - A youtube-dl fork with additional features and patches
-COMPONENT_PROJECT_URL =		https://github.com/yt-dlp/yt-dlp
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a9/a7/d8536993aed7569c5221f532e3ba01b09d5bdc893df3ef4e5b05d01582c4/yt-dlp-2023.12.30.tar.gz
+COMPONENT_NAME =		yt_dlp
+HUMAN_VERSION =			2024.3.10
+COMPONENT_SUMMARY =		yt_dlp - A youtube-dl fork with additional features and patches
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a11862e57721b0a0f0883dfeb5a4d79ba213a2d4c45e1880e9fd70f8e6570c38
+	sha256:6e74cb14a69dbeb872c8ef4e0b8bbed2ee846ec633513cf3124a74c1faedc07b
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,12 +38,11 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/brotli
 PYTHON_REQUIRED_PACKAGES += library/python/certifi
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/mutagen
 PYTHON_REQUIRED_PACKAGES += library/python/pycryptodomex
 PYTHON_REQUIRED_PACKAGES += library/python/requests
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/urllib3
 PYTHON_REQUIRED_PACKAGES += library/python/websockets
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
