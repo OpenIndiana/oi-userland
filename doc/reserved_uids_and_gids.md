@@ -23,6 +23,7 @@ UID   | User name
 19    | minidlna
 21    | ftp
 22    | sshd
+24    | hpnsshd
 25    | smmsp
 27    | postfix
 30    | opendkim
@@ -96,6 +97,7 @@ GID   | Group name
 20    | games
 21    | ftp
 22    | sshd
+24    | hpnsshd
 25    | smmsp
 27    | postfix
 28    | postdrop
