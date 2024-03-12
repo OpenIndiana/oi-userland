@@ -18,14 +18,15 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= iceauth
-COMPONENT_VERSION= 1.0.9
+COMPONENT_VERSION= 1.0.10
 COMPONENT_FMRI= x11/iceauth
 COMPONENT_SUMMARY= ICE authority file utility
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2cb9dfcb545683af77fb1029bea3fc52dcc8a0666f7b8b2d7373b6ed4c408c05
+COMPONENT_ARCHIVE_HASH= sha256:3deefb7da26af9dc799b5628d929d91c9af68c78575639944db3b955f29aa029
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libice
