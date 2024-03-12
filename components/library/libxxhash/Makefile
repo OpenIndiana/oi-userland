@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libxxhash
 COMPONENT_VERSION= 0.8.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Extremely fast non-cryptographic hash algorithm
 COMPONENT_PROJECT_URL= http://www.xxhash.com/
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
@@ -35,6 +36,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_INSTALL_ENV += PREFIX=$(USRDIR)
 COMPONENT_INSTALL_ENV += LIBDIR=$(USRLIBDIR.64)
+COMPONENT_INSTALL_ENV += MANDIR=$(USRSHAREMAN1DIR)
 
 # For some reason the Makefile generates output under both usr and usr/local prefixes...
 # For simplicity and cleaniness remove the usr/local version before the sample-manifest script
