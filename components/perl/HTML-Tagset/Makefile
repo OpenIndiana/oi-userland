@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTML::Tagset
-HUMAN_VERSION =			3.20
-COMPONENT_REVISION =		4
+HUMAN_VERSION =			3.24
 COMPONENT_SUMMARY =		HTML::Tagset - data tables useful in parsing HTML
 COMPONENT_CPAN_AUTHOR =		PETDANCE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:adb17dac9e36cd011f5243881c9739417fd102fce760f8de4e9be4c7131108e2
-COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+	sha256:eb89e145a608ed1f8f141a57472ee5f69e67592a432dcd2e8b1dbb445f2b230b
+COMPONENT_LICENSE =		Artistic-2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
