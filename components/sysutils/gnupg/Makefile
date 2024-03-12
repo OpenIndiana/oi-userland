@@ -22,20 +22,20 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2021, Nona Hansel
-# Copyright (c) 2021, 2023 Andreas Wacknitz
+# Copyright (c) 2021, 2024 Andreas Wacknitz
 #
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
-COMPONENT_VERSION=      2.4.4
+COMPONENT_VERSION=      2.4.5
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnupg.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:67ebe016ca90fa7688ce67a387ebd82c6261e95897db7b23df24ff335be85bc6
+COMPONENT_ARCHIVE_HASH= sha256:f68f7d75d06cb1635c336d34d844af97436c3f64ea14bcb7c869782f96f44277
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         crypto/gnupg
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -84,6 +84,8 @@ install:	$(INSTALL_64)
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
 	    $(CP) -R 'en@boldquot' en )
 
+# Alas we have some failing tests after changes in shared-macros.mk:
+# build, install and test in clean environment (c86a36b0fd6dda8c75b28642c319842ace789385)
 COMPONENT_TEST_TRANSFORMS += "-e '/Failed tests/p'"
 COMPONENT_TEST_TRANSFORMS += "-e '/tests run/p'"
 COMPONENT_TEST_TRANSFORMS += "-e '/test passed/p'"
