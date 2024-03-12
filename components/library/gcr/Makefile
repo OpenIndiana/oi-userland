@@ -32,12 +32,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gcr
 COMPONENT_MJR_VERSION=	3.41
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).1
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).2
 COMPONENT_SUMMARY=	A GNOME library for displaying certificates and crypto UI
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gcr/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:bb7128a3c2febbfee9c03b90d77d498d0ceb237b0789802d60185c71c4bea24f
+COMPONENT_ARCHIVE_HASH=	sha256:bad10f3c553a0e1854649ab59c5b2434da22ca1a54ae6138f1f53961567e1ab7
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/GNOME/gcr
 COMPONENT_FMRI=			library/gnome/$(COMPONENT_NAME)
@@ -69,6 +69,7 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Manually added build dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/gi-docgen
 REQUIRED_PACKAGES += crypto/gnupg
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
