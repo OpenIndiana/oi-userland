@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hpn-ssh
 COMPONENT_VERSION=	18.3.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	High performance SSH/SCP
 COMPONENT_SRC=		$(COMPONENT_NAME)-hpn-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.psc.edu/hpn-ssh-home/
@@ -101,10 +102,8 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += network/ssh-askpass
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
-REQUIRED_PACKAGES += x11/session/xauth

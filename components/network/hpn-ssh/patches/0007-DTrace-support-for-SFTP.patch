@@ -163,28 +163,28 @@
 +#pragma D depends_on library io.d
 +#pragma D depends_on module lofs
 +
-+typedef struct sftpinfo {
++typedef struct hpnsftpinfo {
 +	string sfi_user;		/* user name */
 +	string sfi_operation;		/* SFTP Operation */
 +	ssize_t sfi_nbytes;		/* bytes transferred, if any */
 +	string sfi_pathname;		/* pathname of transfer */
 +	string sfi_fsresource;		/* Dataset(ZFS) or resource name */
-+} sftpinfo_t;
++} hpnsftpinfo_t;
 +
 +/*
 + * This structure must match the definition of same in sftp_provider_impl.h.
 + */
-+typedef struct sftpproto {
++typedef struct hpnsftpproto {
 +	int64_t sftp_nbytes;		/* bytes written or read */
 +	uint64_t sftp_user;		/* user name */
 +	uint64_t sftp_operation;	/* SFTP operation */
 +	uint64_t sftp_raddr;		/* remote address */
 +	uint64_t sftp_pathname;		/* path with file name */
 +	int32_t sftp_fd;		/* fd for transfer, if any */
-+} sftpproto_t;
++} hpnsftpproto_t;
 +
 +#pragma D binding "1.6.1" translator
-+translator conninfo_t <sftpproto_t *s> {
++translator conninfo_t <hpnsftpproto_t *s> {
 +	ci_protocol = "tcp";
 +	ci_remote = copyinstr((uintptr_t)
 +	    *(uint64_t *)copyin((uintptr_t)&s->sftp_raddr, sizeof (uint64_t)));
@@ -192,7 +192,7 @@
 +};
 +
 +#pragma D binding "1.6.1" translator
-+translator sftpinfo_t <sftpproto_t *s> {
++translator hpnsftpinfo_t <hpnsftpproto_t *s> {
 +	sfi_user = copyinstr((uintptr_t)
 +	    *(uint64_t *)copyin((uintptr_t)&s->sftp_user, sizeof (uint64_t)));
 +	sfi_operation = copyinstr((uintptr_t)
