@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sybil
 HUMAN_VERSION =			6.0.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		sybil - Automated testing for the examples in your code and documentation.
 COMPONENT_PROJECT_URL =		https://github.com/simplistix/sybil
 COMPONENT_ARCHIVE_URL =		\
@@ -48,10 +49,16 @@ include $(WS_MAKE_RULES)/common.mk
 # manually.
 TEST_REQUIREMENTS_EXTRAS += test
 
+# https://github.com/pytest-dev/pluggy/issues/457
+TEST_CONFLICTING_PACKAGES.python += library/python/faker
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
-TEST_REQUIRED_PACKAGES.python += library/python/myst-parser
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/seedir
