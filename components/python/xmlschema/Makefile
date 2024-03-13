@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		xmlschema
-HUMAN_VERSION =			3.0.2
+HUMAN_VERSION =			3.1.0
 COMPONENT_SUMMARY =		xmlschema - An XML Schema validator and decoder
 COMPONENT_PROJECT_URL =		https://github.com/sissaschool/xmlschema
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b2526e91695905aa62d4aa2b68349565a168fedf88ada0005f5e0dd21da9734b
+	sha256:a0d64f3e9f24c8af9b2e56a4b66e8edfbdc60bc09b5f9f61b3076b3233be49cb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
