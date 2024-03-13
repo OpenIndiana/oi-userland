@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flaky
-HUMAN_VERSION =			3.8.0
+HUMAN_VERSION =			3.8.1
 COMPONENT_SUMMARY =		flaky - Plugin for pytest that automatically reruns flaky tests.
 COMPONENT_PROJECT_URL =		https://github.com/box/flaky
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/box/flaky/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bccee75843629bb9a7cac21bded1ab9697bce31f59500355cca50a4ee261eb7b
+	sha256:e12f33292d2a84390691dd56dadc44876f123c2959d719b87623457a0983ffb1
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
