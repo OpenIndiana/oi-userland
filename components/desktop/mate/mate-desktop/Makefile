@@ -23,16 +23,16 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-desktop
 COMPONENT_MJR_VERSION=	1.28
-COMPONENT_MNR_VERSION=	1
-COMPONENT_REVISION= 1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_SUMMARY=	Additional UI API for MATE Desktop
-COMPONENT_ARCHIVE_HASH= sha256:71ed1bcf775e2cbba4d80a73c33c795d3864e6ce429a37eed875885ac86b206e
+COMPONENT_ARCHIVE_HASH= sha256:32bb4b792014b391c1e1b8ae9c18a82b4d447650984b4cba7d28e95564964aa2
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += data/iso-codes
+REQUIRED_PACKAGES += developer/build/autoconf-archive
 
 # Add dconf-editor as dependency as otherwise mate-applets crash
 # as this is a non binary dependency it is not detected automatically
