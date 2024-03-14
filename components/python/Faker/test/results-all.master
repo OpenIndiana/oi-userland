@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1878 items
+collecting ... collected 1892 items
 
 Use a separate pytest run for tests like this with the "--exclusive-
 Use a separate pytest run for tests like this with the "--exclusive-
@@ -743,6 +743,11 @@ tests/providers/test_credit_card.py::TestRuRu::test_mastercard PASSED
 tests/providers/test_credit_card.py::TestRuRu::test_mir PASSED
 tests/providers/test_credit_card.py::TestRuRu::test_unionpay PASSED
 tests/providers/test_credit_card.py::TestRuRu::test_visa PASSED
+tests/providers/test_credit_card.py::TestUkUa::test_credit_card_full PASSED
+tests/providers/test_credit_card.py::TestUkUa::test_maestro PASSED
+tests/providers/test_credit_card.py::TestUkUa::test_mastercard PASSED
+tests/providers/test_credit_card.py::TestUkUa::test_prostir PASSED
+tests/providers/test_credit_card.py::TestUkUa::test_visa PASSED
 tests/providers/test_currency.py::TestAzAz::test_currency PASSED
 tests/providers/test_currency.py::TestAzAz::test_pricetag PASSED
 tests/providers/test_currency.py::TestCsCz::test_pricetag PASSED
@@ -1244,6 +1249,15 @@ tests/providers/test_person.py::TestTaIN::test_gender_first_names PASSED
 tests/providers/test_person.py::TestThTh::test_first_name PASSED
 tests/providers/test_person.py::TestThTh::test_last_name PASSED
 tests/providers/test_person.py::TestThTh::test_name PASSED
+tests/providers/test_person.py::TestUkUa::test_female_middle_names PASSED
+tests/providers/test_person.py::TestUkUa::test_full_name PASSED
+tests/providers/test_person.py::TestUkUa::test_full_name_female PASSED
+tests/providers/test_person.py::TestUkUa::test_full_name_male PASSED
+tests/providers/test_person.py::TestUkUa::test_language_name PASSED
+tests/providers/test_person.py::TestUkUa::test_male_middle_names PASSED
+tests/providers/test_person.py::TestUkUa::test_middle_names PASSED
+tests/providers/test_person.py::TestUkUa::test_short_full_name PASSED
+tests/providers/test_person.py::TestUkUa::test_transliteration PASSED
 tests/providers/test_person.py::TestUs::test_first_names PASSED
 tests/providers/test_person.py::TestUs::test_last_names PASSED
 tests/providers/test_person.py::TestUs::test_prefix PASSED
@@ -1912,7 +1926,7 @@ tests/test_providers_formats.py::test_no_invalid_formats[fr_QC]
     warnings.warn("fr_QC locale is deprecated. Please use fr_CA.")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1847 passed, 31 skipped, 2 warnings ========
+======== 1861 passed, 31 skipped, 2 warnings ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -2246,8 +2260,8 @@ faker/providers/bank/tl_PH/__init__.py                3      3     0%
 faker/providers/bank/tl_PH/__init__.py                3      3     0%
 faker/providers/bank/tr_TR/__init__.py                4      4     0%
 faker/providers/bank/tr_TR/__init__.py                4      4     0%
-faker/providers/bank/uk_UA/__init__.py                4      4     0%
-faker/providers/bank/uk_UA/__init__.py                4      4     0%
+faker/providers/bank/uk_UA/__init__.py                7      7     0%
+faker/providers/bank/uk_UA/__init__.py                7      7     0%
 faker/providers/bank/zh_CN/__init__.py                5      5     0%
 faker/providers/bank/zh_CN/__init__.py                5      5     0%
 faker/providers/barcode/__init__.py                  33     20    39%
@@ -2404,6 +2418,8 @@ faker/providers/credit_card/pt_PT/__init__.py         8      8     0%
 faker/providers/credit_card/pt_PT/__init__.py         8      8     0%
 faker/providers/credit_card/ru_RU/__init__.py        18     18     0%
 faker/providers/credit_card/ru_RU/__init__.py        18     18     0%
+faker/providers/credit_card/uk_UA/__init__.py        16     16     0%
+faker/providers/credit_card/uk_UA/__init__.py        16     16     0%
 faker/providers/currency/__init__.py                 29     13    55%
 faker/providers/currency/__init__.py                 29     13    55%
 faker/providers/currency/az_AZ/__init__.py            6      6     0%
@@ -2934,8 +2950,8 @@ faker/providers/person/tr_TR/__init__.py             12     12     0%
 faker/providers/person/tr_TR/__init__.py             12     12     0%
 faker/providers/person/tw_GH/__init__.py             11     11     0%
 faker/providers/person/tw_GH/__init__.py             11     11     0%
-faker/providers/person/uk_UA/__init__.py             13     13     0%
-faker/providers/person/uk_UA/__init__.py             13     13     0%
+faker/providers/person/uk_UA/__init__.py             46     46     0%
+faker/providers/person/uk_UA/__init__.py             46     46     0%
 faker/providers/person/zh_CN/__init__.py             18     18     0%
 faker/providers/person/zh_CN/__init__.py             18     18     0%
 faker/providers/person/zh_TW/__init__.py             18     18     0%
@@ -3207,6 +3223,6 @@ faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      9    44%
 faker/utils/text.py                                  16      9    44%
 ---------------------------------------------------------------------
-TOTAL                                             19824  17384    12%
+TOTAL                                             19928  17488    12%
   py$(PYV): OK
   congratulations :)
