@@ -24,11 +24,13 @@
 #
 
 BUILD_BITS= 64_and_32
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dbus
 COMPONENT_VERSION= 1.14.10
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Simple IPC library based on messages
 COMPONENT_PROJECT_URL= https://dbus.freedesktop.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
