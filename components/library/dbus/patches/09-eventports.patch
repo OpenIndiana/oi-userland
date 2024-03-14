@@ -1,0 +1,453 @@
+This patch implements file monitoring backend using Solaris native event ports.
+D-Bus uses it to check for changes in configuration files so that it can
+automatically re-read them when necessary.
+
+Should be offered upstream once we are sure it works as expected.
+
+--- dbus-1.14.6/configure.ac
++++ dbus-1.14.6/configure.ac
+@@ -214,6 +214,7 @@ AC_ARG_ENABLE([apparmor],
+ AC_ARG_ENABLE(libaudit,AS_HELP_STRING([--enable-libaudit],[build audit daemon support for SELinux]),enable_libaudit=$enableval,enable_libaudit=auto)
+ AC_ARG_ENABLE(inotify, AS_HELP_STRING([--enable-inotify],[build with inotify support (linux only)]),enable_inotify=$enableval,enable_inotify=auto)
+ AC_ARG_ENABLE(kqueue, AS_HELP_STRING([--enable-kqueue],[build with kqueue support]),enable_kqueue=$enableval,enable_kqueue=auto)
++AC_ARG_ENABLE(evports, AS_HELP_STRING([--enable-evports],[build with evports support]),enable_evports=$enableval,enable_evports=auto)
+ AC_ARG_ENABLE(console-owner-file, AS_HELP_STRING([--enable-console-owner-file],[enable console owner file]),enable_console_owner_file=$enableval,enable_console_owner_file=auto)
+ AC_ARG_ENABLE(launchd, AS_HELP_STRING([--enable-launchd],[build with launchd auto-launch support]),enable_launchd=$enableval,enable_launchd=auto)
+ AC_ARG_ENABLE(systemd, AS_HELP_STRING([--enable-systemd],[build with systemd at_console support]),enable_systemd=$enableval,enable_systemd=auto)
+@@ -934,6 +935,26 @@ fi
+ 
+ AM_CONDITIONAL(DBUS_BUS_ENABLE_KQUEUE, test x$have_kqueue = xyes)
+ 
++# evports checks
++if test x$enable_evports = xno ; then
++    have_evports=no
++else
++    have_evports=yes
++    AC_CHECK_HEADER(port.h, , have_evports=no)
++    AC_CHECK_FUNC(port_create, , have_evports=no)
++
++    if test x$enable_evports = xyes -a x$have_evports = xno; then
++        AC_MSG_ERROR(evports support explicitly enabled but not available)
++    fi
++fi
++
++dnl check if evports backend is enabled
++if test x$have_evports = xyes; then
++   AC_DEFINE(DBUS_BUS_ENABLE_EVPORTS,1,[Use evports])
++fi
++
++AM_CONDITIONAL(DBUS_BUS_ENABLE_EVPORTS, test x$have_evports = xyes)
++
+ # launchd checks
+ if test x$enable_launchd = xno ; then
+     have_launchd=no
+@@ -1807,6 +1828,7 @@ echo "
+         Building AppArmor support: ${have_apparmor}
+         Building inotify support: ${have_inotify}
+         Building kqueue support:  ${have_kqueue}
++        Building evports support: ${have_evports}
+         Building systemd support: ${have_systemd}
+         Traditional activation:   ${enable_traditional_activation}
+         Building X11 code:        ${have_x11}
+--- dbus-1.14.6/bus/Makefile.am
++++ dbus-1.14.6/bus/Makefile.am
+@@ -79,12 +79,16 @@ endif
+ if DBUS_BUS_ENABLE_KQUEUE
+ DIR_WATCH_SOURCE=dir-watch-kqueue.c
+ else
++if DBUS_BUS_ENABLE_EVPORTS
++DIR_WATCH_SOURCE=dir-watch-evports.c
++else
+ if DBUS_BUS_ENABLE_INOTIFY
+ DIR_WATCH_SOURCE=dir-watch-inotify.c
+ else
+ DIR_WATCH_SOURCE=dir-watch-default.c
+ endif
+ endif
++endif
+ 
+ noinst_LTLIBRARIES = libdbus-daemon-internal.la
+ 
+--- dbus-1.14.6/bus/CMakeLists.txt
++++ dbus-1.14.6/bus/CMakeLists.txt
+@@ -30,6 +30,8 @@ if(DBUS_BUS_ENABLE_INOTIFY)
+     set(DIR_WATCH_SOURCE dir-watch-inotify.c)
+ elseif(DBUS_BUS_ENABLE_KQUEUE)
+     set(DIR_WATCH_SOURCE dir-watch-kqueue.c)
++elseif(DBUS_BUS_ENABLE_EVPORTS)
++    set(DIR_WATCH_SOURCE dir-watch-evports.c)
+ else(DBUS_BUS_ENABLE_INOTIFY)
+     set(DIR_WATCH_SOURCE dir-watch-default.c)
+ endif()
+--- dbus-1.14.6/README.cmake
++++ dbus-1.14.6/README.cmake
+@@ -211,6 +211,10 @@ DBUS_BUS_ENABLE_INOTIFY:BOOL=ON
+ // enable kqueue as dir watch backend
+ DBUS_BUS_ENABLE_KQUEUE:BOOL=ON
+ 
++*Solaris only:
++// enable evports as dir watch backend
++DBUS_BUS_ENABLE_EVPORTS:BOOL=ON
++
+ x11 only:
+ // Build with X11 auto launch support
+ DBUS_BUILD_X11:BOOL=ON
+--- dbus-1.14.6/cmake/ConfigureChecks.cmake
++++ dbus-1.14.6/cmake/ConfigureChecks.cmake
+@@ -27,6 +27,7 @@ check_include_file(string.h     HAVE_STR
+ check_include_file(strings.h     HAVE_STRINGS_H)
+ check_include_file(syslog.h     HAVE_SYSLOG_H)
+ check_include_files("stdint.h;sys/types.h;sys/event.h" HAVE_SYS_EVENT_H)
++check_include_files("port.h"    HAVE_PORT_H)
+ check_include_file(sys/inotify.h     HAVE_SYS_INOTIFY_H)
+ check_include_file(sys/random.h     HAVE_SYS_RANDOM_H)
+ check_include_file(sys/resource.h     HAVE_SYS_RESOURCE_H)
+--- dbus-1.14.6/CMakeLists.txt
++++ dbus-1.14.6/CMakeLists.txt
+@@ -510,6 +510,13 @@ endif()
+ 
+ string(TOUPPER ${CMAKE_SYSTEM_NAME} sysname)
+ if("${sysname}" MATCHES ".*SOLARIS.*")
++    option(DBUS_BUS_ENABLE_EVPORTS "build with evports support (solaris only)" ON)
++    if(DBUS_BUS_ENABLE_EVPORTS)
++        if(NOT HAVE_PORT_H)
++            message(FATAL_ERROR "port.h not found!")
++        endif()
++    endif()
++
+     option(HAVE_CONSOLE_OWNER_FILE "enable console owner file(solaris only)" ON)
+     if(HAVE_CONSOLE_OWNER_FILE)
+         set(DBUS_CONSOLE_OWNER_FILE "/dev/console" CACHE STRING "Directory to check for console ownerhip")
+@@ -765,6 +772,7 @@ message("        Building bus stats API:
+ message("        installing system libs:   ${DBUS_INSTALL_SYSTEM_LIBS}         ")
+ message("        Building inotify support: ${DBUS_BUS_ENABLE_INOTIFY}          ")
+ message("        Building kqueue support:  ${DBUS_BUS_ENABLE_KQUEUE}           ")
++message("        Building evports support: ${DBUS_BUS_ENABLE_EVPORTS}          ")
+ message("        Building systemd support: ${DBUS_BUS_ENABLE_SYSTEMD}          ")
+ message("        systemd system install dir:${DBUS_SYSTEMD_SYSTEMUNITDIR}      ")
+ message("        systemd user install dir: ${DBUS_SYSTEMD_USERUNITDIR}         ")
+--- dbus-1.14.6/bus/dir-watch-evports.c
++++ dbus-1.14.6/bus/dir-watch-evports.c
+@@ -0,0 +1,322 @@
++/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
++/* dir-watch-evports.c  OS specific directory change notification for message bus
++ *
++ * Copyright (C) 2023 Oracle and/or its affiliates.
++ *
++ * Licensed under the Academic Free License version 2.1
++ * 
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
++ *
++ */
++
++#include <config.h>
++
++#include <errno.h>
++#include <port.h>
++#include <sys/stat.h>
++#include <unistd.h>
++#include <poll.h>
++#include <dirent.h>
++
++#include <dbus/dbus-internals.h>
++#include <dbus/dbus-list.h>
++#include <dbus/dbus-watch.h>
++#include "dir-watch.h"
++
++/* This limit is not just for the directories given by dbus but also for
++ * all the files and directories within.
++ */
++#define MAX_OBJECTS_TO_WATCH 128
++
++/* Because the data passed to port_associate are no longer significant after
++ * the call, we can save memory by overlapping file_obj structures (such that
++ * alignment is not an issue).
++ */
++static dbus_int64_t fobjs[MAX_OBJECTS_TO_WATCH + sizeof(struct file_obj) - 1];
++
++static int port = -1;
++static DBusWatch *watch = NULL;
++static DBusLoop *loop = NULL;
++/* Used to define the point since given directories are being watched */
++struct timespec last_sighup;
++
++/* For the comparison of timespec structures */
++# define tslower(a, b)            \
++  (((a).tv_sec == (b).tv_sec) ?   \
++   ((a).tv_nsec < (b).tv_nsec) :  \
++   ((a).tv_sec < (b).tv_sec))
++
++
++static dbus_bool_t
++_handle_evport_watch (DBusWatch *_watch, unsigned int flags, void *data)
++{
++  struct timespec nullts = { 0, 0 };
++  int res;
++  port_event_t pe;
++
++  res = port_get (port, &pe, &nullts);
++
++  /* Sleep for half a second to avoid a race when files are being installed. */
++  usleep (500000);
++
++  if (res == 0)
++    {
++      /* Remember this point in order to not miss any further changes. */
++      clock_gettime (CLOCK_REALTIME, &last_sighup);
++      _dbus_verbose ("Sending SIGHUP signal on reception of an event\n");
++      (void) kill (_dbus_getpid (), SIGHUP);
++    }
++  else if (res < 0 && errno == EBADF)
++    {
++      port = -1;
++      _dbus_assert (watch == _watch);
++      if (watch != NULL)
++        {
++          _dbus_loop_remove_watch (loop, watch);
++          _dbus_watch_invalidate (watch);
++          _dbus_watch_unref (watch);
++          watch = NULL;
++        }
++      _dbus_verbose ("Sending SIGHUP signal since event port has been closed\n");
++      (void) kill (_dbus_getpid (), SIGHUP);
++    }
++
++  return TRUE;
++}
++
++static void
++_shutdown_watch (void *data)
++{
++  if (loop == NULL)
++    return;
++
++  _dbus_loop_unref (loop);
++  loop = NULL;
++}
++
++static int
++_init_watch (BusContext *context)
++{
++  if (loop == NULL)
++    {
++      if (!_dbus_register_shutdown_func (_shutdown_watch, NULL))
++        {
++          _dbus_warn ("Unable to register shutdown function");
++          return FALSE;
++        }
++
++      loop = bus_context_get_loop (context);
++      _dbus_loop_ref (loop);
++
++      /* This is the point since when changes to files is being watched */
++      if (clock_gettime (CLOCK_REALTIME, &last_sighup))
++        {
++          _dbus_warn ("Cannot create evport; error '%s'", _dbus_strerror (errno));
++          return FALSE;
++        }
++    }
++
++  return TRUE;
++}
++
++static dbus_bool_t
++_init_evport (void)
++{
++  /* First, close the old port if necessary. We can do so now and not miss any
++   * notification as any changes since the last SIGHUP will be caught by the
++   * new port (as last_sighup was set back then).
++   */
++  if (loop && watch)
++    {
++      _dbus_loop_remove_watch (loop, watch);
++    }
++
++  if (watch)
++    {
++      _dbus_watch_invalidate (watch);
++      _dbus_watch_unref (watch);
++      watch = NULL;
++    }
++
++  if (port != -1)
++    {
++      /* This will also dissociate all the objects previously associated
++       * with given port - no need to do so one by one.
++       */
++      close (port);
++      port = -1;
++    }
++
++  /* Rebuild everything at this point */
++  port = port_create ();
++  if (port == -1)
++    {
++      _dbus_warn ("Cannot create evport; error '%s'", _dbus_strerror (errno));
++      goto out;
++    }
++
++  watch = _dbus_watch_new (port, DBUS_WATCH_READABLE, TRUE,
++                           _handle_evport_watch, NULL, NULL);
++
++  if (watch == NULL)
++    {
++      _dbus_warn ("Unable to create evport watch\n");
++      goto out1;
++    }
++
++  if (!_dbus_loop_add_watch (loop, watch))
++    {
++      _dbus_warn ("Unable to add reload watch to main loop");
++      goto out2;
++    }
++
++  return TRUE;
++
++out2:
++  if (watch)
++    {
++      _dbus_watch_invalidate (watch);
++      _dbus_watch_unref (watch);
++      watch = NULL;
++    }
++
++out1:
++  if (port != -1)
++    {
++      close (port);
++      port = -1;
++    }
++
++out:
++  return FALSE;
++}
++
++static dbus_bool_t
++_associate (char *filepath, int index, dbus_bool_t file_only)
++{
++	int res;
++  struct stat sb;
++  struct file_obj *fobj;
++
++  res = stat (filepath, &sb);
++  if (res < 0)
++    {
++      if (errno != ENOENT)
++        {
++          _dbus_warn ("Cannot stat '%s'; error '%s'", filepath, _dbus_strerror (errno));
++        }
++      return FALSE;
++    }
++
++  if (file_only && !S_ISREG(sb.st_mode))
++    return FALSE;
++
++  /* file_obj structures can safely overlap as the data is no longer
++   * necessary after the call
++   */
++  fobj = (struct file_obj *)(&fobjs[index]);
++  fobj->fo_name = filepath;
++  fobj->fo_atime = sb.st_atim;
++  fobj->fo_mtime = sb.st_mtim;
++  fobj->fo_ctime = sb.st_ctim;
++
++  /* Event ports sadly don't let us set last_sighup to fobj directly as it only
++   * checks for differences; it doesn't make timespec comparison.
++   */
++  if (tslower (last_sighup, sb.st_mtim) || tslower (last_sighup, sb.st_ctim)) {
++    /* Changing one value to something different from stat forces immediate event. */
++    fobj->fo_mtime = last_sighup;
++  }
++
++  res = port_associate (port, PORT_SOURCE_FILE, (uintptr_t)fobj, FILE_MODIFIED|FILE_ATTRIB, NULL);
++  if (res < 0)
++    {
++      _dbus_warn ("Cannot setup evport for '%s'; error '%s'", filepath, _dbus_strerror (errno));
++      return FALSE;
++    }
++  return TRUE;
++}
++
++void
++bus_set_watched_dirs (BusContext *context, DBusList **directories)
++{
++  DBusList *link;
++  char buffer[256];
++  int num_objects;
++  DIR *folder;
++  struct dirent *entry = NULL;
++
++  if (!_init_watch (context))
++    return;
++
++  if (!_init_evport ())
++    return;
++
++  num_objects = 0;
++  link = _dbus_list_get_first_link (directories);
++  while (link != NULL && num_objects < MAX_OBJECTS_TO_WATCH)
++    {
++      if (!_associate ((char *)link->data, num_objects, FALSE))
++        {
++          /* Currently, this implementation goes through every directory given,
++           * even if some of them fail stat/association, which is different
++           * from other implementations. I am not sure whether that is an
++           * issue; we'll see.
++           */
++          link = _dbus_list_get_next_link (directories, link);
++          continue;
++        }
++
++      num_objects++;
++
++      /* Go through the entire directory */
++      folder = opendir ((char *)link->data);
++      if (folder == NULL)
++        {
++          _dbus_warn ("Cannot read directory '%s'; error '%s'", (char *)link->data, _dbus_strerror (errno));
++          link = _dbus_list_get_next_link (directories, link);
++          continue;
++        }
++
++      while ((entry = readdir (folder)))
++        {
++          if (!strcmp (entry->d_name, ".") || !strcmp (entry->d_name, ".."))
++            continue;
++
++          if (num_objects >= MAX_OBJECTS_TO_WATCH)
++            break;
++
++          /* Construct full path to files within */
++          buffer[0] = 0;
++          strlcat (buffer, (char*)link->data, 256);
++          if (buffer[strlen ((char*)link->data)-1] != '/') {
++            strlcat (buffer, "/", 256);
++          }
++          strlcat (buffer, entry->d_name, 256);
++
++          if (!_associate (buffer, num_objects, TRUE))
++            continue;
++
++          num_objects++;
++        }
++      closedir (folder);
++      link = _dbus_list_get_next_link (directories, link);
++    }
++
++  if (link != NULL || entry != NULL)
++    {
++      _dbus_warn ("Too many files and directories to watch them all, only watching first %d.", MAX_OBJECTS_TO_WATCH);
++    }
++}

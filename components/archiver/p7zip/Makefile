@@ -24,25 +24,21 @@
 # Copyright (c) 2016, Jim Klimov
 #
 
-BUILD_STYLE=justmake
-BUILD_BITS=64
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         p7zip
 COMPONENT_VERSION=      16.2
-COMPONENT_REVISION=     3
-COMPONENT_SRC_VERSION=	16.02
-COMPONENT_FMRI=         compress/p7zip
+HUMAN_VERSION=		16.02
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=      The p7zip compression and archiving utility
-COMPONENT_CLASSIFICATION=System/Core
-COMPONENT_PROJECT_URL=  http://p7zip.sourceforge.net/
-COMPONENT_SRC=          $(COMPONENT_NAME)_$(COMPONENT_SRC_VERSION)
+COMPONENT_PROJECT_URL=  https://p7zip.sourceforge.net/
+COMPONENT_SRC=          $(COMPONENT_NAME)_$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC)_src_all.tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-	sha256:5eb20ac0e2944f6cb9c2d51dd6c4518941c185347d4089ea89087ffdd6e2341f
-COMPONENT_ARCHIVE_URL=  \
-	http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_SRC_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/p7zip
+COMPONENT_ARCHIVE_HASH= sha256:5eb20ac0e2944f6cb9c2d51dd6c4518941c185347d4089ea89087ffdd6e2341f
+COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/p7zip/p7zip/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         compress/p7zip
+COMPONENT_CLASSIFICATION= System/Core
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -59,7 +55,8 @@ COMPONENT_BUILD_TARGETS = all3
 COMPONENT_INSTALL_ARGS += DEST_HOME=/usr DEST_DIR=$(PROTO_DIR)
 
 COMPONENT_BUILD_ARGS += BUILD_CC="$(CC)"
-COMPONENT_BUILD_ARGS += BUILD_CXX="$(CXX)"
+# Note: the -std=c++11 setting below is probably not needed for a newer version.
+COMPONENT_BUILD_ARGS += BUILD_CXX="$(CXX) -std=c++11"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ARGS += BUILD_FLAGS="$(CPP_LARGEFILES) $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS)"
 
@@ -83,9 +80,10 @@ install:	build $(INSTALL_64) $(EXTRATARGETS)
 # so they're impossible to remove without adding the write bit first.
 COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR)
 
-# build does this always
-
+ifeq ($(strip $(MACH)),sparc)
 REQUIRED_PACKAGES += system/library/math
+endif
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

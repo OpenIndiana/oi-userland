@@ -13,42 +13,37 @@
 # Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Tim Mooney.  All rights reserved.
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS=		32_and_64
-BUILD_STYLE=	meson
-
+BUILD_BITS= 64
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gstreamer1
-COMPONENT_VERSION=      1.20.3
+COMPONENT_VERSION=      1.22.10
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC_NAME=		gstreamer
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:607daf64bbbd5fb18af9d17e21c0d22c4d702fffe83b23cb22d1b1af2ca23a2a
+COMPONENT_ARCHIVE_HASH= sha256:969aaef396f252ce925132a4be2aa004e0320f5c1baf0acaaae09c544a6759f4
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Optimisation has been lowered in past for an unknown reason. Nowadays it doesn't seem to make any difference in the test results:
-#gcc_OPT = -O2
-
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
 CONFIGURE_OPTIONS += -Dexamples=disabled
-CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
-CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
-#CONFIGURE_OPTIONS += --program-suffix=""
+CONFIGURE_OPTIONS += -Dintrospection=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
@@ -57,30 +52,20 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CC="$(CC)"
 
-# (first) delete the timing information from any line
-# delete the "exit status N", it can cause issues too
-# print lines that start with " N/NNN"
-# print everything between "^Ok:" and "^Timeout:"
-# delete the ninja log-related stuff at the end
-unexport SHELLOPTS
+# As test results keep only everything betweeni the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
-	'-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-	'-e "s/[ 	]*exit status [0-9][0-9]*//" ' \
-	'-e "/^[ 	]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-	'-e "/^Summary of/p" ' \
-	'-e "/^Ok:/,/^Timeout:/p" ' \
-	'-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
+	'-e "/^Ok:/,/^Timeout:/p" '
 
-# not picked up by REQUIRED_PACKAGES but probably still needed
-# for the 64 bit build to do introspection
+# not picked up by REQUIRED_PACKAGES but still needed
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 
 # gmp & gsl needed only for the test suite
-REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += developer/gsl
+TEST_REQUIRED_PACKAGES += library/gmp
+TEST_REQUIRED_PACKAGES += developer/gsl
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

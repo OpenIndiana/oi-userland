@@ -15,20 +15,37 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Type::Tiny
-HUMAN_VERSION =			2.000001
+HUMAN_VERSION =			2.004000
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Type::Tiny - tiny, yet Moo(se)-compatible type constraint
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:63f942e1d6f5104fa90acbfc435e69e570d8b3374fe0c733f8419e31a6331920
+	sha256:697e7f775edfc85f4cf07792d04fd19b09c25285f98f5938e8efc4f74507a128
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-clean
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/specio
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/class-xsaccessor
+PERL_REQUIRED_PACKAGES += library/perl-5/devel-lexalias
+PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
 PERL_REQUIRED_PACKAGES += library/perl-5/exporter-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/ref-util-xs
+PERL_REQUIRED_PACKAGES += library/perl-5/regexp-util
+PERL_REQUIRED_PACKAGES += library/perl-5/type-tiny-xs
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/moo
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/mouse
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-memory-cycle
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings

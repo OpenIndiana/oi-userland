@@ -10,31 +10,33 @@
 #
 
 #
-# Copyright 2020 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project python-xlib
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	python-xlib
-COMPONENT_VERSION= 	0.26
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY= 	'Python interface to the X11 protocol'
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:b819c7e5f55830305919d78ea42b0cbd5e13687f5d12aa53556c33674b9876df
-COMPONENT_ARCHIVE_URL= \
-  $(call pypi_url)
-COMPONENT_PROJECT_URL = https://github.com/python-xlib/python-xlib
-COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE=	LICENSE
-COMPONENT_FMRI=	library/python/python-xlib
-COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_NAME =		python-xlib
+HUMAN_VERSION =			0.33
+COMPONENT_SUMMARY =		python-xlib - Python X Library
+COMPONENT_PROJECT_URL =		https://github.com/python-xlib/python-xlib
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/86/f5/8c0653e5bb54e0cbdfe27bf32d41f27bc4e12faa8742778c17f2a71be2c0/python-xlib-0.33.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:55af7906a2c75ce6cb280a584776080602444f75815a7aff4d287bb2d7018b32
+COMPONENT_LICENSE =		LGPL-2.1-only
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.5
-
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/six
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/codecov
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/mock
+TEST_REQUIRED_PACKAGES.python += library/python/nose
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools-scm
+TEST_REQUIRED_PACKAGES.python += library/python/six

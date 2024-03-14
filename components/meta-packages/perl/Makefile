@@ -18,14 +18,20 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
 COMPONENT_VERSION =		$(PERL_VERSION)
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		7
 COMPONENT_SUMMARY =		Perl - Highly capable, feature-rich programming language
 COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_FMRI =		runtime/perl
 COMPONENT_CLASSIFICATION =	Development/Perl
 
-include $(WS_MAKE_RULES)/common.mk
+# This needs to be done before the common.mk include because here we still do
+# have the full list of Perl versions in PERL_VERSIONS.
+ifeq ($(PERL_VERSION),$(lastword $(PERL_VERSIONS)))
+PKG_MACROS += VENDOR_MEDIATOR=\#
+else
+PKG_MACROS += VENDOR_MEDIATOR=
+endif
 
-PKG_MACROS += PLV=$(shell echo $(PERL_VERSION) | tr -d .)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies

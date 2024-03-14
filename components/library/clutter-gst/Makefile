@@ -11,6 +11,7 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2023 Friedrich Kink.  All rights reserved.
 #
 
 BUILD_STYLE=configure
@@ -18,15 +19,15 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         clutter-gst
-COMPONENT_VERSION=      1.6.0
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      3.0.27
+COMPONENT_FMRI=      	library/desktop/clutter/clutter-gst
 COMPONENT_SUMMARY=      gstreamer integration library for clutter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:abc879cdd562f1640a825131405f4327a427bfe65b805ebc25d0c78909c8c622
+	sha256:fe69bd6c659d24ab30da3f091eb91cd1970026d431179b0724f13791e8ad9f9d
 COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.6/$(COMPONENT_ARCHIVE)
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/3.0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.clutter-project.org/
 
 TEST_TARGET=$(NO_TESTS)
@@ -51,9 +52,12 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 REQUIRED_PACKAGES += library/desktop/json-glib
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/audio/gstreamer
-REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/clutter
+REQUIRED_PACKAGES += library/desktop/cogl
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

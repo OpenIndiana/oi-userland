@@ -11,26 +11,24 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 #
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		qhull
-COMPONENT_VERSION=	7.2.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	8.0.2
 COMPONENT_PROJECT_URL=	http://www.qhull.org/
 COMPONENT_SUMMARY=	General dimension convex hull programs
 COMPONENT_DESCRIPTION=	Qhull is a general dimension convex hull program that reads a set of points from stdin, and outputs the smallest convex set that contains the points to stdout.  It also generates Delaunay triangulations, Voronoi diagrams, furthest-site Voronoi diagrams, and halfspace intersections about a point.
-COMPONENT_FMRI=         library/qhull
-COMPONENT_CLASSIFICATION=       System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-2015.2
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-2015-src-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:78b010925c3b577adc3d58278787d7df08f7c8fb02c3490e375eab91bb58a436
+COMPONENT_SRC=		$(COMPONENT_NAME)-2020.2
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-2020-src-$(COMPONENT_VERSION).tgz
+COMPONENT_ARCHIVE_HASH=	sha256:b5c2d7eb833278881b952c8a52d20179eab87766b00b865000469a45c1838b7e
 COMPONENT_ARCHIVE_URL=	http://www.qhull.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/qhull
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	Qhull
 COMPONENT_LICENSE_FILE=	COPYING.txt
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS+=	-DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS+= -DINCLUDE_INSTALL_DIR:PATH=$(CMAKE_INCLUDEDIR)
@@ -39,12 +37,9 @@ CMAKE_OPTIONS+= -DLIB_INSTALL_DIR:PATH=$(CMAKE_LIBDIR.$(BITS))
 CMAKE_OPTIONS+= -DCMAKE_SKIP_RPATH=1
 
 COMPONENT_TEST_TARGETS=	test
+COMPONENT_TEST_ENV= LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) PATH=$(PATH):/usr/lib/$(MACH64)
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*\.[0-9]* sec//" '
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

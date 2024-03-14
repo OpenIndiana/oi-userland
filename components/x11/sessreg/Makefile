@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     sessreg
-COMPONENT_VERSION=  1.1.2
-COMPONENT_FMRI=     x11/session/sessreg
+COMPONENT_VERSION=  1.1.3
 COMPONENT_SUMMARY=  sessreg - manage utmp/wtmp entries for non-init clients
-COMPONENT_ARCHIVE_HASH= \
-  sha256:dfcb9e954273ace63879aec053c7880466f8755752a35aa9ced3fa5f04fd2c33
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:022acd5de8077dddc4f919961f79e102ecd5f3228a333681af5cd0e7344facc2
+COMPONENT_FMRI=     x11/session/sessreg
 
 include $(WS_MAKE_RULES)/common.mk
 

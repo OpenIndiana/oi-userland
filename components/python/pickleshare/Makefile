@@ -10,34 +10,28 @@
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project pickleshare
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	pickleshare
-COMPONENT_VERSION= 	0.7.4
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	https://github.com/pickleshare/pickleshare
-COMPONENT_FMRI=	library/python/pickleshare
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:84a9257227dfdd6fe1b4be1319096c20eb85ff1e82c7932f36efccfe1b09737b
-COMPONENT_ARCHIVE_URL= \
-  $(call pypi_url)
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_NAME =		pickleshare
+HUMAN_VERSION =			0.7.5
+COMPONENT_SUMMARY =		pickleshare - Tiny 'shelve'-like database with concurrency support
+COMPONENT_PROJECT_URL =		https://github.com/pickleshare/pickleshare
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/d8/b6/df3c1c9b616e9c0edbc4fbab6ddd09df9535849c64ba51fcb6531c32d4d8/pickleshare-0.7.5.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:87683d47965c1da65cdacaf31c8441d12b8044cdec9aca500cd78fc2c683afca
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.5
+TEST_STYLE = pytest
 
-TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
+PYTHON_REQUIRED_PACKAGES += runtime/python

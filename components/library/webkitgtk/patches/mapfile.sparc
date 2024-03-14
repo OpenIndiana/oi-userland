@@ -1,52 +1,17 @@
-Ths patch below has been modified from it's solaris-userland original by
-removing the following entries from the mapfile:
-
-AUndefined			first referenced
- symbol  			    in file
-WebKit::PluginProcessMain(int, char**) /ws/oi-userland/components/library/webkitgtk/webkitgtk-2.32.3/Source/WebKit/webkitglib-symbols.map
-bmalloc::PerThreadStorage<bmalloc::PerHeapKind<bmalloc::Cache> >::s_key /ws/oi-userland/components/library/webkitgtk/webkitgtk-2.32.3/Source/WebKit/webkitglib-symbols.map
-bmalloc::vmPageSize()::cached       /ws/oi-userland/components/library/webkitgtk/webkitgtk-2.32.3/Source/WebKit/webkitglib-symbols.map
-bmalloc::PerThreadStorage<bmalloc::PerHeapKind<bmalloc::Cache> >::s_didInitialize /ws/oi-userland/components/library/webkitgtk/webkitgtk-2.32.3/Source/WebKit/webkitglib-symbols.map
-ld: fatal: symbol referencing errors. No output written to ../../lib/libwebkit2gtk-4.0.so.37.53.4
-
-Comments from solaris-userland:
-===============================
-Two issues worked around here.  First is that Solaris linker expects -M for
-mapfiles, not the GNU ld --version-script option.  Ideally, CMakeLists.txt
-or some other appropriate CMake file would be changed to detect that the
-version-script option is not supported and then if not, check if SunOS, and
-if so, use -M instead.
-
-The second is a temporary workaround for the fact that the Solaris linker
-doesn't currently support arbitrary globbing of symbols via '*'.  For now,
-this is worked around with a manual definition of all of the symbols that
-should be exported by the relevant library.  The right fix is probably to
-detect whether we're using the GNU linker, and if not, use a combination of
-perl, sed, etc. to generate the mapfile at build time.
-
-Why setting LDFLAGS += -Wl,-zgnu-version-script-compat doesn't work is a
-mystery that needs to be eventually figured out.
-
-file upstream bug after resolving issues documented above
-
---- webkitgtk-2.32.3/Source/WebKit/webkitglib-symbols.map.orig	2021-02-26 10:57:16.000000000 +0000
-+++ webkitgtk-2.32.3/Source/WebKit/webkitglib-symbols.map	2021-09-22 08:09:36.402059019 +0000
-@@ -1,16 +1,2142 @@
+--- webkitgtk-2.42.2/Source/WebKit/webkitglib-symbols.map	2023-09-19 10:27:50.835672000 +0200
++++ webkitgtk-2.42.2/Source/WebKit/webkitglib-symbols.map.new	2023-11-22 19:28:27.318318298 +0100
+@@ -1,14 +1,2174 @@
  {
  global:
 -  jsc_*;
 -  webkit_*;
 -  extern "C++" {
--    "bmalloc::PerThreadStorage<bmalloc::PerHeapKind<bmalloc::Cache> >::s_didInitialize";
--    "bmalloc::PerThreadStorage<bmalloc::PerHeapKind<bmalloc::Cache> >::s_key";
--    "bmalloc::vmPageSize()::cached";
+-    "WebKit::GPUProcessMain(int, char**)";
 -    "WebKit::NetworkProcessMain(int, char**)";
--    "WebKit::WebKitExtensionManager::initialize(WebKit::InjectedBundle*, API::Object*)";
--    "WebKit::WebKitExtensionManager::singleton()";
+-    "WebKit::WebProcessExtensionManager::initialize(WebKit::InjectedBundle*, API::Object*)";
+-    "WebKit::WebProcessExtensionManager::singleton()";
 -    "WebKit::WebProcessMain(int, char**)";
 -  };
-+  webkit_accessible_get_type;
-+  webkit_accessible_hyperlink_get_type;
 +  webkit_application_info_get_name;
 +  webkit_application_info_get_type;
 +  webkit_application_info_get_version;
@@ -1500,7 +1465,6 @@ file upstream bug after resolving issues documented above
 +  webkit_editor_state_is_redo_available;
 +  webkit_editor_state_is_undo_available;
 +  webkit_editor_typing_attributes_get_type;
-+  webkit_emoji_chooser_get_type;
 +  webkit_favicon_database_clear;
 +  webkit_favicon_database_error_get_type;
 +  webkit_favicon_database_error_quark;
@@ -2025,7 +1989,6 @@ file upstream bug after resolving issues documented above
 +  webkit_web_inspector_get_web_view;
 +  webkit_web_inspector_is_attached;
 +  webkit_web_inspector_show;
-+  webkit_web_page_accessibility_object_get_type;
 +  webkit_web_page_get_dom_document;
 +  webkit_web_page_get_editor;
 +  webkit_web_page_get_id;
@@ -2178,9 +2141,45 @@ file upstream bug after resolving issues documented above
 +  webkit_window_properties_get_statusbar_visible;
 +  webkit_window_properties_get_toolbar_visible;
 +  webkit_window_properties_get_type;
++  webkit_user_media_permission_is_for_display_device;
++  webkit_credential_new_for_certificate;
++  webkit_settings_set_feature_enabled;
++  webkit_website_data_manager_set_network_proxy_settings;
++  webkit_feature_get_identifier;
++  webkit_settings_get_all_features;
++  webkit_web_view_get_display_capture_state;
++  webkit_feature_get_details;
++  webkit_settings_get_feature_enabled;
++  webkit_clipboard_permission_request_get_type;
++  webkit_feature_get_status;
++  webkit_web_view_get_microphone_capture_state;
++  webkit_feature_status_get_type;
++  webkit_web_view_set_display_capture_state;
++  webkit_web_view_get_camera_capture_state;
++  webkit_feature_get_type;
++  webkit_feature_get_name;
++  webkit_website_data_manager_set_tls_errors_policy;
++  webkit_settings_get_development_features;
++  webkit_web_view_evaluate_javascript;
++  webkit_feature_list_unref;
++  webkit_feature_list_get;
++  webkit_feature_list_get_length;
++  webkit_feature_unref;
++  webkit_media_key_system_permission_get_name;
++  webkit_feature_get_default_value;
++  webkit_settings_get_experimental_features;
++  webkit_response_policy_decision_is_main_frame_main_resource;
++  webkit_feature_get_category;
++  webkit_script_message_reply_get_type;
++  webkit_media_capture_state_get_type;
++  webkit_permission_state_get_type;
++  webkit_memory_pressure_settings_get_type;
++  webkit_feature_list_get_type;
++  webkit_uri_scheme_response_get_type;
++  webkit_permission_state_query_get_type;
++  webkit_web_extension_mode_get_type;
++  webkit_web_form_manager_get_type;
 +  _ZN6WebKit18NetworkProcessMainEiPPc;
-+  _ZN6WebKit22WebKitExtensionManager10initializeEPNS_14InjectedBundleEPN3API6ObjectE;
-+  _ZN6WebKit22WebKitExtensionManager9singletonEv;
 +  _ZN6WebKit14WebProcessMainEiPPc;
  local:
    *;

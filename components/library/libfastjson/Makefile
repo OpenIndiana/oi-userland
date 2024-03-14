@@ -12,27 +12,31 @@
 # Copyright 2022 Niklas Poslovski
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libfastjson
-COMPONENT_VERSION=	0.99.9
+COMPONENT_VERSION=	1.2304.0
+COMPONENT_SUMMARY=	A performance-focused json library for C
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:881f954633aa76931e4c756ece0bda6fd8a673c6e66955a3db3b2bb9d6bbff72
+COMPONENT_ARCHIVE_HASH=	sha256:6c18848c75b179108429fc2818273551c68ffe6ddd5e414c20c071c844befbc1
 COMPONENT_PROJECT_URL=	https://github.com/rsyslog/libfastjson
-COMPONENT_ARCHIVE_URL=	https://github.com/rsyslog/libfastjson/archive/refs/tags/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=	A performance-focused json library for C
-COMPONENT_LICENSE=	MIT
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libfastjson
 COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && ./autogen.sh)
+COMPONENT_PREP_ACTION = ( cd $(@D)  && ./autogen.sh)
 
-COMPONENT_PRE_CONFIGURE_ACTION=(cp -r $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( cp -r $(SOURCE_DIR)/* $(@D) )
+
+unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

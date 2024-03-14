@@ -3,15 +3,18 @@
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
 # 1.0 of the CDDL.
+#
 # A full copy of the text of the CDDL should have accompanied this
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
+#
 
 #
-# Copyright 2022 Andreas Wacknitz
+# This file was automatically generated using python-integrate-project
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -20,17 +23,14 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
+file path=usr/lib/python$(PYVER)/vendor-packages/appdirs-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/appdirs-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/appdirs-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/appdirs-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/appdirs.py
 
-# appdirs.py dynamically imports modules for different operating systems we naturally don't have:
-<transform file path=usr/lib/python$(PYVER)/vendor-packages/appdirs.py -> set pkg.depend.bypass-generate .* >
-
-# Force a dependency on the appropriate python runtime:
+# python modules are unusable without python runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
-file path=usr/lib/python$(PYVER)/vendor-packages/appdirs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
-file path=usr/lib/python$(PYVER)/vendor-packages/appdirs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/appdirs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/appdirs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/appdirs.py
+# Automatically generated dependencies based on distribution metadata

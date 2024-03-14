@@ -12,31 +12,34 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2018 Michal Nowak
+# Copyright 2022 Friedrich Kink
 #
+
+BUILD_STYLE=	justmake
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= docbook-xsl
-COMPONENT_VERSION= 1.78.1
-COMPONENT_SUBVERSION= 5.1
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= Norman Walsh's XSL stylesheets for DocBook XML
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:c98f7296ab5c8ccd2e0bc07634976a37f50847df2d8a59bdb1e157664700b467
+COMPONENT_NAME=		docbook-xsl
+COMPONENT_VERSION=	1.79.2
+COMPONENT_SUBVERSION=	5.1
+COMPONENT_FMRI=		data/docbook/xsl
+COMPONENT_SUMMARY=	Norman Walsh's XSL stylesheets for DocBook XML
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:316524ea444e53208a2fb90eeb676af755da96e1417835ba5f5eb719c81fa371
 COMPONENT_ARCHIVE_URL= \
-  http://prdownloads.sourceforge.net/docbook/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=http://docbook.sourceforge.net/
+  https://github.com/docbook/xslt10-stylesheets/releases/download/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://docbook.org/
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	docbook-xsl
 
-COMPONENT_ARCHIVE_1=    docbook-xsl-doc-$(COMPONENT_VERSION).tar.bz2
-COMPONENT_ARCHIVE_HASH_1= \
-    sha256:cea88089e88a5b01554b123d1d89278763eab4e8e42974853a112a54bb76905d
-COMPONENT_ARCHIVE_URL_1= http://sourceforge.net/projects/docbook/files/docbook-xsl-doc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
+COMPONENT_VERSION_1=	1.79.1
+COMPONENT_ARCHIVE_1=    docbook-xsl-doc-$(COMPONENT_VERSION_1).tar.bz2
+COMPONENT_ARCHIVE_HASH_1= sha256:aabaebeb35f6ca77a9c1fa23e2c4e704dcefc5b47af03f8b6ead7103cd5d1155
+COMPONENT_ARCHIVE_URL_1= \
+  http://sourceforge.net/projects/docbook/files/docbook-xsl-doc/$(COMPONENT_VERSION_1)/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # we don't use $(USERLAND_UNPACK) because it can't unpack files to existing directory
 COMPONENT_POST_UNPACK_ACTION += /usr/gnu/bin/tar xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
@@ -46,6 +49,4 @@ COMPONENT_PREP_ACTION +=(cp $(COMPONENT_DIR)/files/docbook-style-xsl.Makefile $(
 COMPONENT_INSTALL_ARGS = DESTDIR=$(PROTO_DIR)/usr/share/sgml/docbook/xsl-stylesheets-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_INSTALL_ARGS += BINDIR=$(PROTO_DIR)/usr/bin
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+# Auto-generated dependencies

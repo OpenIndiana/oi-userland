@@ -15,22 +15,22 @@
 # Copyright 2019 Michal Nowak
 #
 
-USE_OPENSSL11=		yes
+OPENSSL_VERSION= 3.1
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		irssi
-COMPONENT_VERSION=	1.4.2
+COMPONENT_VERSION=	1.4.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	irssi - a terminal based IRC client
-COMPONENT_CLASSIFICATION= Applications/Internet
-COMPONENT_FMRI=		network/chat/irssi
+COMPONENT_PROJECT_URL=	https://irssi.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:79a4765d2dfe153c440a1775b074d5d0682b96814c7cf92325b5e15ce50e26a8
 COMPONENT_ARCHIVE_URL=	https://github.com/irssi/irssi/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://irssi.org/
+COMPONENT_ARCHIVE_HASH= sha256:72a951cb0ad622785a8962801f005a3a412736c7e7e3ce152f176287c52fe062
+COMPONENT_FMRI=		network/chat/irssi
+COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=	GPLv2+
-
-USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -42,7 +42,7 @@ CONFIGURE_OPTIONS +=	--with-perl-lib=$(CONFIGURE_PREFIX)/perl5/vendor_perl/$(PER
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)
 
-CONFIGURE_ENV     +=    perlpath=$(PERL)
+CONFIGURE_ENV += perlpath=$(PERL)
 
 COMPONENT_PRE_CONFIGURE_ACTION += $(CLONEY) $(SOURCE_DIR) $(@D)
 
@@ -52,12 +52,9 @@ COMPONENT_POST_INSTALL_ACTION += ( for x in COPYING AUTHORS ChangeLog ; do cp $(
 # PKGVERS is needed for manifest processing
 PKG_MACROS += PERLVER=$(PERL_VERSION)
 
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library

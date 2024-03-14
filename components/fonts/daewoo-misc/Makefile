@@ -23,16 +23,17 @@
 # Copyright (c) 2008, 2018, Oracle and/or its affiliates. All rights reserved.
 # COpyright 2018, Aurelien Larcher
 #
-BUILD_STYLE=configure
 
+BUILD_STYLE=configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		font-daewoo-misc
-COMPONENT_VERSION= 	1.0.3
+COMPONENT_VERSION= 	1.0.4
 COMPONENT_SUMMARY=      Korean bitmap fonts from Daewoo Electronics
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:bc65de70bee12698caa95b523d3b652c056347e17b68cc8b5d6bbdff235c4be8
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:f63c8b3dc8f30098cb868b7db2c2c0c8b5b3fd2cefd044035697a43d4c7a4f31
 COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE=	COPYING
 
 FONT_TYPE = X11MISC
 
@@ -44,3 +45,4 @@ COMPONENT_FONT_PKG  = daewoo-misc
 # Install to separate directory for easier packaging
 CONFIGURE_OPTIONS += --with-fontdir=$(COMPONENT_FONT_DEST_DIR)
 
+# Auto-generated dependencies

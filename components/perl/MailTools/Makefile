@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		MailTools
 HUMAN_VERSION =			2.21
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		MailTools - Various ancient e-mail related modules
 COMPONENT_CPAN_AUTHOR =		MARKOV
 COMPONENT_ARCHIVE_HASH =	\

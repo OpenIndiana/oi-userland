@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2024 <contributor>
 #
 
 BUILD_BITS=64

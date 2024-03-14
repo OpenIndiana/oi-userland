@@ -17,19 +17,22 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=    xditview
-COMPONENT_VERSION= 1.0.5
-COMPONENT_FMRI=    document/viewer/xditview
-COMPONENT_SUMMARY= xditview - display ditroff output
-COMPONENT_ARCHIVE_HASH= \
-  sha256:eecb1ed51ab4edc7f454476d1248cfb7799a17c5679b3dd834e8b4658331c04b
+COMPONENT_NAME=              xditview
+COMPONENT_VERSION=           1.0.7
+COMPONENT_SUMMARY=           xditview - display ditroff output
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=      sha256:039e2d447fa409d4bb25c4e87cf09b4d4b3eff2d3af5aee8e7e52165a3259fd7
+COMPONENT_FMRI=              document/viewer/xditview
+COMPONENT_LICENSE_FILE=      COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxft
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt

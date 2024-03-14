@@ -1,0 +1,83 @@
+From 41bd15156e4b103ba00aeeea8665a262e341134c Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sun, 30 Sep 2012 16:44:14 -0400
+Subject: allow the global disabling of function cloning
+
+Optimizations which clone functions to create call-specific implementations
+which may be better optimized also dissociate these functions from their
+symbol names in ways harmful to tracing and debugging (since there are now
+several implementations of a single source symbol, quite possibly none of them
+having the actual source symbol name).
+
+This allows any function cloning to be disabled, and makes any such
+optimization ineffective, and our source safe for debuggers everywhere.
+---
+ gcc/attribs.cc      |  9 +++++++++
+ gcc/common.opt      |  5 +++++
+ gcc/doc/invoke.texi | 10 ++++++++++
+ 3 files changed, 24 insertions(+)
+
+diff --git a/gcc/attribs.cc b/gcc/attribs.cc
+index b219f878042..9370c903dc2 100644
+--- a/gcc/attribs.cc
++++ b/gcc/attribs.cc
+@@ -694,6 +694,15 @@ decl_attributes (tree *node, tree attributes, int flags,
+ 	attributes = tree_cons (get_identifier ("no_icf"),  NULL, attributes);
+     }
+ 
++  /* If the user passed -fno-clone-functions, all functions should be treated
++     as "noclone" */
++  if (TREE_CODE (*node) == FUNCTION_DECL
++      && !flag_clone_functions)
++    {
++      if (lookup_attribute ("noclone", attributes) == NULL)
++	attributes = tree_cons (get_identifier ("noclone"),  NULL, attributes);
++    }
++
+   targetm.insert_attributes (*node, &attributes);
+ 
+   /* Note that attributes on the same declaration are not necessarily
+diff --git a/gcc/common.opt b/gcc/common.opt
+index 314c1c6a478..9dad568d6e6 100644
+--- a/gcc/common.opt
++++ b/gcc/common.opt
+@@ -1201,6 +1201,11 @@ fcode-hoisting
+ Common Var(flag_code_hoisting) Optimization
+ Enable code hoisting.
+ 
++fclone-functions
++Common Var(flag_clone_functions) Init(1)
++Allow the compiler to clone functions to facilitate certain optimizations.
++Enabled by default.
++
+ fcombine-stack-adjustments
+ Common Var(flag_combine_stack_adjustments) Optimization
+ Looks for opportunities to reduce stack adjustments and stack references.
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index 348df5caf1d..f003f8ce480 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -509,6 +509,7 @@ Objective-C and Objective-C++ Dialects}.
+ -fassociative-math  -fauto-profile  -fauto-profile[=@var{path}] @gol
+ -fauto-inc-dec  -fbranch-probabilities @gol
+ -fcaller-saves @gol
++-fclone-functions
+ -fcombine-stack-adjustments  -fconserve-stack @gol
+ -fcompare-elim  -fcprop-registers  -fcrossjumping @gol
+ -fcse-follow-jumps  -fcse-skip-blocks  -fcx-fortran-rules @gol
+@@ -11812,6 +11813,15 @@ and then tries to find ways to combine them.
+ 
+ Enabled by default at @option{-O1} and higher.
+ 
++@item -fno-clone-functions
++@opindex fno-clone-functions
++Forbid the implicit cloning of functions implicit in certain
++optimizations.  This also effectively will disable any optimization
++which wishes to clone functions, equivalent to each function having
++the ``noclone'' attribute.  This allows the prevention of the
++dissociation of a piece of text from an intelligible and expected
++symbol name, which may hamper debugging and tracing.
++
+ @item -fipa-ra
+ @opindex fipa-ra
+ Use caller save registers for allocation if those registers are not used by

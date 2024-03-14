@@ -1,0 +1,30 @@
+PIDFILE=/var/run/iaxmodem.pid
+
+case $1 in
+
+'start')
+        for dev in /etc/iaxmodem/*
+        do
+                /usr/sbin/iaxmodem `basename $dev` &
+                sleep 1
+                if [ -L `head -1 $dev | awk '{print $2}' ` ]
+                then
+                        /usr/sbin/faxgetty `head -1 $dev | awk '{print $2}' ` &
+                fi
+        done
+        ;;
+
+'restart')
+        if [ -f "$PIDFILE" ]; then
+                /usr/bin/kill -HUP `/usr/bin/cat $PIDFILE`
+        fi
+        ;;
+
+*)
+        echo "Usage: $0 { start | restart }"
+        exit 1
+        ;;
+esac
+
+exit $?
+

@@ -54,15 +54,19 @@ MESON_BUILDPIE ?=	false
 # location.  This allows simplification of package manifests and makes it
 # easier to deliver the 64-bit binaries as the default.
 ifeq ($(strip $(PREFERRED_BITS)),64)
-CONFIGURE_BINDIR.32 ?=	$(CONFIGURE_PREFIX)/bin/$(MACH32)
-CONFIGURE_SBINDIR.32 ?=	$(CONFIGURE_PREFIX)/sbin/$(MACH32)
-CONFIGURE_BINDIR.64 ?=	$(CONFIGURE_PREFIX)/bin
-CONFIGURE_SBINDIR.64 ?=	$(CONFIGURE_PREFIX)/sbin
+CONFIGURE_BINDIR.32 ?=		$(CONFIGURE_PREFIX)/bin/$(MACH32)
+CONFIGURE_SBINDIR.32 ?=		$(CONFIGURE_PREFIX)/sbin/$(MACH32)
+CONFIGURE_LIBEXECDIR.32 ?=	$(CONFIGURE_PREFIX)/libexec/$(MACH32)
+CONFIGURE_BINDIR.64 ?=		$(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR.64 ?=		$(CONFIGURE_PREFIX)/sbin
+CONFIGURE_LIBEXECDIR.64 ?=	$(CONFIGURE_PREFIX)/libexec
 else
-CONFIGURE_BINDIR.32 ?=	$(CONFIGURE_PREFIX)/bin
-CONFIGURE_SBINDIR.32 ?=	$(CONFIGURE_PREFIX)/sbin
-CONFIGURE_BINDIR.64 ?=	$(CONFIGURE_PREFIX)/bin/$(MACH64)
-CONFIGURE_SBINDIR.64 ?=	$(CONFIGURE_PREFIX)/sbin/$(MACH64)
+CONFIGURE_BINDIR.32 ?=		$(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR.32 ?=		$(CONFIGURE_PREFIX)/sbin
+CONFIGURE_LIBEXECDIR.32 ?=	$(CONFIGURE_PREFIX)/libexec
+CONFIGURE_BINDIR.64 ?=		$(CONFIGURE_PREFIX)/bin/$(MACH64)
+CONFIGURE_SBINDIR.64 ?=		$(CONFIGURE_PREFIX)/sbin/$(MACH64)
+CONFIGURE_LIBEXECDIR.64 ?=	$(CONFIGURE_PREFIX)/libexec/$(MACH64)
 endif
 
 # Regardless of PREFERRED_BITS, 64-bit libraries should always be delivered to
@@ -84,6 +88,7 @@ CONFIGURE_ETCDIR.64 ?= $(ETCDIR)
 CONFIGURE_DEFAULT_DIRS?=yes
 
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+CONFIGURE_ENV += PATH="$(PATH)"
 CONFIGURE_ENV += CC="$(CC)"
 CONFIGURE_ENV += CXX="$(CXX)"
 CONFIGURE_ENV += F77="$(F77)"
@@ -119,7 +124,7 @@ ifeq ($(CONFIGURE_DEFAULT_DIRS),yes)
 CONFIGURE_OPTIONS += --bindir="$(CONFIGURE_BINDIR.$(BITS))"
 CONFIGURE_OPTIONS += --sbindir="$(CONFIGURE_SBINDIR.$(BITS))"
 CONFIGURE_OPTIONS += --libdir="$(CONFIGURE_LIBDIR.$(BITS))"
-CONFIGURE_OPTIONS += --libexecdir="$(CONFIGURE_LIBDIR.32)"
+CONFIGURE_OPTIONS += --libexecdir="$(CONFIGURE_LIBEXECDIR.$(BITS))"
 CONFIGURE_OPTIONS += --localstatedir="$(VARDIR)"
 CONFIGURE_OPTIONS += --mandir="$(CONFIGURE_MANDIR)"
 CONFIGURE_OPTIONS += --sysconfdir="$(CONFIGURE_ETCDIR.$(BITS))"
@@ -158,7 +163,20 @@ ifeq   ($(strip $(BUILD_STYLE)),meson)
 configure:	$(CONFIGURE_$(MK_BITS))
 endif
 
-REQUIRED_PACKAGES += developer/build/meson
+USERLAND_REQUIRED_PACKAGES += developer/build/meson
+
+MESON_TEST_TRANSFORMS = \
+	'-n ' \
+	'-e "/Ok:/p" ' \
+	'-e "/Fail:/p" ' \
+	'-e "/Pass:/p" ' \
+	'-e "/Skipped:/p" ' \
+	'-e "/Timeout:/p" '
+
+USE_DEFAULT_TEST_TRANSFORMS?=no
+ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)
+COMPONENT_TEST_TRANSFORMS+= $(MESON_TEST_TRANSFORMS)
+endif
 
 # Meson generates build.ninja files for the ninja build tool to run,
 # so we include ninja.mk for the build/install/test rules

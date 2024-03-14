@@ -1,0 +1,141 @@
+--- hpn-ssh-hpn-18.3.1/configure.ac.orig
++++ hpn-ssh-hpn-18.3.1/configure.ac
+@@ -1656,6 +1656,62 @@
+ 	AC_MSG_RESULT([no])
+ fi
+ 
++# Check whether user wants TCP wrappers support
++TCPW_MSG="no"
++AC_ARG_WITH([tcp-wrappers],
++	[  --with-tcp-wrappers[[=PATH]] Enable tcpwrappers support (optionally in PATH)],
++	[
++		if test "x$withval" != "xno" ; then
++			saved_LIBS="$LIBS"
++			saved_LDFLAGS="$LDFLAGS"
++			saved_CPPFLAGS="$CPPFLAGS"
++			if test -n "${withval}" && \
++			    test "x${withval}" != "xyes"; then
++				if test -d "${withval}/lib"; then
++					if test -n "${need_dash_r}"; then
++						LDFLAGS="-L${withval}/lib -R${withval}/lib ${LDFLAGS}"
++					else
++						LDFLAGS="-L${withval}/lib ${LDFLAGS}"
++					fi
++				else
++					if test -n "${need_dash_r}"; then
++						LDFLAGS="-L${withval} -R${withval} ${LDFLAGS}"
++					else
++						LDFLAGS="-L${withval} ${LDFLAGS}"
++					fi
++				fi
++				if test -d "${withval}/include"; then
++					CPPFLAGS="-I${withval}/include ${CPPFLAGS}"
++				else
++					CPPFLAGS="-I${withval} ${CPPFLAGS}"
++				fi
++			fi
++			LIBS="-lwrap $LIBS"
++			AC_MSG_CHECKING([for libwrap])
++			AC_LINK_IFELSE([AC_LANG_PROGRAM([[
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <netinet/in.h>
++#include <tcpd.h>
++int deny_severity = 0, allow_severity = 0;
++				]], [[
++	hosts_access(0);
++				]])], [
++					AC_MSG_RESULT([yes])
++					AC_DEFINE([LIBWRAP], [1],
++						[Define if you want
++						TCP Wrappers support])
++					SSHDLIBS="$SSHDLIBS -lwrap"
++					TCPW_MSG="yes"
++				], [
++					AC_MSG_ERROR([*** libwrap missing])
++
++			])
++			LIBS="$saved_LIBS"
++		fi
++	]
++)
++
+ # Check whether user wants to use ldns
+ LDNS_MSG="no"
+ AC_ARG_WITH(ldns,
+@@ -5683,6 +5739,7 @@
+ echo "                   OSF SIA support: $SIA_MSG"
+ echo "                 KerberosV support: $KRB5_MSG"
+ echo "                   SELinux support: $SELINUX_MSG"
++echo "              TCP Wrappers support: $TCPW_MSG"
+ echo "                   libedit support: $LIBEDIT_MSG"
+ echo "                   libldns support: $LDNS_MSG"
+ echo "  Solaris process contract support: $SPC_MSG"
+--- hpn-ssh-hpn-18.3.1/hpnsshd.8.orig
++++ hpn-ssh-hpn-18.3.1/hpnsshd.8
+@@ -924,6 +924,12 @@
+ This file should be writable only by the user, and need not be
+ readable by anyone else.
+ .Pp
++.It Pa /etc/hosts.allow
++.It Pa /etc/hosts.deny
++Access controls that should be enforced by tcp-wrappers are defined here.
++Further details are described in
++.Xr hosts_access 5 .
++.Pp
+ .It Pa /etc/hosts.equiv
+ This file is for host-based authentication (see
+ .Xr hpnssh 1 ) .
+@@ -1053,6 +1059,7 @@
+ .Xr hpnssh-keygen 1 ,
+ .Xr hpnssh-keyscan 1 ,
+ .Xr chroot 2 ,
++.Xr hosts_access 5 ,
+ .Xr login.conf 5 ,
+ .Xr moduli 5 ,
+ .Xr hpnsshd_config 5 ,
+--- hpn-ssh-hpn-18.3.1/sshd.c.orig
++++ hpn-ssh-hpn-18.3.1/sshd.c
+@@ -128,6 +128,17 @@
+ #include "srclimit.h"
+ #include "dh.h"
+ 
++#ifdef LIBWRAP
++#include <tcpd.h>
++#include <syslog.h>
++int allow_severity;
++int deny_severity;
++#endif /* LIBWRAP */
++
++#ifndef O_NOCTTY
++#define O_NOCTTY	0
++#endif
++
+ /* Re-exec fds */
+ #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
+ #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
+@@ -2218,6 +2229,24 @@
+ #ifdef SSH_AUDIT_EVENTS
+ 	audit_connection_from(ssh, remote_ip, remote_port);
+ #endif
++#ifdef LIBWRAP
++	allow_severity = options.log_facility|LOG_INFO;
++	deny_severity = options.log_facility|LOG_WARNING;
++	/* Check whether logins are denied from this host. */
++	if (ssh_packet_connection_is_on_socket(ssh)) {
++		struct request_info req;
++
++		request_init(&req, RQ_DAEMON, __progname, RQ_FILE, sock_in, 0);
++		fromhost(&req);
++
++		if (!hosts_access(&req)) {
++			debug("Connection refused by tcp wrapper");
++			refuse(&req);
++			/* NOTREACHED */
++			fatal("libwrap refuse returns");
++		}
++	}
++#endif /* LIBWRAP */
+ 
+ 	rdomain = ssh_packet_rdomain_in(ssh);
+ 

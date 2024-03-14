@@ -96,10 +96,10 @@ COMPONENT_FONT_TYPE = $(PKGFONTCLS)
 COMPONENT_FONT_NAME = $(COMPONENT_NAME)
 COMPONENT_FONT_PKG  = $(COMPONENT_NAME)
 ifeq ($(strip $(COMPONENT_FONT_TYPE)),)
-COMPONENT_FMRI = \
+COMPONENT_FMRI ?= \
   system/font/$(strip $(COMPONENT_FONT_PKG))
 else
-COMPONENT_FMRI = \
+COMPONENT_FMRI ?= \
   system/font/$(strip $(COMPONENT_FONT_TYPE))/$(strip $(COMPONENT_FONT_PKG))
 endif
 COMPONENT_CLASSIFICATION = System/Fonts
@@ -195,7 +195,7 @@ $(MANIFEST_BASE)-%.font-transforms: %.p5m
 	-p $(PROTO_DIR) -m $< > $@ || ( rm $@ ; exit 1 )
 
 # Package containing fc-scan used in generate_font_metadata.pl
-REQUIRED_PACKAGES	+= system/library/fontconfig
+USERLAND_REQUIRED_PACKAGES += system/library/fontconfig
 # Package containing $(MKFONTSCALE) & $(MKFONTDIR)
-REQUIRED_PACKAGES	+= x11/font-utilities
+USERLAND_REQUIRED_PACKAGES += x11/font-utilities
 

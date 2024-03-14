@@ -53,7 +53,7 @@ $(BUILD_DIR)/%/.installed:	  $(BUILD_DIR)/%/.built
 		$(TOUCH) $@
 
 # test the built source
-$(BUILD_DIR)/%/.tested-and-compared:	$(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested-and-compared:	$(COMPONENT_TEST_DEP)
 		$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 		$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 		$(COMPONENT_PRE_TEST_ACTION)
@@ -69,12 +69,27 @@ $(BUILD_DIR)/%/.tested-and-compared:	$(BUILD_DIR)/%/.built
 		$(COMPONENT_TEST_CLEANUP)
 		$(TOUCH) $@
 
-$(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested:	SHELLOPTS=pipefail
+$(BUILD_DIR)/%/.tested:	$(COMPONENT_TEST_DEP)
+		$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+		$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 		$(COMPONENT_PRE_TEST_ACTION)
 		(cd $(COMPONENT_TEST_DIR) ; \
 				$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 				./Build \
-				$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+				$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
+				|& $(TEE) $(COMPONENT_TEST_OUTPUT)
 		$(COMPONENT_POST_TEST_ACTION)
+		$(COMPONENT_TEST_CREATE_TRANSFORMS)
+		$(COMPONENT_TEST_PERFORM_TRANSFORM)
 		$(COMPONENT_TEST_CLEANUP)
 		$(TOUCH) $@
+
+# Workaround for https://github.com/Perl-Toolchain-Gang/Module-Build/issues/91.
+# Without the workaround we would need to add library/perl-5/module-build as a
+# required package manually to all Perl components with the modulebuild build
+# style.  We do not need the library/perl-5/module-build package to bootstrap
+# the Module::Build module itself.
+ifneq ($(strip $(COMPONENT_PERL_MODULE)),Module::Build)
+USERLAND_REQUIRED_PACKAGES.perl += library/perl-5/module-build
+endif

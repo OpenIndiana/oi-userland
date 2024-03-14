@@ -63,6 +63,7 @@ class Component(object):
                          'dependencies' : self.required_packages }
                 with open(component_pkg5_file, 'w') as f:
                     f.write(json.dumps(data, sort_keys=True, indent=4))
+                    f.write('\n')
             else:
                 with open(component_pkg5_file, 'r') as f:
                     data = json.loads(f.read())
@@ -71,8 +72,6 @@ class Component(object):
                 self.name = data['name']
                 self.supplied_packages = data['fmris']
                 self.required_packages = data['dependencies']
-            if not self.supplied_packages or not self.supplied_packages[0]:
-                raise ValueError('Empty list of supplied FMRIs\npath = ' + self.path)
 
     def required(self, component):
         result = False

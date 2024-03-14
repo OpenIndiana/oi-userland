@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= docbook-dsssl
 COMPONENT_VERSION= 1.79
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	2
 COMPONENT_SUMMARY= Norman Walsh's modular stylesheets for DocBook
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -28,6 +28,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://prdownloads.sourceforge.net/docbook/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=http://docbook.sourceforge.net/
+COMPONENT_FMRI=			data/docbook/dsssl
+COMPONENT_CLASSIFICATION=	System/Text Tools
+COMPONENT_LICENSE=		docbook-dsssl
 
 TEST_TARGET = $(NO_TESTS)
 
@@ -35,8 +38,11 @@ include $(WS_TOP)/make-rules/common.mk
 
 COMPONENT_PREP_ACTION +=(cp $(COMPONENT_DIR)/files/docbook-style-dsssl.Makefile $(@D)/Makefile)
 
-COMPONENT_INSTALL_ARGS = DESTDIR=$(PROTO_DIR)/usr/share/sgml/docbook/dsssl-stylesheets-$(COMPONENT_VERSION)
-COMPONENT_INSTALL_ARGS += BINDIR=$(PROTO_DIR)/usr/bin
+COMPONENT_INSTALL_ARGS = DESTDIR=$(PROTOUSRSHAREDIR)/sgml/docbook/dsssl-stylesheets-$(COMPONENT_VERSION)
+COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRSHAREDIR)/sgml/docbook
+
+COMPONENT_POST_INSTALL_ACTION += \
+	$(SYMLINK) dsssl-stylesheets-$(HUMAN_VERSION) $(PROTOUSRSHAREDIR)/sgml/docbook/dsssl-stylesheets ;
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/perl

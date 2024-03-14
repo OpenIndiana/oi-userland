@@ -19,21 +19,23 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test2::Suite
-HUMAN_VERSION =			0.000145
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.000159
 COMPONENT_SUMMARY =		Test2::Suite - Distribution with a rich set of tools built upon the Test2 framework.
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ed44be739c8879fe178d3107b238f2db960d52797db0058de53be5b84600358b
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:cb7453380d2a70682c450cb6ec44fecd02d1c48674a76d9799903b7f4444cc0e
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/json-maybexs
+
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/importer
-PERL_REQUIRED_PACKAGES += library/perl-5/module-pluggable
-PERL_REQUIRED_PACKAGES += library/perl-5/scope-guard
-PERL_REQUIRED_PACKAGES += library/perl-5/sub-info
 PERL_REQUIRED_PACKAGES += library/perl-5/term-table
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/module-pluggable
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/term-size-any
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/termreadkey
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/unicode-linebreak

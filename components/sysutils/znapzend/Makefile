@@ -19,7 +19,7 @@ BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		znapzend
-COMPONENT_VERSION =		0.21.1
+COMPONENT_VERSION =		0.21.2
 COMPONENT_SUMMARY =		zfs backup with remote capabilities and mbuffer integration
 COMPONENT_DESCRIPTION =		ZnapZend is a ZFS centric backup tool. It relies on snapshot,\
  send and receive to do its work. It has the built-in ability to manage both local\
@@ -29,7 +29,7 @@ COMPONENT_DESCRIPTION =		ZnapZend is a ZFS centric backup tool. It relies on sna
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1b438816a9a647a5bb3282ad26a6a8cd3ecce0a874f2fb506cbc156527e188f7
+	sha256:c3753d663c2f4d87f87da0191441c5cd2cb32aca7ded913d97565472413e3823
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/oetiker/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =		https://github.com/oetiker/$(COMPONENT_NAME)
@@ -57,10 +57,8 @@ COMPONENT_TEST_TRANSFORMS += "-e '/\<ok\>/p'"
 # We are not able to detect these dependencies automatically.
 # The list is based on $(SOURCE_DIR)/cpanfile.
 REQUIRED_PACKAGES += library/perl-5/mojolicious
-REQUIRED_PACKAGES += library/perl-5/mojo-ioloop-forkcall
-REQUIRED_PACKAGES += library/perl-5/test-sharedfork
-REQUIRED_PACKAGES += library/perl-5/test-exception
+REQUIRED_PACKAGES += library/perl-5/mojo-log-clearable
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl

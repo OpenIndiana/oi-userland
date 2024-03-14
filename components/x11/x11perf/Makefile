@@ -18,12 +18,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    x11perf
-COMPONENT_VERSION= 1.6.1
-COMPONENT_FMRI=    benchmark/x11perf
+COMPONENT_VERSION= 1.6.2
 COMPONENT_SUMMARY= x11perf - X11 server performance test program
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_URL= $(XORG_TEST_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:5a0e7cea47716ad07ceca38bbd07ae06459ee4d837b9c9dfc21ccb94e3e24fcc
+COMPONENT_FMRI=    benchmark/x11perf
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_ARCHIVE_HASH= \
-  sha256:1c7e0b8ffc2794b4ccf11e04d551823abe0ea47b4f7db0637390db6fbe817c34
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -31,7 +32,7 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --localstatedir=/var
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

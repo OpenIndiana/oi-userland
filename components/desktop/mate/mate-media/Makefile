@@ -22,19 +22,18 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-media
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		1
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	1
 COMPONENT_SUMMARY=	Multimedia applications for the MATE desktop
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:8b731b203fd8219ccc2f2ced40e4301823a17f7940acf3cec72b4494a3fe3c3a
-COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
+COMPONENT_ARCHIVE_HASH= sha256:bcdc102e22f63f55e63166d5c708e91c113570e6a30a874345a88609e83a9912
 COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
+REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

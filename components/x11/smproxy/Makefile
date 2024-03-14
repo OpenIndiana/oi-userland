@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     smproxy
-COMPONENT_VERSION=  1.0.6
-COMPONENT_REVISION= 1
-COMPONENT_FMRI=     x11/session/smproxy
+COMPONENT_VERSION=  1.0.7
 COMPONENT_SUMMARY=  X Window System Session Manager Proxy
-COMPONENT_ARCHIVE_HASH= \
-  sha256:6cf19155a2752237f36dbf8bc4184465ea190d2652f887faccb4e2a6ebf77266
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:4aa99237cc9dab7d87ce9bc7cca4116674a853b5f08dfe3f9db1bb2b2cf9f305
+COMPONENT_FMRI=     x11/session/smproxy
 
 include $(WS_MAKE_RULES)/common.mk
 

@@ -30,6 +30,8 @@ GIT_REPO=https://github.com/OpenIndiana/time-slider
 GIT_BRANCH=master
 GIT_CHANGESET=HEAD
 
+SINGLE_PYTHON_VERSION = yes
+
 PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_GIT=no
@@ -66,6 +68,8 @@ install: $(INSTALL_32)
 
 download:: $(SOURCE_DIR)/.downloaded
 
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += shell/ksh93

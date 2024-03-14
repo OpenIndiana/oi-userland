@@ -13,41 +13,34 @@
 # Copyright 2016 phorcys@126.com.  All rights reserved.
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libplist
-COMPONENT_VERSION= 1.12
+COMPONENT_VERSION= 2.3.0
+COMPONENT_SUMMARY= A library to handle Apple Property List format in binary or XML
+COMPONENT_PROJECT_URL = https://github.com/libimobiledevice/libplist
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:55ec210e7487dce1f86a35c2fb073bc556c7c6d3378de50fbe4fb2e6b1244d94
+COMPONENT_ARCHIVE_URL=	https://cgit.libimobiledevice.org/libplist.git/snapshot/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = library/libplist
 COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_PROJECT_URL = https://github.com/libimobiledevice/libplist
-COMPONENT_SUMMARY= A library to handle Apple Property List format in binary or XML
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:b8e860ef2e01154e79242438252b2a7ed185df351f02c167147a8a602a0aa63e
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/libimobiledevice/libplist/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE = GPLv2,LGPLv2.1
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION= \
-    ( cd  $(@D) && NOCONFIGURE=true sh autogen.sh )
+# Without .tarball-version the build fails because of undefined PKG_VERSION.
+COMPONENT_PREP_ACTION= ( cd  $(@D) && echo -n "$(COMPONENT_VERSION)" > .tarball-version  && NOCONFIGURE=true PATH="$(PATH.gnu)" sh autogen.sh )
 
-CFLAGS += $($(COMPILER)_PIC)
+CONFIGURE_OPTIONS += --disable-static
 
-CONFIGURE_OPTIONS+= --disable-static
+unexport SHELLOPTS
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

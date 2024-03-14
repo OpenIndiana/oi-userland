@@ -22,43 +22,57 @@
 # Copyright (c) 2018, Michal Nowak
 # Copyright (c) 2022, Niklas Poslovski
 #
-BUILD_BITS= 64_and_32
-USE_COMMON_TEST_MASTER= no
-USE_OPENSSL11= yes
+
+BUILD_BITS= 64
+OPENSSL_VERSION= 3.1
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      7.85.0
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      8.6.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:88b54a6d4b9a48cb4d873c7056dcba997ddd5b7be5a2d537a4acb55c20b04be6
+COMPONENT_ARCHIVE_HASH= sha256:3ccd55d91af9516539df80625f818c734dc6f2ecf9bada33c76765e99121db15
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE).asc
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_SIG_URL=  	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      CURL
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Community code uses different defs
-$(BUILD_DIR_32)/.configured:   CPPFLAGS += -D__ILP32=32
+#$(BUILD_DIR_32)/.configured:   CPPFLAGS += -D__ILP32=32
 $(BUILD_DIR_64)/.configured:   CPPFLAGS += -D__LP64=64
 
-GSSAPI_LIBDIR_32 = /usr/lib
-GSSAPI_LIBDIR_64 = /usr/lib/$(MACH64)
+CPPFLAGS += $(CPP_LARGEFILES)
+CPPFLAGS += $(CC_PIC_ENABLE)
+CPPFLAGS += -DNAME_MAX=256
 
-CFLAGS += $(CPP_LARGEFILES)
+CPPFLAGS += -I/usr/include/openldap
+CPPFLAGS += $(shell pkg-config --cflags libidn2)
+# GSS MECH's API is in /usr/include/kerberosv5/gssapi/
+CPPFLAGS += $(shell krb5-config --cflags)
+LIBS     += $(shell krb5-config --libs gssapi)
 
-OPENSSL_VERSION=1.1
+#GSSAPI_LIBDIR_32= /usr/lib
+GSSAPI_LIBDIR_64= /usr/lib/$(MACH64)
+
+LDFLAGS += -m$(BITS)
+LDFLAGS += $(LD_Z_DEFS)
+
 CONFIGURE_ENV += CFLAGS="-I$(OPENSSL_INCDIR) $(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="-I$(OPENSSL_INCDIR) $(CPPFLAGS) -I/usr/include/openldap"
 
 CONFIGURE_OPTIONS += LDFLAGS="-L$(OPENSSL_LIBDIR.$(BITS)) $(LDFLAGS)"
-CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
+CONFIGURE_OPTIONS += --disable-dependency-tracking
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp
 CONFIGURE_OPTIONS += --enable-file --enable-dict
 CONFIGURE_OPTIONS += --enable-manual --disable-libgcc
@@ -71,6 +85,8 @@ CONFIGURE_OPTIONS += --disable-sspi --enable-crypto-auth
 CONFIGURE_OPTIONS += --enable-cookies --disable-hidden-symbols
 CONFIGURE_OPTIONS += --disable-soname-bump
 CONFIGURE_OPTIONS += --enable-ldap --with-random=/dev/urandom
+CONFIGURE_OPTIONS += --enable-ares
+CONFIGURE_OPTIONS += --enable-websockets
 CONFIGURE_OPTIONS += --with-openssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --with-ldap-lib=ldap_r-2.4
 CONFIGURE_OPTIONS += --with-lber-lib=lber-2.4
@@ -84,10 +100,8 @@ CONFIGURE_OPTIONS += --with-libssh2
 CONFIGURE_OPTIONS += --without-librtmp
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
-#LINT_FLAGS += -I$(SOURCE_DIR)/include
-
 # Generate configuration scripts form .am-files
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -fi)
+COMPONENT_PREP_ACTION= (cd $(@D) ; PATH="$(PATH)" autoreconf -fi)
 
 ENV = /usr/bin/env -i
 COMPONENT_TEST_ENV += CC="$(CC)"
@@ -95,31 +109,25 @@ COMPONENT_TEST_ENV += USER=`id -un`
 COMPONENT_TEST_ENV += PATH="$(GCC_ROOT)/bin:$(GNUBIN):$(PATH)"
 COMPONENT_TEST_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_TEST_ENV += LC_ALL=C
-COMPONENT_TEST_ARGS+= -k -i
+COMPONENT_TEST_ARGS += -k -i
 
 # Only the #'s of passed/failed tests are verified for change
+# Note that we have many broken tests if valgrind is installed.
 COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "s/ during [0-9][0-9]* seconds.//" ' \
-	'-e "/TESTDONE:/p" ' \
-	'-e "/TESTFAIL:/p" ' \
-	'-e "/ TOTAL:/p" ' \
-	'-e "/ PASS:/p" ' \
-	'-e "/ SKIP:/p" ' \
-	'-e "/ XFAIL:/p" ' \
-	'-e "/ FAIL:/p" ' \
-	'-e "/ XPASS:/p" ' \
-	'-e "/ ERROR:/p" '
+	'-e "s/ during [0-9]* seconds.//" ' \
+	'-e "/TESTDONE:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
+REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libgsasl
 REQUIRED_PACKAGES += library/libidn2
+REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

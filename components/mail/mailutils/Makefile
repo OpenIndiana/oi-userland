@@ -23,24 +23,25 @@
 # Copyright 2021, Klaus Ziegler
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mailutils
-COMPONENT_VERSION=	3.15
+COMPONENT_VERSION=	3.17
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU-mailutils provides IMAP4D LMTPD MDA POP3D servers and various mail programs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:b7d0c286c352fcc7da7978cfd617cc66736b21fa891aa4f88855f516354f2ddb
+COMPONENT_ARCHIVE_HASH=	sha256:fa49bacec37566fe52f88221d3871673a633aeee0cd923cc3a8e65bbef2b84e9
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://mailutils.org/
+COMPONENT_FMRI=		mail/mailutils
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv3,LGPLv3
-COMPONENT_FMRI=		mail/mailutils
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION=	3.9
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+
 CONFIGURE_ENV += PYTHON_CONFIG=/usr/bin/python3.9-config
 
 # cpp flags.
@@ -49,17 +50,17 @@ CONFIGURE_ENV += CPPFLAGS="-I/usr/include/openldap \
 		-I$(PG_HOME)/include"
 
 # library link flags.
-CONFIGURE_ENV += LIBS="-lldap-2.4"
+CONFIGURE_ENV += LIBS="-lldap-2.6"
 # needed for 01-pg-mariadb.patch
-CONFIGURE_ENV += MYSQL_LIB="$(MYSQL_HOME)/lib/$(MACH64)"
-CONFIGURE_ENV += PG_LIB="$(PG_LIBDIR.64)"
+CONFIGURE_ENV += MYSQL_LIB="$(MYSQL_LIBDIR)"
+CONFIGURE_ENV += PG_LIB="$(PG_LIBDIR)"
 
-CONFIGURE_OPTIONS  +=		--libexecdir=/usr/gnu/libexec
-CONFIGURE_OPTIONS  +=		--enable-static=no
-CONFIGURE_OPTIONS  +=		--with-ldap
-CONFIGURE_OPTIONS  +=		--with-mysql
-CONFIGURE_OPTIONS  +=		--with-postgres
-CONFIGURE_OPTIONS  +=		--with-pythondir=$(PYTHON_LIB)
+CONFIGURE_OPTIONS += --libexecdir=/usr/libexec
+CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --with-ldap
+CONFIGURE_OPTIONS += --with-mysql
+CONFIGURE_OPTIONS += --with-postgres
+CONFIGURE_OPTIONS += --with-pythondir=$(PYTHON_LIB)
 
 COMPONENT_POST_INSTALL_ACTION = \
 	( cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/mailutils ; \
@@ -67,17 +68,48 @@ COMPONENT_POST_INSTALL_ACTION = \
 	  cd $(PROTOUSRSHAREDIR)/info ; rm dir )
 
 COMPONENT_TEST_TRANSFORMS= \
-	'-e "/^\/usr\/gnu\/bin\/make/d" ' \
-	'-e "/^make/d" ' \
-	'-e "/^Making/d" '
+	' -n ' \
+	' -e "/^Auxiliary/p" ' \
+	' -e "/^Basic/p" ' \
+	' -e "/^Conversions/p" ' \
+	' -e "/^Word/p" ' \
+	' -e "/^Command/p" ' \
+	' -e "/^Standard/p" ' \
+	' -e "/^Stream/p" ' \
+	' -e "/^List/p" ' \
+	' -e "/^Email/p" ' \
+	' -e "/^Variable/p" ' \
+	' -e "/^URL/p" ' \
+	' -e "/^Reconstructed/p" ' \
+	' -e "/^Mailcap/p" ' \
+	' -e "/^Wicket/p" ' \
+	' -e "/^Property/p" ' \
+	' -e "/^File/p" ' \
+	' -e "/^Base64/p" ' \
+	' -e "/^RFC/p" ' \
+	' -e "/^Filters/p" ' \
+	' -e "/^crlf/p" ' \
+	' -e "/^Debug/p" ' \
+	' -e "/^IMAP/p" ' \
+	' -e "/^Message/p" ' \
+	' -e "/^mu_scan/p" ' \
+	' -e "/^mu_c/p" ' \
+	' -e "/^Globbing/p" ' \
+	' -e "/^Line/p" ' \
+	' -e "/^Locking/p" ' \
+	' -e "/ok/p" ' \
+	' -e "/FAILED/p" ' \
+	' -e "/failed/p" ' \
+	' -e "/^ERROR/p" '
 
 # build dependencies.
 REQUIRED_PACKAGES += editor/gnu-emacs
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/berkeleydb-5
-REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/gnutls-3
@@ -87,7 +119,6 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		WWW::RobotRules
 HUMAN_VERSION =			6.02
-COMPONENT_REVISION =		3
+COMPONENT_REVISION =		4
 COMPONENT_SUMMARY =		WWW::RobotRules - database of robots.txt-derived permissions
 COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\

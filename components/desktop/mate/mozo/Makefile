@@ -16,27 +16,31 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-MATE_CATEGORY=	APP
+MATE_CATEGORY= APP
+BUILD_STYLE= meson
 include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mozo
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	0
 COMPONENT_SUMMARY=	Simple menu editor for MATE
-COMPONENT_ARCHIVE_HASH=	sha256:0f24429a3b037bd0688ec4c391d9d8781e42b23ef345f5e50af1e72c5ef2fa39
+COMPONENT_ARCHIVE_HASH=	sha256:fe98984ffd6aa8c36d0594bcefdba03de39b42d41e007251680384f3cef44924
 COMPONENT_FMRI=		desktop/xdg/menu-editor/mozo
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
 COMPONENT_LICENSE= LGPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV+= PYTHON=$(PYTHON.3.5.64)
-CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.3.5.VENDOR_PACKAGES.64)"
+# Move Python modules from site-packages directory to vendor-packages directory
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
+
+PYTHON_SCRIPTS += usr/bin/mozo
 
 # Build requirements
-REQUIRED_PACKAGES += library/python/pygobject-3
-REQUIRED_PACKAGES += library/python/pygobject-3-35
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-35
+PYTHON_REQUIRED_PACKAGES += runtime/python

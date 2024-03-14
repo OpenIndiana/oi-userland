@@ -1,0 +1,23 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest .
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 5 items
+
+test_pytest_reporter.py::test_file_is_saved PASSED
+test_pytest_reporter.py::test_status PASSED
+test_pytest_reporter.py::test_tests PASSED
+test_pytest_reporter.py::test_top_level_context PASSED
+test_pytest_reporter.py::test_xdist_loadgroup PASSED
+
+=============================== warnings summary ===============================
+test_pytest_reporter.py::test_xdist_loadgroup
+  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:46: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
+    warner(PytestBenchmarkWarning(text))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 5 passed, 1 warning ========
+  py$(PYV): OK
+  congratulations :)

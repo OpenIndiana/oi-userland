@@ -12,36 +12,32 @@
 # Copyright 2013 - 2016 Adam Stevko. All rights reserved.
 #
 
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pciutils
-COMPONENT_VERSION=	3.7.0
+COMPONENT_VERSION=	3.10.0
+COMPONENT_SUMMARY=	The PCI Utilities are a collection of programs for inspecting and manipulating configuration of PCI devices
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH =	sha256:08c27e01030d1fcc700d02bc2ea66c638f58a3d150e45e58852aa82ad4160d84
+COMPONENT_ARCHIVE_HASH =	sha256:7deabe38ae5fa88a96a8c4947975cf31c591506db546e9665a10dddbf350ead0
 COMPONENT_ARCHIVE_URL =		https://mj.ucw.cz/download/linux/pci/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =		https://mj.ucw.cz/sw/pciutils/
 COMPONENT_FMRI=		system/pciutils
 COMPONENT_CLASSIFICATION =	System/Hardware
-COMPONENT_SUMMARY=	The PCI Utilities are a collection of programs for inspecting and manipulating configuration of PCI devices
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-BUILD_STYLE =	justmake
-
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+PATH = $(PATH.gnu)
+
 COMPONENT_BUILD_ARGS += CC=$(CC)
-COMPONENT_BUILD_ARGS += OPT="-O2 -DBYTE_ORDER=1234 -DLITTLE_ENDIAN=1234"
+COMPONENT_BUILD_ARGS += OPT="-DBYTE_ORDER=1234 -DLITTLE_ENDIAN=1234"
 COMPONENT_BUILD_ARGS += PREFIX="/usr"
 
 COMPONENT_INSTALL_ARGS += PREFIX="/usr"
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib

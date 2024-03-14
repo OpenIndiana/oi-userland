@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2021 <contributor>
+# Copyright 2023 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,53 +23,62 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python3.9/vendor-packages/isort-$(COMPONENT_VERSION)-py3.9.egg-info/PKG-INFO
-file path=usr/lib/python3.9/vendor-packages/isort-$(COMPONENT_VERSION)-py3.9.egg-info/SOURCES.txt
-file path=usr/lib/python3.9/vendor-packages/isort-$(COMPONENT_VERSION)-py3.9.egg-info/dependency_links.txt
-file path=usr/lib/python3.9/vendor-packages/isort-$(COMPONENT_VERSION)-py3.9.egg-info/top_level.txt
-file path=usr/lib/python3.9/vendor-packages/isort/__init__.py
-file path=usr/lib/python3.9/vendor-packages/isort/__main__.py
-file path=usr/lib/python3.9/vendor-packages/isort/_future/__init__.py
-file path=usr/lib/python3.9/vendor-packages/isort/_future/_dataclasses.py
-file path=usr/lib/python3.9/vendor-packages/isort/_vendored/toml/__init__.py
-file path=usr/lib/python3.9/vendor-packages/isort/_vendored/toml/decoder.py
-file path=usr/lib/python3.9/vendor-packages/isort/_vendored/toml/encoder.py
-file path=usr/lib/python3.9/vendor-packages/isort/_vendored/toml/ordered.py
-file path=usr/lib/python3.9/vendor-packages/isort/_vendored/toml/tz.py
-file path=usr/lib/python3.9/vendor-packages/isort/_version.py
-file path=usr/lib/python3.9/vendor-packages/isort/api.py
-file path=usr/lib/python3.9/vendor-packages/isort/comments.py
-file path=usr/lib/python3.9/vendor-packages/isort/core.py
-file path=usr/lib/python3.9/vendor-packages/isort/deprecated/__init__.py
-file path=usr/lib/python3.9/vendor-packages/isort/deprecated/finders.py
-file path=usr/lib/python3.9/vendor-packages/isort/exceptions.py
-file path=usr/lib/python3.9/vendor-packages/isort/files.py
-file path=usr/lib/python3.9/vendor-packages/isort/format.py
-file path=usr/lib/python3.9/vendor-packages/isort/hooks.py
-file path=usr/lib/python3.9/vendor-packages/isort/identify.py
-file path=usr/lib/python3.9/vendor-packages/isort/io.py
-file path=usr/lib/python3.9/vendor-packages/isort/literal.py
-file path=usr/lib/python3.9/vendor-packages/isort/logo.py
-file path=usr/lib/python3.9/vendor-packages/isort/main.py
-file path=usr/lib/python3.9/vendor-packages/isort/output.py
-file path=usr/lib/python3.9/vendor-packages/isort/parse.py
-file path=usr/lib/python3.9/vendor-packages/isort/place.py
-file path=usr/lib/python3.9/vendor-packages/isort/profiles.py
-file path=usr/lib/python3.9/vendor-packages/isort/pylama_isort.py
-file path=usr/lib/python3.9/vendor-packages/isort/sections.py
-file path=usr/lib/python3.9/vendor-packages/isort/settings.py
-file path=usr/lib/python3.9/vendor-packages/isort/setuptools_commands.py
-file path=usr/lib/python3.9/vendor-packages/isort/sorting.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/__init__.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/all.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/py2.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/py27.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/py3.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/py35.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/py36.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/py37.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/py38.py
-file path=usr/lib/python3.9/vendor-packages/isort/stdlibs/py39.py
-file path=usr/lib/python3.9/vendor-packages/isort/utils.py
-file path=usr/lib/python3.9/vendor-packages/isort/wrap.py
-file path=usr/lib/python3.9/vendor-packages/isort/wrap_modes.py
+file path=usr/bin/isort-$(PYVER)
+file path=usr/bin/isort-identify-imports-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/isort-$(HUMAN_VERSION).dist-info/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/isort-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/isort-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/isort-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/_vendored/tomli/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/_vendored/tomli/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/_vendored/tomli/_parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/_vendored/tomli/_re.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/_vendored/tomli/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/comments.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/deprecated/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/deprecated/finders.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/files.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/format.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/hooks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/identify.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/io.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/literal.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/logo.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/main.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/output.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/parse.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/place.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/profiles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/pylama_isort.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/sections.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/settings.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/setuptools_commands.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/sorting.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/all.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py27.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py3.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py310.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py311.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py312.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py36.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py37.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py38.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/stdlibs/py39.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/wrap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/isort/wrap_modes.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata

@@ -13,14 +13,14 @@
 # Copyright (c) 2022 Friedrich Kink
 #
 
-BUILD_BITS=		64
 USE_OPENSSL11=		yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.1-ext-mongodb
 COMPONENT_VERSION=	1.12.0
-COMPONENT_PROJECT_URL=	https://pecl.php.net/package/mongodb
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	MongoDB driver for PHP
+COMPONENT_PROJECT_URL=	https://pecl.php.net/package/mongodb
 COMPONENT_SRC=		mongodb-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:0d9f670b021288bb6c9b060979f191f1da773d729100673166f38b617e24317e
@@ -51,7 +51,12 @@ CONFIGURE_OPTIONS  +=   --datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS  +=   --mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS  +=   --localstatedir=$(PHP_DATADIR)
 
-CONFIGURE_OPTIONS  +=	--build=x86_64-pc-solaris2.10
+ifeq ($(strip $(MACH)),i386)
+CONFIGURE_OPTIONS  +=	--build=x86_64-pc-solaris$(SOLARIS_VERSION)
+else
+CONFIGURE_OPTIONS  +=	--build=sparcv9-sun-solaris$(SOLARIS_VERSION)
+endif
+
 CONFIGURE_OPTIONS  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
 
 CFLAGS             +=	-I$(PHP_PREFIX)/include -I/usr/include/pcre

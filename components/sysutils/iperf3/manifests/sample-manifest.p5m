@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,9 +25,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/iperf3
 file path=usr/include/iperf_api.h
-file path=usr/lib/libiperf.a
-link path=usr/lib/libiperf.so target=libiperf.so.0.0.0
-link path=usr/lib/libiperf.so.0 target=libiperf.so.0.0.0
-file path=usr/lib/libiperf.so.0.0.0
+link path=usr/lib/$(MACH64)/libiperf.so target=libiperf.so.0.0.0
+link path=usr/lib/$(MACH64)/libiperf.so.0 target=libiperf.so.0.0.0
+file path=usr/lib/$(MACH64)/libiperf.so.0.0.0
 file path=usr/share/man/man1/iperf3.1
 file path=usr/share/man/man3/libiperf.3

@@ -21,78 +21,78 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2023 Friedrich Kink
 #
 
-# build 64-bit only
-BUILD_BITS =	64
-
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		graphviz
-COMPONENT_VERSION =		2.50.0
-COMPONENT_PROJECT_URL =		https://www.graphviz.org/
-COMPONENT_CLASSIFICATION =	Applications/System Utilities
-COMPONENT_LICENSE_FILE =	COPYING
-COMPONENT_LICENSE =		EPL1.0
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH = \
-    sha256:6b16bf990df114195be669773a1dae975dbbffada45e1de2849ddeb5851bb9a8
-COMPONENT_ARCHIVE_URL = \
-    https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=			graphviz
+COMPONENT_VERSION=		10.0.1
+COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
+            simple text language, and make diagrams in useful formats, such as images and SVG \
+            for web pages, PDF or PostScript for inclusion in other documents; or display in an \
+            interactive graph browser.  Graphviz has many useful features for concrete diagrams, \
+            such as options for colors, fonts, tabular node layouts, line styles, hyperlinks, \
+            and custom shapes.
+COMPONENT_SUMMARY=		Graph visualization software
+COMPONENT_PROJECT_URL=	https://www.graphviz.org/
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:7bd8064a94bc178862aa0fbb0ed2236f49c188b2fd656487247c58db3019fe21
+COMPONENT_ARCHIVE_URL=	https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			image/graphviz
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=		EPL1.0
+COMPONENT_LICENSE_FILE=	COPYING
 
+# no usable tests available
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# explicit versions
-PERL_VERSION =		5.34
-PYTHON_VERSION =	3.9
-RUBY_VERSION =		2.6
+RUBY_VERSION= 3.2
+RUBY= /usr/bin/ruby32
 
-# preparation
-COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
-				aclocal && \
-				autoconf -f -I m4 && \
-				autoheader && \
-				automake --add-missing)
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D) && libtoolize -cf && \
+	aclocal && \
+	autoconf -f -I m4 && \
+	autoheader && \
+	automake --add-missing)
 
 # configure
-CONFIGURE_ENV +=	LIBPOSTFIX="/$(MACH64)"
+CONFIGURE_ENV += LIBPOSTFIX="/$(MACH64)"
 # --with-javaincludedir allows for only one directory and we need two
-CONFIGURE_ENV +=	JAVA_INCLUDES="-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris"
-CONFIGURE_ENV +=	PERL=$(PERL)
-CONFIGURE_ENV +=	PYTHON=$(PYTHON)
-CONFIGURE_ENV +=	RUBY=$(RUBY)
-CONFIGURE_ENV +=	RUBY_VER=$(RUBY_VERSION)
-CONFIGURE_OPTIONS +=	--disable-man-pdfs
-CONFIGURE_OPTIONS +=	--disable-sharp
-CONFIGURE_OPTIONS +=	--disable-go
-CONFIGURE_OPTIONS +=	--disable-guile
-CONFIGURE_OPTIONS +=	--disable-php
-CONFIGURE_OPTIONS +=	--disable-python
-CONFIGURE_OPTIONS +=	--enable-python3
-CONFIGURE_OPTIONS +=	--disable-r
-CONFIGURE_OPTIONS +=	--enable-lefty
-CONFIGURE_OPTIONS +=	--without-included-ltdl
-CONFIGURE_OPTIONS +=	--without-devil
-CONFIGURE_OPTIONS +=	--without-visio
-CONFIGURE_OPTIONS +=	--without-lasi
-CONFIGURE_OPTIONS +=	--without-gtkgl
-CONFIGURE_OPTIONS +=	--without-gtkglext
-CONFIGURE_OPTIONS +=	--without-ann
-CONFIGURE_OPTIONS +=	--without-qt
-CONFIGURE_OPTIONS +=	--without-smyrna
+CONFIGURE_ENV += JAVA_INCLUDES="-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris"
+CONFIGURE_ENV += PERL=$(PERL)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+CONFIGURE_ENV += RUBY=$(RUBY)
+CONFIGURE_ENV += RUBY_VER=$(RUBY_VERSION)
 
-# graphviz.7 -> graphviz.5
-COMPONENT_POST_INSTALL_ACTION += \
-	$(RM) -r $(PROTOUSRSHAREMAN5DIR) ; \
-	$(MV) $(PROTOUSRSHAREMANDIR)/man7 $(PROTOUSRSHAREMAN5DIR) ; \
-	$(MV) $(PROTOUSRSHAREMAN5DIR)/graphviz.7 \
-	    $(PROTOUSRSHAREMAN5DIR)/graphviz.5 ;
+CONFIGURE_OPTIONS += --disable-dependency-tracking
+CONFIGURE_OPTIONS += --disable-man-pdfs
+CONFIGURE_OPTIONS += --disable-sharp
+#CONFIGURE_OPTIONS += --disable-go
+CONFIGURE_OPTIONS += --disable-ocaml
+CONFIGURE_OPTIONS += --enable-php
+CONFIGURE_OPTIONS += --disable-python
+CONFIGURE_OPTIONS += --enable-python3
+CONFIGURE_OPTIONS += --disable-r
+CONFIGURE_OPTIONS += --enable-lefty
+CONFIGURE_OPTIONS += --without-included-ltdl
+CONFIGURE_OPTIONS += --without-devil
+CONFIGURE_OPTIONS += --without-visio
+CONFIGURE_OPTIONS += --without-lasi
+CONFIGURE_OPTIONS += --without-gtkgl
+CONFIGURE_OPTIONS += --without-gtkglext
+CONFIGURE_OPTIONS += --without-ann
+CONFIGURE_OPTIONS += --without-qt
+CONFIGURE_OPTIONS += --without-smyrna
 
 # fix java, lua, ocaml, python, ruby man pages
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(PROTOUSRSHAREMAN3DIR) ; \
-	for e in java lua ocaml python ruby ; do \
+	for e in java lua ocaml python ruby guile go php perl; do \
 		for f in *.3$$e ; do \
 			$(MV) $$f $${f%.3$$e}-$$e.3 ; \
 		done ; \
@@ -114,20 +114,18 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(RM) -r vendor-packages ; \
 	$(MV) site-packages vendor-packages ;
 
-# no usable tests available
-TEST_TARGET = $(NO_TESTS)
-
 # various build dependencies not detected automatically
-REQUIRED_PACKAGES += developer/java/openjdk8
-REQUIRED_PACKAGES += runtime/ocaml
+REQUIRED_PACKAGES += runtime/java/openjdk17
+#REQUIRED_PACKAGES += runtime/ocaml
 REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += web/php-82
+REQUIRED_PACKAGES += developer/golang
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-#REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/librsvg
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -135,6 +133,7 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libwebp
@@ -142,12 +141,8 @@ REQUIRED_PACKAGES += library/math/gts
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/perl-534
-REQUIRED_PACKAGES += runtime/ruby-26
+REQUIRED_PACKAGES += runtime/ruby-32
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxmu
-REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
-REQUIRED_PACKAGES += x11/library/toolkit/libxt

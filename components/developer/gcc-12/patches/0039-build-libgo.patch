@@ -1,0 +1,37 @@
+PR bootstrap/106472: Add libgo depends on libbacktrace to Makefile.def
+regenerate Makefile.in with autogen after patching; (COMPONENT_PRE_CONFIGURE_ACTION)
+
+diff --git a/Makefile.def b/Makefile.def
+index 72d5854..8804ba6 100644
+--- a/Makefile.def
++++ b/Makefile.def
+@@ -663,6 +663,7 @@ dependencies = { module=configure-target-newlib; on=all-binutils; };
+ dependencies = { module=configure-target-newlib; on=all-ld; };
+ dependencies = { module=configure-target-libgfortran; on=all-target-libquadmath; };
+ dependencies = { module=configure-target-libgfortran; on=all-target-libbacktrace; };
++dependencies = { module=configure-target-libgo; on=all-target-libbacktrace; };
+ 
+ languages = { language=c;	gcc-check-target=check-gcc; };
+ languages = { language=c++;	gcc-check-target=check-c++;
+diff --git a/Makefile.def b/Makefile.def
+index 8804ba6..b6ffd19 100644
+--- a/Makefile.def
++++ b/Makefile.def
+@@ -169,7 +169,7 @@ target_modules = { module= newlib; };
+ target_modules = { module= libgcc; bootstrap=true; no_check=true;
+ 		  missing=TAGS;
+ 		  missing=install-dvi; };
+-target_modules = { module= libbacktrace; bootstrap=true; };
++target_modules = { module= libbacktrace; };
+ target_modules = { module= libquadmath; };
+ target_modules = { module= libgfortran; };
+ target_modules = { module= libobjc;
+@@ -191,7 +191,7 @@ target_modules = { module= rda; };
+ target_modules = { module= libada; };
+ target_modules = { module= libgomp; bootstrap= true; lib_path=.libs; };
+ target_modules = { module= libitm; lib_path=.libs; };
+-target_modules = { module= libatomic; bootstrap=true; lib_path=.libs; };
++target_modules = { module= libatomic; lib_path=.libs; };
+ 
+ // These are (some of) the make targets to be done in each subdirectory.
+ // Not all; these are the ones which don't have special options.

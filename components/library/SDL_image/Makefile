@@ -16,34 +16,26 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL_image
 COMPONENT_VERSION=	1.2.12
-COMPONENT_PROJECT_URL=	http://www.libsdl.org/projects/SDL_image/
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Simple DirectMedia Layer - Sample Image Loading Library
+COMPONENT_PROJECT_URL=	http://www.libsdl.org/projects/SDL_image
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:0b90722984561004de84847744d566809dbb9daf732a9e503b91a1b5a84e5699
-COMPONENT_ARCHIVE_URL=	http://www.libsdl.org/projects/SDL_image/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:0b90722984561004de84847744d566809dbb9daf732a9e503b91a1b5a84e5699
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	image/library/sdl-image
-COMPONENT_LICENSE =	zlib
-COMPONENT_LICENSE_FILE =	COPYING
-COMPONENT_CLASSIFICATION =	System/Multimedia Libraries
+COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
+COMPONENT_LICENSE=	zlib
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS +=	--disable-png-shared
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --disable-png-shared
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libpng16

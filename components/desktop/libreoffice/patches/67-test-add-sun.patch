@@ -1,0 +1,53 @@
+--- a/vcl/qa/cppunit/BitmapTest.cxx	Fri May  6 16:49:44 2022
++++ b/vcl/qa/cppunit/BitmapTest.cxx	Fri Oct 28 16:21:25 2022
+@@ -313,7 +313,7 @@
+         if (SkiaHelper::isVCLSkiaEnabled()) // aligned to 4 bytes
+             CPPUNIT_ASSERT_EQUAL(sal_uInt32(32), pReadAccess->GetScanlineSize());
+         else
+-#if defined LINUX || defined FREEBSD
++#if defined LINUX || defined FREEBSD || defined SUN
+         {
+             CPPUNIT_ASSERT_EQUAL(sal_uInt32(32), pReadAccess->GetScanlineSize());
+         }
+--- a/svx/qa/unit/gallery/test_gallery.cxx	Fri May  6 16:49:44 2022
++++ b/svx/qa/unit/gallery/test_gallery.cxx	Fri Oct 28 16:23:25 2022
+@@ -172,7 +172,7 @@
+     CPPUNIT_ASSERT_MESSAGE("Could not create theme", pGallery->CreateTheme(myThemeName));
+     CPPUNIT_ASSERT_MESSAGE("Could not find theme", pGallery->HasTheme(myThemeName));
+ 
+-#if defined(LINUX)
++#if defined(LINUX) || defined(SUN)
+     CPPUNIT_ASSERT_MESSAGE("[LINUX] Could not find .thm in lowercase",
+                            comphelper::DirectoryHelper::fileExists(
+                                aGalleryURL + "/" + myThemeName.toAsciiLowerCase() + ".thm"));
+--- a/sal/qa/osl/mutex/osl_Mutex.cxx	Fri May  6 16:49:44 2022
++++ b/sal/qa/osl/mutex/osl_Mutex.cxx	Fri Oct 28 16:24:42 2022
+@@ -855,7 +855,7 @@
+                 bRes1 );
+         }
+ 
+-#ifdef LINUX
++#if defined(LINUX) || defined(SUN)
+         void reset_002( )
+         {
+             Mutex aMutex;
+@@ -878,7 +878,7 @@
+ 
+         CPPUNIT_TEST_SUITE(reset);
+         CPPUNIT_TEST(reset_001);
+-#ifdef LINUX
++#if defined(LINUX) || defined(SUN)
+         CPPUNIT_TEST(reset_002);
+ #endif
+         CPPUNIT_TEST_SUITE_END();
+--- a/cppu/qa/cppumaker/test_cppumaker.cxx	Fri May  6 16:49:44 2022
++++ b/cppu/qa/cppumaker/test_cppumaker.cxx	Fri Oct 28 16:25:28 2022
+@@ -445,7 +445,7 @@
+ 
+ //This is a very platform specific test.
+ #if defined __GNUC__ // see CPPU_GCC3_ALIGN
+-#if defined(LINUX) && (defined (X86_64) || defined(X86) || defined(PPC))
++#if (defined(LINUX) || defined(SUN)) && (defined (X86_64) || defined(X86) || defined(PPC))
+     static_assert(
+         sizeof (test::codemaker::cppumaker::AlignmentDerivedStruct) ==
+ #if defined X86_64 || defined PPC

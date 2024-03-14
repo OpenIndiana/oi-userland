@@ -11,35 +11,30 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2023 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	powerman
-COMPONENT_VERSION=	2.3.24
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.3.25
 COMPONENT_SUMMARY=	Powerman - power management software ($(COMPONENT_VERSION))
 COMPONENT_DESCRIPTION=	LLNL CHAOS powerman is free UNIX/Linux software that controls (remotely and in parallel) switched power distribution units
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:d2f08ee1383d417ed14438443fefbad4954a3912de8e8e574a21089927eda2a0
+  sha256:36e98a5a6b1395d8243b5bcaa8a6af42b4ab9411a63d7aa0768b4014ee0f207d
 COMPONENT_ARCHIVE_URL=	\
-  https://github.com/chaos/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
+  https://github.com/chaos/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/chaos/powerman
 COMPONENT_FMRI=	system/management/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	GPLv2+
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-
-COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh )
-
-COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
+CONFIGURE_ENV += CPPFLAGS="-DNETSNMP_DISABLE_MD5"
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
@@ -49,21 +44,21 @@ CONFIGURE_OPTIONS +=	--with-httppower
 CONFIGURE_OPTIONS +=	--with-snmppower
 CONFIGURE_OPTIONS +=	--with-systemdsystemunitdir=no
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/^\# TOTAL/p" ' \
+	'-e "/^\# PASS/p" ' \
+	'-e "/^\# SKIP/p" ' \
+	'-e "/^\# XFAIL/p" ' \
+	'-e "/^\# FAIL/p" ' \
+	'-e "/^\# XPASS/p" ' \
+	'-e "/^\# ERROR/p" '
+
 # libgenders is another CHAOS project that we don't bother to package for now.
 # It is a static cluster configuration database used for cluster configuration
 # management. It is used by a variety of tools and scripts for management of
 # large clusters.
 CONFIGURE_OPTIONS +=	--without-genders
-
-
-build: $(BUILD_32_and_64)
-
-# Ensure configs etc. match 32-bit
-$(INSTALL_32): $(INSTALL_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/management/snmp/net-snmp

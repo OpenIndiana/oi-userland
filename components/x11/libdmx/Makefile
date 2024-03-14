@@ -17,16 +17,16 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libdmx
-COMPONENT_VERSION= 1.1.4
+COMPONENT_VERSION= 1.1.5
 COMPONENT_SUMMARY= X Window System DMX (Distributed Multihead X) extension library
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:35a4e26a8b0b2b4fe36441dca463645c3fa52d282ac3520501a38ea942cbf74f
 COMPONENT_FMRI=    x11/library/libdmx
-COMPONENT_ARCHIVE_HASH= \
-  sha256:253f90005d134fa7a209fbcbc5a3024335367c930adf0f3203e754cf32747243
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=      --disable-static
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

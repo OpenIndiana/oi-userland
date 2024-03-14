@@ -24,13 +24,13 @@
 # Copyright (c) 2020-2022 Nona Hansel
 #
 
-BUILD_BITS=		64
-USE_OPENSSL11=	yes
+BUILD_BITS= 64
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=		1.9.11
-SRC_PATCH_VERSION=	3
+SRC_VERSION=		1.9.15
+SRC_PATCH_VERSION=	5
 SRC_DOT_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo .$(SRC_PATCH_VERSION))
 SRC_P_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo p$(SRC_PATCH_VERSION))
 HUMAN_VERSION=		$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
@@ -38,38 +38,37 @@ COMPONENT_VERSION=	$(SRC_VERSION)$(SRC_DOT_PATCH_VERSION)
 COMPONENT_SUMMARY=	sudo - tool to allow certain tasks to be run as root by ordinary users
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:4687e7d2f56721708f59cca2e1352c056cb23de526c22725615a42bb094f1f70
-COMPONENT_ARCHIVE_URL=	https://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
-COMPONENT_PROJECT_URL=  https://www.sudo.ws/
+COMPONENT_ARCHIVE_HASH= sha256:558d10b9a1991fb3b9fa7fa7b07ec4405b7aefb5b3cb0b0871dbc81e3a88e558
+COMPONENT_PROJECT_URL=  https://www.sudo.ws
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/sudo/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=		security/sudo
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	ISC-like, BSD, zlib license
+COMPONENT_LICENSE_FILE=	LICENSE.md
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV +=	MAKE=$(GMAKE)
+CONFIGURE_ENV += MAKE=$(GMAKE)
 
 COMPONENT_PREP_ACTION = ( cd $(@D)  && autoreconf -vif )
 
-#CONFIGURE_OPTIONS +=	--disable-hardening
-CONFIGURE_OPTIONS +=	--with-ldap
-CONFIGURE_OPTIONS +=	--with-project
-CONFIGURE_OPTIONS +=	--with-rundir=/var/run/sudo
-CONFIGURE_OPTIONS +=	--with-pam 
-CONFIGURE_OPTIONS +=	--with-pam-login
-CONFIGURE_OPTIONS +=	--disable-pam-session
-CONFIGURE_OPTIONS +=	--with-tty-tickets
-CONFIGURE_OPTIONS +=	--without-insults
-CONFIGURE_OPTIONS +=	--without-lecture
-CONFIGURE_OPTIONS +=	--with-ignore-dot
-CONFIGURE_OPTIONS +=	--with-bsm-audit
-CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR64)
-#CONFIGURE_OPTIONS +=	"sudo_cv_var_nroff_opt_Tascii=no"
+CONFIGURE_OPTIONS += --with-ldap
+CONFIGURE_OPTIONS += --with-project
+CONFIGURE_OPTIONS += --with-rundir=/var/run/sudo
+CONFIGURE_OPTIONS += --with-pam 
+CONFIGURE_OPTIONS += --with-pam-login
+CONFIGURE_OPTIONS += --disable-pam-session
+CONFIGURE_OPTIONS += --with-tty-tickets
+CONFIGURE_OPTIONS += --without-insults
+CONFIGURE_OPTIONS += --without-lecture
+CONFIGURE_OPTIONS += --with-ignore-dot
+CONFIGURE_OPTIONS += --with-bsm-audit
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR64)
 
-COMPONENT_BUILD_ENV +=	CC="$(CC)"
-COMPONENT_BUILD_ENV +=	CXX="$(CXX)"
-COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CXX="$(CXX)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_TARGETS = install
 
@@ -85,6 +84,6 @@ COMPONENT_INSTALL_ARGS += INSTALL_OWNER=
 ASLR_MODE = $(ASLR_ENABLE)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

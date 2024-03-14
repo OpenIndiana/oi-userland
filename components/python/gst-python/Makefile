@@ -10,20 +10,19 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
 
 BUILD_STYLE= meson
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-python
-COMPONENT_VERSION=	1.20.3
+COMPONENT_VERSION=	1.22.10
 COMPONENT_SUMMARY=	Python bindings for the GStreamer streaming media framework
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:db348120eae955b8cc4de3560a7ea06e36d6e1ddbaa99a7ad96b59846601cfdc
+COMPONENT_ARCHIVE_HASH= sha256:99e37ea9f7163099734f9b0fce361bc67a0e7a65ffba9bc497127506a3fdedb3
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_CLASSIFICATION= Development/Python
@@ -31,29 +30,20 @@ COMPONENT_FMRI=	library/python/python-gst
 COMPONENT_LICENSE=	LGPL v2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-PYTHON_VERSION=		3.9
-PYTHON_VERSIONS=	3.9
-
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV+=		PYTHON=$(PYTHON)
-CONFIGURE_ENV+=		CPPFLAGS="$(CFLAGS)"
-CONFIGURE_ENV+=		am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_ENV+=		am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_OPTIONS += -Dpygi-overrides-dir=$(PYTHON_VENDOR_PACKAGES)/gi/overrides
 
-# for the tests
-unexport SHELLOPTS
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
+# As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
-	'-e "/^Ran 39 tests/d" '
+	'-e "/^Ok:/,/^Timeout:/p" '
 
 # Build dependencies
-REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library

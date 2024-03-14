@@ -75,3 +75,16 @@
      {
          auto it = filesystemTypes.find(statbuf.f_fstypename);
  
+@@ -2203,10 +2203,10 @@
+ // saturating that quota.
+ m_off_t PosixFileSystemAccess::availableDiskSpace(const LocalPath& drivePath)
+ {
+-    struct statfs buffer;
++    struct statvfs buffer;
+     m_off_t constexpr maximumBytes = std::numeric_limits<m_off_t>::max();
+ 
+-    if (statfs(adjustBasePath(drivePath).c_str(), &buffer) < 0)
++    if (statvfs(adjustBasePath(drivePath).c_str(), &buffer) < 0)
+     {
+         auto result = errno;
+ 

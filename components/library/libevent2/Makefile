@@ -11,22 +11,22 @@
 #
 # Copyright 2021 Gary Mills
 # Copyright 2014 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
 BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent2
-COMPONENT_VERSION=	2.0.22
-COMPONENT_REVISION=	4
-COMPONENT_PROJECT_URL=	http://libevent.org/
+COMPONENT_VERSION=	2.1.12
+COMPONENT_PROJECT_URL=	https://libevent.org/
 COMPONENT_SUMMARY=	An event notification library for event-driven network servers
 COMPONENT_FMRI=         library/libevent2
 COMPONENT_CLASSIFICATION=       System/Libraries
 COMPONENT_SRC=		libevent-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:71c2c49f0adadacfdbe6332a372c38cf9c8b7895bb73dabeaa53cdcc1d4e1fa3
+    sha256:92e6de1be9ec176428fd2367677e61ceffc2ee1cb119035037a27d346b0403bb
 COMPONENT_ARCHIVE_URL=\
 https://github.com/libevent/libevent/releases/download/release-$(COMPONENT_VERSION)-stable/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
@@ -71,6 +71,7 @@ COMPONENT_POST_INSTALL_ACTION= \
 
 # util/getaddrinfo fails (https://github.com/libevent/libevent/issues/134)
 
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/python-39
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,85 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/LICENSE.APACHE
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/LICENSE.BSD
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/__about__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/_elffile.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/_manylinux.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/_musllinux.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/_parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/_structures.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/_tokenizer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/markers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/requirements.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/specifiers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/tags.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/packaging/version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/pyproject_metadata/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/pyproject_metadata/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/pyproject_metadata/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli/_parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli/_re.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli/_types.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli_w/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli_w/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli_w/_writer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/tomli_w/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/_vendor/vendor.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/editable.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/hooks/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/hooks/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/hooks/setuptools.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/hooks/version/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/hooks/version/scm.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/intree.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/macosx_platform.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/sdist.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/structures.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm/backend/wheel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm_backend-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm_backend-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/pdm_backend-$(HUMAN_VERSION).dist-info/licenses/LICENSE
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/importlib-metadata-$(PYV)

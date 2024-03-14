@@ -1,0 +1,16 @@
+Configuration option "--disable-imageProcessor-build" disables use of proprietary libImageProcessor which is delivered
+pre-compiled so unusable for Solaris. Skip linking with ImageProcessor library.
+
+Not for upstream.
+
+--- a/Makefile.am	2019-04-08 13:05:18.000000000 +0200
++++ b/Makefile.am	2019-06-21 16:54:22.681742625 +0200
+@@ -597,7 +597,7 @@ prnt/hpcups/genJPEGStrips.cpp prnt/hpcup
+ 	prnt/hpcups/ImageProcessor.h
+ 
+ hpcups_CXXFLAGS = $(APDK_ENDIAN_FLAG) $(DBUS_CFLAGS)
+-hpcups_LDADD = -L./prnt/hpcups/ -ljpeg -ldl -lImageProcessor -lcups -lcupsimage -lz $(DBUS_LIBS)
++hpcups_LDADD = -L./prnt/hpcups/ -ljpeg -ldl -lcups -lcupsimage -lz $(DBUS_LIBS)
+ #else
+ #hpcupsdir = $(cupsfilterdir)
+ #hpcups_PROGRAMS = hpcups

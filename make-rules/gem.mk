@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+.NOTPARALLEL:
 
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
@@ -74,7 +75,7 @@ COMPONENT_TEST_TARGETS =
 
 # Test the built source.  If the output file shows up in the environment or
 # arguments, don't redirect stdout/stderr to it.
-$(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
@@ -91,13 +92,19 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	$(TOUCH) $@
 
 
+$(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
 $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
+	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
 	(cd $(COMPONENT_TEST_DIR) ; \
 	    $(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 	    $(COMPONENT_TEST_CMD) \
-	    $(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+	    $(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
+	    $(if $(findstring $(COMPONENT_TEST_OUTPUT),$(COMPONENT_TEST_ENV)$(COMPONENT_TEST_ARGS)),,|& $(TEE) $(COMPONENT_TEST_OUTPUT))
 	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 

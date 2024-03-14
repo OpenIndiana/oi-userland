@@ -1,0 +1,366 @@
+diff -rc alpine-2.26/pith/conf.c alpine-2.26.longurl/pith/conf.c
+*** alpine-2.26/pith/conf.c	2022-06-02 18:14:00.491274749 -0600
+--- alpine-2.26.longurl/pith/conf.c	2022-06-02 18:15:09.259106132 -0600
+***************
+*** 3091,3096 ****
+--- 3091,3098 ----
+  	 F_VIEW_SEL_URL, h_config_enable_view_url, PREF_VIEW, 1},
+  	{"enable-msg-view-web-hostnames", "Enable Message View Web Hostname Links",
+  	 F_VIEW_SEL_URL_HOST, h_config_enable_view_web_host, PREF_VIEW, 1},
++ 	{"enable-msg-view-long-url", "Enable Recognition of Long URLS without Delimiter",
++ 	 F_VIEW_LONG_URL, h_config_enable_long_url, PREF_VIEW, 0},
+  	{"enable-msg-view-forced-arrows", "Enable Message View Forced Arrows",
+  	 F_FORCE_ARROWS, h_config_enable_view_arrows, PREF_VIEW, 0},
+  	{"external-command-loads-inline-images-only", NULL,
+diff -rc alpine-2.26/pith/conftype.h alpine-2.26.longurl/pith/conftype.h
+*** alpine-2.26/pith/conftype.h	2022-06-02 18:14:00.491274749 -0600
+--- alpine-2.26.longurl/pith/conftype.h	2022-06-02 18:15:09.259106132 -0600
+***************
+*** 465,470 ****
+--- 465,471 ----
+  	F_VIEW_SEL_ATTACH,
+  	F_VIEW_SEL_URL,
+  	F_VIEW_SEL_URL_HOST,
++ 	F_VIEW_LONG_URL,
+  	F_SCAN_ADDR,
+  	F_FORCE_ARROWS,
+  	F_EXTERNAL_INLINE_IMAGES,
+diff -rc alpine-2.26/pith/mailview.c alpine-2.26.longurl/pith/mailview.c
+*** alpine-2.26/pith/mailview.c	2022-06-02 18:14:00.491274749 -0600
+--- alpine-2.26.longurl/pith/mailview.c	2022-06-02 18:15:09.307106014 -0600
+***************
+*** 1843,1860 ****
+      return(0);
+  }
+  
+  
+  int
+  url_hilite(long int linenum, char *line, LT_INS_S **ins, void *local)
+  {
+      register char *lp, *up = NULL, *urlp = NULL,
+  		  *weburlp = NULL, *mailurlp = NULL;
+!     int		   n, n1, n2, n3, l;
+      char	   buf[256], color[256];
+      HANDLE_S	  *h;
+      URL_HILITE_S  *uh;
+  
+!     for(lp = line; ; lp = up + n){
+  	/* scan for all of them so we can choose the first */
+  	if(F_ON(F_VIEW_SEL_URL,ps_global))
+  	  urlp = rfc1738_scan(lp, &n1);
+--- 1843,1920 ----
+      return(0);
+  }
+  
++ int
++ incomplete_url(char *up, int n, int delim)
++ {
++   char *line, *line2;
++   int rv = 0, len;
++ 
++   if(*(up + n) != '\0')
++     return 0;
++ 
++   if(delim > 0)
++    return 1;
++ 
++   if(F_ON(F_VIEW_LONG_URL, ps_global)){
++     line = up;
++     if(!strncmp(line, "http://", 7))
++       line += 7;
++     else if(!strncmp(line, "https://", 8))
++       line += 8;
++     if(strchr(line, '/') != NULL && (line = strrchr(line, '/')) != NULL){
++       line++;
++       line2 = strrchr(line, '.');
++       rv = (strpbrk(line,"+#?=&") != NULL) 
++ 	    || (!line2 || line-line2 > 4);
++     }
++   }
++   return rv;
++ }
++ 
+  
+  int
+  url_hilite(long int linenum, char *line, LT_INS_S **ins, void *local)
+  {
+      register char *lp, *up = NULL, *urlp = NULL,
+  		  *weburlp = NULL, *mailurlp = NULL;
+!     char *use_this_line, c, *begin_line, *end_line;
+!     static int scannextline, delim = -1;
+!     int		   n, n1, n2, n3, l, len;
+!     int		   we_clear = 0, newhandle = 1, tie_off = 0;
+      char	   buf[256], color[256];
+      HANDLE_S	  *h;
+      URL_HILITE_S  *uh;
+  
+!     uh = (URL_HILITE_S *) local;
+!     if(((uh && uh->handlesp && ((h = *(uh->handlesp)) == NULL)) || h->key == 0) ||
+! 	(!line || !*line) || linenum == 0)
+!       scannextline = 0;		/* initialize scannextline */
+! 
+!     if(scannextline != 0){
+! 	up = rfc1738_scan(line, &n1);
+! 
+! 	/* if we found a url in the current line, but it is not at the beginning of 
+! 	 * the next line, or if there is no url in this line, we check if the url 
+! 	 * in the previous line continues in this line.
+! 	 */
+! 
+! 	if(line != up){
+! 	  if(*uh->handlesp == NULL)
+! 	    h = new_handle(uh->handlesp);
+! 	  for(h = *uh->handlesp; h->next; h = h->next);	/* get last handle */
+! 	  len = h->h.url.path ? strlen(h->h.url.path) : 0;
+! 	  use_this_line = (char *) fs_get((len + strlen(line) + 1)*sizeof(char));
+! 	  sprintf(use_this_line,"%s%s", (h->h.url.path ? h->h.url.path : ""), line);
+! 	  we_clear++;
+! 	  newhandle = 0;
+! 	}
+! 	else
+! 	  use_this_line = line;
+!     }
+!     else
+!        use_this_line = line;
+! 
+!     for(lp = use_this_line; ; lp = up + n){
+  	/* scan for all of them so we can choose the first */
+  	if(F_ON(F_VIEW_SEL_URL,ps_global))
+  	  urlp = rfc1738_scan(lp, &n1);
+***************
+*** 1864,1869 ****
+--- 1924,1933 ----
+  	  mailurlp = mail_addr_scan(lp, &n3);
+  	
+  	if(urlp || weburlp || mailurlp){
++ 	    if(scannextline == 0){
++ 		newhandle++;
++ 		delim = -1;
++ 	    }
+  	    up = urlp ? urlp : 
+  		  weburlp ? weburlp : mailurlp;
+  	    if(up == urlp && weburlp && weburlp < up)
+***************
+*** 1871,1878 ****
+  	    if(mailurlp && mailurlp < up)
+  	      up = mailurlp;
+  
+! 	    if(up == urlp){
+  		n = n1;
+  		weburlp = mailurlp = NULL;
+  	    }
+  	    else if(up == weburlp){
+--- 1935,1956 ----
+  	    if(mailurlp && mailurlp < up)
+  	      up = mailurlp;
+  
+! 	    if(scannextline != 0 && up == use_this_line){
+! 		scannextline = 0;
+! 		newhandle++;
+  		n = n1;
++             }
++             else if(up == urlp){
++ 		if(delim < 0)
++ 		   delim = up > use_this_line && *(up - 1) == '<';
++ 		n = n1;
++ 		if(incomplete_url(up,n, delim))
++ 		   scannextline++;
++ 		else{
++ 		   if(scannextline)
++ 		     tie_off++;
++ 		   scannextline = 0;
++ 		}
+  		weburlp = mailurlp = NULL;
+  	    }
+  	    else if(up == weburlp){
+***************
+*** 1889,1924 ****
+  
+  	uh = (URL_HILITE_S *) local;
+  
+! 	h	      = new_handle(uh->handlesp);
+! 	h->type	      = URL;
+! 	h->h.url.path = (char *) fs_get((n + 10) * sizeof(char));
+! 	snprintf(h->h.url.path, n+10, "%s%.*s",
+  		weburlp ? "http://" : (mailurlp ? "mailto:" : ""), n, up);
+! 	h->h.url.path[n+10-1] = '\0';
+  
+  	if(handle_start_color(color, sizeof(color), &l, uh->hdr_color))
+! 	  ins = gf_line_test_new_ins(ins, up, color, l);
+  	else if(F_OFF(F_SLCTBL_ITEM_NOBOLD, ps_global))
+! 	  ins = gf_line_test_new_ins(ins, up, url_embed(TAG_BOLDON), 2);
+  
+  	buf[0] = TAG_EMBED;
+  	buf[1] = TAG_HANDLE;
+  	snprintf(&buf[3], sizeof(buf)-3, "%d", h->key);
+  	buf[sizeof(buf)-1] = '\0';
+  	buf[2] = strlen(&buf[3]);
+! 	ins = gf_line_test_new_ins(ins, up, buf, (int) buf[2] + 3);
+  
+  	/* in case it was the current selection */
+! 	ins = gf_line_test_new_ins(ins, up + n, url_embed(TAG_INVOFF), 2);
+  
+  	if(scroll_handle_end_color(color, sizeof(color), &l, uh->hdr_color))
+! 	  ins = gf_line_test_new_ins(ins, up + n, color, l);
+  	else
+! 	  ins = gf_line_test_new_ins(ins, up + n, url_embed(TAG_BOLDOFF), 2);
+  
+  	urlp = weburlp = mailurlp = NULL;
+      }
+  
+      return(0);
+  }
+  
+--- 1967,2025 ----
+  
+  	uh = (URL_HILITE_S *) local;
+  
+! 	if(tie_off){
+! 	   for(;h->next; h = h->next);
+! 	   tie_off = 0;	/* do only once */
+! 	   begin_line = line;
+! 	   end_line = line + n - strlen(h->h.url.path);
+! 	   fs_give((void **)&(h->h.url.path));
+! 	   c = *(use_this_line + n);
+! 	   *(use_this_line+n) = '\0';
+! 	   h->h.url.path = cpystr(use_this_line);
+! 	   *(use_this_line+n) = c;
+! 	}
+! 	else{
+! 	   if(newhandle){
+! 	     h = new_handle(uh->handlesp);
+! 	     h->type = URL;
+! 	   }
+! 	   begin_line = newhandle ? (we_clear ? line + strlen(line) - strlen(up) 
+! 					      : up) : line;
+! 	   end_line = newhandle ? begin_line + n : line + strlen(line);
+! 	   if(scannextline && h->h.url.path)
+! 	     fs_give((void **)&(h->h.url.path));
+! 	   h->h.url.path = (char *) fs_get((n + 10) * sizeof(char));
+! 	   snprintf(h->h.url.path, n+10, "%s%.*s",
+  		weburlp ? "http://" : (mailurlp ? "mailto:" : ""), n, up);
+! 	   h->h.url.path[n+10-1] = '\0';
+! 	}
+  
+  	if(handle_start_color(color, sizeof(color), &l, uh->hdr_color))
+! 	  ins = gf_line_test_new_ins(ins, begin_line, color, l);
+  	else if(F_OFF(F_SLCTBL_ITEM_NOBOLD, ps_global))
+! 	  ins = gf_line_test_new_ins(ins, begin_line, url_embed(TAG_BOLDON), 2);
+  
+  	buf[0] = TAG_EMBED;
+  	buf[1] = TAG_HANDLE;
+  	snprintf(&buf[3], sizeof(buf)-3, "%d", h->key);
+  	buf[sizeof(buf)-1] = '\0';
+  	buf[2] = strlen(&buf[3]);
+! 	ins = gf_line_test_new_ins(ins, begin_line, buf, (int) buf[2] + 3);
+  
+  	/* in case it was the current selection */
+! 	ins = gf_line_test_new_ins(ins, end_line, url_embed(TAG_INVOFF), 2);
+  
+  	if(scroll_handle_end_color(color, sizeof(color), &l, uh->hdr_color))
+! 	  ins = gf_line_test_new_ins(ins, end_line, color, l);
+  	else
+! 	  ins = gf_line_test_new_ins(ins, end_line, url_embed(TAG_BOLDOFF), 2);
+  
+  	urlp = weburlp = mailurlp = NULL;
+      }
+  
++     if(we_clear)
++ 	fs_give((void **)&use_this_line);
++ 
+      return(0);
+  }
+  
+diff -rc alpine-2.26/pith/pine.hlp alpine-2.26.longurl/pith/pine.hlp
+*** alpine-2.26/pith/pine.hlp	2022-06-02 18:14:00.491274749 -0600
+--- alpine-2.26.longurl/pith/pine.hlp	2022-06-02 18:15:09.327105965 -0600
+***************
+*** 31651,31656 ****
+--- 31651,31688 ----
+  &lt;End of help on this topic&gt;
+  </BODY>
+  </HTML>
++ ====== h_config_enable_long_url =====
++ <HTML>
++ <HEAD>
++ <TITLE>FEATURE: <!--#echo var="FEAT_enable-msg-view-long-url"--></TITLE>
++ </HEAD>
++ <BODY>
++ <H1>FEATURE: <!--#echo var="FEAT_enable-msg-view-long-url"--></H1>
++ 
++ This feature modifies the behavior of Alpine's MESSAGE TEXT screen. When this feature
++ is set alpine will attempt to recognize long urls (those that spread over several
++ lines in the text) for the HTTP protocol, even when they have not been enclosed between
++ delimiters &quot;&lt;&quot; and &quot;&gt;&quot;.
++ 
++ <P>The normal behavior in Alpine is that if a URL is preceeded by the &quot;&lt;&quot;
++ character and this URL was not finished before the end of the line, then a
++ continuation of the URL is searched in the following line(s). Normally, this type of
++ URLs will be ended by the &quot;&gt;&quot; character, and if it is not, there is a
++ possibility of including erroneous text into the URL.
++ 
++ <P>Enabling this feature will make Alpine search for a continuation of certain URLs in
++ lines following its location. This will be of great help most times, but in some cases
++ the algorithm will catch some text into the URL that is not part of the URL.
++ 
++ <P>If you find that Alpine failed to recognize correctly a URL simply edit the URL before
++ passing it to your browser.
++ 
++ <UL>   
++ <LI><A HREF="h_finding_help">Finding more information and requesting help</A>
++ </UL><P>
++ &lt;End of help on this topic&gt;
++ </BODY>
++ </HTML>
+  ====== h_config_enable_view_addresses =====
+  <HTML>
+  <HEAD>
+diff -rc alpine-2.26/pith/url.c alpine-2.26.longurl/pith/url.c
+*** alpine-2.26/pith/url.c	2022-06-02 18:14:00.491274749 -0600
+--- alpine-2.26.longurl/pith/url.c	2022-06-02 18:15:09.327105965 -0600
+***************
+*** 49,55 ****
+  rfc1738_scan(char *line, int *len)
+  {
+      char *colon, *start, *end;
+!     int   n;
+  
+      /* process each : in the line */
+      for(; (colon = strindex(line, ':')) != NULL; line = end){
+--- 49,55 ----
+  rfc1738_scan(char *line, int *len)
+  {
+      char *colon, *start, *end;
+!     int   n, delim;
+  
+      /* process each : in the line */
+      for(; (colon = strindex(line, ':')) != NULL; line = end){
+***************
+*** 139,144 ****
+--- 139,145 ----
+  
+  		if(i != j){
+  		    *len = end - start;
++ 		    delim = start > line && *(start - 1) == '<';
+  
+  		    /*
+  		     * Special case handling for comma.
+***************
+*** 148,155 ****
+  		     * In most cases any way, that's why we have the
+  		     * exception.
+  		     */
+! 		    if(*(end - 1) == ','
+! 		       || (*(end - 1) == '.' && (!*end  || *end == ' ')))
+  		      (*len)--;
+  
+  		    if(*len - (colon - start) > 0)
+--- 149,156 ----
+  		     * In most cases any way, that's why we have the
+  		     * exception.
+  		     */
+! 		    if(delim == 0 && (*(end - 1) == ','
+! 		       || (*(end - 1) == '.' && (!*end  || *end == ' '))))
+  		      (*len)--;
+  
+  		    if(*len - (colon - start) > 0)

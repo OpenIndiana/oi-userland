@@ -1,0 +1,54 @@
+#! /usr/bin/python
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Marcel Telka
+#
+
+#
+# Usage:
+#   python-requires PACKAGE [EXTRA]
+#
+# Print requirements for PACKAGE.  Evaluated and normalized.
+# If PACKAGE is - evaluate and normalize stdin.
+# With optional EXTRA argument passed print requirements for such extra only.
+#
+
+import sys
+import re
+
+try:
+    from importlib.metadata import requires
+    from packaging.requirements import Requirement
+    import subprocess
+except:
+    exit()
+
+if len(sys.argv) < 2:
+    exit()
+
+e = {'extra': sys.argv[2]} if len(sys.argv) > 2 else None
+reqs = requires(sys.argv[1]) if sys.argv[1] != "-" else sys.stdin.readlines()
+
+try:
+    for req in reqs:
+        try:
+            r = Requirement(re.sub(r"#.*", "", req))
+        except:
+            continue
+        m = r.marker
+        if (not m and not e) or (m and m.evaluate(e) and (not e or not m.evaluate())):
+            print(re.sub(r"[-_.]+", "-", r.name).lower())
+            for extra in r.extras:
+                subprocess.run([sys.argv[0], r.name, extra])
+except:
+    pass

@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xvidtune
-COMPONENT_VERSION=        1.0.3
-COMPONENT_REVISION=       1
+COMPONENT_VERSION=        1.0.4
+COMPONENT_SUMMARY=        xvidtune − video mode tuner for Xorg
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=   sha256:0d4eecd54e440cc11f1bdaaa23180fcf890f003444343f533f639086b05b2cc5
 COMPONENT_FMRI=           x11/xvidtune
-COMPONENT_SUMMARY=        xvidtune − video mode tuner for Xorg 
-COMPONENT_ARCHIVE_HASH= \
-  sha256:24e5e103933a04bfb2e1d18562619ed74031ab515e7343eb546bacdbcbeecf01
 
 include $(WS_MAKE_RULES)/common.mk
 

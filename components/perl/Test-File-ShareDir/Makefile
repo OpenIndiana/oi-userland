@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::File::ShareDir
 HUMAN_VERSION =			1.001002
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::File::ShareDir - Create a Fake ShareDir for your modules for testing.
 COMPONENT_CPAN_AUTHOR =		KENTNL
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,5 +36,6 @@ PERL_REQUIRED_PACKAGES += library/perl-5/file-copy-recursive
 PERL_REQUIRED_PACKAGES += library/perl-5/file-sharedir
 PERL_REQUIRED_PACKAGES += library/perl-5/path-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/scope-guard
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/path-tiny
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal

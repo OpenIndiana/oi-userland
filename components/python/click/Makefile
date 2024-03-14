@@ -19,18 +19,21 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		click
-COMPONENT_VERSION =		8.1.3
+HUMAN_VERSION =			8.1.7
 COMPONENT_SUMMARY =		click - Composable command line interface toolkit
 COMPONENT_PROJECT_URL =		https://palletsprojects.com/p/click/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/59/87/84326af34517fca8c58418d148f2403df25303e02736832403587318e9e8/click-8.1.3.tar.gz
+	https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7682dc8afb30297001674575ea00d1814d808d6a36af415a82bd481d37ba7b8e
+	sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
-
-TEST_TARGET = $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/iniconfig
+TEST_REQUIRED_PACKAGES.python += library/python/packaging
+TEST_REQUIRED_PACKAGES.python += library/python/pluggy
+TEST_REQUIRED_PACKAGES.python += library/python/pytest

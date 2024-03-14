@@ -20,6 +20,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= glw
 COMPONENT_VERSION= 8.0.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libglw part of the Mesa 3-D Graphics Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
@@ -35,10 +36,12 @@ PATCH_LEVEL=0
 
 LDFLAGS= -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR)
 
-CONFIGURE_OPTIONS += --enable-motif
+# 2023-07-14 Stephan Althaus - motif deactivated because of missing sources/package in the oi-userland tree
+#CONFIGURE_OPTIONS += --enable-motif
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
+REQUIRED_PACKAGES += x11/header/x11-protocols
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/motif
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/toolkit/libxt

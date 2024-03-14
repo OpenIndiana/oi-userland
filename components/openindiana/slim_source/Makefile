@@ -11,6 +11,10 @@
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2023 Klaus Ziegler
+#
+# Note: to chack all dependencies, don't use gmake build/publish
+# you'll have to use gmake prep
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -69,6 +73,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded Makefile
           echo export CC=$(CC); \
           echo export MAKE=$(DMAKE); \
           echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
+          echo export MULTI_PROTO=yes; \
           echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
           developer.sh && \
         time $${NIGHTLY} developer.sh &&\
@@ -137,6 +142,7 @@ PACKAGE_NAMES += system/install/text-install
 PACKAGE_NAMES += system/library/install
 
 # Build dependencies
+REQUIRED_PACKAGES += library/desktop/libglade
 REQUIRED_PACKAGES += system/install/text-install
 REQUIRED_PACKAGES += system/library/install/libinstzones
 REQUIRED_PACKAGES += system/library/storage/ima/header-ima

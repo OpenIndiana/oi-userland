@@ -1,0 +1,155 @@
+This preserves most of the old SunSSH locale negotiation
+behaviour (at least the parts that are most commonly used).
+
+--- hpn-ssh-hpn-18.3.1/servconf.c.orig
++++ hpn-ssh-hpn-18.3.1/servconf.c
+@@ -174,7 +174,7 @@
+ 	options->client_alive_interval = -1;
+ 	options->client_alive_count_max = -1;
+ 	options->num_authkeys_files = 0;
+-	options->num_accept_env = 0;
++	options->num_accept_env = -1;
+ 	options->num_setenv = 0;
+ 	options->permit_tun = -1;
+ 	options->permitted_opens = NULL;
+@@ -494,6 +494,33 @@
+ 		options->max_sessions = DEFAULT_SESSIONS_MAX;
+ 	if (options->use_dns == -1)
+ 		options->use_dns = 0;
++	if (options->num_accept_env == -1) {
++		options->num_accept_env = 0;
++		opt_array_append("[default]", 0, "AcceptEnv",
++		    &options->accept_env, &options->num_accept_env,
++		    "LANG");
++		opt_array_append("[default]", 0, "AcceptEnv",
++		    &options->accept_env, &options->num_accept_env,
++		    "LC_ALL");
++		opt_array_append("[default]", 0, "AcceptEnv",
++		    &options->accept_env, &options->num_accept_env,
++		    "LC_CTYPE");
++		opt_array_append("[default]", 0, "AcceptEnv",
++		    &options->accept_env, &options->num_accept_env,
++		    "LC_COLLATE");
++		opt_array_append("[default]", 0, "AcceptEnv",
++		    &options->accept_env, &options->num_accept_env,
++		    "LC_TIME");
++		opt_array_append("[default]", 0, "AcceptEnv",
++		    &options->accept_env, &options->num_accept_env,
++		    "LC_NUMERIC");
++		opt_array_append("[default]", 0, "AcceptEnv",
++		    &options->accept_env, &options->num_accept_env,
++		    "LC_MONETARY");
++		opt_array_append("[default]", 0, "AcceptEnv",
++		    &options->accept_env, &options->num_accept_env,
++		    "LC_MESSAGES");
++	}
+ 	if (options->client_alive_interval == -1)
+ 		options->client_alive_interval = 0;
+ 	if (options->client_alive_count_max == -1)
+@@ -2233,8 +2260,12 @@
+ 			if (*arg == '\0' || strchr(arg, '=') != NULL)
+ 				fatal("%s line %d: Invalid environment name.",
+ 				    filename, linenum);
++			if (options->num_accept_env == -1)
++				options->num_accept_env = 0;
+ 			if (!*activep)
+ 				continue;
++			if (strcmp(arg, "none") == 0)
++				continue;
+ 			opt_array_append(filename, linenum, keyword,
+ 			    &options->accept_env, &options->num_accept_env,
+ 			    arg);
+@@ -2971,7 +3002,7 @@
+ } while(0)
+ #define M_CP_STRARRAYOPT(s, num_s) do {\
+ 	u_int i; \
+-	if (src->num_s != 0) { \
++	if (src->num_s != 0 && src->num_s != -1) { \
+ 		for (i = 0; i < dst->num_s; i++) \
+ 			free(dst->s[i]); \
+ 		free(dst->s); \
+--- hpn-ssh-hpn-18.3.1/session.c.orig
++++ hpn-ssh-hpn-18.3.1/session.c
+@@ -848,6 +848,18 @@
+ }
+ 
+ /*
++ * If the given environment variable is set in the daemon's environment,
++ * push it into the new child as well. If it is unset, do nothing.
++ */
++static void
++child_inherit_env(char ***envp, u_int *envsizep, const char *name)
++{
++	char *value;
++	if ((value = getenv(name)) != NULL)
++		child_set_env(envp, envsizep, name, value);
++}
++
++/*
+  * Reads environment variables from the given file and adds/overrides them
+  * into the environment.  If the file does not exist, this does nothing.
+  * Otherwise, it must consist of empty lines, comments (line starts with '#')
+@@ -1031,6 +1043,16 @@
+ 	ssh_gssapi_do_child(&env, &envsize);
+ #endif
+ 
++	/* Default to the system-wide locale/language settings. */
++	child_inherit_env(&env, &envsize, "LANG");
++	child_inherit_env(&env, &envsize, "LC_ALL");
++	child_inherit_env(&env, &envsize, "LC_CTYPE");
++	child_inherit_env(&env, &envsize, "LC_COLLATE");
++	child_inherit_env(&env, &envsize, "LC_TIME");
++	child_inherit_env(&env, &envsize, "LC_NUMERIC");
++	child_inherit_env(&env, &envsize, "LC_MONETARY");
++	child_inherit_env(&env, &envsize, "LC_MESSAGES");
++
+ 	/* Set basic environment. */
+ 	for (i = 0; i < s->num_env; i++)
+ 		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
+@@ -1074,8 +1096,7 @@
+ 	/* Normal systems set SHELL by default. */
+ 	child_set_env(&env, &envsize, "SHELL", shell);
+ 
+-	if (getenv("TZ"))
+-		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
++	child_inherit_env(&env, &envsize, "TZ");
+ 	if (s->term)
+ 		child_set_env(&env, &envsize, "TERM", s->term);
+ 	if (s->display)
+--- hpn-ssh-hpn-18.3.1/sshd_config.orig
++++ hpn-ssh-hpn-18.3.1/sshd_config
+@@ -26,6 +26,10 @@
+ #SyslogFacility AUTH
+ #LogLevel INFO
+ 
++# Use the client's locale/language settings
++#AcceptEnv LANG LC_ALL LC_CTYPE LC_COLLATE LC_TIME LC_NUMERIC
++#AcceptEnv LC_MONETARY LC_MESSAGES
++
+ # Authentication:
+ 
+ #LoginGraceTime 2m
+--- hpn-ssh-hpn-18.3.1/hpnsshd_config.5.orig
++++ hpn-ssh-hpn-18.3.1/hpnsshd_config.5
+@@ -96,7 +96,20 @@
+ Be warned that some environment variables could be used to bypass restricted
+ user environments.
+ For this reason, care should be taken in the use of this directive.
+-The default is not to accept any environment variables.
++The default is to accept only
++.Ev LANG
++and the
++.Ev LC_*
++family of environment variables. If any
++.Cm AcceptEnv
++directives are present in your config file, they will replace this default
++.Po
++ie, only the variables you list will be passed into the session's
++.Xr environ 7
++.Pc .
++You can also use an argument of
++.Dq none
++to specify that no environment variables should be passed.
+ .It Cm AddressFamily
+ Specifies which address family should be used by
+ .Xr sshd 8 .

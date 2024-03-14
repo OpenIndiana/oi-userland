@@ -1,0 +1,29 @@
+--- gdl-1.0.2/src/brent.cpp.orig	2023-01-06 18:39:47.000000000 +0100
++++ gdl-1.0.2/src/brent.cpp	2023-02-05 15:14:16.437488573 +0100
+@@ -41,7 +41,7 @@
+ double praxis ( double t0, double h0, int n, int prin, double x[], 
+   double f ( double x[], int n ) );
+ void print2 ( int n, double x[], int prin, double fx, int nf, int nl );
+-void quad ( int n, double f ( double x[], int n ), double x[], double t, 
++void quad2 ( int n, double f ( double x[], int n ), double x[], double t, 
+   double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
+   double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc, 
+   double &qd0, double &qd1 );
+@@ -1413,7 +1413,7 @@
+ //
+ //  Try quadratic extrapolation in case we are in a curved valley.
+ //
+-    quad ( n, f, x, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, 
++    quad2 ( n, f, x, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, 
+       qa, qb, qc, qd0, qd1 );
+ 
+     for ( j = 0; j < n; j++ )
+@@ -1653,7 +1653,7 @@
+ }
+ //****************************************************************************80
+ 
+-void quad ( int n, double f ( double x[], int n ), double x[], double t, 
++void quad2 ( int n, double f ( double x[], int n ), double x[], double t, 
+   double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
+   double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc, 
+   double &qd0, double &qd1 )

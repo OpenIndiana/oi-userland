@@ -24,28 +24,25 @@
 # Copyright 2017, Aurelien Larcher.
 #
 
-BUILD_BITS=64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
-
 COMPONENT_NAME=         quilt
-COMPONENT_VERSION=      0.65
-COMPONENT_REVISION=     2
-COMPONENT_FMRI=         developer/quilt
+COMPONENT_VERSION=      0.67
 COMPONENT_SUMMARY=      Quilt - tool to manage series of patches
-COMPONENT_CLASSIFICATION=Development/Source Code Management
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://savannah.nongnu.org/projects/quilt/
+COMPONENT_PROJECT_URL=  https://savannah.nongnu.org/projects/quilt/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:f6cbc788e5cbbb381a3c6eab5b9efce67c776a8662a7795c7432fd27aa096819
-COMPONENT_ARCHIVE_URL=  \
-	http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:3be3be0987e72a6c364678bb827e3e1fcc10322b56bc5f02b576698f55013cc2
+COMPONENT_ARCHIVE_URL= 	https://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         developer/quilt
+COMPONENT_CLASSIFICATION= Development/Source Code Management
 COMPONENT_LICENSE=      GPLv2 
+COMPONENT_LICENSE_FILE= COPYING 
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -53,7 +50,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPONENT_PREP_ACTION = \
     (cd $(@D) ; autoconf )
 
-PATCH_LEVEL=	0
+PATCH_LEVEL= 0
 
 # without this, some make messages end up in the
 # generated README and man pages.
@@ -65,6 +62,7 @@ CONFIGURE_OPTIONS += --with-date=$(GNUBIN)/date
 CONFIGURE_OPTIONS += --with-getopt=$(GNUBIN)/getopt
 CONFIGURE_OPTIONS += --with-grep=$(GNUBIN)/grep
 CONFIGURE_OPTIONS += --with-tail=$(GNUBIN)/tail
+CONFIGURE_OPTIONS += --with-tar=$(GNUBIN)/tar
 CONFIGURE_OPTIONS += --with-tr=$(GNUBIN)/tr
 CONFIGURE_OPTIONS += --with-sed=$(GNUBIN)/sed
 CONFIGURE_OPTIONS += --with-diff=$(GNUBIN)/diff
@@ -77,22 +75,18 @@ CONFIGURE_OPTIONS += --with-pod2man=$(POD2MAN)
 CONFIGURE_OPTIONS += --with-xgettext=/usr/bin/gxgettext
 CONFIGURE_OPTIONS += --with-msgfmt=/usr/bin/gmsgfmt
 CONFIGURE_OPTIONS += --without-rpmbuild
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-
-COMPONENT_INSTALL_ARGS +=	BUILD_ROOT=$(PROTO_DIR)
+COMPONENT_INSTALL_ARGS += BUILD_ROOT=$(PROTO_DIR)
 
 COMPONENT_TEST_TRANSFORMS += \
  	'-n ' \
 	'-e "/commands/p" ' \
 
-# Build dependencies
-REQUIRED_PACKAGES += text/diffstat
-REQUIRED_PACKAGES += text/text-utilities
-
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += archiver/gnu-tar
+REQUIRED_PACKAGES += compress/p7zip
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += service/network/smtp/postfix

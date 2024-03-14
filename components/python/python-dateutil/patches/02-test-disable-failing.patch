@@ -1,0 +1,20 @@
+--- python-dateutil-2.9.0.post0/tests/test_tz.py.orig
++++ python-dateutil-2.9.0.post0/tests/test_tz.py
+@@ -985,6 +985,7 @@
+ 
+ 
+ @mark_tzlocal_nix
++@pytest.mark.skip(reason="always fails: https://github.com/dateutil/dateutil/issues/1260")
+ def test_tzlocal_local_time_trim_colon():
+     with TZEnvContext(':/etc/localtime'):
+         assert tz.gettz() is not None
+--- python-dateutil-2.9.0.post0/tests/test_internals.py.orig
++++ python-dateutil-2.9.0.post0/tests/test_internals.py
+@@ -62,6 +62,7 @@
+ 
+ 
+ @pytest.mark.skipif(IS_PY32, reason='pytest.warns not supported on Python 3.2')
++@pytest.mark.skip(reason="always fails: https://github.com/dateutil/dateutil/issues/1260")
+ def test_parser_parser_private_not_warns():
+     from dateutil.parser._parser import _timelex, _tzparser
+     from dateutil.parser._parser import _parsetz

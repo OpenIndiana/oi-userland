@@ -1,0 +1,41 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/nut-monitor-gui-py3qt5@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - NUT-Monitor GUI client (Python 3.x with QT5)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform dir path=usr/share/nut/nut-monitor/app -> set group bin>
+<transform dir path=usr/share/nut/nut-monitor/app/ui -> set group bin>
+
+depend fmri=$(COMPONENT_FMRI)/nut-monitor-gui-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
+dir path=usr/share/nut/nut-monitor/app group=bin
+dir path=usr/share/nut/nut-monitor/app/ui group=bin
+
+file path=usr/share/nut/nut-monitor/app/NUT-Monitor-py3qt5 mode=0555
+file path=usr/share/nut/nut-monitor/app/nut-monitor-py3qt5.desktop
+link path=usr/share/applications/nut-monitor-py3qt5.desktop \
+    target=../nut/nut-monitor/app/nut-monitor-py3qt5.desktop
+file path=usr/share/nut/nut-monitor/app/ui/aboutdialog1.ui
+file path=usr/share/nut/nut-monitor/app/ui/dialog1.ui
+file path=usr/share/nut/nut-monitor/app/ui/dialog2.ui
+file path=usr/share/nut/nut-monitor/app/ui/window1.ui

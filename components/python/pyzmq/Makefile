@@ -1,51 +1,87 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2020 Alexander Pyhalov
-# Copyright (c) 2021 Nona Hansel
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project pyzmq
 #
 
-BUILD_STYLE= setup.py
-BUILD_BITS= 32_and_64
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=$(PATH.gnu)
+COMPONENT_NAME =		pyzmq
+HUMAN_VERSION =			25.1.2
+COMPONENT_SUMMARY =		pyzmq - Python bindings for 0MQ
+COMPONENT_PROJECT_URL =		https://pyzmq.readthedocs.org
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/3a/33/1a3683fc9a4bd64d8ccc0290da75c8f042184a1a49c146d28398414d3341/pyzmq-25.1.2.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:93f1aa311e8bb912e34f004cf186407a4e90eec4f0ecc0efd26056bf7eda0226
+COMPONENT_LICENSE =		BSD-3-Clause AND LGPL-3.0-only
 
-COMPONENT_NAME=		pyzmq
-COMPONENT_VERSION=	19.0.0
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	Python bindings for zeromq
-COMPONENT_PROJECT_URL=	https://github.com/zeromq/pyzmq
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:5e1f65e576ab07aed83f444e201d86deb01cd27dcf3f37c727bc8729246a60a8
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	library/python/pyzmq
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE= BSD
-
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_DIR =    $(SOURCE_DIR)/zmq/tests
-COMPONENT_TEST_CMD =    $(PYTHON) -m pytest
-COMPONENT_TEST_ARGS =
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += test-requirements.txt
+
+#
+# Tests are run from build directory that contains cloned copy of sdist.  We
+# try to ask Python to find tested modules in the proto area (the PYTHONPATH is
+# set accordingly), but Python (< 3.11) always adds the current directory to
+# sys.path and there is no known (simple) way how to avoid that.  Except -I,
+# but that would cause Python to ignore PYTHONPATH too so we would not have
+# access to the proto area either.  The -P option together with PYTHONSAFEPATH
+# environment variable were added to Python 3.11 only so we cannot use them yet
+# for all Python versions we support.
+#
+# Since sdist for this project contains the main module in the top-level
+# directory we cannot force Python to skip it.  But, unfortunately, this module
+# does not contain built dynamic libraries, so Python cannot find them while
+# testing.
+#
+# To workaround this we rename the main module in the build directory during
+# testing so Python will need to defer to PYTHONPATH.  We also need to preserve
+# the tests subdirectory reachable via the original path because pytest.ini
+# refers to it.
+#
+COMPONENT_PRE_TEST_ACTION +=	$(MV) $(@D)/zmq $(@D)/zmq-RENAMED ;
+COMPONENT_PRE_TEST_ACTION +=	$(MKDIR) $(@D)/zmq ;
+COMPONENT_PRE_TEST_ACTION +=	$(SYMLINK) ../zmq-RENAMED/tests $(@D)/zmq/tests ;
+COMPONENT_POST_TEST_ACTION +=	$(RM) -r $(@D)/zmq ;
+COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/zmq-RENAMED $(@D)/zmq ;
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/cython
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/c++/zeromq
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/codecov
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/cython
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/gevent
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pymongo
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-rerunfailures
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/tornado

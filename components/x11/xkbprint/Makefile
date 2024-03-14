@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xkbprint
-COMPONENT_VERSION=  1.0.5
-COMPONENT_FMRI=     x11/keyboard/xkbprint
+COMPONENT_VERSION=  1.0.6
 COMPONENT_SUMMARY=  xkbprint - utility to print XKB keyboard layouts
-COMPONENT_ARCHIVE_HASH= \
-  sha256:5b58fe834f0822f06d63d283fac404098c6d3f6acce61888b81016f1c41023fa
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:99cc9404f7b90289ae04944c0d98a208cc8b158492ad6481386e31d4d09aa7b0
+COMPONENT_FMRI=     x11/keyboard/xkbprint
 
 include $(WS_MAKE_RULES)/common.mk
 

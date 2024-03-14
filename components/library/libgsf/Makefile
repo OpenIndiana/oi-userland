@@ -14,36 +14,40 @@
 # Copyright 2019 Jason Martin
 # Copyright 2021 Andreas Wacknitz
 #
-BUILD_BITS= 64_and_32
+
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
-COMPONENT_VERSION= 1.14.49
+COMPONENT_VERSION_MAJOR= 1.14
+COMPONENT_VERSION= $(COMPONENT_VERSION_MAJOR).52
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e9ebe36688f010c9e6e40c8903f3732948deb8aca032578d07d0751bd82cf857
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.14/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:9181c914b9fac0e05d6bcaa34c7b552fe5fc0961d3c9f8c01ccc381fb084bcf0
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_FMRI= library/desktop/libgsf
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE= LGPLv2
-COMPONENT_LICENSE_FILE = COPYING.LIB
+COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION= ( cd $(@D)  && \
-                            libtoolize --copy --force &&\
-                            aclocal -I m4 &&\
-                            autoheader &&\
-                            automake -c -f -a &&\
-                            autoconf &&\
-                            cp /usr/share/gettext/config.rpath .)
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D) && \
+	libtoolize --copy --force && \
+	aclocal -I m4 && \
+	autoheader && \
+	automake -c -f -a && \
+	autoconf && \
+	cp /usr/share/gettext/config.rpath . )
 
 # Missing files in build dir without this.
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
@@ -51,22 +55,10 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-bz2
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-zlib
-CONFIGURE_OPTIONS.32 += --disable-introspection
-CONFIGURE_OPTIONS.64 += --enable-introspection
+CONFIGURE_OPTIONS += --enable-introspection
 
 COMPONENT_TEST_ENV += CC=$(CC)
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_ARGS =   -k -i
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL:/p" ' \
-        '-e "/SKIP:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" ' \
-        '-e "/ERROR:/p" '
-
-# To prevent "libtool_install_magic: unbound variable"
-unexport SHELLOPTS
+COMPONENT_TEST_ARGS= -k -i
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

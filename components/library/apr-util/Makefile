@@ -20,23 +20,27 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Andreas Wacknitz
+# Copyright (c) 2023, Niklas Poslovski
 #
-BUILD_BITS=			32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
-COMPONENT_VERSION=	1.6.1
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	1.6.3
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b65e40713da57d004123b6319828be7f1273fbc6490e145874ee1177e112c459
+	sha256:2b74d8932703826862ca305b094eef2983c27b39d5c9414442e9976a9acf1983
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_DEFAULT_DIRS=no
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Without this the build is unable to find right C preprocessor
+PATH = $(GCC_BINDIR):$(PATH.illumos)
 
 PATCH_LEVEL=0
 
@@ -50,11 +54,10 @@ CONFIGURE_OPTIONS +=	--with-sqlite3=/usr
 CONFIGURE_OPTIONS +=	--with-ldap=ldap_r-2.4
 CONFIGURE_OPTIONS +=	--with-ldap-include=/usr/include/openldap
 CONFIGURE_OPTIONS +=	--without-odbc
-CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
-CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
-CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/bin/apr-1-config
-CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.64 +=	PGSQL_CONFIG=$(PG_CONFIG.64)
+CONFIGURE_OPTIONS +=	--enable-layout=OpenSolaris-$(MACH64)
+CONFIGURE_OPTIONS +=	--with-apr=/usr/apr/bin/apr-1-config
+CONFIGURE_OPTIONS +=	--bindir=$(CONFIGURE_PREFIX)/bin
+CONFIGURE_OPTIONS +=	PGSQL_CONFIG=$(PG_CONFIG.64)
 
 COMPONENT_TEST_TARGETS= test
 
@@ -69,26 +72,27 @@ COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Documentation is generated in and directly packaged from 32 bit build
-# directory using doxygen.
-PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH32)/docs/dox/manual
+# We need to list (the default) 'all' build target explicitly because we need
+# to add one more (non-default) target
+COMPONENT_BUILD_TARGETS += all
+# The 'dox' target is used to build documentation
+COMPONENT_BUILD_TARGETS += dox
 
-COMPONENT_POST_INSTALL_ACTION.32=\
-	(cd $(BUILD_DIR)/$(MACH32); doxygen docs/doxygen.conf)
-COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
+# Install documentation
+COMPONENT_POST_INSTALL_ACTION += $(CP) -a $(@D)/docs/dox/manual $(PROTO_DIR)/usr/apr-util/manual ;
 
 # Build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 # The MariaDB client must be installed to get mysql_config:
-REQUIRED_PACKAGES += database/mariadb-101/client
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

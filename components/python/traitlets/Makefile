@@ -10,38 +10,38 @@
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project traitlets
 #
+
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	traitlets
-COMPONENT_VERSION= 	4.3.2
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	https://github.com/ipython/traitlets
-COMPONENT_FMRI=	library/python/traitlets
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:9c4bd2d267b7153df9152698efb1050a5d84982d3384a37b2c1f7723ba3e7835
-COMPONENT_ARCHIVE_URL= \
-  $(call pypi_url)
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_LICENSE=	BSD
-COMPONENT_LICENSE_FILE=	COPYING.md
+COMPONENT_NAME =		traitlets
+HUMAN_VERSION =			5.14.1
+COMPONENT_SUMMARY =		traitlets - Traitlets Python configuration system
+COMPONENT_PROJECT_URL =		https://github.com/ipython/traitlets
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/f1/b9/19206da568095bbf2e57f9f7f7cb6b3b2af2af2670f8c83c23a53d6c00cd/traitlets-5.14.1.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:8585105b371a04b8316a43d5ce29c098575c2e477850b62b848b964f1444527e
+COMPONENT_LICENSE =		BSD-3-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.5
+TEST_STYLE = pytest
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-build: $(BUILD_NO_ARCH)
-
-install: $(INSTALL_NO_ARCH)
-
-test:	$(NO_TESTS)
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += test
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/argcomplete
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock

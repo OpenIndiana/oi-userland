@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Implementation
 HUMAN_VERSION =			0.09
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module::Implementation - Loads one of several alternate underlying implementations for a module
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,7 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-requires
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires

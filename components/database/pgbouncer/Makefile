@@ -11,23 +11,23 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
-USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
-COMPONENT_VERSION= 	1.17.0
+COMPONENT_VERSION= 	1.22.1
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:657309b7bc5c7a85cbf70a9a441b535f7824123081eabb7ba86d00349a256e23
+COMPONENT_ARCHIVE_HASH=	sha256:2b018aa6ce7f592c9892bb9e0fd90262484eb73937fd2af929770a45373ba215
 COMPONENT_ARCHIVE_URL=	https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.pgbouncer.org/
 COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	COPYRIGHT
 
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
@@ -47,5 +47,5 @@ REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library

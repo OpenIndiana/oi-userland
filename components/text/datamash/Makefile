@@ -20,33 +20,29 @@
 #
 # Copyright (c) 2014, David Hoeppner. All rights reserved.
 #
+USE_DEFAULT_TEST_TRANSFORMS= yes
+#USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		datamash
-COMPONENT_VERSION=	1.2
-COMPONENT_FMRI=	        text/datamash
+COMPONENT_VERSION=	1.8
 COMPONENT_SUMMARY=	performs numeric, textual and statistical operations on data files
-COMPONENT_CLASSIFICATION=System/Text Tools      
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/datamash/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:e8d46fb22ccc77e5380f26cde622a733f363d388b04a2c22e7fb6de0e9d85996
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:7ad97e8c7ef616dd03aa5bd67ae24c488272db3e7d1f5774161c18b75f29f6fd
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	    text/datamash
+COMPONENT_CLASSIFICATION=   System/Text Tools      
 COMPONENT_LICENSE=      GPLv3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
+CONFIGURE_OPTIONS += --with-openssl=yes
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
+COMPONENT_TEST_ENV += RUN_EXPENSIVE_TESTS=yes
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

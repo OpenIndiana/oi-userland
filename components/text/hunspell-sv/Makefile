@@ -10,23 +10,25 @@
 
 #
 # Copyright (c) 2016 Alexander Pyhalov
+# Copyright (c) 2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hunspell-sv
-COMPONENT_VERSION=	2.40
-COMPONENT_PROJECT_URL=	http://extensions.libreoffice.org/extension-center/swedish-spelling-dictionary-den-stora-svenska-ordlistan/
+COMPONENT_VERSION=	2.42
+COMPONENT_PROJECT_URL=	https://extensions.libreoffice.org/extension-center/swedish-spelling-dictionary-den-stora-svenska-ordlistan/
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for SWedish
 COMPONENT_LICENSE=	LGPLv3
 COMPONENT_FMRI=	library/myspell/dictionary/sv
 COMPONENT_CLASSIFICATION	= System/Localizations
 
-COMPONENT_SRC=            ooo_swedish_dict_2-40
+COMPONENT_SRC=            ooo-swedish-dict-2-42
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).oxt
 COMPONENT_ARCHIVE_HASH=        \
-     sha256:b982881cc75f5c4af1199535bd4735ee476bdc48edf63e3f05fb4f715654a7bc
-COMPONENT_ARCHIVE_URL=   https://extensions.libreoffice.org/extensions/swedish-spelling-dictionary-den-stora-svenska-ordlistan/$(COMPONENT_VERSION)/@@download/file/$(COMPONENT_ARCHIVE)
+     sha256:6f8c62461eb4c2cfe81628094c74ab6511918520047742f14e23dd440b99f45f
+COMPONENT_ARCHIVE_URL=   https://extensions.libreoffice.org/assets/downloads/z/$(COMPONENT_ARCHIVE)
+
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -42,6 +44,8 @@ $(SOURCE_DIR)/.installed:	$(SOURCE_DIR)/.prep
 	[ -d $(PROTO_DIR)$(LINKDIR) ] || mkdir -p $(PROTO_DIR)$(LINKDIR)
 	[ -d $(PROTO_DIR)$(FFDIR) ] || mkdir -p $(PROTO_DIR)$(FFDIR)
 	[ -d $(PROTO_DIR)$(TBDIR) ] || mkdir -p $(PROTO_DIR)$(TBDIR)
+	cp $(COMPONENT_SRC)/dictionaries/sv_FI.dic $(PROTO_DIR)$(DESTDIR)
+	cp $(COMPONENT_SRC)/dictionaries/sv_FI.aff $(PROTO_DIR)$(DESTDIR)
 	cp $(COMPONENT_SRC)/dictionaries/sv_SE.dic $(PROTO_DIR)$(DESTDIR)
 	cp $(COMPONENT_SRC)/dictionaries/sv_SE.aff $(PROTO_DIR)$(DESTDIR)
 	for file in `cd $(PROTO_DIR)/$(DESTDIR)/; ls`;  do\

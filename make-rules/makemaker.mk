@@ -41,6 +41,10 @@ $(BUILD_DIR)/%-$(1)/.built:			PERL_VERSION=$(1)
 $(BUILD_DIR)/%-$(1)/.installed:			PERL_VERSION=$(1)
 $(BUILD_DIR)/%-$(1)/.tested:			PERL_VERSION=$(1)
 $(BUILD_DIR)/%-$(1)/.tested-and-compared:	PERL_VERSION=$(1)
+
+$(BUILD_DIR)/%-$(1)/.depend-build:		PERL_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.depend-runtime:		PERL_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.depend-test:		PERL_VERSION=$(1)
 endef
 $(foreach perlver,$(PERL_VERSIONS),$(eval $(call perl-version-rule,$(perlver))))
 
@@ -70,6 +74,8 @@ INSTALL_64 = $(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 INSTALL_NO_ARCH = $(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.installed)
 
 COMPONENT_CONFIGURE_ENV +=	$(COMMON_PERL_ENV)
+# Avoid interactive behaviour for Module::AutoInstall
+COMPONENT_CONFIGURE_ENV +=	PERL_AUTOINSTALL=--skipdeps
 COMPONENT_CONFIGURE_ENV +=	PERL="$(PERL)"
 $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 	($(RM) -r $(@D) ; $(MKDIR) $(@D))
@@ -105,7 +111,7 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 ifeq ($(strip $(USE_COMMON_TEST_MASTER)),no)
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
 endif
-COMPONENT_TEST_BUILD_DIR = $(BUILD_DIR)/test
+COMPONENT_TEST_BUILD_DIR = $(BUILD_DIR)/test-$(PERL_VERSION)
 COMPONENT_TEST_OUTPUT = $(COMPONENT_TEST_BUILD_DIR)/test-$(PERL_VERSION)-results
 COMPONENT_TEST_DIFFS =  $(COMPONENT_TEST_BUILD_DIR)/test-$(PERL_VERSION)-diffs
 COMPONENT_TEST_SNAPSHOT = $(COMPONENT_TEST_BUILD_DIR)/results-$(PERL_VERSION).snapshot
@@ -118,7 +124,7 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^\#/d"'			# delete comments
 COMPONENT_TEST_TRANSFORMS += '-e "/^make\[/d"'			# delete make logs
 
 # Add the expected 'test_harness' line if it is missing in the test results.
-$(BUILD_DIR)/%/.tested-and-compared:	COMPONENT_POST_TEST_ACTION += \
+COMPONENT_POST_TEST_ACTION += \
 	$(GNU_GREP) -q test_harness $(COMPONENT_TEST_OUTPUT) \
 	|| $(GSED) -i -e '1i\test_harness' $(COMPONENT_TEST_OUTPUT) ;
 
@@ -137,7 +143,7 @@ TEST_NO_ARCH = $(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested-and-compared)
 endif
 
 # test the built source
-$(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
@@ -153,19 +159,25 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
-$(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
+$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
+	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
 	(cd $(COMPONENT_TEST_DIR) ; \
 		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
+		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
 	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
 
-# We need to add -$(PLV) to package fmri and generate runtime dependencies based on META.json
-GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.json
+# We need to add -$(PLV) to package fmri and add runtime dependencies from metadata to generated manifest
+GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.depend-runtime.res
 GENERATE_EXTRA_CMD += | \
 	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PLV)\2/' | \
 	$(CAT) - <( \
@@ -173,29 +185,66 @@ GENERATE_EXTRA_CMD += | \
 		echo "\# perl modules are unusable without perl runtime binary" ; \
 		echo "depend type=require fmri=__TBD pkg.debug.depend.file=perl \\" ; \
 		echo "    pkg.debug.depend.path=usr/perl5/\$$(PERLVER)/bin" ; \
-		$(CAT) $(BUILD_DIR)/META.json \
-			| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) \
-			| $(GSED) -e 's|^\(depend.*pkg:/runtime/perl-\$$(PLV).*\)$$|\#\1|g' \
+		echo "" ; \
+		echo "\# Automatically generated dependencies based on distribution metadata" ; \
+		$(CAT) $(BUILD_DIR)/META.depend-runtime.res $(MANGLE_DEPEND_RUNTIME) | $(PKGFMT) \
 	)
 
-# Support for adding dependencies from META.json to REQUIRED_PACKAGES
-REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
-$(BUILD_DIR)/META.depend.res: $(BUILD_DIR)/META.json
-	$(CAT) $(BUILD_DIR)/META.json | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) > $@
+# Add build dependencies from metadata to REQUIRED_PACKAGES.
+REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-build.res
 
-$(BUILD_DIR)/META.json: $(SOURCE_DIR)/.prep
-	$(MKDIR) $(BUILD_DIR)
-	if [ -f $(SOURCE_DIR)/META.json ] ; then \
-		$(CAT) $(SOURCE_DIR)/META.json ; \
-	elif [ -f $(SOURCE_DIR)/META.yml ] ; then \
-		$(CAT) $(SOURCE_DIR)/META.yml \
-			| python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
-			| jq '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
-	fi > $@
+# Generate list of TEST_REQUIRED_PACKAGES entries
+REQUIRED_PACKAGES_EXTRA_DEPS += $(BUILD_DIR)/META.depend-test.required
+$(BUILD_DIR)/META.depend-test.required: $(BUILD_DIR)/META.depend-test.res
+	$(GSED) -e 's|^depend.*pkg:/\(library/perl-5/.*\)-\$$(PLV).*$$|TEST_REQUIRED_PACKAGES.perl += \1|' \
+		-e '/^TEST_REQUIRED_PACKAGES\.perl/!s/.*/\# TODO: &/' < $< > $@
 
-# perl-meta-deps requires jq
+# Add META.depend-test.required to the generated list of REQUIRED_PACKAGES
+REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'
+
+
+# The configure target should create the MYMETA.json file.  If it does not we
+# need a fallback to use either META.json or META.yml.  We probably (and
+# hopefully) currently have no component requiring such fallback.
+$(BUILD_DIR)/%/MYMETA.json:	$(BUILD_DIR)/%/.configured
+	if [ ! -f $@ ] ; then \
+		if [ -e $(@D)/META.json ] ; then \
+			$(CAT) $(@D)/META.json ; \
+		elif [ -e $(@D)/META.yml ] ; then \
+			$(CAT) $(@D)/META.yml \
+				| $(PYTHON) -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
+				| $(JQ) '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
+		fi > $@ ; \
+	fi ; \
+	$(TOUCH) $@
+
+$(BUILD_DIR)/%/.depend-build:	$(BUILD_DIR)/%/MYMETA.json
+	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) configure build $(PERL_VERSION) < $< > $@
+	# Get configure requirements from META.json/META.yml too
+	if [ -e $(@D)/META.json ] ; then \
+		$(CAT) $(@D)/META.json ; \
+	elif [ -e $(@D)/META.yml ] ; then \
+		$(CAT) $(@D)/META.yml \
+			| $(PYTHON) -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
+			| $(JQ) '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
+	fi | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) configure $(PERL_VERSION) >> $@ ; \
+	$(TOUCH) $@
+$(BUILD_DIR)/%/.depend-runtime:	$(BUILD_DIR)/%/MYMETA.json
+	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) < $< > $@
+$(BUILD_DIR)/%/.depend-test:	$(BUILD_DIR)/%/MYMETA.json
+	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) test $(PERL_VERSION) < $< > $@
+	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) test runtime suggests $(PERL_VERSION) < $< >> $@
+
+$(BUILD_DIR)/META.depend-build.res:	$(BUILD_$(MK_BITS):%.built=%.depend-build)
+	$(CAT) $^ | $(SORT) -u > $@
+$(BUILD_DIR)/META.depend-runtime.res:	$(BUILD_$(MK_BITS):%.built=%.depend-runtime)
+	$(CAT) $^ | $(SORT) -u > $@
+$(BUILD_DIR)/META.depend-test.res:	$(BUILD_$(MK_BITS):%.built=%.depend-test)
+	$(CAT) $^ | $(SORT) -u > $@
+
+# jq is needed for perl-meta-deps and to convert META.yml to JSON format
 USERLAND_REQUIRED_PACKAGES += text/jq
-# pyyaml is needed to convert META.yml to META.json
+# pyyaml is needed to convert META.yml to MYMETA.json
 USERLAND_REQUIRED_PACKAGES += library/python/pyyaml
 
 

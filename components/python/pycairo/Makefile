@@ -1,79 +1,83 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2021 Gary Mills
-# Copyright 2017 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project pycairo
 #
-BUILD_BITS=64
-BUILD_STYLE=waf
+
+BUILD_STYLE = pyproject
+# Force setup.py build style - see https://github.com/pygobject/pycairo/issues/312
+BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pycairo
-# This version supports only python 3.5
-COMPONENT_VERSION=	1.10.0
-COMPONENT_REVISION=	6
-COMPONENT_PROJECT_URL=	http://www.cairographics.org
-COMPONENT_SUMMARY=	Python bindings for Cairo
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:9aa4078e7eb5be583aeabbe8d87172797717f95e8c4338f0d4a17b683a7253be
-COMPONENT_ARCHIVE_URL=	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME =		pycairo
+HUMAN_VERSION =			1.26.0
+COMPONENT_SUMMARY =		pycairo - Python interface for cairo
+COMPONENT_PROJECT_URL =		https://pycairo.readthedocs.io
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:2dddd0a874fbddb21e14acd9b955881ee1dc6e63b9c549a192d613a907f9cbeb
+COMPONENT_LICENSE =		LGPL-2.1-only OR MPL-1.1
 
-PYTHON_VERSIONS =	 3.5
+TEST_STYLE = pytest
 
-VARIANT_PYTHON35 = $(BUILD_DIR)/python-35
+# We cannot obsolete pycairo-27 yet because it is needed by pygtk2-27 and
+# pygtk2-27 is needed by gimp.
+PYTHON_VERSIONS_OBSOLETING := $(filter-out 2.7, $(PYTHON_VERSIONS_OBSOLETING))
 
-VARIANTS_64 = $(VARIANT_PYTHON35)
+# Install common files to /usr
+PYTHON_DATA = $(USRDIR)
 
-BUILD_64 = $(VARIANTS_64:%=%/$(MACH64)/.built)
-
-INSTALL_64 = $(VARIANTS_64:%=%/$(MACH64)/.installed)
-
-$(VARIANT_PYTHON35)/$(MACH64)/.configured: BITS=64
-$(VARIANT_PYTHON35)/$(MACH64)/.configured: PYTHON=$(PYTHON.3.5.64)
-$(VARIANT_PYTHON35)/$(MACH64)/.configured: CONFIGURE_ENV += PYTHON_CONFIG=/usr/bin/python3.5-config
-$(VARIANT_PYTHON35)/$(MACH64)/.installed: PYTHON=$(PYTHON.3.5.64)
-$(VARIANT_PYTHON34)/$(MACH64)/.installed: PYTHON_VERSION=3.5
-
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+# The pkgconfig file should go to proper place
+COMPONENT_INSTALL_ARGS += install_pkgconfig --pkgconfigdir=$(PKG_CONFIG_PATH.$(BITS))
 
-# Trick bundled waf into unpacking itself so we can patch it
-COMPONENT_POST_UNPACK_ACTION += \
-        (cd $(@D) ; $(PYTHON.3.5.64) waf --help >> /dev/null );
-
-CONFIGURE_OPTIONS+=	--nopyo
-CONFIGURE_OPTIONS+=	--nopyc
-CONFIGURE_ENV+=		PYTHON=$(PYTHON)
-
-# waf picks up the PYTHONDIR & PYTHONARCHDIR settings at configure time,
-# but still insists on installing to site-packages instead of vendor-packages
+# Rename headers and pkgconfig files to contain version number
 COMPONENT_POST_INSTALL_ACTION += \
-	if [ -d  $(PROTO_DIR)/usr/lib/$(MACH64)/python3.5  ]; then \
-            $(MKDIR) -p  $(PROTO_DIR)/usr/lib/python3.5/vendor-packages      ; \
-            $(MV) $(PROTO_DIR)/usr/lib/$(MACH64)/python3.5/site-packages/* $(PROTO_DIR)/usr/lib/python3.5/vendor-packages ; \
-	    $(RM) -fr  $(PROTO_DIR)/usr/lib/$(MACH64)/python3.5 ; \
-            $(PYTHON) -m compileall $(PROTO_DIR)/usr/lib/python3.5/vendor-packages/cairo ; \
-	fi ;
+	for f in $(PROTOUSRINCDIR)/pycairo/* $(PROTO_DIR)$(PKG_CONFIG_PATH.$(BITS))/* ; do \
+		[ -f $$f ] || continue ; \
+		for v in $(PYTHON_VERSIONS) ; do \
+			[ "$$f" == "$${f%%$$v}" ] || continue 2 ; \
+		done ; \
+		$(MV) $$f $$f-$(PYTHON_VERSION) ; \
+	done ;
 
-# Rename some files to make way for symlinks
-COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRINCDIR)/pycairo; $(MV) py3cairo.h py3cairo.h-3.5) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRLIBDIR.64)/pkgconfig; $(MV) py3cairo.pc py3cairo.pc-3.5) ;
+# Tests are run from build directory which contains cloned copy of sdist.  We
+# try to ask Python to find tested modules in the proto area (the PYTHONPATH is
+# set accordingly), but Python (< 3.11) always adds the current directory to
+# sys.path and there is no known (simple) way how to avoid that.  Except -I,
+# but that would cause Python to ignore PYTHONPATH too so we would not have
+# access to the proto area either.  The -P option together with PYTHONSAFEPATH
+# environment variable were added to Python 3.11 only so we cannot use them yet
+# for all Python versions we support.
+#
+# Since sdist for this project contains the main module in the top-level
+# directory we cannot force Python to skip it.  But, unfortunately, this module
+# does not contain built dynamic libraries, so Python cannot find them while
+# testing.
+#
+# To workaround this we rename the main module in the build directory during
+# testing so Python will need to defer to PYTHONPATH.
+COMPONENT_PRE_TEST_ACTION += \
+	$(MV) $(@D)/cairo $(@D)/cairo-RENAMED ;
+COMPONENT_POST_TEST_ACTION += \
+	$(MV) $(@D)/cairo-RENAMED $(@D)/cairo ;
 
+# Replace Python version in header and pkgconfig file names
+GENERATE_EXTRA_CMD += | \
+	$(GSED) -e 's/\(py3cairo\.[hpc]*-\)3\.[0-9]*$$/\1$$(PYVER)/' | uniq
+
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

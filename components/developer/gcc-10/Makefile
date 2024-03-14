@@ -14,31 +14,29 @@
 # Copyright 2016-2019 Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_VERSION= 10.4.0
+COMPONENT_VERSION= 10.5.0
+COMPONENT_REVISION= 1
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:47540938502b6599437d6471825c256aec06b847e8da9433dc07a156aabbf6cc
+  sha256:ad6645257a0f1f3114857dc8f76f8151a95feee051221ff916b5d756f9b2d546
 
-MPFR_VERSION=4.1.0
+MPFR_VERSION=4.2.0
 MPFR_ARCHIVE_HASH= \
-  sha256:feced2d430dd5a97805fa289fed3fc8ff2b094c02d05287fd6133e7f1f0ec926
+  sha256:691db39178e36fc460c046591e4b0f2a52c8f2b3ee6d750cc2eab25f1eaa999d
 
-MPC_VERSION=1.2.1
+MPC_VERSION=1.3.1
 MPC_ARCHIVE_HASH= \
-  sha256:17503d2c395dfcf106b622dc142683c1199431d095367c6aacba6eec30340459
+  sha256:ab642492f5cf882b74aa0cb730cd410a81edcdbec895183ce930e706c1c759b8
 
 GMP_VERSION=6.2.1
 GMP_ARCHIVE_HASH= \
   sha256:eae9326beb4158c386e39a356818031bd28f3124cf915f8c5b1dc4c7a36b4d7c
 
 include $(WS_MAKE_RULES)/gcc-component.mk
-
-PYTHON_VERSION= 3.9
 
 GCC_MAJOR="$(GCC_COMPONENT_VERSION_MAJOR)"
 PKG_VARS += GCC_MAJOR
@@ -59,10 +57,27 @@ CONFIGURE_OPTIONS+= --with-diagnostics-urls=auto-if-env
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
 CONFIGURE_OPTIONS.i386+= --enable-initfini-array
-CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
+CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,go,lto,objc
 CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 
+COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
+
+PKG_HARDLINKS += usr/gcc/10/bin/g++
+PKG_HARDLINKS += usr/gcc/10/bin/gcc
+PKG_HARDLINKS += usr/gcc/10/bin/gcc-ar
+PKG_HARDLINKS += usr/gcc/10/bin/gcc-nm
+PKG_HARDLINKS += usr/gcc/10/bin/gcc-ranlib
+PKG_HARDLINKS += usr/gcc/10/bin/gccgo
+PKG_HARDLINKS += usr/gcc/10/bin/gfortran
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += developer/gnu-binutils
+REQUIRED_PACKAGES += developer/linker
 REQUIRED_PACKAGES += library/gc
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/header
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c-runtime
+REQUIRED_PACKAGES += system/library/math

@@ -1,4 +1,4 @@
-#
+
 # This file and its contents are supplied under the terms of the
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
@@ -11,36 +11,28 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
-BUILD_BITS= 64
-USE_OPENSSL11= yes
+
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=      4.4.1
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      6.1.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-	sha256:8fc9f20ac5ed95115a9e285647add0eedd5cc1a98a039ada14c132452f98ac42
-COMPONENT_ARCHIVE_URL=  \
-	https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:8684f4b00f94b85461884c3719382f1261f0d9eb3d59640a1f4ac0873616f968
+COMPONENT_ARCHIVE_URL= https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org/
-COMPONENT_LICENSE=      GPLv2
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         video/ffmpeg
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-#Dropped 32-bit build
-#CFLAGS.32 += -fno-rename-registers
-#CFLAGS.32 += -fomit-frame-pointer
-#CFLAGS.32 += -fno-PIC -UPIC 
-#CFLAGS.32 += -mpreferred-stack-boundary=4
-
-CFLAGS += $(CFLAGS.$(BITS))
 CFLAGS += -I/usr/X11/include
 CFLAGS += $(CPP_LARGEFILES)
 
@@ -66,6 +58,7 @@ CONFIGURE_OPTIONS += --enable-libxvid
 CONFIGURE_OPTIONS += --enable-libx264
 CONFIGURE_OPTIONS += --enable-libx265
 CONFIGURE_OPTIONS += --enable-libdav1d
+CONFIGURE_OPTIONS += --enable-libwebp
 # Don't enable it, resulting binary is not 
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
@@ -110,7 +103,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
 # suite, as we use binaries and libraries from $(PROTO_DIR) for tests
 # to reduce issues with all the test binaries not being able to find
 # ffmpeg's libraries.
-test:	install $(TEST_32_and_64)
+test:	install $(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += audio/lame
@@ -124,8 +117,9 @@ REQUIRED_PACKAGES += library/audio/libgsm
 REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/sdl2
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264

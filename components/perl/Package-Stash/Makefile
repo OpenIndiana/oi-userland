@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Package::Stash
 HUMAN_VERSION =			0.40
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Package::Stash - Routines for manipulating stashes
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,9 +31,11 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta-check
 PERL_REQUIRED_PACKAGES += library/perl-5/dist-checkconflicts
 PERL_REQUIRED_PACKAGES += library/perl-5/module-implementation
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
+PERL_REQUIRED_PACKAGES += library/perl-5/package-stash-xs
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-check
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/variable-magic

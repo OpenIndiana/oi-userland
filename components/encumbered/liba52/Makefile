@@ -13,35 +13,31 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         liba52
-COMPONENT_VERSION=      0.7.4
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      0.8.0
 COMPONENT_SUMMARY=      liba52  - a free library for decoding ATSC A/52 streams
-COMPONENT_SRC=          a52dec-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:a21d724ab3b3933330194353687df82c475b5dfb997513eef4c25de6c865ec33
-COMPONENT_ARCHIVE_URL=  \
-	http://liba52.sourceforge.net/files/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://liba52.sourceforge.net/
-COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_SRC=          a52dec-v$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:d4f26685d32a8c85f86a5cb800554160fb85400298a0a27151c3d1e63a170943
+COMPONENT_PROJECT_URL=  https://liba52.sourceforge.net
+COMPONENT_ARCHIVE_URL=  https://git.adelielinux.org/community/a52dec/-/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=System/Media
 COMPONENT_FMRI=         library/audio/liba52
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-                                        libtoolize --copy --force &&\
-                                        aclocal -I . &&\
-                                        automake -c -f -a &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION= ( cd $(@D)  && \
+	aclocal -I autotools && \
+	libtoolize --force --copy && \
+	autoheader && \
+	automake --add-missing --copy && \
+	autoconf )
 
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --enable-shared
@@ -50,6 +46,5 @@ CONFIGURE_OPTIONS += --disable-static
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

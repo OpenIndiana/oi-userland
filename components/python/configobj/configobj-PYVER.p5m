@@ -10,24 +10,31 @@
 #
 
 #
-# Copyright 2022 Gary Mills
-# Copyright 2016 Alexander Pyhalov
+# This file was automatically generated using python-integrate-project
 #
 
-set name=pkg.fmri value=pkg:/library/python/configobj-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=pkg.summary value="Config file reading, writing and validation"
-set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license configobj.license license='BSD'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Force a dependency on the python runtime package
-depend type=require fmri=runtime/python-$(PYV)
+file path=usr/lib/python$(PYVER)/vendor-packages/configobj-$(HUMAN_VERSION).dist-info/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/configobj-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/configobj-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/configobj-$(HUMAN_VERSION).dist-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/configobj/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/configobj/_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/configobj/validate.py
+file path=usr/lib/python$(PYVER)/vendor-packages/validate/__init__.py
 
-file path=usr/lib/python$(PYVER)/vendor-packages/_version.py
-file path=usr/lib/python$(PYVER)/vendor-packages/configobj-$(COMPONENT_VERSION)-py$(PYVER).egg-info
-file path=usr/lib/python$(PYVER)/vendor-packages/configobj.py
-file path=usr/lib/python$(PYVER)/vendor-packages/validate.py
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/six-$(PYV)

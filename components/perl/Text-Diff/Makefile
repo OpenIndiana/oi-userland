@@ -20,12 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Text::Diff
 HUMAN_VERSION =			1.45
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Text::Diff - Perform diffs on files and record sets
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:e8baa07b1b3f53e00af3636898bbf73aec9a0ff38f94536ede1dbe96ef086f04
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk

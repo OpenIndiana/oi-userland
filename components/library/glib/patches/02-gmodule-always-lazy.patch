@@ -5,24 +5,27 @@ After talking with Rod, it seems like this should apply to all platforms;
 not just Solaris, otherwise there could be a significant performance
 penalty at startup.  Need to file upstream bug for that.
 
---- glib-2.44.0/gmodule/gmodule-dl.c	2014-10-04 17:08:22.000000000 -0700
-+++ glib-2.44.0/gmodule/gmodule-dl.c	2015-04-19 12:35:57.727036805 -0700
-@@ -93,9 +93,17 @@
- 		gboolean     bind_local)
+diff --git a/gmodule/gmodule-dl.c b/gmodule/gmodule-dl.c
+index c1c2fce..d71595e 100644
+--- a/gmodule/gmodule-dl.c
++++ b/gmodule/gmodule-dl.c
+@@ -133,10 +133,18 @@ _g_module_open (const gchar *file_name,
+                 GError     **error)
  {
    gpointer handle;
 +
-+  #if defined(__sun) && defined(__SVR4)
++#if defined(__sun) && defined(__SVR4)
 +  /* 
 +   * Always use RTLD_LAZY on Solaris; otherwise all relocations are performed
 +   * immediately in all dynamic dependencies.
 +   */
 +  bind_lazy = 1;
-+  #endif
++#endif
    
+   lock_dlerror ();
    handle = dlopen (file_name,
 -		   (bind_local ? 0 : RTLD_GLOBAL) | (bind_lazy ? RTLD_LAZY : RTLD_NOW));
 +		   (bind_local ? 0 : RTLD_GLOBAL) | (bind_lazy ? RTLD_LAZY | RTLD_FIRST : RTLD_NOW));
    if (!handle)
-     g_module_set_error (fetch_dlerror (TRUE));
-   
+     {
+       const gchar *message = fetch_dlerror (TRUE);

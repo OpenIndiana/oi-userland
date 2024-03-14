@@ -18,15 +18,14 @@ BUILD_STYLE=		justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dmenu
-COMPONENT_VERSION=	5.1
+COMPONENT_VERSION=	5.2
 COMPONENT_PROJECT_URL=	https://tools.suckless.org/dmenu/
 COMPONENT_SUMMARY=	dmenu is a dynamic menu for X, originally designed for dwm
 COMPONENT_FMRI=		desktop/dmenu
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:1f4d709ebba37eb7326eba0e665e0f13be4fa24ee35c95b0d79c30f14a348fd5
+COMPONENT_ARCHIVE_HASH= sha256:d4d4ca77b59140f272272db537e05bb91a5914f56802652dc57e61a773d43792
 COMPONENT_ARCHIVE_URL=	https://dl.suckless.org/tools/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT/X
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -35,7 +34,7 @@ TEST_TARGET:		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += x11/library/libx11

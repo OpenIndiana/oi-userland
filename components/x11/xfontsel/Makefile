@@ -17,17 +17,15 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=    xfontsel
-COMPONENT_VERSION= 1.1.0
-COMPONENT_SUMMARY= xfontsel - point and click selection of X11 font names
-COMPONENT_FMRI=    x11/xfontsel
+COMPONENT_NAME=              xfontsel
+COMPONENT_VERSION=           1.1.1
+COMPONENT_SUMMARY=           xfontsel - point and click selection of X11 font names
+COMPONENT_FMRI=              x11/xfontsel
 COMPONENT_ARCHIVE_EXTENSION= .tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:32938f671c706dc15644ceebf5daebbf0f2f1fe45afa2d06d2b905cc7d6c7de2
+COMPONENT_ARCHIVE_HASH=      sha256:5a3c037ef28e8d22ccf7ca05894e0fcd86256a48dd56fb6e2838308cef623b7e
+COMPONENT_LICENSE_FILE=      COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-CPPFLAGS+= -DXLOCALEDIR=\"$(USRSHARELOCALEDIR)\"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

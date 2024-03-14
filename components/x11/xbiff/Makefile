@@ -18,16 +18,17 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xbiff
-COMPONENT_VERSION=      1.0.4
-COMPONENT_FMRI=         x11/xbiff
+COMPONENT_VERSION=      1.0.5
 COMPONENT_SUMMARY=      xbiff − mailbox flag for X
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:cffb10e2488b09695da8377f395a4fed6d33f5eb9691322ebaa969e8ead7b0c2
+COMPONENT_FMRI=         x11/xbiff
 COMPONENT_CLASSIFICATION=Applications/Accessories
-COMPONENT_ARCHIVE_HASH= \
-  sha256:e1e1a39628a5678585008ef7fb1ff2864edaaa0e062989c2331f8c74e0fec971
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += x11/data/xbitmaps
 
 # Auto-generated dependencies

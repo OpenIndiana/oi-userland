@@ -10,32 +10,32 @@
 
 #
 # Copyright 2020 Marco van Wieringen
+# Copyright 2023 Niklas Poslovski
 #
 
 BUILD_BITS= 64
 BUILD_STYLE= cmake
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		remmina
-COMPONENT_VERSION=	1.4.8
+COMPONENT_VERSION=	1.4.31
 COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Remmina remote desktop client
-COMPONENT_PROJECT_URL=	https://www.freerdp.com
+COMPONENT_PROJECT_URL=	https://remmina.org
 COMPONENT_FMRI=		desktop/remote-desktop/remmina
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC_NAME=	Remmina
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:8963b18a1e77296a14b6876c8de1f7369969e716a856a8496bf5a0d2fffb9287
+COMPONENT_ARCHIVE_HASH= sha256:c59444e4f97c26205455b8ad4b7dbffc8dffd24dcef3f4094090f9fa97a5be0d
 COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/Remmina/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
 TEST_TARGET= $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
+
+LDFLAGS += -lnsl -lsocket
 
 CMAKE_OPTIONS += -DWITH_AVAHI=OFF
 CMAKE_OPTIONS += -DWITH_LIBSSH=OFF
@@ -44,6 +44,8 @@ CMAKE_OPTIONS += -DGETTEXT_MSGMERGE_EXECUTABLE=/usr/bin/gmsgmerge
 CMAKE_OPTIONS += -DGETTEXT_MSGFMT_EXECUTABLE=/usr/bin/gmsgfmt
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += desktop/library/libayatana-appindicator
 REQUIRED_PACKAGES += desktop/remote-desktop/freerdp
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -52,12 +54,8 @@ REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsecret
-REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
-REQUIRED_PACKAGES += x11/library/libx11

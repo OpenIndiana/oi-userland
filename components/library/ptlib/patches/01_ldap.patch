@@ -1,0 +1,33 @@
+--- ptlib-2.16.2/src/ptclib/pldap.cxx	2016-05-12 11:53:04.000000000 +0200
++++ ptlib-2.16.2/src/ptclib/pldap.cxx.orig	2023-09-09 21:11:52.400305692 +0200
+@@ -141,7 +141,7 @@
+   else
+     whoPtr = who;
+ 
+-#ifdef SOLARIS
++#ifdef SOLARIS_ORIG
+   static const int AuthMethodCode[NumAuthenticationMethod2] = {
+     LDAP_AUTH_SIMPLE, LDAP_AUTH_SASL, LDAP_AUTH_KRBV41_30, LDAP_AUTH_KRBV42_30
+ #else
+--- ptlib-2.16.2/include/ptclib/pldap.h	2016-05-12 11:53:07.000000000 +0200
++++ ptlib-2.16.2/include/ptclib/pldap.h.orig	2023-09-09 21:28:37.016974899 +0200
+@@ -103,7 +103,7 @@
+       AuthSimple,
+       AuthSASL,
+       AuthKerberos,
+-#ifdef SOLARIS
++#ifdef SOLARIS_ORIG
+       NumAuthenticationMethod1,
+       NumAuthenticationMethod2
+ #else
+--- ptlib-2.16.2/configure.ac	2016-05-12 11:53:04.000000000 +0200
++++ ptlib-2.16.2/configure.ac.orig	2023-09-09 21:38:43.744699705 +0200
+@@ -1462,7 +1462,7 @@
+    [Open LDAP support],
+    [ldap],
+    [],
+-   [-lldap -llber],
++   [-lldap-2.6 -llber-2.6],
+    [#include <ldap.h>],
+    [ldap_init("localhost", 1234)],
+    [],

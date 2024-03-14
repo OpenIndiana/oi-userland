@@ -19,11 +19,11 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	pg_repack
-COMPONENT_VERSION=	1.4.7
+COMPONENT_VERSION=	1.4.8
 COMPONENT_SUMMARY=	pg_repack - utility to reorganize PostgreSQL tables on-line
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:04a29a0d8e1a458bcbbf28a441a7380bb184c23b5f434c1c7249c5a6324c088c
+COMPONENT_ARCHIVE_HASH= sha256:5033da618b169095b1f601b267b889407b1a20e567af5ac3524fda3d10f82dfb
 COMPONENT_ARCHIVE_URL=	https://api.pgxn.org/dist/pg_repack/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://reorg.github.io/pg_repack/
 COMPONENT_FMRI=	database/postgres-14/pg_repack
@@ -44,5 +44,6 @@ include $(WS_MAKE_RULES)/common.mk
 REQUIRED_PACKAGES += database/postgres-14/developer
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += database/postgres-14/library
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += database/postgres-14
 REQUIRED_PACKAGES += system/library

@@ -22,21 +22,21 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2023, Klaus Ziegler
 #
 
-BUILD_BITS=			32_and_64
+USE_COMMON_TEST_MASTER= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			tk
-COMPONENT_MAJOR_VERSION=	8.6
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).12
-COMPONENT_REVISION=		1
+COMPONENT_MJR_VERSION=	8.6
+COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).14
 COMPONENT_SUMMARY=		Tk - TCL GUI Toolkit
 COMPONENT_DESCRIPTION=	Tk is an open source, cross-platform widget toolkit that provides a library of basic elements for building a graphical user interface
 COMPONENT_PROJECT_URL=	https://www.tcl-lang.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-src.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:12395c1f3fcb6bed2938689f797ea3cdf41ed5cb6c4766eec8ac949560310630
+COMPONENT_ARCHIVE_HASH= sha256:8ffdb720f47a6ca6107eac2dd877e30b0ef7fac14f3a84ebbd0b3612cee41a94
 COMPONENT_ARCHIVE_URL=	https://prdownloads.sourceforge.net/tcl/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/tk-8
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -45,31 +45,38 @@ COMPONENT_LICENSE_FILE=	license.terms
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = \
+PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MJR_VERSION)
+
+COMPONENT_PREP_ACTION= \
 	(cd $(@D)/unix ; autoreconf -f)
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
+COMPONENT_PRE_CONFIGURE_ACTION= \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # This macro will help to look for the configure
 # file at the pointed location
-CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
-
-CONFIGURE_BINDIR.32 =  $(CONFIGURE_PREFIX)/bin/$(MACH32)
+CONFIGURE_SCRIPT= $(SOURCE_DIR)/unix/configure
 
 CFLAGS += $(XPG6MODE) -std=c99
 
-CONFIGURE_OPTIONS	+= --enable-shared
-CONFIGURE_OPTIONS	+= --enable-man-symlinks
-CONFIGURE_OPTIONS	+= --enable-threads
-CONFIGURE_OPTIONS	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
-# Prevents a '64-bit runpath in 32-bit binary' pkglint warning
-CONFIGURE_OPTIONS.32	+= -x-libraries=/usr/lib
-CONFIGURE_OPTIONS.64	+= --enable-64bit
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-man-symlinks
+CONFIGURE_OPTIONS += --enable-threads
+CONFIGURE_OPTIONS += --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
+CONFIGURE_OPTIONS += --enable-64bit
+ifeq ($(strip $(MACH)),sparc)
+CONFIGURE_OPTIONS += --enable-64bit-vis
+endif
 
 # Don't use rpath
 COMPONENT_POST_INSTALL_ACTION += \
 	find $(PROTO_DIR) -name libtk$(COMPONENT_MAJOR_VERSION).so -exec chmod 0755 {} \; ;
+
+COMPONENT_POST_INSTALL_ACTION += \
+	sed -f $(COMPONENT_DIR)/files/tksed $(PROTOUSRLIBDIR64)/tkConfig.sh > \
+	$(PROTOUSRLIBDIR64)/tkConfig.sh.new \
+	$(MV) $(PROTOUSRLIBDIR64)/tkConfig.sh.new $(PROTOUSRLIBDIR64)/tkConfig.sh; \
+	$(CHMOD) 555 $(PROTOUSRLIBDIR64)/tkConfig.sh
 
 # Tests are run using an X virtual framebuffer.
 # When we have the equivalent of REQUIRED_PACKAGES for test dependencies,
@@ -83,43 +90,20 @@ COMPONENT_POST_TEST_ACTION = \
 	$(SHELL) $(COMPONENT_DIR)/stop_Xvfb $(COMPONENT_DIR)
 
 # Test results differ between 32-bit and 64-bit and x86 and SPARC.
-COMPONENT_TEST_MASTER = \
-	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS)-$(MACH).master
+#COMPONENT_TEST_MASTER = \
+#	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS)-$(MACH).master
 
-COMPONENT_TEST_TRANSFORMS += \
-    '-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
-    '-e "s|^.*tcl/build/$(MACH$(BITS)).*$$|XXX_CC_XXX|g"' \
-    '-e "s|^cc: Warning: -xarch=v9 is deprecated.*$$|XXX_CC_XXX|g"' \
-    '-e "s|^cc: Warning: illegal use of -x.* option, .*$$|XXX_CC_XXX|g"' \
-    '-e "/Nothing to be done/d"' \
-    '-e "/Leaving directory/d"' \
-    '-e "/Entering directory/d"' \
-    '-e "/is deprecated/d"' \
-    '-e "/tk.*Init.o/d"' \
-    '-e "/^XXX_CC_XXX$$/d"' \
-    '-e "/^make.*$$/d"' \
-    '-e "/^rm .*$$/d"' \
-    '-e "/^mv .*$$/d"' \
-    '-e "/^Tests began at .*$$/d"' \
-    '-e "/^Tests ended at .*$$/d"'
-
-COMPONENT_POST_INSTALL_ACTION += \
-	sed -f $(COMPONENT_DIR)/files/tksed.$(BITS) \
-		$(PROTO_DIR)$(USRLIBDIR.$(BITS))/tkConfig.sh > \
-		$(PROTO_DIR)$(USRLIBDIR.$(BITS))/tkConfig.sh.new; \
-	$(MV) $(PROTO_DIR)$(USRLIBDIR.$(BITS))/tkConfig.sh.new \
-		$(PROTO_DIR)$(USRLIBDIR.$(BITS))/tkConfig.sh; \
-	$(CHMOD) 555 $(PROTO_DIR)$(USRLIBDIR.$(BITS))/tkConfig.sh
-
+COMPONENT_TEST_TRANSFORMS= \
+	'-n' \
+	'-e "/Total/p"' \
+	'-e "/Sourced/p"' \
+	'-e "/failing/p"'
 
 # special targets due to tcl internals dependencies
 ../tcl/build/%/.built:
 	(cd ../tcl ; $(GMAKE) build)
 
-$(CONFIGURE_32):	../tcl/build/$(MACH32)/.built
 $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
-
-PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 
 # Required for test suite
 REQUIRED_PACKAGES += x11/server/xvfb

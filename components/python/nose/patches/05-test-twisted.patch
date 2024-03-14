@@ -1,0 +1,22 @@
+--- nose-1.3.7/functional_tests/test_program.py.orig
++++ nose-1.3.7/functional_tests/test_program.py
+@@ -116,12 +116,16 @@
+         self.assertEqual(res.testsRun, 4,
+                          "Expected to run 4 tests, ran %s" % (res.testsRun,))
+         assert not res.wasSuccessful()
+-        assert len(res.errors) == 1
++        import twisted
++        v = twisted.version
++        # With Twisted 23.8.0 we see nine errors
++        if (v.major, v.minor) >= (23, 8):
++            assert len(res.errors) == 9
++        else:
++            assert len(res.errors) == 1
+ 
+         # In 12.3, Twisted made their skip functionality match unittests, so the
+         # skipped test is no longer reported as a failure.
+-        import twisted
+-        v = twisted.version
+         if (v.major, v.minor) >= (12, 3):
+             assert len(res.failures) == 1
+         else:

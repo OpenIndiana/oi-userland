@@ -1,0 +1,17 @@
+diff -Nru qbittorrent-4.5.0.orig/src/app/application.cpp qbittorrent-4.5.0/src/app/application.cpp
+--- qbittorrent-4.5.0.orig/src/app/application.cpp	2023-01-14 20:42:09.101483950 +0000
++++ qbittorrent-4.5.0/src/app/application.cpp	2023-01-14 20:51:56.094149358 +0000
+@@ -1036,11 +1036,11 @@
+     // has no effect on linux but it might be meaningful for other OS
+     rlimit limit {};
+ 
+-    if (::getrlimit(RLIMIT_RSS, &limit) != 0)
++    if (::getrlimit(RLIMIT_VMEM, &limit) != 0)
+         return;
+ 
+     limit.rlim_cur = memoryWorkingSetLimit() * MiB;
+-    if (::setrlimit(RLIMIT_RSS, &limit) != 0)
++    if (::setrlimit(RLIMIT_VMEM, &limit) != 0)
+     {
+         const auto message = QString::fromLocal8Bit(strerror(errno));
+         LogMsg(logMessage.arg(QString::number(errno), message), Log::WARNING);

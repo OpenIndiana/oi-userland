@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::HTML
 HUMAN_VERSION =			1.004
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IO::HTML - Open an HTML file with automatic charset detection
 COMPONENT_CPAN_AUTHOR =		CJM
 COMPONENT_ARCHIVE_HASH =	\

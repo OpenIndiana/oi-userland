@@ -23,6 +23,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		FFI::CheckLib
 HUMAN_VERSION =			0.31
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		FFI::CheckLib - Check that a library is available for FFI
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,5 +35,5 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/file-which
-PERL_REQUIRED_PACKAGES += library/perl-5/test2-suite
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite

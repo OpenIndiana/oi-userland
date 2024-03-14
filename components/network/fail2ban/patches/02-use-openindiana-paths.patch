@@ -1,0 +1,42 @@
+--- fail2ban-1.0.2/files/solaris-svc-fail2ban.old	2024-01716 05:56:47.429668837 -0500
++++ fail2ban-1.0.2/files/solaris-svc-fail2ban	2024-01-16 07:58:31.726321003 -0500
+@@ -15,7 +15,7 @@
+   F2B_CONF="$2"
+ fi
+ 
+-ENV="/usr/bin/env -i LANG=C PATH=/usr/local/bin:/usr/bin:/bin:/opt/sfw/bin:/usr/sfw/bin"
++ENV="/usr/bin/env -i LANG=C PATH=/usr/bin:/usr/bin:/bin"
+ 
+ # get socket/pid conf and check dir exists
+ # sock and pid default dirs are currently the same
+@@ -39,24 +39,24 @@
+ 		fi
+ 		[ -f /etc/fail2ban.conf ] || touch /etc/fail2ban.conf
+ 		echo "Starting fail2ban-server with $F2B_CONF"
+-		eval $ENV /usr/local/bin/fail2ban-client start &
++		eval $ENV /usr/bin/fail2ban-client start &
+ 	;;
+ 	stop)
+ 		echo "Stopping fail2ban-server with $F2B_CONF"
+-		eval $ENV /usr/local/bin/fail2ban-client stop &
++		eval $ENV /usr/bin/fail2ban-client stop &
+ 	;;
+ 	reload | refresh )
+ 		echo "Reloading fail2ban-server with $F2B_CONF"
+-		eval $ENV /usr/local/bin/fail2ban-client reload &
++		eval $ENV /usr/bin/fail2ban-client reload &
+ 	;;
+ 	restart | force-reload)
+ 		echo "Forcing reload of fail2ban-server with $F2B_CONF"
+-		eval $ENV /usr/local/bin/fail2ban-client stop &
++		eval $ENV /usr/bin/fail2ban-client stop &
+ 		sleep 2
+-		eval $ENV /usr/local/bin/fail2ban-client start &
++		eval $ENV /usr/bin/fail2ban-client start &
+ 	;;
+ 	status)
+-		/usr/local/bin/fail2ban-client status &
++		/usr/bin/fail2ban-client status &
+ 	;;
+ 	*)
+ 		echo "Usage: /lib/svc/method/svc-fail2ban start|stop|status|refresh|restart|reload|force-reload" >&2

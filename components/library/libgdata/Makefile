@@ -11,69 +11,58 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2022 Andreas Wacknitz
 #
 
+BUILD_STYLE= meson
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgdata
-COMPONENT_MJR_VERSION= 0.17
-COMPONENT_MNR_VERSION= 9
-COMPONENT_REVISION= 2
+COMPONENT_MJR_VERSION= 0.18
+COMPONENT_MNR_VERSION= 1
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libgdata is a collection library providing GObject-based interfaces and classes for commonly used data structures
+COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/libgdata
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:85c4f7674c0098ffaf060ae01b6b832cb277b3673d54ace3bdedaad6b127453a
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_CLASSIFICATION = Development/GNOME and GTK+
+COMPONENT_ARCHIVE_HASH= sha256:dd8592eeb6512ad0a8cf5c8be8c72e76f74bfe6b23e4dd93f0756ee0716804c7
+COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/desktop/libgdata
+COMPONENT_CLASSIFICATION = Development/GNOME and GTK+
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_LICENSE= LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+CONFIGURE_ENV += PATH="$(PATH)"
+COMPONENT_INSTALL_ENV += PATH="$(PATH)"
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --disable-goa
+# We don't have goa:
+CONFIGURE_OPTIONS += -Dgoa=disabled
+# introspection needs linux compatible ld:
+CONFIGURE_OPTIONS += -Dintrospection=false
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-# for the tests
-unexport SHELLOPTS
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_ARGS =   -k -i
 COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ERROR:/p" '
+	'-e "s/[0-9]*.[0-9][0-9]s//" ' \
+	'-e "/OK/p" ' \
+	'-e "/SIGTERM/p" ' \
+	'-e "/FAIL/p" '
 
-build: $(BUILD_32_and_64)
+# for the tests to pass
+unexport SHELLOPTS
 
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += library/uhttpmock
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gcr
-REQUIRED_PACKAGES += library/liboauth
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library

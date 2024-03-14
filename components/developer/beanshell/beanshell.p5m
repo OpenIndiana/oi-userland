@@ -1,59 +1,50 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/runtime/java/beanshell@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.human-version value=$(COMPONENT_VERSION)
-set name=pkg.summary value="beanshell - a small and embeddable Java source interpreter"
-set name=pkg.description value="BeanShell is a small, free, embeddable Java source interpreter with object scripting language features, written in Java. BeanShell dynamically executes standard Java syntax and extends it with common scripting conveniences such as loose types, commands, and method closures like those in Perl and JavaScript."
-set name=com.oracle.info.description value="the beanshell Java source interpreter"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Development/Java"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2023 Niklas Poslovski
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2009/270
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
 file scripts/bsh path=usr/bin/beansh
 file path=usr/demo/bsh/webapps/bshservlet-wbsh.war
 file path=usr/demo/bsh/webapps/bshservlet.war
 file docs/manual/bshcommands-bshdoc.xml path=usr/share/doc/beanshell/bshcommands-bshdoc.xml
-file path=usr/share/lib/java/bsh-2.0b6.jar
-file path=usr/share/lib/java/bsh-bsf-2.0b6.jar
-file path=usr/share/lib/java/bsh-classgen-2.0b6.jar
-file path=usr/share/lib/java/bsh-classpath-2.0b6.jar
-file path=usr/share/lib/java/bsh-commands-2.0b6.jar
-file path=usr/share/lib/java/bsh-core-2.0b6.jar
-file path=usr/share/lib/java/bsh-engine-2.0b6.jar
-file path=usr/share/lib/java/bsh-reflect-2.0b6.jar
-file path=usr/share/lib/java/bsh-util-2.0b6.jar
+file path=usr/share/lib/java/bsh-$(HUMAN_VERSION).jar
+file path=usr/share/lib/java/bsh-bsf-$(HUMAN_VERSION).jar
+file path=usr/share/lib/java/bsh-classgen-$(HUMAN_VERSION).jar
+file path=usr/share/lib/java/bsh-classpath-$(HUMAN_VERSION).jar
+file path=usr/share/lib/java/bsh-commands-$(HUMAN_VERSION).jar
+file path=usr/share/lib/java/bsh-core-$(HUMAN_VERSION).jar
+file path=usr/share/lib/java/bsh-engine-$(HUMAN_VERSION).jar
+file path=usr/share/lib/java/bsh-reflect-$(HUMAN_VERSION).jar
+file path=usr/share/lib/java/bsh-util-$(HUMAN_VERSION).jar
 file path=usr/share/lib/java/javadoc/beanshell/allclasses-frame.html
 file path=usr/share/lib/java/javadoc/beanshell/allclasses-noframe.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/BshClassManager.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/BshClassManager.Listener.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/BSHFormalComment.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/BshIterator.html
+file path=usr/share/lib/java/javadoc/beanshell/bsh/BSHLiteral.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/BshMethod.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/BSHPackageDeclaration.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/CallStack.html
@@ -62,25 +53,24 @@ file path=usr/share/lib/java/javadoc/beanshell/bsh/Capabilities.Unavailable.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/BshClassManager.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/BshClassManager.Listener.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/BSHFormalComment.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/BshIterator.html
+file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/BSHLiteral.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/BshMethod.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/BSHPackageDeclaration.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/CallStack.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/Capabilities.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/Capabilities.Unavailable.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ClassGenerator.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ClassGeneratorImpl.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ClassGeneratorUtil.ConstructorArgs.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ClassGeneratorUtil.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ClassIdentifier.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ClassPathException.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/CollectionManager.BasicBshIterator.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/CollectionManager.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/Console.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ConsoleInterface.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/DelayedEvalBshMethod.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/EvalError.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ExternalNameSpace.html
+file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/GeneratedClass.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/Interpreter.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/InterpreterError.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/JavaCharStream.html
@@ -93,8 +83,8 @@ file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/Parser.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ParserConstants.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ParserTokenManager.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ParserTreeConstants.html
+file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/PreparsedScript.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/Primitive.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/ReflectManager.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/Remote.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/StringUtil.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/TargetError.html
@@ -106,7 +96,6 @@ file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/UtilTargetError.htm
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/Variable.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/class-use/XThis.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ClassGenerator.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/ClassGeneratorImpl.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ClassGeneratorUtil.ConstructorArgs.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ClassGeneratorUtil.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ClassIdentifier.html
@@ -139,13 +128,13 @@ file path=usr/share/lib/java/javadoc/beanshell/bsh/classpath/package-summary.htm
 file path=usr/share/lib/java/javadoc/beanshell/bsh/classpath/package-tree.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/classpath/package-use.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ClassPathException.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/CollectionManager.BasicBshIterator.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/CollectionManager.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/Console.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ConsoleInterface.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/DelayedEvalBshMethod.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/EvalError.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ExternalNameSpace.html
+file path=usr/share/lib/java/javadoc/beanshell/bsh/GeneratedClass.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/Interpreter.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/InterpreterError.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/JavaCharStream.html
@@ -162,14 +151,8 @@ file path=usr/share/lib/java/javadoc/beanshell/bsh/Parser.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ParserConstants.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ParserTokenManager.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/ParserTreeConstants.html
+file path=usr/share/lib/java/javadoc/beanshell/bsh/PreparsedScript.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/Primitive.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/reflect/class-use/ReflectManagerImpl.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/reflect/package-frame.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/reflect/package-summary.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/reflect/package-tree.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/reflect/package-use.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/reflect/ReflectManagerImpl.html
-file path=usr/share/lib/java/javadoc/beanshell/bsh/ReflectManager.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/Remote.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/StringUtil.html
 file path=usr/share/lib/java/javadoc/beanshell/bsh/TargetError.html
@@ -229,4 +212,3 @@ file path=usr/share/lib/java/javadoc/beanshell/stylesheet.css
 file beansh.1 path=usr/share/man/man1/beansh.1
 file beanshell.1 path=usr/share/man/man1/beanshell.1
 link path=usr/bin/beanshell target=beansh
-license beanshell.license license="LGPLv2.1, SPL"

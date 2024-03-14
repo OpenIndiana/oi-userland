@@ -1,0 +1,22 @@
+From 96002bef758aa37906f0e6aa1f0e2dcc84b3bc3b Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <illumos@fiddaman.net>
+Date: Mon, 28 Nov 2022 14:52:31 +0000
+Subject: illumos OFD locking must span the entire file
+
+---
+ util/osdep.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/util/osdep.c b/util/osdep.c
+index 77c1a6c562..dec1e6386a 100644
+--- a/util/osdep.c
++++ b/util/osdep.c
+@@ -31,6 +31,8 @@
+ #include "qemu/hw-version.h"
+ #include "monitor/monitor.h"
+ 
++#undef F_OFD_SETLK
++
+ static const char *hw_version = QEMU_HW_VERSION;
+ 
+ int socket_set_cork(int fd, int v)

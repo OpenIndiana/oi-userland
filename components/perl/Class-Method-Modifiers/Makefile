@@ -19,18 +19,16 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Class::Method::Modifiers
-HUMAN_VERSION =			2.13
+HUMAN_VERSION =			2.15
 COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Class::Method::Modifiers - Provides Moose-like method modifiers
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ab5807f71018a842de6b7a4826d6c1f24b8d5b09fcce5005a3309cf6ea40fd63
+	sha256:65cd85bfe475d066e9186f7a8cc636070985b30b0ebb1cde8681cf062c2e15fc
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
 PERL_REQUIRED_PACKAGES += runtime/perl

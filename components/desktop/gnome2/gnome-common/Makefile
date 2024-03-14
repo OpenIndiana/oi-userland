@@ -16,7 +16,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-common
 COMPONENT_VERSION=	2.28.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Multiply used files used by the GNOME 2.0 platform
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -24,26 +24,12 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:dd4817103d23745d00c735dd137951552ba7b576cb8f68e6a529d06661e9b6a1
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.28/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
+COMPONENT_FMRI=		gnome/gnome-common
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_LICENSE=	GPL-3.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
-
-gcc_OPT		= -O2
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
-CONFIGURE_ENV+=  PERL=$(PERL)
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += developer/gnome/gettext
+REQUIRED_PACKAGES += shell/ksh93

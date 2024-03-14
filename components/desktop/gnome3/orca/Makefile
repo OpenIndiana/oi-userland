@@ -13,13 +13,11 @@
 # Copyright (c) 2014 Ken Mays
 #
 
-BUILD_BITS=64
-
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         orca
 COMPONENT_VERSION=      3.24.0
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=  http://www.gnome.org
 COMPONENT_SUMMARY=      Orca screen reader/magnifier
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,16 +34,15 @@ TEST_TARGET = $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION=	3.5
-
 PATH=$(PATH.gnu)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV+= am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
-REQUIRED_PACKAGES += library/python/pyatspi2-35
-REQUIRED_PACKAGES += library/python/pygobject-3-35
-REQUIRED_PACKAGES += runtime/python-35
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pyatspi2
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += runtime/python

@@ -14,27 +14,28 @@
 # Copyright 2018 Michal Nowak
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 32_and_64
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdk-pixbuf
 COMPONENT_VERSION=      2.36.12
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=      GNOME gdk-pixbuf
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42cb3759a3b427a334
-COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.36/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42cb3759a3b427a334
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.36/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/gdk-pixbuf
 COMPONENT_FMRI=         library/desktop/gdk-pixbuf
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=	LGPL-2.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal  -I m4 && \
-				libtoolize --force --copy&& \
+				PATH="$(PATH)" libtoolize --force --copy && \
 				autoheader && \
 				automake -a -f -c --gnu && \
 				autoconf )
@@ -86,7 +87,7 @@ COMPONENT_TEST_TRANSFORMS += '-ne "/^ERROR/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/glib2

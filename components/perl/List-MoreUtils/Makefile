@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		List::MoreUtils
 HUMAN_VERSION =			0.430
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		List::MoreUtils - Provide the stuff missing in List::Util
 COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,5 +33,5 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/exporter-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/list-moreutils-xs
-PERL_REQUIRED_PACKAGES += library/perl-5/test-leaktrace
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace

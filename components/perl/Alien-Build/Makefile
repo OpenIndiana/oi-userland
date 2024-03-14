@@ -19,11 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Alien::Build
-HUMAN_VERSION =			2.71
+HUMAN_VERSION =			2.80
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Alien::Build - Build external dependencies for use in CPAN
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6789a11609f48557466effccb23392dedccdb585fe2f635ce7dbf7a780c7fa58
+	sha256:d9edc936b06705bb5cb5ee5a2ea8bcf6111a3e8815914f177e15e3c0fed301f3
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,5 +36,6 @@ PERL_REQUIRED_PACKAGES += library/perl-5/ffi-checklib
 PERL_REQUIRED_PACKAGES += library/perl-5/file-chdir
 PERL_REQUIRED_PACKAGES += library/perl-5/file-which
 PERL_REQUIRED_PACKAGES += library/perl-5/path-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/test2-suite
+PERL_REQUIRED_PACKAGES += library/perl-5/pkgconfig
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite

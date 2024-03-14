@@ -15,22 +15,21 @@
 #
 
 BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tig
-COMPONENT_VERSION=	2.5.7
-COMPONENT_FMRI=		developer/versioning/tig
-COMPONENT_PROJECT_URL=	https://jonas.github.io/$(COMPONENT_NAME)
+COMPONENT_VERSION=	2.5.8
 COMPONENT_SUMMARY=	Text-mode interface for git
 COMPONENT_DESCRIPTION=	Tig is an ncurses-based text-mode interface for git. It functions mainly as a Git repository browser, but can also assist in staging changes for commit at chunk level and act as a pager for output from various Git commands.
-COMPONENT_CLASSIFICATION= Development/Source Code Management
+COMPONENT_PROJECT_URL=	https://jonas.github.io/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:dbc7bac86b29098adaa005a76161e200f0734dda36de9f6bd35a861c7c29ca76
+COMPONENT_ARCHIVE_HASH= sha256:b70e0a42aed74a4a3990ccfe35262305917175e3164330c0889bd70580406391
 COMPONENT_ARCHIVE_URL=	https://github.com/jonas/$(COMPONENT_NAME)/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_FMRI=		developer/versioning/tig
+COMPONENT_CLASSIFICATION= Development/Source Code Management
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -44,16 +43,17 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # Place the config file in /etc
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
-CFLAGS +=	-I/usr/include/ncurses
+CFLAGS += -I/usr/include/ncurses
 
 COMPONENT_INSTALL_TARGETS = install install-doc
 
 # GNU grep is expected
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
-
 COMPONENT_TEST_TARGETS = test
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += text/asciidoc
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline

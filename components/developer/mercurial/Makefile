@@ -24,27 +24,29 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=64
 BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mercurial
 COMPONENT_VERSION=	5.9.3
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
+COMPONENT_REVISION=		2
+COMPONENT_SUMMARY=		The Mercurial Source Control Management System
+COMPONENT_PROJECT_URL=		https://mercurial-scm.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3b43f68977ad0fa75aa7f1e5c8f0a83ba935621ab2396129abb498e56d1be08e
 COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/hg
+COMPONENT_FMRI=			developer/versioning/mercurial
+COMPONENT_CLASSIFICATION=	Development/Source Code Management
+COMPONENT_LICENSE=		GPL-2.0-or-later
+COMPONENT_LICENSE_FILE=		COPYING
 
-PYTHON_VERSIONS = 3.7 3.9
+SINGLE_PYTHON_VERSION = yes
+
+TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f hg hg-$(PYTHON_VERSION))
 
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/contrib
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
@@ -70,23 +72,22 @@ TEST_BLACKLIST += \
 	test-ssh-bundle1.t \
 	test-bundle2-exchange.t
 
-COMPONENT_PRE_TEST_ACTION = \
+COMPONENT_PRE_TEST_ACTION += \
 	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
-	printf "%s\n" $(TEST_BLACKLIST) > blacklist); \
-	(cd $(PROTOUSRBINDIR); rm -f hg; ln -s hg-$(PYTHON_VERSION) hg)
+	printf "%s\n" $(TEST_BLACKLIST) > blacklist);
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
 COMPONENT_TEST_ENV =	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
 COMPONENT_TEST_ENV +=	TERM=dumb
 COMPONENT_TEST_ENV +=	HGTEST_JOBS=$(or $(HGTEST_JOBS),1)
 COMPONENT_TEST_ENV +=	PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_TEST_CMD =	$(PYTHON)
 COMPONENT_TEST_ARGS =	./run-tests.py \
 			--shell $(BUILD_DIR)/sh \
 			--with-hg $(PROTOUSRBINDIR)/hg \
 			--blacklist $(BUILD_DIR)/blacklist
+COMPONENT_TEST_TARGETS =
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library

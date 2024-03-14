@@ -24,22 +24,23 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         npth
 COMPONENT_VERSION=      1.6
-COMPONENT_REVISION=     1
-COMPONENT_FMRI=         library/npth
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      The New GNU Portable Threads Library
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_DESCRIPTION=	A portable library that uses the system's standard threads library to provid non-preemptive priority-based scheduling for multiple threads using the npth API
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://www.gnupg.org/related_software/npth/
+COMPONENT_PROJECT_URL=  https://www.gnupg.org/related_software/npth/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-	sha256:1393abd9adcf0762d34798dc34fdcf4d0d22a8410721e76f1e3afcd1daa4e2d1
-COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/npth/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:1393abd9adcf0762d34798dc34fdcf4d0d22a8410721e76f1e3afcd1daa4e2d1
+COMPONENT_ARCHIVE_URL=  https://ftp.gnupg.org/gcrypt/npth/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/npth
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_LICENSE=		LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING.LIB
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -55,16 +56,15 @@ CFLAGS += -fPIC
 
 CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
 
-LDFLAGS =	-lpthread -lposix4 -lrt
+LDFLAGS=	-lpthread -lposix4 -lrt
 
-CONFIGURE_OPTIONS  +=	--localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS  +=	--with-pic
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --with-pic
 
 CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV += CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += '-e "s|\(^Pth:\).*|\1|" '
 
 # Auto-generated dependencies

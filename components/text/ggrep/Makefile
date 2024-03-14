@@ -24,17 +24,15 @@
 # Copyright (c) 2020-2021, Nona Hansel
 #
 
-BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	3.8
+COMPONENT_VERSION=	3.11
 COMPONENT_SUMMARY= 	GNU grep utilities
 COMPONENT_PROJECT_URL=	https://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:498d7cc1b4fb081904d87343febb73475cf771e424fb7e6141aff66013abc382
+COMPONENT_ARCHIVE_HASH= sha256:1db2aedde89d0dea42b16d9528f894c8d15dae4e190b59aecc78f5a951276eab
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-grep
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -67,13 +65,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/ERROR/p" '
 
-# Since version 3.4, GNU grep is needed for build.
-REQUIRED_PACKAGES += text/gnu-grep
 # Testsuite requirements
-REQUIRED_PACKAGES += developer/versioning/cvs
-REQUIRED_PACKAGES += locale/tr
-REQUIRED_PACKAGES += locale/ru-extra
-REQUIRED_PACKAGES += locale/zh_cn-extra
+TEST_REQUIRED_PACKAGES += developer/versioning/cvs
+TEST_REQUIRED_PACKAGES += locale/tr
+TEST_REQUIRED_PACKAGES += locale/ru-extra
+TEST_REQUIRED_PACKAGES += locale/zh_cn-extra
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/pcre2

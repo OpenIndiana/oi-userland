@@ -1,46 +1,40 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2022 Gary Mills
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2023 Andreas Wacknitz
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)-2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="ANother Tool for Language Recognition"
-set name=pkg.description \
-    value="ANTLR, ANother Tool for Language Recognition, (formerly PCCTS) is a language tool that provides a framework for constructing recognizers, compilers, and translators from grammatical descriptions containing C++ or Java actions [You can use PCCTS 1.xx to generate C-based parsers]."
-set name=com.oracle.info.description value="the ANTLR Language Recognition tool"
-set name=com.oracle.info.tpno value=5546
-set name=info.classification \
-    value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=LSARC/2009/049
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-file path=usr/bin/antlr-$(COMPONENT_VERSION)
-file path=usr/bin/antlr-config-$(COMPONENT_VERSION)
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+legacy pkg=SUNWantlr2 \
+    desc="ANTLR, (AN)other (T)ool for (L)anguage (R)ecognition" \
+    name="ANTLR, (AN)other (T)ool for (L)anguage (R)ecognition"
+
+# Note that we provide a static library because there is no shared library at all.
+
+file path=usr/bin/antlr-$(HUMAN_VERSION)
+file path=usr/bin/antlr-config-$(HUMAN_VERSION)
 file path=usr/include/antlr/ANTLRException.hpp
 file path=usr/include/antlr/ANTLRUtil.hpp
 file path=usr/include/antlr/AST.hpp
@@ -91,42 +85,38 @@ file path=usr/include/antlr/TokenWithIndex.hpp
 file path=usr/include/antlr/TreeParser.hpp
 file path=usr/include/antlr/TreeParserSharedInputState.hpp
 file path=usr/include/antlr/config.hpp
-file path=usr/lib/antlr-$(COMPONENT_VERSION).jar
-file path=usr/share/antlr-$(COMPONENT_VERSION)/antlr-jedit.xml
-file path=usr/share/antlr-$(COMPONENT_VERSION)/antlr-mode.el
-file path=usr/share/antlr-$(COMPONENT_VERSION)/antlr.jar
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/INSTALL.txt
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/LICENSE.txt
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/README.txt
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/closure.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/cpp-runtime.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/csharp-runtime.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/err.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/glossary.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/hidden.stream.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/index.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/inheritance.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/j-guru-blue.jpg
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/jguru-logo.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/lexer.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/lexer.to.parser.tokens.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/logo.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/metalang.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/optional.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/options.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/posclosure.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/python-runtime.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/runtime.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/sor.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/stream.perspectives.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/stream.selector.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/stream.splitter.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/streams.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/subrule.gif
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/trees.html
-file path=usr/share/doc/antlr-$(COMPONENT_VERSION)/vocab.html
-file antlr-2.7.7.1 path=usr/share/man/man1/antlr-2.7.7.1
-legacy pkg=SUNWantlr2 \
-    desc="ANTLR, (AN)other (T)ool for (L)anguage (R)ecognition" \
-    name="ANTLR, (AN)other (T)ool for (L)anguage (R)ecognition"
-license antlr.license license="Public Domain"
+file path=usr/lib/antlr-$(HUMAN_VERSION).jar
+file path=usr/lib/libantlr.a
+file path=usr/share/antlr-$(HUMAN_VERSION)/antlr-jedit.xml
+file path=usr/share/antlr-$(HUMAN_VERSION)/antlr-mode.el
+file path=usr/share/antlr-$(HUMAN_VERSION)/antlr.jar
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/INSTALL.txt
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/LICENSE.txt
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/README.txt
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/closure.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/cpp-runtime.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/csharp-runtime.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/err.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/glossary.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/hidden.stream.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/index.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/inheritance.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/j-guru-blue.jpg
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/jguru-logo.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/lexer.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/lexer.to.parser.tokens.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/logo.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/metalang.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/optional.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/options.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/posclosure.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/python-runtime.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/runtime.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/sor.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/stream.perspectives.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/stream.selector.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/stream.splitter.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/streams.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/subrule.gif
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/trees.html
+file path=usr/share/doc/antlr-$(HUMAN_VERSION)/vocab.html

@@ -1,0 +1,25 @@
+diff -Nru protobuf-24.4.orig/cmake/install.cmake protobuf-24.4/cmake/install.cmake
+--- protobuf-24.4.orig/cmake/install.cmake	2023-10-04 00:27:05.000000000 +0200
++++ protobuf-24.4/cmake/install.cmake	2023-10-08 10:49:40.459664022 +0200
+@@ -33,8 +33,8 @@
+     $<BUILD_INTERFACE:${protobuf_SOURCE_DIR}/src>
+     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+   if (UNIX AND NOT APPLE)
+-    set_property(TARGET ${_library}
+-      PROPERTY INSTALL_RPATH "$ORIGIN")
++#    set_property(TARGET ${_library}
++#      PROPERTY INSTALL_RPATH "$ORIGIN")
+   elseif (APPLE)
+     set_property(TARGET ${_library}
+       PROPERTY INSTALL_RPATH "@loader_path")
+@@ -50,8 +50,8 @@
+     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT protoc
+     BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT protoc)
+   if (UNIX AND NOT APPLE)
+-    set_property(TARGET protoc
+-      PROPERTY INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
++#    set_property(TARGET protoc
++#      PROPERTY INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+   elseif (APPLE)
+     set_property(TARGET protoc
+       PROPERTY INSTALL_RPATH "@loader_path/../lib")

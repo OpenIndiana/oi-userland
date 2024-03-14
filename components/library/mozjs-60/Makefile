@@ -22,15 +22,14 @@
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-BUILD_BITS = 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_PARALLEL_BUILD= yes
 
 include ../../../make-rules/shared-macros.mk
 
-GCC_VERSION= 10
-GNU_ARCH= x86_64-sun-solaris
-
 COMPONENT_NAME=		mozjs
 COMPONENT_VERSION=	60.8.0
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey
 COMPONENT_SRC=          mozjs-60.8.0
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -43,18 +42,15 @@ COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE= MPL v2.0
 COMPONENT_LICENSE_FILE= mozjs.license
 
-CXXFLAGS += -std=c++11
-
-# Only used during build process.
-PYTHON_VERSIONS= 2.7
-PYTHON= $(PYTHON.2.7.$(BITS))
-
 # Tests hook up need work
-TEST_TARGET = $(SKIP_TEST)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-xCOMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
+CXXFLAGS += -std=c++11
+GNU_ARCH= x86_64-sun-solaris
+
+# Python 2.7 path
+PYTHON = /usr/bin/amd64/python2.7
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
   cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
@@ -69,6 +65,7 @@ CONFIGURE_SCRIPT= $(SOURCE_DIR)/js/src/configure
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += LDSHARED="$(CC) -shared"
 CONFIGURE_ENV += NSPR_CONFIG=/usr/bin/amd64/nspr-config
+CONFIGURE_ENV += SHELL="$(SHELL)"
 
 # detection of ARCH by config.guess depends on the compiler (e.g. gcc > 8)
 CONFIGURE_OPTIONS += --target=$(GNU_ARCH)
@@ -82,7 +79,7 @@ CONFIGURE_OPTIONS += --with-system-zlib
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --with-system-nspr
 
-COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
+COMPONENT_BUILD_ENV += SHELL="$(SHELL)"
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in `find $(PROTO_DIR)$(CONFIGURE_LIBDIR.$(BITS)) -name "*.so"`; do \
@@ -101,19 +98,12 @@ COMPONENT_BUILD_ENV.64 += LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS.64)"
 COMPONENT_INSTALL_ENV.64 += LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS.64)"
 endif
 
-unexport SHELLOPTS
+COMPONENT_TEST_ENV += SHELL="$(SHELL)"
 COMPONENT_TEST_ARGS =   -k -i
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL:/p" ' \
-        '-e "/SKIP:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" ' \
-        '-e "/ERROR:/p" '
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += developer/gcc-10
+REQUIRED_PACKAGES += runtime/python-27
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

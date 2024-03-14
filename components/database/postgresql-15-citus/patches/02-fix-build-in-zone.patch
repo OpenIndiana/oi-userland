@@ -1,0 +1,20 @@
+--- citus-12.0.0/src/backend/distributed/Makefile.orig	2023-07-13 23:22:32.000000000 +0200
++++ citus-12.0.0/src/backend/distributed/Makefile	2023-08-20 11:02:48.430148720 +0200
+@@ -18,7 +18,7 @@
+ DATA_built = $(generated_sql_files)
+ 
+ # directories with source files
+-SUBDIRS = . commands connection ddl deparser executor metadata operations planner progress relay safeclib shardsplit test transaction utils worker clock
++SUBDIRS = commands connection ddl deparser executor metadata operations planner progress relay safeclib shardsplit test transaction utils worker clock
+ # enterprise modules
+ SUBDIRS += replication
+ 
+@@ -31,6 +31,8 @@
+ OBJS += \
+ 	$(patsubst $(citus_abs_srcdir)/%.c,%.o,$(foreach dir,$(SUBDIRS), $(sort $(wildcard $(citus_abs_srcdir)/$(dir)/*.c))))
+ 
++OBJS += shared_library_init.o
++
+ # be explicit about the default target
+ .PHONY: cdc
+ 

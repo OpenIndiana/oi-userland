@@ -13,26 +13,24 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2024 Niklas Poslovski
+# Copyright 2023 Franklin Ronald <franklin@wiselabs.com.br>
 #
-
-BUILD_BITS=   64
 
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	17
 OPENJDK_UPDATE=	0
-OPENJDK_BUILD=	4
-OPENJDK_PATCH=	8
+OPENJDK_BUILD=	10
 COMPONENT_NAME=		openjdk
-COMPONENT_VERSION=	$(OPENJDK_VERSION)
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(COMPONENT_VERSION)
+COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-$(OPENJDK_PATCH)
-COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)+$(OPENJDK_PATCH).tar.gz
+COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
+COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:b10b80aa96ac43c75163c1888bb42b66e1eeaecb02412d30de5369df7337ac8f
+	sha256:fac2539384ba8d86cdcf3553e69aaf4001a3cec1134bbf6f5f04f64f0acbc055
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
@@ -46,23 +44,17 @@ COMPONENT_ARCHIVE_HASH_1= sha256:973b576b3ba0b78451cf26c835162fba10216ac2d5a6141
 COMPONENT_ARCHIVE_URL_1= http://pkgs.tribblix.org/openjdk/$(COMPONENT_ARCHIVE_1)
 PKG_PROTO_DIRS += $(COMPONENT_SRC_1)
 
-OPENJDK_INSTANCE=	openjdk17.0.4
+OPENJDK_INSTANCE=	openjdk$(COMPONENT_VERSION)
 CACERTS_STORE=	cacerts.out
 
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS  += OPENJDK_INSTANCE=$(OPENJDK_INSTANCE)
+PKG_MACROS  += OPENJDK_VERSION=$(OPENJDK_VERSION)
 
 CLEAN_PATHS += $(BUILD_DIR)
 CLEAN_PATHS += $(CACERTS_STORE)
 CLEAN_PATHS += $(COMPONENT_SRC_1)
-
-#COMPONENT_PRE_CONFIGURE_ACTION=	($(CP) -r $(SOURCE_DIR)/* $(@D); \
-#																	$(MKDIR) $(@D)/build; \
-#																	cd $(@D)/build; )
-
-#COMPONENT_POST_CONFIGURE_ACTION= (cd $(@D); \
-#																	$(CP) -r build/* .;)
 
 # read the number of jobs from the arguments for make
 JOBS=$(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
@@ -151,8 +143,8 @@ REQUIRED_PACKAGES += system/library/c++/sunpro
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/giflib

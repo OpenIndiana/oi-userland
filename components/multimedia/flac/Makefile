@@ -11,45 +11,50 @@
 #
 # Copyright 2014 (c) Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=			32_and_64
+
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flac
-COMPONENT_VERSION=	1.3.3
-COMPONENT_FMRI=		codec/flac
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_PROJECT_URL=	https://flac.sourceforge.net/
+COMPONENT_VERSION=	1.4.3
+COMPONENT_REVISION=	2
+COMPONENT_SUMMARY=	An Open Source Lossless Audio Codec
+COMPONENT_PROJECT_URL=	https://xiph.org/flac
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:213e82bd716c9de6db2f98bcadbc4c24c7e2efe8c75939a1a84e28539c4e1748
-COMPONENT_ARCHIVE_URL=\
-	https://downloads.us.xiph.org/releases/flac/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	$(COMPONENT_FMRI)
+COMPONENT_ARCHIVE_HASH= sha256:6c58e69cd22348f441b861092b825e591d0b822e106de6eb0ee4d05d27205b70
+COMPONENT_ARCHIVE_URL=	https://downloads.us.xiph.org/releases/flac/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		codec/flac
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=	Xiph.org BSD-style, binaries & media player plugins also use GPL v2, LGPL v2.1, documentation uses FDL v1.2
-COMPONENT_SUMMARY=	An Open Source Lossless Audio Codec
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  += --disable-static
-CONFIGURE_OPTIONS  += --enable-shared
-CONFIGURE_OPTIONS  += --disable-xmms-plugin
-ifeq   ($(MACH), i386)
-CONFIGURE_OPTIONS  += --enable-sse
-ifeq   ($(BITS), 32)
-CONFIGURE_OPTIONS  += --enable-asm-optimizations
-else
-CONFIGURE_OPTIONS  += --disable-asm-optimizations
-endif
-else
-CONFIGURE_OPTIONS  += --disable-sse
-CONFIGURE_OPTIONS  += --disable-asm-optimizations
-endif
-CONFIGURE_OPTIONS  += --disable-altivec 
+CXXFLAGS += -fstack-protector-all
 
-# One test is known to fail (failed also in the previous version 1.3.2)
-# Testing the metadata-handling properties of flac-to-flac encoding...
-# case00a...  ERROR: metadata does not match expected test/flac-to-flac-metadata-test-files/case00a-expect.meta
+#CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-ogg
+
+ifeq   ($(MACH), i386)
+CONFIGURE_OPTIONS += --enable-sse
+ifeq   ($(BITS), 32)
+CONFIGURE_OPTIONS += --enable-asm-optimizations
+else
+CONFIGURE_OPTIONS += --disable-asm-optimizations
+endif
+else
+CONFIGURE_OPTIONS += --disable-sse
+CONFIGURE_OPTIONS += --disable-asm-optimizations
+endif
+
+# Note that the test needed to be run with standard user privileges.
+COMPONENT_TEST_TRANSFORMS = \
+	' -n ' \
+	' -e "/unit test/p" ' \
+	' -e "/---/p" ' \
+	' -e "/passed/p" ' \
+	' -e "/+++/p" ' \
+	' -e "/PASSED/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

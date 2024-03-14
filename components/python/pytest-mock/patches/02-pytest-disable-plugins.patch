@@ -1,0 +1,83 @@
+--- pytest-mock-3.12.0/tests/test_pytest_mock.py.orig
++++ pytest-mock-3.12.0/tests/test_pytest_mock.py
+@@ -748,7 +748,7 @@
+         mock_traceback_monkeypatch = false
+     """
+     )
+-    result = testdir.runpytest_subprocess()
++    result = testdir.runpytest_subprocess("-p", "no:black")
+     assert result.ret == 0
+ 
+ 
+@@ -833,7 +833,7 @@
+         mock_use_standalone_module = true
+     """
+     )
+-    result = testdir.runpytest_subprocess()
++    result = testdir.runpytest_subprocess("-p", "no:black")
+     assert result.ret == 0
+ 
+ 
+@@ -967,7 +967,7 @@
+             mocker.mock_module.patch.stopall()
+     """
+     )
+-    result = testdir.runpytest_subprocess()
++    result = testdir.runpytest_subprocess("-p", "no:black", "-p", "no:mypy")
+     result.stdout.fnmatch_lines("* 1 passed in *")
+     assert "RuntimeError" not in result.stderr.str()
+ 
+@@ -1073,7 +1073,7 @@
+             check(mocker)
+     """
+     )
+-    result = testdir.runpytest()
++    result = testdir.runpytest("-p", "no:black", "-p", "no:cov", "-p", "no:mypy", "-p", "no:relaxed")
+     result.assert_outcomes(passed=1)
+ 
+     assert compileall.compile_file(str(py_fn), legacy=True)
+@@ -1082,7 +1082,7 @@
+     assert os.path.isfile(pyc_fn)
+ 
+     py_fn.remove()
+-    result = testdir.runpytest()
++    result = testdir.runpytest("-p", "no:black", "-p", "no:cov", "-p", "no:mypy")
+     result.assert_outcomes(passed=1)
+ 
+ 
+@@ -1111,7 +1111,7 @@
+                 assert get_random_number() == 5
+     """
+     )
+-    result = testdir.runpytest_subprocess()
++    result = testdir.runpytest_subprocess("-p", "no:mypy")
+     assert "AssertionError" not in result.stderr.str()
+     result.stdout.fnmatch_lines("* 1 passed in *")
+ 
+@@ -1139,7 +1139,7 @@
+             assert get_random_number() == 5
+     """
+     )
+-    result = testdir.runpytest_subprocess()
++    result = testdir.runpytest_subprocess("-p", "no:mypy")
+     assert "AssertionError" not in result.stderr.str()
+     result.stdout.fnmatch_lines("* 1 passed in *")
+ 
+@@ -1167,7 +1167,7 @@
+             assert get_random_number() == 5
+     """
+     )
+-    result = testdir.runpytest_subprocess()
++    result = testdir.runpytest_subprocess("-p", "no:mypy")
+     assert "AssertionError" not in result.stderr.str()
+     result.stdout.fnmatch_lines("* 1 passed in *")
+ 
+@@ -1195,7 +1195,7 @@
+             assert get_random_number() == 5
+     """
+     )
+-    result = testdir.runpytest_subprocess()
++    result = testdir.runpytest_subprocess("-p", "no:mypy")
+     assert "AssertionError" not in result.stderr.str()
+     result.stdout.fnmatch_lines("* 1 passed in *")
+ 

@@ -67,6 +67,16 @@ COMPONENT_LICENSE        = MIT License
 endif
 
 #
+# Set defaults for X11 utilities
+#
+ifeq ($(strip $(X11_CATEGORY)),UTIL)
+BUILD_BITS = 64
+PATH=$(PATH.gnu)
+COMPONENT_CLASSIFICATION = System/X11
+COMPONENT_LICENSE        = MIT License
+endif
+
+#
 # Set defaults for X11 documentation
 #
 ifeq ($(strip $(X11_CATEGORY)),DOC)
@@ -151,6 +161,6 @@ PKG_MACROS += X11PKGVERS=$(PKG_X11_VERSION)
 #
 # Default build dependencies
 #
-REQUIRED_PACKAGES += x11/header/x11-protocols
-REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
+USERLAND_REQUIRED_PACKAGES += x11/header/x11-protocols
+USERLAND_REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
 

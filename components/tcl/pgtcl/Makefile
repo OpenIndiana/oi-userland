@@ -13,17 +13,14 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS=32_and_64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgtcl
-COMPONENT_VERSION= 	2.7.7
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	3.0.1
 COMPONENT_SUMMARY= 	A Tcl client library for PostgreSQL
 COMPONENT_SRC= 		Pgtcl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e0f831a98f1e64b004bcabd9aa9b23286eb3a3bf52406427e6b836b5a3bf422a
+COMPONENT_ARCHIVE_HASH=	sha256:d25e3caafeb31197571f3ae77737887af8f54d5ad176bae837e54fa7292fbe2d
 COMPONENT_ARCHIVE_URL=	https://github.com/flightaware/Pgtcl/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	https://flightaware.github.io/Pgtcl/
 COMPONENT_FMRI=	database/postgres/pgtcl
@@ -34,19 +31,18 @@ COMPONENT_LICENSE_FILE= LICENSE
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):$(PATH.illumos)
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi )
 
-CONFIGURE_OPTIONS +=	--enable-threads
-CONFIGURE_OPTIONS.64 +=	--enable-64bit
-
-CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/tcl8.6/pgtcl
-CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/tcl8.6/pgtcl/$(MACH64)
-
-CONFIGURE_OPTIONS.32    += --with-tcl="/usr/lib"
-CONFIGURE_OPTIONS.64    += --with-tcl="/usr/lib/$(MACH64)"
+CONFIGURE_OPTIONS += --enable-threads
+CONFIGURE_OPTIONS += --enable-64bit
+CONFIGURE_OPTIONS += --libdir=/usr/lib/tcl8.6/pgtcl/$(MACH64)
+CONFIGURE_OPTIONS += --with-tcl="/usr/lib/$(MACH64)"
+ifeq ($(strip $(MACH)),sparc)
+CONFIGURE_OPTIONS += --enable-64bit-vis
+endif
 
 COMPONENT_POST_INSTALL_ACTION= ( mkdir -p $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) && \
 	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) )  

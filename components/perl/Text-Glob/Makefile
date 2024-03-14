@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Text::Glob
 HUMAN_VERSION =			0.11
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Text::Glob - match globbing patterns against text
 COMPONENT_CPAN_AUTHOR =		RCLAMP
 COMPONENT_ARCHIVE_HASH =	\

@@ -1,0 +1,29 @@
+We do not have these optional test dependencies packaged yet.
+
+--- tqdm-4.66.2/tox.ini.orig
++++ tqdm-4.66.2/tox.ini
+@@ -25,8 +25,6 @@
+     pytest-cov
+     pytest-timeout
+     pytest-asyncio
+-    ipywidgets
+-    git+https://github.com/casperdcl/nbval.git@master#egg=nbval
+     coverage
+     coveralls
+     codecov
+@@ -40,15 +38,10 @@
+ deps=
+     {[core]deps}
+     cython
+-    dask[delayed]
+-    matplotlib
+-    numpy
+-    pandas
+     rich
+     tf: tensorflow!=2.5.0
+     keras: keras
+ commands=
+-    pytest --cov=tqdm --cov-report= -W=ignore tests_notebook.ipynb --nbval --current-env --sanitize-with=.meta/nbval.ini
+     pytest --cov=tqdm --cov-report=xml --cov-report=term --cov-append -k "not perf"
+     {[core]commands}
+ allowlist_externals=codacy

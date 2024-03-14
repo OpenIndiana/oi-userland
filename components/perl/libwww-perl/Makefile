@@ -20,12 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		LWP
 COMPONENT_PERL_DISTRIBUTION =	libwww-perl
-HUMAN_VERSION =			6.67
+HUMAN_VERSION =			6.77
 COMPONENT_SUMMARY =		LWP - The World-Wide Web library for Perl
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:96eec40a3fd0aa1bd834117be5eb21c438f73094d861a1a7e5774f0b1226b723
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:94a907d6b3ea8d966ef43deffd4fa31f5500142b4c00489bfd403860a5f060e4
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
@@ -35,16 +35,20 @@ PERL_REQUIRED_PACKAGES += library/perl-5/encode-locale
 PERL_REQUIRED_PACKAGES += library/perl-5/file-listing
 PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
 PERL_REQUIRED_PACKAGES += library/perl-5/http-cookies
-PERL_REQUIRED_PACKAGES += library/perl-5/http-daemon
 PERL_REQUIRED_PACKAGES += library/perl-5/http-date
 PERL_REQUIRED_PACKAGES += library/perl-5/http-message
 PERL_REQUIRED_PACKAGES += library/perl-5/http-negotiate
 PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
 PERL_REQUIRED_PACKAGES += library/perl-5/net-http
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
-PERL_REQUIRED_PACKAGES += library/perl-5/test-requiresinternet
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += library/perl-5/www-robotrules
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/data-dump
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-cookiejar
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-daemon
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/lwp-protocol-https
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requiresinternet

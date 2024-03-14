@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		synergy
 COMPONENT_VERSION=      1.7.6
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_PROJECT_URL=	http://synergy-project.org
 COMPONENT_SUMMARY=	Synergy: Mouse and Keyboard Sharing
 COMPONENT_SRC=		$(COMPONENT_NAME)-core-$(COMPONENT_VERSION)-stable

@@ -1,0 +1,42 @@
+From a gcc build attempt on sparc.
+
+extern static is an error.
+
+AV_HW1_IDX and AV_HW2_IDX are part of getisax() and are defined on
+Solaris 11.4 but not present on illumos (or 11.2).
+
+--- a/src/hotspot/os_cpu/solaris_sparc/vm_version_solaris_sparc.cpp	Thu Mar 30 12:53:34 2023
++++ b/src/hotspot/os_cpu/solaris_sparc/vm_version_solaris_sparc.cpp	Thu Mar 30 12:53:40 2023
+@@ -35,7 +35,7 @@
+ #include <dlfcn.h>
+ #include <link.h>
+ 
+-extern "C" static int PICL_visit_cpu_helper(picl_nodehdl_t nodeh, void *result);
++extern "C" int PICL_visit_cpu_helper(picl_nodehdl_t nodeh, void *result);
+ 
+ // Functions from the library we need (signatures should match those in picl.h)
+ extern "C" {
+@@ -221,7 +221,7 @@
+ };
+ 
+ 
+-extern "C" static int PICL_visit_cpu_helper(picl_nodehdl_t nodeh, void *result) {
++extern "C" int PICL_visit_cpu_helper(picl_nodehdl_t nodeh, void *result) {
+   return PICL::visit_cpu(nodeh, result);
+ }
+ 
+@@ -326,6 +326,14 @@
+ #define _SC_L2CACHE_LINESZ      527     /* Size of L2 cache line */
+ #endif
+ 
++#ifndef AV_HW1_IDX
++#define AV_HW1_IDX 0
++#endif
++
++#ifndef AV_HW2_IDX
++#define AV_HW2_IDX 1
++#endif
++
+ void VM_Version::platform_features() {
+   uint64_t features = ISA_v9_msk;   // Basic SPARC-V9 required (V8 not supported).
+ 

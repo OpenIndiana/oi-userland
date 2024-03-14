@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2018 Harry Liebel
+# Copyright 2023 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,21 +23,24 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/libvncserver-config
 file path=usr/include/rfb/keysym.h
 file path=usr/include/rfb/rfb.h
 file path=usr/include/rfb/rfbclient.h
 file path=usr/include/rfb/rfbconfig.h
-file path=usr/include/rfb/rfbint.h
 file path=usr/include/rfb/rfbproto.h
 file path=usr/include/rfb/rfbregion.h
-file path=usr/lib/$(MACH64)/libvncclient.a
-link path=usr/lib/$(MACH64)/libvncclient.so target=libvncclient.so.0.0.0
-link path=usr/lib/$(MACH64)/libvncclient.so.0 target=libvncclient.so.0.0.0
-file path=usr/lib/$(MACH64)/libvncclient.so.0.0.0
-file path=usr/lib/$(MACH64)/libvncserver.a
-link path=usr/lib/$(MACH64)/libvncserver.so target=libvncserver.so.0.0.0
-link path=usr/lib/$(MACH64)/libvncserver.so.0 target=libvncserver.so.0.0.0
-file path=usr/lib/$(MACH64)/libvncserver.so.0.0.0
+file path=usr/include/rfb/threading.h
+file path=usr/lib/$(MACH64)/cmake/LibVNCServer/LibVNCServerConfig.cmake
+file path=usr/lib/$(MACH64)/cmake/LibVNCServer/LibVNCServerConfigVersion.cmake
+file path=usr/lib/$(MACH64)/cmake/LibVNCServer/LibVNCServerTargets-noconfig.cmake
+file path=usr/lib/$(MACH64)/cmake/LibVNCServer/LibVNCServerTargets.cmake
+link path=usr/lib/$(MACH64)/libvncclient.so target=libvncclient.so.1
+file path=usr/lib/$(MACH64)/libvncclient.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libvncclient.so.1 \
+    target=libvncclient.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libvncserver.so target=libvncserver.so.1
+file path=usr/lib/$(MACH64)/libvncserver.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libvncserver.so.1 \
+    target=libvncserver.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libvncclient.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libvncserver.pc

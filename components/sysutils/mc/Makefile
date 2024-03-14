@@ -24,28 +24,29 @@
 # Copyright (c) 2020, Michal Nowak
 #
 
+USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.8.28
-COMPONENT_REVISION =	1
-COMPONENT_FMRI=		file/mc
+COMPONENT_VERSION=	4.8.31
 COMPONENT_SUMMARY=	The GNU Midnight Commander file manager
 COMPONENT_DESCRIPTION=	GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell
-COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_PROJECT_URL=	https://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:e994d9be9a7172e9ac4a4ad62107921f6aa312e668b056dfe5b8bcebbaf53803
-COMPONENT_ARCHIVE_URL=	http://ftp.midnight-commander.org/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=	https://github.com/MidnightCommander/mc/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:53be761b505f539ab1ba5d112734628667b8abb06de75a04953b0ffce71548b7
+COMPONENT_FMRI=		file/mc
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_LICENSE=	GPLv3
-
-USE_DEFAULT_TEST_TRANSFORMS = yes
+COMPONENT_LICENSE_FILE=	doc/COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --sysconfdir=/usr/share
-CONFIGURE_OPTIONS += --libexecdir=/usr/share
+COMPONENT_PREP_ACTION = ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
+
+CONFIGURE_OPTIONS += --sysconfdir=$(USRSHAREDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset
 CONFIGURE_OPTIONS += --disable-vfs-undelfs
@@ -53,12 +54,22 @@ CONFIGURE_OPTIONS += --with-screen=slang
 CONFIGURE_OPTIONS += --enable-vfs-sftp=no
 CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 
+# pkgdepend doesn't like the first line of a Python script to be:
+# '#!/usr/bin/python' or '#!/usr/bin/env python'so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
+COMPONENT_POST_INSTALL_ACTION += \
+    $(GSED) -i -e 's?\/usr\/bin\/python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
+    $(PROTO_DIR)/usr/share/mc/extfs.d/s3+ ; \
+    $(GSED) -i -e 's?\/usr\/bin\/env python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
+    $(PROTO_DIR)/usr/share/mc/extfs.d/uc1541 ;
+
+# Manually added dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+
 # Needed for tests
-REQUIRED_PACKAGES += developer/check
+TEST_REQUIRED_PACKAGES += developer/check
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/slang
-REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += sysutils/e2fsprogs

@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-mach64
-COMPONENT_VERSION= 6.9.6
-COMPONENT_REVISION= 2
-COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-mach64
+COMPONENT_VERSION= 6.9.7
 COMPONENT_SUMMARY= xf86-video-mach64 - MACH64 driver for the Xorg X server
-COMPONENT_ARCHIVE_HASH= \
-  sha256:7a0707c71bb522430f83bb5e9d9ee697e661e35534a3a2d10834f86b327a3c9c
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-mach64
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:50d78abffa7c8227e6f187976f23a244ae2095e97f08de275529b70fba9481ba
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -39,6 +38,8 @@ CONFIGURE_OPTIONS += --disable-dri
 
 CONFIGURE_OPTIONS += --enable-exa
 CONFIGURE_OPTIONS += --enable-xaa
+
+CONFIGURE_ENV += with_xorg_module_dir=/usr/lib/xorg/modules/drivers/$(MACH64)
 
 COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
 COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)

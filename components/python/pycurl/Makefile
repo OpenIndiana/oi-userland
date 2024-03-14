@@ -1,79 +1,59 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2019, Michal Nowak
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project pycurl
 #
+
+BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pycurl
-COMPONENT_VERSION=	7.44.1
-COMPONENT_PROJECT_URL=	http://pycurl.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:5bcef4d988b74b99653602101e17d8401338d596b9234d263c728a0c3df003e8
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_BUGDB=	python-mod/pycurl
+COMPONENT_NAME =		pycurl
+HUMAN_VERSION =			7.45.2
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		pycurl - PycURL -- A Python Interface To The cURL library
+COMPONENT_PROJECT_URL =		http://pycurl.io/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/a8/af/24d3acfa76b867dbd8f1166853c18eefc890fc5da03a48672b38ea77ddae/pycurl-7.45.2.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:5730590be0271364a5bddd9e245c9cc0fb710c4cbacbdd95264a3122d23224ca
+COMPONENT_LICENSE =		LGPL-2.1-only
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+TEST_STYLE = pytest
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Install common files to /usr
+PYTHON_DATA = $(USRDIR)
 
-# to make sure that the docs get installed in the right place.
-PYTHON_DATA = /usr
+include $(WS_MAKE_RULES)/common.mk
 
-# pycurl can't auto-detect the backend in use
-COMPONENT_BUILD_ENV += PYCURL_SSL_LIBRARY=openssl
-COMPONENT_INSTALL_ENV += PYCURL_SSL_LIBRARY=openssl
+# Make sure we link with proper openssl version
+LDFLAGS += -L$(OPENSSL_LIBDIR)
+LDFLAGS += -R$(OPENSSL_LIBDIR)
+COMPONENT_BUILD_SETUP_PY_ARGS += --openssl-dir=$(OPENSSL_PREFIX)
 
-ASLR_MODE=	$(ASLR_NOT_APPLICABLE)
+# Rename pycurl documentation to contain version number
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MV) $(PROTOUSRSHAREDOCDIR)/pycurl $(PROTOUSRSHAREDOCDIR)/pycurl-$(PYTHON_VERSION) ;
 
-build:		$(BUILD_32_and_64)
+# Compile extra libraries for tests
+COMPONENT_PRE_TEST_ACTION += make -C $(@D)/tests/fake-curl/libcurl ;
 
-install:	$(INSTALL_32_and_64)
-
-COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
-COMPONENT_TEST_CMD=	$(GMAKE) test
-COMPONENT_TEST_ARGS=
-
-# Test requires bottle and vsftpd which haven't been integrated yet.
-test:		$(TEST_32_and_64)
-
-# Test suite dependency
-REQUIRED_PACKAGES += library/python/nose
-REQUIRED_PACKAGES += library/python/nose-27
-REQUIRED_PACKAGES += library/python/nose-35
-REQUIRED_PACKAGES += library/python/nose-37
-REQUIRED_PACKAGES += library/python/nose-39
+# Replace Python version in pycurl documentation directory name
+GENERATE_EXTRA_CMD += | \
+	$(GSED) -e 's/\(usr\/share\/doc\/pycurl-\)3\.[0-9]*/\1$$(PYVER)/' | uniq
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl

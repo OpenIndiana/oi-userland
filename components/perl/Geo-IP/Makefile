@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Geo::IP
 HUMAN_VERSION =			1.51
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Geo::IP - Look up location and network information by IP Address
 COMPONENT_CPAN_AUTHOR =		MAXMIND
 COMPONENT_ARCHIVE_HASH =	\

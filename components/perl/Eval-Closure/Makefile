@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Eval::Closure
 HUMAN_VERSION =			0.14
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Eval::Closure - safely and cleanly create closures via string eval
 COMPONENT_CPAN_AUTHOR =		DOY
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +31,8 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-requires
+PERL_REQUIRED_PACKAGES += library/perl-5/devel-lexalias
+PERL_REQUIRED_PACKAGES += library/perl-5/perl-tidy
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires

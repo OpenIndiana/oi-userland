@@ -1,0 +1,68 @@
+From 786bb479aa293e7d938f9cf577b25fe8894dafc7 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Wed, 5 Mar 2014 04:12:52 +0000
+Subject: gcc: enable the .eh_frame based unwinder
+
+---
+ gcc/configure    | 9 ++++++---
+ gcc/configure.ac | 9 ++++++---
+ 2 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/gcc/configure b/gcc/configure
+index c749ace011d..8a9f7ebe318 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -24115,11 +24115,12 @@ if test $in_tree_ld != yes ; then
+ 	# numbers can be used in ld.so.1 feature checks even if a different
+ 	# linker is configured.
+ 	ld_ver=`$gcc_cv_ld -V 2>&1`
+-	if echo "$ld_ver" | grep 'Solaris Link Editors' > /dev/null; then
+-	  ld_vers=`echo $ld_ver | sed -n \
+-	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
++	if echo "$ld_ver" | $EGREP 'Solaris Link Editors|Solaris ELF Utilities' > /dev/null; then
++	  ld_vers=`echo $ld_ver | /bin/sed -n \
++	    -E 's,^.*: (5|1[0-9])\.[0-9][0-9]*-([0-9]\.[0-9][0-9]*).*$,\2,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++	  ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
+ 	fi
+ 	;;
+     esac
+@@ -30332,6 +30333,8 @@ elif test x$gcc_cv_ld != x; then
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+         if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
+           gcc_cv_ld_eh_frame_hdr=yes
++        elif test "$ld_vers_minor" -ge 1735 && test -n "$ld_vers_isillumos"; then
++          gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 992a50e7b20..adcdc0a7734 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -3064,11 +3064,12 @@ if test $in_tree_ld != yes ; then
+ 	# numbers can be used in ld.so.1 feature checks even if a different
+ 	# linker is configured.
+ 	ld_ver=`$gcc_cv_ld -V 2>&1`
+-	if echo "$ld_ver" | grep 'Solaris Link Editors' > /dev/null; then
+-	  ld_vers=`echo $ld_ver | sed -n \
+-	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
++	if echo "$ld_ver" | $EGREP 'Solaris Link Editors|Solaris ELF Utilities' > /dev/null; then
++	  ld_vers=`echo $ld_ver | /bin/sed -n \
++	    -E 's,^.*: (5|1[0-9])\.[0-9][0-9]*-([0-9]\.[0-9][0-9]*).*$,\2,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++	  ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
+ 	fi
+ 	;;
+     esac
+@@ -5991,6 +5992,8 @@ elif test x$gcc_cv_ld != x; then
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+         if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
+           gcc_cv_ld_eh_frame_hdr=yes
++        elif test "$ld_vers_minor" -ge 1735 && test -n "$ld_vers_isillumos"; then
++          gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac

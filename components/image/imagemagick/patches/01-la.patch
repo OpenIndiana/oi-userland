@@ -1,12 +1,13 @@
 To avoid dependency on libtool/libltdl, change "*.la" extension to "*.so".
-This also changes the path for the *.so files necessary for testing to the 
+This also changes the path for the *.so files necessary for testing to the
 correct location.
 This patch comes from in-house.  It has not been submitted upstream; plans
 unclear.
 
---- ImageMagick6-6.9.12-38/magick/module.c.~1~	2020-02-29 14:57:31.000000000 +0000
-+++ ImageMagick6-6.9.12-38/magick/module.c	2022-02-07 23:44:33.017739400 +0000
-@@ -75,7 +75,7 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/MagickCore/module.c a/MagickCore/module.c
+--- a~/MagickCore/module.c	1970-01-01 00:00:00
++++ a/MagickCore/module.c	1970-01-01 00:00:00
+@@ -77,7 +77,7 @@ typedef void *ModuleHandle;
    Define declarations.
  */
  #if defined(MAGICKCORE_LTDL_DELEGATE)
@@ -15,30 +16,31 @@ unclear.
  #else
  #  if defined(_DEBUG)
  #    define ModuleGlobExpression "IM_MOD_DB_*.dll"
-@@ -1495,7 +1495,7 @@
-   (void) LogMagickEvent(TraceEvent,GetMagickModule(),"%s",tag);
-   assert(name != (char *) NULL);
+@@ -1473,7 +1473,7 @@ static void TagToCoderModuleName(const c
+   if (IsEventLogging() != MagickFalse)
+     (void) LogMagickEvent(TraceEvent,GetMagickModule(),"%s",tag);
  #if defined(MAGICKCORE_LTDL_DELEGATE)
--  (void) FormatLocaleString(name,MaxTextExtent,"%s.la",tag);
-+  (void) FormatLocaleString(name,MaxTextExtent,"%s.so",tag);
+-  (void) FormatLocaleString(name,MagickPathExtent,"%s.la",tag);
++  (void) FormatLocaleString(name,MagickPathExtent,"%s.so",tag);
    (void) LocaleLower(name);
  #else
  #if defined(MAGICKCORE_WINDOWS_SUPPORT)
-@@ -1546,7 +1546,7 @@
- #if !defined(MAGICKCORE_LTDL_DELEGATE)
-   (void) FormatLocaleString(name,MaxTextExtent,"%s.dll",tag);
+@@ -1527,7 +1527,7 @@ static void TagToFilterModuleName(const
+ #elif !defined(MAGICKCORE_LTDL_DELEGATE)
+   (void) FormatLocaleString(name,MagickPathExtent,"%s.dll",tag);
  #else
--  (void) FormatLocaleString(name,MaxTextExtent,"%s.la",tag);
-+  (void) FormatLocaleString(name,MaxTextExtent,"%s.so",tag);
+-  (void) FormatLocaleString(name,MagickPathExtent,"%s.la",tag);
++  (void) FormatLocaleString(name,MagickPathExtent,"%s.so",tag);
  #endif
  }
  
---- ImageMagick6-6.9.12-38/common.shi.in.~1~	2022-02-07 23:29:44.226177628 +0000
-+++ ImageMagick6-6.9.12-38/common.shi.in	2022-02-07 23:39:18.248646177 +0000
-@@ -18,9 +18,9 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/common.shi.in a/common.shi.in
+--- a~/common.shi.in	1970-01-01 00:00:00
++++ a/common.shi.in	1970-01-01 00:00:00
+@@ -19,9 +19,9 @@ VALIDATE="@abs_top_builddir@/tests/valid
  DRAWTEST="@abs_top_builddir@/tests/drawtest"
  WANDTEST="@abs_top_builddir@/tests/wandtest"
- LD_LIBRARY_PATH="@abs_top_builddir@/magick/.libs:@abs_top_builddir@/wand/.libs:${LD_LIBRARY_PATH}"
+ LD_LIBRARY_PATH="@abs_top_builddir@/MagickCore/.libs:@abs_top_builddir@/MagickWand/.libs:${LD_LIBRARY_PATH}"
 -MAGICK_CODER_MODULE_PATH="@abs_top_builddir@/coders"
 +MAGICK_CODER_MODULE_PATH="@abs_top_builddir@/coders/.libs"
  MAGICK_CONFIGURE_PATH="@abs_top_builddir@/config:@abs_top_srcdir@/config"

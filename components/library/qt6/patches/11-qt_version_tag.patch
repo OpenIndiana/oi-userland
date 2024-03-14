@@ -1,0 +1,14 @@
+diff -Nru qt-everywhere-src-6.4.2.orig/qtbase/src/corelib/global/qversiontagging.h qt-everywhere-src-6.4.2/qtbase/src/corelib/global/qversiontagging.h
+--- qt-everywhere-src-6.4.2.orig/qtbase/src/corelib/global/qversiontagging.h	2022-11-16 08:54:24.000000000 +0000
++++ qt-everywhere-src-6.4.2/qtbase/src/corelib/global/qversiontagging.h	2023-01-12 12:33:44.008992611 +0000
+@@ -109,7 +109,9 @@
+ #endif
+ 
+ #ifdef Q_OF_ELF
+-#  define QT_VERSION_TAG_SYMBOL(prefix, sym, m, n)      sym
++//#  define QT_VERSION_TAG_SYMBOL(prefix, sym, m, n)      sym
++#  define QT_VERSION_TAG_SYMBOL2(prefix, sym, m, n)     prefix ## sym ## _ ## m ## _ ## n
++#  define QT_VERSION_TAG_SYMBOL(prefix, sym, m, n)      QT_VERSION_TAG_SYMBOL2(prefix, sym, m, n)
+ #else
+ #  define QT_VERSION_TAG_SYMBOL2(prefix, sym, m, n)     prefix ## sym ## _ ## m ## _ ## n
+ #  define QT_VERSION_TAG_SYMBOL(prefix, sym, m, n)      QT_VERSION_TAG_SYMBOL2(prefix, sym, m, n)

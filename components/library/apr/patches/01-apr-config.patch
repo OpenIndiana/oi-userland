@@ -28,16 +28,16 @@
  CC="@CC@"
  CPP="@CPP@"
  SHELL="@SHELL@"
-@@ -200,7 +221,11 @@
+@@ -199,7 +199,11 @@
+     --link-ld)
+     if test "$location" = "installed"; then
          ### avoid using -L if libdir is a "standard" location like /usr/lib
-         # Since the user is specifying they are linking with libtool, we
-         # *know* that -R will be recognized by libtool.
--        flags="$flags -L$libdir -R$libdir -l${APR_LIBNAME}"
+-        flags="$flags -L$libdir -l${APR_LIBNAME}"
 +        if test -n "$install_root"; then
 +            flags="$flags -L$libdir -l${APR_LIBNAME}"
 +        else
 +            flags="$flags -L$libdir -R$libdir -l${APR_LIBNAME}"
 +        fi
+     elif test "$location" = "crosscompile"; then
+         flags="$flags -L$APR_TARGET_DIR/$libdir -l${APR_LIBNAME}"
      else
-         flags="$flags $LA_FILE"
-     fi

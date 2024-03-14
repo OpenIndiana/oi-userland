@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2014 Andrzej Szeszo. All rights reserved.
 #
 
@@ -35,6 +35,7 @@
 #
 # This set of rules makes the "publish" target the default target for make(1)
 #
+.NOTPARALLEL:
 
 PKGDEPEND =	/usr/bin/pkgdepend
 PKGFMT =	/usr/bin/pkgfmt
@@ -64,10 +65,7 @@ endif
 
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-libs
-
-ifneq ($(GCC_ROOT), /usr/gcc/4.9)
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-gcc-usr-lib
-endif
 
 LICENSE_TRANSFORMS =		$(WS_TOP)/transforms/license-changes
 
@@ -98,16 +96,10 @@ endef
 $(foreach var, $(filter PY3_%_NAMING,$(.VARIABLES)), \
     $(eval $(call add-limiting-variable,$(var))))
 
-
-ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
-AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
-else
 AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/drop-all
-endif
 
 # For items defined as variables or that may contain whitespace, add
 # them to a list to be expanded into PKG_OPTIONS later.
-PKG_VARS += ARC_CASE TPNO
 PKG_VARS += MACH MACH32 MACH64
 PKG_VARS += BUILD_VERSION OS_VERSION PKG_SOLARIS_VERSION
 PKG_VARS += GNU_TRIPLET
@@ -121,12 +113,15 @@ PKG_VARS += HG_REPO HG_REV HG_URL COMPONENT_HG_URL COMPONENT_HG_REV
 PKG_VARS += GIT_COMMIT_ID GIT_REPO GIT_TAG
 PKG_VARS += PUBLISHER PUBLISHER_LOCALIZABLE
 PKG_VARS += USERLAND_GIT_REMOTE USERLAND_GIT_BRANCH USERLAND_GIT_REV
+PKG_VARS += COMPONENT
 
 # For items that need special definition, add them to PKG_MACROS.
 # IPS_COMPONENT_VERSION suitable for use in regular expressions.
 PKG_MACROS += IPS_COMPONENT_RE_VERSION=$(subst .,\\.,$(IPS_COMPONENT_VERSION))
 # COMPONENT_VERSION suitable for use in regular expressions.
 PKG_MACROS += COMPONENT_RE_VERSION=$(subst .,\\.,$(COMPONENT_VERSION))
+# HUMAN_VERSION suitable for use in regular expressions.
+PKG_MACROS += HUMAN_VERSION_RE=$(subst .,\\.,$(HUMAN_VERSION))
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) \
 					-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION))"
@@ -158,24 +153,31 @@ MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
 SAMPLE_MANIFEST_DIR = 	$(COMPONENT_DIR)/manifests
 SAMPLE_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/sample-manifest.p5m
-GENERIC_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/generic-manifest.p5m
 
-CANONICAL_MANIFESTS =	$(wildcard *.p5m)
+CANONICAL_MANIFESTS =	$(filter-out dummy.p5m %.ARCH.p5m,$(wildcard *.p5m))
 ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 endif
 
+# Support for arch specific manifests
+ARCH_MANIFESTS =	$(wildcard *.p5m.$(MACH))
+GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.ARCH.p5m)
+CANONICAL_MANIFESTS +=  $(GENERATED_ARCH_MANIFESTS)
+
+%.ARCH.p5m: 	%.p5m.$(MACH)
+	$(CP) $< $@
+
 define ips-print-depend-require-rule
 $(shell cat $(1) $(WS_TOP)/transforms/print-depend-require |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u)
+	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-depend-require-versioned-rule
 $(foreach v,$($(1)V_VALUES),\
 	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u))
+	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
 endef
 
 define ips-print-depend-require-type-rule
@@ -184,15 +186,15 @@ endef
 
 define ips-print-names-rule
 $(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
-	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u)
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $(call per-manifest-options,$(1:.p5m=)) /dev/fd/0 |\
+	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-names-versioned-rule
 $(foreach v,$($(1)V_VALUES),\
 	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u))
+	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
 endef
 
 #
@@ -203,7 +205,7 @@ define ips-print-names-generic-rule
 $(shell cat $(2) $(WS_TOP)/transforms/mkgeneric $(BUILD_DIR)/mkgeneric-python \
     $(WS_TOP)/transforms/print-pkgs |\
     $(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=\#\#\# /dev/fd/0 |\
-    sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u)
+    sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-names-type-rule
@@ -215,17 +217,16 @@ endef
 
 VERSIONED_MANIFEST_TYPES =
 UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m, $(CANONICAL_MANIFESTS))
-GENERATE_GENERIC_TRANSFORMS=
 
 # Look for manifests which need to be duplicated for each version of python.
 ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
 VERSIONED_MANIFEST_TYPES+= PY
 NOPY_MANIFESTS = $(filter-out %-PYVER.p5m,$(UNVERSIONED_MANIFESTS))
 PY_MANIFESTS = $(filter %-PYVER.p5m,$(CANONICAL_MANIFESTS))
-PYV_VALUES = $(shell echo $(PYTHON_VERSIONS) | tr -d .)
+PYV_VALUES = $(subst .,,$(PYTHON_VERSIONS))
 PYV_FMRI_VERSION = PYV
-PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
-PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
+PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(PY_MANIFESTS:-PYVER.p5m=-$(v).p5m))
+PYNV_MANIFESTS = $(PY_MANIFESTS:-PYVER.p5m=.p5m)
 MKGENERIC_SCRIPTS += $(BUILD_DIR)/mkgeneric-python
 else
 NOPY_MANIFESTS = $(UNVERSIONED_MANIFESTS)
@@ -235,21 +236,21 @@ endif
 # - for all currently supported python versions (from PYTHON_VERSIONS)
 # - for all python versions we are currently obsoleting (from PYTHON_VERSIONS_OBSOLETING)
 # - the $(PYV) string itself
-PYTHON_PYV_VALUES = $(shell echo $(PYTHON_VERSIONS) $(PYTHON_VERSIONS_OBSOLETING) | tr -d .) $$(PYV)
+PYTHON_PYV_VALUES = $(subst .,,$(PYTHON_VERSIONS) $(PYTHON_VERSIONS_OBSOLETING)) $$(PYV)
 # Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for runtime/python
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PYTHON_PYV_VALUES), -e 's|^\(.*runtime/python\)-$(v)$$|PYTHON_\1|g')
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PYTHON_PYV_VALUES)),-e 's|^\(.*runtime/python\)-$(v)$$|PYTHON_\1|g')
 # Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for library/python/*
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PYTHON_PYV_VALUES), -e 's|^\(.*library/python/.*\)-$(v)$$|PYTHON_\1|g')
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PYTHON_PYV_VALUES)),-e 's|^\(.*library/python/.*\)-$(v)$$|PYTHON_\1|g')
 
 # Look for manifests which need to be duplicated for each version of perl.
 ifeq ($(findstring -PERLVER,$(UNVERSIONED_MANIFESTS)),-PERLVER)
 VERSIONED_MANIFEST_TYPES+= PERL
 NOPERL_MANIFESTS = $(filter-out %-PERLVER.p5m,$(NOPY_MANIFESTS))
 PERL_MANIFESTS = $(filter %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS))
-PERLV_VALUES = $(shell echo $(PERL_VERSIONS) | tr -d .)
+PERLV_VALUES = $(subst .,,$(PERL_VERSIONS))
 PERLV_FMRI_VERSION = PLV
-PERLV_MANIFESTS = $(foreach v,$(PERLV_VALUES),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
-PERLNV_MANIFESTS = $(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER//')
+PERLV_MANIFESTS = $(foreach v,$(PERLV_VALUES),$(PERL_MANIFESTS:-PERLVER.p5m=-$(v).p5m))
+PERLNV_MANIFESTS = $(PERL_MANIFESTS:-PERLVER.p5m=.p5m)
 else
 NOPERL_MANIFESTS = $(NOPY_MANIFESTS)
 endif
@@ -258,11 +259,11 @@ endif
 # - for all currently supported perl versions (from PERL_VERSIONS)
 # - for all perl versions we are currently obsoleting (from PERL_VERSIONS_OBSOLETING)
 # - the $(PLV) string itself
-PERL_PLV_VALUES = $(shell echo $(PERL_VERSIONS) $(PERL_VERSIONS_OBSOLETING) | tr -d .) $$(PLV)
+PERL_PLV_VALUES = $(subst .,,$(PERL_VERSIONS) $(PERL_VERSIONS_OBSOLETING)) $$(PLV)
 # Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for runtime/perl
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERL_PLV_VALUES), -e 's|^\(.*runtime/perl\)-$(v)$$|PERL_\1|g')
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PERL_PLV_VALUES)),-e 's|^\(.*runtime/perl\)-$(v)$$|PERL_\1|g')
 # Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for library/perl-5/*
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERL_PLV_VALUES), -e 's|^\(.*library/perl-5/.*\)-$(v)$$|PERL_\1|g')
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PERL_PLV_VALUES)),-e 's|^\(.*library/perl-5/.*\)-$(v)$$|PERL_\1|g')
 
 # Look for manifests which need to be duplicated for each version of ruby.
 # NOPERL_MANIFESTS represents the manifests that are not Python or
@@ -274,11 +275,8 @@ NORUBY_MANIFESTS = $(filter-out %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBY_MANIFESTS = $(filter %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBYV_VALUES = $(RUBY_VERSIONS)
 RUBYV_FMRI_VERSION = RUBYV
-RUBYV_MANIFESTS = $(foreach v,$(RUBY_VERSIONS),\
-                      $(shell echo $(RUBY_MANIFESTS) |\
-                      sed -e 's/-RUBYVER.p5m/-$(shell echo $(v) |\
-                      cut -d. -f1,2 | tr -d .).p5m/g'))
-RUBYNV_MANIFESTS = $(shell echo $(RUBY_MANIFESTS) | sed -e 's/-RUBYVER//')
+RUBYV_MANIFESTS = $(foreach v,$(RUBY_VERSIONS),$(RUBY_MANIFESTS:-RUBYVER.p5m=-$(subst $(space),,$(wordlist 1,2,$(subst ., ,$(v)))).p5m))
+RUBYNV_MANIFESTS = $(RUBY_MANIFESTS:-RUBYVER.p5m=.p5m)
 else
 NORUBY_MANIFESTS = $(NOPERL_MANIFESTS)
 endif
@@ -289,7 +287,7 @@ VERSIONED_MANIFESTS = \
 	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
 	$(PERLV_MANIFESTS) $(PERLNV_MANIFESTS) \
 	$(RUBYV_MANIFESTS) $(RUBYNV_MANIFESTS) \
-	$(NORUBY_MANIFESTS) $(HISTORICAL_MANIFESTS)
+	$(NORUBY_MANIFESTS)
 
 GENERATED =		$(MANIFEST_BASE)-generated
 COMBINED =		$(MANIFEST_BASE)-combined
@@ -300,6 +298,8 @@ DEPENDED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend)
 RESOLVED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend.res)
 PRE_PUBLISHED=$(RESOLVED:%.depend.res=%.pre-published)
 PUBLISHED=$(RESOLVED:%.depend.res=%.published)
+
+PUBLISHED +=		$(HISTORICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
 
 COPYRIGHT_FILE ?=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
 IPS_COMPONENT_VERSION ?=	$(COMPONENT_VERSION)
@@ -321,18 +321,17 @@ publish:		pre-publish update-metadata $(PUBLISH_STAMP)
 sample-manifest:	$(GENERATED).p5m
 
 $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
-	[ ! -d $(SAMPLE_MANIFEST_DIR) ] && $(MKDIR) $(SAMPLE_MANIFEST_DIR) || true
+	$(MKDIR) $(SAMPLE_MANIFEST_DIR)
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' \
-		-e '/\.la$$/d' | \
-		$(PKGFMT) | \
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' \
+			-e '/\.la$$/d' \
+			-e 's/$(subst .,\.,$(GCC_GNU_TRIPLET))/$$(GCC_GNU_TRIPLET)/g' | \
+		$(PKGFMT) -u | \
 		uniq | \
-		cat $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \
+		$(PKGFMT) | \
+		$(CAT) $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
-	if [ "$(GENERATE_GENERIC_TRANSFORMS)X" != "X" ]; \
-	then sed $(GENERATE_GENERIC_TRANSFORMS) $(SAMPLE_MANIFEST_FILE) \
-		| gawk '!seen[$$0]++' > $(GENERIC_MANIFEST_FILE); fi;
 
 # copy the canonical manifest(s) to the build tree
 $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
@@ -365,7 +364,12 @@ endif
 $(MANIFEST_BASE)-%-$(2).p5m: %-PYVER.p5m
 	$(PKGMOGRIFY) -D PYVER=$(1) $(MANIFEST_LIMITING_VARS) -D PYV=$(2)  $$< > $$@
 endef
-$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(shell echo $(ver)|tr -d .))))
+$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(subst .,,$(ver)))))
+
+ifeq ($(strip $(SINGLE_PYTHON_VERSION)),yes)
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+PKG_MACROS += PYV=$(subst .,,$(PYTHON_VERSION))
+endif
 
 # A rule to create a helper transform package for python, that will insert the
 # appropriate conditional dependencies into a python library's
@@ -373,9 +377,9 @@ $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(she
 # corresponding version of python is on the system.
 $(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ) $(BUILD_DIR)
 	$(RM) $@
-	$(foreach ver,$(shell echo $(PYTHON_VERSIONS) | tr -d .), \
+	$(foreach ver,$(subst .,,$(PYTHON_VERSIONS)), \
 		$(call mkgeneric,runtime/python,$(ver)))
-	$(call mkgenericdep,runtime/python,$(shell echo $(PYTHON_VERSIONS) | tr -d .))
+	$(call mkgenericdep,runtime/python,$(subst .,,$(PYTHON_VERSIONS)))
 
 # Build Python version-wrapping manifests from the generic version.
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
@@ -386,11 +390,16 @@ $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 # Define and execute a macro that generates a rule to create a manifest for a
 # perl module specific to a particular version of the perl runtime.
 define perl-manifest-rule
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
-	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$(shell echo $(1) | tr -d .) \
-		-D PERL_ARCH=$(call PERL_ARCH_FUNC,$(PERL.$(1))) $$< > $$@
+$(MANIFEST_BASE)-%-$(subst .,,$(1)).p5m: %-PERLVER.p5m
+	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$$(subst .,,$(1)) \
+		-D PERL_ARCH=$$(call PERL_ARCH_FUNC,$$(PERL.$(1))) $$< > $$@
 endef
 $(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
+
+ifeq ($(strip $(SINGLE_PERL_VERSION)),yes)
+PKG_MACROS += PERLVER=$(PERL_VERSION)
+PKG_MACROS += PLV=$(subst .,,$(PERL_VERSION))
+endif
 
 # A rule to create a helper transform package for perl, that will insert the
 # appropriate conditional dependencies into a perl library's
@@ -398,9 +407,9 @@ $(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
 # corresponding version of perl is on the system.
 $(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ)
 	$(RM) $@
-	$(foreach ver,$(shell echo $(PERL_VERSIONS) | tr -d .), \
+	$(foreach ver,$(subst .,,$(PERL_VERSIONS)), \
 		$(call mkgeneric,runtime/perl,$(ver)))
-	$(call mkgenericdep,runtime/perl,$(shell echo $(PERL_VERSIONS) | tr -d .))
+	$(call mkgenericdep,runtime/perl,$(subst .,,$(PERL_VERSIONS)))
 
 # Build Perl version-wrapping manifests from the generic version.
 $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
@@ -421,20 +430,19 @@ $(foreach mfst,$(HISTORICAL_MANIFESTS),$(eval $(call history-manifest-rule,$(mfs
 # Creates build/manifest-*-modulename-##.p5m file where ## is replaced with
 # the version number.
 define ruby-manifest-rule
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: \
+$(MANIFEST_BASE)-%-$(subst .,,$(1)).mogrified: \
         PKG_MACROS += RUBY_VERSION=$(1) RUBY_LIB_VERSION=$(2) \
             RUBYV=$(subst .,,$(1))
 
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m
-	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then \
-	        cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; \
+$(MANIFEST_BASE)-%-$(subst .,,$(1)).p5m: %-RUBYVER.p5m
+	if [ -f $$*-$(subst .,,$(1))GENFRAG.p5m ]; then \
+	        cat $$*-$(subst .,,$(1))GENFRAG.p5m >> $$@; \
 	fi
 	$(PKGMOGRIFY) -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
-	    -D RUBYV=$(shell echo $(1) | tr -d .) $$< > $$@
+	    -D RUBYV=$(subst .,,$(1)) $$< > $$@
 endef
 $(foreach ver,$(RUBY_VERSIONS),\
-        $(eval $(call ruby-manifest-rule,$(shell echo $(ver) | \
-            cut -d. -f1,2),$(ver))))
+        $(eval $(call ruby-manifest-rule,$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(ver)))),$(ver))))
 
 # A rule to create a helper transform package for ruby, that will insert the
 # appropriate conditional dependencies into a ruby library's
@@ -443,9 +451,8 @@ $(foreach ver,$(RUBY_VERSIONS),\
 $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ)
 	$(RM) $@
 	$(foreach ver,$(RUBY_VERSIONS),\
-	        $(call mkgeneric,runtime/ruby,$(shell echo $(ver) | \
-	            cut -d. -f1,2 | tr -d .)))
-	$(call mkgenericdep,runtime/ruby,$(shell echo $(RUBY_VERSIONS) | cut -d. -f1,2 | tr -d .))
+	        $(call mkgeneric,runtime/ruby,$(subst $(space),,$(wordlist 1,2,$(subst ., ,$(ver))))))
+	$(call mkgenericdep,runtime/ruby,$(subst $(space),,$(wordlist 1,2,$(subst ., ,$(RUBY_VERSIONS)))))
 
 # Build Ruby version-wrapping manifests from the generic version.
 # Creates build/manifest-*-modulename.p5m file.
@@ -455,45 +462,29 @@ $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
 	        $(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
-ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
-# auto-generate file/directory list
-$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
-	(cat $(METADATA_TEMPLATE); \
-	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR)) | \
-	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(AUTOGEN_MANIFEST_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) | \
-		cat $< - >$@
+per-manifest-options = $(foreach var,$(PKG_VARS),$(if $($(var).$(1)),-D $(var)="$(strip $($(var).$(1)))")) \
+	$(if $(COMPONENT_CLASSIFICATION.$(1)),-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION.$(1)))")
 
 # mogrify non-parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	%.generated
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR) $(MAKEFILE_PREREQ)
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $(call per-manifest-options,$*) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # mogrify parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated
+$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR) $(MAKEFILE_PREREQ)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
-else
-# mogrify non-parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
-		$(PUBLISH_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
-
-# mogrify parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR)
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
-		$(PUBLISH_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
-endif
 
 # mangle the file contents
 $(BUILD_DIR) $(MANGLED_DIR):
 	$(MKDIR) $@
 
 PKGMANGLE_OPTIONS = -D $(MANGLED_DIR) $(PKG_PROTO_DIRS:%=-d %)
+ifeq ($(strip $(USE_CTF)),yes)
+PKGMANGLE_OPTIONS += -c $(CTFCONVERT)
+endif
 $(MANIFEST_BASE)-%.mangled:	$(MANIFEST_BASE)-%.mogrified $(MANGLED_DIR)
 	$(PKGMANGLE) $(PKGMANGLE_OPTIONS) -m $< >$@
 
@@ -517,14 +508,17 @@ $(RESOLVE_DEPS):	Makefile $(BUILD_DIR) $(DEPENDED)
 	    echo $${pkg} ; \
 	done ; \
 	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) | \
-		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' ;) | sort -u >$@
+		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' ;) | $(SORT) -u >$@
 
 $(BUILD_DIR)/runtime-perl.p5m: $(WS_TOOLS)/runtime-perl.p5m
 	$(CP) $< $@
 
+$(BUILD_DIR)/runtime-ruby.p5m: $(WS_TOOLS)/runtime-ruby.p5m
+	$(CP) $< $@
+
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime-perl.p5m
-	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime-perl.p5m $(BUILD_DIR)/runtime-ruby.p5m
+	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m $(BUILD_DIR)/runtime-ruby.p5m
 	$(TOUCH) $@
 
 # generate list of sed rules to filter out component's own packages from
@@ -532,7 +526,7 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime
 $(BUILD_DIR)/filter-own-pkgs: $(DEPENDED)
 	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) \
 		| $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' -e 's/^\///g' -e 's/\//\\\//g' \
-		| sort -u \
+		| $(SORT) -u \
 		| $(GSED) -e 's/^\(.*\)$$/\/^REQUIRED_PACKAGES += \1$$\/d/g' >$@
 
 # Set REQUIRED_PACKAGES macro substitution rules
@@ -544,7 +538,7 @@ REQUIRED_PACKAGES_TRANSFORM += $(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($
 # truly lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
 # You must still include packages for tools you build and test with.
 #
-REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) $(BUILD_DIR)/filter-own-pkgs
+REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) $(BUILD_DIR)/filter-own-pkgs $(REQUIRED_PACKAGES_EXTRA_DEPS)
 	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
 	@$(GSED) -i -e '/^# Auto-generated dependencies$$/,$$d' Makefile
 	@echo "# Auto-generated dependencies" >>Makefile
@@ -554,7 +548,7 @@ REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) $(BUILD_DIR)/f
 		| $(GSED) -e 's,pkg:/,,g' -e 's/@.*$$//g' \
 			-f $(BUILD_DIR)/filter-own-pkgs \
 			$(REQUIRED_PACKAGES_TRANSFORM) \
-		| sort -u >>Makefile
+		| $(SORT) -u >>Makefile
 	@echo "*** Please edit your Makefile and verify the new or updated content at the end ***"
 
 
@@ -588,10 +582,17 @@ $(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.li
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 	@echo "NEW PACKAGE CONTENTS ARE LOCALLY VALIDATED AND READY TO GO"
 
+$(MANIFEST_BASE)-%.histogrified: $(MANIFEST_BASE)-%.p5m
+	$(PKGMOGRIFY) -D CONSOLIDATION="$(CONSOLIDATION)" $< > $@
+
 # Push to the repo
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.pre-published
 	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@
+
+$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.histogrified
+	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest --no-catalog $<
+	$(CP) $< $@
 
 $(BUILD_DIR)/.pre-published-$(MACH):	$(PRE_PUBLISHED)
 	$(TOUCH) $@
@@ -604,23 +605,24 @@ print-depend-require:	canonical-manifests
 		$(foreach t,$(VERSIONED_MANIFEST_TYPES),$(call ips-print-depend-require-type-rule,$(t))) | tr ' ' '\n'
 
 print-package-names:	canonical-manifests $(MKGENERIC_SCRIPTS)
-	@echo $(call ips-print-names-rule,$(NONVER_MANIFESTS)) \
+	@echo $(foreach m,$(NONVER_MANIFESTS),\
+		$(call ips-print-names-rule,$(m))) \
 	    $(foreach t,$(VERSIONED_MANIFEST_TYPES),\
 	        $(call ips-print-names-type-rule,$(t))) \
-	    | tr ' ' '\n'
+	    | tr ' ' '\n' | $(SORT) -u
 
 print-package-paths:	canonical-manifests
 	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | \
-		LANG=C LC_ALL=C sort -u
+		$(SORT) -u
 
 install-packages:	publish
 	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
 	    cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 	    $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
 	    sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | \
-	    LANG=C LC_ALL=C sort -u | \
+	    $(SORT) -u | \
 	    (cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
 	 else ; \
 	    echo "unsafe to install package(s) automatically" ; \
@@ -662,3 +664,4 @@ CLEAN_PATHS +=	required-pkgs.mk
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-perl
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-python
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-ruby
+CLEAN_PATHS +=	$(GENERATED_ARCH_MANIFESTS)

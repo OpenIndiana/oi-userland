@@ -22,30 +22,32 @@
 #
 # Copyright 2018, Aurelien Larcher
 # Copyright 2020, Michal Nowak
-# Copyright 2020, 2021 Andreas Wacknitz
+# Copyright 2020, 2024 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		htop
-COMPONENT_VERSION=	3.2.1
-COMPONENT_FMRI=		diagnostic/htop
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_VERSION=	3.3.0
 COMPONENT_SUMMARY=	htop - an interactive process viewer for Unix
 COMPONENT_PROJECT_URL=	https://htop.dev/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b5ffac1949a8daaabcffa659c0964360b5008782aae4dfa7702d2323cfb4f438
+COMPONENT_ARCHIVE_HASH= sha256:1e5cc328eee2bd1acff89f860e3179ea24b85df3ac483433f92a29977b14b045
 COMPONENT_ARCHIVE_URL=	https://github.com/htop-dev/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=		diagnostic/htop
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=  GPLv2 
+COMPONENT_LICENSE_FILE=  COPYING
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(GNUBIN64):$(PATH.gnu)
 
-COMPONENT_PREP_ACTION= ( cd $(@D); $(RM) config.h; sh autogen.sh )
+COMPONENT_PREP_ACTION= ( cd $(@D); $(RM) config.h; PATH=$(PATH) sh autogen.sh )
+
+CPPFLAGS += -D_XOPEN_SOURCE=700 -D__EXTENSIONS__
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses

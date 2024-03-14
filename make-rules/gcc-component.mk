@@ -43,7 +43,7 @@ COMPONENT_ARCHIVE_URL ?= \
 
 PATCH_EACH_ARCHIVE=1
 PATCHDIR_PATCHES = $(shell find $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
-                                2>/dev/null | sort)
+                                2>/dev/null | $(SORT))
 
 MPFR_NAME= mpfr
 ifeq ($(strip $(MPFR_VERSION)),)
@@ -118,7 +118,6 @@ CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+= --host $(GNU_TRIPLET)
 CONFIGURE_OPTIONS+= --build $(GNU_TRIPLET)
 CONFIGURE_OPTIONS+= --target $(GNU_TRIPLET)
-#CONFIGURE_OPTIONS+= --with-boot-ldflags=-R$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS+= --with-pkgversion="OpenIndiana $(GCC_COMPONENT_STRING_VERSION)"
 CONFIGURE_OPTIONS+= --with-bugurl="https://bugs.openindiana.org"
 
@@ -129,16 +128,11 @@ CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
 
 # If the compiler used to build matches the compiler being built, there is no
 # need for a 3 stage build.
-ifneq ($(shell $(CC) --version | grep $(COMPONENT_VERSION)),)
-CONFIGURE_OPTIONS +=    --disable-bootstrap
-else
-COMPONENT_BUILD_TARGETS=bootstrap
-endif
+CONFIGURE_OPTIONS += $(if $(strip $(shell $(CC) --version | grep $(COMPONENT_VERSION))),--disable-bootstrap,)
+COMPONENT_BUILD_TARGETS = $(if $(strip $(shell $(CC) --version | grep $(COMPONENT_VERSION))),,bootstrap)
 
-# On SPARC systems, use Sun Assembler
-CONFIGURE_OPTIONS.sparc+= --without-gnu-as --with-as=/usr/bin/as
-CONFIGURE_OPTIONS.i386+= --with-gnu-as --with-as=/usr/bin/gas
-CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(MACH))
+# The Sun Assembler is only used on SPARC gates.
+CONFIGURE_OPTIONS+= --with-gnu-as --with-as=/usr/bin/gas
 
 # Set path to library install prefix
 CONFIGURE_OPTIONS+= LDFLAGS="-R$(CONFIGURE_PREFIX)/lib"
@@ -168,10 +162,10 @@ COMPONENT_PRE_TEST_ACTION += \
 	(cd $(COMPONENT_TEST_DIR) ; \
 	 ulimit -Ss 16385 ; \
 	 $(ENV) $(COMPONENT_PRE_TEST_ENV) \
-	        $(GMAKE) -k -i $(JOBS:%=-j%) check check-target RUNTESTFLAGS="--target_board=unix/-m64\{,-msave-args\}" ; \
+	        $(GMAKE) -k -i $(JOBS:%=-j%) check RUNTESTFLAGS="--target_board=unix/-m64\{,-msave-args\}" ; \
 	 $(FIND) . -name  '*.sum' | while read f; do \
 	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
-	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | sort -k 2 >> $f.2; \
+	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | $(SORT) -k 2 >> $f.2; \
 	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
 	        mv $f.2 $f; done; \
 	 $(GMAKE) mail-report.log)
@@ -180,10 +174,10 @@ COMPONENT_PRE_TEST_ACTION += \
 	(cd $(COMPONENT_TEST_DIR) ; \
 	 ulimit -Ss 16385 ; \
 	 $(ENV) $(COMPONENT_PRE_TEST_ENV) \
-	        $(GMAKE) -k -i $(JOBS:%=-j%) check check-target RUNTESTFLAGS="--target_board=unix/-m64" ; \
+	        $(GMAKE) -k -i $(JOBS:%=-j%) check RUNTESTFLAGS="--target_board=unix/-m64" ; \
 	 $(FIND) . -name  '*.sum' | while read f; do \
 	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
-	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | sort -k 2 >> $f.2; \
+	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | $(SORT) -k 2 >> $f.2; \
 	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
 	        mv $f.2 $f; done; \
 	 $(GMAKE) mail-report.log)
@@ -196,13 +190,8 @@ COMPONENT_TEST_TARGETS = mail-report.log
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
-# Common dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
-
 # Required by the test suite
-REQUIRED_PACKAGES += developer/test/dejagnu
-REQUIRED_PACKAGES += developer/build/autoconf-archive
-REQUIRED_PACKAGES += developer/build/autogen
-REQUIRED_PACKAGES += system/extended-system-utilities
+TEST_REQUIRED_PACKAGES += developer/test/dejagnu
+TEST_REQUIRED_PACKAGES += developer/build/autoconf-archive
+TEST_REQUIRED_PACKAGES += developer/build/autogen
+TEST_REQUIRED_PACKAGES += system/extended-system-utilities

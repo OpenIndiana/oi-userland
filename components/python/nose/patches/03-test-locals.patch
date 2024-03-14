@@ -1,0 +1,74 @@
+This is probably more workaround than an actual fix for the test failure.
+
+See also:
+https://stackoverflow.com/questions/45714276/transplant-class-locals-c-error-in-python
+
+--- nose-1.3.7/functional_tests/doc_tests/test_issue145/imported_tests.rst.orig
++++ nose-1.3.7/functional_tests/doc_tests/test_issue145/imported_tests.rst
+@@ -46,7 +46,7 @@
+     package1.test_module.TestClass.test_class ... ok
+     package1.test_module.test_function ... ok
+     package2c setup
+-    test (package2c.test_module.TestCase) ... ok
++    test (package2c.test_module.transplant_class.<locals>.C) ... ok
+     package2c.test_module.TestClass.test_class ... ok
+     package2f setup
+     package2f.test_module.test_function ... ok
+@@ -71,7 +71,7 @@
+     >>> argv = [__file__, '-v', os.path.join(support, 'package2c')]
+     >>> run(argv=argv) # doctest: +REPORT_NDIFF
+     package2c setup
+-    test (package2c.test_module.TestCase) ... ok
++    test (package2c.test_module.transplant_class.<locals>.C) ... ok
+     package2c.test_module.TestClass.test_class ... ok
+     <BLANKLINE>
+     ----------------------------------------------------------------------
+@@ -98,7 +98,7 @@
+     ...         ':TestCase.test']
+     >>> run(argv=argv) # doctest: +REPORT_NDIFF
+     package2c setup
+-    test (package2c.test_module.TestCase) ... ok
++    test (package2c.test_module.transplant_class.<locals>.C) ... ok
+     <BLANKLINE>
+     ----------------------------------------------------------------------
+     Ran 1 test in ...s
+--- nose-1.3.7/functional_tests/test_load_tests_from_test_case.py.orig
++++ nose-1.3.7/functional_tests/test_load_tests_from_test_case.py
+@@ -44,7 +44,7 @@
+ 
+     def runTest(self):
+         expect = [
+-            'test_value (%s.Derived) ... ERROR' % __name__,
++            'test_value (%s.NoFixturePlug.loadTestsFromTestCase.<locals>.Derived) ... ERROR' % __name__,
+             'test_value (tests.Tests) ... ok']
+         print str(self.output)
+         for line in self.output:
+--- nose-1.3.7/unit_tests/test_xunit.py.orig
++++ nose-1.3.7/unit_tests/test_xunit.py
+@@ -123,7 +123,7 @@
+             eq_(tree.attrib['skip'], "0")
+ 
+             tc = tree.find("testcase")
+-            eq_(tc.attrib['classname'], "test_xunit.TC")
++            eq_(tc.attrib['classname'], "test_xunit.mktest.<locals>.TC")
+             eq_(tc.attrib['name'], "runTest")
+             assert time_taken.match(tc.attrib['time']), (
+                         'Expected decimal time: %s' % tc.attrib['time'])
+@@ -190,7 +190,7 @@
+             eq_(tree.attrib['skip'], "0")
+ 
+             tc = tree.find("testcase")
+-            eq_(tc.attrib['classname'], "test_xunit.TC")
++            eq_(tc.attrib['classname'], "test_xunit.mktest.<locals>.TC")
+             eq_(tc.attrib['name'], "runTest")
+             assert time_taken.match(tc.attrib['time']), (
+                         'Expected decimal time: %s' % tc.attrib['time'])
+@@ -279,7 +279,7 @@
+             eq_(tree.attrib['skip'], "0")
+ 
+             tc = tree.find("testcase")
+-            eq_(tc.attrib['classname'], "test_xunit.TC")
++            eq_(tc.attrib['classname'], "test_xunit.mktest.<locals>.TC")
+             eq_(tc.attrib['name'], "runTest")
+             assert time_taken.match(tc.attrib['time']), (
+                         'Expected decimal time: %s' % tc.attrib['time'])

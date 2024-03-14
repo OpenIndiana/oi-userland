@@ -30,23 +30,13 @@ set name=pkg.summary value="SQL database engine library - tcl files"
 set name=pkg.description \
     value="tcl files for SQLite which is a self-contained, serverless, zero-configuration, transactional SQL database engine"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
-
-# We force a runtime dependency on $(COMPONENT_FMRI) which is already a build dependendy:                                            
-set pkg.linted.pkglint.manifest005.2=true
-
-# Depend on the main package
-depend type=require fmri=$(COMPONENT_FMRI)
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # Note these files have been manually moved here from the main package.
 
-file path=usr/lib/tcl8.6/sqlite3/libtclsqlite3.so
-file path=usr/lib/tcl8.6/sqlite3/pkgIndex.tcl
-# The 64-bit version of the library doesn't work. The package database/sqlcipher delivers a working version of it.
-# So this is excluded for now.
-#file path=usr/lib/$(MACH64)/sqlite3/libtclsqlite3.so
-#file path=usr/lib/$(MACH64)/sqlite3/pkgIndex.tcl
+file path=usr/lib/tcl8.6/sqlite3/$(MACH64)/libtclsqlite3.so
+file path=usr/lib/tcl8.6/sqlite3/$(MACH64)/pkgIndex.tcl

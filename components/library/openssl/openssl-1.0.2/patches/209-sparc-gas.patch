@@ -1,0 +1,60 @@
+--- openssl-1.0.2u/crypto/aes/Makefile.orig	2022-02-23 14:52:50.159200596 +0000
++++ openssl-1.0.2u/crypto/aes/Makefile	2022-02-23 15:23:45.499857494 +0000
+@@ -76,7 +76,7 @@
+ 	$(PERL) asm/aest4-sparcv9.pl $(CFLAGS) > $@
+ 
+ aest4-sparcv9.o: aest4-sparcv9.s
+-	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
++	$(AS) $(ASFLAGS) -o $@ $^
+ 
+ aes-ppc.s:	asm/aes-ppc.pl
+ 	$(PERL) asm/aes-ppc.pl $(PERLASM_SCHEME) $@
+--- openssl-1.0.2u/crypto/modes/Makefile.orig	2022-02-23 14:52:50.164031263 +0000
++++ openssl-1.0.2u/crypto/modes/Makefile	2022-02-23 15:23:51.360222738 +0000
+@@ -55,7 +55,7 @@
+ ghash-sparcv9.s:	asm/ghash-sparcv9.pl
+ 	$(PERL) asm/ghash-sparcv9.pl $@ $(CFLAGS)
+ ghash-sparcv9.o:	ghash-sparcv9.s
+-	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
++	$(AS) $(ASFLAGS) -o $@ $^
+ 
+ ghash-alpha.s:	asm/ghash-alpha.pl
+ 	(preproc=$$$$.$@.S; trap "rm $$preproc" INT; \
+--- openssl-1.0.2u/crypto/bn/Makefile.orig	2022-02-23 14:52:50.161943929 +0000
++++ openssl-1.0.2u/crypto/bn/Makefile	2022-02-23 15:24:04.616799392 +0000
+@@ -80,11 +80,11 @@
+ vis3-mont.s:		asm/vis3-mont.pl
+ 	$(PERL) asm/vis3-mont.pl $(CFLAGS) > $@
+ vis3-mont.o:	vis3-mont.s
+-	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
++	$(AS) $(ASFLAGS) -o $@ $^
+ sparct4-mont.S:	asm/sparct4-mont.pl
+ 	$(PERL) asm/sparct4-mont.pl $(CFLAGS) > $@
+ sparct4-mont.o:	sparct4-mont.S
+-	$(CC) $(CFLAGS) -Wa,-n -c -o $@ $^
++	$(CC) $(CFLAGS) -c -o $@ $^
+ sparcv9-gf2m.S:	asm/sparcv9-gf2m.pl
+ 	$(PERL) asm/sparcv9-gf2m.pl $(CFLAGS) > $@
+ 
+--- openssl-1.0.2u/crypto/sha/Makefile.orig	2022-02-23 14:52:50.160664596 +0000
++++ openssl-1.0.2u/crypto/sha/Makefile	2022-02-23 15:24:11.158514136 +0000
+@@ -74,7 +74,7 @@
+ sha256-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
+ sha512-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
+ sha512-sparcv9.o: sha512-sparcv9.S
+-	$(CC) $(CFLAGS) -Wa,-n -c -o $@ $^
++	$(CC) $(CFLAGS) -c -o $@ $^
+ 
+ sha1-ppc.s:	asm/sha1-ppc.pl;	$(PERL) asm/sha1-ppc.pl $(PERLASM_SCHEME) $@
+ sha256-ppc.s:	asm/sha512-ppc.pl;	$(PERL) asm/sha512-ppc.pl $(PERLASM_SCHEME) $@
+--- openssl-1.0.2u/crypto/camellia/Makefile.orig	2022-02-23 14:52:50.162973096 +0000
++++ openssl-1.0.2u/crypto/camellia/Makefile	2022-02-23 15:24:23.799541790 +0000
+@@ -52,7 +52,7 @@
+ 	$(PERL) asm/cmllt4-sparcv9.pl $(CFLAGS) > $@
+ 
+ cmllt4-sparcv9.o: cmllt4-sparcv9.s
+-	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
++	$(AS) $(ASFLAGS) -o $@ $^
+ 
+ files:
+ 	$(PERL) $(TOP)/util/files.pl Makefile >> $(TOP)/MINFO

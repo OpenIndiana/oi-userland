@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IPC::System::Simple
 HUMAN_VERSION =			1.30
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IPC::System::Simple - Run commands simply, with detailed diagnostics
 COMPONENT_CPAN_AUTHOR =		JKEENAN
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,10 @@ COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/bsd-resource
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl

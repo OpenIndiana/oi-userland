@@ -35,20 +35,19 @@
 #
 # Author: David Stes
 # -r option to use wget and download image from files.squeak.org
+# -32 and -64 options to choose 32bit or 64bit image (64 default)
+# -v6 option to download Squeak 6.0 image
 # $Id: inisqueak5,v 1.1 2020/12/01 11:19:19 stes Exp $
 # 
 
 # subtle difference between SqueakV46.sources not SqueakV4.6.sources
 MAJOR=5.3
 MAJORV=50
-VERSION=5.3-19480
+VERSION=5.3-19481
+BIT=64
 
 REMOTESRC="http://files.squeak.org/sources_files/"
-REMOTESOURCES=SqueakV${MAJORV}.sources.gz
-SUFFIX64="-64bit"
-REMOTEIMAGE=Squeak${VERSION}${SUFFIX64}
-REMOTEIMAGEZIP=${REMOTEIMAGE}.zip
-REMOTEDIR="http://files.squeak.org/${MAJOR}/${REMOTEIMAGE}"
+REMSUFFIX="-64bit"
 
 prefix=/usr
 exec_prefix=${prefix}
@@ -68,12 +67,17 @@ startup=true
 batch=false
 interactive=true
 remote=true
+# in 5.3 19480 and 19481 the sources seem to be in the zip image 
+remotesrc=false
 
 while true; do
   case "$1" in
     -l) list=true; shift;;
     -n) startup=false; shift;;
     -r) remote=true; shift;;
+    -32) BIT=32;REMSUFFIX='-32bit'; shift;;
+    -64) shift;;
+    -v6) MAJOR=6.0; MAJORV=60; VERSION=6.0-22104; shift ;;
     -R) remote=false; shift;;
     -b) batch=true; interactive=false; shift;;
     -h|-help|--help)
@@ -81,6 +85,9 @@ while true; do
         echo '    -b      batch (avoid interaction, exit status reflects success)'
         echo '    -h      you already know about'
         echo '    -r      download Squeak from remote server (default)'
+        echo '    -v6     download Squeak 6.0 images'
+        echo '    -32     download 32 bit images'
+        echo '    -64     download 64 bit images (default)'
         echo '    -R      do not download Squeak from remote server'
         echo '    -help   same as -h'
         echo '    -l      always present a list of alternative images (overrides -b)'
@@ -100,6 +107,9 @@ SQUEAK=${bindir}/squeak
 SOURCES=SqueakV${MAJORV}.sources
 IMAGE=squeak.image.gz
 CHANGES=squeak.changes.gz
+REMOTEIMAGE=Squeak${VERSION}${REMSUFFIX}
+REMOTEDIR="http://files.squeak.org/${MAJOR}/${REMOTEIMAGE}"
+REMOTEIMAGEZIP=${REMOTEIMAGE}.zip
 
 # local install function
 
@@ -110,7 +120,9 @@ missing()
   exit 1
 }
 
-if ${remote}; then
+REMOTESOURCES=SqueakV${MAJORV}.sources.gz
+
+if ${remotesrc}; then
   echo "Downloading $REMOTESOURCES from $REMOTESRC"
   wget -O $REMOTESOURCES $REMOTESRC/$REMOTESOURCES
   case $? in
@@ -122,7 +134,18 @@ if ${remote}; then
    0) ;;
    *) echo "Unable to unzip $REMOTESOURCES"; exit 1;
   esac
+fi
+
+if ${remote}; then
   echo "Downloading $REMOTEIMAGEZIP from $REMOTEDIR"
+  if [ -f $REMOTEIMAGEZIP ]
+  then
+    rm $REMOTEIMAGEZIP Squeak${VERSION}${REMSUFFIX}.image Squeak${VERSION}${REMSUFFIX}.changes
+    case $? in
+      0) ;;
+      *) echo "Unable to clean up existing $REMOTEIMAGEZIP"; exit 1;
+    esac
+  fi
   wget -O $REMOTEIMAGEZIP $REMOTEDIR/$REMOTEIMAGEZIP
   case $? in
    0) ;;
@@ -134,8 +157,8 @@ if ${remote}; then
    *) echo "Unable to unzip $REMOTEIMAGEZIP"; exit 1;
   esac
   echo "Copying to default image name .."
-  cp Squeak${VERSION}${SUFFIX64}.image squeak.image
-  cp Squeak${VERSION}${SUFFIX64}.changes squeak.changes
+  cp Squeak${VERSION}${REMSUFFIX}.image squeak.image
+  cp Squeak${VERSION}${REMSUFFIX}.changes squeak.changes
 fi
 
 if ${test} \( -f squeak.image \) -a \( -f squeak.changes \) -a \( -e ${SOURCES} \)

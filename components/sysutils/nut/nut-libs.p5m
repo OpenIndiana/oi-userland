@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2016 Jim Klimov
+# Copyright 2016-2023 Jim Klimov
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/libs@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY) - headers, libraries and their manpages"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -27,22 +28,28 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 ### NUT Development files - headers, libraries and their manpages
 file path=usr/include/nut-scan.h
 file path=usr/include/nutclient.h
+file path=usr/include/nutclientmem.h
 file path=usr/include/nutscan-device.h
 file path=usr/include/nutscan-init.h
 file path=usr/include/nutscan-ip.h
+file path=usr/include/nutscan-serial.h
 file path=usr/include/parseconf.h
 file path=usr/include/upsclient.h
 
-file path=usr/lib/$(MACH64)/libnutclient.so.0.0.0
-link path=usr/lib/$(MACH64)/libnutclient.so target=libnutclient.so.0.0.0
-link path=usr/lib/$(MACH64)/libnutclient.so.0 target=libnutclient.so.0.0.0
-file path=usr/lib/$(MACH64)/libnutscan.so.1.0.0
-link path=usr/lib/$(MACH64)/libnutscan.so target=libnutscan.so.1.0.0
-link path=usr/lib/$(MACH64)/libnutscan.so.1 target=libnutscan.so.1.0.0
-file path=usr/lib/$(MACH64)/libupsclient.so.4.0.0
-link path=usr/lib/$(MACH64)/libupsclient.so target=libupsclient.so.4.0.0
-link path=usr/lib/$(MACH64)/libupsclient.so.4 target=libupsclient.so.4.0.0
+file path=usr/lib/$(MACH64)/libnutclient.so.2.0.2
+link path=usr/lib/$(MACH64)/libnutclient.so target=libnutclient.so.2.0.2
+link path=usr/lib/$(MACH64)/libnutclient.so.2 target=libnutclient.so.2.0.2
+file path=usr/lib/$(MACH64)/libnutclientstub.so.1.0.1
+link path=usr/lib/$(MACH64)/libnutclientstub.so target=libnutclientstub.so.1.0.1
+link path=usr/lib/$(MACH64)/libnutclientstub.so.0 target=libnutclientstub.so.1.0.1
+file path=usr/lib/$(MACH64)/libnutscan.so.2.0.2
+link path=usr/lib/$(MACH64)/libnutscan.so target=libnutscan.so.2.0.2
+link path=usr/lib/$(MACH64)/libnutscan.so.2 target=libnutscan.so.2.0.2
+file path=usr/lib/$(MACH64)/libupsclient.so.6.0.1
+link path=usr/lib/$(MACH64)/libupsclient.so target=libupsclient.so.6.0.1
+link path=usr/lib/$(MACH64)/libupsclient.so.6 target=libupsclient.so.6.0.1
 file path=usr/lib/$(MACH64)/pkgconfig/libnutclient.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libnutclientstub.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libnutscan.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libupsclient.pc
 
@@ -85,7 +92,10 @@ file path=usr/share/man/man3/nutscan_add_device_to_device.3
 file path=usr/share/man/man3/nutscan_add_option_to_device.3
 file path=usr/share/man/man3/nutscan_cidr_to_ip.3
 file path=usr/share/man/man3/nutscan_display_parsable.3
+file path=usr/share/man/man3/nutscan_display_sanity_check.3
+file path=usr/share/man/man3/nutscan_display_sanity_check_serial.3
 file path=usr/share/man/man3/nutscan_display_ups_conf.3
+file path=usr/share/man/man3/nutscan_display_ups_conf_with_sanity_check.3
 file path=usr/share/man/man3/nutscan_free_device.3
 file path=usr/share/man/man3/nutscan_get_serial_ports_list.3
 file path=usr/share/man/man3/nutscan_init.3
@@ -96,7 +106,7 @@ file path=usr/share/man/man3/nutscan_scan_ipmi.3
 file path=usr/share/man/man3/nutscan_scan_nut.3
 file path=usr/share/man/man3/nutscan_scan_snmp.3
 file path=usr/share/man/man3/nutscan_scan_usb.3
-file path=usr/share/man/man3/nutscan_scan_xml_http.3
+file path=usr/share/man/man3/nutscan_scan_xml_http_range.3
 file path=usr/share/man/man3/upscli_add_host_cert.3
 file path=usr/share/man/man3/upscli_cleanup.3
 file path=usr/share/man/man3/upscli_connect.3
@@ -107,7 +117,9 @@ file path=usr/share/man/man3/upscli_init.3
 file path=usr/share/man/man3/upscli_list_next.3
 file path=usr/share/man/man3/upscli_list_start.3
 file path=usr/share/man/man3/upscli_readline.3
+file path=usr/share/man/man3/upscli_readline_timeout.3
 file path=usr/share/man/man3/upscli_sendline.3
+file path=usr/share/man/man3/upscli_sendline_timeout.3
 file path=usr/share/man/man3/upscli_splitaddr.3
 file path=usr/share/man/man3/upscli_splitname.3
 file path=usr/share/man/man3/upscli_ssl.3

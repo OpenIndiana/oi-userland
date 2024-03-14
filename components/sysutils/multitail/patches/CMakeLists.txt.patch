@@ -1,0 +1,21 @@
+--- multitail-7.1.2/CMakeLists.txt	Mon Oct 30 14:09:56 2023
++++ multitail-7.1.2-wkr/CMakeLists.txt	Tue Nov 28 21:00:44 2023
+@@ -60,7 +60,8 @@
+ # ``find_package(Curses)`` call if unicode functionality is required.
+ if(UTF8_SUPPORT)
+     set(CURSES_NEED_WIDE TRUE)
+-    find_library(PANEL_LIBRARY panelw REQUIRED)
++	message( STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR}" )
++    find_library(PANEL_LIBRARY panelw REQUIRED PATHS /usr/gnu/lib/amd64)
+     add_definitions(-DUTF8_SUPPORT)
+     add_definitions(-DNCURSES_WIDECHAR)
+ else()
+@@ -79,7 +80,7 @@
+     include_directories(${CURSES_INCLUDE_DIRS})
+ endif()
+ 
+-set(EXTRA_LIBS "-lutil -lm")
++set(EXTRA_LIBS "-lsocket -lnsl -lm")
+ 
+ 
+ #

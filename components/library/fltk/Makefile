@@ -12,41 +12,47 @@
 # Copyright 2017 Aurelien Larcher
 #
 
-BUILD_BITS=				32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=        fltk
-COMPONENT_VERSION=     1.3.8
-COMPONENT_SUMMARY=     fltk - Fast Light Toolkit
-COMPONENT_PROJECT_URL= https://www.fltk.org
-COMPONENT_FMRI=        library/fltk
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_NAME=			fltk
+COMPONENT_VERSION=		1.3.9
+COMPONENT_SUMMARY=		fltk - Fast Light Toolkit
+COMPONENT_PROJECT_URL=	https://www.fltk.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
 COMPONENT_ARCHIVE_URL=	https://fltk.org/pub/fltk/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:f3c1102b07eb0e7a50538f9fc9037c18387165bc70d4b626e94ab725b9d4d1bf
-COMPONENT_LICENSE= GPLv2
+COMPONENT_ARCHIVE_HASH=	sha256:d736b0445c50d607432c03d5ba5e82f3fba2660b10bc1618db8e077a42d9511b
+COMPONENT_FMRI=			library/fltk
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_LICENSE=		GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 CONFIGURE_FIX_LIBTOOL_RPATH= no
 
-TEST_TARGET=			$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --enable-cairo=yes
+
+# Note that the tests are no real tests but just examples. You can run them manually.
+COMPONENT_TEST_DIR = $(@D)/test
+COMPONENT_TEST_TARGETS= all
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig

@@ -10,44 +10,67 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
-# Copyright 2015, PALO Richard.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project psycopg2
 #
 
-BUILD_STYLE=	setup.py
-BUILD_BITS=		32_and_64
+BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	psycopg2
-COMPONENT_VERSION= 	2.9.1
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY= 	Python-PostgreSQL Database Adapter
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:de5303a6f1d0a7a34b9d40e4d3bef684ccc44a49bbe3eb85e3c0bffb4a131b7c
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/psycopg2
-COMPONENT_FMRI=		library/python/psycopg2
-COMPONENT_CLASSIFICATION=	System/Databases
-COMPONENT_LICENSE=	LGPLv3
+COMPONENT_NAME =		psycopg2
+HUMAN_VERSION =			2.9.9
+COMPONENT_SUMMARY =		psycopg2 - psycopg2 - Python-PostgreSQL Database Adapter
+COMPONENT_PROJECT_URL =		https://psycopg.org/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/c9/5e/dc6acaf46d78979d6b03458b7a1618a68e152a6776fce95daac5e0f0301b/psycopg2-2.9.9.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:d1454bde93fb1e224166811694d600e746430c006fbb031ea06ecc2ea41bf156
+COMPONENT_LICENSE =		LGPL-3.0-only
 
-PYTHON_VERSIONS=	3.7 3.9
+# see doc/src/install.rst
+TEST_STYLE = custom
 
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# Don't depend on host default pg_config
-PATH				=	$(PG_BINDIR.$(BITS)):$(PATH.illumos)
+# Do not depend on host default pg_config
+PATH := $(PG_BINDIR):$(PATH)
 
-LDFLAGS 			+=	-L$(PG_LIBDIR.$(BITS)) -R$(PG_LIBDIR.$(BITS))
-COMPONENT_BUILD_ENV	+=	LDFLAGS="$(LDFLAGS)"
+# force needed rpath
+LD_OPTIONS += -R$(PG_LIBDIR)
 
-# Manually added build dependencies
-REQUIRED_PACKAGES	+= $(PG_DEVELOPER_PKG)
+#
+# Note:
+#
+# To test we need to fulfill following prerequisites:
+#	1) the default system postgres version must match the version we built
+#	   psycopg2 for,
+#	2) the postgresql service must be running,
+#	3) the psycopg2_test database with plpgsql extension must exist.
+#
+# To check 1) and 2) you can run following commands:
+#	gmake print-value-PG_VERSION
+#	pkg mediator postgres
+#	svcs '*postgresql*'
+# To create the psycopg2_test database you could run:
+#	su - postgres
+#	createdb psycopg2_test
+#	psql -c 'CREATE EXTENSION plpgsql;' psycopg2_test
+#
+# Testing will use the default 'postgres' user.
+#
+COMPONENT_TEST_ENV += PSYCOPG2_TESTDB_USER=postgres
+
+# Custom test style - see doc/src/install.rst
+COMPONENT_TEST_CMD =		$(PYTHON) -c "import tests; tests.unittest.main(defaultTest='tests.test_suite')"
+COMPONENT_TEST_ARGS =		--verbose
+COMPONENT_TEST_TARGETS =
+
+# Manually added build and testing dependencies
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+TEST_REQUIRED_PACKAGES += $(PG_SERVICE_PKG)
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library

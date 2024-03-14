@@ -19,15 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::DNS
-HUMAN_VERSION =			1.35
+HUMAN_VERSION =			1.44
 COMPONENT_SUMMARY =		Net::DNS - Perl Interface to the Domain Name System
 COMPONENT_CPAN_AUTHOR =		NLNETLABS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f1a1478e4acbdb6b96de63070b35050dec9b9fce6c95bb2215bfc64a2d98e167
+	sha256:13d7edc4b8cea0132147faac3571f6b3c71d1d0cfd844c530c5a044f4a3ec31e
 COMPONENT_LICENSE =		MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-bubblebabble
 PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
+PERL_REQUIRED_PACKAGES += library/perl-5/net-libidn2
 PERL_REQUIRED_PACKAGES += runtime/perl

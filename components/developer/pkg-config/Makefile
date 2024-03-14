@@ -24,13 +24,11 @@
 # Copyright (c) 2017, Aurelien Larcher
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pkg-config
 COMPONENT_VERSION=      0.29.2
-COMPONENT_REVISION=     4
+COMPONENT_REVISION=     5
 COMPONENT_FMRI=         developer/build/pkg-config
 COMPONENT_SUMMARY=      A tool to query library build-time information
 COMPONENT_CLASSIFICATION=Development/System
@@ -42,7 +40,10 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591
 COMPONENT_ARCHIVE_URL=  \
 	https://pkgconfig.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE=      GPL-2.0-only
+COMPONENT_LICENSE_FILE=	COPYING
+
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -52,15 +53,9 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 # have pkg-config strip any of the default linker search directories
 CONFIGURE_OPTIONS += --with-system-library-path='/lib:/usr/lib:/lib/${MACH64}:/usr/lib/${MACH64}:/lib/64:/usr/lib/64'
-
-COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-# Strip make lines from test output
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "/^Making/d" ' \
-	'-e "/^make/d" '
+# We do not want usr/bin/$(GCC_GNU_TRIPLET)-pkg-config link
+CONFIGURE_OPTIONS += --disable-host-tool
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library

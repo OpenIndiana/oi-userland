@@ -1,0 +1,25 @@
+From 7d62e9750149bb80810da65fbf55c941cb7083a3 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Mon, 29 Oct 2018 18:23:00 +0000
+Subject: libgo: libelf on illumos doesn't support largefile
+
+Originally from pkgsrc
+---
+ libgo/runtime/proc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/libgo/runtime/proc.c b/libgo/runtime/proc.c
+index 3a30748d329..29efc3e26c9 100644
+--- a/libgo/runtime/proc.c
++++ b/libgo/runtime/proc.c
+@@ -12,6 +12,10 @@
+ #include "config.h"
+ 
+ #ifdef HAVE_DL_ITERATE_PHDR
++#ifdef __sun
++#undef _FILE_OFFSET_BITS
++#define _FILE_OFFSET_BITS 32
++#endif
+ #include <link.h>
+ #endif
+ 

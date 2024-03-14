@@ -1,0 +1,24 @@
+warning: o_max could be used unintializied
+
+diff --git a/src/modules/module-combine-sink.c b/src/modules/module-combine-sink.c
+index 2ccd9eb..11a260b 100644
+--- a/src/modules/module-combine-sink.c
++++ b/src/modules/module-combine-sink.c
+@@ -257,7 +257,7 @@ static void adjust_rates(struct userdata *u) {
+     uint32_t idx;
+     unsigned n = 0;
+     pa_usec_t now;
+-    struct output *o_max;
++    struct output *o_max = NULL;
+ 
+     pa_assert(u);
+     pa_sink_assert_ref(u->sink);
+@@ -334,7 +334,7 @@ static void adjust_rates(struct userdata *u) {
+     /* The target selection ensures, that at least one of the
+      * sinks will use the base rate and all other sinks are set
+      * relative to it. */
+-    if (max_sink_latency > min_total_latency)
++    if ((o_max != NULL) && (max_sink_latency > min_total_latency))
+         target_latency = o_max->total_latency;
+     else
+         target_latency = min_total_latency;

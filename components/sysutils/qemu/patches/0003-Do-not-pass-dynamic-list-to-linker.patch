@@ -1,0 +1,22 @@
+From 94b48e6c66c43a70743d7762e8d13909ab81fca7 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <illumos@fiddaman.net>
+Date: Mon, 28 Nov 2022 14:53:22 +0000
+Subject: Do not pass --dynamic-list to linker
+
+---
+ plugins/meson.build | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/plugins/meson.build b/plugins/meson.build
+index 752377c66d..e86414aa2a 100644
+--- a/plugins/meson.build
++++ b/plugins/meson.build
+@@ -8,8 +8,6 @@ if not enable_modules
+       capture: true,
+       command: ['sed', '-ne', 's/^[[:space:]]*\\(qemu_.*\\);/_\\1/p', '@INPUT@'])
+     plugin_ldflags = ['-Wl,-exported_symbols_list,plugins/qemu-plugins-ld64.symbols']
+-  else
+-    plugin_ldflags = ['-Xlinker', '--dynamic-list=' + (meson.project_source_root() / 'plugins/qemu-plugins.symbols')]
+   endif
+ endif
+ 

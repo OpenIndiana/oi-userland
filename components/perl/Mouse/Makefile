@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mouse
 HUMAN_VERSION =			2.5.10
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Mouse - Moose minus the antlers
 COMPONENT_CPAN_AUTHOR =		SKAJI
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,14 +32,17 @@ COMPONENT_SRC =			$(COMPONENT_NAME)-v$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-message
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build-xsutil
-PERL_REQUIRED_PACKAGES += library/perl-5/test-exception
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-leaktrace
-PERL_REQUIRED_PACKAGES += library/perl-5/test-output
-PERL_REQUIRED_PACKAGES += library/perl-5/test-requires
-PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-output
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/try-tiny

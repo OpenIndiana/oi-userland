@@ -1,20 +1,6 @@
-Index: autogen-5.18.16/agen5/guile-iface.h
-===================================================================
---- autogen-5.18.16.orig/agen5/guile-iface.h
-+++ autogen-5.18.16/agen5/guile-iface.h
-@@ -9,7 +9,7 @@
- # error AutoGen does not work with this version of Guile
-   choke me.
- 
--#elif GUILE_VERSION < 203000
-+#elif GUILE_VERSION <= 300000
- # define AG_SCM_IS_PROC(_p)           scm_is_true( scm_procedure_p(_p))
- # define AG_SCM_LIST_P(_l)            scm_is_true( scm_list_p(_l))
- # define AG_SCM_PAIR_P(_p)            scm_is_true( scm_pair_p(_p))
-Index: autogen-5.18.16/config/guile.m4
-===================================================================
---- autogen-5.18.16.orig/config/guile.m4
-+++ autogen-5.18.16/config/guile.m4
+diff -up autogen-5.18.16/config/guile.m4.omv~ autogen-5.18.16/config/guile.m4
+--- autogen-5.18.16/config/guile.m4.omv~	2020-06-11 00:44:52.504286768 +0200
++++ autogen-5.18.16/config/guile.m4	2020-06-11 00:45:08.085490315 +0200
 @@ -61,7 +61,7 @@
  #
  AC_DEFUN([GUILE_PKG],
@@ -24,11 +10,10 @@ Index: autogen-5.18.16/config/guile.m4
    if test -n "$GUILE_EFFECTIVE_VERSION"; then
      _guile_tmp=""
      for v in $_guile_versions_to_search; do
-Index: autogen-5.18.16/configure
-===================================================================
---- autogen-5.18.16.orig/configure
-+++ autogen-5.18.16/configure
-@@ -14799,7 +14799,7 @@ $as_echo "no" >&6; }
+diff -up autogen-5.18.16/configure.omv~ autogen-5.18.16/configure
+--- autogen-5.18.16/configure.omv~	2020-06-11 00:45:14.791577912 +0200
++++ autogen-5.18.16/configure	2020-06-11 00:45:22.791682407 +0200
+@@ -15020,7 +15020,7 @@ $as_echo "no" >&6; }
  		PKG_CONFIG=""
  	fi
  fi
@@ -37,3 +22,16 @@ Index: autogen-5.18.16/configure
    if test -n "$GUILE_EFFECTIVE_VERSION"; then
      _guile_tmp=""
      for v in $_guile_versions_to_search; do
+diff -up autogen-5.18.16/agen5/guile-iface.h.omv~ autogen-5.18.16/agen5/guile-iface.h
+--- autogen-5.18.16/agen5/guile-iface.h.omv~	2020-06-11 00:46:47.082782949 +0200
++++ autogen-5.18.16/agen5/guile-iface.h	2020-06-11 00:47:02.066978514 +0200
+@@ -9,7 +9,7 @@
+ # error AutoGen does not work with this version of Guile
+   choke me.
+ 
+-#elif GUILE_VERSION < 203000
++#elif 1 < 203000 /* Let's assume any guile >= 2.2 is ok... */
+ # define AG_SCM_IS_PROC(_p)           scm_is_true( scm_procedure_p(_p))
+ # define AG_SCM_LIST_P(_l)            scm_is_true( scm_list_p(_l))
+ # define AG_SCM_PAIR_P(_p)            scm_is_true( scm_pair_p(_p))
+

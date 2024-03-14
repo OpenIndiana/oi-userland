@@ -1,17 +1,34 @@
-running test
-WARNING: Testing via this command is deprecated and will be removed in a future version. Users looking for a generic test entry point independent of test runner are encouraged to use tox.
-running egg_info
-writing jaraco.context.egg-info/PKG-INFO
-writing dependency_links to jaraco.context.egg-info/dependency_links.txt
-writing requirements to jaraco.context.egg-info/requires.txt
-writing top-level names to jaraco.context.egg-info/top_level.txt
-package init file 'jaraco/__init__.py' not found (or not a regular file)
-reading manifest file 'jaraco.context.egg-info/SOURCES.txt'
-adding license file 'LICENSE'
-writing manifest file 'jaraco.context.egg-info/SOURCES.txt'
-running build_ext
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder .tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+configfile: pytest.ini
+asyncio: mode=strict
+collecting ... collected 16 items
 
-----------------------------------------------------------------------
-Ran 0 tests
+::project PASSED
+docs/conf.py::BLACK PASSED
+docs/conf.py::mypy PASSED
+docs/conf.py::mypy-status PASSED
+jaraco/context.py::BLACK PASSED
+jaraco/context.py::context.ExceptionTrap PASSED
+jaraco/context.py::context.ExceptionTrap.passes PASSED
+jaraco/context.py::context.ExceptionTrap.raises PASSED
+jaraco/context.py::context.infer_compression PASSED
+jaraco/context.py::context.null PASSED
+jaraco/context.py::context.on_interrupt PASSED
+jaraco/context.py::context.pushd PASSED
+jaraco/context.py::context.suppress PASSED
+jaraco/context.py::context.temp_dir PASSED
+jaraco/context.py::mypy PASSED
 
-OK
+===================================== mypy =====================================
+
+Success: no issues found in 2 source files
+======== 15 passed ========
+  py$(PYV): OK
+  congratulations :)

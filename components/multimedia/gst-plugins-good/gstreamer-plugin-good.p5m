@@ -1,10 +1,11 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
@@ -13,15 +14,17 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+<transform path=.+/lib/.+\.a -> drop>
 
 file path=etc/gconf/schemas/gstreamer-0.10.schemas preserve=renameold
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstaasink.so
@@ -36,6 +39,7 @@ file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstauparse.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstautodetect.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstavi.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstcairo.so
+file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstcdda2wav.a
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstcdda2wav.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstcutter.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstdebug.so
@@ -85,6 +89,7 @@ file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstvideocrop.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstvideofilter.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstvideomixer.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstwavenc.so
+file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstwavpack.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstwavparse.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgstximagesrc.so
 file path=usr/lib/$(MACH64)/gstreamer-0.10/libgsty4menc.so
@@ -100,6 +105,7 @@ file path=usr/lib/gstreamer-0.10/libgstauparse.so
 file path=usr/lib/gstreamer-0.10/libgstautodetect.so
 file path=usr/lib/gstreamer-0.10/libgstavi.so
 file path=usr/lib/gstreamer-0.10/libgstcairo.so
+file path=usr/lib/gstreamer-0.10/libgstcdda2wav.a
 file path=usr/lib/gstreamer-0.10/libgstcdda2wav.so
 file path=usr/lib/gstreamer-0.10/libgstcutter.so
 file path=usr/lib/gstreamer-0.10/libgstdebug.so
@@ -149,6 +155,7 @@ file path=usr/lib/gstreamer-0.10/libgstvideocrop.so
 file path=usr/lib/gstreamer-0.10/libgstvideofilter.so
 file path=usr/lib/gstreamer-0.10/libgstvideomixer.so
 file path=usr/lib/gstreamer-0.10/libgstwavenc.so
+file path=usr/lib/gstreamer-0.10/libgstwavpack.so
 file path=usr/lib/gstreamer-0.10/libgstwavparse.so
 file path=usr/lib/gstreamer-0.10/libgstximagesrc.so
 file path=usr/lib/gstreamer-0.10/libgsty4menc.so

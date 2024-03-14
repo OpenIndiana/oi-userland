@@ -9,22 +9,25 @@
 #
 
 #
-# Copyright (c) 2021 Andreas Wacknitz
+# Copyright (c) 2023 Andreas Wacknitz
 #
-BUILD_BITS= 64_and_32
+
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xapian
-COMPONENT_VERSION=	1.4.21
-COMPONENT_PROJECT_URL=	https://xapian.org
+COMPONENT_VERSION=	1.4.24
 COMPONENT_SUMMARY=	An Open Source Search Engine Library
+COMPONENT_PROJECT_URL=	https://xapian.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-core-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:80f86034d2fb55900795481dfae681bfaa10efbe818abad3622cdc0c55e06f88
+COMPONENT_ARCHIVE_HASH= sha256:eda5ae6dcf6b0553a8676af64b1fd304e998cd20f779031ccaaf7ab9a373531a
 COMPONENT_ARCHIVE_URL=	https://oligarchy.co.uk/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2+
 COMPONENT_FMRI=		library/xapian
 COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=	GPLv2+
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -33,9 +36,7 @@ COMPONENT_PREP_ACTION =	( cd $(@D) && autoreconf -f -i )
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-n' \
 	'-e "/^Running /p"' \
-	'-e "/^PASS/p"' \
 	'-e "/failed/p"' \
 	'-e "/^Please/p"' \
 	'-e "/======/p"'

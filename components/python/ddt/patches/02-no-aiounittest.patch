@@ -1,0 +1,29 @@
+This reverts the following commit:
+https://github.com/datadriventests/ddt/pull/112/commits/2d0f8a76dd27924830ebf3b708324924fb384c06
+
+--- ddt-1.7.2/test/test_async.py.orig
++++ ddt-1.7.2/test/test_async.py
+@@ -1,11 +1,11 @@
+-import aiounittest
++import unittest
+ 
+ from ddt import ddt, data
+ from test.mycode import larger_than_two
+ 
+ 
+ @ddt
+-class TestAsync(aiounittest.AsyncTestCase):
++class TestAsync(unittest.IsolatedAsyncioTestCase):
+     @data(3, 4, 12, 23)
+     async def test_larger_than_two(self, value):
+         self.assertTrue(larger_than_two(value))
+--- ddt-1.7.2/tox.ini.orig
++++ ddt-1.7.2/tox.ini
+@@ -6,7 +6,6 @@
+     pytest
+     pytest-cov
+     coverage
+-    aiounittest
+     flake8
+     six>=1.4.0
+     PyYAML

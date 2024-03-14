@@ -19,17 +19,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
-# Use is subject to license terms.
-#
-# ident	"@(#)svc-dbus	1.1	06/04/24 SMI"
+# Copyright (c) 2006, 2017, Oracle and/or its affiliates. All rights reserved.
 
 FMRI=svc:/system/dbus:default
 
 . /lib/svc/share/smf_include.sh
 
-if [ ! -x /usr/lib/dbus-daemon ]; then
-	echo "/usr/lib/dbus-daemon not found or not executable"
+if [ ! -x /usr/libexec/dbus-daemon ]; then
+	echo "/usr/libexec/dbus-daemon not found or not executable"
 	exit $SMF_EXIT_ERR_FATAL
 fi
 
@@ -39,23 +36,23 @@ if [ ! -f /var/lib/dbus/machine-id ]; then
 fi
 
 if smf_is_nonglobalzone; then
-	   /usr/sbin/svcadm disable -t svc:/system/dbus
-        echo "dbus-daemon cannot be run in non-global zones"
-	   sleep 5 &
-	   exit $SMF_EXIT_OK
+    /usr/sbin/svcadm disable -t svc:/system/dbus
+    echo "dbus-daemon cannot be run in non-global zones"
+    sleep 5 &
+    exit $SMF_EXIT_OK
 fi
 
 case "$1" in
 'start')
 	# temporary hacks
 	if [ ! -d /var/run/dbus ]; then
-		mkdir /var/run/dbus
+		mkdir -m 0755 /var/run/dbus
 	fi
 	if [ -f /var/run/dbus/pid ]; then
 		rm -f /var/run/dbus/pid
 	fi
 
-	/usr/lib/dbus-daemon --system
+	(ulimit -S -n 8192 ; /usr/libexec/dbus-daemon --system)
 	err=$?
 	if [ $err -ne 0 ]; then
 		echo "dbus failed to start: error $err"

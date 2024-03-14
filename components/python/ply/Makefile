@@ -1,63 +1,45 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2017 Gary Mills
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project ply
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		ply
-COMPONENT_VERSION=	3.11
-#COMPONENT_REVISION=	5
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3
-COMPONENT_ARCHIVE_URL=	http://www.dabeaz.com/ply/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.dabeaz.com/ply/
-COMPONENT_BUGDB=	python-mod/ply
+COMPONENT_NAME =		ply
+HUMAN_VERSION =			3.11
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		ply - Python Lex & Yacc
+COMPONENT_PROJECT_URL =		http://www.dabeaz.com/ply/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/e5/69/882ee5c9d017149285cab114ebeab373308ef0f874fcdac9beb90e0ac4da/ply-3.11.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3
+COMPONENT_LICENSE =		BSD-3-Clause
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+# This project uses custom testing.  See $(SOURCE_DIR)/test/README.
+TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# Run 42 tests, OK.
-COMPONENT_TEST_ENV = PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
-COMPONENT_TEST_CMD = $(PYTHON) testlex.py; \
-                     $(PYTHON) testyacc.py
-COMPONENT_TEST_ARGS=
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
-    '-e "s|\(^Ran 42 tests\).*|\1|" '
-
+# Custom testing
+COMPONENT_TEST_DIR = $(@D)/test
+COMPONENT_TEST_CMD = $(PYTHON) testlex.py ; $(PYTHON) testyacc.py ; $(PYTHON) testcpp.py
+COMPONENT_TEST_ARGS =
+COMPONENT_TEST_TARGETS =
+COMPONENT_POST_TEST_ACTION = cd $(COMPONENT_TEST_DIR) ; ./cleanup.sh
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += runtime/python

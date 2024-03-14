@@ -50,51 +50,32 @@ index c655a50..be6f1a4 100644
  constexpr size_t CeilingOnPageSize = 64 * KB;
  #elif OS(WINDOWS) || CPU(MIPS) || CPU(MIPS64) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64)
  constexpr size_t CeilingOnPageSize = 4 * KB;
-diff --git a/Source/WTF/wtf/PlatformCPU.h b/Source/WTF/wtf/PlatformCPU.h
-index 0e711de..62864ea 100644
---- a/Source/WTF/wtf/PlatformCPU.h
-+++ b/Source/WTF/wtf/PlatformCPU.h
-@@ -89,6 +89,26 @@
- #define WTF_CPU_KNOWN 1
- #endif
- 
-+/* CPU(SPARC32) - SPARC 32-bit */
-+#if defined(__sparc) && !defined(__arch64__) || defined(__sparcv8)
-+#define WTF_CPU_SPARC32 1
-+#define WTF_CPU_BIG_ENDIAN 1
-+#define WTF_CPU_KNOWN 1
-+#endif
-+
-+/* CPU(SPARC64) - SPARC 64-bit */
-+#if defined(__sparc__) && defined(__arch64__) || defined (__sparcv9)
-+#define WTF_CPU_SPARC64 1
-+#define WTF_CPU_BIG_ENDIAN 1
-+#define WTF_CPU_KNOWN 1
-+#endif
-+
-+/* CPU(SPARC) - any SPARC, true for CPU(SPARC32) and CPU(SPARC64) */
-+#if CPU(SPARC32) || CPU(SPARC64)
-+#define WTF_CPU_SPARC 1
-+#define WTF_CPU_KNOWN 1
-+#endif
-+
- /* CPU(X86) - i386 / x86 32-bit */
- #if   defined(__i386__) \
-     || defined(i386)     \
-@@ -281,7 +301,7 @@
- #define WTF_CPU_UNKNOWN 1
- #endif
- 
--#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN)
-+#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN) || CPU(SPARC)
- #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
- #endif
  
 diff --git a/Source/WTF/wtf/PlatformHave.h b/Source/WTF/wtf/PlatformHave.h
 index 41afbb4..9e5d453 100644
 --- a/Source/WTF/wtf/PlatformHave.h
 +++ b/Source/WTF/wtf/PlatformHave.h
-@@ -328,7 +328,7 @@
+@@ -229,16 +229,16 @@
+ #define HAVE_HOSTED_CORE_ANIMATION 1
+ #endif
+ 
+-#if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)))
++#if OS(DARWIN) || OS(FUCHSIA) || OS(SOLARIS) || ((OS(FREEBSD) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)))
+ #define HAVE_MACHINE_CONTEXT 1
+ #endif
+ 
+-#if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
++#if OS(DARWIN) || OS(SOLARIS) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
+ #define HAVE_BACKTRACE 1
+ #define HAVE_BACKTRACE_SYMBOLS 1
+ #endif
+ 
+-#if OS(DARWIN) || OS(LINUX)
++#if OS(DARWIN) || OS(LINUX) || OS(SOLARIS)
+ #define HAVE_DLADDR 1
+ #endif
+ 
+@@ -376,7 +376,7 @@
  #define HAVE_URL_FORMATTING 1
  #endif
  
@@ -173,3 +154,58 @@ index 6577423..b882b9e 100644
  #else
      return "unknown"_s;
  #endif
+--- webkitgtk-2.42.5/Source/JavaScriptCore/runtime/MachineContext.h.~1~	2023-09-19 04:27:45.475782200 -0400
++++ webkitgtk-2.42.5/Source/JavaScriptCore/runtime/MachineContext.h	2024-02-18 01:24:47.690986457 -0500
+@@ -33,6 +33,7 @@
+ #include <wtf/PlatformRegisters.h>
+ #include <wtf/PointerPreparations.h>
+ #include <wtf/StdLibExtras.h>
++#include <sys/regset.h>
+ 
+ namespace JSC {
+ namespace MachineContext {
+@@ -193,7 +194,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ #if CPU(X86)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_ESP]);
+@@ -338,7 +339,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86)
+@@ -496,7 +497,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86)
+@@ -652,7 +653,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86)
+@@ -787,7 +788,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86)

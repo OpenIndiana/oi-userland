@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::Find::Rule
 HUMAN_VERSION =			0.34
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		File::Find::Rule - Alternative interface to File::Find
 COMPONENT_CPAN_AUTHOR =		RCLAMP
 COMPONENT_ARCHIVE_HASH =	\

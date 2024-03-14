@@ -1,49 +1,56 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
-# Copyright 2021 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project paramiko
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		paramiko
-COMPONENT_VERSION=	2.9.2
-COMPONENT_SUMMARY=	Library for making SSH2 connections
-COMPONENT_PROJECT_URL=	https://github.com/pyca/paramiko/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:944a9e5dbdd413ab6c7951ea46b0ab40713235a9c4c5ca81cfe45c6f14fa677b
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	library/python/paramiko
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_NAME =		paramiko
+HUMAN_VERSION =			3.4.0
+COMPONENT_SUMMARY =		paramiko - SSH2 protocol library
+COMPONENT_PROJECT_URL =		https://paramiko.org
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/paramiko/paramiko/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:36a34a9bd0b1f4fca89c0d880fad7af69f4dc5f8f0fb8c795938bdf880694c1f
+COMPONENT_LICENSE =		LGPL-2.1-only
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+TEST_STYLE = pytest
 
-# Tests fail - depend on pytest-relaxed and pytest > 3
-TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD =    $(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =
-
-# Test dependencies
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += dev-requirements.txt
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/bcrypt
+PYTHON_REQUIRED_PACKAGES += library/python/cryptography
+PYTHON_REQUIRED_PACKAGES += library/python/pynacl
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/alabaster
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/codespell
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/icecream
+TEST_REQUIRED_PACKAGES.python += library/python/invocations
+TEST_REQUIRED_PACKAGES.python += library/python/invoke
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-relaxed
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/releases
+TEST_REQUIRED_PACKAGES.python += library/python/watchdog

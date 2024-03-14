@@ -13,23 +13,24 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2022 Niklas Poslovski
 #
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= enchant
-COMPONENT_VERSION= 2.3.3
+COMPONENT_VERSION= 2.6.7
 COMPONENT_SUMMARY= GNOME spell checker component
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:3da12103f11cf49c3cf2fd2ce3017575c5321a489e5b9bfa81dd91ec413f3891
+COMPONENT_ARCHIVE_HASH=	sha256:a1c2e5b59acca000bbfb24810af4a1165733d407f2154786588e076c8cd57bfc
 COMPONENT_ARCHIVE_URL=	https://github.com/AbiWord/enchant/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://abiword.github.io/enchant/
-COMPONENT_LICENSE=		LGPLv2.1
 COMPONENT_FMRI=			library/spell-checking/enchant
 COMPONENT_CLASSIFICATION=	Applications/Accessories
+COMPONENT_LICENSE=		LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING.LIB
 
 # C tests pass but we do not have unittest-cpp
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D)  && autoreconf -vif )

@@ -22,30 +22,27 @@
 # Copyright (c) 2020 Michal Nowak
 #
 
-BUILD_BITS=			64_and_32
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.39.4
-TARBALL_VERSION=		3390400
+COMPONENT_VERSION=      3.45.2
+TARBALL_VERSION=		3450200
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:02d96c6ccf811ab9b63919ef717f7e52a450c420e06bd129fb483cd70c3b3bba
+COMPONENT_ARCHIVE_HASH= sha256:4a45a3577cc8af683c4bd4c6e81a7c782c5b7d5daa06175ea2cb971ca71691b1
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
-COMPONENT_ARCHIVE_URL=  https://www.sqlite.org/2022/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=	Development/Databases
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2024/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         database/sqlite-3
+COMPONENT_CLASSIFICATION=	Development/Databases
 COMPONENT_LICENSE=      Public Domain
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION	+= $(CP) $(COMPONENT_DIR)/files/mapfile $(@D) ;
-
 # 'oserror' test has too low threshold for file descriptor depletion. When it's
 # bumped 32-bit is fine, however on 64-bit the whole test suite crashes.
-COMPONENT_PRE_CONFIGURE_ACTION	+= $(RM) $(SOURCE_DIR)/test/oserror.test ;
+COMPONENT_PRE_CONFIGURE_ACTION += $(RM) $(SOURCE_DIR)/test/oserror.test ;
 
 CFLAGS			+= -D_POSIX_PTHREAD_SEMANTICS
 CFLAGS			+= -DNDEBUG
@@ -66,41 +63,43 @@ CFLAGS			+= -DSQLITE_ENABLE_STAT2
 CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 CFLAGS			+= -DSQLITE_ENABLE_COLUMN_METADATA
 
-# Fixes firefox crash with new sqlite, don't remove until proper fix
-#gcc_OPT                 =  -O2
-
-CONFIGURE_OPTIONS.32	+= --with-tcl="$(USRLIBDIR)"
+CONFIGURE_OPTIONS.32	+= --disable-tcl
 CONFIGURE_OPTIONS.64	+= --with-tcl="$(USRLIBDIR64)"
-CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
-CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS	+= --disable-static
-CONFIGURE_OPTIONS	+= --enable-readline
-CONFIGURE_OPTIONS	+= --enable-fts3
-CONFIGURE_OPTIONS	+= --enable-fts4
-CONFIGURE_OPTIONS	+= --enable-fts5
-CONFIGURE_OPTIONS	+= --enable-json1
-CONFIGURE_OPTIONS	+= --enable-update-limit
-CONFIGURE_OPTIONS	+= --enable-rtree
-CONFIGURE_OPTIONS	+= --enable-threadsafe 
-CONFIGURE_OPTIONS	+= --enable-shared
+CONFIGURE_OPTIONS		+= --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS		+= --disable-static
+CONFIGURE_OPTIONS		+= --enable-readline
+CONFIGURE_OPTIONS		+= --enable-fts3
+CONFIGURE_OPTIONS		+= --enable-fts4
+CONFIGURE_OPTIONS		+= --enable-fts5
+CONFIGURE_OPTIONS		+= --enable-json1
+CONFIGURE_OPTIONS		+= --enable-update-limit
+CONFIGURE_OPTIONS		+= --enable-rtree
+CONFIGURE_OPTIONS		+= --enable-threadsafe 
+CONFIGURE_OPTIONS		+= --enable-shared
+CONFIGURE_OPTIONS		+= --enable-dynamic-extensions
+
+CONFIGURE_ENV.64 += TCLLIBDIR=$(USRLIBDIR)/tcl8.6/sqlite3/$(MACH64)
+
+# Build and install should be able to find some basic tools like cp, cat, rm, or mkdir.
+COMPONENT_BUILD_ENV += PATH=$(PATH)
+COMPONENT_INSTALL_ENV += PATH=$(PATH)
 
 # Install sqlite3(1) man page
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/
 
-COMPONENT_TEST_TARGETS = test
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-# remove clutter and timings from test results:
-COMPONENT_TEST_TRANSFORMS += \
+COMPONENT_TEST_TARGETS= test
+
+COMPONENT_TEST_TRANSFORMS= \
+	' -e "s/in [0-9]*\.[0-9]* seconds//" ' \
+	' -e "s/tests on .*/tests/" ' \
 	' -n ' \
-	' -e "s/[0-9]* ms//" ' \
-	' -e "s/ in [0-9]*\.[0-9]* seconds//" ' \
-	' -e "s/[0-9]* microseconds per iteration//" ' \
-	' -e "/^Time/p" ' \
-	' -e "/^Query/p" ' \
-	' -e "/No /p" ' 
+	' -e "/errors out of/p" ' \
+	' -e "/memory allocations freed/p" ' \
+	' -e "/^Maximum memory usage:/p" ' \
+	' -e "/^Current memory usage:/p" ' \
+	' -e "/^Number of malloc/p" '
 
 # Auto-generated dependencies
-#REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

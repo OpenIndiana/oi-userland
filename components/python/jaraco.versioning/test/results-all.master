@@ -1,0 +1,28 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder .tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+configfile: pytest.ini
+asyncio: mode=strict
+collecting ... collected 12 items
+
+jaraco/versioning.py::versioning.SummableVersion PASSED
+jaraco/versioning.py::versioning.SummableVersion.as_number PASSED
+jaraco/versioning.py::versioning.SummableVersion.reset_less_significant PASSED
+jaraco/versioning.py::versioning.Versioned.infer_next_version PASSED
+jaraco/versioning.py::versioning.find PASSED
+jaraco/versioning.py::versioning.rfind PASSED
+jaraco/versioning.py::versioning.semver PASSED
+tests/test_versioning.py::TestVersioning::test_defer_to_parent_tag PASSED
+tests/test_versioning.py::TestVersioning::test_get_next_version PASSED
+tests/test_versioning.py::TestVersioning::test_local_revision_not_tagged PASSED
+tests/test_versioning.py::TestVersioning::test_tag_priority PASSED
+tests/test_versioning.py::TestVersioning::test_tag_versions PASSED
+
+======== 12 passed ========
+  py$(PYV): OK
+  congratulations :)

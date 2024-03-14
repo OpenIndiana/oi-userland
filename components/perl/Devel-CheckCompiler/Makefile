@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Devel::CheckCompiler
 HUMAN_VERSION =			0.07
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Devel::CheckCompiler - Check the compiler's availability
 COMPONENT_CPAN_AUTHOR =		SYOHEX
 COMPONENT_ARCHIVE_HASH =	\

@@ -20,6 +20,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcache
 COMPONENT_VERSION=	8.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/memcache
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
@@ -55,7 +56,12 @@ CONFIGURE_OPTIONS	+=   --datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS	+=   --mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS	+=   --localstatedir=$(PHP_DATADIR)
 
-CONFIGURE_OPTIONS	+=   --build=x86_64-pc-solaris2.10
+ifeq ($(strip $(MACH)),i386)
+CONFIGURE_OPTIONS	+=   --build=x86_64-pc-solaris$(SOLARIS_VERSION)
+else
+CONFIGURE_OPTIONS.64+=	--build=sparcv9-sun-solaris$(SOLARIS_VERSION)
+endif
+
 CONFIGURE_OPTIONS	+=   --with-php-config=$(PHP_PREFIX)/bin/php-config
 
 CFLAGS                +=	-I$(PHP_PREFIX)/include

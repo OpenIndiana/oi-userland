@@ -1,0 +1,34 @@
+This is to get similar results as with the setup.py build style
+(see setup.py.mk).
+
+--- system-config-printer-1.5.18/configure.orig
++++ system-config-printer-1.5.18/configure
+@@ -7750,7 +7750,7 @@
+ else:
+   from distutils import sysconfig
+   sitedir = sysconfig.get_python_lib(0, 0, prefix='$am_py_prefix')
+-sys.stdout.write(sitedir)"`
++sys.stdout.write(sitedir)" | sed -e 's/site-packages/vendor-packages/g'`
+    #
+    case $am_cv_python_pythondir in
+    $am_py_prefix*)
+@@ -7793,7 +7793,7 @@
+ else:
+   from distutils import sysconfig
+   sitedir = sysconfig.get_python_lib(1, 0, prefix='$am_py_exec_prefix')
+-sys.stdout.write(sitedir)"`
++sys.stdout.write(sitedir)" | sed -e 's/site-packages/vendor-packages/g'`
+    #
+    case $am_cv_python_pyexecdir in
+    $am_py_exec_prefix*)
+--- system-config-printer-1.5.18/Makefile.am.orig
++++ system-config-printer-1.5.18/Makefile.am
+@@ -63,7 +63,7 @@
+ 
+ # Use distutils to install the module.
+ install-exec-local: .stamp-distutils-in-builddir
+-	$(PYTHON) setup.py install --prefix=$(DESTDIR)$(prefix)
++	$(PYTHON) setup.py install --root $(DESTDIR) --install-lib=$(pythondir) --skip-build
+ 
+ # Uninstall the module, crossing our fingers that we know enough
+ # about how distutils works to do this.  Unfortunately, distutils

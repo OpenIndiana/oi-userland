@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Scope::Guard
 HUMAN_VERSION =			0.21
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Scope::Guard - lexically-scoped resource management
 COMPONENT_CPAN_AUTHOR =		CHOCOLATE
 COMPONENT_ARCHIVE_HASH =	\

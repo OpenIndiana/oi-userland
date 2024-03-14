@@ -22,22 +22,18 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-utils
-COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	Basic MATE utils
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:7ca56ab242e8efaa64f93ffb84f6e4bf8d4d0df01e20b3b6ef8956ce3192782e
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:58449d7a0d1d900ff03b78ca9f7e98c21e97f47fc26bee7ff1c61834f22f88d3
+COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--disable-disk-image-mounter
-
-REQUIRED_PACKAGES += image/editor/inkscape
+CONFIGURE_OPTIONS += --disable-disk-image-mounter
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
@@ -45,6 +41,7 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2

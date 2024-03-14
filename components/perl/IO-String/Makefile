@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::String
 HUMAN_VERSION =			1.08
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IO::String - Emulate file interface for in-core strings
 COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\

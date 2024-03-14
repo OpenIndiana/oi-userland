@@ -14,55 +14,48 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pycairo
-COMPONENT_VERSION=	1.8.8
-COMPONENT_REVISION=	6
+#
+# Warnings!
+#
+# - This is needed for GIMP 2 only.
+# - This must stay forever at version 1.8.x.
+# - GIMP 2 is 64 bit only, so we build this 64 bit only too.
+#
+
+COMPONENT_NAME=		py2cairo
+COMPONENT_VERSION=	1.8.10
 COMPONENT_PROJECT_URL=	http://www.cairographics.org
 COMPONENT_SUMMARY=	Python bindings for Cairo
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_SRC=		pycairo-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2f52599943ca03c8ff336a0e84b1c8b74f30e2a3de9cb6a9a42a93a848832860
+	sha256:b15f71019e42e06d86f7e8fe5587f07c3de5a59a6c3a071b25fe100796dbcd56
 COMPONENT_ARCHIVE_URL=	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		library/python/pycairo-27
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	LGPL-2.1-only
+COMPONENT_LICENSE_FILE=	COPYING-LGPL-2.1
 
-PYTHON_VERSIONS =	2.7
+TEST_TARGET=	$(NO_TESTS)
 
-VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
+include $(WS_MAKE_RULES)/common.mk
 
-VARIANTS = $(VARIANT_PYTHON26) $(VARIANT_PYTHON27)
+# Python 2.7 paths
+PYTHON = /usr/bin/amd64/python2.7
+PYTHON_VENDOR_PACKAGES = /usr/lib/python2.7/vendor-packages
 
-BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
-BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
+# Python settings for configure
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 
-INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
-INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
+# Move 64 bit libraries to their proper location
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in $$($(FIND) $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES) -name '*.so') ; do \
+		$(MKDIR) $$(dirname $$f)/64 ; \
+		$(MV) $$f $$(dirname $$f)/64/$$(basename $$f) ; \
+	done ;
 
-$(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
-$(VARIANT_PYTHON27)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
-$(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
-$(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
-
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_ENV+=		PYTHON=$(PYTHON)
-CONFIGURE_ENV+=		am_cv_python_pythondir="$(am_cv_python_pythondir)"
-CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(am_cv_python_pyexecdir)"
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += system/library

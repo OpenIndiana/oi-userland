@@ -1,0 +1,230 @@
+--- nose-1.3.7/functional_tests/doc_tests/test_restricted_plugin_options/restricted_plugin_options.rst.orig
++++ nose-1.3.7/functional_tests/doc_tests/test_restricted_plugin_options/restricted_plugin_options.rst
+@@ -18,7 +18,7 @@
+     >>> from nose.plugins.manager import RestrictedPluginManager
+     >>> class StartPlugin(Plugin):
+     ...     def startTest(self, test):
+-    ...         print "started %s" % test
++    ...         print("started %s" % test)
+ 
+ .. Note ::
+ 
+--- nose-1.3.7/functional_tests/test_withid_failures.rst.orig
++++ nose-1.3.7/functional_tests/test_withid_failures.rst
+@@ -7,16 +7,16 @@
+     >>> support = os.path.join(os.path.dirname(__file__), 'support', 'id_fails')
+     >>> argv = [__file__, '-v', '--with-id', '--id-file', idfile, support]
+     >>> run(argv=argv, plugins=[TestId()]) # doctest: +ELLIPSIS
+-    #1 Failure: ImportError (No module ...apackagethatdoesntexist...) ... ERROR
++    #1 Failure: ModuleNotFoundError (No module named ...apackagethatdoesntexist...) ... ERROR
+     #2 test_b.test ... ok
+     #3 test_b.test_fail ... FAIL
+     <BLANKLINE>
+     ======================================================================
+-    ERROR: Failure: ImportError (No module ...apackagethatdoesntexist...)
++    ERROR: Failure: ModuleNotFoundError (No module named ...apackagethatdoesntexist...)
+     ----------------------------------------------------------------------
+     Traceback (most recent call last):
+     ...
+-    ImportError: No module ...apackagethatdoesntexist...
++    ModuleNotFoundError: No module named ...apackagethatdoesntexist...
+     <BLANKLINE>
+     ======================================================================
+     FAIL: test_b.test_fail
+@@ -35,14 +35,14 @@
+     >>> argv.append('1')
+     >>> _junk = sys.modules.pop('test_a', None) # 2.3 requires
+     >>> run(argv=argv, plugins=[TestId()]) #doctest: +ELLIPSIS
+-    #1 Failure: ImportError (No module ...apackagethatdoesntexist...) ... ERROR
++    #1 Failure: ModuleNotFoundError (No module named ...apackagethatdoesntexist...) ... ERROR
+     <BLANKLINE>
+     ======================================================================
+-    ERROR: Failure: ImportError (No module ...apackagethatdoesntexist...)
++    ERROR: Failure: ModuleNotFoundError (No module named ...apackagethatdoesntexist...)
+     ----------------------------------------------------------------------
+     Traceback (most recent call last):
+     ...
+-    ImportError: No module ...apackagethatdoesntexist...
++    ModuleNotFoundError: No module named ...apackagethatdoesntexist...
+     <BLANKLINE>
+     ----------------------------------------------------------------------
+     Ran 1 test in ...s
+--- nose-1.3.7/functional_tests/doc_tests/test_selector_plugin/selector_plugin.rst.orig
++++ nose-1.3.7/functional_tests/doc_tests/test_selector_plugin/selector_plugin.rst
+@@ -19,7 +19,7 @@
+ package and associated tests, laid out like this::
+ 
+     >>> from nose.util import ls_tree
+-    >>> print ls_tree(support)
++    >>> print(ls_tree(support))
+     |-- mymodule.py
+     |-- mypackage
+     |   |-- __init__.py
+--- nose-1.3.7/functional_tests/doc_tests/test_issue145/imported_tests.rst.orig
++++ nose-1.3.7/functional_tests/doc_tests/test_issue145/imported_tests.rst
+@@ -11,7 +11,7 @@
+     >>> import os
+     >>> support = os.path.join(os.path.dirname(__file__), 'support')
+     >>> from nose.util import ls_tree
+-    >>> print ls_tree(support) # doctest: +REPORT_NDIFF
++    >>> print(ls_tree(support)) # doctest: +REPORT_NDIFF
+     |-- package1
+     |   |-- __init__.py
+     |   `-- test_module.py
+--- nose-1.3.7/unit_tests/test_doctest_munging.rst.orig
++++ nose-1.3.7/unit_tests/test_doctest_munging.rst
+@@ -28,13 +28,13 @@
+ the example should raise an exception!
+ 
+     >>> from nose.plugins.plugintest import remove_stack_traces
+-    >>> print remove_stack_traces("""\
++    >>> print(remove_stack_traces("""\
+     ... Ceci n'est pas une traceback.
+     ... Traceback (most recent call last):
+     ...   File "/some/dir/foomodule.py", line 15, in runTest
+     ...   File "/some/dir/spam.py", line 293, in who_knows_what
+     ... AssertionError: something bad happened
+-    ... """)
++    ... """))
+     Ceci n'est pas une traceback.
+     Traceback (most recent call last):
+     ...
+@@ -44,7 +44,7 @@
+ Multiple tracebacks in an example are all replaced, as long as they're
+ separated by blank lines.
+ 
+-    >>> print remove_stack_traces("""\
++    >>> print(remove_stack_traces("""\
+     ... Ceci n'est pas une traceback.
+     ... Traceback (most recent call last):
+     ...   File spam
+@@ -53,7 +53,7 @@
+     ... Traceback (most recent call last):
+     ...   File eggs
+     ... AttributeError: spam
+-    ... """)
++    ... """))
+     Ceci n'est pas une traceback.
+     Traceback (most recent call last):
+     ...
+@@ -70,7 +70,7 @@
+ trailing blank lines.
+ 
+     >>> from nose.plugins.plugintest import munge_nose_output_for_doctest
+-    >>> print munge_nose_output_for_doctest("""\
++    >>> print(munge_nose_output_for_doctest("""\
+     ... runTest (foomodule.PassingTest) ... ok
+     ... runTest (foomodule.FailingTest) ... FAIL
+     ...
+@@ -88,7 +88,7 @@
+     ... FAILED (failures=1)
+     ...
+     ...
+-    ... """)
++    ... """))
+     runTest (foomodule.PassingTest) ... ok
+     runTest (foomodule.FailingTest) ... FAIL
+     <BLANKLINE>
+--- nose-1.3.7/unit_tests/test_config_defaults.rst.orig
++++ nose-1.3.7/unit_tests/test_config_defaults.rst
+@@ -1,6 +1,6 @@
+     >>> from optparse import OptionParser
+     >>> import os
+-    >>> from cStringIO import StringIO
++    >>> from io import StringIO
+ 
+     >>> import nose.config
+ 
+@@ -12,7 +12,7 @@
+     ...                        "config_defaults")
+ 
+     >>> def error(msg):
+-    ...     print "error: %s" % msg
++    ...     print("error: %s" % msg)
+ 
+     >>> def get_parser():
+     ...     parser = OptionParser()
+@@ -129,18 +129,18 @@
+ (filename)
+ 
+     >>> options, args = parse([], os.path.join(support, "nonexistent.cfg"))
+-    >>> print options.__dict__
++    >>> print(options.__dict__)
+     {'verbosity': 1}
+ 
+ (filenames)
+ 
+     >>> options, args = parse([], [os.path.join(support, "nonexistent.cfg")])
+-    >>> print options.__dict__
++    >>> print(options.__dict__)
+     {'verbosity': 1}
+ 
+ 
+ The same goes for missing config file section ("nosetests")
+ 
+     >>> options, args = parse([], StringIO("[spam]\nfoo=bar\n"))
+-    >>> print options.__dict__
++    >>> print(options.__dict__)
+     {'verbosity': 1}
+--- nose-1.3.7/functional_tests/doc_tests/test_init_plugin/init_plugin.rst.orig
++++ nose-1.3.7/functional_tests/doc_tests/test_init_plugin/init_plugin.rst
+@@ -130,7 +130,7 @@
+     ...     def begin(self):
+     ...         ConfigurableWidget.cfg = self.cfg
+     ...     def load_config(self, path):
+-    ...         from ConfigParser import ConfigParser
++    ...         from configparser import ConfigParser
+     ...         p = ConfigParser()
+     ...         p.read([path])
+     ...         self.cfg = dict(p.items('DEFAULT'))
+--- nose-1.3.7/functional_tests/doc_tests/test_issue097/plugintest_environment.rst.orig
++++ nose-1.3.7/functional_tests/doc_tests/test_issue097/plugintest_environment.rst
+@@ -29,7 +29,7 @@
+     ...         self.conf = conf
+     ...
+     ...     def options(self, parser, env={}):
+-    ...         print "env:", env
++    ...         print("env:", env)
+ 
+ To test the argv, we use a config class that prints the argv it's
+ given by nose.  We need to monkeypatch nose.config.Config, so that we
+@@ -39,7 +39,7 @@
+     >>> class PrintArgvConfig(old_config):
+     ...
+     ...     def configure(self, argv=None, doc=None):
+-    ...         print "argv:", argv
++    ...         print("argv:", argv)
+     ...         old_config.configure(self, argv, doc)
+     >>> nose.config.Config = PrintArgvConfig
+ 
+--- nose-1.3.7/unit_tests/test_ls_tree.rst.orig
++++ nose-1.3.7/unit_tests/test_ls_tree.rst
+@@ -7,7 +7,7 @@
+     >>> dir_path = tempfile.mkdtemp()
+ 
+     >>> def create_file(filename):
+-    ...     fd = os.open(filename, os.O_WRONLY|os.O_CREAT, 0666)
++    ...     fd = os.open(filename, os.O_WRONLY|os.O_CREAT, 0o666)
+     ...     os.close(fd)
+ 
+     >>> os.mkdir(os.path.join(dir_path, "top"))
+@@ -32,7 +32,7 @@
+     Note that files matching skip_pattern (by default SVN files,
+     backup files and compiled Python files) are ignored
+ 
+-    >>> print ls_tree(os.path.join(dir_path, "top"))
++    >>> print(ls_tree(os.path.join(dir_path, "top")))
+     |-- file
+     |-- file2
+     |-- .notsvn
+--- nose-1.3.7/functional_tests/test_loader.py.orig
++++ nose-1.3.7/functional_tests/test_loader.py
+@@ -369,7 +369,7 @@
+         assert res.errors, "Expected errors but got none"
+         assert not res.failures, res.failures
+         err = res.errors[0][0].test.exc_class
+-        assert err is ImportError, \
++        assert err is ModuleNotFoundError, \
+             "Expected import error, got %s" % err
+ 
+     def test_load_nonsense_name(self):

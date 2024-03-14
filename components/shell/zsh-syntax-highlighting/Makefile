@@ -14,26 +14,25 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS=			32
-BUILD_STYLE=		justmake
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zsh-syntax-highlighting
-COMPONENT_VERSION=	0.7.1
+COMPONENT_VERSION=	0.8.0
 COMPONENT_SUMMARY=	Fish shell like syntax highlighting for Zsh
 COMPONENT_PROJECT_URL=	https://github.com/zsh-users/zsh-syntax-highlighting
-COMPONENT_FMRI=		utility/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_URL=	https://github.com/zsh-users/zsh-syntax-highlighting/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:f5044266ee198468b1bcec881a56e6399e209657d6ed9fa6d21175bc76afdefa
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:5981c19ebaab027e356fe1ee5284f7a021b89d4405cc53dc84b476c3aee9cc32
+COMPONENT_FMRI=		utility/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_LICENSE=	Various
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE=	COPYING.md
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_INSTALL_ENV+= PREFIX="/usr"
+COMPONENT_INSTALL_ENV += PREFIX=$(USRDIR)
 
 COMPONENT_TEST_TARGETS= test
 
@@ -41,3 +40,5 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-ne "/^ok/p" ' \
 	'-ne "/^not ok/p" '
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/zsh

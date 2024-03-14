@@ -14,20 +14,19 @@
 #   $WS_TOOLS/perl-integrate-module Module::Build
 #
 
-BUILD_STYLE = makemaker
-# Force modulebuild build style
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Build
-HUMAN_VERSION =			0.4231
+HUMAN_VERSION =			0.4234
 COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module::Build - Build and install Perl modules
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7e0f4c692c1740c1ac84ea14d7ea3d8bc798b2fb26c09877229e04f430b2b717
-COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+	sha256:66aeac6127418be5e471ead3744648c766bd01482825c5b66652675f2bc86a8f
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 

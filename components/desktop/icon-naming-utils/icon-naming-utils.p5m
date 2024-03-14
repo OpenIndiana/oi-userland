@@ -12,17 +12,17 @@
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/library/desktop/xdg/icon-naming-utils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Theming"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-depend type=require fmri=library/perl-5/xml-simple
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-license COPYING license='GPLv2'
+depend type=require fmri=library/perl-5/xml-simple-$(PLV)
 
 file path=usr/lib/icon-name-mapping mode=0555
 file path=usr/share/dtds/legacy-icon-mapping.dtd

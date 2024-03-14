@@ -14,40 +14,39 @@
 # Copyright 2016 Till Wegmueller
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_STYLE= meson
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libnotify
-COMPONENT_VERSION=      0.7.7
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      0.7.12
 COMPONENT_SUMMARY=      Library for desktop notifications
+COMPONENT_PROJECT_URL=  https://github.com/GNOME/libnotify
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:9cb4ce315b2655860c524d46b56010874214ec27e854086c1a1d0260137efc04
-COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.7/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.galago-project.org/news/index.php
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.7/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:744b2b37508135f8261b755a9debe6e09add421adc75bde930f6e198b70ab46e
 COMPONENT_FMRI=         library/libnotify
-COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
-# Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_SCRIPT=       $(@D)/configure
-
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu)
 
-COMPONENT_BUILD_ENV += CC=$(CC)
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# g-ir-scanner
+CC_PIC_MODE = $(CC_PIC_DISABLE)
+LD_Z_PIE_MODE = $(LD_Z_PIE_DISABLE)
 
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS.32 += --enable-introspection=no 
+# Required for other components.
+CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
+CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
+CONFIGURE_OPTIONS += -Dman=false
+CONFIGURE_OPTIONS += -Ddefault_library=shared
+
+COMPONENT_BUILD_ENV += PATH="$(PATH)"
+COMPONENT_INSTALL_ENV += PATH="$(PATH)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

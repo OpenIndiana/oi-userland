@@ -11,23 +11,23 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
+USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libmpeg2
 COMPONENT_VERSION=      0.5.1
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      MPEG2 Decoder library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:dee22e893cb5fc2b2b6ebd60b88478ab8556cb3b93f9a0d7ce8f3b61851871d4
 COMPONENT_ARCHIVE_URL=  \
-	http://libmpeg2.sourceforge.net/files/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://libmpeg2.sourceforge.net/
+	https://libmpeg2.sourceforge.net/files/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://libmpeg2.sourceforge.net/
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -39,7 +39,7 @@ include $(WS_MAKE_RULES)/common.mk
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
-COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/sdl

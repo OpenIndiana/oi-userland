@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xdriinfo
-COMPONENT_VERSION=  1.0.6
-COMPONENT_REVISION= 1
-COMPONENT_FMRI=     x11/diagnostic/xdriinfo
+COMPONENT_VERSION=  1.0.7
 COMPONENT_SUMMARY=  xdriinfo - DRI drivers configuration information query utility
-COMPONENT_ARCHIVE_HASH= \
-  sha256:d9ccd2c3e87899417acc9ea1f3e319a4198112babe1dc711273584f607449d51
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:dd838bae9d2b19ddd71fe6d30ed33abc7c85e19d223e79d35600db3fa44bf734
+COMPONENT_FMRI=     x11/diagnostic/xdriinfo
 
 include $(WS_MAKE_RULES)/common.mk
 

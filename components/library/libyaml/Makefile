@@ -38,9 +38,11 @@ COMPONENT_ARCHIVE_URL=	https://github.com/yaml/libyaml/archive/$(COMPONENT_VERSI
 COMPONENT_LICENSE= 	MIT
 COMPONENT_LICENSE_FILE=	libyaml.license
 
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION= (cd $(@D); ./bootstrap )
+COMPONENT_PREP_ACTION= (cd $(@D); PATH="$(PATH)" ./bootstrap )
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared

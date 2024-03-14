@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     libX11
 COMPONENT_VERSION=  1.7.5
+COMPONENT_REVISION =	1
 COMPONENT_FMRI =    x11/library/libx11
 COMPONENT_SUMMARY=  libX11 - X11 core protocol client library
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
@@ -31,7 +32,7 @@ CPPFLAGS += -I/usr/include/freetype2  -I/usr/include/X11  -I/usr/include/xcb
 CPPFLAGS += -DSUNSOFT -DMOTIFBC -DSUNSOFT_KBD
 
 COMPONENT_PREP_ACTION = ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
-                          cd $(@D) &&  libtoolize --copy --force &&\
+                          cd $(@D) && PATH=$(PATH) libtoolize --copy --force && \
                           aclocal -I m4 &&\
                           automake -c -f -a &&\
                           autoconf )
@@ -67,8 +68,10 @@ CONFIGURE_OPTIONS +=  --with-locale-lib-dir="$(LOCALE_LIB_DIR.$(BITS))"
 COMPONENT_BUILD_ARGS.64=ADD_libX11_LDFLAGS="-Wl,-M$(COMPONENT_DIR)/mapfile-vers-64"
 COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
 
+REQUIRED_PACKAGES += x11/library/xtrans
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxau
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/xtrans

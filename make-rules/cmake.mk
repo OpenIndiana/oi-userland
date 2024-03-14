@@ -76,8 +76,17 @@ CMAKE_SBINDIR.64 =	sbin/$(MACH64)
 endif
 CMAKE_LIBDIR.32 =	lib
 CMAKE_LIBDIR.64 =	lib/$(MACH64)
-CMAKE_LIBEXECDIR.32 =	lib
-CMAKE_LIBEXECDIR.64 =	lib/$(MACH64)
+# If the component prefers 64-bit binaries, then ensure builds deliver 64-bit
+# binaries to the standard directories and 32-bit binaries to the non-standard
+# location.  This allows simplification of package manifests and makes it
+# easier to deliver the 64-bit binaries as the default.
+ifeq ($(strip $(PREFERRED_BITS)),64)
+CMAKE_LIBEXECDIR.32 =	libexec/$(MACH32)
+CMAKE_LIBEXECDIR.64 =	libexec
+else
+CMAKE_LIBEXECDIR.32 =	libexec
+CMAKE_LIBEXECDIR.64 =	libexec/$(MACH64)
+endif
 CMAKE_INCLUDEDIR =	include
 CMAKE_DATAROOTDIR =	share
 CMAKE_DATADIR =		$(CMAKE_DATAROOTDIR)
@@ -97,6 +106,7 @@ CMAKE_ENV += FFLAGS="$(F77FLAGS)"
 CMAKE_ENV += FCFLAGS="$(FCFLAGS)"
 CMAKE_ENV += LDFLAGS="$(LDFLAGS)"
 CMAKE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+CMAKE_ENV += PATH="$(PATH)"
 
 # Rewrite absolute source-code paths into relative for ccache, so that any
 # workspace with a shared CCACHE_DIR can benefit when compiling a component
@@ -146,7 +156,7 @@ CMAKE_OPTIONS += -DLIBEXEC_INSTALL_DIR="$(CMAKE_PREFIX)/$(CMAKE_LIBEXECDIR.$(BIT
 # variable that we can generally use to accomplish the same result.  Setting
 # them both shouldn't harm anything.
 CMAKE_OPTIONS += -DLIB_INSTALL_DIR="$(CMAKE_PREFIX)/$(CMAKE_LIBDIR.$(BITS))"
-CMAKE_OPTIONS.64 += -DCMAKE_LIBRARY_ARCHITECTURE=amd64
+CMAKE_OPTIONS.64 += -DCMAKE_LIBRARY_ARCHITECTURE=$(MACH64)
 CMAKE_OPTIONS.64 += -DLIB_SUFFIX="/$(MACH64)"
 endif
 CMAKE_OPTIONS += $(CMAKE_OPTIONS.$(BITS))
@@ -163,6 +173,23 @@ COMPONENT_TEST_TARGETS=
 
 # configure the unpacked source for building 32 and 64 bit version
 CMAKE =	cmake
+
+# provide test transforms for ctest
+CMAKE_TEST_TRANSFORMS = \
+	' -e "s/[0-9]*\.[0-9]* sec//" ' \
+	' -n ' \
+	' -e "/Not Run/p" ' \
+	' -e "/Start/p" ' \
+	' -e "/Skipped/p" ' \
+	' -e "/Failed/p" ' \
+	' -e "/Passed/p" ' \
+	' -e "/failed/p" '
+
+USE_DEFAULT_TEST_TRANSFORMS?=no
+ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)
+COMPONENT_TEST_TRANSFORMS += $(CMAKE_TEST_TRANSFORMS)
+endif
+
 $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
 	$(COMPONENT_PRE_CMAKE_ACTION)
@@ -189,7 +216,7 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(TOUCH) $@
 
 # test the built source
-$(BUILD_DIR)/%/.tested-and-compared:	$(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested-and-compared:	$(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
@@ -205,13 +232,19 @@ $(BUILD_DIR)/%/.tested-and-compared:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
-$(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested:	SHELLOPTS=pipefail
+$(BUILD_DIR)/%/.tested:	$(COMPONENT_TEST_DEP)
+	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
 	(cd $(COMPONENT_TEST_DIR) ; \
 		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
+		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
 	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 

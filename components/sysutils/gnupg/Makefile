@@ -22,29 +22,28 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2021, Nona Hansel
-# Copyright (c) 2021, Andreas Wacknitz
+# Copyright (c) 2021, 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
-USE_COMMON_TEST_MASTER= no
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
-COMPONENT_VERSION=      2.3.8
+COMPONENT_VERSION=      2.4.4
 COMPONENT_SUMMARY=      GNU Privacy Guard
+COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnupg.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:540b7a40e57da261fb10ef521a282e0021532a80fd023e75fb71757e8a4969ed
+COMPONENT_ARCHIVE_HASH= sha256:67ebe016ca90fa7688ce67a387ebd82c6261e95897db7b23df24ff335be85bc6
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         crypto/gnupg
 COMPONENT_CLASSIFICATION=Applications/System Utilities
-COMPONENT_DESCRIPTION=		A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_LICENSE=      GPLv3, GPLv2, LGPLv3, LGPLv2.1, Creative Commons 1.0, others
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += -I/usr/include/openldap
@@ -55,44 +54,41 @@ CFLAGS += -I/usr/include/openldap
 LDFLAGS += -lc -z defs -lsocket -lnsl
 LD_OPTIONS += -z defs
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
-CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
-CONFIGURE_ENV +=	LDAPLIBS="-lldap-2.4 -llber-2.4"
+CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_ENV += INSTALL="$(INSTALL)"
+CONFIGURE_ENV += LDAPLIBS="-lldap-2.6 -llber-2.6"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--libexecdir=$(USRBINDIR)
-CONFIGURE_OPTIONS  +=		--datadir=$(CONFIGURE_PREFIX)/share
-CONFIGURE_OPTIONS  +=		--sysconfdir=/etc
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--enable-nls
-CONFIGURE_OPTIONS  +=		--enable-largefile
-CONFIGURE_OPTIONS  +=		--disable-selinux-support
-CONFIGURE_OPTIONS  +=		--disable-libdns
-# gpg -> gpg2
-CONFIGURE_OPTIONS  +=		--enable-gpg-is-gpg2
-CONFIGURE_OPTIONS  +=		--with-pinentry-pgm=$(CONFIGURE_PREFIX)/lib/pinentry
-CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-libassuan-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-ksba-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-libiconv-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-libintl-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-zlib=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-bzip2=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-readline=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(USRBINDIR)
+CONFIGURE_OPTIONS += --datadir=$(CONFIGURE_PREFIX)/share
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --enable-nls
+CONFIGURE_OPTIONS += --enable-largefile
+CONFIGURE_OPTIONS += --disable-selinux-support
+CONFIGURE_OPTIONS += --disable-libdns
+CONFIGURE_OPTIONS += --with-pinentry-pgm=$(CONFIGURE_PREFIX)/lib/pinentry
+CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-libassuan-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-ksba-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-libiconv-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-libintl-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-bzip2=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-readline=$(CONFIGURE_PREFIX)
 
-MAN8LIST = addgnupghome applygnupgdefaults
+MAN8LIST= addgnupghome applygnupgdefaults
 
 install:	$(INSTALL_64)
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
 	    $(CP) -R 'en@boldquot' en )
 
-COMPONENT_TEST_TRANSFORMS += \
-         '-n ' \
-         '-e "/^PASS:/p" ' \
-         '-e "/^FAIL:/p" ' \
-         '-e "/^SKIP:/p" ' \
-         '-e "/^\# /p" '
+COMPONENT_TEST_TRANSFORMS += "-e '/Failed tests/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/tests run/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/test passed/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/tests passed/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/====/p'"
 
 # Missing dependencies for pinentry
 REQUIRED_PACKAGES += library/desktop/gtk2

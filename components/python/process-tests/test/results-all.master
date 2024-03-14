@@ -1,0 +1,17 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> pytest --cov --cov-report=term-missing --cov-report=xml -vv tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pytest.ini
+collecting ... collected 3 items
+
+tests/test_process_tests.py::test_filebuffer PASSED
+tests/test_process_tests.py::test_socket PASSED
+tests/test_process_tests.py::test_wait_for_strings PASSED
+
+
+======== 3 passed ========
+  py$(PYV): OK
+  congratulations :)

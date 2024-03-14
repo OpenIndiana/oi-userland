@@ -1,0 +1,13 @@
+--- a/make/autoconf/flags-ldflags.m4	Thu Nov 26 19:47:04 2020
++++ b/make/autoconf/flags-ldflags.m4	Thu Nov 26 20:43:34 2020
+@@ -183,7 +183,9 @@
+        test "x${OPENJDK_$1_CPU}" = xmips64el; then
+       $1_CPU_LDFLAGS="${$1_CPU_LDFLAGS} -Wl,--hash-style=sysv"
+     else
+-      $1_CPU_LDFLAGS="${$1_CPU_LDFLAGS} -Wl,--hash-style=gnu"
++      if test "x$OPENJDK_TARGET_OS" != xsolaris; then
++        $1_CPU_LDFLAGS="${$1_CPU_LDFLAGS} -Wl,--hash-style=gnu"
++      fi
+     fi
+ 
+   elif test "x$TOOLCHAIN_TYPE" = xmicrosoft; then

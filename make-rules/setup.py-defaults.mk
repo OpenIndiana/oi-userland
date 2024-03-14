@@ -13,13 +13,21 @@
 # Copyright 2022 Marcel Telka
 #
 
+#
 # Component defaults
+#
+
+# Support for Post-releases (see PEP 440).
+COMPONENT_VERSION ?=		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.post.*//')
 COMPONENT_CLASSIFICATION ?=	Development/Python
-COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
-COMPONENT_FMRI ?=		library/python/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z])
+# To make the package name comparable we normalize it here by following the
+# PyPA Core metadata specifications and PEP 503.
+COMPONENT_FMRI ?=		library/python/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z] | $(GSED) -e 's/[._-]\{1,\}/-/g')
 COMPONENT_PROJECT_URL ?=	https://pypi.org/project/$(COMPONENT_NAME)/
-COMPONENT_ARCHIVE_URL ?=	$(call pypi_url)
+# https://warehouse.pypa.io/api-reference/integration-guide.html#predictable-urls
+COMPONENT_ARCHIVE_URL ?=	https://files.pythonhosted.org/packages/source/$(shell echo $(COMPONENT_NAME) | cut -c 1)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PYPI ?=		$(COMPONENT_NAME)
 # Enable ASLR by default.  Component could disable ASLR by setting
 # COMPONENT_ASLR to 'no'.
@@ -28,3 +36,6 @@ ASLR_MODE = $(ASLR_DISABLE)
 else
 ASLR_MODE = $(ASLR_ENABLE)
 endif
+
+# By default we build Python projects for all supported Python versions
+SINGLE_PYTHON_VERSION ?= no

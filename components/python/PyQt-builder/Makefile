@@ -1,54 +1,41 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2022 Daniel Chan
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project PyQt-builder
 #
 
-BUILD_BITS=			64
-BUILD_STYLE=		setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		PyQt-builder
-COMPONENT_VERSION=	1.12.2
-COMPONENT_SUMMARY=	The PEP 517 compliant PyQt build system
-COMPONENT_PROJECT_URL=	https://pypi.org/project/PyQt-builder/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f62bb688d70e0afd88c413a8d994bda824e6cebd12b612902d1945c5a67edcd7
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	library/python/pyqtbuilder
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=      GPLv3
-COMPONENT_LICENSE_FILE= LICENSE-GPL3
+COMPONENT_NAME =		PyQt-builder
+HUMAN_VERSION =			1.15.4
+COMPONENT_SUMMARY =		PyQt-builder - The PEP 517 compliant PyQt build system
+COMPONENT_PROJECT_URL =		https://www.riverbankcomputing.com/software/pyqt-builder/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/c0/75/a3384eea8770c17e77821368618a5140c4ae0c37f9c05a84ef55f4807172/PyQt-builder-1.15.4.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:39f8c75db17d9ce17cb6bbf3df1650b5cebc1ea4e5bd73843d21cc96612b2ae1
+COMPONENT_LICENSE =		GPL-3.0-only
+COMPONENT_LICENSE_FILE =	LICENSE-GPL3
 
-PYTHON_VERSION=	3.9
-PYTHON_VERSIONS=	3.9
+TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Manually added dependencies
-REQUIRED_PACKAGES += library/python/packaging-39
-REQUIRED_PACKAGES += library/python/sip
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/sip
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python

@@ -1,0 +1,20 @@
+From daeaf29f392d44b24c575666db6b989582654d76 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <illumos@fiddaman.net>
+Date: Thu, 29 Dec 2022 11:13:28 +0000
+Subject: cpu-exec.c fails to compile - code path is reachable
+
+https://www.illumos.org/issues/15304
+
+diff --git a/accel/tcg/cpu-exec.c b/accel/tcg/cpu-exec.c
+index 356fe348de..d66ca82088 100644
+--- a/accel/tcg/cpu-exec.c
++++ b/accel/tcg/cpu-exec.c
+@@ -459,7 +459,7 @@ cpu_tb_exec(CPUState *cpu, TranslationBlock *itb, int *tb_exit)
+ 
+         if (cc->tcg_ops->synchronize_from_tb) {
+             cc->tcg_ops->synchronize_from_tb(cpu, last_tb);
+-        } else {
++        } else if (!TARGET_TB_PCREL) {
+             assert(!TARGET_TB_PCREL);
+             assert(cc->set_pc);
+             cc->set_pc(cpu, tb_pc(last_tb));

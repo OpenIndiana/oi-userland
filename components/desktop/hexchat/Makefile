@@ -13,47 +13,44 @@
 # Copyright 2020 Michal Nowak
 #
 
-BITS=			64
-BUILD_STYLE=		meson
-USE_OPENSSL11=		yes
-
+BITS= 64
+BUILD_STYLE= meson
+OPENSSLi_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
-COMPONENT_VERSION=	2.16.1
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	https://hexchat.github.io/
+COMPONENT_VERSION=	2.16.2
 COMPONENT_SUMMARY=	HexChat IRC client
+COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a7e497da71df419daf9855582d51c723a2611de25d5e97b5efc33fe78da5c4c7
-COMPONENT_ARCHIVE_URL=	https://dl.hexchat.net/hexchat/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:2e88340a8da274b87373ec0740746da78120cc6fbfdd201a4dd6999cac790e4a
+COMPONENT_ARCHIVE_URL=	https://github.com/hexchat/hexchat/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/irc/hexchat
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-
-# We need to use non-default User-Agent for the fetch, otherwise we are denied
-# to download the source file.
-COMPONENT_FETCH_USER_AGENT= fetch
-
-TEST_TARGET=           $(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-PATH=$(PATH.gnu)
+
+PATH= $(PATH.gnu)
+
+# Disable direct binding to allow the Python plugin to load.
+# Without this, you get:
+# ld.so.1: hexchat: fatal: relocation error: file .../python.so:
+#   symbol __iob: referenced symbol not found
+LD_B_DIRECT=
 
 PERL5_LIBDIR=/usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/CORE/
-COMPONENT_POST_INSTALL_ACTION = ( \
-	for file in `find $(PROTOUSRDIR) -name "*.so"`; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(PERL5_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/perl.so; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(PERL5_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/perl.so; \
-	/usr/bin/elfedit -e 'dyn:value -s NEEDED "libpython3.9.so.1.0"' $(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/python.so; \
-	done; )
 
+COMPONENT_POST_INSTALL_ACTION= ( \
+	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(PERL5_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/perl.so; \
+	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(PERL5_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/perl.so; \
+	/usr/bin/elfedit -e 'dyn:value -add -s NEEDED "libpython$(PYTHON_VERSION).so.1.0"' \
+		$(PROTOUSRDIR)/lib/$(MACH64)/hexchat/plugins/python.so)
 
-
-CONFIGURE_OPTIONS += -Dwith-python=python-3.9
+CONFIGURE_OPTIONS += -Dwith-python=python-$(PYTHON_VERSION)
 CONFIGURE_OPTIONS += -Dwith-lua=false
 CONFIGURE_ENV += AR="/usr/gnu/bin/ar"
 
@@ -65,7 +62,7 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += x11/library/libx11

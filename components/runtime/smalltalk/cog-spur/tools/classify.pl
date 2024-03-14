@@ -39,6 +39,8 @@ while (<>) {
 	} elsif (/file path=/) {
 		if (/Sun/) {
 			# ignore the Sun sound plugin - we use pulseaudio
+		} elsif (/vm-sound-OSS/) {
+			# ignore the OSS sound plugin - we use pulseaudio
 		} elsif (/usr\/bin/) {
 			# don't deal with driver scripts here
 		} elsif (/usr\/doc/) {

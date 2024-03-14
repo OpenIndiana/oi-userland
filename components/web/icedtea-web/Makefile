@@ -11,19 +11,19 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	icedtea-web
-COMPONENT_VERSION= 	1.8.3
+COMPONENT_VERSION= 	1.8.8
 COMPONENT_SUMMARY= 	Java browser plugin and Web Start launcher
 COMPONENT_SRC_NAME= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SRC=		IcedTea-Web-$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC_NAME).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-   sha256:41b6f09a7b44ad6b85d5086c289557f6f6340baa51be71bc4361aa26a844e7af
+   sha256:f4203a605a3c9c50acdcc6eef4a366b9fdd36d95edcd76bcbfede01107cb5fe6
 COMPONENT_ARCHIVE_URL= \
    https://github.com/AdoptOpenJDK/IcedTea-Web/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://icedtea.classpath.org/wiki/Main_Page
@@ -53,5 +53,6 @@ REQUIRED_PACKAGES += developer/java/openjdk8
 REQUIRED_PACKAGES += developer/lang/rustc
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += runtime/java/openjdk8
+REQUIRED_PACKAGES += system/library

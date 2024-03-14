@@ -22,21 +22,21 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2023, Klaus Ziegler
 #
 
-BUILD_BITS=		32_and_64
+USE_COMMON_TEST_MASTER= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tcl
-COMPONENT_VERSION=      8.6.12
+COMPONENT_VERSION=      8.6.14
 COMPONENT_MINOR_VERSION= $(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.\([0-9]\+\)\.[0-9]\+/\1.\2/')
-COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Tcl - portable scripting environment
 COMPONENT_DESCRIPTION=	Tcl is a dynamic programming language used in web and desktop applications, networking, administration, testing and many more applications
 COMPONENT_PROJECT_URL=	https://core.tcl-lang.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-core$(COMPONENT_VERSION)-src.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:186748f1131cef3d637421a18d70892f808e526a29c694bebfeb1c540f98727c
+COMPONENT_ARCHIVE_HASH= sha256:ff604f43862a778827d7ecd1ad7686950ac2ef48d9cf69d3424cea9de08d9a72
 COMPONENT_ARCHIVE_URL=  https://prdownloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/tcl-8
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -44,6 +44,8 @@ COMPONENT_LICENSE=	BSD-like
 COMPONENT_LICENSE_FILE=	license.terms
 
 include $(WS_MAKE_RULES)/common.mk
+
+PKG_MACROS += COMPONENT_MINOR_VERSION=$(COMPONENT_MINOR_VERSION)
 
 COMPONENT_PREP_ACTION = \
 	(cd $(SOURCE_DIR)/unix ; autoreconf -f; \
@@ -56,30 +58,30 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
-CONFIGURE_BINDIR.32 =  $(CONFIGURE_PREFIX)/bin/$(MACH32)
-
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --enable-man-symlinks
 CONFIGURE_OPTIONS	+= --enable-threads
-CONFIGURE_OPTIONS.64	+= --enable-64bit
+CONFIGURE_OPTIONS	+= --enable-64bit
+ifeq ($(strip $(MACH)),sparc)
+CONFIGURE_OPTIONS	+= --enable-64bit-vis
+endif
 
-COMPONENT_TEST_TARGETS = test
+install:	$(INSTALL_64) $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh
 
-install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tclConfig.sh
+$(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh:	$(INSTALL_64)
+	sed -f $(COMPONENT_DIR)/files/tclsed $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh > \
+		$(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh.new
+	$(MV) $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh.new $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh
+	$(CHMOD) 555 $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh
 
-$(PROTOUSRLIBDIR)/tclConfig.sh:		$(INSTALL_32)
-					sed -f $(COMPONENT_DIR)/files/tclsed $(PROTOUSRLIBDIR)/tclConfig.sh > \
-						$(PROTOUSRLIBDIR)/tclConfig.sh.new
-					$(MV) $(PROTOUSRLIBDIR)/tclConfig.sh.new $(PROTOUSRLIBDIR)/tclConfig.sh
-					$(CHMOD) 555 $(PROTOUSRLIBDIR)/tclConfig.sh
-
-# We skip until the beginning (append.test), read until a flaky text
-# (httpold.test), resume with the next (if-old.test), then stop at end time.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMER =    $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/append.test/ {results = 1}; /httpold.test/ {results = 0}; /if-old.test/ {results = 1}; /Tests ended at/ {results = 0}; {if (results) print $0 } '"
-
-PKG_MACROS += COMPONENT_MINOR_VERSION=$(COMPONENT_MINOR_VERSION)
+# if test does not run the first, try second time, then it
+# will show no diffs - some kind of a ping pong play.
+COMPONENT_TEST_TARGETS= test
+COMPONENT_TEST_TRANSFORMS= \
+	'-n' \
+	'-e "/^LD_LIBRARY_PATH/d"' \
+	'-e "/all\.tcl/p"' \
+	'-e "/Files/p"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib

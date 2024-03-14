@@ -25,23 +25,26 @@
 # Copyright (c) 2022  Tim Mooney.  All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS=             32_and_64
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		zlib
-COMPONENT_VERSION=	1.2.12
-COMPONENT_REVISION=	2
-COMPONENT_SUMMARY=	The Zip compression library
-COMPONENT_PROJECT_URL=	https://zlib.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9
-COMPONENT_ARCHIVE_URL=	https://zlib.net/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	library/zlib
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_LICENSE=	zlib license
+COMPONENT_NAME=         zlib
+COMPONENT_VERSION=      1.3.1
+COMPONENT_SUMMARY=      The Zip compression library
+COMPONENT_PROJECT_URL=  https://zlib.net/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=  https://zlib.net/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=      $(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_ARCHIVE_HASH=	sha256:9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23
+COMPONENT_FMRI=         library/zlib
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_LICENSE=      zlib license
+COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
 
 # Zlib won't build without cloning. We need also to get rid of default
 # Makefile and get our own version of zconf.h to avoid interactions

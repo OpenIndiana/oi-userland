@@ -1,0 +1,22 @@
+diff -wpruN '--exclude=*.orig' a~/configure.in a/configure.in
+--- a~/configure.in	1970-01-01 00:00:00
++++ a/configure.in	1970-01-01 00:00:00
+@@ -75,17 +75,7 @@ case $KARCH in
+ 	;;
+       'amd64')
+ 	CFLAGS="$CFLAGS -m64"	
+-	if test "$GCC" = yes; then
+-                if test "$GCC_MAJOR_VERSION" -ge 4 \
+-	           -a "$MINOR_VERSION" -ge 5 ; then
+-                    KCFLAGS="$KCFLAGS -m64 -mcmodel=large -mno-red-zone"
+-                else      
+-                    KCFLAGS="$KCFLAGS -m64 -mcmodel=kernel -mno-red-zone"
+-                fi
+-		
+-	else
+-		KCFLAGS="$KCFLAGS -m64 -xmodel=kernel"
+-	fi
++	KCFLAGS="$KCFLAGS -m64"
+ 	DRV_DIR="/usr/kernel/drv/amd64"
+ 	if test -n "$IS_GNU_LD";
+ 	then

@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::AuthenticationResults
-HUMAN_VERSION =			2.20210915
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.20231031
 COMPONENT_SUMMARY =		Mail::AuthenticationResults - Object Oriented Authentication-Results Headers
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c297bc9bb1af2a37201db9920e1cb5e2f581024713f5c5b135f41402ec94e10f
+	sha256:6cf2cfaa3368401ad9d9013cb75a8a9c61db6c3444b1ef1d4b424b6a06a2ed6b
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,5 +32,5 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/clone
 PERL_REQUIRED_PACKAGES += library/perl-5/json
-PERL_REQUIRED_PACKAGES += library/perl-5/test-exception
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception

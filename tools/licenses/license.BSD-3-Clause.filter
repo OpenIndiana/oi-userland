@@ -1,0 +1,41 @@
+#! /usr/bin/sh
+#
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Marcel Telka
+#
+
+sed \
+	-e 's/``/"/g' -e "s/''/\"/g" \
+	-e 's/[123]\./*/g' \
+	-e 's/- /* /g' \
+	-e 's/\([^ ]\) \*/\1\
+*/g' \
+| sed \
+	-e 's/\* *//g' \
+	-e 's/\(with or without modification,\) .* \(permitted provided\)/\1 REPLACEABLE \2/I' \
+	-e 's/^\(Redistributions of\) .* \(must retain the\) .* \(copyright notice,\)/\1 REPLACEABLE \2 REPLACEABLE \3/I' \
+	-e 's/\(binary form must reproduce the\) .* \(copyright notice,\)/\1 REPLACEABLE \2/I' \
+	-e 's/.*\(be used to endorse or promote products derived from this\) .* \(without\)/REPLACEABLE \1 REPLACEABLE \2/I' \
+	-e 's/^THIS .* \(IS PROVIDED BY\).*\("AS IS" AND ANY\).*\(OR IMPLIED WARRANTIES\)/THIS REPLACEABLE \1 REPLACEABLE \2 REPLACEABLE \3/I' \
+	-e 's/\(IN NO EVENT SHALL\).*\(BE LIABLE\)/\1 REPLACEABLE \2/I' \
+	-e 's/\(USE OF THIS\) .*\(, EVEN IF ADVISED\)/\1 REPLACEABLE\2/I' \
+| sed -n \
+	-e '{	1 {	N
+			N
+			N
+		}
+		N
+		/^Redistribution and use.*\n.*\n.*\n.*\nTHIS REPLACEABLE IS PROVIDED/Ip
+		D
+	}'

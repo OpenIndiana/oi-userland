@@ -1,0 +1,199 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/configure a/configure
+--- a~/configure	1970-01-01 00:00:00
++++ a/configure	1970-01-01 00:00:00
+@@ -208,6 +208,11 @@ get_features () {
+ 
+ 
+ OPERATINGSYSTEM=`uname -s`
++if [ "$OPERATINGSYSTEM" = "SunOS" ]; then
++  KERNEL=`uname -o`
++  [ -n "$KERNEL" ] && OPERATINGSYSTEM="$KERNEL"
++fi
++
+ VERSION=`uname -r`
+ MACHINE=`uname -m`
+ 
+@@ -472,7 +477,7 @@ case $OPERATINGSYSTEM in
+         fi
+         echo "Configuring for macOS (" $SYSTEM "macOS version" $VERSION ")"
+     ;;
+-    SunOS)
++    SunOS|Solaris)
+         EXTRA_OBJECTS="sys_generic.o sys_solaris.o sys_timex.o sys_posix.o"
+         LIBS="$LIBS -lsocket -lnsl -lkvm -lelf -lresolv"
+         try_setsched=1
+@@ -488,6 +493,21 @@ case $OPERATINGSYSTEM in
+         fi
+         echo "Configuring for illumos (" $SYSTEM "SunOS version" $VERSION ")"
+     ;;                                                                        
++    illumos)
++        EXTRA_OBJECTS="sys_generic.o sys_solaris.o sys_timex.o sys_posix.o"
++        LIBS="$LIBS -lsocket -lnsl -lresolv"
++        try_setsched=1
++        try_lockmem=1
++        add_def SOLARIS
++        # These are needed to have msg_control in struct msghdr
++        add_def _XOPEN_SOURCE 600
++        add_def __EXTENSIONS__ 1
++        if [ $feat_droproot = "1" ]; then
++          add_def FEAT_PRIVDROP
++          priv_ops="ADJUSTTIMEX SETTIME BINDSOCKET"
++        fi
++        echo "Configuring for illumos (" $SYSTEM "version" $VERSION ")"
++    ;;
+     * )
+         echo "error: $SYSTEM is not supported (yet?)"
+         exit 1
+diff -wpruN --no-dereference '--exclude=*.orig' a~/privops.c a/privops.c
+--- a~/privops.c	1970-01-01 00:00:00
++++ a/privops.c	1970-01-01 00:00:00
+@@ -34,6 +34,7 @@
+ #include "logging.h"
+ #include "privops.h"
+ #include "socket.h"
++#include "sys.h"
+ #include "util.h"
+ 
+ #define OP_ADJUSTTIME     1024
+@@ -667,6 +668,8 @@ PRV_StartHelper(void)
+     /* ignore signals, the process will exit on OP_QUIT request */
+     UTI_SetQuitSignalsHandler(SIG_IGN, 1);
+ 
++    SYS_DropRoot(0, 0, SYS_PRIV_HELPER);
++
+     helper_main(sock_fd2);
+ 
+   } else {
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sys.h a/sys.h
+--- a~/sys.h	1970-01-01 00:00:00
++++ a/sys.h	1970-01-01 00:00:00
+@@ -38,6 +38,7 @@ extern void SYS_Finalise(void);
+ typedef enum {
+   SYS_MAIN_PROCESS,
+   SYS_NTSKE_HELPER,
++  SYS_PRIV_HELPER,
+ } SYS_ProcessContext;
+ 
+ /* Switch to the specified user and group in given context */
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sys_solaris.c a/sys_solaris.c
+--- a~/sys_solaris.c	1970-01-01 00:00:00
++++ a/sys_solaris.c	1970-01-01 00:00:00
+@@ -34,41 +34,13 @@
+ #include "sys_timex.h"
+ #include "util.h"
+ 
+-#include <kvm.h>
+-#include <nlist.h>
+-
+-/* ================================================== */
+-
+-static void
+-set_dosynctodr(int on_off)
+-{
+-  struct nlist nl[] = { {"dosynctodr"}, {NULL} };
+-  kvm_t *kt;
+-
+-  kt = kvm_open(NULL, NULL, NULL, O_RDWR, NULL);
+-  if (!kt)
+-    LOG_FATAL("Could not open kvm");
+-
+-  if (kvm_nlist(kt, nl) < 0 || !nl[0].n_value)
+-    LOG_FATAL("Could not get dosynctodr address");
+-
+-  if (kvm_kwrite(kt, nl[0].n_value, &on_off, sizeof (on_off)) < 0)
+-    LOG_FATAL("Could not write to dosynctodr");
+-
+-  kvm_close(kt);
+-}
++#include "logging.h"
+ 
+ /* ================================================== */
+ 
+ void
+ SYS_Solaris_Initialise(void)
+ {
+-  /* The kernel keeps the system clock and hardware clock synchronised to each
+-     other.  The dosynctodr variable needs to be set to zero to prevent the
+-     the system clock from following the hardware clock when the system clock
+-     is not adjusted by adjtime() or ntp_adjtime(modes=MOD_OFFSET). */
+-  set_dosynctodr(0);
+-
+   /* The kernel allows the frequency to be set in the full range off int32_t */
+   SYS_Timex_InitialiseWithFunctions(32500, 1.0 / 100, NULL, NULL, NULL,
+                                     0.0, 0.0, NULL, NULL);
+@@ -85,11 +57,75 @@ SYS_Solaris_Finalise(void)
+ /* ================================================== */
+ 
+ #ifdef FEAT_PRIVDROP
++
++#include <priv.h>
++
+ void
+ SYS_Solaris_DropRoot(uid_t uid, gid_t gid, SYS_ProcessContext context)
+ {
++	priv_set_t *privs, *basicprivs;
++
++#if DEBUG > 0
++	setpflags(PRIV_DEBUG, 1);
++#endif
++
++	privs = priv_allocset();
++	basicprivs = priv_allocset();
++
++	if (privs == NULL || basicprivs == NULL)
++		LOG_FATAL("Failed to allocate privilege sets");
++
++	if (getppriv(PRIV_PERMITTED, privs) != 0)
++		LOG_FATAL("Failed to retrieve current privileges");
++
++	priv_basicset(basicprivs);
++	priv_intersect(basicprivs, privs);
++
++	if (context == SYS_PRIV_HELPER) {
++		/* for OP_BINDSOCKET */
++		priv_addset(privs, PRIV_NET_PRIVADDR);
++		/* for OP_SETTIME and OP_ADJUSTTIMEX */
++		priv_addset(privs, PRIV_SYS_TIME);
++
++		priv_delset(privs, PRIV_FILE_LINK_ANY);
++		priv_delset(privs, PRIV_FILE_READ);
++		priv_delset(privs, PRIV_FILE_WRITE);
++		priv_delset(privs, PRIV_NET_ACCESS);
++		priv_delset(privs, PRIV_PROC_FORK);
++		priv_delset(privs, PRIV_PROC_EXEC);
++		priv_delset(privs, PRIV_PROC_SECFLAGS);
++		priv_delset(privs, PRIV_PROC_INFO);
++		priv_delset(privs, PRIV_PROC_SESSION);
++
++	} else {
++		int mail_enabled;
++		double mail_threshold;
++		char *mail_user;
++
+   if (context == SYS_MAIN_PROCESS)
+     PRV_StartHelper();
++
+   UTI_DropRoot(uid, gid);
++
++		priv_delset(privs, PRIV_FILE_LINK_ANY);
++		priv_delset(privs, PRIV_PROC_INFO);
++		priv_delset(privs, PRIV_PROC_SESSION);
++
++		CNF_GetMailOnChange(&mail_enabled, &mail_threshold, &mail_user);
++		if (!mail_enabled) {
++			priv_delset(privs, PRIV_PROC_FORK);
++			priv_delset(privs, PRIV_PROC_EXEC);
++		}
++	}
++
++	if (setppriv(PRIV_SET, PRIV_PERMITTED, privs) != 0)
++		LOG_FATAL("Failed to reduce permitted privileges");
++	if (setppriv(PRIV_SET, PRIV_INHERITABLE, privs) != 0)
++		LOG_FATAL("Failed to reduce inheritable privileges");
++	if (setppriv(PRIV_SET, PRIV_LIMIT, privs) != 0)
++		LOG_FATAL("Failed to reduce limit privileges");
++
++	priv_freeset(privs);
++	priv_freeset(basicprivs);
+ }
+ #endif

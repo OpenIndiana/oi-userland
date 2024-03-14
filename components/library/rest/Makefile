@@ -14,22 +14,23 @@
 #
 
 BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rest
 COMPONENT_VERSION= 0.8.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A library designed to make it easier to access web services that claim to be 'RESTful'
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:0513aad38e5d3cedd4ae3c551634e3be1b9baaa79775e53b2dba9456f15b01c9
-COMPONENT_ARCHIVE_URL= \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://wiki.gnome.org/Projects/Librest
-COMPONENT_FMRI = library/desktop/librest
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = LGPLv2.1
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_ARCHIVE_HASH= sha256:0513aad38e5d3cedd4ae3c551634e3be1b9baaa79775e53b2dba9456f15b01c9
+COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/Librest
+COMPONENT_FMRI= library/desktop/librest
+COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
+COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -44,15 +45,8 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # for tests to pass
 unexport SHELLOPTS
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_ARGS =   -k -i
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ERROR:/p" '
+
+COMPONENT_TEST_ARGS= -k -i
 
 # Manually added dependency
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

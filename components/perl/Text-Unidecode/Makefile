@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Text::Unidecode
 HUMAN_VERSION =			1.30
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Text::Unidecode - plain ASCII transliterations of Unicode text
 COMPONENT_CPAN_AUTHOR =		SBURKE
 COMPONENT_ARCHIVE_HASH =	\

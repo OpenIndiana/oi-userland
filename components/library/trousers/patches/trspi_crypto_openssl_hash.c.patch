@@ -1,5 +1,5 @@
---- a/src/trspi/crypto/openssl/hash.c.old	2011-05-09 06:20:09.505021734 -0700
-+++ b/src/trspi/crypto/openssl/hash.c	2011-05-09 06:19:04.603252090 -0700
+--- trousers-0.3.11.2/src/trspi/crypto/openssl/hash.c.orig
++++ trousers-0.3.11.2/src/trspi/crypto/openssl/hash.c
 @@ -56,45 +56,21 @@
  TSS_RESULT
  Trspi_Hash(UINT32 HashType, UINT32 BufSize, BYTE* Buf, BYTE* Digest)
@@ -7,9 +7,7 @@
 -	EVP_MD_CTX md_ctx;
 -	unsigned int result_size;
 -	int rv;
-+	Trspi_HashCtx ctx;
-+	TSS_RESULT rv;
- 
+-
 -	switch (HashType) {
 -		case TSS_HASH_SHA1:
 -			rv = EVP_DigestInit(&md_ctx, EVP_sha1());
@@ -19,15 +17,17 @@
 -			goto out;
 -			break;
 -	}
-+	rv = Trspi_HashInit(&ctx, HashType);
-+	if (rv != TSS_SUCCESS)
-+		return rv;
++	Trspi_HashCtx ctx;
++	TSS_RESULT rv;
  
 -	if (rv != EVP_SUCCESS) {
 -		rv = TSPERR(TSS_E_INTERNAL_ERROR);
 -		goto err;
 -	}
--
++	rv = Trspi_HashInit(&ctx, HashType);
++	if (rv != TSS_SUCCESS)
++		return rv;
+ 
 -	rv = EVP_DigestUpdate(&md_ctx, Buf, BufSize);
 -	if (rv != EVP_SUCCESS) {
 -		rv = TSPERR(TSS_E_INTERNAL_ERROR);

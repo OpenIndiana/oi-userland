@@ -12,36 +12,32 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
-BUILD_BITS=64
-
+BUILD_BITS= 64
+X11_CATEGORY= UTIL
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           imake
-COMPONENT_VERSION=        1.0.8
-COMPONENT_FMRI=           developer/build/imake
-COMPONENT_CLASSIFICATION= Development/X11
+COMPONENT_VERSION=        1.0.10
 COMPONENT_SUMMARY=  imake - makefile generation tool
-COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:b8d2e416b3f29cd6482bcffaaf19286d32917a164d07102a0e531ccd41a2a702
-COMPONENT_ARCHIVE_URL=    $(XORG_UTIL_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT License
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=   sha256:75decbcea8d7b354cf36adc9675e53c4790ee3de56a14bd87b42c8e8aad2ecf5
+COMPONENT_FMRI=           developer/build/imake
+COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS+= --enable-mkdirhier
-CONFIGURE_OPTIONS+= --disable-ccmakedep
-CONFIGURE_OPTIONS+= --disable-cleanlinks
-CONFIGURE_OPTIONS+= --disable-makeg
-CONFIGURE_OPTIONS+= --disable-mergelib
-CONFIGURE_OPTIONS+= --disable-mkhtmlindex
-CONFIGURE_OPTIONS+= --disable-revpath
-CONFIGURE_OPTIONS+= RAWCPP=/usr/lib/cpp
+CONFIGURE_OPTIONS += --enable-mkdirhier
+CONFIGURE_OPTIONS += --disable-ccmakedep
+CONFIGURE_OPTIONS += --disable-cleanlinks
+CONFIGURE_OPTIONS += --disable-makeg
+CONFIGURE_OPTIONS += --disable-mergelib
+CONFIGURE_OPTIONS += --disable-mkhtmlindex
+CONFIGURE_OPTIONS += --disable-revpath
+CONFIGURE_OPTIONS += RAWCPP=/usr/lib/cpp
 
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

@@ -23,48 +23,41 @@
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		getopt
 COMPONENT_VERSION=	1.1.6
-COMPONENT_FMRI= shell/gnu-getopt
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= parse command-line arguments from shell scripts
-COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL=	http://frodo.looijaard.name/project/getopt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:d0bf1dc642a993e7388a1cddfb9409bed375c21d5278056ccca3a0acd09dc5fe
-COMPONENT_ARCHIVE_URL= \
-    http://frodo.looijaard.name/system/files/software/getopt/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:d0bf1dc642a993e7388a1cddfb9409bed375c21d5278056ccca3a0acd09dc5fe
+COMPONENT_ARCHIVE_URL= http://frodo.looijaard.name/system/files/software/getopt/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= shell/gnu-getopt
+COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_LICENSE= GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # getopt doesn't use configure, override the hard-wired values in the Makefile.
-COMPONENT_BUILD_ARGS+=	CC="$(CC) $(CC_BITS)"
-COMPONENT_BUILD_ARGS+=	CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ARGS+=	LIBCGETOPT=0
+COMPONENT_BUILD_ARGS += CC="$(CC) $(CC_BITS)"
+COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ARGS += LIBCGETOPT=0
 
-COMPONENT_INSTALL_ARGS+=	prefix=/usr/gnu
-COMPONENT_INSTALL_ARGS+=	mandir=/usr/gnu/share/man
-COMPONENT_INSTALL_ARGS+=	CC="$(CC) $(CC_BITS)"
-COMPONENT_INSTALL_ARGS+=	CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ARGS += prefix=/usr/gnu
+COMPONENT_INSTALL_ARGS += mandir=/usr/gnu/share/man
+COMPONENT_INSTALL_ARGS += CC="$(CC) $(CC_BITS)"
+COMPONENT_INSTALL_ARGS += CFLAGS="$(CFLAGS)"
 
 # Stupid source tarball distribution contains two .o files.
 COMPONENT_POST_UNPACK_ACTION= \
 	$(RM) $(COMPONENT_SRC)/gnu/*.o
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

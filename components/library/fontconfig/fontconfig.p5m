@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -49,16 +50,19 @@ file path=etc/fonts/conf.avail/10-hinting-full.conf
 file path=etc/fonts/conf.avail/10-hinting-medium.conf
 file path=etc/fonts/conf.avail/10-hinting-none.conf
 file path=etc/fonts/conf.avail/10-hinting-slight.conf
-file path=etc/fonts/conf.avail/10-no-sub-pixel.conf
+file path=etc/fonts/conf.avail/10-no-antialias.conf
 file path=etc/fonts/conf.avail/10-scale-bitmap-fonts.conf
 file path=etc/fonts/conf.avail/10-sub-pixel-bgr.conf
+file path=etc/fonts/conf.avail/10-sub-pixel-none.conf
 file path=etc/fonts/conf.avail/10-sub-pixel-rgb.conf
 file path=etc/fonts/conf.avail/10-sub-pixel-vbgr.conf
 file path=etc/fonts/conf.avail/10-sub-pixel-vrgb.conf
 file path=etc/fonts/conf.avail/10-unhinted.conf
+file path=etc/fonts/conf.avail/10-yes-antialias.conf
 file path=etc/fonts/conf.avail/11-lcdfilter-default.conf
 file path=etc/fonts/conf.avail/11-lcdfilter-legacy.conf
 file path=etc/fonts/conf.avail/11-lcdfilter-light.conf
+file path=etc/fonts/conf.avail/11-lcdfilter-none.conf
 file path=etc/fonts/conf.avail/20-unhint-small-vera.conf
 file path=etc/fonts/conf.avail/25-unhint-nonlatin.conf
 file path=etc/fonts/conf.avail/30-metric-aliases.conf
@@ -94,12 +98,14 @@ link path=etc/fonts/conf.d/10-hinting-none.conf \
     target=../conf.avail/10-hinting-none.conf
 link path=etc/fonts/conf.d/10-hinting-slight.conf \
     target=../conf.avail/10-hinting-slight.conf
-link path=etc/fonts/conf.d/10-no-sub-pixel.conf \
-    target=../conf.avail/10-no-sub-pixel.conf
+link path=etc/fonts/conf.d/10-no-antialias.conf \
+    target=../conf.avail/10-no-antialias.conf
 link path=etc/fonts/conf.d/10-scale-bitmap-fonts.conf \
     target=../conf.avail/10-scale-bitmap-fonts.conf
 link path=etc/fonts/conf.d/10-sub-pixel-bgr.conf \
     target=../conf.avail/10-sub-pixel-bgr.conf
+link path=etc/fonts/conf.d/10-sub-pixel-none.conf \
+    target=../conf.avail/10-sub-pixel-none.conf
 link path=etc/fonts/conf.d/10-sub-pixel-rgb.conf \
     target=../conf.avail/10-sub-pixel-rgb.conf
 link path=etc/fonts/conf.d/10-sub-pixel-vbgr.conf \
@@ -108,12 +114,16 @@ link path=etc/fonts/conf.d/10-sub-pixel-vrgb.conf \
     target=../conf.avail/10-sub-pixel-vrgb.conf
 link path=etc/fonts/conf.d/10-unhinted.conf \
     target=../conf.avail/10-unhinted.conf
+link path=etc/fonts/conf.d/10-yes-antialias.conf \
+    target=../conf.avail/10-yes-antialias.conf
 link path=etc/fonts/conf.d/11-lcdfilter-default.conf \
     target=../conf.avail/11-lcdfilter-default.conf
 link path=etc/fonts/conf.d/11-lcdfilter-legacy.conf \
     target=../conf.avail/11-lcdfilter-legacy.conf
 link path=etc/fonts/conf.d/11-lcdfilter-light.conf \
     target=../conf.avail/11-lcdfilter-light.conf
+link path=etc/fonts/conf.d/11-lcdfilter-none.conf \
+    target=../conf.avail/11-lcdfilter-none.conf
 link path=etc/fonts/conf.d/20-unhint-small-vera.conf \
     target=../conf.avail/20-unhint-small-vera.conf
 link path=etc/fonts/conf.d/25-unhint-nonlatin.conf \
@@ -141,23 +151,13 @@ link path=etc/fonts/conf.d/65-nonlatin.conf \
 link path=etc/fonts/conf.d/69-unifont.conf target=../conf.avail/69-unifont.conf
 link path=etc/fonts/conf.d/70-no-bitmaps.conf \
     target=../conf.avail/70-no-bitmaps.conf
-#link path=etc/fonts/conf.d/70-yes-bitmaps.conf \
-#    target=../conf.avail/70-yes-bitmaps.conf
+link path=etc/fonts/conf.d/70-yes-bitmaps.conf \
+    target=../conf.avail/70-yes-bitmaps.conf
 link path=etc/fonts/conf.d/80-delicious.conf \
     target=../conf.avail/80-delicious.conf
 link path=etc/fonts/conf.d/90-synthetic.conf \
     target=../conf.avail/90-synthetic.conf
 file path=etc/fonts/fonts.conf
-file path=etc/fonts/fonts.conf.bak
-file path=usr/bin/$(MACH64)/fc-cache
-file path=usr/bin/$(MACH64)/fc-cat
-file path=usr/bin/$(MACH64)/fc-conflist
-file path=usr/bin/$(MACH64)/fc-list
-file path=usr/bin/$(MACH64)/fc-match
-file path=usr/bin/$(MACH64)/fc-pattern
-file path=usr/bin/$(MACH64)/fc-query
-file path=usr/bin/$(MACH64)/fc-scan
-file path=usr/bin/$(MACH64)/fc-validate
 file path=usr/bin/fc-cache
 file path=usr/bin/fc-cat
 file path=usr/bin/fc-conflist
@@ -170,14 +170,10 @@ file path=usr/bin/fc-validate
 file path=usr/include/fontconfig/fcfreetype.h
 file path=usr/include/fontconfig/fcprivate.h
 file path=usr/include/fontconfig/fontconfig.h
-link path=usr/lib/$(MACH64)/libfontconfig.so target=libfontconfig.so.1.12.0
-link path=usr/lib/$(MACH64)/libfontconfig.so.1 target=libfontconfig.so.1.12.0
-file path=usr/lib/$(MACH64)/libfontconfig.so.1.12.0
+link path=usr/lib/$(MACH64)/libfontconfig.so target=libfontconfig.so.1.12.1
+link path=usr/lib/$(MACH64)/libfontconfig.so.1 target=libfontconfig.so.1.12.1
+file path=usr/lib/$(MACH64)/libfontconfig.so.1.12.1
 file path=usr/lib/$(MACH64)/pkgconfig/fontconfig.pc
-link path=usr/lib/libfontconfig.so target=libfontconfig.so.1.12.0
-link path=usr/lib/libfontconfig.so.1 target=libfontconfig.so.1.12.0
-file path=usr/lib/libfontconfig.so.1.12.0
-file path=usr/lib/pkgconfig/fontconfig.pc
 file path=usr/share/doc/fontconfig/fontconfig-devel.pdf
 file path=usr/share/doc/fontconfig/fontconfig-devel.txt
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcatomiccreate.html
@@ -317,6 +313,7 @@ file path=usr/share/doc/fontconfig/fontconfig-devel/fcmatrixscale.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcmatrixshear.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcnameconstant.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcnamegetconstant.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcnamegetconstantfor.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcnamegetobjecttype.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcnameparse.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcnameregisterconstants.html
@@ -408,6 +405,8 @@ file path=usr/share/doc/fontconfig/fontconfig-user.pdf
 file path=usr/share/doc/fontconfig/fontconfig-user.txt
 file path=usr/share/gettext/its/fontconfig.its
 file path=usr/share/gettext/its/fontconfig.loc
+file path=usr/share/locale/ka/LC_MESSAGES/fontconfig-conf.mo
+file path=usr/share/locale/ka/LC_MESSAGES/fontconfig.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/fontconfig-conf.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/fontconfig.mo
 file path=usr/share/man/man1/fc-cache.1
@@ -556,6 +555,7 @@ file path=usr/share/man/man3/FcMatrixScale.3
 file path=usr/share/man/man3/FcMatrixShear.3
 file path=usr/share/man/man3/FcNameConstant.3
 file path=usr/share/man/man3/FcNameGetConstant.3
+file path=usr/share/man/man3/FcNameGetConstantFor.3
 file path=usr/share/man/man3/FcNameGetObjectType.3
 file path=usr/share/man/man3/FcNameParse.3
 file path=usr/share/man/man3/FcNameRegisterConstants.3

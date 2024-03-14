@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2022 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,7 +23,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-hardlink path=usr/bin/gunzip target=uncompress
+file path=usr/bin/gunzip
 file path=usr/bin/gzcat
 file path=usr/bin/gzcmp
 file path=usr/bin/gzdiff
@@ -35,7 +36,7 @@ file path=usr/bin/gzip
 file path=usr/bin/gzless
 file path=usr/bin/gzmore
 file path=usr/bin/gznew
-file path=usr/bin/uncompress
+hardlink path=usr/bin/uncompress target=gunzip
 file path=usr/share/info/dir
 file path=usr/share/info/gzip.info
 file path=usr/share/man/man1/gunzip.1

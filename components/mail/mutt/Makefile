@@ -23,27 +23,29 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019, Michal Nowak
 #
-
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	2.2.7
-COMPONENT_SUMMARY=	The Mutt E-Mail Client
-COMPONENT_DESCRIPTION=	Mutt is a small but very powerful text-based mail client for Unix operating systems.
+COMPONENT_VERSION=	2.2.13
+COMPONENT_SUMMARY=	Mutt is a small but very powerful text-based mail client for Unix operating systems.
+COMPONENT_PROJECT_URL=	http://www.mutt.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:eb13858f58bb369f477bf652d90e9b6aaddd0d610acbea3455049e5efad36df1
+COMPONENT_ARCHIVE_HASH=	sha256:eb23faddc1cc97d867693f3a4a9f30949ad93765ad5b6fdae2797a4001c58efb
 COMPONENT_ARCHIVE_URL=	http://ftp.mutt.org/pub/mutt/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://www.mutt.org/
+COMPONENT_FMRI=		mail/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_FMRI=		mail/mutt
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYRIGHT
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I$(USRINCDIR)/idn2
 
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
+CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_PREFIX)/include
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --sysconfdir="$(ETCDIR)/$(COMPONENT_NAME)"
 CONFIGURE_OPTIONS += --enable-pop
@@ -55,7 +57,7 @@ CONFIGURE_OPTIONS += --enable-debug
 CONFIGURE_OPTIONS += --with-gdbm
 CONFIGURE_OPTIONS += --with-regex
 CONFIGURE_OPTIONS += --with-slang
-CONFIGURE_OPTIONS += --with-ssl
+CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --with-idn2
 CONFIGURE_OPTIONS += --with-wc-funcs
 CONFIGURE_OPTIONS += --with-sasl
@@ -63,7 +65,7 @@ CONFIGURE_OPTIONS += --with-sasl
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/libidn2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/slang
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl

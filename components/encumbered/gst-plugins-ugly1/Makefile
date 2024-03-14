@@ -13,33 +13,29 @@
 # Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Tim Mooney.  All rights reserved.
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
 
 BUILD_BITS= 64
-BUILD_STYLE=	meson
-
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly1
-COMPONENT_VERSION=      1.20.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      1.22.10
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
 COMPONENT_SRC_NAME=	gst-plugins-ugly
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8caa20789a09c304b49cf563d33cca9421b1875b84fcc187e4a385fa01d6aefd
-COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_HASH= sha256:cc80a81a22c0b3b31ab7f1b8bf18dda23c72d2791b86cc6264923a68336329ea
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL= 	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
-
-# In the past the optimisation level has been reduced for unknown reasons. Nowadays the test results don't differ anymore:
-#gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
@@ -47,7 +43,7 @@ CFLAGS += -I/usr/X11/include/mesa
 CFLAGS += -I/usr/X11/include
 
 # no introspection or examples here
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dorc=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 CONFIGURE_OPTIONS += -Dgpl=enabled
@@ -62,20 +58,10 @@ COMPONENT_INSTALL_ENV += CXXFLAGS="$(CXXFLAGS)"
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-unexport SHELLOPTS
-# (first) delete the timing information from any line
-# delete the "exit status N", it can cause issues too
-# print lines that start with " N/NNN"
-# print everything between "^Ok:" and "^Timeout:"
-# delete the ninja log-related stuff at the end
+# As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
-	'-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-	'-e "s/[ 	]*exit status [0-9][0-9]*//" ' \
-	'-e "/^[ 	]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-	'-e "/^Summary of/p" ' \
-	'-e "/^Ok:/,/^Timeout:/p" ' \
-	'-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
+	'-e "/^Ok:/,/^Timeout:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/opencore-amr

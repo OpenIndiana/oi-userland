@@ -11,29 +11,33 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2023 Andreas Wacknitz
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libunibreak
-
-COMPONENT_VERSION= 1.1
+COMPONENT_VERSION= 5.1
 COMPONENT_SUMMARY= Implementation of the line and word breaking algorithm for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:968bc1314f40c336ad008fff457a058551167cef312d41206a652e23083dc508
-COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/vimgadgets/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_PROJECT_URL = http://vimgadgets.sourceforge.net/libunibreak/
+COMPONENT_ARCHIVE_HASH= sha256:dd1a92d4c5646aa0e457ff41d89812ec5243863be6c20bbcb5ee380f3dd78377
+COMPONENT_ARCHIVE_URL=	https://github.com/adah1972/libunibreak/releases/download/libunibreak_5_1/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://vimgadgets.sourceforge.net/libunibreak/
+COMPONENT_FMRI=			library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=		zlib/libpng licence
+COMPONENT_LICENSE_FILE=	LICENCE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-build: $(BUILD_32_and_64)
+CONFIGURE_OPTIONS += --enable-static=no
 
-install: $(INSTALL_32_and_64)
+COMPONENT_TEST_TRANSFORMS += \
+	' -e "s/[0-9, ]*s//" ' \
+	' -n ' \
+	' -e "/Passed/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

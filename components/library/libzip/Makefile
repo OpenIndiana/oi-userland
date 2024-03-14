@@ -12,26 +12,29 @@
 # Copyright (c) 2021 Klaus Ziegler
 #
 
-BUILD_BITS=		64
-BUILD_STYLE=	cmake
+BUILD_BITS= 64
+BUILD_STYLE= cmake
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libzip
-COMPONENT_VERSION=	1.9.2
+COMPONENT_VERSION=	1.10.1
 COMPONENT_SUMMARY=	A C library for reading, creating, and modifying zip archives
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://libzip.org/
-COMPONENT_ARCHIVE_HASH=	sha256:c93e9852b7b2dc931197831438fee5295976ee0ba24f8524a8907be5c2ba5937
+COMPONENT_ARCHIVE_HASH=	sha256:dc3c8d5b4c8bbd09626864f6bcf93de701540f761d76b85d7c7d710f4bd90318
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_FMRI=		library/libzip
 COMPONENT_LICENSE=	BSD 3-clause
+COMPONENT_LICENSE_FILE=	LICENSE
 
+# We are lackaing nihtest (INSTALL.md mentions the test prerequisites):
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9. ]*sec//g"'
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTOUSRLIBDIR)/cmake/libzip ; \
@@ -43,7 +46,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += library/gnutls-3
-REQUIRED_PACKAGES += library/nettle
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

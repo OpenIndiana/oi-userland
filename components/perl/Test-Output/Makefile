@@ -19,15 +19,19 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Output
-HUMAN_VERSION =			1.033
+HUMAN_VERSION =			1.034
 COMPONENT_SUMMARY =		Test::Output - Utilities to test STDOUT and STDERR messages.
 COMPONENT_CPAN_AUTHOR =		BDFOY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f6a8482740b075fad22aaf4d987d38ef927c6d2b452d4ae0d0bd8f779830556e
+	sha256:cd42e2801c0d2b482d18c9fb4b06c757054818bcbb2824e5dfbf33ad7a3d69a0
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny

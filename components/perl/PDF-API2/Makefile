@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PDF::API2
-HUMAN_VERSION =			2.043
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.045
 COMPONENT_SUMMARY =		PDF::API2 - Create, modify, and examine PDF files
 COMPONENT_CPAN_AUTHOR =		SSIMMS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6312f605172973fa4d017639c217b61b1a8d6c533237ce58d5aacecfa273f0b2
+	sha256:b6bdb4e0d0cd6526103fdd58c171e0560c36b843b7fe3ca4ddc9bb1e4c832406
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,6 +31,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/font-ttf
-PERL_REQUIRED_PACKAGES += library/perl-5/test-exception
-PERL_REQUIRED_PACKAGES += library/perl-5/test-memory-cycle
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-memory-cycle

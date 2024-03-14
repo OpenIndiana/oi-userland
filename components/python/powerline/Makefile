@@ -1,48 +1,64 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2019 Michal Nowak
-# Copyright 2021 Nona Hansel
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project powerline
 #
 
-BUILD_BITS=		64
-BUILD_STYLE=		setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		powerline
-COMPONENT_VERSION=	2.8.2
-COMPONENT_SUMMARY=	'The ultimate statusline/prompt utility'
-COMPONENT_PROJECT_URL=	https://github.com/powerline/powerline/
-COMPONENT_FMRI=		python/powerline
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	https://github.com/powerline/powerline/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ea4ca0df45b8ea3870ff135cd3c4623ba4b785630be81db7f13bf5e94b3753c7
-COMPONENT_LICENSE=	MIT
+COMPONENT_NAME =		powerline
+HUMAN_VERSION =			2.8.3
+COMPONENT_SUMMARY =		powerline - The ultimate statusline/prompt utility
+COMPONENT_PROJECT_URL =		https://github.com/powerline/powerline/
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/powerline/powerline/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:45d838dbac94a1363942899708b6ce7c71c1cad9e1b9d048affab4f630c4cb98
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-CFLAGS += -lsocket
+TEST_STYLE = pytest
 
-PYTHON_VERSION=		3.9
-PYTHON_VERSIONS=	3.9
+COMPONENT_FMRI =	python/powerline
+
+# Manifest options for python/powerline-vim package
+COMPONENT_FMRI.powerline-vim =			$(COMPONENT_FMRI)-vim
+COMPONENT_SUMMARY.powerline-vim =		$(COMPONENT_SUMMARY) - Vim editor binding
+COMPONENT_CLASSIFICATION.powerline-vim =	System/Text Tools
+
+# This is a standalone application.  Since no other Python project depends on
+# it we just provide single unversioned package.
+SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Needed for connect() and socket()
+CFLAGS += -lsocket -lnsl
+
+# Make sure compiled binaries are installed at proper location
+PYTHON_DATA = $(USRDIR)
+
+# Adjust powerline configuration for our location of bindings
 COMPONENT_PREP_ACTION= \
 	$(GSED) -i -e "/TMUX_CONFIG_DIRECTORY/ s@BINDINGS_DIRECTORY@'/usr/share/powerline'@" $(SOURCE_DIR)/powerline/config.py
 
+# Move bindings where we want them
 PROTOUSRLIBPOWERLINE=		$(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/powerline
 PROTOUSRSHAREPOWERLINEDIR=	$(PROTOUSRSHAREDIR)/powerline/
 PROTOUSRSHAREVIM=		$(PROTOUSRSHAREDIR)/vim/vimfiles/powerline/
-COMPONENT_POST_INSTALL_ACTION= \
+COMPONENT_POST_INSTALL_ACTION +=	\
 	$(MKDIR) $(PROTOUSRSHAREPOWERLINEDIR){,awesome,bash,fish,shell,tcsh,tmux,zsh} ; \
 	for file in awesome/powerline.lua \
 		bash/powerline.sh \
@@ -63,9 +79,24 @@ COMPONENT_POST_INSTALL_ACTION= \
 	done ; \
 	$(MKDIR) $(PROTOUSRSHAREVIM) ; \
 	$(MV) $(PROTOUSRLIBPOWERLINE)/bindings/vim/autoload/powerline/debug.vim $(PROTOUSRSHAREVIM) ; \
-	$(MV) $(PROTOUSRLIBPOWERLINE)/bindings/vim/plugin/powerline.vim $(PROTOUSRSHAREVIM) ; \
-	find $(PROTO_DIR) -name '*.~*~' -exec rm -f {} \; ;
+	$(MV) $(PROTOUSRLIBPOWERLINE)/bindings/vim/plugin/powerline.vim $(PROTOUSRSHAREVIM) ;
+
+# Remove files we do not need
+COMPONENT_POST_INSTALL_ACTION +=	\
+	( cd $(PROTOUSRLIBPOWERLINE) ; $(RM) \
+		bindings/bar/powerline-bar.py \
+		bindings/lemonbar/powerline-lemonbar.py \
+		commands/lemonbar.py \
+		dist/systemd/powerline-daemon.service \
+		lemonbar.py \
+		renderers/lemonbar.py \
+	) ;
+
+# Testing needs TEST_ROOT and HOME environment variables (the directory does
+# not need to exist)
+COMPONENT_TEST_ENV += TEST_ROOT="$(@D)/.test_home"
+COMPONENT_TEST_ENV += HOME="$(@D)/.test_home"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Params::Util
 HUMAN_VERSION =			1.102
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Params::Util - Simple, compact and correct param-checking functions
 COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,6 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/test-leaktrace
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace

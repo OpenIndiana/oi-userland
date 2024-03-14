@@ -1,14 +1,12 @@
---- b/driver/xscreensaver-auth.c	Sat Feb 19 18:16:50 2022
-+++ a/driver/xscreensaver-auth.c	Mon Aug  8 20:39:57 2022
-@@ -275,9 +275,9 @@
- 
-   if (!splash_p && init_p)
-     exit (0);
-+// Unable to complete the pam conversation unless we're setuid the whole time 
-+//  disavow_privileges ();
+--- xscreensaver-6.08/driver/xscreensaver-auth.c.orig	2022-09-12 04:33:40.607094356 +0200
++++ xscreensaver-6.08/driver/xscreensaver-auth.c	2023-10-26 21:32:25.594969717 +0200
+@@ -340,7 +340,8 @@
+   if (!splash_p && !init_p)
+     lock_priv_init ();
  
 -  disavow_privileges ();
--
-   if (!splash_p)
-     lock_init ();
++  // Unable to complete the pam conversation unless we're setuid the whole time
++  //  disavow_privileges ();
  
+   if (!splash_p && !init_p)
+     lock_init ();

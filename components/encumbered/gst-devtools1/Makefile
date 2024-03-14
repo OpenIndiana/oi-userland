@@ -10,30 +10,25 @@
 #
 
 #
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
 
 BUILD_BITS= 64
-BUILD_STYLE=	meson
-
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-devtools1
-COMPONENT_VERSION=      1.20.3
+COMPONENT_VERSION=      1.22.10
 COMPONENT_SUMMARY=      Multimedia graph framework - devtools
-COMPONENT_SRC_NAME=	gst-devtools
+COMPONENT_SRC_NAME=		gst-devtools
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:bbbd45ead703367ea8f4be9b3c082d7b62bef47b240a39083f27844e28758c47
-COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_HASH= sha256:0e1ec0d0b8f2d3d314a397399cd01dfc50c02ac088176996f934758119075ea9
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/devtools
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2
-COMPONENT_LICENSE_FILE= gst-devtools1.license
-
-# Set python version used by this product
-PYTHON_VERSION=		3.7
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
@@ -51,7 +46,10 @@ COMPONENT_POST_INSTALL_ACTION += \
     $(GSED) -i -e 's?env python3?python$(PYTHON_VERSION)?' \
 	$(PROTOUSRBINDIR)/gst-validate-launcher;
 
-# Test fail because we are missing gst-validate
+# As test results keep only everything between the lines containing Ok: and Timeout:
+COMPONENT_TEST_TRANSFORMS += \
+    '-n ' \
+    '-e "/^Ok:/,/^Timeout:/p" '
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio

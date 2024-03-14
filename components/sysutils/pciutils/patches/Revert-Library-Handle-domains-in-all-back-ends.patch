@@ -1,0 +1,47 @@
+This reverts parts of commit 1ae94881c9f30d274fe55f4c3677510da5d789fd.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/lib/i386-ports.c a/lib/i386-ports.c
+--- a~/lib/i386-ports.c	1970-01-01 00:00:00
++++ a/lib/i386-ports.c	1970-01-01 00:00:00
+@@ -133,7 +133,7 @@ conf1_read(struct pci_dev *d, int pos, b
+   int addr = 0xcfc + (pos&3);
+   int res = 1;
+ 
+-  if (d->domain || pos >= 256)
++  if (pos >= 256)
+     return 0;
+ 
+   if (len != 1 && len != 2 && len != 4)
+@@ -165,7 +165,7 @@ conf1_write(struct pci_dev *d, int pos,
+   int addr = 0xcfc + (pos&3);
+   int res = 1;
+ 
+-  if (d->domain || pos >= 256)
++  if (pos >= 256)
+     return 0;
+ 
+   if (len != 1 && len != 2 && len != 4)
+@@ -223,7 +223,7 @@ conf2_read(struct pci_dev *d, int pos, b
+   int res = 1;
+   int addr = 0xc000 | (d->dev << 8) | pos;
+ 
+-  if (d->domain || pos >= 256)
++  if (pos >= 256)
+     return 0;
+ 
+   if (d->dev >= 16)
+@@ -259,12 +259,11 @@ conf2_write(struct pci_dev *d, int pos,
+   int res = 1;
+   int addr = 0xc000 | (d->dev << 8) | pos;
+ 
+-  if (d->domain || pos >= 256)
++  if (pos >= 256)
+     return 0;
+ 
+   if (d->dev >= 16)
+-    /* conf2 supports only 16 devices per bus */
+-    return 0;
++    d->access->error("conf2_write: only first 16 devices exist.");
+ 
+   if (len != 1 && len != 2 && len != 4)
+     return pci_generic_block_write(d, pos, buf, len);

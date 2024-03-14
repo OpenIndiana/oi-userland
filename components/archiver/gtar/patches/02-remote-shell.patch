@@ -1,9 +1,9 @@
 Patch origin: in-house
 Patch status: Solaris-specific; not suitable for upstream
 
---- tar-1.33/src/tar.c	2021-01-06 16:52:09.000000000 +0000
-+++ tar-1.33/src/tar.c	2021-02-01 11:42:10.625930437 +0000
-@@ -648,7 +648,7 @@ static struct argp_option options[] = {
+--- tar-1.35/src/tar.c.orig	2023-07-10 09:29:17.000000000 +0200
++++ tar-1.35/src/tar.c	2023-07-23 11:32:59.273655249 +0200
+@@ -649,7 +649,7 @@
     N_("use given rmt COMMAND instead of rmt"),
     GRID_DEVICE },
    {"rsh-command", RSH_COMMAND_OPTION, N_("COMMAND"), 0,
@@ -12,9 +12,9 @@ Patch status: Solaris-specific; not suitable for upstream
     GRID_DEVICE },
  
    {"multi-volume", 'M', 0, 0,
---- tar-1.30/doc/tar.info-1.~1~	2016-05-16 11:52:52.000000000 +0300
-+++ tar-1.30/doc/tar.info-1	2016-10-30 08:00:55.817485210 +0300
-@@ -3032,7 +3032,7 @@
+--- tar-1.35/doc/tar.info-1.orig	2023-07-18 08:40:53.000000000 +0200
++++ tar-1.35/doc/tar.info-1	2023-07-23 12:05:57.157315230 +0200
+@@ -3084,7 +3084,7 @@
  
            $ tar --show-defaults
            --format=gnu -f- -b20 --quoting-style=escape
@@ -23,7 +23,7 @@ Patch status: Solaris-specific; not suitable for upstream
  
       Notice, that this option outputs only one line.  The example output
       above has been split to fit page boundaries.  *Note defaults::.
-@@ -3615,7 +3615,7 @@
+@@ -3669,7 +3669,7 @@
  
       $ tar --show-defaults
       --format=gnu -f- -b20 --quoting-style=escape
@@ -32,27 +32,27 @@ Patch status: Solaris-specific; not suitable for upstream
  
  Notice, that this option outputs only one line.  The example output
  above has been split to fit page boundaries.
-@@ -3624,7 +3624,7 @@
- 'gnu' archive format (*note Formats::), it uses standard output as the
- archive, if no '--file' option has been given (*note file tutorial::),
+@@ -3678,7 +3678,7 @@
+ ‘gnu’ archive format (*note Formats::), it uses standard output as the
+ archive, if no ‘--file’ option has been given (*note file tutorial::),
  the default blocking factor is 20 (*note Blocking Factor::).  It also
--shows the default locations where 'tar' will look for 'rmt' and 'rsh'
-+shows the default locations where 'tar' will look for 'rmt' and 'ssh'
+-shows the default locations where ‘tar’ will look for ‘rmt’ and ‘rsh’
++shows the default locations where ‘tar’ will look for ‘rmt’ and ‘ssh’
  binaries.
  
  
-@@ -6135,8 +6135,8 @@
-      Full file name of 'mt' binary.
+@@ -6310,8 +6310,8 @@
+      Full file name of ‘mt’ binary.
  
   -- Backup variable: RSH
--     Full file name of 'rsh' binary or its equivalent.  You may wish to
--     set it to 'ssh', to improve security.  In this case you will have
-+     Full file name of 'rsh' binary or its equivalent.  This has been
-+     set to 'ssh', to improve security.  In this case you will have
+-     Full file name of ‘rsh’ binary or its equivalent.  You may wish to
+-     set it to ‘ssh’, to improve security.  In this case you will have
++     Full file name of ‘rsh’ binary or its equivalent.  This has been
++     set to ‘ssh’, to improve security.  In this case you will have
       to use public key authentication.
  
   -- Backup variable: RSH_COMMAND
-@@ -6295,9 +6295,9 @@
+@@ -6470,9 +6470,9 @@
       BACKUP_HOUR=1
       TAPE_FILE=/dev/nrsmt0
  
@@ -65,60 +65,51 @@ Patch status: Solaris-specific; not suitable for upstream
  
       # Override MT_STATUS function:
       my_status() {
-@@ -6595,10 +6595,10 @@
-    If the archive file name includes a colon (':'), then it is assumed
+@@ -6770,10 +6770,10 @@
+    If the archive file name includes a colon (‘:’), then it is assumed
  to be a file on another machine.  If the archive file is
- 'USER@HOST:FILE', then FILE is used on the host HOST.  The remote host
--is accessed using the 'rsh' program, with a username of USER.  If the
-+is accessed using the 'ssh' program, with a username of USER.  If the
- username is omitted (along with the '@' sign), then your user name will
--be used.  (This is the normal 'rsh' behavior.)  It is necessary for the
--remote machine, in addition to permitting your 'rsh' access, to have the
-+be used.  (This is the normal 'ssh' behavior.)  It is necessary for the
-+remote machine, in addition to permitting your 'ssh' access, to have the
- 'rmt' program installed (this command is included in the GNU 'tar'
- distribution and by default is installed under 'PREFIX/libexec/rmt',
+ ‘USER@HOST:FILE’, then FILE is used on the host HOST.  The remote host
+-is accessed using the ‘rsh’ program, with a username of USER.  If the
++is accessed using the ‘ssh’ program, with a username of USER.  If the
+ username is omitted (along with the ‘@’ sign), then your user name will
+-be used.  (This is the normal ‘rsh’ behavior.)  It is necessary for the
+-remote machine, in addition to permitting your ‘rsh’ access, to have the
++be used.  (This is the normal ‘ssh’ behavior.)  It is necessary for the
++remote machine, in addition to permitting your ‘ssh’ access, to have the
+ ‘rmt’ program installed (this command is included in the GNU ‘tar’
+ distribution and by default is installed under ‘PREFIX/libexec/rmt’,
  where PREFIX means your installation prefix).  If you need to use a file
-@@ -7636,7 +7636,7 @@
- 'H'
-      Do not apply transformation to hard link targets.
- 
--   Default is 'rsh', which means to apply transformations to both
-+   Default is 'ssh', which means to apply transformations to both
- archive members and targets of symbolic and hard links.
- 
-    Default scope flags can also be changed using 'flags=' statement in
---- tar-1.30/doc/tar.info-2.~1~	2016-10-30 08:04:42.386436773 +0300
-+++ tar-1.30/doc/tar.info-2	2016-10-30 08:07:01.340671522 +0300
-@@ -2207,9 +2207,9 @@
-    If the file name contains a ':', it is interpreted as 'hostname:file
- name'.  If the HOSTNAME contains an "at" sign ('@'), it is treated as
- 'user@hostname:file name'.  In either case, 'tar' will invoke the
--command 'rsh' (or 'remsh') to start up an '/usr/libexec/rmt' on the
-+command 'ssh' (or 'remsh') to start up an '/usr/libexec/rmt' on the
+--- tar-1.35/doc/tar.info-2.orig	2023-07-18 08:40:55.000000000 +0200
++++ tar-1.35/doc/tar.info-2	2023-07-23 12:12:48.648431353 +0200
+@@ -2634,9 +2634,9 @@
+    If the file name contains a ‘:’, it is interpreted as ‘hostname:file
+ name’.  If the HOSTNAME contains an “at” sign (‘@’), it is treated as
+ ‘user@hostname:file name’.  In either case, ‘tar’ will invoke the
+-command ‘rsh’ (or ‘remsh’) to start up an ‘/usr/libexec/rmt’ on the
++command ‘ssh’ (or ‘remsh’) to start up an ‘/usr/libexec/rmt’ on the
  remote machine.  If you give an alternate login name, it will be given
--to the 'rsh'.  Naturally, the remote machine must have an executable
-+to the 'ssh'.  Naturally, the remote machine must have an executable
- '/usr/libexec/rmt'.  This program is free software from the University
+-to the ‘rsh’.  Naturally, the remote machine must have an executable
++to the ‘ssh’.  Naturally, the remote machine must have an executable
+ ‘/usr/libexec/rmt’.  This program is free software from the University
  of California, and a copy of the source code can be found with the
- sources for 'tar'; it's compiled and installed by default.  The exact
-@@ -2257,8 +2257,8 @@
+ sources for ‘tar’; it’s compiled and installed by default.  The exact
+@@ -2684,8 +2684,8 @@
       Archive file is local even if it contains a colon.
  
- '--rsh-command=COMMAND'
--     Use remote COMMAND instead of 'rsh'.  This option exists so that
--     people who use something other than the standard 'rsh' (e.g., a
-+     Use remote COMMAND instead of 'ssh'.  This option exists so that
-+     people who use something other than the standard 'ssh' (e.g., a
-      Kerberized 'rsh') can access a remote device.
+ ‘--rsh-command=COMMAND’
+-     Use remote COMMAND instead of ‘rsh’.  This option exists so that
+-     people who use something other than the standard ‘rsh’ (e.g., a
++     Use remote COMMAND instead of ‘ssh’.  This option exists so that
++     people who use something other than the standard ‘ssh’ (e.g., a
+      Kerberized ‘rsh’) can access a remote device.
  
       When this command is not used, the shell command found when the
-@@ -2321,7 +2321,7 @@
+@@ -2748,7 +2748,7 @@
  remote tape server written at the University of California at Berkeley.
- The remote tape server must be installed as 'PREFIX/libexec/rmt' on any
- machine whose tape drive you want to use.  'tar' calls 'rmt' by running
--an 'rsh' or 'remsh' to the remote machine, optionally using a different
-+an 'ssh' or 'remsh' to the remote machine, optionally using a different
+ The remote tape server must be installed as ‘PREFIX/libexec/rmt’ on any
+ machine whose tape drive you want to use.  ‘tar’ calls ‘rmt’ by running
+-an ‘rsh’ or ‘remsh’ to the remote machine, optionally using a different
++an ‘ssh’ or ‘remsh’ to the remote machine, optionally using a different
  login name if one is supplied.
  
     A copy of the source for the remote tape server is provided.  Its

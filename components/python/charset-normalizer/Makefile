@@ -1,68 +1,55 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project charset-normalizer
 #
 
-BUILD_BITS= NO_ARCH
-BUILD_STYLE= setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		charset-normalizer
-COMPONENT_VERSION=	2.0.10
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	The Real First Universal Charset Detector
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:876d180e9d7432c5d1dfd4c5d26b72f099d503e8fcc0feb7532c9289be60fcbd
-COMPONENT_ARCHIVE_URL=  $(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/ousret/charset_normalizer
-COMPONENT_CLASSIFICATION= Development/Python
-COMPONENT_FMRI=	library/python/$(COMPONENT_NAME)
-COMPONENT_LICENSE= MIT
+COMPONENT_NAME =		charset-normalizer
+HUMAN_VERSION =			3.3.2
+COMPONENT_SUMMARY =		charset-normalizer - The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.
+COMPONENT_PROJECT_URL =		https://github.com/Ousret/charset_normalizer
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/63/09/c1bc53dab74b1816a00d8d030de5bf98f724c52c1635e07681d312f20be8/charset-normalizer-3.3.2.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:f30c3cb33b24454a82faecaf01b19c18562b1e89558fb6c56de4d9118a032fd5
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS= $(PYTHON3_VERSIONS)
-# iFor tests use the following as they don't work for python-3.5:
-#PYTHON_VERSIONS= 3.7 3.9
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-COMPONENT_POST_INSTALL_ACTION = ( \
-	cd $(PROTO_DIR)/usr/bin ; \
-	$(MV) -f normalizer normalizer-$(PYTHON_VERSION) )
-
-# Without copying the data folder into the tests folder many tests fail:
-COMPONENT_PRE_TEST_ACTION = $(CP) -r $(COMPONENT_SRC)/data $(COMPONENT_SRC)/tests/data
-
-COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD =    $(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += dev-requirements.txt
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/chardet
+TEST_REQUIRED_PACKAGES.python += library/python/codecov
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/flask
+TEST_REQUIRED_PACKAGES.python += library/python/isort
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/requests
+TEST_REQUIRED_PACKAGES.python += library/python/wheel

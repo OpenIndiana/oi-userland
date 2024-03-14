@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		nmap
 COMPONENT_VERSION=		7.80
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_PROJECT_URL=	http://nmap.org/
 COMPONENT_FMRI=			diagnostic/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration

@@ -1,0 +1,225 @@
+From 22bd08d19c456bb0b359bbefb6f5f638cc77865d Mon Sep 17 00:00:00 2001
+From: Alexander Pyhalov <apyhalov@gmail.com>
+Date: Thu, 8 Aug 2019 09:13:24 +0300
+Subject: [PATCH 2/2] Convert oi-userland tools to Python 3.5
+
+---
+ usr/src/tools/userland-fetch | 90 ++++++++++++++++--------------------
+ 1 file changed, 41 insertions(+), 49 deletions(-)
+
+diff --git a/usr/src/tools/userland-fetch b/usr/src/tools/userland-fetch
+index ac93d10..d89391b 100755
+--- a/usr/src/tools/userland-fetch
++++ b/usr/src/tools/userland-fetch
+@@ -22,7 +22,7 @@
+ # Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ #
+ #
+-# fetch.py - a file download utility
++# userland-fetch - a file download utility
+ #
+ #  A simple program similiar to wget(1), but handles local file copy, ignores
+ #  directories, and verifies file hashes.
+@@ -31,20 +31,20 @@
+ import os
+ import sys
+ import shutil
+-from urllib import splittype
+-from urllib2 import urlopen
+-from urllib2 import Request
++from urllib.parse import splittype
++from urllib.request import urlopen
++from urllib.request import Request
+ import hashlib
+ 
+ 
+ def printIOError(e, txt):
+     """ Function to decode and print IOError type exception """
+-    print "I/O Error: " + txt + ": "
++    print("I/O Error: " + txt + ": ")
+     try:
+         (code, message) = e
+-        print str(message) + " (" + str(code) + ")"
++        print(str(message) + " (" + str(code) + ")")
+     except:
+-        print str(e)
++        print(str(e))
+ 
+ 
+ def validate(file, hash):
+@@ -58,23 +58,20 @@ def validate(file, hash):
+     except ValueError:
+         return False
+ 
+-    while True:
+-        try:
+-            block = file.read()
+-        except IOError, err:
+-            print str(err),
+-            break
+-
++    try:
++        block = file.read()
+         m.update(block)
+-        if block == '':
+-            break
++        return "%s:%s" % (algorithm, m.hexdigest())
++    except IOError as err:
++        print(str(err), end=' ')
++
++    return "%s:" % (algorithm)
+ 
+-    return "%s:%s" % (algorithm, m.hexdigest())
+ 
+ 
+ def validate_container(filename, hash):
+     try:
+-        file = open(filename, 'r')
++        file = open(filename, 'rb')
+     except IOError as e:
+         printIOError(e, "Can't open file " + filename)
+         return False
+@@ -92,11 +89,11 @@ def validate_payload(filename, hash):
+ 
+     try:
+         if expr_bz.match(filename):
+-            file = bz2.BZ2File(filename, 'r')
++            file = bz2.BZ2File(filename, 'rb')
+         elif expr_gz.match(filename):
+-            file = gzip.GzipFile(filename, 'r')
++            file = gzip.GzipFile(filename, 'rb')
+         elif expr_tgz.match(filename):
+-            file = gzip.GzipFile(filename, 'r')
++            file = gzip.GzipFile(filename, 'rb')
+         else:
+             return False
+     except IOError as e:
+@@ -119,7 +116,7 @@ def download(url, filename=None, user_agent_arg=None):
+ 
+     # 3xx, 4xx and 5xx (f|ht)tp codes designate unsuccessfull action
+     if src.getcode() and (3 <= int(src.getcode() / 100) <= 5):
+-        print "Error code: " + str(src.getcode())
++        print("Error code: " + str(src.getcode()))
+         return None
+ 
+     if filename == None:
+@@ -132,11 +129,7 @@ def download(url, filename=None, user_agent_arg=None):
+         src.close()
+         return None
+ 
+-    while True:
+-        block = src.read()
+-        if block == '':
+-            break
+-        dst.write(block)
++    dst.write(src.read())
+ 
+     src.close()
+     dst.close()
+@@ -170,17 +163,16 @@ def download_paths(search, filename, url):
+ 
+ 
+ def usage():
+-    print "Usage: %s [-a|--user-agent (user-agent)] [-f|--file (file)] " \
++    print("Usage: %s [-a|--user-agent (user-agent)] [-f|--file (file)] " \
+         "[-l|--link] [-h|--hash (hash)] [-s|--search (search-dir)] " \
+-        "-u|--url (url)" % (sys.argv[0].split('/')[-1])
++        "-u|--url (url)" % (sys.argv[0].split('/')[-1]))
+     sys.exit(1)
+ 
+ 
+ def main():
+     import getopt
+ 
+-    # FLUSH STDOUT
+-    sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
++    sys.stdout.flush()
+ 
+     user_agent_arg = None
+     file_arg = None
+@@ -194,8 +186,8 @@ def main():
+         opts, args = getopt.getopt(sys.argv[1:], "a:f:h:lks:u:",
+                                    ["file=", "link", "keep", "hash=", "search=", "url=",
+                                     "user-agent="])
+-    except getopt.GetoptError, err:
+-        print str(err)
++    except getopt.GetoptError as err:
++        print(str(err))
+         usage()
+ 
+     for opt, arg in opts:
+@@ -220,58 +212,58 @@ def main():
+         usage()
+ 
+     for url in download_paths(search_list, file_arg, url_arg):
+-        print "Source %s..." % url,
++        print("Source %s..." % url, end=' ')
+ 
+         scheme, path = splittype(url)
+         name = file_arg
+ 
+         if scheme in [None, 'file']:
+             if os.path.exists(path) == False:
+-                print "not found, skipping file copy"
++                print("not found, skipping file copy")
+                 continue
+             elif name != path:
+                 if link_arg == False:
+-                    print "\n    copying..."
++                    print("\n    copying...")
+                     shutil.copy2(path, name)
+                 else:
+-                    print "\n    linking..."
++                    print("\n    linking...")
+                     os.symlink(path, name)
+             else:
+                 pass
+         elif scheme in ['http', 'https', 'ftp']:
+-            print "\n    downloading...",
++            print("\n    downloading...", end=' ')
+             name = download(url, file_arg, user_agent_arg)
+             if name == None:
+-                print "failed"
++                print("failed")
+                 continue
+ 
+-        print "\n    validating...",
++        print("\n    validating...", end=' ')
+         if hash_arg == None:
+-            print "skipping (no hash)"
++            print("skipping (no hash)")
+             sys.exit(0)
+ 
+         realhash = validate_container(name, hash_arg)
+         if realhash == hash_arg:
+-            print "ok"
++            print("ok")
+             sys.exit(0)
+         else:
+             payloadhash = validate_payload(name, hash_arg)
+             if payloadhash == hash_arg:
+-                print "ok"
++                print("ok")
+                 sys.exit(0)
+-            print "corruption detected"
+-            print "    expected: %s" % hash_arg
+-            print "    actual:   %s" % realhash
+-            print "    payload:  %s" % payloadhash
++            print("corruption detected")
++            print("    expected: %s" % hash_arg)
++            print("    actual:   %s" % realhash)
++            print("    payload:  %s" % payloadhash)
+ 
+         if keep_arg == False:
+             try:
+-                print "\nWARN: Removing the corrupt downloaded file"
++                print("\nWARN: Removing the corrupt downloaded file")
+                 os.remove(name)
+             except OSError:
+                 pass
+         else:
+-            print "\nINFO: Keeping the downloaded file because asked to"
++            print("\nINFO: Keeping the downloaded file because asked to")
+ 
+     sys.exit(1)
+ 

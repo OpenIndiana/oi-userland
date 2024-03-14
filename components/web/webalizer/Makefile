@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		webalizer
 COMPONENT_VERSION=	2.23.8
 HUMAN_VERSION=		2.23-08
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.webalizer.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
@@ -37,9 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mrunix.net/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/webalizer
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D)); (cd $(SOURCE_DIR); $(GSED) -i -e 's/u_int64_t/uint64_t/g' *.c *.h configure.in configure)
@@ -49,7 +48,8 @@ COMPONENT_PRE_BUILD_ACTION += \
 	$(GSED) -i -e 's?lib/httpd/logs/?apache2/2.2/logs/?' \
 		$(SOURCE_DIR)/sample.conf
 
-CFLAGS += -I/usr/gnu/include
+CPPFLAGS += -I/usr/gnu/include
+CFLAGS += -fcommon
 LDFLAGS += -L$(GNULIB) -L$(GNULIB64)
 
 CONFIGURE_OPTIONS +=	--enable-dns
@@ -59,13 +59,6 @@ CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 
 # Needed to correctly build that 64-bit library.
 LDFLAGS += $(CC_BITS)
-
-# common targets
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/berkeleydb-5

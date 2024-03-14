@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gptfdisk
 COMPONENT_VERSION= 1.0.3
+COMPONENT_REVISION= 1
 COMPONENT_FMRI = system/storage/gptfdisk
 COMPONENT_CLASSIFICATION = System/Administration and Configuration
 COMPONENT_SUMMARY= GPT fdisk - Disk partitioning tool
@@ -60,10 +61,10 @@ install: $(INSTALL_32_and_64)
 test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/popt
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

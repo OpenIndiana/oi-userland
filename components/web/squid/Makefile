@@ -22,23 +22,25 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2022, Friedrich Kink
+# Copyright (c) 2023,2024 Friedrich Kink
 #
 
 BUILD_BITS=             64
-USE_OPENSSL11=		yes
+OPENSSL_VERSION=	3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      5.7
+COMPONENT_VERSION=      6.7
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
-#No https connection available at all
-COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
+COMPONENT_PROJECT_URL=  https://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v5/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:6b0753aaba4c9c4efd333e67124caecf7ad6cc2d38581f19d2f0321f5b7ecd81
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v6/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:e14daa4eae41925d1ae3f08e64439a6aaa3011bdced686628b8de697d5ab8428
+COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME)-langpack-20231227.tar.gz
+COMPONENT_ARCHIVE_URL_1=$(COMPONENT_PROJECT_URL)Versions/langpack/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_HASH_1= sha256:43f98e15759f193e56fedeff9fab5d31a6b326df1ebe9bf77cb9a26ae6674a74
 COMPONENT_FMRI=         web/proxy/squid
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_LICENSE=      GPLv2
@@ -48,7 +50,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH   = $(PATH.gnu)
 CFLAGS += $(CPP_LARGEFILES)
-CXXFLAGS += -Wno-unknown-pragmas
+
+#incorporate official translations
+COMPONENT_PREP_ACTION=	( cd $(COMPONENT_SRC)/errors; $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1))
 
 # Squid has own prefix
 CONFIGURE_PREFIX =	/usr/squid
@@ -56,7 +60,7 @@ CONFIGURE_PREFIX =	/usr/squid
 CONFIGURE_BINDIR = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_SBINDIR = $(CONFIGURE_PREFIX)/sbin
 
-CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
+CONFIGURE_OPTIONS += LDFLAGS="-lldap-2.6"
 CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/openldap"
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS += --localstatedir=/var/squid
@@ -105,6 +109,10 @@ CONFIGURE_OPTIONS += --enable-useragent-log
 CONFIGURE_OPTIONS += --enable-log-daemon-helpers='DB,file'
 CONFIGURE_OPTIONS += --enable-x-accelerator-vary
 CONFIGURE_OPTIONS += --enable-translation
+CONFIGURE_OPTIONS += --enable-gnuregex
+CONFIGURE_OPTIONS += --enable-htpc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
+
 CONFIGURE_OPTIONS += --with-aio
 CONFIGURE_OPTIONS += --with-tbd
 CONFIGURE_OPTIONS += --with-aufs-threads=8
@@ -113,7 +121,9 @@ CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_LP64_OFF64
 CONFIGURE_OPTIONS += --with-pthreads
 # the following option is not documented but without kerberos does not work
 CONFIGURE_OPTIONS += --with-solaris-krb5
+CONFIGURE_OPTIONS += --with-xml2
 CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --without-cap
 CONFIGURE_OPTIONS += --without-heimdal-krb5
 CONFIGURE_OPTIONS += --without-mit-krb5
 CONFIGURE_OPTIONS += --without-gnugss
@@ -122,20 +132,17 @@ CONFIGURE_OPTIONS += --without-gnutls
 # These are needed for Cisco integration
 CONFIGURE_OPTIONS += --enable-wccp
 CONFIGURE_OPTIONS += --enable-wccpv2
-# Native instructions need to be disabled for zones as reported in #5221
-# This is described in detail in
-#   http://wiki.squid-cache.org/KnowledgeBase/IllegalInstructionError
-CONFIGURE_OPTIONS += --disable-arch-native
 
+COMPONENT_TEST_TARGETS = -k check
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/=====/p" ' \
 	'-e "/squidconf/d" ' \
-	'-e "/TOTAL/p" ' \
+	'-e "/^\# TOTAL/p" ' \
 	'-e "/SKIP/p" ' \
 	'-e "/PASS/p" ' \
 	'-e "/FAIL/p" ' \
-	'-e "/^\# ERROR/p" '
+	'-e "/ERROR/p" '
 
 # Build dependencies (manually added)
 REQUIRED_PACKAGES += developer/cppunit
@@ -149,7 +156,7 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/tdb
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/security/kerberos-5

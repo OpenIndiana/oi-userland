@@ -11,39 +11,32 @@
 #
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 # Copyright 2019 Michal Nowak
+# Copyright 2023 Karlson2k (Evgeny Grin) <k2k@narod.ru>
 #
 
-BUILD_BITS=		64_and_32
+BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
-COMPONENT_VERSION=	0.9.75
-COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libmicrohttpd/
-COMPONENT_FMRI=		library/libmicrohttpd
+COMPONENT_VERSION=	0.9.77
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU libmicrohttpd is a small HTTP server as a C library
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libmicrohttpd/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9278907a6f571b391aab9644fd646a5108ed97311ec66f6359cebbedb0a4e3bb
+COMPONENT_ARCHIVE_HASH= sha256:9e7023a151120060d2806a6ea4c13ca9933ece4eacfc5c9464d20edddb76b0a0
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE).sig
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
+COMPONENT_FMRI=		library/libmicrohttpd
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	LGPL2.1+
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-
-# Tests work properly only for curl with GnuTLS SSL backend (we use OpenSSL only),
-# see https://gnunet.org/bugs/view.php?id=5564.
-#TEST_TARGET=		$(TEST_32_and_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
-
-CONFIGURE_ENV += LIBS="-lnsl -lsocket"
-
-CONFIGURE_OPTIONS += --enable-epoll=no
-CONFIGURE_OPTIONS += --enable-itc=socketpair
 CONFIGURE_OPTIONS += --disable-static
+# Make sure that HTTPS is enabled
+CONFIGURE_OPTIONS += --enable-https
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -53,8 +46,6 @@ CONFIGURE_OPTIONS += --disable-static
 unexport SHELLOPTS
 
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
-
-REQUIRED_PACKAGES += system/library/security/libgcrypt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gnutls-3

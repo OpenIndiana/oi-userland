@@ -1,0 +1,54 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m zope.testrunner --test-path=src -vv
+Running tests at level 1
+Running zope.testrunner.layer.UnitTests tests:
+  Set up zope.testrunner.layer.UnitTests.
+  Running:
+ test_ctor (zope.copy.tests.test_copy.CopyPersistentTests)
+ test_id_w_hook_already_cached (zope.copy.tests.test_copy.CopyPersistentTests)
+ test_id_w_hook_normal (zope.copy.tests.test_copy.CopyPersistentTests)
+ test_id_w_hook_raising_ResumeCopy (zope.copy.tests.test_copy.CopyPersistentTests)
+ test_id_wo_hook (zope.copy.tests.test_copy.CopyPersistentTests)
+ test_subobject_w_post_copy_hook (zope.copy.tests.test_copy.Test_clone)
+ test_subobject_wo_post_copy_hook (zope.copy.tests.test_copy.Test_clone)
+ test_w_simple_hook (zope.copy.tests.test_copy.Test_clone)
+ test_wo_hooks (zope.copy.tests.test_copy.Test_clone)
+ test_clears_attrs (zope.copy.tests.test_copy.Test_copy)
+ test_w_readonly___parent___and___name__ (zope.copy.tests.test_copy.Test_copy)
+  Ran 11 tests with 0 failures, 0 errors and 0 skipped.
+Tearing down left over layers:
+  Tear down zope.testrunner.layer.UnitTests.
+py$(PYV): commands[1]> sphinx-build -b doctest -d $(@D)/.tox/py$(PYV)/.cache/doctrees docs $(@D)/.tox/py$(PYV)/.cache/doctest
+Running Sphinx v7.1.2
+making output directory... done
+WARNING: html_static_path entry '_static' does not exist
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [doctest]: targets for 4 source files that are out of date
+updating environment: [new config] 4 added, 0 changed, 0 removed
+[2Kreading sources... [ 25%] api[2Kreading sources... [ 50%] hacking[2Kreading sources... [ 75%] index[2Kreading sources... [100%] narr
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+running tests...
+
+Document: narr
+--------------
+1 items passed all tests:
+  92 tests in default
+92 tests in 1 items.
+92 passed and 0 failed.
+Test passed.
+
+Doctest summary
+===============
+   92 tests
+    0 failures in tests
+    0 failures in setup code
+    0 failures in cleanup code
+build succeeded, 1 warning.
+
+Testing of doctests in the sources finished, look at the results in .tox/py$(PYV)/.cache/doctest/output.txt.
+  py$(PYV): OK
+  congratulations :)

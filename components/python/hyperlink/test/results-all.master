@@ -1,0 +1,156 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --cov=hyperlink --cov-report=term-missing:skip-covered --doctest-modules src/hyperlink
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.tox/hypothesis/examples')
+rootdir: $(@D), configfile: pytest.ini
+asyncio: mode=strict
+collecting ... collected 133 items
+
+src/hyperlink/_url.py::hyperlink._url PASSED
+src/hyperlink/_url.py::hyperlink._url.DecodedURL PASSED
+src/hyperlink/_url.py::hyperlink._url.URL PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.absolute PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.add PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.authority PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.child PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.click PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.from_text PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.get PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.normalize PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.port PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.set PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.to_iri PASSED
+src/hyperlink/_url.py::hyperlink._url.URL.to_uri PASSED
+src/hyperlink/_url.py::hyperlink._url._decode_path_part PASSED
+src/hyperlink/_url.py::hyperlink._url._percent_decode PASSED
+src/hyperlink/_url.py::hyperlink._url.make_sentinel PASSED
+src/hyperlink/_url.py::hyperlink._url.parse PASSED
+src/hyperlink/_url.py::hyperlink._url.parse_host PASSED
+src/hyperlink/test/test_common.py::TestHyperlink::test_assertRaisesContextManager PASSED
+src/hyperlink/test/test_common.py::TestHyperlink::test_assertRaisesContextManagerDoesNotRaise PASSED
+src/hyperlink/test/test_common.py::TestHyperlink::test_assertRaisesContextManagerUnexpectedException PASSED
+src/hyperlink/test/test_common.py::TestHyperlink::test_assertRaisesWithCallable PASSED
+src/hyperlink/test/test_common.py::TestHyperlink::test_assertRaisesWithCallableDoesNotRaise PASSED
+src/hyperlink/test/test_common.py::TestHyperlink::test_assertRaisesWithCallableUnexpectedException PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_click_decoded_url PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_decode_nonplussed PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_decode_plus PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_durl_basic PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_equality_and_hashability PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_passthroughs PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_percent_decode_mixed PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_query_manipulation PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_replace_roundtrip PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_replace_userinfo PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_repr PASSED
+src/hyperlink/test/test_decoded_url.py::TestURL::test_twisted_compat PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_decoded_urls PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_encoded_urls PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostname_labels_long_idn_punycode PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostname_labels_valid_ascii PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostname_labels_valid_idn PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_ascii PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_ascii_nolead PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_idn PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_idn_nolead PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_idna_text_min_max PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_idna_text_valid PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_paths PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_port_numbers_bounds PASSED
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_port_numbers_bounds_allow_zero PASSED
+src/hyperlink/test/test_parse.py::TestURL::test_parse PASSED
+src/hyperlink/test/test_scheme_registration.py::TestSchemeRegistration::test_invalid_uses_netloc PASSED
+src/hyperlink/test/test_scheme_registration.py::TestSchemeRegistration::test_register_invalid_port PASSED
+src/hyperlink/test/test_scheme_registration.py::TestSchemeRegistration::test_register_invalid_uses_netloc PASSED
+src/hyperlink/test/test_scheme_registration.py::TestSchemeRegistration::test_register_no_netloc_scheme PASSED
+src/hyperlink/test/test_scheme_registration.py::TestSchemeRegistration::test_register_no_netloc_with_port PASSED
+src/hyperlink/test/test_scheme_registration.py::TestSchemeRegistration::test_register_no_quote_plus_scheme PASSED
+src/hyperlink/test/test_scheme_registration.py::TestSchemeRegistration::test_register_scheme_basic PASSED
+src/hyperlink/test/test_url.py::TestURL::test_alreadyIRIAsIRI PASSED
+src/hyperlink/test/test_url.py::TestURL::test_alreadyURIAsURI PASSED
+src/hyperlink/test/test_url.py::TestURL::test_asIRI PASSED
+src/hyperlink/test/test_url.py::TestURL::test_asURI PASSED
+src/hyperlink/test/test_url.py::TestURL::test_autorooted PASSED
+src/hyperlink/test/test_url.py::TestURL::test_badUTF8AsIRI PASSED
+src/hyperlink/test/test_url.py::TestURL::test_basic PASSED
+src/hyperlink/test/test_url.py::TestURL::test_child PASSED
+src/hyperlink/test/test_url.py::TestURL::test_childInitRoot PASSED
+src/hyperlink/test/test_url.py::TestURL::test_click PASSED
+src/hyperlink/test/test_url.py::TestURL::test_clickCollapse PASSED
+src/hyperlink/test/test_url.py::TestURL::test_clickRFC3986 PASSED
+src/hyperlink/test/test_url.py::TestURL::test_clickSchemeRelPath PASSED
+src/hyperlink/test/test_url.py::TestURL::test_cloneUnchanged PASSED
+src/hyperlink/test/test_url.py::TestURL::test_delim_in_param PASSED
+src/hyperlink/test/test_url.py::TestURL::test_differentNotEqual PASSED
+src/hyperlink/test/test_url.py::TestURL::test_differentUnequal PASSED
+src/hyperlink/test/test_url.py::TestURL::test_dir PASSED
+src/hyperlink/test/test_url.py::TestURL::test_emoji_domain PASSED
+src/hyperlink/test/test_url.py::TestURL::test_empty PASSED
+src/hyperlink/test/test_url.py::TestURL::test_emptyChild PASSED
+src/hyperlink/test/test_url.py::TestURL::test_empty_paths_eq PASSED
+src/hyperlink/test/test_url.py::TestURL::test_encoded_userinfo PASSED
+src/hyperlink/test/test_url.py::TestURL::test_equality PASSED
+src/hyperlink/test/test_url.py::TestURL::test_fragmentEquality PASSED
+src/hyperlink/test/test_url.py::TestURL::test_from_text PASSED
+src/hyperlink/test/test_url.py::TestURL::test_from_text_bad_authority PASSED
+src/hyperlink/test/test_url.py::TestURL::test_from_text_type PASSED
+src/hyperlink/test/test_url.py::TestURL::test_hash PASSED
+src/hyperlink/test/test_url.py::TestURL::test_httpWithoutHost PASSED
+src/hyperlink/test/test_url.py::TestURL::test_identicalEqual PASSED
+src/hyperlink/test/test_url.py::TestURL::test_identicalNotUnequal PASSED
+src/hyperlink/test/test_url.py::TestURL::test_idna PASSED
+src/hyperlink/test/test_url.py::TestURL::test_idna_corners PASSED
+src/hyperlink/test/test_url.py::TestURL::test_init PASSED
+src/hyperlink/test/test_url.py::TestURL::test_initDefaults PASSED
+src/hyperlink/test/test_url.py::TestURL::test_initPercent PASSED
+src/hyperlink/test/test_url.py::TestURL::test_invalidArguments PASSED
+src/hyperlink/test/test_url.py::TestURL::test_invalid_authority_url PASSED
+src/hyperlink/test/test_url.py::TestURL::test_invalid_ipv6 PASSED
+src/hyperlink/test/test_url.py::TestURL::test_invalid_port PASSED
+src/hyperlink/test/test_url.py::TestURL::test_invalid_url PASSED
+src/hyperlink/test/test_url.py::TestURL::test_ipv6_with_port PASSED
+src/hyperlink/test/test_url.py::TestURL::test_justQueryText PASSED
+src/hyperlink/test/test_url.py::TestURL::test_mailto PASSED
+src/hyperlink/test/test_url.py::TestURL::test_multiChild PASSED
+src/hyperlink/test/test_url.py::TestURL::test_netloc PASSED
+src/hyperlink/test/test_url.py::TestURL::test_netloc_slashes PASSED
+src/hyperlink/test/test_url.py::TestURL::test_normalize PASSED
+src/hyperlink/test/test_url.py::TestURL::test_otherTypesNotEqual PASSED
+src/hyperlink/test/test_url.py::TestURL::test_otherTypesUnequal PASSED
+src/hyperlink/test/test_url.py::TestURL::test_parseEqualSignInParamValue PASSED
+src/hyperlink/test/test_url.py::TestURL::test_pathIterable PASSED
+src/hyperlink/test/test_url.py::TestURL::test_portText PASSED
+src/hyperlink/test/test_url.py::TestURL::test_queryAdd PASSED
+src/hyperlink/test/test_url.py::TestURL::test_queryIterable PASSED
+src/hyperlink/test/test_url.py::TestURL::test_queryRemove PASSED
+src/hyperlink/test/test_url.py::TestURL::test_querySet PASSED
+src/hyperlink/test/test_url.py::TestURL::test_repr PASSED
+src/hyperlink/test/test_url.py::TestURL::test_rooted_to_relative PASSED
+src/hyperlink/test/test_url.py::TestURL::test_rooted_with_port_but_no_host PASSED
+src/hyperlink/test/test_url.py::TestURL::test_roundtrip PASSED
+src/hyperlink/test/test_url.py::TestURL::test_roundtrip_double_iri PASSED
+src/hyperlink/test/test_url.py::TestURL::test_schemeless_path PASSED
+src/hyperlink/test/test_url.py::TestURL::test_set_ordering PASSED
+src/hyperlink/test/test_url.py::TestURL::test_sibling PASSED
+src/hyperlink/test/test_url.py::TestURL::test_similarEqual PASSED
+src/hyperlink/test/test_url.py::TestURL::test_similarNotUnequal PASSED
+src/hyperlink/test/test_url.py::TestURL::test_str PASSED
+src/hyperlink/test/test_url.py::TestURL::test_technicallyTextIsIterableBut PASSED
+src/hyperlink/test/test_url.py::TestURL::test_twisted_compat PASSED
+src/hyperlink/test/test_url.py::TestURL::test_userinfo PASSED
+src/hyperlink/test/test_url.py::TestURL::test_wrong_constructor PASSED
+
+=============================== warnings summary ===============================
+src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostname_labels_long_idn_punycode
+  $(PYTHON_DIR)/vendor-packages/hypothesis/strategies/_internal/core.py:1563: HypothesisDeprecationWarning: There is no reason to use @st.composite on a function which does not call the provided draw() function internally.
+    has_codemod=False,
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+6 files skipped due to complete coverage.
+
+======== 133 passed, 1 warning ========
+  py$(PYV): OK
+  congratulations :)

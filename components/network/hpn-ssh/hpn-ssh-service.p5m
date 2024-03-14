@@ -1,0 +1,64 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with # fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr/sbin/hpnsshd$ -> default restart_fmri svc:/network/hpnssh:default>
+<transform file path=usr/libexec/hpnssh-keysign$ -> default mode 4555>
+<transform file path=etc/hpnssh/sshd_config$ -> default mode 0644>
+<transform file path=etc/hpnssh/sshd_config$ -> default preserve true>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Applications/Internet \
+    value=org.opensolaris.category.2008:System/Security
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+dir  path=var/empty owner=root group=sys mode=0755 sysattr=readonly
+
+group groupname=hpnsshd gid=24
+user username=hpnsshd ftpuser=false gcos-field="hpnsshd privsep" group=hpnsshd \
+    home-dir=/var/empty login-shell=/bin/false uid=24
+
+depend type=require fmri=network/hpn-ssh
+
+file path=etc/hpnssh/moduli
+file path=etc/hpnssh/sshd_config
+file path=lib/svc/manifest/network/hpnssh.xml
+file path=lib/svc/method/hpnsshd
+file path=usr/lib/dtrace/hpnsftp.d
+file path=usr/libexec/hpnsftp-server
+file path=usr/libexec/hpnssh-keysign
+file path=usr/libexec/hpnssh-pkcs11-helper
+file path=usr/libexec/hpnssh-sk-helper
+file path=usr/sbin/hpnsshd
+file path=usr/share/man/man5/hpnmoduli.5
+file path=usr/share/man/man5/hpnsshd_config.5
+file path=usr/share/man/man8/hpnsftp-server.8
+file path=usr/share/man/man8/hpnssh-keysign.8
+file path=usr/share/man/man8/hpnssh-pkcs11-helper.8
+file path=usr/share/man/man8/hpnssh-sk-helper.8
+file path=usr/share/man/man8/hpnsshd.8

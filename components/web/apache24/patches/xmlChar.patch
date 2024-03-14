@@ -1,0 +1,12 @@
+# see https://github.com/apache/httpd/pull/393
+--- modules/filters/mod_xml2enc.c	2020-02-21 01:33:40.000000000 +0100
++++ modules/filters/mod_xml2enc.c.new	2023-11-29 19:31:15.134240536 +0100
+@@ -209,7 +209,7 @@
+   
+     /* to sniff, first we look for BOM */
+     if (ctx->xml2enc == XML_CHAR_ENCODING_NONE) {
+-        ctx->xml2enc = xmlDetectCharEncoding((const xmlChar*)ctx->buf,
++        ctx->xml2enc = xmlDetectCharEncoding((const unsigned char*)ctx->buf,
+                                              ctx->bytes); 
+         if (HAVE_ENCODING(ctx->xml2enc)) {
+             ap_log_rerror(APLOG_MARK, APLOG_INFO, 0, r, APLOGNO(01432)

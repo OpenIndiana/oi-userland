@@ -14,24 +14,22 @@
 # Copyright 2019 Michal Nowak
 # Copyright 2022 Niklas Poslovski
 #
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nghttp2
-COMPONENT_VERSION=	1.50.0
+COMPONENT_VERSION=	1.60.0
 COMPONENT_SUMMARY=	HTTP/2 C Library
-COMPONENT_FMRI=		library/nghttp2
+COMPONENT_PROJECT_URL=	https://nghttp2.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:af24007e34c18c782393a1dc3685f8fd5b50283e90a9191d25488eb50aa2c825
-COMPONENT_ARCHIVE_URL= \
-	https://github.com/nghttp2/nghttp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://nghttp2.org/
-COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_LICENSE=	MIT
+COMPONENT_ARCHIVE_HASH= sha256:625d6c3da1d9ca4fd643a638256431ae68fd1901653b2a61a245eea7b261bf4e
+COMPONENT_ARCHIVE_URL=	https://github.com/nghttp2/nghttp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		library/nghttp2
 COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -40,13 +38,14 @@ CONFIGURE_OPTIONS += --enable-examples
 CONFIGURE_OPTIONS += --disable-python-bindings
 CONFIGURE_OPTIONS += --disable-app
 
-# Build dependencies
-REQUIRED_PACKAGES += developer/cunit
+# Manually added dependencies
+TEST_REQUIRED_PACKAGES += developer/cunit
+REQUIRED_PACKAGES += library/libev
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/jansson
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -22,17 +22,18 @@ include ../../../make-rules/shared-macros.mk
 # This is latest NVIDIA Production Branch driver
 
 COMPONENT_NAME =		nvidia
-COMPONENT_VERSION =		515.76
+HUMAN_VERSION =			550.54.14
+COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
 COMPONENT_FMRI =		driver/graphics/nvidia
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:bfa8d273428407a985095d56060d05de1b96799d582713e8562f1238c088e4bd
+COMPONENT_ARCHIVE_HASH =	sha256:6c8b755a1b05237e7c7e5b8ed88e9cdcc7d4b8ae10f9d310f777cfc51574e25f
 COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
-COMPONENT_LICENSE_FILE =	nvidia.license
+COMPONENT_LICENSE_FILE =	NVDAgraphics/install/copyright
 
 BUILD_TARGET = $(BUILD_$(MK_BITS))
 INSTALL_TARGET = $(INSTALL_$(MK_BITS))
@@ -59,7 +60,7 @@ $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
 	$(CP) -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
 	$(TOUCH) $@
 
-GENERATE_EXTRA_CMD = \
+GENERATE_EXTRA_CMD += | \
 	$(CAT) - <( \
 		eval $$($(GNU_GREP) ^A $(SOURCE_DIR)/NVDAgraphicsr/install/postinstall) ; \
 		printf 'driver name=nvidia_modeset perms="* 0666 root root"\n' ; \
@@ -71,13 +72,13 @@ GENERATE_EXTRA_CMD = \
 	)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

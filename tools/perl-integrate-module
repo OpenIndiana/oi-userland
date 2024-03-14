@@ -26,19 +26,23 @@ CURL="/usr/bin/curl -s"
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
-	printf "Usage: %s [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" "$THIS" >&2
+	printf "Usage: %s [-d DIR] [-f] [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" "$THIS" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
 
 
-VERSION=
+OPT_VERSION=
 OBSOLETE=
 UPGRADE_ONLY=0
-while getopts ":hl:o:u" OPT ; do
+DIRECTORY=
+FORCE=0
+while getopts ":hd:fl:o:u" OPT ; do
 	case "$OPT" in
 	"?"|"h")	usage ;;
-	"l")		VERSION="$OPTARG" ;;
+	"d")		DIRECTORY="$OPTARG" ;;
+	"f")		FORCE=1 ;;
+	"l")		OPT_VERSION="$OPTARG" ;;
 	"o")		OBSOLETE="$OBSOLETE $OPTARG" ;;
 	"u")		UPGRADE_ONLY=1 ;;
 	esac
@@ -51,11 +55,18 @@ shift $((OPTIND - 1))
 MODULE="$1"
 
 
+# Prevent user's environment to affect the integration.
+# Allow one exception only: USERLAND_ARCHIVES
+GMAKE="env -"
+[[ -n "$USERLAND_ARCHIVES" ]] && GMAKE="$GMAKE USERLAND_ARCHIVES=$USERLAND_ARCHIVES"
+GMAKE="$GMAKE gmake"
+
+
 WS_TOP=$(git rev-parse --show-toplevel 2>/dev/null)
 [[ -z "$WS_TOP" ]] && usage "The script must be run in git repo"
 
-DIR="$WS_TOP/components/perl"
-[[ -d "$DIR" ]] || usage "Directory $DIR not found"
+BASE_DIR="$WS_TOP/components"
+[[ -d "$BASE_DIR" ]] || usage "Directory $BASE_DIR not found"
 
 
 # Get data from metacpan
@@ -83,7 +94,32 @@ if [[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] then
 	fi
 fi
 
-# Find the latest version if not provided by user
+
+# Prepare the directory
+[[ -z "$DIRECTORY" ]] && DIRECTORY="perl/$DISTRIBUTION"
+DIR="$BASE_DIR/$DIRECTORY"
+mkdir -p "$DIR"
+cd "$DIR"
+git restore --staged . > /dev/null 2>&1
+git checkout . > /dev/null 2>&1
+
+
+# Following variables could be set by the hook-begin snippet
+VERSION=
+DOWNLOAD_URL=
+LICENSE_FILE=
+
+# Execute hook-begin snippet
+if [[ -f "$CONF" ]] ; then
+	gsed -e '0,/^%hook-begin%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+	. "./$SNIPPET"
+	rm -f "$SNIPPET"
+fi
+
+# Version specified as option takes precedence
+[[ -n "$OPT_VERSION" ]] && VERSION="$OPT_VERSION"
+
+# Find the latest version if not already provided
 if [[ -z "$VERSION" ]] ; then
 	VERSION=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.version')
 	if (($? != 0)) || [[ -z "$VERSION" || "$VERSION" == "null" ]] ; then
@@ -93,76 +129,90 @@ if [[ -z "$VERSION" ]] ; then
 	VERSION=${VERSION#v}
 fi
 
-# Get module author
-AUTHOR=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.author')
-if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
-	printf "FATAL: Failed to get author for module %s from metacpan\n" "$MODULE" >&2
-	exit 1
-fi
-
-# Get download_url
-DOWNLOAD_URL=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.download_url')
-if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
-	printf "WARNING: Failed to get download_url for module %s from metacpan\n" "$MODULE" >&2
-	DOWNLOAD_URL=
-fi
-
-
-# Prepare the directory
-DIR="$DIR/$DISTRIBUTION"
-mkdir -p "$DIR"
-cd "$DIR"
-git restore --staged . > /dev/null 2>&1
-git checkout . > /dev/null 2>&1
 
 # Is this new module, or just a rebuild?
 NEW=1
-REBUILD=0
 PREV_VER=
 PREV_HVER=
 PREV_REV=0
 if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	NEW=0
-	REBUILD=1
-	PREV_VER=$(gmake print-value-COMPONENT_VERSION 2>/dev/null)
-	PREV_REV=$(gmake print-value-COMPONENT_REVISION 2>/dev/null)
+	PREV_VER=$($GMAKE print-value-COMPONENT_VERSION 2>/dev/null)
+	(($? != 0)) && printf "FATAL: 'gmake print-value-COMPONENT_VERSION' failed!\n" >&2 && exit 1
+	PREV_REV=$($GMAKE print-value-COMPONENT_REVISION 2>/dev/null)
 
 	# If we were asked to do version upgrade, but we do not have new
 	# version, then we are done.
-	PREV_HVER=$(gmake print-value-HUMAN_VERSION 2>/dev/null)
+	PREV_HVER=$($GMAKE print-value-HUMAN_VERSION 2>/dev/null)
 	((UPGRADE_ONLY)) && [[ "$PREV_HVER" == "$VERSION" ]] && exit 0
 
-	gmake clobber > /dev/null 2>&1
+	# Pre-flight environment checks
+	if ((FORCE == 0)) ; then
+		! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake env-check' failed!\n" >&2 && exit 1
+		! $GMAKE test-env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake test-env-check' failed!\n" >&2 && exit 1
+	fi
+
+	$GMAKE clobber > /dev/null 2>&1
 fi
 
-# Remove everything from git (except known patches, history, and $CONF)
-touch "$CONF"
-grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
+
+# Get download_url if not already provided
+if [[ -z "$DOWNLOAD_URL" ]] ; then
+	# Get module author
+	# TODO: here we get author of the latest version, not the specified version
+	AUTHOR=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.author')
+	if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
+		printf "FATAL: Failed to get author for module %s from metacpan\n" "$MODULE" >&2
+		exit 1
+	fi
+
+	# Get download_url
+	DOWNLOAD_URL=$($CURL "$APIURL/download_url/$MODULE?version===$VERSION" | /usr/bin/jq -r '.download_url')
+	if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
+		printf "WARNING: Failed to get download_url for module %s, version %s from metacpan\n" "$MODULE" "$VERSION" >&2
+		DOWNLOAD_URL=
+	fi
+fi
+
+
+# Remove everything that is not in git
+rm -rf *
+git checkout . > /dev/null 2>&1
+# Remove everything from git (except known patches, files, history, and $CONF)
+[[ -f "$CONF" ]] && grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
+[[ -f "$CONF" ]] && grep "^%file%" "$CONF" | while read TAG FILE ; do rm -f "files/$FILE" ; done
 rm -f history "$CONF"
 find . -type f | while read f ; do git rm "$f" > /dev/null 2>&1 ; done
 rm -rf "$DIR" 2>/dev/null
 git checkout history > /dev/null 2>&1
 git checkout "$CONF" > /dev/null 2>&1
-touch "$CONF"
-grep "^%patch%" "$CONF" | while read TAG PATCH ; do
+[[ -f "$CONF" ]] && grep "^%patch%" "$CONF" | while read TAG PATCH ; do
 	git checkout "patches/$PATCH" > /dev/null 2>&1
 	[[ -f "patches/$PATCH" ]] || printf "WARNING: Patch %s not found\n" "$PATCH" >&2
+done
+[[ -f "$CONF" ]] && grep "^%file%" "$CONF" | while read TAG FILE ; do
+	git checkout "files/$FILE" > /dev/null 2>&1
+	[[ -f "files/$FILE" ]] || printf "WARNING: File %s not found\n" "$FILE" >&2
 done
 
 
 # Makefile template
+GENERATE_CMD="\$WS_TOOLS/$THIS"
+[[ "$DIRECTORY" != "perl/$DISTRIBUTION" ]] && GENERATE_CMD="$GENERATE_CMD -d $DIRECTORY"
+GENERATE_CMD="$GENERATE_CMD $MODULE"
 (
 cat $WS_TOP/transforms/copyright-template | sed -e '/^$/,$d'
 cat <<EOF
 
 #
 # This file was automatically generated using the following command:
-#   \$WS_TOOLS/$THIS $MODULE
+#   $GENERATE_CMD
 #
 
-BUILD_STYLE = modulebuild
+BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 EOF
-gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
+[[ -f "$CONF" ]] && gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
 cat <<EOF
 
 include ../../../make-rules/shared-macros.mk
@@ -180,38 +230,56 @@ COMPONENT_ARCHIVE_HASH =	\\
 COMPONENT_LICENSE =		license:TODO
 COMPONENT_LICENSE_FILE =	licfile:TODO
 EOF
-cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
+[[ -f "$CONF" ]] && cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
-cat "$CONF" | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
+[[ -f "$CONF" ]] && cat "$CONF" | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\n"
 ) > Makefile
 
 # If the automatically constructed COMPONENT_ARCHIVE_URL is not correct then we
 # do not need COMPONENT_CPAN_AUTHOR.  We need COMPONENT_ARCHIVE_URL instead.
 if [[ -n "$DOWNLOAD_URL" ]] ; then
-	COMPONENT_ARCHIVE_URL=$(gmake print-value-COMPONENT_ARCHIVE_URL)
+	COMPONENT_ARCHIVE_URL=$($GMAKE print-value-COMPONENT_ARCHIVE_URL)
 	[[ "$COMPONENT_ARCHIVE_URL" == "$DOWNLOAD_URL" ]] && DOWNLOAD_URL=
 fi
-[[ -n "$DOWNLOAD_URL" ]] && sed -i -e 's|^COMPONENT_CPAN_AUTHOR.*|COMPONENT_ARCHIVE_URL=\t\t'"$DOWNLOAD_URL"'|g' Makefile
+[[ -n "$DOWNLOAD_URL" ]] && sed -i -e $'s|^COMPONENT_CPAN_AUTHOR.*|COMPONENT_ARCHIVE_URL =\t\t\\\\\\\n\t'"$DOWNLOAD_URL"'|' Makefile
 
 # Remove COMPONENT_REVISION if not needed
-COMPONENT_VERSION=$(gmake print-value-COMPONENT_VERSION)
-[[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && REBUILD=0 && sed -i -e '/^COMPONENT_REVISION/d' Makefile
+COMPONENT_VERSION=$($GMAKE print-value-COMPONENT_VERSION)
+[[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && sed -i -e '/^COMPONENT_REVISION/d' Makefile
+git add Makefile
 
 # Calculate sham256 sum for source package
-gmake fetch > /dev/null 2>&1
-USERLAND_ARCHIVES=$(gmake print-value-USERLAND_ARCHIVES)
-COMPONENT_ARCHIVE=$(gmake print-value-COMPONENT_ARCHIVE)
-SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES/$COMPONENT_ARCHIVE")
+$GMAKE fetch > /dev/null 2>&1
+USERLAND_ARCHIVES=$($GMAKE print-value-USERLAND_ARCHIVES)
+COMPONENT_ARCHIVE=$($GMAKE print-value-COMPONENT_ARCHIVE)
+[[ ! -f "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE" ]] && printf "FATAL: 'gmake fetch' failed!\n" >&2 && exit 1
+SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE")
 sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
 git add Makefile
 
-# Unpack sources
-! gmake prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
-SOURCE_DIR=$(gmake print-value-SOURCE_DIR)
+# Unpack sources and apply patches
+! $GMAKE patch > /dev/null 2>&1 && printf "FATAL: 'gmake patch' failed!\n" >&2 && exit 1
 
-# Switch to makemaker if needed
-[[ ! -f "$SOURCE_DIR/Build.PL" && -f "$SOURCE_DIR/Makefile.PL" ]] && sed -i -e 's/modulebuild/makemaker/g' Makefile
+# Refresh patches
+if $GMAKE refresh-patches > /dev/null 2>&1 ; then
+	git add patches 2>/dev/null
+else
+	printf "ERROR: 'gmake refresh-patches' failed!\n" >&2
+	git checkout patches 2>/dev/null
+fi
+
+# Cleanup after patch refresh
+$GMAKE clobber > /dev/null 2>&1
+
+# Prepare sources
+! $GMAKE prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
+SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
+COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
+[[ -n "$COMPONENT_SUBDIR" ]] && COMPONENT_SUBDIR="/$COMPONENT_SUBDIR"
+
+# Switch to modulebuild if possible
+[[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/Build.PL" ]] && sed -i -e 's/makemaker/modulebuild/g' Makefile
 
 # Get abstract.  Either from metacpan, or directly from sources.
 ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
@@ -220,10 +288,10 @@ if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
 	ABSTRACT="TODO"
 fi
 if [[ "$ABSTRACT" == "TODO" ]] ; then
-	if [[ ! -f "$SOURCE_DIR/META.json" ]] ; then
+	if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" ]] ; then
 		printf "WARNING: META.json missing\n" >&2
 	else
-		ABSTRACT=$(cat "$SOURCE_DIR/META.json" | /usr/bin/jq -r '.abstract')
+		ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" | /usr/bin/jq -r '.abstract')
 		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
 			printf "WARNING: Failed to get abstract from META.json\n" >&2
 			ABSTRACT="TODO"
@@ -231,10 +299,10 @@ if [[ "$ABSTRACT" == "TODO" ]] ; then
 	fi
 fi
 if [[ "$ABSTRACT" == "TODO" ]] ; then
-	if [[ ! -f "$SOURCE_DIR/META.yml" ]] ; then
+	if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" ]] ; then
 		printf "WARNING: META.yml missing\n" >&2
 	else
-		ABSTRACT=$(cat "$SOURCE_DIR/META.yml" | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | /usr/bin/jq -r '.abstract')
+		ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | /usr/bin/jq -r '.abstract')
 		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
 			printf "WARNING: Failed to get abstract from META.yml\n" >&2
 			ABSTRACT="TODO"
@@ -246,6 +314,7 @@ ABSTRACT="${ABSTRACT//\`/\\\\\`}"
 ABSTRACT="${ABSTRACT//\"/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"}"
 ABSTRACT="${ABSTRACT//\//\/}"
 ABSTRACT="${ABSTRACT//\$/\\\\\$\$}"
+ABSTRACT="${ABSTRACT//\&/\\&}"
 sed -i -e 's/\(COMPONENT_SUMMARY.*\)TODO$/\1'"$ABSTRACT"'/g' Makefile
 
 
@@ -263,9 +332,9 @@ function detect_license
 LICENSE=
 LICFILE=
 COPYRIGHT=
-for f in LICENSE LICENCE COPYING COPYRIGHT ; do
-	[[ -f "$SOURCE_DIR/$f" ]] || continue
-	LICFILE="$SOURCE_DIR/$f"
+for f in $LICENSE_FILE LICENSE LICENCE COPYING COPYRIGHT ; do
+	[[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/$f" ]] || continue
+	LICFILE="$SOURCE_DIR$COMPONENT_SUBDIR/$f"
 
 	detect_license LICENSE "$LICFILE"
 
@@ -293,7 +362,7 @@ if [[ -z "$LICENSE" ]] ; then
 
 	# Try to find Copyright notice if we do not have one yet
 	[[ -z "$COPYRIGHT" ]] && for f in README README.md ; do
-		f="$SOURCE_DIR/$f"
+		f="$SOURCE_DIR$COMPONENT_SUBDIR/$f"
 		[[ -f "$f" ]] || continue
 
 		COPYRIGHT=$(gsed -e '0,/^# LICENSE/d' -e '/^#/,$d' -e '/./,$!d' "$f" 2>/dev/null)
@@ -311,7 +380,7 @@ if [[ -z "$LICENSE" ]] ; then
 	done
 	if [[ -z "$COPYRIGHT" ]] ; then
 		printf "WARNING: No copyright notice found at standard locations\n" >&2
-		for f in $(find "$SOURCE_DIR" -type f -name "*.pm" | LC_ALL=C sort | while read f ; do egrep -q "^=head1 (LICENSE|LICENCE|COPYRIGHT)" "$f" && echo "$f" ; done) ; do
+		for f in $(find "$SOURCE_DIR$COMPONENT_SUBDIR" -type f -name "*.pm" | LC_ALL=C sort | while read f ; do egrep -q "^=head1 (LICENSE|LICENCE|COPYRIGHT)" "$f" && echo "$f" ; done) ; do
 			COPYRIGHT=$(sed -e '1,/^=head1 LICENSE/d' -e '/^=/,$d' "$f" 2>/dev/null)
 			if [[ -n "$COPYRIGHT" ]] ; then
 				printf "WARNING: Using copyright notice from %s\n" "$f" >&2
@@ -341,19 +410,21 @@ if [[ -z "$LICENSE" ]] ; then
 	USE_DEFAULT_PERL_LICENSE=1
 
 	# Execute hook-no-license snippet
-	gsed -e '0,/^%hook-no-license%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
-	. "./$SNIPPET"
-	rm -f "$SNIPPET"
+	if [[ -f "$CONF" ]] ; then
+		gsed -e '0,/^%hook-no-license%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+		. "./$SNIPPET"
+		rm -f "$SNIPPET"
+	fi
 
 
 	if ((USE_DEFAULT_PERL_LICENSE)) ; then
 		# Confirm the package is distributed under the same terms as Perl itself
 		D=1
 		((D)) && (printf "%s\n" "$COPYRIGHT" | grep -q -i "under the same terms as Perl itself") && D=0
-		((D)) && grep -q "license *=> *'http://dev\.perl\.org/licenses/'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
-		((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
-		((D)) && [[ -f "$SOURCE_DIR/META.json" && "$(/usr/bin/jq -r '.license[]' < "$SOURCE_DIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
-		((D)) && [[ -f "$SOURCE_DIR/META.yml" && "$(cat "$SOURCE_DIR/META.yml" \
+		((D)) && grep -q "license *=> *'http://dev\.perl\.org/licenses/'" "$SOURCE_DIR$COMPONENT_SUBDIR/Makefile.PL" 2>/dev/null && D=0
+		((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR$COMPONENT_SUBDIR/Makefile.PL" 2>/dev/null && D=0
+		((D)) && [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" && "$(/usr/bin/jq -r '.license[]' < "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
+		((D)) && [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" && "$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" \
 			| python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
 			| /usr/bin/jq -r '.license[]' 2>/dev/null)" == "perl_5" ]] && D=0
 
@@ -373,29 +444,28 @@ sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
 
 
 # Create manifests
-if ! gmake sample-manifest > /dev/null 2>&1 ; then
+if ! $GMAKE sample-manifest > /dev/null 2>&1 ; then
 	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
 else
+	MANIFEST="$DISTRIBUTION-PERLVER.p5m"
+	[[ "$($GMAKE print-value-SINGLE_PERL_VERSION)" == "yes" ]] && MANIFEST="$DISTRIBUTION.p5m"
 	cat manifests/sample-manifest.p5m \
 		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using '"$THIS"'/g' \
-		> "$DISTRIBUTION-PERLVER.p5m"
+		> "$MANIFEST"
 
 	# Execute hook-manifest snippet
-	gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
-	. "./$SNIPPET"
-	rm -f "$SNIPPET"
+	if [[ -f "$CONF" ]] ; then
+		gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+		. "./$SNIPPET"
+		rm -f "$SNIPPET"
+	fi
 
-	git add manifests/sample-manifest.p5m "$DISTRIBUTION-PERLVER.p5m"
+	git add manifests/sample-manifest.p5m $MANIFEST
 fi
 
 
-# $CONF is no longer needed
-rm -f "$CONF"
-git checkout "$CONF" > /dev/null 2>&1
-
-
 # Generate REQUIRED_PACKAGES
-gmake REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
+$GMAKE REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
 git add Makefile
 
 
@@ -405,58 +475,17 @@ grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\
 
 # Make sure the build environment is setup properly and we do have all
 # requirements installed.  Otherwise we cannot continue.
-! gmake env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
-
-
-PERL_VERSIONS=$(gmake print-value-PERL_VERSIONS)
-
-
-# Run tests to make sure they pass
-for v in $PERL_VERSIONS ; do
-	gmake PERL_VERSIONS=$v test > /dev/null 2>&1 || printf "ERROR: Testing failed for %s!\n" "$v" >&2
-done
-
-# Run tests again and create test results master file(s)
-COMPONENT_TEST_MASTER_PREV=
-for v in $PERL_VERSIONS ; do
-	COMPONENT_TEST_MASTER=$(gmake PERL_VERSION=$v print-value-COMPONENT_TEST_MASTER)
-	COMPONENT_TEST_SNAPSHOT=$(gmake PERL_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
-	mkdir -p $(dirname "$COMPONENT_TEST_MASTER")
-	touch "$COMPONENT_TEST_MASTER"
-	gmake PERL_VERSIONS=$v test > /dev/null 2>&1
-	TEST_RET=$?
-	# If there is no snapshot produced the component likely does not support tests
-	if [[ ! -f "$COMPONENT_TEST_SNAPSHOT" ]] ; then
-		printf "WARNING: test unsupported for %s\n" "$v" >&2
-		rm -f "$COMPONENT_TEST_MASTER"
-		rmdir $(dirname "$COMPONENT_TEST_MASTER")
-		continue
-	fi
-	if [[ "$COMPONENT_TEST_MASTER_PREV" != "$COMPONENT_TEST_MASTER" ]] ; then
-		[[ -s "$COMPONENT_TEST_SNAPSHOT" ]] || printf "WARNING: 'gmake test' produced empty results for %s\n" "$v" >&2
-		cp -p "$COMPONENT_TEST_SNAPSHOT" "$COMPONENT_TEST_MASTER"
-		git add "$COMPONENT_TEST_MASTER"
-		COMPONENT_TEST_MASTER_PREV="$COMPONENT_TEST_MASTER"
-		gmake PERL_VERSIONS=$v test > /dev/null 2>&1
-		TEST_RET=$?
-	fi
-	((TEST_RET != 0)) && printf "ERROR: 'gmake test' results differ for %s!\n" "$v" >&2
-done
-
-
-# Publish packages and create pkg5 file
-gmake publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
-git add pkg5 2>/dev/null
+! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
 
 
 # Handle history
-COMPONENT_FMRI=$(gmake print-value-COMPONENT_FMRI)
-PERL_VERSIONS_OBSOLETING=$(gmake print-value-PERL_VERSIONS_OBSOLETING)
+COMPONENT_FMRI=$($GMAKE print-value-COMPONENT_FMRI)
+PERL_VERSIONS_OBSOLETING=$($GMAKE print-value-PERL_VERSIONS_OBSOLETING)
 OV=
 OV_PLURAL=
 for o in $(echo $OBSOLETE $PERL_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
 	PLV=${o//.}
-	FMRI=$(pkg list -avH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -v '(o|r)$' | sed -e 's|^.*\('"$COMPONENT_FMRI"'\)|\1|g' -e 's/:[^:]*$//g' -e 's/\(-[^-]*\)$/,5.11\1/g')
+	FMRI=$(pkg list -nvH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -v '(o|r)$' | sed -e 's|^.*\('"$COMPONENT_FMRI"'\)|\1|g' -e 's/:[^:]*$//g' -e 's/\(-[^-]*\)$/,5.11\1/g')
 	[[ -n "$FMRI" ]] || continue
 	FMRI_H=${FMRI%.*}
 	FMRI_T=${FMRI##*.}
@@ -467,38 +496,110 @@ for o in $(echo $OBSOLETE $PERL_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
 	FMRI_T=$((FMRI_T + 1))
 	printf "%s.%s noincorporate\n" "$FMRI_H" "$FMRI_T" >> history
 
-	[[ -n "$OV" ]] && OV="$OV and " && OV_PLURAL="s"
+	[[ -n "$OV" ]] && OV="${OV/ and /, } and " && OV_PLURAL="s"
 	OV="$OV$o"
 done
 if [[ -f history ]] ; then
 	LC_ALL=C sort -u history > history.new
 	mv history.new history
 	git add history
+
+	awk '$2 == "noincorporate" {printf("WARNING: Unincorporated package: %s\n", $1)}' < history >&2
+fi
+
+
+# Cleanup before we try to publish to make sure there are no leftovers from
+# previous steps
+$GMAKE clobber > /dev/null 2>&1
+
+# Publish packages and create pkg5 file
+$GMAKE publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
+git add pkg5 2>/dev/null
+
+
+PERL_VERSIONS=$($GMAKE print-value-PERL_VERSIONS)
+
+
+# Run tests to make sure they pass and to create result snapshots
+TESTED_VERSIONS=
+for v in $PERL_VERSIONS ; do
+	# Check the test environment
+	! $GMAKE PERL_VERSIONS=$v test-env-check > /dev/null 2>&1 && printf "ERROR: 'gmake test-env-check' failed for %s!\n" "$v" >&2 && continue
+
+	# Run the test
+	! $GMAKE PERL_VERSIONS=$v test > /dev/null 2>&1 && printf "ERROR: Testing failed for %s!\n" "$v" >&2 && continue
+
+	# If there is no snapshot produced the component likely does not support tests
+	COMPONENT_TEST_SNAPSHOT=$($GMAKE PERL_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
+	[[ ! -f "$COMPONENT_TEST_SNAPSHOT" ]] && printf "WARNING: Testing unsupported for %s\n" "$v" >&2 && continue
+
+	# Empty result snapshot is suspicious
+	[[ -s "$COMPONENT_TEST_SNAPSHOT" ]] || printf "WARNING: Empty test results for %s\n" "$v" >&2
+
+	TESTED_VERSIONS="$TESTED_VERSIONS $v"
+done
+
+# Save result snapshots and detect USE_COMMON_TEST_MASTER value
+TEST_MASTERS=
+for common_results in yes no ; do
+	for v in $TESTED_VERSIONS ; do
+		COMPONENT_TEST_SNAPSHOT=$($GMAKE PERL_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
+		COMPONENT_TEST_MASTER=$($GMAKE PERL_VERSION=$v USE_COMMON_TEST_MASTER=$common_results print-value-COMPONENT_TEST_MASTER)
+
+		if [[ -f "$COMPONENT_TEST_MASTER" ]] ; then
+			# Switch to 'USE_COMMON_TEST_MASTER = no' if test results differ
+			if ! diff "$COMPONENT_TEST_SNAPSHOT" "$COMPONENT_TEST_MASTER" > /dev/null ; then
+				printf "WARNING: Test results differ so switch to 'USE_COMMON_TEST_MASTER = no'\n" >&2
+				rm -f $TEST_MASTERS
+				TEST_MASTERS=
+				continue 2
+			fi
+		else
+			mkdir -p $(dirname "$COMPONENT_TEST_MASTER")
+			cp -p "$COMPONENT_TEST_SNAPSHOT" "$COMPONENT_TEST_MASTER"
+			TEST_MASTERS="$TEST_MASTERS $COMPONENT_TEST_MASTER"
+		fi
+	done
+	break
+done
+[[ -n "$TEST_MASTERS" ]] && git add $TEST_MASTERS
+
+# Run tests again to confirm the results are reproducible
+for v in $TESTED_VERSIONS ; do
+	$GMAKE PERL_VERSIONS=$v USE_COMMON_TEST_MASTER=$common_results test > /dev/null 2>&1 || printf "ERROR: Testing for %s is not reproducible!\n" "$v" >&2
+done
+
+# Remove USE_COMMON_TEST_MASTER from Makefile if it should be set to (default) 'yes'
+if [[ "$common_results" == "yes" ]] ; then
+	sed -i -e '/^USE_COMMON_TEST_MASTER/d' Makefile
+	git add Makefile
 fi
 
 
 # Construct the commit message
 MSG=
 if ((NEW)) ; then
-	MSG="Add $MODULE perl module"
+	MSG="Add $MODULE Perl module"
 else
-	if ((REBUILD == 0)) ; then
-		[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION" || MSG="change version format"
-	fi
-
-	NV=
-	for v in $PERL_VERSIONS ; do
-		PLV=${v//.}
-		pkg list -avH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -q -v '(o|r)$' && continue
-		[[ -n "$NV" ]] && NV="$NV and "
-		NV="$NV$v"
-	done
+	[[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && MSG="change version format"
+	[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION"
 
 	REBUILDMSG=
-	[[ -n "$NV" ]] && REBUILDMSG="rebuild for perl $NV"
+
+	if [[ "$($GMAKE print-value-SINGLE_PERL_VERSION)" == "no" ]] ; then
+		NV=
+		for v in $PERL_VERSIONS ; do
+			PLV=${v//.}
+			pkg list -avH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -q -v '(o|r)$' && continue
+			[[ -n "$NV" ]] && NV="$NV and "
+			NV="$NV$v"
+		done
+		[[ -n "$NV" ]] && REBUILDMSG="rebuild for Perl $NV"
+	fi
+
 	if [[ -n "$OV" ]] ; then
-		[[ -n "$REBUILDMSG" ]] && REBUILDMSG="$REBUILDMSG and" || REBUILDMSG="rebuild"
-		REBUILDMSG="$REBUILDMSG to get package$OV_PLURAL for perl $OV obsoleted"
+		[[ -n "$REBUILDMSG" ]] && REBUILDMSG="$REBUILDMSG and "
+		REBUILDMSG="${REBUILDMSG}obsolete package$OV_PLURAL for Perl $OV"
 	fi
 
 	if [[ -n "$REBUILDMSG" ]] ; then
@@ -507,7 +608,7 @@ else
 	fi
 	[[ -z "$MSG" ]] && MSG="rebuild"
 
-	MSG="perl/$DISTRIBUTION: $MSG"
+	MSG="$DIRECTORY: $MSG"
 fi
 
 # Commit the results

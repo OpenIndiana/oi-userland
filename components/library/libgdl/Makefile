@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     gdl
 COMPONENT_VERSION=  3.28.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY=  Gnome Docking library
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_PROJECT_URL=  https://developer.gnome.org/gdl/

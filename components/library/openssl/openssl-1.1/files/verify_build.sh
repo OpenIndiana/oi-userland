@@ -150,7 +150,7 @@ function pkgconfig_64bit_check()
 
 	for name in openssl.pc libssl.pc libcrypto.pc; do
 		file="$BUILD_DIR/$name"
-		if ! grep '^libdir=.*\/.*64' "$file" >/dev/null; then
+		if ! egrep '^libdir=.*\/.*64|sparcv9' "$file" >/dev/null; then
 			fail "Missing 64-bit path component in $file"
 		fi
 	done

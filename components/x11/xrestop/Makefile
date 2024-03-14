@@ -17,33 +17,34 @@
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           xrestop
-COMPONENT_VERSION=        0.5
-COMPONENT_FMRI=           x11/xrestop
+COMPONENT_NAME=         xrestop
+COMPONENT_VERSION=      0.6
+COMPONENT_SUMMARY=      the xrestop X-Resource top utility
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:2e2ec111c4b2798b5dc2dc2b3ec7af4f6b261946e903b8e14db046831d203b29
+COMPONENT_ARCHIVE_URL=  https://xorg.freedesktop.org/archive/individual/app/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.x.org/
+COMPONENT_FMRI=         x11/xrestop
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  the xrestop X-Resource top utility
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:89d0a5d99d1f4b290a79c5ba0d6142d8591262f167165d1bc468abaa9c18d51b
-COMPONENT_ARCHIVE_URL= \
-  https://xorg.freedesktop.org/archive/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
+COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = \
-	( cd $(@D) && \
-                 $(MKDIR) m4 && \
-                 libtoolize --copy --force &&\
-                 aclocal -I m4 &&\
-                 automake -c -f -a &&\
-                 autoconf )
+COMPONENT_PREP_ACTION = ( \
+	cd $(@D) && \
+	$(MKDIR) m4 && \
+	libtoolize --copy --force && \
+	aclocal -I m4 && \
+	automake -c -f -a && \
+	autoconf )
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxres

@@ -10,22 +10,21 @@
 #
 
 #
-# Copyright 2019 Michal Nowak
+# This file was automatically generated using python-integrate-project
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-vim@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY) - Vim editor binding"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python \
-    value="org.opensolaris.category.2008:System/Text Tools"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # This binding needs Vim to be functional
-depend fmri=editor/vim type=conditional predicate=editor/vim
+depend type=require fmri=editor/vim
 
 file path=usr/share/vim/vimfiles/powerline/debug.vim
 file path=usr/share/vim/vimfiles/powerline/powerline.vim

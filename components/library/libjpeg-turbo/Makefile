@@ -13,25 +13,28 @@
 #
 
 BUILD_BITS= 32_and_64
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libjpeg-turbo
-COMPONENT_VERSION= 2.1.4
-COMPONENT_FMRI= image/library/libjpeg-turbo
-COMPONENT_PROJECT_URL= https://www.libjpeg-turbo.org/
+COMPONENT_VERSION= 3.0.2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= libjpeg -JPEG Turbo libraries
-COMPONENT_SRC= libjpeg-turbo-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d3ed26a1131a13686dfca4935e520eb7c90ae76fbc45d98bb50a8dc86230342b
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libjpeg-turbo/files/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz/download
-COMPONENT_LICENSE= IJG,BSD,zlib
+COMPONENT_PROJECT_URL= https://www.libjpeg-turbo.org/
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:c2ce515a78d91b09023773ef2770d6b0df77d674e144de80d63e0389b3a15ca6
+COMPONENT_ARCHIVE_URL=	https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= image/library/libjpeg-turbo
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_LICENSE= IJG,BSD,zlib
+COMPONENT_LICENSE_FILE= LICENSE.md
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CMAKE_DEFAULT_DIRS=no
+CMAKE_DEFAULT_DIRS= no
 
 # Warnings are normal: libtool:   error: ignoring unknown tag NASM
 

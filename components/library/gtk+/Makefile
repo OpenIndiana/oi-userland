@@ -13,55 +13,45 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS = 32_and_64
-
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
-COMPONENT_VERSION= 2.24.32
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 2.24.33
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:b6c8a93ddda5eabe3bfee1eb39636c9a03d2a56c7b62828b359bf197943c582e
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gtk.org/
-
-TEST_TARGET = $(NO_TESTS)
-
-PYTHON_VERSION = 3.5
+COMPONENT_ARCHIVE_HASH= sha256:ac2ac757f5942d318a311a54b0c80b5ef295f299c2a73c632f6bfb1ff49cc6da
+COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://www.gtk.org/
 
 include $(WS_MAKE_RULES)/common.mk
 
 gcc_OPT = -O2
 CFLAGS += -I/usr/X11/include
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
- (chmod -R u+r  $(SOURCE_DIR) && \
-          cp -r $(SOURCE_DIR)/* $(@D) && \
-          cd $(@D) && libtoolize --force &&\
+COMPONENT_PREP_ACTION = \
+          ( cd $(@D) && PATH="$(PATH)" libtoolize --force && \
           aclocal -I ./m4 &&\
           gtkdocize &&\
           autoheader &&\
           automake -a -f -c --gnu &&\
           autoconf )
 
-CONFIGURE_SCRIPT = $(@D)/configure
-
-CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
-CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+#CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/$(MACH64)
 CONFIGURE_OPTIONS += --enable-shm
 CONFIGURE_OPTIONS += --with-gdktarget=x11
 CONFIGURE_OPTIONS += --enable-explicit-deps=yes
-CONFIGURE_OPTIONS += --without-libjasper
 CONFIGURE_OPTIONS += --enable-man
 
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
-CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
+CONFIGURE_ENV    += GLIB_GENMARSHAL=/usr/bin/glib-genmarshal
+CONFIGURE_ENV    += GLIB_MKENUMS=/usr/bin/glib-mkenums
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -69,17 +59,23 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 
 COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' $(PROTO_DIR)/usr/bin/gtk-builder-convert )
 
+COMPONENT_TEST_TRANSFORMS += \
+	' -e "/check in/p" ' \
+	' -e "/======/p" ' \
+	' -e "/summary/p" '
+
+# Manually added dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
-REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/print/open-printing
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math

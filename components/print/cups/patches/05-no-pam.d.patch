@@ -1,0 +1,20 @@
+We do not support /etc/pam.d directory.
+See https://www.illumos.org/issues/2947
+
+--- cups-2.4.7/config-scripts/cups-pam.m4.orig	2023-10-25 19:36:00.681132879 +0200
++++ cups-2.4.7/config-scripts/cups-pam.m4	2023-10-25 19:36:23.527933638 +0200
+@@ -43,14 +43,6 @@
+ 	], [
+ 	    PAMLIBS="-lpam"
+ 	])
+-
+-	# Find the PAM configuration directory, if any...
+-	for dir in /private/etc/pam.d /etc/pam.d; do
+-	    AS_IF([test -d $dir], [
+-		PAMDIR="$dir"
+-		break;
+-	    ])
+-	done
+     ])
+ 
+     LIBS="$SAVELIBS"

@@ -24,18 +24,17 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcsh
-COMPONENT_VERSION=	6.24.1
-HUMAN_VERSION=		6.24.01
+COMPONENT_VERSION=	6.24.10
+#HUMAN_VERSION=		6.24.10
 COMPONENT_SUMMARY=	Tenex C-shell (tcsh)
 COMPONENT_DESCRIPTION=	C shell with file name completion and command line editing
 COMPONENT_PROJECT_URL=	https://github.com/tcsh-org/tcsh
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:5659a1b973b1f947e36238cb17a00210ac4cff3b496f8f851acd77172ab91d7e
+COMPONENT_ARCHIVE_HASH= sha256:13475c0fbeb74139d33ed793bf00ffbbb2ac2dc9fb1d44467a410760aba36664
 COMPONENT_ARCHIVE_URL=	https://astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/tcsh
 COMPONENT_CLASSIFICATION= System/Shells
@@ -44,13 +43,9 @@ COMPONENT_LICENSE_FILE=	Copyright
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Default GCC opt -O3 fails on GCC 6 & 7: https://bugs.astron.com/view.php?id=80
-gcc_OPT = -O2
-
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# Strip compilation lines from test output
 COMPONENT_TEST_TRANSFORMS = \
 	' -n "/^\s*[0-9]/p" '
 

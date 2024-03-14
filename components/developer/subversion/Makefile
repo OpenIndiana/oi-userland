@@ -21,7 +21,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2021 Klaus Ziegler
+# Copyright (c) 2023 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -30,7 +30,7 @@ PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
 COMPONENT_VERSION=	1.14.2
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	3
 COMPONENT_PROJECT_URL=	https://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -40,12 +40,10 @@ COMPONENT_LICENSE=	Apache v2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
-GCC_VERSION=	10
+COMPONENT_PREP_ACTION += $(GSED) -i -e 's|@PYTHON_LIB@|'"$(PYTHON_LIB)"'|' $(@D)/Makefile.in ;
 
-PYTHON= /usr/bin/python3.9
 PYMODS = client core delta fs ra repos wc
 PLMODS= Fs Core Wc Client Repos Ra Delta
-JAVA_ROOT = $(JAVA_HOME)
 
 CXXFLAGS += $(CC_PIC)
 CXXFLAGS += $(CPP_LARGEFILES)
@@ -66,42 +64,38 @@ COMPONENT_INSTALL_TARGETS = install install-lib \
 			    install-mods-shared \
 			    install-bin install-docs
 
-COMPONENT_BUILD_TARGETS = $(COMPONENT_BUILD_TARGETS.$(BITS))
-
-PYTHON_VERSION=3.9
-
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += PYMODS="$(PYMODS)"
 CONFIGURE_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES)"
-CONFIGURE_ENV += JAVA_ROOT="$(JAVA_ROOT)"
+CONFIGURE_ENV += JAVA_ROOT="$(JAVA_HOME)"
 CONFIGURE_ENV += PERL="$(PERL)"
 CONFIGURE_ENV += PLMODS="$(PLMODS)"
 CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
-LIBSVNDIR.64 = $(CONFIGURE_PREFIX)/lib/$(MACH64)
+LIBSVNDIR = $(CONFIGURE_PREFIX)/lib/$(MACH64)
 
-APR-CONFIG.64 = /usr/apr/bin/$(MACH64)/apr-1-config
-APU-CONFIG.64 = /usr/apr-util/bin/$(MACH64)/apu-1-config
-APXS.64 = /usr/apache2/2.4/bin/apxs
-APR-CONFIG-RPATH.64 = /usr/apr/lib/$(MACH64)
-APU-CONFIG-RPATH.64 = /usr/apr-util/lib/$(MACH64)
-APACHE_LIBEXECDIR.64 = `$(APXS.64) -q libexecdir`
+APR-CONFIG = /usr/apr/bin/apr-1-config
+APU-CONFIG = /usr/apr-util/bin/apu-1-config
+APXS = /usr/apache2/2.4/bin/apxs
+APR-CONFIG-RPATH = /usr/apr/lib/$(MACH64)
+APU-CONFIG-RPATH = /usr/apr-util/lib/$(MACH64)
+APACHE_LIBEXECDIR = `$(APXS) -q libexecdir`
 
-LDFLAGS += -R$(LIBSVNDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
-	   -R$(APU-CONFIG-RPATH.$(BITS))
+LDFLAGS += -R$(LIBSVNDIR) -R$(APR-CONFIG-RPATH) \
+	   -R$(APU-CONFIG-RPATH)
 
 CONFIGURE_ENV += RUBY="$(RUBY.1.9)"
 
 # Let's make noise just because we have to override --libdir
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS += --libdir=$(LIBSVNDIR.$(BITS))
+CONFIGURE_OPTIONS += --libdir=$(LIBSVNDIR)
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-shared 
 CONFIGURE_OPTIONS += --disable-libtool-lock 
 CONFIGURE_OPTIONS += --disable-experimental-libtool
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
+CONFIGURE_OPTIONS += --with-jdk=$(JAVA_HOME)
 CONFIGURE_OPTIONS += --with-apr=/usr/apr
 CONFIGURE_OPTIONS += --with-apr-util=/usr/apr-util
 CONFIGURE_OPTIONS += --enable-nls
@@ -109,30 +103,31 @@ CONFIGURE_OPTIONS += --disable-mod-activation
 CONFIGURE_OPTIONS += --enable-javahl
 CONFIGURE_OPTIONS += --with-swig
 CONFIGURE_OPTIONS += --with-utf8proc=internal
-CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG.$(BITS))
-CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG.$(BITS))
-CONFIGURE_OPTIONS.64 += --with-apxs=$(APXS.$(BITS))
-CONFIGURE_OPTIONS.64 += --with-apache-libexecdir=$(APACHE_LIBEXECDIR.$(BITS))
+CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG)
+CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG)
+CONFIGURE_OPTIONS += --with-apxs=$(APXS)
+CONFIGURE_OPTIONS += --with-apache-libexecdir=$(APACHE_LIBEXECDIR)
 # libgnome-keyring was obsoleted upstream, disable support for storing svn
 # passwords in gnome-keyring until svn is updated to use libsecret instead
 CONFIGURE_OPTIONS += --without-gnome-keyring
 
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
+# Build and install should be able to find tools like chmod, touch, or true
+COMPONENT_BUILD_ENV += PATH=$(PATH)
+COMPONENT_INSTALL_ENV += PATH=$(PATH)
 
-COMPONENT_POST_BUILD_ACTION.64 += \
-        ( cd $(BUILD_DIR_$(BITS)) && \
-            $(GMAKE) -j1 swig-pl )
-COMPONENT_POST_BUILD_ACTION = $(COMPONENT_POST_BUILD_ACTION.$(BITS))
-
+# Rename Python libraries to follow Python SOABI naming scheme
 COMPONENT_POST_INSTALL_ACTION += \
-	( cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/libsvn ; \
-		for i in *.so  ; \
-		do \
-		  t=`echo $$i | sed -e "s@.so@.cpython-39.so@g"` ; \
-		  ln -s $$i $$t ; \
-		done ) ; \
-	( cd $(PROTOUSRDIR)/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH) ; \
-		find . -name *.so -exec chmod 755 {} \; -print )
+	EXT_SUFFIX=$(shell $(PYTHON) -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))") ; \
+	for i in $(PROTO_DIR)$(PYTHON_LIB)/libsvn/*.so ; do \
+		[[ -f $$i ]] || continue ; \
+		[[ $${i%%$$EXT_SUFFIX} == $$i ]] || continue ; \
+		t=$${i%%.so}$$EXT_SUFFIX ; \
+		$(MV) $$i $$t ; \
+	done ;
+# Make sure built perl libraries are writable so we can modify them later
+COMPONENT_POST_INSTALL_ACTION += \
+	find $(PROTOUSRDIR)/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH) \
+		-name *.so -exec chmod +w {} \; -print ;
 
 COMPONENT_TEST_TRANSFORMS += \
 '-e "/libtool/d"' \
@@ -153,19 +148,20 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
 
-# PKGVERS is needed for manifest processing
-PKG_MACROS += PERLVER=$(PERL_VERSION)
+# SPARC needs math library
+ifeq ($(strip $(MACH)),sparc)
+REQUIRED_PACKAGES += system/library/math
+endif
 
-# Build dependencies
-REQUIRED_PACKAGES += library/py3c
-REQUIRED_PACKAGES += runtime/python-39
+# Manually added build dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/py3c
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += developer/versioning/subversion
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
 REQUIRED_PACKAGES += library/expat
@@ -174,4 +170,3 @@ REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/magic
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math

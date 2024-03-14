@@ -1,0 +1,114 @@
+#!/sbin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+. /lib/svc/share/smf_include.sh
+
+# SMF_FMRI is the name of the target service. This allows multiple instances
+# to use the same script.
+
+getproparg() {
+        val=`svcprop -p $1 $SMF_FMRI`
+        [ -n "$val" ] && echo $val
+}
+
+check_data_dir() {
+	if [ ! -d $PGDATA ]; then
+		echo "Error: postgresql_15/data directory $PGDATA does not exist"
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+
+	if [ ! -w $PGDATA ]; then
+		echo "Error: postgresql_15/data directory $PGDATA is not writable by postgres"
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+
+	if [ "$PGINIT" = "false" ]; then
+		echo "Notice: postgresql_15/data directory $PGDATA is not initialized"
+		echo "        Calling '$PGBIN/initdb -D $PGDATA' to initialize"
+		$PGBIN/initdb -D $PGDATA
+		if [ $? -ne 0 ]; then
+			echo "Error: initdb failed"
+			echo "Hint : If database is already initialized set postgresql_15/initialized property to true."
+			echo "        svccfg -s $SMF_FMRI \"setprop postgresql_15/initialized = boolean: true\""
+			echo "        svccfg -s $SMF_FMRI refresh"
+			exit $SMF_EXIT_ERR
+		fi
+		svccfg -s $SMF_FMRI "setprop postgresql_15/initialized = boolean: true"
+		svccfg -s $SMF_FMRI refresh
+	fi
+
+	if [ ! -d $PGDATA/base -o ! -d $PGDATA/global -o ! -f $PGDATA/PG_VERSION ]; then
+		if [ `ls -a $PGDATA | wc -w` -le 2 ]; then
+			echo "Error: postgresql_15/data directory $PGDATA is empty, but it should be initialized"
+			echo "Hint : check your mountpoints"
+		else
+			echo "Error: postgresql_15/data directory $PGDATA is not empty, nor is it a valid PostgreSQL data directory"
+		fi
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+}
+
+PGBIN=`getproparg postgresql_15/bin`
+PGDATA=`getproparg postgresql_15/data`
+PGLOG=`getproparg postgresql_15/log`
+PGINIT=`getproparg postgresql_15/initialized`
+
+if [ -z $SMF_FMRI ]; then
+	echo "Error: SMF framework variables are not initialized"
+	exit $SMF_EXIT_ERR
+fi
+
+if [ -z $PGDATA ]; then
+        echo "Error: postgresql_15/data property not set"
+        exit $SMF_EXIT_ERR_CONFIG
+fi
+
+if [ -z $PGLOG ]; then
+        echo "Error: postgresql_15/log property not set"
+        exit $SMF_EXIT_ERR_CONFIG
+fi
+
+
+case "$1" in
+'start')
+	check_data_dir
+        $PGBIN/pg_ctl -D $PGDATA -l $PGDATA/$PGLOG start
+        ;;
+
+'stop')
+        $PGBIN/pg_ctl -D $PGDATA -m fast stop
+        ;;
+
+'refresh')
+        $PGBIN/pg_ctl -D $PGDATA reload
+        ;;
+
+*)
+        echo "Usage: $0 {start|stop|refresh}"
+        exit 1
+        ;;
+
+esac
+exit $SMF_EXIT_OK

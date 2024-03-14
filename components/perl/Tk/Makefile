@@ -20,20 +20,31 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Tk
 HUMAN_VERSION =			804.036
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Tk - a Graphical User Interface Toolkit
 COMPONENT_CPAN_AUTHOR =		SREZIC
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:32aa7271a6bdfedc3330119b3825daddd0aa4b5c936f84ad74eabb932a200a5e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
-TEST_TARGET = $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
+
+# With default "symlink" cloney mode tests fails
+CLONEY_ARGS = CLONEY_MODE="hardlink"
+
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
+# Contains random address
+COMPONENT_TEST_TRANSFORMS += "-e '/^Stack moved/d'"
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig

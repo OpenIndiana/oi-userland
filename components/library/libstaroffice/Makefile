@@ -20,20 +20,20 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libstaroffice
 COMPONENT_VERSION=      0.0.7
-COMPONENT_REVISION=     1
-COMPONENT_FMRI=         library/c++/libstaroffice
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=  https://github.com/fosnola/libstaroffice/wiki	
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      libstaroffice - import filter for all StarOffice document
+COMPONENT_PROJECT_URL=  https://github.com/fosnola/libstaroffice/wiki	
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:f94fb0ad8216f97127bedef163a45886b43c62deac5e5b0f5e628e234220c8db
 COMPONENT_ARCHIVE_URL=  https://github.com/fosnola/libstaroffice/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/c++/libstaroffice
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MPLv2
 
 # Fix threading detection issue introduced with boost 1.64

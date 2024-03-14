@@ -23,13 +23,25 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python$(PYVER)/vendor-packages/colorama-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
-file path=usr/lib/python$(PYVER)/vendor-packages/colorama-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/colorama-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/colorama-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama-$(COMPONENT_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama-$(COMPONENT_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama-$(COMPONENT_VERSION).dist-info/licenses/LICENSE.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/colorama/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/colorama/ansi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/colorama/ansitowin32.py
 file path=usr/lib/python$(PYVER)/vendor-packages/colorama/initialise.py
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama/tests/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama/tests/ansi_test.py
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama/tests/ansitowin32_test.py
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama/tests/initialise_test.py
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama/tests/isatty_test.py
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama/tests/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/colorama/tests/winterm_test.py
 file path=usr/lib/python$(PYVER)/vendor-packages/colorama/win32.py
 file path=usr/lib/python$(PYVER)/vendor-packages/colorama/winterm.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata

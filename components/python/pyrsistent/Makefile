@@ -1,39 +1,40 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
-# Copyright 2021, Richard Lowe.
+#
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project pyrsistent
+#
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         pyrsistent
-COMPONENT_VERSION=      0.18.0
-COMPONENT_PROJECT_URL=  https://pypi.python.org/pypi/pyrsistent
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:773c781216f8c2900b42a7b638d5b517bb134ae1acbebe4d1e8f1f41ea60eb4b
-COMPONENT_ARCHIVE_URL=  https://pypi.python.org/packages/source/p/pyrsistent/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME =		pyrsistent
+HUMAN_VERSION =			0.20.0
+COMPONENT_SUMMARY =		pyrsistent - Persistent/Functional/Immutable data structures
+COMPONENT_PROJECT_URL =		https://github.com/tobgu/pyrsistent/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/ce/3a/5031723c09068e9c8c2f0bc25c3a9245f2b1d1aea8396c787a408f2b95ca/pyrsistent-0.20.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:4c48f78f62ab596c679086084d0dd13254ae4f3d6c72a83ffdf5ebdef8f265a4
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE.mit
 
-BUILD_BITS=		64
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
+TEST_STYLE = pytest
 
-TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library

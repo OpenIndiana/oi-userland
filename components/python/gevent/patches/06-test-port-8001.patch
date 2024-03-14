@@ -1,0 +1,21 @@
+Port 8001 is missing from /etc/services so getaddrinfo() would fail.
+We need to switch to some listed port.
+
+--- gevent-22.10.2/src/gevent/tests/test__issue230.py.orig
++++ gevent-22.10.2/src/gevent/tests/test__issue230.py
+@@ -11,13 +11,13 @@
+ 
+ 
+ def block():
+-    socket.getaddrinfo('localhost', 8001)
++    socket.getaddrinfo('localhost', 8080)
+ 
+ 
+ 
+ class Test(greentest.TestCase):
+     def test(self):
+-        socket.getaddrinfo('localhost', 8001)
++        socket.getaddrinfo('localhost', 8080)
+ 
+         p = multiprocessing.Process(target=block)
+         p.start()

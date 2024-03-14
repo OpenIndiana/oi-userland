@@ -1,0 +1,71 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 Andreas Wacknitz
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Files in libexec should be executable
+<transform file path=usr/libexec/.+ ->default mode 0555>
+
+file path=usr/include/libdbusmenu-glib-0.4/libdbusmenu-glib/client.h
+file path=usr/include/libdbusmenu-glib-0.4/libdbusmenu-glib/dbusmenu-glib.h
+file path=usr/include/libdbusmenu-glib-0.4/libdbusmenu-glib/enum-types.h
+file path=usr/include/libdbusmenu-glib-0.4/libdbusmenu-glib/menuitem-proxy.h
+file path=usr/include/libdbusmenu-glib-0.4/libdbusmenu-glib/menuitem.h
+file path=usr/include/libdbusmenu-glib-0.4/libdbusmenu-glib/server.h
+file path=usr/include/libdbusmenu-glib-0.4/libdbusmenu-glib/types.h
+file path=usr/include/libdbusmenu-glib-0.4/libdbusmenu-jsonloader/json-loader.h
+file path=usr/include/libdbusmenu-gtk3-0.4/libdbusmenu-gtk/client.h
+file path=usr/include/libdbusmenu-gtk3-0.4/libdbusmenu-gtk/dbusmenu-gtk.h
+file path=usr/include/libdbusmenu-gtk3-0.4/libdbusmenu-gtk/menu.h
+file path=usr/include/libdbusmenu-gtk3-0.4/libdbusmenu-gtk/menuitem.h
+file path=usr/include/libdbusmenu-gtk3-0.4/libdbusmenu-gtk/parser.h
+file path=usr/lib/$(MACH64)/girepository-1.0/Dbusmenu-0.4.typelib
+file path=usr/lib/$(MACH64)/girepository-1.0/DbusmenuGtk3-0.4.typelib
+link path=usr/lib/$(MACH64)/libdbusmenu-glib.so \
+    target=libdbusmenu-glib.so.4.0.12
+link path=usr/lib/$(MACH64)/libdbusmenu-glib.so.4 \
+    target=libdbusmenu-glib.so.4.0.12
+file path=usr/lib/$(MACH64)/libdbusmenu-glib.so.4.0.12
+link path=usr/lib/$(MACH64)/libdbusmenu-gtk3.so \
+    target=libdbusmenu-gtk3.so.4.0.12
+link path=usr/lib/$(MACH64)/libdbusmenu-gtk3.so.4 \
+    target=libdbusmenu-gtk3.so.4.0.12
+file path=usr/lib/$(MACH64)/libdbusmenu-gtk3.so.4.0.12
+link path=usr/lib/$(MACH64)/libdbusmenu-jsonloader.so \
+    target=libdbusmenu-jsonloader.so.4.0.12
+link path=usr/lib/$(MACH64)/libdbusmenu-jsonloader.so.4 \
+    target=libdbusmenu-jsonloader.so.4.0.12
+file path=usr/lib/$(MACH64)/libdbusmenu-jsonloader.so.4.0.12
+file path=usr/lib/$(MACH64)/pkgconfig/dbusmenu-glib-0.4.pc
+file path=usr/lib/$(MACH64)/pkgconfig/dbusmenu-gtk3-0.4.pc
+file path=usr/lib/$(MACH64)/pkgconfig/dbusmenu-jsonloader-0.4.pc
+file path=usr/libexec/dbusmenu-bench
+file path=usr/libexec/dbusmenu-dumper
+file path=usr/libexec/dbusmenu-testapp
+file path=usr/share/doc/libdbusmenu/README.dbusmenu-bench
+file path=usr/share/doc/libdbusmenu/examples/glib-server-nomenu.c
+file path=usr/share/gir-1.0/Dbusmenu-0.4.gir
+file path=usr/share/gir-1.0/DbusmenuGtk3-0.4.gir
+file path=usr/share/libdbusmenu/json/test-gtk-label.json
+file path=usr/share/vala/vapi/Dbusmenu-0.4.vapi
+file path=usr/share/vala/vapi/DbusmenuGtk3-0.4.vapi

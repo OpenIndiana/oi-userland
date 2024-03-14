@@ -21,46 +21,45 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2020, Andreas Wacknitz
-# Copyright (c) 2021, Klaus Ziegler
+# Copyright (c) 2023, Klaus Ziegler
 #
-
-BUILD_BITS=			64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
-COMPONENT_VERSION=      28.2
+COMPONENT_VERSION=      29.2
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ee21182233ef3232dc97b486af2d86e14042dbb65bbc535df562c3a858232488
+COMPONENT_ARCHIVE_HASH= sha256:7d3d2448988720bf4bf57ad77a5a08bf22df26160f90507a841ba986be2670dc
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			editor/gnu-emacs
 COMPONENT_CLASSIFICATION=	Development/Editors
 COMPONENT_LICENSE=		GPLv3
+COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # we build three different variants of emacs for our users. As Solaris
 # always has a 64-bit kernel, and 64-bit emacs can handle larger files,
 # we only build and deliver 64-bit binaries.
-X_VARIANT =	$(BUILD_DIR)/$(MACH64)-x
-NOX_VARIANT =	$(BUILD_DIR)/$(MACH64)-nox
-GTK_VARIANT =	$(BUILD_DIR)/$(MACH64)-gtk
-VARIANTS =	$(NOX_VARIANT) $(X_VARIANT) $(GTK_VARIANT)
+X_VARIANT=	$(BUILD_DIR)/$(MACH64)-x
+NOX_VARIANT=	$(BUILD_DIR)/$(MACH64)-nox
+GTK_VARIANT=	$(BUILD_DIR)/$(MACH64)-gtk
+VARIANTS=	$(NOX_VARIANT) $(X_VARIANT) $(GTK_VARIANT)
 
 $(VARIANTS:%=%/.configured):	BITS=64
 
-BUILD_64 = $(VARIANTS:%=%/.built)
-INSTALL_64 = $(VARIANTS:%=%/.installed)
+BUILD_64= $(VARIANTS:%=%/.built)
+INSTALL_64= $(VARIANTS:%=%/.installed)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-CFLAGS	+= $(shell pkg-config --cflags lcms2)
+CFLAGS += $(shell pkg-config --cflags lcms2)
 
 # LD_OPTIONS is defined to apply desirable link-editor options to Userland
 # components. Non-executable stack and data break sparc emacs.
@@ -69,12 +68,6 @@ LD_MAP_NOEXDATA.sparc=
 
 # LDFLAGS is defined for emacs to detect ncurses
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
-
-# This code is built with gcc. The primary reason for this is that the
-# configure script has problems using a non-GNU cpp. I am not aware of
-# any reason Sun Studio could not be made to work, but simply made a
-# cost/benefit decision not to pursue it at this time
-COMPILER =	gcc
 
 # Uncomment this for debugging only. It configures emacs to run from the
 # local proto instead of from its final installed location.
@@ -91,9 +84,23 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=yes
 CONFIGURE_OPTIONS +=	--with-xaw3d=no
 CONFIGURE_OPTIONS +=	--with-mailutils
-# Disable imagemagick (fixes https://www.illumos.org/issues/10354)
-CONFIGURE_OPTIONS +=	--without-imagemagick
+CONFIGURE_OPTIONS +=	--with-modules
+CONFIGURE_OPTIONS +=	--with-imagemagick
+CONFIGURE_OPTIONS +=	--with-threads
+CONFIGURE_OPTIONS +=	--with-png
+CONFIGURE_OPTIONS +=	--with-rsvg
+CONFIGURE_OPTIONS +=	--with-sqlite3
+CONFIGURE_OPTIONS +=	--with-tiff
+CONFIGURE_OPTIONS +=	--with-toolkit-scroll-bars
+CONFIGURE_OPTIONS +=	--with-webp
+CONFIGURE_OPTIONS +=	--with-treesitter
+CONFIGURE_OPTIONS +=	--with-sound=oss
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
+
+# SPARC needs this to be set in order to publish correctly.
+ifeq ($(strip $(MACH)),sparc)
+CONFIGURE_OPTIONS +=	--build=$(GCC_GNU_TRIPLET)
+endif
 
 # ASLR should remain disabled for emacs (the default);
 # build consistently core dumps with ASLR
@@ -104,7 +111,7 @@ LD_OPTIONS+= $(ASLR_MODE)
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
-$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3
+$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3 --with-xwidgets
 
 # we need to build all variants, but only have to install one in order
 # to get the common files shared by all. We use COMPONENT_POST_INSTALL_ACTION
@@ -117,7 +124,7 @@ $(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3
 # facilitates the use of 'gmake sample-manifest'.
 PBIN=		$(PROTO_DIR)/usr/bin
 PETC=		$(PROTO_DIR)/usr/share/emacs/$(COMPONENT_VERSION)/etc
-PPDMP=		$(PROTO_DIR)/usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)
+PPDMP=		$(PROTO_DIR)/usr/lib/emacs/$(COMPONENT_VERSION)/$(GCC_GNU_TRIPLET)
 PGBIN=		$(PROTO_DIR)/usr/gnu/bin
 PGSHAREMAN1=	$(PROTO_DIR)/usr/gnu/share/man/man1
 PSHAREMAN1=	$(PROTO_DIR)/usr/share/man/man1
@@ -213,9 +220,10 @@ install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed
 REQUIRED_PACKAGES += mail/mailutils
 
 # Auto-generated dependencies
-#REQUIRED_PACKAGES += editor/gnu-emacs
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += file/gnu-findutils
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/imagemagick
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
@@ -224,14 +232,17 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/tree-sitter
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
@@ -243,13 +254,15 @@ REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxpm
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
-#REQUIRED_PACKAGES += x11/library/toolkit/libxaw3d
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += x11/library/xcb-util

@@ -1,0 +1,54 @@
+--- caja-1.28.0/configure.ac.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/configure.ac	2024-02-26 08:42:41.073474185 +0100
+@@ -159,6 +159,51 @@
+ 
+ dnl ==========================================================================
+ 
++dnl ********************
++dnl * Check for libzfs *
++dnl ********************
++ZFS_LIBS=
++msg_zfs=no
++AC_CHECK_LIB(zfs, zfs_iter_root,
++   [AC_CHECK_HEADER(libzfs.h,
++       [AC_DEFINE(HAVE_ZFS, 1, [Define to 1 if ZFS is available])
++        ZFS_LIBS="-lzfs"
++        msg_zfs=yes])
++     ])
++AC_SUBST(ZFS_LIBS)
++
++dnl ==========================================================================
++
++dnl ********************
++dnl * Check for libscf*
++dnl ********************
++SCF_LIBS=
++msg_scf=no
++AC_CHECK_LIB(scf, scf_handle_bind,
++   [AC_CHECK_HEADER(libscf.h,
++       [AC_DEFINE(HAVE_SCF, 1, [Define to 1 if SCF is available])
++        SCF_LIBS="-lscf"
++        msg_scf=yes])
++     ])
++AC_SUBST(SCF_LIBS)
++
++dnl ==========================================================================
++
++dnl ********************
++dnl * Check for libscf*
++dnl ********************
++NVPAIR_LIBS=
++msg_nvpair=no
++AC_CHECK_LIB(nvpair, nvpair_value_match,
++   [AC_CHECK_HEADER(libscf.h,
++       [AC_DEFINE(NVPAIR_LIBS, 1, [Define to 1 if nvpair is available])
++        NVPAIR_LIBS="-lnvpair"
++        msg_nvpair=yes])
++     ])
++AC_SUBST(NVPAIR_LIBS)
++
++dnl ==========================================================================
++
+ dnl exempi checking
+ 
+ AM_CONDITIONAL(HAVE_EXEMPI, false)

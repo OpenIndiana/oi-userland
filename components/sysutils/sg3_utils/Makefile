@@ -24,30 +24,31 @@
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-BUILD_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
-GCC_VERSION= 10
-
 COMPONENT_NAME= sg3_utils
-COMPONENT_VERSION= 1.46
-COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_PROJECT_URL= http://sg.danny.cz/sg/sg3_utils.html
+COMPONENT_VERSION= 1.48
+COMPONENT_SUMMARY= Utilities for devices that use SCSI command sets
+COMPONENT_DESCRIPTION= Collection of utilities for devices that use the SCSI command set. Includes utilities to copy data based \
+					   on "dd" syntax and semantics (called sg_dd, sgp_dd and sgm_dd); check INQUIRY data and VPD pages (sg_inq); \
+					   check mode and log pages (sginfo, sg_modes and sg_logs); spin up and down disks (sg_start); do self tests \
+					   (sg_senddiag); and various other functions. Warning: Some of these tools access the internals of your \
+					   system and the incorrect usage of them may render your system inoperable.
+COMPONENT_PROJECT_URL= https://sg.danny.cz/sg/sg3_utils.html
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha256:701dfa3c828867f97e904d25f280346d46da9e582a66e6afebe2b294ae4a6176
-COMPONENT_ARCHIVE_URL= http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:d62b6c3cf20390fa7357044390084166d25f1d932a1135c450b69fe5c283d773
+COMPONENT_ARCHIVE_URL= https://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE= GPLv2+ and BSD 
-COMPONENT_SUMMARY= Utilities for devices that use SCSI command sets
 
 include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
-CFLAGS += -std=c99 $(CPP_XPG6MODE)
+CFLAGS += -std=c99 $(XPG6MODE)
 
-CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
@@ -57,20 +58,8 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	$(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; \
 	$(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool)
 
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
-# common targets
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(TEST_64)
-
-# build dependency
-REQUIRED_PACKAGES += developer/gcc-10
+PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-

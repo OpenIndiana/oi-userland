@@ -1,0 +1,47 @@
+diff -ur a/external/gpgmepp/ExternalPackage_gpgmepp.mk b/external/gpgmepp/ExternalPackage_gpgmepp.mk
+--- a/external/gpgmepp/ExternalPackage_gpgmepp.mk	2022-05-06 16:49:44.000000000 +0000
++++ b/external/gpgmepp/ExternalPackage_gpgmepp.mk	2022-10-26 18:31:31.221278169 +0000
+@@ -13,7 +13,7 @@
+ 
+ ifneq ($(DISABLE_DYNLOADING),TRUE)
+ 
+-ifeq ($(OS),LINUX)
++ifneq (,$(filter LINUX SOLARIS,$(OS)))
+ 
+ $(eval $(call gb_ExternalPackage_add_file,gpgmepp,$(LIBO_LIB_FOLDER)/libgpgmepp.so.6,lang/cpp/src/.libs/libgpgmepp.so.6.10.0))
+ $(eval $(call gb_ExternalPackage_add_file,gpgmepp,$(LIBO_LIB_FOLDER)/libgpgme.so.11,src/.libs/libgpgme.so.11.22.1))
+diff -ur a/external/libassuan/ExternalPackage_libassuan.mk b/external/libassuan/ExternalPackage_libassuan.mk
+--- a/external/libassuan/ExternalPackage_libassuan.mk	2022-05-06 16:49:44.000000000 +0000
++++ b/external/libassuan/ExternalPackage_libassuan.mk	2022-10-26 18:31:53.794531068 +0000
+@@ -13,7 +13,7 @@
+ 
+ ifneq ($(DISABLE_DYNLOADING),TRUE)
+ 
+-ifeq ($(OS),LINUX)
++ifneq (,$(filter LINUX SOLARIS,$(OS)))
+ 
+ $(eval $(call gb_ExternalPackage_add_file,libassuan,$(LIBO_LIB_FOLDER)/libassuan.so.0,src/.libs/libassuan.so.0.8.3))
+ 
+diff -ur a/external/libgpg-error/ExternalPackage_libgpg-error.mk b/external/libgpg-error/ExternalPackage_libgpg-error.mk
+--- a/external/libgpg-error/ExternalPackage_libgpg-error.mk	2022-05-06 16:49:44.000000000 +0000
++++ b/external/libgpg-error/ExternalPackage_libgpg-error.mk	2022-10-26 18:32:17.757841372 +0000
+@@ -13,7 +13,7 @@
+ 
+ ifneq ($(DISABLE_DYNLOADING),TRUE)
+ 
+-ifeq ($(OS),LINUX)
++ifneq (,$(filter LINUX SOLARIS,$(OS)))
+ 
+ $(eval $(call gb_ExternalPackage_add_file,libgpg-error,$(LIBO_LIB_FOLDER)/libgpg-error-lo.so.0,src/.libs/libgpg-error-lo.so.0.28.0))
+ 
+--- a/RepositoryExternal.mk	Fri May  6 16:49:44 2022
++++ b/RepositoryExternal.mk	Wed Oct 26 19:44:24 2022
+@@ -3631,7 +3631,7 @@
+ 
+ endif
+ 
+-ifneq ($(filter MACOSX LINUX,$(OS)),)
++ifneq ($(filter MACOSX LINUX SOLARIS,$(OS)),)
+ 
+ define gb_LinkTarget__use_gpgmepp
+ $(call gb_LinkTarget_use_package,$(1),gpgmepp)

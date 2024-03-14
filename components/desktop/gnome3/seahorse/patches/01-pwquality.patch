@@ -1,0 +1,68 @@
+to remove dependency on pwquality, which we do not have
+unsuitable for upstreaming
+
+diff -r 3ba313853648 gkr/meson.build
+--- a/gkr/meson.build	Tue Feb 11 14:18:42 2020 +0000
++++ b/gkr/meson.build	Tue Feb 11 14:20:06 2020 +0000
+@@ -17,7 +17,6 @@
+   gcr,
+   gcr_ui,
+   libsecret,
+-  libpwquality,
+   common_dep,
+ ]
+ 
+diff -r 3ba313853648 meson.build
+--- a/meson.build	Tue Feb 11 14:18:42 2020 +0000
++++ b/meson.build	Tue Feb 11 14:20:06 2020 +0000
+@@ -45,7 +45,6 @@
+ gcr = dependency('gcr-3',       version: '>=' + min_gcr_version)
+ gcr_ui = dependency('gcr-ui-3', version: '>=' + min_gcr_version)
+ libsecret = dependency('libsecret-1', version: '>= 0.16')
+-libpwquality = dependency('pwquality')
+ posix = valac.find_library('posix')
+ ssh_bin = find_program('ssh')
+ ssh_keygen = find_program('ssh-keygen')
+diff -r 4203bcce6634 gkr/gkr-item-add.vala
+--- a/gkr/gkr-item-add.vala	Wed Feb 12 10:43:00 2020 +0000
++++ b/gkr/gkr-item-add.vala	Wed Feb 12 10:48:59 2020 +0000
+@@ -31,7 +31,7 @@
+     [GtkChild]
+     private Gtk.Image password_strength_icon;
+ 
+-    private PasswordQuality.Settings pwquality = new PasswordQuality.Settings();
++    //private PasswordQuality.Settings pwquality = new PasswordQuality.Settings();
+ 
+     construct {
+         // Load up a list of all the keyrings, and select the default
+@@ -73,18 +73,18 @@
+     }
+ 
+     private void on_password_entry_changed (Gtk.Editable entry) {
+-        void* auxerr;
+-        int score = this.pwquality.check(entry.get_chars(), null, null, out auxerr);
+-
+-        if (score < 0) {
+-            PasswordQuality.Error err = ((PasswordQuality.Error) score);
+-            this.password_strength_icon.tooltip_text = dgettext("libpwquality", err.to_string(auxerr));
+-            this.password_strength_icon.show();
+-        } else {
+-            this.password_strength_icon.hide();
+-        }
+-
+-        this.password_strength_bar.value = ((score / 25) + 1).clamp(1, 5);
++        //void* auxerr;
++        //int score = this.pwquality.check(entry.get_chars(), null, null, out auxerr);
++//
++        //if (score < 0) {
++        //    PasswordQuality.Error err = ((PasswordQuality.Error) score);
++        //    this.password_strength_icon.tooltip_text = dgettext("libpwquality", err.to_string(auxerr));
++        //    this.password_strength_icon.show();
++        //} else {
++        //    this.password_strength_icon.hide();
++        //}
++//
++        //this.password_strength_bar.value = ((score / 25) + 1).clamp(1, 5);
+     }
+ 
+     public override void response(int resp) {

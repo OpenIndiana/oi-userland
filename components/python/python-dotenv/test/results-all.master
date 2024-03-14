@@ -1,0 +1,172 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --cov --cov-report=term-missing --cov-config setup.cfg
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: tests
+collecting ... collected 152 items
+
+tests/test_cli.py::test_get_default_path PASSED
+tests/test_cli.py::test_get_existing_value PASSED
+tests/test_cli.py::test_get_non_existent_file PASSED
+tests/test_cli.py::test_get_non_existent_value PASSED
+tests/test_cli.py::test_get_not_a_file PASSED
+tests/test_cli.py::test_list[None-x='a b c'-x=a b c\n] PASSED
+tests/test_cli.py::test_list[export-x='a b c'-export x='a b c'\n] PASSED
+tests/test_cli.py::test_list[json-x='a b c'-{\n  "x": "a b c"\n}\n] PASSED
+tests/test_cli.py::test_list[shell-x="'a b c'"-x=''"'"'a b c'"'"''\n] PASSED
+tests/test_cli.py::test_list[shell-x='"a b c"'-x='"a b c"'\n] PASSED
+tests/test_cli.py::test_list[shell-x='a b c'-x='a b c'\n] PASSED
+tests/test_cli.py::test_list[shell-x='a\nb\nc'-x='a\nb\nc'\n] PASSED
+tests/test_cli.py::test_list[simple-x="'a b c'"-x='a b c'\n] PASSED
+tests/test_cli.py::test_list[simple-x='"a b c"'-x="a b c"\n] PASSED
+tests/test_cli.py::test_list[simple-x='a b c'-x=a b c\n] PASSED
+tests/test_cli.py::test_list_no_file PASSED
+tests/test_cli.py::test_list_non_existent_file PASSED
+tests/test_cli.py::test_list_not_a_file PASSED
+tests/test_cli.py::test_run PASSED
+tests/test_cli.py::test_run_with_existing_variable PASSED
+tests/test_cli.py::test_run_with_existing_variable_not_overridden PASSED
+tests/test_cli.py::test_run_with_invalid_cmd PASSED
+tests/test_cli.py::test_run_with_none_value PASSED
+tests/test_cli.py::test_run_with_other_env PASSED
+tests/test_cli.py::test_run_with_version PASSED
+tests/test_cli.py::test_run_without_cmd PASSED
+tests/test_cli.py::test_set_export[dotenv_path0-true-a-x-export a='x'\n] PASSED
+tests/test_cli.py::test_set_export[dotenv_path1-false-a-x-a='x'\n] PASSED
+tests/test_cli.py::test_set_no_file PASSED
+tests/test_cli.py::test_set_non_existent_file PASSED
+tests/test_cli.py::test_set_quote_options[always-a-x-a='x'\n] PASSED
+tests/test_cli.py::test_set_quote_options[auto-a-$-a='$'\n] PASSED
+tests/test_cli.py::test_set_quote_options[auto-a-x y-a='x y'\n] PASSED
+tests/test_cli.py::test_set_quote_options[auto-a-x-a=x\n] PASSED
+tests/test_cli.py::test_set_quote_options[never-a-x-a=x\n] PASSED
+tests/test_cli.py::test_unset_existing_value PASSED
+tests/test_cli.py::test_unset_non_existent_value PASSED
+tests/test_ipython.py::test_ipython_existing_variable_no_override PASSED
+tests/test_ipython.py::test_ipython_existing_variable_override PASSED
+tests/test_ipython.py::test_ipython_new_variable PASSED
+tests/test_main.py::test_dotenv_values_file PASSED
+tests/test_main.py::test_dotenv_values_file_stream PASSED
+tests/test_main.py::test_dotenv_values_string_io[env0-a=$b-False-expected0] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env1-a=$b-True-expected1] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env10-a='${b}'-True-expected10] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env11-a=x${b}y-True-expected11] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env12-a=${a}-True-expected12] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env13-a=${a}-True-expected13] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env14-a=${a:-c}-True-expected14] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env15-a=${a:-c}-True-expected15] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env16-a=${b}${b}-True-expected16] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env17-b=d\na=${b}-True-expected17] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env18-a=b\na=c\nd=${a}-True-expected18] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env19-a=b\nc=${a}\nd=e\nc=${d}-True-expected19] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env2-a=${b}-False-expected2] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env3-a=${b}-True-expected3] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env4-a=${b:-d}-False-expected4] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env5-a=${b:-d}-True-expected5] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env6-b=c\na=${b}-True-expected6] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env7-a=${b}-True-expected7] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env8-a=${b:-d}-True-expected8] PASSED
+tests/test_main.py::test_dotenv_values_string_io[env9-a="${b}"-True-expected9] PASSED
+tests/test_main.py::test_find_dotenv_found PASSED
+tests/test_main.py::test_find_dotenv_no_file_no_raise PASSED
+tests/test_main.py::test_find_dotenv_no_file_raise PASSED
+tests/test_main.py::test_get_key_encoding PASSED
+tests/test_main.py::test_get_key_no_file PASSED
+tests/test_main.py::test_get_key_none PASSED
+tests/test_main.py::test_get_key_not_found PASSED
+tests/test_main.py::test_get_key_ok PASSED
+tests/test_main.py::test_load_dotenv_existing_file PASSED
+tests/test_main.py::test_load_dotenv_existing_variable_no_override PASSED
+tests/test_main.py::test_load_dotenv_existing_variable_override PASSED
+tests/test_main.py::test_load_dotenv_file_stream PASSED
+tests/test_main.py::test_load_dotenv_in_current_dir PASSED
+tests/test_main.py::test_load_dotenv_no_file_verbose PASSED
+tests/test_main.py::test_load_dotenv_redefine_var_used_in_file_no_override PASSED
+tests/test_main.py::test_load_dotenv_redefine_var_used_in_file_with_override PASSED
+tests/test_main.py::test_load_dotenv_string_io_utf_8 PASSED
+tests/test_main.py::test_set_key[-a-"b"-expected3-a='"b"'\n] PASSED
+tests/test_main.py::test_set_key[-a-'b'-expected2-a='\\'b\\''\n] PASSED
+tests/test_main.py::test_set_key[-a--expected0-a=''\n] PASSED
+tests/test_main.py::test_set_key[-a-b"c-expected5-a='b"c'\n] PASSED
+tests/test_main.py::test_set_key[-a-b'c-expected4-a='b\\'c'\n] PASSED
+tests/test_main.py::test_set_key[-a-b-expected1-a='b'\n] PASSED
+tests/test_main.py::test_set_key[a=b-a-c-expected6-a='c'\n] PASSED
+tests/test_main.py::test_set_key[a=b-c-d-expected12-a=b\nc='d'\n] PASSED
+tests/test_main.py::test_set_key[a=b\n-a-c-expected7-a='c'\n] PASSED
+tests/test_main.py::test_set_key[a=b\n-c-d-expected11-a=b\nc='d'\n] PASSED
+tests/test_main.py::test_set_key[a=b\n\n-a-c-expected8-a='c'\n\n] PASSED
+tests/test_main.py::test_set_key[a=b\nc=d-a-e-expected9-a='e'\nc=d] PASSED
+tests/test_main.py::test_set_key[a=b\nc=d\ne=f-c-g-expected10-a=b\nc='g'\ne=f] PASSED
+tests/test_main.py::test_set_key_encoding PASSED
+tests/test_main.py::test_set_key_no_file PASSED
+tests/test_main.py::test_set_key_permission_error PASSED
+tests/test_main.py::test_set_key_unauthorized_file PASSED
+tests/test_main.py::test_unset_encoding PASSED
+tests/test_main.py::test_unset_no_value PASSED
+tests/test_main.py::test_unset_non_existent_file PASSED
+tests/test_main.py::test_unset_with_value PASSED
+tests/test_parser.py::test_parse_stream[ a = b -expected4] PASSED
+tests/test_parser.py::test_parse_stream[ export 'a'=b-expected6] PASSED
+tests/test_parser.py::test_parse_stream[# a=b-expected7] PASSED
+tests/test_parser.py::test_parse_stream[# comment 1\n# comment 2-expected41] PASSED
+tests/test_parser.py::test_parse_stream[# comment\na="b\nc"\nd=e\n-expected39] PASSED
+tests/test_parser.py::test_parse_stream['a'=b-expected2] PASSED
+tests/test_parser.py::test_parse_stream[-expected0] PASSED
+tests/test_parser.py::test_parse_stream[[=b-expected3] PASSED
+tests/test_parser.py::test_parse_stream[\n\n-expected35] PASSED
+tests/test_parser.py::test_parse_stream[a: b-expected30] PASSED
+tests/test_parser.py::test_parse_stream[a="\nb=c-expected38] PASSED
+tests/test_parser.py::test_parse_stream[a="\xe0"-expected28] PASSED
+tests/test_parser.py::test_parse_stream[a="b c "-expected17] PASSED
+tests/test_parser.py::test_parse_stream[a="b\\"c"-expected25] PASSED
+tests/test_parser.py::test_parse_stream[a="b\\nc"-expected23] PASSED
+tests/test_parser.py::test_parse_stream[a="b\nc"-expected20] PASSED
+tests/test_parser.py::test_parse_stream[a="b\nc"-expected22] PASSED
+tests/test_parser.py::test_parse_stream[a='b c '-expected16] PASSED
+tests/test_parser.py::test_parse_stream[a='b\\'c'-expected26] PASSED
+tests/test_parser.py::test_parse_stream[a='b\\nc'-expected24] PASSED
+tests/test_parser.py::test_parse_stream[a='b\nc'-expected21] PASSED
+tests/test_parser.py::test_parse_stream[a=\nb=c-expected34] PASSED
+tests/test_parser.py::test_parse_stream[a=\xe0-expected27] PASSED
+tests/test_parser.py::test_parse_stream[a=b  c-expected13] PASSED
+tests/test_parser.py::test_parse_stream[a=b #c-expected9] PASSED
+tests/test_parser.py::test_parse_stream[a=b c -expected15] PASSED
+tests/test_parser.py::test_parse_stream[a=b c-expected11] PASSED
+tests/test_parser.py::test_parse_stream[a=b#c-expected8] PASSED
+tests/test_parser.py::test_parse_stream[a=b-expected1] PASSED
+tests/test_parser.py::test_parse_stream[a=b\n# comment 1-expected40] PASSED
+tests/test_parser.py::test_parse_stream[a=b\n\n-expected36] PASSED
+tests/test_parser.py::test_parse_stream[a=b\n\nc=d-expected37] PASSED
+tests/test_parser.py::test_parse_stream[a=b\nc=d-expected31] PASSED
+tests/test_parser.py::test_parse_stream[a=b\r\nc=d-expected33] PASSED
+tests/test_parser.py::test_parse_stream[a=b\rc=d-expected32] PASSED
+tests/test_parser.py::test_parse_stream[a=b\t#c-expected10] PASSED
+tests/test_parser.py::test_parse_stream[a=b\tc-expected12] PASSED
+tests/test_parser.py::test_parse_stream[a=b\xa0 c-expected14] PASSED
+tests/test_parser.py::test_parse_stream[export a=b-expected5] PASSED
+tests/test_parser.py::test_parse_stream[export export_a=1-expected18] PASSED
+tests/test_parser.py::test_parse_stream[export port=8000-expected19] PASSED
+tests/test_parser.py::test_parse_stream[no_value_var-expected29] PASSED
+tests/test_parser.py::test_parse_stream[uglyKey[%$="S3cr3t_P4ssw#rD" #\na=b-expected42] PASSED
+tests/test_utils.py::test_to_cli_string PASSED
+tests/test_variables.py::test_parse_variables[${a:-b}-expected3] PASSED
+tests/test_variables.py::test_parse_variables[${a}${b}-expected4] PASSED
+tests/test_variables.py::test_parse_variables[${a}-expected2] PASSED
+tests/test_variables.py::test_parse_variables[-expected0] PASSED
+tests/test_variables.py::test_parse_variables[a${b}c${d}e-expected5] PASSED
+tests/test_variables.py::test_parse_variables[a-expected1] PASSED
+tests/test_zip_imports.py::test_load_dotenv_gracefully_handles_zip_imports_when_no_env_file PASSED
+tests/test_zip_imports.py::test_load_dotenv_outside_zip_file_when_called_in_zipfile $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:298: CovReportWarning: Failed to generate report: No data to report.
+
+  self.cov_controller.finish()
+PASSED [100%]WARNING: Failed to generate report: No data to report.
+
+
+
+
+======== 152 passed ========
+  py$(PYV): OK
+  congratulations :)

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		XML::Simple
 HUMAN_VERSION =			2.25
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		XML::Simple - An API for simple XML files
 COMPONENT_CPAN_AUTHOR =		GRANTM
 COMPONENT_ARCHIVE_HASH =	\

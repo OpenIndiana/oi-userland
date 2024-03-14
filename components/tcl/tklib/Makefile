@@ -11,12 +11,14 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 # Copyright (c) 2018 Michal Nowak
+# Copyright (c) 2023 Klaus Ziegler
 #
-BUILD_BITS= 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tklib
 COMPONENT_VERSION=	0.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://core.tcl.tk/tklib/home
 COMPONENT_SUMMARY=	Collection of widgets and other packages for Tk
 COMPONENT_FMRI=         tcl/tklib
@@ -34,8 +36,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_POST_UNPACK_ACTION += \
 	mv tklib-$(COMPONENT_SRC) $(COMPONENT_SRC)
 
-CONFIGURE_OPTIONS.64	+= --with-tclsh=$(USRBINDIR64)/tclsh
-
 COMPONENT_POST_INSTALL_ACTION = \
         (for i in $$(find $(PROTO_DIR)$(USRSHAREMANDIR) -name '*.n') ; do \
            mandir="$$(dirname "$$i")"; \
@@ -44,5 +44,4 @@ COMPONENT_POST_INSTALL_ACTION = \
          done)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs

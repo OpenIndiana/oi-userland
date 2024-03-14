@@ -11,59 +11,43 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2023 Friedrich Kink
 #
 
-PREFERRED_BITS=64
-
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freetds
-COMPONENT_VERSION=	1.00.94
-IPS_COMPONENT_VERSION=	1.0.94
-COMPONENT_PROJECT_URL=	http://www.freetds.org/
+COMPONENT_VERSION=	1.4.10
 COMPONENT_SUMMARY=	FreeTDS command-line utilities
-COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_PROJECT_URL=	https://www.freetds.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:5fcf59a554eb3e72a09cc49c8dba5db8ad6dced07315ed775c4b8b2b81b603e4
-COMPONENT_ARCHIVE_URL=	ftp://ftp.freetds.org/pub/freetds/stable/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:4f58ee544c94a75263c9e71449ec9cf50be45c899243a4bdb73ba4cb96b8f038
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		database/freetds
-COMPONENT_LICENSE=	LGPLv2
-COMPONENT_LICENSE_FILE=	COPYING.LIB
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING.txt
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-LDFLAGS += -lsocket -lnsl
-CFLAGS += -I/usr/include/odbc
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--enable-threadsafe
-CONFIGURE_OPTIONS +=	--with-gnutls=$(CONFIGURE_PREFIX)/include/gnutls-3
-CONFIGURE_OPTIONS +=	--with-unixodbc=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-krb5
+CONFIGURE_OPTIONS += --enable-msdblib
+CONFIGURE_OPTIONS += --with-gnutls
 
-COMPONENT_POST_INSTALL_ACTION= \
-	(cd $(PROTOUSRDIR) ;  \
-	 $(MV) include/tds_sysdep_public.h include/tds_sysdep_public-$(BITS).h )
+COMPONENT_TEST_ARGS += -k
 
-# Some tests require SQL server to talk to (which we don't have), so they
-# fail in our case: http://www.freetds.org/userguide/confirminstall.htm#TESTS
-COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += library/unixodbc
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

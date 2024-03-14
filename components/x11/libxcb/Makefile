@@ -21,54 +21,54 @@
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
 
-X11_CATEGORY=LIB
+X11_CATEGORY= LIB
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxcb
-COMPONENT_VERSION=		1.14
+COMPONENT_VERSION=		1.16.1
 COMPONENT_FMRI=			x11/library/libxcb
 COMPONENT_SUMMARY=		The X protocol C-language Binding (XCB): Libraries
 COMPONENT_PROJECT_URL=	https://xcb.freedesktop.org
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:a55ed6db98d43469801262d81dc2572ed124edc3db31059d4e9916eb9f844c34
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://xorg.freedesktop.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:f24d187154c8e027b358fc7cb6588e35e33e6a92f11c668fe77396a7ae66e311
+COMPONENT_LICENSE_FILE=	COPYING
+
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --disable-libtool-lock 
-CONFIGURE_OPTIONS+= --enable-devel-docs=no 
-CONFIGURE_OPTIONS+= --enable-composite 
-CONFIGURE_OPTIONS+= --enable-damage 
-CONFIGURE_OPTIONS+= --enable-dpms 
-CONFIGURE_OPTIONS+= --enable-dri2 
-CONFIGURE_OPTIONS+= --enable-glx 
-CONFIGURE_OPTIONS+= --enable-randr 
-CONFIGURE_OPTIONS+= --enable-record 
-CONFIGURE_OPTIONS+= --enable-render 
-CONFIGURE_OPTIONS+= --enable-resource 
-CONFIGURE_OPTIONS+= --enable-screensaver 
-CONFIGURE_OPTIONS+= --enable-shape 
-CONFIGURE_OPTIONS+= --enable-shm 
-CONFIGURE_OPTIONS+= --enable-sync 
-CONFIGURE_OPTIONS+= --enable-xevie 
-CONFIGURE_OPTIONS+= --enable-xfixes 
-CONFIGURE_OPTIONS+= --enable-xfree86-dri 
-CONFIGURE_OPTIONS+= --enable-xinerama 
-CONFIGURE_OPTIONS+= --enable-xinput 
-CONFIGURE_OPTIONS+= --enable-xprint 
-CONFIGURE_OPTIONS+= --disable-selinux 
-CONFIGURE_OPTIONS+= --enable-xtest 
-CONFIGURE_OPTIONS+= --enable-xv 
-CONFIGURE_OPTIONS+= --enable-xvmc 
-CONFIGURE_OPTIONS+= --with-queue-size=32768 
-CONFIGURE_OPTIONS+= --with-pic
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-libtool-lock 
+CONFIGURE_OPTIONS += --enable-devel-docs=no 
+CONFIGURE_OPTIONS += --enable-composite 
+CONFIGURE_OPTIONS += --enable-damage 
+CONFIGURE_OPTIONS += --enable-dpms 
+CONFIGURE_OPTIONS += --enable-dri2 
+CONFIGURE_OPTIONS += --enable-glx 
+CONFIGURE_OPTIONS += --enable-randr 
+CONFIGURE_OPTIONS += --enable-record 
+CONFIGURE_OPTIONS += --enable-render 
+CONFIGURE_OPTIONS += --enable-resource 
+CONFIGURE_OPTIONS += --enable-screensaver 
+CONFIGURE_OPTIONS += --enable-shape 
+CONFIGURE_OPTIONS += --enable-shm 
+CONFIGURE_OPTIONS += --enable-sync 
+CONFIGURE_OPTIONS += --enable-xevie 
+CONFIGURE_OPTIONS += --enable-xfixes 
+CONFIGURE_OPTIONS += --enable-xfree86-dri 
+CONFIGURE_OPTIONS += --enable-xinerama 
+CONFIGURE_OPTIONS += --enable-xinput 
+CONFIGURE_OPTIONS += --enable-xprint 
+CONFIGURE_OPTIONS += --disable-selinux 
+CONFIGURE_OPTIONS += --enable-xtest 
+CONFIGURE_OPTIONS += --enable-xv 
+CONFIGURE_OPTIONS += --enable-xvmc 
+CONFIGURE_OPTIONS += --with-queue-size=32768 
+CONFIGURE_OPTIONS += --with-pic
 
-unexport SHELLOPTS
-
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/check
 REQUIRED_PACKAGES += x11/header/xcb-protocols
 REQUIRED_PACKAGES += x11/library/libpthread-stubs

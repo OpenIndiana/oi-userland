@@ -26,33 +26,35 @@
 #
 
 BUILD_BITS=	64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffutils
-COMPONENT_VERSION=	3.8
+COMPONENT_VERSION=	3.10
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	GNU Diffutils is a package of several programs related to finding differences between files
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/diffutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:a6bdd7d1b31266d11c4f4de6c1b748d4607ab0231af5188fc2533d0ae2438fec
+COMPONENT_ARCHIVE_HASH= sha256:90e5e93cc724e4ebe12ede80df1634063c7a855692685919bfe60b556c9bd09e
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-diffutils
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
-TEST_TARGER=	$(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
-# Tests failure
-unexport SHELLOPTS
+PATH = $(PATH.gnu)
 
 CFLAGS += $(CPP_LARGEFILES)
 CPPFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_BINDIR.64 =		$(CONFIGURE_PREFIX)/gnu/bin
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_PREFIX)/gnu/bin
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+# Tests failure
+unexport SHELLOPTS
 
-COMPONENT_TEST_DIR =	$(@D)/tests
+COMPONENT_TEST_DIR = $(@D)/tests
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
@@ -61,8 +63,10 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^/usr/gnu/bin/make.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
-COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
-COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
+COMPONENT_SYSTEM_TEST_DIR = $(@D)/tests
+# Note on tests: Some tests require the new version already to be installed because we have paths (eg. for diff3) hardcoded.
+# Even setting the PATH for the tests might not work as intended:
+COMPONENT_SYSTEM_TEST_ENV += PATH="$(PROTO_DIR)/usr/gnu/bin:$(PATH)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -70,7 +74,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 REQUIRED_PACKAGES += text/gnu-gettext
 
 # Test dependency
-REQUIRED_PACKAGES += developer/debug/valgrind
+TEST_REQUIRED_PACKAGES += developer/debug/valgrind
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

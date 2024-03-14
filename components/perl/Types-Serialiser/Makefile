@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Types::Serialiser
 HUMAN_VERSION =			1.01
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Types::Serialiser - simple data types for common serialisation formats
 COMPONENT_CPAN_AUTHOR =		MLEHMANN
 COMPONENT_ARCHIVE_HASH =	\

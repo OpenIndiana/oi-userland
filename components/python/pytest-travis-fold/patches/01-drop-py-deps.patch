@@ -1,0 +1,30 @@
+From 76dbf22b5b72198720ae24a1f25d2f2de1e2437d Mon Sep 17 00:00:00 2001
+From: Mohammed El-Afifi <Mohammed_ElAfifi@yahoo.com>
+Date: Tue, 13 Dec 2022 19:29:02 +0200
+Subject: [PATCH] Drop the dependency on `py` (#12)
+
+---
+ pytest_travis_fold.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/pytest_travis_fold.py b/pytest_travis_fold.py
+index 609ff76..a5b520b 100644
+--- a/pytest_travis_fold.py
++++ b/pytest_travis_fold.py
+@@ -13,7 +13,6 @@
+ from functools import partial, update_wrapper
+ 
+ import pytest
+-from py.builtin import _basestring
+ 
+ 
+ __author__ = "Eldar Abusalimov"
+@@ -82,7 +81,7 @@ def __init__(self, fold_enabled='auto'):
+         self.setup_fold_enabled(fold_enabled)
+ 
+     def setup_fold_enabled(self, value='auto'):
+-        if isinstance(value, _basestring):
++        if isinstance(value, str):
+             value = {
+                 'never': False,
+                 'always': True,

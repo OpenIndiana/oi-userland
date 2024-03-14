@@ -1,0 +1,160 @@
+diff -wpruN '--exclude=*.orig' a~/gdb/features/Makefile a/gdb/features/Makefile
+--- a~/gdb/features/Makefile	1970-01-01 00:00:00
++++ a/gdb/features/Makefile	1970-01-01 00:00:00
+@@ -99,6 +99,11 @@ OUTPUTS = $(patsubst %,$(outdir)/%.dat,$
+ # --enable-targets=all GDB.  You can override this by passing XMLTOC
+ # to make on the command line.
+ XMLTOC = \
++	i386/amd64-avx-illumos.xml \
++	i386/amd64-illumos.xml \
++	i386/i386-avx-illumos.xml \
++	i386/i386-illumos.xml \
++	i386/i386-mmx-illumos.xml \
+ 	microblaze-with-stack-protect.xml \
+ 	microblaze.xml \
+ 	mips-dsp-linux.xml \
+@@ -227,6 +232,8 @@ FEATURE_XMLFILES = aarch64-core.xml \
+ 	i386/64bit-pkeys.xml \
+ 	i386/64bit-sse.xml \
+ 	i386/x32-core.xml \
++	i386/32bit-illumos.xml \
++	i386/64bit-illumos.xml \
+ 	loongarch/base32.xml \
+ 	loongarch/base64.xml \
+ 	riscv/rv32e-xregs.xml \
+diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/32bit-illumos.xml a/gdb/features/i386/32bit-illumos.xml
+--- a~/gdb/features/i386/32bit-illumos.xml	1970-01-01 00:00:00
++++ a/gdb/features/i386/32bit-illumos.xml	1970-01-01 00:00:00
+@@ -0,0 +1,11 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!DOCTYPE feature SYSTEM "gdb-target.dtd">
++<feature name="org.gnu.gdb.i386.illumos">
++  <reg name="orig_eax" bitsize="32" type="int" regnum="41"/>
++</feature>
+diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/64bit-illumos.xml a/gdb/features/i386/64bit-illumos.xml
+--- a~/gdb/features/i386/64bit-illumos.xml	1970-01-01 00:00:00
++++ a/gdb/features/i386/64bit-illumos.xml	1970-01-01 00:00:00
+@@ -0,0 +1,11 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!DOCTYPE feature SYSTEM "gdb-target.dtd">
++<feature name="org.gnu.gdb.i386.illumos">
++  <reg name="orig_rax" bitsize="64" type="int" regnum="57"/>
++</feature>
+diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/amd64-avx-illumos.xml a/gdb/features/i386/amd64-avx-illumos.xml
+--- a~/gdb/features/i386/amd64-avx-illumos.xml	1970-01-01 00:00:00
++++ a/gdb/features/i386/amd64-avx-illumos.xml	1970-01-01 00:00:00
+@@ -0,0 +1,18 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- AMD64 with AVX - illumos.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386:x86-64</architecture>
++  <osabi>illumos</osabi>
++  <xi:include href="64bit-core.xml"/>
++  <xi:include href="64bit-sse.xml"/>
++  <xi:include href="64bit-illumos.xml"/>
++  <xi:include href="64bit-avx.xml"/>
++</target>
+diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/amd64-illumos.xml a/gdb/features/i386/amd64-illumos.xml
+--- a~/gdb/features/i386/amd64-illumos.xml	1970-01-01 00:00:00
++++ a/gdb/features/i386/amd64-illumos.xml	1970-01-01 00:00:00
+@@ -0,0 +1,17 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- AMD64 - illumos.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386:x86-64</architecture>
++  <osabi>illumos</osabi>
++  <xi:include href="64bit-core.xml"/>
++  <xi:include href="64bit-sse.xml"/>
++  <xi:include href="64bit-illumos.xml"/>
++</target>
+diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/i386-avx-illumos.xml a/gdb/features/i386/i386-avx-illumos.xml
+--- a~/gdb/features/i386/i386-avx-illumos.xml	1970-01-01 00:00:00
++++ a/gdb/features/i386/i386-avx-illumos.xml	1970-01-01 00:00:00
+@@ -0,0 +1,18 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- I386 with AVX - illumos.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386</architecture>
++  <osabi>illumos</osabi>
++  <xi:include href="32bit-core.xml"/>
++  <xi:include href="32bit-sse.xml"/>
++  <xi:include href="32bit-illumos.xml"/>
++  <xi:include href="32bit-avx.xml"/>
++</target>
+diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/i386-illumos.xml a/gdb/features/i386/i386-illumos.xml
+--- a~/gdb/features/i386/i386-illumos.xml	1970-01-01 00:00:00
++++ a/gdb/features/i386/i386-illumos.xml	1970-01-01 00:00:00
+@@ -0,0 +1,17 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- I386 with SSE - illumos.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386</architecture>
++  <osabi>illumos</osabi>
++  <xi:include href="32bit-core.xml"/>
++  <xi:include href="32bit-illumos.xml"/>
++  <xi:include href="32bit-sse.xml"/>
++</target>
+diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/i386-mmx-illumos.xml a/gdb/features/i386/i386-mmx-illumos.xml
+--- a~/gdb/features/i386/i386-mmx-illumos.xml	1970-01-01 00:00:00
++++ a/gdb/features/i386/i386-mmx-illumos.xml	1970-01-01 00:00:00
+@@ -0,0 +1,16 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- I386 with MMX - illumos.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386</architecture>
++  <osabi>illumos</osabi>
++  <xi:include href="32bit-core.xml"/>
++  <xi:include href="32bit-illumos.xml"/>
++</target>

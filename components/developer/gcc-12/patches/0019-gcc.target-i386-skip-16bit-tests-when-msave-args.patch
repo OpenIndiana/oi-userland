@@ -1,0 +1,33 @@
+From 14791c0e969dc79b6836240b1abfbf889a7ed486 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Fri, 3 May 2019 01:22:56 +0000
+Subject: gcc.target/i386: skip 16bit tests when -msave-args
+
+---
+ gcc/testsuite/gcc.target/i386/pr78691-i386.c | 1 +
+ gcc/testsuite/gcc.target/i386/pr80569.c      | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/gcc/testsuite/gcc.target/i386/pr78691-i386.c b/gcc/testsuite/gcc.target/i386/pr78691-i386.c
+index f4b88559bc3..5f8c91bc370 100644
+--- a/gcc/testsuite/gcc.target/i386/pr78691-i386.c
++++ b/gcc/testsuite/gcc.target/i386/pr78691-i386.c
+@@ -1,5 +1,6 @@
+ /* PR tree-optimization/78691 */
+ /* { dg-options "-Os -m16" } */
++/* { dg-skip-if "" { *-*-* } "-msave-args" "" } */
+ 
+ int fn1(char *p1, char *p2) {
+   int a;
+diff --git a/gcc/testsuite/gcc.target/i386/pr80569.c b/gcc/testsuite/gcc.target/i386/pr80569.c
+index 8e11c40bb08..92a86380f78 100644
+--- a/gcc/testsuite/gcc.target/i386/pr80569.c
++++ b/gcc/testsuite/gcc.target/i386/pr80569.c
+@@ -1,6 +1,7 @@
+ /* PR target/80569 */
+ /* { dg-do assemble } */
+ /* { dg-options "-O2 -m16 -march=haswell" } */
++/* { dg-skip-if "" { *-*-* } "-msave-args" "" } */
+ 
+ void load_kernel(void *setup_addr)
+ {

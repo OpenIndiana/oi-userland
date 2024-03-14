@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Digest::HMAC
 HUMAN_VERSION =			1.04
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Digest::HMAC - Keyed-Hashing for Message Authentication
 COMPONENT_CPAN_AUTHOR =		ARODLAND
 COMPONENT_ARCHIVE_HASH =	\

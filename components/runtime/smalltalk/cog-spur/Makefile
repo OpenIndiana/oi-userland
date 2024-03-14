@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024 David Stes
 #
 
 
@@ -19,7 +19,13 @@
 #
 
 # opensmalltalk-vm can be built both in 32 and 64bit
-BUILD_BITS=32_and_64
+# since december 2023 version 5.0.3339 we only deliver ELF64 bit executables
+# because the required 32bit libraries are no longer available
+BUILD_BITS=64
+USE_COMMON_TEST_MASTER= no
+
+# the SSL module is supporting 1.1 and 3.x but SUnit testframework is not
+USE_OPENSSL10=yes
 
 include ../../../../make-rules/shared-macros.mk
 
@@ -28,9 +34,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		cog-spur
-COMPONENT_VERSION=	5.0.3254
-GIT_TAG=		sun-v5.0.54
-PLUGIN_REV=		5.0-202210151805-cog
+COMPONENT_VERSION=	5.0.3351
+GIT_TAG=		sun-v5.0.62
+PLUGIN_REV=		5.0-202402252018-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/cog-spur
@@ -44,10 +50,13 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9d4ed9f06796c036bcd6a7352036f12e33609071ce1d3499b144fd5095d8b324
+COMPONENT_ARCHIVE_HASH=	sha256:3eec084e9620a9552a8ab87e4eb19a98b5f6b639f6907dba0e047103c033ff2d
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
-TEST_TARGET= $(NO_TESTS)
+# run SUnit tests in the build directories on 32bit and 64bit Squeak images
+# AllocationTest and BitmapStreamTests are currently skipped
+# see comments in the Squeak.image on those tests
+COMPONENT_TEST_CMD=	$(COMPONENT_TEST_RESULTS_DIR)/testrunner.sh $(BITS) $(COMPONENT_DIR) $(BUILD_DIR_$(BITS))
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -97,6 +106,10 @@ CONFIGURE_ENV    +=     LIBS="$(LIBS)"
 CONFIGURE_ENV.32 +=	TARGET_ARCH="-m32"
 CONFIGURE_ENV.64 +=	TARGET_ARCH="-m64"
 
+# for pkgsend generate (sample-manifest)
+# the actual manifest uses a mediator mediated hardlink for the squeak manpage
+PKG_HARDLINKS    += usr/share/man/man1/squeak.1
+
 # the opensmalltalk Makefile does not use DESTDIR
 COMPONENT_INSTALL_ARGS=  	ROOT=$(PROTO_DIR)
 COMPONENT_BUILD_TARGETS= 	getversion squeak plugins ckformat
@@ -127,7 +140,6 @@ REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += x11/library/libxevie
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/pulseaudio

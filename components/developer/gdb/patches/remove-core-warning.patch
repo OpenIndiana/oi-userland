@@ -1,0 +1,24 @@
+# The warning below appears multiple times for .reg2 when debugging a core
+# file on x86.  Can't set REGSET_VARIABLE_SIZE flag, so
+# just remove the warning.
+# Note: this patch may not be appropriate for upstream;
+# it may eventually be removed.
+
+diff -wpruN '--exclude=*.orig' a~/gdb/corelow.c a/gdb/corelow.c
+--- a~/gdb/corelow.c	1970-01-01 00:00:00
++++ a/gdb/corelow.c	1970-01-01 00:00:00
+@@ -650,11 +650,14 @@ core_target::get_core_register_section (
+ 	       section_name.c_str ());
+       return;
+     }
++#if !defined(__sun) && !defined(__SVR4)
++	/* skip this warning for illumos */
+   if (size != section_min_size && !variable_size_section)
+     {
+       warning (_("Unexpected size of section `%s' in core file."),
+ 	       section_name.c_str ());
+     }
++#endif
+ 
+   gdb::byte_vector contents (size);
+   if (!bfd_get_section_contents (core_bfd, section, contents.data (),

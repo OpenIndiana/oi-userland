@@ -24,10 +24,9 @@
 #
 
 #
-# For Python >= 3.5: drop the path with /64/ in it (i.e., we put the 64-bit
-# library in the 32-bit path for simplicity), and tell pkglint that
-# doing so is OK.
+# Drop the path with /64/ in it (i.e., we put the 64-bit library in the 32-bit
+# path for simplicity), and tell pkglint that doing so is OK.
 #
-<transform file path=usr/lib/python3.([5-9])/vendor-packages(.*/64/).+\.so$ -> drop>
-<transform file path=usr/lib/python3.([5-9])/vendor-packages(?!.*/64/).+\.so$ -> \
+<transform file path=usr/lib/python3\.\d+/vendor-packages.*/64/.+\.so$ -> drop>
+<transform file path=usr/lib/python3\.\d+/vendor-packages(?!.*/64/).+\.so$ -> \
     add pkg.linted.userland.action001.2 true>

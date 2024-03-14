@@ -16,34 +16,47 @@
 # Copyright 2021 omnios.org wrt the ctx patches
 # Copyright 2022 Daniel Bell
 
-#USE_OPENSSL11= yes
+BUILD_STYLE= configure
+BUILD_BITS= 64
+# Virtualbox uses the default openssl. It was not possible to provide configure the include and library paths separately
+# and thus, it doesn't find anything else than the default which is 1.0 at the moment.
+USE_OPENSSL10= yes
 include ../../../make-rules/shared-macros.mk
+GCC_VERSION= 12
+gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      6.1.38
-COMPONENT_REVISION =	0
+COMPONENT_VERSION=      6.1.48
+COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
-COMPONENT_FMRI=         system/virtualbox
-COMPONENT_CLASSIFICATION= System/Virtualization
-
 COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-
-COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= $(shell sed -E '/ [ \*]$(COMPONENT_ARCHIVE)$$/!d;s/(^[0-9a-fA-F]+)( .*)/sha256:\1/' $(COMPONENT_DIR)/$(COMPONENT_NAME).sums)
+COMPONENT_FMRI=         system/virtualbox
+COMPONENT_CLASSIFICATION=System/Virtualization
 COMPONENT_LICENSE=      GPLv2
 
-# Get build number from SDK zip entry in the checksum file
-SDK_BUILD_NUMBER=	$(shell sed -E '/ [ \*]VirtualBoxSDK.*zip/!d;s/(^[0-9a-fA-F]+ [ \*]VirtualBoxSDK-[0-9\.]+-)([0-9]+)(.*$$)/\2/' $(COMPONENT_DIR)/$(COMPONENT_NAME).sums)
+HASH_DIR= $(COMPONENT_DIR)/hashes
+export HASH_DIR
+
+FETCH_KEEP= -n --keep
+DEFAULT_HASH_FILES= SHA256SUMS
+export DEFAULT_HASH_FILES
+
+# We need the hashfile before even parsing the Makefile since we need the build number from it.
+ifeq (,$(wildcard $(HASH_DIR)/SHA256SUMS))
+$(shell curl -q -o $(HASH_DIR)/SHA256SUMS $(COMPONENT_DOWNLOAD_URL)/SHA256SUMS)
+endif
+SDK_BUILD_NUM=$(shell sed -E '/ [ \*]VirtualBoxSDK.*zip/!d;s/(^[0-9a-fA-F]+ [ \*]VirtualBoxSDK-[0-9\.]+-)([0-9]+)(.*$$)/\2/' $(HASH_DIR)/SHA256SUMS)
+
 
 COMPONENT_NAME_1=       VirtualBoxSDK
-COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-$(SDK_BUILD_NUMBER)
+COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-$(SDK_BUILD_NUM)
 COMPONENT_SRC_1=        $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
-COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_HASH_1= $(shell sed -E '/ [ \*]$(COMPONENT_ARCHIVE_1)$$/!d;s/(^[0-9a-fA-F]+)( .*)/sha256:\1/' $(COMPONENT_DIR)/$(COMPONENT_NAME).sums)
+COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_LICENSE_1=	GPLv2
 
 UNPACK_ARGS_1=		-r $(COMPONENT_SRC_1)
@@ -51,11 +64,14 @@ UNPACK_ARGS_1=		-r $(COMPONENT_SRC_1)
 COMPONENT_POST_UNPACK_ACTION_1 = \
 	cd $(COMPONENT_SRC); $(LN) -s ../$(COMPONENT_SRC_1)/sdk .;
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+FLAVOUR=release
+#FLAVOUR=debug
+CC= /usr/gcc/$(GCC_VERSION_MAJOR)/bin/gcc
+CXX= /usr/gcc/$(GCC_VERSION_MAJOR)/bin/g++
 
 INSTALL_ADDITIONS = $(BUILD_DIR)/.install_additions
 
@@ -67,8 +83,8 @@ X11_SERVERINP_DIR.32=/usr/lib/xorg/modules/input
 X11_SERVERINP_DIR.64=/usr/lib/xorg/modules/input/$(MACH64)
 X11_SERVERINP_DIR=$(X11_SERVERMODS_DIR.64)
 
-VBOX_BINDIR= $(BUILD_DIR_64)/out/solaris.$(MACH64)/release/bin/additions/
-VBOX_BINDIR.32= $(BUILD_DIR_32)/out/solaris.x86/release/bin/additions/
+VBOX_BINDIR= $(BUILD_DIR_64)/out/solaris.$(MACH64)/$(FLAVOUR)/bin/additions/
+VBOX_BINDIR.32= $(BUILD_DIR_32)/out/solaris.x86/$(FLAVOUR)/bin/additions/
 VBOX_MODULES= vboxguest vboxms vboxvideo
 VBOX_FS_MODULES= vboxfs
 
@@ -154,17 +170,20 @@ CONFIGURE_OPTIONS+= --disable-docs
 # See: https://www.virtualbox.org/ticket/18544 for more info
 #CONFIGURE_OPTIONS+= --enable-pulse
 CONFIGURE_OPTIONS+= --disable-python
+CONFIGURE_OPTIONS+= --disable-java
 CONFIGURE_OPTIONS+= --disable-sdl-ttf
 CONFIGURE_OPTIONS+= --disable-libvpx
-CONFIGURE_OPTIONS+= --nofatal
+# CONFIGURE_OPTIONS+= --nofatal
 CONFIGURE_OPTIONS+= --enable-webservice
 CONFIGURE_OPTIONS+= --enable-vnc
+CONFIGURE_OPTIONS.debug += --build-debug
 
 CONFIGURE_OPTIONS.32 = --only-additions
 CONFIGURE_OPTIONS.32 += --target-arch=x86
 CONFIGURE_OPTIONS.64 = --enable-qt5
 
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(FLAVOUR))
 
 VBOX_PREFIX   = /opt/VirtualBox
 VBOX_LIBDIR   = $(VBOX_PREFIX)/$(MACH64)
@@ -175,7 +194,7 @@ VBOX_QT5_RPATH= $(VBOX_LIBDIR):$(GCC_LIBDIR):$(QT5_ROOT)/lib/$(MACH64)
 # https://www.virtualbox.org/manual/UserManual.html#otherextpacks.
 COMPONENT_POST_INSTALL_ACTION = \
 	build/amd64/kBuild/bin/solaris.amd64/kmk -C $(@D)/src/VBox/ExtPacks/VNC packing; \
-	pushd $(@D)/out/solaris.amd64/release/packages/; \
+	pushd $(@D)/out/solaris.amd64/$(FLAVOUR)/packages/; \
 	mkdir -p $(PROTO_DIR)$(VBOX_PREFIX)/ExtensionPacks/; \
 	install -m 644 VNC-*.vbox-extpack $(PROTO_DIR)$(VBOX_PREFIX)/ExtensionPacks/VNC-$(COMPONENT_VERSION).vbox-extpack; \
 	popd; \
@@ -225,13 +244,11 @@ $(BUILD_32_and_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)
 
 # Sometimes 32-bit build is skipped silently. Better build like this:
 #	gmake build install sample-manifest
-build:		$(BUILD_32_and_64)
 
 $(INSTALL_64): GMAKE= cd $(@D)/src/VBox/Installer && $(SHELL) -c ". $(@D)/env.sh && kmk solaris-install VBOX_PATH_SI_SCRATCH_PKG=$(PROTO_DIR)"
 
 install:	$(INSTALL_64) $(INSTALL_ADDITIONS)
 
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += driver/usb
@@ -249,6 +266,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/gsoap
+REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/sdl

@@ -1,0 +1,26 @@
+diff -Naur libreoffice-7.6.0.0.beta1/external/skia.old/illumos-no-malloc-usable-size.patch libreoffice-7.6.0.0.beta1/external/skia/illumos-no-malloc-usable-size.patch
+--- libreoffice-7.6.0.0.beta1/external/skia.old/illumos-no-malloc-usable-size.patch	1969-12-31 19:00:00.000000000 -0500
++++ libreoffice-7.6.0.0.beta1/external/skia/illumos-no-malloc-usable-size.patch	2023-06-21 16:43:40.798954904 -0400
+@@ -0,0 +1,11 @@
++--- skia/src/base/SkContainers.cpp.old	2023-06-21 16:39:34.295412401 -0400
+++++ skia/src/base/SkContainers.cpp	2023-06-21 16:39:55.779378998 -0400
++@@ -38,7 +38,7 @@
++     #elif defined(SK_BUILD_FOR_ANDROID) && __ANDROID_API__ >= 17
++         completeSize = malloc_usable_size(ptr);
++         SkASSERT(completeSize >= size);
++-    #elif defined(SK_BUILD_FOR_UNIX)
+++    #elif defined(SK_BUILD_FOR_UNIX) && !defined(__illumos__)
++         completeSize = malloc_usable_size(ptr);
++         SkASSERT(completeSize >= size);
++     #elif defined(SK_BUILD_FOR_WIN)
+diff -Naur core-e19e193f88cd6c0525a17fb7a176ed8e6a3e2aa1/external/skia/UnpackedTarball_skia.mk.old core-e19e193f88cd6c0525a17fb7a176ed8e6a3e2aa1/external/skia/UnpackedTarball_skia.mk
+--- core-e19e193f88cd6c0525a17fb7a176ed8e6a3e2aa1/external/skia/UnpackedTarball_skia.mk.old	2023-12-02 09:55:43.216743100 -0500
++++ core-e19e193f88cd6c0525a17fb7a176ed8e6a3e2aa1/external/skia/UnpackedTarball_skia.mk	2023-12-02 09:56:03.764496725 -0500
+@@ -40,6 +40,7 @@
+     redefinition-of-op.patch.0 \
+     0001-Added-missing-include-cstdio.patch \
+     0001-AvoidCombiningExtrememelyLargeMeshes.patch.1 \
++    illumos-no-malloc-usable-size.patch \
+ 
+ $(eval $(call gb_UnpackedTarball_set_patchlevel,skia,1))
+ 

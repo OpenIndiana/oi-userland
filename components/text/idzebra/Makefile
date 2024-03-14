@@ -12,15 +12,16 @@
 #
 # Copyright 2016 Alexander Pyhalov
 #
-BUILD_BITS=	64_and_32
+BUILD_BITS=	64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= idzebra
-COMPONENT_VERSION= 2.2.3
+COMPONENT_VERSION= 2.2.7
 COMPONENT_SUMMARY= idzebra - text indexing and retrieval engine
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:85ade449d161d97df47d4a8910a53a5ea3bd5e3598b6189d86fc8986a8effea4
+COMPONENT_ARCHIVE_HASH=	sha256:b465ffeb060f507316e6cfc20ebd46022472076d0d4e96ef7dab63e798066420
 COMPONENT_ARCHIVE_URL=	https://ftp.indexdata.com/pub/zebra/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.indexdata.com/resources/software/zebra/
 COMPONENT_FMRI= text/idzebra
@@ -35,33 +36,16 @@ COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
 
+CONFIGURE_OPTIONS += --enable-static=no
+
 # Without this tests fail
 unexport SHELLOPTS
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ERROR:/p" '
-
-# Remove trailing -2.0 from apps:
-COMPONENT_POST_INSTALL_ACTION.32 = \
-	( cd $(PROTO_DIR)/usr/bin/$(MACH32) && \
-	  $(MV) ./idzebra-config-2.0 ./idzebra-config && \
-	  $(MV) ./zebraidx-2.0 ./zebraidx && \
-	  $(MV) ./zebrasrv-2.0 ./zebrasrv )
-
-COMPONENT_POST_INSTALL_ACTION.64 = \
-	( cd $(PROTO_DIR)/usr/bin && \
-	  $(MV) ./idzebra-config-2.0 ./idzebra-config && \
-	  $(MV) ./zebraidx-2.0 ./zebraidx && \
-	  $(MV) ./zebrasrv-2.0 ./zebrasrv )
-
-# Manually added build dependencies
-REQUIRED_PACKAGES += runtime/tcl-8
+COMPONENT_POST_INSTALL_ACTION = ( \
+	cd $(PROTO_DIR)/usr/bin && \
+	$(MV) ./idzebra-config-2.0 ./idzebra-config && \
+	$(MV) ./zebraidx-2.0 ./zebraidx && \
+	$(MV) ./zebrasrv-2.0 ./zebrasrv )
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
@@ -70,6 +54,7 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-534
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		ExtUtils::Config
 HUMAN_VERSION =			0.008
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		ExtUtils::Config - A wrapper for perl's configuration
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\

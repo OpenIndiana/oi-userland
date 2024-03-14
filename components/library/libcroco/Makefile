@@ -14,11 +14,11 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libcroco
 COMPONENT_VERSION= 0.6.13
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Cascading Style Sheet (CSS) parsing and manipulation toolkit
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -41,7 +41,7 @@ CONFIGURE_OPTIONS += --disable-dependency-tracking
 # Needed to make tests work
 # Tests fail because of poor quality
 COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
-COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TARGETS= test
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2

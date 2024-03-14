@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Devel::Cycle
 HUMAN_VERSION =			1.12
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Devel::Cycle - Find memory cycles in objects
 COMPONENT_CPAN_AUTHOR =		LDS
 COMPONENT_ARCHIVE_HASH =	\

@@ -1,0 +1,72 @@
+--- clamav-1.1.0/libfreshclam/CMakeLists.txt	2023-04-28 22:54:01.000000000 +0200
++++ clamav-1.1.0/libfreshclam/CMakeLists.txt.new	2023-05-03 21:16:52.477856750 +0200
+@@ -56,11 +56,11 @@
+         endif()
+     endif()
+ 
+-    if(WIN32)
+-        set_target_properties(freshclam PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+-    elseif(UNIX AND NOT APPLE)
+-        target_link_options(freshclam PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfreshclam.map")
+-    endif()
++#    if(WIN32)
++#        set_target_properties(freshclam PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
++#    elseif(UNIX AND NOT APPLE)
++#        target_link_options(freshclam PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfreshclam.map")
++#    endif()
+     set_target_properties(freshclam PROPERTIES
+         COMPILE_FLAGS "${WARNCFLAGS}"
+         VERSION ${LIBFRESHCLAM_VERSION} SOVERSION ${LIBFRESHCLAM_SOVERSION})
+--- clamav-1.1.0/libclamunrar_iface/CMakeLists.txt	2023-04-28 22:54:01.000000000 +0200
++++ clamav-1.1.0/libclamunrar_iface/CMakeLists.txt.new	2023-05-03 21:18:38.193681771 +0200
+@@ -60,11 +60,11 @@
+             )
+         endif()
+ 
+-        if(WIN32)
+-            set_target_properties(clamunrar_iface PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+-        elseif(UNIX AND NOT APPLE)
+-            target_link_options(clamunrar_iface PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamunrar_iface.map")
+-        endif()
++#        if(WIN32)
++#            set_target_properties(clamunrar_iface PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
++#        elseif(UNIX AND NOT APPLE)
++#            target_link_options(clamunrar_iface PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamunrar_iface.map")
++#        endif()
+ 
+         # Private (internal-only) dependencies.
+         target_link_libraries( clamunrar_iface
+--- clamav-1.1.0/libclamunrar/CMakeLists.txt	2023-04-28 22:54:01.000000000 +0200
++++ clamav-1.1.0/libclamunrar/CMakeLists.txt.new	2023-05-03 21:18:01.082163255 +0200
+@@ -93,11 +93,11 @@
+         )
+     endif()
+ 
+-    if(WIN32)
+-        set_target_properties(clamunrar PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+-    elseif(UNIX AND NOT APPLE)
+-        target_link_options(clamunrar PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamunrar.map")
+-    endif()
++#    if(WIN32)
++#        set_target_properties(clamunrar PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
++#    elseif(UNIX AND NOT APPLE)
++#        target_link_options(clamunrar PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamunrar.map")
++#    endif()
+ 
+     if(WIN32)
+         install(TARGETS clamunrar DESTINATION . COMPONENT libraries)
+--- clamav-1.1.0/libclamav/CMakeLists.txt	2023-04-28 22:54:01.000000000 +0200
++++ clamav-1.1.0/libclamav/CMakeLists.txt.new	2023-05-03 21:21:47.935900574 +0200
+@@ -464,9 +464,9 @@
+     else()
+         target_link_libraries( clamav PUBLIC Iconv::Iconv )
+     endif()
+-    if(UNIX AND NOT APPLE)
+-        target_link_options( clamav PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamav.map")
+-    endif()
++#    if(UNIX AND NOT APPLE)
++#        target_link_options( clamav PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamav.map")
++#    endif()
+     if(WIN32)
+         install( TARGETS clamav DESTINATION . COMPONENT libraries )
+         install( FILES $<TARGET_PDB_FILE:clamav> DESTINATION . OPTIONAL COMPONENT libraries )

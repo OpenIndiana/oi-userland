@@ -1,0 +1,63 @@
+From 77f9c71162932943bf8fcc7cf705da347b69fe15 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Wed, 4 Nov 2020 16:16:25 +0000
+Subject: Use the illumos libc SSP implementation for
+ -fstack-protector
+
+---
+ gcc/config/i386/sol2.h | 17 +++++++++++++++++
+ gcc/configure          |  2 +-
+ gcc/configure.ac       |  2 +-
+ 3 files changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/config/i386/sol2.h b/gcc/config/i386/sol2.h
+index cd754f3dd0a..144fc352109 100644
+--- a/gcc/config/i386/sol2.h
++++ b/gcc/config/i386/sol2.h
+@@ -252,3 +252,20 @@ along with GCC; see the file COPYING3.  If not see
+ /* We do not need NT_VERSION notes.  */
+ #undef X86_FILE_START_VERSION_DIRECTIVE
+ #define X86_FILE_START_VERSION_DIRECTIVE false
++
++/*
++ * As of 5788, the illumos libc includes support for the stack protector
++ * __stack_chk_fail() function and for the __stack_chk_guard variable.
++ * That means that, for most cases, no extra objects need to be linked in
++ * when compiling with one of the -fstack-protector options.
++ * However, for 32-bit PIC/PIE objects, the gcc stack protector emits a
++ * function call to __stack_chk_fail_local(); this symbol is provided in
++ * illumos via the libssp_ns.a object. The spec below includes this in the
++ * link when appropriate.
++ */
++#if defined(TARGET_LIBC_PROVIDES_SSP)
++#define LINK_SSP_SPEC "%{fstack-protector|fstack-protector-all|" \
++		       "fstack-protector-strong|fstack-protector-explicit:" \
++		       DEF_ARCH32_SPEC("-lssp_ns") \
++		       "}"
++#endif
+diff --git a/gcc/configure b/gcc/configure
+index 8a9f7ebe318..c4ed4baf7d3 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -31398,7 +31398,7 @@ fi
+ 	 # realistically usable GNU/Hurd configurations.
+ 	 # All supported versions of musl provide it as well
+ 	 gcc_cv_libc_provides_ssp=yes;;
+-       *-*-darwin* | *-*-freebsd* | *-*-netbsd*)
++       *-*-darwin* | *-*-freebsd* | *-*-netbsd* | *-*-solaris2*)
+ 	 ac_fn_cxx_check_func "$LINENO" "__stack_chk_fail" "ac_cv_func___stack_chk_fail"
+ if test "x$ac_cv_func___stack_chk_fail" = xyes; then :
+   gcc_cv_libc_provides_ssp=yes
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index adcdc0a7734..2278833e6bf 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -6899,7 +6899,7 @@ AC_CACHE_CHECK(__stack_chk_fail in target C library,
+ 	 # realistically usable GNU/Hurd configurations.
+ 	 # All supported versions of musl provide it as well
+ 	 gcc_cv_libc_provides_ssp=yes;;
+-       *-*-darwin* | *-*-freebsd* | *-*-netbsd*)
++       *-*-darwin* | *-*-freebsd* | *-*-netbsd* | *-*-solaris2*)
+ 	 AC_CHECK_FUNC(__stack_chk_fail,[gcc_cv_libc_provides_ssp=yes],
+            [echo "no __stack_chk_fail on this target"])
+         ;;

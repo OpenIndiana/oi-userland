@@ -1,54 +1,45 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2014 Alexander Pyhalov.  All rights reserved.
-# Copyright (c) 2018 Till Wegmueller
-# Copyright (c) 2021 Nona Hansel
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project tornado
 #
 
-BUILD_BITS=			32_and_64
-BUILD_STYLE=		setup.py
+BUILD_STYLE = pyproject
+PYTHON3_SOABI = abi3
+
 include ../../../make-rules/shared-macros.mk
 
-PATH=$(PATH.illumos)
+COMPONENT_NAME =		tornado
+HUMAN_VERSION =			6.4
+COMPONENT_SUMMARY =		tornado - Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed.
+COMPONENT_PROJECT_URL =		http://www.tornadoweb.org/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/bd/a2/ea124343e3b8dd7712561fe56c4f92eda26865f5e1040b289203729186f2/tornado-6.4.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:72291fa6e6bc84e626589f1c29d90a5a6d593ef5ae68052ee2ef000dfd273dee
+COMPONENT_LICENSE =		Apache-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
-COMPONENT_NAME=		tornado
-# Python 2 compat was dropped in 6.*
-COMPONENT_VERSION=	5.1.1
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/tornado
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4e5158d97583502a7e2739951553cbd88a72076f152b4b11b64b9a10c4c49409
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/t/tornado/$(COMPONENT_ARCHIVE)
-
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
-
-TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_INSTALL_ACTION= \
-  gfind $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32) -type f \
-    -exec gawk '/^\#!.*python/{print FILENAME}{nextfile}' {} + \
-  | xargs gsed -i -e '1 s;^.*$$;\#!$(PYTHON.32);'
+# Force verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- --verbose
 
-# Build dependencies
-REQUIRED_PACKAGES += library/python/backports.ssl_match_hostname-27
-REQUIRED_PACKAGES += library/python/certifi-27
-REQUIRED_PACKAGES += library/python/pycurl-27
-REQUIRED_PACKAGES += library/python/python-mysql-27
+# Remove timing from test results
+COMPONENT_TEST_TRANSFORMS += "-e 's/[^ ]*ms$$//'"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library

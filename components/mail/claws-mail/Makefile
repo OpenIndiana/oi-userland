@@ -14,36 +14,36 @@
 # Copyright 2021 Gary Mills
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS= 64
+SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	4.1.0
+COMPONENT_VERSION=	4.2.0
 COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	https://www.claws-mail.org
-COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
+COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:534603d60200f3be346830d2fafd90dbdf0b59b9b3b928bc0aa7f8c1c218ec31
+COMPONENT_ARCHIVE_HASH= sha256:446c89f27c2205277f08e776b53d9d151be013211d91e7d9da006bc95c051c60
 COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/download.php?file=releases/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		mail/claws-mail
+COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=	GPL-3
 COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_CLASSIFICATION= Applications/Internet
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi )
+PATH= $(PATH.gnu)
 
-# Specify the python version used by this build
-PYTHON_VERSION=		3.9
+COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi )
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 CPPFLAGS += $(CPPFLAGS.$(BITS))
 
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --disable-fancy-plugin
 CONFIGURE_OPTIONS += --disable-ldap
 CONFIGURE_OPTIONS += --disable-perl-plugin
@@ -51,19 +51,20 @@ CONFIGURE_OPTIONS += --disable-rssyl-plugin
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-jpilot
 CONFIGURE_OPTIONS += --disable-valgrind
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+
 CONFIGURE_ENV += PATH=/usr/bin/$(MACH64):/usr/bin
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-# Manual-derived dependencies
-REQUIRED_PACKAGES += runtime/python-39
+# Manually added build dependencies
+# gnu-coreutils is needed for gecho (which is needed for providing the -n option):
+REQUIRED_PACKAGES += file/gnu-coreutils
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/libgdata
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
@@ -71,6 +72,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/libetpan
+REQUIRED_PACKAGES += library/libical
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/nettle
@@ -80,7 +82,7 @@ REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus-glib
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11

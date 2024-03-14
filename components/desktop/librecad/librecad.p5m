@@ -10,25 +10,25 @@
 #
 
 #
-# Copyright 2016 Carsten Grzemba cgrzemba@opencsw.org
+# Copyright 2023 Andreas Wacknitz
 #
 
-
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license LICENSE license='GPLv2'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/librecad
 file path=usr/bin/ttf2lff
 file path=usr/lib/librecad/plugins/$(MACH64)/libalign.so
 file path=usr/lib/librecad/plugins/$(MACH64)/libasciifile.so
+file path=usr/lib/librecad/plugins/$(MACH64)/libdivide.so
 file path=usr/lib/librecad/plugins/$(MACH64)/libgear.so
-file path=usr/lib/librecad/plugins/$(MACH64)/libimportshp.so
 file path=usr/lib/librecad/plugins/$(MACH64)/liblist.so
 file path=usr/lib/librecad/plugins/$(MACH64)/libpicfile.so
 file path=usr/lib/librecad/plugins/$(MACH64)/libplotequation.so
@@ -49,8 +49,6 @@ file path=usr/share/librecad/doc/lc_opengost-fonts.txt
 file path=usr/share/librecad/doc/licenses.qrc
 file path=usr/share/librecad/doc/readme.md
 file path=usr/share/librecad/doc/style.css
-file path=usr/share/librecad/fonts/OpenGostTypeA-Regular.lff
-file path=usr/share/librecad/fonts/OpenGostTypeB-Regular.lff
 file path=usr/share/librecad/fonts/amiri-regular.lff
 file path=usr/share/librecad/fonts/azomix.lff
 file path=usr/share/librecad/fonts/azomix_i.lff
@@ -76,6 +74,8 @@ file path=usr/share/librecad/fonts/kochimincho.lff
 file path=usr/share/librecad/fonts/kst32b.lff
 file path=usr/share/librecad/fonts/lc_opengost-ar.lff
 file path=usr/share/librecad/fonts/lc_opengost-br.lff
+file path=usr/share/librecad/fonts/opengosttypea-regular.lff
+file path=usr/share/librecad/fonts/opengosttypeb-regular.lff
 file path=usr/share/librecad/fonts/romanc.lff
 file path=usr/share/librecad/fonts/romancs.lff
 file path=usr/share/librecad/fonts/romand.lff
@@ -1371,8 +1371,6 @@ file path=usr/share/librecad/library/sheets/A4_1_text.dxf
 file path=usr/share/librecad/library/sheets/A4_2_draw.dxf
 file path=usr/share/librecad/library/sheets/A4_2_text.dxf
 file path=usr/share/librecad/library/templates/empty.dxf
-file path=usr/share/librecad/librecad.appdata.xml
-file path=usr/share/librecad/librecad.appdata.xml.in
 file path=usr/share/librecad/patterns/angle.dxf
 file path=usr/share/librecad/patterns/ansi31.dxf
 file path=usr/share/librecad/patterns/ar-b816.dxf
@@ -1423,6 +1421,7 @@ file path=usr/share/librecad/patterns/hound.dxf
 file path=usr/share/librecad/patterns/iso03w100.dxf
 file path=usr/share/librecad/patterns/iso03w100a.dxf
 file path=usr/share/librecad/patterns/kerpele.dxf
+file path=usr/share/librecad/patterns/millstone.dxf
 file path=usr/share/librecad/patterns/misc01.dxf
 file path=usr/share/librecad/patterns/misc02.dxf
 file path=usr/share/librecad/patterns/misc03.dxf
@@ -1435,7 +1434,6 @@ file path=usr/share/librecad/patterns/sand.dxf
 file path=usr/share/librecad/patterns/square.dxf
 file path=usr/share/librecad/patterns/triangle_a.dxf
 file path=usr/share/librecad/patterns/triangle_b.dxf
-link path=usr/share/librecad/plugins target=../../lib/librecad/plugins/$(MACH64)
 file path=usr/share/librecad/qm/librecad_ar.qm
 file path=usr/share/librecad/qm/librecad_ca.qm
 file path=usr/share/librecad/qm/librecad_cs.qm

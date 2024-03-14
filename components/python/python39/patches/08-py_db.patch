@@ -37,9 +37,9 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  	if test "x$(ENSUREPIP)" != "xno"  ; then \
  		case $(ENSUREPIP) in \
  			upgrade) ensurepip="--upgrade" ;; \
---- Python-3.9.1/py_db/libpython39_db.c
-+++ Python-3.9.1/py_db/libpython39_db.c
-@@ -0,0 +1,596 @@
+--- Python-3.9.18/py_db/libpython39_db.c.~1~	2024-02-12 12:48:39.903737823 -0800
++++ Python-3.9.18/py_db/libpython39_db.c	2024-02-12 13:04:54.724880396 -0800
+@@ -0,0 +1,633 @@
 +/*
 + * CDDL HEADER START
 + *
@@ -79,11 +79,20 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +
 +#include "libpython39_db.h"
 +
++/* Maximum number of pieces of the core eval function */
++#define NEVAL 2
++struct pydb_code_range {
++	uintptr_t base;
++	size_t size;
++};
++
 +struct pydb_agent {
 +	struct ps_prochandle *pdb_ph;
 +	int pdb_vers;
-+	int pdb_is_64bit;
++	int pdb_is_64bit:1;
++	int pdb_has_eval:1;
 +	int pdb_datamodel;
++	struct pydb_code_range pdb_eval_code[NEVAL];
 +};
 +
 +typedef uintptr_t (*pdi_next_cb_t)(pydb_iter_t *);
@@ -191,16 +200,22 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +
 +	/*
 +	 * Python's line number algorithm is arcane. See here for details:
-+	 * http://svn.python.org/projects/python/trunk/Objects/lnotab_notes.txt
++	 * https://github.com/python/cpython/blob/main/Objects/lnotab_notes.txt
 +	 */
 +
 +	line = firstline;
 +	for (addr = i = 0; i < lnotab_len; i += 2) {
-+		if (addr + lnotab[i] > lastinst) {
++		int addr_incr = lnotab[i];
++		int line_incr = lnotab[i+1];
++
++		addr += addr_incr;
++		if (addr > lastinst) {
 +			break;
 +		}
-+		addr += lnotab[i];
-+		line += lnotab[i + 1];
++		if (line_incr > 0x80) {
++			line_incr -= 0x100;
++		}
++		line += line_incr;
 +	}
 +
 +	return (line);
@@ -336,6 +351,24 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +	return (read_sz);
 +}
 +
++static void
++pydb_find_eval(pydb_agent_t *py) {
++	ps_sym_t psym;
++
++	if (ps_pglobal_sym(py->pdb_ph, LIBPYTHON, "_PyEval_EvalFrameDefault", &psym)
++	    == PS_OK) {
++		py->pdb_eval_code[0].base = psym.st_value;
++		py->pdb_eval_code[0].size = psym.st_size;
++		py->pdb_has_eval = 1;
++	}
++	if (ps_pglobal_sym(py->pdb_ph, LIBPYTHON, "_PyEval_EvalFrameDefault.cold", &psym)
++	    == PS_OK) {
++		py->pdb_eval_code[1].base = psym.st_value;
++		py->pdb_eval_code[1].size = psym.st_size;
++		py->pdb_has_eval = 1;
++	}
++}
++
 +
 +static int
 +pydb_frameinfo(pydb_agent_t *py, uintptr_t addr, char *funcnm,
@@ -415,42 +448,46 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 + * Return a description about a PyFrameObject, if the object is
 + * actually a PyFrameObject.  In this case, the pc argument is checked
 + * to make sure that it came from a function that takes a PyFrameObject
-+ * as its first (argv[0]) argument.
++ * as its second (argv[1]) argument.
 + */
 +int
-+pydb_pc_frameinfo(pydb_agent_t *py, uintptr_t pc, uintptr_t frame_addr,
++pydb_pc_frameinfo_argv(pydb_agent_t *py, uintptr_t pc, const long *argv,
 +    char *fbuf, size_t bufsz)
 +{
 +	char funcname[1024];
 +	char filename[1024];
 +	int lineno;
-+	int rc;
-+	ps_sym_t psym;
++	int i, rc;
++	uintptr_t frame_addr = argv[1];
++
++	if (!py->pdb_has_eval) {
++		pydb_find_eval(py);
++		if (!py->pdb_has_eval)
++			return (-1);
++	}
 +
 +	/*
-+	 * If PC doesn't match PyEval_EvalFrameEx in either libpython
-+	 * or the executable, don't decode it.
++	 * If the PC isn't inside one of the eval code ranges,
++	 * don't decode it.
 +	 */
-+	if (ps_pglobal_sym(py->pdb_ph, LIBPYTHON, "PyEval_EvalFrameEx", &psym)
-+	    != PS_OK) {
-+		return (-1);
++	for (i = 0; i < NEVAL; i++) {
++		struct pydb_code_range *r = &py->pdb_eval_code[i];
++
++		if (pc >= r->base && pc < (r->base + r->size)) {
++
++			rc = pydb_frameinfo(py, frame_addr, funcname, sizeof (funcname),
++			    filename, sizeof (filename), &lineno);
++			if (rc < 0) {
++				return (-1);
++			}
++
++			(void) snprintf(fbuf, bufsz, "[ %s:%d (%s) ]\n", filename, lineno,
++			    funcname);
++			return (0);
++		}
 +	}
 +
-+	/* If symbol found, ensure that PC falls within PyEval_EvalFrameEx. */
-+	if (pc < psym.st_value || pc > psym.st_value + psym.st_size) {
-+		return (-1);
-+	}
-+
-+	rc = pydb_frameinfo(py, frame_addr, funcname, sizeof (funcname),
-+	    filename, sizeof (filename), &lineno);
-+	if (rc < 0) {
-+		return (-1);
-+	}
-+
-+	(void) snprintf(fbuf, bufsz, "[ %s:%d (%s) ]\n", filename, lineno,
-+	    funcname);
-+
-+	return (0);
++	return (-1);
 +}
 +
 +/*
@@ -636,8 +673,8 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +
 +	free(iter);
 +}
---- Python-3.9.1/py_db/libpython39_db.h
-+++ Python-3.9.1/py_db/libpython39_db.h
+--- Python-3.9.18/py_db/libpython39_db.h.~1~	2024-02-12 12:48:39.904029254 -0800
++++ Python-3.9.18/py_db/libpython39_db.h	2024-02-12 13:04:59.939924305 -0800
 @@ -0,0 +1,73 @@
 +/*
 + * CDDL HEADER START
@@ -693,8 +730,8 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 + * Used by callers that don't know if they're looking at PyFrameObject.
 + * Checks PC for traceable functions.
 + */
-+extern	int	pydb_pc_frameinfo(pydb_agent_t *py, uintptr_t pc,
-+    uintptr_t frame_addr, char *fbuf, size_t bufsz);
++extern	int	pydb_pc_frameinfo_argv(pydb_agent_t *py, uintptr_t pc,
++    const long *argv, char *fbuf, size_t bufsz);
 +
 +/* Iterator functions */
 +typedef struct pydb_iter pydb_iter_t;
@@ -746,7 +783,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +	pydb_agent_destroy;
 +	pydb_frame_iter_init;
 +	pydb_get_frameinfo;
-+	pydb_pc_frameinfo;
++	pydb_pc_frameinfo_argv;
 +	pydb_interp_iter_init;
 +	pydb_thread_iter_init;
 +	pydb_iter_fini;

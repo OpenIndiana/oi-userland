@@ -18,18 +18,19 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-vesa
-COMPONENT_VERSION= 2.4.0
-COMPONENT_REVISION= 2
-COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-vesa
+COMPONENT_VERSION= 2.6.0
 COMPONENT_SUMMARY= xf86-video-vesa - VESA driver for the Xorg X server
-COMPONENT_ARCHIVE_HASH= \
-  sha256:bf443c94d7bf6cd4e248f8a3147f4647be04dc4c80250d9405006263bbdee38c
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:10082771b1a8f659c60b3d9b70456a4b59948a75b3cade2dfa33b8b05e549bb1
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-vesa
 
 include $(WS_MAKE_RULES)/common.mk
 
 LD_OPTIONS= \
         -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
         -lfb -lpciaccess -lshadow -lvbe
+
+CONFIGURE_ENV += with_xorg_module_dir=/usr/lib/xorg/modules/drivers/$(MACH64)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/x11-protocols

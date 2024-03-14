@@ -14,35 +14,44 @@
 # Copyright 2018 Michal Nowak
 #
 
+BUILD_STYLE= meson
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pangomm
-COMPONENT_VERSION=	2.42.0
+COMPONENT_MAJOR_VERSION=	2.46
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).3
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	pangomm - C++ Wrapper for the pango Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:410fe04d471a608f3f0273d3a17d840241d911ed0ff2c758a9859c66c6f24379
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/pangomm/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.gtkmm.org/
 COMPONENT_FMRI=		library/desktop/c++/pangomm
-COMPONENT_ARCHIVE_HASH= \
-  sha256:ca6da067ff93a6445780c0b4b226eb84f484ab104b8391fb744a45cbc7edbf56
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/pangomm/2.42/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.gtkmm.org/
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=		LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# There are no tests available.
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu)
 
-CXXFLAGS +=-std=c++11
+CXXFLAGS += -std=c++17
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+# I haven't found the reason yet why generating the documentation differs from my systems to the build server.
+# So we won't build documentation for now as it increases the package size significantely. 
+CONFIGURE_OPTIONS += -Dbuild-documentation=false
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
+# Build dependency
+REQUIRED_PACKAGES += developer/build/pkg-config
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += developer/macro/gnu-m4
+REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += library/desktop/c++/mm-common
+REQUIRED_PACKAGES += library/libxslt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

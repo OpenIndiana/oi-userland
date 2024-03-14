@@ -15,37 +15,40 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=			64
-BUILD_STYLE=		cmake
+BUILD_BITS= 64
+BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	3.5.1
+COMPONENT_VERSION=	3.7.0
+COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:a6d45b3dc5a45dd31772e7f8dfdfecabc063986e8f67d60bd7ca60cc81db6928
+COMPONENT_ARCHIVE_HASH=	sha256:df1b7378b714f0690b285ed9e4e58afe270ac98dbc9ca5839589c1afcca33ab1
 COMPONENT_ARCHIVE_URL=	https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell
 COMPONENT_FMRI=		shell/fish
 COMPONENT_CLASSIFICATION=	System/Shells
+COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CMAKE_OPTIONS += -DCMAKE_INSTALL_SYSCONFDIR="/etc"
-CMAKE_OPTIONS += -DPCRE2_INCLUDE_DIR=/usr/include/pcre
+CMAKE_OPTIONS += -DSYS_PCRE2_INCLUDE_DIR=/usr/include/pcre
+CMAKE_OPTIONS += -DFISH_USE_SYSTEM_PCRE2=ON
+CMAKE_OPTIONS += -DWITH_GETTEXT=ON
 
+COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 COMPONENT_TEST_CMD= gmake
 COMPONENT_TEST_TARGETS= test
 
-REQUIRED_PACKAGES += developer/documentation-tool/doxygen
-REQUIRED_PACKAGES += library/pcre2
-# test dependency
-REQUIRED_PACKAGES += library/python/pexpect-39
+# Manually added dependencies (for tests)
+PYTHON_REQUIRED_PACKAGES += library/python/pexpect
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

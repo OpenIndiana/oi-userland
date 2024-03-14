@@ -17,24 +17,21 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =	mpich/$(COMPILER)
-COMPONENT_VERSION =	3.3.2
+COMPONENT_VERSION =	4.1.1
 COMPONENT_FMRI =	library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
-COMPONENT_PROJECT_URL =	http://www.mpich.org/
-COMPONENT_SRC_NAME = mpich
+COMPONENT_PROJECT_URL =	https://www.mpich.org/
+COMPONENT_SRC_NAME =    mpich
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = \
-    sha256:4bfaf8837a54771d3e4922c84071ef80ffebddbb6971a006038d91ee7ef959b9
-COMPONENT_ARCHIVE_URL =	http://www.mpich.org/static/downloads/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:ee30471b35ef87f4c88f871a5e2ad3811cd9c4df32fd4f138443072ff4284ca2
+COMPONENT_ARCHIVE_URL =	https://www.mpich.org/static/downloads/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 COMPONENT_SUMMARY =	High-performance and widely portable implementation of the MPI standard
-COMPONENT_LICENSE_FILE = $(COMPONENT_SRC_NAME).license
+COMPONENT_LICENSE_FILE= $(COMPONENT_SRC_NAME).license
 COMPONENT_LICENSE =	BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk  
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -56,15 +53,11 @@ CONFIGURE_OPTIONS+=	--sbindir=$(MPI_SBINDIR)
 CONFIGURE_OPTIONS+=	--sysconfdir=$(MPI_ETCDIR)
 CONFIGURE_OPTIONS+=	--with-pm=hydra
 CONFIGURE_OPTIONS+=	--with-device=ch3:sock
-CONFIGURE_OPTIONS+=	--with-thread-package=posix
+CONFIGURE_OPTIONS+=	--enable-threads=multiple
 CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--enable-rpath
+CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--enable-fortran=all
 CONFIGURE_OPTIONS+=	--enable-cxx
-CONFIGURE_OPTIONS+=	--enable-mpe
-
-# It seems the issue has gone with the 3.x series
-#CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS) -Wa,--divide"
 
 COMPONENT_TEST_MASTER =     $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
@@ -98,12 +91,9 @@ test:	$(TEST_64)
 REQUIRED_PACKAGES += system/header/header-picl
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += diagnostic/scanpci
-REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += service/picl
+REQUIRED_PACKAGES += $(GFORTRAN_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += developer/hwloc
+REQUIRED_PACKAGES += package/environment-modules
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GFORTRAN_RUNTIME_PKG)

@@ -25,17 +25,18 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libodfgen
 COMPONENT_VERSION=	0.1.8
-COMPONENT_FMRI=     	library/c++/libodfgen
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_PROJECT_URL=	https://sourceforge.net/p/libwpd/wiki/libodfgen/
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      libodfgen - ODF export library using librevenge
+COMPONENT_PROJECT_URL=	https://sourceforge.net/p/libwpd/wiki/libodfgen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:55200027fd46623b9bdddd38d275e7452d1b0ff8aeddcad6f9ae6dc25f610625
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libwpd/files/libodfgen/libodfgen-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     	library/c++/libodfgen
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Fix threading detection issue with boost 1.64

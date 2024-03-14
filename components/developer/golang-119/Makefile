@@ -23,7 +23,6 @@
 # Copyright 2021 Till Wegmueller
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 USE_COMMON_TEST_MASTER= no
 CLONEY_ARGS= CLONEY_MODE="copy"
@@ -33,17 +32,19 @@ PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=			golang
 COMPONENT_MAJOR_VERSION=	1.19
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).1
-COMPONENT_FMRI=			developer/golang
-COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).13
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		The Go Programming Language
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:27871baa490f3401414ad793fba49086f6c855b1c584385ed7771e1204c7e179
+COMPONENT_ARCHIVE_HASH=		sha256:ccf36b53fb0024a017353c3ddb22c1f00bc7a8073c6aac79042da24ee34434d3
+COMPONENT_FMRI=			developer/golang
+COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=		BSD-style, Patent Grant
-COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE=		LICENSE
+
 MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
 
 # Go has a number of supplementary tools and packages that are located in
@@ -56,6 +57,8 @@ MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION
 GOROOT_FINAL=		/usr/lib/golang/$(COMPONENT_MAJOR_VERSION)
 # Enable easier stack unwinding for debugging.
 GOEXPERIMENT=
+# Use golang 1.8 to bootstrap golang 1.19
+COMPONENT_BUILD_ENV += GOROOT_BOOTSTRAP="/usr/lib/golang/1.8"
 COMPONENT_BUILD_ENV +=	GOROOT_FINAL="$(GOROOT_FINAL)"
 COMPONENT_BUILD_ENV +=	GOEXPERIMENT="$(GOEXPERIMENT)"
 COMPONENT_BUILD_ENV +=	GOOS="illumos"
@@ -94,16 +97,12 @@ COMPONENT_TEST_ENV +=	GOROOT="$(@D)"
 COMPONENT_TEST_DIR =	$(@D)/src
 COMPONENT_TEST_CMD =	./run.bash
 COMPONENT_TEST_TARGETS =
+# Remove CPU
+COMPONENT_TEST_TRANSFORMS += "-e '/^\# CPU:/d'"
+# Remove OS Version
+COMPONENT_TEST_TRANSFORMS += "-e '/^\# OS Version:/d'"
 # Remove measured times (eg. 11.106s, 0.312s or 1,16s):
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9][0-9].[0-9][0-9][0-9]s//" '
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9][0-9]s//" '
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
-# Remove occurrences of "(cached)":
-COMPONENT_TEST_TRANSFORMS += '-e "s/(cached)//" '
-# Replace port numbers with nnnnn on localhost:
-COMPONENT_TEST_TRANSFORMS += '-e "s/127.0.0.1\:[0-9]*/127.0.0.1\:nnnnn/" '
-# Remove trailing random numbers on TestReadOnlyWriteFile: 
-COMPONENT_TEST_TRANSFORMS += '-e "s/TestReadOnlyWriteFile[0-9]*/TestReadOnlyWriteFile/" '
+COMPONENT_TEST_TRANSFORMS += "-e 's/[ \t]*[0-9]\{1,\}\.[0-9]\{1,\}s//'"
 
 # Use this Command to copy the Go Source tree into the proto area. In order to deliver the Go SDK under GOROOT
 # Additionally nuke all the funky binary files used for test suites. They keep bothering the packaging tools
@@ -126,6 +125,7 @@ define COMPONENT_INSTALL_ACTION=
 	| xargs rm;
 endef
 
-REQUIRED_PACKAGES += developer/golang-118
+REQUIRED_PACKAGES += developer/golang-18
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,75 @@
+From 1e3883563faf35dea24bdd07d08d5659211bdeb5 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <illumos@fiddaman.net>
+Date: Fri, 30 Dec 2022 18:06:57 +0000
+Subject: Drop unnecessary privileges
+
+---
+ os-posix.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+
+diff --git a/os-posix.c b/os-posix.c
+index 4858650c3e..26b7741023 100644
+--- a/os-posix.c
++++ b/os-posix.c
+@@ -28,6 +28,7 @@
+ #include <pwd.h>
+ #include <grp.h>
+ #include <libgen.h>
++#include <priv.h>
+ 
+ /* Needed early for CONFIG_BSD etc. */
+ #include "net/slirp.h"
+@@ -263,6 +264,45 @@ void os_daemonize(void)
+     }
+ }
+ 
++/*
++ * In case qemu is started as root, drop unnecessary privileges.
++ */
++static void
++illumos_drop_privileges(void)
++{
++	priv_set_t *privs, *wantedprivs;
++
++	privs = priv_allocset();
++	wantedprivs = priv_allocset();
++
++	if (privs == NULL || wantedprivs == NULL) {
++		error_report("Unable to allocate privilege sets");
++		exit(1);
++	}
++
++	if (getppriv(PRIV_PERMITTED, privs) != 0) {
++		error_report("Failed to retrieve current privileges");
++		exit(1);
++	}
++
++	priv_basicset(wantedprivs);
++	priv_delset(wantedprivs, PRIV_FILE_LINK_ANY);
++	priv_delset(wantedprivs, PRIV_PROC_INFO);
++	priv_delset(wantedprivs, PRIV_PROC_SESSION);
++	priv_addset(wantedprivs, PRIV_NET_RAWACCESS); /* VNIC net backend */
++	priv_intersect(wantedprivs, privs);
++
++	if (setppriv(PRIV_SET, PRIV_PERMITTED, privs) != 0 ||
++	    setppriv(PRIV_SET, PRIV_INHERITABLE, privs) != 0 ||
++	    setppriv(PRIV_SET, PRIV_LIMIT, privs) != 0) {
++		error_report("Failed to reduce privileges");
++		exit(1);
++	}
++
++	priv_freeset(wantedprivs);
++	priv_freeset(privs);
++}
++
+ void os_setup_post(void)
+ {
+     int fd = 0;
+@@ -280,6 +320,7 @@ void os_setup_post(void)
+ 
+     change_root();
+     change_process_uid();
++    illumos_drop_privileges();
+ 
+     if (daemonize) {
+         uint8_t status = 0;

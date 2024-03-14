@@ -13,13 +13,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= imf-selector
 COMPONENT_VERSION= 0.5.11
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= Input Method Framework startup
 COMPONENT_SRC = src
 COMPONENT_PROJECT_URL = http://www.openindiana.org
@@ -29,7 +27,7 @@ COMPONENT_LICENSE = CDDL
 COMPONENT_CLASSIFICATION = System/Internationalization
 
 TEST_TARGET = $(NO_TESTS)
-PYTHON_VERSION = 3.5
+
 include $(WS_MAKE_RULES)/common.mk
 
 clobber:: clean
@@ -44,7 +42,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/autogen.sh
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
@@ -53,6 +51,6 @@ clean::
 	$(RM) -rf $(BUILD_DIR)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/pygobject-3-35
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += SUNWcs
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += shell/ksh93

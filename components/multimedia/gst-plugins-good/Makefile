@@ -14,32 +14,30 @@
 # Copyright 2019 Tim Mooney.
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-good
 COMPONENT_VERSION= 0.10.31
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 6
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:77a8436a7c0a15f876bad29616835046890df2bcaf72da02151bd91e3d292b64
-COMPONENT_ARCHIVE_URL= \
-  http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_HASH= sha256:77a8436a7c0a15f876bad29616835046890df2bcaf72da02151bd91e3d292b64
+COMPONENT_ARCHIVE_URL=	https://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://gstreamer.freedesktop.org/
 COMPONENT_FMRI = library/audio/gstreamer/plugin/good
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 &&\
-                                        autoheader &&\
-                                        automake -a -f -c --gnu &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 && \
+	autoheader && \
+	automake -a -f -c --gnu && \
+	autoconf )
+
 gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
@@ -65,18 +63,13 @@ COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += audio/wavpack
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/aalib
 REQUIRED_PACKAGES += library/audio/gstreamer

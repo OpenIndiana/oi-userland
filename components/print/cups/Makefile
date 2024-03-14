@@ -22,73 +22,84 @@
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
+
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
-COMPONENT_VERSION=	2.4.1
-COMPONENT_REVISION =	1
+COMPONENT_VERSION=	2.4.7
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:df195c931349949293c832e1337527e7831e1225f567b60caf5d9c206c2bffdc
+COMPONENT_ARCHIVE_HASH=	sha256:9b9a126018462f7326baa828bdf861939e37e00bc63884e03129b3f3360c44fe
 COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+COMPONENT_LICENSE=	Apache 2.0 with an exception to allow linking against GNU GPL2-only software
 
 include $(WS_MAKE_RULES)/common.mk
 
-# don't use LD_Z_IGNORE: causes linker problems
-LD_Z_IGNORE=
+$(CONFIGURE_32):    LDFLAGS += -m32
+$(CONFIGURE_64):    LDFLAGS += -m64
 
-CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+COMPONENT_PRE_CONFIGURE_ACTION += $(CLONEY) $(SOURCE_DIR) $(@D)
+
+COMPONENT_PREP_ACTION= ( cd $(@D) ; autoconf -f )
+
+# Make sure that "install-sh -s" calls "strip -x" and not "strip";
+# we want to remove debugging data but not the symbols.
+COMPONENT_INSTALL_ENV += STRIPPROG="strip -x"
+
+CFLAGS += $(CPP_XPG6MODE)
 LDFLAGS += -lsocket
 
+# Ensure dynamic shared objects are linked using same LDFLAGS as executables.
 CONFIGURE_ENV += DSOFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-CONFIGURE_OPTIONS +=	--prefix=/usr
-CONFIGURE_OPTIONS +=	--mandir=/usr/share/man
-CONFIGURE_OPTIONS +=	--localedir=$(USRSHARELOCALEDIR)
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--localstatedir=/var
-CONFIGURE_OPTIONS +=	--with-fontpath=/usr/openwin/lib
-CONFIGURE_OPTIONS +=	--with-logdir=/var/log/cups
-CONFIGURE_OPTIONS +=	--with-domainsocket=/var/run/cups-socket
-CONFIGURE_OPTIONS +=	--with-smfmanifestdir=/lib/svc/manifest/application
-CONFIGURE_OPTIONS +=	--with-printcap=/etc/printers.conf
-CONFIGURE_OPTIONS +=	--with-cups-user=lp
-CONFIGURE_OPTIONS +=	--with-cups-group=lp
-CONFIGURE_OPTIONS +=	--disable-systemd
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--enable-dbus
-CONFIGURE_OPTIONS +=	--enable-threads
-CONFIGURE_OPTIONS += 	--with-archflags="$(CC_BITS)"
+CONFIGURE_OPTIONS += --prefix=/usr
+CONFIGURE_OPTIONS += --mandir=/usr/share/man
+CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+# Unlike Solaris 11 which has combined and renamed /var/run and /etc/volatile into /system/volatile
+# we still use the traditional state folder:
+CONFIGURE_OPTIONS += --with-rundir=/var/run/cups
+CONFIGURE_OPTIONS += --with-smfmanifestdir=/lib/svc/manifest/application
+CONFIGURE_OPTIONS += --with-printcap=/etc/printers.conf
+CONFIGURE_OPTIONS += --with-cups-user=lp
+CONFIGURE_OPTIONS += --with-cups-group=lp
+CONFIGURE_OPTIONS += --with-tls=gnutls
+CONFIGURE_OPTIONS += --without-rcdir
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-dbus
+CONFIGURE_OPTIONS += --with-archflags="$(CC_BITS)"
 
-#$(BUILD_DIR)/%/.installed:	ENV +=	DSTROOT="$(PROTO_DIR)"
+# Dynamically create the license file from its sources:
+cups.license: $(SOURCE_DIR)/LICENSE $(SOURCE_DIR)/NOTICE
+	cat $? > $@
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
- $(CLONEY) $(SOURCE_DIR) $(@D) ; \
- find $(@D) -name '*.in' | sed -e 's/.in$$//' | xargs $(RM) ; \
- ( cd $(SOURCE_DIR) ; autoconf -f )
+# IdleExitTimeout is unknown and throws an error.
+COMPONENT_POST_INSTALL_ACTION= $(GSED) -i -e "s:IdleExitTimeout 60:\#IdleExitTimeout 60:" $(PROTOETCDIR)/cups/cupsd.conf*
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += service/network/slp
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/ca-certificates
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math

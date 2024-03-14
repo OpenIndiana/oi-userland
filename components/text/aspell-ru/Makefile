@@ -20,25 +20,28 @@
 #
 # Copyright 2013 Alexander Pyhalov
 #
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		aspell-ru
-COMPONENT_VERSION=	0.99f7-1
-COMPONENT_SRC=		aspell6-ru-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:5c29b6ccce57bc3f7c4fb0510d330446b9c769e59c92bdfede27333808b6e646
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/aspell/dict/ru/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME= aspell-ru
+HUMAN_VERSION= 0.99f7-1
+COMPONENT_VERSION= 0.99.15.7.1
+COMPONENT_REVISION= 1
+COMPONENT_SUMMARY= GNU Aspell spell russian dictionaries
+COMPONENT_PROJECT_URL= https://ftp.gnu.org/gnu/aspell/dict/0index.html
+COMPONENT_SRC= aspell6-ru-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:5c29b6ccce57bc3f7c4fb0510d330446b9c769e59c92bdfede27333808b6e646
+COMPONENT_ARCHIVE_URL= https://ftp.gnu.org/gnu/aspell/dict/ru/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= text/aspell/ru
+COMPONENT_CLASSIFICATION= System/Text Tools
+COMPONENT_LICENSE= aspell-ru Copyright
+COMPONENT_LICENSE_FILE= Copyright
 
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D)
+COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS = 
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
+# Auto-generated dependencies

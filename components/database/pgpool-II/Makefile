@@ -14,17 +14,18 @@
 #
 
 BUILD_BITS= 64
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgpool-II
-COMPONENT_VERSION= 	4.3.3
-COMPONENT_SUMMARY= 	pgpool-II middle ware
+COMPONENT_VERSION= 	4.5.1
+COMPONENT_SUMMARY= 	A connection pooling/replication server for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:6c73434baee581386a9555fe59628bf467820f7d5bdbe3341768399a0382c979
-COMPONENT_ARCHIVE_URL=	https://www.pgpool.net/download.php?f=$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://pgpool.net/
-COMPONENT_FMRI=	database/postgres/pgpool-II
+COMPONENT_ARCHIVE_HASH= sha256:8e14b0558a15dae8767c8e1acee3f2f6c7c08ebfffda66a359367eaaa56c3936
+COMPONENT_PROJECT_URL=	https://www.pgpool.net
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download.php?f=$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
@@ -34,19 +35,26 @@ PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS += -D__EXTENSIONS__
+CFLAGS += -D__EXTENSIONS__ -I/usr/include/openldap
 
-COMPONENT_PREP_ACTION =        (cd $(SOURCE_DIR) && autoreconf -fi )
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && autoreconf -fi )
+COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D) )
+COMPONENT_POST_CONFIGURE_ACTION = ( find $(@D) -name Makefile -exec $(GSED) -i -e 's/lldap /lldap-2.6 /' {} \; )
 
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+CONFIGURE_BINDIR = $(CONFIGURE_PREFIX)/bin
+
 # Earlier all binaries were delivered in /usr/bin,
 # preserve this behavior
-CONFIGURE_SBINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR = $(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS	+=	--sysconfdir=/etc/pgpool-II
+CONFIGURE_OPTIONS += --sysconfdir=/etc/pgpool-II
+CONFIGURE_OPTIONS += --with-ldap
+CONFIGURE_OPTIONS += --with-pam
+CONFIGURE_OPTIONS += --with-openssl
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
+CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_PREFIX)/include
 
 COMPONENT_POST_BUILD_ACTION += $(ENV) $(COMPONENT_BUILD_ENV) \
 	$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) -C $(BUILD_DIR_$(BITS))/doc/src/sgml man1 man8
@@ -63,5 +71,7 @@ REQUIRED_PACKAGES += developer/documentation-tool/openjade
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

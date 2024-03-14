@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Class::Inspector
 HUMAN_VERSION =			1.36
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Class::Inspector - Get information about a class and its structure
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\

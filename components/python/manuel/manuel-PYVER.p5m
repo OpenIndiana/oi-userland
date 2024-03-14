@@ -1,0 +1,60 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# This file was automatically generated using python-integrate-project
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel-$(HUMAN_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel-$(HUMAN_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/README.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/bugs.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/capture.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/capture.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/codeblock.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/doc1.ex
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/doc2.ex
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/doc3.ex
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/doctest.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/footnote.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/ignore.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/index.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/isolation.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/myst-markdown.md
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/myst/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/myst/codeblock.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/table-example.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/testcase.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/testing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/manuel/tests.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/setuptools-$(PYV)
+depend type=require fmri=pkg:/library/python/six-$(PYV)

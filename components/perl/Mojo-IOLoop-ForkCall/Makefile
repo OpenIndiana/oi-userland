@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mojo::IOLoop::ForkCall
 HUMAN_VERSION =			0.21
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mojo::IOLoop::ForkCall - (DEPRECATED) run blocking functions asynchronously by forking
 COMPONENT_CPAN_AUTHOR =		JBERGER
 COMPONENT_ARCHIVE_HASH =	\

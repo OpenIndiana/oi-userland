@@ -1,0 +1,21 @@
+
+Upstream PR: https://gitlab.com/gnuwget/wget2/-/merge_requests/530
+
+illumos does not support getaddrinfo() with hints where ai_socktype is 0
+(unspecified) and ai_flags contains AI_NUMERICSERV. Neither, apparently, does
+Windows.
+
+https://www.illumos.org/issues/11616
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/libwget/dns.c a/libwget/dns.c
+--- a~/libwget/dns.c	1970-01-01 00:00:00
++++ a/libwget/dns.c	1970-01-01 00:00:00
+@@ -227,7 +227,7 @@ static int resolve(int family, int flags
+ {
+ 	struct addrinfo hints = {
+ 		.ai_family = family,
+-#ifdef _WIN32
++#if defined(_WIN32) || defined(__illumos__)
+ 		// It looks like on Windows 0 is not a valid option here.
+ 		// see https://learn.microsoft.com/en-us/windows/win32/api/ws2def/ns-ws2def-addrinfoa
+ 		// TODO: On Windows, do two calls to getaddrinfo (for TCP and UDP) and merge the results.

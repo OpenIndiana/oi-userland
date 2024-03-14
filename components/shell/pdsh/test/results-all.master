@@ -1,10 +1,9 @@
 PASS: t0001-basic.sh 1 - working success
 XFAIL: t0001-basic.sh 2 - pretend known breakage # TODO known breakage
-XFAIL: t0001-basic.sh 2 - pretend known breakage # TODO known breakage
-FAIL: t0001-basic.sh 3 - 3 pretend we have fixed a known breakage (run in sub test-lib)
+PASS: t0001-basic.sh 3 - pretend we have fixed a known breakage (run in sub test-lib)
 PASS: t0001-basic.sh 4 - test runs if prerequisite is satisfied
 PASS: t0001-basic.sh 5 - tests clean up after themselves
-FAIL: t0001-basic.sh 6 - 6 tests clean up even on failures
+PASS: t0001-basic.sh 6 - tests clean up even on failures
 PASS: t0001-basic.sh 7 - pdsh runs
 PASS: t0001-basic.sh 8 - pdsh -V works
 PASS: t0001-basic.sh 9 - pdsh -L works
@@ -22,7 +21,6 @@ PASS: t0001-basic.sh 20 - env PDSH_COMMAND_TIMEOUT sets command timeout
 PASS: t0001-basic.sh 21 - command timeout 0 by default
 PASS: t0001-basic.sh 22 - -b enables batch mode
 PASS: t0001-basic.sh 23 - pdsh -N option works
-ERROR: t0001-basic.sh - exited with status 1
 PASS: t0002-internal.sh 1 - working xstrerrorcat
 PASS: t0002-internal.sh 2 - working pipecmd
 PASS: t0003-wcoll.sh 1 - hostname range expansion works
@@ -128,6 +126,8 @@ PASS: t2001-ssh.sh 20 - create ssh dummy script for exit code testing
 PASS: t2001-ssh.sh 21 - ssh dummy script is functional
 PASS: t2001-ssh.sh 22 - ssh works with pdsh -S
 PASS: t2001-ssh.sh 23 - ssh works with pdsh -S and multiple targets
+PASS: t2001-ssh.sh 24 - ssh works with pdsh -k
+PASS: t2001-ssh.sh 25 - ssh works with pdsh -k and multiple targets
 SKIP: t2002-mrsh.sh - skipping mrsh tests, mrsh module not available
 PASS: t5000-dshbak.sh 1 - dshbak functionality
 PASS: t5000-dshbak.sh 2 - dshbak -c does not coalesce different length output
@@ -137,7 +137,6 @@ PASS: t5000-dshbak.sh 5 - dshbak -c does not strip leading zeros
 PASS: t5000-dshbak.sh 6 - dshbak -c does not coalesce different zero padding
 PASS: t5000-dshbak.sh 7 - dshbak -c properly coalesces zero padding of "00"
 PASS: t5000-dshbak.sh 8 - dshbak -c can detect suffixes
-XFAIL: t5000-dshbak.sh 9 - dshbak -c can detect suffix with numeral # TODO known breakage
 XFAIL: t5000-dshbak.sh 9 - dshbak -c can detect suffix with numeral # TODO known breakage
 PASS: t5000-dshbak.sh 10 - issue 19: missing commas in dshbak header output
 PASS: t5000-dshbak.sh 11 - dshbak properly joins 9,10
@@ -149,6 +148,7 @@ PASS: t5000-dshbak.sh 16 - dshbak -f without -d fails
 PASS: t5000-dshbak.sh 17 - dshbak -d fails when output dir does not exist
 PASS: t5000-dshbak.sh 18 - dshbak -d fails gracefully for non-writable dir
 PASS: t5000-dshbak.sh 19 - Issue 70: dshbak fails on hostname of 0
+PASS: t5000-dshbak.sh 20 - Issue 132: dshbak handles empty input
 PASS: t6036-long-output-lines.sh 1 - pdsh does not truncate very long lines
 PASS: t6036-long-output-lines.sh 2 - pdsh does not truncate even longer lines
 PASS: t6114-no-newline-corruption.sh 1 - pdsh does not garble 1K with no newline
@@ -159,12 +159,10 @@ PASS: t6114-no-newline-corruption.sh 5 - pdsh labels 1K with no newline only onc
 PASS: t6114-no-newline-corruption.sh 6 - pdsh labels 8K with no newline only once
 PASS: t6114-no-newline-corruption.sh 7 - pdsh labels 8K+ with no newline only once
 PASS: t6114-no-newline-corruption.sh 8 - pdsh labels 10K with no newline only once
-# TOTAL: 159
-# PASS:  146
+# TOTAL: 161
+# PASS:  151
 # SKIP:  3
 # XFAIL: 2
-# XFAIL: 2
-# FAIL:  4
+# FAIL:  2
 # XPASS: 0
-# XPASS: 0
-# ERROR: 4
+# ERROR: 3

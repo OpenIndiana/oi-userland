@@ -1,0 +1,22 @@
+illumos doesn't have execvpe so we need to emulate it.
+
+--- libcupsfilters-2.0.0/cupsfilters/ghostscript.c.orig	2023-09-22 00:21:04.000000000 +0200
++++ libcupsfilters-2.0.0/cupsfilters/ghostscript.c	2023-11-05 09:15:49.880764443 +0100
+@@ -456,6 +456,7 @@
+   char *msg;
+   int status = 65536;
+   int wstatus;
++  extern char **environ;
+ 
+   // Put Ghostscript command line argument into an array for the "exec()"
+   // call
+@@ -613,7 +614,8 @@
+     }
+ 
+     // Execute Ghostscript command line ...
+-    execvpe(filename, gsargv, envp);
++    environ = envp;
++    execvp(filename, gsargv);
+     if (log) log(ld, CF_LOGLEVEL_ERROR,
+ 		 "cfFilterGhostscript: Unable to launch Ghostscript: %s: %s",
+ 		 filename, strerror(errno));

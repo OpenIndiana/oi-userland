@@ -1,0 +1,1085 @@
+--- /dev/null	Sun May 15 10:42:57 2022
++++ a/src/java.base/solaris/classes/sun/nio/ch/DefaultPollerProvider.java	Sun May 15 10:17:39 2022
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (c) 2022, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++package sun.nio.ch;
++
++import java.io.IOException;
++
++/**
++ * Default PollerProvider for illumos/Solaris.
++ */
++class DefaultPollerProvider extends PollerProvider {
++    DefaultPollerProvider() { }
++
++    @Override
++    Poller readPoller(boolean subPoller) throws IOException {
++        return new EPollPoller(subPoller, true);
++    }
++
++    @Override
++    Poller writePoller(boolean subPoller) throws IOException {
++        return new EPollPoller(subPoller, false);
++    }
++}
+diff --new-file -ur jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPoll.java jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPoll.java
+--- jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPoll.java	1970-01-01 01:00:00.000000000 +0100
++++ jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPoll.java	2023-11-09 09:45:49.844024203 +0000
+@@ -0,0 +1,121 @@
++/*
++ * Copyright (c) 2008, 2022, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++package sun.nio.ch;
++
++import java.io.IOException;
++import jdk.internal.misc.Unsafe;
++
++/**
++ * Provides access to the Linux epoll facility.
++ */
++
++class EPoll {
++    private EPoll() { }
++
++    private static final Unsafe unsafe = Unsafe.getUnsafe();
++
++    /**
++     * typedef union epoll_data {
++     *     void *ptr;
++     *     int fd;
++     *     __uint32_t u32;
++     *     __uint64_t u64;
++     *  } epoll_data_t;
++     *
++     * struct epoll_event {
++     *     __uint32_t events;
++     *     epoll_data_t data;
++     * }
++     */
++    static {
++        IOUtil.load();
++    }
++    private static final int SIZEOF_EPOLLEVENT   = eventSize();
++    private static final int OFFSETOF_EVENTS     = eventsOffset();
++    private static final int OFFSETOF_FD         = dataOffset();
++
++    // opcodes
++    static final int EPOLL_CTL_ADD  = 1;
++    static final int EPOLL_CTL_DEL  = 2;
++    static final int EPOLL_CTL_MOD  = 3;
++
++    // events
++    static final int EPOLLIN   = 0x1;
++    static final int EPOLLOUT  = 0x4;
++
++    // flags
++    static final int EPOLLONESHOT   = (1 << 30);
++
++    /**
++     * Allocates a poll array to handle up to {@code count} events.
++     */
++    static long allocatePollArray(int count) {
++        return unsafe.allocateMemory(count * SIZEOF_EPOLLEVENT);
++    }
++
++    /**
++     * Free a poll array
++     */
++    static void freePollArray(long address) {
++        unsafe.freeMemory(address);
++    }
++
++    /**
++     * Returns event[i];
++     */
++    static long getEvent(long address, int i) {
++        return address + (SIZEOF_EPOLLEVENT*i);
++    }
++
++    /**
++     * Returns event->data.fd
++     */
++    static int getDescriptor(long eventAddress) {
++        return unsafe.getInt(eventAddress + OFFSETOF_FD);
++    }
++
++    /**
++     * Returns event->events
++     */
++    static int getEvents(long eventAddress) {
++        return unsafe.getInt(eventAddress + OFFSETOF_EVENTS);
++    }
++
++    // -- Native methods --
++
++    private static native int eventSize();
++
++    private static native int eventsOffset();
++
++    private static native int dataOffset();
++
++    static native int create() throws IOException;
++
++    static native int ctl(int epfd, int opcode, int fd, int events);
++
++    static native int wait(int epfd, long pollAddress, int numfds, int timeout)
++        throws IOException;
++}
+diff --new-file -ur jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPollPoller.java jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPollPoller.java
+--- jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPollPoller.java	1970-01-01 01:00:00.000000000 +0100
++++ jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPollPoller.java	2023-11-09 09:45:51.976254333 +0000
+@@ -0,0 +1,85 @@
++/*
++ * Copyright (c) 2017, 2023, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++package sun.nio.ch;
++
++import java.io.IOException;
++import static sun.nio.ch.EPoll.*;
++
++/**
++ * Poller implementation based on the epoll facility.
++ */
++
++class EPollPoller extends Poller {
++    private static final int ENOENT = 2;
++
++    private final int epfd;
++    private final int event;
++    private final int maxEvents;
++    private final long address;
++
++    EPollPoller(boolean subPoller, boolean read) throws IOException {
++        this.epfd = EPoll.create();
++        this.event = (read) ? EPOLLIN : EPOLLOUT;
++        this.maxEvents = (subPoller) ? 64 : 512;
++        this.address = EPoll.allocatePollArray(maxEvents);
++    }
++
++    @Override
++    int fdVal() {
++        return epfd;
++    }
++
++    @Override
++    void implRegister(int fdVal) throws IOException {
++        // re-arm
++        int err = EPoll.ctl(epfd, EPOLL_CTL_MOD, fdVal, (event | EPOLLONESHOT));
++        if (err == ENOENT)
++            err = EPoll.ctl(epfd, EPOLL_CTL_ADD, fdVal, (event | EPOLLONESHOT));
++        if (err != 0)
++            throw new IOException("epoll_ctl failed: " + err);
++    }
++
++    @Override
++    void implDeregister(int fdVal, boolean polled) {
++        // event is disabled if already polled
++        if (!polled) {
++            EPoll.ctl(epfd, EPOLL_CTL_DEL, fdVal, 0);
++        }
++    }
++
++    @Override
++    int poll(int timeout) throws IOException {
++        int n = EPoll.wait(epfd, address, maxEvents, timeout);
++        int i = 0;
++        while (i < n) {
++            long eventAddress = EPoll.getEvent(address, i);
++            int fdVal = EPoll.getDescriptor(eventAddress);
++            polled(fdVal);
++            i++;
++        }
++        return n;
++    }
++}
++
+diff --new-file -ur jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPollPort.java jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPollPort.java
+--- jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPollPort.java	1970-01-01 01:00:00.000000000 +0100
++++ jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPollPort.java	2023-11-09 09:45:51.976499486 +0000
+@@ -0,0 +1,320 @@
++/*
++ * Copyright (c) 2008, 2022, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++package sun.nio.ch;
++
++import java.nio.channels.spi.AsynchronousChannelProvider;
++import java.io.IOException;
++import java.util.concurrent.ArrayBlockingQueue;
++import java.util.concurrent.RejectedExecutionException;
++import java.util.concurrent.atomic.AtomicInteger;
++
++import static sun.nio.ch.EPoll.EPOLLIN;
++import static sun.nio.ch.EPoll.EPOLLONESHOT;
++import static sun.nio.ch.EPoll.EPOLL_CTL_ADD;
++import static sun.nio.ch.EPoll.EPOLL_CTL_MOD;
++
++
++/**
++ * AsynchronousChannelGroup implementation based on the Linux epoll facility.
++ */
++
++final class EPollPort
++    extends Port
++{
++    // maximum number of events to poll at a time
++    private static final int MAX_EPOLL_EVENTS = 512;
++
++    // errors
++    private static final int ENOENT     = 2;
++
++    // epoll file descriptor
++    private final int epfd;
++
++    // address of the poll array passed to epoll_wait
++    private final long address;
++
++    // true if epoll closed
++    private boolean closed;
++
++    // socket pair used for wakeup
++    private final int sp[];
++
++    // number of wakeups pending
++    private final AtomicInteger wakeupCount = new AtomicInteger();
++
++    // encapsulates an event for a channel
++    static class Event {
++        final PollableChannel channel;
++        final int events;
++
++        Event(PollableChannel channel, int events) {
++            this.channel = channel;
++            this.events = events;
++        }
++
++        PollableChannel channel()   { return channel; }
++        int events()                { return events; }
++    }
++
++    // queue of events for cases that a polling thread dequeues more than one
++    // event
++    private final ArrayBlockingQueue<Event> queue;
++    private final Event NEED_TO_POLL = new Event(null, 0);
++    private final Event EXECUTE_TASK_OR_SHUTDOWN = new Event(null, 0);
++
++    EPollPort(AsynchronousChannelProvider provider, ThreadPool pool)
++        throws IOException
++    {
++        super(provider, pool);
++
++        this.epfd = EPoll.create();
++        this.address = EPoll.allocatePollArray(MAX_EPOLL_EVENTS);
++
++        // create socket pair for wakeup mechanism
++        try {
++            long fds = IOUtil.makePipe(true);
++            this.sp = new int[]{(int) (fds >>> 32), (int) fds};
++        } catch (IOException ioe) {
++            EPoll.freePollArray(address);
++            FileDispatcherImpl.closeIntFD(epfd);
++            throw ioe;
++        }
++
++        // register one end with epoll
++        EPoll.ctl(epfd, EPOLL_CTL_ADD, sp[0], EPOLLIN);
++
++        // create the queue and offer the special event to ensure that the first
++        // threads polls
++        this.queue = new ArrayBlockingQueue<>(MAX_EPOLL_EVENTS);
++        this.queue.offer(NEED_TO_POLL);
++    }
++
++    EPollPort start() {
++        startThreads(new EventHandlerTask());
++        return this;
++    }
++
++    /**
++     * Release all resources
++     */
++    private void implClose() {
++        synchronized (this) {
++            if (closed)
++                return;
++            closed = true;
++        }
++        try { FileDispatcherImpl.closeIntFD(epfd); } catch (IOException ioe) { }
++        try { FileDispatcherImpl.closeIntFD(sp[0]); } catch (IOException ioe) { }
++        try { FileDispatcherImpl.closeIntFD(sp[1]); } catch (IOException ioe) { }
++        EPoll.freePollArray(address);
++    }
++
++    private void wakeup() {
++        if (wakeupCount.incrementAndGet() == 1) {
++            // write byte to socketpair to force wakeup
++            try {
++                IOUtil.write1(sp[1], (byte)0);
++            } catch (IOException x) {
++                throw new AssertionError(x);
++            }
++        }
++    }
++
++    @Override
++    void executeOnHandlerTask(Runnable task) {
++        synchronized (this) {
++            if (closed)
++                throw new RejectedExecutionException();
++            offerTask(task);
++            wakeup();
++        }
++    }
++
++    @Override
++    void shutdownHandlerTasks() {
++        /*
++         * If no tasks are running then just release resources; otherwise
++         * write to the one end of the socketpair to wakeup any polling threads.
++         */
++        int nThreads = threadCount();
++        if (nThreads == 0) {
++            implClose();
++        } else {
++            // send wakeup to each thread
++            while (nThreads-- > 0) {
++                wakeup();
++            }
++        }
++    }
++
++    // invoke by clients to register a file descriptor
++    @Override
++    void startPoll(int fd, int events) {
++        // update events (or add to epoll on first usage)
++        int err = EPoll.ctl(epfd, EPOLL_CTL_MOD, fd, (events | EPOLLONESHOT));
++        if (err == ENOENT)
++            err = EPoll.ctl(epfd, EPOLL_CTL_ADD, fd, (events | EPOLLONESHOT));
++        if (err != 0)
++            throw new AssertionError();     // should not happen
++    }
++
++    /**
++     * Task to process events from epoll and dispatch to the channel's
++     * onEvent handler.
++     *
++     * Events are retrieved from epoll in batch and offered to a BlockingQueue
++     * where they are consumed by handler threads. A special "NEED_TO_POLL"
++     * event is used to signal one consumer to re-poll when all events have
++     * been consumed.
++     */
++    private class EventHandlerTask implements Runnable {
++        private Event poll() throws IOException {
++            try {
++                for (;;) {
++                    int n;
++                    do {
++                        n = EPoll.wait(epfd, address, MAX_EPOLL_EVENTS, -1);
++                    } while (n == IOStatus.INTERRUPTED);
++
++                    /**
++                     * 'n' events have been read. Here we map them to their
++                     * corresponding channel in batch and queue n-1 so that
++                     * they can be handled by other handler threads. The last
++                     * event is handled by this thread (and so is not queued).
++                     */
++                    fdToChannelLock.readLock().lock();
++                    try {
++                        while (n-- > 0) {
++                            long eventAddress = EPoll.getEvent(address, n);
++                            int fd = EPoll.getDescriptor(eventAddress);
++
++                            // wakeup
++                            if (fd == sp[0]) {
++                                if (wakeupCount.decrementAndGet() == 0) {
++                                    // consume one wakeup byte, never more as this
++                                    // would interfere with shutdown when there is
++                                    // a wakeup byte queued to wake each thread
++                                    int nread;
++                                    do {
++                                        nread = IOUtil.drain1(sp[0]);
++                                    } while (nread == IOStatus.INTERRUPTED);
++                                }
++
++                                // queue special event if there are more events
++                                // to handle.
++                                if (n > 0) {
++                                    queue.offer(EXECUTE_TASK_OR_SHUTDOWN);
++                                    continue;
++                                }
++                                return EXECUTE_TASK_OR_SHUTDOWN;
++                            }
++
++                            PollableChannel channel = fdToChannel.get(fd);
++                            if (channel != null) {
++                                int events = EPoll.getEvents(eventAddress);
++                                Event ev = new Event(channel, events);
++
++                                // n-1 events are queued; This thread handles
++                                // the last one except for the wakeup
++                                if (n > 0) {
++                                    queue.offer(ev);
++                                } else {
++                                    return ev;
++                                }
++                            }
++                        }
++                    } finally {
++                        fdToChannelLock.readLock().unlock();
++                    }
++                }
++            } finally {
++                // to ensure that some thread will poll when all events have
++                // been consumed
++                queue.offer(NEED_TO_POLL);
++            }
++        }
++
++        public void run() {
++            Invoker.GroupAndInvokeCount myGroupAndInvokeCount =
++                Invoker.getGroupAndInvokeCount();
++            final boolean isPooledThread = (myGroupAndInvokeCount != null);
++            boolean replaceMe = false;
++            Event ev;
++            try {
++                for (;;) {
++                    // reset invoke count
++                    if (isPooledThread)
++                        myGroupAndInvokeCount.resetInvokeCount();
++
++                    try {
++                        replaceMe = false;
++                        ev = queue.take();
++
++                        // no events and this thread has been "selected" to
++                        // poll for more.
++                        if (ev == NEED_TO_POLL) {
++                            try {
++                                ev = poll();
++                            } catch (IOException x) {
++                                x.printStackTrace();
++                                return;
++                            }
++                        }
++                    } catch (InterruptedException x) {
++                        continue;
++                    }
++
++                    // handle wakeup to execute task or shutdown
++                    if (ev == EXECUTE_TASK_OR_SHUTDOWN) {
++                        Runnable task = pollTask();
++                        if (task == null) {
++                            // shutdown request
++                            return;
++                        }
++                        // run task (may throw error/exception)
++                        replaceMe = true;
++                        task.run();
++                        continue;
++                    }
++
++                    // process event
++                    try {
++                        ev.channel().onEvent(ev.events(), isPooledThread);
++                    } catch (Error | RuntimeException x) {
++                        replaceMe = true;
++                        throw x;
++                    }
++                }
++            } finally {
++                // last handler to exit when shutdown releases resources
++                int remaining = threadExit(this, replaceMe);
++                if (remaining == 0 && isShutdown()) {
++                    implClose();
++                }
++            }
++        }
++    }
++}
+diff --new-file -ur jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPollSelectorImpl.java jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPollSelectorImpl.java
+--- jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPollSelectorImpl.java	1970-01-01 01:00:00.000000000 +0100
++++ jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPollSelectorImpl.java	2023-11-09 09:45:51.976701355 +0000
+@@ -0,0 +1,273 @@
++/*
++ * Copyright (c) 2005, 2022, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++package sun.nio.ch;
++
++import java.io.IOException;
++import java.nio.channels.ClosedSelectorException;
++import java.nio.channels.SelectionKey;
++import java.nio.channels.Selector;
++import java.nio.channels.spi.SelectorProvider;
++import java.util.ArrayDeque;
++import java.util.Deque;
++import java.util.HashMap;
++import java.util.Map;
++import java.util.concurrent.TimeUnit;
++import java.util.function.Consumer;
++import jdk.internal.misc.Blocker;
++
++import static sun.nio.ch.EPoll.EPOLLIN;
++import static sun.nio.ch.EPoll.EPOLL_CTL_ADD;
++import static sun.nio.ch.EPoll.EPOLL_CTL_DEL;
++import static sun.nio.ch.EPoll.EPOLL_CTL_MOD;
++
++
++/**
++ * Linux epoll based Selector implementation
++ */
++
++class EPollSelectorImpl extends SelectorImpl {
++
++    // maximum number of events to poll in one call to epoll_wait
++    private static final int NUM_EPOLLEVENTS = Math.min(IOUtil.fdLimit(), 1024);
++
++    // epoll file descriptor
++    private final int epfd;
++
++    // address of poll array when polling with epoll_wait
++    private final long pollArrayAddress;
++
++    // eventfd object used for interrupt
++    private final EventFD eventfd;
++
++    // maps file descriptor to selection key, synchronize on selector
++    private final Map<Integer, SelectionKeyImpl> fdToKey = new HashMap<>();
++
++    // pending new registrations/updates, queued by setEventOps
++    private final Object updateLock = new Object();
++    private final Deque<SelectionKeyImpl> updateKeys = new ArrayDeque<>();
++
++    // interrupt triggering and clearing
++    private final Object interruptLock = new Object();
++    private boolean interruptTriggered;
++
++    EPollSelectorImpl(SelectorProvider sp) throws IOException {
++        super(sp);
++
++        this.epfd = EPoll.create();
++        this.pollArrayAddress = EPoll.allocatePollArray(NUM_EPOLLEVENTS);
++
++        try {
++            this.eventfd = new EventFD();
++            IOUtil.configureBlocking(IOUtil.newFD(eventfd.efd()), false);
++        } catch (IOException ioe) {
++            EPoll.freePollArray(pollArrayAddress);
++            FileDispatcherImpl.closeIntFD(epfd);
++            throw ioe;
++        }
++
++        // register the eventfd object for wakeups
++        EPoll.ctl(epfd, EPOLL_CTL_ADD, eventfd.efd(), EPOLLIN);
++    }
++
++    private void ensureOpen() {
++        if (!isOpen())
++            throw new ClosedSelectorException();
++    }
++
++    @Override
++    protected int doSelect(Consumer<SelectionKey> action, long timeout)
++        throws IOException
++    {
++        assert Thread.holdsLock(this);
++
++        // epoll_wait timeout is int
++        int to = (int) Math.min(timeout, Integer.MAX_VALUE);
++        boolean blocking = (to != 0);
++        boolean timedPoll = (to > 0);
++
++        int numEntries;
++        processUpdateQueue();
++        processDeregisterQueue();
++        try {
++            begin(blocking);
++
++            do {
++                long startTime = timedPoll ? System.nanoTime() : 0;
++                long comp = Blocker.begin(blocking);
++                try {
++                    numEntries = EPoll.wait(epfd, pollArrayAddress, NUM_EPOLLEVENTS, to);
++                } finally {
++                    Blocker.end(comp);
++                }
++                if (numEntries == IOStatus.INTERRUPTED && timedPoll) {
++                    // timed poll interrupted so need to adjust timeout
++                    long adjust = System.nanoTime() - startTime;
++                    to -= (int) TimeUnit.NANOSECONDS.toMillis(adjust);
++                    if (to <= 0) {
++                        // timeout expired so no retry
++                        numEntries = 0;
++                    }
++                }
++            } while (numEntries == IOStatus.INTERRUPTED);
++            assert IOStatus.check(numEntries);
++
++        } finally {
++            end(blocking);
++        }
++        processDeregisterQueue();
++        return processEvents(numEntries, action);
++    }
++
++    /**
++     * Process changes to the interest ops.
++     */
++    private void processUpdateQueue() {
++        assert Thread.holdsLock(this);
++
++        synchronized (updateLock) {
++            SelectionKeyImpl ski;
++            while ((ski = updateKeys.pollFirst()) != null) {
++                if (ski.isValid()) {
++                    int fd = ski.getFDVal();
++                    // add to fdToKey if needed
++                    SelectionKeyImpl previous = fdToKey.putIfAbsent(fd, ski);
++                    assert (previous == null) || (previous == ski);
++
++                    int newEvents = ski.translateInterestOps();
++                    int registeredEvents = ski.registeredEvents();
++                    if (newEvents != registeredEvents) {
++                        if (newEvents == 0) {
++                            // remove from epoll
++                            EPoll.ctl(epfd, EPOLL_CTL_DEL, fd, 0);
++                        } else {
++                            if (registeredEvents == 0) {
++                                // add to epoll
++                                EPoll.ctl(epfd, EPOLL_CTL_ADD, fd, newEvents);
++                            } else {
++                                // modify events
++                                EPoll.ctl(epfd, EPOLL_CTL_MOD, fd, newEvents);
++                            }
++                        }
++                        ski.registeredEvents(newEvents);
++                    }
++                }
++            }
++        }
++    }
++
++    /**
++     * Process the polled events.
++     * If the interrupt fd has been selected, drain it and clear the interrupt.
++     */
++    private int processEvents(int numEntries, Consumer<SelectionKey> action)
++        throws IOException
++    {
++        assert Thread.holdsLock(this);
++
++        boolean interrupted = false;
++        int numKeysUpdated = 0;
++        for (int i=0; i<numEntries; i++) {
++            long event = EPoll.getEvent(pollArrayAddress, i);
++            int fd = EPoll.getDescriptor(event);
++            if (fd == eventfd.efd()) {
++                interrupted = true;
++            } else {
++                SelectionKeyImpl ski = fdToKey.get(fd);
++                if (ski != null) {
++                    int rOps = EPoll.getEvents(event);
++                    numKeysUpdated += processReadyEvents(rOps, ski, action);
++                }
++            }
++        }
++
++        if (interrupted) {
++            clearInterrupt();
++        }
++
++        return numKeysUpdated;
++    }
++
++    @Override
++    protected void implClose() throws IOException {
++        assert Thread.holdsLock(this);
++
++        // prevent further wakeup
++        synchronized (interruptLock) {
++            interruptTriggered = true;
++        }
++
++        FileDispatcherImpl.closeIntFD(epfd);
++        EPoll.freePollArray(pollArrayAddress);
++
++        eventfd.close();
++    }
++
++    @Override
++    protected void implDereg(SelectionKeyImpl ski) throws IOException {
++        assert !ski.isValid();
++        assert Thread.holdsLock(this);
++
++        int fd = ski.getFDVal();
++        if (fdToKey.remove(fd) != null) {
++            if (ski.registeredEvents() != 0) {
++                EPoll.ctl(epfd, EPOLL_CTL_DEL, fd, 0);
++                ski.registeredEvents(0);
++            }
++        } else {
++            assert ski.registeredEvents() == 0;
++        }
++    }
++
++    @Override
++    public void setEventOps(SelectionKeyImpl ski) {
++        ensureOpen();
++        synchronized (updateLock) {
++            updateKeys.addLast(ski);
++        }
++    }
++
++    @Override
++    public Selector wakeup() {
++        synchronized (interruptLock) {
++            if (!interruptTriggered) {
++                try {
++                    eventfd.set();
++                } catch (IOException ioe) {
++                    throw new InternalError(ioe);
++                }
++                interruptTriggered = true;
++            }
++        }
++        return this;
++    }
++
++    private void clearInterrupt() throws IOException {
++        synchronized (interruptLock) {
++            eventfd.reset();
++            interruptTriggered = false;
++        }
++    }
++}
+diff --new-file -ur jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPollSelectorProvider.java jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPollSelectorProvider.java
+--- jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EPollSelectorProvider.java	1970-01-01 01:00:00.000000000 +0100
++++ jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EPollSelectorProvider.java	2023-11-09 09:45:51.976886100 +0000
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2005, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++package sun.nio.ch;
++
++import java.io.IOException;
++import java.nio.channels.*;
++import java.nio.channels.spi.*;
++
++public class EPollSelectorProvider
++    extends SelectorProviderImpl
++{
++    public AbstractSelector openSelector() throws IOException {
++        return new EPollSelectorImpl(this);
++    }
++
++    public Channel inheritedChannel() throws IOException {
++        return InheritedChannel.getChannel();
++    }
++}
+diff --new-file -ur jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EventFD.java jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EventFD.java
+--- jdk-jdk-22-22/src/java.base/solaris/classes/sun/nio/ch/EventFD.java	1970-01-01 01:00:00.000000000 +0100
++++ jdk-jdk-22-23/src/java.base/solaris/classes/sun/nio/ch/EventFD.java	2023-11-09 09:51:38.680862380 +0000
+@@ -0,0 +1,73 @@
++/*
++ * Copyright (c) 2021, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++package sun.nio.ch;
++
++import java.io.IOException;
++
++/*
++ * Provides access to the Linux eventfd object.
++ */
++final class EventFD {
++    private final int efd;
++
++    /**
++     * Creates a blocking eventfd object with initial value zero.
++     */
++    EventFD() throws IOException {
++        efd = eventfd0();
++    }
++
++    int efd() {
++        return efd;
++    }
++
++    void set() throws IOException {
++        set0(efd);
++    }
++
++    void reset() throws IOException {
++        IOUtil.drain(efd);
++    }
++
++    void close() throws IOException {
++        FileDispatcherImpl.closeIntFD(efd);
++    }
++
++    private static native int eventfd0() throws IOException;
++
++    /**
++     * Writes the value 1 to the eventfd object as a long in the
++     * native byte order of the platform.
++     *
++     * @param the integral eventfd file descriptor
++     * @return the number of bytes written; should equal 8
++     */
++    private static native int set0(int efd) throws IOException;
++
++    static {
++        IOUtil.load();
++    }
++}
+diff --new-file -ur jdk-jdk-22-22/src/java.base/solaris/native/libnio/ch/EPoll.c jdk-jdk-22-23/src/java.base/solaris/native/libnio/ch/EPoll.c
+--- jdk-jdk-22-22/src/java.base/solaris/native/libnio/ch/EPoll.c	1970-01-01 01:00:00.000000000 +0100
++++ jdk-jdk-22-23/src/java.base/solaris/native/libnio/ch/EPoll.c	2023-11-09 09:46:09.429493149 +0000
+@@ -0,0 +1,96 @@
++/*
++ * Copyright (c) 2008, 2020, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++ #include <dlfcn.h>
++ #include <unistd.h>
++ #include <sys/types.h>
++ #include <sys/epoll.h>
++
++#include "jni.h"
++#include "jni_util.h"
++#include "jvm.h"
++#include "jlong.h"
++#include "nio.h"
++#include "nio_util.h"
++
++#include "sun_nio_ch_EPoll.h"
++
++JNIEXPORT jint JNICALL
++Java_sun_nio_ch_EPoll_eventSize(JNIEnv* env, jclass clazz)
++{
++    return sizeof(struct epoll_event);
++}
++
++JNIEXPORT jint JNICALL
++Java_sun_nio_ch_EPoll_eventsOffset(JNIEnv* env, jclass clazz)
++{
++    return offsetof(struct epoll_event, events);
++}
++
++JNIEXPORT jint JNICALL
++Java_sun_nio_ch_EPoll_dataOffset(JNIEnv* env, jclass clazz)
++{
++    return offsetof(struct epoll_event, data);
++}
++
++JNIEXPORT jint JNICALL
++Java_sun_nio_ch_EPoll_create(JNIEnv *env, jclass clazz) {
++    int epfd = epoll_create1(EPOLL_CLOEXEC);
++    if (epfd < 0) {
++        JNU_ThrowIOExceptionWithLastError(env, "epoll_create1 failed");
++    }
++    return epfd;
++}
++
++JNIEXPORT jint JNICALL
++Java_sun_nio_ch_EPoll_ctl(JNIEnv *env, jclass clazz, jint epfd,
++                          jint opcode, jint fd, jint events)
++{
++    struct epoll_event event;
++    int res;
++
++    event.events = events;
++    event.data.fd = fd;
++
++    res = epoll_ctl(epfd, (int)opcode, (int)fd, &event);
++    return (res == 0) ? 0 : errno;
++}
++
++JNIEXPORT jint JNICALL
++Java_sun_nio_ch_EPoll_wait(JNIEnv *env, jclass clazz, jint epfd,
++                           jlong address, jint numfds, jint timeout)
++{
++    struct epoll_event *events = jlong_to_ptr(address);
++    int res = epoll_wait(epfd, events, numfds, timeout);
++    if (res < 0) {
++        if (errno == EINTR) {
++            return IOS_INTERRUPTED;
++        } else {
++            JNU_ThrowIOExceptionWithLastError(env, "epoll_wait failed");
++            return IOS_THROWN;
++        }
++    }
++    return res;
++}

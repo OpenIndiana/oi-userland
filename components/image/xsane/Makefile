@@ -17,22 +17,20 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xsane
 COMPONENT_VERSION=	0.999
-COMPONENT_REVISION=	4
-COMPONENT_PROJECT_URL=	http://www.xsane.org
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	Graphical scanning frontend for the SANE scanner interface
-COMPONENT_FMRI=		image/scanner/xsane
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_PROJECT_URL=	http://www.xsane.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:5782d23e67dc961c81eef13a87b17eb0144cae3d1ffc5cf7e0322da751482b4b
 COMPONENT_ARCHIVE_URL=	http://www.xsane.org/download/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION = Applications/System Utilities
-COMPONENT_FMRI = image/scanner/xsane
+COMPONENT_FMRI=		image/scanner/xsane
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = xsane.COPYING
 
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
@@ -45,10 +43,10 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 CFLAGS+= -std=gnu89
 LDFLAGS+=-lnsl -lsocket
 
-COMPONENT_PREP_ACTION =        (chmod -R u+rw  $(SOURCE_DIR))
+COMPONENT_PREP_ACTION = (chmod -R u+rw  $(SOURCE_DIR))
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ( cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_SCRIPT=$(@D)/configure
 
@@ -57,8 +55,8 @@ CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/editor/gimp
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends

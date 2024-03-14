@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::SSLeay
-HUMAN_VERSION =			1.92
+HUMAN_VERSION =			1.94
 COMPONENT_SUMMARY =		Net::SSLeay - Perl bindings for OpenSSL and LibreSSL
 COMPONENT_CPAN_AUTHOR =		CHRISN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:47c2f2b300f2e7162d71d699f633dd6a35b0625a00cbda8c50ac01144a9396a9
+	sha256:9d7be8a56d1bedda05c425306cc504ba134307e0c09bda4a788c98744ebcd95d
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,6 +32,9 @@ include $(WS_MAKE_RULES)/common.mk
 # The component Makefile.PL file will ask some questions on whether we want
 # to run external tests, to which we want to answer with "n".
 COMPONENT_CONFIGURE_ENV += ; echo "n" |
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl

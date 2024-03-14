@@ -19,22 +19,26 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTTP::Message
-HUMAN_VERSION =			6.41
+HUMAN_VERSION =			6.45
 COMPONENT_SUMMARY =		HTTP::Message - HTTP style message (base class)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2183e1a8dfaef79309eae1d3902c5d9d42b516eb0a297be039862fb2aa3afa07
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:01cb8406612a3f738842d1e97313ae4d874870d1b8d6d66331f16000943d4cbe
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/clone
 PERL_REQUIRED_PACKAGES += library/perl-5/encode-locale
 PERL_REQUIRED_PACKAGES += library/perl-5/http-date
+PERL_REQUIRED_PACKAGES += library/perl-5/io-compress-brotli
 PERL_REQUIRED_PACKAGES += library/perl-5/io-html
 PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
-PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
-PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-compress-brotli
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/uri

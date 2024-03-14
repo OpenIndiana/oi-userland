@@ -13,38 +13,28 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
-
-BUILD_BITS=   64
 
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	18
 OPENJDK_UPDATE=	0
-OPENJDK_BUILD=	2
-OPENJDK_PATCH=	-ga
+OPENJDK_BUILD=	2.1
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)$(OPENJDK_PATCH)
-COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)$(OPENJDK_PATCH).tar.gz
+COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
+COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:8be88cecf79f2917d795c1f601b64c7c07b7fc072fb438adfa931072a35b3306
+	sha256:06fad73665af281e36e1cc5fb0c8ed5e88e1e821989f1421539cb012065d7722
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_LICENSE=	GPLv2 with Classpath Exception
-
-COMPONENT_NAME_1= jdk17
-COMPONENT_SRC_1= $(COMPONENT_NAME_1)-jdk-17-35
-COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.bz2
-COMPONENT_ARCHIVE_HASH_1= sha256:973b576b3ba0b78451cf26c835162fba10216ac2d5a6141a6040dddcde9ac6c6
-COMPONENT_ARCHIVE_URL_1= http://pkgs.tribblix.org/openjdk/$(COMPONENT_ARCHIVE_1)
-PKG_PROTO_DIRS += $(COMPONENT_SRC_1)
 
 OPENJDK_INSTANCE=	openjdk$(COMPONENT_VERSION)
 CACERTS_STORE=	cacerts.out
@@ -60,13 +50,6 @@ CLEAN_PATHS += $(BUILD_DIR)
 CLEAN_PATHS += $(CACERTS_STORE)
 CLEAN_PATHS += $(COMPONENT_SRC_1)
 
-#COMPONENT_PRE_CONFIGURE_ACTION=	($(CP) -r $(SOURCE_DIR)/* $(@D); \
-#																	$(MKDIR) $(@D)/build; \
-#																	cd $(@D)/build; )
-
-#COMPONENT_POST_CONFIGURE_ACTION= (cd $(@D); \
-#																	$(CP) -r build/* .;)
-
 # read the number of jobs from the arguments for make
 JOBS=$(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
 
@@ -77,7 +60,7 @@ CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
 CONFIGURE_OPTIONS+=        --x-libraries=$(USRLIBDIR64)
 CONFIGURE_OPTIONS+=        --with-version-pre=
 CONFIGURE_OPTIONS+=        --with-conf-name=oi
-CONFIGURE_OPTIONS+=        --with-boot-jdk=$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
+CONFIGURE_OPTIONS+=        --with-boot-jdk=/usr/jdk/openjdk17/
 CONFIGURE_OPTIONS+=        --with-freetype=system
 CONFIGURE_OPTIONS+=        --with-giflib=system
 CONFIGURE_OPTIONS+=        --with-harfbuzz=system
@@ -104,9 +87,7 @@ CONFIGURE_OPTIONS+=        --disable-option-checking
 CONFIGURE_OPTIONS+=        --enable-deprecated-ports=yes
 
 CONFIGURE_ENV+= LD=/usr/bin/gld
-CONFIGURE_ENV+= LD_LIBRARY_PATH=/usr/gcc/7/lib/amd64
 COMPONENT_BUILD_ENV+= LD=/usr/bin/gld
-COMPONENT_BUILD_ENV+= LD_LIBRARY_PATH=/usr/gcc/7/lib/amd64
 
 COMPONENT_POST_BUILD_ACTION=	($(LN) -s server/libjvm.so $(@D)/images/jdk/lib/libjvm.so)
 
@@ -147,11 +128,14 @@ install: $(BUILD_DIR_64)/.built	$(CACERTS_STORE)
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/library/c++/sunpro
 
+# Manually added boot JDK
+REQUIRED_PACKAGES += runtime/java/openjdk17
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/giflib

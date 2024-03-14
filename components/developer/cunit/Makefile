@@ -20,31 +20,33 @@
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
+
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cunit
+HUMAN_VERSION=		2.1-3
 COMPONENT_VERSION=      2.1.3
 COMPONENT_FMRI=         developer/cunit
 COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_SUMMARY=     	Automated testing framework for C
 COMPONENT_SRC_NAME=	CUnit
-COMPONENT_SRC_VERSION=  2.1-3
-COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_SRC_VERSION)
+COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	http://cunit.sourceforge.net/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f5b29137f845bb08b77ec60584fdb728b4e58f1023e6f249a464efa49a40f214
 COMPONENT_ARCHIVE_URL= \
-    http://sourceforge.net/projects/cunit/files/CUnit/$(COMPONENT_SRC_VERSION)/$(COMPONENT_ARCHIVE)
+    http://sourceforge.net/projects/cunit/files/CUnit/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && \
                           aclocal -I m4 --install && \
-                          libtoolize -i && \
+                          PATH="$(PATH)" libtoolize -i && \
                           autoheader  && \
                           automake --add-missing --include-deps --copy && \
                           autoconf && \
@@ -61,16 +63,8 @@ CONFIGURE_OPTIONS+= --enable-console
 CONFIGURE_OPTIONS+= --enable-examples
 CONFIGURE_OPTIONS+= --enable-test
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-CUNIT_TESTDIR=CUnit/Sources/Test
-CUNIT_TESTBIN=test_cunit
-
-test: $(TEST_32_and_64)
-	pushd $(BUILD_DIR_32)/$(CUNIT_TESTDIR); ./$(CUNIT_TESTBIN); popd; 
-	pushd $(BUILD_DIR_64)/$(CUNIT_TESTDIR); ./$(CUNIT_TESTBIN); popd; 
+COMPONENT_TEST_DIR = $(@D)/CUnit/Sources/Test
+COMPONENT_TEST_CMD = ./test_cunit
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

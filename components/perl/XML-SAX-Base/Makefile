@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		XML::SAX::Base
 HUMAN_VERSION =			1.09
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		XML::SAX::Base - Base class SAX Drivers and Filters
 COMPONENT_CPAN_AUTHOR =		GRANTM
 COMPONENT_ARCHIVE_HASH =	\

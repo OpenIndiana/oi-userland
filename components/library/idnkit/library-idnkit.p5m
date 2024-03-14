@@ -23,23 +23,18 @@
 # Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri \
-    value=pkg:/library/idnkit@$(PKG_SOLARIS_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(PKG_SOLARIS_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="Internationalized Domain Name kit (idnkit-2.3/JPRS)"
-set name=pkg.description \
-    value="Library for handling internationalized domain names."
-set name=com.oracle.info.description \
-    value="Toolkit for handling internationalized domain names (IDN)."
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Internationalization
+set name=pkg.description value="Library for handling internationalized domain names."
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2012/004
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
 
-license idnkit2.license license=JPRS
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 link path=usr/lib/$(MACH64)/libidnkit.so target=libidnkit.so.2.0.3
 link path=usr/lib/$(MACH64)/libidnkit.so.2 target=libidnkit.so.2.0.3

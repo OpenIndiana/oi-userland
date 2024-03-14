@@ -22,19 +22,18 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-settings-daemon
-COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	Fork of gnome-settings-deamon
-COMPONENT_ARCHIVE_HASH= sha256:b77aa017ff811a6fcae40bd45f18d8606eec87be21e3e6fa6d35c0fe14e66d41
-COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_ARCHIVE_HASH= sha256:4ed7cdadaaa4c99efffc0282b8411703bb76e072c41c4b57989f8c5b40611a3a
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+= --disable-rfkill
-CONFIGURE_OPTIONS+= --enable-pulse
+CONFIGURE_OPTIONS += --disable-rfkill
+CONFIGURE_OPTIONS += --enable-pulse
 
 # Build requirements
 REQUIRED_PACKAGES += library/nspr
@@ -56,8 +55,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
-REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxi

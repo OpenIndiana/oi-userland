@@ -1,0 +1,40 @@
+HFAXD=/usr/sbin/hfaxd
+HFAXD_CONF=/var/spool/hylafax/etc/setup.cache
+PIDFILE=/var/run/hfaxd.pid
+
+test -f $HFAXD_CONF || {
+    cat<<EOF
+
+FATAL ERROR: $HFAXD_CONF is missing!
+
+The file $HFAXD_CONF is not present.  This
+probably means the machine has not been setup using the faxsetup(8C)
+command.  Read the documentation on setting up HylaFAX before you
+startup a server system.
+
+EOF
+    exit 1
+}
+. $HFAXD_CONF
+
+
+case $1 in
+
+'start')
+        $HFAXD -i hylafax
+        ;;
+
+'restart')
+        if [ -f "$PIDFILE" ]; then
+                /usr/bin/kill -HUP `/usr/bin/cat $PIDFILE`
+        fi
+        ;;
+
+*)
+        echo "Usage: $0 { start | restart }"
+        exit 1
+        ;;
+esac
+
+exit $?
+

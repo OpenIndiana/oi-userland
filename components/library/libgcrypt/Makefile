@@ -22,44 +22,35 @@
 # Copyright 2011 Audioboo Ltd. All rights reserved.
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
-COMPONENT_VERSION=	1.9.4
-COMPONENT_FMRI=		system/library/security/libgcrypt
+COMPONENT_VERSION=	1.10.3
 COMPONENT_SUMMARY=	GnuPG libgcrypt library
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libgcrypt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:ea849c83a72454e3ed4267697e8ca03390aee972ab421e7df69dfe42b65caaf7
+COMPONENT_ARCHIVE_HASH= sha256:8b0870897ac5ac67ded568dcfadf45969cfa8a6beb0fd60af2a9eadc2a3272aa
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		system/library/security/libgcrypt
 COMPONENT_CLASSIFICATION= System/Security
 COMPONENT_LICENSE=	LGPL, BSD, BSD-like
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS  +=	--enable-shared
-CONFIGURE_OPTIONS  +=	--disable-static
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
-# We disalbe asm for 64-bit arch, as this code doesn't compile.
+# We disalbe asm as this code doesn't compile.
 # But libgcrypt still tries to use asm functions.
 # gcry_cv_gcc_amd64_platform_as_ok switch allows us to prevent this
-CONFIGURE_OPTIONS.64  +=	--disable-asm
-CONFIGURE_ENV.64 +=		gcry_cv_gcc_amd64_platform_as_ok=no
-
-# some tests fail as gcry_control (GCRYCTL_INIT_SECMEM,...)
-# requires root (or proc_lock_memory) privileges
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n -e "/PASS/p" ' \
-	'-e "/SKIP/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/All/p" '
+CONFIGURE_OPTIONS += --disable-asm
+CONFIGURE_ENV += gcry_cv_gcc_amd64_platform_as_ok=no
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/libgpg-error
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

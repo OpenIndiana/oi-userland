@@ -1,0 +1,13 @@
+--- pytest-subprocess-1.5.0/tests/test_examples.py.orig
++++ pytest-subprocess-1.5.0/tests/test_examples.py
+@@ -57,5 +57,9 @@
+         imports + setup_fixture + event_loop_fixture + "\n" + code_blocks
+     )
+ 
+-    result = testdir.inline_run()
++    result = testdir.inline_run(
++        "-p", "no:black",
++        "-p", "no:relaxed",     # https://github.com/bitprophet/pytest-relaxed/issues/28
++        "-p", "no:reporter",    # https://github.com/christiansandberg/pytest-reporter/issues/8
++    )
+     assert result.ret == 0

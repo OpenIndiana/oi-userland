@@ -1,0 +1,44 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 10 items
+
+tests/test_integration.py::IntegrationTests::test_canonical_url PASSED
+tests/test_integration.py::IntegrationTests::test_escape_canonical_url PASSED
+tests/test_integration.py::IntegrationTests::test_escape_js_vars PASSED
+tests/test_integration.py::IntegrationTests::test_generate_json_artifacts PASSED
+tests/test_integration.py::IntegrationTests::test_included_data PASSED
+tests/test_integration.py::IntegrationTests::test_included_js PASSED
+tests/test_integration.py::IntegrationTests::test_integration PASSED
+tests/test_integration.py::IntegrationTests::test_media_integration PASSED
+tests/test_integration.py::IntegrationTests::test_searchtools_is_patched PASSED
+tests/test_integration.py::IntegrationTests::test_version_warning PASSED
+
+=============================== warnings summary ===============================
+tests/test_integration.py: 41 warnings
+  $(@D)/tests/pyexample-json/../../readthedocs_ext/readthedocs.py:106: RemovedInSphinx90Warning: 'sphinx.builders.html.StandaloneHTMLBuilder.css_files' is deprecated. Check CHANGES for Sphinx API modifications.
+    if inject_css and theme_css not in app.builder.css_files:
+
+tests/test_integration.py: 82 warnings
+  $(@D)/tests/pyexample-json/../../readthedocs_ext/readthedocs.py:106: RemovedInSphinx90Warning: The str interface for _CascadingStyleSheet objects is deprecated. Use css.filename instead.
+    if inject_css and theme_css not in app.builder.css_files:
+
+tests/test_integration.py: 41 warnings
+  $(@D)/tests/pyexample-json/../../readthedocs_ext/readthedocs.py:120: RemovedInSphinx90Warning: 'sphinx.builders.html.StandaloneHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
+    hasattr(app.builder, 'script_files'),
+
+tests/test_integration.py: 41 warnings
+  $(@D)/tests/pyexample-json/../../readthedocs_ext/readthedocs.py:121: RemovedInSphinx90Warning: 'sphinx.builders.html.StandaloneHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
+    js_file not in app.builder.script_files,
+
+tests/test_integration.py: 123 warnings
+  $(@D)/tests/pyexample-json/../../readthedocs_ext/readthedocs.py:121: RemovedInSphinx90Warning: The str interface for _JavaScript objects is deprecated. Use js.filename instead.
+    js_file not in app.builder.script_files,
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 10 passed, 328 warnings ========
+  py$(PYV): OK
+  congratulations :)

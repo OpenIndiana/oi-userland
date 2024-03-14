@@ -1,23 +1,12 @@
-diff -ur freeglut-3.0.0freeglut-3.0.0-1/src/fg_joystick.c freeglut-3.0.0/src/fg_joystick.c
---- freeglut-3.0.0-1/src/fg_joystick.c	2017-11-28 07:21:55.973204711 +0000
-+++ freeglut-3.0.0/src/fg_joystick.c	2017-11-28 07:23:07.334099131 +0000
-@@ -309,7 +309,7 @@
- /*
-  * Read the raw joystick data
-  */
--static void fghJoystickRawRead( SFG_Joystick* joy, int* buttons, float* axes )
-+void fghJoystickRawRead( SFG_Joystick* joy, int* buttons, float* axes )
- {
-     int i;
-
-diff -ur freeglut-3.0.0freeglut-3.0.0-1/src/x11/fg_joystick_x11.c freeglut-3.0.0/src/x11/fg_joystick_x11.c
---- freeglut-3.0.0-1/src/x11/fg_joystick_x11.c	2017-11-28 07:21:55.968026267 +0000
-+++ freeglut-3.0.0/src/x11/fg_joystick_x11.c	2017-11-28 07:22:39.633277307 +0000
-@@ -40,6 +40,7 @@
- #endif
-
- #include <fcntl.h>
-+void fghJoystickRawRead( SFG_Joystick* joy, int* buttons, float* axes );
-
-
- /*this should be defined in a header file */
+diff -Nru freeglut-3.4.0.orig/src/x11/fg_joystick_x11.c freeglut-3.4.0/src/x11/fg_joystick_x11.c
+--- freeglut-3.4.0.orig/src/x11/fg_joystick_x11.c	2022-10-07 18:12:51.000000000 +0200
++++ freeglut-3.4.0/src/x11/fg_joystick_x11.c	2023-10-03 13:32:05.380485367 +0200
+@@ -627,7 +627,7 @@
+ 
+     do
+     {
+-        fghJoystickRawRead( joy, NULL, joy->center );
++        fgJoystickRawRead( joy, NULL, joy->center );
+         counter++;
+     } while( !joy->error &&
+              counter < 100 &&

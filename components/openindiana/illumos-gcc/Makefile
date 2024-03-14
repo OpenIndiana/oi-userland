@@ -11,6 +11,10 @@
 #
 # Copyright 2012, Jon Tibble
 #
+
+BUILD_BITS = 32
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-gcc
@@ -62,11 +66,9 @@ COMPONENT_ARCHIVE_HASH_3= \
 CLEAN_PATHS += $(COMPONENT_SRC_3)
 COMPONENT_POST_UNPACK_ACTION_3 += ( $(RM) -r $(COMPONENT_SRC)/$(GMP_NAME) && $(CP) -rpP $(COMPONENT_SRC_3) $(COMPONENT_SRC)/$(GMP_NAME) )
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-GCC_VERSION=4.4.4
+# We use illumos-gcc to build illumos-gcc
 GCC_ROOT=/opt/gcc/4.4.4
 
 CC_BITS=
@@ -89,25 +91,27 @@ CONFIGURE_OPTIONS +=	--with-pkgversion="Illumos $(ILLUMOS_VERSION)"
 CONFIGURE_OPTIONS +=	--with-bugurl="http://github.com/illumos/gcc/issues"
 
 COMPONENT_BUILD_ENV=		SHELL=$(CONFIG_SHELL) CFLAGS="$(CFLAGS)" STAGE1_CFLAGS="$(CFLAGS)" CFLAGS_FOR_TARGET="$(CFLAGS)"
-COMPONENT_BUILD_GMAKE_ARGS=	-j8
+COMPONENT_BUILD_ENV +=		PATH="$(PATH)"
 COMPONENT_BUILD_TARGETS=	bootstrap
 
-COMPONENT_POST_INSTALL_ACTION= ( \
-	elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib' $(PROTO_DIR)/opt/gcc/4.4.4/lib/libgomp.so.1 ; \
-	elfedit -e "dyn:rpath /opt/gcc/4.4.4/lib/$(MACH64)" $(PROTO_DIR)/opt/gcc/4.4.4/lib/$(MACH64)/libgomp.so.1 ; \
-	elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib' $(PROTO_DIR)/opt/gcc/4.4.4/lib/libssp.so.0 ; \
-	elfedit -e "dyn:rpath /opt/gcc/4.4.4/lib/$(MACH64)" $(PROTO_DIR)/opt/gcc/4.4.4/lib/$(MACH64)/libssp.so.0 ; \
-	elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib' $(PROTO_DIR)/opt/gcc/4.4.4/lib/libstdc++.so.6 ; \
-	elfedit -e "dyn:rpath /opt/gcc/4.4.4/lib/$(MACH64)" $(PROTO_DIR)/opt/gcc/4.4.4/lib/$(MACH64)/libstdc++.so.6 )
+COMPONENT_POST_INSTALL_ACTION += \
+	/usr/bin/elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib' $(PROTO_DIR)/opt/gcc/4.4.4/lib/libgomp.so.1 ; \
+	/usr/bin/elfedit -e "dyn:rpath /opt/gcc/4.4.4/lib/$(MACH64)" $(PROTO_DIR)/opt/gcc/4.4.4/lib/$(MACH64)/libgomp.so.1 ; \
+	/usr/bin/elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib' $(PROTO_DIR)/opt/gcc/4.4.4/lib/libssp.so.0 ; \
+	/usr/bin/elfedit -e "dyn:rpath /opt/gcc/4.4.4/lib/$(MACH64)" $(PROTO_DIR)/opt/gcc/4.4.4/lib/$(MACH64)/libssp.so.0 ; \
+	/usr/bin/elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib' $(PROTO_DIR)/opt/gcc/4.4.4/lib/libstdc++.so.6 ; \
+	/usr/bin/elfedit -e "dyn:rpath /opt/gcc/4.4.4/lib/$(MACH64)" $(PROTO_DIR)/opt/gcc/4.4.4/lib/$(MACH64)/libstdc++.so.6 ;
 
-build:		$(BUILD_32)
+COMPONENT_POST_INSTALL_ACTION += \
+	$(RM) -r $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include-fixed ;
 
-install:	$(INSTALL_32)
+PKG_HARDLINKS += opt/gcc/4.4.4/bin/gcc
+PKG_HARDLINKS += opt/gcc/4.4.4/bin/g++
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/illumos-gcc
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

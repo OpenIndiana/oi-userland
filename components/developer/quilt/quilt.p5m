@@ -22,9 +22,6 @@
 # Copyright 2017, Aurelien Larcher.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-<transform file path=usr/share/quilt/.+ ->default mode 0555>
-
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
@@ -35,6 +32,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/share/quilt/.+ ->default mode 0555>
 
 file etc/bash_completion.d/quilt path=usr/share/bash-completion/completions/quilt
 file path=etc/quilt.quiltrc \
@@ -93,6 +92,7 @@ file path=usr/share/quilt/top
 file path=usr/share/quilt/unapplied
 file path=usr/share/quilt/upgrade
 
+link path=usr/share/quilt/compat/7zr target=../../../bin/7zr pkg.linted.userland.action002.0=true
 link path=usr/share/quilt/compat/awk target=../../../gnu/bin/awk pkg.linted.userland.action002.0=true
 link path=usr/share/quilt/compat/column target=../../../bin/column pkg.linted.userland.action002.0=true
 link path=usr/share/quilt/compat/cp target=../../../gnu/bin/cp pkg.linted.userland.action002.0=true
@@ -110,6 +110,7 @@ link path=usr/share/quilt/compat/tail target=../../../gnu/bin/tail pkg.linted.us
 link path=usr/share/quilt/compat/tar target=../../../gnu/bin/tar pkg.linted.userland.action002.0=true
 link path=usr/share/quilt/compat/tr target=../../../gnu/bin/tr pkg.linted.userland.action002.0=true
 
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/7zr type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/awk type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/cp type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/column type=require

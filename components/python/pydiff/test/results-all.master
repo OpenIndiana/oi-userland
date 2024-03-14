@@ -1,0 +1,23 @@
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 6 items
+
+::project PASSED
+test_pydiff.py::UnitTests::test_diff_bytecode PASSED
+test_pydiff.py::UnitTests::test_diff_bytecode_of_files PASSED
+test_pydiff.py::UnitTests::test_diff_bytecode_should_ignore_docstrings PASSED
+test_pydiff.py::UnitTests::test_disassemble PASSED
+test_pydiff.py::UnitTests::test_disassemble_with_bad_syntax PASSED
+
+=============================== warnings summary ===============================
+test_pydiff.py::UnitTests::test_diff_bytecode_of_files
+  $(@D)/pydiff.py:134: PendingDeprecationWarning: lib2to3 package is deprecated and may not be able to parse Python 3.10+
+    from lib2to3.pgen2 import tokenize as lib2to3_tokenize
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+======== 6 passed, 1 warning ========

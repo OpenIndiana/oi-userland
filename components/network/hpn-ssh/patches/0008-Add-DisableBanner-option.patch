@@ -1,0 +1,161 @@
+--- hpn-ssh-hpn-18.3.1/readconf.c.orig
++++ hpn-ssh-hpn-18.3.1/readconf.c
+@@ -168,6 +168,9 @@
+ 	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
+ 	oSendEnv, oSetEnv, oControlPath, oControlMaster, oControlPersist,
+ 	oHashKnownHosts,
++#ifdef DISABLE_BANNER
++	oDisableBanner,
++#endif
+ 	oTunnel, oTunnelDevice,
+ 	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
+ 	oTcpRcvBufPoll, oHPNDisabled,
+@@ -298,6 +301,9 @@
+ 	{ "controlpersist", oControlPersist },
+ 	{ "hashknownhosts", oHashKnownHosts },
+ 	{ "include", oInclude },
++#ifdef DISABLE_BANNER
++	{ "disablebanner", oDisableBanner },
++#endif
+ 	{ "tunnel", oTunnel },
+ 	{ "tunneldevice", oTunnelDevice },
+ 	{ "localcommand", oLocalCommand },
+@@ -1026,6 +1032,17 @@
+ 	return -1;
+ }
+ 
++#ifdef DISABLE_BANNER
++static const struct multistate multistate_disablebanner[] = {
++	{ "true",			SSH_DISABLEBANNER_YES },
++	{ "false",			SSH_DISABLEBANNER_NO },
++	{ "yes",			SSH_DISABLEBANNER_YES },
++	{ "no",				SSH_DISABLEBANNER_NO },
++	{ "in-exec-mode",		SSH_DISABLEBANNER_INEXECMODE },
++	{ NULL, -1 }
++};
++#endif
++
+ /*
+  * Processes a single option line as used in the configuration files. This
+  * only sets those values that have not already been set.
+@@ -2425,6 +2442,13 @@
+ 		}
+ 		break;
+ 
++#ifdef DISABLE_BANNER
++	case oDisableBanner:
++	        intptr = &options->disable_banner;
++                multistate_ptr = multistate_disablebanner;
++                goto parse_multistate;
++#endif
++
+ 	case oDeprecated:
+ 		debug("%s line %d: Deprecated option \"%s\"",
+ 		    filename, linenum, keyword);
+@@ -2672,6 +2696,9 @@
+ 	options->stdin_null = -1;
+ 	options->fork_after_authentication = -1;
+ 	options->proxy_use_fdpass = -1;
++#ifdef DISABLE_BANNER
++	options->disable_banner = -1;
++#endif
+ 	options->ignored_unknown = NULL;
+ 	options->num_canonical_domains = 0;
+ 	options->num_permitted_cnames = 0;
+@@ -2906,6 +2933,10 @@
+ 		options->canonicalize_fallback_local = 1;
+ 	if (options->canonicalize_hostname == -1)
+ 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
++#ifdef DISABLE_BANNER
++	if (options->disable_banner == -1)
++		options->disable_banner = 0;
++#endif
+ 	if (options->fingerprint_hash == -1)
+ 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
+ #ifdef ENABLE_SK_INTERNAL
+--- hpn-ssh-hpn-18.3.1/readconf.h.orig
++++ hpn-ssh-hpn-18.3.1/readconf.h
+@@ -198,6 +198,9 @@
+ 	u_int	num_channel_timeouts;
+ 
+ 	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
++#ifdef DISABLE_BANNER
++        int     disable_banner; /* Disable display of banner */
++#endif
+ }       Options;
+ 
+ #define SSH_PUBKEY_AUTH_NO	0x00
+@@ -243,6 +246,12 @@
+ #define SSH_KEYSTROKE_CHAFF_MIN_MS		1024
+ #define SSH_KEYSTROKE_CHAFF_RNG_MS		2048
+ 
++#ifdef DISABLE_BANNER
++#define SSH_DISABLEBANNER_NO		0
++#define SSH_DISABLEBANNER_YES		1
++#define SSH_DISABLEBANNER_INEXECMODE	2
++#endif
++
+ const char *kex_default_pk_alg(void);
+ char	*ssh_connection_hash(const char *thishost, const char *host,
+     const char *portstr, const char *user, const char *jump_host);
+--- hpn-ssh-hpn-18.3.1/hpnssh_config.5.orig
++++ hpn-ssh-hpn-18.3.1/hpnssh_config.5
+@@ -713,6 +713,14 @@
+ then the backgrounded master connection will automatically terminate
+ after it has remained idle (with no client connections) for the
+ specified time.
++.It Cm DisableBanner
++If set to yes, disables the display of the  banner  message.
++If set to in-exec-mode, disables the display of banner message when in remote
++command mode only.
++.Pp
++The default value is no, which means that the banner is displayed unless the
++log level  is  QUIET, FATAL, or ERROR. See also the Banner option in
++.Xr sshd_config 4 . This option applies to protocol version 2 only.
+ .It Cm DisableMTAES
+ Switch the encryption cipher being used from the multithreaded MT-AES-CTR cipher
+ back to the stock single-threaded AES-CTR cipher. This may prove to be more
+--- hpn-ssh-hpn-18.3.1/sshconnect2.c.orig
++++ hpn-ssh-hpn-18.3.1/sshconnect2.c
+@@ -85,6 +85,10 @@
+ extern char *server_version_string;
+ extern Options options;
+ 
++#ifdef DISABLE_BANNER
++extern struct sshbuf *command;
++#endif
++
+ /*
+  * tty_flag is set in ssh.c. Use this in ssh_userauth2:
+  * if it is set, then prevent the switch to the null cipher.
+@@ -630,8 +634,28 @@
+ 	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
+ 	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
+ 		goto out;
+-	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
+-		fmprintf(stderr, "%s", msg);
++#ifdef DISABLE_BANNER
++	/*
++	 * Banner is a warning message according to RFC 4252. So, never print
++	 * a banner in error log level or lower. If the log level is higher,
++	 * use DisableBanner option to decide whether to display it or not.
++	 */
++	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO &&
++            (options.disable_banner == SSH_DISABLEBANNER_NO ||
++            (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE &&
++            sshbuf_len(command) == 0))) {
++#else
++	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO) {
++#endif
++		char *safe;
++
++		if (len > 65536)
++			len = 65536;
++		safe = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
++		strnvis(safe, msg, len * 4 + 1, VIS_SAFE|VIS_OCTAL|VIS_NOSLASH);
++		fmprintf(stderr, "%s", safe);
++		free(safe);
++	}
+ 	r = 0;
+  out:
+ 	free(msg);

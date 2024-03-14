@@ -1,0 +1,176 @@
+#!/bin/sh
+#
+# Copyright (c) 2020, Oracle and/or its affiliates.
+#
+
+# check		verify gs specified by ${GS} or the one in current directory
+# system_check	verify system gs
+# generate	generate data for tests
+
+# GS variable selects gs tree
+# DEBUG variable is more verbose
+
+
+AWK=gawk
+ECHO=gecho
+SED=gsed
+
+
+TMPDIR=$(mktemp -d) || {
+	echo Cannot create temp dir. >&2
+	exit 1
+}
+trap "rm -rf \"$TMPDIR\"" 0 1 2 3 6
+
+TEST_DIR=$(dirname "$0"); [ -z "$TEST_DIR" ] && TEST_DIR=.
+if [ "$1" = system-check ]; then
+	GS_BIN=$(which gs)
+	echo "Using system gs."
+else
+	GS=${GS:-.}
+	GS_BIN=$GS/bin/gs
+	GS_RESPATH="$GS/Resource/Init:$GS/lib:$GS/Resource/Font"
+	echo "Using $GS_BIN -I \"$GS_RESPATH\"."
+fi
+
+[ ! -x "$GS_BIN" ] && {
+	echo "Cannot find gs executable $GS_BIN." >&2
+	exit 1
+}
+
+GS_BIN_BITS=$(file "$GS_BIN" | "$SED" -e 's/^.*ELF \([[:digit:]]*\)-bit.*$/\1/')
+
+IN="$TEST_DIR/input.ps"
+OUT=$TMPDIR/testout
+
+[ ! -f "$IN" ] && {
+	echo "Cannot find test data $IN." >&2
+	exit 1
+}
+
+TEST1_GENERATE_FILTER="bbox|cif|devicen|display|ijs|nullpage|oprp|opvp|plib|plibc|plibg|plibk|plibm|rinkj|tiffsep1|uniprint|x11|x11alpha|x11cmyk|x11cmyk2|x11cmyk4|x11cmyk8|x11gray2|x11gray4|x11mono|x11rg16x|x11rg32x"
+
+TEST2_DEVS="bjccmyk cdeskjet cdj1600 cdj500 cdj550 cdj670 cdj850 cdj880 cdj890 cdjcolor chp2200 mj500c mj6000c mj700v2c mj8000c npdl photoex picty180 stcolor txtwrite"
+TEST2_GENERATE_TRIES=3
+TEST2_EXPECTED="$TEST_DIR/test2-$(uname -p)-$GS_BIN_BITS"
+TEST2_CKSUM=$TMPDIR/cksum
+
+GS() {
+	dev=$1
+	in=$2
+	out=$3
+
+	cmd="$GS_BIN -I \"$GS_RESPATH\" -q -dNOPAUSE -dBATCH -sDEVICE=\"$dev\" -sOutputFile=\"$out\" \"$in\""
+	[ -n "$DEBUG" ] && echo "\$ $cmd"
+
+	eval "$cmd"; ret=$?
+	[ -n "$DEBUG" ] && echo "\$?=$ret"
+
+	return $ret
+}
+
+test1() {
+	$ECHO This is test1.
+
+	GS_DEVICES=$($GS_BIN -h | $AWK -vFILTER="$TEST1_GENERATE_FILTER" 'END {print devices}
+		$0 == "Available devices:" {gather=1; next}
+		$0 == "Search path:" {gather=0}
+		gather == 1 {for(i=1; i<=NF; i++){if(!(match($i, FILTER))) devices=devices " " $i}}')
+
+	for dev in $GS_DEVICES; do
+		status=pass
+		target="$TMPDIR/$dev"
+		GS "$dev" "$IN" "$target" || status=fail
+		[ ! -s "$target" ] && status="fail (zero size)"
+		[ $ret -eq 0 -a "$status" != pass ] && ret=1
+
+		$ECHO $dev $status
+	done
+}
+
+test2_find_deterministic() {
+	dev=$1
+
+	target="$TMPDIR/$dev"
+
+	GS "$dev" "$IN" "$target" >/dev/null 2>&1 || return 1
+	[ ! -f "$target" ] && return 1
+	for n in $(seq 2 $TEST2_GENERATE_TRIES); do
+		$ECHO -n "$n "
+		GS "$dev" "$IN" "$OUT" >/dev/null 2>&1 || return 1
+		cmp -s "$target" "$OUT" || return 1
+	done
+	(cd $(dirname "$target") && cksum "$dev" >"$TEST2_CKSUM")
+}
+
+# Generate function tries to find devices with deterministic output and saves it for testing.
+test2_generate() {
+	# disable x11 devices
+	unset DISPLAY
+
+	mkdir -p "$TEST2_EXPECTED"
+
+	for dev in $TEST2_DEVS; do
+		$ECHO -n "$dev "
+		test2_find_deterministic $dev
+		if [ $? -eq 0 ]; then
+			target="$TEST2_EXPECTED/$dev"
+			if [ -s "$target" ]; then
+				status=same
+				cmp "$target" "$TEST2_CKSUM" || status=changed
+			else
+				status=new
+			fi
+
+			[ "$status" = new -o "$status" = changed ] && mv "$TEST2_CKSUM" "$target"
+			$ECHO "keep ($status)"
+		else
+			$ECHO disable
+			rm -f "$TEST2_EXPECTED/$dev"
+		fi
+	done
+}
+
+# generates output for all devices, compare with expected
+test2() {
+	$ECHO This is test2.
+
+	for dev in $TEST2_DEVS; do
+		status=pass
+		target="$TMPDIR/$dev"
+		GS "$dev" "$IN" "$target" || status=fail
+		[ "$status" = pass ] && {
+			(cd $(dirname "$target") && cksum $(basename "$target") >"$TEST2_CKSUM")
+			cmp "$TEST2_CKSUM" "$TEST2_EXPECTED/$dev" || status=fail
+		}
+
+		[ $ret -eq 0 -a $status != pass ] && ret=1
+
+		$ECHO $dev $status
+	done
+}
+
+check() {
+	test1
+	echo
+	test2
+}
+
+generate() {
+	test2_generate
+}
+
+case "$1" in
+	check|system-check)
+		ret=0
+		check
+		exit $ret
+		;;
+	generate)
+		generate
+		;;
+	*)
+		$ECHO "Argument must be either 'check', 'system-check' or 'generate'." >&2
+		exit 1
+		;;
+esac

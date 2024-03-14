@@ -11,50 +11,48 @@
 #
 # Copyright (c) 2016 Alexander Pyhalov
 # Copyright (c) 2017 Ken Mays
+# Copyright (c) 2023 Klaus Ziegler
 #
 
-BUILD_BITS = 32_and_64
-
+BUILD_BITS = 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hunspell
-COMPONENT_VERSION=        1.6.2
-COMPONENT_REVISION =	1
-COMPONENT_PROJECT_URL=    http://hunspell.github.io/
-COMPONENT_SUMMARY=        Improved spellchecker
+COMPONENT_VERSION=        1.7.2
+COMPONENT_REVISION=       3
+COMPONENT_SUMMARY=        Hunspell is a free spell checker and morphological analyzer library and command-line tool
+COMPONENT_PROJECT_URL=    https://hunspell.github.io/
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=        \
-    sha256:3cd9ceb062fe5814f668e4f22b2fa6e3ba0b339b921739541ce180cac4d6f4c4 
-COMPONENT_ARCHIVE_URL=        https://github.com/hunspell/hunspell/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE=	GPLv3, LGPLv3, MPLv1.1
-COMPONENT_FMRI= text/hunspell
-COMPONENT_CLASSIFICATION = System/Text Tools
-
-USE_DEFAULT_TEST_TRANSFORMS = yes
+COMPONENT_ARCHIVE_HASH=   sha256:69fa312d3586c988789266eaf7ffc9861d9f6396c31fc930a014d551b59bbd6e
+COMPONENT_ARCHIVE_URL=    https://github.com/hunspell/hunspell/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=           text/hunspell
+COMPONENT_CLASSIFICATION= System/Text Tools
+COMPONENT_LICENSE=        GPLv3, LGPLv3, MPLv1.1
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu)
 
 CPPFLAGS += -I/usr/include/ncurses
-# We need to check headers with C++ compiler, but configure uses $(CC).
-# We can't use $(CXX) as $(CC) as $(CC) is used to compile C files.
-# So we make $(CC) behave more like $(CXX) during configure.
-CFLAGS += -D_XOPEN_SOURCE=600
-CFLAGS += -std=c99
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -vif )
+CFLAGS += $(CPP_XPG6MODE)
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf -vif )
 
 # Missing files in build dir without this.
-COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-CONFIGURE_OPTIONS+=        --with-ui
-CONFIGURE_OPTIONS+=        --with-readline
+CONFIGURE_OPTIONS += --with-ui
+CONFIGURE_OPTIONS += --with-readline
+
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 
 unexport SHELLOPTS
 

@@ -16,14 +16,14 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=		  xmessage
-COMPONENT_VERSION=	  1.0.6
-COMPONENT_SUMMARY=	  xmessage - display a message or query in a window
-COMPONENT_FMRI=		  x11/xmessage
-COMPONENT_CLASSIFICATION= Applications/Accessories
+COMPONENT_NAME=           xmessage
+COMPONENT_VERSION=        1.0.7
+COMPONENT_SUMMARY=        xmessage - display a message or query in a window
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:d2eac545f137156b960877e052fcc8e29795ed735c02f7690fd7b439e6846a12
+COMPONENT_ARCHIVE_HASH=   sha256:703fccb7a0b772d61d7e603c189b9739866aa97ba985c727275420f829a30356
+COMPONENT_FMRI=           x11/xmessage
+COMPONENT_CLASSIFICATION= Applications/Accessories
+COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 

@@ -24,31 +24,35 @@
 # Copyright 2018 Michal Nowak
 # Copyright (c) 2015, 2021, Oracle and/or its affiliates.
 # Copyright 2021, Carsten Grzemba
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS = 64
-
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
-# unfortunatly I see -m32 in CFLAGS despite that BUILD_BITS = 64 is set
-BITS = 64
-
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	102.3.3
+COMPONENT_VERSION =	115.8.1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:c4bec51c09d216b4ba03210c6ef3b7eef4e76f1fa4957e9d11f79d3e5825164e
+	 sha256:80d75ae91b7cbd60bcbaf134fc3f11290bd542a8a7ff965eaa4a0d95bb0d4d51
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)
 endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI = mail/thunderbird
+COMPONENT_CLASSIFICATION = Applications/Internet
+COMPONENT_LICENSE = MPL v2.0
 
-RUST_VERSION = 1.61.0
+RUST_VERSION = 1.76.0
+
+# TODO: use remote hashfile to verify
+ALLOW_UNVERIFIED_DOWNLOADS=yes
+export ALLOW_UNVERIFIED_DOWNLOADS
 
 # There are a set of .xpi files (as given in the LANG_LIST definition
 # below) that we need. We could download and unpack them individually, but
@@ -57,15 +61,15 @@ RUST_VERSION = 1.61.0
 # one file with version number.
 
 LANG_LIST = af ar ast be bg br ca cak cs cy \
-       da de dsb el en-CA en-GB en-US es-AR es-ES et \
+       da de dsb el en-CA en-GB en-US es-AR es-ES es-MX et \
        eu fi fr fy-NL ga-IE gd gl he hr hsb hu \
        hy-AM id is it ja ka kab kk ko lt lv ms \
        nb-NO nl nn-NO pa-IN pl pt-BR pt-PT rm ro ru sk sl \
        sq sr sv-SE th tr uk uz vi zh-CN zh-TW
 
 LANG_FILES_LOCATION= \
-        http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
-
+        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)/linux-x86_64/xpi
+#        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
 CLEAN_PATHS += $(COMPONENT_DIR)/xpi
 
 CONFIGURE_DEFAULT_DIRS=no
@@ -97,9 +101,12 @@ THUNDERBIRD_LIBDIR = /usr/lib/$(MACH64)
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	rm -f  $(MOZCONFIG); \
 	echo "ac_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
+	echo "ac_add_options PKG_CONFIG=/usr/bin/amd64/pkg-config" >> $(MOZCONFIG) ; \
+	echo "ac_add_options CC_TYPE=$(CC_TYPE)" >> $(MOZCONFIG) ; \
+	echo "ac_add_options CC=$(CC)" >> $(MOZCONFIG) ; \
+	echo "ac_add_options CXX=$(CXX)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --libdir=$(THUNDERBIRD_LIBDIR)" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --disable-av1" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-debug-symbols" >> $(MOZCONFIG_NON_DEBUG) ; \
 	echo "ac_add_options --disable-install-strip" >> $(MOZCONFIG_DEBUG) ; \
@@ -108,9 +115,12 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-application=comm/mail" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-debug" >> $(MOZCONFIG_DEBUG) ; \
+	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-js-shell" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-official-branding" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-optimize" >> $(MOZCONFIG_NON_DEBUG) ; \
+	echo "ac_add_options --enable-pulseaudio" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
@@ -131,9 +141,6 @@ LD_Z_IGNORE=
 # missing symbols from gtk3 during Firefox start
 LD_B_DIRECT=
 
-# SPARC build seems to require more open files for "Reticulating splines" phase
-ENV := ulimit -n 16384; $(ENV)
-
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
 CLEAN_PATHS += $(LANG_FILES)
@@ -145,23 +152,15 @@ download prep:: $(LANG_FILES)
 
 CONFIGURE_OPTIONS = CC=$(CC) CXX=$(CXX)
 
-ENV +=  CFLAGS="$(CFLAGS)"
-ENV +=  CXXFLAGS="$(CXXFLAGS)"
-ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
-ENV += RUSTUP_HOME=$(RUSTUP_HOME)
-ENV += CARGO_HOME=$(CARGO_HOME)
+CONFIGURE_ENV += RUSTUP_HOME=$(RUSTUP_HOME)
+CONFIGURE_ENV += CARGO_HOME=$(CARGO_HOME)
+COMPONENT_BUILD_ENV += RUSTUP_HOME=$(RUSTUP_HOME)
+COMPONENT_BUILD_ENV += CARGO_HOME=$(CARGO_HOME)
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
-CONFIGURE_ENV = $(ENV)
-COMPONENT_BUILD_ENV =   $(ENV)
-
 # because we touched old-configure.in and js/src/old-configure.in
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
-	cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
-        cp configure.in configure; \
-        cd js/src; \
-        cp configure.in configure; \
         export RUSTUP_HOME=$(RUSTUP_HOME); \
         export CARGO_HOME=$(CARGO_HOME); \
         export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
@@ -170,7 +169,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         rustup install $(RUST_VERSION); \
         rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
         rustup show; \
-        cargo install --root=$(CARGO_HOME) --vers 0.24.2 cbindgen; \
+	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.24.3 cbindgen; \
 	);
 
 # COMPONENT_POST_BUILD_ACTION = \
@@ -217,18 +216,15 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/.*/d" '
 
 # Build dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/build/autoconf-213
+REQUIRED_PACKAGES += developer/clang-17
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
 REQUIRED_PACKAGES += library/python/psutil
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/header/header-audio
-
-# Rustup needs gcc-49 libraries (otherwise build fails):
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -237,7 +233,6 @@ REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
@@ -253,6 +248,4 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxrender
-REQUIRED_PACKAGES += x11/library/toolkit/libxt
 REQUIRED_PACKAGES += x11/library/libxrandr

@@ -1,0 +1,94 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --cov=h11 --cov-config=.coveragerc h11
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 78 items
+
+h11/tests/test_against_stdlib_http.py::test_h11_as_client PASSED
+h11/tests/test_against_stdlib_http.py::test_h11_as_server PASSED
+h11/tests/test_connection.py::test_100_continue PASSED
+h11/tests/test_connection.py::test_408_request_timeout PASSED
+h11/tests/test_connection.py::test_Connection_basics_and_content_length PASSED
+h11/tests/test_connection.py::test_HEAD_framing_headers PASSED
+h11/tests/test_connection.py::test__body_framing PASSED
+h11/tests/test_connection.py::test__keep_alive PASSED
+h11/tests/test_connection.py::test_automagic_connection_close_handling PASSED
+h11/tests/test_connection.py::test_automatic_transfer_encoding_in_response PASSED
+h11/tests/test_connection.py::test_chunk_boundaries PASSED
+h11/tests/test_connection.py::test_chunked PASSED
+h11/tests/test_connection.py::test_client_talking_to_http10_server PASSED
+h11/tests/test_connection.py::test_close_different_states PASSED
+h11/tests/test_connection.py::test_close_simple PASSED
+h11/tests/test_connection.py::test_connection_drop PASSED
+h11/tests/test_connection.py::test_early_detection_of_invalid_request[ ] PASSED
+h11/tests/test_connection.py::test_early_detection_of_invalid_request[\x00] PASSED
+h11/tests/test_connection.py::test_early_detection_of_invalid_request[\x16\x03\x01\x00\xa5] PASSED
+h11/tests/test_connection.py::test_early_detection_of_invalid_response[ ] PASSED
+h11/tests/test_connection.py::test_early_detection_of_invalid_response[\x00] PASSED
+h11/tests/test_connection.py::test_early_detection_of_invalid_response[\x16\x03\x03\x001] PASSED
+h11/tests/test_connection.py::test_empty_request PASSED
+h11/tests/test_connection.py::test_empty_response PASSED
+h11/tests/test_connection.py::test_errors PASSED
+h11/tests/test_connection.py::test_idle_receive_nothing PASSED
+h11/tests/test_connection.py::test_max_incomplete_event_size_countermeasure PASSED
+h11/tests/test_connection.py::test_pipelined_close PASSED
+h11/tests/test_connection.py::test_pipelining PASSED
+h11/tests/test_connection.py::test_protocol_switch PASSED
+h11/tests/test_connection.py::test_reuse_simple PASSED
+h11/tests/test_connection.py::test_sendfile PASSED
+h11/tests/test_connection.py::test_server_talking_to_http10_client PASSED
+h11/tests/test_connection.py::test_special_exceptions_for_lost_connection_in_message_body PASSED
+h11/tests/test_events.py::test_events PASSED
+h11/tests/test_events.py::test_header_casing PASSED
+h11/tests/test_events.py::test_intenum_status_code PASSED
+h11/tests/test_headers.py::test_get_set_comma_header PASSED
+h11/tests/test_headers.py::test_has_100_continue PASSED
+h11/tests/test_headers.py::test_normalize_and_validate PASSED
+h11/tests/test_helpers.py::test_normalize_data_events PASSED
+h11/tests/test_io.py::test_ChunkedReader PASSED
+h11/tests/test_io.py::test_ChunkedWriter PASSED
+h11/tests/test_io.py::test_ContentLengthReader PASSED
+h11/tests/test_io.py::test_ContentLengthWriter PASSED
+h11/tests/test_io.py::test_Http10Reader PASSED
+h11/tests/test_io.py::test_Http10Writer PASSED
+h11/tests/test_io.py::test__obsolete_line_fold_bytes PASSED
+h11/tests/test_io.py::test_allow_some_garbage_in_cookies PASSED
+h11/tests/test_io.py::test_host_comes_first PASSED
+h11/tests/test_io.py::test_readers_simple PASSED
+h11/tests/test_io.py::test_readers_unusual PASSED
+h11/tests/test_io.py::test_reject_garbage_after_request_line PASSED
+h11/tests/test_io.py::test_reject_garbage_after_response_line PASSED
+h11/tests/test_io.py::test_reject_garbage_in_header_line PASSED
+h11/tests/test_io.py::test_reject_non_vchar_in_path PASSED
+h11/tests/test_io.py::test_writers_simple PASSED
+h11/tests/test_io.py::test_writers_unusual PASSED
+h11/tests/test_receivebuffer.py::test_receivebuffer PASSED
+h11/tests/test_receivebuffer.py::test_receivebuffer_for_invalid_delimiter[with_crlf_delimiter] PASSED
+h11/tests/test_receivebuffer.py::test_receivebuffer_for_invalid_delimiter[with_lf_only_delimiter] PASSED
+h11/tests/test_receivebuffer.py::test_receivebuffer_for_invalid_delimiter[with_mixed_crlf_and_lf] PASSED
+h11/tests/test_state.py::test_ConnectionState PASSED
+h11/tests/test_state.py::test_ConnectionState_double_protocol_switch PASSED
+h11/tests/test_state.py::test_ConnectionState_inconsistent_protocol_switch PASSED
+h11/tests/test_state.py::test_ConnectionState_keep_alive PASSED
+h11/tests/test_state.py::test_ConnectionState_keep_alive_in_DONE PASSED
+h11/tests/test_state.py::test_ConnectionState_keepalive_protocol_switch_interaction PASSED
+h11/tests/test_state.py::test_ConnectionState_protocol_switch_accepted PASSED
+h11/tests/test_state.py::test_ConnectionState_reuse PASSED
+h11/tests/test_state.py::test_ConnectionState_switch_denied PASSED
+h11/tests/test_state.py::test_server_request_is_illegal PASSED
+h11/tests/test_util.py::test_LocalProtocolError PASSED
+h11/tests/test_util.py::test_ProtocolError PASSED
+h11/tests/test_util.py::test_bytesify PASSED
+h11/tests/test_util.py::test_make_sentinel PASSED
+h11/tests/test_util.py::test_validate PASSED
+h11/tests/test_util.py::test_validate_formatting PASSED
+
+
+======== 78 passed ========
+  py$(PYV): OK
+  congratulations :)

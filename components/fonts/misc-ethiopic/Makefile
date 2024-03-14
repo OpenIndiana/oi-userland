@@ -23,16 +23,17 @@
 # Copyright (c) 2008, 2018, Oracle and/or its affiliates. All rights reserved.
 # COpyright 2018, Aurelien Larcher
 #
-BUILD_STYLE=configure
 
+BUILD_STYLE=configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		font-misc-ethiopic
-COMPONENT_VERSION= 	1.0.4
+COMPONENT_VERSION= 	1.0.5
 COMPONENT_SUMMARY=      Ethiopic language fonts from the Ge'ez Frontiers Foundation
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:698c0f6ddf9ca482250bdafa08293893148393bb9cb23e0a9ca313c6dbfc4ae0
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:4749a7e6e1a1eef6c91fcc9a04e8b1c0ed027d40c1599e5a6c93270d8469b612
 COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE= COPYING
 
 FONT_TYPE = X11MISC
 
@@ -44,3 +45,4 @@ COMPONENT_FONT_PKG  = misc-ethiopic
 # Install to separate directory for easier packaging
 CONFIGURE_OPTIONS += --with-ttf-fontdir=$(USRSHARETTFFONTSDIR)/$(COMPONENT_FONT_NAME)
 CONFIGURE_OPTIONS += --with-otf-fontdir=$(USRSHAREOTFFONTSDIR)/$(COMPONENT_FONT_NAME)
+# Auto-generated dependencies

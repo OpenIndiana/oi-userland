@@ -14,21 +14,47 @@
 #   $WS_TOOLS/python-integrate-project jaraco.context
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.context
-COMPONENT_VERSION =		4.1.1
+HUMAN_VERSION =			4.3.0
 COMPONENT_SUMMARY =		jaraco.context - Context managers by jaraco
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.context
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/63/e4/e7a5d1b19296c29b0ac7b7666e1a19dd156861881ba1cbc92f25dd7eedbf/jaraco.context-4.1.1.tar.gz
+	https://files.pythonhosted.org/packages/7c/b4/fa71f82b83ebeed95fe45ce587d6cba85b7c09ef3d9f61602f92f45e90db/jaraco.context-4.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f0d4d82ffbbbff680384eba48a32a3167f12a91a30a7db56fd97b87e73a87241
+	sha256:4dad2404540b936a20acedec53355bdaea223acb88fd329fa6de9261c941566e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# jaraco.context --> pytest-enabler ==> jaraco.context
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/tholo/pytest-flake8/issues/92
+PYTEST_ADDOPTS += -p no:flake8
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy

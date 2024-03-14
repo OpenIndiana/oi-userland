@@ -1,99 +1,66 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project nose
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		nose
-COMPONENT_VERSION=	1.3.7
-COMPONENT_SUMMARY=	Nicer testing for Python
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_FMRI=		library/python/nose
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  https://github.com/nose-devs/nose
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f1bffef9cbc82628f6e7d7b40d7e255aefaa1adb6a1b1d26c69a8b79e6208a98
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE= nose.license
+COMPONENT_NAME =		nose
+HUMAN_VERSION =			1.3.7
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		nose - nose extends unittest to make testing easier
+COMPONENT_PROJECT_URL =		http://readthedocs.org/docs/nose/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/58/a5/0dc93c3ec33f4e281849523a5a913fa1eea9a3068acfa754d44d88107a44/nose-1.3.7.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:f1bffef9cbc82628f6e7d7b40d7e255aefaa1adb6a1b1d26c69a8b79e6208a98
+COMPONENT_LICENSE =		LGPL-2.1-only
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+# nose uses custom testing via the selftest.py script
+TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+# Support for 2to3 was removed in setuptools 58.0.0 so we cannot rely on
+# use_2to3 and we need to convert the code explicitly here.
+COMPONENT_PRE_BUILD_ACTION += 2to3-$(PYTHON_VERSION) --write --nobackups --no-diffs $(@D) ;
 
-# nose ships the tests in Python 2 syntax, and uses setup.py build_tests
-# to convert them to Python 3 syntax, but doing so requires running Python 3.
-$(SOURCE_DIR)/.prep:	PYTHON_VERSION=3.5
-
-
-COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_ARGS =	selftest.py
-
-# Save an original copy of the test script to be able to edit it correctly
-# for each version of Python and build the tests once.
-COMPONENT_POST_UNPACK_ACTION += \
-	($(CP) $(SOURCE_DIR)/selftest.py $(SOURCE_DIR)/selftest.py.orig ; \
-	cd $(COMPONENT_TEST_DIR); $(COMPONENT_TEST_ENV_CMD) \
-                $(COMPONENT_TEST_ENV) \
-                $(COMPONENT_TEST_CMD) setup.py build_tests)
-
-# We need to adjust the script that is used to run the tests, to pick the
-# appropriate nose in the proto area depending upon which version of Python
-# we are running the tests against.
+# We need to convert tests from Python 2 syntax to Python 3 syntax before we
+# run them.  See selftest.py for details.
 COMPONENT_PRE_TEST_ACTION = \
-	$(GSED) -e "s|'build', 'lib\*'|'..', 'build', 'prototype', '$(MACH)', 'usr', 'lib', 'python$(PYTHON_VERSION)', 'vendor-packages\*'|" \
-		$(SOURCE_DIR)/selftest.py.orig > $(SOURCE_DIR)/selftest.py
+	cd $(@D) ; $(PYTHON) setup.py --no-user-cfg build_tests ;
 
-# The test output can contain non-deterministic results because "chances are
-# you will experience odd, intermittent and unexplainable failures and errors"
-# when using the multiprocess plug. See:
-# http://nose.readthedocs.org/en/latest/plugins/multiprocess.html
-# CR #20470423 has been filed to investigate these failures.
-#
-# Because of this we use nawk to just extract lines starting with:
-# ERROR: ...
-# Ran 3XX tests in ...
-# FAILED ...
-# OK
-# stripping out the random portions (like time to complete the tests).
-COMPONENT_TEST_TRANSFORMER =	$(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/^ERROR: / { print }; /^Ran / { sub(\" test.+in .+s\", \" tests in\"); print }; /^FAILED / { print }; /^OK / { print };'"
+# Custom test style
+COMPONENT_TEST_CMD =		$(PYTHON) selftest.py
+COMPONENT_TEST_ARGS =
+COMPONENT_TEST_TARGETS =
 
-COMPONENT_SYSTEM_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_SYSTEM_TEST_ENV =
-COMPONENT_SYSTEM_TEST_ARGS =	selftest.py
+# Get verbose test results
+COMPONENT_TEST_ENV +=		NOSE_VERBOSE=2
+
+# Normalize pointers
+COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12\}/\$$(POINTER)/g'"
+
+# teamcity-messages pollutes test report and causes test_issue135 to fail
+TEST_CONFLICTING_PACKAGES.python += library/python/teamcity-messages
+
+# Manually added test dependencies
+TEST_REQUIRED_PACKAGES.python += library/python/twisted
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += runtime/python

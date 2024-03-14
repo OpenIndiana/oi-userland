@@ -13,25 +13,23 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS=64_and_32
-USE_COMMON_TEST_MASTER=yes
-USE_DEFAULT_TEST_TRANSFORMS=yes
-
+BUILD_BITS= 64_and_32
+USE_COMMON_TEST_MASTER= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tiff
-COMPONENT_VERSION= 4.4.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 4.6.0
 COMPONENT_SUMMARY= libtiff - library for reading and writing TIFF
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:917223b37538959aca3b790d2d73aa6e626b688e02dcda272aec24c2f498abed
+COMPONENT_ARCHIVE_HASH= sha256:88b3979e6d5c7e32b50d7ec72fb15af724f6ab2cbf7e10880c360a77e4b5d99a
 COMPONENT_ARCHIVE_URL=	https://download.osgeo.org/libtiff/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.simplesystems.org/libtiff/
-COMPONENT_LICENSE_FILE=	COPYRIGHT
-COMPONENT_LICENSE=	BSD-like
 COMPONENT_FMRI=	image/library/libtiff
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
+COMPONENT_LICENSE=	BSD-like
+COMPONENT_LICENSE_FILE=	LICENSE.md
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -43,6 +41,7 @@ LDFLAGS           +=    $(JPEG_LDFLAGS)
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-cxx
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
@@ -59,11 +58,10 @@ unexport SHELLOPTS
 COMPONENT_TEST_ENV+= PATH=$(PATH.gnu)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/freeglut

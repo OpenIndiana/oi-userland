@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Memory::Cycle
 HUMAN_VERSION =			1.06
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Test::Memory::Cycle - Check for memory leaks and circular memory references
 COMPONENT_CPAN_AUTHOR =		PETDANCE
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,6 +29,10 @@ COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-cycle

@@ -11,30 +11,31 @@
 
 #
 # Copyright 2019 Alexander Pyhalov
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2021,2024 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpg123
-COMPONENT_VERSION= 1.30.2
+COMPONENT_VERSION= 1.32.5
 COMPONENT_SUMMARY= Fast console MPEG Audio Player and decoder library
+COMPONENT_PROJECT_URL= https://mpg123.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:c7ea863756bb79daed7cba2942ad3b267a410f26d2dfbd9aaf84451ff28a05d7
-COMPONENT_ARCHIVE_URL=	https://mpg123.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:af908cdf6cdb6544b97bc706a799f79894e69468af5881bf454a0ebb9171ed63
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
-COMPONENT_PROJECT_URL = https://mpg123.org/
-COMPONENT_FMRI = audio/mpg123
-COMPONENT_CLASSIFICATION = Applications/Sound and Video
-COMPONENT_LICENSE = LGPLv2,GPLv2
+COMPONENT_FMRI= audio/mpg123
+COMPONENT_CLASSIFICATION= Applications/Sound and Video
+COMPONENT_LICENSE= GPL-2.0-only OR LGPL-2.1-only
+COMPONENT_LICENSE_FILE=  COPYING
 
-# Tests are all failing
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS += -D__EXTENSIONS__
+CFLAGS += $(XPG6MODE)
+CFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
@@ -43,8 +44,9 @@ CONFIGURE_OPTIONS += --enable-fifo
 CONFIGURE_OPTIONS += --enable-network
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-optimization=3
-CONFIGURE_OPTIONS.32 += --with-cpu=sse
-CONFIGURE_OPTIONS.64 += --with-cpu=x86-64
+ifeq ($(strip $(MACH)),i386)
+CONFIGURE_OPTIONS += --with-cpu=x86-64
+endif
 CONFIGURE_OPTIONS += --with-default-audio=pulse
 
 # Auto-generated dependencies

@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2023 Klaus Ziegler
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,29 +23,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform path=usr/lib/($(MACH64)/)?gvfsd.* -> default mode 0555> 
-<transform path=usr/lib/($(MACH64)/)?gvfs-hal-volume-monitor$ -> default mode 0555> 
+<transform path=usr/lib/($(MACH64)/)?gvfsd.* -> default mode 0555>
+<transform path=usr/lib/($(MACH64)/)?gvfs-hal-volume-monitor$ -> default mode 0555>
 
 depend fmri=pkg:/gnome/gnome-mount type=require
 
-file path=usr/bin/$(MACH64)/gvfs-cat
-file path=usr/bin/$(MACH64)/gvfs-copy
-file path=usr/bin/$(MACH64)/gvfs-info
-file path=usr/bin/$(MACH64)/gvfs-less
-file path=usr/bin/$(MACH64)/gvfs-ls
-file path=usr/bin/$(MACH64)/gvfs-mime
-file path=usr/bin/$(MACH64)/gvfs-mkdir
-file path=usr/bin/$(MACH64)/gvfs-monitor-dir
-file path=usr/bin/$(MACH64)/gvfs-monitor-file
-file path=usr/bin/$(MACH64)/gvfs-mount
-file path=usr/bin/$(MACH64)/gvfs-move
-file path=usr/bin/$(MACH64)/gvfs-open
-file path=usr/bin/$(MACH64)/gvfs-rename
-file path=usr/bin/$(MACH64)/gvfs-rm
-file path=usr/bin/$(MACH64)/gvfs-save
-file path=usr/bin/$(MACH64)/gvfs-set-attribute
-file path=usr/bin/$(MACH64)/gvfs-trash
-file path=usr/bin/$(MACH64)/gvfs-tree
+<transform path=.*/bin/$(MACH32) -> drop>
+
 file path=usr/bin/gvfs-cat
 file path=usr/bin/gvfs-copy
 file path=usr/bin/gvfs-info
@@ -85,6 +70,8 @@ file path=usr/lib/$(MACH64)/gvfsd-metadata
 file path=usr/lib/$(MACH64)/gvfsd-network
 file path=usr/lib/$(MACH64)/gvfsd-recent
 file path=usr/lib/$(MACH64)/gvfsd-sftp
+file path=usr/lib/$(MACH64)/gvfsd-smb
+file path=usr/lib/$(MACH64)/gvfsd-smb-browse
 file path=usr/lib/$(MACH64)/gvfsd-trash
 file path=usr/lib/gio/modules/libgioremote-volume-monitor.so
 file path=usr/lib/gio/modules/libgvfsdbus.so
@@ -106,8 +93,6 @@ file path=usr/lib/gvfsd-metadata
 file path=usr/lib/gvfsd-network
 file path=usr/lib/gvfsd-recent
 file path=usr/lib/gvfsd-sftp
-file path=usr/lib/gvfsd-smb
-file path=usr/lib/gvfsd-smb-browse
 file path=usr/lib/gvfsd-trash
 file path=usr/share/GConf/gsettings/gvfs-dns-sd.convert
 file path=usr/share/GConf/gsettings/gvfs-smb.convert

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		strictures
 HUMAN_VERSION =			2.000006
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		strictures - Turn on strict and make most warnings fatal
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\

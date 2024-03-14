@@ -1,0 +1,119 @@
+--- a/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp	Thu Nov 12 10:50:44 2020
++++ b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp	Thu Nov 12 10:57:39 2020
+@@ -270,61 +270,9 @@
+   return result;
+ }
+ 
+-extern "C" JNIEXPORT int
+-JVM_handle_solaris_signal(int sig, siginfo_t* info, void* ucVoid,
+-                          int abort_if_unrecognized) {
+-  ucontext_t* uc = (ucontext_t*) ucVoid;
++bool PosixSignals::pd_hotspot_signal_handler(int sig, siginfo_t* info,
++                                             ucontext_t* uc, JavaThread* thread) {
+ 
+-#ifndef AMD64
+-  if (sig == SIGILL && info->si_addr == (caddr_t)sse_check) {
+-    // the SSE instruction faulted. supports_sse() need return false.
+-    uc->uc_mcontext.gregs[EIP] = (greg_t)sse_unavailable;
+-    return true;
+-  }
+-#endif // !AMD64
+-
+-  Thread* t = Thread::current_or_null_safe();
+-
+-  // If crash protection is installed we may longjmp away and no destructors
+-  // for objects in this scope will be run.
+-  // So don't use any RAII utilities before crash protection is checked.
+-  os::ThreadCrashProtection::check_crash_protection(sig, t);
+-
+-  if(sig == SIGPIPE || sig == SIGXFSZ) {
+-    if (PosixSignals::chained_handler(sig, info, ucVoid)) {
+-      return true;
+-    } else {
+-      // Ignoring SIGPIPE/SIGXFSZ - see bugs 4229104 or 6499219
+-      return true;
+-    }
+-  }
+-
+-  JavaThread* thread = NULL;
+-  VMThread* vmthread = NULL;
+-
+-  if (PosixSignals::are_signal_handlers_installed()) {
+-    if (t != NULL ){
+-      if(t->is_Java_thread()) {
+-        thread = (JavaThread*)t;
+-      }
+-      else if(t->is_VM_thread()){
+-        vmthread = (VMThread *)t;
+-      }
+-    }
+-  }
+-
+-  if (sig == ASYNC_SIGNAL) {
+-    if(thread || vmthread){
+-      return true;
+-    } else if (PosixSignals::chained_handler(sig, info, ucVoid)) {
+-      return true;
+-    } else {
+-      // If ASYNC_SIGNAL not chained, and this is a non-vm and
+-      // non-java thread
+-      return true;
+-    }
+-  }
+-
+   if (info == NULL || info->si_code <= 0 || info->si_code == SI_NOINFO) {
+     // can't decode this kind of signal
+     info = NULL;
+@@ -527,52 +475,6 @@
+     return true;
+   }
+ 
+-  // signal-chaining
+-  if (PosixSignals::chained_handler(sig, info, ucVoid)) {
+-    return true;
+-  }
+-
+-  if (!abort_if_unrecognized) {
+-    // caller wants another chance, so give it to him
+-    return false;
+-  }
+-
+-  /*
+-   * FIXME: libjsig_is_loaded has been moved to PosixSignals but is
+-   * not visible. But what does this code do anyway? I can find no
+-   * analogues to this code in any other os_cpu files
+-   *
+-  if (!PosixSignals::libjsig_is_loaded) {
+-    struct sigaction oldAct;
+-    sigaction(sig, (struct sigaction *)0, &oldAct);
+-    if (oldAct.sa_sigaction != signalHandler) {
+-      void* sighand = oldAct.sa_sigaction ? CAST_FROM_FN_PTR(void*,  oldAct.sa_sigaction)
+-                                          : CAST_FROM_FN_PTR(void*, oldAct.sa_handler);
+-      warning("Unexpected Signal %d occurred under user-defined signal handler %#lx", sig, (long)sighand);
+-    }
+-  }
+-  */
+-
+-  if (pc == NULL && uc != NULL) {
+-    pc = (address) uc->uc_mcontext.gregs[REG_PC];
+-  }
+-
+-  // unmask current signal
+-  sigset_t newset;
+-  sigemptyset(&newset);
+-  sigaddset(&newset, sig);
+-  sigprocmask(SIG_UNBLOCK, &newset, NULL);
+-
+-  // Determine which sort of error to throw.  Out of swap may signal
+-  // on the thread stack, which could get a mapping error when touched.
+-  address addr = (address) info->si_addr;
+-  if (sig == SIGBUS && info->si_code == BUS_OBJERR && info->si_errno == ENOMEM) {
+-    vm_exit_out_of_memory(0, OOM_MMAP_ERROR, "Out of swap space to map in thread stack.");
+-  }
+-
+-  VMError::report_and_die(t, sig, pc, info, ucVoid);
+-
+-  ShouldNotReachHere();
+   return false;
+ }
+ 

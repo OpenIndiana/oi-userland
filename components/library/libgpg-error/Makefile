@@ -22,16 +22,18 @@
 # Copyright 2011 Audioboo Ltd. All rights reserved.
 # Copyright 2019 Michal Nowak
 #
-BUILD_BITS = 64_and_32
+
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgpg-error
-COMPONENT_VERSION=	1.45
+COMPONENT_VERSION=	1.48
 COMPONENT_SUMMARY=	GnuPG Error Library
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/libgpg-error/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:570f8ee4fb4bff7b7495cff920c275002aea2147e9a1d220c068213267f80a26
+COMPONENT_ARCHIVE_HASH=	sha256:89ce1ae893e122924b858de84dc4f67aae29ffa610ebf668d5aa539045663d6f
 COMPONENT_ARCHIVE_URL=	https://gnupg.org/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/security/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Security
@@ -39,18 +41,16 @@ COMPONENT_LICENSE=	LGPLv2.1
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+PATH = $(PATH.gnu)
 
-CONFIGURE_OPTIONS  +=	--disable-static
-CONFIGURE_OPTIONS  +=	--enable-shared
-CONFIGURE_OPTIONS  +=	--enable-threads=posix
+COMPONENT_PREP_ACTION = (cd $(@D) && PATH="$(PATH)" autoreconf -fi)
 
-#COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	' -e "s/(.*)/()/" '
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-threads=posix
+CONFIGURE_OPTIONS += --enable-install-gpg-error-config
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/xopen/xcu4

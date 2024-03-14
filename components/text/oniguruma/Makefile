@@ -12,40 +12,30 @@
 # Copyright 2021 Till Wegmueller
 #
 
-BUILD_BITS=64 # for binaries or 32_and_64 for libraries
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			oniguruma
-COMPONENT_VERSION_BASE=		6.9.8
+COMPONENT_VERSION_BASE=		6.9.9
 COMPONENT_VERSION=		$(COMPONENT_VERSION_BASE)
 COMPONENT_SUMMARY=		oniguruma - regular expression library 
 COMPONENT_PROJECT_URL=		https://github.com/kkos/oniguruma
-COMPONENT_FMRI=			text/oniguruma
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=			onig-$(COMPONENT_VERSION_BASE)
 COMPONENT_SRC2=			onig-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC2).tar.gz
 COMPONENT_ARCHIVE_URL=		https://github.com/kkos/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:28cd62c1464623c7910565fb1ccaaa0104b2fe8b12bcd646e81f73b47535213e
+COMPONENT_ARCHIVE_HASH=		sha256:60162bd3b9fc6f4886d4c7a07925ffd374167732f55dce8c491bfd9cd818a6cf
+COMPONENT_FMRI=			text/oniguruma
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=		BSD like
 COMPONENT_LICENSE_FILE=		COPYING
 
-#TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --enable-static=no
 
 unexport SHELLOPTS
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/=====/p" ' \
-	'-e "/Testsuite summary/p" ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/SKIP/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/ERROR/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93

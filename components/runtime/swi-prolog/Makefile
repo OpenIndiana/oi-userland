@@ -12,24 +12,31 @@
 # Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swipl
-COMPONENT_VERSION=	8.5.18
+COMPONENT_VERSION=	9.0.4
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Robust, mature, free. Prolog for the real world.
-COMPONENT_PROJECT_URL=	https://www.swi-prolog.org/
+COMPONENT_PROJECT_URL= https://www.swi-prolog.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/devel/src/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:34e79a319610428620d569aa5504e14732495e9a632423ed3093d8a8e56b965c
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/stable/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:feb2815a51d34fa81cb34e8149830405935a7e1d1c1950461239750baa8b49f0
 COMPONENT_FMRI=		runtime/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/System
 COMPONENT_LICENSE=	BSD-2 license, others
+COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 JAVA_HOME=/usr/jdk/openjdk1.8.0
 PCRE_INCLUDE=/usr/include/pcre
@@ -55,18 +62,15 @@ CMAKE_OPTIONS += -DPCRE_INCLUDE_DIR=$(PCRE_INCLUDE)
 CMAKE_OPTIONS += -DJAVA_INCLUDE_PATH=$(JAVA_HOME)/include
 CMAKE_OPTIONS += -DJAVA_AWT_LIBRARY=/usr/java/jre/lib/amd64/libjawt.so
 CMAKE_OPTIONS += -DJAVA_JVM_LIBRARY=/usr/java/jre/lib/amd64/server/libjvm.so
+CMAKE_OPTIONS += -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
 
 CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec/ SEC sec/"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += database/berkeleydb-5
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/libedit
@@ -74,7 +78,7 @@ REQUIRED_PACKAGES += library/libyaml
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/java/openjdk8

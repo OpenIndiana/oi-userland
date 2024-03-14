@@ -1,0 +1,15 @@
+diff -Nru qt-everywhere-src-6.3.2.orig/qtbase/src/corelib/plugin/qelfparser_p.cpp qt-everywhere-src-6.3.2/qtbase/src/corelib/plugin/qelfparser_p.cpp
+--- qt-everywhere-src-6.3.2.orig/qtbase/src/corelib/plugin/qelfparser_p.cpp	2022-09-02 18:13:45.000000000 +0200
++++ qt-everywhere-src-6.3.2/qtbase/src/corelib/plugin/qelfparser_p.cpp	2023-09-18 21:03:26.954213291 +0200
+@@ -56,6 +56,11 @@
+ #  error "Need ELF header to parse plugins."
+ #endif
+ 
++// Support older ELFOSABI define for GNU/Linux
++#if !defined(ELFOSABI_GNU) && defined(ELFOSABI_LINUX)
++#  define ELFOSABI_GNU ELFOSABI_LINUX
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ // ### Qt7: propagate the constant and eliminate dead code

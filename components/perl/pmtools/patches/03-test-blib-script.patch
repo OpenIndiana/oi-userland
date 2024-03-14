@@ -1,0 +1,250 @@
+We need to test scripts with mangled Perl shebang.
+
+--- pmtools-2.2.0/t/basepods.t.orig
++++ pmtools-2.2.0/t/basepods.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/basepods 2>&1`;
++    $output = `blib/script/basepods 2>&1`;
+ };
+ 
+ is($?,        0,               "basepods runs");
+--- pmtools-2.2.0/t/faqpods.t.orig
++++ pmtools-2.2.0/t/faqpods.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/faqpods 2>&1`;
++    $output = `blib/script/faqpods 2>&1`;
+ };
+ 
+ is($?,        0,                    "faqpods runs");
+--- pmtools-2.2.0/t/modpods.t.orig
++++ pmtools-2.2.0/t/modpods.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/modpods 2>&1`;
++    $output = `blib/script/modpods 2>&1`;
+ };
+ 
+ is($?,        0,                  "modpods runs");
+--- pmtools-2.2.0/t/pfcat.t.orig
++++ pmtools-2.2.0/t/pfcat.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pfcat seek 2>&1`;
++    $output = `blib/script/pfcat seek 2>&1`;
+ };
+ 
+ is($?,        0,                                                       "pfcat runs");
+--- pmtools-2.2.0/t/plxload.t.orig
++++ pmtools-2.2.0/t/plxload.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/plxload bin/plxload 2>&1`;
++    $output = `blib/script/plxload blib/script/plxload 2>&1`;
+ };
+ 
+ is($output, "", "modules loaded");
+--- pmtools-2.2.0/t/pmall.t.orig
++++ pmtools-2.2.0/t/pmall.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pmall | t/head.pl 2>&1`;
++    $output = `blib/script/pmall | t/head.pl 2>&1`;
+ };
+ 
+ is($?,        0,                               "pmall runs");
+--- pmtools-2.2.0/t/pman.t.orig
++++ pmtools-2.2.0/t/pman.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pman Carp 2>&1`;
++    $output = `blib/script/pman Carp 2>&1`;
+ };
+ 
+ is($?, 0, 'pman runs');
+--- pmtools-2.2.0/t/pmcat.t.orig
++++ pmtools-2.2.0/t/pmcat.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pmcat Carp 2>&1`;
++    $output = `blib/script/pmcat Carp 2>&1`;
+ };
+ 
+ is($?,        0,                                        "pmcat runs");
+--- pmtools-2.2.0/t/pmcheck.t.orig
++++ pmtools-2.2.0/t/pmcheck.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pmcheck 2>&1`;
++    $output = `blib/script/pmcheck 2>&1`;
+ };
+ 
+ isnt($?,             127,  "pmcheck runs");
+--- pmtools-2.2.0/t/pmdesc.t.orig
++++ pmtools-2.2.0/t/pmdesc.t
+@@ -16,12 +16,12 @@
+ my $unified;
+ 
+ eval {
+-    $output_unified = `bin/pmdesc Carp 2>&1`;
++    $output_unified = `blib/script/pmdesc Carp 2>&1`;
+ };
+ $unified = $?;
+ 
+ eval {
+-    $output_split = `bin/pmdesc --splitpod Carp 2>&1`;
++    $output_split = `blib/script/pmdesc --splitpod Carp 2>&1`;
+ };
+ $split = $?;
+ 
+--- pmtools-2.2.0/t/pmeth.t.orig
++++ pmtools-2.2.0/t/pmeth.t
+@@ -12,7 +12,7 @@
+ $ENV{'PATH'} = 'blib/script:' . $ENV{PATH};
+ 
+ eval {
+-    $output = `bin/pmeth Tie::Hash 2>&1`;
++    $output = `blib/script/pmeth Tie::Hash 2>&1`;
+ };
+ 
+ is($?,        0,                   "pmeth runs");
+--- pmtools-2.2.0/t/pmexp.t.orig
++++ pmtools-2.2.0/t/pmexp.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pmexp Carp 2>&1`;
++    $output = `blib/script/pmexp Carp 2>&1`;
+ };
+ 
+ is($?,        0,                                      "pmexp runs");
+--- pmtools-2.2.0/t/pmfunc.t.orig
++++ pmtools-2.2.0/t/pmfunc.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pmfunc Cwd::chdir 2>&1`;
++    $output = `blib/script/pmfunc Cwd::chdir 2>&1`;
+ };
+ 
+ isnt($?, 127, "pmfunc runs");
+--- pmtools-2.2.0/t/pmload.t.orig
++++ pmtools-2.2.0/t/pmload.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pmload Tie::Hash 2>&1`;
++    $output = `blib/script/pmload Tie::Hash 2>&1`;
+ };
+ 
+ is($?,        0,               "pmload runs");
+--- pmtools-2.2.0/t/pmls.t.orig
++++ pmtools-2.2.0/t/pmls.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pmls Tie::Hash 2>&1`;
++    $output = `blib/script/pmls Tie::Hash 2>&1`;
+ };
+ 
+ is($?, 0, "pmls runs");
+--- pmtools-2.2.0/t/pmpath.t.orig
++++ pmtools-2.2.0/t/pmpath.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pmpath Tie::Hash 2>&1`;
++    $output = `blib/script/pmpath Tie::Hash 2>&1`;
+ };
+ 
+ is($?, 0, "pmpath runs");
+--- pmtools-2.2.0/t/pmvers.t.orig
++++ pmtools-2.2.0/t/pmvers.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pmvers Tie::Hash 2>&1`;
++    $output = `blib/script/pmvers Tie::Hash 2>&1`;
+ };
+ 
+ is($?,        0,            "pmvers runs");
+--- pmtools-2.2.0/t/podgrep.t.orig
++++ pmtools-2.2.0/t/podgrep.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/podgrep DESC bin/podgrep 2>&1`;
++    $output = `blib/script/podgrep DESC blib/script/podgrep 2>&1`;
+ };
+ 
+ is($?, 0, "podgrep runs");
+--- pmtools-2.2.0/t/pods.t.orig
++++ pmtools-2.2.0/t/pods.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/pods 2>&1`;
++    $output = `blib/script/pods 2>&1`;
+ };
+ 
+ is($?, 0, "pods runs");
+--- pmtools-2.2.0/t/podtoc.t.orig
++++ pmtools-2.2.0/t/podtoc.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/podtoc bin/podtoc 2>&1`;
++    $output = `blib/script/podtoc bin/podtoc 2>&1`;
+ };
+ 
+ is($?, 0, "podtoc runs");
+--- pmtools-2.2.0/t/sitepods.t.orig
++++ pmtools-2.2.0/t/sitepods.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/sitepods 2>&1`;
++    $output = `blib/script/sitepods 2>&1`;
+ };
+ 
+ is($?, 0, "sitepods runs");
+--- pmtools-2.2.0/t/stdpods.t.orig
++++ pmtools-2.2.0/t/stdpods.t
+@@ -12,7 +12,7 @@
+ $ENV{"PATH"} = 'blib/script:' . $ENV{"PATH"};
+ 
+ eval {
+-    $output = `bin/stdpods 2>&1`;
++    $output = `blib/script/stdpods 2>&1`;
+ };
+ 
+ is($?, 0, "stdpods runs");

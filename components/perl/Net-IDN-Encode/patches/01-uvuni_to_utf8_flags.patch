@@ -1,0 +1,16 @@
+The uvuni_to_utf8_flags() function was deprecated[1] in Perl 5.20 and removed[2] in Perl 5.38.
+
+[1] https://github.com/Perl/perl5/commit/378516de21aea9be747038c25876881aaf56e166
+[2] https://github.com/Perl/perl5/commit/7008caa915ad99e650acf2aea40612b5e48b7ba2
+
+--- Net-IDN-Encode-2.500/lib/Net/IDN/Punycode.xs.orig
++++ Net-IDN-Encode-2.500/lib/Net/IDN/Punycode.xs
+@@ -253,7 +253,7 @@
+ 		  if(skip_p < re_p)				/* move succeeding chars */
+ 		    Move(skip_p, skip_p + u8, re_p - skip_p, char);
+ 		  re_p += u8;
+-		  uvuni_to_utf8_flags((U8*)skip_p, n, UNICODE_ALLOW_ANY);
++		  uvoffuni_to_utf8_flags((U8*)skip_p, n, UNICODE_ALLOW_ANY);
+ 		}
+ 
+ 		if(!first) SvUTF8_on(RETVAL);			/* UTF-8 chars have been inserted */

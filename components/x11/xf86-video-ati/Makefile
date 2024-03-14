@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-ati
 COMPONENT_VERSION= 6.14.6
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-ati
 COMPONENT_SUMMARY= xf86-video-ati - ATI Radeon video driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \

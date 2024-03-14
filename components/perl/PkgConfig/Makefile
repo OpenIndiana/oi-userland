@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PkgConfig
 HUMAN_VERSION =			0.25026
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		PkgConfig - Pure-Perl Core-Only replacement for pkg-config
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,6 +32,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # remove line with perl version
 COMPONENT_TEST_TRANSFORMS += '-e "/^Testing PkgConfig .*, Perl .*/d"'
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl

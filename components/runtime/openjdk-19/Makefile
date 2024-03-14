@@ -13,47 +13,40 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
-
-BUILD_BITS=   64
 
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	19
-OPENJDK_PATCH=	34
+OPENJDK_UPDATE=	0
+OPENJDK_BUILD=	2
 COMPONENT_NAME=		openjdk
-COMPONENT_VERSION=	$(OPENJDK_VERSION)
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(COMPONENT_VERSION)
+COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
+COMPONENT_REVISION=	2
+COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION)-$(OPENJDK_PATCH)
-COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION)+$(OPENJDK_PATCH).tar.gz
+COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
+COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:b2851ccf0362df67b24680f78d0ab52432446bd35b245a4a3d178c838eb8aa3f
+	sha256:c297c9d0a09721e84c420e7893ff9ba2e0c4e27370507dec4b356b59e6c8e7a2
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_LICENSE=	GPLv2 with Classpath Exception
 
-OPENJDK_INSTANCE=	openjdk19
+OPENJDK_INSTANCE=	openjdk$(COMPONENT_VERSION)
 CACERTS_STORE=	cacerts.out
 
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS  += OPENJDK_INSTANCE=$(OPENJDK_INSTANCE)
+PKG_MACROS  += OPENJDK_VERSION=$(OPENJDK_VERSION)
 
 CLEAN_PATHS += $(BUILD_DIR)
 CLEAN_PATHS += $(CACERTS_STORE)
 CLEAN_PATHS += $(COMPONENT_SRC_1)
-
-#COMPONENT_PRE_CONFIGURE_ACTION=	($(CP) -r $(SOURCE_DIR)/* $(@D); \
-#																	$(MKDIR) $(@D)/build; \
-#																	cd $(@D)/build; )
-
-#COMPONENT_POST_CONFIGURE_ACTION= (cd $(@D); \
-#																	$(CP) -r build/* .;)
 
 # read the number of jobs from the arguments for make
 JOBS=$(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
@@ -143,8 +136,8 @@ REQUIRED_PACKAGES += runtime/java/openjdk18
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/giflib

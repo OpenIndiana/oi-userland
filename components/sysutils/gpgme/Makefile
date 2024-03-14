@@ -21,26 +21,28 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS = 32_and_64
+BUILD_BITS = 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gpgme
-COMPONENT_VERSION=	1.13.1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/gpgme/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:c4e30b227682374c23cddc7fdb9324a99694d907e79242a25a4deeedb393be46
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	library/security/gpgme
+COMPONENT_VERSION=	1.23.2
 COMPONENT_SUMMARY=	GnuPG Made Easy
 COMPONENT_DESCRIPTION=	A library designed to make access to GnuPG easier for applications
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/gpgme/
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH=	sha256:9499e8b1f33cccb6815527a1bc16049d35a6198a6c5fae0185f2bd561bce5224
+COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	library/security/gpgme
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	GPLv2,LGPLv2
 
+# Only test the 64 bit variant
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
+COMPONENT_PREP_ACTION= ( cd $(@D) && PATH=$(PATH.gnu) autoreconf -fi )
 
 PATH = $(PATH.gnu)
 
@@ -50,26 +52,24 @@ CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(gcc_C99_ENABLE)
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
+CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--enable-largefile
-CONFIGURE_OPTIONS  +=		--with-pth=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--enable-languages="cl"
-CONFIGURE_OPTIONS  +=		--enable-gpg-test
-CONFIGURE_OPTIONS  +=		--enable-gpgsm-test
-CONFIGURE_OPTIONS  +=		--enable-gpgconf-test
-CONFIGURE_OPTIONS  +=		--with-gpg=$(USRBINDIR)/gpg2
-CONFIGURE_OPTIONS  +=		--with-gpgsm=$(USRBINDIR)/gpgsm
-CONFIGURE_OPTIONS  +=		--with-gpgconf=$(USRBINDIR)/gpgconf
-CONFIGURE_OPTIONS  +=		--with-pic
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-libgpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --enable-largefile
+CONFIGURE_OPTIONS += --enable-languages=cl
+CONFIGURE_OPTIONS += --enable-gpg-test
+CONFIGURE_OPTIONS += --enable-gpgsm-test
+CONFIGURE_OPTIONS += --enable-gpgconf-test
+CONFIGURE_OPTIONS += --with-pic
 
-# Please see comments in patches/GNUPGHOME.patch
+# Note that the requested passphrase for alpha@example.com is "abc" (without quotation marks).
+# For the tests you will also need a configured gpg (eg. known passphrase for the default keyring).
 GNUPG_HOME_DIR = GNUPGHOME
 GNUPG_HOME_LINK = LINK
 COMPONENT_PRE_BUILD_ACTION += ( \
@@ -90,12 +90,18 @@ COMPONENT_POST_BUILD_ACTION += ( \
 
 COMPONENT_BUILD_ARGS += GNUPGHOME="$$(< "$(@D)/$(GNUPG_HOME_LINK)")"
 
+# In the 'doc' directory CC_FOR_BUILD is used as a compiler. That does not
+# respect our CFLAGS and CPPFLAGS so the PIC build breaks. This is a way to
+# overcome it.
+COMPONENT_BUILD_ARGS += CC_FOR_BUILD='$(CC) $(CONFIGURE_CPPFLAGS) $(CC_PIC_ENABLE)'
+
 COMPONENT_PRE_TEST_ACTION = $(COMPONENT_PRE_BUILD_ACTION)
 COMPONENT_POST_TEST_ACTION = $(COMPONENT_POST_BUILD_ACTION)
 COMPONENT_TEST_ARGS += GNUPGHOME="$$(< "$(@D)/$(GNUPG_HOME_LINK)")"
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += library/security/libgpg-error
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

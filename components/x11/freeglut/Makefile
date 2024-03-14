@@ -11,29 +11,30 @@
 
 #
 # Copyright 2015-2017 Aurelien Larcher
+# Copyright 2023 Niklas Poslovski
 #
 
+BUILD_BITS = 64_and_32
+BUILD_STYLE = cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freeglut
-COMPONENT_VERSION=        3.0.0
-COMPONENT_REVISION=       2
+COMPONENT_VERSION=        3.4.0
 COMPONENT_FMRI=           x11/library/freeglut
 COMPONENT_SUMMARY= \
   freeglut - open-source alternative to the OpenGL Utility Toolkit (GLUT) library
-COMPONENT_PROJECT_URL = http://freeglut.sourceforge.net/
+COMPONENT_PROJECT_URL = https://freeglut.sourceforge.net/
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2a43be8515b01ea82bcfa17d29ae0d40bd128342f0930cd1f375f1ff999f76a2
+  sha256:3c0bcb915d9b180a97edaebd011b7a1de54583a838644dcd42bb0ea0c6f3eaec
 COMPONENT_ARCHIVE_URL= \
-  http://downloads.sourceforge.net/project/freeglut/freeglut/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+  https://downloads.sourceforge.net/project/freeglut/freeglut/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT License
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -45,12 +46,6 @@ CPPFLAGS += -D__posix__ -D__unix__
 
 # Find issues with undefined symbols in build time
 LD_OPTIONS += $(LD_Z_DEFS)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

@@ -1,5 +1,5 @@
---- lmdb-LMDB_0.9.23/libraries/liblmdb/Makefile	2019-01-24 06:48:44.393091156 +0000
-+++ lmdb-LMDB_0.9.23/libraries/liblmdb/Makefile	2019-01-24 08:25:21.037887427 +0000
+--- openldap-LMDB_0.9.32/libraries/liblmdb/Makefile.orig	2024-01-29 19:20:26.000000000 +0100
++++ openldap-LMDB_0.9.32/libraries/liblmdb/Makefile	2024-02-01 08:56:41.845326495 +0100
 @@ -18,7 +18,6 @@
  # There may be other macros in mdb.c of interest. You should
  # read mdb.c before changing any of them.
@@ -28,7 +28,7 @@
  IPROGS	= mdb_stat mdb_copy mdb_dump mdb_load
  IDOCS	= mdb_stat.1 mdb_copy.1 mdb_dump.1 mdb_load.1
  PROGS	= $(IPROGS) mtest mtest2 mtest3 mtest4 mtest5
-@@ -51,33 +43,34 @@
+@@ -51,6 +43,7 @@
  	mkdir -p $(DESTDIR)$(mandir)/man1
  	for f in $(IPROGS); do cp $$f $(DESTDIR)$(bindir); done
  	for f in $(ILIBS); do cp $$f $(DESTDIR)$(libdir); done
@@ -36,11 +36,9 @@
  	for f in $(IHDRS); do cp $$f $(DESTDIR)$(includedir); done
  	for f in $(IDOCS); do cp $$f $(DESTDIR)$(mandir)/man1; done
  
- clean:
- 	rm -rf $(PROGS) *.[ao] *.[ls]o *~ testdb
+@@ -59,26 +52,26 @@
  
--test:	all
-+test: all
+ test:	all
  	rm -rf testdb && mkdir testdb
 -	./mtest && ./mdb_stat testdb
 +	LD_LIBRARY_PATH=. ./mtest && LD_LIBRARY_PATH=. ./mdb_stat testdb
@@ -64,20 +62,22 @@
 -mtest4:	mtest4.o liblmdb.a
 -mtest5:	mtest5.o liblmdb.a
 -mtest6:	mtest6.o liblmdb.a
-+mdb_stat: mdb_stat.o 
-+mdb_copy: mdb_copy.o 
-+mdb_dump: mdb_dump.o 
-+mdb_load: mdb_load.o 
-+mtest:    mtest.o 
-+mtest2:	mtest2.o 
-+mtest3:	mtest3.o 
-+mtest4:	mtest4.o 
-+mtest5:	mtest5.o 
-+mtest6:	mtest6.o 
+-mplay:	mplay.o liblmdb.a
++mdb_stat: mdb_stat.o
++mdb_copy: mdb_copy.o
++mdb_dump: mdb_dump.o
++mdb_load: mdb_load.o
++mtest:    mtest.o
++mtest2:	mtest2.o
++mtest3:	mtest3.o
++mtest4:	mtest4.o
++mtest5:	mtest5.o
++mtest6:	mtest6.o
++mplay:	mplay.o
  
  mdb.o: mdb.c lmdb.h midl.h
  	$(CC) $(CFLAGS) $(CPPFLAGS) -c mdb.c
-@@ -91,8 +84,8 @@
+@@ -92,8 +85,8 @@
  midl.lo: midl.c midl.h
  	$(CC) $(CFLAGS) -fPIC $(CPPFLAGS) -c midl.c -o $@
  

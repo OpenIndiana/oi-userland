@@ -1,11 +1,14 @@
---- claws-mail-3.17.6/configure.ac.orig	2020-05-18 14:59:58.000000000 +0000
-+++ claws-mail-3.17.6/configure.ac	2020-07-25 10:25:10.991303310 +0000
-@@ -21,7 +21,7 @@
- 	echo "echo ${GIT_VERSION}" > ./version
-     fi
+--- claws-mail-4.1.1/get-git-version.orig	2022-09-23 17:27:46.000000000 +0000
++++ claws-mail-4.1.1/get-git-version	2022-10-22 10:23:32.190943851 +0000
+@@ -9,9 +9,9 @@
+     exit 1
+   fi
+ elif test \( -s ./version \); then
+-  version=`sh -c ". ./version"`
++  version=`bash -c ". ./version"`
  else
--    GIT_VERSION=`sh -c ". $srcdir/version"`
-+    GIT_VERSION=`${CONFIG_SHELL} -c ". $srcdir/version"`
+   echo "Error: *** invalid tree. Neither '.git' nor 'version' were found"
+   exit 1
  fi
- 
- if test \( -z "$GIT_VERSION" \); then
+-echo -n $version
++gecho -n $version

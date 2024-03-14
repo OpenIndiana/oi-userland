@@ -11,12 +11,12 @@
 #
 # Copyright 2022 Gary Mills
 #
-BUILD_BITS=	64
-BUILD_STYLE=	justmake
+BUILD_BITS= 64
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zrepl
-COMPONENT_VERSION=	0.5.0
+COMPONENT_VERSION=	0.6.1
 COMPONENT_SUMMARY=	A one-stop, integrated solution for ZFS replication
 COMPONENT_PROJECT_URL=	https://zrepl.github.io/
 COMPONENT_FMRI=		backup/$(COMPONENT_NAME)
@@ -24,12 +24,11 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:4acfde9e7a09eca2de3de5c7d2987907ae446b345b69133e4b3c58a99c294465
+COMPONENT_ARCHIVE_HASH= sha256:263c82501b75a1413f8a298c1d67d7e940c1b0cb967979790773237e2a30adbd
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -74,8 +73,10 @@ COMPONENT_POST_INSTALL_ACTION=$(CP) $(COMPONENT_DIR)/files/illumos.yml \
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
 # Build dependencies
-REQUIRED_PACKAGES+=developer/golang
-REQUIRED_PACKAGES+=library/python/docutils
+REQUIRED_PACKAGES += developer/golang
+REQUIRED_PACKAGES += library/python/docutils
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

@@ -13,15 +13,15 @@
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/developer/dtrace/toolkit@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Development/System"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license License license='CDDL v1.0'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=opt/DTT/.*\.d$ -> default mode 0555>
 <transform file path=opt/DTT/.*\.py$ -> default pkg.tmp.autopyc false>
@@ -29,11 +29,6 @@ license License license='CDDL v1.0'
 <transform file path=opt/DTT/Code/.*\.py$ -> default mode 0555>
 <transform file path=opt/DTT/Code/.*\.rb$ -> default mode 0555>
 <transform file path=opt/DTT/Code/.*\.sh$ -> default mode 0555>
-
-# Depend on python-37 explicitly, so we can disconnect userland from
-# python-27 once and for all.
-<transform file path=opt/DTT/.*\.py$ -> default pkg.depend.bypass-generate .*>
-depend fmri=runtime/python-37 type=require
 
 file path=opt/DTT/Apps/Readme
 file path=opt/DTT/Apps/httpdstat.d

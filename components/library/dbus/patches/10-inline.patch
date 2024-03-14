@@ -1,0 +1,100 @@
+Without the following patches illumos-gate build fail with errors like this:
+In file included from /usr/include/dbus-1.0/dbus/dbus.h:30,                                                                          
+                 from ../common/libhal.c:35:                                                                                         
+/usr/include/dbus-1.0/dbus/dbus-address.h:74:14: error: expected ';' before 'void'                                                   
+   74 | static inline void                                                                                                                                                                    
+      |              ^~~~~                                                                                                           
+      |              ;                                                                                                               
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/dbus/dbus-address.h a/dbus/dbus-address.h
+--- a~/dbus/dbus-address.h	1970-01-01 00:00:00
++++ a/dbus/dbus-address.h	1970-01-01 00:00:00
+@@ -71,12 +71,9 @@ char* dbus_address_unescape_value (const
+  * pointer_to_entries must not be #NULL, but *pointer_to_entries
+  * may be #NULL.
+  */
+-static inline void
+-dbus_clear_address_entries (DBusAddressEntry ***pointer_to_entries)
+-{
+-  _dbus_clear_pointer_impl (DBusAddressEntry *, pointer_to_entries,
+-                            dbus_address_entries_free);
+-}
++#define dbus_clear_address_entries(pointer) \
++	_dbus_clear_pointer_impl(DBusAddressEntry *, \
++	(pointer), dbus_address_entries_free)
+ 
+ /** @} */
+ 
+diff -wpruN --no-dereference '--exclude=*.orig' a~/dbus/dbus-connection.h a/dbus/dbus-connection.h
+--- a~/dbus/dbus-connection.h	1970-01-01 00:00:00
++++ a/dbus/dbus-connection.h	1970-01-01 00:00:00
+@@ -461,12 +461,9 @@ dbus_bool_t dbus_connection_get_socket
+  * pointer_to_connection must not be #NULL, but *pointer_to_connection
+  * may be #NULL.
+  */
+-static inline void
+-dbus_clear_connection (DBusConnection **pointer_to_connection)
+-{
+-  _dbus_clear_pointer_impl (DBusConnection, pointer_to_connection,
+-                            dbus_connection_unref);
+-}
++#define dbus_clear_connection(pointer) \
++	_dbus_clear_pointer_impl(DBusConnection, \
++	(pointer), dbus_connection_unref)
+ 
+ /** @} */
+ 
+diff -wpruN --no-dereference '--exclude=*.orig' a~/dbus/dbus-message.h a/dbus/dbus-message.h
+--- a~/dbus/dbus-message.h	1970-01-01 00:00:00
++++ a/dbus/dbus-message.h	1970-01-01 00:00:00
+@@ -369,12 +369,8 @@ dbus_bool_t dbus_message_get_allow_inter
+  * pointer_to_message must not be #NULL, but *pointer_to_message
+  * may be #NULL.
+  */
+-static inline void
+-dbus_clear_message (DBusMessage **pointer_to_message)
+-{
+-  _dbus_clear_pointer_impl (DBusMessage, pointer_to_message,
+-                            dbus_message_unref);
+-}
++#define dbus_clear_message(pointer) \
++	_dbus_clear_pointer_impl(DBusMessage, (pointer), dbus_message_unref)
+ 
+ /** @} */
+ 
+diff -wpruN --no-dereference '--exclude=*.orig' a~/dbus/dbus-pending-call.h a/dbus/dbus-pending-call.h
+--- a~/dbus/dbus-pending-call.h	1970-01-01 00:00:00
++++ a/dbus/dbus-pending-call.h	1970-01-01 00:00:00
+@@ -84,12 +84,9 @@ void*       dbus_pending_call_get_data
+  * pointer_to_pending_call must not be #NULL, but *pointer_to_pending_call
+  * may be #NULL.
+  */
+-static inline void
+-dbus_clear_pending_call (DBusPendingCall **pointer_to_pending_call)
+-{
+-  _dbus_clear_pointer_impl (DBusPendingCall, pointer_to_pending_call,
+-                            dbus_pending_call_unref);
+-}
++#define dbus_clear_pending_call(pointer) \
++	_dbus_clear_pointer_impl(DBusPendingCall, (pointer), \
++	dbus_pending_call_unref)
+ 
+ /** @} */
+ 
+diff -wpruN --no-dereference '--exclude=*.orig' a~/dbus/dbus-server.h a/dbus/dbus-server.h
+--- a~/dbus/dbus-server.h	1970-01-01 00:00:00
++++ a/dbus/dbus-server.h	1970-01-01 00:00:00
+@@ -112,11 +112,8 @@ void*       dbus_server_get_data
+  * pointer_to_server must not be #NULL, but *pointer_to_server
+  * may be #NULL.
+  */
+-static inline void
+-dbus_clear_server (DBusServer **pointer_to_server)
+-{
+-  _dbus_clear_pointer_impl (DBusServer, pointer_to_server, dbus_server_unref);
+-}
++#define dbus_clear_server(pointer) \
++	_dbus_clear_pointer_impl(DBusServer, (pointer), dbus_server_unref)
+ 
+ /** @} */
+ 

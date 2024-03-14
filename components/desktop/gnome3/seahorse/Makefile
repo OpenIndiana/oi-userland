@@ -14,50 +14,49 @@
 #
 
 BUILD_BITS= 64
-
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		seahorse
-COMPONENT_MJR_VERSION=	3.20
+COMPONENT_MJR_VERSION=	43
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/action/show/Apps/Seahorse
 COMPONENT_SUMMARY=	Seahorse is a GNOME application for managing encryption keys
+COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Seahorse
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:e2b07461ed54a8333e5628e9b8e517ec2b731068377bf376570aad998274c6df
+COMPONENT_ARCHIVE_HASH= sha256:5b1d1bfba74f3658227f3c82e296f330dd0fcd1ef4636b6a218228fee5ea832d
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		gnome/security/seahorse
 COMPONENT_CLASSIFICATION=System/Security
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	GPLv2, LGPLv2.1, Creative Commons Attribution-ShareAlike 3.0 Unported License
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -fi)
+# Assumes GNU msgfmt in PATH.
+CONFIGURE_ENV += PATH="$(PATH.gnu)"
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+COMPONENT_BUILD_ENV += PATH="$(PATH.gnu)"
+COMPONENT_INSTALL_ENV += PATH="$(PATH.gnu)"
+COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
+CONFIGURE_OPTIONS += -Dhkp-support=false -Dmanpage=true
 
 CPPFLAGS += -I/usr/include/openldap
 
-CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
+LDFLAGS += -lldap-2.6 -llber-2.6
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--enable-pgp
-
-CONFIGURE_ENV+=	CPPFLAGS="$(CPPFLAGS)"
-
-REQUIRED_PACKAGES += library/desktop/atk
+# Note that some gpgme tests fail because we don't have proper file monitoring solutions.
+#
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gcr
+REQUIRED_PACKAGES += library/libhandy
 REQUIRED_PACKAGES += library/libsecret
-REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/network/avahi

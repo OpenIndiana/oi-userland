@@ -12,29 +12,29 @@
 # Copyright (c) 2017 - 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=			32_and_64
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsass
-COMPONENT_VERSION=	3.6.5
-COMPONENT_PROJECT_URL=	https://github.com/sass/libsass
+COMPONENT_VERSION=	3.6.6
 COMPONENT_SUMMARY=	LibSass is a C/C++ port of the Sass engine
+COMPONENT_PROJECT_URL=	https://github.com/sass/libsass
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:89d8f2c46ae2b1b826b58ce7dde966a176bac41975b82e84ad46b01a55080582
+COMPONENT_ARCHIVE_HASH= sha256:11f0bb3709a4f20285507419d7618f3877a425c0131ea8df40fe6196129df15d
 COMPONENT_ARCHIVE_URL=	https://github.com/sass/libsass/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_FMRI =	library/libsass
+COMPONENT_FMRI=	library/libsass
+COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
-COMPONENT_CLASSIFICATION =	System/Libraries
 
-TESTi_TARGET=	$(NO_TESTS)
+TESTi_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = \
-			( cd $(@D) && $(CONFIG_SHELL) autoreconf --force --install )
+COMPONENT_PREP_ACTION = ( cd $(@D) && $(CONFIG_SHELL) autoreconf --force --install )
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared

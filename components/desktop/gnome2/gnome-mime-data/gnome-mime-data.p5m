@@ -13,9 +13,10 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/desktop/gnome-mime-data@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -23,7 +24,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 <transform file path=usr/share/mime-info/.* ->  default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
 
-license gnome-mime-data.license license="GPLv2"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/gnome-realplay.keys path=usr/share/mime-info/gnome-realplay.keys
 

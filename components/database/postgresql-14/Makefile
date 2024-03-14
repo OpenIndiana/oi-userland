@@ -18,17 +18,16 @@
 #
 
 BUILD_BITS= 32_and_64
-# Alas the settings resulting from the following are completely ignored:
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	14
-COMPONENT_MNR_VERSION=	5
+COMPONENT_MNR_VERSION=	11
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:d4f72cb5fb857c9a9f75ec8cf091a1771272802f2178f0b2e65b7b6ff64f4a30
+COMPONENT_ARCHIVE_HASH=	sha256:a670bd7dce22dcad4297b261136b3b1d4a09a6f541719562aa14ca63bf2968a8
 COMPONENT_ARCHIVE_URL=	https://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.postgresql.org
 COMPONENT_FMRI=			database/postgres-$(COMPONENT_MJR_VERSION)
@@ -36,10 +35,7 @@ COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=		Postgresql
 COMPONENT_LICENSE_FILE=	COPYRIGHT
 
-# Set python version used by this product
-PYTHON_VERSION=3.7
-
-TEST_TARGET=$(TEST_64)
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
@@ -66,7 +62,7 @@ CONFIGURE_OPTIONS.64 += --with-pam
 CONFIGURE_OPTIONS += --with-ssl=openssl
 CONFIGURE_OPTIONS += --with-libedit-preferred
 CONFIGURE_OPTIONS += --with-libxml
-CONFIGURE_OPTIONS += --with-libxslt
+CONFIGURE_OPTIONS.64 += --with-libxslt
 CONFIGURE_OPTIONS += --with-lz4
 CONFIGURE_OPTIONS += --with-gssapi
 CONFIGURE_OPTIONS += --enable-thread-safety
@@ -81,11 +77,15 @@ CONFIGURE_OPTIONS.32 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MA
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
 CONFIGURE_OPTIONS.32 += --sbindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
 CONFIGURE_OPTIONS.32 += --libdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/lib
+CONFIGURE_OPTIONS.32 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib
 
 CONFIGURE_OPTIONS.64 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
 CONFIGURE_OPTIONS.64 += --sbindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
 CONFIGURE_OPTIONS.64 += --libdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/lib/$(MACH64)
+CONFIGURE_OPTIONS.64 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
+
+CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_PREFIX)/include
 
 CONFIGURE_OPTIONS+=$(CONFIGURE_OPTIONS.$(BITS))
 
@@ -119,17 +119,17 @@ COMPONENT_TEST_TRANSFORMS= \
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/postgres-common
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss

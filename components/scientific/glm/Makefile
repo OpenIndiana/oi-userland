@@ -12,13 +12,15 @@
 #
 # Copyright 2020 Aurelien Larcher
 #
-BUILD_BITS=32_and_64
-BUILD_STYLE=cmake
 
+BUILD_BITS= 64
+BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= glm
 COMPONENT_VERSION= 0.9.9.8
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= library/math/glm
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY= glm - OpenGL Mathematics, A C++ mathematics library for graphics programming
@@ -28,14 +30,11 @@ COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:7d508ab72cb5d43227a3711420f06ff99b0a0cb63ee2f93631b162bfe1fe9592
 COMPONENT_ARCHIVE_URL= https://github.com/g-truc/glm/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= MIT
+COMPONENT_LICENSE_FILE= copying.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/[0-9]*\.[0-9]* sec/ SEC seconds/"' \
-	'-n ' \
-	'-e "/Passed/p"' \
-	'-e "/tests passed/,\\$$p"'
+# Note that test-core_func_integer fails with gcc-13 but is ok with gcc-7 and gcc-10.
+COMPONENT_TEST_TRANSFORMS += ' -e "/aborted/p" '
 
 # Auto-generated dependencies

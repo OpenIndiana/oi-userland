@@ -1,0 +1,37 @@
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 21 items
+
+::project PASSED
+test/test_autoasync.py::test_basic_autoasync PASSED
+test/test_autoasync.py::test_custom_loop PASSED
+test/test_autoasync.py::test_defered_loop PASSED
+test/test_autoasync.py::test_pass_loop PASSED
+test/test_autoasync.py::test_pass_loop_kwarg_only PASSED
+test/test_autoasync.py::test_pass_loop_prior_argument PASSED
+test/test_autoasync.py::test_run_forever PASSED
+test/test_autoasync.py::test_run_forever_func PASSED
+test/test_autocommand.py::test_autocommand_incorrect_invocation_no_parenthesis PASSED
+test/test_autocommand.py::test_autocommand_no_async PASSED
+test/test_autocommand.py::test_autocommand_with_async[True-None] PASSED
+test/test_autocommand.py::test_autocommand_with_async[input_loop0-output_loop0] PASSED
+test/test_automain.py::test_args PASSED
+test/test_automain.py::test_args_and_kwargs PASSED
+test/test_automain.py::test_invalid_usage PASSED
+test/test_automain.py::test_name_equals_main_or_true[True] PASSED
+test/test_automain.py::test_name_equals_main_or_true[__main__] PASSED
+test/test_automain.py::test_name_not_main_or_true PASSED
+
+=============================== warnings summary ===============================
+test/test_autoasync.py::test_custom_loop
+  $(PYTHON_DIR)/asyncio/base_events.py:672: RuntimeWarning: coroutine 'test_custom_loop.<locals>.bad_coro' was never awaited
+    self._ready.clear()
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 19 passed, 1 warning ========

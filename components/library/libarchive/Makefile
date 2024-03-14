@@ -21,13 +21,17 @@
 #
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2023, Andreas Wacknitz
 #
 
-BUILD_BITS=		64_and_32
+BUILD_BITS= 64_and_32
+OPENSSL_VERSION= 3.1
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.6.1
+COMPONENT_VERSION=	3.7.2
 COMPONENT_SUMMARY=	multi-format archive and compression library
 COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  interface for reading and writing archives in various formats such as\
@@ -39,7 +43,7 @@ COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
 COMPONENT_SRC=			libarchive-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.libarchive.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c676146577d989189940f1959d9e3980d28513d74eedfbc6b7f15ea45fe54ee2
+COMPONENT_ARCHIVE_HASH=	sha256:df404eb7222cf30b4f8f93828677890a2986b66ff8bf39dac32a804e96ddf104
 COMPONENT_ARCHIVE_URL=	https://www.libarchive.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/libarchive
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -50,6 +54,8 @@ include $(WS_MAKE_RULES)/common.mk
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-largefile
+# We don't have an iconv library and using this will make depending packages fail when trying to find it:
+CONFIGURE_OPTIONS += --without-iconv
 # Linking libarchive with lzo violates LZO GPL licence
 CONFIGURE_OPTIONS += --without-lzo
 # We prefer openssl over nettle.
@@ -65,6 +71,10 @@ COMPONENT_BUILD_ARGS +=	COMMON_CFLAGS=''
 COMPONENT_BUILD_ARGS +=	CFLAGS="$(CFLAGS)"
 COMPONENT_TEST_ARGS +=	COMMON_CFLAGS=''
 COMPONENT_TEST_ARGS +=	CFLAGS="$(CFLAGS)"
+
+CONFIGURE_OPTIONS.64 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
+CONFIGURE_OPTIONS.32 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib
+CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_PREFIX)/include
 
 # We need GNU awk for the following to work; hence the PATH tweak.
 # We then convert BSD-style section numbers in the libarchive man pages to
@@ -90,14 +100,8 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL:/p" ' \
-        '-e "/SKIP:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" ' \
-        '-e "/ERROR:/p" '
+# Tests may fail for other locales.
+COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
 # Build requirements
 REQUIRED_PACKAGES += print/filter/ghostscript
@@ -109,6 +113,6 @@ REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

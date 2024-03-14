@@ -10,6 +10,7 @@
 
 #
 # Copyright (c) 2015-2016 Jim Klimov
+# Copyright (c) 2023 Niklas Poslovski
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,12 +24,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/ccache
-file path=usr/share/man/man1/ccache.1
 file files/ccache-update-symlinks.xml path=lib/svc/manifest/application/ccache-update-symlinks.xml restart_fmri=svc:/system/manifest-import:default
 file files/ccache-update-symlinks.sh path=lib/svc/method/ccache-update-symlinks.sh mode=0555
-
-# Files from tarball (HTMLs may be rebuilt)
-file MANUAL.txt path=usr/share/ccache/manual.txt
-file MANUAL.html path=usr/share/ccache/manual.html
 
 dir  path=usr/lib/ccache

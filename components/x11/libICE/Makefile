@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libICE
-COMPONENT_VERSION= 1.0.10
+COMPONENT_VERSION= 1.1.1
 COMPONENT_FMRI =   x11/library/libice
 COMPONENT_SUMMARY= libICE - Inter-Client Exchange Library
-COMPONENT_ARCHIVE_HASH= \
-  sha256:6f86dce12cf4bcaf5c37dddd8b1b64ed2ddf1ef7b218f22b9942595fb747c348
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:03e77afaf72942c7ac02ccebb19034e6e20f456dcf8dddadfeb572aa5ad3e451
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -39,4 +39,5 @@ LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/xtrans
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

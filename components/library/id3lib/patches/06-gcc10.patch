@@ -1,0 +1,20 @@
+--- id3lib-3.8.3/examples/test_io.cpp.orig	2003-03-02 01:23:00.000000000 +0000
++++ id3lib-3.8.3/examples/test_io.cpp	2022-12-27 19:36:48.451799573 +0000
+@@ -24,7 +24,7 @@
+   ID3D_INIT_WARNING();
+   ID3D_INIT_NOTICE();
+ 
+-  ID3_IStreamReader isr(cin);
++  ID3_IStreamReader isr(std::cin);
+   BString orig = io::readAllBinary(isr);
+     
+   cout << "input size:    " << orig.size() << endl;
+@@ -116,7 +116,7 @@
+   cout << "binary number:";
+   for (size_t i = 0; i < number.size(); ++i)
+   {
+-    cout << " 0x" << hex << (size_t) (0xFF & number[i]) << dec;
++    cout << " 0x" << std::hex << (size_t) (0xFF & number[i]) << std::dec;
+   }
+   cout << endl;
+ 

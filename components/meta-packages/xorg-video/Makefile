@@ -12,25 +12,16 @@
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
 
+BUILD_STYLE = pkg
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xorg-video
-COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION= 2
+COMPONENT_VERSION=	1
 COMPONENT_SUMMARY=	Xorg server video drivers group
+COMPONENT_CLASSIFICATION=	System/X11
+COMPONENT_FMRI=			x11/server/xorg/driver/xorg-video
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-#PKGLINT=/bin/true
-
-download:
-
-prep:
-
-build:
-
-install:
-	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
-
-clean:
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+# Auto-generated dependencies

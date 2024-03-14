@@ -14,13 +14,13 @@
 # Copyright (c) 2022 Friedrich Kink
 #
 
-BUILD_BITS=             64
 USE_OPENSSL11=  yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.1-ext-memcached
 COMPONENT_REAL_NAME=	memcached
 COMPONENT_VERSION=	3.1.5
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		web/php-81/extension/php-memcached
 COMPONENT_SUMMARY=	PHP extension for interfacing with memcached via libmemcached library
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/$(COMPONENT_REAL_NAME)
@@ -59,7 +59,12 @@ CONFIGURE_OPTIONS  +=   --mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS  +=   --localstatedir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS  +=	--disable-memcached-sasl
 
-CONFIGURE_OPTIONS  +=	--build=x86_64-pc-solaris2.10
+ifeq ($(strip $(MACH)),i386)
+CONFIGURE_OPTIONS  +=	--build=x86_64-pc-solaris$(SOLARIS_VERSION)
+else
+CONFIGURE_OPTIONS.64+=	--build=sparcv9-sun-solaris$(SOLARIS_VERSION)
+endif
+
 CONFIGURE_OPTIONS  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
 
 CFLAGS             +=	-I/usr/include -I$(PHP_PREFIX)/include

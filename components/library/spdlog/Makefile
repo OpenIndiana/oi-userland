@@ -19,30 +19,30 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2023, Niklas Poslovski
 #
-BUILD_BITS=32_and_64
-BUILD_STYLE=cmake
+
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		spdlog
-COMPONENT_VERSION=	1.5.0
-COMPONENT_FMRI=     	library/c++/spdlog
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	https://github.com/gabime/spdlog	
+COMPONENT_VERSION=	1.13.0
 COMPONENT_SUMMARY=      spdlog - Fast C++ logging library
+COMPONENT_PROJECT_URL=	https://github.com/gabime/spdlog
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b38e0bbef7faac2b82fed550a0c19b0d4e7f6737d5321d4fd8f216b80f8aee8a
+COMPONENT_ARCHIVE_HASH=	sha256:534f2ee1a4dcbeb22249856edfb2be76a1cf4f708a20b0ac2ed090ee24cfdbc9
 COMPONENT_ARCHIVE_URL=	https://github.com/gabime/spdlog/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=     	library/c++/spdlog
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE=	LICENSE
 
+# Tests now require Catch2 which we don't have yet.
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CMAKE_OPTIONS+= -DSPDLOG_BUILD_SHARED=ON
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
+CMAKE_OPTIONS += -DSPDLOG_BUILD_SHARED=ON
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

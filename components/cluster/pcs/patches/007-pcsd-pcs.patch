@@ -1,5 +1,5 @@
---- pcs-0.9.159/pcsd/pcs.rb.~1~	2017-06-30 17:33:01.000000000 +0000
-+++ pcs-0.9.159/pcsd/pcs.rb	2017-09-26 15:03:17.755738686 +0000
+--- pcs-0.10.1/pcsd/pcs.rb.orig
++++ pcs-0.10.1/pcsd/pcs.rb
 @@ -26,6 +26,15 @@
  class InvalidFileNameException < NameError
  end
@@ -16,7 +16,7 @@
  def getAllSettings(auth_user, cib_dom=nil)
    unless cib_dom
      cib_dom = get_cib_dom(auth_user)
-@@ -978,7 +987,11 @@
+@@ -817,7 +826,11 @@
  end
  
  def pacemaker_running?()
@@ -29,7 +29,7 @@
  end
  
  def pacemaker_remote_running?()
-@@ -1803,7 +1818,11 @@
+@@ -1445,7 +1458,11 @@
  end
  
  def get_node_uptime()
@@ -42,7 +42,7 @@
    mm, ss = uptime.divmod(60)
    hh, mm = mm.divmod(60)
    dd, hh = hh.divmod(24)
-@@ -2068,6 +2087,9 @@
+@@ -1711,6 +1728,9 @@
  def is_service_enabled?(service)
    if ISSYSTEMCTL
      cmd = ['systemctl', 'is-enabled', "#{service}.service"]
@@ -52,7 +52,7 @@
    else
      cmd = ['chkconfig', service]
    end
-@@ -2078,6 +2100,8 @@
+@@ -1721,6 +1741,8 @@
  def is_service_running?(service)
    if ISSYSTEMCTL
      cmd = ['systemctl', 'status', "#{service}.service"]
@@ -61,7 +61,7 @@
    else
      cmd = ['service', service, 'status']
    end
-@@ -2086,6 +2110,12 @@
+@@ -1729,6 +1751,12 @@
  end
  
  def is_service_installed?(service)
@@ -74,7 +74,7 @@
    unless ISSYSTEMCTL
      stdout, _, retcode = run_cmd(PCSAuth.getSuperuserAuth(), 'chkconfig')
      if retcode != 0
-@@ -2120,6 +2150,9 @@
+@@ -1763,6 +1791,9 @@
    if ISSYSTEMCTL
      # fails when the service is not installed
      cmd = ['systemctl', 'enable', "#{service}.service"]
@@ -84,7 +84,7 @@
    else
      # fails when the service is not installed
      cmd = ['chkconfig', service, 'on']
-@@ -2136,6 +2169,9 @@
+@@ -1779,6 +1810,9 @@
  
    if ISSYSTEMCTL
      cmd = ['systemctl', 'disable', "#{service}.service"]
@@ -94,7 +94,7 @@
    else
      cmd = ['chkconfig', service, 'off']
    end
-@@ -2146,7 +2182,10 @@
+@@ -1789,7 +1823,10 @@
  def start_service(service)
    if ISSYSTEMCTL
      cmd = ['systemctl', 'start', "#{service}.service"]
@@ -106,7 +106,7 @@
      cmd = ['service', service, 'start']
    end
    _, _, retcode = run_cmd(PCSAuth.getSuperuserAuth(), *cmd)
-@@ -2159,7 +2198,10 @@
+@@ -1802,7 +1839,10 @@
    end
    if ISSYSTEMCTL
      cmd = ['systemctl', 'stop', "#{service}.service"]

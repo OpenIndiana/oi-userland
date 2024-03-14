@@ -20,30 +20,30 @@
 #
 # Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2023 Niklas Poslovski
 #
+BUILD_STYLE = ant
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		beanshell
-COMPONENT_VERSION=	2.0b6
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.1.1
+COMPONENT_FMRI=		runtime/java/beanshell
+COMPONENT_SUMMARY=	beanshell - a small and embeddable Java source interpreter
+COMPONENT_DESCRIPTION=	BeanShell is a small, free, embeddable Java source interpreter with object scripting language features, written in Java. BeanShell dynamically executes standard Java syntax and extends it with common scripting conveniences such as loose types, commands, and method closures like those in Perl and JavaScript.
+COMPONENT_CLASSIFICATION=Development/Java
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.beanshell.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
+COMPONENT_PROJECT_URL=	https://beanshell.github.io
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dbcd8296a0aa81b5edc80a5421841b968d031332ffcebf3b2c877969669f5cad
-COMPONENT_ARCHIVE_URL=	https://github.com/beanshell/beanshell/archive/$(COMPONENT_ARCHIVE)
+    sha256:7e50fe51c7a36f595ee5c792a75f37a252f6b4b24cd21b97c5bc2634c2c33a77
+COMPONENT_ARCHIVE_URL=	https://github.com/beanshell/beanshell/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_LICENSE=	LGPLv2.1, SPL
 
-COMPONENT_BUGDB=	utility/beanshell
-
-IPS_COMPONENT_VERSION=	2.0
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ant.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS =		-Ddist-dir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS +=	-Djavadoc-dir=${PROTO_DIR}
-COMPONENT_BUILD_TARGETS +=	dist 
+COMPONENT_BUILD_TARGETS +=	dist
 
 # We use the solaris-transform file to pick up files in the prototype area
 # that are not found in the directories we install them to on Solaris.
@@ -51,15 +51,11 @@ COMPONENT_BUILD_TARGETS +=	dist
 # associated beanshell.p5m file.
 PUBLISH_TRANSFORMS += solaris-transform
 # Needed to pick up scripts/bsh and bshcommands-bshdoc.xml
-PKG_PROTO_DIRS += $(COMPONENT_DIR) 
-PKG_PROTO_DIRS += $(BUILD_DIR_32)
+PKG_PROTO_DIRS += $(COMPONENT_DIR)
+PKG_PROTO_DIRS += $(BUILD_DIR_64)
 
-# common targets
-build:		$(BUILD_32)
-
-install:	build
-
-test:	$(NO_TESTS)
-
-REQUIRED_PACKAGES += SUNWcs
+# Manually added dependencies
 REQUIRED_PACKAGES += runtime/java/openjdk8
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93

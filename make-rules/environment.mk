@@ -51,13 +51,49 @@ component-environment-prep::
 	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%) >/dev/null || \
 		{ echo "Adding required packages to build environment..."; \
 		while true ; do \
-		  $(PFEXEC) /usr/bin/pkg install --accept -v $(REQUIRED_PACKAGES:%=/%) ; \
+		  $(PFEXEC) /usr/bin/pkg install --accept -v $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%) ; \
 		  RETVAL=$$? ; \
 		  [ $$RETVAL -eq 0 ] && break; \
 		  [ $$RETVAL -eq 4 ] && break; \
 		  [ $$RETVAL -ne 7 ] && echo "pkg install returned $$RETVAL" && exit 1; \
 		  sleep 10; \
 		done; }
+
+component-test-environment-check:: component-environment-check
+	$(call separator-line,Required Additional Packages Needed for Testing Only)
+	@[ -z "$(strip $(USERLAND_TEST_REQUIRED_PACKAGES))$(strip $(TEST_REQUIRED_PACKAGES))" ] || \
+		/usr/bin/pkg list -vH $(USERLAND_TEST_REQUIRED_PACKAGES:%=/%) $(TEST_REQUIRED_PACKAGES:%=/%)
+	@C=0 ; \
+		for p in $(TEST_CONFLICTING_PACKAGES) ; do \
+			/usr/bin/pkg list -q /$$p && echo "Conflicting package $$p found" && C=1 ; \
+		done ; \
+		exit $$C
+	$(call separator-line)
+
+component-test-environment-prep::
+	@[ -z "$(strip $(USERLAND_TEST_REQUIRED_PACKAGES))$(strip $(TEST_REQUIRED_PACKAGES))" ] || \
+		/usr/bin/pkg list -vH $(USERLAND_TEST_REQUIRED_PACKAGES:%=/%) $(TEST_REQUIRED_PACKAGES:%=/%) >/dev/null || \
+		{ echo "Adding required packages to testing environment..."; \
+		while true ; do \
+		  $(PFEXEC) /usr/bin/pkg install --accept -v $(USERLAND_TEST_REQUIRED_PACKAGES:%=/%) $(TEST_REQUIRED_PACKAGES:%=/%) ; \
+		  RETVAL=$$? ; \
+		  [ $$RETVAL -eq 0 ] && break; \
+		  [ $$RETVAL -eq 4 ] && break; \
+		  [ $$RETVAL -ne 7 ] && echo "pkg install returned $$RETVAL" && exit 1; \
+		  sleep 10; \
+		done; }
+	@for p in $(TEST_CONFLICTING_PACKAGES) ; do \
+		/usr/bin/pkg list -q /$$p || continue ; \
+		echo "Removing conflicting packages from testing environment..." ; \
+		while true ; do \
+		  $(PFEXEC) /usr/bin/pkg uninstall -v --deny-new-be --ignore-missing $(TEST_CONFLICTING_PACKAGES:%=/%) ; \
+		  RETVAL=$$? ; \
+		  [ $$RETVAL -eq 0 ] && exit 0 ; \
+		  [ $$RETVAL -ne 7 ] && echo "pkg uninstall returned $$RETVAL" && exit 1 ; \
+		  sleep 10 ; \
+		done ; \
+	done
+
 ZONENAME_PREFIX = bz
 ZONENAME_ID = $(shell echo "$(WS_TOP)" | sha1sum | cut -c0-7)-$(COMPONENT_NAME)
 ZONENAME = $(ZONENAME_PREFIX)-$(ZONENAME_ID)
@@ -118,3 +154,5 @@ component-zone-cleanup:
 # Short aliases for user convenience
 env-check:: component-environment-check
 env-prep:: component-environment-prep
+test-env-check:: component-test-environment-check
+test-env-prep:: component-test-environment-prep

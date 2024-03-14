@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTTP::Negotiate
 HUMAN_VERSION =			6.01
-COMPONENT_REVISION =		3
+COMPONENT_REVISION =		4
 COMPONENT_SUMMARY =		HTTP::Negotiate - choose a variant to serve
 COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\

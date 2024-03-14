@@ -1,0 +1,100 @@
+illumos ld have no support for --build-id option.
+
+--- gdb-13.2/libbacktrace/Makefile.in.orig
++++ gdb-13.2/libbacktrace/Makefile.in
+@@ -135,8 +135,6 @@
+ @NATIVE_TRUE@@USE_DSYMUTIL_TRUE@	btest.dSYM btest_alloc.dSYM \
+ @NATIVE_TRUE@@USE_DSYMUTIL_TRUE@	stest.dSYM stest_alloc.dSYM \
+ @NATIVE_TRUE@@USE_DSYMUTIL_TRUE@	edtest.dSYM edtest_alloc.dSYM
+-@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@am__append_6 = b2test
+-@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@am__append_7 = b2test_buildid
+ @HAVE_DWZ_TRUE@@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@am__append_8 = b3test
+ @HAVE_DWZ_TRUE@@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@am__append_9 = b3test_dwz_buildid
+ @HAVE_ELF_TRUE@@NATIVE_TRUE@am__append_10 = btest_lto
+@@ -221,7 +219,6 @@
+ 	$(am_libbacktrace_noformat_la_OBJECTS)
+ @NATIVE_TRUE@am_libbacktrace_noformat_la_rpath =
+ @NATIVE_TRUE@am__EXEEXT_1 = allocfail$(EXEEXT)
+-@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@am__EXEEXT_2 = b2test$(EXEEXT)
+ @HAVE_DWZ_TRUE@@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@am__EXEEXT_3 = b3test$(EXEEXT)
+ @NATIVE_TRUE@am__EXEEXT_4 = test_elf_32$(EXEEXT) test_elf_64$(EXEEXT) \
+ @NATIVE_TRUE@	test_macho$(EXEEXT) test_xcoff_32$(EXEEXT) \
+@@ -257,14 +254,6 @@
+ allocfail_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(allocfail_CFLAGS) \
+ 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+-@NATIVE_TRUE@am__objects_2 = b2test-btest.$(OBJEXT) \
+-@NATIVE_TRUE@	b2test-testlib.$(OBJEXT)
+-@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@am_b2test_OBJECTS = $(am__objects_2)
+-b2test_OBJECTS = $(am_b2test_OBJECTS)
+-@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@b2test_DEPENDENCIES = libbacktrace_elf_for_test.la
+-b2test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(b2test_CFLAGS) $(CFLAGS) \
+-	$(b2test_LDFLAGS) $(LDFLAGS) -o $@
+ @NATIVE_TRUE@am__objects_3 = b3test-btest.$(OBJEXT) \
+ @NATIVE_TRUE@	b3test-testlib.$(OBJEXT)
+ @HAVE_DWZ_TRUE@@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@am_b3test_OBJECTS = $(am__objects_3)
+@@ -560,7 +549,7 @@
+ 	$(libbacktrace_elf_for_test_la_SOURCES) \
+ 	$(libbacktrace_instrumented_alloc_la_SOURCES) \
+ 	$(libbacktrace_noformat_la_SOURCES) $(allocfail_SOURCES) \
+-	$(b2test_SOURCES) $(b3test_SOURCES) $(btest_SOURCES) \
++	$(b3test_SOURCES) $(btest_SOURCES) \
+ 	$(btest_alloc_SOURCES) $(btest_lto_SOURCES) $(ctesta_SOURCES) \
+ 	$(ctesta_alloc_SOURCES) $(ctestg_SOURCES) \
+ 	$(ctestg_alloc_SOURCES) $(dwarf5_SOURCES) \
+@@ -1051,10 +1040,6 @@
+ @NATIVE_TRUE@allocfail_SOURCES = allocfail.c testlib.c
+ @NATIVE_TRUE@allocfail_CFLAGS = $(libbacktrace_TEST_CFLAGS)
+ @NATIVE_TRUE@allocfail_LDADD = libbacktrace_instrumented_alloc.la
+-@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@b2test_SOURCES = $(btest_SOURCES)
+-@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@b2test_CFLAGS = $(libbacktrace_TEST_CFLAGS)
+-@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@b2test_LDFLAGS = -Wl,--build-id
+-@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@b2test_LDADD = libbacktrace_elf_for_test.la
+ @HAVE_DWZ_TRUE@@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@b3test_SOURCES = $(btest_SOURCES)
+ @HAVE_DWZ_TRUE@@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@b3test_CFLAGS = $(libbacktrace_TEST_CFLAGS)
+ @HAVE_DWZ_TRUE@@HAVE_ELF_TRUE@@HAVE_OBJCOPY_DEBUGLINK_TRUE@@NATIVE_TRUE@b3test_LDFLAGS = -Wl,--build-id
+@@ -1261,10 +1246,6 @@
+ 	@rm -f allocfail$(EXEEXT)
+ 	$(AM_V_CCLD)$(allocfail_LINK) $(allocfail_OBJECTS) $(allocfail_LDADD) $(LIBS)
+ 
+-b2test$(EXEEXT): $(b2test_OBJECTS) $(b2test_DEPENDENCIES) $(EXTRA_b2test_DEPENDENCIES) 
+-	@rm -f b2test$(EXEEXT)
+-	$(AM_V_CCLD)$(b2test_LINK) $(b2test_OBJECTS) $(b2test_LDADD) $(LIBS)
+-
+ b3test$(EXEEXT): $(b3test_OBJECTS) $(b3test_DEPENDENCIES) $(EXTRA_b3test_DEPENDENCIES) 
+ 	@rm -f b3test$(EXEEXT)
+ 	$(AM_V_CCLD)$(b3test_LINK) $(b3test_OBJECTS) $(b3test_LDADD) $(LIBS)
+@@ -1412,18 +1393,6 @@
+ allocfail-testlib.obj: testlib.c
+ 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(allocfail_CFLAGS) $(CFLAGS) -c -o allocfail-testlib.obj `if test -f 'testlib.c'; then $(CYGPATH_W) 'testlib.c'; else $(CYGPATH_W) '$(srcdir)/testlib.c'; fi`
+ 
+-b2test-btest.o: btest.c
+-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(b2test_CFLAGS) $(CFLAGS) -c -o b2test-btest.o `test -f 'btest.c' || echo '$(srcdir)/'`btest.c
+-
+-b2test-btest.obj: btest.c
+-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(b2test_CFLAGS) $(CFLAGS) -c -o b2test-btest.obj `if test -f 'btest.c'; then $(CYGPATH_W) 'btest.c'; else $(CYGPATH_W) '$(srcdir)/btest.c'; fi`
+-
+-b2test-testlib.o: testlib.c
+-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(b2test_CFLAGS) $(CFLAGS) -c -o b2test-testlib.o `test -f 'testlib.c' || echo '$(srcdir)/'`testlib.c
+-
+-b2test-testlib.obj: testlib.c
+-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(b2test_CFLAGS) $(CFLAGS) -c -o b2test-testlib.obj `if test -f 'testlib.c'; then $(CYGPATH_W) 'testlib.c'; else $(CYGPATH_W) '$(srcdir)/testlib.c'; fi`
+-
+ b3test-btest.o: btest.c
+ 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(b3test_CFLAGS) $(CFLAGS) -c -o b3test-btest.o `test -f 'btest.c' || echo '$(srcdir)/'`btest.c
+ 
+@@ -1999,13 +1968,6 @@
+ 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+ 	--log-file $$b.log --trs-file $$b.trs \
+ 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+-	"$$tst" $(AM_TESTS_FD_REDIRECT)
+-b2test_buildid.log: b2test_buildid
+-	@p='b2test_buildid'; \
+-	b='b2test_buildid'; \
+-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+-	--log-file $$b.log --trs-file $$b.trs \
+-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+ 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ b3test_dwz_buildid.log: b3test_dwz_buildid
+ 	@p='b3test_dwz_buildid'; \

@@ -1,0 +1,15 @@
+--- llvm-17.0.1.src/tools/clang/tools/clang-shlib/CMakeLists.txt	2023-09-19 11:05:13.000000000 +0200
++++ llvm-17.0.1.src/tools/clang/tools/clang-shlib/CMakeLists.txt.new	2023-09-22 19:40:57.158341019 +0200
+@@ -50,9 +50,9 @@
+                   ${_DEPS})
+ # Optimize function calls for default visibility definitions to avoid PLT and
+ # reduce dynamic relocations.
+-if (NOT APPLE AND NOT MINGW)
+-  target_link_options(clang-cpp PRIVATE LINKER:-Bsymbolic-functions)
+-endif()
++#if (NOT APPLE AND NOT MINGW)
++#  target_link_options(clang-cpp PRIVATE LINKER:-Bsymbolic-functions)
++#endif()
+ if (MINGW OR CYGWIN)
+   # The clang-cpp DLL is supposed to export all symbols (except for ones
+   # that are explicitly hidden). Normally, this is what happens anyway, but

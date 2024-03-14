@@ -1,0 +1,34 @@
+diff -Nru qt-everywhere-src-6.3.2.orig/qtbase/src/corelib/plugin/qplugin.h qt-everywhere-src-6.3.2/qtbase/src/corelib/plugin/qplugin.h
+--- qt-everywhere-src-6.3.2.orig/qtbase/src/corelib/plugin/qplugin.h	2023-09-19 16:19:55.659890584 +0200
++++ qt-everywhere-src-6.3.2/qtbase/src/corelib/plugin/qplugin.h	2023-09-19 16:23:09.763222161 +0200
+@@ -174,13 +174,6 @@
+ // Since Qt 6.3
+ template <auto (&PluginMetaData)> class QPluginMetaDataV2
+ {
+-    struct ElfNotePayload : QPluginMetaData::ElfNoteHeader {
+-        static constexpr size_t HeaderOffset = offsetof(QPluginMetaData::ElfNoteHeader, header);
+-        quint8 payload[sizeof(PluginMetaData)] = {};
+-        constexpr ElfNotePayload() : ElfNoteHeader(sizeof(PluginMetaData))
+-        { QPluginMetaData::copy(payload, PluginMetaData); }
+-    };
+-
+     struct RegularPayload : QPluginMetaData::MagicHeader {
+         static constexpr size_t HeaderOffset = offsetof(QPluginMetaData::MagicHeader, header);
+         quint8 payload[sizeof(PluginMetaData)] = {};
+@@ -197,16 +190,6 @@
+ #if defined(QT_STATICPLUGIN)
+ #  define QT_PLUGIN_METADATAV2_SECTION
+     using Payload = StaticPayload;
+-#elif defined(Q_OF_ELF)
+-#  ifdef Q_CC_CLANG
+-#    define QT_PLUGIN_METADATAV2_SECTION                                                            \
+-            __attribute__((section(".note.qt.metadata"), used, aligned(alignof(void *)),            \
+-                           no_sanitize("address")))
+-#  else
+-#    define QT_PLUGIN_METADATAV2_SECTION                                                            \
+-            __attribute__((section(".note.qt.metadata"), used, aligned(alignof(void *))))
+-#  endif
+-    using Payload = ElfNotePayload;
+ #else
+ #  define QT_PLUGIN_METADATAV2_SECTION      QT_PLUGIN_METADATA_SECTION
+     using Payload = RegularPayload;

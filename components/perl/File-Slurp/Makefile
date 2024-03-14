@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::Slurp
 HUMAN_VERSION =			9999.32
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		File::Slurp - Simple and Efficient Reading/Writing/Modifying of Complete Files
 COMPONENT_CPAN_AUTHOR =		CAPOEIRAB
 COMPONENT_ARCHIVE_HASH =	\

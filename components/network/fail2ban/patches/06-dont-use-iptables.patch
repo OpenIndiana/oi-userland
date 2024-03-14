@@ -1,0 +1,23 @@
+Don't have iptables enabled in jail.conf With ipfilter, it is always "all ports"
+--- fail2ban-1.0.2/config/jail.conf.old	2024-01-24 12:27:51.440050976 -0500
++++ fail2ban-1.0.2/config/jail.conf	2024-01-24 12:28:58.458709510 -0500
+@@ -205,8 +205,8 @@
+ # iptables-multiport, shorewall, etc) It is used to define
+ # action_* variables. Can be overridden globally or per
+ # section within jail.local file
+-banaction = iptables-multiport
+-banaction_allports = iptables-allports
++banaction = ipfilter
++banaction_allports = ipfilter
+ 
+ # The simplest action to take: ban only
+ action_ = %(banaction)s[port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+@@ -839,7 +839,7 @@
+ 
+ [xinetd-fail]
+ 
+-banaction = iptables-multiport-log
++banaction = ipfilter
+ logpath   = %(syslog_daemon)s
+ backend   = %(syslog_backend)s
+ maxretry  = 2

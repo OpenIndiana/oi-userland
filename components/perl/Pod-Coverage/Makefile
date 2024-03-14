@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Pod::Coverage
 HUMAN_VERSION =			0.23
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Pod::Coverage - Checks if the documentation of a module is comprehensive
 COMPONENT_CPAN_AUTHOR =		RCLAMP
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +28,9 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-symdump

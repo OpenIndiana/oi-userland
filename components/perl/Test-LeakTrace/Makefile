@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::LeakTrace
 HUMAN_VERSION =			0.17
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Test::LeakTrace - Traces memory leaks
 COMPONENT_CPAN_AUTHOR =		LEEJO
 COMPONENT_ARCHIVE_HASH =	\

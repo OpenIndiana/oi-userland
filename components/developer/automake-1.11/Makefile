@@ -23,25 +23,49 @@
 # Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         automake
 COMPONENT_VERSION=      1.11.6
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=	2
+COMPONENT_SUMMARY=	A Makefile generator
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/automake/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:53dbf1945401c43f4ce19c1971baecdbf8bc32e0f37fa3f49fe7b6992d0d2030
+	sha256:1ffbc6cc41f0ea6c864fbe9485b981679dc5e350f6c4bc6c3512f5a4226936b5
 COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		developer/build/automake-111
+COMPONENT_CLASSIFICATION=Development/GNU
+COMPONENT_LICENSE=	GPL-2.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=	--docdir=$(CONFIGURE_PREFIX)/share/doc/automake-1.11
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
+COMPONENT_VERSION_MAJOR = $(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
+
+CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)/automake-$(COMPONENT_VERSION_MAJOR)
+
+# Convert unversioned binary hardlinks and man page files to symlinks
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in aclocal automake ; do \
+		$(RM) $(PROTOUSRBINDIR)/$$f ; \
+		$(SYMLINK) $$f-$(COMPONENT_VERSION_MAJOR) $(PROTOUSRBINDIR)/$$f ; \
+		$(RM) $(PROTOUSRSHAREMAN1DIR)/$$f.1 ; \
+		$(SYMLINK) $$f-$(COMPONENT_VERSION_MAJOR).1 $(PROTOUSRSHAREMAN1DIR)/$$f.1 ; \
+	done ;
+
+# We do not want the info index file
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
+
+# Convert unversioned info files to versioned and create unversioned symlinks
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in automake.info automake.info-1 automake.info-2 automake.info-3 ; do \
+		$(MV) $(PROTOUSRSHAREDIR)/info/$$f \
+			$(PROTOUSRSHAREDIR)/info/$${f%.*}-$(COMPONENT_VERSION_MAJOR).$${f\#\#*.} ; \
+		$(SYMLINK) $${f%.*}-$(COMPONENT_VERSION_MAJOR).$${f\#\#*.} $(PROTOUSRSHAREDIR)/info/$$f ; \
+	done ;
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93

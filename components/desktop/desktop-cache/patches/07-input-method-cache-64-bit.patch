@@ -1,0 +1,121 @@
+Both gtk2 and gtk3 are 64-bit only so we need to adjust input-method-cache
+accordingly.
+
+--- desktop-cache-smf-services-0.2.2/input-method/input-method-cache.orig
++++ desktop-cache-smf-services-0.2.2/input-method/input-method-cache
+@@ -45,7 +45,6 @@
+ 
+ 
+ #
+-# for each architecture 
+ #   if cache file exist 
+ #      get the list of modules newer than the cache file
+ #   else
+@@ -54,16 +53,11 @@
+ #   if list generate cache
+ #
+ 
+-ARCH64=`/bin/isainfo -k`
+-
+-if [[ $ARCH64 != "amd64" ]] && [[ "$ARCH64" != "sparcv9" ]]; then
+-  ARCH64=""
+-fi
++DIR=64
+ 
+ start_input_method_cache ()
+ {
+-for DIR in "" $ARCH64; do
+-  test -x /usr/bin/$DIR/gtk-query-immodules-2.0 || {
++  test -x /usr/bin/gtk-query-immodules-2.0 || {
+       echo "gtk-query-immodules-2.0 not installed"
+       continue
+   }
+@@ -77,7 +71,7 @@
+ 
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+-    /usr/bin/$DIR/gtk-query-immodules-2.0 /usr/lib/$DIR/gtk-2.0/*/immodules/*.so \
++    /usr/bin/gtk-query-immodules-2.0 /usr/lib/$DIR/gtk-2.0/*/immodules/*.so \
+ 	> /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache
+     if [ $? -ne 0 ]; then
+       echo "gtk-query-immodules-2.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
+@@ -86,13 +80,11 @@
+       echo "input method cache installed in /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
+     fi
+   fi
+-done
+ }
+ 
+ refresh_input_method_cache ()
+ {
+-for DIR in "" $ARCH64; do
+-  test -x /usr/bin/$DIR/gtk-query-immodules-2.0 || {
++  test -x /usr/bin/gtk-query-immodules-2.0 || {
+       echo "gtk-query-immodules-2.0 not installed"
+       continue
+   }
+@@ -105,7 +97,7 @@
+ 
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+-    /usr/bin/$DIR/gtk-query-immodules-2.0 /usr/lib/$DIR/gtk-2.0/*/immodules/*.so \
++    /usr/bin/gtk-query-immodules-2.0 /usr/lib/$DIR/gtk-2.0/*/immodules/*.so \
+ 	> /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache
+     if [ $? -ne 0 ]; then
+       echo "gtk-query-immodules-2.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
+@@ -114,13 +106,11 @@
+       echo "input method cache installed in /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
+     fi
+   fi
+-done
+ }
+ 
+ start_input_method_cache_3 ()
+ {
+-for DIR in "" $ARCH64; do
+-  test -x /usr/bin/$DIR/gtk-query-immodules-3.0 || {
++  test -x /usr/bin/gtk-query-immodules-3.0 || {
+       echo "gtk-query-immodules-3.0 not installed"
+       continue
+   }
+@@ -134,7 +124,7 @@
+ 
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+-    /usr/bin/$DIR/gtk-query-immodules-3.0 /usr/lib/$DIR/gtk-3.0/*/immodules/*.so \
++    /usr/bin/gtk-query-immodules-3.0 /usr/lib/$DIR/gtk-3.0/*/immodules/*.so \
+ 	> /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache
+     if [ $? -ne 0 ]; then
+       echo "gtk-query-immodules-3.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
+@@ -143,13 +133,11 @@
+       echo "input method cache installed in /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
+     fi
+   fi
+-done
+ }
+ 
+ refresh_input_method_cache_3 ()
+ {
+-for DIR in "" $ARCH64; do
+-  test -x /usr/bin/$DIR/gtk-query-immodules-3.0 || {
++  test -x /usr/bin/gtk-query-immodules-3.0 || {
+       echo "gtk-query-immodules-3.0 not installed"
+       continue
+   }
+@@ -162,7 +150,7 @@
+ 
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+-    /usr/bin/$DIR/gtk-query-immodules-3.0 /usr/lib/$DIR/gtk-3.0/*/immodules/*.so \
++    /usr/bin/gtk-query-immodules-3.0 /usr/lib/$DIR/gtk-3.0/*/immodules/*.so \
+ 	> /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache
+     if [ $? -ne 0 ]; then
+       echo "gtk-query-immodules-3.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
+@@ -171,7 +159,6 @@
+       echo "input method cache installed in /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
+     fi
+   fi
+-done
+ }
+ 
+ 

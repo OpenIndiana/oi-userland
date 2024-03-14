@@ -1,49 +1,44 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2017 Gary Mills
-# Copyright 2021 Nona Hansel
-# Copyright (c) 2015 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project jsonschema
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         jsonschema
-COMPONENT_VERSION=      3.2.0
-COMPONENT_REVISION=		3
-COMPONENT_PROJECT_URL=  https://pypi.python.org/pypi/jsonschema
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:c8a85b28d377cc7737e46e2d9f2b4f44ee3c0e1deac6bf46ddefc7187d30797a
-COMPONENT_ARCHIVE_URL=  https://pypi.python.org/packages/source/j/jsonschema/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME =		jsonschema
+HUMAN_VERSION =			4.21.1
+COMPONENT_SUMMARY =		jsonschema - An implementation of JSON Schema validation for Python
+COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/4d/c5/3f6165d3df419ea7b0990b3abed4ff348946a826caf0e7c990b65ff7b9be/jsonschema-4.21.1.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:85727c00279f5fa6bedbe6238d2aa6403bedd8b4864ab11207d07df3cc1b2ee5
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	COPYING
 
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
+TEST_STYLE = pytest
 
-TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_INSTALL_ACTION = \
-        (cd $(PROTO_DIR)/usr/bin ; \
-                $(MV) jsonschema jsonschema-$(PYTHON_VERSION); )
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += library/python/importlib-metadata-35
-REQUIRED_PACKAGES += library/python/importlib-metadata-37
-REQUIRED_PACKAGES += library/python/importlib-metadata-39
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/attrs
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/jsonschema-specifications
+PYTHON_REQUIRED_PACKAGES += library/python/referencing
+PYTHON_REQUIRED_PACKAGES += library/python/rpds-py
+PYTHON_REQUIRED_PACKAGES += runtime/python

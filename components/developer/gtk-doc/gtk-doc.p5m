@@ -12,38 +12,40 @@
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/developer/documentation-tool/gtk-doc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license gtk-doc.license license='GPLv3, FDLv1.1'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Python scripts are broken
-<transform file path=usr/bin/ -> set pkg.depend.bypass-generate .*>
+# Do not generate dependencies on gtkdoc_uninstalled.  Such module does not exist intentionally.
+<transform file path=usr/bin/ -> add pkg.depend.bypass-generate .*/gtkdoc_uninstalled.*>
+# Do not generate dependencies on own gtkdoc module.
+<transform file path=usr/bin/ -> add pkg.depend.bypass-generate .*/gtkdoc.*>
 
-# Add a runtime dependency on pygments and as we are using python-3.7 depend on pygments-37:
-depend fmri=library/python/pygments-37 type=require
+# Add a runtime dependency on pygments
+depend fmri=library/python/pygments type=require
 
 file path=usr/bin/gtkdoc-check
 file path=usr/bin/gtkdoc-depscan
 file path=usr/bin/gtkdoc-fixxref
 file path=usr/bin/gtkdoc-mkdb
 file path=usr/bin/gtkdoc-mkhtml
+file path=usr/bin/gtkdoc-mkhtml2
 file path=usr/bin/gtkdoc-mkman
 file path=usr/bin/gtkdoc-mkpdf
-file path=usr/bin/gtkdoc-mkhtml2
 file path=usr/bin/gtkdoc-rebase
 file path=usr/bin/gtkdoc-scan
 file path=usr/bin/gtkdoc-scangobj
 file path=usr/bin/gtkdocize
+file path=usr/share/aclocal/gtk-doc.m4
 file path=usr/share/cmake/GtkDoc/GtkDocConfig.cmake
 file path=usr/share/cmake/GtkDoc/GtkDocConfigVersion.cmake
 file path=usr/share/cmake/GtkDoc/GtkDocScanGObjWrapper.cmake
-file path=usr/share/aclocal/gtk-doc.m4
 file path=usr/share/gtk-doc/data/devhelp2.xsd
 file path=usr/share/gtk-doc/data/devhelp2.xsl
 file path=usr/share/gtk-doc/data/gtk-doc.flat.make

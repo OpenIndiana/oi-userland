@@ -1,0 +1,79 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# This file was automatically generated using python-integrate-project
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/uvicorn-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn-$(HUMAN_VERSION).dist-info/licenses/LICENSE.md
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/_subprocess.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/_types.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/importer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/lifespan/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/lifespan/off.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/lifespan/on.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/logging.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/loops/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/loops/asyncio.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/loops/auto.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/loops/uvloop.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/main.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/middleware/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/middleware/asgi2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/middleware/message_logger.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/middleware/proxy_headers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/middleware/wsgi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/http/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/http/auto.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/http/flow_control.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/http/h11_impl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/http/httptools_impl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/websockets/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/websockets/auto.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/websockets/websockets_impl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/protocols/websockets/wsproto_impl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/supervisors/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/supervisors/basereload.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/supervisors/multiprocess.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/supervisors/statreload.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/supervisors/watchfilesreload.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/supervisors/watchgodreload.py
+file path=usr/lib/python$(PYVER)/vendor-packages/uvicorn/workers.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/click-$(PYV)
+depend type=require fmri=pkg:/library/python/h11-$(PYV)
+depend type=require fmri=pkg:/library/python/typing-extensions-$(PYV)

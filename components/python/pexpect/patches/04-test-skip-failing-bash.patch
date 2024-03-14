@@ -1,0 +1,27 @@
+--- pexpect-4.9/tests/test_replwrap.py.orig
++++ pexpect-4.9/tests/test_replwrap.py
+@@ -7,6 +7,8 @@
+ import pexpect
+ from pexpect import replwrap
+ 
++import pytest
++
+ skip_pypy = "This test fails on PyPy because of REPL differences"
+ 
+ 
+@@ -23,6 +25,7 @@
+         os.putenv('PS1', self.save_ps1)
+         os.putenv('PS2', self.save_ps2)
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/pexpect/pexpect/issues/568")
+     def test_bash(self):
+         bash = replwrap.bash()
+         res = bash.run_command("alias xyzzy=true; alias")
+@@ -41,6 +44,7 @@
+         res = bash.run_command('man sleep', timeout=5)
+         assert 'SLEEP' in res.upper(), res
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/pexpect/pexpect/issues/568")
+     def test_bash_env(self):
+         """env, which displays PS1=..., should not mess up finding the prompt.
+         """

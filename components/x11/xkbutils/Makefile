@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xkbutils
-COMPONENT_VERSION=  1.0.5
-COMPONENT_FMRI=     x11/keyboard/xkbutils
+COMPONENT_VERSION=  1.0.6
 COMPONENT_SUMMARY=  the xkbutils clients for X11 Keyboard (XKB) extension
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:f6a4a8e9c54582beb3787b1faa8168caab125c1fee0ca9cfa5b6c9c1df25eea4
+COMPONENT_ARCHIVE_HASH= sha256:31a2bbee1e09ccba01de92897b8f540b545de812f318d31de07bd3a5a75ee25e
+COMPONENT_FMRI=     x11/keyboard/xkbutils
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 

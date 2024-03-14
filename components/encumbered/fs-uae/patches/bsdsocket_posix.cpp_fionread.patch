@@ -1,0 +1,14 @@
+--- fs-uae-3.1.66.orig/src/od-fs/bsdsocket_posix.cpp	2021-12-19 14:24:39.000000000 +0000
++++ fs-uae-3.1.66/src/od-fs/bsdsocket_posix.cpp	2022-10-29 21:34:09.867987856 +0000
+@@ -35,6 +35,11 @@
+ #include "native2amiga.h"
+ #include "bsdsocket.h"
+ 
++#ifdef __sun
++#include <sys/filio.h>
++#endif
++
++
+ #ifndef BSDSOCKET
+ 
+ volatile int bsd_int_requested;

@@ -14,22 +14,21 @@
 # Copyright 2020 Michal Nowak
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
 # Copyright 2022 Andreas Wacknitz
+# Copyright 2023 Niklas Poslovski
 #
 
 MATE_CATEGORY= APP
 BUILD_STYLE= configure
-USE_COMMON_TEST_MASTER= no
 include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		caja
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	1
-COMPONENT_REVISION=	2
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	0
 COMPONENT_SUMMARY=	File manager for the MATE desktop
-COMPONENT_ARCHIVE_HASH= sha256:30fd6e6f00a38200f6e2e898ad7fa797876bb060f1d0341dd2f7393279e14c07
-COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
+COMPONENT_ARCHIVE_HASH= sha256:1e3014ce1455817ec2ef74d09efdfb6835d8a372ed9a16efb5919ef7b821957a
 COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
 TEST_TARGET= $(TEST_$(MK_BITS))
 include $(WS_MAKE_RULES)/common.mk
@@ -41,7 +40,6 @@ COMPONENT_PREP_ACTION=	\
 # tests in different dirs, keep going if early tests fail
 COMPONENT_TEST_ARGS += -k -i
 # minimal tests
-unexport SHELLOPTS
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/^\(PASS|SKIP|FAIL\): /p" ' \

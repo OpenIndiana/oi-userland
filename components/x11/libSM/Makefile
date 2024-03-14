@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libSM
-COMPONENT_VERSION= 1.2.3
-COMPONENT_FMRI=    x11/library/libsm
+COMPONENT_VERSION= 1.2.4
 COMPONENT_SUMMARY= libSM - Session Management library 
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2d264499dcb05f56438dee12a1b4b71d76736ce7ba7aa6efbf15ebb113769cbb
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:fdcbe51e4d1276b1183da77a8a4e74a137ca203e0bcfb20972dd5f3347e97b84
+COMPONENT_FMRI=    x11/library/libsm
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -38,6 +38,6 @@ LD_OPTIONS = -M $(PWD)/mapfile-vers
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/xtrans
 
-# Auto-generated
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libice

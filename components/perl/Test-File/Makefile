@@ -19,16 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::File
-HUMAN_VERSION =			1.992
+HUMAN_VERSION =			1.993
 COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::File - test file attributes
 COMPONENT_CPAN_AUTHOR =		BDFOY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:77c57c47a40df11e55d3264608703a79573f909b6f989ef1a1d17f9165680f77
+	sha256:ef2ffe1aaec7b42d874ad411ec647547b9b9bc2f5fb93e49e3399488456afc7a
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl

@@ -24,27 +24,35 @@
 # Copyright (c) 2017, 2020, Andreas Wacknitz
 #
 
-BUILD_BITS=			64
-BUILD_STYLE=		justmake
+BUILD_BITS= 64
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
-# i18n component requires GNU xgettext
-PATH=$(PATH.gnu)
-
 COMPONENT_NAME=		dnsmasq
-COMPONENT_VERSION=	2.85
+COMPONENT_VERSION=	2.89
+COMPONENT_SUMMARY=	dnsmasq is a DNS forwarder for NAT firewalls
+COMPONENT_DESCRIPTION=	dnsmasq(8) is a lightweight DNS, TFTP, PXE, router advertisement and DHCP server. \
+						It is intended to provide coupled DNS and DHCP service to a LAN.
 COMPONENT_PROJECT_URL=	https://www.thekelleys.org.uk
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f36b93ecac9397c15f461de9b1689ee5a2ed6b5135db0085916233053ff3f886
+COMPONENT_ARCHIVE_HASH=	sha256:8651373d000cae23776256e83dcaa6723dee72c06a39362700344e0c12c4e7e4
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	service/dnsmasq
+COMPONENT_FMRI=		service/network/dnsmasq
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	GPLv2, GPLv3
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# i18n component requires GNU xgettext
+PATH= $(PATH.gnu)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
+
+CPPFLAGS += $(CPP_XPG6MODE)
+CPPFLAGS += $(CPP_LARGEFILES)
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CC="$(CC)"

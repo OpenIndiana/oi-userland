@@ -13,33 +13,34 @@
 # Copyright (c) 2020 Andreas Wacknitz
 #
 
-BUILD_BITS=			32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
-COMPONENT_VERSION=	2.0.22
-COMPONENT_PROJECT_URL=	https://www.libsdl.org/
+COMPONENT_VERSION=	2.30.1
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
+COMPONENT_PROJECT_URL=	https://www.libsdl.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:fe7cbf3127882e3fc7259a75a0cb585620272c51745d3852ab9dd87960697f2e
-COMPONENT_ARCHIVE_URL=	https://www.libsdl.org/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:01215ffbc8cfc4ad165ba7573750f15ddda1f971d5a66e9dcaffd37c587f473a
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/sdl2
-# Note: license change from LGPL was significant in 2.x vs 1.x series, and now
-# static linking is permitted. See e.g. https://wiki.libsdl.org/Installation
+COMPONENT_CLASSIFICATION =	System/Libraries
 COMPONENT_LICENSE=	ZLIB
 COMPONENT_LICENSE_FILE=	LICENSE.txt
-COMPONENT_CLASSIFICATION =	System/Libraries
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = \
-			( cd $(@D) && $(CONFIG_SHELL) autogen.sh )
+COMPONENT_PREP_ACTION= ( cd $(@D) && $(CONFIG_SHELL) autogen.sh )
 
 CONFIGURE_OPTIONS += --disable-rpath
+CONFIGURE_OPTIONS += --enable-year2038
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/libsamplerate
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93

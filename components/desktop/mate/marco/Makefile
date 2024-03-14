@@ -22,18 +22,17 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		marco
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		1
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	1
 COMPONENT_SUMMARY=	MATE Window Manager
-COMPONENT_ARCHIVE_HASH= sha256:f63c08cd8b07450ab3e33a04605c4f9e69522358884273b3cbcf30275eee5b05
+COMPONENT_ARCHIVE_HASH= sha256:2496e5e40ee980cd6849493ac3e0f8fd0dec8b81c674da8d9ba19a577f0ac2e1
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS+=-D__EXTENSIONS__
-CFLAGS+=-std=gnu99
+CFLAGS += -D__EXTENSIONS__
+CFLAGS += -std=gnu99
 
 COMPONENT_BUILD_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -48,6 +47,7 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
@@ -67,3 +67,4 @@ REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxpresent
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/libxres

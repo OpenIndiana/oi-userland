@@ -1,0 +1,45 @@
+From fc253f4c687ed47ac99f54ee0db8a0a7ad245402 Mon Sep 17 00:00:00 2001
+From: Keith Marshall <keith.marshall@mailinator.com>
+Date: Fri, 15 Nov 2019 12:21:51 +0000
+Subject: Make install-strip target work for libobjc
+
+See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54720
+	libobjc install-strip target not populated
+---
+ libobjc/Makefile.in | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/libobjc/Makefile.in b/libobjc/Makefile.in
+index 0a8764c5046..626b033a596 100644
+--- a/libobjc/Makefile.in
++++ b/libobjc/Makefile.in
+@@ -308,14 +308,16 @@ $(srcdir)/configure: @MAINT@ configure.ac $(srcdir)/aclocal.m4
+ $(srcdir)/aclocal.m4: @MAINT@ $(aclocal_deps)
+ 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
+ 
+-install: install-libs install-headers
++install-strip: INSTALL_STRIP_FLAG = -s
++install install-strip: install-libs install-headers
+ 
+ install-libs: installdirs
+ 	$(SHELL) $(multi_basedir)/mkinstalldirs $(DESTDIR)$(toolexeclibdir)
+-	$(LIBTOOL_INSTALL) $(INSTALL) libobjc$(libsuffix).la $(DESTDIR)$(toolexeclibdir);
++	$(LIBTOOL_INSTALL) $(INSTALL) $(INSTALL_STRIP_FLAG) \
++	  libobjc$(libsuffix).la $(DESTDIR)$(toolexeclibdir);
+ 	if [ "$(OBJC_BOEHM_GC)" ]; then \
+-	  $(LIBTOOL_INSTALL) $(INSTALL) libobjc_gc$(libsuffix).la \
+-				$(DESTDIR)$(toolexeclibdir);\
++	  $(LIBTOOL_INSTALL) $(INSTALL) $(INSTALL_STRIP_FLAG) \
++	    libobjc_gc$(libsuffix).la $(DESTDIR)$(toolexeclibdir);\
+ 	fi
+ 	$(MULTIDO) $(FLAGS_TO_PASS) multi-do DO="$@"
+ 	@-$(LIBTOOL) --mode=finish $(DESTDIR)$(toolexeclibdir)
+@@ -328,7 +330,7 @@ install-headers:
+ 	  $(INSTALL_DATA) $${realfile} $(DESTDIR)$(libsubdir)/$(includedirname)/objc; \
+ 	done
+ 
+-check uninstall install-strip dist installcheck installdirs:
++check uninstall dist installcheck installdirs:
+ 
+ mostlyclean:
+ 	-$(LIBTOOL_CLEAN) rm -f libobjc$(libsuffix).la libobjc_gc$(libsuffix).la *.lo

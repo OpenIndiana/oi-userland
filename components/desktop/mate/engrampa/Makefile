@@ -22,11 +22,10 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		engrampa
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		1
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	1
 COMPONENT_SUMMARY=	MATE archive manager
-COMPONENT_ARCHIVE_HASH=	sha256:97cdb2c22c32315a38803d4147dfad9de7309e30ce8f37ac9f600709ad075ee3
+COMPONENT_ARCHIVE_HASH=	sha256:9c5c4c9bcf8b08eeaa8f275538d24b4c955089d58aec0331e89c02b84d85386a
 COMPONENT_FMRI=		desktop/archive-manager/engrampa
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_LICENSE=	GPLv3
@@ -43,6 +42,5 @@ REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm

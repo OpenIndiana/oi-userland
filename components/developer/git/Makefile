@@ -25,79 +25,76 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
-BUILD_BITS= 64
-USE_COMMON_TEST_MASTER= no
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.37.1
+COMPONENT_VERSION=	2.44.0
 COMPONENT_SUMMARY=	git - Fast Version Control System
+COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_PROJECT_URL=	https://git-scm.com/
-COMPONENT_FMRI=		developer/versioning/git
-COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:c8162c6b8b8f1c5db706ab01b4ee29e31061182135dc27c4860224aaec1b3500
+COMPONENT_ARCHIVE_HASH=	sha256:e358738dcb5b5ea340ce900a0015c03ae86e804e7ff64e47aa4631ddee681de3
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		developer/versioning/git
+COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_LICENSE=	GPLv2
-COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 
 #
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:4dcece78fcb9c585f362d2607b05189afb6c8b4e47a21dfdccb5fefd27fa1e25
+COMPONENT_ARCHIVE_HASH_1=	sha256:777be83bd54e301988fc49708cae3b5ce4b0971c2ca3b7a720be58e2f4633fcb
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
-PYTHON_VERSION=	3.9
 include $(WS_MAKE_RULES)/common.mk
 
-# With PATH.gnu gmake test stalls at t6030, so don't use it!
-#PATH = $(PATH.gnu)
+# With PATH.gnu gmake test gives a slightly better success rate:
+PATH= $(PATH.gnu)
 
 LDFLAGS += -lnsl -lsocket
 
-CONFIGURE_PREFIX    =	/usr
-CONFIGURE_OPTIONS  +=	--with-libpcre2
-CONFIGURE_OPTIONS  +=	--without-openssl
-CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
-CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
-CONFIGURE_OPTIONS  +=	CPPFLAGS="-I/usr/include/pcre"
+CONFIGURE_PREFIX= /usr
+CONFIGURE_OPTIONS += --with-libpcre2
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
+CONFIGURE_OPTIONS += --with-perl=$(PERL)
+CONFIGURE_OPTIONS += --with-python=$(PYTHON)
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/pcre -I$(OPENSSL_INCDIR)"
 
-COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
-COMPONENT_BUILD_ENV+=	V=1
-COMPONENT_INSTALL_ENV+=	NO_PERL_MAKEMAKER=1
+COMPONENT_BUILD_ENV += NO_PERL_MAKEMAKER=1
+COMPONENT_BUILD_ENV += V=1
+COMPONENT_INSTALL_ENV += NO_PERL_MAKEMAKER=1
 
-PKG_MACROS +=		PERLVER=$(PERL_VERSION)
+PKG_MACROS += PERLVER=$(PERL_VERSION)
 
 # This runs configure but configure doesn't generate a Makefile.
 # Instead a Makefile comes with git.
 # Anyways viewpathing doesn't work.
 # Therefore we need cloney to copy a set of files to build.
 # Overwrite symlinked tests, because they are relying on test assets being regular files.
-COMPONENT_PRE_CONFIGURE_ACTION = \
+COMPONENT_PRE_CONFIGURE_ACTION= \
 	(chmod u+x $(COMPONENT_SRC)/t/*.sh  && $(CLONEY) $(SOURCE_DIR) $(@D) && \
 	$(RM) -r $(@D)/t && $(CP) -rp $(COMPONENT_SRC)/t $(@D))
 
-PKG_HARDLINKS +=        usr/lib/git-core/git
-PKG_HARDLINKS +=        usr/lib/git-core/git-cvsserver
-PKG_HARDLINKS +=        usr/lib/git-core/git-gui
-PKG_HARDLINKS +=        usr/lib/git-core/git-remote-ftps
-PKG_HARDLINKS +=        usr/lib/git-core/git-shell
-PKG_HARDLINKS +=        usr/lib/git-core/git-upload-pack
+PKG_HARDLINKS += usr/libexec/git-core/git
+PKG_HARDLINKS += usr/libexec/git-core/git-cvsserver
+PKG_HARDLINKS += usr/libexec/git-core/git-gui
+PKG_HARDLINKS += usr/libexec/git-core/git-remote-ftps
+PKG_HARDLINKS += usr/libexec/git-core/git-shell
+PKG_HARDLINKS += usr/libexec/git-core/scalar
 
 # We want the perl modules to install the vendor_perl directory, and their
 # manpages to install in the normal perl manpage directory, but the default
 # behavior is to put the modules in /usr/lib.  Setting these four variables
 # massages the perl to get files to go where we want.
-COMPONENT_INSTALL_ARGS+=        INSTALL="$(INSTALL)"
-COMPONENT_INSTALL_ARGS+=        perllibdir=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
-COMPONENT_INSTALL_ARGS+=        VENDORPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
-COMPONENT_INSTALL_ARGS+=        PERLPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
-COMPONENT_INSTALL_ARGS+=        INSTALLVENDORLIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
+COMPONENT_INSTALL_ARGS += INSTALL="$(INSTALL)"
+COMPONENT_INSTALL_ARGS += perllibdir=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
+COMPONENT_INSTALL_ARGS += VENDORPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
+COMPONENT_INSTALL_ARGS += PERLPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
+COMPONENT_INSTALL_ARGS += INSTALLVENDORLIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
 
-COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
 # many failures; keep going; later versions of git are much cleaner
@@ -109,7 +106,7 @@ COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TARGETS += GIT_TEST_OPTS=--tee
 COMPONENT_TEST_TARGETS += DEFAULT_TEST_TARGET=test-noclean
 # Compile the test results and put that into the test output file instead
-COMPONENT_POST_TEST_ACTION = \
+COMPONENT_POST_TEST_ACTION= \
 	(cd $(COMPONENT_TEST_DIR)/t/test-results; for i in *.out; do \
 		echo "*** $${i%.out}.sh ***"; \
 		cat $$i; \
@@ -122,27 +119,27 @@ COMPONENT_POST_TEST_ACTION = \
 # do it manually here.
 $(BUILD_DIR)/.manpages:
 	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
-	$(MKDIR) $(PROTOUSRSHAREMAN1DIR)
-	$(MKDIR) $(PROTOUSRSHAREMAN4DIR)
-	$(MKDIR) $(PROTOUSRSHAREMAN5DIR)
-	cd $(BUILD_DIR) ; for manfile in man*/* ; \
-	do \
-		filename=`basename $$manfile`; \
-		fname=$${filename%.*}; \
-		ext=$${filename##*.}; \
-		newext=1; \
-		if [ $$ext = 5 ]; then newext=4; fi; \
-		if [ $$ext = 7 ]; then newext=5; fi; \
-		$(GSED) -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' \
-		        -e 's/"5"/"4"/' -e 's/(5)/(4)/g' \
-			-e 's/"7"/"5"/' -e 's/(7)/(5)/g' $$manfile > \
-		   $(PROTOUSRSHAREMANDIR)/man$$newext/$$fname.$$newext; \
-	done
+		$(MKDIR) $(PROTOUSRSHAREMAN1DIR)
+		$(MKDIR) $(PROTOUSRSHAREMAN4DIR)
+		$(MKDIR) $(PROTOUSRSHAREMAN5DIR)
+		cd $(BUILD_DIR) ; for manfile in man*/* ; \
+		do \
+			filename=`basename $$manfile`; \
+			fname=$${filename%.*}; \
+			ext=$${filename##*.}; \
+			newext=1; \
+			if [ $$ext = 5 ]; then newext=4; fi; \
+			if [ $$ext = 7 ]; then newext=5; fi; \
+			$(GSED) -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' \
+        			-e 's/"5"/"4"/' -e 's/(5)/(4)/g' \
+        			-e 's/"7"/"5"/' -e 's/(7)/(5)/g' $$manfile > \
+        		$(PROTOUSRSHAREMANDIR)/man$$newext/$$fname.$$newext; \
+		done
 	$(TOUCH) $@
 
 $(BUILD_DIR_64)/.contrib: $(BUILD_DIR_64)/.contrib-subtree
 	$(MKDIR) $(PROTOUSRSHAREDIR)/bash-completion/completions
-	$(GMAKE) -C $(BUILD_DIR_64)/contrib/diff-highlight
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/diff-highlight
 	$(CP) -RLp $(BUILD_DIR_64)/contrib/diff-highlight/diff-highlight $(PROTOUSRBINDIR)/diff-highlight
 	$(CP) -RLp $(BUILD_DIR_64)/contrib/completion/git-completion.bash $(PROTOUSRSHAREDIR)/bash-completion/completions/git
 	(cd $(PROTOUSRSHAREDIR)/bash-completion/completions; $(LN) -sf git gitk)
@@ -150,37 +147,40 @@ $(BUILD_DIR_64)/.contrib: $(BUILD_DIR_64)/.contrib-subtree
 
 # Install steps taken from contrib/subtree/INSTALL
 $(BUILD_DIR_64)/.contrib-subtree:
-	$(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR)
-	$(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install
-	$(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install-doc
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR)
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install-doc
 	$(TOUCH) $@
-
-COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 install:	$(INSTALL_64) $(BUILD_DIR)/.manpages $(BUILD_DIR_64)/.contrib
 
 # Test dependencies
-REQUIRED_PACKAGES += developer/fakeroot
-REQUIRED_PACKAGES += developer/versioning/cvs
-REQUIRED_PACKAGES += system/library/iconv/extra
-REQUIRED_PACKAGES += system/library/iconv/unicode
-REQUIRED_PACKAGES += system/library/iconv/utf-8
-REQUIRED_PACKAGES += library/perl-5/database
-REQUIRED_PACKAGES += library/perl-5/sqlite-dbi
-REQUIRED_PACKAGES += library/perl-5/subversion
-REQUIRED_PACKAGES += locale/is
-REQUIRED_PACKAGES += locale/is-extra
+TEST_REQUIRED_PACKAGES += developer/fakeroot
+TEST_REQUIRED_PACKAGES += developer/versioning/cvs
+TEST_REQUIRED_PACKAGES += system/library/iconv/extra
+TEST_REQUIRED_PACKAGES += system/library/iconv/unicode
+TEST_REQUIRED_PACKAGES += system/library/iconv/utf-8
+TEST_REQUIRED_PACKAGES += library/perl-5/cgi
+TEST_REQUIRED_PACKAGES += library/perl-5/dbi
+TEST_REQUIRED_PACKAGES += library/perl-5/dbd-sqlite
+TEST_REQUIRED_PACKAGES += library/perl-5/subversion
+TEST_REQUIRED_PACKAGES += locale/is
+TEST_REQUIRED_PACKAGES += locale/is-extra
 
 # Needed to generate git-subtree documentation
 REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += text/xmlto
 
+# As long as we disabled pkgdepend on git-p4 we need to add this manually:
+PYTHON_REQUIRED_PACKAGES += runtime/python
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/pcre2
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

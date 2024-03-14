@@ -18,36 +18,34 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-screensaver
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	1
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:4fbdb21ea4a59ea8de33ea9bf776d869753e49295604664c30e220e09659b8bc
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	0
+COMPONENT_SUMMARY= mate-screensaver is a screen saver and locker that aims to have simple, sane, secure defaults and be well integrated with the desktop
+COMPONENT_ARCHIVE_HASH=	sha256:6a0f24a8f84a2f95e10114ab53e63fd4aca688a55fdc503ed650e0a410e3ea70
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_SUMMARY= Mate Screensaver
 
-TEST_TARGET=		$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION=  cd $(@D) && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION= ( cd $(@D) && PATH="$(PATH)" NOCONFIGURE=1 ./autogen.sh )
 
-# FLAVOUR = DBG
+CONFIGURE_OPTIONS += --with-console-kit
+CONFIGURE_OPTIONS += --enable-locking
+CONFIGURE_OPTIONS += --enable-pam
+CONFIGURE_OPTIONS += --enable-authentication-scheme=helper
+CONFIGURE_OPTIONS_DBG += --enable-debug
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS_$(FLAVOUR))
 
-CONFIGURE_OPTIONS+=	--with-console-kit
-CONFIGURE_OPTIONS+=	--enable-locking
-CONFIGURE_OPTIONS+=	--enable-pam
-CONFIGURE_OPTIONS+=	--enable-authentication-scheme=helper
-CONFIGURE_OPTIONS_DBG+=	--enable-debug
-CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS_$(FLAVOUR))
-
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-archive
 REQUIRED_PACKAGES += gnome/theme/background/os-backgrounds
 REQUIRED_PACKAGES += library/desktop/mate/libmatekbd
 REQUIRED_PACKAGES += x11/library/mesa
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

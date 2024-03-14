@@ -6,9 +6,9 @@ Modified this patch to
   02-make-multiload-network-available-part2.patch because of changes to
   that section of the file.
 
---- mate-applets-1.22.2/multiload/src/linux-proc.c	2019-09-19 14:17:35.000000000 +0000
-+++ mate-applets-1.22.2/multiload/src/linux-proc.c	2019-09-19 21:04:08.314342879 +0000
-@@ -151,6 +151,13 @@ GetDiskLoad (int Maximum, int data [3],
+--- mate-applets-1.26.1/multiload/src/linux-proc.c.orig
++++ mate-applets-1.26.1/multiload/src/linux-proc.c
+@@ -153,6 +153,13 @@
      }
      else
      {
@@ -22,7 +22,7 @@ Modified this patch to
          glibtop_mountlist mountlist;
          glibtop_mountentry *mountentries;
  
-@@ -179,6 +186,10 @@ GetDiskLoad (int Maximum, int data [3],
+@@ -182,6 +189,10 @@
          }
  
          g_free(mountentries);
@@ -33,7 +33,7 @@ Modified this patch to
      }
  
      readdiff  = read - lastread;
-@@ -385,7 +397,12 @@ GetNet (int Maximum, int data [4], LoadG
+@@ -381,7 +392,12 @@
  
          glibtop_get_netload(&netload, devices[i]);
  

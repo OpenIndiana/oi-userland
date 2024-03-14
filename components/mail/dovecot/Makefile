@@ -10,14 +10,14 @@
 
 #
 # Copyright 2022 Friedrich Kink
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS=		64 
-USE_OPENSSL11=		yes
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dovecot
-COMPONENT_VERSION=      2.3.19.1
+COMPONENT_VERSION=      2.3.21
 COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
@@ -25,65 +25,64 @@ COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for 
 		It's fast, simple to set up, requires no special administration \
 		and it uses very little memory.
 COMPONENT_PROJECT_URL=  https://dovecot.org/
-COMPONENT_FMRI=         mail/dovecot
-COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE).sig
+#COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE).sig
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:db5abcd87d7309659ea6b45b2cb6ee9c5f97486b2b719a5dd05a759e1f6a5c51
+COMPONENT_ARCHIVE_HASH= sha256:05b11093a71c237c2ef309ad587510721cc93bbee6828251549fc1586c36502d
+COMPONENT_FMRI=         mail/dovecot
+COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      MIT,LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV+=		PANDOC=false
-CONFIGURE_ENV+=		CPPFLAGS=-I/usr/include/openldap
+CONFIGURE_ENV += PANDOC=false
+CONFIGURE_ENV += CPPFLAGS=-I/usr/include/openldap
 
-PATH=$(PATH.gnu):/usr/mariadb/10.3/bin
+PATH = $(PATH.gnu):$(MYSQL_BINDIR)
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc \
-		    --localstatedir=/var \
-		    --libexecdir=/usr/lib \
-                    --with-gssapi=plugin \
-                    --with-ldap=plugin \
-                    --with-sql=plugin \
-                    --with-lua=plugin \
-                    --with-ssl=openssl \
-		    --with-ioloop=poll \
-		    --with-notify=none \
-                    --with-sodium \
-                    --with-mysql \
-                    --with-pgsql \
-		    --enable-static=no \
-		    --without-systemd \
-		    SSL_CFLAGS=-I$(OPENSSL_PREFIX)/include \
-		    SSL_LIBS="-L$(OPENSSL_PREFIX)/lib/$(MACH64) -lssl -lcrypto" \
-		    LDFLAGS="-lldap_r"
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+CONFIGURE_OPTIONS += --with-gssapi=plugin
+CONFIGURE_OPTIONS += --with-ldap=plugin
+CONFIGURE_OPTIONS += --with-sql=plugin
+CONFIGURE_OPTIONS += --with-lua=plugin
+CONFIGURE_OPTIONS += --with-ssl=openssl
+CONFIGURE_OPTIONS += --with-ioloop=poll
+CONFIGURE_OPTIONS += --with-notify=none
+CONFIGURE_OPTIONS += --with-sodium
+CONFIGURE_OPTIONS += --with-mysql
+CONFIGURE_OPTIONS += --with-pgsql
+CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --without-systemd
+CONFIGURE_OPTIONS += SSL_CFLAGS=-I$(OPENSSL_INCDIR)
+CONFIGURE_OPTIONS += SSL_LIBS="-L$(OPENSSL_LIBDIR) -lssl -lcrypto"
+CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
 
 # RPATH needed to make 'make REQUIRED_PACKAGES' happy
 COMPONENT_POST_CONFIGURE_ACTION= \
-	(cd $(@D) ; $(GSED) -i -e 's:^LDFLAGS = .*:LDFLAGS = $(NOPLUGIN_LDFLAGS) -Wl,-rpath=/usr/mariadb/10.3/lib/amd64 -Wl,-rpath=/usr/postgres/12/lib/amd64:' -e 's:mariadb/10.1:mariadb/10.3:g' src/lib-sql/Makefile )
+	( cd $(@D) ; $(GSED) -i -e 's:^LDFLAGS = .*:LDFLAGS = $(NOPLUGIN_LDFLAGS) -Wl,-rpath=$(MYSQL_LIBDIR) -Wl,-rpath=$(PG_LIBDIR):' src/lib-sql/Makefile  )
 
 COMPONENT_TEST_ARGS+=   -k
 COMPONENT_TEST_TRANSFORMS = \
 	'-n ' \
-        '-e "/: ok$$/p" ' \
-        '-e "/tests failed$$/p" ' \
-        '-e "/: FAILED$$/p" '
+	'-e "/: ok$$/p" ' \
+	'-e "/tests failed$$/p" ' \
+	'-e "/: FAILED$$/p" '
 
 # manually added dependencies
-REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += database/mariadb-103
-REQUIRED_PACKAGES += database/mariadb-103/client
+REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += database/mariadb-103/library
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/openldap

@@ -1,0 +1,218 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m coverage run -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pytest.ini
+collecting ... collected 187 items
+
+tests/test_auth.py::test_empty_password_bypasses_prompt PASSED
+tests/test_auth.py::test_get_password_keyring_defers_to_prompt PASSED
+tests/test_auth.py::test_get_password_keyring_key_error_logged PASSED
+tests/test_auth.py::test_get_password_keyring_missing_non_interactive_aborts PASSED
+tests/test_auth.py::test_get_password_keyring_runtime_error_logged PASSED
+tests/test_auth.py::test_get_username_and_password_keyring_overrides_prompt PASSED
+tests/test_auth.py::test_get_username_keyring_defers_to_prompt PASSED
+tests/test_auth.py::test_get_username_keyring_key_error_logged PASSED
+tests/test_auth.py::test_get_username_keyring_missing_get_credentials_prompts PASSED
+tests/test_auth.py::test_get_username_keyring_missing_non_interactive_aborts PASSED
+tests/test_auth.py::test_get_username_keyring_runtime_error_logged PASSED
+tests/test_auth.py::test_logs_cli_values PASSED
+tests/test_auth.py::test_logs_config_values PASSED
+tests/test_auth.py::test_no_password_defers_to_prompt PASSED
+tests/test_auth.py::test_no_password_non_interactive_aborts PASSED
+tests/test_auth.py::test_no_username_non_interactive_aborts PASSED
+tests/test_auth.py::test_warns_for_empty_password[-Your password is empty] PASSED
+tests/test_auth.py::test_warns_for_empty_password[\x16-Your password contains control characters] PASSED
+tests/test_auth.py::test_warns_for_empty_password[entered\x16pw-Your password contains control characters] PASSED
+tests/test_check.py::TestWarningStream::test_str_representation PASSED
+tests/test_check.py::TestWarningStream::test_write_match PASSED
+tests/test_check.py::TestWarningStream::test_write_nomatch PASSED
+tests/test_check.py::test_fails_no_distributions PASSED
+tests/test_check.py::test_fails_rst_no_content PASSED
+tests/test_check.py::test_fails_rst_syntax_error PASSED
+tests/test_check.py::test_main PASSED
+tests/test_check.py::test_passes_markdown_description[text/markdown] PASSED
+tests/test_check.py::test_passes_markdown_description[text/plain] PASSED
+tests/test_check.py::test_passes_rst_description PASSED
+tests/test_check.py::test_warns_missing_description[False] PASSED
+tests/test_check.py::test_warns_missing_description[True] PASSED
+tests/test_check.py::test_warns_missing_file PASSED
+tests/test_cli.py::test_catches_enoent PASSED
+tests/test_cli.py::test_dispatch_to_subcommand PASSED
+tests/test_commands.py::test_ensure_if_no_wheel_files PASSED
+tests/test_commands.py::test_ensure_wheel_files_uploaded_first PASSED
+tests/test_commands.py::test_find_dists_errors_on_invalid_globs PASSED
+tests/test_commands.py::test_find_dists_expands_globs PASSED
+tests/test_commands.py::test_find_dists_handles_real_files PASSED
+tests/test_main.py::test_exception_handling PASSED
+tests/test_main.py::test_http_exception_handling PASSED
+tests/test_main.py::test_no_color_exception PASSED
+tests/test_package.py::test_fips_hash_manager_blake2[TypeError] PASSED
+tests/test_package.py::test_fips_hash_manager_blake2[ValueError] PASSED
+tests/test_package.py::test_fips_hash_manager_md5 PASSED
+tests/test_package.py::test_fips_metadata_excludes_md5_and_blake2 PASSED
+tests/test_package.py::test_hash_manager PASSED
+tests/test_package.py::test_malformed_from_file PASSED
+tests/test_package.py::test_metadata_dictionary_keys PASSED
+tests/test_package.py::test_metadata_dictionary_values[None] PASSED
+tests/test_package.py::test_metadata_dictionary_values[gpg_signature1] PASSED
+tests/test_package.py::test_package_from_egg PASSED
+tests/test_package.py::test_package_safe_name_is_correct[!"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~--.-] PASSED
+tests/test_package.py::test_package_safe_name_is_correct[0123456789-0123456789] PASSED
+tests/test_package.py::test_package_safe_name_is_correct[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ] PASSED
+tests/test_package.py::test_package_safe_name_is_correct[mosaik$$$$.SimConfig-mosaik-.SimConfig] PASSED
+tests/test_package.py::test_package_safe_name_is_correct[mosaik.SimConfig-mosaik.SimConfig] PASSED
+tests/test_package.py::test_package_signed_name_is_correct PASSED
+tests/test_package.py::test_pkginfo_returns_no_metadata[missing Name and Version] PASSED
+tests/test_package.py::test_pkginfo_returns_no_metadata[missing Name] PASSED
+tests/test_package.py::test_pkginfo_returns_no_metadata[missing Version] PASSED
+tests/test_package.py::test_pkginfo_returns_no_metadata[unsupported Metadata-Version] PASSED
+tests/test_package.py::test_run_gpg_falls_back_to_gpg2 PASSED
+tests/test_package.py::test_run_gpg_raises_exception_if_no_gpgs PASSED
+tests/test_package.py::test_run_gpg_raises_exception_if_not_using_gpg PASSED
+tests/test_package.py::test_sign_file PASSED
+tests/test_package.py::test_sign_file_with_identity PASSED
+tests/test_register.py::test_exception_for_redirect PASSED
+tests/test_register.py::test_non_existent_package PASSED
+tests/test_register.py::test_successful_register PASSED
+tests/test_register.py::test_values_from_env_not_pypi PASSED
+tests/test_register.py::test_values_from_env_pypi[pypi] PASSED
+tests/test_register.py::test_values_from_env_pypi[testpypi] PASSED
+tests/test_repository.py::test_content_structure_is_preserved PASSED
+tests/test_repository.py::test_disable_progress_bar_is_forwarded_to_rich[False] PASSED
+tests/test_repository.py::test_disable_progress_bar_is_forwarded_to_rich[True] PASSED
+tests/test_repository.py::test_gpg_signature_structure_is_preserved PASSED
+tests/test_repository.py::test_iterables_are_flattened PASSED
+tests/test_repository.py::test_logs_username_and_password[--messages1] PASSED
+tests/test_repository.py::test_logs_username_and_password[None-None-messages0] PASSED
+tests/test_repository.py::test_logs_username_and_password[username-password-messages2] PASSED
+tests/test_repository.py::test_make_user_agent_string PASSED
+tests/test_repository.py::test_package_is_registered PASSED
+tests/test_repository.py::test_package_is_uploaded_200s_with_no_releases PASSED
+tests/test_repository.py::test_package_is_uploaded_404s PASSED
+tests/test_repository.py::test_package_is_uploaded_different_filenames PASSED
+tests/test_repository.py::test_package_is_uploaded_incorrect_repo_url PASSED
+tests/test_repository.py::test_package_is_uploaded_with_releases_not_using_cache PASSED
+tests/test_repository.py::test_package_is_uploaded_with_releases_using_cache PASSED
+tests/test_repository.py::test_release_urls[package_meta0-https://upload.pypi.org/legacy/-release_urls0] PASSED
+tests/test_repository.py::test_release_urls[package_meta1-https://test.pypi.org/legacy/-release_urls1] PASSED
+tests/test_repository.py::test_release_urls[package_meta2-https://upload.pypi.org/legacy/-release_urls2] PASSED
+tests/test_repository.py::test_release_urls[package_meta3-https://upload.pypi.org/legacy/-release_urls3] PASSED
+tests/test_repository.py::test_release_urls[package_meta4-http://devpi.example.com-release_urls4] PASSED
+tests/test_repository.py::test_release_urls[package_meta5-https://upload.pypi.org/legacy/-release_urls5] PASSED
+tests/test_repository.py::test_set_certificate_authority PASSED
+tests/test_repository.py::test_set_client_certificate PASSED
+tests/test_repository.py::test_upload_retry PASSED
+tests/test_settings.py::TestArgumentParsing::test_non_interactive_environment PASSED
+tests/test_settings.py::TestArgumentParsing::test_non_interactive_flag PASSED
+tests/test_settings.py::test_client_cert_and_password_both_set_if_given PASSED
+tests/test_settings.py::test_identity_requires_sign PASSED
+tests/test_settings.py::test_no_password_prompt_if_client_cert_and_non_interactive PASSED
+tests/test_settings.py::test_password_is_required_if_no_client_cert[None] PASSED
+tests/test_settings.py::test_password_is_required_if_no_client_cert[] PASSED
+tests/test_settings.py::test_password_required_if_no_client_cert_and_non_interactive PASSED
+tests/test_settings.py::test_print_config_path_if_verbose[False] PASSED
+tests/test_settings.py::test_print_config_path_if_verbose[True] PASSED
+tests/test_settings.py::test_settings_takes_no_positional_arguments PASSED
+tests/test_settings.py::test_settings_transforms_repository_config_non_pypi PASSED
+tests/test_settings.py::test_settings_transforms_repository_config_pypi PASSED
+tests/test_settings.py::test_setup_logging[False-30] PASSED
+tests/test_settings.py::test_setup_logging[True-20] PASSED
+tests/test_upload.py::test_check_status_code_for_wrong_repo_url[https://pypi.org/] PASSED
+tests/test_upload.py::test_check_status_code_for_wrong_repo_url[https://test.pypi.org/] PASSED
+tests/test_upload.py::test_check_status_code_for_wrong_repo_url[https://upload.pypi.org/] PASSED
+tests/test_upload.py::test_deprecated_repo PASSED
+tests/test_upload.py::test_exception_for_http_status[False] PASSED
+tests/test_upload.py::test_exception_for_http_status[True] PASSED
+tests/test_upload.py::test_exception_for_redirect[https://test.pypi.org/legacy-https://test.pypi.org/legacy/-https://test.pypi.org/legacy.+https://test.pypi.org/legacy/.+\\nYour repository URL is missing a trailing slash] PASSED
+tests/test_upload.py::test_exception_for_redirect[https://test.pypi.org/legacy/-https://malicious.website.org/danger/-https://test.pypi.org/legacy/.+https://malicious.website.org/danger/.+\\nIf you trust these URLs] PASSED
+tests/test_upload.py::test_exception_with_only_pre_signed_file PASSED
+tests/test_upload.py::test_get_config_old_format PASSED
+tests/test_upload.py::test_make_package_pre_signed_dist PASSED
+tests/test_upload.py::test_make_package_unsigned_dist PASSED
+tests/test_upload.py::test_print_packages_if_verbose PASSED
+tests/test_upload.py::test_print_response_if_verbose PASSED
+tests/test_upload.py::test_prints_skip_message_for_response PASSED
+tests/test_upload.py::test_prints_skip_message_for_uploaded_package PASSED
+tests/test_upload.py::test_skip_existing_skips_files_on_repository[artifactory_new] PASSED
+tests/test_upload.py::test_skip_existing_skips_files_on_repository[artifactory_old] PASSED
+tests/test_upload.py::test_skip_existing_skips_files_on_repository[gitlab_enterprise] PASSED
+tests/test_upload.py::test_skip_existing_skips_files_on_repository[nexus] PASSED
+tests/test_upload.py::test_skip_existing_skips_files_on_repository[nexus_new] PASSED
+tests/test_upload.py::test_skip_existing_skips_files_on_repository[pypi] PASSED
+tests/test_upload.py::test_skip_existing_skips_files_on_repository[pypiserver] PASSED
+tests/test_upload.py::test_skip_upload_doesnt_match[wrong_code] PASSED
+tests/test_upload.py::test_skip_upload_doesnt_match[wrong_reason] PASSED
+tests/test_upload.py::test_skip_upload_respects_skip_existing PASSED
+tests/test_upload.py::test_success_when_gpg_is_run PASSED
+tests/test_upload.py::test_success_with_pre_signed_distribution PASSED
+tests/test_upload.py::test_successs_prints_release_urls PASSED
+tests/test_upload.py::test_values_from_env_non_pypi PASSED
+tests/test_upload.py::test_values_from_env_pypi[pypi] PASSED
+tests/test_upload.py::test_values_from_env_pypi[testpypi] PASSED
+tests/test_upload.py::test_warns_potential_pgp_removal_on_3p_index PASSED
+tests/test_utils.py::test_check_status_code_for_deprecated_pypi_url[https://pypi.python.org] PASSED
+tests/test_utils.py::test_check_status_code_for_deprecated_pypi_url[https://testpypi.python.org] PASSED
+tests/test_utils.py::test_check_status_code_for_missing_status_code[False-https://pypi.python.org] PASSED
+tests/test_utils.py::test_check_status_code_for_missing_status_code[False-https://testpypi.python.org] PASSED
+tests/test_utils.py::test_check_status_code_for_missing_status_code[True-https://pypi.python.org] PASSED
+tests/test_utils.py::test_check_status_code_for_missing_status_code[True-https://testpypi.python.org] PASSED
+tests/test_utils.py::test_default_to_environment_action[MY_PASSWORD-None-environ0-None] PASSED
+tests/test_utils.py::test_default_to_environment_action[MY_PASSWORD-None-environ1-foo] PASSED
+tests/test_utils.py::test_default_to_environment_action[URL-https://example.org-environ2-https://example.org] PASSED
+tests/test_utils.py::test_default_to_environment_action[URL-https://example.org-environ3-https://pypi.org] PASSED
+tests/test_utils.py::test_empty_userpass PASSED
+tests/test_utils.py::test_get_config PASSED
+tests/test_utils.py::test_get_config_deprecated_pypirc PASSED
+tests/test_utils.py::test_get_config_missing PASSED
+tests/test_utils.py::test_get_config_no_distutils PASSED
+tests/test_utils.py::test_get_config_no_section PASSED
+tests/test_utils.py::test_get_config_override_pypi_url PASSED
+tests/test_utils.py::test_get_file_size[1153433-1.1 MB] PASSED
+tests/test_utils.py::test_get_file_size[21412841-20.4 MB] PASSED
+tests/test_utils.py::test_get_file_size[3704-3.6 KB] PASSED
+tests/test_utils.py::test_get_repository_config_missing PASSED
+tests/test_utils.py::test_get_repository_config_missing_file[missing-repository] PASSED
+tests/test_utils.py::test_get_repository_config_missing_file[pypi] PASSED
+tests/test_utils.py::test_get_repository_config_missing_repository PASSED
+tests/test_utils.py::test_get_repository_config_with_invalid_url[//test.pypi.org-scheme was required but missing.] PASSED
+tests/test_utils.py::test_get_repository_config_with_invalid_url[foo.bar-host, scheme were required but missing.] PASSED
+tests/test_utils.py::test_get_repository_config_with_invalid_url[ftp://test.pypi.org-scheme was required to be one of \\['http', 'https'\\]] PASSED
+tests/test_utils.py::test_get_repository_config_with_invalid_url[https:/-host was required but missing.] PASSED
+tests/test_utils.py::test_get_userpass_value[None-config1-key-<lambda>-value] PASSED
+tests/test_utils.py::test_get_userpass_value[None-config2-key-<lambda>-fallback] PASSED
+tests/test_utils.py::test_get_userpass_value[cli-config0-key-<lambda>-cli] PASSED
+tests/test_wheel.py::test_find_metadata_files PASSED
+tests/test_wheel.py::test_read_invalid_wheel_extension PASSED
+tests/test_wheel.py::test_read_non_existent_wheel_file_name PASSED
+tests/test_wheel.py::test_read_valid[alt-fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
+tests/test_wheel.py::test_read_valid[fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
+tests/test_wheel.py::test_read_wheel_empty_metadata PASSED
+tests/test_wheel.py::test_version_parsing[alt-fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
+tests/test_wheel.py::test_version_parsing[fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
+tests/test_wheel.py::test_version_parsing_missing_pyver[alt-fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
+tests/test_wheel.py::test_version_parsing_missing_pyver[fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
+
+======== 187 passed ========
+py$(PYV): commands[1]> python -m coverage html
+Wrote HTML report to htmlcov/index.html
+py$(PYV): commands[2]> python -m coverage report --skip-covered --show-missing --fail-under 97
+Name                       Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------------
+tests/test_auth.py           127      1      8      1    99%   79
+tests/test_repository.py     109      0     32      1    99%   95->94
+tests/test_upload.py         186      2     28      0    98%   300-301
+tests/test_utils.py           80      1      4      0    99%   283
+twine/package.py             143      4     41      5    95%   104, 132, 204, 283->exit, 289
+twine/repository.py          118      3     38      4    96%   90, 104->exit, 108->exit, 164->exit, 198, 250
+twine/settings.py             80      4      4      0    95%   323-331
+twine/utils.py               124      1     41      0    99%   303
+twine/wininst.py              38     26     19      0    21%   15-17, 21-25, 28-57
+----------------------------------------------------------------------
+TOTAL                       1920     42    363     11    97%
+
+21 files skipped due to complete coverage.
+  py$(PYV): OK
+  congratulations :)

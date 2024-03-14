@@ -20,28 +20,30 @@
 #
 # Copyright (c) 2015-2017, Aurelien Larcher 
 #
-BUILD_BITS=				64_and_32
+
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
-COMPONENT_MJR_VERSION=	2.13
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).1
-COMPONENT_FMRI=         library/lcms2
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_MJR_VERSION=	2.16
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY=      The Little Color Management System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d473e796e7b27c5af01bd6d1552d42b45b43457e7182ce9903f38bb748203b88
+COMPONENT_ARCHIVE_HASH=	sha256:d873d34ad8b9b4cea010631f1a6228d2087475e4dc5e763eb81acc23d9d45a51
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/lcms2
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # build with the distribution preferred libjpeg implementation
-CFLAGS             +=           $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS           +=           $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS            +=           $(JPEG_LDFLAGS)
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 # Seems that we have no other way to designate that we want large file support.
 CFLAGS += $(CPP_LARGEFILES)
@@ -51,18 +53,17 @@ CFLAGS += $(CPP_LARGEFILES)
 # _MAX_ALIGNMENT definition in per-platform sections of <sys/isa_defs.h>
 CPPFLAGS += -DCMS_PTR_ALIGNMENT=_MAX_ALIGNMENT
 
-CONFIGURE_OPTIONS  +=           --includedir=/usr/include/lcms2
-CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           --disable-static
-CONFIGURE_OPTIONS  +=           --with-jpeg
-CONFIGURE_OPTIONS  +=           --with-tiff
-CONFIGURE_OPTIONS  +=           --with-zlib
-CONFIGURE_OPTIONS  +=           --with-pic
+CONFIGURE_OPTIONS += --includedir=/usr/include/lcms2
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-jpeg
+CONFIGURE_OPTIONS += --with-tiff
+CONFIGURE_OPTIONS += --with-zlib
+CONFIGURE_OPTIONS += --with-pic
 
 COMPONENT_PRE_TEST_ACTION = ( cd $(@D); $(MAKE) -C testbed clean )
 
 COMPONENT_TEST_ARGS = -k -i
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*test bed.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^.*MPixel.*$$|XXX_REMOVE_XXX|g" ' \
@@ -76,8 +77,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 # Auto-generated dependencies
-#REQUIRED_PACKAGES += image/library/libjpeg8-turbo
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

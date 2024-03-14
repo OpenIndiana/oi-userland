@@ -14,24 +14,54 @@
 #   $WS_TOOLS/python-integrate-project tox
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-COMPONENT_VERSION =		3.26.0
+HUMAN_VERSION =			4.14.1
 COMPONENT_SUMMARY =		tox - tox is a generic virtualenv management and test command line tool
-COMPONENT_PROJECT_URL =		https://tox.readthedocs.io
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/59/14/1931cd6cb9804f2326cccdd750af32a5095132b7d73cc33577644ab59888/tox-3.26.0.tar.gz
+COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:44f3c347c68c2c68799d7d44f1808f9d396fc8a1a500cbc624253375c7ae107e
+	sha256:f0ad758c3bbf7e237059c929d3595479363c3cdd5a06ac3e49d1dd020ffbee45
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - tox-current-env (test bootstrap)
+# - Userland testing framework (see setup.py.mk)
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib_metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/cachetools
+PYTHON_REQUIRED_PACKAGES += library/python/chardet
+PYTHON_REQUIRED_PACKAGES += library/python/colorama
+PYTHON_REQUIRED_PACKAGES += library/python/filelock
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
+PYTHON_REQUIRED_PACKAGES += library/python/pluggy
+PYTHON_REQUIRED_PACKAGES += library/python/pyproject-api
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
+PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
+TEST_REQUIRED_PACKAGES.python += library/python/detect-test-pollution
+TEST_REQUIRED_PACKAGES.python += library/python/distlib
+TEST_REQUIRED_PACKAGES.python += library/python/flaky
+TEST_REQUIRED_PACKAGES.python += library/python/hatch-vcs
+TEST_REQUIRED_PACKAGES.python += library/python/hatchling
+TEST_REQUIRED_PACKAGES.python += library/python/psutil
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/re-assert
+TEST_REQUIRED_PACKAGES.python += library/python/time-machine
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
+TEST_REQUIRED_PACKAGES.python += library/python/wheel

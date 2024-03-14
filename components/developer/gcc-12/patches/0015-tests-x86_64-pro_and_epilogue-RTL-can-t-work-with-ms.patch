@@ -1,0 +1,40 @@
+From b5ee2e5efd68ce6b4ec192edececd7cbca089e4b Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Thu, 2 May 2019 17:54:20 +0000
+Subject: tests: x86_64 pro_and_epilogue RTL can't work with
+ -msave-args
+
+The RTL is included directly in the test, and was generated without
+saved parameters.
+
+Attempting the test with -msave-args means the prologue and epilogue
+adjustments think there are saved parameters where there are not.
+---
+ gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c b/gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c
+index b6f723a6e60..ed5db9cace3 100644
+--- a/gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c
++++ b/gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c
+@@ -1,5 +1,6 @@
+ /* { dg-do compile { target { { i?86-*-* x86_64-*-* } && lp64 } } } */
+ /* { dg-options "-fdump-rtl-pro_and_epilogue" } */
++/* { dg-skip-if "RTL in test doesn't save arguments" { *-*-* } "-msave-args" "" } */
+ 
+ /* Lightly-modified dump of test.c.274r.split2 for x86_64.  */
+ 
+@@ -95,7 +96,7 @@ int __RTL (startwith ("pro_and_epilogue")) test_1 (int i, int j, int k)
+     (cnote 31 NOTE_INSN_DELETED)
+   ) ;; insn-chain
+   (crtl
+-    (return_rtx 
++    (return_rtx
+       (reg/i:SI ax)
+     ) ;; return_rtx
+   ) ;; crtl
+@@ -107,4 +108,3 @@ int __RTL (startwith ("pro_and_epilogue")) test_1 (int i, int j, int k)
+ 
+ /* We expect a jump_insn to "simple_return".  */
+ /* { dg-final { scan-rtl-dump-times "simple_return" 2 "pro_and_epilogue" } }  */
+-

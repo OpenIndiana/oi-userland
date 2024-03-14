@@ -1,0 +1,24 @@
+There is a nonsense in the configure script which pops up an error message and
+potentially have consequence on following command.
+
+This is an upstream bug.
+--- hplip-3.19.5/configure.in.~1~	2019-04-08 13:05:29.000000000 +0200
++++ hplip-3.19.5/configure.in	2019-06-25 19:36:13.396599879 +0200
+@@ -30,7 +30,7 @@ #AC_PREREQ(2.59)
+ AC_INIT([HP Linux Imaging and Printing], [3.22.6], [3.22.6], [hplip])
+ 
+ #AM_INIT_AUTOMAKE([1.9 foreign])
+-AM_INIT_AUTOMAKE
++AM_INIT_AUTOMAKE([subdir-objects])
+ AC_DISABLE_STATIC
+ 
+ # Checks for programs.
+@@ -257,7 +257,7 @@ epm_class_install=yes
+    test `sh ./createPPD.sh -f` == 0
+ else
+    AC_MSG_RESULT(no)
+-   test `sh ./createPPD.sh -q` == 0
++   ./createPPD.sh -q
+ fi
+ AM_CONDITIONAL(HPLIP_CLASS_DRIVER, test x$class_driver = xyes)
+ 

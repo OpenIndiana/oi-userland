@@ -10,38 +10,19 @@
 #
 
 #
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2023 Andreas Wacknitz
 #
 
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Drop 32-bit binaries. Alas our transform doesn't support the use of $(MACH32) here:
-<transform file path=usr/bin/i86/* -> drop>
-
-file path=usr/bin/$(MACH32)/copydatabase
-file path=usr/bin/$(MACH32)/quest
-file path=usr/bin/$(MACH32)/simpleexpand
-file path=usr/bin/$(MACH32)/simpleindex
-file path=usr/bin/$(MACH32)/simplesearch
-file path=usr/bin/$(MACH32)/xapian-check
-file path=usr/bin/$(MACH32)/xapian-compact
-file path=usr/bin/$(MACH32)/xapian-config
-file path=usr/bin/$(MACH32)/xapian-delve
-file path=usr/bin/$(MACH32)/xapian-metadata
-file path=usr/bin/$(MACH32)/xapian-pos
-file path=usr/bin/$(MACH32)/xapian-progsrv
-file path=usr/bin/$(MACH32)/xapian-replicate
-file path=usr/bin/$(MACH32)/xapian-replicate-server
-file path=usr/bin/$(MACH32)/xapian-tcpsrv
 file path=usr/bin/copydatabase
 file path=usr/bin/quest
 file path=usr/bin/simpleexpand
@@ -96,21 +77,15 @@ file path=usr/include/xapian/visibility.h
 file path=usr/include/xapian/weight.h
 file path=usr/lib/$(MACH64)/cmake/xapian/xapian-config-version.cmake
 file path=usr/lib/$(MACH64)/cmake/xapian/xapian-config.cmake
-link path=usr/lib/$(MACH64)/libxapian.so target=libxapian.so.30.12.2
-link path=usr/lib/$(MACH64)/libxapian.so.30 target=libxapian.so.30.12.2
-file path=usr/lib/$(MACH64)/libxapian.so.30.12.2
+link path=usr/lib/$(MACH64)/libxapian.so target=libxapian.so.30.12.5
+link path=usr/lib/$(MACH64)/libxapian.so.30 target=libxapian.so.30.12.5
+file path=usr/lib/$(MACH64)/libxapian.so.30.12.5
 file path=usr/lib/$(MACH64)/pkgconfig/xapian-core.pc
-file path=usr/lib/cmake/xapian/xapian-config-version.cmake
-file path=usr/lib/cmake/xapian/xapian-config.cmake
-link path=usr/lib/libxapian.so target=libxapian.so.30.12.2
-link path=usr/lib/libxapian.so.30 target=libxapian.so.30.12.2
-file path=usr/lib/libxapian.so.30.12.2
-file path=usr/lib/pkgconfig/xapian-core.pc
 file path=usr/share/aclocal/xapian.m4
 file path=usr/share/doc/xapian-core/admin_notes.html
 file path=usr/share/doc/xapian-core/apidoc/html/annotated.html
 file path=usr/share/doc/xapian-core/apidoc/html/bc_s.png
-file path=usr/share/doc/xapian-core/apidoc/html/bdwn.png
+file path=usr/share/doc/xapian-core/apidoc/html/bc_sd.png
 file path=usr/share/doc/xapian-core/apidoc/html/classXapian_1_1AssertionError-members.html
 file path=usr/share/doc/xapian-core/apidoc/html/classXapian_1_1AssertionError.html
 file path=usr/share/doc/xapian-core/apidoc/html/classXapian_1_1AssertionError__inherit__graph.png
@@ -385,7 +360,6 @@ file path=usr/share/doc/xapian-core/apidoc/html/database_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/dbfactory_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/deprecated.html
 file path=usr/share/doc/xapian-core/apidoc/html/dir_f63502d618711192f85ccb772536c6ae.html
-file path=usr/share/doc/xapian-core/apidoc/html/doc.png
 file path=usr/share/doc/xapian-core/apidoc/html/document_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/doxygen.css
 file path=usr/share/doc/xapian-core/apidoc/html/dynsections.js
@@ -395,8 +369,6 @@ file path=usr/share/doc/xapian-core/apidoc/html/errorhandler_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/eset_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/expanddecider_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/files.html
-file path=usr/share/doc/xapian-core/apidoc/html/folderclosed.png
-file path=usr/share/doc/xapian-core/apidoc/html/folderopen.png
 file path=usr/share/doc/xapian-core/apidoc/html/functions.html
 file path=usr/share/doc/xapian-core/apidoc/html/functions_b.html
 file path=usr/share/doc/xapian-core/apidoc/html/functions_c.html
@@ -503,8 +475,10 @@ file path=usr/share/doc/xapian-core/apidoc/html/namespacemembers_type.html
 file path=usr/share/doc/xapian-core/apidoc/html/namespacemembers_vars.html
 file path=usr/share/doc/xapian-core/apidoc/html/namespaces.html
 file path=usr/share/doc/xapian-core/apidoc/html/nav_f.png
+file path=usr/share/doc/xapian-core/apidoc/html/nav_fd.png
 file path=usr/share/doc/xapian-core/apidoc/html/nav_g.png
 file path=usr/share/doc/xapian-core/apidoc/html/nav_h.png
+file path=usr/share/doc/xapian-core/apidoc/html/nav_hd.png
 file path=usr/share/doc/xapian-core/apidoc/html/open.png
 file path=usr/share/doc/xapian-core/apidoc/html/pages.html
 file path=usr/share/doc/xapian-core/apidoc/html/positioniterator_8h.html
@@ -514,15 +488,20 @@ file path=usr/share/doc/xapian-core/apidoc/html/query_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/queryparser_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/registry_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/splitbar.png
+file path=usr/share/doc/xapian-core/apidoc/html/splitbard.png
 file path=usr/share/doc/xapian-core/apidoc/html/stem_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/structXapian_1_1LatLongCoord-members.html
 file path=usr/share/doc/xapian-core/apidoc/html/structXapian_1_1LatLongCoord.html
 file path=usr/share/doc/xapian-core/apidoc/html/sync_off.png
 file path=usr/share/doc/xapian-core/apidoc/html/sync_on.png
 file path=usr/share/doc/xapian-core/apidoc/html/tab_a.png
+file path=usr/share/doc/xapian-core/apidoc/html/tab_ad.png
 file path=usr/share/doc/xapian-core/apidoc/html/tab_b.png
+file path=usr/share/doc/xapian-core/apidoc/html/tab_bd.png
 file path=usr/share/doc/xapian-core/apidoc/html/tab_h.png
+file path=usr/share/doc/xapian-core/apidoc/html/tab_hd.png
 file path=usr/share/doc/xapian-core/apidoc/html/tab_s.png
+file path=usr/share/doc/xapian-core/apidoc/html/tab_sd.png
 file path=usr/share/doc/xapian-core/apidoc/html/tabs.css
 file path=usr/share/doc/xapian-core/apidoc/html/termgenerator_8h.html
 file path=usr/share/doc/xapian-core/apidoc/html/termiterator_8h.html

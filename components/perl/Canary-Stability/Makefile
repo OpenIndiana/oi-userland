@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Canary::Stability
 HUMAN_VERSION =			2013
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Canary::Stability - canary to check perl compatibility for schmorp's modules
 COMPONENT_CPAN_AUTHOR =		MLEHMANN
 COMPONENT_ARCHIVE_HASH =	\

@@ -19,17 +19,14 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Inter
-HUMAN_VERSION =			1.09
+HUMAN_VERSION =			1.11
 COMPONENT_SUMMARY =		Test::Inter - framework for more readable interactive test scripts
 COMPONENT_CPAN_AUTHOR =		SBECK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1e9f129cc1a001fb95449d385253b38afabf5b466e3b3bd33e4e430f216e177a
+	sha256:2b9845212547cd6056753f87866d19368efc67c080146bcbb929a51ab055da37
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/file-find-rule
-PERL_REQUIRED_PACKAGES += library/perl-5/test-pod
-PERL_REQUIRED_PACKAGES += library/perl-5/test-pod-coverage
 PERL_REQUIRED_PACKAGES += runtime/perl

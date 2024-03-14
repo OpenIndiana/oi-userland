@@ -1,75 +1,42 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2021, Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project freezegun
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		freezegun
-COMPONENT_VERSION=	1.1.0
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	A library that allows your Python tests to travel through time by mocking the datetime module
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:177f9dd59861d871e27a484c3332f35a6e3f5d14626f2bf91be37891f18927f3
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/spulec/freezegun
-COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	Apache 2.0
-
-PYTHON_VERSIONS=	3.7 3.9
+COMPONENT_NAME =		freezegun
+HUMAN_VERSION =			1.4.0
+COMPONENT_SUMMARY =		freezegun - Let your Python tests travel through time
+COMPONENT_PROJECT_URL =		https://github.com/spulec/freezegun
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/1c/73/5decad3abddbe7e1bf4bf98ead1a8345b1cc6fc6ec7e4fa27da81f4e1eee/freezegun-1.4.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:10939b0ba0ff5adaecf3b06a5c2f73071d9678e507c5eaedb23c761d56ac774b
+COMPONENT_LICENSE =		Apache-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
-COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
-COMPONENT_TEST_ARGS =
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/in [0-9]*\.[0-9]*s //"' \
-	'-n' \
-	'-e "/===/p"' \
-	'-e "/collected/p"' \
-	'-e "/test_/p"'
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# Manually added test dependencies
-REQUIRED_PACKAGES += library/python/python-dateutil-37
-REQUIRED_PACKAGES += library/python/python-dateutil-39
-REQUIRED_PACKAGES += library/python/flaky-37
-REQUIRED_PACKAGES += library/python/flaky-39
-REQUIRED_PACKAGES += library/python/hypothesis-37
-REQUIRED_PACKAGES += library/python/hypothesis-39
-REQUIRED_PACKAGES += library/python/pytest-37
-REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/pytest-benchmark-37
-REQUIRED_PACKAGES += library/python/pytest-benchmark-39
-REQUIRED_PACKAGES += library/python/pytest-reporter-37
-REQUIRED_PACKAGES += library/python/pytest-reporter-39
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coveralls
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil

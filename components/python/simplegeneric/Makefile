@@ -10,37 +10,30 @@
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project simplegeneric
 #
+
+BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	simplegeneric
-COMPONENT_VERSION= 	0.8.1
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	https://pypi.org/project/simplegeneric/
-COMPONENT_FMRI=	library/python/simplegeneric
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= \
-  sha256:dc972e06094b9af5b855b3df4a646395e43d1c9d0d39ed345b7393560d0b9173
-COMPONENT_ARCHIVE_URL= \
-  $(call pypi_url)
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_LICENSE=	ZPLv2.1
+COMPONENT_NAME =		simplegeneric
+HUMAN_VERSION =			0.8.1
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		simplegeneric - Simple generic functions (similar to Python's own len(), pickle.dump(), etc.)
+COMPONENT_PROJECT_URL =		http://cheeseshop.python.org/pypi/simplegeneric
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/3d/57/4d9c9e3ae9a255cd4e1106bb57e24056d3d0709fc01b2e3e345898e49d5b/simplegeneric-0.8.1.zip
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:dc972e06094b9af5b855b3df4a646395e43d1c9d0d39ed345b7393560d0b9173
+COMPONENT_LICENSE =		ZPL-2.1
 
-PYTHON_VERSIONS=	2.7 3.5
+TEST_STYLE = setup.py
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+COMPONENT_ARCHIVE =		$(COMPONENT_SRC).zip
 
-build: $(BUILD_NO_ARCH)
-
-install: $(INSTALL_NO_ARCH)
-
-test:	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
+PYTHON_REQUIRED_PACKAGES += runtime/python

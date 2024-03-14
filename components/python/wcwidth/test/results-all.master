@@ -1,0 +1,57 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> $(PYTHON) -m pytest --cov-config=$(@D)/tox.ini --verbose --junit-xml=.tox/results.py$(PYV).xml --durations=3 '--log-format=%(levelname)s %(relativeCreated)2.2f %(filename)s:%(lineno)d %(message)s' tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .tox/py$(PYV)/.pytest_cache
+benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: $(@D)
+configfile: tox.ini
+collecting ... collected 39 items
+
+only with a single version of python)
+tests/test_core.py::test_balinese_script PASSED
+tests/test_core.py::test_combining_cafe PASSED
+tests/test_core.py::test_combining_enclosing PASSED
+tests/test_core.py::test_combining_width PASSED
+tests/test_core.py::test_control_c0_width_negative_1 PASSED
+tests/test_core.py::test_devanagari_script PASSED
+tests/test_core.py::test_empty_string PASSED
+tests/test_core.py::test_hello_jp PASSED
+tests/test_core.py::test_kannada_script PASSED
+tests/test_core.py::test_kannada_script_2 PASSED
+tests/test_core.py::test_kr_jamo PASSED
+tests/test_core.py::test_kr_jamo_filler PASSED
+tests/test_core.py::test_null_width_0 PASSED
+tests/test_core.py::test_package_version PASSED
+tests/test_core.py::test_tamil_script PASSED
+tests/test_core.py::test_wcswidth_substr PASSED
+tests/test_core.py::test_zero_wide_conflict PASSED
+tests/test_emojis.py::test_another_emoji_zwj_sequence PASSED
+tests/test_emojis.py::test_longer_emoji_zwj_sequence PASSED
+tests/test_emojis.py::test_non_recommended_zwj_sequence PASSED
+tests/test_emojis.py::test_recommended_emoji_zwj_sequences PASSED
+tests/test_emojis.py::test_recommended_variation_16_sequences PASSED
+tests/test_emojis.py::test_unfinished_zwj_sequence PASSED
+tests/test_emojis.py::test_unicode_8_vs16 PASSED
+tests/test_emojis.py::test_unicode_9_vs16 PASSED
+tests/test_table_integrity.py::test_verify_table_integrity SKIPPED (Test
+tests/test_ucslevel.py::test_exact_410_str PASSED
+tests/test_ucslevel.py::test_exact_410_unicode PASSED
+tests/test_ucslevel.py::test_latest PASSED
+tests/test_ucslevel.py::test_nearest_505_str PASSED
+tests/test_ucslevel.py::test_nearest_505_unicode PASSED
+tests/test_ucslevel.py::test_nearest_800_str PASSED
+tests/test_ucslevel.py::test_nearest_800_unicode PASSED
+tests/test_ucslevel.py::test_nearest_999_str PASSED
+tests/test_ucslevel.py::test_nearest_999_unicode PASSED
+tests/test_ucslevel.py::test_nearest_lowint40_str PASSED
+tests/test_ucslevel.py::test_nearest_lowint40_unicode PASSED
+tests/test_ucslevel.py::test_nonint_str PASSED
+tests/test_ucslevel.py::test_nonint_unicode PASSED
+
+- generated xml file: $(@D)/.tox/results.py$(PYV).xml -
+
+============================= slowest 3 durations ==============================
+======== 38 passed, 1 skipped ========
+  py$(PYV): OK
+  congratulations :)

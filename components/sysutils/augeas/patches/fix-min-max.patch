@@ -1,0 +1,18 @@
+diff -Nru augeas-1.14.1.orig/src/augprint.c augeas-1.14.1/src/augprint.c
+--- augeas-1.14.1.orig/src/augprint.c	2023-07-14 13:07:23.000000000 +0200
++++ augeas-1.14.1/src/augprint.c	2023-07-24 17:05:29.961473790 +0200
+@@ -70,10 +70,13 @@
+ #include <augeas.h>
+ #include <errno.h>
+ #include <libgen.h>        /* for basename() on FreeBSD and MacOS */
+-#include <sys/param.h>     /* for MIN() MAX() */
+ #include <unistd.h>
+ #include "augprint.h"
+ 
++/* Macros for min/max taken from FreeBSD */
++#define MIN(a,b) (((a)<(b))?(a):(b))
++#define MAX(a,b) (((a)>(b))?(a):(b))
++
+ #define CHECK_OOM(condition, action, arg)         \
+     do {                                          \
+         if (condition) {                          \

@@ -1,0 +1,90 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/salt-factories-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_salt_factories-$(HUMAN_VERSION).dist-info/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_salt_factories-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_salt_factories-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_salt_factories-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pytest_salt_factories-$(HUMAN_VERSION).dist-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/bases.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/cli/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/cli/call.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/cli/cloud.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/cli/cp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/cli/key.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/cli/run.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/cli/salt.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/cli/spm.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/cli/ssh.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/daemons/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/daemons/api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/daemons/container.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/daemons/master.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/daemons/minion.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/daemons/proxy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/daemons/sshd.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/daemons/syndic.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/plugins/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/plugins/event_listener.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/plugins/factories.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/plugins/loader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/plugins/log_server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/plugins/markers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/plugins/sysinfo.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/plugins/sysstats.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/cli_scripts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/functional.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/loader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/markers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/ports.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/processes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/saltext/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/socket.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/tempfiles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/time.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/utils/virtualenv.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saltfactories/version.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/attrs-$(PYV)
+depend type=require fmri=pkg:/library/python/msgpack-$(PYV)
+depend type=require fmri=pkg:/library/python/psutil-$(PYV)
+depend type=require fmri=pkg:/library/python/pytest-$(PYV)
+depend type=require fmri=pkg:/library/python/pytest-helpers-namespace-$(PYV)
+depend type=require fmri=pkg:/library/python/pytest-skip-markers-$(PYV)
+depend type=require fmri=pkg:/library/python/pytest-tempdir-$(PYV)
+depend type=require fmri=pkg:/library/python/pyzmq-$(PYV)
+depend type=require fmri=pkg:/library/python/virtualenv-$(PYV)

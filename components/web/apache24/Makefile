@@ -22,28 +22,28 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2023, Niklas Poslovski
 #
 
-BUILD_BITS= 64
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.54
+COMPONENT_VERSION=	2.4.58
 COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c687b99c446c0ef345e7d86c21a8e15fc074b7d5152c4fe22b0463e2be346ffb
+COMPONENT_ARCHIVE_HASH= sha256:503a7da4a4a27fd496037998b17078dc9fe004db32c657c96cce8356b8aa2eb6
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 
-CONFIGURE_DEFAULT_DIRS=no
+CONFIGURE_DEFAULT_DIRS= no
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATCH_LEVEL=0
+PATCH_LEVEL= 0
 
 # Some patches need configure script re-creation.
 COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.c $(@D)/modules/aaa);
@@ -83,8 +83,8 @@ CONFIGURE_OPTIONS +=	--enable-exception-hook
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS +=	--enable-layout=Solaris-Apache2
 CONFIGURE_OPTIONS +=	CC="$(CC) -m$(BITS)"
-CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/bin/$(MACH64)/apu-1-config
+CONFIGURE_OPTIONS +=	--with-apr=/usr/apr/bin/apr-1-config
+CONFIGURE_OPTIONS +=	--with-apr-util=/usr/apr-util/bin/apu-1-config
 
 install: $(INSTALL_64)
 	# Some files installed in proto area need to be fixed.
@@ -103,10 +103,10 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/perl-534
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

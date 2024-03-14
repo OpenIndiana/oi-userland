@@ -1,0 +1,14 @@
+# bzero is a deprecated funtion
+
+--- memcached-1.6.22/tls.c	2022-11-25 01:28:47.000000000 +0100
++++ memcached-1.6.22/tls.c.new	2023-12-26 11:16:26.830255549 +0100
+@@ -124,7 +124,8 @@
+         *errmsg = NULL;
+         return false;
+     }
+-    bzero(ssl_err_msg, SSL_ERROR_MSG_SIZE);
++    //bzero(ssl_err_msg, SSL_ERROR_MSG_SIZE);
++    memset(ssl_err_msg, 0, sizeof(SSL_ERROR_MSG_SIZE));
+     size_t err_msg_size = 0;
+ 
+     SSL_LOCK();

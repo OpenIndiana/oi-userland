@@ -13,33 +13,49 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 64_and_32
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
+SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libsecret
-COMPONENT_VERSION=      0.18.5
-COMPONENT_REVISION=     2
+COMPONENT_MAJOR_VERSION= 0.20
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).5
 COMPONENT_SUMMARY=      GObject based library for accessing the Secret Service API
+COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:9ce7bd8dd5831f2786c935d82638ac428fa085057cc6780aba0e39375887ccb3
-COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.18/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.gnome.org
-COMPONENT_FMRI=         library/libsecret
+COMPONENT_ARCHIVE_HASH= sha256:3fb3ce340fcd7db54d87c893e69bfc2b1f6e4d4b279065ffe66dac9f0fd12b4d
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH= $(PATH.gnu)
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS.32 += -Dintrospection=false
+CONFIGURE_OPTIONS.32 += -Dvapi=false
+CONFIGURE_OPTIONS.32 += -Dgtk_doc=false
+
+COMPONENT_TEST_TRANSFORMS = \
+	' -n ' \
+	' -e "s/[0-9][0-9]*\.[0-9][0-9]*s//" ' \
+	' -e "/OK/p" ' \
+	' -e "/FAIL/p" ' \
+	' -e "/Ok/p" ' \
+	' -e "/Fail/p" ' \
+	' -e "/Skipped/p" ' \
+	' -e "/Timeout/p" ' \
+	' -e "/Pass/p" '
+
+# Manually added dependencies
+REQUIRED_PACKAGES += developer/vala
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2

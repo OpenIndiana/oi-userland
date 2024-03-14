@@ -19,27 +19,27 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DateTime::Locale
-HUMAN_VERSION =			1.36
+HUMAN_VERSION =			1.40
 COMPONENT_SUMMARY =		DateTime::Locale - Localization support for DateTime.pm
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:90a8243f2b2d4068019c65178600e76e03f5b478cb41d18c8c81cdf0d481f0a4
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:7490b4194b5d23a4e144976dedb3bdbcc6d3364b5d139cc922a86d41fdb87afb
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta-check
 PERL_REQUIRED_PACKAGES += library/perl-5/dist-checkconflicts
 PERL_REQUIRED_PACKAGES += library/perl-5/file-sharedir
 PERL_REQUIRED_PACKAGES += library/perl-5/file-sharedir-install
-PERL_REQUIRED_PACKAGES += library/perl-5/ipc-system-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
 PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
-PERL_REQUIRED_PACKAGES += library/perl-5/path-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/specio
-PERL_REQUIRED_PACKAGES += library/perl-5/test-file-sharedir
-PERL_REQUIRED_PACKAGES += library/perl-5/test2-plugin-nowarnings
-PERL_REQUIRED_PACKAGES += library/perl-5/test2-suite
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-check
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/ipc-system-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/path-tiny
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-file-sharedir
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-plugin-nowarnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite

@@ -13,13 +13,11 @@
 # Copyright (c) 2019 Michal Nowak
 #
 
-BUILD_BITS=	64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		redshift
 COMPONENT_VERSION=	1.12
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://jonls.dk/redshift/
 COMPONENT_SUMMARY=	Redshift adjusts the color temperature of your screen according to your surroundings
 COMPONENT_FMRI=         x11/redshift
@@ -29,36 +27,40 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d2f8c5300e3ce2a84fe6584d2f1483aa9eadc668ab1951b2c2b8a03ece3a22ba
 COMPONENT_ARCHIVE_URL=	https://github.com/jonls/redshift/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPL-3
+COMPONENT_LICENSE=	GPL-3.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
+
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION	= 3.5
+# configure expects GNU gettext
+PATH = $(PATH.gnu)
 
-CONFIGURE_ENV	+= XGETTEXT=/usr/gnu/bin/xgettext
-CONFIGURE_ENV	+= MSGFMT=/usr/gnu/bin/msgfmt
-CONFIGURE_ENV	+= PYTHON=$(PYTHON)
-
-# There are no binary python modules, install them in 32-bit path
-CONFIGURE_OPTIONS	+= am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES.32)"
-CONFIGURE_OPTIONS	+= --enable-gui
+CONFIGURE_OPTIONS += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_OPTIONS += --enable-gui
 
 # MATE won't load SVG icons for Redshift, PNG ones work though
-COMPONENT_POST_INSTALL_ACTION = \
+COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) -p $(PROTOUSRSHAREDIR)/icons/hicolor/24x24/apps/ ;\
 	for img in redshift redshift-status-on redshift-status-off; do \
-		inkscape -z -e $(PROTOUSRSHAREDIR)/icons/hicolor/24x24/apps/$$img.png -w 24 -h 24 $(PROTOUSRSHAREDIR)/icons/hicolor/scalable/apps/$$img.svg ;\
+		convert \
+		    $(PROTOUSRSHAREDIR)/icons/hicolor/scalable/apps/$$img.svg \
+		    -resize 24x24 \
+		    $(PROTOUSRSHAREDIR)/icons/hicolor/24x24/apps/$$img.png ; \
 	done ;
+
+# Update Python shebang to point to version we build for
+PYTHON_SCRIPTS += $(USRBINDIR)/redshift-gtk
 
 # Build dependencies
 REQUIRED_PACKAGES += image/editor/inkscape
+REQUIRED_PACKAGES += image/imagemagick
 REQUIRED_PACKAGES += system/header/header-drm
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libdrm

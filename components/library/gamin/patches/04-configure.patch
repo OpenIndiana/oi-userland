@@ -1,0 +1,150 @@
+--- gamin-0.1.10/configure.in.orig	2008-11-24 16:23:06.000000000 +0000
++++ gamin-0.1.10/configure.in	2023-01-25 21:22:37.375364226 +0000
+@@ -42,6 +42,12 @@
+ 	CFLAGS=""
+ fi
+ 
++dnl If the user set no CFLAGS, then don't assume the autotools defaults of
++dnl "-g -O2". We set default CFLAGS later based on the --disable-debug flag.
++if test -z "$ENV_CFLAGS"; then
++	CFLAGS=""
++fi
++
+ dnl for the spec file
+ RELDATE=`date +'%a %b %e %Y'`
+ AC_SUBST(RELDATE)
+@@ -279,6 +285,43 @@
+ 	backends="${backends}, kqueue"
+ fi
+ 
++case "$os" in
++    solaris*)
++	AM_CONDITIONAL(ON_SOLARIS, true)
++	AC_COMPILE_IFELSE([
++		#include <port.h>
++		#ifndef PORT_SOURCE_FILE
++		#error "Please upgrade to Nevada 72 or above to suppoert FEN"
++		#endif
++		int main() { return 0; }
++		],[have_fen=1],)
++	if test x$have_fen = x1 ; then
++            AC_ARG_ENABLE(fen,
++		AC_HELP_STRING([--disable-fen], [Disable the FEN backend]),
++                       [fen="${enableval}"], [fen=true])
++
++		if test x$fen = xyes; then
++                       fen=true
++		elif test x$fen = xno; then
++                       fen=false
++		elif test x$fen != xtrue; then
++                       AC_MSG_ERROR(bad value ${enableval} for --disable-fen)
++		fi
++	fi
++	break;
++	;;
++    *)
++	fen=false
++	break;
++	;;
++esac
++
++AM_CONDITIONAL(ENABLE_FEN, test x$fen = xtrue)
++if test x$fen = xtrue; then
++	AC_DEFINE(ENABLE_FEN,1,[Use Solaris FEN as backend])
++	backends="${backends}, FEN"
++fi
++
+ dnl pthread support for reentrance of the client library.
+ AC_ARG_WITH(threads,
+ [  --with-threads          add multithread support(on)])
+@@ -385,6 +428,14 @@
+     AC_DEFINE(HAVE_CMSGCRED,1,[Have cmsgcred structure])
+ fi
+ 
++dnl Check for getpeerucred support - Solaris
++
++AC_CHECK_HEADER(ucred.h,
++    AC_CHECK_LIB(c, getpeerucred,[
++        AC_DEFINE([HAVE_GETPEERUCRED],[],[Define if has getpeerucred])
++        AC_DEFINE([HAVE_UCRED_H],[],[Define if <ucred.h> exists])]))
++
++
+ #### Abstract sockets
+ 
+ AC_MSG_CHECKING(abstract socket namespace)
+@@ -455,7 +506,6 @@
+ PYTHON_INCLUDES=
+ PYTHON_SITE_PACKAGES=
+ PYTHON_TESTS=
+-pythondir=
+ if test "$with_python" != "no" ; then
+     if test -x "$with_python/bin/python"
+     then
+@@ -478,26 +528,26 @@
+     fi
+     if test "$PYTHON" != ""
+     then
+-        PYTHON_VERSION=`$PYTHON -c "import sys; print sys.version[[0:3]]"`
++        PYTHON_VERSION=`$PYTHON -c "import sys; print(sys.version)" | awk -F\. 'NR==1 {print $1 "." $2}'`
+ 	echo Found Python version $PYTHON_VERSION
+     fi
+     if test "$PYTHON_VERSION" != ""
+     then
+ 	if test -r $with_python/include/python$PYTHON_VERSION/Python.h -a \
+-	   -d $with_python/lib/python$PYTHON_VERSION/site-packages
++	   -d $with_python/lib/python$PYTHON_VERSION/vendor-packages
+ 	then
+ 	    PYTHON_INCLUDES=$with_python/include/python$PYTHON_VERSION
+-	    PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/site-packages
++	    PYTHON_SITE_PACKAGES=/usr/lib/python$PYTHON_VERSION/vendor-packages
+ 	else
+ 	    if test -r $prefix/include/python$PYTHON_VERSION/Python.h
+ 	    then
+ 	        PYTHON_INCLUDES=$prefix/include/python$PYTHON_VERSION
+-	        PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/site-packages
++	        PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/vendor-packages
+ 	    else
+ 		if test -r /usr/include/python$PYTHON_VERSION/Python.h
+ 		then
+ 		    PYTHON_INCLUDES=/usr/include/python$PYTHON_VERSION
+-	            PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/site-packages
++	            PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/vendor-packages
+ 		else
+ 		    echo could not find python$PYTHON_VERSION/Python.h
+ 		fi
+@@ -508,11 +558,13 @@
+ 	    fi
+ 	fi
+     fi
+-    if test "$with_python" != ""
+-    then
+-        pythondir='$(PYTHON_SITE_PACKAGES)'
+-    else
+-        pythondir='$(libdir)/python$(PYTHON_VERSION)/site-packages'
++    if test -z "$pythondir"; then 
++        if test "$with_python" != ""
++        then
++            pythondir='$(PYTHON_SITE_PACKAGES)'
++        else
++            pythondir='$(libdir)/python$(PYTHON_VERSION)/vendor-packages'
++        fi
+     fi
+ else
+     PYTHON=
+@@ -529,6 +581,16 @@
+ AC_SUBST(PYTHON_INCLUDES)
+ AC_SUBST(PYTHON_SITE_PACKAGES)
+ 
++dnl Check for -lsocket -lnsl
++
++AC_CHECK_FUNC(gethostent, , AC_CHECK_LIB(nsl, gethostent))
++AC_CHECK_FUNC(setsockopt, , AC_CHECK_LIB(socket, setsockopt))
++
++dnl Check for <sys/mnttab.h>
++
++AC_CHECK_HEADER(sys/mnttab.h,
++	AC_DEFINE([HAVE_SYS_MNTTAB_H], [], [Define if <sys/mnttab.h> is there]))
++
+ dnl After all config-related tweaking of CFLAGS, set it to its "build" value
+ 
+ AC_MSG_CHECKING(for more compiler warnings)

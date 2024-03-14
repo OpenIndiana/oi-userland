@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Number::Compare
 HUMAN_VERSION =			0.03
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Number::Compare - numeric comparisons
 COMPONENT_CPAN_AUTHOR =		RCLAMP
 COMPONENT_ARCHIVE_HASH =	\

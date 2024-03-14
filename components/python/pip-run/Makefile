@@ -14,24 +14,47 @@
 #   $WS_TOOLS/python-integrate-project pip-run
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip-run
-COMPONENT_VERSION =		8.8.0
+HUMAN_VERSION =			12.6.1
 COMPONENT_SUMMARY =		pip-run - install packages and run Python with them
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pip-run
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d2/34/78d7dc3a06488e5b0a2dfd79126998ad3e33f871dd91c77f33da11cf17a9/pip-run-8.8.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5fc40424ff9bf783f261a18d0248a69657cc8c6b7c0f3784605368a63dc601b6
+	sha256:227914cba705e9d90ce823e7163111a8a5b614c2e37fea003d506291763dafb1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Revert back unneeded PYV normalizations
+COMPONENT_TEST_TRANSFORMS += "-e 's/py\$$(PYV)compat/py$(subst .,,$(PYTHON_VERSION))compat/'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib_metadata
+PYTHON_REQUIRED_PACKAGES += library/python/autocommand
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-env
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-text
+PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/path
+PYTHON_REQUIRED_PACKAGES += library/python/pip
+PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/flit-core
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
+TEST_REQUIRED_PACKAGES.python += library/python/nbformat
+TEST_REQUIRED_PACKAGES.python += library/python/pygments
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy

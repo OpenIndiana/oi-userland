@@ -1,0 +1,22 @@
+From a881bf677a39cecb60ea7383598ad369a329dd94 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Fri, 3 May 2019 01:02:08 +0000
+Subject: gcc.target/i386/retarg: skip if msave-args
+
+This will always fail if saving arguments, because we're testing
+argument registers are untouched, so saving them will ruin that.
+---
+ gcc/testsuite/gcc.target/i386/retarg.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gcc/testsuite/gcc.target/i386/retarg.c b/gcc/testsuite/gcc.target/i386/retarg.c
+index a69b60feaf4..3967ef76b1f 100644
+--- a/gcc/testsuite/gcc.target/i386/retarg.c
++++ b/gcc/testsuite/gcc.target/i386/retarg.c
+@@ -1,5 +1,6 @@
+ /* { dg-do compile { target { ! ia32 } } } */
+ /* { dg-options "-O2" } */
++/* { dg-skip-if "" { *-*-* } "-msave-args" "" } */
+ 
+ #include <string.h>
+ 

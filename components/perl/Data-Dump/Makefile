@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Data::Dump
 HUMAN_VERSION =			1.25
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Data::Dump - Pretty printing of data structures
 COMPONENT_CPAN_AUTHOR =		GARU
 COMPONENT_ARCHIVE_HASH =	\

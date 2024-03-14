@@ -1,58 +1,52 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project attrs
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		attrs
-COMPONENT_VERSION=	20.3.0
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://www.attrs.org/en/stable/
-
-PYTHON_VERSIONS = 2.7 3.5 3.7 3.9
+COMPONENT_NAME =		attrs
+HUMAN_VERSION =			23.2.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		attrs - Classes Without Boilerplate
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/e3/fc/f800d51204003fa8ae392c4e8278f256206e7a919b708eef054f5f4b650d/attrs-23.2.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:935dc3b529c262f6cf76e50877d35a4bd3c1de194fd41f47a2b7ae8f19971f30
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
-COMPONENT_TEST_CMD =	$(PYTHON)
-COMPONENT_TEST_ARGS =	main_runner.py
-
-# Testing related components
-REQUIRED_PACKAGES += library/python/coverage
-#REQUIRED_PACKAGES += library/python/hypothesis
-REQUIRED_PACKAGES += library/python/python-zope-interface
-REQUIRED_PACKAGES += library/python/six
+# Filter out test loop dependency.  The loop is caused by complex project's
+# test dependency hierarchy involving extras (see pyproject.toml).
+REQUIRED_PACKAGES_TRANSFORM += \
+	| $(GSED) -e '/^TEST_REQUIRED_PACKAGES\.python += library\/python\/attrs$$/d' \
+	| $(COMPONENT_TEST_TRANSFORMER) -e ''
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/cloudpickle
+TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/psutil
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy-plugins
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/zope-interface

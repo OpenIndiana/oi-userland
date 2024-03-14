@@ -14,25 +14,24 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		sunpro
-COMPONENT_VERSION=	0.5.11
-COMPONENT_SRC=		$(COMPONENT_NAME)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-# below is required for userland-fetch to bahave
-COMPONENT_ARCHIVE_URL=blah
+COMPONENT_NAME=         sunpro
+COMPONENT_VERSION=      0.5.11
+COMPONENT_REVISION=     1
+COMPONENT_SRC=          $(COMPONENT_NAME)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 
-COMPONENT_FMRI =		system/library/c++/sunpro
-COMPONENT_SUMMARY =		Sun Workshop Compilers Bundled libC
-COMPONENT_CLASSIFICATION =	Development/C++
-COMPONENT_LICENSE_FILE =	SUNWlibC.copyright
-COMPONENT_LICENSE =		SUNWlibC.copyright
+COMPONENT_FMRI=         system/library/c++/sunpro
+COMPONENT_SUMMARY=      Sun Workshop Compilers Bundled libC
+COMPONENT_CLASSIFICATION=Development/C++
+COMPONENT_LICENSE_FILE= SUNWlibC.copyright
+COMPONENT_LICENSE=      SUNWlibC.copyright
 
-download::
-	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) http://pkg.openindiana.org/legacy \
+$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE):
+	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) https://pkg.openindiana.org/legacy \
 	system/library/c++/sunpro@0.5.11,5.11-0.134:20100302T055027Z
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:	prep
 

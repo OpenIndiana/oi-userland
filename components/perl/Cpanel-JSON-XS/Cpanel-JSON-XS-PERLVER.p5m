@@ -1,0 +1,40 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# This file was automatically generated using perl-integrate-module
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/perl5/$(PERLVER)/bin/cpanel_json_xs
+file path=usr/perl5/$(PERLVER)/man/man1/cpanel_json_xs.1
+file path=usr/perl5/$(PERLVER)/man/man3perl/Cpanel::JSON::XS.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Cpanel::JSON::XS::Boolean.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Cpanel::JSON::XS::Type.3perl
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Cpanel/JSON/XS.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Cpanel/JSON/XS/Boolean.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Cpanel/JSON/XS/Type.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Cpanel/JSON/XS/XS.so
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata

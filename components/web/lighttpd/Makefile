@@ -24,28 +24,30 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS = 64
-#USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.67
+COMPONENT_VERSION=	1.4.73
 COMPONENT_SUMMARY=	The Lighttpd Web Server
 COMPONENT_PROJECT_URL=	https://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:de3c783a0ec3459e7e36a5ef08e13482d8640b339570dd036dfd456a6f7bb312
+COMPONENT_ARCHIVE_HASH= sha256:816cbec71e8d02d874f1d5c798d76d091a76d5acbeb6e017ba76aeb4263d6995
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	web/server/$(COMPONENT_NAME)-14
 COMPONENT_CLASSIFICATION= Web Services/Application and Web Servers
 COMPONENT_LICENSE=	Lighttpd license
-
-LIGHTTPD_INSTALLDIR=/usr/lighttpd/1.4
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATCH_LEVEL=0
+PATCH_LEVEL= 0
+
+ELFEDIT= /usr/bin/elfedit
+
+LIGHTTPD_INSTALLDIR= /usr/lighttpd/1.4
 
 CFLAGS += -I/usr/include/openldap
 LDFLAGS += -lldap_r-2.4
@@ -58,27 +60,35 @@ COMPONENT_PREP_ACTION = ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
 # using just source file names (without full absolute paths).
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_PREFIX= /usr/lighttpd/1.4
+CONFIGURE_PREFIX= $(LIGHTTPD_INSTALLDIR)
 CONFIGURE_MANDIR= $(CONFIGURE_PREFIX)/man
-CONFIGURE_SBINDIR.64 = $(CONFIGURE_PREFIX)/sbin
-CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR = $(CONFIGURE_PREFIX)/sbin
+CONFIGURE_BINDIR = $(CONFIGURE_PREFIX)/bin
 
-CONFIGURE_OPTIONS +=	--with-pic
-CONFIGURE_OPTIONS +=	--without-lua
-CONFIGURE_OPTIONS +=	--with-openssl=$(OPENSSL_PREFIX)
-CONFIGURE_OPTIONS +=	--with-pcre
-CONFIGURE_OPTIONS +=	--with-mysql=$(MYSQL_CONFIG)
-CONFIGURE_OPTIONS +=	--with-ldap
+CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += --without-lua
+CONFIGURE_OPTIONS += --with-openssl=$(OPENSSL_PREFIX)
+CONFIGURE_OPTIONS += --with-pcre
+CONFIGURE_OPTIONS += --with-mysql=$(MYSQL_CONFIG)
+CONFIGURE_OPTIONS += --with-ldap
+CONFIGURE_OPTIONS += --enable-rpath
+CONFIGURE_OPTIONS += LDFLAGS="-L$(OPENSSL_LIBDIR) -L$(MYSQL_LIBDIR)"
+CONFIGURE_OPTIONS += LIBS="-L$(OPENSSL_LIBDIR) -L$(MYSQL_LIBDIR)"
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
+# mod_vhostdb_mysql.so doesn't find its mariadb lib without this:
+COMPONENT_POST_INSTALL_ACTION += \
+	$(ELFEDIT) -e "dyn:runpath $(MYSQL_LIBDIR)" \
+                    $(PROTO_DIR)$(LIGHTTPD_INSTALLDIR)/lib/$(MACH64)/mod_vhostdb_mysql.so
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/fastcgi/spawn-fcgi

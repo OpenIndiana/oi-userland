@@ -14,13 +14,13 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		upower
 COMPONENT_VERSION=	0.99.11
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://upower.freedesktop.org/
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		system/upower

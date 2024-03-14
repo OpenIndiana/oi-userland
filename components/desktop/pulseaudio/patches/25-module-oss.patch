@@ -1,0 +1,70 @@
+diff --git a/src/modules/oss/oss-util.c b/src/modules/oss/oss-util.c
+index 9d73966..a73f837 100644
+--- a/src/modules/oss/oss-util.c
++++ b/src/modules/oss/oss-util.c
+@@ -615,8 +616,5 @@ int pa_oss_open_mixer_for_device(const char *device) {
+     fd = pa_oss_open_mixer(fn);
+     pa_xfree(fn);
+ 
+-    if (fd < 0)
+-        pa_log_warn("Failed to open mixer '%s': %s", device, pa_cstrerror(errno));
+-
+     return fd;
+ }
+diff --git a/src/modules/oss/module-oss.c b/src/modules/oss/module-oss.c
+index 4fdffff..4e4404c 100644
+--- a/src/modules/oss/module-oss.c
++++ b/src/modules/oss/module-oss.c
+@@ -965,7 +965,7 @@ static void sink_set_volume(pa_sink *s) {
+     if (pa_oss_set_volume(u->mixer_dsp_fd, &(u->sink_mixext), &s->sample_spec, &s->real_volume) >= 0)
+         return;
+ 
+-    pa_log_info("Device doesn't support writing mixer settings: %s", pa_cstrerror(errno));
++    pa_log_info("Device %s doesn't support writing mixer settings: %s", u->device_name, pa_cstrerror(errno));
+ }
+ 
+ static void source_get_volume(pa_source *s) {
+diff --git a/src/modules/oss/oss-util.c b/src/modules/oss/oss-util.c
+index a80c641..83e40e3 100644
+--- a/src/modules/oss/oss-util.c
++++ b/src/modules/oss/oss-util.c
+@@ -393,12 +586,14 @@ int pa_oss_get_hw_description(const char *dev, char *name, size_t l) {
+     return r;
+ }
+ 
+-static int open_mixer(const char *mixer) {
++int pa_oss_open_mixer(const char *mixer) {
+     int fd;
+ 
+-    if ((fd = pa_open_cloexec(mixer, O_RDWR|O_NDELAY, 0)) >= 0)
++    if ((fd = pa_open_cloexec(mixer, O_RDWR|O_NDELAY, 0)) >= 0) {
++        pa_log_debug ("Opening device %s fd %d", mixer, fd);
+         return fd;
+-
++    }
++    pa_log_warn("Failed to open mixer '%s': %s", mixer, pa_cstrerror(errno));
+     return -1;
+ }
+ 
+diff --git a/src/modules/oss/oss-util.c b/src/modules/oss/oss-util.c
+index 8ba7baf..bfdd422 100644
+--- a/src/modules/oss/oss-util.c
++++ b/src/modules/oss/oss-util.c
+@@ -429,7 +429,7 @@ int pa_oss_set_volume(int fd, oss_mixext *mixext, const pa_sample_spec *ss, cons
+   val = oss4_mixer_slider_pack_volume (mixext, ss->channels, volume);
+ 
+   if (oss4_mixer_set_control_val (fd, mixext, val) != 0) {
+-    pa_log_debug ("Setting volume failed");
++    pa_log_debug ("Setting volume failed on %d", fd);
+     return -1;
+   }
+ 
+@@ -554,7 +554,7 @@ int pa_oss_get_hw_description(const char *dev, char *name, size_t l) {
+         line[strcspn(line, "\r\n")] = 0;
+ 
+         if (!b) {
+-            b = pa_streq(line, "Audio devices:") || pa_streq(line, "Installed devices:");
++            b = pa_streq(line, "Audio Devices:") || pa_streq(line, "Installed devices:");
+             continue;
+         }
+ 

@@ -14,7 +14,7 @@ will remove this patch when we upgrade to that release.
 diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
 --- a~/session.c	1970-01-01 00:00:00
 +++ a/session.c	1970-01-01 00:00:00
-@@ -63,6 +63,10 @@
+@@ -62,6 +62,10 @@
  #include <unistd.h>
  #include <limits.h>
  
@@ -25,7 +25,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  #include "openbsd-compat/sys-queue.h"
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -130,6 +134,11 @@ static void do_authenticated2(struct ssh
+@@ -129,6 +133,11 @@ static void do_authenticated2(struct ssh
  
  static int session_pty_req(struct ssh *, Session *);
  
@@ -37,7 +37,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1100,6 +1109,11 @@ do_setup_env(struct ssh *ssh, Session *s
+@@ -1099,6 +1108,11 @@ do_setup_env(struct ssh *ssh, Session *s
  		    auth_sock_name);
  
  
@@ -49,7 +49,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  	/* Set custom environment options from pubkey authentication. */
  	if (options.permit_user_env) {
  		for (n = 0 ; n < auth_opts->nenv; n++) {
-@@ -1997,6 +2011,11 @@ session_x11_req(struct ssh *ssh, Session
+@@ -1996,6 +2010,11 @@ session_x11_req(struct ssh *ssh, Session
  	int r, success;
  	u_char single_connection = 0;
  
@@ -61,7 +61,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -2011,19 +2030,78 @@ session_x11_req(struct ssh *ssh, Session
+@@ -2010,19 +2029,78 @@ session_x11_req(struct ssh *ssh, Session
  
  	s->single_connection = single_connection;
  
@@ -144,7 +144,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  	return success;
  }
  
-@@ -2300,6 +2378,51 @@ session_pty_cleanup(Session *s)
+@@ -2297,6 +2375,51 @@ session_pty_cleanup(Session *s)
  	PRIVSEP(session_pty_cleanup2(s));
  }
  
@@ -196,7 +196,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  static char *
  sig2name(int sig)
  {
-@@ -2441,6 +2564,9 @@ session_close(struct ssh *ssh, Session *
+@@ -2437,6 +2560,9 @@ session_close(struct ssh *ssh, Session *
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -206,7 +206,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2695,6 +2821,10 @@ do_cleanup(struct ssh *ssh, Authctxt *au
+@@ -2690,6 +2816,10 @@ do_cleanup(struct ssh *ssh, Authctxt *au
  		auth_info_file = NULL;
  	}
  

@@ -1,0 +1,114 @@
+--- /dev/null	Sun May 15 10:42:57 2022
++++ a/src/java.base/solaris/classes/sun/nio/ch/DefaultPollerProvider.java	Sun May 15 10:17:39 2022
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (c) 2022, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++package sun.nio.ch;
++
++import java.io.IOException;
++
++/**
++ * Default PollerProvider for illumos/Solaris.
++ */
++class DefaultPollerProvider extends PollerProvider {
++    DefaultPollerProvider() { }
++
++    @Override
++    Poller readPoller() throws IOException {
++        return new DevPollPoller(true);
++    }
++
++    @Override
++    Poller writePoller() throws IOException {
++        return new DevPollPoller(false);
++    }
++}
+--- /dev/null	Sun May 15 10:42:57 2022
++++ a/src/java.base/solaris/classes/sun/nio/ch/DevPollPoller.java	Sun May 15 10:17:09 2022
+@@ -0,0 +1,64 @@
++/*
++ * Copyright (c) 2022, Oracle and/or its affiliates. All rights reserved.
++ * Copyright 2022 Peter Tribble
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++package sun.nio.ch;
++
++import java.io.IOException;
++
++/**
++ * Stub Poller implementation for illumos/Solaris.
++ * Returns UnsupportedOperationException for all calls.
++ */
++
++class DevPollPoller extends Poller {
++
++    DevPollPoller(boolean read) throws IOException {
++        super(read);
++    }
++
++    @Override
++    int fdVal() {
++        // Stub
++        throw new UnsupportedOperationException("Unimplemented on SunOS");
++    }
++
++    @Override
++    void implRegister(int fdVal) throws IOException {
++        // Stub
++        throw new UnsupportedOperationException("Unimplemented on SunOS");
++    }
++
++    @Override
++    void implDeregister(int fdVal) {
++        // Stub
++        throw new UnsupportedOperationException("Unimplemented on SunOS");
++    }
++
++    @Override
++    int poll(int timeout) throws IOException {
++        // Stub
++        throw new UnsupportedOperationException("Unimplemented on SunOS");
++    }
++}

@@ -10,8 +10,7 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
-# Copyright 2019 Michal Nowak
+# Copyright 2023 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,16 +23,18 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file path=.+/share/info/dir -> drop>
+
 file path=usr/include/microhttpd.h
-link path=usr/lib/$(MACH64)/libmicrohttpd.so target=libmicrohttpd.so.12.60.0
-link path=usr/lib/$(MACH64)/libmicrohttpd.so.12 target=libmicrohttpd.so.12.60.0
-file path=usr/lib/$(MACH64)/libmicrohttpd.so.12.60.0
+link path=usr/lib/$(MACH64)/libmicrohttpd.so target=libmicrohttpd.so.12.61.0
+link path=usr/lib/$(MACH64)/libmicrohttpd.so.12 target=libmicrohttpd.so.12.61.0
+file path=usr/lib/$(MACH64)/libmicrohttpd.so.12.61.0
 file path=usr/lib/$(MACH64)/pkgconfig/libmicrohttpd.pc
-link path=usr/lib/libmicrohttpd.so target=libmicrohttpd.so.12.60.0
-link path=usr/lib/libmicrohttpd.so.12 target=libmicrohttpd.so.12.60.0
-file path=usr/lib/libmicrohttpd.so.12.60.0
+link path=usr/lib/libmicrohttpd.so target=libmicrohttpd.so.12.61.0
+link path=usr/lib/libmicrohttpd.so.12 target=libmicrohttpd.so.12.61.0
+file path=usr/lib/libmicrohttpd.so.12.61.0
 file path=usr/lib/pkgconfig/libmicrohttpd.pc
-#file path=usr/share/info/dir
+file path=usr/share/info/dir
 file path=usr/share/info/libmicrohttpd-tutorial.info
 file path=usr/share/info/libmicrohttpd.info
 file path=usr/share/info/libmicrohttpd_performance_data.png

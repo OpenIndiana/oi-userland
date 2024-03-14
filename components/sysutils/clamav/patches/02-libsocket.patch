@@ -1,0 +1,136 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/CMakeLists.txt a/CMakeLists.txt
+--- a~/CMakeLists.txt	1970-01-01 00:00:00
++++ a/CMakeLists.txt	1970-01-01 00:00:00
+@@ -283,6 +283,15 @@ if(ENABLE_TESTS)
+     endif()
+ endif()
+ 
++if (UNIX)
++    INCLUDE(CheckFunctionExists)
++    INCLUDE(CheckLibraryExists)
++    check_function_exists(setsockopt IS_setsockopt_IN_LIBC)
++    if(NOT IS_setsockopt_IN_LIBC)
++        check_library_exists(socket setsockopt "" NEED_LIBSOCKET)
++    endif()
++endif()
++
+ #
+ # Configure CPack
+ #  - for installers
+diff -wpruN --no-dereference '--exclude=*.orig' a~/clambc/CMakeLists.txt a/clambc/CMakeLists.txt
+--- a~/clambc/CMakeLists.txt	1970-01-01 00:00:00
++++ a/clambc/CMakeLists.txt	1970-01-01 00:00:00
+@@ -34,6 +34,9 @@ target_link_libraries( clambc
+     PRIVATE
+         ClamAV::libclamav
+         ClamAV::common )
++if(NEED_LIBSOCKET)
++    target_link_libraries( clambc PUBLIC socket )
++endif()
+ if(WIN32)
+     install(TARGETS clambc DESTINATION . COMPONENT programs)
+     install(FILES $<TARGET_PDB_FILE:clambc> DESTINATION . OPTIONAL COMPONENT programs)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/clamconf/CMakeLists.txt a/clamconf/CMakeLists.txt
+--- a~/clamconf/CMakeLists.txt	1970-01-01 00:00:00
++++ a/clamconf/CMakeLists.txt	1970-01-01 00:00:00
+@@ -34,6 +34,9 @@ target_link_libraries( clamconf
+     PRIVATE
+         ClamAV::libclamav
+         ClamAV::common )
++if(NEED_LIBSOCKET)
++    target_link_libraries( clamconf PUBLIC socket )
++endif()
+ if(WIN32)
+     install(TARGETS clamconf DESTINATION . COMPONENT programs)
+     install(FILES $<TARGET_PDB_FILE:clamconf> DESTINATION . OPTIONAL COMPONENT programs)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/clamd/CMakeLists.txt a/clamd/CMakeLists.txt
+--- a~/clamd/CMakeLists.txt	1970-01-01 00:00:00
++++ a/clamd/CMakeLists.txt	1970-01-01 00:00:00
+@@ -52,6 +52,9 @@ target_link_libraries( clamd
+     PRIVATE
+         ClamAV::libclamav
+         ClamAV::common )
++if(NEED_LIBSOCKET)
++    target_link_libraries( clamd PUBLIC socket )
++endif()
+ if(WIN32)
+     install(TARGETS clamd DESTINATION . COMPONENT programs)
+     install(FILES $<TARGET_PDB_FILE:clamd> DESTINATION . OPTIONAL COMPONENT programs)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/clamdscan/CMakeLists.txt a/clamdscan/CMakeLists.txt
+--- a~/clamdscan/CMakeLists.txt	1970-01-01 00:00:00
++++ a/clamdscan/CMakeLists.txt	1970-01-01 00:00:00
+@@ -41,6 +41,9 @@ target_link_libraries( clamdscan
+     PRIVATE
+         ClamAV::libclamav
+         ClamAV::common )
++if(NEED_LIBSOCKET)
++    target_link_libraries( clamdscan PUBLIC socket )
++endif()
+ if(WIN32)
+     install(TARGETS clamdscan DESTINATION . COMPONENT programs)
+     install(FILES $<TARGET_PDB_FILE:clamdscan> DESTINATION . OPTIONAL COMPONENT programs)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/clamdtop/CMakeLists.txt a/clamdtop/CMakeLists.txt
+--- a~/clamdtop/CMakeLists.txt	1970-01-01 00:00:00
++++ a/clamdtop/CMakeLists.txt	1970-01-01 00:00:00
+@@ -35,6 +35,9 @@ target_link_libraries( clamdtop
+         ClamAV::libclamav
+         ClamAV::common
+         Curses::curses )
++if(NEED_LIBSOCKET)
++    target_link_libraries( clamdtop PUBLIC socket )
++endif()
+ if(WIN32)
+     install(TARGETS clamdtop DESTINATION . COMPONENT programs)
+     install(FILES $<TARGET_PDB_FILE:clamdtop> DESTINATION . OPTIONAL COMPONENT programs)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/clamscan/CMakeLists.txt a/clamscan/CMakeLists.txt
+--- a~/clamscan/CMakeLists.txt	1970-01-01 00:00:00
++++ a/clamscan/CMakeLists.txt	1970-01-01 00:00:00
+@@ -40,6 +40,9 @@ target_link_libraries( clamscan
+     PRIVATE
+         ClamAV::libclamav
+         ClamAV::common )
++if(NEED_LIBSOCKET)
++    target_link_libraries( clamscan PUBLIC socket )
++endif()
+ if(WIN32)
+     install(TARGETS clamscan DESTINATION . COMPONENT programs)
+     install(FILES $<TARGET_PDB_FILE:clamscan> DESTINATION . OPTIONAL COMPONENT programs)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/clamsubmit/CMakeLists.txt a/clamsubmit/CMakeLists.txt
+--- a~/clamsubmit/CMakeLists.txt	1970-01-01 00:00:00
++++ a/clamsubmit/CMakeLists.txt	1970-01-01 00:00:00
+@@ -44,6 +44,9 @@ if(APPLE)
+             ${APPLE_CORE_FOUNDATION}
+             ${APPLE_SECURITY} )
+ endif()
++if(NEED_LIBSOCKET)
++    target_link_libraries( clamsubmit PUBLIC socket )
++endif()
+ if(WIN32)
+     install(TARGETS clamsubmit DESTINATION . COMPONENT programs)
+     install(FILES $<TARGET_PDB_FILE:clamsubmit> DESTINATION . OPTIONAL COMPONENT programs)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/freshclam/CMakeLists.txt a/freshclam/CMakeLists.txt
+--- a~/freshclam/CMakeLists.txt	1970-01-01 00:00:00
++++ a/freshclam/CMakeLists.txt	1970-01-01 00:00:00
+@@ -39,6 +39,9 @@ target_link_libraries(freshclam-bin
+         ClamAV::libfreshclam
+         ClamAV::libclamav
+         ClamAV::common )
++if(NEED_LIBSOCKET)
++    target_link_libraries( freshclam-bin PUBLIC socket )
++endif()
+ if(WIN32)
+     install(TARGETS freshclam-bin DESTINATION . COMPONENT programs)
+     install(FILES $<TARGET_PDB_FILE:freshclam-bin> DESTINATION . OPTIONAL COMPONENT programs)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sigtool/CMakeLists.txt a/sigtool/CMakeLists.txt
+--- a~/sigtool/CMakeLists.txt	1970-01-01 00:00:00
++++ a/sigtool/CMakeLists.txt	1970-01-01 00:00:00
+@@ -38,6 +38,9 @@ target_link_libraries( sigtool
+     PRIVATE
+         ClamAV::libclamav
+         ClamAV::common )
++if(NEED_LIBSOCKET)
++    target_link_libraries( sigtool PUBLIC socket )
++endif()
+ if(WIN32)
+     install(TARGETS sigtool DESTINATION . COMPONENT programs)
+     install(FILES $<TARGET_PDB_FILE:sigtool> DESTINATION . OPTIONAL COMPONENT programs)

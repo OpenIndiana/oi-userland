@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -21,8 +22,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-<transform file path=usr/lib(.*)/pkgconfig/(.+).pc$ -> set action.hash usr/lib/xorg%<\1>/pkgconfig/%<\2>.pc >
 
 file path=usr/include/X11/fonts/bdfint.h
 file path=usr/include/X11/fonts/bitmap.h
@@ -40,10 +39,10 @@ file path=usr/include/X11/fonts/ft.h
 file path=usr/include/X11/fonts/ftfuncs.h
 file path=usr/include/X11/fonts/pcf.h
 file path=usr/lib/$(MACH64)/pkgconfig/xfont.pc
+file path=usr/lib/pkgconfig/xfont.pc
 link path=usr/lib/xorg/$(MACH64)/libXfont.so target=libXfont.so.1.4.1
 link path=usr/lib/xorg/$(MACH64)/libXfont.so.1 target=libXfont.so.1.4.1
 file path=usr/lib/xorg/$(MACH64)/libXfont.so.1.4.1
 link path=usr/lib/xorg/libXfont.so target=libXfont.so.1.4.1
 link path=usr/lib/xorg/libXfont.so.1 target=libXfont.so.1.4.1
 file path=usr/lib/xorg/libXfont.so.1.4.1
-file path=usr/lib/pkgconfig/xfont.pc

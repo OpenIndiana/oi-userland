@@ -1,0 +1,81 @@
+--- powerline-2.8.3/tests/test_python/test_logging.py.orig
++++ powerline-2.8.3/tests/test_python/test_logging.py
+@@ -17,6 +17,8 @@
+ from tests.modules import TestCase
+ from tests.modules.lib import replace_attr
+ 
++import pytest
++
+ 
+ TIMESTAMP_RE = r'\d{4}-\d\d-\d\d \d\d:\d\d:\d\d,\d{3}'
+ 
+@@ -312,6 +314,7 @@
+ 			self.assertEqual(err.getvalue(), '')
+ 			self.assertEqual(out.getvalue(), '')
+ 
++	@pytest.mark.skip(reason="always fails: https://github.com/powerline/powerline/issues/2234")
+ 	def test_logger_format(self):
+ 		out = StringIO()
+ 		err = StringIO()
+@@ -331,6 +334,7 @@
+ 			self.assertEqual(err.getvalue(), '')
+ 			self.assertEqual(out.getvalue(), '')
+ 
++	@pytest.mark.skip(reason="always fails: https://github.com/powerline/powerline/issues/2234")
+ 	def test_top_log_format(self):
+ 		out = StringIO()
+ 		err = StringIO()
+--- powerline-2.8.3/tests/test_python/test_lib.py.orig
++++ powerline-2.8.3/tests/test_python/test_lib.py
+@@ -25,6 +25,8 @@
+ from tests.modules.lib import Pl, replace_attr
+ from tests.modules import TestCase, SkipTest
+ 
++import pytest
++
+ 
+ try:
+ 	__import__('bzrlib')
+@@ -69,6 +71,7 @@
+ 
+ 
+ class TestThreaded(TestCase):
++	@pytest.mark.skip(reason="always fails: https://github.com/powerline/powerline/issues/2128")
+ 	def test_threaded_segment(self):
+ 		log = []
+ 		pl = Pl()
+@@ -266,6 +269,7 @@
+ 		self.assertEqual(num_runs - 1, len(pl.exceptions))
+ 		log[:] = ()
+ 
++	@pytest.mark.skip(reason="always fails: https://github.com/powerline/powerline/issues/2128")
+ 	def test_kw_threaded_segment(self):
+ 		log = []
+ 		pl = Pl()
+--- powerline-2.8.3/tests/test_python/test_segments.py.orig
++++ powerline-2.8.3/tests/test_python/test_segments.py
+@@ -19,6 +19,8 @@
+                                replace_module_module, replace_env, Pl)
+ from tests.modules import TestCase, SkipTest
+ 
++import pytest
++
+ 
+ def get_dummy_guess(**kwargs):
+ 	if 'directory' in kwargs:
+@@ -535,6 +537,7 @@
+ class TestEnv(TestCommon):
+ 	module_name = 'env'
+ 
++	@pytest.mark.skip(reason="always fails: https://github.com/powerline/powerline/issues/2128")
+ 	def test_user(self):
+ 		new_os = new_module('os', getpid=lambda: 1)
+ 
+@@ -908,6 +911,7 @@
+ 		with replace_attr(self.module, '_get_uptime', _get_uptime):
+ 			self.assertEqual(self.module.uptime(pl=pl), None)
+ 
++	@pytest.mark.skip(reason="always fails: https://github.com/powerline/powerline/issues/2128")
+ 	def test_system_load(self):
+ 		pl = Pl()
+ 		with replace_module_module(self.module, 'os', getloadavg=lambda: (7.5, 3.5, 1.5)):

@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXevie
 COMPONENT_VERSION= 1.0.3
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=    x11/library/libxevie
 COMPONENT_SUMMARY= libXevie - X Event Interception Extension library
 COMPONENT_ARCHIVE_HASH= \

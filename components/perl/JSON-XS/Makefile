@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		JSON::XS
 HUMAN_VERSION =			4.03
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		JSON::XS - JSON serialising/deserialising, done correctly and fast
 COMPONENT_CPAN_AUTHOR =		MLEHMANN
 COMPONENT_ARCHIVE_HASH =	\

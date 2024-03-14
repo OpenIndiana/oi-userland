@@ -27,12 +27,33 @@
 # This file sets up the standard, default options and base requirements for
 # userland components.
 #
+.NOTPARALLEL:
 
 # Assume components use a configure script-style build by default.
 BUILD_STYLE ?= configure
 
 # Some build styles might want to set some defaults before prep.mk is included.
 -include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE))-defaults.mk
+
+# The SINGLE_PERL_VERSION variable is used to select building a component for
+# single or multiple Perl versions.  By default we build for single Perl
+# version only unless the component is a Perl module.  If the default value of
+# SINGLE_PERL_VERSION is not what is needed for a component it could be
+# overridden in component's Makefile.
+SINGLE_PERL_VERSION ?= yes
+ifeq ($(strip $(SINGLE_PERL_VERSION)),yes)
+PERL_VERSIONS = $(PERL_VERSION)
+endif
+
+# The SINGLE_PYTHON_VERSION variable is used to select building a component for
+# single or multiple Python versions.  By default we build for single Python
+# version only unless the component is a Python project.  If the default value
+# of SINGLE_PYTHON_VERSION is not what is needed for a component it could be
+# overridden in component's Makefile.
+SINGLE_PYTHON_VERSION ?= yes
+ifeq ($(strip $(SINGLE_PYTHON_VERSION)),yes)
+PYTHON_VERSIONS = $(PYTHON_VERSION)
+endif
 
 include $(WS_MAKE_RULES)/prep.mk
 
@@ -126,7 +147,7 @@ endif
 
 # For pkg-based build style, assume there are no build, install, or test steps;
 # just a package to be published.  However, 'gmake sample-manifest' requires
-# build dir.  Since sample-manifest generation depends on install target we
+# proto dir.  Since sample-manifest generation depends on install target we
 # will abuse it to get the required dir created.
 ifeq ($(strip $(BUILD_STYLE)),pkg)
 BUILD_TARGET=
@@ -138,8 +159,11 @@ test system-test:	$(NO_TESTS)
 
 $(BUILD_DIR)/.installed:
 	$(RM) -r $(BUILD_DIR)
-	$(MKDIR) $(BUILD_DIR)
+	$(MKDIR) $(PROTO_DIR)
 	$(TOUCH) $@
+
+clean::
+	$(RM) -r $(BUILD_DIR)
 endif
 
 # If TEST_TARGET is NO_TESTS, assume no system tests by default.
@@ -200,3 +224,15 @@ COMPONENT_PRE_TEST_ACTION += $(COMPONENT_PRE_TEST_ACTION.$(BITS))
 COMPONENT_PRE_TEST_ACTION += $(COMPONENT_PRE_TEST_ACTION.$(MACH))
 COMPONENT_POST_TEST_ACTION += $(COMPONENT_POST_TEST_ACTION.$(BITS))
 COMPONENT_POST_TEST_ACTION += $(COMPONENT_POST_TEST_ACTION.$(MACH))
+
+# If component asked for non-default gcc version we need to make sure it is
+# installed
+ifneq ($(strip $(GCC_VERSION)),$(GCC_DEFAULT))
+USERLAND_REQUIRED_PACKAGES += developer/gcc-$(GCC_VERSION)
+endif
+
+# If component asked for non-default clang version we need to make sure it is
+# installed
+ifneq ($(strip $(CLANG_VERSION)),$(CLANG_DEFAULT))
+USERLAND_REQUIRED_PACKAGES += developer/clang-$(CLANG_VERSION)
+endif

@@ -11,29 +11,34 @@
 #
 # Copyright 2017 Dariusz Sendkowski
 #
+
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=          eigen
-COMPONENT_VERSION=       3.3.7
-COMPONENT_FMRI=          library/eigen3
-COMPONENT_SUMMARY=       A C++ template library for linear algebra.
-COMPONENT_PROJECT_URL=   http://eigen.tuxfamily.org/index.php 
+COMPONENT_NAME=         eigen
+COMPONENT_VERSION=      3.4.0
+COMPONENT_SUMMARY=      A C++ template library for linear algebra.
+COMPONENT_PROJECT_URL=  https://eigen.tuxfamily.org/index.php
+COMPONENT_SRC_BASE=     $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_COMMIT_ID=	3147391d946bb4b6c68edd901f2add6ac1f31f8c
+COMPONENT_SRC=			$(COMPONENT_SRC_BASE)-$(COMPONENT_COMMIT_ID)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC_BASE).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:cf6f07443a4bdb382a0ad3a3307faf23ef7e65761ff42ac9b271eb78b3e6e0c8
+COMPONENT_ARCHIVE_URL=  https://gitlab.com/libeigen/$(COMPONENT_NAME)/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_VERSION).tar.bz2
+COMPONENT_FMRI=         library/eigen3
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_NAME)-323c052e1731
-COMPONENT_ARCHIVE=       $(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=  sha256:7e84ef87a07702b54ab3306e77cea474f56a40afa1c0ab245bb11725d006d0da
-COMPONENT_ARCHIVE_URL=   http://bitbucket.org/$(COMPONENT_NAME)/$(COMPONENT_NAME)/get/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=       MPL2
-COMPONENT_LICENSE_FILE=  COPYING.MPL2
+COMPONENT_LICENSE=      MPL2
+COMPONENT_LICENSE_FILE= COPYING.MPL2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
+CXXFLAGS += -DEIGEN_MPL2_ONLY
 
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 
-build:		$(BUILD_32)
+unexport SHELLOPTS
 
-install:	$(INSTALL_32)
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/[0-9]*\.[0-9]* sec//"'
 
-test:		$(NO_TEST)
+# Auto-generated dependencies

@@ -1,0 +1,24 @@
+warning: compare pointer with integer
+
+diff --git a/src/modules/module-detect.c b/src/modules/module-detect.c
+index d6c1e8d..7017e64 100644
+--- a/src/modules/module-detect.c
++++ b/src/modules/module-detect.c
+@@ -58,7 +58,7 @@ static const char* const valid_modargs[] = {
+     NULL
+ };
+ 
+-#ifdef HAVE_OSSV4
++#if defined(HAVE_OSSV4) && defined(HAVE_OSS_OUTPUT)
+ static int get_device_number(const char *dev) {
+     const char *p;
+     char *rp = NULL;
+@@ -88,7 +88,7 @@ static int get_device_number(const char *dev) {
+     }
+     p += n;
+ 
+-    if (p == '/') {
++    if (*p == '/') {
+         r = 0;
+         goto finish;
+     }

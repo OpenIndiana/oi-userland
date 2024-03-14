@@ -14,28 +14,29 @@
 # Copyright 2019 Tim Mooney
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
-USE_COMMON_TEST_MASTER= no
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
-COMPONENT_VERSION=$(COMPONENT_MJR_VERSION).38
+COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).48
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e4a33c8430a5042fba8439b595348e71870f0d95fbf885ff553f9020c1bed750
-COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/gegl/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://www.gegl.org/
-COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_ARCHIVE_HASH= sha256:418c26d94be8805d7d98f6de0c6825ca26bd74fcacb6c188da47533d9ee28247
+COMPONENT_ARCHIVE_URL= https://download.gimp.org/pub/gegl/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://www.gegl.org/
 COMPONENT_FMRI=	image/library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE= GPLv3, LGPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
+# strptime needs this:
+CFLAGS += -D_XOPEN_SOURCE_EXTENDED=1
 CFLAGS += $(CFLAGS.$(BITS))
 
 # build with the distribution default libjpeg
@@ -44,7 +45,9 @@ CXXFLAGS	+=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS		+=    $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
-CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
+CONFIGURE_OPTIONS+= -Ddocs=false
+CONFIGURE_OPTIONS+= -Dgi-docgen=disabled
+CONFIGURE_OPTIONS+= -Dvapigen=disabled
 CONFIGURE_OPTIONS+= -Dworkshop=true
 # libav is from encumbered
 CONFIGURE_OPTIONS+= -Dlibav=disabled
@@ -53,20 +56,21 @@ CONFIGURE_OPTIONS+= -Dlibav=disabled
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# Without this we get issues with gobject-introspection
-#LD_B_DIRECT=
-#LD_Z_IGNORE=
-
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_64)/gegl
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += \
+	' -e "s/[0-9]*\.[0-9]*s//" ' \
+	' -e "/OK/p" ' \
+	' -e "/SKIP/p" ' \
+	' -e "/FAIL/p" ' \
+	' -e "/Summary/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += image/library/babl
-#REQUIRED_PACKAGES += image/library/gegl
 REQUIRED_PACKAGES += image/library/lensfun
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
@@ -77,6 +81,7 @@ REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/sdl2

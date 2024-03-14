@@ -20,20 +20,17 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2023, Friedrich Kink
 #
 
 <transform file path=usr/share/doc/bind/html/(.+)$ -> \
 	set action.hash doc/arm/%<\1> >
 
-set name=pkg.fmri \
-    value=pkg:/service/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.human-version value=$(COMPONENT_VERSION)
-set name=pkg.description \
-    value="BIND is open source software that implements the Domain Name System (DNS) protocols for the Internet.  This package contains the DNS server 'named' and tools used to setup and validate configuration."
-set name=pkg.summary \
-    value="BIND DNS name server and configuration tools."
-set name=info.classification \
-    value="org.opensolaris.category.2008:System/Services"
+set name=pkg.fmri value=pkg:/service/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -50,51 +47,67 @@ file Solaris/dns-server.sh path=lib/svc/method/dns-server mode=0555
 file Solaris/migration.txt path=usr/share/doc/bind/migration.txt
 
 # Libs
-file path=usr/lib/dns/$(MACH64)/named/filter-aaaa.so
+file path=usr/lib/dns/$(MACH64)/bind/filter-aaaa.so
+file path=usr/lib/dns/$(MACH64)/bind/filter-a.so
 
 # Tools
+file path=usr/bin/dnssec-cds
+file path=usr/bin/dnssec-dsfromkey
+file path=usr/bin/dnssec-importkey
+file path=usr/bin/dnssec-keyfromlabel
+file path=usr/bin/dnssec-keygen
+file path=usr/bin/dnssec-revoke
+file path=usr/bin/dnssec-settime
+file path=usr/bin/dnssec-signzone
+file path=usr/bin/dnssec-verify
+file path=usr/bin/named-checkconf
+file path=usr/bin/named-checkzone
+hardlink path=usr/bin/named-compilezone target=named-checkzone
+file path=usr/bin/named-journalprint
+file path=usr/bin/named-nzd2nzf
 file path=usr/bin/named-rrchecker
+file path=usr/bin/nsec3hash
 file path=usr/sbin/ddns-confgen
-link path=usr/sbin/tsig-keygen target=ddns-confgen
-file path=usr/sbin/dnssec-cds
-file path=usr/sbin/dnssec-checkds
-file path=usr/sbin/dnssec-coverage
-file path=usr/sbin/dnssec-dsfromkey
-file path=usr/sbin/dnssec-importkey
-file path=usr/sbin/dnssec-keyfromlabel
-file path=usr/sbin/dnssec-keygen
-file path=usr/sbin/dnssec-revoke
-file path=usr/sbin/dnssec-settime
-file path=usr/sbin/dnssec-signzone
-file path=usr/sbin/dnssec-verify
+hardlink path=usr/sbin/tsig-keygen target=ddns-confgen
 file path=usr/sbin/named
-file path=usr/sbin/named-checkconf
-file path=usr/sbin/named-checkzone
-link path=usr/sbin/named-compilezone target=named-checkzone
-file path=usr/sbin/named-journalprint
-file path=usr/sbin/named-nzd2nzf
-link path=usr/sbin/named-rrchecker target=../bin/named-rrchecker
+
+# Compatibiliy symlinks
+link path=usr/sbin/dnssec-cds target=../bin/dnssec-cds
+link path=usr/sbin/dnssec-dsfromkey target=../bin/dnssec-dsfromkey
+link path=usr/sbin/dnssec-importkey target=../bin/dnssec-importkey
+link path=usr/sbin/dnssec-keyfromlabel target=../bin/dnssec-keyfromlabel
+link path=usr/sbin/dnssec-keygen target=../bin/dnssec-keygen
+link path=usr/sbin/dnssec-revoke target=../bin/dnssec-revoke
+link path=usr/sbin/dnssec-settime target=../bin/dnssec-settime
+link path=usr/sbin/dnssec-signzone target=../bin/dnssec-signzone
+link path=usr/sbin/dnssec-verify target=../bin/dnssec-verify
+link path=usr/sbin/named-checkconf target=../bin/named-checkconf
+link path=usr/sbin/named-checkzone target=../bin/named-checkzone
+link path=usr/sbin/named-compilezone target=../bin/named-checkzone
+link path=usr/sbin/named-journalprint target=../bin/named-journalprint
+link path=usr/sbin/named-nzd2nzf target=../bin/named-nzd2nzf
 
 # Man
+file path=usr/share/man/man1/dnssec-cds.1
+file path=usr/share/man/man1/dnssec-dsfromkey.1
+file path=usr/share/man/man1/dnssec-importkey.1
+file path=usr/share/man/man1/dnssec-keyfromlabel.1
+file path=usr/share/man/man1/dnssec-keygen.1
+file path=usr/share/man/man1/dnssec-revoke.1
+file path=usr/share/man/man1/dnssec-settime.1
+file path=usr/share/man/man1/dnssec-signzone.1
+file path=usr/share/man/man1/dnssec-verify.1
+file path=usr/share/man/man1/named-checkconf.1
+file path=usr/share/man/man1/named-checkzone.1
+file path=usr/share/man/man1/named-compilezone.1
+file path=usr/share/man/man1/named-journalprint.1
+file path=usr/share/man/man1/named-nzd2nzf.1
 file path=usr/share/man/man1/named-rrchecker.1
+file path=usr/share/man/man1/nsec3hash.1
 file path=usr/share/man/man5/named.conf.5
 file path=usr/share/man/man8/ddns-confgen.8
-file path=usr/share/man/man8/dnssec-cds.8
-file path=usr/share/man/man8/dnssec-checkds.8
-file path=usr/share/man/man8/dnssec-coverage.8
-file path=usr/share/man/man8/dnssec-dsfromkey.8
-file path=usr/share/man/man8/dnssec-importkey.8
-file path=usr/share/man/man8/dnssec-keyfromlabel.8
-file path=usr/share/man/man8/dnssec-keygen.8
-file path=usr/share/man/man8/dnssec-revoke.8
-file path=usr/share/man/man8/dnssec-settime.8
-file path=usr/share/man/man8/dnssec-signzone.8
-file path=usr/share/man/man8/dnssec-verify.8
+file path=usr/share/man/man8/filter-a.8
 file path=usr/share/man/man8/filter-aaaa.8
-file path=usr/share/man/man8/named-checkconf.8
-file path=usr/share/man/man8/named-checkzone.8
-file path=usr/share/man/man8/named-compilezone.8
-file path=usr/share/man/man8/named-journalprint.8
 file path=usr/share/man/man8/named.8
 file path=usr/share/man/man8/tsig-keygen.8
 

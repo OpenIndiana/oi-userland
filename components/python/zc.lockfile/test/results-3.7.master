@@ -1,0 +1,22 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m zope.testrunner --test-path=src -vv
+Running tests at level 1
+Running zope.testrunner.layer.UnitTests tests:
+  Set up zope.testrunner.layer.UnitTests.
+  Running:
+ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/zc/lockfile/README.txt
+ hostname_in_lockfile (zc.lockfile.tests)
+ many_threads_read_and_write (zc.lockfile.tests)
+ pid_in_lockfile (zc.lockfile.tests)
+ test_log_formatting (zc.lockfile.tests.LockFileLogEntryTestCase)
+ test_simple_lock (zc.lockfile.tests.LockFileLogEntryTestCase)
+ test_unlock_and_lock_while_multiprocessing_process_running (zc.lockfile.tests.LockFileLogEntryTestCase)
+The following test left new threads behind:
+test_unlock_and_lock_while_multiprocessing_process_running (zc.lockfile.tests.LockFileLogEntryTestCase)
+New thread(s): [<Thread(QueueFeederThread, started daemon 52)>]
+  Ran 7 tests with 0 failures, 0 errors and 0 skipped.
+Tearing down left over layers:
+  Tear down zope.testrunner.layer.UnitTests.
+  py$(PYV): OK
+  congratulations :)

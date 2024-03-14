@@ -21,36 +21,38 @@
 
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2023, Andreas Wacknitz
 #
-BUILD_BITS= 64_and_32
+
+BUILD_BITS= 64
+USE_PARALLEL_BUILD= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
-COMPONENT_VERSION=		6.9.12
-COMPONENT_SUBVERSION=		38
+COMPONENT_VERSION=		7.1.1
+COMPONENT_SUBVERSION=		29
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
-COMPONENT_REVISION=		2
+COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
+COMPONENT_PROJECT_URL=	https://imagemagick.org
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:27bd25f945efdd7e38f6f9845a7c0a391fdb732f652dda140b743769c5f106e8
+COMPONENT_ARCHIVE_URL=	https://github.com/ImageMagick/ImageMagick/archive/$(HUMAN_VERSION).tar.gz
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
-COMPONENT_PROJECT_URL=	https://legacy.imagemagick.org
-COMPONENT_SRC=			$(COMPONENT_NAME)6-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
-COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:209d2c60e19372da6da308004826f8e5004489bc281b6d9410c108655915634c
-COMPONENT_ARCHIVE_URL=	https://github.com/ImageMagick/ImageMagick6/archive/$(HUMAN_VERSION).tar.gz
 COMPONENT_LICENSE= Apache 2.0 license
 COMPONENT_LICENSE_FILE= LICENSE
 
-CONFIGURE_FIX_LIBTOOL_RPATH= no
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
+COMPONENT_PREP_ACTION = ( cd $(@D) && libtoolize -f && autoreconf -fi )
 
 # To get the Perl modules built it is necessary to copy the PerlMagick directory
 # to the build directory
 #
-COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CP) -R $(SOURCE_DIR)/PerlMagick $(@D) )
 
 # Don't use rpath, or relink!
 COMPONENT_POST_CONFIGURE_ACTION = \
@@ -63,59 +65,31 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 LIBS += -lsocket -lnsl
 CONFIGURE_ENV += LIBS="$(LIBS)"
 
-# Prevent older versions of libMagick{Core,Wand}-6.Q16.so from the build
-# machine from being found ahead of new versions from the proto area.
-LD_OPTIONS_SO=		-L. -L../../magick/.libs
-COMPONENT_BUILD_ENV +=	LD_OPTIONS_SO="$(LD_OPTIONS_SO)"
-
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS+= --with-modules
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --without-gvc
-CONFIGURE_OPTIONS+= --disable-openmp
+CONFIGURE_OPTIONS += --with-modules
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
 # configuration file 'type-ghostscript.xml' is being used.
-CONFIGURE_OPTIONS+= --with-fontconfig=no
+#CONFIGURE_OPTIONS+= --with-fontconfig=no
 # Configure option 'with-gs-font-dir' is required because some build systems might 
 # not have ghostscript fonts installed.
-CONFIGURE_OPTIONS+= --with-gs-font-dir="/usr/share/ghostscript/fonts"
-CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
-CONFIGURE_OPTIONS.32 += --without-perl
-CONFIGURE_OPTIONS.64 += --with-perl=$(PERL)
-CONFIGURE_OPTIONS.64 += --with-perl-options="INSTALLDIRS=vendor"
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
+CONFIGURE_OPTIONS += --with-gs-font-dir="/usr/share/ghostscript/fonts"
+CONFIGURE_OPTIONS += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
+CONFIGURE_OPTIONS += --with-perl=$(PERL)
+CONFIGURE_OPTIONS += --with-perl-options="INSTALLDIRS=vendor"
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
-# common targets
-#
-# Doing it twice because /usr/lib is deep...
-# Remove build machine runpath from libMagick++-6.Q16.so.1.0.0
-#install:	$(INSTALL_32_and_64)
-
-# Needed for "gmake test" to work successfully.  If SHELLOPTS is exported (as
-# it is by the Userland Makefiles), then all shell options get exported to
-# child invocations of bash, which results in test failures due to nounset and
-# xtrace being set unexpectedly, and errors such as "$1: unbound variable" and
-# diffs failing due to script tracing in output files.
-unexport SHELLOPTS
+# As of version 7.1.0-34, a "Linux-compatible sendfile()" is detected;
+# override thiis.
+CONFIGURE_OPTIONS += ac_cv_have_linux_sendfile=no
 
 # Tests hang waiting for input unless stdin is redirected.
 COMPONENT_TEST_TARGETS = check < /dev/null
-
-# Master test transforms
-COMPONENT_TEST_TRANSFORMS += \
-       '-n '\
-       '-e "/TOTAL/p" ' \
-       '-e "/SKIP/p" ' \
-       '-e "/PASS/p" ' \
-       '-e "/FAIL/p" ' \
-       '-e "/ERROR/p" ' 
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # PKGVERS is needed for manifest processing
 PKG_MACROS += PERLVER=$(PERL_VERSION)
@@ -126,10 +100,11 @@ REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/djvulibre
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/libtiff
@@ -141,10 +116,12 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libzip
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

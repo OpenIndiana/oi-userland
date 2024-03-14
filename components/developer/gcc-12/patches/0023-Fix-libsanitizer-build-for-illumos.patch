@@ -1,0 +1,38 @@
+From 39552e917df890c6745faebca38a672c623aa710 Mon Sep 17 00:00:00 2001
+From: Aurelien Larcher <aurelien.larcher@gmail.com>
+Date: Tue, 12 Nov 2019 15:01:57 +0000
+Subject: Fix libsanitizer build for illumos
+
+---
+ .../sanitizer_platform_limits_solaris.h               | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h b/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h
+index cbab577bcf2..826a672b250 100644
+--- a/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h
++++ b/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h
+@@ -19,6 +19,9 @@
+ #include "sanitizer_internal_defs.h"
+ #include "sanitizer_platform.h"
+ 
++struct stat;
++struct dirent;
++
+ namespace __sanitizer {
+ extern unsigned struct_utsname_sz;
+ extern unsigned struct_stat_sz;
+@@ -337,6 +340,14 @@ struct __sanitizer_glob_t {
+   uptr gl_offs;
+   char **gl_pathp;
+   int gl_pathn;
++  int gl_matchc;
++  int gl_flags;
++  struct stat **gl_statv;
++  void (*gl_closedir)(void *);
++  struct dirent *(*gl_readdir)(void *);
++  void *(*gl_opendir)(const char *);
++  int (*gl_lstat)(const char *, struct stat *);
++  int (*gl_stat)(const char *, struct stat *);
+ };
+ 
+ extern int glob_nomatch;

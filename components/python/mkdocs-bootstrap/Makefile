@@ -19,16 +19,20 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs-bootstrap
-COMPONENT_VERSION =		1.1
+HUMAN_VERSION =			1.1.1
 COMPONENT_SUMMARY =		mkdocs-bootstrap - Bootstrap theme for MkDocs
 COMPONENT_PROJECT_URL =		http://mkdocs.github.io/mkdocs-bootstrap/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/ec/b2/2a344013516ab6d50e356cf56430272a1ca3aca304063044a8712b29683c/mkdocs-bootstrap-1.1.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6ed37250a1dd0c738c61643b9144791db27ce2a0eb3a8209d3c2f93380981603
+	sha256:c8ec5eb3a1dbd54f8285414a710bd023edb501946a48d9f37de8c835b7f44158
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_TARGET = $(NO_TESTS)
+TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/mkdocs
+PYTHON_REQUIRED_PACKAGES += runtime/python

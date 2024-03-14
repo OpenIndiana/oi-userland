@@ -14,13 +14,11 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS= 64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rhythmbox
 COMPONENT_VERSION= 3.4.4
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Rhythmbox Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -43,14 +41,14 @@ CXXFLAGS+= -DMOZ_DEFAULT_TOOLKIT=\"cairo-gtk2\"
 CXXFLAGS+= -std=gnu++0x
 CFLAGS += -I/usr/include/check
 
-COMPONENT_PREP_ACTION =	(cd $(@D) && autoreconf -f)
+COMPONENT_PREP_ACTION =	(cd $(@D) && PATH="$(PATH)" NOCONFIGURE=1 ./autogen.sh)
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
+CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS+= --disable-browser-plugin
 CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_ENV    += PYTHON=$(PYTHON.3.5.$(BITS))
+CONFIGURE_ENV    += PYTHON=$(PYTHON)
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -83,4 +81,3 @@ REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

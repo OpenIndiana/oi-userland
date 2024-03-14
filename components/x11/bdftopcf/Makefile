@@ -13,19 +13,22 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-X11_CATEGORY=APP
+X11_CATEGORY=UTIL
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    bdftopcf
-COMPONENT_VERSION= 1.1
+COMPONENT_VERSION= 1.1.1
 COMPONENT_SUMMARY= bdftopcf font conversion utility
 COMPONENT_FMRI=    x11/bdftopcf
-COMPONENT_ARCHIVE_HASH= \
-  sha256:4b4df05fc53f1e98993638d6f7e178d95b31745c4568cee407e167491fd311a2
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:11c953d53c0f3ed349d0198dfb0a40000b5121df7eef09f2615a262892fed908
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += system/library
+# Manually added build dependencies
 REQUIRED_PACKAGES += x11/library/libxfont
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library

@@ -1,0 +1,48 @@
+py$(PYV) create: $(@D)/.tox/py$(PYV)
+py$(PYV) run-test: commands[0] | python -m pytest --junitxml=$(@D)/.tox/py$(PYV)/log/junit-py$(PYV).xml
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D), configfile: tox.ini
+collecting ... collected 18 items
+
+::project PASSED
+pytest_flake8.py::flake-8::FLAKE8 PASSED
+setup.py::flake-8::FLAKE8 PASSED
+test_flake8.py::TestIgnores::test_default_flake8_ignores PASSED
+test_flake8.py::TestIgnores::test_ignores PASSED
+test_flake8.py::TestIgnores::test_ignores_all PASSED
+test_flake8.py::TestIgnores::test_mtime_caching PASSED
+test_flake8.py::TestIgnores::test_w293w292 PASSED
+test_flake8.py::flake-8::FLAKE8 PASSED
+test_flake8.py::test_extensions PASSED
+test_flake8.py::test_junit_classname PASSED
+test_flake8.py::test_keyword_match PASSED
+test_flake8.py::test_ok_verbose PASSED
+test_flake8.py::test_run_on_init_file PASSED
+test_flake8.py::test_strict XFAIL (flake8 is not properly registered...)
+test_flake8.py::test_unicode_error PASSED
+test_flake8.py::test_version PASSED
+
+=============================== warnings summary ===============================
+test_flake8.py: 12 warnings
+  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:136: PytestDeprecationWarning: The hookimpl pytest_load_initial_conftests uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(tryfirst=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.tryfirst
+
+test_flake8.py: 12 warnings
+  $(PYTHON_DIR)/vendor-packages/pytest_travis_fold.py:186: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(trylast=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.trylast  # to let 'terminalreporter' be registered first
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: $(@D)/.tox/py$(PYV)/log/junit-py$(PYV).xml -
+======== 16 passed, 1 xfailed, 24 warnings ========
+___________________________________ summary ____________________________________
+  py$(PYV): commands succeeded
+  congratulations :)

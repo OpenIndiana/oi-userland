@@ -12,13 +12,12 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=64
 BUILD_STYLE=meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         venom
 COMPONENT_VERSION=      0.5.5
-#COMPONENT_REVISION=     1
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://github.com/naxuroqa/venom
 COMPONENT_SUMMARY=      A modern Tox client for the desktop
 COMPONENT_FMRI=         communication/im/venom
@@ -29,7 +28,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	https://github.com/naxuroqa/Venom/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=       Applications/Internet
 COMPONENT_LICENSE=      GPLv3
-COMPONENT_LICENSE_FILE= venom.license
+COMPONENT_LICENSE_FILE= COPYING
 
 PATH = $(PATH.gnu)
 

@@ -23,46 +23,43 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         aalib
 COMPONENT_VERSION=      1.4.0
 HUMAN_VERSION=		1.4rc5
 IPS_COMPONENT_VERSION =	1.4.5
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://aa-project.sourceforge.net/aalib/
+COMPONENT_PROJECT_URL=  https://aa-project.sourceforge.net/aalib/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:fbddda9230cf6ee2a4f5706b4b11e2190ae45f5eda1f0409dc4f99b35e0a70ee
-COMPONENT_ARCHIVE_URL=  http://downloads.sourceforge.net/aa-project/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/aalib
+COMPONENT_ARCHIVE_HASH= sha256:fbddda9230cf6ee2a4f5706b4b11e2190ae45f5eda1f0409dc4f99b35e0a70ee
+COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/aa-project/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
+PKG_PROTO_DIRS += $(COMPONENT_SRC)
 
 COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -fi)
 
 # We need to reset configure options here because aalib is confused with
 # CC and CFLAGS definitions as configure parameters.
-CONFIGURE_OPTIONS	= --prefix=/usr
-CONFIGURE_OPTIONS	+= --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS	+= --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS	+= --bindir=$(CONFIGURE_BINDIR.$(BITS))
-CONFIGURE_OPTIONS	+= --libdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS	+= --enable-shared
-CONFIGURE_OPTIONS	+= --disable-static
-CONFIGURE_OPTIONS	+= --x-includes=/usr/include
-CONFIGURE_OPTIONS	+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
+CONFIGURE_OPTIONS += --prefix=/usr
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
+CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --x-includes=/usr/include
+CONFIGURE_OPTIONS += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE= $(ASLR_ENABLE)
 
 # actually there is a test we put in the demos,
 # but it's 32-bit only and not a target

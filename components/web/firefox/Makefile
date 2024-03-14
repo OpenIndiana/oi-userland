@@ -18,24 +18,34 @@
 # Copyright 2021 Carsten Grzemba
 #
 
-BUILD_BITS = 64
+USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
+ENV = /usr/bin/env
 
-ESR = esr
+# ESR should be set to esr for esr build, or an empty string for other builds
+ESR = 
+
+# CANDIDATE_BUILD is the build number found in the candidates directory.
+# CANDIDATE_BETA is the beta version found in the candidates directory.
+# CANDIDATE_NIGHTLY is the nightly release hosted on github
+# Do not define any for final release build.
+# CANDIDATE_BUILD=1
+# CANDIDATE_BETA=9
+# CANDIDATE_NIGHTLY=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	102.3.0
+COMPONENT_VERSION =	123.0.1
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
+
 ifdef CANDIDATE_BETA
 COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR).source.tar.xz
 else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
+# CANDIDATE_BETA
 endif
-COMPONENT_ARCHIVE_HASH= \
-	sha256:308e23b6dcf964e342cf95fd0c8a386127371b620a489ae26e537d728341b55a
+
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -45,27 +55,56 @@ MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPON
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR)-candidates/build$(CANDIDATE_BUILD)
   endif
 endif
+
+ifdef CANDIDATE_NIGHTLY
+COMPONENT_GIT_HASH=     c130c69b7b863d5e28ab9524b65c27c7a9507c48
+COMPONENT_SRC=          gecko-dev-$(COMPONENT_GIT_HASH)
+COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
+COMPONENT_ARCHIVE_URL=  https://github.com/mozilla/gecko-dev/archive/$(COMPONENT_ARCHIVE)
+else
+COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
+endif
+
+COMPONENT_ARCHIVE_HASH= sha256:d5dcb955b65e0f164a90cac0760724486e36e896221b98f244801dfd045d741c
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.61.0
+RUST_VERSION = 1.75.0
+
+# TODO: use remote hashfile to verify
+ALLOW_UNVERIFIED_DOWNLOADS=yes
+export ALLOW_UNVERIFIED_DOWNLOADS
 
 LANG_LIST= ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA en-GB \
- en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb \
+ en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb \
  hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN \
- pl pt-BR pt-PT rm ro ru si sk sl son sq sr sv-SE ta te th tl tr trs uk ur uz vi xh zh-CN zh-TW
+ pl pt-BR pt-PT rm ro ru sat sc sco si sk sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
 
-ifdef CANDIDATE_BETA
+ifdef CANDIDATE_NIGHTLY
+FIREFOX_UPDATE_CHANNEL=nightly
+else
+  ifdef CANDIDATE_BETA
 LANG_FILES_LOCATION= \
 	https://ftp.mozilla.org/pub/firefox/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+FIREFOX_UPDATE_CHANNEL=beta
 else
-  ifdef CANDIDATE_BUILD
+    ifdef CANDIDATE_BUILD
 LANG_FILES_LOCATION= \
 	https://ftp.mozilla.org/pub/firefox/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
-  else
+FIREFOX_UPDATE_CHANNEL=default
+    else
 LANG_FILES_LOCATION= \
 	https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
+FIREFOX_UPDATE_CHANNEL=default
+    endif
+  endif
+endif
+
+# handle esr case to set FIREFOX_UPDATE_CHANNEL
+ifdef ESR
+  ifeq ($(ESR), esr)
+    FIREFOX_UPDATE_CHANNEL=esr
   endif
 endif
 
@@ -133,12 +172,14 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-pulseaudio" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-update-channel=esr" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-update-channel=$(FIREFOX_UPDATE_CHANNEL)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --target=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --without-wasm-sandboxed-libraries" >> $(MOZCONFIG) ; \
+# 	echo "ac_add_options --enable-bootstrap" >> $(MOZCONFIG) ; \
+#	echo "ac_add_options --with-wasi-sysroot=" >> $(MOZCONFIG) ; \
 
 LD_SECEXT_OPTIONS += $(SSBD_ENABLE)
 
@@ -154,12 +195,8 @@ LD_B_DIRECT=
 # hope to get args data in stacks of core dumps
 LD_OPTIONS += -msave-args
 
-# because we touched old-configure.in and js/src/old-configure.in
+# use a local installed rust since the system version may not be compatible
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
-	cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
-	cp configure.in configure; \
-	cd js/src; \
-	cp configure.in configure; \
 	export RUSTUP_HOME=$(RUSTUP_HOME); \
 	export CARGO_HOME=$(CARGO_HOME); \
 	export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
@@ -168,7 +205,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.24.2 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.26.0 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
@@ -183,6 +220,8 @@ CONFIGURE_ENV =	$(ENV)
 COMPONENT_BUILD_ENV =	$(ENV)
 COMPONENT_INSTALL_ENV += HOME=/tmp
 
+# language support is more complex on nightly release, support on beta and later
+ifndef CANDIDATE_NIGHTLY
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
 CLEAN_PATHS += $(LANG_FILES)
@@ -191,6 +230,7 @@ $(LANG_FILES):
 	$(FETCH) --file $@  --url $(LANG_FILES_LOCATION)/$@
 
 download prep:: $(LANG_FILES)
+endif
 
 COMPONENT_POST_BUILD_ACTION = \
 	(cd $(@D)/browser/installer ; $(ENV) $(COMPONENT_BUILD_ENV) \
@@ -200,15 +240,9 @@ COMPONENT_POST_INSTALL_ACTION  = \
     for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/ -name "*.so"`; do \
         /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
-    done ;
-
-SIGNED_LIST = libsoftokn3.so libfreebl3.so
-
-COMPONENT_POST_INSTALL_ACTION += \
-        slist='$(SIGNED_LIST)' ; for f in $$slist ; do \
-            mcs -d $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/$$f ; \
-            LD_LIBRARY_PATH=$(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox $(BUILD_DIR_64)/dist/bin/shlibsign -v -i $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/$$f ; \
-        done ;
+    done ; \
+    unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/toolkit/content/global/license.html \
+    | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
@@ -219,15 +253,21 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/^FAILURES:/,/Failed:/p" ' \
 	'-e "/.*/d" '
 
+# the license file is dynamically build, thus we need to remove it:
+clean::
+	$(RM) $(COMPONENT_LICENSE_FILE)
+
 # Build dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+PYTHON_REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += system/header/header-audio
+REQUIRED_PACKAGES += developer/lang/rustc
 REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += runtime/python-39
-REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/http-parser
+REQUIRED_PACKAGES += web/browser/lynx
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -245,7 +285,6 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb

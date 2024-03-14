@@ -19,7 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         brasero
 COMPONENT_VERSION=      3.12.3
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=  https://projects.gnome.org/brasero/
 COMPONENT_SUMMARY=      Gnome CD/DVD burner
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -78,3 +78,4 @@ REQUIRED_PACKAGES += library/media-player/totem-pl-parser
 REQUIRED_PACKAGES += media/cdrtools
 REQUIRED_PACKAGES += media/dvd+rw-tools
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

@@ -1,0 +1,63 @@
+We need to rename the regular file constant in order to prevent a gcc compiler error:
+
+    In file included from /export2/home/andreas/oi-userland/components/shell/fish/fish-3.6.0/src/env_dispatch.cpp:15:
+    oi-userland/components/shell/fish/fish-3.6.0/src/wutil.h:162:5: error: expected identifier before 'register'
+      162 |     reg,       // regular file
+          |     ^~~
+
+--- fish-3.6.0/src/wutil.h.orig	2023-01-07 15:12:25.000000000 +0000
++++ fish-3.6.0/src/wutil.h	2023-01-08 10:47:45.570118762 +0000
+@@ -159,7 +159,7 @@
+     chr,       // character device
+     dir,       // directory
+     blk,       // block device
+-    reg,       // regular file
++    regr,       // regular file
+     lnk,       // symlink
+     sock,      // socket
+     whiteout,  // whiteout (from BSD)
+--- fish-3.6.0/src/wutil.cpp.orig	2023-01-08 10:47:17.199812493 +0000
++++ fish-3.6.0/src/wutil.cpp	2023-01-08 10:48:38.986129968 +0000
+@@ -78,7 +78,7 @@
+         case DT_BLK:
+             return dir_entry_type_t::blk;
+         case DT_REG:
+-            return dir_entry_type_t::reg;
++            return dir_entry_type_t::regr;
+         case DT_LNK:
+             return dir_entry_type_t::lnk;
+         case DT_SOCK:
+@@ -106,7 +106,7 @@
+         case S_IFBLK:
+             return dir_entry_type_t::blk;
+         case S_IFREG:
+-            return dir_entry_type_t::reg;
++            return dir_entry_type_t::regr;
+         case S_IFLNK:
+             return dir_entry_type_t::lnk;
+         case S_IFSOCK:
+--- fish-3.6.0/src/fish_tests.cpp.orig	2023-01-07 15:12:25.000000000 +0000
++++ fish-3.6.0/src/fish_tests.cpp	2023-01-08 10:49:07.581582097 +0000
+@@ -1755,9 +1755,9 @@
+         if (entry->name == dirname) {
+             expected = dir_entry_type_t::dir;
+         } else if (entry->name == regname) {
+-            expected = dir_entry_type_t::reg;
++            expected = dir_entry_type_t::regr;
+         } else if (entry->name == reglinkname) {
+-            expected = dir_entry_type_t::reg;
++            expected = dir_entry_type_t::regr;
+         } else if (entry->name == dirlinkname) {
+             expected = dir_entry_type_t::dir;
+         } else if (entry->name == badlinkname) {
+--- fish-3.7.0/src/wildcard.cpp.orig	2024-01-01 16:15:17.000000000 +0100
++++ fish-3.7.0/src/wildcard.cpp	2024-01-01 20:23:37.471572632 +0100
+@@ -386,7 +386,7 @@
+     }
+ 
+     // regular file *excludes* broken links - we have no use for them as commands.
+-    const bool is_regular_file = entry.check_type() == dir_entry_type_t::reg;
++    const bool is_regular_file = entry.check_type() == dir_entry_type_t::regr;
+     if (executables_only && (!is_regular_file || waccess(filepath, X_OK) != 0)) {
+         return false;
+     }

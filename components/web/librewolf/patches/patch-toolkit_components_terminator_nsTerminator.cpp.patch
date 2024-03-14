@@ -1,0 +1,27 @@
+$NetBSD: patch-toolkit_components_terminator_nsTerminator.cpp,v 1.3 2019/03/19 16:11:28 ryoon Exp $
+
+* Fix segfault on exit under NetBSD
+
+--- firefox-102.0/toolkit/components/terminator/nsTerminator.cpp.~2~	2022-05-31 17:22:51.266704060 +0000
++++ firefox-102.0/toolkit/components/terminator/nsTerminator.cpp	2022-05-31 17:32:46.773492649 +0000
+@@ -34,7 +34,7 @@
+ #if defined(XP_WIN)
+ #  include <windows.h>
+ #else
+-#  include <unistd.h>
++#  include <time.h>
+ #endif
+ 
+ #include "mozilla/AppShutdown.h"
+@@ -184,7 +184,10 @@
+ #if defined(XP_WIN)
+     Sleep(HEARTBEAT_INTERVAL_MS /* ms */);
+ #else
+-    usleep(HEARTBEAT_INTERVAL_MS * 1000 /* usec */);
++    struct timespec tickd;
++    tickd.tv_sec = 1;
++    tickd.tv_nsec = 0;
++    nanosleep(&tickd, NULL);
+ #endif
+ 
+     if (gHeartbeat++ < timeToLive) {

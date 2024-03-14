@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Most
 HUMAN_VERSION =			0.38
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Most - Most commonly needed test functions and features.
 COMPONENT_CPAN_AUTHOR =		OVID
 COMPONENT_ARCHIVE_HASH =	\

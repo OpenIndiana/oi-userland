@@ -20,30 +20,24 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xcb-util-wm
-COMPONENT_VERSION=	0.4.1
+COMPONENT_VERSION=	0.4.2
+COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): client and window-manager helpers for EWMH and ICCCM
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=	https://xcb.freedesktop.org/XcbUtil
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:62c34e21d06264687faea7edbf63632c9f04d55e72114aa4a57bb95e4f888a0b
+COMPONENT_ARCHIVE_URL=	https://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     	x11/library/xcb-util-wm
 COMPONENT_CLASSIFICATION= Development/X11
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://xcb.freedesktop.org/XcbUtil
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:28bf8179640eaa89276d2b0f1ce4285103d136be6c98262b6151aaee1d3c2a3f
-COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): client and window-manager helpers for EWMH and ICCCM
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxcb

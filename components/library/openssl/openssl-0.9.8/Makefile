@@ -18,7 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssl
 COMPONENT_VERSION=	0.9.8zh
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://openssl.org
 COMPONENT_SUMMARY=	Toolkit for SSL/TLS and general purpose cryptographic library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -70,8 +70,13 @@ CONFIGURE_OPTIONS += no-hw_cswift
 CONFIGURE_OPTIONS += threads
 CONFIGURE_OPTIONS += shared
 
+ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS.32 += solaris-x86-gcc-sunw
 CONFIGURE_OPTIONS.64 += solaris64-x86_64-gcc-sunw
+else
+CONFIGURE_OPTIONS.32 += solaris-sparcv8-gcc
+CONFIGURE_OPTIONS.64 += solaris64-sparcv9-gcc
+endif
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 CONFIGURE_OPTIONS += --pk11-libname=$(PKCS11_LIB$(BITS))

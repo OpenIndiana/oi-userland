@@ -20,21 +20,23 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS=			64_and_32
+
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
-COMPONENT_VERSION=	5.2.7
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION=	5.6.1
+COMPONENT_SUMMARY=	XZ Utils - loss-less file compression application and library
 COMPONENT_PROJECT_URL=	https://tukaani.org/xz/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:06327c2ddc81e126a6d9a78b0be5014b976a2c0832f492dcfc4755d7facf6d33
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:f334777310ca3ae9ba07206d78ed286a655aa3f44eec27854f740c26b2cd2ed0
+COMPONENT_ARCHIVE_URL=	https://github.com/tukaani-project/xz/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=		compress/xz
-COMPONENT_SUMMARY=	'XZ Utils - loss-less file compression application and library.'
-COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE=	COPYING.LGPLv2.1
 COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE=	0BSD, GPLv2+,GPLv3+, LGPLv2.1, CC BY-SA 4.0
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -45,18 +47,7 @@ CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 COMPONENT_TEST_DIR = $(@D)/tests
 
-# The additional xz specific set of transforms to be applied to the
-# test results to try to normalize them.
-COMPONENT_TEST_TRANSFORMS += \
-        '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-        '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
-        '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
-        '-e "/^XXX_CC_XXX$$/d" ' \
-		'-e "/^make/d" ' \
-		'-e "/^mv -f/d" '
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/xopen/xcu4

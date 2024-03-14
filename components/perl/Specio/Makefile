@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Specio
 HUMAN_VERSION =			0.48
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Specio - Type constraints and coercions for Perl
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,14 +30,19 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-autoclean
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
 PERL_REQUIRED_PACKAGES += library/perl-5/eval-closure
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += library/perl-5/mro-compat
+PERL_REQUIRED_PACKAGES += library/perl-5/ref-util
 PERL_REQUIRED_PACKAGES += library/perl-5/role-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-quote
 PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/xstring
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs

@@ -13,26 +13,30 @@
 # Copyright (c) 2019 Tim Mooney
 #
 
-BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
-COMPONENT_VERSION=	2.10.32
-COMPONENT_REVISION= 1
-COMPONENT_PROJECT_URL=	https://www.gimp.org/
+COMPONENT_VERSION=	2.10.36
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
-COMPONENT_FMRI=		image/editor/gimp
-COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
+COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:3f15c70554af5dcc1b46e6dc68f3d8f0a6cc9fe56b6d78ac08c0fd859ab89a25
+COMPONENT_ARCHIVE_HASH= sha256:3d3bc3c69a4bdb3aea9ba2d5385ed98ea03953f3857aafd1d6976011ed7cdbb2
 COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/gimp/v2.10/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		image/editor/gimp
+COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
+
+# Gimp depends on Python 2.7 still:
+PYTHON_VERSION= 2.7
+PYTHON=/usr/bin/$(MACH64)/python2.7
 
 CFLAGS += -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include
 CFLAGS += -I/usr/include/libmng
@@ -43,20 +47,22 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 CONFIGURE_ENV += CPPFLAGS="$(JPEG_CPPFLAGS)"
 
+#CONFIGURE_ENV += LIBDIR="$(USRLIBDIR64)"
+#COMPONENT_BUILD_ENV += LIBDIR="$(USRLIBDIR64)"
+
 COMPONENT_PREP_ACTION =	( cd $(@D)  && \
-				libtoolize --force &&\
+				PATH="$(PATH)" libtoolize --force &&\
 				intltoolize --force --copy --automake &&\
 				aclocal -I. &&\
 				automake -a -c -f &&\
 				autoconf)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-CONFIGURE_OPTIONS+=	--enable-mp
-CONFIGURE_OPTIONS+=	--enable-default-binary
-CONFIGURE_OPTIONS+=	--enable-mmx=no
-CONFIGURE_OPTIONS+=	--with-lcms=2
+CONFIGURE_OPTIONS += --datarootdir=$(USRSHAREDIR)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --enable-mp
+CONFIGURE_OPTIONS += --enable-default-binary
+CONFIGURE_OPTIONS += --enable-mmx=no
+CONFIGURE_OPTIONS += --with-lcms=2
 
 CONFIGURE_ENV+= PYTHON=$(PYTHON)
 
@@ -72,25 +78,24 @@ COMPONENT_POST_INSTALL_ACTION = \
         /usr/bin/find $(PROTO_DIR) -name *.py \
                 -exec $(GSED) -i -e '1s|env python.*|$(MACH64)/python$(PYTHON_VERSION)|' "{}" \; ;
 
-# Tests need this
-unexport SHELLOPTS
 # Tests need a display and some fail.
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
-REQUIRED_PACKAGES += library/mypaint-brushes
-REQUIRED_PACKAGES += library/python/pygobject
-REQUIRED_PACKAGES += library/python/pygtk2
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
+PYTHON_REQUIRED_PACKAGES += library/python/pygtk2
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/babl
 REQUIRED_PACKAGES += image/library/gegl
 REQUIRED_PACKAGES += image/library/gexiv2
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
@@ -108,12 +113,10 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libmypaint
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/mypaint-brushes
 REQUIRED_PACKAGES += library/openexr
-REQUIRED_PACKAGES += library/python/pygobject-27
-REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

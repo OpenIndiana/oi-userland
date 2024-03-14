@@ -1,0 +1,15 @@
+--- inkscape-1.1.2_2022-02-04_0a00cf5339/src/path-prefix.cpp.~1~	2022-02-04 20:12:19.000000000 +0000
++++ inkscape-1.1.2_2022-02-04_0a00cf5339/src/path-prefix.cpp	2022-03-12 03:18:41.926995059 +0000
+@@ -134,6 +134,12 @@
+         if (!program_name) {
+             g_warning("get_program_name() - g_file_read_link failed");
+         }
++#elif defined(__sun)
++        const char *exec_name = getexecname();
++        program_name = (gchar *) exec_name;
++        if (!program_name) {
++            g_warning("get_program_name() - getexecname failed");
++        }
+ #elif defined(__NetBSD__)
+         static const int name[] = {CTL_KERN, KERN_PROC_ARGS, -1, KERN_PROC_PATHNAME};
+         char path[MAXPATHLEN];

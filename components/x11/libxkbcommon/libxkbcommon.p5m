@@ -10,38 +10,149 @@
 #
 
 #
-# Copyright 2016 Aurelien Larcher
+# Copyright 2022 Andreas Wacknitz
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file path=.*/bin/$(MACH32)/.+ -> drop> 
+
+file path=usr/bin/$(MACH32)/xkbcli
+file path=usr/bin/xkbcli
 file path=usr/include/xkbcommon/xkbcommon-compat.h
 file path=usr/include/xkbcommon/xkbcommon-compose.h
 file path=usr/include/xkbcommon/xkbcommon-keysyms.h
 file path=usr/include/xkbcommon/xkbcommon-names.h
 file path=usr/include/xkbcommon/xkbcommon-x11.h
 file path=usr/include/xkbcommon/xkbcommon.h
-link path=usr/lib/$(MACH64)/libxkbcommon-x11.so target=libxkbcommon-x11.so.0.0.0
+file path=usr/include/xkbcommon/xkbregistry.h
+link path=usr/lib/$(MACH64)/libxkbcommon-x11.so target=libxkbcommon-x11.so.0
 link path=usr/lib/$(MACH64)/libxkbcommon-x11.so.0 \
     target=libxkbcommon-x11.so.0.0.0
 file path=usr/lib/$(MACH64)/libxkbcommon-x11.so.0.0.0
-link path=usr/lib/$(MACH64)/libxkbcommon.so target=libxkbcommon.so.0.0.0
+link path=usr/lib/$(MACH64)/libxkbcommon.so target=libxkbcommon.so.0
 link path=usr/lib/$(MACH64)/libxkbcommon.so.0 target=libxkbcommon.so.0.0.0
 file path=usr/lib/$(MACH64)/libxkbcommon.so.0.0.0
+link path=usr/lib/$(MACH64)/libxkbregistry.so target=libxkbregistry.so.0
+link path=usr/lib/$(MACH64)/libxkbregistry.so.0 target=libxkbregistry.so.0.0.0
+file path=usr/lib/$(MACH64)/libxkbregistry.so.0.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/xkbcommon-x11.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xkbcommon.pc
-link path=usr/lib/libxkbcommon-x11.so target=libxkbcommon-x11.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/xkbregistry.pc
+link path=usr/lib/libxkbcommon-x11.so target=libxkbcommon-x11.so.0
 link path=usr/lib/libxkbcommon-x11.so.0 target=libxkbcommon-x11.so.0.0.0
 file path=usr/lib/libxkbcommon-x11.so.0.0.0
-link path=usr/lib/libxkbcommon.so target=libxkbcommon.so.0.0.0
+link path=usr/lib/libxkbcommon.so target=libxkbcommon.so.0
 link path=usr/lib/libxkbcommon.so.0 target=libxkbcommon.so.0.0.0
 file path=usr/lib/libxkbcommon.so.0.0.0
+link path=usr/lib/libxkbregistry.so target=libxkbregistry.so.0
+link path=usr/lib/libxkbregistry.so.0 target=libxkbregistry.so.0.0.0
+file path=usr/lib/libxkbregistry.so.0.0.0
 file path=usr/lib/pkgconfig/xkbcommon-x11.pc
 file path=usr/lib/pkgconfig/xkbcommon.pc
+file path=usr/lib/pkgconfig/xkbregistry.pc
+file path=usr/lib/xkbcommon/xkbcli-compile-keymap mode=0555
+file path=usr/lib/xkbcommon/xkbcli-how-to-type mode=0555
+file path=usr/lib/xkbcommon/xkbcli-interactive-x11 mode=0555
+file path=usr/lib/xkbcommon/xkbcli-list mode=0555
+file path=usr/share/doc/libxkbcommon/html/annotated.html
+file path=usr/share/doc/libxkbcommon/html/bc_s.png
+file path=usr/share/doc/libxkbcommon/html/bc_sd.png
+file path=usr/share/doc/libxkbcommon/html/bdwn.png
+file path=usr/share/doc/libxkbcommon/html/classes.html
+file path=usr/share/doc/libxkbcommon/html/closed.png
+file path=usr/share/doc/libxkbcommon/html/deprecated.html
+file path=usr/share/doc/libxkbcommon/html/dir_63ce773eee1f9b680e6e312b48cc99ca.html
+file path=usr/share/doc/libxkbcommon/html/dir_d44c64559bbebec7f509842c48db8b23.html
+file path=usr/share/doc/libxkbcommon/html/dir_e68e8157741866f444e17edd764ebbae.html
+file path=usr/share/doc/libxkbcommon/html/doc.png
+file path=usr/share/doc/libxkbcommon/html/docd.png
+file path=usr/share/doc/libxkbcommon/html/doxygen-extra.css
+file path=usr/share/doc/libxkbcommon/html/doxygen.css
+file path=usr/share/doc/libxkbcommon/html/doxygen.svg
+file path=usr/share/doc/libxkbcommon/html/dynsections.js
+file path=usr/share/doc/libxkbcommon/html/files.html
+file path=usr/share/doc/libxkbcommon/html/folderclosed.png
+file path=usr/share/doc/libxkbcommon/html/folderopen.png
+file path=usr/share/doc/libxkbcommon/html/functions.html
+file path=usr/share/doc/libxkbcommon/html/functions_func.html
+file path=usr/share/doc/libxkbcommon/html/functions_type.html
+file path=usr/share/doc/libxkbcommon/html/functions_vars.html
+file path=usr/share/doc/libxkbcommon/html/globals.html
+file path=usr/share/doc/libxkbcommon/html/globals_defs.html
+file path=usr/share/doc/libxkbcommon/html/globals_enum.html
+file path=usr/share/doc/libxkbcommon/html/globals_eval.html
+file path=usr/share/doc/libxkbcommon/html/globals_func.html
+file path=usr/share/doc/libxkbcommon/html/globals_type.html
+file path=usr/share/doc/libxkbcommon/html/group__components.html
+file path=usr/share/doc/libxkbcommon/html/group__compose.html
+file path=usr/share/doc/libxkbcommon/html/group__context.html
+file path=usr/share/doc/libxkbcommon/html/group__include-path.html
+file path=usr/share/doc/libxkbcommon/html/group__keymap.html
+file path=usr/share/doc/libxkbcommon/html/group__keysyms.html
+file path=usr/share/doc/libxkbcommon/html/group__logging.html
+file path=usr/share/doc/libxkbcommon/html/group__registry.html
+file path=usr/share/doc/libxkbcommon/html/group__state.html
+file path=usr/share/doc/libxkbcommon/html/group__x11.html
+file path=usr/share/doc/libxkbcommon/html/index.html
+file path=usr/share/doc/libxkbcommon/html/jquery.js
+file path=usr/share/doc/libxkbcommon/html/md_doc_compat.html
+file path=usr/share/doc/libxkbcommon/html/md_doc_keymap_format_text_v1.html
+file path=usr/share/doc/libxkbcommon/html/md_doc_quick_guide.html
+file path=usr/share/doc/libxkbcommon/html/md_doc_rules_format.html
+file path=usr/share/doc/libxkbcommon/html/md_doc_user_configuration.html
+file path=usr/share/doc/libxkbcommon/html/menu.js
+file path=usr/share/doc/libxkbcommon/html/menudata.js
+file path=usr/share/doc/libxkbcommon/html/modules.html
+file path=usr/share/doc/libxkbcommon/html/nav_f.png
+file path=usr/share/doc/libxkbcommon/html/nav_fd.png
+file path=usr/share/doc/libxkbcommon/html/nav_g.png
+file path=usr/share/doc/libxkbcommon/html/nav_h.png
+file path=usr/share/doc/libxkbcommon/html/nav_hd.png
+file path=usr/share/doc/libxkbcommon/html/open.png
+file path=usr/share/doc/libxkbcommon/html/pages.html
+file path=usr/share/doc/libxkbcommon/html/splitbar.png
+file path=usr/share/doc/libxkbcommon/html/splitbard.png
+file path=usr/share/doc/libxkbcommon/html/structrxkb__context.html
+file path=usr/share/doc/libxkbcommon/html/structrxkb__iso3166__code.html
+file path=usr/share/doc/libxkbcommon/html/structrxkb__iso639__code.html
+file path=usr/share/doc/libxkbcommon/html/structrxkb__layout.html
+file path=usr/share/doc/libxkbcommon/html/structrxkb__model.html
+file path=usr/share/doc/libxkbcommon/html/structrxkb__option.html
+file path=usr/share/doc/libxkbcommon/html/structrxkb__option__group.html
+file path=usr/share/doc/libxkbcommon/html/structxkb__compose__state.html
+file path=usr/share/doc/libxkbcommon/html/structxkb__compose__table.html
+file path=usr/share/doc/libxkbcommon/html/structxkb__context.html
+file path=usr/share/doc/libxkbcommon/html/structxkb__keymap.html
+file path=usr/share/doc/libxkbcommon/html/structxkb__rule__names.html
+file path=usr/share/doc/libxkbcommon/html/structxkb__state.html
+file path=usr/share/doc/libxkbcommon/html/sync_off.png
+file path=usr/share/doc/libxkbcommon/html/sync_on.png
+file path=usr/share/doc/libxkbcommon/html/tab_a.png
+file path=usr/share/doc/libxkbcommon/html/tab_ad.png
+file path=usr/share/doc/libxkbcommon/html/tab_b.png
+file path=usr/share/doc/libxkbcommon/html/tab_bd.png
+file path=usr/share/doc/libxkbcommon/html/tab_h.png
+file path=usr/share/doc/libxkbcommon/html/tab_hd.png
+file path=usr/share/doc/libxkbcommon/html/tab_s.png
+file path=usr/share/doc/libxkbcommon/html/tab_sd.png
+file path=usr/share/doc/libxkbcommon/html/tabs.css
+file path=usr/share/doc/libxkbcommon/html/xkbcommon-compose_8h.html
+file path=usr/share/doc/libxkbcommon/html/xkbcommon-names_8h.html
+file path=usr/share/doc/libxkbcommon/html/xkbcommon-x11_8h.html
+file path=usr/share/doc/libxkbcommon/html/xkbcommon_8h.html
+file path=usr/share/doc/libxkbcommon/html/xkbregistry_8h.html
+file path=usr/share/man/man1/xkbcli-compile-keymap.1
+file path=usr/share/man/man1/xkbcli-how-to-type.1
+file path=usr/share/man/man1/xkbcli-interactive-x11.1
+file path=usr/share/man/man1/xkbcli-list.1
+file path=usr/share/man/man1/xkbcli.1

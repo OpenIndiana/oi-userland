@@ -19,14 +19,14 @@
                 + QString::fromUtf8("/data/Mega Limited/MEGAsync");
  #else
 @@ -89,7 +89,7 @@
-     logToStdout = true;
- #endif
+         args += QString::fromUtf8(argv[i]);
+     }
  
 -#ifdef Q_OS_LINUX
 +#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
-     if (argc == 2)
+ 
+     if (args.contains(QLatin1String("--version")))
      {
-          if (!strcmp("--debug", argv[1]))
 @@ -418,7 +418,7 @@
      indexing = false;
      setQuitOnLastWindowClosed(false);

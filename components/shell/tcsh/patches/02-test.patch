@@ -1,11 +1,10 @@
-diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
---- a~/Makefile.in	1970-01-01 00:00:00
-+++ a/Makefile.in	1970-01-01 00:00:00
-@@ -732,6 +732,7 @@ $(srcdir)/stamp-h.in: $(srcdir)/configur
+--- tcsh-6.24.08/Makefile.in.orig	2023-04-10 11:26:45.000000000 +0200
++++ tcsh-6.24.08/Makefile.in	2023-04-11 22:08:08.291769614 +0200
+@@ -723,6 +723,7 @@ $(srcdir)/stamp-h.in: $(srcdir)/configur
  
- check test: atconfig $(srcdir)/tests/testsuite
+ check test: atconfig atlocal $(srcdir)/tests/testsuite $(BUILD)
  	$(ENVCMD) - \
 +		PATH=/usr/bin \
+ 		TESTSUITEREGEN="$(TESTSUITEREGEN)" \
  		USER="$(USER)" \
- 		$(SHELL) $(srcdir)/tests/testsuite
- 
+ 		$(SHELL) $(srcdir)/tests/testsuite $(TESTSUITEFLAGS)

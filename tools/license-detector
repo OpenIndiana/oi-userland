@@ -19,17 +19,19 @@
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
-	printf "Usage: license-detector [-d] LICENSE_FILE\n" >&2
+	printf "Usage: license-detector [-d] [-l LICENSE] LICENSE_FILE\n" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
 
 
 DEBUG=0
-while getopts ":hd" OPT ; do
+LICENSE="*"
+while getopts ":hdl:" OPT ; do
 	case "$OPT" in
 	"?"|"h")	usage ;;
 	"d")		DEBUG=1 ;;
+	"l")		LICENSE="*.$OPTARG" ;;
 	esac
 done
 shift $((OPTIND - 1))
@@ -47,21 +49,16 @@ WS_TOOLS=$(dirname $0)
 
 F="$LICENSE_FILE"
 
-if grep -A 1 "Apache License" "$F" | grep -q "Version 2\.0, January 2004" ; then
-	D="Apache-2.0"
-	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
-fi
-
 if grep -q -i "Artistic License" "$F" ; then
 	if ! grep -q -i "Artistic License.*2" "$F" ; then
-		D="Artistic-1.0-TODO"
+		D=
 		grep -q "7\. C subroutines" "$F" && grep -q "10\. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-Perl"
 		grep -q "7\. C or perl subroutines" "$F" && grep -q "10\. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-cl8"
 		grep -q "7\. C or perl subroutines" "$F" && grep -q "9\. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0"
 	else
 		D="Artistic-2.0"
 	fi
-	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	[[ -n "$L" && -n "$D" ]] && L="$L OR " ; L="$L$D"
 fi
 
 if grep -A 1 "GNU GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 1, February 1989" ; then
@@ -70,48 +67,65 @@ if grep -A 1 "GNU GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 1, February 19
 	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 fi
 
-if grep -i -A 1 "GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 2, June 1991" ; then
-	D="GPL-2.0-only"
-	grep -A 2 "GNU General Public License as published by the" "$F" | grep -q "or (at your option) any" && D="GPL-2.0-or-later"
-	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
-fi
+TMPFILE=$(mktemp -q)
+[[ -z "$TMPFILE" ]] && printf "ERROR: Temporary file creation failed\n" >&2 && exit 1
 
-if grep -A 1 "GNU LIBRARY GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 2, June 1991" ; then
-	D="LGPL-2.0-only"
-	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
-fi
-
-if grep -A 1 "GNU Lesser General Public License" "$F" | grep -q "Version 2\.1, February 1999" ; then
-	D="LGPL-2.1-only"
-	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
-fi
-
-for l in "$WS_TOOLS"/licenses/* ; do
+typeset -A matched
+for l in "$WS_TOOLS"/licenses/$LICENSE ; do
 	[[ -f "$l" ]] || continue
+	# skip filters
+	[[ "$l" != "${l%.filter}" ]] && continue
 
-	LICCMD="$(grep '^# ' "$l" | sed -e 's/^# //')"
-	[[ -n "$LICCMD" ]] && LICCMD=" | $LICCMD"
+	# extract license identifier
+	license_id="${l##*/}"
+	license_id="${license_id#header.}"
+	license_id="${license_id#license.}"
+	# sanity check, this should never happen
+	[[ -z "$license_id" ]] && continue
 
-	CMD="awk '/^#/{next}/^\$/{\$0=\"\\n\"}1' ORS=' '"
-	CMD="$CMD | sed -E -e 's/ +/ /g' -e 's/^ //' -e 's/ \$//'"
-	CMD="$CMD$LICCMD"
-	CMD="$CMD | tr ' ' '\\n' | gfmt -w 80"
+	# make sure we do not match one license twice
+	[[ -n "$matched[$license_id]" ]] && continue
+
+	cat <<#EOF > "$TMPFILE"
+		dos2unix -ascii \\
+			| tr -d '\\014' \\
+			| LC_ALL=C sed -E -e 's/^[[:space:]]+\$//g' \\
+			| awk '/^#/{next}/^\$/{\$0="\n"}1' ORS=' ' \\
+			| LC_ALL=C sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d' \\
+	EOF
+	# Remove some reStructuredText markup
+	if [[ "${F%.rst}" != "$F" ]] ; then
+		cat <<#EOF >> "$TMPFILE"
+				| sed -e '/^\*\*\$/d' -e 's/^\*\*\([^*]\)/\1/' -e 's/\([^*]\)\*\*\$/\1/' -e 's/\([^*]\)\*\*\([^*]\)/\1\2/g' \\
+		EOF
+	fi
+	# Apply filter if any
+	[[ -x "$l.filter" ]] && printf '\t| LC_ALL=C %s \\\n' "$l.filter" >> "$TMPFILE"
+	cat <<#EOF >> "$TMPFILE"
+			| LC_ALL=C tr '[:upper:]' '[:lower:]' \\
+			| sed -e 's|http://|https://|g' \
+			| tr ' ' '\\n' | fmt
+	EOF
 
 	REDIRECT="/dev/null"
 
 	if ((DEBUG)) ; then
 		REDIRECT="/dev/stdout"
-		printf "[DBG] TEMPLATE %s\n" "$(basename "$l")"
-		eval $CMD < "$l"
+		printf "[DBG] TEMPLATE %s\n" "${l##*/}"
+		. "$TMPFILE" < "$l"
 		printf "[DBG] FILE\n"
-		eval $CMD < "$F"
+		. "$TMPFILE" < "$F"
 		printf "[DBG] DIFFS\n"
 	fi
 
-	diff -i <(eval $CMD < "$l") <(eval $CMD < "$F") > "$REDIRECT" || continue
+	diff -i <(. "$TMPFILE" < "$l") <(. "$TMPFILE" < "$F") > "$REDIRECT" || continue
+
+	matched[$license_id]="$l"
 
 	[[ -n "$L" ]] && L="$L OR "
-	L="$L$(basename "$l")"
+	L="$L$license_id"
 done
+
+rm -f "$TMPFILE"
 
 [[ -n "$L" ]] && printf "%s\n" "$L"

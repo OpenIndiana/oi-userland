@@ -11,26 +11,26 @@
 #
 # Copyright 2014 Artem Shepelev. All rights reserved.
 #
-BUILD_BITS=32
+BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         arj
 COMPONENT_VERSION=      3.10.22
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=		Arj archiver utility
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_SUMMARY=	Arj archiver utility
-COMPONENT_PROJECT_URL=  http://arj.sourceforge.net/
+COMPONENT_PROJECT_URL=  https://arj.sourceforge.net/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:589e4c9bccc8669e7b6d8d6fcd64e01f6a2c21fe10aad56a83304ecc3b96a7db
-COMPONENT_ARCHIVE_URL=  http://arj.sourceforge.net/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:589e4c9bccc8669e7b6d8d6fcd64e01f6a2c21fe10aad56a83304ecc3b96a7db
+COMPONENT_ARCHIVE_URL=  https://arj.sourceforge.net/files/$(COMPONENT_ARCHIVE)
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = (cp -r $(SOURCE_DIR)/* $(BUILD_DIR_$(BITS))/) 
 
-COMPONENT_PREP_ACTION =	(cd $(SOURCE_DIR)/gnu && \
-					autoconf)
+COMPONENT_PREP_ACTION =	(cd $(SOURCE_DIR)/gnu && autoconf)
+
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/gnu/configure
 
 COMPONENT_BUILD_ARGS=

@@ -25,7 +25,6 @@
 #
 
 # requires gobject-introspection
-BUILD_BITS = 64
 
 include ../../../make-rules/shared-macros.mk
 
@@ -34,7 +33,7 @@ COMPONENT_SUMMARY=	A gobject-based plugins engine for GNOME
 COMPONENT_DESCRIPTION=	libpeas is a gobject-based plugins engine, and is targeted\
  at giving every application the chance to assume its own extensibility.
 COMPONENT_VERSION=	1.20.0
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Libpeas
 COMPONENT_MAJOR_MINOR=        $(basename $(COMPONENT_VERSION))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,9 +48,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Note, there's no 32-bit Python 3.5
-CONFIGURE_ENV += PYTHON=$(PYTHON.3.5.64)
-CONFIGURE_ENV += PYTHON3_CONFIG=/usr/bin/python3.5-config
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+CONFIGURE_ENV += PYTHON3_CONFIG=/usr/bin/python$(PYTHON_VERSION)-config
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk
@@ -63,18 +61,17 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
 
 # Assumes GNU xgettext in PATH
-CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
+PATH = $(PATH.gnu)
 
 # gobject introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Required due to patches.
-COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
+COMPONENT_PREP_ACTION += (cd $(@D); PATH="$(PATH)" autoreconf -fiv);
 
 # for the tests
 unexport SHELLOPTS
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_ARGS =   -k -i
 # Strip pids from test output, since they're always different
 COMPONENT_TEST_TRANSFORMS += '-e "s% (pid=[0-9]*)%%"'
@@ -85,17 +82,17 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" '
 
 # Build dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
 REQUIRED_PACKAGES += developer/ui-designer/glade
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/lua/lgi-52
-REQUIRED_PACKAGES += library/python/pygobject-3
 REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,76 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Dialects::ANSI.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Dialects::AnyData.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Dialects::CSV.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Dialects::Role.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Eval.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Parser.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Embed.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Function.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Functions.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::GetInfo.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Operation.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Placeholder.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::RAM.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Roadmap.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Structure.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Syntax.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Term.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::TermFactory.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/SQL::Statement::Util.3perl
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Dialects/ANSI.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Dialects/AnyData.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Dialects/CSV.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Dialects/Role.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Eval.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Parser.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Embed.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Function.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Functions.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/GetInfo.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Operation.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Placeholder.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/RAM.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Roadmap.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Structure.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Syntax.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Term.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/TermFactory.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/SQL/Statement/Util.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/clone-$(PLV)@0.30
+depend type=require fmri=pkg:/library/perl-5/math-base-convert-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/module-runtime-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/params-util-$(PLV)@1.0
+depend type=require fmri=pkg:/library/perl-5/text-soundex-$(PLV)@3.4

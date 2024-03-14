@@ -1,8 +1,6 @@
-diff --git a/configure.ac b/configure.ac
-index 7614ea8..b36d45a 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -884,27 +884,18 @@ AC_CHECK_HEADER(sys/sysinfo.h,
+--- gtk+-2.24.33/configure.ac.orig
++++ gtk+-2.24.33/configure.ac
+@@ -887,27 +887,18 @@
                  AC_DEFINE(HAVE_SYS_SYSINFO_H, 1,
                            [Define to 1 if sys/sysinfo.h is available]))
  
@@ -37,11 +35,9 @@ index 7614ea8..b36d45a 100644
  
  dnl Look for a host system's gdk-pixbuf-csource if we are cross-compiling
  
-diff --git a/gdk/gdkdraw.c b/gdk/gdkdraw.c
-index 81e6e08..d659480 100644
---- a/gdk/gdkdraw.c
-+++ b/gdk/gdkdraw.c
-@@ -1385,26 +1385,26 @@ composite_0888_medialib (guchar      *src_buf,
+--- gtk+-2.24.33/gdk/gdkdraw.c.orig
++++ gtk+-2.24.33/gdk/gdkdraw.c
+@@ -1474,26 +1474,26 @@
  
    mlib_image img_src, img_dst;
  
@@ -52,14 +48,6 @@ index 81e6e08..d659480 100644
 -                       height,
 -                       dest_rowstride,
 -                       dest_buf);
--
--  mlib_ImageSetStruct (&img_src,
--                       MLIB_BYTE,
--                       4,
--                       width,
--                       height,
--                       src_rowstride,
--                       src_buf);
 +  medialib_ImageSetStruct (&img_dst,
 +                           MLIB_BYTE,
 +                           4,
@@ -67,7 +55,14 @@ index 81e6e08..d659480 100644
 +                           height,
 +                          dest_rowstride,
 +                          dest_buf);
-+
+ 
+-  mlib_ImageSetStruct (&img_src,
+-                       MLIB_BYTE,
+-                       4,
+-                       width,
+-                       height,
+-                       src_rowstride,
+-                       src_buf);
 +  medialib_ImageSetStruct (&img_src,
 +                           MLIB_BYTE,
 +                           4,
@@ -85,10 +80,8 @@ index 81e6e08..d659480 100644
  }
  #endif
  
-diff --git a/gdk/gdkmedialib.c b/gdk/gdkmedialib.c
-index effb89d..ae01bfb 100644
---- a/gdk/gdkmedialib.c
-+++ b/gdk/gdkmedialib.c
+--- gtk+-2.24.33/gdk/gdkmedialib.c.orig
++++ gtk+-2.24.33/gdk/gdkmedialib.c
 @@ -46,29 +46,56 @@
  
  #include "gdkmedialib.h"
@@ -161,17 +154,19 @@ index effb89d..ae01bfb 100644
     * mlib_version returns a string in this format:
     *
     * mediaLib:0210:20011101:v8plusa
-@@ -78,43 +105,83 @@ _gdk_use_medialib (void)
+@@ -78,43 +105,83 @@
     *
     * The first 2 digits of the version are the major version.  The 3rd digit
     * is the minor version, and the 4th digit is the micro version. So the
 -   * above string corresponds to version 2.1.0.In the following test we only
 -   * care about the major version.
 +   * above string corresponds to version 2.1.0.
-+   */
+    */
+-   mlib_version_string = medialib_version ();
 +  mlib_version_string = medialib_version ();
 +  mlib_target_isa = &mlib_version_string[23];
-+
+ 
+-   count = sysinfo (SI_ARCHITECTURE, &sys_info[0], 257);
 +  /*
 +   * For x86 processors mediaLib generic C implementation
 +   * does not give any performance advantage so disable it.
@@ -182,15 +177,13 @@ index effb89d..ae01bfb 100644
 +  /*
 +   * For x86 processors use of libumem conflicts with
 +   * mediaLib, so avoid using it.
-    */
--   mlib_version_string = medialib_version ();
++   */
 +  if (dlsym (RTLD_PROBE,   "umem_alloc") != NULL)
 +    return FALSE;
 +
 +  return TRUE;
 +}
- 
--   count = sysinfo (SI_ARCHITECTURE, &sys_info[0], 257);
++
 +/*
 + * Sun mediaLib(tm) support.
 + *
@@ -279,10 +272,8 @@ index effb89d..ae01bfb 100644
 +  use_medialib = FALSE;
 +  return FALSE;
  }
-diff --git a/gdk/gdkmedialib.h b/gdk/gdkmedialib.h
-index 1912e9d..1306277 100644
---- a/gdk/gdkmedialib.h
-+++ b/gdk/gdkmedialib.h
+--- gtk+-2.24.33/gdk/gdkmedialib.h.orig
++++ gtk+-2.24.33/gdk/gdkmedialib.h
 @@ -36,6 +36,32 @@
  
  G_BEGIN_DECLS
@@ -316,11 +307,9 @@ index 1912e9d..1306277 100644
  gboolean _gdk_use_medialib (void);
  
  G_END_DECLS
-diff --git a/gdk/gdkrgb.c b/gdk/gdkrgb.c
-index 347ff59..9f34366 100644
---- a/gdk/gdkrgb.c
-+++ b/gdk/gdkrgb.c
-@@ -2154,7 +2154,7 @@ gdk_rgb_convert_0888 (GdkRgbInfo *image_info, GdkImage *image,
+--- gtk+-2.24.33/gdk/gdkrgb.c.orig
++++ gtk+-2.24.33/gdk/gdkrgb.c
+@@ -2155,7 +2155,7 @@
      }
  }
  
@@ -329,7 +318,7 @@ index 347ff59..9f34366 100644
  /* convert 24-bit packed to 32-bit unpacked */
  static void
  gdk_rgb_convert_0888_medialib (GdkRgbInfo *image_info, GdkImage *image,
-@@ -2171,9 +2171,9 @@ gdk_rgb_convert_0888_medialib (GdkRgbInfo *image_info, GdkImage *image,
+@@ -2172,9 +2172,9 @@
    bpl = image->bpl;
    obuf = ((guchar *)image->mem) + y0 * bpl + x0 * 4;
  
@@ -342,7 +331,7 @@ index 347ff59..9f34366 100644
  }
  #endif
  
-@@ -3157,7 +3157,7 @@ gdk_rgb_select_conv (GdkRgbInfo *image_info)
+@@ -3158,7 +3158,7 @@
  	   vtype == GDK_VISUAL_TRUE_COLOR &&
  	   (mask_rgb && byte_order == GDK_LSB_FIRST))
      {
@@ -351,7 +340,7 @@ index 347ff59..9f34366 100644
        if (_gdk_use_medialib ())
          conv = gdk_rgb_convert_0888_medialib;
        else
-@@ -3184,7 +3184,7 @@ gdk_rgb_select_conv (GdkRgbInfo *image_info)
+@@ -3185,7 +3185,7 @@
    else if (bpp == 32 && depth == 32 && vtype == GDK_VISUAL_TRUE_COLOR &&
  	   (mask_rgb && byte_order == GDK_LSB_FIRST))
      {
@@ -360,4 +349,3 @@ index 347ff59..9f34366 100644
        if (_gdk_use_medialib ())
          conv = gdk_rgb_convert_0888_medialib;
        else
-

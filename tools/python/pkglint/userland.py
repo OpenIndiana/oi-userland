@@ -77,8 +77,8 @@ class UserlandActionChecker(base.ActionChecker):
                         re.compile('^.*/64(/.*)?$'),
                         re.compile('^.*/amd64(/.*)?$'),
                         re.compile('^.*/sparcv9(/.*)?$'),
-                        re.compile('^.*/i86pc-solaris-64(/.*)?$'), # perl path
-                        re.compile('^.*/sun4-solaris-64(/.*)?$')   # perl path
+                        re.compile('^.*/i86pc-solaris-thread-multi-64(/.*)?$'), # perl path
+                        re.compile('^.*/sun4-solaris-thread-multi-64(/.*)?$')   # perl path
                 ]
                 self.initscript_re = re.compile("^etc/(rc.|init)\.d")
 

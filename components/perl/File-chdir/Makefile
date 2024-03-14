@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::chdir
 HUMAN_VERSION =			0.1011
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		File::chdir - a more sensible way to change directories
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\

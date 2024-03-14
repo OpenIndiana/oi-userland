@@ -1,0 +1,58 @@
+--- build/sparcv9/unixodbc_conf.h.orig	2022-03-02 13:32:18.427996777 +0000
++++ build/sparcv9/unixodbc_conf.h	2022-03-02 13:56:11.778417910 +0000
+@@ -397,22 +397,32 @@
+ #define PACKAGE "unixODBC"
+ 
+ /* Define to the address where bug reports for this package should be sent. */
++#ifndef PACKAGE_BUGREPORT
+ #define PACKAGE_BUGREPORT "nick@unixodbc.org"
++#endif
+ 
+ /* Define to the full name of this package. */
++#ifndef PACKAGE_NAME
+ #define PACKAGE_NAME "unixODBC"
++#endif
+ 
+ /* Define to the full name and version of this package. */
++#ifndef PACKAGE_STRING
+ #define PACKAGE_STRING "unixODBC 2.3.9"
++#endif
+ 
+ /* Define to the one symbol short name of this package. */
++#ifndef PACKAGE_TARNAME
+ #define PACKAGE_TARNAME "unixODBC"
++#endif
+ 
+ /* Define to the home page for this package. */
+ #define PACKAGE_URL ""
+ 
+ /* Define to the version of this package. */
++#ifndef PACKAGE_VERSION
+ #define PACKAGE_VERSION "2.3.9"
++#endif
+ 
+ /* Platform is 64 bit */
+ #define PLATFORM64 /**/
+@@ -427,10 +437,22 @@
+ #define SHLIBEXT ".so"
+ 
+ /* The size of `long', as computed by sizeof. */
++#ifndef SIZEOF_LONG
++#if defined(_LP32)
++#define SIZEOF_LONG 4
++#else
+ #define SIZEOF_LONG 8
++#endif
++#endif
+ 
+ /* The size of `long int', as computed by sizeof. */
++#ifndef SIZEOF_LONG_INT
++#if defined(_LP32)
++#define SIZEOF_LONG_INT 4
++#else
+ #define SIZEOF_LONG_INT 8
++#endif
++#endif
+ 
+ /* If using the C implementation of alloca, define if you know the
+    direction of stack growth for your system; otherwise it will be

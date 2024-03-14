@@ -1,57 +1,44 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2019-2020 Nona Hansel
-# Copyright 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project tqdm
 #
 
-BUILD_BITS= NO_ARCH
-BUILD_STYLE= setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		tqdm
-COMPONENT_VERSION=	4.64.0
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	Fast, extensible progress bar for Python and CLI
-COMPONENT_PROJECT_URL=	https://github.com/tqdm/tqdm
-COMPONENT_FMRI=		library/python/tqdm		
-COMPONENT_CLASSIFICATION= Development/Python 
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_ARCHIVE_HASH= sha256:40be55d30e200777a307a7585aee69e4eabb46b4ec6a4b4a5f2d9f11e7d5408d
-COMPONENT_LICENSE=	MPLv2.0,MIT
-COMPONENT_LICENSE_FILE=	LICENCE
+COMPONENT_NAME =		tqdm
+HUMAN_VERSION =			4.66.2
+COMPONENT_SUMMARY =		tqdm - Fast, Extensible Progress Meter
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:6cd52cdf0fef0e0f543299cfc96fec90d7b8a7e88745f411ec33eb44d5ed3531
+COMPONENT_LICENSE =		MIT AND MPL-2.0
+COMPONENT_LICENSE_FILE =	LICENCE
 
-PYTHON_VERSIONS=	3.7 3.9
-
-# Tests are failing because numpy package cannot be build.
-TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_INSTALL_ACTION += \
-        (cd $(PROTOUSRBINDIR); $(MV) tqdm tqdm-$(PYTHON_VERSION)) ;
-
-#COMPONENT_TEST_DIR= $(SOURCE_DIR)
-#COMPONENT_TEST_CMD= tox -e py$(PYV)
-
-# Manually added test dependencies
-REQUIRED_PACKAGES += library/python/tox
-
-# Manually added dependencies
-REQUIRED_PACKAGES += library/python/importlib-metadata-37
-REQUIRED_PACKAGES += library/python/importlib-metadata-39
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/codecov
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/coveralls
+TEST_REQUIRED_PACKAGES.python += library/python/cython
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
+TEST_REQUIRED_PACKAGES.python += library/python/rich

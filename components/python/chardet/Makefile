@@ -1,44 +1,47 @@
+#
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project chardet
 #
 
-BUILD_STYLE = setup.py
-BUILD_BITS = NO_ARCH
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		chardet
-COMPONENT_VERSION=	4.0.0
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:0d6f53a15db4120f2b08c94f11e7d93d2c911ee118b6b30a04ec3ee8310179fa
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/chardet/chardet
+COMPONENT_NAME =		chardet
+HUMAN_VERSION =			5.2.0
+COMPONENT_SUMMARY =		chardet - Universal encoding detector for Python 3
+COMPONENT_PROJECT_URL =		https://github.com/chardet/chardet
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/f3/0d/f7b6ab21ec75897ed80c17d79b15951a719226b9fababf1e40ea74d69079/chardet-5.2.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7
+COMPONENT_LICENSE =		LGPL-2.1-only
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
+TEST_STYLE = pytest
 
-TEST_TARGET=		$(NO_TESTS)
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - tox (test bootstrap)
+PYTHON_TEST_BOOTSTRAP = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_INSTALL_ACTION = \
-        (cd $(PROTO_DIR)/usr/bin ; \
-                $(MV) chardetect chardetect-$(PYTHON_VERSION); )
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python

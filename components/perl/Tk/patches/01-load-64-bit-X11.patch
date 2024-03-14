@@ -1,0 +1,16 @@
+Since we build 64 bit we need to load 64 bit libX11.
+See https://github.com/eserte/perl-tk/issues/99
+
+--- Tk-804.036/Tk.pm.orig
++++ Tk-804.036/Tk.pm
+@@ -90,8 +90,8 @@
+ my $boot_time = timeofday();
+ 
+ # This is a workround for Solaris X11 locale handling
+-Preload(DynaLoader::dl_findfile('-L/usr/openwin/lib','-lX11'))
+-  if (NeedPreload() && -d '/usr/openwin/lib');
++Preload(DynaLoader::dl_findfile('-L/usr/openwin/lib/64','-lX11'))
++  if (NeedPreload() && -d '/usr/openwin/lib/64');
+ 
+ use Tk::Submethods ('option'    =>  [qw(add get clear readfile)],
+                     'clipboard' =>  [qw(clear append get)]

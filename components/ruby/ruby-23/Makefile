@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	2.3.8
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -120,23 +120,23 @@ CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
 
 # 16084 tests, 2236321 assertions, 2 failures, 1 errors, 49 skips
 
+# Manually added dependendies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libyaml
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/ruby-23
-REQUIRED_PACKAGES += runtime/ruby-23/ruby-tk
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

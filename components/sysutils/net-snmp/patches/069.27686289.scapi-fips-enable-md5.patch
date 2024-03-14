@@ -1,6 +1,6 @@
---- net-snmp-5.8.old/snmplib/scapi.c	2019-02-11 04:11:11.928699103 +0000
-+++ net-snmp-5.8/snmplib/scapi.c	2019-02-11 04:10:39.181904990 +0000
-@@ -204,6 +204,10 @@
+--- net-snmp-5.9.4/snmplib/scapi.c.orig
++++ net-snmp-5.9.4/snmplib/scapi.c
+@@ -207,6 +207,10 @@
  
  #ifdef NETSNMP_USE_OPENSSL
  static
@@ -11,7 +11,7 @@
  int EVP_decrypt(const EVP_CIPHER *type, u_char * key,
                  u_int keylen, u_char * iv, u_char * ciphertext,
                  u_int ctlen, u_char * plaintext);
-@@ -740,7 +744,7 @@
+@@ -744,7 +748,7 @@
      size_t          properlength;
      u_char          buf[SNMP_MAXBUF_SMALL];
  #if  defined(NETSNMP_USE_OPENSSL) || defined(NETSNMP_USE_PKCS11)
@@ -20,7 +20,7 @@
  #endif
  #ifdef NETSNMP_USE_OPENSSL
      const EVP_MD   *hashfn;
-@@ -787,7 +791,12 @@
+@@ -791,7 +795,12 @@
      if (NULL == hashfn) {
          QUITFUN(SNMPERR_GENERR, sc_generate_keyed_hash_quit);
      }
@@ -34,7 +34,7 @@
      if (buf_len != properlength) {
          QUITFUN(rval, sc_generate_keyed_hash_quit);
      }
-@@ -1821,6 +1830,49 @@
+@@ -1827,6 +1836,49 @@
  #endif /* NETSNMP_USE_INTERNAL_CRYPTO */
  #ifdef NETSNMP_USE_OPENSSL
  static

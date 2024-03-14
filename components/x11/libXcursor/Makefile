@@ -18,18 +18,19 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXcursor
-COMPONENT_VERSION= 1.2.1
-COMPONENT_FMRI=    x11/library/libxcursor
+COMPONENT_VERSION= 1.2.2
 COMPONENT_SUMMARY= libXcursor - Client-side cursor loading library
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:46c143731610bafd2070159a844571b287ac26192537d047a39df06155492104
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:53d071bd2cc56e517a30998d5e685c8a74556ddada43c6985d14da9a023a88ee
+COMPONENT_FMRI=    x11/library/libxcursor
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --with-icondir=/usr/share/icons
-CONFIGURE_OPTIONS+= --with-cursorpath='~/.icons:/usr/share/icons:/usr/share/pixmaps'
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --with-icondir=$(USRSHAREDIR)/icons
+CONFIGURE_OPTIONS += --with-cursorpath='~/.icons:$(USRSHAREDIR)/icons:$(USRSHAREDIR)/pixmaps'
 
 
 # Auto-generated dependencies

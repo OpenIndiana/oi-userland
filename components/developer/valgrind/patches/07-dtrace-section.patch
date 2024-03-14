@@ -1,0 +1,50 @@
+Solaris ELF objects can contain additional DTrace related .data section,
+which can confuse Valgrind.
+
+Previously, this was handled by detecting an ELF section outside all
+mapped regions. However, it seems that even this DTrace related section
+can be mapped into an existing region. This patch changes this detection
+such that section mapping is no longer relevant.
+
+Original fix:
+https://sourceware.org/git/?p=valgrind.git;h=6260274e4ed84f02d3fbe73adbd3b65893e73bd8
+
+Should be reported upstream.
+
+--- valgrind-3.22.0/coregrind/m_debuginfo/readelf.c
++++ valgrind-3.22.0/coregrind/m_debuginfo/readelf.c
+@@ -2153,17 +2153,24 @@ Bool ML_(read_elf_debug_info) ( struct _
+                      }
+                   }
+                }
+-               if (!loaded) {
+-#                 if defined(SOLARIS_PT_SUNDWTRACE_THRP)
+-                  if ((a_phdr.p_memsz == VKI_PT_SUNWDTRACE_SIZE)
+-                     && ((a_phdr.p_flags & (PF_R | PF_W | PF_X)) == PF_R)) {
+-                     TRACE_SYMTAB("PT_LOAD[%ld]:   ignore dtrace_data program "
+-                                  "header\n", i);
+-                     dtrace_data_vaddr = a_phdr.p_vaddr;
+-                     continue;
++#              if defined(SOLARIS_PT_SUNDWTRACE_THRP)
++               if ((a_phdr.p_memsz == VKI_PT_SUNWDTRACE_SIZE)
++                  && ((a_phdr.p_flags & (PF_R | PF_W | PF_X)) == PF_R)) {
++                  if (dtrace_data_vaddr != 0) {
++                     ML_(symerr)(di, True, "Multiple dtrace_data headers detected");
++                     goto out;
+                   }
+-#                 endif /* SOLARIS_PT_SUNDWTRACE_THRP */
++                  dtrace_data_vaddr = a_phdr.p_vaddr;
+ 
++                  /* DTrace related section might be outside all mapped regions. */
++                  if (!loaded) {
++                     TRACE_SYMTAB("PT_LOAD[%ld]:   ignore dtrace_data program "
++                                  "header\n", i);
++                     continue;
++                  }
++               }
++#              endif /* SOLARIS_PT_SUNDWTRACE_THRP */
++               if (!loaded) {
+                   ML_(symerr)(di, False,
+                               "ELF section outside all mapped regions");
+                   /* This problem might be solved by further memory mappings.
+

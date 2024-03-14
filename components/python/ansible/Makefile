@@ -1,65 +1,49 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
-# Copyright 2021, 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project ansible
 #
 
-BUILD_STYLE=	setup.py
-BUILD_BITS=	NO_ARCH
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		ansible
-COMPONENT_VERSION=	2.9.27
-COMPONENT_REVISION=	2
-COMPONENT_SUMMARY=	Ansible is a radically simple IT automation system
-COMPONENT_PROJECT_URL=	https://ansible.com/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:479159e50b3bd90920d06bc59410c3a51d3f9be9b4e1029e11d1e4a2d0705736
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	system/management/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	System/Administration and Configuration
-COMPONENT_LICENSE=	GPLv3
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_NAME =		ansible
+HUMAN_VERSION =			8.7.0
+COMPONENT_SUMMARY =		ansible - Radically simple IT automation
+COMPONENT_PROJECT_URL =		https://ansible.com/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/90/25/55e09468efe564f3b48c47a7e082bd84d4f0d064af60ac8458eba4667994/ansible-8.7.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:3a5ca5152e4547d590e40b542d76b18dbbe2b36da4edd00a13a7c51a374ff737
+COMPONENT_LICENSE =		GPL-3.0-only
+COMPONENT_LICENSE_FILE =	COPYING
 
-PYTHON_VERSION=		3.9
-PYTHON_VERSIONS=	3.9
+COMPONENT_FMRI =		system/management/ansible
+COMPONENT_CLASSIFICATION =	System/Administration and Configuration
+
+# This project is a collection of other projects (see tags.yaml), each with its
+# own test requirements.  We do not support testing of that (yet).
+TEST_STYLE = none
+
+# This is a standalone application.  Since no other Python project depends on
+# it we just provide single unversioned package.
+SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/test
-COMPONENT_TEST_CMD =    $(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/in [0-9]*\.[0-9]*s //"' \
-	'-n' \
-	'-e "/=========/p"' \
-	'-e "/---------/p"' \
-	'-e "/collected/p"' \
-	'-e "/ERROR /p"' \
-	'-e "/HINT/p"'
-
-# Some tests still fail because of missing modules like validate_modules:
-# Required for tests
-REQUIRED_PACKAGES += library/python/flaky-39
-REQUIRED_PACKAGES += library/python/hypothesis-39
-REQUIRED_PACKAGES += library/python/mock-39
-REQUIRED_PACKAGES += library/python/pluggy-39
-REQUIRED_PACKAGES += library/python/py-39
-REQUIRED_PACKAGES += library/python/pyparsing-39
-REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/pytest-benchmark-39
-REQUIRED_PACKAGES += library/python/pytest-reporter-39
-REQUIRED_PACKAGES += library/python/sortedcontainers-39
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/ansible-core
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python

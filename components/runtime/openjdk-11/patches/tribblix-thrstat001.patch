@@ -1,0 +1,22 @@
+Local definition of wait() conflicts with wait(3C).
+
+--- a/test/hotspot/jtreg/vmTestbase/nsk/jvmti/GetThreadState/thrstat001/thrstat001.cpp	Fri Oct  6 06:33:33 2023
++++ b/test/hotspot/jtreg/vmTestbase/nsk/jvmti/GetThreadState/thrstat001/thrstat001.cpp	Thu Oct 19 09:25:58 2023
+@@ -70,7 +70,7 @@
+ }
+ 
+ static void
+-wait(const char* func_name, jrawMonitorID lock, jint millis) {
++thrstat001wait(const char* func_name, jrawMonitorID lock, jint millis) {
+     jvmtiError err = jvmti->RawMonitorWait(lock, (jlong)millis);
+     if (err != JVMTI_ERROR_NONE) {
+         printf("%s: unexpected error in RawMonitorWait: %s (%d)\n",
+@@ -229,7 +229,7 @@
+             break;
+         }
+         lock("checkStatus", wait_lock);
+-        wait("checkStatus", wait_lock, millis);
++        thrstat001wait("checkStatus", wait_lock, millis);
+         unlock("checkStatus", wait_lock);
+     }
+ 

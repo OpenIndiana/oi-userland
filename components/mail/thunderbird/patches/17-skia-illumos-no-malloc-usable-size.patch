@@ -1,0 +1,13 @@
+illumos does not have malloc_usable_size()
+just like Android before API 17
+--- gecko-dev-master/gfx/skia/skia/src/base/SkContainers.cpp.~1~	2023-04-27 17:53:23.211806686 -0400
++++ gecko-dev-master/gfx/skia/skia/src/base/SkContainers.cpp	2023-04-27 18:05:21.421757061 -0400
+@@ -38,7 +38,7 @@
+     #elif defined(SK_BUILD_FOR_ANDROID) && __ANDROID_API__ >= 17
+         completeSize = malloc_usable_size(ptr);
+         SkASSERT(completeSize >= size);
+-    #elif defined(SK_BUILD_FOR_UNIX) && !defined(__OpenBSD__)
++    #elif defined(SK_BUILD_FOR_UNIX) && !defined(__OpenBSD__) && !defined(__illumos__)
+         completeSize = malloc_usable_size(ptr);
+         SkASSERT(completeSize >= size);
+     #elif defined(SK_BUILD_FOR_WIN)

@@ -35,7 +35,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability Uncommitted>
-<transform file path=usr/lib/rsyslog/.*\.so -> \
+<transform file path=usr/lib/$(MACH64)/rsyslog/.*\.so -> \
     add pkg.linted.userland.action001.2 true>
 
 dir  path=var/spool/rsyslog
@@ -44,10 +44,16 @@ file rsyslog.conf-solaris path=etc/rsyslog.conf group=sys mode=0644 \
     overlay=allow preserve=true
 file rsyslog.xml path=lib/svc/manifest/system/rsyslog.xml
 file rsyslog path=lib/svc/method/rsyslog
+
+file path=usr/bin/rscryutil
 file path=usr/lib/$(MACH64)/rsyslog/fmhash.so
 file path=usr/lib/$(MACH64)/rsyslog/fmhttp.so
+file path=usr/lib/$(MACH64)/rsyslog/imfile.so
 file path=usr/lib/$(MACH64)/rsyslog/imgssapi.so
 file path=usr/lib/$(MACH64)/rsyslog/immark.so
+file path=usr/lib/$(MACH64)/rsyslog/improg.so
+file path=usr/lib/$(MACH64)/rsyslog/impstats.so
+file path=usr/lib/$(MACH64)/rsyslog/imptcp.so
 file path=usr/lib/$(MACH64)/rsyslog/imsolaris.so
 file path=usr/lib/$(MACH64)/rsyslog/imtcp.so
 file path=usr/lib/$(MACH64)/rsyslog/imudp.so
@@ -57,17 +63,39 @@ file path=usr/lib/$(MACH64)/rsyslog/lmgssutil.so
 file path=usr/lib/$(MACH64)/rsyslog/lmnet.so
 file path=usr/lib/$(MACH64)/rsyslog/lmnetstrms.so
 file path=usr/lib/$(MACH64)/rsyslog/lmnsd_gtls.so
+file path=usr/lib/$(MACH64)/rsyslog/lmnsd_ossl.so
 file path=usr/lib/$(MACH64)/rsyslog/lmnsd_ptcp.so
 file path=usr/lib/$(MACH64)/rsyslog/lmregexp.so
 file path=usr/lib/$(MACH64)/rsyslog/lmtcpclt.so
 file path=usr/lib/$(MACH64)/rsyslog/lmtcpsrv.so
 file path=usr/lib/$(MACH64)/rsyslog/lmzlibw.so
+file path=usr/lib/$(MACH64)/rsyslog/lmzstdw.so
+file path=usr/lib/$(MACH64)/rsyslog/mmanon.so
+file path=usr/lib/$(MACH64)/rsyslog/mmcount.so
 file path=usr/lib/$(MACH64)/rsyslog/mmexternal.so
+file path=usr/lib/$(MACH64)/rsyslog/mmjsonparse.so
+file path=usr/lib/$(MACH64)/rsyslog/mmsnmptrapd.so
+file path=usr/lib/$(MACH64)/rsyslog/mmtaghostname.so
+file path=usr/lib/$(MACH64)/rsyslog/mmutf8fix.so
+file path=usr/lib/$(MACH64)/rsyslog/omfile-hardened.so
 file path=usr/lib/$(MACH64)/rsyslog/omgssapi.so
+file path=usr/lib/$(MACH64)/rsyslog/omhttp.so
+file path=usr/lib/$(MACH64)/rsyslog/omhttpfs.so
 file path=usr/lib/$(MACH64)/rsyslog/ommail.so
+file path=usr/lib/$(MACH64)/rsyslog/ommysql.so
+file path=usr/lib/$(MACH64)/rsyslog/ompgsql.so
+file path=usr/lib/$(MACH64)/rsyslog/omprog.so
+file path=usr/lib/$(MACH64)/rsyslog/omruleset.so
+file path=usr/lib/$(MACH64)/rsyslog/omsnmp.so
+link path=usr/lib/$(MACH64)/rsyslog/omtcl.so target=omtcl.so.0.0.0
+link path=usr/lib/$(MACH64)/rsyslog/omtcl.so.0 target=omtcl.so.0.0.0
+file path=usr/lib/$(MACH64)/rsyslog/omtcl.so.0.0.0
 file path=usr/lib/$(MACH64)/rsyslog/omtesting.so
+file path=usr/lib/$(MACH64)/rsyslog/omuxsock.so
+file path=usr/lib/$(MACH64)/rsyslog/pmlastmsg.so
 file path=usr/lib/rsyslog/rsyslogd mode=0555
 file usr/share/man/man8/rsyslogd.8 path=usr/share/man/man1m/rsyslogd.1m \
     mangler.bypass=true
 file usr/share/man/man5/rsyslog.conf.5 path=usr/share/man/man4/rsyslog.conf.4
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/stat
+

@@ -1,0 +1,44 @@
+We have no trio packaged yet.
+https://github.com/python-trio/trio/issues/1437
+
+--- anyio-4.2.0/src/anyio/_core/_eventloop.py.orig
++++ anyio-4.2.0/src/anyio/_core/_eventloop.py
+@@ -19,7 +19,7 @@
+     from ..abc import AsyncBackend
+ 
+ # This must be updated when new backends are introduced
+-BACKENDS = "asyncio", "trio"
++BACKENDS = "asyncio",
+ 
+ T_Retval = TypeVar("T_Retval")
+ PosArgsT = TypeVarTuple("PosArgsT")
+--- anyio-4.2.0/pyproject.toml.orig
++++ anyio-4.2.0/pyproject.toml
+@@ -43,7 +43,6 @@
+ [project.optional-dependencies]
+ trio = ["trio >= 0.23"]
+ test = [
+-    "anyio[trio]",
+     "coverage[toml] >= 7",
+     "exceptiongroup >= 1.2.0",
+     "hypothesis >= 4.0",
+--- anyio-4.2.0/tests/test_taskgroups.py.orig
++++ anyio-4.2.0/tests/test_taskgroups.py
+@@ -67,7 +67,6 @@
+     "module",
+     [
+         pytest.param(asyncio, id="asyncio"),
+-        pytest.param(pytest.importorskip("trio"), id="trio"),
+     ],
+ )
+ def test_run_natively(module: Any) -> None:
+--- anyio-4.2.0/tests/conftest.py.orig
++++ anyio-4.2.0/tests/conftest.py
+@@ -40,7 +40,6 @@
+             marks=uvloop_marks,
+             id="asyncio+uvloop",
+         ),
+-        pytest.param("trio"),
+     ]
+ )
+ def anyio_backend(request: SubRequest) -> tuple[str, dict[str, Any]]:

@@ -19,25 +19,30 @@
 # CDDL HEADER END
 #
 # Copyright 2013 Alexander Pyhalov
+# Copyright 2022 Andreas Wacknitz
 #
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		aspell-en
-COMPONENT_VERSION=	7.1-0
-COMPONENT_SRC=		aspell6-en-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:ff9df3c2e8c5bb19c6a66078b36a0ef4c4dfb0fcb969e29f7b5345e26d748d0a
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/aspell/dict/en/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=			aspell-en
+COMPONENT_VERSION=		2020.12.7
+HUMAN_VERSION=			2020.12.07-0
+COMPONENT_SUMMARY=		GNU Aspell spell english dictionaries
+COMPONENT_PROJECT_URL=	https://ftp.gnu.org/gnu/aspell/dict/0index.html
+COMPONENT_SRC=			aspell6-en-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH=	sha256:4c8f734a28a088b88bb6481fcf972d0b2c3dc8da944f7673283ce487eac49fb3
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/aspell/dict/en/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			text/aspell/en
+COMPONENT_CLASSIFICATION=	System/Text Tools
+COMPONENT_LICENSE=		aspell-en Copyright
+COMPONENT_LICENSE_FILE=	Copyright
 
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D)
+CONFIGURE_OPTIONS= 
 
-CONFIGURE_OPTIONS = 
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
+# Auto-generated dependencies

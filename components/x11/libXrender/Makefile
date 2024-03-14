@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXrender
-COMPONENT_VERSION= 0.9.10
-COMPONENT_FMRI=    x11/library/libxrender
+COMPONENT_VERSION= 0.9.11
 COMPONENT_SUMMARY= libXrender - X Render extension library
-COMPONENT_ARCHIVE_HASH= \
-  sha256:c06d5979f86e64cabbde57c223938db0b939dff49fdb5a793a1d3d0396650949
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:bc53759a3a83d1ff702fb59641b3d2f7c56e05051fa0cfa93501166fa782dc24
+COMPONENT_FMRI=    x11/library/libxrender
 
 include $(WS_MAKE_RULES)/common.mk
 

@@ -19,7 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         at-spi2-core
 COMPONENT_VERSION=      2.24.1
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      Assistive Technology Service Provider Interface
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -40,7 +40,7 @@ PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --with-dbus_daemondir=/usr/lib
+CONFIGURE_OPTIONS += --with-dbus_daemondir=/usr/libexec
 CONFIGURE_OPTIONS += --enable-xevie=no
 CONFIGURE_OPTIONS.32 += --enable-introspection=no
 

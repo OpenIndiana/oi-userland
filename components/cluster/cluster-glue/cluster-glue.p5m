@@ -13,8 +13,6 @@
 # Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-<transform file path=usr/share/man/man1m/(.+).1m$ -> set action.hash usr/share/man/man1/%<1>.1m >
-
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
@@ -25,7 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file files/glue_config.h path=usr/include/heartbeat/glue_config.h
+<transform file path=usr/lib/$(MACH64)/heartbeat/ -> default mode 0555>
+<transform file path=usr/lib/$(MACH64)/stonith/ -> default mode 0555>
+<transform file path=usr/share/cluster-glue/ha_log.sh -> default mode 0555>
 
 file path=usr/include/clplumbing/GSource.h
 file path=usr/include/clplumbing/GSource_internal.h
@@ -61,8 +61,7 @@ file path=usr/include/clplumbing/setproctitle.h
 file path=usr/include/clplumbing/timers.h
 file path=usr/include/clplumbing/uids.h
 file path=usr/include/heartbeat/compress.h
-file path=usr/include/heartbeat/glue_config-32.h
-file path=usr/include/heartbeat/glue_config-64.h
+file path=usr/include/heartbeat/glue_config.h
 file path=usr/include/heartbeat/ha_msg.h
 file path=usr/include/heartbeat/lrm/lrm_api.h
 file path=usr/include/heartbeat/lrm/lrm_msg.h
@@ -79,56 +78,21 @@ file path=usr/include/stonith/stonith_expect_helpers.h
 file path=usr/include/stonith/stonith_plugin.h
 file path=usr/include/stonith/stonith_plugin_common.h
 file path=usr/include/stonith/stonith_signal.h
-
-file path=usr/lib/heartbeat/base64_md5_test mode=0555
-file path=usr/lib/heartbeat/ha_logd mode=0555
-file path=usr/lib/heartbeat/ipctest mode=0555
-file path=usr/lib/heartbeat/ipctransientclient mode=0555
-file path=usr/lib/heartbeat/ipctransientserver mode=0555
-file path=usr/lib/heartbeat/logtest mode=0555
-file path=usr/lib/heartbeat/lrmd mode=0555
-file path=usr/lib/heartbeat/plugins/InterfaceMgr/generic.so mode=0555
-file path=usr/lib/heartbeat/plugins/RAExec/heartbeat.so mode=0555
-file path=usr/lib/heartbeat/plugins/RAExec/lsb.so mode=0555
-file path=usr/lib/heartbeat/plugins/RAExec/ocf.so mode=0555
-file path=usr/lib/heartbeat/plugins/compress/bz2.so mode=0555
-file path=usr/lib/heartbeat/plugins/compress/zlib.so mode=0555
-file path=usr/lib/heartbeat/plugins/test/test.so mode=0555
-file path=usr/lib/heartbeat/transient-test.sh mode=0555
-
-file path=usr/lib/$(MACH64)/heartbeat/base64_md5_test mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/ha_logd mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/ipctest mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/ipctransientclient mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/ipctransientserver mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/logtest mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/lrmd mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/plugins/InterfaceMgr/generic.so mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/plugins/RAExec/heartbeat.so mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/plugins/RAExec/lsb.so mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/plugins/RAExec/ocf.so mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/plugins/compress/bz2.so mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/plugins/compress/zlib.a mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/plugins/compress/zlib.so mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/plugins/test/test.so mode=0555
-file path=usr/lib/$(MACH64)/heartbeat/transient-test.sh mode=0555
-
-link path=usr/lib/liblrm.so target=liblrm.so.2.0.0
-link path=usr/lib/liblrm.so.2 target=liblrm.so.2.0.0
-file path=usr/lib/liblrm.so.2.0.0
-link path=usr/lib/libpils.so target=libpils.so.2.0.0
-link path=usr/lib/libpils.so.2 target=libpils.so.2.0.0
-file path=usr/lib/libpils.so.2.0.0
-link path=usr/lib/libplumb.so target=libplumb.so.2.1.0
-link path=usr/lib/libplumb.so.2 target=libplumb.so.2.1.0
-file path=usr/lib/libplumb.so.2.1.0
-link path=usr/lib/libplumbgpl.so target=libplumbgpl.so.2.0.0
-link path=usr/lib/libplumbgpl.so.2 target=libplumbgpl.so.2.0.0
-file path=usr/lib/libplumbgpl.so.2.0.0
-link path=usr/lib/libstonith.so target=libstonith.so.1.0.0
-link path=usr/lib/libstonith.so.1 target=libstonith.so.1.0.0
-file path=usr/lib/libstonith.so.1.0.0
-
+file path=usr/lib/$(MACH64)/heartbeat/base64_md5_test
+file path=usr/lib/$(MACH64)/heartbeat/ha_logd
+file path=usr/lib/$(MACH64)/heartbeat/ipctest
+file path=usr/lib/$(MACH64)/heartbeat/ipctransientclient
+file path=usr/lib/$(MACH64)/heartbeat/ipctransientserver
+file path=usr/lib/$(MACH64)/heartbeat/logtest
+file path=usr/lib/$(MACH64)/heartbeat/lrmd
+file path=usr/lib/$(MACH64)/heartbeat/plugins/InterfaceMgr/generic.so
+file path=usr/lib/$(MACH64)/heartbeat/plugins/RAExec/heartbeat.so
+file path=usr/lib/$(MACH64)/heartbeat/plugins/RAExec/lsb.so
+file path=usr/lib/$(MACH64)/heartbeat/plugins/RAExec/ocf.so
+file path=usr/lib/$(MACH64)/heartbeat/plugins/compress/bz2.so
+file path=usr/lib/$(MACH64)/heartbeat/plugins/compress/zlib.so
+file path=usr/lib/$(MACH64)/heartbeat/plugins/test/test.so
+file path=usr/lib/$(MACH64)/heartbeat/transient-test.sh
 link path=usr/lib/$(MACH64)/liblrm.so target=liblrm.so.2.0.0
 link path=usr/lib/$(MACH64)/liblrm.so.2 target=liblrm.so.2.0.0
 file path=usr/lib/$(MACH64)/liblrm.so.2.0.0
@@ -144,99 +108,52 @@ file path=usr/lib/$(MACH64)/libplumbgpl.so.2.0.0
 link path=usr/lib/$(MACH64)/libstonith.so target=libstonith.so.1.0.0
 link path=usr/lib/$(MACH64)/libstonith.so.1 target=libstonith.so.1.0.0
 file path=usr/lib/$(MACH64)/libstonith.so.1.0.0
-
-file path=usr/lib/stonith/plugins/external/drac5 mode=0555
-file path=usr/lib/stonith/plugins/external/dracmc-telnet mode=0555
-file path=usr/lib/stonith/plugins/external/ec2 mode=0555
-file path=usr/lib/stonith/plugins/external/hetzner mode=0555
-file path=usr/lib/stonith/plugins/external/hmchttp mode=0555
-file path=usr/lib/stonith/plugins/external/ibmrsa mode=0555
-file path=usr/lib/stonith/plugins/external/ibmrsa-telnet mode=0555
-file path=usr/lib/stonith/plugins/external/ipmi mode=0555
-file path=usr/lib/stonith/plugins/external/ippower9258 mode=0555
-file path=usr/lib/stonith/plugins/external/kdumpcheck mode=0555
-file path=usr/lib/stonith/plugins/external/libvirt mode=0555
-file path=usr/lib/stonith/plugins/external/nut mode=0555
-file path=usr/lib/stonith/plugins/external/rackpdu mode=0555
-file path=usr/lib/stonith/plugins/external/riloe mode=0555
-file path=usr/lib/stonith/plugins/external/ssh mode=0555
-file path=usr/lib/stonith/plugins/external/vcenter mode=0555
-file path=usr/lib/stonith/plugins/external/vmware mode=0555
-file path=usr/lib/stonith/plugins/external/xen0 mode=0555
-file path=usr/lib/stonith/plugins/external/xen0-ha mode=0555
-file path=usr/lib/stonith/plugins/stonith2/apcmaster.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/apcmastersnmp.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/apcsmart.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/baytech.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/cyclades.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/drac3.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/external.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/ibmhmc.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/meatware.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/null.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/nw_rpc100s.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/rcd_serial.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/rhcs.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/ribcl.py mode=0555
-file path=usr/lib/stonith/plugins/stonith2/rps10.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/ssh.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/suicide.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/wti_mpc.so mode=0555
-file path=usr/lib/stonith/plugins/stonith2/wti_nps.so mode=0555
-file path=usr/lib/stonith/plugins/xen0-ha-dom0-stonith-helper mode=0555
-
-file path=usr/lib/$(MACH64)/stonith/plugins/external/drac5 mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/dracmc-telnet mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/ec2 mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/hetzner mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/hmchttp mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/ibmrsa mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/ibmrsa-telnet mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/ipmi mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/ippower9258 mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/kdumpcheck mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/libvirt mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/nut mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/rackpdu mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/riloe mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/ssh mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/vcenter mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/vmware mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/xen0 mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/external/xen0-ha mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/apcmaster.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/apcmastersnmp.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/apcsmart.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/baytech.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/cyclades.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/drac3.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/external.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/ibmhmc.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/meatware.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/null.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/nw_rpc100s.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/rcd_serial.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/rhcs.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/ribcl.py mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/rps10.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/ssh.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/suicide.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/wti_mpc.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/wti_nps.so mode=0555
-file path=usr/lib/$(MACH64)/stonith/plugins/xen0-ha-dom0-stonith-helper mode=0555
-
-#file path=usr/sbin/$(MACH32)/cibsecret
-#file path=usr/sbin/$(MACH32)/ha_logger
-#file path=usr/sbin/$(MACH32)/lrmadmin
-#file path=usr/sbin/$(MACH32)/meatclient
-#file path=usr/sbin/$(MACH32)/stonith
+file path=usr/lib/$(MACH64)/stonith/plugins/external/drac5
+file path=usr/lib/$(MACH64)/stonith/plugins/external/dracmc-telnet
+file path=usr/lib/$(MACH64)/stonith/plugins/external/ec2
+file path=usr/lib/$(MACH64)/stonith/plugins/external/hetzner
+file path=usr/lib/$(MACH64)/stonith/plugins/external/hmchttp
+file path=usr/lib/$(MACH64)/stonith/plugins/external/ibmrsa
+file path=usr/lib/$(MACH64)/stonith/plugins/external/ibmrsa-telnet
+file path=usr/lib/$(MACH64)/stonith/plugins/external/ipmi
+file path=usr/lib/$(MACH64)/stonith/plugins/external/ippower9258
+file path=usr/lib/$(MACH64)/stonith/plugins/external/kdumpcheck
+file path=usr/lib/$(MACH64)/stonith/plugins/external/libvirt
+file path=usr/lib/$(MACH64)/stonith/plugins/external/nut
+file path=usr/lib/$(MACH64)/stonith/plugins/external/rackpdu
+file path=usr/lib/$(MACH64)/stonith/plugins/external/riloe
+file path=usr/lib/$(MACH64)/stonith/plugins/external/ssh
+file path=usr/lib/$(MACH64)/stonith/plugins/external/vcenter
+file path=usr/lib/$(MACH64)/stonith/plugins/external/vmware
+file path=usr/lib/$(MACH64)/stonith/plugins/external/xen0
+file path=usr/lib/$(MACH64)/stonith/plugins/external/xen0-ha
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/apcmaster.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/apcmastersnmp.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/apcsmart.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/baytech.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/cyclades.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/drac3.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/external.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/ibmhmc.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/meatware.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/null.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/nw_rpc100s.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/rcd_serial.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/rhcs.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/ribcl.py
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/rps10.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/ssh.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/suicide.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/wti_mpc.so
+file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/wti_nps.so
+file path=usr/lib/$(MACH64)/stonith/plugins/xen0-ha-dom0-stonith-helper
 file path=usr/sbin/cibsecret
 file path=usr/sbin/ha_logger
 file path=usr/sbin/lrmadmin
 file path=usr/sbin/meatclient
 file path=usr/sbin/stonith
 file path=usr/share/cluster-glue/ha_cf_support.sh
-file path=usr/share/cluster-glue/ha_log.sh mode=0555
+file path=usr/share/cluster-glue/ha_log.sh
 file path=usr/share/cluster-glue/openais_conf_support.sh
 file path=usr/share/cluster-glue/utillib.sh
 file path=usr/share/doc/cluster-glue/stonith/README.bladehpi
@@ -255,6 +172,7 @@ file path=usr/share/doc/cluster-glue/stonith/README.vcenter
 file path=usr/share/doc/cluster-glue/stonith/README.wti_mpc
 file path=usr/share/doc/cluster-glue/stonith/README_kdumpcheck.txt
 file path=usr/share/man/man1/ha_logger.1
-file path=usr/share/man/man1m/ha_logd.1m
-file path=usr/share/man/man1m/meatclient.1m
-file path=usr/share/man/man1m/stonith.1m
+file path=usr/share/man/man8/ha_logd.8
+file path=usr/share/man/man8/lrmadmin.8
+file path=usr/share/man/man8/meatclient.8
+file path=usr/share/man/man8/stonith.8

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::CaptureOutput
 HUMAN_VERSION =			1.1105
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IO::CaptureOutput - (DEPRECATED) capture STDOUT and STDERR from Perl code, subprocesses or XS
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\

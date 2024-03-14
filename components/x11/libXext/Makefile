@@ -18,12 +18,14 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXext
-COMPONENT_VERSION= 1.3.4
-COMPONENT_FMRI =   x11/library/libxext
+COMPONENT_VERSION= 1.3.6
 COMPONENT_SUMMARY= libXext - X11 protocol common extensions client library
-COMPONENT_ARCHIVE_HASH= \
-  sha256:59ad6fcce98deaecc14d39a672cf218ca37aba617c9a0f691cac3bcd28edf82b
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:edb59fa23994e405fdc5b400afdf5820ae6160b94f35e3dc3da4457a16e89753
+COMPONENT_FMRI =   x11/library/libxext
 COMPONENT_LICENSE_FILE = COPYING
+
+DROP_STATIC_LIBRARIES = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -32,7 +34,7 @@ CPPFLAGS += -DSUNSOFT
 LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile-vers
 
 COMPONENT_PREP_ACTION = ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
-                          cd $(@D) &&  libtoolize --copy --force &&\
+                          cd $(@D) && PATH=$(PATH) libtoolize --copy --force && \
                           aclocal -I . &&\
                           automake -c -f -a &&\
                           autoconf )
@@ -43,8 +45,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_ENV += LIB_MAN_SUFFIX=3xext
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
+CONFIGURE_OPTIONS += --without-xmlto
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxevie
 REQUIRED_PACKAGES += x11/library/libxscrnsaver

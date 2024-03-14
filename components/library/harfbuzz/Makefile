@@ -22,28 +22,29 @@
 #
 # Copyright (c) 2015-2018, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2021-2022, Andreas Wacknitz
+# Copyright (c) 2021-2023, Andreas Wacknitz
 #
 
-BUILD_BITS=				64_and_32
-BUILD_STYLE=			meson
+BUILD_BITS= 64
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
-COMPONENT_VERSION=      5.3.0
+COMPONENT_VERSION=      8.3.0
 COMPONENT_FMRI=         library/c++/harfbuzz
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/HarfBuzz/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a05e19e3f52da24ed071522f0fddf872157d7d25e869cfd156cd6f1e81c42152
+COMPONENT_ARCHIVE_HASH= sha256:109501eaeb8bde3eadb25fab4164e993fbace29c3d775bcaa1c1e58e2f15f847
 COMPONENT_ARCHIVE_URL=  https://github.com/harfbuzz/harfbuzz/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # We want graphite2 support:
 CONFIGURE_OPTIONS	 += -Dgraphite=enabled
@@ -72,10 +73,10 @@ COMPONENT_TEST_TRANSFORMS  = "'/Ok:|Expected Fail:|Fail:|Unexpected Pass:|Skippe
 REQUIRED_PACKAGES += developer/icu
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math

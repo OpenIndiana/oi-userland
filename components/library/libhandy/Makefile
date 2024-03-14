@@ -12,34 +12,36 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=64
-BUILD_STYLE=meson
+BUILD_BITS= 64
+BUILD_STYLE= meson
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libhandy
-COMPONENT_VERSION=      1.5.90
-#COMPONENT_REVISION=     1
-COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/libhandy
+COMPONENT_MJR_VERSION=  1.8
+COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).3
 COMPONENT_SUMMARY=      Library full of GTK+ widgets for mobile phones
-COMPONENT_FMRI=         library/libhandy
+COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/libhandy
 COMPONENT_SRC=          libhandy-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:69c137b5782293539371bcdbd15b91cc1f0f4a2f54d9bde3b3398607a58890a2
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.5/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:05b497229073ff557f10b326e074c5066f8743a302d4820ab97bcb5cd2dab087
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/libhandy
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=      LGPLv2.1
-COMPONENT_LICENSE_FILE= libhandy.license
+COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/vala
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/ui-designer/glade

@@ -11,14 +11,17 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
+
+# crypto-test segfaults with OpenSSL 3.1, so let's stay at 1.1 for now.
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		transmission
 COMPONENT_VERSION=	3.0.0
 HUMAN_VERSION=		3.00
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.transmissionbt.com/
 COMPONENT_SUMMARY=	GTK and console BitTorrent client
 COMPONENT_FMRI=		desktop/torrent/transmission

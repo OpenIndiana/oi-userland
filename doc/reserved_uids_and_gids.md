@@ -23,6 +23,7 @@ UID   | User name
 19    | minidlna
 21    | ftp
 22    | sshd
+24    | hpnsshd
 25    | smmsp
 27    | postfix
 30    | opendkim
@@ -53,6 +54,7 @@ UID   | User name
 71    | lp
 72    | dovecot
 73    | dovenull
+74    | pulse
 75    | openldap
 76    | p0f
 77    | nut
@@ -95,6 +97,7 @@ GID   | Group name
 20    | games
 21    | ftp
 22    | sshd
+24    | hpnsshd
 25    | smmsp
 27    | postfix
 28    | postdrop
@@ -124,6 +127,7 @@ GID   | Group name
 70    | mysql
 72    | dovecot
 73    | dovenull
+74    | pulse
 75    | openldap
 76    | p0f
 77    | nut

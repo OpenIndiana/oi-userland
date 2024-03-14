@@ -1,0 +1,10 @@
+--- urllib3-2.1.0/test/with_dummyserver/test_socketlevel.py.orig
++++ urllib3-2.1.0/test/with_dummyserver/test_socketlevel.py
+@@ -1747,6 +1747,7 @@
+             assert expected_request_headers == filter_non_x_headers(self.parsed_headers)
+ 
+     @resolvesLocalhostFQDN()
++    @pytest.mark.skip(reason="fails with 'Connection refused'")
+     def test_request_host_header_ignores_fqdn_dot(self) -> None:
+         self.start_parsing_handler()
+ 

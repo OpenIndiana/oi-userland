@@ -25,25 +25,26 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openblas
-COMPONENT_VERSION=	0.3.21
-COMPONENT_FMRI=     	library/math/openblas
-COMPONENT_CLASSIFICATION=Development/High Performance Computing
-COMPONENT_SRC=		OpenBLAS-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.openblas.net
-COMPONENT_ARCHIVE=	OpenBLAS-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f36ba3d7a60e7c8bcc54cd9aaa9b1223dd42eaf02c811791c37e8ca707c241ca
-COMPONENT_ARCHIVE_URL=	http://github.com/xianyi/OpenBLAS/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      BSD 3-Clause
+COMPONENT_VERSION=	0.3.26
 COMPONENT_SUMMARY=     	Optimized BLAS library based on GotoBLAS2
+COMPONENT_SRC=			OpenBLAS-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=	https://www.openblas.net
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68
+COMPONENT_ARCHIVE_URL=	https://github.com/xianyi/OpenBLAS/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=     	library/math/openblas
+COMPONENT_CLASSIFICATION= Development/High Performance Computing
+COMPONENT_LICENSE=      BSD 3-Clause
+COMPONENT_LICENSE_FILE= LICENSE
 
 # Numerical libraries should be shipped as static libs as it is still common in scientific computing projects
 # See discussion here: https://github.com/OpenIndiana/oi-userland/pull/9459
 DROP_STATIC_LIBRARIES= no
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # In a virtualized environment getarch cannot detect the architecture.
 # It falls back to INTEL_UKNOWN which causes failure of the build.

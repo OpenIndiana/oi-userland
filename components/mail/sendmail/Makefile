@@ -21,24 +21,20 @@
 
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2022 Friedrich Kink
+# Copyright (c) 2022, 2023, 2024 Friedrich Kink
 #
 
-USE_OPENSSL11=		yes
-
+OPENSSL_VERSION=	3.1
 BUILD_STYLE=		justmake
-# despite everything now is built as 64-bit the 32-bit build is needed for 
-# libmilter to not break older applications dependend on 32-bit libraries.
-BUILD_BITS=		64_and_32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sendmail
-COMPONENT_VERSION=      8.17.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      8.18.1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  ftp://ftp.sendmail.org/pub/sendmail/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:04bc76b6c886e6d111be7fd8daa32b8ce00128a288b6b52e067bc29f3854a6e6
+COMPONENT_ARCHIVE_HASH= sha256:cbf1f309c38e4806f7cf3ead24260f17d1fe8fb63256d13edb3cdd1a098f0770
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -124,7 +120,7 @@ APPENDDEF(`confENVDEF', `-D_FFR_MTA_STS')
 APPENDDEF(`confENVDEF', `-D_FFR_TLSA_DANE')
 APPENDDEF(`confENVDEF', `-D_FFR_TLS_ALTNAMES')
 APPENDDEF(`confENVDEF', `-D_FFR_TLS_USE_CERTIFICATE_CHAIN_FILE')
-APPENDDEF(`confLIBS', `-L$(OPENSSL_PREFIX)/lib/amd64 -lssl -lcrypto -lldap_r -llber -lsasl -licuuc')
+APPENDDEF(`confLIBS', `-L$(OPENSSL_PREFIX)/lib/$(MACH64) -lssl -lcrypto -lldap_r -llber -lsasl -licuuc')
 APPENDDEF(`conf_sendmail_LIBS', `-lsldap')
 APPENDDEF(`conf_sendmail_LIBS', `-lwrap')
 APPENDDEF(`conf_sendmail_LIBS', `-lumem')
@@ -139,6 +135,8 @@ endef
 #define(\`confOPTIMIZE', \`-g')
 
 export SITE_CONFIG_M4
+
+COMPONENT_PRE_BUILD_ACTION += $(GSED) -i -e 's:/usr/perl5/bin/perl:/usr/bin/perl:' $(BUILD_DIR)/$(MACH64)/contrib/etrn.pl
 
 $(SOURCE_DIR)/devtools/Site/site.config.m4:	unpack
 	$(file > $@,$(SITE_CONFIG_M4))
@@ -184,23 +182,18 @@ COMPONENT_TEST_ENV +=	PATH=$(GNUBIN):$(USRBINDIR)
 # the results, so we can use a common "all" master file.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-COMPONENT_TEST_TRANSFORMS += \
-    '-e "s|$(SM_BUILD_SUB_DIR)|\\$$(SM_BUILD_SUB_DIR)|g" ' \
-    '-e "s|$(OS_VERSION)|\\$$(OS_VERSION)|g" ' \
-    '-e "s|$(ARCH)|\\$$(ARCH)|g" ' \
-    '-e "s|^$(CC).*$$|XXX_CC_XXX|g" ' \
-    '-e "s|m$(BITS)|m\\$$(BITS)|g" ' \
-    '-e "/^XXX_CC_XXX\\$$/d" '
+COMPONENT_TEST_TRANSFORMS += -n \
+    '-e "/tests /p" ' \
+    '-e "/PASS: /p" ' \
+    '-e "/===========/p" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
-REQUIRED_PACKAGES += library/icu
-#chicken egg problem
-#REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-11
-REQUIRED_PACKAGES += runtime/perl-534
+REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl

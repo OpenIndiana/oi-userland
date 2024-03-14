@@ -1,0 +1,24 @@
+This patch provides a workaround for https://github.com/openssl/openssl/issues/15587
+
+This patch changes Montgomery squaring implementation for SPARCv9
+so that it uses less optimized code path (within code path that is
+already heavily optimized and written in handcrafted assembly).
+Basically, instead of using dedicated Montgomery squaring procedure ( A == B ),
+it will use the generic Montgomery multiplication procedure ( A != B ).
+
+This results in performance degradation, until proper fix is determined.
+When calling ECDSA_sign()/ECDSA_verify() back to back in FIPS mode with the
+NID_secp521r1 curve, using 64-bit program on a LDOM with 16 SPARC-M7 CPUs on a
+SPARC T7-1 machine, the performance degradation was 5 percent on average.
+
+--- openssl-3.0.0/crypto/bn/asm/sparcv9-mont.pl
++++ openssl-3.0.0/crypto/bn/asm/sparcv9-mont.pl
+@@ -117,7 +117,7 @@ and	%o7,-1024,%o7
+ 	ld	[$np],$car1		! np[0]
+ 	sub	%o7,$bias,%sp		! alloca
+ 	ld	[$np+4],$npj		! np[1]
+-	be,pt	SIZE_T_CC,.Lbn_sqr_mont
++	nop				! disable bn_sqr_mont for now
+ 	mov	12,$j
+ 
+ 	mulx	$car0,$mul0,$car0	! ap[0]*bp[0]

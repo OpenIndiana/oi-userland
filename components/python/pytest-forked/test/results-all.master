@@ -1,0 +1,27 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D), configfile: tox.ini
+asyncio: mode=strict
+collecting ... collected 13 items
+
+::project PASSED
+testing/test_boxed.py::test_functional_boxed PASSED
+testing/test_boxed.py::test_functional_boxed_capturing[fd] XFAIL (ca...)
+testing/test_boxed.py::test_functional_boxed_capturing[no] PASSED
+testing/test_boxed.py::test_functional_boxed_capturing[sys] XFAIL (c...)
+testing/test_boxed.py::test_functional_boxed_per_test PASSED
+testing/test_boxed.py::test_is_not_boxed_by_default PASSED
+testing/test_xfail_behavior.py::test_xfail[non-strict xfail] PASSED
+testing/test_xfail_behavior.py::test_xfail[non-strict xpass] PASSED
+testing/test_xfail_behavior.py::test_xfail[strict xfail] PASSED
+testing/test_xfail_behavior.py::test_xfail[strict xpass] PASSED
+
+=========================== short test summary info ============================
+======== 9 passed, 2 xfailed ========
+  py$(PYV): OK
+  congratulations :)

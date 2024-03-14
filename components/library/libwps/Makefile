@@ -20,26 +20,27 @@
 #
 # Copyright (c) 2015-2017, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=			32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwps
-COMPONENT_VERSION=	0.4.12
-COMPONENT_FMRI=     	library/c++/libwps
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwps
+COMPONENT_VERSION=	0.4.14
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      libwps - library for reading Microsoft Works documents 
+COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwps
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e21afb52a06d03b774c5a8c72679687ab64891b91ce0c3bdf2d3e97231534edb
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libwps/files/libwps/libwps-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:365b968e270e85a8469c6b160aa6af5619a4e6c995dbb04c1ecc1b4dd13e80de
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/libwps/libwps-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     	library/c++/libwps
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

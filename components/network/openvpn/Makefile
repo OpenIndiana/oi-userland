@@ -13,17 +13,19 @@
 # Copyright 2016 Jim Klimov
 # Copyright 2020 Michal Nowak
 # Copyright 2022 Niklas Poslovski
+# Copyright 2024 Stephan Althaus
 #
 
-USE_OPENSSL11=	yes
+OPENSSL_VERSION= 3.1
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvpn
-COMPONENT_VERSION=	2.5.7
+COMPONENT_VERSION=	2.6.9
 COMPONENT_SUMMARY=	OpenVPN is a full-featured open source SSL VPN solution
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:313bca7e996a4f59ef9940dd87c6c4b9168064db9be6cabebd37cd65f13759ed
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:e08d147e15b4508dfcd1d6618a1f21f1495f9817a8dadc1eddf0532fa116d7e3
 COMPONENT_PROJECT_URL=	https://openvpn.net
 COMPONENT_ARCHIVE_URL=	https://build.openvpn.net/downloads/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/openvpn
@@ -45,24 +47,16 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTO_DIR)/$(USRSHAREDOCDIR)/openvpn/sample/ ; \
 	$(CP) -a $(SOURCE_DIR)/sample/sample-{config-files,keys,scripts} $(PROTO_DIR)/$(USRSHAREDOCDIR)/openvpn/sample/ ;
 
-COMPONENT_TEST_TRANSFORMS= \
-	'-n '\
-	'-e "/^SKIP/p"' \
-	'-e "/^PASS/p"' \
-	'-e "/^FAIL/p"' \
-	'-e "/^Testing/p"' \
-	'-e "/^====/p"' \
-	'-e "/^All/p"' \
+COMPONENT_TEST_TRANSFORMS += \
 	'-e "/test was not run/p"' \
-	'-e "/cannot find/p"' \
-	'-e "/^If the addresses are in use/p"'
+	'-e "/cannot find/p"'
 
 # Build dependencies
 REQUIRED_PACKAGES += driver/network/header-tun
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/lzo
-REQUIRED_PACKAGES += library/security/openssl-11
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,15 @@
+This is a Solaris specific change which may break HPLIP on other Operating Systems.
+
+Not suitable for upstream.
+
+--- a/base/slp.py	2020-08-14 11:25:50.517868719 +0200
++++ b/base/slp.py	2020-08-14 11:26:05.129548672 +0200
+@@ -67,7 +67,7 @@
+ 
+     try:
+         s.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_TTL, ttl)
+-        s.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(intf) + socket.inet_aton('0.0.0.0'))
++        s.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(intf))
+         s.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_LOOP ,1)
+     except Exception as e:
+         log.error("Unable to setup multicast socket for SLP: %s" % e)

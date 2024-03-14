@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Aurelien Larcher.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2022, Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -30,7 +31,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sed
-COMPONENT_VERSION=	4.8
+COMPONENT_VERSION=	4.9
 COMPONENT_FMRI=		text/gnu-sed
 COMPONENT_SUMMARY=	GNU implementation of sed, the Unix stream editor
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -38,7 +39,7 @@ COMPONENT_PROJECT_URL=	https://www.gnu.org/software/sed/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:f79b0cfea71b37a8eeec8490db6c5f7ae7719c35587f21edb0617f370eeff633
+	sha256:6e226b732e1cd739464ad6862bd1a1aba42d7982922da7a53519631d24975181
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/sed/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
 

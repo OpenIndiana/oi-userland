@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		XML::NamespaceSupport
 HUMAN_VERSION =			1.12
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		XML::NamespaceSupport - A simple generic namespace processor
 COMPONENT_CPAN_AUTHOR =		PERIGRIN
 COMPONENT_ARCHIVE_HASH =	\

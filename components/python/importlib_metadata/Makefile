@@ -14,23 +14,42 @@
 #   $WS_TOOLS/python-integrate-project importlib_metadata
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_metadata
-COMPONENT_VERSION =		4.10.1
+HUMAN_VERSION =			7.0.2
 COMPONENT_SUMMARY =		importlib_metadata - Read metadata from Python packages
 COMPONENT_PROJECT_URL =		https://github.com/python/importlib_metadata
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f8/41/8ffb059708359ea14a3ec74a99a2bf0cd44a0c983a0c480d9eb7a69438bb/importlib_metadata-4.10.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:951f0d8a5b7260e9db5e41d429285b5f451e928479f19d80818878527d36e95e
+	sha256:198f568f3230878cb1b44fbd7975f87906c22336dba2e4a7f05278c281fbd792
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_TARGET = $(NO_TESTS)
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - build
+# - tox-current-env (test bootstrap)
+PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/jaraco/pytest-perf/issues/6
+PYTEST_ADDOPTS += '-p no:perf'
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += library/python/zipp
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/flufl-flake8
+TEST_REQUIRED_PACKAGES.python += library/python/packaging
+TEST_REQUIRED_PACKAGES.python += library/python/pyfakefs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-perf

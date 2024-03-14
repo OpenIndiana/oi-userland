@@ -1,0 +1,24 @@
+From 33698eeb8af452867970d99e9575e9bdc5157367 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Mon, 11 Mar 2019 10:41:58 +0000
+Subject: libpthread is a filter in illumos; all functionality
+ has been migrated to libc. Prevent gcc from linking with libpthread if
+ -pthread[s] is passed as an option.
+
+Some build systems such as meson/ninja pass this option.
+---
+ gcc/config/sol2.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index aa115adf52f..698d0cad2e4 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -161,7 +161,6 @@ along with GCC; see the file COPYING3.  If not see
+ #undef LIB_SPEC
+ #define LIB_SPEC \
+   "%{!symbolic:\
+-     %{pthreads|pthread:-lpthread} \
+      %{p|pg:-ldl} -lc}"
+ 
+ #ifndef CROSS_DIRECTORY_STRUCTURE

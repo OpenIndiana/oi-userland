@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTML::Template
 HUMAN_VERSION =			2.97
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		HTML::Template - Perl module to use HTML-like templating language
 COMPONENT_CPAN_AUTHOR =		SAMTREGAR
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,5 +32,5 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/cgi
-PERL_REQUIRED_PACKAGES += library/perl-5/test-pod
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod

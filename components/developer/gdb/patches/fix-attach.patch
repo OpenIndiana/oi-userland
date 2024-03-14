@@ -1,0 +1,19 @@
+Started with GDB 10.1, the attach to a process was crashing
+because the_procfs_target variable had not been initialized
+with a valid process_stratum_target structure. To workaround
+the issue, we extract a valid stratum from the current inferior.
+
+Will be sent to upstream.
+
+diff -wpruN '--exclude=*.orig' a~/gdb/procfs.c a/gdb/procfs.c
+--- a~/gdb/procfs.c	1970-01-01 00:00:00
++++ a/gdb/procfs.c	1970-01-01 00:00:00
+@@ -1864,7 +1864,7 @@ do_attach (ptid_t ptid)
+ 
+   /* Add it to gdb's thread list.  */
+   ptid = ptid_t (pi->pid, lwpid, 0);
+-  thread_info *thr = add_thread (&the_procfs_target, ptid);
++  thread_info *thr = add_thread (inf->process_target(), ptid);
+   switch_to_thread (thr);
+ }
+ 

@@ -14,13 +14,13 @@
 #   $WS_TOOLS/perl-integrate-module Net::SNMP
 #
 
-BUILD_STYLE = makemaker
+BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::SNMP
 HUMAN_VERSION =			6.0.1
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Net::SNMP - Object oriented interface to SNMP
 COMPONENT_CPAN_AUTHOR =		DTOWN
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,5 +33,10 @@ COMPONENT_SRC =			$(COMPONENT_NAME)-v$(HUMAN_VERSION)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/crypt-des
+PERL_REQUIRED_PACKAGES += library/perl-5/crypt-rijndael
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha1
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
+PERL_REQUIRED_PACKAGES += library/perl-5/socket6
 PERL_REQUIRED_PACKAGES += runtime/perl

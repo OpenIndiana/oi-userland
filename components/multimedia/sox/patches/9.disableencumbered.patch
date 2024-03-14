@@ -1,6 +1,6 @@
---- sox-14.4.1/configure.ac.~1~	2013-02-02 06:02:37.000000000 +0400
-+++ sox-14.4.1/configure.ac	2016-04-19 20:33:37.556800433 +0300
-@@ -393,20 +393,11 @@
+--- sox-14.4.2/configure.ac.orig
++++ sox-14.4.2/configure.ac
+@@ -450,15 +450,8 @@
  fi
  
  # Check for libgsm
@@ -18,18 +18,13 @@
  AM_CONDITIONAL(EXTERNAL_GSM, test x$found_libgsm = xyes)
  AC_SUBST(LIBGSM_LIBADD)
  
--
--
- # Check for liblpc10
- found_liblpc10=yes
- AC_CHECK_HEADERS(lpc10.h, ,
-@@ -440,58 +431,11 @@
+@@ -509,58 +502,10 @@
  AC_OPTIONAL_FORMAT(flac, FLAC, [AC_CHECK_HEADER(FLAC/all.h, [AC_CHECK_DECL(FLAC_API_VERSION_CURRENT, [AC_CHECK_LIB(FLAC, FLAC__stream_encoder_new, FLAC_LIBS="-lFLAC $FLAC_LIBS $OGG_VORBIS_LIBS",using_flac=no, $FLAC_LIBS $OGG_VORBIS_LIBS)], using_flac=no, [#include <FLAC/all.h>])], using_flac=no)], using_flac=no)
  
  
 -dnl When enable_dl_amrbw, do not let add libraries to be linked in
 -dnl since they will be dlopen()'ed instead.
- ac_sox_save_AMRWB_LIBS="$AMRWB_LIBS"
+-ac_sox_save_AMRWB_LIBS="$AMRWB_LIBS"
 -tmp_using_amrwb=$opt_default
 -AC_CHECK_HEADERS(opencore-amrwb/dec_if.h,
 -		 [AC_CHECK_LIB(opencore-amrwb, D_IF_init, 
@@ -39,7 +34,7 @@
 -		    AMRWB_LIBS="$AMRWB_LIBS -lamrwb",tmp_using_amrwb=no)], 
 -		    tmp_using_amrwb=no)])
 -AC_ARG_ENABLE(dl_amrwb,
--	      AC_HELP_STRING([--enable-dl-amrwb], 
+-	      AS_HELP_STRING([--enable-dl-amrwb], 
 -			     [Dlopen amrbw instead of linking in.]),
 -			     enable_dl_amrwb=$enableval, enable_dl_amrwb=no)
 -if test "x$using_libltdl" = "xyes" -a "x$enable_dl_amrwb" = "xyes"; then
@@ -67,7 +62,7 @@
 -		    AMRNB_LIBS="$AMRNB_LIBS -lamrnb", tmp_using_amrnb=no)], 
 -		    tmp_using_amrnb=no)])
 -AC_ARG_ENABLE(dl_amrnb,
--	      AC_HELP_STRING([--enable-dl-amrnb], 
+-	      AS_HELP_STRING([--enable-dl-amrnb], 
 -			     [Dlopen amrnb instead of linking in.]),
 -			     enable_dl_amrnb=$enableval, enable_dl_amrnb=no)
 -if test "x$using_libltdl" = "xyes" -a "x$enable_dl_amrnb" = "xyes"; then

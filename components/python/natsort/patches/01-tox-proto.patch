@@ -1,0 +1,16 @@
+We need to test natsort in proto area.  Currently PYTHONPATH points there.
+
+--- natsort-8.3.1/tox.ini.orig
++++ natsort-8.3.1/tox.ini
+@@ -31,9 +31,9 @@
+     # Doctests
+     {envpython} -m doctest -o IGNORE_EXCEPTION_DETAIL docs/howitworks.rst
+     pytest README.rst docs/examples.rst
+-    pytest --doctest-modules {envsitepackagesdir}/natsort
++    pytest --doctest-modules {env:PYTHONPATH}/natsort
+     # Full test suite. Allow the user to pass command-line objects.
+-    pytest --hypothesis-profile=slow-tests --tb=short --cov {envsitepackagesdir}/natsort --cov-report term-missing {posargs:}
++    pytest --hypothesis-profile=slow-tests --tb=short --cov {env:PYTHONPATH}/natsort --cov-report term-missing {posargs:}
+ 
+ # Check code quality.
+ [testenv:flake8]

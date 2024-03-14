@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Socket6
 HUMAN_VERSION =			0.29
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Socket6 - IPv6 related part of the C socket.h defines and structure manipulators
 COMPONENT_CPAN_AUTHOR =		UMEMOTO
 COMPONENT_ARCHIVE_HASH =	\

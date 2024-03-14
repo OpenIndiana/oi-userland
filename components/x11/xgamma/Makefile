@@ -18,15 +18,18 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xgamma
-COMPONENT_VERSION=  1.0.6
-COMPONENT_REVISION= 1
-COMPONENT_FMRI=     x11/xgamma
+COMPONENT_VERSION=  1.0.7
 COMPONENT_SUMMARY=  xgamma - monitor gamma correction setting utility
-COMPONENT_ARCHIVE_HASH= \
-  sha256:0ef1c35b5c18b1b22317f455c8df13c0a471a8efad63c89c98ae3ce8c2b222d3
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:1c79dae85a8953a15f4fe5c2895a033307b43b8613456c87ec47b374b113bc8f
+COMPONENT_FMRI=     x11/xgamma
 
 include $(WS_MAKE_RULES)/common.mk
 
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxxf86vm
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxxf86vm

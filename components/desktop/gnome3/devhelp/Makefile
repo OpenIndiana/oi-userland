@@ -13,44 +13,38 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= devhelp
-COMPONENT_MJR_VERSION= 3.18
+COMPONENT_MJR_VERSION= 43
 COMPONENT_MNR_VERSION= 0
-COMPONENT_REVISION= 2
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY= API documentation browser for GNOME
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2494af16fedc311d7bb50bc47c32a69035f7b95fd7995d9db4fe497926087fb5
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/devhelp/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:63ceeefd05392e02044881ef1ecd724293553da5735b7efc082b2d13fe85dd04
+COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/devhelp/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Apps/Devhelp
-COMPONENT_FMRI= developer/gnome/devhelp
+COMPONENT_FMRI= developer/gnome/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Development/GNOME and GTK+
-COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = COPYING
-
-TEST_TARGET= $(NO_TESTS)
+COMPONENT_LICENSE= GPLv3+,CC BY-SA 4.0
 
 include $(WS_MAKE_RULES)/common.mk
 
-CXXFLAGS+= -std=gnu++0x
+# g-ir-scanner
+CC_PIC_MODE= $(CC_PIC_DISABLE)
+LD_Z_PIE_MODE= $(LD_Z_PIE_DISABLE)
 
-# We get Werror without building in separate directory, and it's not good
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+# need to use gnu-gettext
+CONFIGURE_ENV += PATH=$(PATH.gnu)
+COMPONENT_INSTALL_ENV += PATH=$(PATH.gnu)
+COMPONENT_BUILD_ENV += PATH=$(PATH.gnu)
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
-CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math

@@ -26,8 +26,8 @@
 # whenever PATH is to be defined there:
 #     PATH = $(PATH.illumos)
 #     PATH = $(PATH.gnu)
-PATH.illumos=$(PATH.prepend):$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
-PATH.gnu=$(PATH.prepend):$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
+PATH.illumos =	$(subst $(space),:,$(strip $(PATH.prepend))):$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR)
+PATH.gnu =	$(subst $(space),:,$(strip $(PATH.prepend))):$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR)
 
 # Default PATH
 PATH = $(PATH.illumos)
@@ -44,7 +44,7 @@ PATH = $(PATH.illumos)
 #EXTERNAL_ARCHIVE_MIRROR = \
 #	http://static.opensolaris.org/action/browse/userland/tarball/userland
 
-DLC_ARCHIVE_MIRROR = http://dlc.openindiana.org/oi-userland/source-archives
+DLC_ARCHIVE_MIRROR = https://dlc.openindiana.org/oi-userland/source-archives
 
 # Default to looking for source archives on the internal mirror and the external
 # mirror before we hammer on the community source archive repositories.
@@ -57,7 +57,7 @@ export DOWNLOAD_FALLBACK_PATH =  $(DLC_ARCHIVE_MIRROR)
 # The workspace starts at the mercurial root
 ifeq ($(origin WS_TOP), undefined)
 export WS_TOP := \
-	$(shell hg root 2>/dev/null || git rev-parse --show-toplevel)
+	$(shell git rev-parse --show-toplevel || hg root 2>/dev/null)
 endif
 
 USERLAND_ARCHIVES ?=	$(WS_TOP)/archives/
@@ -107,7 +107,7 @@ ROOT =			/
 # to determine the distribution version
 # (it should look like OpenIndiana Hipster YYYY.MM).
 DISTRIBUTION_NAME = OpenIndiana Hipster
-DISTRIBUTION_VERSION = 2021.10
+DISTRIBUTION_VERSION = 2023.10
 # Native OS version
 OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
@@ -156,16 +156,21 @@ else
 MK_BITS=$(strip $(BUILD_BITS))
 endif
 
-PYTHON_VERSION = 3.9
-PYTHON_VERSIONS = 3.7 3.9
+#
+# Upstream support for Python is by default 5 years after the first release.
+# We will start to obsolete Python versions according the following table:
+#
+# +----------------+----------------+
+# | Python version | Obsolete after |
+# +----------------+----------------+
+# |      3.9       |   2025-10      |
+# +----------------+----------------+
+#
+# See https://devguide.python.org/versions/
+#
 
-# These variables are for backward compatibility only.  Components should stop
-# to use them.  Once they do so these vars should be removed.
-PYTHON3_VERSION	= $(PYTHON_VERSION)
-PYTHON3_VERSIONS = $(PYTHON_VERSIONS)
-PYTHON3_RUNTIME_PKG = runtime/python-$(subst .,,$(PYTHON3_VERSION))
-PYTHON_ALL_VERSIONS = $(PYTHON_VERSIONS)
-PYTHON_VERSIONS_ALL= $(PYTHON_VERSIONS)
+PYTHON_VERSION = 3.9
+PYTHON_VERSIONS = 3.9
 
 # Python up to 2.7 was built both 32-bit and 64-bit.  Starting with Python 3.x
 # the python package is built 64-bit only.  So now all PYTHON_VERSIONS are
@@ -180,7 +185,7 @@ PYTHON_64_ONLY_VERSIONS = $(PYTHON_VERSIONS)
 #
 # This list should be usually empty.  Intersection of
 # PYTHON_VERSIONS_OBSOLETING and PYTHON_VERSIONS lists MUST be always empty.
-PYTHON_VERSIONS_OBSOLETING = 2.7 3.5
+PYTHON_VERSIONS_OBSOLETING = 2.7 3.7
 
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
@@ -205,6 +210,7 @@ CONFIG_SHELL =	/bin/bash
 
 PKG_REPO =	file:$(WS_REPO)
 
+COMPONENT =		$(COMPONENT_DIR:$(WS_TOP)/components/%=%)
 HUMAN_VERSION ?=	$(COMPONENT_VERSION)
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)
 
@@ -219,26 +225,30 @@ ARCHLIBSUBDIR32	=
 ARCHLIBSUBDIR64	= $(MACH64)
 ARCHLIBSUBDIR	= $(ARCHLIBSUBDIR$(BITS))
 
-ETCDIR =	/etc
-USRDIR =	/usr
-BINDIR =	/bin
-SBINDIR =	/sbin
-LIBDIR =	/lib
-VARDIR =	/var
-KERNELDRVDIR =	/kernel/drv
-KERNELDRVDIR32 =/kernel/drv
-KERNELDRVDIR64 =/kernel/drv/$(MACH64)
-USRBINDIR = 	$(USRDIR)/bin
-USRBINDIR32 =	$(USRDIR)/bin/$(MACH32)
-USRBINDIR64 =	$(USRDIR)/bin/$(MACH64)
-USRSBINDIR = 	$(USRDIR)/sbin
-USRSBINDIR32 =	$(USRDIR)/sbin/$(MACH32)
-USRSBINDIR64 =	$(USRDIR)/sbin/$(MACH64)
-USRLIBDIR = 	$(USRDIR)/lib
-USRLIBDIR32 =	$(USRDIR)/lib
-USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
-USRSHAREDIR =	$(USRDIR)/share
-USRINCDIR = 	$(USRDIR)/include
+ETCDIR =		/etc
+USRDIR =		/usr
+BINDIR =		/bin
+SBINDIR =		/sbin
+LIBDIR =		/lib
+LIBEXECDIR =		/libexec
+VARDIR =		/var
+KERNELDRVDIR =		/kernel/drv
+KERNELDRVDIR32 =	/kernel/drv
+KERNELDRVDIR64 =	/kernel/drv/$(MACH64)
+USRBINDIR = 		$(USRDIR)/bin
+USRBINDIR32 =		$(USRDIR)/bin/$(MACH32)
+USRBINDIR64 =		$(USRDIR)/bin/$(MACH64)
+USRSBINDIR = 		$(USRDIR)/sbin
+USRSBINDIR32 =		$(USRDIR)/sbin/$(MACH32)
+USRSBINDIR64 =		$(USRDIR)/sbin/$(MACH64)
+USRLIBDIR = 		$(USRDIR)/lib
+USRLIBDIR32 =		$(USRDIR)/lib
+USRLIBDIR64 =		$(USRDIR)/lib/$(MACH64)
+USRLIBEXECDIR =		$(USRDIR)/libexec
+USRLIBEXECDIR32 =	$(USRDIR)/libexec
+USRLIBEXECDIR64 =	$(USRDIR)/libexec/$(MACH64)
+USRSHAREDIR =		$(USRDIR)/share
+USRINCDIR = 		$(USRDIR)/include
 USRSHARELOCALEDIR =	$(USRSHAREDIR)/locale
 USRSHAREMANDIR =	$(USRSHAREDIR)/man
 USRSHAREDOCDIR =	$(USRSHAREDIR)/doc
@@ -256,20 +266,22 @@ USRKERNELDRVDIR64 =	$(USRDIR)/kernel/drv/$(MACH64)
 
 # The *.$(BITS) variables are different from those above (better suited for
 # isaexec wrapper), and allow for default 32-bit vs. nondefault 64-bit setups
-USRBINDIR.32 = 	$(USRBINDIR)
-USRBINDIR.64 = 	$(USRBINDIR64)
-USRSBINDIR.32 =	$(USRSBINDIR)
-USRSBINDIR.64 =	$(USRSBINDIR64)
-USRLIBDIR.32 = 	$(USRLIBDIR)
-USRLIBDIR.64 = 	$(USRLIBDIR64)
-
-PROTOETCDIR =	$(PROTO_DIR)/$(ETCDIR)
-PROTOETCSECDIR = $(PROTO_DIR)/$(ETCDIR)/security
-PROTOUSRDIR =	$(PROTO_DIR)/$(USRDIR)
-PROTOBINDIR =	$(PROTO_DIR)/$(BINDIR)
-PROTOSBINDIR =	$(PROTO_DIR)/$(SBINDIR)
-PROTOLIBDIR =	$(PROTO_DIR)/$(LIBDIR)
-PROTOVARDIR =	$(PROTO_DIR)/$(VARDIR)
+USRBINDIR.32 = 		$(USRBINDIR)
+USRBINDIR.64 = 		$(USRBINDIR64)
+USRSBINDIR.32 =		$(USRSBINDIR)
+USRSBINDIR.64 =		$(USRSBINDIR64)
+USRLIBDIR.32 = 		$(USRLIBDIR)
+USRLIBDIR.64 = 		$(USRLIBDIR64)
+USRLIBEXECDIR.32 =	$(USRLIBEXECDIR)
+USRLIBEXECDIR.64 =	$(USRLIBEXECDIR64)
+PROTOETCDIR =		$(PROTO_DIR)/$(ETCDIR)
+PROTOETCSECDIR = 	$(PROTO_DIR)/$(ETCDIR)/security
+PROTOUSRDIR =		$(PROTO_DIR)/$(USRDIR)
+PROTOBINDIR =		$(PROTO_DIR)/$(BINDIR)
+PROTOSBINDIR =		$(PROTO_DIR)/$(SBINDIR)
+PROTOLIBDIR =		$(PROTO_DIR)/$(LIBDIR)
+PROTOLIBEXECDIR =	$(PROTO_DIR)/$(LIBEXECDIR)
+PROTOVARDIR =		$(PROTO_DIR)/$(VARDIR)
 PROTOKERNELDRVDIR =  	$(PROTO_DIR)/$(KERNELDRVDIR)
 PROTOKERNELDRVDIR32 =	$(PROTO_DIR)/$(KERNELDRVDIR32)
 PROTOKERNELDRVDIR64 =	$(PROTO_DIR)/$(KERNELDRVDIR64)
@@ -282,6 +294,9 @@ PROTOUSRSBINDIR64 =	$(PROTO_DIR)/$(USRSBINDIR64)
 PROTOUSRLIBDIR =	$(PROTO_DIR)/$(USRLIBDIR)
 PROTOUSRLIBDIR32 =	$(PROTO_DIR)/$(USRLIBDIR32)
 PROTOUSRLIBDIR64 =	$(PROTO_DIR)/$(USRLIBDIR64)
+PROTOUSRLIBEXECDIR =	$(PROTO_DIR)/$(USRLIBEXECDIR)
+PROTOUSRLIBEXECDIR32 =	$(PROTO_DIR)/$(USRLIBEXECDIR32)
+PROTOUSRLIBEXECDIR64 =	$(PROTO_DIR)/$(USRLIBEXECDIR64)
 PROTOUSRINCDIR =	$(PROTO_DIR)/$(USRINCDIR)
 PROTOUSRSHAREDIR =	$(PROTO_DIR)/$(USRSHAREDIR)
 PROTOUSRSHARELIBDIR =	$(PROTO_DIR)/$(USRSHARELIBDIR)
@@ -304,6 +319,8 @@ PROTOUSRSBINDIR.32 =	$(PROTOUSRSBINDIR)
 PROTOUSRSBINDIR.64 =	$(PROTOUSRSBINDIR64)
 PROTOUSRLIBDIR.32 = 	$(PROTOUSRLIBDIR)
 PROTOUSRLIBDIR.64 = 	$(PROTOUSRLIBDIR64)
+PROTOUSRLIBEXECDIR.32 = $(PROTOUSRLIBEXECDIR)
+PROTOUSRLIBEXECDIR.64 = $(PROTOUSRLIBEXECDIR64)
 
 # NOTE: We do not build SFW contents
 # /usr/sfw/bin is just a historic artefact, containing symlinks
@@ -418,6 +435,16 @@ CONFIGURE_NO_ARCH =	$(BUILD_DIR_NO_ARCH)/.configured
 CONFIGURE_32 =		$(BUILD_DIR_32)/.configured
 CONFIGURE_64 =		$(BUILD_DIR_64)/.configured
 
+# In ideal world all components should support parallel build but it is often
+# not the case.  So by default we do not run parallel build and allow
+# components to opt-in for parallel build by setting USE_PARALLEL_BUILD = yes
+# before the shared-macros.mk file is included.
+PARALLEL_JOBS ?= 8
+ifeq ($(strip $(USE_PARALLEL_BUILD)),yes)
+COMPONENT_BUILD_GMAKE_ARGS += -j$(PARALLEL_JOBS)
+COMPONENT_BUILD_SETUP_PY_ARGS += -j$(PARALLEL_JOBS)
+endif
+
 BUILD_DIR_NO_ARCH =	$(BUILD_DIR)/$(MACH)
 BUILD_DIR_32 =		$(BUILD_DIR)/$(MACH32)
 BUILD_DIR_64 =		$(BUILD_DIR)/$(MACH64)
@@ -471,18 +498,20 @@ COMPONENT_TEST_TRANSFORMER =	$(GSED)
 COMPONENT_TEST_TRANSFORMS = \
 	'-e "s|$(@D)|\\$$(@D)|g" ' \
 	'-e "s|$(PERL)|\\$$(PERL)|g" ' \
+	'-e "s|$(PYTHON)|\\$$(PYTHON)|g" ' \
 	'-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" '
-COMPONENT_TEST_TRANSFORMS +=	"-e 's|$(PYTHON_DIR)|\$$(PYTHON_DIR)|g'"
+COMPONENT_TEST_TRANSFORMS +=	"-e 's|$(PROTO_DIR)|\$$(PROTO_DIR)|g'"
+COMPONENT_TEST_TRANSFORMS +=	"-e 's|$(BUILD_DIR)|\$$(BUILD_DIR)|g'"
 
 # set the default commands used to generate the file containing the set
 # of transforms to be applied to the test results to try to normalize them.
 COMPONENT_TEST_CREATE_TRANSFORMS = \
 	print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
+	print '$(CAT) $(COMPONENT_TEST_OUTPUT) | \\' \
+		>> $(COMPONENT_TEST_TRANSFORM_CMD); \
 	print '$(COMPONENT_TEST_TRANSFORMER) ' \
 		$(COMPONENT_TEST_TRANSFORMS) \
 		' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
-	print '$(COMPONENT_TEST_OUTPUT) \\' \
-		>> $(COMPONENT_TEST_TRANSFORM_CMD); \
 	print '> $(COMPONENT_TEST_SNAPSHOT)' \
 		>> $(COMPONENT_TEST_TRANSFORM_CMD); \
 
@@ -523,6 +552,11 @@ COMPONENT_TEST_TARGETS =	check
 
 # set the default directory for test of the component
 COMPONENT_TEST_DIR =	$(@D)
+
+# prepare the testing environment before we run tests
+COMPONENT_TEST_DEP += component-test-environment-prep
+# we test built components
+COMPONENT_TEST_DEP += $(BUILD_DIR)/%/.built
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
@@ -596,12 +630,9 @@ export CCACHE := $(shell \
         fi; \
     fi)
 
-GCC_VERSION =	7
+GCC_DEFAULT =	13
+GCC_VERSION ?=	$(GCC_DEFAULT)
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
-
-GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
-GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
-GCC_LIBDIR =	$(GCC_LIBDIR.$(BITS))
 
 # Define runtime package names to be used in dependencies
 GCC_VERSION_MAJOR    = $(shell echo $(GCC_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
@@ -631,6 +662,7 @@ GCC_LIBDIR =	$(GCC_LIBDIR.$(BITS))
 GCC_INCDIR =	$(GCC_ROOT)/include
 GCC_LIBGCCDIR =	$(GCC_ROOT)/lib/gcc
 GCC_INCGXXDIR =	$(GCC_ROOT)/include/c++/$(GCC_FULL_VERSION)
+PATH.prepend +=	$(GCC_BINDIR)
 
 ifneq ($(strip $(CCACHE)),)
 
@@ -656,10 +688,20 @@ endif
 
 LD =		/usr/bin/ld
 
-PYTHON.3.7.VENDOR_PACKAGES.64 = /usr/lib/python3.7/vendor-packages
-PYTHON.3.7.VENDOR_PACKAGES.32 = /usr/lib/python3.7/vendor-packages
-PYTHON.3.7.VENDOR_PACKAGES = $(PYTHON.3.7.VENDOR_PACKAGES.$(BITS))
+# Clang definitions (we only have 64 bit clang)
+CLANG_DEFAULT =		17
+CLANG_VERSION =		$(CLANG_DEFAULT)
+CLANG_FULL_VERSION =	$(CLANG_VERSION).0
+CLANG_PREFIX             = /usr/clang/$(CLANG_FULL_VERSION)
+CLANG_BINDIR =		$(CLANG_PREFIX)/bin
+CLANG_LIBDIR             = $(CLANG_PREFIX)/lib
+CLANG_DEVELOPER_PKG      = developer/clang-$(CLANG_VERSION)
+CLANG_RUNTIME_PKG        = runtime/clang-$(CLANG_VERSION)
+REQUIRED_PACKAGES_SUBST += CLANG_DEVELOPER_PKG
+REQUIRED_PACKAGES_SUBST += CLANG_RUNTIME_PKG
+PATH.prepend +=		$(CLANG_BINDIR)
 
+# Python definitions
 PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES.32 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES = $(PYTHON.3.9.VENDOR_PACKAGES.$(BITS))
@@ -669,11 +711,27 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =  2.3
+#
+# We will start to obsolete major Ruby versions according the following table:
+#
+# +--------------+----------------+
+# | Ruby version | Obsolete after |
+# +--------------+----------------+
+# |     2.3      |   2019-03-31   |
+# |     3.2      |   2026-03-31   |
+# +--------------+----------------+
+#
+# See https://www.ruby-lang.org/en/downloads/branches/
+#
+
+RUBY_VERSION = 3.2
+
 RUBY_LIB_VERSION.2.3 = 2.3.0
-RUBY_LIB_VERSION.2.6 = 2.6.0
+RUBY_LIB_VERSION.3.2 = 3.2.0
+
 RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
-RUBY.2.6 =	/usr/ruby/2.6/bin/ruby
+RUBY.3.2 =	/usr/ruby/3.2/bin/ruby
+
 RUBY =          $(RUBY.$(RUBY_VERSION))
 RUBY_LIB_VERSION = $(RUBY_LIB_VERSION.$(RUBY_VERSION))
 
@@ -697,26 +755,56 @@ PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 # python2 was built for both 32- and 64-bits.
 # python3 is built for 64-bits only.
 
-PYTHON.3.7 =	/usr/bin/python3.7
-PYTHON.3.7.64 =	$(PYTHON.3.7)
-
 PYTHON.3.9 =	/usr/bin/python3.9
 PYTHON.3.9.64 =	$(PYTHON.3.9)
 
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
 PYTHON =	$(PYTHON.$(PYTHON_VERSION))
 
+TOX.3.9 =	/usr/bin/tox-3.9
+TOX =		$(TOX.$(PYTHON_VERSION))
+
 # The default is site-packages, but that directory belongs to the end-user.
 # Modules which are shipped by the OS but not with the core Python distribution
 # belong in vendor-packages.
 PYTHON_DIR= /usr/lib/python$(PYTHON_VERSION)
-PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
+PYTHON_LIB= $(PYTHON_DIR)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
-JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
-JAVA11_HOME =	/usr/jdk/instances/openjdk11.0.10
-JAVA18_HOME =	/usr/jdk/instances/openjdk18.0.1
-JAVA_HOME = $(JAVA8_HOME)
+# If the component has python scripts then the first line should probably
+# point at the python version currently set by the $(PYTHON) variable so
+# as not to be influenced by the ips python mediator.
+# In the component's Makefile define PYTHON_SCRIPTS with a list of files
+# to be edited.
+
+# Edit the leading #!/usr/bin/python line in python scripts to use the
+# BUILD's $(PYTHON). The source file must be recompiled after that, as
+# the corresponding .pyc file is outdated now.
+PYTHON_SCRIPT_SHEBANG_FIX_FUNC = \
+    $(GSED) -i \
+        -e '1s@/usr/bin/python3\{0,1\}$$@$(PYTHON)@' \
+        -e '1s@/usr/bin/python3\{0,1\} @$(PYTHON) @' \
+        -e '1s@/usr/bin/env python3\.[0-9]\{1,\}@$(PYTHON)@' \
+        -e '1s@/usr/bin/env python3\{0,1\}@$(PYTHON)@' \
+	$(PROTO_DIR)/$(1); \
+    $(PYTHON) -m compileall $(PROTO_DIR)/$(1);
+
+# PYTHON_SCRIPTS is a list of files from the calling Makefile.
+PYTHON_SCRIPTS_PROCESS= \
+    $(foreach s,$(PYTHON_SCRIPTS), \
+            $(call PYTHON_SCRIPT_SHEBANG_FIX_FUNC,$(s)))
+
+# Finally if PYTHON_SCRIPTS is defined in a Makefile then process them here.
+# If multiple installs in the component then clear
+# COMPONENT_POST_INSTALL_ACTION =
+# and re-add $(PYTHON_SCRIPTS_PROCESS)
+COMPONENT_POST_INSTALL_ACTION += $(PYTHON_SCRIPTS_PROCESS)
+
+JAVA8_HOME =	/usr/jdk/openjdk1.8.0
+JAVA11_HOME =	/usr/jdk/openjdk11
+JAVA17_HOME =	/usr/jdk/openjdk17
+JAVA21_HOME =	/usr/jdk/openjdk21
+JAVA_HOME = $(JAVA17_HOME)
 
 # QT macros
 # We deliver version 5 in 32- and 64-bit variants.
@@ -732,17 +820,43 @@ QT5_INCDIR = $(QT5_BASEDIR)/include
 QT5_PKG_CONFIG_PATH = $(QT5_LIBDIR)/pkgconfig
 
 # We deliver version 6 only in a 64-bit variant.
-QT6_VERSION = 6.2
+QT6_VERSION = 6.6
 QT6_BASEDIR = $(USRLIBDIR)/qt/$(QT6_VERSION)
 QT6_BINDIR = $(QT6_BASEDIR)/bin/$(MACH64)
 QT6_LIBDIR = $(QT6_BASEDIR)/lib/$(MACH64)
 QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 
-# This is the default BUILD version of perl
-# Not necessarily the system's default version, i.e. /usr/bin/perl
-PERL_VERSION =  5.36
+#
+# Upstream officially supports two recent major Perl versions.  They also aim
+# to provide critical security fixes for major Perl versions whose 5.x.0
+# release was within the past three years.
+#
+# We support union of both sets.  IOW, we will start to obsolete a major Perl
+# version if its 5.x.0 was released longer than three years ago AND there are
+# already released two newer major Perl versions.
+#
+# See https://perldoc.perl.org/perlpolicy
+#
+#
+# We will start to obsolete major Perl versions according the following table:
+#
+# +--------------+----------------+
+# | Perl version | Obsolete after |
+# +--------------+----------------+
+# |     5.34     |   2024-05-20   |
+# |     5.36     |   2025-05-28   |
+# |     5.38     |   2026-07-02   |
+# +--------------+----------------+
+#
+# See https://www.cpan.org/src/README.html
+#
 
-PERL_VERSIONS = 5.34 5.36
+# This is the default version of Perl
+PERL_VERSION =  5.38
+
+# The PERL_VERSIONS list should always be in ascending order (newest version
+# last)
+PERL_VERSIONS = 5.34 5.36 5.38
 # Perl up to 5.22 was built 32-bit only.  Starting with 5.24 the perl package
 # is built 64-bit only.  So now all PERL_VERSIONS are 64-bit only.
 PERL_64_ONLY_VERSIONS = $(PERL_VERSIONS)
@@ -779,20 +893,43 @@ PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 
+#
+# Upstream supports major PostgreSQL versions for 5 years after its initial
+# release.  After that one last minor version is released and then the major
+# version is considered EOL.
+#
+# We will start to obsolete PostgreSQL versions according the following table:
+#
+# +--------------------+----------------+
+# | PostgreSQL version | Obsolete after |
+# +--------------------+----------------+
+# |         12         |   2024-11-14   |
+# |         14         |   2026-11-12   |
+# |         15         |   2027-11-11   |
+# |         16         |   2028-11-09   |
+# +--------------------+----------------+
+#
+# See https://www.postgresql.org/support/versioning/
+#
+
 # Config magic for Postgres/EnterpriseDB/...
 # Default DB version should be the newest one we do have so we detect any
 # incompatibilities as soon as possible.  Components could override this when
 # they are not ready yet to compile with so new version.
-PG_VERSION ?=   14
+PG_VERSION ?=   16
 PG_IMPLEM ?=    postgres
 PG_VERNUM =     $(subst .,,$(PG_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed
 PG_BASEPKG =    database/$(PG_IMPLEM)-$(PG_VERNUM)
+PG_CLIENT_PKG = $(PG_BASEPKG)/client
 PG_DEVELOPER_PKG = $(PG_BASEPKG)/developer
 PG_LIBRARY_PKG = $(PG_BASEPKG)/library
+PG_SERVICE_PKG = service/$(PG_BASEPKG)
 
+REQUIRED_PACKAGES_SUBST+= PG_CLIENT_PKG
 REQUIRED_PACKAGES_SUBST+= PG_DEVELOPER_PKG
 REQUIRED_PACKAGES_SUBST+= PG_LIBRARY_PKG
+REQUIRED_PACKAGES_SUBST+= PG_SERVICE_PKG
 
 PG_HOME =       $(USRDIR)/$(PG_IMPLEM)/$(PG_VERSION)
 PG_BINDIR.32 =  $(PG_HOME)/bin/$(MACH32)
@@ -808,10 +945,26 @@ PG_LIBDIR =     $(PG_LIBDIR.$(BITS))
 PG_CONFIG.32 =  $(PG_BINDIR.32)/pg_config
 PG_CONFIG.64 =  $(PG_BINDIR.64)/pg_config
 PG_CONFIG =     $(PG_CONFIG.$(BITS))
+PATH.prepend +=	$(PG_BINDIR)
 
 PKG_MACROS +=   PG_VERSION=$(PG_VERSION)
 PKG_MACROS +=   PG_VERNUM=$(PG_VERNUM)
 PKG_MACROS +=   PG_BASEPKG=$(PG_BASEPKG)
+
+#
+# Upstream maintains long-term MariaDB releases for at least 5 years and
+# short-term MariaDB releases for at least one year.
+#
+# We will start to obsolete MariaDB versions according the following table:
+#
+# +-----------------+----------------+
+# | MariaDB version | Obsolete after |
+# +-----------------+----------------+
+# |      10.6       |   2026-07      |
+# +-----------------+----------------+
+#
+# See https://mariadb.org/about/#maintenance-policy
+#
 
 # Config magic for MySQL/MariaDB/Percona/...
 # Default DB version should be the newest one we do have so we detect any
@@ -829,6 +982,13 @@ $(if $(shell [ $(MYSQL_MINOR) -ge 6 ] && echo "OK"), \
     $(eval MYSQL_64_BIT_ONLY := false))
 # For dependencies, including REQUIRED_PACKAGES if needed
 MYSQL_BASEPKG =    database/$(MYSQL_IMPLEM)-$(MYSQL_VERNUM)
+MYSQL_CLIENT_PKG = $(MYSQL_BASEPKG)/client
+MYSQL_DEVELOPER_PKG = $(MYSQL_BASEPKG)/developer
+MYSQL_LIBRARY_PKG = $(MYSQL_BASEPKG)/library
+
+REQUIRED_PACKAGES_SUBST+= MYSQL_CLIENT_PKG
+REQUIRED_PACKAGES_SUBST+= MYSQL_DEVELOPER_PKG
+REQUIRED_PACKAGES_SUBST+= MYSQL_LIBRARY_PKG
 
 MYSQL_HOME =       $(USRDIR)/$(MYSQL_IMPLEM)/$(MYSQL_VERSION)
 ifeq ($(strip $(MYSQL_64_BIT_ONLY)),false)
@@ -848,6 +1008,8 @@ MYSQL_LIBDIR =     $(MYSQL_LIBDIR.$(BITS))
 MYSQL_CONFIG.32 =  $(MYSQL_BINDIR.32)/mysql_config
 MYSQL_CONFIG.64 =  $(MYSQL_BINDIR.64)/mysql_config
 MYSQL_CONFIG =     $(MYSQL_CONFIG.$(BITS))
+MYSQL_PKG_CONFIG_PATH =	$(MYSQL_LIBDIR)/pkgconfig
+PATH.prepend +=		$(MYSQL_BINDIR)
 
 PKG_MACROS +=   MYSQL_VERSION=$(MYSQL_VERSION)
 PKG_MACROS +=   MYSQL_VERNUM=$(MYSQL_VERNUM)
@@ -874,6 +1036,9 @@ JPEG_LDFLAGS.32 =  -L$(JPEG_LIBDIR.32) -R$(JPEG_LIBDIR.32)
 JPEG_LDFLAGS.64 =  -L$(JPEG_LIBDIR.64) -R$(JPEG_LIBDIR.64)
 JPEG_LDFLAGS =     $(JPEG_LDFLAGS.$(BITS))
 
+JPEG_IMPLEM_PKG = image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES_SUBST += JPEG_IMPLEM_PKG
+
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
 TCL_VERSION =  8.6
@@ -882,6 +1047,12 @@ TCLSH.8.6.i386.64 =	/usr/bin/amd64/tclsh8.6
 TCLSH.8.6.sparc.32 =	/usr/bin/sparcv7/tclsh8.6
 TCLSH.8.6.sparc.64 =	/usr/bin/sparcv9/tclsh8.6
 TCLSH =		$(TCLSH.$(TCL_VERSION).$(MACH).$(BITS))
+
+# ICU library
+ICU_VERSION =			74
+ICU_LIBRARY_PKG =		library/icu-$(ICU_VERSION)
+REQUIRED_PACKAGES_SUBST +=	ICU_LIBRARY_PKG
+
 
 CCSMAKE =	/usr/ccs/bin/make
 GMAKE =		/usr/gnu/bin/make
@@ -894,6 +1065,8 @@ GDIFF =		/usr/gnu/bin/diff
 GSORT =		/usr/gnu/bin/sort
 GUNZIP =	/usr/bin/gunzip
 
+SORT =		LC_ALL=C /usr/bin/sort
+
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)
@@ -902,8 +1075,8 @@ else
 PKGLINT =	${WS_TOOLS}/pkglint
 endif
 
-ACLOCAL =	/usr/bin/aclocal-1.10
-AUTOMAKE =	/usr/bin/automake-1.10
+ACLOCAL =	/usr/bin/aclocal-1.16
+AUTOMAKE =	/usr/bin/automake-1.16
 AUTORECONF = 	/usr/bin/autoreconf
 
 KSH93 =         /usr/bin/ksh93
@@ -915,7 +1088,7 @@ MV =		/bin/mv -f
 LN =		/bin/ln
 CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
-ENV =		/usr/bin/env
+ENV =		/usr/bin/env -i
 FIND =		/usr/bin/find
 INSTALL =	/usr/bin/ginstall
 GNU_GREP =	/usr/gnu/bin/grep
@@ -926,37 +1099,44 @@ GAS =		/usr/gnu/bin/as
 GTAR =		/usr/gnu/bin/tar
 STRIP =	/usr/bin/strip
 IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
+JQ =		/usr/bin/jq
+DOS2UNIX =	/usr/bin/dos2unix
+TAC =		/usr/bin/tac
+QUILT =		/usr/bin/quilt
+CTFCONVERT =	/opt/onbld/bin/$(MACH)/ctfconvert
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
 
 # OpenSSL macros
-OPENSSL_DEFAULT= 1.0
+OPENSSL_DEFAULT = 3.1
 ifeq ($(strip $(USE_OPENSSL11)),yes)
-OPENSSL_VERSION= 1.1
-PATH.prepend+=$(OPENSSL_BINDIR)
+OPENSSL_VERSION = 1.1
 else
 ifeq ($(strip $(USE_OPENSSL10)),yes)
-OPENSSL_VERSION= 1.0
-PATH.prepend+=$(OPENSSL_BINDIR)
+OPENSSL_VERSION = 1.0
 else
-OPENSSL_VERSION= $(OPENSSL_DEFAULT)
+OPENSSL_VERSION ?= $(OPENSSL_DEFAULT)
 endif
 endif
+PATH.prepend+=$(OPENSSL_BINDIR)
 OPENSSL_PREFIX= $(USRDIR)/openssl/$(OPENSSL_VERSION)
-OPENSSL_BINDIR.64=$(OPENSSL_PREFIX)/bin
-OPENSSL_BINDIR.32=$(OPENSSL_PREFIX)/bin/$(MACH32)
-OPENSSL_BINDIR=$(OPENSSL_BINDIR.$(BITS))
-OPENSSL_LIBDIR.64=$(OPENSSL_PREFIX)/lib/64
-OPENSSL_LIBDIR.32=$(OPENSSL_PREFIX)/lib/32
-OPENSSL_PKG_CONFIG_PATH= $(OPENSSL_PREFIX)/lib/$(BITS)/pkgconfig
+OPENSSL_BINDIR.64= $(OPENSSL_PREFIX)/bin
+OPENSSL_BINDIR.32= $(OPENSSL_PREFIX)/bin/$(MACH32)
+OPENSSL_BINDIR= $(OPENSSL_BINDIR.$(BITS))
+OPENSSL_LIBDIR.64= $(OPENSSL_PREFIX)/lib/64
+OPENSSL_LIBDIR.32= $(OPENSSL_PREFIX)/lib
+OPENSSL_LIBDIR= $(OPENSSL_LIBDIR.$(BITS))
+OPENSSL_PKG_CONFIG_PATH.32= $(OPENSSL_PREFIX)/lib/pkgconfig
+OPENSSL_PKG_CONFIG_PATH.64= $(OPENSSL_PREFIX)/lib/64/pkgconfig
+OPENSSL_PKG_CONFIG_PATH= $(OPENSSL_PKG_CONFIG_PATH.$(BITS))
 OPENSSL_INCDIR=$(OPENSSL_PREFIX)/include
 
 # Pkg-config paths
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
 PKG_CONFIG_PATH = \
-    $(OPENSSL_PKG_CONFIG_PATH):$(PKG_CONFIG_PATH.$(BITS)):$(PKG_CONFIG_PATH.32)
+    $(OPENSSL_PKG_CONFIG_PATH):$(MYSQL_PKG_CONFIG_PATH):$(PKG_CONFIG_PATH.$(BITS)):$(PKG_CONFIG_PATH.32)
 
 # Set default path for environment modules
 MODULE_VERSION =	3.2.10
@@ -1027,8 +1207,8 @@ XPG5MODE =		$(CPP_XPG5MODE)
 #
 
 # Control the GCC optimization level.
-gcc_OPT.sparc.32 =	-O3 -mcpu=ultrasparc -mvis
-gcc_OPT.sparc.64 =	-O3 -mcpu=ultrasparc -mvis
+gcc_OPT.sparc.32 =	-O3 -mcpu=ultrasparc -mvis -mfsmuld
+gcc_OPT.sparc.64 =	-O3 -mcpu=ultrasparc -mvis -mfsmuld
 gcc_OPT.i386.32 =	-O3
 gcc_OPT.i386.64 =	-O3
 gcc_OPT =		$(gcc_OPT.$(MACH).$(BITS))
@@ -1070,6 +1250,31 @@ CFLAGS +=	$(CC_BITS)
 
 # Add compiler specific 'default' features
 CFLAGS +=	$(CFLAGS.$(COMPILER))
+
+# Per-compiler CFLAGS to use when building for CTF.  Currently only defined
+# for gcc; could be made to work with other compilers.
+
+# -gdwarf-4 is the newest DWARF revision understood by illumos libctf
+#
+# -gstrict-dwarf prevents the compiler from including newer DWARF features
+CTF_CFLAGS.gcc = -g -gdwarf-4 -gstrict-dwarf
+# -msave-args makes it possible for debugging tools (specifically pstack and
+# mdb) to retrieve function arguments, and is required for the python pstack
+# hooks.
+CTF_CFLAGS.gcc += -msave-args
+# By default, GCC may put parts of functions in different named sub-sections
+# of .text based on their presumed or measured calling frequency.  This is not
+# currently handled by libctf and other illumos tools which assume that a
+# function's text lies in a single contiguous range of virtual addresses.
+# Disable this optimization if building with CTF.
+CTF_CFLAGS.gcc += -fno-reorder-functions -fno-reorder-blocks-and-partition
+
+# Enable CTF if desired
+ifeq ($(strip $(USE_CTF)),yes)
+CFLAGS += $(if $(CTF_CFLAGS.$(COMPILER)), \
+	$(CTF_CFLAGS.$(COMPILER)), \
+	$(error Error: CTF_CFLAGS.$(COMPILER) must be defined to use CTF with $(COMPILER)))
+endif
 
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
@@ -1181,11 +1386,13 @@ COMPONENT_INSTALL_ENV= \
     LD_OPTIONS="$(LD_OPTIONS)" \
     LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 
+# PATH should be always set
+COMPONENT_BUILD_ENV += PATH="$(PATH)"
+COMPONENT_INSTALL_ENV += PATH="$(PATH)"
+COMPONENT_TEST_ENV += PATH="$(PATH)"
+
 # PERL options which depend on C options should be placed here
 PERL_OPTIMIZE :=	$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
-
-# Allow user to override default maximum number of archives
-NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9 10
 
 # Rewrite absolute source-code paths into relative for ccache, so that any
 # workspace with a shared CCACHE_DIR can benefit when compiling a component
@@ -1246,21 +1453,13 @@ COMPONENT_HOOK ?=	echo $(COMPONENT_NAME) $(COMPONENT_VERSION)
 component-hook:
 	@$(COMPONENT_HOOK)
 
-# Add default dependency to SUNWcs
-REQUIRED_PACKAGES += SUNWcs
-
-# Add default dependency to shell/ksh93 which has been separated from SUNWcs
-REQUIRED_PACKAGES += shell/ksh93
+# We need shell/ksh93 to be able to run scripts in the tools directory
+USERLAND_REQUIRED_PACKAGES += shell/ksh93
 
 #
 # Packages with tools that are required to build Userland components
 #
 USERLAND_REQUIRED_PACKAGES += metapackages/build-essential
-
-# Only a default dependency if component being built produces binaries.
-ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
-REQUIRED_PACKAGES += system/library
-endif
 
 # Define substitution rules for some packages.
 # Such package names may change and would be better defined with a macro to
@@ -1273,10 +1472,26 @@ REQUIRED_PACKAGES_SUBST+= GFORTRAN_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 
 # Generate requirements on all built python version variants for given packages
-REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(PYTHON_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
+USERLAND_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(USERLAND_REQUIRED_PACKAGES.python:%=%-$(subst .,,$(ver))))
+REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(PYTHON_REQUIRED_PACKAGES:%=%-$(subst .,,$(ver))))
+TEST_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_REQUIRED_PACKAGES.python:%=%-$(subst .,,$(ver))))
 
 # Generate requirements on all built perl version variants for given packages
-REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(PERL_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
+USERLAND_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(USERLAND_REQUIRED_PACKAGES.perl:%=%-$(subst .,,$(ver))))
+REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(PERL_REQUIRED_PACKAGES:%=%-$(subst .,,$(ver))))
+TEST_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(TEST_REQUIRED_PACKAGES.perl:%=%-$(subst .,,$(ver))))
+
+# Generate conflicting packages for all built python version variants for given package
+TEST_CONFLICTING_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_CONFLICTING_PACKAGES.python:%=%-$(subst .,,$(ver))))
+
+# Targets for some tools rarely used by the build framework.  We do not add
+# these tools to USERLAND_REQUIRED_PACKAGES to do not pollute it.
+$(QUILT):
+	@echo
+	@echo "$(QUILT) is missing"
+	@echo "Please install developer/quilt package"
+	@echo
+	@exit 1
 
 include $(WS_MAKE_RULES)/environment.mk
 include $(WS_MAKE_RULES)/depend.mk

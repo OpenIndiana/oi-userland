@@ -1,5 +1,12 @@
---- pulseaudio-13.0/src/modules/oss/module-oss.c-orig	Fri Sep 13 08:10:23 2019
-+++ pulseaudio-13.0/src/modules/oss/module-oss.c	Fri Sep 11 14:44:33 2020
+Author: Gary Mills <gary_mills@fastmail.fm>
+Date:   Tue Sep 22 13:16:06 2020 -0500
+
+    bug #9732: pulseaudio always uses the first audio device
+
+diff --git a/src/modules/oss/module-oss.c b/src/modules/oss/module-oss.c
+index 048822c..1146666 100644
+--- a/src/modules/oss/module-oss.c
++++ b/src/modules/oss/module-oss.c
 @@ -32,6 +32,8 @@
   *
   */
@@ -9,7 +16,7 @@
  #ifdef HAVE_CONFIG_H
  #include <config.h>
  #endif
-@@ -122,7 +124,18 @@
+@@ -122,7 +124,18 @@ struct userdata {
      int mode;
  
      int mixer_fd;
@@ -28,7 +35,7 @@
  
      int nfrags, frag_size, orig_frag_size;
  
-@@ -197,8 +210,13 @@
+@@ -199,8 +212,13 @@ static void trigger(struct userdata *u, pa_sink_state_t sink_state, pa_source_st
      } else {
  
          if (enable_bits)
@@ -42,7 +49,7 @@
  
          if (!quick) {
              /*
-@@ -817,11 +835,165 @@
+@@ -819,6 +837,160 @@ static int source_set_state_in_io_thread_cb(pa_source *s, pa_source_state_t new_
      return 0;
  }
  
@@ -154,11 +161,11 @@
 +    return;
 +}
 +
- static void sink_get_volume(pa_sink *s) {
-     struct userdata *u;
- 
-     pa_assert_se(u = s->userdata);
- 
++static void sink_get_volume(pa_sink *s) {
++    struct userdata *u;
++
++    pa_assert_se(u = s->userdata);
++
 +    if (pa_oss_get_volume(u->mixer_dsp_fd, &(u->sink_mixext), &s->sample_spec, &s->real_volume) >= 0)
 +        return;
 +
@@ -200,23 +207,18 @@
 +
 +#else
 +
-+static void sink_get_volume(pa_sink *s) {
-+    struct userdata *u;
-+
-+    pa_assert_se(u = s->userdata);
-+
-     pa_assert(u->mixer_devmask & (SOUND_MASK_VOLUME|SOUND_MASK_PCM));
+ static void sink_get_volume(pa_sink *s) {
+     struct userdata *u;
  
-     if (u->mixer_devmask & SOUND_MASK_VOLUME)
-@@ -888,6 +1060,7 @@
- 
-     pa_log_info("Device doesn't support writing mixer settings: %s", pa_cstrerror(errno));
+@@ -889,6 +1061,7 @@ static void source_set_volume(pa_source *s) {
+     if (u->mixer_devmask & SOUND_MASK_MIC)
+         (void) pa_oss_set_volume(u->mixer_fd, SOUND_MIXER_WRITE_MIC, &s->sample_spec, &s->real_volume);
  }
 +#endif
  
  static void thread_func(void *userdata) {
      struct userdata *u = userdata;
-@@ -1170,6 +1343,11 @@
+@@ -1179,6 +1352,11 @@ fail:
  
  int pa__init(pa_module*m) {
  
@@ -228,7 +230,7 @@
      struct audio_buf_info info;
      struct userdata *u = NULL;
      const char *dev;
-@@ -1267,7 +1445,9 @@
+@@ -1278,7 +1456,9 @@ int pa__init(pa_module*m) {
      m->userdata = u;
      u->fd = fd;
      u->mixer_fd = -1;
@@ -238,7 +240,7 @@
      u->use_getospace = u->use_getispace = true;
      u->use_getodelay = true;
      u->mode = mode;
-@@ -1441,6 +1621,179 @@
+@@ -1452,6 +1632,179 @@ int pa__init(pa_module*m) {
      if ((u->mixer_fd = pa_oss_open_mixer_for_device(u->device_name)) >= 0) {
          bool do_close = true;
  
@@ -418,7 +420,7 @@
          if (ioctl(u->mixer_fd, SOUND_MIXER_READ_DEVMASK, &u->mixer_devmask) < 0)
              pa_log_warn("SOUND_MIXER_READ_DEVMASK failed: %s", pa_cstrerror(errno));
          else {
-@@ -1460,11 +1813,14 @@
+@@ -1471,11 +1824,14 @@ int pa__init(pa_module*m) {
                  do_close = false;
              }
          }
@@ -433,7 +435,7 @@
          }
      }
  
-@@ -1583,6 +1939,10 @@
+@@ -1595,6 +1951,10 @@ void pa__done(pa_module*m) {
      if (u->fd >= 0)
          pa_close(u->fd);
  
@@ -444,9 +446,31 @@
      if (u->mixer_fd >= 0)
          pa_close(u->mixer_fd);
  
---- pulseaudio-13.0/src/modules/oss/oss-util.c-orig	Fri Jul 13 14:06:14 2018
-+++ pulseaudio-13.0/src/modules/oss/oss-util.c	Tue Sep  8 10:19:33 2020
-@@ -246,6 +246,190 @@
+diff --git a/src/modules/oss/oss-util.c b/src/modules/oss/oss-util.c
+index 80b6c8c..69c702a 100644
+--- a/src/modules/oss/oss-util.c
++++ b/src/modules/oss/oss-util.c
+@@ -30,6 +30,7 @@
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <fcntl.h>
++#include <sys/filio.h>
+ 
+ #include <pulse/xmalloc.h>
+ #include <pulsecore/core-error.h>
+@@ -90,10 +91,7 @@ int pa_oss_open(const char *device, int *mode, int* pcaps) {
+     }
+ 
+ success:
+-    if (ioctl(fd, FIONBIO, &nonblock_io) < 0) {
+-        pa_log("FIONBIO: %s", pa_cstrerror(errno));
+-        goto fail;
+-    }
++    pa_make_fd_nonblock(fd);
+ 
+     t = pa_sprintf_malloc(
+             "%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+@@ -256,6 +254,190 @@ int pa_oss_set_fragments(int fd, int nfrags, int frag_size) {
      return 0;
  }
  
@@ -637,60 +661,36 @@
  int pa_oss_get_volume(int fd, unsigned long mixer, const pa_sample_spec *ss, pa_cvolume *volume) {
      char cv[PA_CVOLUME_SNPRINT_VERBOSE_MAX];
      unsigned vol;
-@@ -288,35 +472,35 @@
+@@ -298,6 +480,7 @@ int pa_oss_set_volume(int fd, unsigned long mixer, const pa_sample_spec *ss, con
      pa_log_debug("Wrote mixer settings: %s", pa_cvolume_snprint(cv, sizeof(cv), volume));
      return 0;
  }
 +#endif
  
  static int get_device_number(const char *dev) {
--    const char *p, *e;
-+    const char *p;
+     const char *p;
+@@ -305,10 +488,16 @@ static int get_device_number(const char *dev) {
      char *rp = NULL;
-     int r;
+     int r = -1;
  
 -    if (!(p = rp = pa_readlink(dev))) {
+-        if (errno != EINVAL && errno != ENOLINK)
+-            return -2;
+-        p = dev;
 +    p = strchr(dev, '\0') - 1;
-+
 +    if (*p >= '0' && *p <= '9') {
-+        p = dev;
-+    }
-+    else {
++         p = dev;
++    } else {
 +        /* We need to resolve the symlink */
 +        if (!(p = rp = pa_readlink(dev))) {
- #ifdef ENOLINK
--        if (errno != EINVAL && errno != ENOLINK) {
-+            if (errno != EINVAL && errno != ENOLINK) {
- #else
--        if (errno != EINVAL) {
-+            if (errno != EINVAL) {
- #endif
--            r = -1;
--            goto finish;
--        }
-+                r = -1;
-+                goto finish;
-+            }
- 
--        p = dev;
++            if (errno != EINVAL && errno != ENOLINK)
++                return -2;
++            p = dev;
 +        }
      }
  
--    if ((e = strrchr(p, '/')))
--        p = e+1;
-+    p = strchr(p, '\0') - 1;
- 
--    if (p == 0) {
--        r = 0;
--        goto finish;
--    }
--
--    p = strchr(p, 0) -1;
--
-     if (*p >= '0' && *p <= '9') {
-         r = *p - '0';
-         goto finish;
-@@ -329,6 +513,10 @@
+     /* find the last forward slash */
+@@ -333,6 +522,10 @@ static int get_device_number(const char *dev) {
      return r;
  }
  
@@ -701,51 +701,32 @@
  int pa_oss_get_hw_description(const char *dev, char *name, size_t l) {
      FILE *f;
      int n, r = -1;
-@@ -357,7 +545,7 @@
-         line[strcspn(line, "\r\n")] = 0;
- 
-         if (!b) {
--            b = pa_streq(line, "Audio devices:");
-+            b = pa_streq(line, "Audio Devices:");
-             continue;
-         }
- 
-@@ -386,9 +574,11 @@
-     return r;
- }
- 
--static int open_mixer(const char *mixer) {
-+int pa_oss_open_mixer(const char *mixer) {
-     int fd;
- 
-+    pa_log_debug ("Opening device %s", mixer);
-+
-     if ((fd = pa_open_cloexec(mixer, O_RDWR|O_NDELAY, 0)) >= 0)
-         return fd;
- 
-@@ -400,15 +590,13 @@
+@@ -407,15 +602,17 @@ int pa_oss_open_mixer_for_device(const char *device) {
      char *fn;
      int fd;
  
--    if ((n = get_device_number(device)) < 0)
-+    if ((n = get_device_number(device)) < 0) {
+-    if ((n = get_device_number(device)) == -2)
++    if ((n = get_device_number(device)) == -2) {
 +        pa_log_warn ("Cannot find number for device '%s'", device);
          return -1;
 +    }
  
--    if (n == 0)
+     if (n == -1)
 -        if ((fd = open_mixer("/dev/mixer")) >= 0)
--            return fd;
--
++        if ((fd = pa_oss_open_mixer("/dev/mixer")) >= 0)
+             return fd;
+ 
      fn = pa_sprintf_malloc("/dev/mixer%i", n);
 -    fd = open_mixer(fn);
 +    fd = pa_oss_open_mixer(fn);
      pa_xfree(fn);
  
      if (fd < 0)
---- pulseaudio-13.0/src/modules/oss/oss-util.h-orig	Fri Jul 13 14:06:14 2018
-+++ pulseaudio-13.0/src/modules/oss/oss-util.h	Tue Sep  8 11:08:51 2020
-@@ -29,11 +29,22 @@
+diff --git a/src/modules/oss/oss-util.h b/src/modules/oss/oss-util.h
+index 8af27de..120fc5d 100644
+--- a/src/modules/oss/oss-util.h
++++ b/src/modules/oss/oss-util.h
+@@ -29,11 +29,22 @@ int pa_oss_auto_format(int fd, pa_sample_spec *ss);
  
  int pa_oss_set_fragments(int fd, int frags, int frag_size);
  

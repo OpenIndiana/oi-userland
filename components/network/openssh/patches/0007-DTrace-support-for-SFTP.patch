@@ -31,9 +31,9 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
 +SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o sftp_provider.o
 +ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
  
- SFTP_OBJS=	sftp.o progressmeter.o $(SFTP_CLIENT_OBJS)
+ SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)
  
-@@ -269,9 +271,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
+@@ -264,9 +266,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
  moduli:
  	echo
  
@@ -57,7 +57,7 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  	rm -f regress/check-perm$(EXEEXT)
  	rm -f regress/mkdtemp$(EXEEXT)
  	rm -f regress/unittests/test_helper/*.a
-@@ -433,6 +448,7 @@ install-files:
+@@ -428,6 +443,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
@@ -68,7 +68,7 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
 diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
 --- a~/sftp-server.c	1970-01-01 00:00:00
 +++ a/sftp-server.c	1970-01-01 00:00:00
-@@ -54,6 +54,9 @@
+@@ -56,6 +56,9 @@
  
  #include "sftp.h"
  #include "sftp-common.h"
@@ -78,7 +78,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
  
  char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
  
-@@ -790,14 +793,17 @@ process_read(u_int32_t id)
+@@ -803,14 +806,17 @@ process_read(u_int32_t id)
  	u_int32_t len;
  	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
  	u_int64_t off;
@@ -97,7 +97,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
  	if ((fd = handle_to_fd(handle)) == -1)
  		goto out;
  	if (len > SFTP_MAX_READ_LENGTH) {
-@@ -816,6 +822,9 @@ process_read(u_int32_t id)
+@@ -829,6 +835,9 @@ process_read(u_int32_t id)
  		    strerror(errno));
  		goto out;
  	}
@@ -107,7 +107,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
  	if (len == 0) {
  		/* weird, but not strictly disallowed */
  		ret = 0;
-@@ -828,11 +837,18 @@ process_read(u_int32_t id)
+@@ -841,11 +850,18 @@ process_read(u_int32_t id)
  		status = SSH2_FX_EOF;
  		goto out;
  	}
@@ -126,7 +126,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
  	if (status != SSH2_FX_OK)
  		send_status(id, status);
  }
-@@ -844,14 +860,17 @@ process_write(u_int32_t id)
+@@ -857,14 +873,17 @@ process_write(u_int32_t id)
  	size_t len;
  	int r, handle, fd, ret, status;
  	u_char *data;
@@ -145,7 +145,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
  	fd = handle_to_fd(handle);
  
  	if (fd < 0)
-@@ -864,7 +883,13 @@ process_write(u_int32_t id)
+@@ -877,7 +896,13 @@ process_write(u_int32_t id)
  			    strerror(errno));
  		} else {
  /* XXX ATOMICIO ? */

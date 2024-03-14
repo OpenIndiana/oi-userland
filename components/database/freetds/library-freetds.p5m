@@ -12,9 +12,11 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2023 Friedrich Kink
 #
 
 set name=pkg.fmri value=pkg:/library/freetds@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="MS SQL and Sybase client libraries"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,8 +24,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-file files/tds_sysdep_public.h path=usr/include/tds_sysdep_public.h
 
 file path=usr/include/bkpublic.h
 file path=usr/include/cspublic.h
@@ -35,23 +35,10 @@ file path=usr/include/sqlfront.h
 file path=usr/include/sybdb.h
 file path=usr/include/syberror.h
 file path=usr/include/sybfront.h
-file path=usr/include/tds_sysdep_public-32.h
-file path=usr/include/tds_sysdep_public-64.h
+file path=usr/include/tds_sysdep_public.h
 link path=usr/lib/$(MACH64)/libct.so target=libct.so.4.0.0
 link path=usr/lib/$(MACH64)/libct.so.4 target=libct.so.4.0.0
 file path=usr/lib/$(MACH64)/libct.so.4.0.0
 link path=usr/lib/$(MACH64)/libsybdb.so target=libsybdb.so.5.1.0
 link path=usr/lib/$(MACH64)/libsybdb.so.5 target=libsybdb.so.5.1.0
 file path=usr/lib/$(MACH64)/libsybdb.so.5.1.0
-link path=usr/lib/$(MACH64)/libtdsodbc.so target=libtdsodbc.so.0.0.0
-link path=usr/lib/$(MACH64)/libtdsodbc.so.0 target=libtdsodbc.so.0.0.0
-file path=usr/lib/$(MACH64)/libtdsodbc.so.0.0.0
-link path=usr/lib/libct.so target=libct.so.4.0.0
-link path=usr/lib/libct.so.4 target=libct.so.4.0.0
-file path=usr/lib/libct.so.4.0.0
-link path=usr/lib/libsybdb.so target=libsybdb.so.5.1.0
-link path=usr/lib/libsybdb.so.5 target=libsybdb.so.5.1.0
-file path=usr/lib/libsybdb.so.5.1.0
-link path=usr/lib/libtdsodbc.so target=libtdsodbc.so.0.0.0
-link path=usr/lib/libtdsodbc.so.0 target=libtdsodbc.so.0.0.0
-file path=usr/lib/libtdsodbc.so.0.0.0

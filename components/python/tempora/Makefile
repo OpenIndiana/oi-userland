@@ -1,61 +1,45 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project tempora
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		tempora
-COMPONENT_VERSION=	1.13
-COMPONENT_REVISION=	4
-COMPONENT_SUMMARY=	'Objects and routines pertaining to date and time'
-COMPONENT_PROJECT_URL=	https://pypi.org/project/tempora/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:4848df474c9d7ad9515fbeaadc88e48843176b4b90393652156ccff613bcaeb1
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	library/python/tempora
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	LICENSE
-
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+COMPONENT_NAME =		tempora
+HUMAN_VERSION =			5.5.1
+COMPONENT_SUMMARY =		tempora - Objects and routines pertaining to date and time (tempora)
+COMPONENT_PROJECT_URL =		https://github.com/jaraco/tempora
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:a2bb51e2121976d931347b3e433917c364b83fdd5f64ef27336c865bf1fb0f75
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
-COMPONENT_INSTALL_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
-
-COMPONENT_POST_INSTALL_ACTION += \
-        (cd $(PROTO_DIR)/usr/bin && \
-          $(MV) -f calc-prorate calc-prorate-$(PYTHON_VERSION))
-
-TEST_TARGET=$(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += library/python/setuptools_scm-27
-REQUIRED_PACKAGES += library/python/setuptools_scm-35
-REQUIRED_PACKAGES += library/python/setuptools_scm-37
-REQUIRED_PACKAGES += library/python/setuptools_scm-39
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
+PYTHON_REQUIRED_PACKAGES += library/python/pytz
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-freezer
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
+TEST_REQUIRED_PACKAGES.python += library/python/types-pytz

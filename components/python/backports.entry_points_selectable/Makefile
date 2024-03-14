@@ -10,32 +10,35 @@
 #
 
 #
-# Copyright 2021 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project backports.entry_points_selectable
 #
-BUILD_BITS= NO_ARCH
-BUILD_STYLE= setup.py
+
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	backports.entry_points_selectable
-COMPONENT_VERSION= 	1.1.0
-COMPONENT_SUMMARY=	Compatibility shim to ease adoption of importlib_metadata 3.6
-COMPONENT_PROJECT_URL=	https://github.com/jaraco/backports.entry_points_selectable
-COMPONENT_FMRI=	library/python/$(COMPONENT_NAME)
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:988468260ec1c196dab6ae1149260e2f5472c9110334e5d51adcb77867361f6a
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	MIT
+COMPONENT_NAME =		backports.entry_points_selectable
+HUMAN_VERSION =			1.3.0
+COMPONENT_SUMMARY =		backports.entry_points_selectable - Compatibility shim providing selectable entry points for older implementations
+COMPONENT_PROJECT_URL =		https://github.com/jaraco/backports.entry_points_selectable
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/fc/25/dae014b114397a6f60578d7358bf5fcb103f71556e5363a50d7b42e9bc51/backports.entry_points_selectable-1.3.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:17a8b44ae700fba548686dd274ddc91c060371565cd63806c20a1d33911746e6
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
-
-TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy

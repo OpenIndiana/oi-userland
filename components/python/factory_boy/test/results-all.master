@@ -1,0 +1,406 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> make test
+python \
+	-b \
+	-X dev \
+	-Werror \
+	-Wdefault:"the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses":DeprecationWarning:distutils: \
+	-Wdefault:"Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated, and in 3.8 it will stop working":DeprecationWarning:: \
+	-Wdefault:"Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.9 it will stop working":DeprecationWarning:: \
+	-Wdefault:"set_output_charset() is deprecated":DeprecationWarning:: \
+	-Wdefault:"parameter codeset is deprecated":DeprecationWarning:: \
+	-Wdefault:"'cgi' is deprecated and slated for removal in Python 3.13":DeprecationWarning:: \
+	-m unittest -v
+tests.test_alchemy (unittest.loader.ModuleSkipped) ... skipped 'sqlalchemy tests disabled.'
+test_abstract_factory_cannot_be_called (tests.test_base.AbstractFactoryTestCase) ... ok
+test_abstract_factory_not_inherited (tests.test_base.AbstractFactoryTestCase)
+abstract=True isn't propagated to child classes. ... ok
+test_abstract_or_model_is_required (tests.test_base.AbstractFactoryTestCase) ... ok
+test_factory_for_and_abstract_factory_optional (tests.test_base.AbstractFactoryTestCase)
+Ensure that Meta.abstract is optional. ... ok
+test_factory_for_optional (tests.test_base.AbstractFactoryTestCase)
+Ensure that model= is optional for abstract=True. ... ok
+test_classmethod (tests.test_base.DeclarationParsingTests) ... ok
+test_custom_creation (tests.test_base.FactoryCreationTestCase) ... ok
+test_factory_for (tests.test_base.FactoryCreationTestCase) ... ok
+test_inheritance_with_stub (tests.test_base.FactoryCreationTestCase) ... ok
+test_no_associated_class (tests.test_base.FactoryCreationTestCase) ... ok
+test_stub (tests.test_base.FactoryCreationTestCase) ... ok
+test_stub_and_subfactory (tests.test_base.FactoryCreationTestCase) ... ok
+test_build_strategy (tests.test_base.FactoryDefaultStrategyTestCase) ... ok
+test_change_strategy (tests.test_base.FactoryDefaultStrategyTestCase) ... ok
+test_create_strategy (tests.test_base.FactoryDefaultStrategyTestCase) ... ok
+test_stub_strategy (tests.test_base.FactoryDefaultStrategyTestCase) ... ok
+test_stub_with_build_strategy (tests.test_base.FactoryDefaultStrategyTestCase) ... ok
+test_stub_with_create_strategy (tests.test_base.FactoryDefaultStrategyTestCase) ... ok
+test_unknown_strategy (tests.test_base.FactoryDefaultStrategyTestCase) ... ok
+test_reset_sequence (tests.test_base.FactorySequenceTestCase) ... ok
+test_reset_sequence_subclass_fails (tests.test_base.FactorySequenceTestCase)
+Tests that the sequence of a 'slave' factory cannot be reset. ... ok
+test_reset_sequence_subclass_force (tests.test_base.FactorySequenceTestCase)
+Tests that reset_sequence(force=True) works. ... ok
+test_reset_sequence_subclass_parent (tests.test_base.FactorySequenceTestCase)
+Tests that the sequence of a 'slave' factory cannot be reset. ... ok
+test_reset_sequence_with_value (tests.test_base.FactorySequenceTestCase) ... ok
+test_display (tests.test_base.FactoryTestCase) ... ok
+test_inheritance_with_sequence (tests.test_base.FactoryTestCase)
+Tests that sequence IDs are shared between parent and son. ... ok
+test_lazy_attribute_non_existent_param (tests.test_base.FactoryTestCase) ... ok
+test_magic_happens (tests.test_base.FactoryTestCase)
+Calling a FooFactory doesn't yield a FooFactory instance. ... ok
+test_base_attrs (tests.test_base.OptionsTests) ... ok
+test_declaration_collecting (tests.test_base.OptionsTests) ... ok
+test_factory_as_meta_model_raises_exception (tests.test_base.OptionsTests) ... ok
+test_inherited_declaration_collecting (tests.test_base.OptionsTests) ... ok
+test_inherited_declaration_shadowing (tests.test_base.OptionsTests) ... ok
+test_classlevel_extraction (tests.test_base.PostGenerationParsingTestCase) ... ok
+test_extraction (tests.test_base.PostGenerationParsingTestCase) ... ok
+test_base_factory (tests.test_base.SafetyTestCase) ... ok
+test_chaining (tests.test_declarations.DigTestCase) ... ok
+test_cache (tests.test_declarations.FactoryWrapperTestCase)
+Ensure that _FactoryWrapper tries to import only once. ... ok
+test_class (tests.test_declarations.FactoryWrapperTestCase) ... ok
+test_invalid_path (tests.test_declarations.FactoryWrapperTestCase) ... ok
+test_lazyness (tests.test_declarations.FactoryWrapperTestCase) ... ok
+test_path (tests.test_declarations.FactoryWrapperTestCase) ... ok
+test_cycle (tests.test_declarations.IteratorTestCase) ... ok
+test_getter (tests.test_declarations.IteratorTestCase) ... ok
+test_initial_reset (tests.test_declarations.IteratorTestCase) ... ok
+test_no_cycling (tests.test_declarations.IteratorTestCase) ... ok
+test_reset_cycle (tests.test_declarations.IteratorTestCase) ... ok
+test_reset_no_cycling (tests.test_declarations.IteratorTestCase) ... ok
+test_init (tests.test_declarations.MaybeTestCase) ... ok
+test_errors (tests.test_declarations.OrderedDeclarationTestCase) ... ok
+test_decorator_simple (tests.test_declarations.PostGenerationDeclarationTestCase) ... ok
+test_post_generation (tests.test_declarations.PostGenerationDeclarationTestCase) ... ok
+test_call_with_method_args (tests.test_declarations.PostGenerationMethodCallTestCase) ... ok
+test_call_with_method_kwargs (tests.test_declarations.PostGenerationMethodCallTestCase) ... ok
+test_call_with_passed_extracted_int (tests.test_declarations.PostGenerationMethodCallTestCase) ... ok
+test_call_with_passed_extracted_iterable (tests.test_declarations.PostGenerationMethodCallTestCase) ... ok
+test_call_with_passed_extracted_string (tests.test_declarations.PostGenerationMethodCallTestCase) ... ok
+test_call_with_passed_kwargs (tests.test_declarations.PostGenerationMethodCallTestCase) ... ok
+test_multi_call_with_multi_method_args (tests.test_declarations.PostGenerationMethodCallTestCase) ... ok
+test_simplest_setup_and_call (tests.test_declarations.PostGenerationMethodCallTestCase) ... ok
+test_post_generation_declaration_order (tests.test_declarations.PostGenerationOrdering) ... ok
+test_default (tests.test_declarations.SelfAttributeTestCase) ... ok
+test_dot (tests.test_declarations.SelfAttributeTestCase) ... ok
+test_grandparent (tests.test_declarations.SelfAttributeTestCase) ... ok
+test_parent (tests.test_declarations.SelfAttributeTestCase) ... ok
+test_standard (tests.test_declarations.SelfAttributeTestCase) ... ok
+test_transform (tests.test_declarations.TransformerTestCase) ... ok
+test_subfactory_to_factorylike_model (tests.test_dev_experience.DeclarationTests)
+A helpful error message occurs when pointing a subfactory to a model. ... ok
+test_subfactory_to_model (tests.test_dev_experience.DeclarationTests)
+A helpful error message occurs when pointing a subfactory to a model. ... ok
+tests.test_django (unittest.loader.ModuleSkipped) ... skipped 'django tests disabled.'
+test_simple_usage (tests.test_docs_internals.DocsInternalsTests) ... ok
+test_add_provider (tests.test_faker.FakerTests) ... ok
+test_faker_customization (tests.test_faker.FakerTests)
+Factory declarations in Faker parameters should be accepted. ... ok
+test_full_factory (tests.test_faker.FakerTests) ... ok
+test_override_locale (tests.test_faker.FakerTests) ... ok
+test_simple_biased (tests.test_faker.FakerTests) ... ok
+test_simple_call (tests.test_fuzzy.FuzzyAttributeTestCase) ... ok
+test_generator (tests.test_fuzzy.FuzzyChoiceTestCase) ... ok
+test_getter (tests.test_fuzzy.FuzzyChoiceTestCase) ... ok
+test_lazy_generator (tests.test_fuzzy.FuzzyChoiceTestCase) ... ok
+test_mock (tests.test_fuzzy.FuzzyChoiceTestCase) ... ok
+test_unbiased (tests.test_fuzzy.FuzzyChoiceTestCase) ... ok
+test_accurate_definition (tests.test_fuzzy.FuzzyDateTestCase)
+Tests all ways of defining a FuzzyDate. ... ok
+test_biased (tests.test_fuzzy.FuzzyDateTestCase)
+Tests a FuzzyDate with a biased random.randint. ... ok
+test_biased_partial (tests.test_fuzzy.FuzzyDateTestCase)
+Tests a FuzzyDate with a biased random and implicit upper bound. ... ok
+test_invalid_definition (tests.test_fuzzy.FuzzyDateTestCase) ... ok
+test_invalid_partial_definition (tests.test_fuzzy.FuzzyDateTestCase) ... ok
+test_partial_definition (tests.test_fuzzy.FuzzyDateTestCase)
+Test defining a FuzzyDate without passing an end date. ... ok
+test_accurate_definition (tests.test_fuzzy.FuzzyDateTimeTestCase)
+Tests explicit definition of a FuzzyDateTime. ... ok
+test_biased (tests.test_fuzzy.FuzzyDateTimeTestCase)
+Tests a FuzzyDate with a biased random.randint. ... ok
+test_biased_partial (tests.test_fuzzy.FuzzyDateTimeTestCase)
+Tests a FuzzyDate with a biased random and implicit upper bound. ... ok
+test_force_day (tests.test_fuzzy.FuzzyDateTimeTestCase) ... ok
+test_force_hour (tests.test_fuzzy.FuzzyDateTimeTestCase) ... ok
+test_force_microsecond (tests.test_fuzzy.FuzzyDateTimeTestCase) ... ok
+test_force_minute (tests.test_fuzzy.FuzzyDateTimeTestCase) ... ok
+test_force_month (tests.test_fuzzy.FuzzyDateTimeTestCase) ... ok
+test_force_second (tests.test_fuzzy.FuzzyDateTimeTestCase) ... ok
+test_force_year (tests.test_fuzzy.FuzzyDateTimeTestCase) ... ok
+test_invalid_definition (tests.test_fuzzy.FuzzyDateTimeTestCase) ... ok
+test_invalid_partial_definition (tests.test_fuzzy.FuzzyDateTimeTestCase) ... ok
+test_naive_end (tests.test_fuzzy.FuzzyDateTimeTestCase)
+Tests that a timezone-naive end datetime is rejected. ... ok
+test_naive_start (tests.test_fuzzy.FuzzyDateTimeTestCase)
+Tests that a timezone-naive start datetime is rejected. ... ok
+test_partial_definition (tests.test_fuzzy.FuzzyDateTimeTestCase)
+Test defining a FuzzyDateTime without passing an end date. ... ok
+test_biased (tests.test_fuzzy.FuzzyDecimalTestCase) ... ok
+test_biased_high_only (tests.test_fuzzy.FuzzyDecimalTestCase) ... ok
+test_definition (tests.test_fuzzy.FuzzyDecimalTestCase)
+Tests all ways of defining a FuzzyDecimal. ... ok
+test_no_approximation (tests.test_fuzzy.FuzzyDecimalTestCase)
+We should not go through floats in our fuzzy calls unless actually needed. ... ok
+test_precision (tests.test_fuzzy.FuzzyDecimalTestCase) ... ok
+test_biased (tests.test_fuzzy.FuzzyFloatTestCase) ... ok
+test_biased_high_only (tests.test_fuzzy.FuzzyFloatTestCase) ... ok
+test_default_precision (tests.test_fuzzy.FuzzyFloatTestCase) ... ok
+test_definition (tests.test_fuzzy.FuzzyFloatTestCase)
+Tests all ways of defining a FuzzyFloat. ... ok
+test_precision (tests.test_fuzzy.FuzzyFloatTestCase) ... ok
+test_biased (tests.test_fuzzy.FuzzyIntegerTestCase) ... ok
+test_biased_high_only (tests.test_fuzzy.FuzzyIntegerTestCase) ... ok
+test_biased_with_step (tests.test_fuzzy.FuzzyIntegerTestCase) ... ok
+test_definition (tests.test_fuzzy.FuzzyIntegerTestCase)
+Tests all ways of defining a FuzzyInteger. ... ok
+test_accurate_definition (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase)
+Tests explicit definition of a FuzzyNaiveDateTime. ... ok
+test_aware_end (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase)
+Tests that a timezone-aware end datetime is rejected. ... ok
+test_aware_start (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase)
+Tests that a timezone-aware start datetime is rejected. ... ok
+test_biased (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase)
+Tests a FuzzyDate with a biased random.randint. ... ok
+test_biased_partial (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase)
+Tests a FuzzyDate with a biased random and implicit upper bound. ... ok
+test_force_day (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase) ... ok
+test_force_hour (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase) ... ok
+test_force_microsecond (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase) ... ok
+test_force_minute (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase) ... ok
+test_force_month (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase) ... ok
+test_force_second (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase) ... ok
+test_force_year (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase) ... ok
+test_invalid_definition (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase) ... ok
+test_invalid_partial_definition (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase) ... ok
+test_partial_definition (tests.test_fuzzy.FuzzyNaiveDateTimeTestCase)
+Test defining a FuzzyNaiveDateTime without passing an end date. ... ok
+test_reset_state (tests.test_fuzzy.FuzzyRandomTestCase) ... ok
+test_seeding (tests.test_fuzzy.FuzzyRandomTestCase) ... ok
+test_seeding_warning (tests.test_fuzzy.FuzzyRandomTestCase) ... ok
+test_generator (tests.test_fuzzy.FuzzyTextTestCase) ... ok
+test_mock (tests.test_fuzzy.FuzzyTextTestCase) ... ok
+test_unbiased (tests.test_fuzzy.FuzzyTextTestCase) ... ok
+test_alternate_logger (tests.test_helpers.DebugTest) ... ok
+test_default_logger (tests.test_helpers.DebugTest) ... ok
+test_restores_logging_on_error (tests.test_helpers.DebugTest) ... ok
+tests.test_mongoengine (unittest.loader.ModuleSkipped) ... skipped 'mongodb tests disabled.'
+test_locale_issue (tests.test_regression.FakerRegressionTests)
+Regression test for `KeyError: 'locale'` ... ok
+test_default_transform (tests.test_transformer.RelatedTest) ... ok
+test_default_transform (tests.test_transformer.TransformerMaybeTest) ... ok
+test_no_transform (tests.test_transformer.TransformerMaybeTest) ... ok
+test_override (tests.test_transformer.TransformerMaybeTest) ... ok
+test_yes_transform (tests.test_transformer.TransformerMaybeTest) ... ok
+test_on_sequence (tests.test_transformer.TransformerSequenceTest) ... ok
+test_on_user_supplied (tests.test_transformer.TransformerSequenceTest)
+A transformer can wrap a call-time declaration ... ok
+test_force_value (tests.test_transformer.TransformerTest) ... ok
+test_force_value_declaration (tests.test_transformer.TransformerTest)
+Pretty unlikely use case, but easy enough to cover. ... ok
+test_force_value_declaration_context (tests.test_transformer.TransformerTest)
+Ensure "forced" values run at the right level. ... ok
+test_transform_count (tests.test_transformer.TransformerTest) ... ok
+test_transform_faker (tests.test_transformer.TransformerTest) ... ok
+test_transform_kwarg (tests.test_transformer.TransformerTest) ... ok
+test_transform_linked (tests.test_transformer.TransformerTest) ... ok
+test_trait_transform_applies (tests.test_transformer.TransformerTraitTest)
+A trait-provided transformer should apply to existing values ... ok
+test_trait_transform_applies_supplied (tests.test_transformer.TransformerTraitTest)
+A trait-provided transformer should be overridden by caller-provided values ... ok
+test_traits_off (tests.test_transformer.TransformerTraitTest) ... ok
+test_example (tests.test_using.CircularTestCase) ... ok
+test_dict_extra_key (tests.test_using.DictTestCase) ... ok
+test_dict_merged_fields (tests.test_using.DictTestCase) ... ok
+test_dict_override (tests.test_using.DictTestCase) ... ok
+test_empty_dict (tests.test_using.DictTestCase) ... ok
+test_naive_dict (tests.test_using.DictTestCase) ... ok
+test_nested_dicts (tests.test_using.DictTestCase) ... ok
+test_sequence_dict (tests.test_using.DictTestCase) ... ok
+test_existing_instance (tests.test_using.DjangoModelFactoryTestCase) ... skipped 'django tests disabled.'
+test_existing_instance_complex_key (tests.test_using.DjangoModelFactoryTestCase) ... skipped 'django tests disabled.'
+test_full_get_or_create (tests.test_using.DjangoModelFactoryTestCase)
+Test a DjangoModelFactory with all fields in get_or_create. ... skipped 'django tests disabled.'
+test_get_or_create (tests.test_using.DjangoModelFactoryTestCase) ... skipped 'django tests disabled.'
+test_new_instance (tests.test_using.DjangoModelFactoryTestCase) ... skipped 'django tests disabled.'
+test_new_instance_complex_key (tests.test_using.DjangoModelFactoryTestCase) ... skipped 'django tests disabled.'
+test_no_get_or_create (tests.test_using.DjangoModelFactoryTestCase) ... skipped 'django tests disabled.'
+test_sequence (tests.test_using.DjangoModelFactoryTestCase) ... skipped 'django tests disabled.'
+test_simple (tests.test_using.DjangoModelFactoryTestCase) ... skipped 'django tests disabled.'
+test_iterator (tests.test_using.IteratorTestCase) ... ok
+test_iterator_decorator (tests.test_using.IteratorTestCase) ... ok
+test_iterator_late_loading (tests.test_using.IteratorTestCase)
+Ensure that Iterator doesn't unroll on class creation. ... ok
+test_iterator_list_comprehension_protected (tests.test_using.IteratorTestCase) ... ok
+test_iterator_time_manipulation (tests.test_using.IteratorTestCase) ... ok
+test_build (tests.test_using.KwargAdjustTestCase) ... ok
+test_rename (tests.test_using.KwargAdjustTestCase) ... ok
+test_rename_non_existent_kwarg (tests.test_using.KwargAdjustTestCase) ... ok
+test_empty_list (tests.test_using.ListTestCase) ... ok
+test_list_extra_key (tests.test_using.ListTestCase) ... ok
+test_list_merged_fields (tests.test_using.ListTestCase) ... ok
+test_list_override (tests.test_using.ListTestCase) ... ok
+test_long_list (tests.test_using.ListTestCase) ... ok
+test_naive_list (tests.test_using.ListTestCase) ... ok
+test_nested_lists (tests.test_using.ListTestCase) ... ok
+test_sequence_list (tests.test_using.ListTestCase) ... ok
+test_declarations (tests.test_using.MaybeTestCase) ... ok
+test_post_generation (tests.test_using.MaybeTestCase) ... ok
+test_simple_maybe (tests.test_using.MaybeTestCase) ... ok
+test_build (tests.test_using.NonKwargParametersTestCase) ... ok
+test_create (tests.test_using.NonKwargParametersTestCase) ... ok
+test_post_generation (tests.test_using.PostGenerationTestCase) ... ok
+test_post_generation_extraction (tests.test_using.PostGenerationTestCase) ... ok
+test_post_generation_extraction_declaration (tests.test_using.PostGenerationTestCase) ... ok
+test_post_generation_extraction_lambda (tests.test_using.PostGenerationTestCase) ... ok
+test_post_generation_hook (tests.test_using.PostGenerationTestCase) ... ok
+test_post_generation_method_call (tests.test_using.PostGenerationTestCase) ... ok
+test_post_generation_override_with_extra (tests.test_using.PostGenerationTestCase) ... ok
+test_no_extraction (tests.test_using.RelatedFactoryExtractionTestCase) ... ok
+test_passed_none (tests.test_using.RelatedFactoryExtractionTestCase) ... ok
+test_passed_value (tests.test_using.RelatedFactoryExtractionTestCase) ... ok
+test_parameterized_related_factory (tests.test_using.RelatedFactoryTestCase) ... ok
+test_related_factory (tests.test_using.RelatedFactoryTestCase) ... ok
+test_related_factory_no_name (tests.test_using.RelatedFactoryTestCase) ... ok
+test_related_factory_selfattribute (tests.test_using.RelatedFactoryTestCase) ... ok
+test_related_factory_list_of_static_size (tests.test_using.RelatedListFactoryTestCase) ... ok
+test_related_factory_list_of_varying_size (tests.test_using.RelatedListFactoryTestCase) ... ok
+test_same_seed_is_used_between_fuzzy_and_faker_generators (tests.test_using.RepeatableRandomSeedFakerTests) ... ok
+test_deep (tests.test_using.SelfReferentialTests) ... ok
+test_no_parent (tests.test_using.SelfReferentialTests) ... ok
+test_build (tests.test_using.SimpleBuildTestCase) ... ok
+test_build_batch (tests.test_using.SimpleBuildTestCase) ... ok
+test_build_to_dict (tests.test_using.SimpleBuildTestCase) ... ok
+test_complex (tests.test_using.SimpleBuildTestCase) ... ok
+test_create (tests.test_using.SimpleBuildTestCase) ... ok
+test_create_batch (tests.test_using.SimpleBuildTestCase) ... ok
+test_create_batch_custom_base (tests.test_using.SimpleBuildTestCase) ... skipped 'django tests disabled.'
+test_create_custom_base (tests.test_using.SimpleBuildTestCase) ... skipped 'django tests disabled.'
+test_generate_batch_build (tests.test_using.SimpleBuildTestCase) ... ok
+test_generate_batch_create (tests.test_using.SimpleBuildTestCase) ... ok
+test_generate_batch_create_custom_base (tests.test_using.SimpleBuildTestCase) ... skipped 'django tests disabled.'
+test_generate_batch_stub (tests.test_using.SimpleBuildTestCase) ... ok
+test_generate_build (tests.test_using.SimpleBuildTestCase) ... ok
+test_generate_create (tests.test_using.SimpleBuildTestCase) ... ok
+test_generate_create_custom_base (tests.test_using.SimpleBuildTestCase) ... skipped 'django tests disabled.'
+test_generate_stub (tests.test_using.SimpleBuildTestCase) ... ok
+test_make_factory (tests.test_using.SimpleBuildTestCase) ... ok
+test_simple_generate_batch_build (tests.test_using.SimpleBuildTestCase) ... ok
+test_simple_generate_batch_create (tests.test_using.SimpleBuildTestCase) ... ok
+test_simple_generate_batch_create_custom_base (tests.test_using.SimpleBuildTestCase) ... skipped 'django tests disabled.'
+test_simple_generate_build (tests.test_using.SimpleBuildTestCase) ... ok
+test_simple_generate_create (tests.test_using.SimpleBuildTestCase) ... ok
+test_simple_generate_create_custom_base (tests.test_using.SimpleBuildTestCase) ... skipped 'django tests disabled.'
+test_stub (tests.test_using.SimpleBuildTestCase) ... ok
+test_stub_batch (tests.test_using.SimpleBuildTestCase) ... ok
+test_deep_nested_subfactory (tests.test_using.SubFactoryTestCase) ... ok
+test_diamond_sub_factory (tests.test_using.SubFactoryTestCase)
+Tests the case where an object has two fields with a common field. ... ok
+test_function_container_attribute (tests.test_using.SubFactoryTestCase) ... ok
+test_nested_sub_factory (tests.test_using.SubFactoryTestCase)
+Test nested sub-factories. ... ok
+test_nested_sub_factory_with_overridden_sub_factories (tests.test_using.SubFactoryTestCase)
+Test nested sub-factories, with attributes overridden with subfactories. ... ok
+test_nested_subfactory_with_override (tests.test_using.SubFactoryTestCase)
+Tests replacing a SubFactory field with an actual value. ... ok
+test_nonstrict_container_attribute (tests.test_using.SubFactoryTestCase) ... ok
+test_strict_container_attribute (tests.test_using.SubFactoryTestCase) ... ok
+test_sub_factory (tests.test_using.SubFactoryTestCase) ... ok
+test_sub_factory_and_inheritance (tests.test_using.SubFactoryTestCase)
+Test inheriting from a factory with subfactories, overriding. ... ok
+test_sub_factory_and_sequence (tests.test_using.SubFactoryTestCase) ... ok
+test_sub_factory_deep_overrides (tests.test_using.SubFactoryTestCase) ... ok
+test_sub_factory_overriding (tests.test_using.SubFactoryTestCase) ... ok
+test_sub_factory_with_lazy_fields (tests.test_using.SubFactoryTestCase) ... ok
+test_sub_factory_with_lazy_fields_access_factory_parent (tests.test_using.SubFactoryTestCase) ... ok
+test_deep_traits (tests.test_using.TraitTestCase) ... ok
+test_post_generation_traits (tests.test_using.TraitTestCase) ... ok
+test_prevent_cyclic_traits (tests.test_using.TraitTestCase) ... ok
+test_traits (tests.test_using.TraitTestCase) ... ok
+test_traits_and_postgeneration (tests.test_using.TraitTestCase)
+A trait parameter should be resolved before post_generation hooks. ... ok
+test_traits_chaining (tests.test_using.TraitTestCase)
+Use a trait to enable other traits. ... ok
+test_traits_inheritance (tests.test_using.TraitTestCase)
+A trait can be set in an inherited class. ... ok
+test_traits_override (tests.test_using.TraitTestCase)
+Override a trait in a subclass. ... ok
+test_traits_override_params (tests.test_using.TraitTestCase)
+Override a Params value in a trait ... ok
+test_abstract (tests.test_using.UsingFactoryTestCase) ... ok
+test_attribute (tests.test_using.UsingFactoryTestCase) ... ok
+test_build_with_parameters (tests.test_using.UsingFactoryTestCase) ... ok
+test_class_method_accessible (tests.test_using.UsingFactoryTestCase) ... ok
+test_create (tests.test_using.UsingFactoryTestCase) ... ok
+test_create_batch (tests.test_using.UsingFactoryTestCase) ... ok
+test_custom_create (tests.test_using.UsingFactoryTestCase) ... ok
+test_dual_inheritance (tests.test_using.UsingFactoryTestCase) ... ok
+test_exclude (tests.test_using.UsingFactoryTestCase) ... ok
+test_exclude_and_inline_args (tests.test_using.UsingFactoryTestCase) ... ok
+test_generate_batch_build (tests.test_using.UsingFactoryTestCase) ... ok
+test_generate_batch_create (tests.test_using.UsingFactoryTestCase) ... ok
+test_generate_batch_stub (tests.test_using.UsingFactoryTestCase) ... ok
+test_generate_build (tests.test_using.UsingFactoryTestCase) ... ok
+test_generate_create (tests.test_using.UsingFactoryTestCase) ... ok
+test_generate_stub (tests.test_using.UsingFactoryTestCase) ... ok
+test_inheritance (tests.test_using.UsingFactoryTestCase) ... ok
+test_inheritance_and_sequences (tests.test_using.UsingFactoryTestCase)
+Sequence counters should be kept within an inheritance chain. ... ok
+test_inheritance_sequence_inheriting_objects (tests.test_using.UsingFactoryTestCase)
+Sequence counters are kept with inheritance, incl. misc objects. ... ok
+test_inheritance_sequence_unrelated_objects (tests.test_using.UsingFactoryTestCase)
+Sequence counters are kept with inheritance, unrelated objects. ... ok
+test_inheritance_with_inherited_class (tests.test_using.UsingFactoryTestCase) ... ok
+test_inheriting_model_class (tests.test_using.UsingFactoryTestCase) ... ok
+test_inline_args (tests.test_using.UsingFactoryTestCase) ... ok
+test_lazy_attribute (tests.test_using.UsingFactoryTestCase) ... ok
+test_lazy_attribute_decorator (tests.test_using.UsingFactoryTestCase) ... ok
+test_lazy_attribute_sequence (tests.test_using.UsingFactoryTestCase) ... ok
+test_lazy_attribute_sequence_decorator (tests.test_using.UsingFactoryTestCase) ... ok
+test_non_django_create (tests.test_using.UsingFactoryTestCase) ... ok
+test_override_inherited (tests.test_using.UsingFactoryTestCase)
+Overriding inherited declarations ... ok
+test_override_inherited_deep (tests.test_using.UsingFactoryTestCase)
+Overriding inherited declarations ... ok
+test_self_attribute (tests.test_using.UsingFactoryTestCase) ... ok
+test_self_attribute_parent (tests.test_using.UsingFactoryTestCase) ... ok
+test_sequence (tests.test_using.UsingFactoryTestCase) ... ok
+test_sequence_batch (tests.test_using.UsingFactoryTestCase) ... ok
+test_sequence_custom_begin (tests.test_using.UsingFactoryTestCase) ... ok
+test_sequence_decorator (tests.test_using.UsingFactoryTestCase) ... ok
+test_sequence_override (tests.test_using.UsingFactoryTestCase) ... ok
+test_simple_generate_batch_build (tests.test_using.UsingFactoryTestCase) ... ok
+test_simple_generate_batch_create (tests.test_using.UsingFactoryTestCase) ... ok
+test_simple_generate_build (tests.test_using.UsingFactoryTestCase) ... ok
+test_simple_generate_create (tests.test_using.UsingFactoryTestCase) ... ok
+test_static_method_accessible (tests.test_using.UsingFactoryTestCase) ... ok
+test_stub_batch (tests.test_using.UsingFactoryTestCase) ... ok
+test_datetime (tests.test_utils.ImportObjectTestCase) ... ok
+test_invalid_module (tests.test_utils.ImportObjectTestCase) ... ok
+test_unknown_attribute (tests.test_utils.ImportObjectTestCase) ... ok
+test_bytes_args (tests.test_utils.LogPPrintTestCase) ... ok
+test_bytes_kwargs (tests.test_utils.LogPPrintTestCase) ... ok
+test_nothing (tests.test_utils.LogPPrintTestCase) ... ok
+test_only_args (tests.test_utils.LogPPrintTestCase) ... ok
+test_only_kwargs (tests.test_utils.LogPPrintTestCase) ... ok
+test_text_args (tests.test_utils.LogPPrintTestCase) ... ok
+test_text_kwargs (tests.test_utils.LogPPrintTestCase) ... ok
+test_infinite (tests.test_utils.ResetableIteratorTestCase) ... ok
+test_no_reset (tests.test_utils.ResetableIteratorTestCase) ... ok
+test_no_reset_new_iterator (tests.test_utils.ResetableIteratorTestCase) ... ok
+test_reset_after_end (tests.test_utils.ResetableIteratorTestCase) ... ok
+test_reset_at_begin (tests.test_utils.ResetableIteratorTestCase) ... ok
+test_reset_at_end (tests.test_utils.ResetableIteratorTestCase) ... ok
+test_reset_shorter (tests.test_utils.ResetableIteratorTestCase) ... ok
+test_reset_simple (tests.test_utils.ResetableIteratorTestCase) ... ok
+test_reset_twice (tests.test_utils.ResetableIteratorTestCase) ... ok
+test_version (tests.test_version.VersionTestCase) ... ok
+
+----------------------------------------------------------------------
+Ran 330 tests
+
+OK (skipped=18)
+  py$(PYV): OK
+  congratulations :)

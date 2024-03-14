@@ -11,6 +11,7 @@
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2019 Alexander Pyhalov
+# Copyright 2023 Till Wegmüller
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -24,6 +25,7 @@ COMPONENT_FMRI= diagnostic/ddu
 COMPONENT_CLASSIFICATION= System/Hardware
 COMPONENT_LICENSE= CDDL,BSD3
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_PROJECT_URL=	$(GIT_REPO)
 
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
@@ -77,18 +79,20 @@ install: $(INSTALL_32)
 
 download:: $(SOURCE_DIR)/.downloaded
 
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+
 REQUIRED_PACKAGES += developer/versioning/git
 REQUIRED_PACKAGES += system/header
 REQUIRED_PACKAGES += system/library/storage/libmpapi
 REQUIRED_PACKAGES += text/locale
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += gnome/help-viewer/yelp
-REQUIRED_PACKAGES += library/python/notify2-35
-REQUIRED_PACKAGES += library/python/pygobject-3-35
-REQUIRED_PACKAGES += library/python/simplejson-35
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += service/hal
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/simplejson
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += gnome/help-viewer/yelp
+REQUIRED_PACKAGES += service/hal
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus

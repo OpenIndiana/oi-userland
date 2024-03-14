@@ -15,8 +15,6 @@
 # Copyright (c) 2021 Tim Mooney. All rights reserved
 #
 
-<transform file path=usr/share/mime/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
-
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
@@ -29,6 +27,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # We use gvfs gio modules to handle a lot of locations
 depend type=require fmri=library/gnome/gvfs
+
+<transform file path=usr/share/mime/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
 
 file path=usr/bin/caja
 file path=usr/bin/caja-autorun-software
@@ -104,10 +104,8 @@ file path=usr/share/caja/patterns/snow_ridge.png
 file path=usr/share/caja/patterns/stucco.jpg
 file path=usr/share/caja/patterns/terracotta.png
 file path=usr/share/caja/patterns/wavy_white.png
-file path=usr/share/caja/ui/caja-bookmarks-window.ui
 file path=usr/share/caja/ui/caja-desktop-icon-view-ui.xml
 file path=usr/share/caja/ui/caja-directory-view-ui.xml
-file path=usr/share/caja/ui/caja-file-management-properties.ui
 file path=usr/share/caja/ui/caja-icon-view-ui.xml
 file path=usr/share/caja/ui/caja-list-view-ui.xml
 file path=usr/share/caja/ui/caja-navigation-window-ui.xml
@@ -253,17 +251,18 @@ file path=usr/share/metainfo/caja.appdata.xml
 # Packaged in desktop/shared-mime-info
 #file path=usr/share/mime/XMLnamespaces
 #file path=usr/share/mime/aliases
-#file path=usr/share/mime/application/x-mate-saved-search.xml
+file path=usr/share/mime/application/x-mate-saved-search.xml
 #file path=usr/share/mime/generic-icons
 #file path=usr/share/mime/globs
 #file path=usr/share/mime/globs2
 #file path=usr/share/mime/icons
 #file path=usr/share/mime/magic
 #file path=usr/share/mime/mime.cache
-#file path=usr/share/mime/packages/caja.xml
+file path=usr/share/mime/packages/caja.xml
 #file path=usr/share/mime/subclasses
 #file path=usr/share/mime/treemagic
 #file path=usr/share/mime/types
+#file path=usr/share/mime/version
 file path=usr/share/pixmaps/caja/audio.svg
 file path=usr/share/pixmaps/caja/backgrounds.png
 file path=usr/share/pixmaps/caja/camera.png

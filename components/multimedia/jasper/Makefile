@@ -11,44 +11,44 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
+BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= jasper
-COMPONENT_VERSION= 1.900.1
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 4.2.2
 COMPONENT_SUMMARY= A free software-based reference implementation of the JPEG-2000 Part-1 CODEC
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= \
-  sha256:6b905a9c2aca2e275544212666eefc4eb44d95d0a57e4305457b407fe63f9494
-COMPONENT_ARCHIVE_URL= \
-  http://www.ece.uvic.ca/~frodo/jasper/software/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.ece.uvic.ca/~frodo/jasper/
-COMPONENT_FMRI = codec/jasper
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_LICENSE = BSD-like
-COMPONENT_LICENSE_FILE = LICENSE
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:5e397570b3110a8edef6d50127e20a2297939809cea25d29068823b442ecdd6d
+COMPONENT_PROJECT_URL=	https://www.ece.uvic.ca/~frodo/jasper
+COMPONENT_ARCHIVE_URL=	https://github.com/jasper-software/$(COMPONENT_NAME)/releases/download/version-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= codec/jasper
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_LICENSE= BSD-like
+COMPONENT_LICENSE_FILE= LICENSE.txt
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # build with the distribution preferred libjpeg implementation
-CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS           +=    $(JPEG_LDFLAGS)
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --without-docs
+# jpeg-turbo is not detected without this.
+CMAKE_OPTIONS += -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
 
-build: $(BUILD_32_and_64)
+unexport SHELLOPTS
 
-install: $(INSTALL_32_and_64)
+COMPONENT_TEST_TRANSFORMS += '-e "/Output/p" '
 
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/freeglut
+REQUIRED_PACKAGES += x11/library/glu

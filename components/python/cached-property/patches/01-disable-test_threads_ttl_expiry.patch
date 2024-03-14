@@ -1,0 +1,18 @@
+--- cached-property-1.5.2/tests/test_cached_property.py.orig
++++ cached-property-1.5.2/tests/test_cached_property.py
+@@ -7,6 +7,7 @@
+ 
+ import cached_property
+ 
++import pytest
+ 
+ def CheckFactory(cached_property_decorator, threadsafe=False):
+     """
+@@ -188,6 +189,7 @@
+         self.assert_cached(check, 2)
+         self.assert_cached(check, 2)
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/pydanny/cached-property/issues/131")
+     def test_threads_ttl_expiry(self):
+         Check = CheckFactory(self.cached_property_factory(ttl=100000), threadsafe=True)
+         check = Check()

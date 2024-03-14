@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,10 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file files/lvconfig.h path=usr/include/libvisual-0.4/libvisual/lvconfig.h
+depend fmri=library/desktop/libvisual/plugins type=require
 
-depend fmri=library/desktop/libvisual/plugins@0.4.0,5.11-2015.0.0.0 type=require
-
+file path=usr/bin/lv-tool-0.4
 file path=usr/include/libvisual-0.4/libvisual/libvisual.h
 file path=usr/include/libvisual-0.4/libvisual/lv_actor.h
 file path=usr/include/libvisual-0.4/libvisual/lv_audio.h
@@ -72,6 +72,7 @@ file path=usr/include/libvisual-0.4/libvisual/lv_utils.h
 file path=usr/include/libvisual-0.4/libvisual/lv_video.h
 file path=usr/include/libvisual-0.4/libvisual/lvconfig-32.h
 file path=usr/include/libvisual-0.4/libvisual/lvconfig-64.h
+file path=usr/include/libvisual-0.4/libvisual/lvconfig.h
 link path=usr/lib/$(MACH64)/libvisual-0.4.so target=libvisual-0.4.so.0.0.0
 link path=usr/lib/$(MACH64)/libvisual-0.4.so.0 target=libvisual-0.4.so.0.0.0
 file path=usr/lib/$(MACH64)/libvisual-0.4.so.0.0.0
@@ -80,5 +81,7 @@ link path=usr/lib/libvisual-0.4.so target=libvisual-0.4.so.0.0.0
 link path=usr/lib/libvisual-0.4.so.0 target=libvisual-0.4.so.0.0.0
 file path=usr/lib/libvisual-0.4.so.0.0.0
 file path=usr/lib/pkgconfig/libvisual-0.4.pc
+file path=usr/share/locale/de/LC_MESSAGES/libvisual-0.4.mo
 file path=usr/share/locale/es_AR/LC_MESSAGES/libvisual-0.4.mo
 file path=usr/share/locale/es_ES/LC_MESSAGES/libvisual-0.4.mo
+file path=usr/share/man/man1/lv-tool-0.4.1

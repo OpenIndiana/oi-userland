@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Pluggable
 HUMAN_VERSION =			5.2
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Module::Pluggable - automatically give your module the ability to have plugins
 COMPONENT_CPAN_AUTHOR =		SIMONW
 COMPONENT_ARCHIVE_HASH =	\

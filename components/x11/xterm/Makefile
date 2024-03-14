@@ -12,28 +12,27 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2020 Michal Nowak
-# Copyright 2022 Andreas Wacknitz
+# Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xterm
-COMPONENT_VERSION=	373
+COMPONENT_VERSION=	390
 COMPONENT_SUMMARY=	Xterm - terminal emulator for X 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:deb0989473a63908b5a8d44dfeea8301c8710f6ce01fb57ce8c30002375746b6
+COMPONENT_ARCHIVE_HASH=	sha256:75117c3cc5174a09c425ef106e69404d72f5ef05e03a5da00aaf15792d6f9c0f
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://invisible-island.net/xterm/
 COMPONENT_FMRI=		terminal/xterm
-COMPONENT_LICENSE=	MIT
 COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_LICENSE=	MIT
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --enable-256-color
 CONFIGURE_OPTIONS += --enable-88-color

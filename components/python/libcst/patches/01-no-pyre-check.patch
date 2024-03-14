@@ -1,0 +1,19 @@
+--- libcst-1.2.0/libcst/metadata/tests/test_type_inference_provider.py.orig
++++ libcst-1.2.0/libcst/metadata/tests/test_type_inference_provider.py
+@@ -10,7 +10,7 @@
+ import sys
+ from pathlib import Path
+ from typing import cast, Mapping, Optional
+-from unittest import skipIf
++from unittest import skipIf, skip
+ 
+ import libcst as cst
+ from libcst import MetadataWrapper
+@@ -57,6 +57,7 @@
+     sys.version_info < (3, 7), "TypeInferenceProvider doesn't support 3.6 and below"
+ )
+ @skipIf(sys.platform == "win32", "TypeInferenceProvider doesn't support windows")
++@skip("We have no pyre-check package")
+ class TypeInferenceProviderTest(UnitTest):
+     maxDiff: Optional[int] = None
+ 

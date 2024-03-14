@@ -1,0 +1,46 @@
+diff -Nru NetHack-3.6.7.orig/include/config.h NetHack-3.6.7/include/config.h
+--- NetHack-3.6.7.orig/include/config.h	2023-02-15 22:52:57.000000000 +0100
++++ NetHack-3.6.7/include/config.h	2023-10-08 14:58:19.655839924 +0200
+@@ -46,7 +46,7 @@
+ #define TTY_GRAPHICS /* good old tty based graphics */
+ #endif
+ /* #define CURSES_GRAPHICS *//* Curses interface - Karl Garrison*/
+-/* #define X11_GRAPHICS */   /* X11 interface */
++#define X11_GRAPHICS   /* X11 interface */
+ /* #define QT_GRAPHICS */    /* Qt interface */
+ /* #define GNOME_GRAPHICS */ /* Gnome interface */
+ /* #define MSWIN_GRAPHICS */ /* Windows NT, CE, Graphics */
+@@ -263,11 +263,11 @@
+ 
+ #if defined(UNIX) && !defined(ZLIB_COMP) && !defined(COMPRESS)
+ /* path and file name extension for compression program */
+-#define COMPRESS "/usr/bin/compress" /* Lempel-Ziv compression */
+-#define COMPRESS_EXTENSION ".Z"      /* compress's extension */
++/* #define COMPRESS "/usr/bin/compress" */ /* Lempel-Ziv compression */
++/* #define COMPRESS_EXTENSION ".Z" */      /* compress's extension */
+ /* An example of one alternative you might want to use: */
+-/* #define COMPRESS "/usr/local/bin/gzip" */ /* FSF gzip compression */
+-/* #define COMPRESS_EXTENSION ".gz" */       /* normal gzip extension */
++#define COMPRESS "/usr/local/bin/gzip" /* FSF gzip compression */
++#define COMPRESS_EXTENSION ".gz"       /* normal gzip extension */
+ #endif
+ 
+ #ifndef COMPRESS
+@@ -352,7 +352,7 @@
+  * otherwise it will be the current directory.
+  */
+ #ifndef HACKDIR
+-#define HACKDIR "/usr/games/lib/nethackdir"
++#define HACKDIR "/usr/lib/nethack"
+ #endif
+ 
+ /*
+@@ -442,7 +442,7 @@
+  * functions that have been macroized.
+  */
+ 
+-/* #define VISION_TABLES */ /* use vision tables generated at compile time */
++#define VISION_TABLES 1 /* use vision tables generated at compile time */
+ #ifndef VISION_TABLES
+ #ifndef NO_MACRO_CPATH
+ #define MACRO_CPATH /* use clear_path macros instead of functions */

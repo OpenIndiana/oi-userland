@@ -49,9 +49,6 @@ CONFIGURE_ENV    += PYTHON=$(PYTHON)
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# Build dependencies
-REQUIRED_PACKAGES += developer/build/automake-111
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library

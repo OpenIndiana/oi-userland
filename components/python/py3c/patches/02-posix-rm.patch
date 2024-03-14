@@ -1,0 +1,17 @@
+Some rm commands are not GNU rm.
+
+--- py3c-1.4/Makefile.orig
++++ py3c-1.4/Makefile
+@@ -27,10 +27,10 @@
+ # TODO: A better way to build & use one-off extensions?
+ 
+ build-%:
+-	cd test; rm -rvf ${_testbuilddir_abs} ; $* setup.py build -b ${_testbuilddir_abs}
++	cd test; rm -rf ${_testbuilddir_abs} ; $* setup.py build -b ${_testbuilddir_abs}
+ 
+ build-%-cpp:
+-	cd test; rm -rvf ${_testbuilddir_abs} ; TEST_USE_CPP=yes $* setup.py build -b ${_testbuilddir_abs}
++	cd test; rm -rf ${_testbuilddir_abs} ; TEST_USE_CPP=yes $* setup.py build -b ${_testbuilddir_abs}
+ 
+ test-%: build-%
+ 	echo ${_testbuilddir_abs}

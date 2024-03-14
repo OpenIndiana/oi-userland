@@ -1,0 +1,53 @@
+https://github.com/unicode-org/icu/commit/ea7b6472b2a73a848c0c9bc4586e1db3b20f65f5
+
+--- icu/source/common/unicode/icuplug.h.orig
++++ icu/source/common/unicode/icuplug.h
+@@ -187,8 +187,12 @@
+ 
+ /**
+  * Entrypoint for an ICU plugin.
+- * @param plug the UPlugData handle. 
+- * @param status the plugin's extended status code.
++ * @param plug the UPlugData handle.
++ * @param reason the reason code for the entrypoint's call.
++ * @param status Standard ICU error code. Its input value must
++ *               pass the U_SUCCESS() test, or else the function returns
++ *               immediately. Check for U_FAILURE() on output or use with
++ *               function chaining. (See User Guide for details.)
+  * @return A valid plugin must return UPLUG_TOKEN
+  * @internal ICU 4.4 Technology Preview
+  */
+--- icu/source/common/unicode/uclean.h.orig
++++ icu/source/common/unicode/uclean.h
+@@ -114,7 +114,8 @@
+ /**
+   *  Pointer type for a user supplied memory re-allocation function.
+   *  @param context user supplied value, obtained from u_setMemoryFunctions().
+-  *  @param size    The number of bytes to be allocated
++  *  @param mem     Pointer to the memory block to be resized.
++  *  @param size    The new size for the block.
+   *  @return        Pointer to the newly allocated memory, or NULL if the allocation failed.
+   *  @stable ICU 2.8
+   *  @system
+@@ -124,8 +125,7 @@
+   *  Pointer type for a user supplied memory free  function.  Behavior should be
+   *  similar the standard C library free().
+   *  @param context user supplied value, obtained from u_setMemoryFunctions().
+-  *  @param mem     Pointer to the memory block to be resized
+-  *  @param size    The new size for the block
++  *  @param mem     Pointer to the memory block to be freed.
+   *  @return        Pointer to the resized memory block, or NULL if the resizing failed.
+   *  @stable ICU 2.8
+   *  @system
+--- icu/source/test/depstest/dependencies.txt.orig
++++ icu/source/test/depstest/dependencies.txt
+@@ -48,6 +48,9 @@
+     std::condition_variable::~condition_variable()
+     std::condition_variable_any::condition_variable_any()
+     std::condition_variable_any::~condition_variable_any()
++    pthread_once
++    pthread_mutex_lock
++    pthread_mutex_unlock
+ 
+ group: ubsan
+     # UBSan=UndefinedBehaviorSanitizer, clang -fsanitize=bounds

@@ -28,11 +28,12 @@ BUILD_STYLE=configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		font-jis-misc
-COMPONENT_VERSION= 	1.0.3
+COMPONENT_VERSION= 	1.0.4
 COMPONENT_SUMMARY=      Japanese Industrial Standard 9051-1984 bitmap fonts
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:2b18ce10b367ebafe95a17de799b6db9a24e2337188d124adaf68af05b1fac65
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:78d1eff6c471f7aa6802a26d62cccf51d8e5185586406d9b6e1ee691b0bffad0
 COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE= COPYING
 
 FONT_TYPE = X11MISC
 
@@ -44,3 +45,4 @@ COMPONENT_FONT_PKG  = jis-misc
 # Install to separate directory for easier packaging
 CONFIGURE_OPTIONS += --with-fontdir=$(COMPONENT_FONT_DEST_DIR)
 
+# Auto-generated dependencies

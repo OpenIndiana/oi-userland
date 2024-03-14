@@ -12,55 +12,43 @@
 # Copyright 2019 Jason Martin
 #
 
-BUILD_BITS=64
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     gnumeric
-COMPONENT_VERSION=  1.12.53
-COMPONENT_PROJECT_URL=  https://www.gnome.org
+COMPONENT_MJR_VERSION=  1.12
+COMPONENT_VERSION=  $(COMPONENT_MJR_VERSION).57
 COMPONENT_SUMMARY=  GTK Spreadsheet Application
+COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:5568e4c8dceabb9028f1361d1045522f95f0a71daa59e973cbdd2d39badd4f02
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:aff50b1b62340c24fccf453d5fad3e7fb73f4bc4b34f7e34b6c3d2d9af6a1e4f
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=   Applications/Office
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-PYTHON_VERSION=3.9
-
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+= --without-perl
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBEXECDIR.$(BITS))
+CONFIGURE_OPTIONS += --without-perl
 
 COMPONENT_TEST_ARGS += -k
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/XPASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/XFAIL:/p" ' \
-	'-e "/ERROR:/p" '
-
-# To prevent "libtool_install_magic: unbound variable"
-unexport SHELLOPTS
 
 # Build dependencies
 REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

@@ -1,59 +1,13 @@
-gmake[1]: Entering directory '$(@D)/builtins'
-gmake[1]: 'pipesize.h' is up to date.
-gmake[1]: Leaving directory '$(@D)/builtins'
-
-	  ***********************************************************
-	  *                                                         *
-	  * GNU bash, version 5.2.0(1)-release (x86_64-pc-solaris2.11)
-	  *                                                         *
-	  ***********************************************************
-
-Testing $(@D)/bash
-version: 5.2.0(1)-release
-versinfo: 5 2 0 1 release x86_64-pc-solaris2.11
-HOSTTYPE = x86_64
-OSTYPE = solaris2.11
-MACHTYPE = x86_64-pc-solaris2.11
-Any output from any test, unless otherwise noted, indicates a possible anomaly
 run-alias
 run-appendop
 run-arith
 run-arith-for
 run-array
-warning: all of these tests will fail if arrays have not
-warning: been compiled into the shell
-warning: the BASH_ARGC and BASH_ARGV tests will fail if debugging support
-warning: has not been compiled into the shell
 run-array2
-warning: all of these tests will fail if arrays have not
-warning: been compiled into the shell
 run-assoc
-warning: all of these tests will fail if arrays have not
-warning: been compiled into the shell
-242c242
-< foo=( echo "\" "5" "@" "3" "holy hell this works" "4" "a b" "1" "spa ces" "2" )
----
-> foo=( echo "\\" "5" "@" "3" "holy hell this works" "4" "a b" "1" "spa ces" "2" )
-247c247
-< foo=( "'" "squote" "\"" "dquote" "\" "bslash" "\`" "backquote" )
----
-> foo=( "'" "squote" "\"" "dquote" "\\" "bslash" "\`" "backquote" )
-253c253
-< dict=( "?" "quest" "*" "star" "'" "squote" "\$" "dol" "\"" "dquote" "\" "bslash" "@" "at" "}" "rbrace" "{" "lbrace" "\`" "bquote" )
----
-> dict=( "?" "quest" "*" "star" "'" "squote" "\$" "dol" "\"" "dquote" "\\" "bslash" "@" "at" "}" "rbrace" "{" "lbrace" "\`" "bquote" )
-258,259c258,259
-< ")" "rparen" "\"" "dquote" "]" "rbracket" "\" "bs"
-< declare -A a=([")"]="rparen" ["\""]="dquote" ["]"]="rbracket" ["\"]="bs" )
----
-> ")" "rparen" "\"" "dquote" "]" "rbracket" "\\" "bs"
-> declare -A a=([")"]="rparen" ["\""]="dquote" ["]"]="rbracket" ["\\"]="bs" )
 run-attr
 run-braces
 run-builtins
-warning: some of these tests may fail if process substitution has not
-warning: been compiled into the shell or if the OS does not provide
-warning: /dev/fd.
 run-case
 run-casemod
 run-complete
@@ -61,10 +15,6 @@ run-comsub
 run-comsub-eof
 run-comsub-posix
 run-cond
-warning: all of these tests will fail if the conditional command has not
-warning: been compiled into the shell
-warning: some of these tests will fail if extended pattern matching has not
-warning: been compiled into the shell
 run-coproc
 run-cprint
 run-dbg-support
@@ -74,129 +24,38 @@ run-dollars
 run-dynvar
 run-errors
 run-execscript
-warning: the text of a system error message may vary between systems and
-warning: produce diff output.
-warning: UNIX versions number signals differently.
-warning: If output differing only in line numbers is produced, please
-warning: do not consider this a test failure.
-warning: if the text of the error messages concerning `notthere' or
-warning: `/tmp/bash-notthere' not being found or `/' being a directory
-warning: produce diff output, please do not consider this a test failure
-warning: if diff output differing only in the location of the bash
-warning: binary appears, please do not consider this a test failure
 run-exp-tests
-185c185
-< \[\e[0;31m\]
----
-> \[[0;31m\]
 run-exportfunc
 run-extglob
 run-extglob2
 run-extglob3
 run-func
-warning: if you have exported functions defined in your environment,
-warning: they may show up as diff output.
-warning: if so, please do not consider this a test failure
 run-getopts
 run-glob-test
-2,3d1
-< glob2.sub: warning: you do not have the zh_HK.big5hkscs locale installed;
-< glob2.sub: warning: that will cause some of these tests to fail.
-9d6
-< ./glob2.sub: line 44: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
-11c8
-< argv[1] = <A?B>
----
-> argv[1] = <A£\B>
-14,16c11,13
-< argv[1] = <a?b>
-< 0000000 141 077 142
-< 0000003
----
-> argv[1] = <a£\b>
-> 0000000 141 243 134 142
-> 0000004
-18,19d14
-< ./glob2.sub: line 65: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
-< $(@D)/bash: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
 run-globstar
 run-heredoc
-warning: UNIX versions number signals and schedule processes differently.
-warning: If output differing only in line numbers is produced, please
-warning: do not consider this a test failure.
 run-herestr
 run-histexpand
-warning: all of these tests will fail if history has not been compiled
-warning: into the shell
 run-history
-warning: all of these tests will fail if history has not been compiled
-warning: into the shell
 run-ifs
 run-ifs-posix
 run-input-test
 run-intl
-unicode1.sub: warning: you do not have the ja_JP.SJIS locale installed;
-unicode1.sub: that will cause some of these tests to be skipped.
-24c24
 < Passed all 1251 Unicode tests
----
 > Passed all 1378 Unicode tests
 run-invert
 run-iquote
 run-jobs
-warning: some of these tests may fail if job control has not been compiled
-warning: into the shell
-warning: there may be a message regarding a cat process dying due to a
-warning: SIGHUP.  Please disregard.
 run-lastpipe
 run-mapfile
 run-more-exp
 run-nameref
-warning: some of these tests will fail if arrays have not
-warning: been compiled into the shell
 run-new-exp
-warning: two of these tests will fail if your OS does not support
-warning: named pipes or the /dev/fd filesystem.  If the tests of the
-warning: process substitution mechanism fail, please do not consider
-warning: this a test failure
-warning: if you have exported variables beginning with the string _Q,
-warning: diff output may be generated.  If so, please do not consider
-warning: this a test failure
-755c755
-< bc defg
----
-> \abc defg
-758c758
-< bcdefg
----
-> \abcdefg
-761,762c761,762
-< bcdefg
-< \&defg
----
-> \abcdefg
-> \\&defg
-767c767
-< \&defg
----
-> \\&defg
-777c777
-< let\ssee
----
-> let\\ssee
 run-nquote
 run-nquote1
-warning: several of these tests will fail if arrays have not
-warning: been compiled into the shell.
 run-nquote2
-warning: several of these tests will fail if arrays have not
-warning: been compiled into the shell.
 run-nquote3
-warning: several of these tests will fail if arrays have not
-warning: been compiled into the shell.
 run-nquote4
-warning: some of these tests will fail if you do not have UTF-8
-warning: locales installed on your system
 run-nquote5
 run-parser
 run-posix2
@@ -207,21 +66,10 @@ run-posixpipe
 run-precedence
 run-printf
 run-procsub
-warning: all of these tests will fail if process substitution has not
-warning: been compiled into the shell or if the OS does not provide
-warning: FIFOs or /dev/fd. Some tests may fail if the OS does not
-warning: provide FIFOs.
 run-quote
 run-quotearray
 run-read
-warning: please do not consider output differing only in the amount of
-warning: white space to be an error.
 run-redir
-warning: the text of a system error message may vary between systems and
-warning: produce diff output.
-warning: if the text of an error message concerning `redir1.*' not being
-warning: found or messages concerning bad file descriptors produce diff
-warning: output, please do not consider it a test failure
 run-rhs-exp
 run-rsh
 run-set-e
@@ -229,109 +77,9 @@ run-set-x
 run-shopt
 run-strip
 run-test
-297c297
-< 1
----
-> 0
 run-tilde
 run-tilde2
 run-trap
-warning: UNIX versions number signals and schedule processes differently.
-warning: If output differing only in line numbers is produced, please
-warning: do not consider this a test failure.
-81c81
-< false
----
-> +[8] false
 run-type
 run-varenv
-warning: some of these tests will fail if arrays have not
-warning: been compiled into the shell
-145,146c145
-< -n inside: 
-< declare -- foo
----
-> inside: declare -- foo
-149,180c148,163
-< -n inside: 
-< declare -x var="value"
-< -n outside: 
-< declare -- var="one"
-< -n inside: 
-< declare -x var="value"
-< -n outside: 
-< declare -- var="outside"
-< -n inside: 
-< declare -x var="inside"
-< -n outside: 
-< declare -- var="outside"
-< -n outside 1.0: 
-< var=one
-< -n outside 1.1: 
-< var=one
-< -n inside func: 
-< var=two
-< -n outside 2.0: 
-< var=<unset>
-< -n inside func: 
-< var=two
-< -n outside 2.1: 
-< var=global
-< -n inside func1: 
-< var=value
-< -n outside 3.0: 
-< var=value
-< -n inside func2: 
-< var=global
-< -n outside 4.0: 
-< var=outside
----
-> inside: declare -x var="value"
-> outside: declare -- var="one"
-> inside: declare -x var="value"
-> outside: declare -- var="outside"
-> inside: declare -x var="inside"
-> outside: declare -- var="outside"
-> outside 1.0: var=one
-> outside 1.1: var=one
-> inside func: var=two
-> outside 2.0: var=<unset>
-> inside func: var=two
-> outside 2.1: var=global
-> inside func1: var=value
-> outside 3.0: var=value
-> inside func2: var=global
-> outside 4.0: var=outside
-242,243c225
-< foo=showfoo-n  environment foo=
-< showfoo
----
-> foo=showfoo environment foo=showfoo
-245,248c227,228
-< foo=showfoo-n  environment foo=
-< showfoo
-< foo=showfoo-n  environment foo=
-< showfoo
----
-> foo=showfoo environment foo=showfoo
-> foo=showfoo environment foo=showfoo
-250,251c230
-< foo=<unset>-n  environment foo=
-< 
----
-> foo=<unset> environment foo=
-253,256c232,233
-< foo=foo-n  environment foo=
-< foo
-< foo=<unset>-n  environment foo=
-< 
----
-> foo=foo environment foo=foo
-> foo=<unset> environment foo=
 run-vredir
-warning: the text of a system error message may vary between systems and
-warning: produce diff output.
-101c101
-< ./vredir8.sub: line 12: $fd: Bad file number
----
-> ./vredir8.sub: line 12: $fd: Bad file descriptor

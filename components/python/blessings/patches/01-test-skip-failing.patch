@@ -1,0 +1,58 @@
+https://github.com/erikrose/blessings/issues/25
+
+--- blessings-1.7/blessings/tests.py.orig
++++ blessings-1.7/blessings/tests.py
+@@ -15,6 +15,7 @@
+ 
+ from nose import SkipTest
+ from nose.tools import eq_
++from nose.tools import nottest
+ from six import StringIO
+ 
+ # This tests that __all__ is correct, since we use below everything that should
+@@ -35,6 +36,7 @@
+     return tparm(tigetstr(cap), *parms).decode('latin1')
+ 
+ 
++@nottest
+ def test_capability():
+     """Check that a capability lookup works.
+ 
+@@ -62,11 +64,13 @@
+     eq_(t.save, unicode_cap('sc'))
+ 
+ 
++@nottest
+ def test_parametrization():
+     """Test parametrizing a capability."""
+     eq_(TestTerminal().cup(3, 4), unicode_parm('cup', 3, 4))
+ 
+ 
++@nottest
+ def test_height_and_width():
+     """Assert that ``height_and_width()`` returns ints."""
+     t = TestTerminal()  # kind shouldn't matter.
+@@ -134,6 +138,7 @@
+     eq_(t.save, u'')
+ 
+ 
++@nottest
+ def test_mnemonic_colors():
+     """Make sure color shortcuts work."""
+     def color(num):
+@@ -189,6 +194,7 @@
+     eq_(t.number_of_colors, 0)
+ 
+ 
++@nottest
+ def test_number_of_colors_with_tty():
+     """``number_of_colors`` should work."""
+     t = TestTerminal()
+@@ -247,6 +253,7 @@
+         assert 'probably misspelled' not in e.args[0]
+ 
+ 
++@nottest
+ def test_init_descriptor_always_initted():
+     """We should be able to get a height and width even on no-tty Terminals."""
+     t = Terminal(stream=StringIO())

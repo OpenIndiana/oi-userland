@@ -20,40 +20,32 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=32_and_64
+
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		liblangtag
-COMPONENT_VERSION=	0.6.3
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=     	library/liblangtag
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	http://tagoh.github.io/liblangtag/
+COMPONENT_VERSION=	0.6.7
 COMPONENT_SUMMARY=      liblangtag - library to access/deal with tags for identifying languages (RFC 5646)
+COMPONENT_PROJECT_URL=	https://tagoh.github.io/liblangtag/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:1f12a20a02ec3a8d22e54dedb8b683a43c9c160bda1ba337bf1060607ae733bd
 COMPONENT_ARCHIVE_URL=	https://bitbucket.org/tagoh/liblangtag/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:5ed6bcd4ae3f3c05c912e62f216cd1a44123846147f729a49fb5668da51e030e
+COMPONENT_FMRI=     	library/liblangtag
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      LGPLv3, MPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
-unexport SHELLOPTS
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL:/p" ' \
-        '-e "/SKIP:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" ' \
-        '-e "/ERROR:/p" '
+PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
+
+unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2

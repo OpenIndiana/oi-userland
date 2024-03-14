@@ -3,24 +3,40 @@ Makefiles.  There is a set of targets that all Makefiles must include, plus
 some addtional targets that are there for convenience.
 
 component-environment-check::
-  This target is an optional target that will be included in most Makefiles
-  automatically.  It is defined in $(WS_MAKE_RULES)/environment.mk which is
-  included by $(WS_MAKE_RULES)/shares-macros.mk.  It reports on some interesting
+  This target is present in all Makefiles.  It is defined in
+  $(WS_MAKE_RULES)/environment.mk which is included by
+  $(WS_MAKE_RULES)/shares-macros.mk.  It reports on some interesting
   information about the current environment and whether or not it is suitable
-  to build, publish, or test the component.
+  to build and/or publish the component.
 
 component-environment-prep::
-  This target is an optional target that will be included in most Makefiles
-  automatically.  It is defined in $(WS_MAKE_RULES)/environment.mk which is
-  included by $(WS_MAKE_RULES)/shares-macros.mk.  It uses the REQUIRE_PACKAGES
-  macro contents to attempt to install any required packages in the current
-  environment. To use this target user has to be assigned "Software Installation"
-  or "Primary Administrator" profile.
+  This target is present in all Makefiles.  It is defined in
+  $(WS_MAKE_RULES)/environment.mk which is included by
+  $(WS_MAKE_RULES)/shares-macros.mk.  It uses both USERLAND_REQUIRED_PACKAGES
+  and REQUIRED_PACKAGES macro contents to attempt to install any required
+  packages in the current environment.  To use this target user has to be
+  assigned "Software Installation" or "Primary Administrator" profile.
+
+component-test-environment-check::
+  This target is present in all Makefiles.  It is defined in
+  $(WS_MAKE_RULES)/environment.mk which is included by
+  $(WS_MAKE_RULES)/shares-macros.mk.  It reports on some interesting
+  information about the current environment and whether or not it is suitable
+  to test the component.
+
+component-test-environment-prep::
+  This target is present in all Makefiles.  It is defined in
+  $(WS_MAKE_RULES)/environment.mk which is included by
+  $(WS_MAKE_RULES)/shares-macros.mk.  It uses both
+  USERLAND_TEST_REQUIRED_PACKAGES and TEST_REQUIRED_PACKAGES macro contents to
+  attempt to install any required packages in the current environment.  To use
+  this target user has to be assigned "Software Installation" or "Primary
+  Administrator" profile.
 
 download::
   This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
-  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  typically defined by including $(WS_MAKE_RULES)/common.mk in your component
   Makefile.  This target depends on your component Makefile, so changes to your
   component Makefile will automatically trigger a re-download and subsequent
   build steps that depend on it.  You can use the MAKEFILE_PREREQ macro to
@@ -31,7 +47,7 @@ download::
 unpack::
   This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
-  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  typically defined by including $(WS_MAKE_RULES)/common.mk in your component
   Makefile.  This target depends on the previously described "download" target,
   This target will unpack any downloaded source archives.  It is an interim
   step in the source code preparation phase of the build.
@@ -39,7 +55,7 @@ unpack::
 patch::
   This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
-  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  typically defined by including $(WS_MAKE_RULES)/common.mk in your component
   Makefile.  This target depends on the previously described "unpack" target,
   This target will patch any unpacked source.  It is an interim step in the
   source code preparation phase of the build.
@@ -47,7 +63,7 @@ patch::
 prep::
   This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is 
-  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  typically defined by including $(WS_MAKE_RULES)/common.mk in your component
   Makefile.  It depends on the previously described "download" target, as well
   as internal interim targets to unpack source archives and apply patches to
   the unpacked source.
@@ -75,13 +91,13 @@ install::
 
 pkglint::
   This target is an optional target is automatically defined in each Makefile
-  by the inclusion of $(WS_MAKE_RULES)/prep.mk.  It will run the build steps
+  by the inclusion of $(WS_MAKE_RULES)/common.mk.  It will run the build steps
   necessary to pkglint the manifests for a component.
 
 pre-publish::
   This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
-  automatically defined by including $(WS_MAKE_RULES)/ips.mk.  It depends
+  automatically defined by including $(WS_MAKE_RULES)/common.mk.  It depends
   on the previously described 'install' target and will perform a series of
   internal, intermediate steps to use the component package manifests to
   generate and validate consistency of packages for that component.
@@ -94,30 +110,28 @@ pre-publish::
 publish::
   This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
-  automatically defined by including $(WS_MAKE_RULES)/ips.mk.  It depends
+  automatically defined by including $(WS_MAKE_RULES)/common.mk.  It depends
   on the previously described 'pre-publish' target and will actually publish
   packages for that component to the repository configured in $(WS_REPO).
 
 clean::
   This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
-  often automatically defined by including one of the $(WS_MAKE_RULES)
-  Makefile fragments.  It cleans up any files created by building the component
-  with the exception of any downloaded files.
+  automatically defined by including $(WS_MAKE_RULES)/common.mk.  It cleans
+  up any files created by building the component with the exception of any
+  downloaded files.
 
 clobber::
+
   This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
-  often automatically defined by including one of the $(WS_MAKE_RULES)
-  Makefile fragments.  It depends on the previously described 'clean' target
-  and additionally cleans up any downloaded source archives.  In addition,
-  when done from the top level or component sub-directory, it will do a find
-  of 'manifest-*.published' and clean those up; these can be left over from
-  components that were published but then 'hg rm'd before the next clobber.
+  automatically defined by including $(WS_MAKE_RULES)/common.mk.  It depends
+  on the previously described 'clean' target and additionally cleans up any
+  downloaded source archives.
 
 REQUIRED_PACKAGES::
   This target is present in all component Makefiles.  It is automatically
-  defined by including $(WS_MAKE_RULES)/ips.mk.  It is a convenience that can
+  defined by including $(WS_MAKE_RULES)/common.mk.  It is a convenience that can
   be used to generate the set of REQUIRED_PACKAGES that is needed by the
   'pkgdepend resolve' portion of package generation and publication (publish
   target).  It automatically appends to the component Makefile, but the results
@@ -130,6 +144,14 @@ env-check::
 env-prep::
   This target serves as an alias for component-environment-prep target. It exists
   only for user convenience.
+
+test-env-check::
+  This target serves as an alias for component-test-environment-check target.
+  It exists only for user convenience.
+
+test-env-prep::
+  This target serves as an alias for component-test-environment-prep target. It
+  exists only for user convenience.
 
 print-VAR
   This target will print contents of variable VAR and also provide information

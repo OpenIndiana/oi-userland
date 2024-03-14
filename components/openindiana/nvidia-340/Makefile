@@ -23,6 +23,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_MJR_VERSION =		340
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_VERSION =		$(COMPONENT_MJR_VERSION).108
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
@@ -63,7 +64,7 @@ $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
 	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib/$(MACH64):/lib/$(MACH64):/usr/lib/$(MACH64)" $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1
 	$(TOUCH) $@
 
-GENERATE_EXTRA_CMD = \
+GENERATE_EXTRA_CMD += | \
 	$(CAT) - <( \
 		eval $$($(GNU_GREP) ^A $(SOURCE_DIR)/NVDAgraphicsr/install/postinstall) ; \
 		printf 'driver name=nvidia perms="* 0666 root root"' ; \

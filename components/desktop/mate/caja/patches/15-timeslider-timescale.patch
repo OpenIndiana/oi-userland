@@ -1,0 +1,1350 @@
+--- caja-1.28.0/src/timescale.c.orig	2024-02-26 08:42:41.085817612 +0100
++++ caja-1.28.0/src/timescale.c	2024-02-26 08:42:41.085766910 +0100
+@@ -0,0 +1,1286 @@
++/* 
++ * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
++ *
++ */
++
++#include "config.h"
++#include "timescale.h"
++#include <math.h>
++#include <stdlib.h>
++#include <libcaja-private/caja-zfs.h>
++#include <glib/gi18n-lib.h>
++#include <gdk/gdkkeysyms.h>
++
++#define BAR_W_MAX 20
++#define BAR_SPACE 2
++
++
++typedef struct
++{
++    char          *name;    
++    char          *mountpoint;    
++    char          *mtime_str;
++    char          *mtime_short_str;
++    time_t       mtime;
++    float           used_space;
++    char          *used_space_str;
++    SnapType       type;
++    char          *type_str;
++} Snap;
++
++
++struct TimeScalePrivate 
++{
++    GList* all_snaps;
++    GList* snaps;
++    int*    bar_x_end;
++    int   current_pos;
++    int   num_snaps;
++    char  *num_rev_string;
++    int    current_period;
++    GList *today;
++    GList *yesterday;
++    GList *this_week;
++    GList *last_week;
++    GList *this_month;
++    GList *last_month;
++    gboolean scrollbar_set;
++    gboolean key_pressed;
++    GtkWidget *darea;
++    GtkWidget *period;
++    GtkWidget *info;
++    GtkWidget *scrolled;
++    GtkWidget *label_tip;
++};
++
++enum {
++    VALUE_CHANGED,
++    LAST_SIGNAL
++};
++
++enum {
++    ALL,
++    TODAY,
++    YESTERDAY,
++    THIS_WEEK,
++    LAST_WEEK,
++    THIS_MONTH,
++    LAST_MONTH
++};
++
++enum {
++    COLUMN_INDEX,
++    COLUMN_STRING
++};
++
++
++static guint signals[LAST_SIGNAL];
++
++G_DEFINE_TYPE (TimeScale, timescale, GTK_TYPE_HBOX)
++
++#define TIMESCALE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_TIMESCALE, TimeScalePrivate))
++
++static gboolean
++timescale_expose (GtkWidget *widget,
++            GdkEventExpose *event, TimeScale *ts);
++
++static gboolean
++query_tooltip (GtkWidget  *widget,
++        gint        x,
++        gint        y,
++        gboolean    keyboard_tip,
++        GtkTooltip *tooltip,
++        gpointer    data);
++static int 
++key_pressed (GtkWidget *widget, GdkEventKey *event, TimeScale *ts);
++static void
++button_pressed (GtkWidget *widget, GdkEventButton *event, TimeScale *ts);
++
++static void
++print_snaps (GList *list)
++{
++    GList* tmp = list;
++    int i = 0;
++
++    while (tmp)
++    {
++        Snap *snap = (Snap*) tmp->data;
++        printf ("=-= %d =-=\nname: %s\nmountpoint: %s\nmtime: %s\nused_space: %s\n",i,
++                snap->name, snap->mountpoint, snap->mtime_str, snap->used_space_str);
++        i++;
++        tmp = tmp->next;
++    }
++}
++
++static char *
++get_num_snap_string (GList *snap_list)
++{
++    goffset total = 0;
++    int i = 0;
++    GList *tmp = snap_list;
++    char *num_rev;
++
++    char *size_str = NULL;
++
++    for (tmp; tmp; tmp = tmp->next)
++    {
++        Snap *snap = ((Snap*) tmp->data);
++        total += snap->used_space;
++        i++;
++    }
++
++    total *= 1024;
++
++    size_str = g_format_size (total);
++
++    /* SUN_BRANDING */
++    num_rev = g_strdup_printf (_("%d %s\n%s"),
++            i - 1 /* Account for "Now" snapshot */, 
++            /* SUN_BRANDING */
++            ngettext ("snapshot", "snapshots", i),
++            size_str);
++    g_free (size_str);
++
++    return num_rev;
++}
++
++
++static char *
++get_date (GDate *date)
++{
++    return g_strdup_printf ("%d/%d/%d", g_date_get_day (date), 
++            g_date_get_month (date),
++            g_date_get_year (date));
++}
++
++static GList *
++trim_list_by_date (GList *list, int type)
++{
++    GDate then;
++    GDate now;
++    GDate range_min;
++    GDate range_max;
++    GDateWeekday weekday;
++
++    time_t time_now;
++    int diff  = 0;
++    time_now = time (NULL);
++    g_date_set_time_t (&now, time_now);
++    g_date_set_time_t (&range_min, time_now);
++    GList *return_list = NULL;
++    int days_diff = 0;
++    gboolean range = FALSE;
++
++    switch (type)
++    {
++        case TODAY:
++            days_diff = 0;
++            break;
++        case YESTERDAY:
++            days_diff = 1;
++            break;
++        case THIS_WEEK:
++            weekday = g_date_get_weekday(&now);
++            days_diff = weekday - G_DATE_MONDAY;
++            memcpy (&range_max, &range_min, sizeof (GDate));
++            g_date_subtract_days (&range_min, days_diff);
++            range = TRUE;
++            break;
++        case LAST_WEEK:
++            g_date_subtract_days (&range_min, 7);
++            weekday = g_date_get_weekday(&range_min);
++            days_diff = weekday - G_DATE_MONDAY;
++            g_date_subtract_days (&range_min, days_diff);
++            memcpy (&range_max, &range_min, sizeof (GDate));
++            g_date_add_days (&range_max, 6);
++            range = TRUE;
++            break;
++        case THIS_MONTH:
++            g_date_set_dmy (&range_min, 1, g_date_get_month (&now),
++                    g_date_get_year (&now));
++            g_date_set_time_t (&range_max, time_now);
++            range = TRUE;
++            break;
++        case LAST_MONTH:
++            g_date_subtract_months (&range_min, 1);
++            g_date_set_dmy (&range_min, 1, 
++                    g_date_get_month (&range_min),
++                    g_date_get_year (&range_min));
++            memcpy (&range_max, &range_min, sizeof (GDate));
++            g_date_add_days (&range_max, g_date_get_days_in_month (g_date_get_month (&range_min), g_date_get_year (&range_min)) - 1);
++            range = TRUE;
++            break;
++    }
++
++    while (list)
++    {
++        Snap* snap = (Snap*) list->data;
++
++        if (snap->mtime != 0)
++        {
++            g_date_set_time_t (&then, snap->mtime);
++
++            if (!range)
++            {
++                if (g_date_get_julian (&now) - g_date_get_julian (&then) == days_diff)
++                    return_list = g_list_append (return_list, snap);
++            }
++            else
++            {
++                if (g_date_compare (&then, &range_min) >= 0 && g_date_compare (&then, &range_max) <= 0)
++                    return_list = g_list_append (return_list, snap);
++            }
++        }
++        list = list->next;
++    }
++    return return_list;
++}
++
++static void 
++free_periods (TimeScale *ts)
++{
++    if (ts->priv->today)
++    {
++        g_list_free (ts->priv->today);
++        ts->priv->today = NULL;
++    }
++    if (ts->priv->yesterday)
++    {
++        g_list_free (ts->priv->yesterday);
++        ts->priv->yesterday = NULL;
++    }
++    if (ts->priv->this_week)
++    {
++        g_list_free (ts->priv->this_week);
++        ts->priv->this_week = NULL;
++    }
++    if (ts->priv->last_week)
++    {
++        g_list_free (ts->priv->last_week);
++        ts->priv->last_week = NULL;
++    }
++    if (ts->priv->this_month)
++    {
++        g_list_free (ts->priv->this_month);
++        ts->priv->this_month = NULL;
++    }
++    if (ts->priv->last_month)
++    {
++        g_list_free (ts->priv->last_month);
++        ts->priv->last_month = NULL;
++    }
++}
++
++static GtkListStore *
++create_periods (TimeScale *ts)
++{
++    GtkTreeIter iter;
++    GtkListStore* periods = gtk_list_store_new (3, G_TYPE_INT, G_TYPE_STRING, G_TYPE_POINTER);
++
++    free_periods (ts);
++
++    gtk_list_store_append (periods, &iter);
++    gtk_list_store_set (periods, &iter, 0, ALL, 1, _("All"), 2, ts->priv->all_snaps, -1); 
++
++    ts->priv->today = trim_list_by_date (ts->priv->all_snaps, TODAY);
++
++    if (ts->priv->today)
++    {
++        gtk_list_store_append (periods, &iter);
++        gtk_list_store_set (periods, &iter, 0, TODAY, 1, _("Today"), 2, ts->priv->today, -1); 
++    }
++
++    ts->priv->yesterday = trim_list_by_date (ts->priv->all_snaps, YESTERDAY);
++    if (ts->priv->yesterday)
++    {
++        gtk_list_store_append (periods, &iter);
++        gtk_list_store_set (periods, &iter, 0, YESTERDAY, 1, _("Yesterday"), 2, ts->priv->yesterday, -1); 
++    }
++
++    ts->priv->this_week = trim_list_by_date (ts->priv->all_snaps, THIS_WEEK);
++    if (ts->priv->this_week)
++    {
++        gtk_list_store_append (periods, &iter);
++        gtk_list_store_set (periods, &iter, 0, THIS_WEEK, 1, _("This Week"), 2, ts->priv->this_week, -1); 
++    }
++
++    ts->priv->last_week = trim_list_by_date (ts->priv->all_snaps, LAST_WEEK);
++    if (ts->priv->last_week)
++    {
++        gtk_list_store_append (periods, &iter);
++        gtk_list_store_set (periods, &iter, 0, LAST_WEEK, 1, _("Last Week"), 2, ts->priv->last_week, -1); 
++    }
++
++    ts->priv->this_month = trim_list_by_date (ts->priv->all_snaps, THIS_MONTH);
++    if (ts->priv->this_month)
++    {
++        gtk_list_store_append (periods, &iter);
++        gtk_list_store_set (periods, &iter, 0, THIS_MONTH, 1, _("This Month"), 2, ts->priv->this_month, -1); 
++    }
++
++    ts->priv->last_month = trim_list_by_date (ts->priv->all_snaps, LAST_MONTH);
++    if (ts->priv->last_month)
++    {
++        gtk_list_store_append (periods, &iter);
++        gtk_list_store_set (periods, &iter, 0, LAST_MONTH, 1, _("Last Month"), 2, ts->priv->last_month, -1); 
++    }
++
++    return periods;
++}
++
++static void
++period_changed (GtkComboBox *combo,
++        TimeScale *ts)
++{
++    gint type;
++    GtkTreePath *path;
++    GtkTreeModel *model;
++    GtkTreeIter  iter;
++    GList *period;
++
++    if (!gtk_combo_box_get_active_iter (combo, &iter))
++        return;
++
++    model = gtk_combo_box_get_model (combo);
++
++    gtk_tree_model_get (model, &iter, 0, &type, 2, &period, -1);
++
++    if (ts->priv->current_period == type)
++        return;
++
++    ts->priv->current_period = type;
++
++    ts->priv->snaps = period;
++
++    ts->priv->num_snaps = g_list_length (ts->priv->snaps);
++    if (ts->priv->bar_x_end)
++        g_free (ts->priv->bar_x_end);
++
++    ts->priv->bar_x_end = g_new (int, g_list_length (ts->priv->snaps));
++
++    ts->priv->current_pos = -1;
++
++    if (ts->priv->num_rev_string)
++        g_free (ts->priv->num_rev_string);
++
++    ts->priv->num_rev_string = get_num_snap_string (ts->priv->snaps);
++    gtk_label_set_label (GTK_LABEL (ts->priv->info), ts->priv->num_rev_string);
++
++    gtk_widget_set_size_request (ts->priv->darea, ((BAR_SPACE + BAR_W_MAX ) * ts->priv->num_snaps) + PADDING * 2, 60);
++
++    gtk_widget_queue_draw (ts->priv->darea);
++}
++
++static void
++timescale_init (TimeScale *ts)
++{
++    GtkWidget *vbox;
++    GtkCellRenderer *renderer;
++
++    ts->priv = TIMESCALE_GET_PRIVATE (ts);
++    ts->priv->snaps = NULL;
++    ts->priv->all_snaps = NULL;
++    ts->priv->num_snaps = 0;
++    ts->priv->bar_x_end = NULL;
++    ts->priv->current_pos = 0;
++    ts->priv->num_rev_string = NULL;
++    ts->priv->current_period = ALL;
++    ts->priv->today = NULL;
++    ts->priv->yesterday = NULL;
++    ts->priv->this_week = NULL;
++    ts->priv->last_week = NULL;
++    ts->priv->this_month = NULL;
++    ts->priv->last_month = NULL;
++    ts->priv->key_pressed = FALSE;
++
++    gtk_box_set_homogeneous (GTK_BOX (ts), FALSE);
++
++    /* setup drawing area */
++
++    ts->priv->darea = gtk_drawing_area_new (); 
++
++    g_signal_connect(ts->priv->darea, "draw",
++            G_CALLBACK(timescale_expose), ts);
++
++    g_signal_connect (ts->priv->darea, "query-tooltip",
++            G_CALLBACK (query_tooltip), ts);
++
++    g_signal_connect(ts->priv->darea, "key-press-event",
++            G_CALLBACK(key_pressed), ts);
++    g_signal_connect(ts->priv->darea, "button_press_event",
++            G_CALLBACK(button_pressed), ts);
++    gtk_widget_set_can_focus(GTK_WIDGET (ts->priv->darea), TRUE);
++    gtk_widget_add_events (GTK_WIDGET (ts->priv->darea), GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK);
++    g_object_set (G_OBJECT (ts->priv->darea), "has-tooltip", TRUE, NULL);
++    gtk_widget_set_size_request (GTK_WIDGET (ts->priv->darea), -1, 60);
++
++    ts->priv->scrolled = gtk_scrolled_window_new (NULL, NULL);
++    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (ts->priv->scrolled),
++            GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
++    gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (ts->priv->scrolled), 
++            ts->priv->darea);
++    gtk_viewport_set_shadow_type (GTK_VIEWPORT (gtk_bin_get_child (GTK_BIN (ts->priv->scrolled))), GTK_SHADOW_NONE);
++    gtk_widget_show (ts->priv->scrolled);
++
++    ts->priv->label_tip = gtk_label_new ("Hello");
++    gtk_widget_set_name (ts->priv->label_tip, "gtk-tooltip");
++    g_object_ref_sink (ts->priv->label_tip);
++    gtk_label_set_justify (GTK_LABEL (ts->priv->label_tip), GTK_JUSTIFY_CENTER);
++
++    /* setup period combo and snap info */
++
++    vbox = gtk_vbox_new (FALSE, 5);
++    ts->priv->period = gtk_combo_box_new ();
++    renderer = gtk_cell_renderer_text_new ();
++    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (ts->priv->period),
++            renderer,
++            TRUE);
++    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (ts->priv->period), renderer,
++            "text", 1,
++            NULL);
++    g_signal_connect (ts->priv->period, "changed", G_CALLBACK (period_changed), ts);
++
++    ts->priv->info = gtk_label_new ("info\ninfo");
++    gtk_label_set_justify (GTK_LABEL (ts->priv->info), GTK_JUSTIFY_CENTER);
++    gtk_box_pack_start (GTK_BOX (vbox), ts->priv->period, FALSE, FALSE, 5);
++    gtk_box_pack_end (GTK_BOX (vbox), ts->priv->info, FALSE, FALSE, 5);
++
++    /* setup container */
++
++    gtk_box_pack_start (GTK_BOX (ts), vbox, FALSE, FALSE, 0);
++    gtk_box_pack_start (GTK_BOX (ts), ts->priv->scrolled, TRUE, TRUE, 0);
++
++    gtk_widget_set_can_focus(GTK_WIDGET (ts), TRUE);
++    gtk_widget_show_all (GTK_WIDGET (ts));
++}
++
++static float
++get_max_snap_size (GList *snaps)
++{
++    Snap *snap;
++    float max_size = 0;
++    while (snaps)
++    {
++        GList *next = snaps->next;
++        snap = (Snap*) snaps->data;
++        if (snap->used_space > max_size)
++            max_size = snap->used_space;
++        snaps = next;
++    }
++    return max_size;
++}
++
++static Snap*
++get_now_snap (TimeScale* ts)
++{
++    Snap *last_snap;
++    last_snap = g_new0 (Snap, 1);
++    last_snap->name = g_strdup (_("Now"));
++    last_snap->mountpoint = g_strdup (_("None"));
++    last_snap->mtime_str = g_strdup (_("Now"));
++    last_snap->mtime_short_str = g_strdup (_("Now"));
++    last_snap->used_space_str = g_strdup (_("-"));
++    last_snap->used_space = 0.0;
++    last_snap->type = NOW;
++    last_snap->type_str = g_strdup (_("Current Directory"));
++    return last_snap;
++}
++
++static char *
++get_type_str (SnapType type)
++{
++    switch (type)
++    {
++        case LOCAL_AUTOMATIC:
++            return g_strdup (_("Automatic Snapshot"));
++            break;
++        case LOCAL_MANUAL:
++            return g_strdup (_("Manual Snapshot"));
++            break;
++        case REMOTE_AUTOMATIC:
++            return g_strdup (_("Automatic Remote Backup"));
++            break;
++        case REMOTE_MANUAL:
++            return g_strdup (_("Manual Remote Backup"));
++            break;
++        default:
++            break;
++    }
++    return NULL;
++}
++
++static SnapType 
++get_type (ZfsDataSet* snap)
++{
++    if (snap->type)
++    {
++        if (strstr (snap->name, "zfs-auto-snap"))
++            return LOCAL_AUTOMATIC;
++        else
++            return LOCAL_MANUAL;
++    }
++    else
++    {
++        if (strstr (snap->name, "zfs-auto-snap"))
++            return REMOTE_AUTOMATIC;
++        else
++            return REMOTE_MANUAL;
++    }
++}
++
++static GList *
++copy_zfs_list (GList *list)
++{
++    ZfsDataSet *snap;
++    GList *new_list = NULL;
++    Snap *ts_shot;
++    GList *tmp_list = list;
++    while (tmp_list)
++    {
++        snap = (ZfsDataSet*) tmp_list->data;
++        ts_shot = g_new0 (Snap, 1);
++        ts_shot->name = g_strdup (snap->name);
++        ts_shot->mountpoint = g_strdup (snap->mountpoint);
++        ts_shot->mtime_str = g_strdup (snap->mtime_str);
++        ts_shot->mtime_short_str = caja_date_as_string (snap->mtime, TRUE);
++        ts_shot->used_space_str = g_strdup (snap->used_space_str); 
++        ts_shot->used_space = snap->used_space;
++        ts_shot->mtime = snap->mtime;
++        ts_shot->type = get_type (snap);
++        ts_shot->type_str = get_type_str (ts_shot->type);
++        new_list = g_list_append (new_list, ts_shot);
++        tmp_list = tmp_list->next;
++    }
++    return new_list;
++}
++
++static void 
++free_snap (Snap *snap)
++{
++    if (snap->name)
++        g_free (snap->name);
++    if (snap->mountpoint)
++        g_free (snap->mountpoint);
++    if (snap->mtime_str)
++        g_free (snap->mtime_str);
++    if (snap->mtime_short_str)
++        g_free (snap->mtime_short_str);
++    if (snap->used_space_str)
++        g_free (snap->used_space_str); 
++    if (snap->type_str)
++        g_free (snap->type_str); 
++
++    g_free (snap);
++}
++
++static void 
++free_snap_list (GList *list)
++{
++    GList *tmp_list = list;
++    while (tmp_list)
++    {
++        free_snap ((Snap*) tmp_list->data);
++        tmp_list = tmp_list->next;
++    }
++}
++
++
++void 
++timescale_set_snapshots (TimeScale* ts, GList *list, int init_position)
++{
++    if (ts->priv->bar_x_end)
++        g_free (ts->priv->bar_x_end);
++
++    if (ts->priv->num_rev_string)
++        g_free (ts->priv->num_rev_string);
++
++    if (ts->priv->all_snaps)
++        free_snap_list (ts->priv->all_snaps);
++
++    ts->priv->all_snaps = copy_zfs_list (list);
++    ts->priv->all_snaps = g_list_append (ts->priv->all_snaps, get_now_snap(ts));
++    ts->priv->snaps = ts->priv->all_snaps;
++    ts->priv->num_snaps = g_list_length (ts->priv->snaps);
++
++    ts->priv->bar_x_end = g_new (int, g_list_length (ts->priv->snaps));
++    ts->priv->current_pos = ts->priv->num_snaps - 1;
++
++    if (init_position >= 0 && init_position <= ts->priv->num_snaps - 1)
++        ts->priv->current_pos = init_position;
++
++    ts->priv->num_rev_string = get_num_snap_string (ts->priv->snaps);
++
++    gtk_label_set_label (GTK_LABEL (ts->priv->info), ts->priv->num_rev_string);
++    ts->priv->current_period = ALL;
++
++    gtk_combo_box_set_model (GTK_COMBO_BOX (ts->priv->period), GTK_TREE_MODEL (create_periods (ts)));
++    gtk_combo_box_set_active (GTK_COMBO_BOX (ts->priv->period), ALL);
++
++    gtk_widget_set_size_request (ts->priv->darea, ((BAR_SPACE + BAR_W_MAX) * ts->priv->num_snaps) + PADDING * 2, 60);
++    ts->priv->scrollbar_set = FALSE;
++}
++
++GtkWidget*
++timescale_new ()
++{
++    return g_object_new (TYPE_TIMESCALE, NULL);
++}
++
++static void
++draw_type (cairo_t *cr, int x_c, int y_c, int w, SnapType type)
++{
++    int x = x_c - w/2;
++    int y = y_c - w/2;
++
++
++
++    switch (type)
++    {
++        case LOCAL_MANUAL:
++            cairo_move_to (cr,x,y_c);
++            cairo_line_to (cr,x+w/2,y_c-w/2); 
++            cairo_line_to (cr,x+w,y_c); 
++            /*y = y_c - w/4;
++              cairo_rectangle (cr, x, y, w, w/2);*/
++            break;
++        case LOCAL_AUTOMATIC:
++            cairo_arc (cr, x_c, y_c, w/2, M_PI, M_PI*2);
++            break;
++        case REMOTE_MANUAL:
++            /* cairo_rectangle (cr, x, y, w, w); */
++            cairo_move_to (cr,x,y_c);
++            cairo_line_to (cr,x+w/2,y_c+w/2); 
++            cairo_line_to (cr,x+w,y_c); 
++            cairo_line_to (cr,x+w/2,y_c-w/2); 
++            break;
++        case REMOTE_AUTOMATIC:
++            cairo_arc (cr, x_c, y_c, w/2, 0.0, M_PI*2);
++            break;
++        default:
++            break;
++    }
++}
++
++static void
++draw_rounded_bar (cairo_t *cr, int x, int y, double w, double h, int r)
++{
++    /* bottom y instead of top */
++    y -= h;
++
++    if (h == 0 || h < (w / 2) + r)
++    {
++        y += h;
++        cairo_arc (cr, x+(w/2), y+.5, w/2, M_PI, M_PI*2);
++        cairo_line_to (cr,x,y+.5);
++        return;
++    }
++
++    /*    A ****BQ
++          H      C
++          *      *
++          G      D
++          F **** E */
++
++
++    cairo_arc (cr, x+(w/2), y+(w/2), w/2, M_PI, M_PI*2); /* arc from H to C */
++    cairo_line_to (cr,x+w,y+h-r);             /* Move to D */
++    cairo_curve_to(cr, x+w,y+h,x+w,y+h,x+w-r,y+h);   /* Curve to E */
++    cairo_line_to(cr, x+r,y+h);                 /* Line to F */
++    cairo_curve_to(cr, x,y+h,x,y+h,x,y+h-r);         /* Curve to G */
++    cairo_line_to(cr, x,y+(w/2));                 /* Line to H */
++
++}
++
++
++
++static void
++draw_rounded_rec (cairo_t *cr, int x, int y, double w, double h, int r)
++{
++    /* bottom y instead of top */
++    y -= h;
++
++    if (h == 0)
++    {
++        cairo_set_line_width (cr, 1); 
++        cairo_move_to (cr,x,y - .5);
++        cairo_line_to (cr, x + w, y -.5);
++        return;
++    }
++
++    if (h < r * 2)
++        r = h / 2;
++
++    /*    A****BQ
++          H      C
++          *      *
++          G      D
++          F****E */
++
++    cairo_move_to (cr,x+r,y);                 /* Move to A */
++    cairo_line_to (cr,x+w-r,y);                      /* Straight line to B */
++    cairo_curve_to (cr,x+w,y,x+w,y,x+w,y+r);         /* Curve to C, Control points are both at Q */
++    cairo_line_to (cr,x+w,y+h-r);             /* Move to D */
++    cairo_curve_to(cr, x+w,y+h,x+w,y+h,x+w-r,y+h);   /* Curve to E */
++    cairo_line_to(cr, x+r,y+h);                 /* Line to F */
++    cairo_curve_to(cr, x,y+h,x,y+h,x,y+h-r);         /* Curve to G */
++    cairo_line_to(cr, x,y+r);                 /* Line to H */
++    cairo_curve_to(cr, x,y,x,y,x+r,y);             /*  Curve to A */
++}
++
++    static void 
++set_cr_color (GtkWidget *widget, cairo_t* cr, SnapType type, double alpha)
++{
++    GtkStyle * s;
++
++    switch (type)
++    {
++        case LOCAL_MANUAL:
++        case REMOTE_MANUAL:
++            s = gtk_widget_get_style(widget);
++            gdk_cairo_set_source_color (cr, &s->dark[GTK_STATE_SELECTED]);
++            break;
++        case LOCAL_AUTOMATIC:
++        case REMOTE_AUTOMATIC:
++            s = gtk_widget_get_style(widget);
++            gdk_cairo_set_source_color (cr, &s->light[GTK_STATE_SELECTED]);
++            break;
++        case NOW:
++            s = gtk_widget_get_style(widget);
++            gdk_cairo_set_source_color (cr, &s->black);
++            break;
++        default:
++            break;
++    }
++}
++
++int get_snap_index_from_coord (TimeScale* ts, gdouble x, gdouble y)
++{
++    int i;
++
++    for (i = 0; i < ts->priv->num_snaps; i++)
++    {
++        if (x < ts->priv->bar_x_end[i])
++            return i;
++    }
++    return -1;
++}
++
++static gboolean
++timescale_expose (GtkWidget *widget,
++        GdkEventExpose *event, TimeScale* ts)
++{
++    PangoContext *context;
++    PangoFontMetrics *metrics;
++    PangoRectangle logical_rect;
++    gint ascent, descent;
++    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
++    int i = 0;
++    double x;
++    int y;
++    int selected_x = -1;
++    int remaining_timeline_space;
++    int remaining_x_start;
++    int remaining_x_end;
++    int bar_space = BAR_SPACE;
++    int bar_w = BAR_W_MAX;
++    int line_padding = 3;
++    float bar_max_h_inc;
++    float bar_max_h;
++    int last_bar_x;
++    int line_height = 0;
++    int timeline_line_height = 0;
++    float max_size = 0;
++    GList *view_snaps = NULL;
++    int num_view_snaps = 0;
++    PangoLayout *layout = pango_cairo_create_layout (cr);
++    Snap *tmp_snap = NULL;
++    gboolean space_left = TRUE;
++    PangoFontDescription *timeline_font = NULL;
++
++    if (gtk_widget_has_focus (widget)) {
++        gtk_paint_focus (gtk_widget_get_style (widget), cr, gtk_widget_get_state (widget),
++                widget, NULL,
++                0, 0,
++                gtk_widget_get_allocated_width(widget)-1, gtk_widget_get_allocated_height(widget)-1);
++    }
++
++    if (!ts->priv->snaps)
++        goto end;
++
++    /* smaller font for timeline */
++
++    timeline_font = pango_font_description_copy_static ((gtk_widget_get_style (widget))->font_desc);
++    pango_font_description_set_size (timeline_font, pango_font_description_get_size (timeline_font) - (PANGO_SCALE*2));
++
++    /* determine space needed for 2 lines of text + padding with 
++     * current widget->style->font_desc 
++     * and widget->style->font_desc - 1*/
++
++    context = gtk_widget_get_pango_context (widget);
++    metrics = pango_context_get_metrics (context, (gtk_widget_get_style (widget))->font_desc,
++            pango_context_get_language (context));
++    ascent = pango_font_metrics_get_ascent (metrics);
++    descent = pango_font_metrics_get_descent (metrics);
++    pango_font_metrics_unref (metrics);
++
++    line_height = PANGO_PIXELS (ascent + descent);
++
++    metrics = pango_context_get_metrics (context, timeline_font,
++            pango_context_get_language (context));
++    ascent = pango_font_metrics_get_ascent (metrics);
++    descent = pango_font_metrics_get_descent (metrics);
++    pango_font_metrics_unref (metrics);
++
++    timeline_line_height = PANGO_PIXELS (ascent + descent);
++
++
++    x = PADDING;
++    bar_max_h = gtk_widget_get_allocated_height(widget) - ((line_height + timeline_line_height) + PADDING * 4);
++    y =  gtk_widget_get_allocated_height(widget) - (line_height + (PADDING * 2));
++
++    num_view_snaps = ts->priv->num_snaps;
++    view_snaps = ts->priv->snaps;
++
++    max_size = log ((float)get_max_snap_size (view_snaps));
++
++    bar_max_h_inc =  max_size / bar_max_h;
++
++    if (!ts->priv->scrollbar_set)
++    {
++        GtkAdjustment *adj;
++        adj = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled));
++        gtk_adjustment_set_value (adj, gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size (adj));
++        gtk_adjustment_set_step_increment(adj, BAR_W_MAX + BAR_SPACE);
++        gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled), adj);
++        ts->priv->scrollbar_set = TRUE;
++    }
++
++    /* draw the bars */
++
++    cairo_set_line_width (cr, 1); 
++
++    for (i = 0; i < num_view_snaps; i++)
++    {
++        tmp_snap = g_list_nth_data (view_snaps, i);
++        int rounded_radius = ROUNDED_RADIUS;
++        int height = 0;
++        gboolean draw_bar = TRUE;
++        double alpha = 1.0;
++
++        if (tmp_snap->used_space != 0)
++            height = (int) log (tmp_snap->used_space) / bar_max_h_inc;
++
++        /*printf ("drawing %d height %d size %f log of size %f\n", i, 
++          height, 
++          tmp_snap->used_space, log (tmp_snap->used_space));*/
++
++        if (height == 0 & tmp_snap->used_space != 0)
++            height = 1;
++
++        if (tmp_snap->type == REMOTE_AUTOMATIC ||
++                tmp_snap->type == REMOTE_MANUAL)
++            height = bar_max_h - bar_max_h_inc; /* placeholder until we get rsync size */
++
++        if (height < ROUNDED_RADIUS) 
++            height = 0;
++
++        /* printf ("height %d name %s size %s\n", height, tmp_snap->name, tmp_snap->used_space_str);  */
++
++        if (i == ts->priv->current_pos)
++        {
++
++            cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1);
++            draw_rounded_rec (cr, x-1, y+2, bar_w+2, bar_max_h+8, ROUNDED_RADIUS);
++
++            cairo_fill (cr); 
++            cairo_stroke(cr);
++
++            alpha = 0.5;
++            selected_x = x-1 + ((bar_w+2) / 2);
++
++            if (tmp_snap->type != NOW)
++            {
++                char *selected_time_size = g_strdup_printf ("%s - %s",
++                        tmp_snap->mtime_str, 
++                        tmp_snap->used_space_str);
++                gdk_cairo_set_source_color (cr,  gtk_widget_get_style(widget)->text);
++                pango_layout_set_font_description (layout, gtk_widget_get_style(widget)->font_desc);
++                pango_layout_set_text (layout, selected_time_size, -1);
++                g_free (selected_time_size);
++            }
++            else
++                pango_layout_set_text (layout, tmp_snap->mtime_str, -1);
++        }
++
++        cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.8);
++
++        ts->priv->bar_x_end[i] = x + bar_w;
++
++        if (draw_bar)
++        {
++            int tmp_y = y;
++            float tmp_w = bar_w;
++            set_cr_color (widget, cr, tmp_snap->type, 1.0);
++            if (tmp_snap->type == LOCAL_AUTOMATIC || tmp_snap->type == LOCAL_MANUAL)
++            {
++                tmp_y -= 1;
++                tmp_w -= 1;
++            }
++
++            if (tmp_snap->type == LOCAL_AUTOMATIC || tmp_snap->type == REMOTE_AUTOMATIC)
++                draw_rounded_bar (cr, x, tmp_y, tmp_w, height, rounded_radius);
++            else if (tmp_snap->type == LOCAL_MANUAL || tmp_snap->type == REMOTE_MANUAL)
++                draw_rounded_rec (cr, x, tmp_y, tmp_w, height, rounded_radius);
++            else /* Now Shape */
++                draw_type (cr, (x + ((bar_w+bar_space)/2)) - .5, y - (bar_max_h/2), bar_w - 4, REMOTE_MANUAL);
++
++            if (tmp_snap->type == REMOTE_MANUAL || tmp_snap->type == REMOTE_AUTOMATIC || tmp_snap->type == NOW)
++                cairo_fill (cr);
++        }
++
++        cairo_stroke(cr);
++
++        x += bar_w + bar_space;
++    }
++
++    last_bar_x = x;
++
++    /* ensure selected bar is visible on key press when scrollbar is enabled */
++
++    if (ts->priv->current_pos != -1 && ts->priv->key_pressed)
++    {
++
++        GtkAdjustment *adj;
++        adj = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled));
++        ts->priv->key_pressed = FALSE;
++
++        if (gtk_adjustment_get_value (adj) > selected_x)
++        {
++            gtk_adjustment_set_value (adj, selected_x - BAR_W_MAX);
++            gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled), adj);
++        }
++        if (gtk_adjustment_get_value (adj) + gtk_adjustment_get_page_size (adj) < selected_x)
++        {
++            gtk_adjustment_set_value (adj, (selected_x + BAR_W_MAX) - gtk_adjustment_get_page_size (adj));
++            gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled), adj);
++        }
++    }
++
++    pango_layout_set_font_description (layout, gtk_widget_get_style(widget)->font_desc);
++
++    /* try to center the selected text */
++
++    pango_layout_get_pixel_extents (layout,NULL, &logical_rect);
++
++    if (ts->priv->current_pos != -1 && selected_x != -1)
++    {
++
++        int right_space = last_bar_x - selected_x;
++
++        if (logical_rect.width /2 > selected_x)
++            /* no space on the left, left align */
++            selected_x = PADDING;
++        else if (logical_rect.width /2 > right_space) 
++            /* no space on the right, right align */
++            selected_x = last_bar_x - logical_rect.width;
++        else
++            selected_x -= logical_rect.width /2;
++
++        if (selected_x < 0)
++            selected_x = PADDING;
++
++        /* draw background */
++        cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1);
++        draw_rounded_rec (cr, selected_x-2, line_height + 3 , logical_rect.width + 4, line_height+1, ROUNDED_RADIUS);
++        cairo_fill (cr);
++        cairo_stroke(cr);
++
++        /* then selected text */
++        gdk_cairo_set_source_color (cr, gtk_widget_get_style(widget)->text);
++        cairo_move_to(cr, selected_x, PADDING);
++        pango_cairo_show_layout (cr, layout);
++    }
++
++    /* timeline */
++
++    /* what to do  
++     * try to draw oldest 
++     * then "now" first
++     * then in between dates
++     * draw additional is possible starting with newest first */
++
++    x = PADDING;
++
++
++    /* Can the oldest time fit ? */
++    tmp_snap = g_list_nth_data (view_snaps, 0);
++    pango_layout_set_text (layout, tmp_snap->mtime_short_str, -1);
++    pango_layout_set_font_description (layout, timeline_font);
++    pango_layout_get_pixel_extents (layout,NULL, &logical_rect);
++
++    if (logical_rect.width >  gtk_widget_get_allocated_width(widget))
++        goto end;
++
++    /* draw anchor line */
++
++    x += bar_w/2 + .5;
++
++    cairo_set_line_width (cr, 1);
++    gdk_cairo_set_source_color (cr, gtk_widget_get_style(widget)->text_aa);
++    cairo_move_to (cr, x, gtk_widget_get_allocated_height(widget) - ((line_height + PADDING*2)-1));
++    cairo_line_to (cr, x,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
++    cairo_line_to (cr, x+2.5,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
++    cairo_stroke(cr);
++
++    x += 3;
++
++    gdk_cairo_set_source_color (cr, gtk_widget_get_style(widget)->text_aa);
++    cairo_move_to(cr, x,  gtk_widget_get_allocated_height(widget) - (line_height + PADDING));
++    pango_cairo_show_layout (cr, layout);
++
++    remaining_timeline_space = last_bar_x - (x + logical_rect.width);
++
++    remaining_x_start = x + logical_rect.width;
++
++    /* try to draw last item */
++
++    tmp_snap = g_list_nth_data (view_snaps, num_view_snaps-1);
++    pango_layout_set_text (layout, tmp_snap->mtime_short_str, -1);
++    pango_layout_get_pixel_extents (layout,NULL, &logical_rect);
++
++    if (remaining_timeline_space < (logical_rect.width + bar_w))
++        goto end;
++
++    remaining_timeline_space -= logical_rect.width + bar_w;
++
++    x = last_bar_x;
++
++
++    x -= bar_space + bar_w/2 + 0.5;
++
++    cairo_move_to (cr, x,  gtk_widget_get_allocated_height(widget) - ((line_height + PADDING*2)-2));
++    cairo_line_to (cr, x,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
++    cairo_line_to (cr, x-2.5,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
++    cairo_stroke(cr);
++
++    cairo_move_to(cr, x - (logical_rect.width + 3.5),
++             gtk_widget_get_allocated_height(widget) - (line_height + PADDING));
++    pango_cairo_show_layout (cr, layout);
++
++    remaining_x_end = x - (logical_rect.width + 3.5);
++
++    /* now find the next bar that we can to the timeline and loop */
++
++
++    while (space_left)
++    {
++        int bar = get_snap_index_from_coord (ts, remaining_x_start, 0);
++        /* get the next snap */
++        bar++;
++        if (bar >= num_view_snaps)
++            goto end;
++
++        tmp_snap = g_list_nth_data (view_snaps, bar);
++        pango_layout_set_text (layout, tmp_snap->mtime_short_str, -1);
++
++        pango_layout_get_pixel_extents (layout,NULL, &logical_rect);
++
++        if (remaining_timeline_space < logical_rect.width + 4)
++            goto end;
++
++        /* get middle x coord of current bar */
++
++        x = PADDING + ((bar_w + bar_space) * bar) + bar_w / 2;
++
++        if ( x + 4 + logical_rect.width > remaining_x_end)
++            goto end;
++
++        /* draw anchor and text */
++        x += 0.5;
++
++        cairo_move_to (cr, x, gtk_widget_get_allocated_height(widget) - ((line_height + PADDING*2)-1));
++        cairo_line_to (cr, x,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
++        cairo_line_to (cr, x+2.5,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
++        cairo_stroke(cr);
++
++        x += 3;
++
++        cairo_move_to(cr, x,
++                 gtk_widget_get_allocated_height(widget) - (line_height + PADDING));
++        pango_cairo_show_layout (cr, layout);
++
++        remaining_x_start = x + logical_rect.width;
++
++        remaining_timeline_space = remaining_x_end - remaining_x_start;
++
++        if (remaining_timeline_space <= 0)
++            space_left = FALSE;
++    }
++end:     
++    if (timeline_font)
++        pango_font_description_free(timeline_font);
++    cairo_destroy(cr);
++
++    return FALSE;
++}
++
++static int 
++key_pressed (GtkWidget *widget, GdkEventKey *event, TimeScale* ts)
++{
++    switch (event->keyval)
++    {
++        case GDK_KEY_KP_Left:
++        case GDK_KEY_KP_Up:
++        case GDK_KEY_Left:
++        case GDK_KEY_Up:
++
++            if (ts->priv->current_pos >= 1)
++            {
++                ts->priv->current_pos -= 1;
++                gtk_widget_queue_draw (widget);
++                ts->priv->key_pressed = TRUE;
++                g_signal_emit (ts, signals[VALUE_CHANGED], 0);
++                /* printf ("key_pressed back %d\n", ts->priv->current_pos); */
++            }
++            return TRUE;
++        case GDK_KEY_KP_Right:
++        case GDK_KEY_KP_Down:
++        case GDK_KEY_Right:
++        case GDK_KEY_Down:
++            if (ts->priv->current_pos <= ts->priv->num_snaps - 2)
++            {
++                ts->priv->current_pos += 1;
++                gtk_widget_queue_draw (widget);
++                ts->priv->key_pressed = TRUE;
++                g_signal_emit (ts, signals[VALUE_CHANGED], 0);
++                /* printf ("key_pressed forward %d\n", ts->priv->current_pos); */
++            }
++            return TRUE;
++
++        default:
++            return FALSE;
++    }
++}
++
++int timescale_get_position (TimeScale* ts)
++{
++    /* translate into all_snaps position */
++    gconstpointer data;
++    data = g_list_nth_data (ts->priv->snaps, ts->priv->current_pos);
++    return g_list_index (ts->priv->all_snaps, data);
++}
++
++static int match_func (ZfsDataSet *set, char *dir)
++{
++    return strcmp (set->mountpoint, dir);
++}
++
++void 
++timescale_set_position (TimeScale* ts, char *mountpoint) 
++{
++    gboolean redraw = FALSE;
++    int num_snaps = g_list_length (ts->priv->all_snaps);
++    if (mountpoint)
++    {
++        int pos;
++        GList* match = NULL;
++        match = g_list_find_custom (ts->priv->all_snaps, mountpoint, (GCompareFunc)match_func);
++        pos = g_list_index (ts->priv->all_snaps, match->data);
++        if (pos != -1 && ts->priv->current_pos != pos)
++        {
++            redraw = TRUE;
++            ts->priv->current_pos = pos;
++        }
++    }
++    else
++    { /* Now special case */
++        if (ts->priv->current_pos != num_snaps - 1)
++        {
++            redraw = TRUE;
++            ts->priv->current_pos = num_snaps - 1;
++        }
++    }
++
++    if (redraw)
++        gtk_widget_queue_draw (GTK_WIDGET (ts));
++}
++
++static void 
++button_pressed (GtkWidget *widget, GdkEventButton *event, TimeScale* ts)
++{
++    int new_pos;
++
++    gtk_widget_grab_focus (widget);
++    new_pos = get_snap_index_from_coord (ts, event->x, event->y);
++
++    if (new_pos == -1)
++        return;
++
++    if (new_pos != ts->priv->current_pos)
++    {
++        ts->priv->current_pos = new_pos;
++        /* printf ("button_pressed (%g,%g) selected %d\n", event->x, event->y, ts->priv->current_pos); */
++        g_signal_emit (ts, signals[VALUE_CHANGED], 0);
++        gtk_widget_queue_draw (widget);
++    }
++}
++
++static gboolean
++query_tooltip (GtkWidget  *widget,
++        gint        x,
++        gint        y,
++        gboolean    keyboard_tip,
++        GtkTooltip *tooltip,
++        gpointer    data)
++{
++    static gboolean set = FALSE;
++    static int old_pos = -1;
++    TimeScale* ts = TIMESCALE (data);
++    int new_pos = get_snap_index_from_coord (ts, x, y);
++    /* printf ("in query_tooltip new_pos %d total %d num_snap %d\n", new_pos, g_list_length (ts->priv->snaps), ts->priv->num_snaps); */
++    Snap *tmp_snap = NULL;
++    char *tip = NULL;
++
++    if (new_pos == -1)
++        return FALSE;
++
++    if (new_pos != old_pos)
++    {
++        old_pos = new_pos;
++        return FALSE;
++    }
++
++    if (new_pos >= ts->priv->num_snaps)
++        return FALSE;
++
++    tmp_snap = g_list_nth_data (ts->priv->snaps, new_pos);
++
++    tip = g_strdup_printf ("%s\nCreated: %s\nSize: %s\nName: %s", tmp_snap->type_str, tmp_snap->mtime_str, tmp_snap->used_space_str, tmp_snap->name);
++    gtk_label_set_text (GTK_LABEL(ts->priv->label_tip), tip);
++    gtk_tooltip_set_custom (tooltip, ts->priv->label_tip);
++    g_free (tip);
++    return TRUE;
++}
++
++static void
++timescale_class_init (TimeScaleClass *class)
++{
++    GtkWidgetClass *widget_class;
++    GtkScaleClass *scale_class;
++    GObjectClass *object_class;
++
++    object_class = G_OBJECT_CLASS (class);
++    g_type_class_add_private (class, sizeof (TimeScalePrivate));
++
++    widget_class = GTK_WIDGET_CLASS (class);
++
++    signals[VALUE_CHANGED] =
++        g_signal_new ("value-changed",
++                G_TYPE_FROM_CLASS (object_class),
++                G_SIGNAL_RUN_LAST,
++                G_STRUCT_OFFSET (TimeScaleClass, value_changed),
++                NULL, NULL,
++                g_cclosure_marshal_VOID__VOID,
++                G_TYPE_NONE, 0);
++}
++
+--- caja-1.28.0/src/timescale.h.orig	2024-02-26 08:42:41.085975314 +0100
++++ caja-1.28.0/src/timescale.h	2024-02-26 08:42:41.085928246 +0100
+@@ -0,0 +1,58 @@
++#ifndef __TIMESCALE_H__
++#define __TIMESCALE_H__
++
++
++#include <gdk/gdk.h>
++#include <gtk/gtk.h>
++
++
++G_BEGIN_DECLS
++
++#define TYPE_TIMESCALE            (timescale_get_type ())
++#define TIMESCALE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_TIMESCALE, TimeScale))
++#define TIMESCALE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_TIMESCALE, TimeScaleClass))
++#define IS_TIMESCALE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_TIMESCALE))
++#define IS_TIMESCALE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_TIMESCALE))
++#define TIMESCALE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_TIMESCALE, TimeScaleClass))
++
++
++typedef struct _TimeScale       TimeScale;
++typedef struct _TimeScaleClass  TimeScaleClass;
++typedef struct TimeScalePrivate TimeScalePrivate;
++
++struct _TimeScale
++{
++  GtkHBox hbox;
++  TimeScalePrivate *priv;
++};
++
++struct _TimeScaleClass
++{
++  GtkHBoxClass parent_class;
++  void (* value_changed)    (TimeScale *timescale);
++
++};
++
++
++GType      timescale_get_type       (void) G_GNUC_CONST;
++GtkWidget* timescale_new            ();
++void       timescale_set_snapshots (TimeScale* ts, GList *list, int init_position);
++int       timescale_get_position   (TimeScale* ts);
++void       timescale_set_position   (TimeScale* ts, char *mountpoint);
++
++
++#define ROUNDED_RADIUS 6
++#define PADDING 3  
++
++typedef enum {
++  LOCAL_MANUAL,
++  LOCAL_AUTOMATIC,
++  REMOTE_MANUAL,
++  REMOTE_AUTOMATIC,
++  NOW
++} SnapType;
++
++
++G_END_DECLS
++
++#endif /* __TIMESCALE_H__ */

@@ -13,35 +13,34 @@
 # Copyright 2015 Aurelien Larcher
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32
+BUILD_STYLE= configure
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           encodings
-COMPONENT_VERSION=        1.0.6
-COMPONENT_FMRI=           x11/library/libfontenc/encodings
-COMPONENT_CLASSIFICATION= System/Fonts
+COMPONENT_NAME=     encodings
+COMPONENT_VERSION=  1.1.0
 COMPONENT_SUMMARY=  encodings - data files for libfontenc to map font encodings between character sets
 COMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:77e301de661f35a622b18f60b555a7e7d8c4d5f43ed41410e830d5ac9084fc26
+COMPONENT_ARCHIVE_HASH= sha256:9ff13c621756cfa12e95f32ba48a5b23839e8f577d0048beda66c67dab4de975
 COMPONENT_ARCHIVE_URL= $(XORG_FONT_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      MIT License
+COMPONENT_FMRI=     x11/library/libfontenc/encodings
+COMPONENT_CLASSIFICATION= System/Fonts
+COMPONENT_LICENSE=  MIT License
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS+= --disable-gzip-small-encodings
-CONFIGURE_OPTIONS+= --disable-gzip-large-encodings
+CONFIGURE_OPTIONS += --disable-gzip-small-encodings
+CONFIGURE_OPTIONS += --disable-gzip-large-encodings
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
 REQUIRED_PACKAGES += x11/mkfontscale
+
 # Auto-generated dependencies
-# None...

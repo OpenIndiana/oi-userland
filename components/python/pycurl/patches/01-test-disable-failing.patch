@@ -1,0 +1,80 @@
+--- pycurl-7.45.2/tests/option_constants_test.py.orig
++++ pycurl-7.45.2/tests/option_constants_test.py
+@@ -497,6 +497,7 @@
+         self.curl.setopt(self.curl.HTTP_VERSION, self.curl.CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE)
+ 
+     @util.min_libcurl(7, 66, 0)
++    @pytest.mark.skip(reason="our curl is not compiled with HTTP/3 support")
+     def test_http_version_3(self):
+         self.curl.setopt(self.curl.HTTP_VERSION, self.curl.CURL_HTTP_VERSION_3)
+ 
+--- pycurl-7.45.2/tests/multi_socket_select_test.py.orig
++++ pycurl-7.45.2/tests/multi_socket_select_test.py
+@@ -11,6 +11,8 @@
+ from . import appmanager
+ from . import util
+ 
++import pytest
++
+ setup_module_1, teardown_module_1 = appmanager.setup(('app', 8380))
+ setup_module_2, teardown_module_2 = appmanager.setup(('app', 8381))
+ setup_module_3, teardown_module_3 = appmanager.setup(('app', 8382))
+@@ -27,6 +29,7 @@
+ 
+ @flaky.flaky(max_runs=3)
+ class MultiSocketSelectTest(unittest.TestCase):
++    @pytest.mark.skip(reason="always fails: https://github.com/pycurl/pycurl/issues/819")
+     def test_multi_socket_select(self):
+         sockets = set()
+         timeout = 0
+--- pycurl-7.45.2/tests/pause_test.py.orig
++++ pycurl-7.45.2/tests/pause_test.py
+@@ -11,6 +11,8 @@
+ from . import appmanager
+ from . import util
+ 
++import pytest
++
+ setup_module, teardown_module = appmanager.setup(('app', 8380))
+ 
+ @flaky.flaky(max_runs=3)
+@@ -21,9 +23,11 @@
+     def tearDown(self):
+         self.curl.close()
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/pycurl/pycurl/issues/729")
+     def test_pause_via_call(self):
+         self.check_pause(True)
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/pycurl/pycurl/issues/729")
+     def test_pause_via_return(self):
+         self.check_pause(False)
+ 
+--- pycurl-7.45.2/tests/multi_callback_test.py.orig
++++ pycurl-7.45.2/tests/multi_callback_test.py
+@@ -53,6 +53,7 @@
+     # multi.socket_action must call both SOCKETFUNCTION and TIMERFUNCTION at
+     # various points during the transfer (at least at the start and end)
+     @pytest.mark.xfail(sys.platform == 'darwin', reason='https://github.com/pycurl/pycurl/issues/729')
++    @pytest.mark.skip(reason="always fails: https://github.com/pycurl/pycurl/issues/729")
+     def test_multi_socket_action(self):
+         self.multi.add_handle(self.easy)
+         self.timer_result = None
+--- pycurl-7.45.2/tests/ssh_key_cb_test.py.orig
++++ pycurl-7.45.2/tests/ssh_key_cb_test.py
+@@ -27,6 +27,7 @@
+     # curl compiled with libssh doesn't support
+     # CURLOPT_SSH_KNOWNHOSTS and CURLOPT_SSH_KEYFUNCTION
+     @util.guard_unknown_libcurl_option
++    @pytest.mark.skip(reason="always fails: https://github.com/pycurl/pycurl/issues/826")
+     def test_keyfunction(self):
+         # with keyfunction returning ok
+ 
+@@ -58,6 +59,7 @@
+ 
+     @util.min_libcurl(7, 19, 6)
+     @util.guard_unknown_libcurl_option
++    @pytest.mark.skip(reason="always fails: https://github.com/pycurl/pycurl/issues/826")
+     def test_keyfunction_bogus_return(self):
+         def keyfunction(known_key, found_key, match):
+             return 'bogus'

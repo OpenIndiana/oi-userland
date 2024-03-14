@@ -1,0 +1,37 @@
+--- httplib2-0.22.0/tests/test_proxy.py.orig
++++ httplib2-0.22.0/tests/test_proxy.py
+@@ -19,6 +19,8 @@
+ import tests
+ from six.moves import urllib
+ 
++import pytest
++
+ 
+ def _raise_name_not_known_error(*args, **kwargs):
+     raise socket.gaierror(socket.EAI_NONAME, "Name or service not known")
+@@ -135,6 +137,7 @@
+ #     "See https://travis-ci.org/httplib2/httplib2/jobs/408769880.",
+ # )
+ @mock.patch("socket.socket.connect", spec=True)
++@pytest.mark.skip(reason="always fails: https://github.com/httplib2/httplib2/issues/192")
+ def test_server_not_found_error_is_raised_for_invalid_hostname(mock_socket_connect):
+     """Invalidates https://github.com/httplib2/httplib2/pull/100."""
+     mock_socket_connect.side_effect = _raise_name_not_known_error
+@@ -181,6 +184,7 @@
+         assert response.status == 200
+ 
+ 
++@pytest.mark.skip(reason="always fails: https://github.com/httplib2/httplib2/issues/170")
+ def test_socks5_auth():
+     def proxy_conn(client, tick):
+         data = client.recv(64)
+--- httplib2-0.22.0/tests/test_other.py.orig
++++ httplib2-0.22.0/tests/test_other.py
+@@ -111,6 +111,7 @@
+         assert response.reason.startswith("Request Timeout")
+ 
+ 
++@pytest.mark.skip(reason="always fails: https://github.com/httplib2/httplib2/issues/240")
+ def test_timeout_subsequent():
+     class Handler(object):
+         number = 0

@@ -28,23 +28,18 @@ BUILD_BITS=					32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=				popt
-COMPONENT_VERSION=			1.18
-COMPONENT_FMRI=				library/popt
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_VERSION=			1.19
+COMPONENT_SUMMARY=			Command line parsing library
 COMPONENT_PROJECT_URL=		https://github.com/rpm-software-management/popt
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:5159bc03a20b28ce363aa96765f37df99ea4d8850b1ece17d1e6ad5c24fdc5d1
+COMPONENT_ARCHIVE_HASH=		sha256:c25a4838fc8e4c1c8aacb8bd620edb3084a3d63bf8987fdad3ca2758c63240f9
 COMPONENT_ARCHIVE_URL=		https://fossies.org/linux/misc/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=			Command line parsing library
+COMPONENT_FMRI=				library/popt
+COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=			X Consortium
 
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_PREP_ACTION = \
-        (cd $(@D) && \
-	$(TOUCH) config.rpath ) ;
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -55,16 +50,10 @@ CONFIGURE_ENV +=	PATH=$(PATH.gnu)
 CONFIGURE_OPTIONS +=	--disable-nls
 CONFIGURE_OPTIONS +=	--enable-static=no
 
-#PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
 # Get correct libpopt.so.0 from the proto area.
 TEST_LIBPATH.32 =       $(PROTOUSRLIBDIR)
 TEST_LIBPATH.64 =       $(PROTOUSRLIBDIR64)
 COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
-
-# api-sanity-autotest.pl is part of the API Sanity Checker
-# http://ispras.linuxbase.org/index.php/API_Sanity_Autotest
-# (which we don't have in Solaris), so expect that test to fail.
 
 COMPONENT_TEST_TRANSFORMS += \
     '-e "/Entering directory/d"' \

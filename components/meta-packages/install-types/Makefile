@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
+# Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -10,29 +10,18 @@
 
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
+# Copyright 2013 Klaus Ziegler
 #
+
+BUILD_STYLE = pkg
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		install-types
-COMPONENT_VERSION=	0.1
-COMPONENT_REVISION=	53
-COMPONENT_SUMMARY=	A meta-packages that install common applications for ISOs
+COMPONENT_VERSION =	4
 
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_OPTIONS+= -I $(COMPONENT_DIR)/includes
-
-download:
-
-prep:
-
-build:
-
-install:
-	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
-
-clean:
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
 
 # Auto-generated dependencies

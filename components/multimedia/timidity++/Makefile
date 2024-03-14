@@ -12,24 +12,26 @@
 # Copyright 2018 Harry Liebel <hliebel@gmail.com>
 #
 
-BUILD_BITS=64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		timidity++
 COMPONENT_VERSION=	2.15.0
-COMPONENT_FMRI=		multimedia/timidity++
-COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/timidity
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	Software MIDI player
 COMPONENT_DESCRIPTION=	A software synthesizer, without external instruments, that can play MIDI files without a hardware synthesizer. It can either render to the sound card in real time, or it can save the result to a file, such as a PCM .wav file.
-COMPONENT_CLASSIFICATION= Applications/Sound and Video
+COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/timidity
 COMPONENT_SRC=		TiMidity++-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:161fc0395af16b51f7117ad007c3e434c825a308fa29ad44b626ee8f9bb1c8f5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/TiMidity++/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		multimedia/timidity++
+COMPONENT_CLASSIFICATION= Applications/Sound and Video
 COMPONENT_LICENSE_FILE=	timidity++.license
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --enable-audio=oss,ao,vorbis,flac

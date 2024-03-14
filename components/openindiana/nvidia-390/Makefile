@@ -22,14 +22,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_MJR_VERSION =		390
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
-COMPONENT_VERSION =		$(COMPONENT_MJR_VERSION).154
+COMPONENT_VERSION =		$(COMPONENT_MJR_VERSION).157
 COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:85af048d5522638a97de81463ec1e10fb6dc225d2cdcae848e89ddebadfe59f7
+COMPONENT_ARCHIVE_HASH =	sha256:db240ddeff130faeb2dd7a0c5599b659b065e8cd463f18ec8e72e528a1d2735c
 COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
 COMPONENT_LICENSE_FILE =	nvidia.license
@@ -63,7 +63,7 @@ $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
 	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib/$(MACH64):/lib/$(MACH64):/usr/lib/$(MACH64)" $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1
 	$(TOUCH) $@
 
-GENERATE_EXTRA_CMD = \
+GENERATE_EXTRA_CMD += | \
 	$(CAT) - <( \
 		eval $$($(GNU_GREP) ^A $(SOURCE_DIR)/NVDAgraphicsr/install/postinstall) ; \
 		printf 'driver name=nvidia_modeset perms="* 0666 root root"\n' ; \

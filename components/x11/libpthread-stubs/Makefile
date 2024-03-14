@@ -18,16 +18,16 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libpthread-stubs
-COMPONENT_VERSION= 0.3
+COMPONENT_VERSION= 0.5
 COMPONENT_FMRI=    x11/library/libpthread-stubs
 COMPONENT_SUMMARY= pthread-stubs - pkg-config data file for building software using POSIX threads
 COMPONENT_CLASSIFICATION= Development/X11
-COMPONENT_PROJECT_URL= http://xcb.freedesktop.org/
-COMPONENT_ARCHIVE_HASH= \
-  sha256:35b6d54e3cc6f3ba28061da81af64b9a92b7b757319098172488a660e3d87299 
-COMPONENT_ARCHIVE_URL= \
-  http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://xcb.freedesktop.org/
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:59da566decceba7c2a7970a4a03b48d9905f1262ff94410a649224e33d2442bc
+COMPONENT_ARCHIVE_URL=	https://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies

@@ -20,48 +20,6 @@
              double f1 = 1.0 - f;
              double cnx = corner.cx/2;
              double cny = corner.cy/2;
---- inkscape-0.91/src/extension/internal/metafile-print.cpp.orig	2016-08-16 10:55:54.629900974 +0200
-+++ inkscape-0.91/src/extension/internal/metafile-print.cpp	2016-08-16 10:56:56.614912978 +0200
-@@ -382,8 +382,8 @@
-     double x1, y1, x2, y2;
-     Geom::Path SVGep;
- 
--    x1 = ctr[X]  +  cos(F) * rx * cos(0)      +   sin(-F) * ry * sin(0);
--    y1 = ctr[Y]  +  sin(F) * rx * cos(0)      +   cos(F)  * ry * sin(0);
-+    x1 = ctr[X]  +  cos(F) * rx * cos(0.)      +   sin(-F) * ry * sin(0.);
-+    y1 = ctr[Y]  +  sin(F) * rx * cos(0.)      +   cos(F)  * ry * sin(0.);
-     x2 = ctr[X]  +  cos(F) * rx * cos(M_PI)   +   sin(-F) * ry * sin(M_PI);
-     y2 = ctr[Y]  +  sin(F) * rx * cos(M_PI)   +   cos(F)  * ry * sin(M_PI);
- 
-@@ -405,13 +405,13 @@
-     double x21, y21, x22, y22;
-     double degrot = F * 360. / (2.*M_PI);
- 
--    x11 = ctr[X]  +  cos(F) * rx1 * cos(0)      +   sin(-F) * ry1 * sin(0);
--    y11 = ctr[Y]  +  sin(F) * rx1 * cos(0)      +   cos(F)  * ry1 * sin(0);
-+    x11 = ctr[X]  +  cos(F) * rx1 * cos(0.)      +   sin(-F) * ry1 * sin(0.);
-+    y11 = ctr[Y]  +  sin(F) * rx1 * cos(0.)      +   cos(F)  * ry1 * sin(0.);
-     x12 = ctr[X]  +  cos(F) * rx1 * cos(M_PI)   +   sin(-F) * ry1 * sin(M_PI);
-     y12 = ctr[Y]  +  sin(F) * rx1 * cos(M_PI)   +   cos(F)  * ry1 * sin(M_PI);
- 
--    x21 = ctr[X]  +  cos(F) * rx2 * cos(0)      +   sin(-F) * ry2 * sin(0);
--    y21 = ctr[Y]  +  sin(F) * rx2 * cos(0)      +   cos(F)  * ry2 * sin(0);
-+    x21 = ctr[X]  +  cos(F) * rx2 * cos(0.)      +   sin(-F) * ry2 * sin(0.);
-+    y21 = ctr[Y]  +  sin(F) * rx2 * cos(0.)      +   cos(F)  * ry2 * sin(0.);
-     x22 = ctr[X]  +  cos(F) * rx2 * cos(M_PI)   +   sin(-F) * ry2 * sin(M_PI);
-     y22 = ctr[Y]  +  sin(F) * rx2 * cos(M_PI)   +   cos(F)  * ry2 * sin(M_PI);
- 
-@@ -432,8 +432,8 @@
-     double x1, y1, x2, y2;
-     Geom::Path SVGep;
- 
--    x1 = ctr[X]  +  cos(F) * rx * cos(0)      +   sin(-F) * ry * sin(0);
--    y1 = ctr[Y]  +  sin(F) * rx * cos(0)      +   cos(F)  * ry * sin(0);
-+    x1 = ctr[X]  +  cos(F) * rx * cos(0.)      +   sin(-F) * ry * sin(0.);
-+    y1 = ctr[Y]  +  sin(F) * rx * cos(0.)      +   cos(F)  * ry * sin(0.);
-     x2 = ctr[X]  +  cos(F) * rx * cos(M_PI)   +   sin(-F) * ry * sin(M_PI);
-     y2 = ctr[Y]  +  sin(F) * rx * cos(M_PI)   +   cos(F)  * ry * sin(M_PI);
- 
 --- inkscape-0.91/src/extension/internal/wmf-inout.cpp.orig	2016-08-16 11:02:45.530096102 +0200
 +++ inkscape-0.91/src/extension/internal/wmf-inout.cpp	2016-08-16 11:02:57.465244612 +0200
 @@ -2132,7 +2132,7 @@
@@ -97,14 +55,45 @@
              NoOfRowsSpinner.set_value(PerRow);
              NoOfColsSpinner.set_value(PerCol);
              prefs->setInt("/dialogs/gridtiler/NoOfCols", static_cast<int>(PerCol));
-@@ -627,8 +627,8 @@
+--- inkscape-INKSCAPE_1_0/src/extension/internal/metafile-print.cpp.~1~	2020-05-01 06:29:13.000000000 +0000
++++ inkscape-INKSCAPE_1_0/src/extension/internal/metafile-print.cpp	2020-05-06 11:29:19.363050649 +0000
+@@ -352,8 +352,8 @@
+     double x1, y1, x2, y2;
+     Geom::Path SVGep;
  
-     /*#### Number of Rows ####*/
+-    x1 = ctr[X]  +  cos(F) * rx * cos(0)      +   sin(-F) * ry * sin(0);
+-    y1 = ctr[Y]  +  sin(F) * rx * cos(0)      +   cos(F)  * ry * sin(0);
++    x1 = ctr[X]  +  cos(F) * rx * cos(0.)      +   sin(-F) * ry * sin(0.);
++    y1 = ctr[Y]  +  sin(F) * rx * cos(0.)      +   cos(F)  * ry * sin(0.);
+     x2 = ctr[X]  +  cos(F) * rx * cos(M_PI)   +   sin(-F) * ry * sin(M_PI);
+     y2 = ctr[Y]  +  sin(F) * rx * cos(M_PI)   +   cos(F)  * ry * sin(M_PI);
  
--    double PerRow = ceil(sqrt(selcount));
--    double PerCol = ceil(sqrt(selcount));
-+    double PerRow = ceil(sqrt(static_cast<double>(selcount)));
-+    double PerCol = ceil(sqrt(static_cast<double>(selcount)));
+@@ -376,13 +376,13 @@
+     double x21, y21, x22, y22;
+     double degrot = F * 360. / (2.*M_PI);
  
-     #ifdef DEBUG_GRID_ARRANGE
-         g_print("/n PerRox = %f PerCol = %f selcount = %d",PerRow,PerCol,selcount);
+-    x11 = ctr[X]  +  cos(F) * rx1 * cos(0)      +   sin(-F) * ry1 * sin(0);
+-    y11 = ctr[Y]  +  sin(F) * rx1 * cos(0)      +   cos(F)  * ry1 * sin(0);
++    x11 = ctr[X]  +  cos(F) * rx1 * cos(0.)      +   sin(-F) * ry1 * sin(0.);
++    y11 = ctr[Y]  +  sin(F) * rx1 * cos(0.)      +   cos(F)  * ry1 * sin(0.);
+     x12 = ctr[X]  +  cos(F) * rx1 * cos(M_PI)   +   sin(-F) * ry1 * sin(M_PI);
+     y12 = ctr[Y]  +  sin(F) * rx1 * cos(M_PI)   +   cos(F)  * ry1 * sin(M_PI);
+ 
+-    x21 = ctr[X]  +  cos(F) * rx2 * cos(0)      +   sin(-F) * ry2 * sin(0);
+-    y21 = ctr[Y]  +  sin(F) * rx2 * cos(0)      +   cos(F)  * ry2 * sin(0);
++    x21 = ctr[X]  +  cos(F) * rx2 * cos(0.)      +   sin(-F) * ry2 * sin(0.);
++    y21 = ctr[Y]  +  sin(F) * rx2 * cos(0.)      +   cos(F)  * ry2 * sin(0.);
+     x22 = ctr[X]  +  cos(F) * rx2 * cos(M_PI)   +   sin(-F) * ry2 * sin(M_PI);
+     y22 = ctr[Y]  +  sin(F) * rx2 * cos(M_PI)   +   cos(F)  * ry2 * sin(M_PI);
+ 
+@@ -403,8 +403,8 @@
+     double x1, y1, x2, y2;
+     Geom::Path SVGep;
+ 
+-    x1 = ctr[X]  +  cos(F) * rx * cos(0)      +   sin(-F) * ry * sin(0);
+-    y1 = ctr[Y]  +  sin(F) * rx * cos(0)      +   cos(F)  * ry * sin(0);
++    x1 = ctr[X]  +  cos(F) * rx * cos(0.)      +   sin(-F) * ry * sin(0.);
++    y1 = ctr[Y]  +  sin(F) * rx * cos(0.)      +   cos(F)  * ry * sin(0.);
+     x2 = ctr[X]  +  cos(F) * rx * cos(M_PI)   +   sin(-F) * ry * sin(M_PI);
+     y2 = ctr[Y]  +  sin(F) * rx * cos(M_PI)   +   cos(F)  * ry * sin(M_PI);
+ 

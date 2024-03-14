@@ -17,22 +17,19 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libupnp
-COMPONENT_VERSION= 1.14.13
+COMPONENT_VERSION= 1.14.18
 COMPONENT_SUMMARY= Portable C library for UPnP
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:025d7aee1ac5ca8f0bd99cb58b83fcfca0efab0c5c9c1d48f72667fe40788a4e
-COMPONENT_ARCHIVE_URL= \
-  https://sourceforge.net/projects/pupnp/files/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://pupnp.sourceforge.io/
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = system/library/libupnp
-COMPONENT_LICENSE = BSD
+COMPONENT_ARCHIVE_HASH= sha256:16a7cee93ce2868ae63ab1a8164dc7de43577c59983b9f61293a310d6888dceb
+COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/pupnp/files/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://pupnp.sourceforge.io/
+COMPONENT_FMRI= system/library/libupnp
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE= BSD
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-unexport SHELLOPTS
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -49,6 +46,8 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+
+unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

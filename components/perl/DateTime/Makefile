@@ -19,27 +19,27 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DateTime
-HUMAN_VERSION =			1.58
+HUMAN_VERSION =			1.65
 COMPONENT_SUMMARY =		DateTime - A date and time object for Perl
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:00ee2a99d1cf1ae022eaf06b2cde600313d92a069e7ef9258a455a932a5fd90b
+	sha256:0bfda7ff0253fb3d88cf4bdb5a14afb8cea24d147975d5bdf3c88b40e7ab140e
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta-check
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime-locale
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime-timezone
 PERL_REQUIRED_PACKAGES += library/perl-5/dist-checkconflicts
 PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
 PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
 PERL_REQUIRED_PACKAGES += library/perl-5/specio
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
-PERL_REQUIRED_PACKAGES += library/perl-5/test-without-module
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-check
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-without-module

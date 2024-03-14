@@ -21,10 +21,12 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE = pkg
+
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		"Package History (encumbered)"
+COMPONENT_NAME=		history-encumbered
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/history.mk
+include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies

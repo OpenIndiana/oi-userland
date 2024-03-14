@@ -1,0 +1,29 @@
+From c1d0236cd739046fb5b26c445c95cad062b61509 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Fri, 19 Jul 2019 11:42:58 +0000
+Subject: Use GNU backends for gcc-{ar,nm,ranlib}
+
+---
+ gcc/gcc-ar.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/gcc/gcc-ar.cc b/gcc/gcc-ar.cc
+index c693d9a33ae..076f4520de0 100644
+--- a/gcc/gcc-ar.cc
++++ b/gcc/gcc-ar.cc
+@@ -190,12 +190,12 @@ main (int ac, char **av)
+ #endif
+ 
+   /* Find the wrapped binutils program.  */
+-  exe_name = find_a_file (&target_path, PERSONALITY, X_OK);
++  exe_name = find_a_file (&target_path, "g" PERSONALITY, X_OK);
+   if (!exe_name)
+     {
+-      const char *real_exe_name = PERSONALITY;
++      const char *real_exe_name = "g" PERSONALITY;
+ #ifdef CROSS_DIRECTORY_STRUCTURE
+-      real_exe_name = concat (target_machine, "-", PERSONALITY, NULL);
++      real_exe_name = concat (target_machine, "-", "g" PERSONALITY, NULL);
+ #endif
+       exe_name = find_a_file (&path, real_exe_name, X_OK);
+       if (!exe_name)

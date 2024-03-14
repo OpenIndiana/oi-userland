@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ibus
 COMPONENT_VERSION=      1.5.26
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      iBus - Intelligent Input Bus
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -29,7 +29,6 @@ COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_V
 include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
-PYTHON_VERSION = 3.9
 
 GTK_BIN_VER := $(shell pkg-config --variable=gtk_binary_version gtk+-2.0)
 
@@ -57,6 +56,8 @@ CONFIGURE_OPTIONS += --disable-systemd-services
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV += GLIB_GENMARSHAL=/usr/bin/glib-genmarshal
+CONFIGURE_ENV += GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"

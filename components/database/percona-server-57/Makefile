@@ -13,14 +13,16 @@
 # Copyright 2019, Michal Nowak
 # 
 
-BUILD_BITS=			32_and_64
-BUILD_STYLE=		cmake
+BUILD_BITS= 64
+BUILD_STYLE= cmake
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		percona-server
 COMPONENT_VERSION =	5.7.39-42
 IPS_COMPONENT_VERSION =	5.7.39.42
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://www.percona.com/
 COMPONENT_ARCHIVE_HASH=	sha256:bda853fb951eef8be1c2f24391798cf1f3377c776a376f4c55b192e42ae8d1b2
@@ -75,14 +77,13 @@ COMPONENT_POST_CMAKE_ACTION=$(COMPONENT_POST_CMAKE_ACTION.$(BITS))
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-#REQUIRED_PACKAGES += database/percona-server-57/client
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libsasl

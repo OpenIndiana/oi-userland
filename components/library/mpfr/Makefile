@@ -24,25 +24,29 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=				32_and_64
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=      4.1.0
+COMPONENT_VERSION=	4.2.1
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	https://www.mpfr.org/
-COMPONENT_FMRI=		library/mpfr
-COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:feced2d430dd5a97805fa289fed3fc8ff2b094c02d05287fd6133e7f1f0ec926
+COMPONENT_ARCHIVE_HASH= sha256:b9df93635b20e4089c29623b19420c4ac848a1b29df1cfd59f26cab0d2666aa0
+COMPONENT_FMRI=			library/mpfr
+COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_LICENSE=      LGPLv2.1,GPLv2,FDLv1.2	
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(dir $(CC)):$(PATH.illumos)
+#MPFR_PATCHLEVEL=1
+#IPS_COMPONENT_VERSION= $(COMPONENT_VERSION).$(MPFR_PATCHLEVEL)
+#HUMAN_VERSION= $(COMPONENT_VERSION)-p$(MPFR_PATCHLEVEL)
+
+PATH = $(dir $(CC)):$(PATH.illumos)
 
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += -std=c99 $(CPP_XPG6MODE)
@@ -76,15 +80,6 @@ CONFIGURE_OPTIONS += --enable-tests-timeout=0
 CONFIGURE_OPTIONS += --with-gmp-lib=$(GMPLIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
-
-COMPONENT_TEST_TRANSFORMS= \
-	'-e "/^make/d" ' \
-	'-e "/^Making/d" ' \
-	'-e "/^\//d" ' \
-	'-e "/^mv/d" ' \
-	'-e "/^libtool/d" ' \
-	'-e "/^depbase/d" ' \
-	'-e "/^\[/d" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp

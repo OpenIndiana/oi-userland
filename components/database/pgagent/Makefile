@@ -13,18 +13,18 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS = 64
-BUILD_STYLE = cmake
+BUILD_BITS= 64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	pgAgent
-COMPONENT_VERSION= 	4.2.1
-COMPONENT_REVISION=	1
+COMPONENT_NAME=		pgAgent
+COMPONENT_FILENAME=	pgagent
+COMPONENT_VERSION= 	4.2.2
 COMPONENT_SUMMARY= 	pgAgent job scheduler for PostgreSQL
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-Source
+COMPONENT_SRC= 		$(COMPONENT_FILENAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:caa8fa0587433839d733d0ad1d45f5cd6e2e47c9cd9ce5ab62ab2d0e6b317fb8
-COMPONENT_ARCHIVE_URL=	https://ftp.postgresql.org/pub/pgadmin/pgagent/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:6eb6c96eafaeb996b510b8ea683c1612e8120f5b33a1ec428eeb7360a4803f70
+COMPONENT_ARCHIVE_URL=	https://github.com/pgadmin-org/pgagent/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.pgadmin.org/
 COMPONENT_FMRI=	database/postgres/pgagent
 COMPONENT_CLASSIFICATION=	System/Databases
@@ -32,12 +32,13 @@ COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
 # Don't depend on host default pg_config
-PATH=	$(PG_BINDIR.$(BITS)):/usr/bin/$(MACH64):/usr/bin
+PATH= $(PG_BINDIR.$(BITS)):/usr/bin/$(MACH64):/usr/bin
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CMAKE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_FILENAME)-$(COMPONENT_SRC) $(COMPONENT_SRC) )
+COMPONENT_PRE_CMAKE_ACTION= ( cp -a $(SOURCE_DIR)/* $(@D) )
 
 # Workaround for cmake to look for files in build directory
 $(BUILD_DIR)/%/.configured:     $(SOURCE_DIR)/.prep

@@ -12,15 +12,16 @@
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
-# Copyright (c) 2022, Andreas Wacknitz
+# Copyright (c) 2023, Andreas Wacknitz
 #
+
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
@@ -30,11 +31,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
     set action.hash curl-$(COMPONENT_VERSION)/docs/%<\1> >
 <transform file path=usr/share/doc/libcurl/html/(.+)$ -> \
     set action.hash curl-$(COMPONENT_VERSION)/docs/libcurl/%<\1> >
-# Drop 32-bit binaries
-<transform path=usr/bin/$(MACH32) -> drop>
 
-file path=usr/bin/$(MACH32)/curl
-file path=usr/bin/$(MACH32)/curl-config
 file path=usr/bin/curl
 file path=usr/bin/curl-config
 file path=usr/include/curl/curl.h
@@ -48,17 +45,15 @@ file path=usr/include/curl/stdcheaders.h
 file path=usr/include/curl/system.h
 file path=usr/include/curl/typecheck-gcc.h
 file path=usr/include/curl/urlapi.h
+file path=usr/include/curl/websockets.h
 link path=usr/lib/$(MACH64)/libcurl.so target=libcurl.so.4.8.0
 link path=usr/lib/$(MACH64)/libcurl.so.4 target=libcurl.so.4.8.0
 file path=usr/lib/$(MACH64)/libcurl.so.4.8.0
 file path=usr/lib/$(MACH64)/pkgconfig/libcurl.pc
-link path=usr/lib/libcurl.so target=libcurl.so.4.8.0
-link path=usr/lib/libcurl.so.4 target=libcurl.so.4.8.0
-file path=usr/lib/libcurl.so.4.8.0
-file path=usr/lib/pkgconfig/libcurl.pc
 file path=usr/share/aclocal/libcurl.m4
 file path=usr/share/man/man1/curl-config.1
 file path=usr/share/man/man1/curl.1
+file path=usr/share/man/man1/mk-ca-bundle.1
 file path=usr/share/man/man3/CURLINFO_ACTIVESOCKET.3
 file path=usr/share/man/man3/CURLINFO_APPCONNECT_TIME.3
 file path=usr/share/man/man3/CURLINFO_APPCONNECT_TIME_T.3
@@ -68,6 +63,7 @@ file path=usr/share/man/man3/CURLINFO_CERTINFO.3
 file path=usr/share/man/man3/CURLINFO_CONDITION_UNMET.3
 file path=usr/share/man/man3/CURLINFO_CONNECT_TIME.3
 file path=usr/share/man/man3/CURLINFO_CONNECT_TIME_T.3
+file path=usr/share/man/man3/CURLINFO_CONN_ID.3
 file path=usr/share/man/man3/CURLINFO_CONTENT_LENGTH_DOWNLOAD.3
 file path=usr/share/man/man3/CURLINFO_CONTENT_LENGTH_DOWNLOAD_T.3
 file path=usr/share/man/man3/CURLINFO_CONTENT_LENGTH_UPLOAD.3
@@ -99,6 +95,7 @@ file path=usr/share/man/man3/CURLINFO_PROTOCOL.3
 file path=usr/share/man/man3/CURLINFO_PROXYAUTH_AVAIL.3
 file path=usr/share/man/man3/CURLINFO_PROXY_ERROR.3
 file path=usr/share/man/man3/CURLINFO_PROXY_SSL_VERIFYRESULT.3
+file path=usr/share/man/man3/CURLINFO_QUEUE_TIME_T.3
 file path=usr/share/man/man3/CURLINFO_REDIRECT_COUNT.3
 file path=usr/share/man/man3/CURLINFO_REDIRECT_TIME.3
 file path=usr/share/man/man3/CURLINFO_REDIRECT_TIME_T.3
@@ -128,6 +125,7 @@ file path=usr/share/man/man3/CURLINFO_TLS_SESSION.3
 file path=usr/share/man/man3/CURLINFO_TLS_SSL_PTR.3
 file path=usr/share/man/man3/CURLINFO_TOTAL_TIME.3
 file path=usr/share/man/man3/CURLINFO_TOTAL_TIME_T.3
+file path=usr/share/man/man3/CURLINFO_XFER_ID.3
 file path=usr/share/man/man3/CURLMOPT_CHUNK_LENGTH_PENALTY_SIZE.3
 file path=usr/share/man/man3/CURLMOPT_CONTENT_LENGTH_PENALTY_SIZE.3
 file path=usr/share/man/man3/CURLMOPT_MAXCONNECTS.3
@@ -157,6 +155,7 @@ file path=usr/share/man/man3/CURLOPT_BUFFERSIZE.3
 file path=usr/share/man/man3/CURLOPT_CAINFO.3
 file path=usr/share/man/man3/CURLOPT_CAINFO_BLOB.3
 file path=usr/share/man/man3/CURLOPT_CAPATH.3
+file path=usr/share/man/man3/CURLOPT_CA_CACHE_TIMEOUT.3
 file path=usr/share/man/man3/CURLOPT_CERTINFO.3
 file path=usr/share/man/man3/CURLOPT_CHUNK_BGN_FUNCTION.3
 file path=usr/share/man/man3/CURLOPT_CHUNK_DATA.3
@@ -220,6 +219,7 @@ file path=usr/share/man/man3/CURLOPT_FTP_USE_PRET.3
 file path=usr/share/man/man3/CURLOPT_GSSAPI_DELEGATION.3
 file path=usr/share/man/man3/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.3
 file path=usr/share/man/man3/CURLOPT_HAPROXYPROTOCOL.3
+file path=usr/share/man/man3/CURLOPT_HAPROXY_CLIENT_IP.3
 file path=usr/share/man/man3/CURLOPT_HEADER.3
 file path=usr/share/man/man3/CURLOPT_HEADERDATA.3
 file path=usr/share/man/man3/CURLOPT_HEADERFUNCTION.3
@@ -262,7 +262,7 @@ file path=usr/share/man/man3/CURLOPT_LOW_SPEED_TIME.3
 file path=usr/share/man/man3/CURLOPT_MAIL_AUTH.3
 file path=usr/share/man/man3/CURLOPT_MAIL_FROM.3
 file path=usr/share/man/man3/CURLOPT_MAIL_RCPT.3
-file path=usr/share/man/man3/CURLOPT_MAIL_RCPT_ALLLOWFAILS.3
+file path=usr/share/man/man3/CURLOPT_MAIL_RCPT_ALLOWFAILS.3
 file path=usr/share/man/man3/CURLOPT_MAXAGE_CONN.3
 file path=usr/share/man/man3/CURLOPT_MAXCONNECTS.3
 file path=usr/share/man/man3/CURLOPT_MAXFILESIZE.3
@@ -337,6 +337,7 @@ file path=usr/share/man/man3/CURLOPT_PROXY_TLSAUTH_TYPE.3
 file path=usr/share/man/man3/CURLOPT_PROXY_TLSAUTH_USERNAME.3
 file path=usr/share/man/man3/CURLOPT_PROXY_TRANSFER_MODE.3
 file path=usr/share/man/man3/CURLOPT_PUT.3
+file path=usr/share/man/man3/CURLOPT_QUICK_EXIT.3
 file path=usr/share/man/man3/CURLOPT_QUOTE.3
 file path=usr/share/man/man3/CURLOPT_RANDOM_FILE.3
 file path=usr/share/man/man3/CURLOPT_RANGE.3
@@ -362,6 +363,7 @@ file path=usr/share/man/man3/CURLOPT_SASL_IR.3
 file path=usr/share/man/man3/CURLOPT_SEEKDATA.3
 file path=usr/share/man/man3/CURLOPT_SEEKFUNCTION.3
 file path=usr/share/man/man3/CURLOPT_SERVER_RESPONSE_TIMEOUT.3
+file path=usr/share/man/man3/CURLOPT_SERVER_RESPONSE_TIMEOUT_MS.3
 file path=usr/share/man/man3/CURLOPT_SERVICE_NAME.3
 file path=usr/share/man/man3/CURLOPT_SHARE.3
 file path=usr/share/man/man3/CURLOPT_SOCKOPTDATA.3
@@ -371,6 +373,8 @@ file path=usr/share/man/man3/CURLOPT_SOCKS5_GSSAPI_NEC.3
 file path=usr/share/man/man3/CURLOPT_SOCKS5_GSSAPI_SERVICE.3
 file path=usr/share/man/man3/CURLOPT_SSH_AUTH_TYPES.3
 file path=usr/share/man/man3/CURLOPT_SSH_COMPRESSION.3
+file path=usr/share/man/man3/CURLOPT_SSH_HOSTKEYDATA.3
+file path=usr/share/man/man3/CURLOPT_SSH_HOSTKEYFUNCTION.3
 file path=usr/share/man/man3/CURLOPT_SSH_HOST_PUBLIC_KEY_MD5.3
 file path=usr/share/man/man3/CURLOPT_SSH_HOST_PUBLIC_KEY_SHA256.3
 file path=usr/share/man/man3/CURLOPT_SSH_KEYDATA.3
@@ -439,6 +443,7 @@ file path=usr/share/man/man3/CURLOPT_VERBOSE.3
 file path=usr/share/man/man3/CURLOPT_WILDCARDMATCH.3
 file path=usr/share/man/man3/CURLOPT_WRITEDATA.3
 file path=usr/share/man/man3/CURLOPT_WRITEFUNCTION.3
+file path=usr/share/man/man3/CURLOPT_WS_OPTIONS.3
 file path=usr/share/man/man3/CURLOPT_XFERINFODATA.3
 file path=usr/share/man/man3/CURLOPT_XFERINFOFUNCTION.3
 file path=usr/share/man/man3/CURLOPT_XOAUTH2_BEARER.3
@@ -477,6 +482,7 @@ file path=usr/share/man/man3/curl_global_cleanup.3
 file path=usr/share/man/man3/curl_global_init.3
 file path=usr/share/man/man3/curl_global_init_mem.3
 file path=usr/share/man/man3/curl_global_sslset.3
+file path=usr/share/man/man3/curl_global_trace.3
 file path=usr/share/man/man3/curl_mime_addpart.3
 file path=usr/share/man/man3/curl_mime_data.3
 file path=usr/share/man/man3/curl_mime_data_cb.3
@@ -494,6 +500,7 @@ file path=usr/share/man/man3/curl_multi_add_handle.3
 file path=usr/share/man/man3/curl_multi_assign.3
 file path=usr/share/man/man3/curl_multi_cleanup.3
 file path=usr/share/man/man3/curl_multi_fdset.3
+file path=usr/share/man/man3/curl_multi_get_handles.3
 file path=usr/share/man/man3/curl_multi_info_read.3
 file path=usr/share/man/man3/curl_multi_init.3
 file path=usr/share/man/man3/curl_multi_perform.3
@@ -507,6 +514,8 @@ file path=usr/share/man/man3/curl_multi_strerror.3
 file path=usr/share/man/man3/curl_multi_timeout.3
 file path=usr/share/man/man3/curl_multi_wait.3
 file path=usr/share/man/man3/curl_multi_wakeup.3
+file path=usr/share/man/man3/curl_pushheader_byname.3
+file path=usr/share/man/man3/curl_pushheader_bynum.3
 file path=usr/share/man/man3/curl_share_cleanup.3
 file path=usr/share/man/man3/curl_share_init.3
 file path=usr/share/man/man3/curl_share_setopt.3
@@ -524,7 +533,11 @@ file path=usr/share/man/man3/curl_url_set.3
 file path=usr/share/man/man3/curl_url_strerror.3
 file path=usr/share/man/man3/curl_version.3
 file path=usr/share/man/man3/curl_version_info.3
+file path=usr/share/man/man3/curl_ws_meta.3
+file path=usr/share/man/man3/curl_ws_recv.3
+file path=usr/share/man/man3/curl_ws_send.3
 file path=usr/share/man/man3/libcurl-easy.3
+file path=usr/share/man/man3/libcurl-env-dbg.3
 file path=usr/share/man/man3/libcurl-env.3
 file path=usr/share/man/man3/libcurl-errors.3
 file path=usr/share/man/man3/libcurl-multi.3
@@ -534,5 +547,5 @@ file path=usr/share/man/man3/libcurl-symbols.3
 file path=usr/share/man/man3/libcurl-thread.3
 file path=usr/share/man/man3/libcurl-tutorial.3
 file path=usr/share/man/man3/libcurl-url.3
+file path=usr/share/man/man3/libcurl-ws.3
 file path=usr/share/man/man3/libcurl.3
-license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)

@@ -112,7 +112,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 		Makefile ))
 
 
-REQUIRED_PACKAGES += developer/versioning/git
+USERLAND_REQUIRED_PACKAGES += developer/versioning/git
 
 endif
 endef

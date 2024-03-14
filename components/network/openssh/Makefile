@@ -24,27 +24,32 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=		64
-USE_OPENSSL11=	yes
+BUILD_BITS= 64
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-COMPONENT_VERSION=	9.0.0.1
-HUMAN_VERSION=		9.0p1
+COMPONENT_VERSION=	9.6.0.1
+HUMAN_VERSION=		9.6p1
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	OpenSSH client and associated utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openssh.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:03974302161e9ecce32153cfa10012f1e65c8f3750f573a73ab1befd5972a28a
+COMPONENT_ARCHIVE_HASH=	sha256:910211c07255a8c5ad654391b40ee59800710dd8119dd5362de09385aa7a777c
 COMPONENT_ARCHIVE_URL=	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/ssh
 COMPONENT_LICENSE=	BSD, BSD-like
 COMPONENT_LICENSE_FILE=	LICENCE
 
+TEST_TARGET= $(SKIP_TEST)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
+PATH = $(PATH.gnu)
+
+COMPONENT_PREP_ACTION = ( cd $(@D) ; autoreconf -f -i )
 
 CFLAGS += -DSET_USE_PAM
 CFLAGS += -DPAM_ENHANCEMENT
@@ -65,7 +70,7 @@ CFLAGS += -I$(OPENSSL_INCDIR)
 # libraries that it needs.
 LDFLAGS += -B direct -z nolazyload
 
-CONFIGURE_OPTIONS += --with-ssl-dir=$(OPENSSL_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --with-ssl-dir=$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += --with-ssl-engine
 CONFIGURE_OPTIONS += --with-audit=solaris
 CONFIGURE_OPTIONS += --with-libedit
@@ -90,20 +95,17 @@ CONFIGURE_OPTIONS += --bindir=/usr/bin
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm755 $(SOURCE_DIR)/contrib/ssh-copy-id $(PROTOUSRBINDIR)/ssh-copy-id;
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/ssh-copy-id.1 $(PROTOUSRSHAREMAN1DIR)/ssh-copy-id.1;
 
-COMPONENT_TEST_TARGETS	= tests
-
-# Manually added dependencies
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+COMPONENT_TEST_TARGETS = tests
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += network/ssh-askpass
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES += x11/session/xauth
