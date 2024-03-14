@@ -11,30 +11,25 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-lazy-fixtures
+#   $WS_TOOLS/python-integrate-project -d python/pytest-lazy-fixtures pytest_lazy_fixtures
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-lazy-fixtures
-HUMAN_VERSION =			1.0.5
-COMPONENT_SUMMARY =		pytest-lazy-fixtures - Allows you to use fixtures in @pytest.mark.parametrize.
+COMPONENT_NAME =		pytest_lazy_fixtures
+HUMAN_VERSION =			1.0.6
+COMPONENT_SUMMARY =		pytest_lazy_fixtures - Allows you to use fixtures in @pytest.mark.parametrize.
 COMPONENT_PROJECT_URL =		https://github.com/dev-petrov/pytest-lazy-fixtures
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/dev-petrov/pytest-lazy-fixtures/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c99e8969a67d2e2a2cefc7f36151dcb5b52e0c4080e538775ead9ff349eebc2c
+	sha256:d69320b53b7e10888a2b1e98a89d891fa7b39f210b9f2087ebe3042a38e28a2e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/dev-petrov/pytest-lazy-fixtures/issues/10
-COMPONENT_TEST_ENV += PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
