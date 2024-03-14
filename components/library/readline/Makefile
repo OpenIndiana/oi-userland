@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		readline
 COMPONENT_VERSION=	6.3
-COMPONENT_REVISION=	6
+COMPONENT_REVISION=	7
 COMPONENT_SUMMARY=	GNU readline provides interactive line-editing and history
 COMPONENT_DESCRIPTION= The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in
 COMPONENT_PROJECT_URL=	https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
@@ -67,10 +67,6 @@ COMPONENT_BUILD_TARGETS= everything
 COMPONENT_TEST_DIR= $(@D)/examples
 COMPONENT_TEST_CMD= $(CAT) $(SOURCE_DIR)/examples/Inputrc | ./rlcat
 COMPONENT_TEST_TARGETS=
-
-# Master test results are the same for 32-bit and 64-bit, so override
-# here, rather than create multiple identical master files.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Needed to build the test program.
 COMPONENT_PRE_SYSTEM_TEST_ACTION += \
