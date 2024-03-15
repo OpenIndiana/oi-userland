@@ -17,16 +17,16 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libplist
-COMPONENT_VERSION= 2.3.0
+COMPONENT_VERSION= 2.4.0
 COMPONENT_SUMMARY= A library to handle Apple Property List format in binary or XML
 COMPONENT_PROJECT_URL = https://github.com/libimobiledevice/libplist
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:55ec210e7487dce1f86a35c2fb073bc556c7c6d3378de50fbe4fb2e6b1244d94
+COMPONENT_ARCHIVE_HASH= sha256:154815a2daca115f83a00a645073755196fd3adfbf0244d159c0eaced2a45bcd
 COMPONENT_ARCHIVE_URL=	https://cgit.libimobiledevice.org/libplist.git/snapshot/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI = library/libplist
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_LICENSE = GPLv2,LGPLv2.1
+COMPONENT_FMRI= library/libplist
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE= GPLv2,LGPLv2.1
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -35,11 +35,21 @@ PATH= $(PATH.gnu)
 # Without .tarball-version the build fails because of undefined PKG_VERSION.
 COMPONENT_PREP_ACTION= ( cd  $(@D) && echo -n "$(COMPONENT_VERSION)" > .tarball-version  && NOCONFIGURE=true PATH="$(PATH.gnu)" sh autogen.sh )
 
+# We use python vendor-packages instead of site-packages
+COMPONENT_POST_INSTALL_ACTION += \
+	cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
+	$(RM) -r vendor-packages ; \
+	$(MV) site-packages vendor-packages ;
+
+CONFIGURE_ENV += PYTHON_SITE_PKG=/usr/lib/python$(PYTHON_VERSION)/vendor-packages
+
 CONFIGURE_OPTIONS += --disable-static
 
-unexport SHELLOPTS
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/python/cython
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
