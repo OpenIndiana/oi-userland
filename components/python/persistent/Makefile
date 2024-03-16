@@ -19,20 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		persistent
-HUMAN_VERSION =			5.1
+HUMAN_VERSION =			5.2
 COMPONENT_SUMMARY =		persistent - Translucent persistent objects
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/persistent/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e7/bd/9efb67cf7704368663b7b07a99ad08e58fef69423fd90a35c7a75fa2b04c/persistent-5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:97ccc2fa26cc9bdcc3be1fc65aa4f4f28afe5204c2d4fd24a67445908db7469b
+	sha256:dbea5d1ff9db4e451ca39bc0b42a9ea537e6cac9282ae8c0780fb8ffae3ec834
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # This project uses both cpython and abi3 ABI depending on particular library.
 # To deal with this we need to disable automatic ABI library name transforms.

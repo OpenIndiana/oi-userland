@@ -1,0 +1,59 @@
+#
+# To comply to the Solaris PAM policy, the UsePAM option is changed to be
+# always on and not configurable on Solaris.  This is for Solaris only, so we
+# will not contribute the changes to the upstream community.
+#
+
+--- hpn-ssh-hpn-18.3.1/servconf.c.orig
++++ hpn-ssh-hpn-18.3.1/servconf.c
+@@ -285,7 +285,12 @@
+ 
+ 	/* Portable-specific options */
+ 	if (options->use_pam == -1)
++#ifdef SET_USE_PAM
++		/* use_pam should be always set to 1 on Solaris */
++		options->use_pam = 1;
++#else
+ 		options->use_pam = 0;
++#endif
+ 
+ 	/* Standard Options */
+ 	if (options->num_host_key_files == 0) {
+@@ -1392,8 +1397,17 @@
+ 	switch (opcode) {
+ 	/* Portable-specific options */
+ 	case sUsePAM:
++#ifdef SET_USE_PAM
++		/* UsePAM is always on and not configurable on Solaris */
++		logit("%s line %d: ignoring UsePAM option value."
++		    " This option is always on.", filename, linenum);
++		while (arg)
++			arg = strdelim(&str);
++		break; 
++#else
+ 		intptr = &options->use_pam;
+ 		goto parse_flag;
++#endif
+ 
+ 	/* Standard Options */
+ 	case sBadOption:
+--- hpn-ssh-hpn-18.3.1/sshd_config.orig
++++ hpn-ssh-hpn-18.3.1/sshd_config
+@@ -70,17 +70,6 @@
+ #GSSAPIAuthentication no
+ #GSSAPICleanupCredentials yes
+ 
+-# Set this to 'yes' to enable PAM authentication, account processing,
+-# and session processing. If this is enabled, PAM authentication will
+-# be allowed through the KbdInteractiveAuthentication and
+-# PasswordAuthentication.  Depending on your PAM configuration,
+-# PAM authentication via KbdInteractiveAuthentication may bypass
+-# the setting of "PermitRootLogin prohibit-password".
+-# If you just want the PAM account and session checks to run without
+-# PAM authentication, then enable this but set PasswordAuthentication
+-# and KbdInteractiveAuthentication to 'no'.
+-#UsePAM no
+-
+ #AllowAgentForwarding yes
+ #AllowTcpForwarding yes
+ #GatewayPorts no

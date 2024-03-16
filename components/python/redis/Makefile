@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		redis
-HUMAN_VERSION =			5.0.1
+HUMAN_VERSION =			5.0.3
 COMPONENT_SUMMARY =		redis - Python client for Redis database and key-value store
 COMPONENT_PROJECT_URL =		https://github.com/redis/redis-py
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4a/4c/3c3b766f4ecbb3f0bec91ef342ee98d179e040c25b6ecc99e510c2570f2a/redis-5.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0dab495cd5753069d3bc650a0dde8a8f9edde16fc5691b689a566eda58100d0f
+	sha256:4973bae7444c0fbed64a06b87446f79361cb7e4ec1538c022d696ed7a5015580
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -49,12 +47,16 @@ TEST_REQUIRED_PACKAGES += database/redis
 PYTEST_ADDOPTS += -m "not redismod and not onlycluster and not ssl and not replica"
 # We have no RedisBloom support
 PYTEST_ADDOPTS += --ignore tests/test_bloom.py
+PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_bloom.py
 # We have no RedisGraph support
 PYTEST_ADDOPTS += --ignore tests/test_graph.py
+PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_graph.py
 # We have no JSON support for Redis
 PYTEST_ADDOPTS += --ignore tests/test_json.py
+PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_json.py
 # We have no RedisTimeSeries support
 PYTEST_ADDOPTS += --ignore tests/test_timeseries.py
+PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_timeseries.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/async-timeout

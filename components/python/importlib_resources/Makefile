@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_resources
-HUMAN_VERSION =			6.1.1
+HUMAN_VERSION =			6.3.0
 COMPONENT_SUMMARY =		importlib_resources - Read resources from Python packages
 COMPONENT_PROJECT_URL =		https://github.com/python/importlib_resources
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d4/06/402fb5efbe634881341ff30220798c4c5e448ca57c068108c4582c692160/importlib_resources-6.1.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3893a00122eafde6894c59914446a512f728a0c1a45f9bb9b63721b6bacf0b4a
+	sha256:166072a97e86917a9025876f34286f549b9caf1d10b35a1b372bffa1600c6569
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,8 +35,8 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += library/python/zipp
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-collections
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler

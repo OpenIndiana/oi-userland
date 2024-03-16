@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markdown2
-HUMAN_VERSION =			2.4.12
+HUMAN_VERSION =			2.4.13
 COMPONENT_SUMMARY =		markdown2 - A fast and complete Python implementation of Markdown
 COMPONENT_PROJECT_URL =		https://github.com/trentm/python-markdown2
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3c/e4/87a454674ac303e2ca6c25713845d2ae1b59c1a88576054cbec25aaebad1/markdown2-2.4.12.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1bc8692696954d597778e0e25713c14ca56d87992070dedd95c17eddaf709204
+	sha256:18ceb56590da77f2c22382e55be48c15b3c8f0c71d6398def387275e6c347a9f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

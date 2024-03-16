@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		salt
-HUMAN_VERSION =			3006.6
+HUMAN_VERSION =			3006.7
 COMPONENT_SUMMARY =		salt - Portable, distributed, remote execution and configuration management system
 COMPONENT_PROJECT_URL =		https://saltproject.io
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e4/f8/b36b18ae5c4fe53328894d23b3c0358ee386ef8cb1624efd8d5763dd9ad8/salt-3006.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5fab688d86b70e1e84c51b4caa565f3671950506813c3729d44408cc2f5afbc3
+	sha256:ed92d21b84eb9d479f93ba89468453408117e0dc1010614214999e8d0c210afd
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -88,3 +86,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-httpserver
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-salt-factories
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-subtests
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
+TEST_REQUIRED_PACKAGES.python += library/python/trustme

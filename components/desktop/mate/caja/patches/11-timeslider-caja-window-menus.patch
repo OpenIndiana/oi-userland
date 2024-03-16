@@ -1,0 +1,58 @@
+--- caja-1.28.0/src/caja-window-menus.c.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/caja-window-menus.c	2024-02-26 08:42:41.000000000 +0100
+@@ -57,6 +57,8 @@
+ #include "caja-window-private.h"
+ #include "caja-desktop-window.h"
+ #include "caja-search-bar.h"
++#include "caja-navigation-window.h"
++#include "caja-zfs-bar.h"
+ 
+ #define MENU_PATH_EXTENSION_ACTIONS                     "/MenuBar/File/Extension Actions"
+ #define POPUP_PATH_EXTENSION_ACTIONS                     "/background/Before Zoom Items/Extension Actions"
+@@ -370,6 +372,33 @@
+ }
+ 
+ static void
++action_restore_callback (GtkToggleAction *action, 
++                         gpointer user_data) 
++{
++    CajaWindowSlot *slot;
++    GFile *directory;
++    CajaDirectory *n_dir;
++    GtkWidget *bar = CAJA_NAVIGATION_WINDOW (user_data)->zfs_bar;
++
++    slot = caja_window_get_active_slot (CAJA_WINDOW (user_data));
++    directory = caja_window_slot_get_location (slot);
++    n_dir = caja_directory_get (directory);
++
++    if (gtk_toggle_action_get_active (action))
++    {
++        caja_zfs_bar_setup (CAJA_ZFS_BAR (bar), n_dir, slot, action); 
++        gtk_widget_show (bar); 
++    }
++    else
++    {
++        caja_zfs_bar_hide (CAJA_ZFS_BAR (bar));
++        caja_window_reload (CAJA_WINDOW (user_data), FALSE);
++    }
++    g_object_unref (n_dir);
++    g_object_unref (directory);
++}
++
++static void
+ action_zoom_in_callback (GtkAction *action,
+                          gpointer user_data)
+ {
+@@ -962,6 +991,12 @@
+ 
+ static const GtkToggleActionEntry main_toggle_entries[] =
+ {
++    /* name, stock id */         { "Restore", NULL,
++    /* label, accelerator */       N_("R_estore"), "<control>E",
++    /* tooltip */                  N_("Browse the current location snapshot history"),
++        G_CALLBACK (action_restore_callback),
++        FALSE
++    },
+     /* name, icon name */        { "Show Hidden Files", NULL,
+         /* label, accelerator */       N_("Show _Hidden Files"), "<control>H",
+         /* tooltip */                  N_("Toggle the display of hidden files in the current window"),

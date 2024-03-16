@@ -18,12 +18,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services1
-COMPONENT_VERSION=	1.22.9
+COMPONENT_VERSION=	1.22.10
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
 COMPONENT_SRC_NAME=	gst-editing-services
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:3553ad3802dccde0c0ef1461881acd9b55bddf8adf751de4cb51b7f8cb50440d
+COMPONENT_ARCHIVE_HASH=	sha256:bfb1ee1b352dd4d929c3a5b7fe19071a6c62b4828bb70318ad44bcf06828e9f0
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -40,8 +40,11 @@ PATH = $(PATH.gnu)
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# Some tests are failing because we miss some packages
-unexport SHELLOPTS
+# We use python vendor-packages instead of site-packages
+COMPONENT_POST_INSTALL_ACTION += \
+    cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
+    $(RM) -r vendor-packages ; \
+    $(MV) site-packages vendor-packages ;
 
 # As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \

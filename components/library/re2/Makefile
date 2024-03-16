@@ -16,13 +16,13 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         re2
-COMPONENT_VERSION=      2024.2.1
-HUMAN_VERSION=          2024-02-01
+COMPONENT_VERSION=      2024.3.1
+HUMAN_VERSION=          2024-03-01
 COMPONENT_SUMMARY=      Fast, safe, thread-friendly regular expression engine
 COMPONENT_PROJECT_URL=  https://github.com/google/re2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cd191a311b84fcf37310e5cd876845b4bf5aee76fdd755008eef3b6478ce07bb
+COMPONENT_ARCHIVE_HASH= sha256:7b2b3aa8241eac25f674e5b5b2e23d4ac4f0a8891418a2661869f736f03f57f4
 COMPONENT_ARCHIVE_URL=	https://github.com/google/$(COMPONENT_NAME)/releases/download/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/re2
 COMPONENT_CLASSIFICATION= Development/C++

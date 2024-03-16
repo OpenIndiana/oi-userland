@@ -553,6 +553,11 @@ COMPONENT_TEST_TARGETS =	check
 # set the default directory for test of the component
 COMPONENT_TEST_DIR =	$(@D)
 
+# prepare the testing environment before we run tests
+COMPONENT_TEST_DEP += component-test-environment-prep
+# we test built components
+COMPONENT_TEST_DEP += $(BUILD_DIR)/%/.built
+
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
 TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.tested
@@ -901,6 +906,7 @@ PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 # |         12         |   2024-11-14   |
 # |         14         |   2026-11-12   |
 # |         15         |   2027-11-11   |
+# |         16         |   2028-11-09   |
 # +--------------------+----------------+
 #
 # See https://www.postgresql.org/support/versioning/
@@ -910,7 +916,7 @@ PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 # Default DB version should be the newest one we do have so we detect any
 # incompatibilities as soon as possible.  Components could override this when
 # they are not ready yet to compile with so new version.
-PG_VERSION ?=   15
+PG_VERSION ?=   16
 PG_IMPLEM ?=    postgres
 PG_VERNUM =     $(subst .,,$(PG_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed

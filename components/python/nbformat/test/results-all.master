@@ -1,11 +1,9 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests/
-asyncio: mode=strict
 collecting ... collected 189 items
 
 tests/test_api.py::TestAPI::test_capture_validation_error PASSED
@@ -85,8 +83,8 @@ tests/test_validator.py::test_notebook_invalid_without_min_version PASSED
 tests/test_validator.py::test_notebook_v3_valid_without_min_version PASSED
 tests/test_validator.py::test_repair_no_cell_ids PASSED
 tests/test_validator.py::test_repair_non_unique_cell_ids PASSED
-tests/test_validator.py::test_should_not_mutate[fastjsonschema] XPASS
-tests/test_validator.py::test_should_not_mutate[jsonschema] XPASS (I...)
+tests/test_validator.py::test_should_not_mutate[fastjsonschema] SKIPPED
+tests/test_validator.py::test_should_not_mutate[jsonschema] SKIPPED
 tests/test_validator.py::test_should_warn[fastjsonschema] PASSED
 tests/test_validator.py::test_should_warn[jsonschema] PASSED
 tests/test_validator.py::test_strip_invalid_metadata PASSED
@@ -199,16 +197,15 @@ tests/v4/test_validate.py::test_sample_notebook PASSED
 tests/v4/test_validate.py::test_valid_code_cell PASSED
 
 =============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/jupyter_core/application.py:21
-  $(PYTHON_DIR)/vendor-packages/jupyter_core/application.py:21: DeprecationWarning: Jupyter is migrating its paths to use standard platformdirs
+nbformat/sign.py:17
+  $(@D)/nbformat/sign.py:17: DeprecationWarning: Jupyter is migrating its paths to use standard platformdirs
   given by the platformdirs library.  To remove this warning and
   see the appropriate new directories, set the environment variable
   `JUPYTER_PLATFORM_DIRS=1` and then run `jupyter --paths`.
   The use of platformdirs will be the default in `jupyter_core` v6
-    from .paths import (
+    from jupyter_core.paths import jupyter_data_dir
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 187 passed, 2 xpassed, 1 warning ========
+======== 187 passed, 2 skipped, 1 warning ========

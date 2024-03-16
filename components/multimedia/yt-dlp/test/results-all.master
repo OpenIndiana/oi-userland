@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 6264 items / 5563 deselected / 701 selected
+collecting ... collected 6388 items / 5682 deselected / 706 selected
 
 implemented)
 implemented)
@@ -210,8 +210,12 @@ test/test_networking.py::TestHTTPRequestHandler::test_redirect[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_redirect[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_redirect_loop[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_redirect_loop[Urllib] PASSED
-test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[Requests] PASSED
-test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[/a/b/./../../headers-Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[/a/b/./../../headers-Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[/redirect_dotsegments-Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[/redirect_dotsegments-Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[/redirect_dotsegments_absolute-Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[/redirect_dotsegments_absolute-Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_request_cookie_header[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_request_cookie_header[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_response_url[Requests] PASSED
@@ -240,11 +244,15 @@ test/test_networking.py::TestRequest::test_query PASSED
 test/test_networking.py::TestRequest::test_request_helpers PASSED
 test/test_networking.py::TestRequest::test_update_req PASSED
 test/test_networking.py::TestRequest::test_url PASSED
+test/test_networking.py::TestRequestDirector::test_close PASSED
 test/test_networking.py::TestRequestDirector::test_handler_operations PASSED
 test/test_networking.py::TestRequestDirector::test_preference PASSED
 test/test_networking.py::TestRequestDirector::test_send PASSED
 test/test_networking.py::TestRequestDirector::test_unexpected_error PASSED
 test/test_networking.py::TestRequestDirector::test_unsupported_handlers PASSED
+test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Requests-urllib3] PASSED
+test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Websockets-websockets.client] PASSED
+test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Websockets-websockets.server] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[HTTPSupportedRH] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[Requests] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[Urllib] PASSED
@@ -311,25 +319,26 @@ test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-ht
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[ValidationRH-http-UnsupportedRequest-handler_kwargs11] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Websockets-ws-False-handler_kwargs8] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Websockets-wss-False-handler_kwargs9] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-CertificateVerifyError] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-ProxyError] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-RequestError0] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-RequestError1] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-RequestError2] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-SSLError] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-TransportError0] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-TransportError1] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-TransportError2] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-TransportError3] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[Requests-<lambda>-TransportError4] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[Requests-<lambda>-IncompleteRead-3 bytes read, 4 more expected] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[Requests-<lambda>-IncompleteRead-3 bytes read, 5 more expected] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[Requests-<lambda>-SSLError-None] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[Requests-<lambda>-TransportError-None0] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[Requests-<lambda>-TransportError-None1] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[Requests-<lambda>-TransportError-None2] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[Requests-<lambda>-TransportError-None3] PASSED
-test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[Requests-<lambda>-TransportError-None4] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_close[Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-CertificateVerifyError-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-ProxyError-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-RequestError0-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-RequestError1-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-RequestError2-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-SSLError-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-TransportError0-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-TransportError1-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-TransportError2-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-TransportError3-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_request_error_mapping[<lambda>-TransportError4-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[<lambda>-IncompleteRead-3 bytes read, 4 more expected-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[<lambda>-IncompleteRead-3 bytes read, 5 more expected-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[<lambda>-SSLError-None-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[<lambda>-TransportError-None0-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[<lambda>-TransportError-None1-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[<lambda>-TransportError-None2-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[<lambda>-TransportError-None3-Requests] PASSED
+test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping[<lambda>-TransportError-None4-Requests] PASSED
 test/test_networking.py::TestResponse::test_compat PASSED
 test/test_networking.py::TestResponse::test_get_header PASSED
 test/test_networking.py::TestResponse::test_headers PASSED
@@ -372,13 +381,9 @@ test/test_networking.py::TestYoutubeDLNetworking::test_urllib_file_urls PASSED
 test/test_networking.py::TestYoutubeDLNetworking::test_websocket_unavailable_error[ws] PASSED
 test/test_networking.py::TestYoutubeDLNetworking::test_websocket_unavailable_error[wss] PASSED
 test/test_networking_utils.py::TestInstanceStoreMixin::test_mixin PASSED
-test/test_networking_utils.py::TestNetworkingExceptions::test_compat_http_error PASSED
-test/test_networking_utils.py::TestNetworkingExceptions::test_compat_http_error_autoclose PASSED
-test/test_networking_utils.py::TestNetworkingExceptions::test_http_error[<lambda>] PASSED
-test/test_networking_utils.py::TestNetworkingExceptions::test_http_error[HTTPError] PASSED
+test/test_networking_utils.py::TestNetworkingExceptions::test_http_error PASSED
 test/test_networking_utils.py::TestNetworkingExceptions::test_incomplete_read_error PASSED
-test/test_networking_utils.py::TestNetworkingExceptions::test_redirect_http_error[<lambda>] PASSED
-test/test_networking_utils.py::TestNetworkingExceptions::test_redirect_http_error[HTTPError] PASSED
+test/test_networking_utils.py::TestNetworkingExceptions::test_redirect_http_error PASSED
 test/test_networking_utils.py::TestNetworkingUtils::test_add_accept_encoding_header[headers0-supported_encodings0-expected0] PASSED
 test/test_networking_utils.py::TestNetworkingUtils::test_add_accept_encoding_header[headers1-supported_encodings1-expected1] PASSED
 test/test_networking_utils.py::TestNetworkingUtils::test_add_accept_encoding_header[headers2-supported_encodings2-expected2] PASSED
@@ -714,6 +719,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_send_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 688 passed, 13 skipped, 5563 deselected ========
+======== 693 passed, 13 skipped, 5682 deselected ========
   py$(PYV): OK
   congratulations :)

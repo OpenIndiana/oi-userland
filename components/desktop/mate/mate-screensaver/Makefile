@@ -18,11 +18,10 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-screensaver
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	2
-COMPONENT_REVISION=		1
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	0
 COMPONENT_SUMMARY= mate-screensaver is a screen saver and locker that aims to have simple, sane, secure defaults and be well integrated with the desktop
-COMPONENT_ARCHIVE_HASH=	sha256:da9700ce24145bd55d24927eecfe6d31d0a52eae86e563b2c65054b356a5ff7e
+COMPONENT_ARCHIVE_HASH=	sha256:6a0f24a8f84a2f95e10114ab53e63fd4aca688a55fdc503ed650e0a410e3ea70
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING

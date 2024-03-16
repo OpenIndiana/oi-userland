@@ -75,7 +75,7 @@ COMPONENT_TEST_TARGETS =
 
 # Test the built source.  If the output file shows up in the environment or
 # arguments, don't redirect stdout/stderr to it.
-$(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)

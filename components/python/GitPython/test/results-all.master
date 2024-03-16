@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
-collecting ... collected 548 items
+collecting ... collected 578 items
 
 test/performance/test_commit.py::TestPerformance::test_commit_iteration PASSED
 test/performance/test_commit.py::TestPerformance::test_commit_serialization PASSED
@@ -274,7 +274,29 @@ test/test_git.py::TestGit::test_cmd_override PASSED
 test/test_git.py::TestGit::test_env_vars_passed_to_git PASSED
 test/test_git.py::TestGit::test_environment PASSED
 test/test_git.py::TestGit::test_execute_kwargs_set_agrees_with_method PASSED
+test/test_git.py::TestGit::test_git_exc_name_is_git PASSED
 test/test_git.py::TestGit::test_handle_process_output PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_error_1___2___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_error_2___r___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_error_3___raise___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_error_4___e___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_error_5___error___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_quiet_1___0___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_quiet_2___q___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_quiet_3___quiet___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_quiet_4___s___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_quiet_5___silence___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_quiet_6___silent___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_quiet_7___n___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_quiet_8___none___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_warn_1___1___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_warn_2___w___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_warn_3___warn___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_warn_4___warning___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_warn_5___l___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_bad_git_path_env_warn_6___log___ PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_good_absolute_git_path_env PASSED
+test/test_git.py::TestGit::test_initial_refresh_from_good_relative_git_path_env PASSED
 test/test_git.py::TestGit::test_insert_after_kwarg_raises PASSED
 test/test_git.py::TestGit::test_it_accepts_environment_variables PASSED
 test/test_git.py::TestGit::test_it_accepts_stdin PASSED
@@ -307,7 +329,14 @@ test/test_git.py::TestGit::test_it_uses_shell_or_not_as_specified_6__True__True_
 test/test_git.py::TestGit::test_options_are_passed_to_git PASSED
 test/test_git.py::TestGit::test_persistent_cat_file_command PASSED
 test/test_git.py::TestGit::test_persistent_options PASSED
-test/test_git.py::TestGit::test_refresh PASSED
+test/test_git.py::TestGit::test_refresh_from_bad_absolute_git_path_env PASSED
+test/test_git.py::TestGit::test_refresh_from_bad_relative_git_path_env PASSED
+test/test_git.py::TestGit::test_refresh_from_good_absolute_git_path_env PASSED
+test/test_git.py::TestGit::test_refresh_from_good_relative_git_path_env PASSED
+test/test_git.py::TestGit::test_refresh_with_bad_absolute_git_path_arg PASSED
+test/test_git.py::TestGit::test_refresh_with_bad_relative_git_path_arg PASSED
+test/test_git.py::TestGit::test_refresh_with_good_absolute_git_path_arg PASSED
+test/test_git.py::TestGit::test_refresh_with_good_relative_git_path_arg PASSED
 test/test_git.py::TestGit::test_single_char_git_options_are_passed_to_git PASSED
 test/test_git.py::TestGit::test_version PASSED
 test/test_installation.py::TestInstallation::test_installation PASSED
@@ -464,6 +493,7 @@ test/test_submodule.py::TestSubmodule::test_update_clone_multi_options_argument 
 test/test_submodule.py::TestSubmodule::test_update_no_clone_multi_options_argument PASSED
 test/test_tree.py::TestTree::test_serializable PASSED
 test/test_tree.py::TestTree::test_traverse PASSED
+test/test_tree.py::TestTree::test_tree_modifier_ordering PASSED
 test/test_util.py::TestCygpath::test_cygpath_invalids[C:Relative] SKIPPED
 test/test_util.py::TestCygpath::test_cygpath_invalids[C:] SKIPPED (P...)
 test/test_util.py::TestCygpath::test_cygpath_invalids[D:Apps/123] SKIPPED
@@ -557,8 +587,28 @@ test/test_util.py::TestUtils::test_remove_password_from_command_line PASSED
 test/test_util.py::TestUtils::test_user_id PASSED
 test/test_util.py::TestUtils::test_utctz_to_altz PASSED
 
+================================== XFAILURES ===================================
+___________________________ TestSubmodule.test_depth ___________________________
+
+self = <test.test_submodule.TestSubmodule testMethod=test_depth>
+rwdir = '/tmp/test_deptheemc93mk'
+
+    @pytest.mark.xfail(
+        reason="for some unknown reason the assertion fails, even though it in fact is working in more common setup",
+        raises=AssertionError,
+    )
+    @with_rw_directory
+    def test_depth(self, rwdir):
+        parent = git.Repo.init(osp.join(rwdir, "test_depth"))
+        sm_name = "mymodules/myname"
+        sm_depth = 1
+        sm = parent.create_submodule(sm_name, sm_name, url=self._small_repo_url(), depth=sm_depth)
+>       self.assertEqual(len(list(sm.module().iter_commits())), sm_depth)
+E       AssertionError: 211 != 1
+
+test/test_submodule.py:1078: AssertionError
 
 =========================== short test summary info ============================
-======== 474 passed, 73 skipped, 1 xfailed, 2 warnings ========
+======== 504 passed, 73 skipped, 1 xfailed, 2 warnings ========
   py$(PYV): OK
   congratulations :)

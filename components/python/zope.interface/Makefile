@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.interface
-HUMAN_VERSION =			6.1
+HUMAN_VERSION =			6.2
 COMPONENT_SUMMARY =		zope.interface - Interfaces for Python
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.interface
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/87/03/6b85c1df2dca1b9acca38b423d1e226d8ffdf30ebd78bcb398c511de8b54/zope.interface-6.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2fdc7ccbd6eb6b7df5353012fbed6c3c5d04ceaca0038f75e601060e95345309
+	sha256:3b6c62813c63c543a06394a636978b22dffa8c5410affc9331ce6cdb5bfa8565
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -42,10 +40,10 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# verbose test output
-COMPONENT_TEST_TARGETS += -- --verbose
+# force verbose test output via tox posargs
+TOX_POSARGS += --verbose
 # https://github.com/zopefoundation/zope.interface/issues/196
-COMPONENT_TEST_TARGETS += -s $(PROTO_DIR)/$(PYTHON_LIB)/zope/interface -t $(PROTO_DIR)/$(PYTHON_LIB)
+TOX_POSARGS += -s $(PROTO_DIR)/$(PYTHON_LIB)/zope/interface -t $(PROTO_DIR)/$(PYTHON_LIB)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools

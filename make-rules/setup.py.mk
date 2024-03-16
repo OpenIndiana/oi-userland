@@ -234,8 +234,6 @@ COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PYTHON_VE
 # See below for test style specific transforms.
 COMPONENT_TEST_TRANSFORMS += "-e 's|$(PYTHON_DIR)|\$$(PYTHON_DIR)|g'"
 
-# Make sure the test environment is prepared before we start tests
-COMPONENT_TEST_DEP +=	component-test-environment-prep
 # Testing depends on install target because we want to test installed modules
 COMPONENT_TEST_DEP +=	$(BUILD_DIR)/%/.installed
 # Point Python to the proto area so it is able to find installed modules there
@@ -435,7 +433,6 @@ $(eval $(call disable-pytest-plugin,helpers_namespace,pytest-helpers-namespace))
 $(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to test report header
 $(eval $(call disable-pytest-plugin,jaraco.test.http,jaraco-test))
 $(eval $(call disable-pytest-plugin,kgb,kgb))
-$(eval $(call disable-pytest-plugin,lazy-fixture,pytest-lazy-fixture))
 $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
 $(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
@@ -448,6 +445,7 @@ $(eval $(call disable-pytest-plugin,pytest_fakefs,pyfakefs))
 $(eval $(call disable-pytest-plugin,pytest_forked,pytest-forked))
 $(eval $(call disable-pytest-plugin,pytest_httpserver,pytest-httpserver))
 $(eval $(call disable-pytest-plugin,pytest_ignore_flaky,pytest-ignore-flaky))
+$(eval $(call disable-pytest-plugin,pytest_lazyfixture,pytest-lazy-fixtures))
 $(eval $(call disable-pytest-plugin,pytest_mock,pytest-mock))
 $(eval $(call disable-pytest-plugin,randomly,pytest-randomly))		# reorders tests
 $(eval $(call disable-pytest-plugin,regressions,pytest-regressions))
@@ -482,6 +480,14 @@ $(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminde
 # if needed (for example to debug test failures) or in per-component Makefile.
 PYTEST_FASTFAIL = -x
 PYTEST_ADDOPTS += $(PYTEST_FASTFAIL)
+
+# By default we are not interested to see the default long tracebacks.
+# Detailed tracebacks are shown either for failures or xfails.  We aim to see
+# testing passed so there should be no failures.  Since xfails are expected
+# failures we are not interested in detailed tracebacks here at all since they
+# could contain random data, like pointers, temporary file names, etc.
+PYTEST_TRACEBACK = --tb=line
+PYTEST_ADDOPTS += $(PYTEST_TRACEBACK)
 
 # Normalize pytest test results.  The pytest framework could be used either
 # directly or via tox or setup.py so add these transforms for all test styles

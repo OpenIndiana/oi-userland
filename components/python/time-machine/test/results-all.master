@@ -1,17 +1,13 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -W error::ResourceWarning -W error::DeprecationWarning -W error::PendingDeprecationWarning -W ignore:datetime.datetime.utcfromtimestamp:DeprecationWarning -W ignore:datetime.datetime.utcnow:DeprecationWarning -m coverage run -m pytest tests
-$(PYTHON_DIR)/vendor-packages/pytest_ignore_flaky.py:13: PytestDeprecationWarning: The hookimpl PluginIgnoreFlaky.pytest_runtest_makereport uses old-style configuration options (marks or attributes).
-Please use the pytest.hookimpl(hookwrapper=True) decorator instead
- to configure the hooks.
- See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-  @pytest.mark.hookwrapper
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 96 items
+collecting ... collected 97 items
 
+tests/test_time_machine.py::ClassDecoratorInheritanceTests::test_ineheritance_correctly_rebound PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_datetime_now PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_datetime_now_tz PASSED
 tests/test_time_machine.py::TestEscapeHatch::test_datetime_utcnow PASSED
@@ -109,6 +105,8 @@ tests/test_time_machine.py::test_traveller_object PASSED
 tests/test_time_machine.py::test_unsupported_type PASSED
 tests/test_time_machine.py::test_uuid1 PASSED
 
-======== 91 passed, 5 skipped ========
+======== 92 passed, 5 skipped ========
+$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:503: CoverageWarning: Module src/_time_machine.c was never imported. (module-not-imported)
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
   py$(PYV): OK
   congratulations :)

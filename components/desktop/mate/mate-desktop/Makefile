@@ -22,16 +22,21 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-desktop
-COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	2
 COMPONENT_SUMMARY=	Additional UI API for MATE Desktop
-COMPONENT_ARCHIVE_HASH= sha256:5ed03f7c52d7b7ece49ca1e736aa766aefeb5c639eab3e68c7090c530d02376a
+COMPONENT_ARCHIVE_HASH= sha256:32bb4b792014b391c1e1b8ae9c18a82b4d447650984b4cba7d28e95564964aa2
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += data/iso-codes
+REQUIRED_PACKAGES += developer/build/autoconf-archive
+
+# Add dconf-editor as dependency as otherwise mate-applets crash
+# as this is a non binary dependency it is not detected automatically
+REQUIRED_PACKAGES += gnome/config/dconf/dconf-editor
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/dconf
@@ -39,7 +44,6 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library

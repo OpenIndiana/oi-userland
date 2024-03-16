@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		astroid
-HUMAN_VERSION =			3.0.3
+HUMAN_VERSION =			3.1.0
 COMPONENT_SUMMARY =		astroid - An abstract syntax tree for Python with inference support.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4148645659b08b70d72460ed1921158027a9e53ae8b7234149b1400eddacbb93
+	sha256:ac248253bfa4bd924a0de213707e7ebeeb3138abeb48d798784ead1e56d419d4
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 

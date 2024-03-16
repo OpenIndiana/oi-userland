@@ -19,12 +19,11 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::DMARC
-HUMAN_VERSION =			1.20230215
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.20240314
 COMPONENT_SUMMARY =		Mail::DMARC - Perl implementation of DMARC
-COMPONENT_CPAN_AUTHOR =		MBRADSHAW
+COMPONENT_CPAN_AUTHOR =		MSIMERSON
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:57dcf54759cb92448e56e9141340f61344274c58d9dd65aa90aa9ccf0e7eb903
+	sha256:2cf366f87da287cf6f612d1dccbcf54417faa3c4e45295f5547279bd26593d2c
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -64,6 +63,7 @@ PERL_REQUIRED_PACKAGES += library/perl-5/test-file-sharedir
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-libxml
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns-resolver-mock
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-file-sharedir
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-output

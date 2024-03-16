@@ -19,13 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python-dateutil
-HUMAN_VERSION =			2.8.2
+HUMAN_VERSION =			2.9.0.post0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		python-dateutil - Extensions to the standard Python datetime module
 COMPONENT_PROJECT_URL =		https://github.com/dateutil/dateutil
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4c/c4/13b4776ea2d76c115c1d1b84579f3764ee6d57204f6be27119f13a61d0a9/python-dateutil-2.8.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86
+	sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,3 +44,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/six
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv

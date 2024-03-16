@@ -13,16 +13,17 @@
 #
 BUILD_BITS= 64
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dav1d
-COMPONENT_VERSION=      1.3.0
+COMPONENT_VERSION=      1.4.0
 COMPONENT_SUMMARY=      A fast, cross-platform AV1 decoder
 COMPONENT_PROJECT_URL=  https://code.videolan.org/videolan/dav1d
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:1b3e75433dd69eb88ff3190ed1b1707ca5b9f43260b6348c551455c885eaab3a
+COMPONENT_ARCHIVE_HASH= sha256:0b6d484fc3d20541a21403812499530b72875dee0ec88f682cb1d73943dfc156
 COMPONENT_FMRI=         codec/dav1d
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=      BSD 2-Clause Simplified License
@@ -32,23 +33,8 @@ include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 # We need XPG6MODE for clock_gettime():
-CFLAGS += $(CPP_XPG6MODE)
+CFLAGS += $(XPG6MODE)
 CONFIGURE_OPTIONS += -Denable_asm=true
-
-unexport SHELLOPTS
-# (first) delete the timing information from any line
-# delete the "exit status N", it can cause issues too
-# print lines that start with " N/NNN"
-# print everything between "^Ok:" and "^Timeout:"
-# delete the ninja log-related stuff at the end
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-	'-e "s/[ 	]*exit status [0-9][0-9]*//" ' \
-	'-e "/^[ 	]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-	'-e "/^Summary of/p" ' \
-	'-e "/^Ok:/,/^Timeout:/p" ' \
-	'-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
 
 # build requirement
 REQUIRED_PACKAGES += developer/assembler/nasm

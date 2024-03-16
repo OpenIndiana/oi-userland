@@ -1,0 +1,84 @@
+--- hpn-ssh-hpn-18.3.1/auth-pam.c.orig
++++ hpn-ssh-hpn-18.3.1/auth-pam.c
+@@ -1281,11 +1281,13 @@
+ 	free(env);
+ }
+ 
++#ifndef PAM_BUGFIX
+ /*
+  * "Blind" conversation function for password authentication.  Assumes that
+  * echo-off prompts are for the password and stores messages for later
+  * display.
+  */
++#endif
+ static int
+ sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
+     struct pam_response **resp, void *data)
+@@ -1307,12 +1309,24 @@
+ 	for (i = 0; i < n; ++i) {
+ 		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
+ 		case PAM_PROMPT_ECHO_OFF:
++#ifdef PAM_BUGFIX
++			/*
++			 * PAM conversation function for the password userauth
++			 * method (non-interactive) really cannot do any
++			 * prompting.  We set the PAM_AUTHTOK item in
++			 * sshpam_auth_passwd()to avoid conversation. If some
++			 * modules still try to converse, then the password
++			 * userauth will fail.
++			 */
++			goto fail;
++#else
+ 			if (sshpam_password == NULL)
+ 				goto fail;
+ 			if ((reply[i].resp = strdup(sshpam_password)) == NULL)
+ 				goto fail;
+ 			reply[i].resp_retcode = PAM_SUCCESS;
+ 			break;
++#endif
+ 		case PAM_ERROR_MSG:
+ 		case PAM_TEXT_INFO:
+ 			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
+@@ -1349,6 +1363,9 @@
+ int
+ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
+ {
++#ifdef PAM_BUGFIX
++	int set_item_rtn;
++#endif
+ 	int flags = (options.permit_empty_passwd == 0 ?
+ 	    PAM_DISALLOW_NULL_AUTHTOK : 0);
+ 	char *fake = NULL;
+@@ -1369,6 +1386,15 @@
+ 	    options.permit_root_login != PERMIT_YES))
+ 		sshpam_password = fake = fake_password(password);
+ 
++#ifdef PAM_BUGFIX
++	sshpam_err = pam_set_item(sshpam_handle, PAM_AUTHTOK, password);
++	if (sshpam_err != PAM_SUCCESS) {
++		debug("PAM: %s: failed to set PAM_AUTHTOK: %s", __func__,
++		    pam_strerror(sshpam_handle, sshpam_err));
++		return 0;
++	}
++#endif
++
+ 	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
+ 	    (const void *)&passwd_conv);
+ 	if (sshpam_err != PAM_SUCCESS)
+@@ -1380,6 +1406,16 @@
+ 	free(fake);
+ 	if (sshpam_err == PAM_MAXTRIES)
+ 		sshpam_set_maxtries_reached(1);
++
++#ifdef PAM_BUGFIX
++	set_item_rtn = pam_set_item(sshpam_handle, PAM_AUTHTOK, NULL);
++	if (set_item_rtn != PAM_SUCCESS) {
++		debug("PAM: %s: failed to set PAM_AUTHTOK: %s", __func__,
++		    pam_strerror(sshpam_handle, set_item_rtn));
++		return 0;
++	}
++#endif
++
+ 	if (sshpam_err == PAM_SUCCESS && authctxt->valid) {
+ 		debug("PAM: password authentication accepted for %.100s",
+ 		    authctxt->user);

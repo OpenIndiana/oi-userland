@@ -1,16 +1,18 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
-py$(PYV): remove tox env folder .tox/py$(PYV)
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 44 items
+collecting ... collected 53 items
 
-::project PASSED
+.::project PASSED
+.::project PASSED
+conftest.py::mypy PASSED
+conftest.py::mypy-status PASSED
+docs/conf.py::mypy PASSED
+tempora/__init__.py::mypy PASSED
 tempora/__init__.py::tempora._Saved_NS PASSED
 tempora/__init__.py::tempora._prorated_values PASSED
 tempora/__init__.py::tempora.calculate_prorated_values PASSED
@@ -23,14 +25,17 @@ tempora/__init__.py::tempora.get_period_seconds PASSED
 tempora/__init__.py::tempora.gregorian_date PASSED
 tempora/__init__.py::tempora.parse_timedelta PASSED
 tempora/__init__.py::tempora.strftime PASSED
+tempora/schedule.py::mypy PASSED
 tempora/schedule.py::tempora.schedule PASSED
 tempora/schedule.py::tempora.schedule.PeriodicCommandFixedDelay.at_time PASSED
 tempora/schedule.py::tempora.schedule.PeriodicCommandFixedDelay.daily_at PASSED
+tempora/timing.py::mypy PASSED
 tempora/timing.py::tempora.timing.BackoffDelay PASSED
 tempora/timing.py::tempora.timing.IntervalGovernor PASSED
 tempora/timing.py::tempora.timing.Stopwatch PASSED
 tempora/timing.py::tempora.timing.Timer PASSED
 tempora/timing.py::tempora.timing.Timer._accept PASSED
+tempora/utc.py::mypy PASSED
 tempora/utc.py::tempora.utc PASSED
 tests/test_schedule.py::TestCommands::test_command_at_noon PASSED
 tests/test_schedule.py::TestCommands::test_command_at_noon_distant_local[-14-10] PASSED
@@ -48,12 +53,17 @@ tests/test_schedule.py::TestScheduler::test_periodic_command PASSED
 tests/test_schedule.py::TestTimezones::test_alternate_timezone_east PASSED
 tests/test_schedule.py::TestTimezones::test_alternate_timezone_west PASSED
 tests/test_schedule.py::TestTimezones::test_daylight_savings PASSED
+tests/test_schedule.py::mypy PASSED
 tests/test_schedule.py::test_delayed_command_order PASSED
 tests/test_schedule.py::test_periodic_command_delay PASSED
 tests/test_schedule.py::test_periodic_command_fixed_delay PASSED
+tests/test_timing.py::mypy PASSED
 tests/test_timing.py::test_IntervalGovernor PASSED
 tests/test_timing.py::test_Stopwatch_timezone_change PASSED
 
-======== 43 passed ========
+===================================== mypy =====================================
+
+Success: no issues found in 8 source files
+======== 53 passed ========
   py$(PYV): OK
   congratulations :)

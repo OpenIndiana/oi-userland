@@ -21,7 +21,7 @@
 
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2022, 2023 Friedrich Kink
+# Copyright (c) 2022, 2023, 2024 Friedrich Kink
 #
 
 OPENSSL_VERSION=	3.1
@@ -30,11 +30,11 @@ BUILD_STYLE=		justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sendmail
-COMPONENT_VERSION=      8.17.2
+COMPONENT_VERSION=      8.18.1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  ftp://ftp.sendmail.org/pub/sendmail/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:90f5ae74c35a84808861933ba094201b901b70c6b2903684dcf39bdae8a5a1a2
+COMPONENT_ARCHIVE_HASH= sha256:cbf1f309c38e4806f7cf3ead24260f17d1fe8fb63256d13edb3cdd1a098f0770
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk

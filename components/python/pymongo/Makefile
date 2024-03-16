@@ -19,34 +19,31 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.6.1
+HUMAN_VERSION =			4.6.2
 COMPONENT_SUMMARY =		pymongo - Python driver for MongoDB <http://www.mongodb.org>
 COMPONENT_PROJECT_URL =		http://github.com/mongodb/mongo-python-driver
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/mongodb/mongo-python-driver/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1e1473570a90686e06a089f914546507c777f6f2c73f742f0056fd89f1a5ec96
+	sha256:8d520a89dba340c167614ad1f37a902a4904a7194f35a989694d63cac13eae47
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # Github tarball use different source directory than sdist
 COMPONENT_SRC =		mongo-python-driver-$(HUMAN_VERSION)
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# pymongo --> mockupdb ==> pymongo
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
-
 include $(WS_MAKE_RULES)/common.mk
+
+# Normalize pointer
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(traceback object at \)0x[a-f0-9]\{12\}>/\1\$$(POINTER)>/g'"
+# The order of items in the list is random
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(Must be one of (\)[^)]\{1,\})/\1LIST)/g'"
 
 # For testing the svc:/application/database/mongodb-44:default service must be
 # online.
+
+# Manually added test dependencies
+TEST_REQUIRED_PACKAGES += service/database/mongodb-44
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/dnspython

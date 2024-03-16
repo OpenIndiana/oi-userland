@@ -1,0 +1,313 @@
+--- caja-1.28.0/src/file-manager/caja-directory-view-ui.xml.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/file-manager/caja-directory-view-ui.xml	2024-02-26 08:42:41.083540685 +0100
+@@ -71,6 +71,9 @@
+ 			<menuitem name="Duplicate" action="Duplicate"/>
+ 			<menuitem name="Create Link" action="Create Link"/>
+ 			<menuitem name="Rename" action="Rename"/>
++			<menuitem name="Restore to" action="Restore to"/>
++			<menuitem name="Snapshot now" action="Snap Now"/>
++			<menuitem name="Scanning...." action="View Snap"/>
+ 			<menu action="CopyToMenu">
+ 				<menuitem name="Copy to next pane" action="Copy to next pane"/>
+ 				<menuitem name="Copy to Home" action="Copy to Home"/>
+@@ -168,6 +171,9 @@
+ 	<placeholder name="File Actions">
+ 		<menuitem name="Create Link" action="Create Link"/>
+ 		<menuitem name="Rename" action="Rename"/>
++		<menuitem name="Restore to" action="Restore to"/>
++		<menuitem name="Snapshot now" action="Snap Now"/>
++		<menuitem name="Scanning...." action="View Snap"/>
+ 		<menu action="CopyToMenu">
+ 			<menuitem name="Copy to next pane" action="Copy to next pane"/>
+ 			<menuitem name="Copy to Home" action="Copy to Home"/>
+@@ -218,6 +224,7 @@
+ 	</placeholder>
+ 	<separator name="Location After Clipboard Separator"/>
+ 	<placeholder name="Dangerous File Actions">
++		<menuitem name="Restore" action="Restore"/>
+ 		<menuitem name="Trash" action="LocationTrash"/>
+ 		<menuitem name="Delete" action="LocationDelete"/>
+ 		<menuitem name="Restore From Trash" action="LocationRestoreFromTrash"/>
+--- caja-1.28.0/src/file-manager/fm-actions.h.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/file-manager/fm-actions.h	2024-02-26 08:42:41.083717777 +0100
+@@ -58,6 +58,9 @@
+ #define FM_ACTION_NEW_LAUNCHER "New Launcher"
+ #define FM_ACTION_NEW_LAUNCHER_DESKTOP "New Launcher Desktop"
+ #define FM_ACTION_RENAME "Rename"
++#define FM_ACTION_RESTORE_TO "Restore to"
++#define FM_ACTION_HAS_SNAPSHOT "View Snap"
++#define FM_ACTION_SNAP_NOW "Snap Now"
+ #define FM_ACTION_DUPLICATE "Duplicate"
+ #define FM_ACTION_CREATE_LINK "Create Link"
+ #define FM_ACTION_SELECT_ALL "Select All"
+--- caja-1.28.0/src/file-manager/fm-directory-view.c.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/file-manager/fm-directory-view.c	2024-02-26 08:42:41.084993364 +0100
+@@ -1002,6 +1002,77 @@
+ 	return FALSE;
+ }
+ 
++ static void
++action_snap_now (GtkAction *action,
++         gpointer callback_data)
++{
++  FMDirectoryView *view = FM_DIRECTORY_VIEW (callback_data);
++  GList *selection = fm_directory_view_get_selection_for_file_transfer (view);
++  GFile *file = caja_file_get_location (CAJA_FILE (selection->data));
++  char *path = g_file_get_path (file);
++  char *fs = ts_get_zfs_filesystem (path);
++  char *cmd = g_strdup_printf ("/usr/lib/time-slider-snapshot '%s' '%s'", path, fs);
++  mate_gdk_spawn_command_line_on_screen (gtk_widget_get_screen (GTK_WIDGET (callback_data)),
++                    cmd, NULL);
++  
++  g_free (cmd);
++  g_free (fs);
++  g_free (path);
++  g_object_unref (file);
++}
++
++static void
++action_restore_to_desktop_callback (GtkAction *action,
++                    gpointer callback_data)
++{
++  GList *locations = NULL;
++  GList *node;
++  FMDirectoryView *view = FM_DIRECTORY_VIEW (callback_data);
++  char *desktop_directory = caja_get_desktop_directory_uri();
++  GList *selection = fm_directory_view_get_selection_for_file_transfer (view);
++
++  if (selection == NULL)
++    return;
++
++  if (desktop_directory == NULL)
++    return;
++
++
++  for (node = selection; node != NULL; node = node->next) 
++    {        
++      locations = g_list_prepend (locations,
++                  caja_file_get_uri ((CajaFile *) node->data));
++    }
++  
++  fm_directory_view_move_copy_items (locations, NULL, desktop_directory,
++                     GDK_ACTION_COPY, 0, 0, view);
++
++  caja_file_list_free (selection);
++}
++
++static void
++action_show_snapshot_versions_callback (GtkAction *action,
++                                        gpointer callback_data)
++{
++  FMDirectoryView *view = FM_DIRECTORY_VIEW (callback_data);
++  GList *selection = fm_directory_view_get_selection_for_file_transfer (view);
++  GFile *file = caja_file_get_location (CAJA_FILE (selection->data));
++  char *dir = caja_file_get_snapshot_dir (CAJA_FILE (selection->data));
++  char *file_path = g_file_get_path (file);
++  char real_file_path [PATH_MAX + 1];
++  if (ts_realpath (file_path, real_file_path))
++    {
++      char *cmd = g_strdup_printf ("/usr/lib/time-slider-version '%s' '%s'", dir,
++                                   real_file_path);
++      mate_gdk_spawn_command_line_on_screen (gtk_widget_get_screen (GTK_WIDGET (callback_data)),
++                                        cmd, NULL);
++      g_free (cmd);
++    }
++
++  g_free (file_path);
++  g_object_unref (file);
++}
++
+ static void
+ action_trash_callback (GtkAction *action,
+ 		       gpointer callback_data)
+@@ -1686,20 +1757,20 @@
+ 		scripts_directory_uri = g_filename_to_uri(scripts_directory_path, NULL, NULL);
+ 		scripts_directory_uri_length = strlen(scripts_directory_uri);
+ 
+-		/* Support for GNOME Nautilus scripts
++		/* Support for GNOME Caja scripts
+ 		 */
+-		char* nautilus_scripts_path = g_build_filename(g_get_home_dir(), ".gnome2", "nautilus-scripts", NULL);
++		char* caja_scripts_path = g_build_filename(g_get_home_dir(), ".gnome2", "caja-scripts", NULL);
+ 
+-		if (g_file_test(nautilus_scripts_path, G_FILE_TEST_IS_DIR) == TRUE)
++		if (g_file_test(caja_scripts_path, G_FILE_TEST_IS_DIR) == TRUE)
+ 		{
+-			char* nautilus_syslink = g_build_filename(g_get_user_config_dir(), "caja", "scripts", "nautilus", NULL);
++			char* caja_syslink = g_build_filename(g_get_user_config_dir(), "caja", "scripts", "caja", NULL);
+ 			/* If link already exists, or also any other kind of file/dir with same name, ignore it */
+-			if (g_file_test(nautilus_syslink, G_FILE_TEST_IS_SYMLINK) == FALSE &&
+-				g_file_test(nautilus_syslink, G_FILE_TEST_EXISTS) == FALSE &&
+-				g_file_test(nautilus_syslink, G_FILE_TEST_IS_DIR) == FALSE)
++			if (g_file_test(caja_syslink, G_FILE_TEST_IS_SYMLINK) == FALSE &&
++				g_file_test(caja_syslink, G_FILE_TEST_EXISTS) == FALSE &&
++				g_file_test(caja_syslink, G_FILE_TEST_IS_DIR) == FALSE)
+ 			{
+ 				/* Check if we need to create a link */
+-				GDir* dir = g_dir_open(nautilus_scripts_path, 0, NULL);
++				GDir* dir = g_dir_open(caja_scripts_path, 0, NULL);
+ 
+ 				if (dir)
+ 				{
+@@ -1713,20 +1784,20 @@
+ 
+ 					if (count > 0)
+ 					{
+-						/* Create link to nautilus folder */
+-						int res = symlink (nautilus_scripts_path, nautilus_syslink);
++						/* Create link to caja folder */
++						int res = symlink (caja_scripts_path, caja_syslink);
+ 						if (res != 0)
+-							g_warning ("Can't create symlink to nautilus scripts folder");
++							g_warning ("Can't create symlink to caja scripts folder");
+ 					}
+ 
+ 					g_dir_close(dir);
+ 				}
+ 			}
+ 
+-			g_free(nautilus_syslink);
++			g_free(caja_syslink);
+ 		}
+ 
+-		g_free(nautilus_scripts_path);
++		g_free(caja_scripts_path);
+ 	}
+ 
+ 	g_free(scripts_directory_path);
+@@ -7473,6 +7544,18 @@
+   /* label, accelerator */       "RenameSelectAll", "<shift>F2",
+   /* tooltip */                  NULL,
+                                  G_CALLBACK (action_rename_select_all_callback) },
++  /* name, icon name */         { "Restore to", NULL,
++  /* label, accelerator */       N_("Restore to Desktop"), NULL,
++  /* tooltip */                  N_("Move each selected item to the Desktop"),
++                                 G_CALLBACK (action_restore_to_desktop_callback) },
++  /* name, stock id */         { "View Snap", NULL,
++  /* label, accelerator */       N_("View versions"), NULL,
++  /* tooltip */                  N_("View the versions of this file available in ZFS snapshots"),
++                                 G_CALLBACK (action_show_snapshot_versions_callback) },
++  /* name, stock id */         { "Snap Now", NULL,
++  /* label, accelerator */       N_("Snapshot now"), NULL,
++  /* tooltip */                  N_("Take a ZFS snapshot of this directory now"),
++                                 G_CALLBACK (action_snap_now) },
+   /* name, icon name */        { "Trash", NULL,
+   /* label, accelerator */       N_("Mo_ve to Trash"), NULL,
+   /* tooltip */                  N_("Move each selected item to the Trash"),
+@@ -8834,6 +8917,40 @@
+ 	return FALSE;
+ }
+ 
++typedef struct {
++  CajaFile              *file;
++  GCancellable              *cancel;
++  GtkAction                 *action;
++} HasSnapshotData;
++
++static void
++has_snapshot_ready_callback (gpointer user_data)
++{
++  GValue name = {0,};
++  HasSnapshotData *data = (HasSnapshotData*) user_data;
++  HasSnapshotResult result = caja_file_has_snapshot_version (data->file);
++
++  switch (result)
++    {
++    case UNKNOWN_STATE:
++    case NO:
++      gtk_action_set_sensitive (data->action, FALSE);
++      g_value_init (&name, G_TYPE_STRING);
++      /* SUN_BRANDING */
++      g_value_set_static_string (&name, _("No versions"));
++      g_object_set_property (G_OBJECT (data->action), "label", &name);
++      break;
++    case YES:
++      gtk_action_set_sensitive (data->action, TRUE);
++      g_value_init (&name, G_TYPE_STRING);
++      /* SUN_BRANDING */
++      g_value_set_static_string (&name, _("Explore versions"));
++      g_object_set_property (G_OBJECT (data->action), "label", &name);
++      break;
++    }
++  g_free (data);
++ }
++
+ static void
+ real_update_menus (FMDirectoryView *view)
+ {
+@@ -9211,6 +9328,75 @@
+ 	gtk_action_set_sensitive (action, can_copy_files);
+ 	G_GNUC_END_IGNORE_DEPRECATIONS;
+ 
++        action = gtk_action_group_get_action (view->details->dir_action_group,
++                                              FM_ACTION_RESTORE_TO);
++        gtk_action_set_visible (action, can_copy_files &&
++                                  caja_directory_is_in_snapshot (view->details->model));
++ 
++        action = gtk_action_group_get_action (view->details->dir_action_group,
++                                              FM_ACTION_SNAP_NOW);
++ 
++        if (selection_count == 1 && caja_file_is_directory (CAJA_FILE (selection->data)))
++            {
++              GFile *file = caja_file_get_location (CAJA_FILE (selection->data));
++              char *path = g_file_get_path (file);
++              char *fs = ts_get_zfs_filesystem (path);
++              if (fs)
++                {
++                  gtk_action_set_visible (action, TRUE);
++                  g_free (fs);
++                }
++              g_free (path);
++              g_object_unref (file);
++            }
++        else
++          gtk_action_set_visible (action, FALSE);
++ 
++        action = gtk_action_group_get_action (view->details->dir_action_group,
++                                              FM_ACTION_HAS_SNAPSHOT);
++   if (selection_count == 1)
++     {
++       GValue name = { 0, };
++       int result = caja_file_has_snapshot_version (CAJA_FILE (selection->data));
++ 
++       switch (result)
++         {
++         case NO:
++           gtk_action_set_visible (action, FALSE);
++           break;
++         case YES:
++           gtk_action_set_visible (action, TRUE);
++           gtk_action_set_sensitive (action, TRUE);
++           g_value_init (&name,G_TYPE_STRING);
++           /* SUN_BRANDING */
++           g_value_set_static_string (&name, _("Explore versions"));
++           g_object_set_property (G_OBJECT (action), "label", &name);
++           break;
++         case UNKNOWN_STATE:
++           gtk_action_set_visible (action, TRUE);
++           gtk_action_set_sensitive (action, FALSE);
++           g_value_init (&name,G_TYPE_STRING);
++           /* SUN_BRANDING */
++           g_value_set_static_string (&name, _("Scanning for versions"));
++           g_object_set_property (G_OBJECT (action), "label", &name);
++           break;
++         }
++       if (result == UNKNOWN_STATE)
++         {
++           HasSnapshotData *data = g_new0 (HasSnapshotData, 1);
++           data->action = action;
++           data->file = CAJA_FILE (selection->data);
++           data->cancel = g_cancellable_new ();
++           caja_file_get_snapshot_version (CAJA_FILE (selection->data),
++                                               has_snapshot_ready_callback,
++                                               data->cancel,
++                                               data);
++         }
++     }
++   else
++     gtk_action_set_visible (action, FALSE);
++
++
+ 	real_update_paste_menu (view, selection, selection_count);
+ 
+ 	disable_command_line = g_settings_get_boolean (mate_lockdown_preferences, CAJA_PREFERENCES_LOCKDOWN_COMMAND_LINE);

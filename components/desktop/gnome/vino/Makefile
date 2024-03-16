@@ -12,14 +12,14 @@
 # Copyright (c) 2017 Alexander Pyhalov
 #
 
-BUILD_BITS=		64
+BUILD_BITS= 64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vino
 COMPONENT_MJR_VERSION=	3.22
 COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=	Vino is the GNOME desktop sharing server
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Vino
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,15 +41,15 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS +=	--enable-ipv6=yes
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--with-gcrypt
-CONFIGURE_OPTIONS +=	--with-gnutls
-CONFIGURE_OPTIONS +=	--with-jpeg
-CONFIGURE_OPTIONS +=	--with-pic
-CONFIGURE_OPTIONS +=	--with-secret
-CONFIGURE_OPTIONS +=	--with-x
-CONFIGURE_OPTIONS +=	--with-zlib
+CONFIGURE_OPTIONS += --enable-ipv6=yes
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-gcrypt
+CONFIGURE_OPTIONS += --with-gnutls
+CONFIGURE_OPTIONS += --with-jpeg
+CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += --with-secret
+CONFIGURE_OPTIONS += --with-x
+CONFIGURE_OPTIONS += --with-zlib
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)

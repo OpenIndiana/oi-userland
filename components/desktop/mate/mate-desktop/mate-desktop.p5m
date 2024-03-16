@@ -12,7 +12,7 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2020 Michal Nowak
-# Copyright 2023 Andreas Wacknitz
+# Copyright 2024 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -27,11 +27,14 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend type=require fmri=gnome/theme/background/os-backgrounds
 
+# Add dconf-editor as dependency as otherwise mate-applets crash
+# as this is a non binary dependency it is not detected automatically
+depend type=require fmri=gnome/config/dconf/dconf-editor
+
 file path=usr/bin/mate-about
 file path=usr/bin/mate-color-select
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-bg-crossfade.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-bg.h
-file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-colorbutton.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-colorsel.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-colorseldialog.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-dconf.h
@@ -41,6 +44,7 @@ file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-desktop-utils.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-desktop.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-gsettings.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-hsv.h
+file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-image-menu-item.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-languages.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-rr-config.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-rr-labeler.h
@@ -109,7 +113,6 @@ file path=usr/share/locale/el/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/en_AU/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/en_CA/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/en_GB/LC_MESSAGES/mate-desktop.mo
-file path=usr/share/locale/en_US/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/eo/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/es/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/es_AR/LC_MESSAGES/mate-desktop.mo
@@ -205,4 +208,4 @@ file path=usr/share/locale/zu/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/man/man1/mate-about.1
 file path=usr/share/man/man1/mate-color-select.1
 file path=usr/share/mate-about/mate-version.xml
-file path=usr/share/xdg-desktop-portal/mate-portals.conf preserve=yes
+file path=usr/share/xdg-desktop-portal/mate-portals.conf

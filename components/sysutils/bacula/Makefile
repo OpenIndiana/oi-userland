@@ -15,15 +15,15 @@
 # Copyright 2022 Friedrich Kink
 #
 
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bacula
-COMPONENT_VERSION=      13.0.3
+COMPONENT_VERSION=      13.0.4
 COMPONENT_SUMMARY=      Bacula (network backup solution)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0949c32be1090585e88e4c01d828002e87603136d87c598a29dff42bb3ed2a40
+COMPONENT_ARCHIVE_HASH= sha256:14e4c62d381a1008422e3fd14aad19b2614103d89078926d7337f850e3b473dc
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/bacula/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.bacula.org
 COMPONENT_LICENSE=      AGPLv3 with exceptions
@@ -42,13 +42,13 @@ COMPONENT_POST_CONFIGURE_ACTION = ($(GSED) -i -e 's:/usr/mariadb/10.6/lib/mysql/
 
 PATH= $(QT5_BINDIR):$(MYSQL_BINDIR):$(PG_BINDIR):$(PATH.illumos)
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc/bacula
-CONFIGURE_OPTIONS+= --with-scriptdir=/etc/bacula/scripts
-CONFIGURE_OPTIONS+= --with-working-dir=/var/bacula
-CONFIGURE_OPTIONS+= --sharedstatedir=/var/bacula
-CONFIGURE_OPTIONS+= --localstatedir=/var/bacula
-CONFIGURE_OPTIONS+= --with-logdir=/var/bacula
-CONFIGURE_OPTIONS+= --with-pid-dir=/var/bacula
+CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)/bacula
+CONFIGURE_OPTIONS+= --with-scriptdir=$(ETCDIR)/bacula/scripts
+CONFIGURE_OPTIONS+= --with-working-dir=$(VARDIR)/bacula
+CONFIGURE_OPTIONS+= --sharedstatedir=$(VARDIR)/bacula
+CONFIGURE_OPTIONS+= --localstatedir=$(VARDIR)/bacula
+CONFIGURE_OPTIONS+= --with-logdir=$(VARDIR)/bacula
+CONFIGURE_OPTIONS+= --with-pid-dir=$(VARDIR)/bacula
 CONFIGURE_OPTIONS+= --with-smtp-host=localhost
 CONFIGURE_OPTIONS+= --with-sqlite3
 CONFIGURE_OPTIONS+= --with-postgresql=$(PG_HOME)
@@ -80,12 +80,12 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

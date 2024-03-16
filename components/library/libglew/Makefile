@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glew
 COMPONENT_VERSION=	1.13.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The OpenGL Extension Wrangler Library
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_FMRI=		x11/library/lib$(COMPONENT_NAME)

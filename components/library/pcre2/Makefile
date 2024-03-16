@@ -28,13 +28,12 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre2
-COMPONENT_VERSION=	10.42
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	10.43
 COMPONENT_SUMMARY=	Version 2 of Perl-Compatible Regular Expressions
 COMPONENT_PROJECT_URL=  https://pcre.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:8d36cd8cb6ea2a4c2bb358ff6411b0c788633a2a45dabbf1aeb4b701d1b5e840
+COMPONENT_ARCHIVE_HASH= sha256:e2a53984ff0b07dfdb5ae4486bbb9b21cca8e7df2434096cc9bf1b728c350bcb
 COMPONENT_ARCHIVE_URL=  https://github.com/PhilipHazel/pcre2/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_FMRI=		library/pcre2
@@ -96,14 +95,6 @@ COMPONENT_BUILD_ENV += "MAKE=$(GMAKE)"
 COMPONENT_BUILD_ARGS +=	-e
 
 COMPONENT_INSTALL_ARGS += "INSTALL=$(INSTALL)"
-
-# Needed for "gmake test" to work successfully.
-# If SHELLOPTS is exported (as it is by the userland makefiles),
-# then all shell options get exported to child invocations of bash,
-# which results in test failures due to nounset and xtrace being
-# set unexpectedly, and errors such as "$1: unbound variable" and
-# diffs failing due to script tracing in output files.
-unexport SHELLOPTS
 
 # Get correct libpcre2-8.so.0 from the build area.
 TEST_LIBPATH.32 = $(PROTOUSRLIBDIR)

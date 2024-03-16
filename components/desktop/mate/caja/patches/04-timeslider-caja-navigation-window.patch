@@ -1,0 +1,183 @@
+--- caja-1.28.0/src/caja-navigation-window-ui.xml.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/caja-navigation-window-ui.xml	2024-02-26 08:42:41.080238291 +0100
+@@ -63,6 +63,7 @@
+ 	<toolitem name="Up" action="Up"/>
+ 	<toolitem name="Stop" action="Stop"/>
+ 	<toolitem name="Reload" action="Reload"/>
++	<toolitem name="Restore" action="Restore"/>
+ 	<separator/>
+ 	<toolitem name="Home" action="Home"/>
+ 	<toolitem name="Computer" action="Go to Computer"/>
+--- caja-1.28.0/src/caja-navigation-window.h.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/caja-navigation-window.h	2024-02-26 09:27:56.105335195 +0100
+@@ -67,10 +67,18 @@
+     /** UI stuff **/
+     CajaSidePane *sidebar;
+ 
++    GtkWidget    *zfs_bar;
++
+     /* Current views stuff */
+     GList *sidebar_panels;
+ };
+ 
++typedef enum {
++  RESTORE_NORMAL,
++  RESTORE_SEARCH,
++  RESTORE_NO
++} CajaNavigationRestoreIconType;
++
+ struct _CajaNavigationWindowClass
+ {
+     CajaWindowClass parent_spot;
+@@ -91,6 +99,9 @@
+ void     caja_navigation_window_hide_sidebar         (CajaNavigationWindow *window);
+ void     caja_navigation_window_show_sidebar         (CajaNavigationWindow *window);
+ gboolean caja_navigation_window_sidebar_showing      (CajaNavigationWindow *window);
++gboolean Caja_navigation_window_zfs_bar_showing      (CajaNavigationWindow *window);
++void     Caja_navigation_window_set_restore_icon     (CajaNavigationWindow* window,
++                                                      CajaNavigationRestoreIconType type);
+ void     caja_navigation_window_add_sidebar_panel    (CajaNavigationWindow *window,
+         CajaSidebar          *sidebar_panel);
+ void     caja_navigation_window_remove_sidebar_panel (CajaNavigationWindow *window,
+--- caja-1.28.0/src/caja-navigation-window.c.orig	2024-02-20 01:30:36.000000000 +0100
++++ caja-1.28.0/src/caja-navigation-window.c	2024-02-26 08:42:41.080677444 +0100
+@@ -71,6 +71,7 @@
+ #include "caja-notebook.h"
+ #include "caja-window-manage-views.h"
+ #include "caja-navigation-window-pane.h"
++#include "caja-zfs-bar.h"
+ 
+ #define MAX_TITLE_LENGTH 180
+ 
+@@ -107,6 +108,13 @@
+ };
+ 
+ static void
++restore_pref_changed (CajaWindow *window)
++{
++    g_assert (CAJA_IS_WINDOW (window));
++    caja_window_reload (window, FALSE);
++}
++
++static void
+ caja_navigation_window_init (CajaNavigationWindow *window)
+ {
+     GtkUIManager *ui_manager;
+@@ -167,6 +175,16 @@
+ 
+     ui_manager = caja_window_get_ui_manager (CAJA_WINDOW (window));
+     toolbar = gtk_ui_manager_get_widget (ui_manager, "/Toolbar");
++
++    /* add custom icon */
++    caja_navigation_window_set_restore_icon (window, RESTORE_SEARCH);
++
++    /* add preference callback */
++    g_signal_connect_swapped (caja_desktop_preferences,
++                              g_strconcat ("changed::", CAJA_PREFERENCES_ENABLE_TIME_SLIDER, NULL),
++                              G_CALLBACK (restore_pref_changed),
++                              (gpointer) window);
++
+     gtk_style_context_add_class (gtk_widget_get_style_context (toolbar), GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
+     window->details->toolbar = toolbar;
+     gtk_widget_set_hexpand (toolbar, TRUE);
+@@ -183,6 +201,12 @@
+     caja_navigation_window_allow_back (window, FALSE);
+     caja_navigation_window_allow_forward (window, FALSE);
+ 
++    window->zfs_bar = caja_zfs_bar_new ();
++    
++    gtk_grid_attach(GTK_GRID (CAJA_WINDOW (window)->details->grid),
++                      window->zfs_bar,
++                      0, 2, 1, 1);
++
+     g_signal_connect_swapped (caja_preferences,
+                               "changed::" CAJA_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,
+                               G_CALLBACK(always_use_location_entry_changed),
+@@ -348,6 +372,59 @@
+     }
+ }
+ 
++void
++caja_navigation_window_set_restore_icon (CajaNavigationWindow* window,
++                                             CajaNavigationRestoreIconType type)
++{
++    static gboolean init = 0;
++    static GdkPixbuf *normal = NULL;
++    static GdkPixbuf *search = NULL;
++    static GdkPixbuf *no = NULL;
++    GdkPixbuf *pb = NULL;
++    GtkWidget *image = NULL;
++    GtkAction* action = gtk_ui_manager_get_action (caja_window_get_ui_manager (CAJA_WINDOW (window)), "/Toolbar/Restore");
++
++    if (!init)
++    {
++        char *path = caja_pixmap_file ("restore.png");
++        normal = gdk_pixbuf_new_from_file (path, NULL);
++        g_free (path);
++        path = caja_pixmap_file ("restore-search.png");
++        search = gdk_pixbuf_new_from_file (path, NULL);
++        g_free (path);
++        path = caja_pixmap_file ("restore-no.png");
++        no = gdk_pixbuf_new_from_file (path, NULL);
++        g_free (path);
++        init = TRUE;
++    }
++
++    switch (type)
++    {
++      case RESTORE_NORMAL :
++        pb = normal;
++        break;
++      case RESTORE_SEARCH:
++        pb = search;
++        break;
++      case RESTORE_NO:
++        pb = no;
++        break;
++    }
++  
++    image = gtk_image_new_from_pixbuf (pb); 
++    g_object_ref (image);
++    gtk_widget_show (image);
++    GSList *tmp = gtk_action_get_proxies (action);
++    for (tmp; tmp ; tmp = tmp->next)
++    {
++        GtkWidget *proxy = (GtkWidget *)tmp->data;
++        if (GTK_IS_TOOL_BUTTON (proxy))
++        {
++            gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (proxy), image);
++        }
++    }
++}
++
+ static void
+ side_pane_close_requested_callback (GtkWidget *widget,
+                                     gpointer user_data)
+@@ -1207,6 +1284,7 @@
+ static void
+ real_window_close (CajaWindow *window)
+ {
++    caja_zfs_bar_cancel_tasks (window);
+     caja_navigation_window_save_geometry (CAJA_NAVIGATION_WINDOW (window));
+ }
+ 
+@@ -1428,6 +1506,19 @@
+     caja_navigation_window_update_split_view_actions_sensitivity (window);
+ }
+ 
++
++gboolean
++caja_navigation_window_zfs_bar_showing (CajaNavigationWindow *window)
++{
++    g_return_val_if_fail (CAJA_IS_NAVIGATION_WINDOW (window), FALSE);
++
++    if (window->zfs_bar != NULL)
++    {
++        return gtk_widget_get_visible(GTK_WIDGET (window->zfs_bar));
++    }
++    return FALSE;
++}
++
+ gboolean
+ caja_navigation_window_split_view_showing (CajaNavigationWindow *window)
+ {

@@ -17,12 +17,13 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=		xlsfonts
-COMPONENT_VERSION=	1.0.7
-COMPONENT_FMRI=		x11/diagnostic/xlsfonts
-COMPONENT_SUMMARY=	xlsfonts - server font list displayer for X
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:7b726945a967b44c35cddee5edd74802907a239ce2e2e515730b8a32c8e50465
+COMPONENT_NAME=         xlsfonts
+COMPONENT_VERSION=      1.0.8
+COMPONENT_SUMMARY=      xlsfonts - server font list displayer for X
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:807f909eace684b866fc63b3e962729c120822a6c96e051ff51cf350b3ffb6cd
+COMPONENT_FMRI=         x11/diagnostic/xlsfonts
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 

@@ -17,12 +17,12 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	2.4.1
+COMPONENT_VERSION=	2.4.2
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 COMPONENT_PROJECT_URL=	https://sbcl.sourceforge.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:da4f9486fad413d3af7abb1b09269325fdb4bff7e7b88f2195ddee743263cf7e
+COMPONENT_ARCHIVE_HASH=	sha256:fc03cb52d12aafe8759e6328450a201bbddf89b17071a4e83f39e80b43ddef0f
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -32,10 +32,10 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
+COMPONENT_ENV  =	PATH="$(PATH)"
 COMPONENT_ENV +=	GNUMAKE=$(GMAKE)
 COMPONENT_ENV +=	CC="$(CC)"
-COMPONENT_BUILD_ARGS  =	--prefix=/usr
+COMPONENT_BUILD_ARGS  =	--prefix=$(USRDIR)
 COMPONENT_BUILD_ARGS +=	--arch=x86-64
 # This is currently --with-sb-thread --with-sb-core-compression
 # --with-sb-xref-internals and :sb-after-xc-core as a build feature.
@@ -55,8 +55,8 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 $(BUILD_DIR)/%/.tested:		$(BUILD_DIR)/%/.installed
 	(cd $(@D)/tests; $(ENV) $(COMPONENT_ENV) BUILD_ROOT=$(PROTO_DIR) /usr/gnu/bin/sh run-tests.sh)
 
-clean::
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+# Pre-installed sbcl is needed to build sbcl
+REQUIRED_PACKAGES += runtime/sbcl
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd

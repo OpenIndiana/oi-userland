@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pre_commit
-HUMAN_VERSION =			3.6.1
+HUMAN_VERSION =			3.6.2
 COMPONENT_SUMMARY =		pre_commit - A framework for managing and maintaining multi-language pre-commit hooks.
 COMPONENT_PROJECT_URL =		https://github.com/pre-commit/pre-commit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c90961d8aa706f75d60935aba09469a6b0bcb8345f127c3fbee4bdc5f114cf4b
+	sha256:c3ef34f463045c88658c5b99f38c1e297abdcc0ff13f98d3370055fbbfabc67e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

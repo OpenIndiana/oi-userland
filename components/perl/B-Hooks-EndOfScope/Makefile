@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		B::Hooks::EndOfScope
-HUMAN_VERSION =			0.26
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.28
 COMPONENT_SUMMARY =		B::Hooks::EndOfScope - Execute code after a scope finished compilation
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:39df2f8c007a754672075f95b90797baebe97ada6d944b197a6352709cb30671
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:edac77a17fc36620c8324cc194ce1fad2f02e9fcbe72d08ad0b2c47f0c7fd8ef
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENCE
 
 include $(WS_MAKE_RULES)/common.mk
@@ -35,3 +34,5 @@ PERL_REQUIRED_PACKAGES += library/perl-5/module-implementation
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-exporter-progressive
 PERL_REQUIRED_PACKAGES += library/perl-5/variable-magic
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-hide
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/variable-magic

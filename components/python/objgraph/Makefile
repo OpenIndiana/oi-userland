@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		objgraph
-HUMAN_VERSION =			3.6.0
+HUMAN_VERSION =			3.6.1
 COMPONENT_SUMMARY =		objgraph - Draws Python object reference graphs with graphviz
 COMPONENT_PROJECT_URL =		https://mg.pov.lt/objgraph/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/80/f0/ecdf52398873ce10746865d1a04b9a0b5929e3f37ce39fb873bd478b74fe/objgraph-3.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:369567c37b4f2f928160b6f6ededcbea8fc7e929831877fd1056c78a900c17d3
+	sha256:fe96c74147bbcaae8665b396e5388bdcc3197deebba4e6381f05202ee5b453a7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,3 +31,4 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools

@@ -14,7 +14,7 @@
 # Copyright 2019, Michal Nowak
 # Copyright 2022, erwinlem
 # Copyright 2022, Daniel Bell
-# Copyright 2023, Friedrich Kink
+# Copyright 2023,2024 Friedrich Kink
 #
 
 BUILD_STYLE= cmake
@@ -23,13 +23,13 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	10.6.16
+COMPONENT_VERSION=	10.6.17
 COMPONENT_MAJOR_VERSION=$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5ef83843e796dcda9aea47b24690ddf6d848f43f43e11f9d9a0cc21c78fbb9cf
+COMPONENT_ARCHIVE_HASH=	sha256:fb41b0702059c046832d60138733acb73e4c0e5a1a0681061709d25591e4b086
 COMPONENT_PROJECT_URL=	https://www.mariadb.org/
-COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/3588628/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/3713563/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	https://dlm.mariadb.com/3588623/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_LICENSE_FILE=	COPYING
@@ -131,6 +131,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	) | $(COMPONENT_TEST_TRANSFORMER) -e '/^Spent /d'"
 # Skipped tests that require debug build could vary
 COMPONENT_TEST_TRANSFORMS += "-e '/\[ skipped \] Requires debug build$$/d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/\[ skipped \] Extra checkpoint 1 after/d'"
 # Because of above the final stat of skipped tests could vary as well
 COMPONENT_TEST_TRANSFORMS += "-e '/^[0-9]\{1,\} tests were skipped/d'"
 

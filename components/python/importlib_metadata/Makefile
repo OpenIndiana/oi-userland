@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_metadata
-HUMAN_VERSION =			7.0.1
+HUMAN_VERSION =			7.0.2
 COMPONENT_SUMMARY =		importlib_metadata - Read metadata from Python packages
 COMPONENT_PROJECT_URL =		https://github.com/python/importlib_metadata
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/90/b4/206081fca69171b4dc1939e77b378a7b87021b0f43ce07439d49d8ac5c84/importlib_metadata-7.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f238736bb06590ae52ac1fab06a3a9ef1d8dce2b7a35b5ab329371d6c8f5d2cc
+	sha256:198f568f3230878cb1b44fbd7975f87906c22336dba2e4a7f05278c281fbd792
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -50,7 +48,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/flufl-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pyfakefs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler

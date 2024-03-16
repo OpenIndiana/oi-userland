@@ -166,7 +166,7 @@ $(foreach pyver, $(PYTHON_VERSIONS), \
     $(eval $(BUILD_DIR)/%-$(pyver)/.tested-and-compared: PYTHON_VERSION=$(pyver)) \
 )
 
-$(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
@@ -191,7 +191,7 @@ $(foreach pyver, $(PYTHON_VERSIONS), \
 )
 
 $(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
-$(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)

@@ -29,6 +29,13 @@ depend fmri=image/library/libjpeg8-turbo type=require
 # Dependency on libjpeg6 with removed docs and symlinks
 depend fmri=image/library/libjpeg6@6.0.2-2020.0.1.1 type=optional
 
+# Ship libjpeg-turbo headers in default locations
+link path=usr/include/jconfig.h      target=libjpeg8-turbo/jconfig.h
+link path=usr/include/jerror.h       target=libjpeg8-turbo/jerror.h
+link path=usr/include/jmorecfg.h     target=libjpeg8-turbo/jmorecfg.h
+link path=usr/include/jpeglib.h      target=libjpeg8-turbo/jpeglib.h
+link path=usr/include/turbojpeg.h    target=libjpeg8-turbo/turbojpeg.h
+
 # Only shipped by libjpeg-turbo
 file path=usr/share/doc/libjpeg-turbo/LICENSE.md
 file path=usr/share/doc/libjpeg-turbo/README.ijg
@@ -64,3 +71,20 @@ link path=usr/lib/$(MACH64)/pkgconfig/libjpeg.pc \
 	target=../../libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libjpeg.pc
 link path=usr/lib/$(MACH64)/pkgconfig/libturbojpeg.pc \
 	target=../../libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libturbojpeg.pc
+
+# Add cmake links for cmake detection
+link path=usr/lib/$(MACH64)/cmake/libjpeg-turboConfig.cmake target=../../libjpeg8-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboConfig.cmake
+link path=usr/lib/$(MACH64)/cmake/libjpeg-turboConfigVersion.cmake target=../../libjpeg8-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboConfigVersion.cmake
+link path=usr/lib/$(MACH64)/cmake/libjpeg-turboTargets-release.cmake target=../../libjpeg8-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboTargets-release.cmake
+link path=usr/lib/$(MACH64)/cmake/libjpeg-turboTargets.cmake target=../../libjpeg8-turbo/lib/$(MACH64)/cmake/libjpeg-turbo/libjpeg-turboTargets.cmake
+
+# Add symlinks so libjpeg-turbo can be detected from cmake and non pkgconfig builds
+link path=usr/lib/$(MACH64)/libjpeg.so \
+	target=../libjpeg8-turbo/lib/$(MACH64)/libjpeg.so.8.3.2
+# This links provide proper SONAME links
+link path=usr/lib/$(MACH64)/libjpeg.so.8 \
+	target=../libjpeg8-turbo/lib/$(MACH64)/libjpeg.so.8.3.2
+link path=usr/lib/$(MACH64)/libturbojpeg.so \
+	target=../libjpeg8-turbo/lib/$(MACH64)/libturbojpeg.so.0.3.0
+link path=usr/lib/$(MACH64)/libturbojpeg.so.0 \
+	target=../libjpeg8-turbo/lib/$(MACH64)/libturbojpeg.so.0.3.0

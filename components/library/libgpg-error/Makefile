@@ -28,12 +28,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgpg-error
-COMPONENT_VERSION=	1.47
+COMPONENT_VERSION=	1.48
 COMPONENT_SUMMARY=	GnuPG Error Library
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/libgpg-error/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:9e3c670966b96ecc746c28c2c419541e3bcb787d1a73930f5e5f5e1bcbbb9bdb
+COMPONENT_ARCHIVE_HASH=	sha256:89ce1ae893e122924b858de84dc4f67aae29ffa610ebf668d5aa539045663d6f
 COMPONENT_ARCHIVE_URL=	https://gnupg.org/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/security/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Security
@@ -51,7 +51,6 @@ CONFIGURE_OPTIONS += --enable-threads=posix
 CONFIGURE_OPTIONS += --enable-install-gpg-error-config
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/xopen/xcu4

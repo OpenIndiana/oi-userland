@@ -7,7 +7,7 @@ asyncio: mode=auto
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 4269 items / 1466 deselected / 2803 selected
+collecting ... collected 3858 items / 1048 deselected / 2810 selected
 
 tests/test_asyncio/test_commands.py::TestBinarySave::test_22_info[pool-hiredis] SKIPPED
 tests/test_asyncio/test_commands.py::TestBinarySave::test_22_info[pool-python-parser] PASSED
@@ -1187,6 +1187,7 @@ tests/test_asyncio/test_connection.py::test_can_run_concurrent_commands[pool-hir
 tests/test_asyncio/test_connection.py::test_can_run_concurrent_commands[pool-python-parser] PASSED
 tests/test_asyncio/test_connection.py::test_can_run_concurrent_commands[single-hiredis] SKIPPED
 tests/test_asyncio/test_connection.py::test_can_run_concurrent_commands[single-python-parser] SKIPPED
+tests/test_asyncio/test_connection.py::test_client_garbage_collection PASSED
 tests/test_asyncio/test_connection.py::test_close_is_aclose PASSED
 tests/test_asyncio/test_connection.py::test_connect_retry_on_timeout_error PASSED
 tests/test_asyncio/test_connection.py::test_connect_timeout_error_without_retry PASSED
@@ -1194,6 +1195,7 @@ tests/test_asyncio/test_connection.py::test_connect_without_retry_on_os_error PA
 tests/test_asyncio/test_connection.py::test_connection_disconect_race[AsyncHiredisParser] SKIPPED
 tests/test_asyncio/test_connection.py::test_connection_disconect_race[AsyncRESP2Parser] PASSED
 tests/test_asyncio/test_connection.py::test_connection_disconect_race[AsyncRESP3Parser] PASSED
+tests/test_asyncio/test_connection.py::test_connection_garbage_collection PASSED
 tests/test_asyncio/test_connection.py::test_connection_parse_response_resume[pool-hiredis] SKIPPED
 tests/test_asyncio/test_connection.py::test_connection_parse_response_resume[pool-python-parser] PASSED
 tests/test_asyncio/test_connection.py::test_connection_parse_response_resume[single-hiredis] SKIPPED
@@ -1226,6 +1228,8 @@ tests/test_asyncio/test_connection_pool.py::TestBlockingConnectionPool::test_mul
 tests/test_asyncio/test_connection_pool.py::TestBlockingConnectionPool::test_repr_contains_db_info_tcp PASSED
 tests/test_asyncio/test_connection_pool.py::TestBlockingConnectionPool::test_repr_contains_db_info_unix PASSED
 tests/test_asyncio/test_connection_pool.py::TestBlockingConnectionPool::test_reuse_previously_released_connection PASSED
+tests/test_asyncio/test_connection_pool.py::TestBlockingConnectionPoolURLParsing::test_extra_typed_querystring_options PASSED
+tests/test_asyncio/test_connection_pool.py::TestBlockingConnectionPoolURLParsing::test_invalid_extra_typed_querystring_options PASSED
 tests/test_asyncio/test_connection_pool.py::TestConnection::test_busy_loading_disconnects_socket[pool-hiredis] SKIPPED
 tests/test_asyncio/test_connection_pool.py::TestConnection::test_busy_loading_disconnects_socket[pool-python-parser] PASSED
 tests/test_asyncio/test_connection_pool.py::TestConnection::test_busy_loading_disconnects_socket[single-hiredis] SKIPPED
@@ -2482,6 +2486,8 @@ tests/test_connection_pool.py::TestBlockingConnectionPool::test_multiple_connect
 tests/test_connection_pool.py::TestBlockingConnectionPool::test_repr_contains_db_info_tcp PASSED
 tests/test_connection_pool.py::TestBlockingConnectionPool::test_repr_contains_db_info_unix PASSED
 tests/test_connection_pool.py::TestBlockingConnectionPool::test_reuse_previously_released_connection PASSED
+tests/test_connection_pool.py::TestBlockingConnectionPoolURLParsing::test_extra_typed_querystring_options PASSED
+tests/test_connection_pool.py::TestBlockingConnectionPoolURLParsing::test_invalid_extra_typed_querystring_options PASSED
 tests/test_connection_pool.py::TestConnection::test_busy_loading_disconnects_socket PASSED
 tests/test_connection_pool.py::TestConnection::test_busy_loading_from_pipeline PASSED
 tests/test_connection_pool.py::TestConnection::test_busy_loading_from_pipeline_immediate_command PASSED
@@ -2596,6 +2602,7 @@ tests/test_lock.py::TestLock::test_extending_unlocked_lock_raises_error PASSED
 tests/test_lock.py::TestLock::test_float_timeout PASSED
 tests/test_lock.py::TestLock::test_high_sleep_small_blocking_timeout PASSED
 tests/test_lock.py::TestLock::test_lock PASSED
+tests/test_lock.py::TestLock::test_lock_error_gives_correct_lock_name PASSED
 tests/test_lock.py::TestLock::test_lock_token PASSED
 tests/test_lock.py::TestLock::test_lock_token_thread_local_false PASSED
 tests/test_lock.py::TestLock::test_locked PASSED
@@ -2814,14 +2821,21 @@ tests/test_sentinel.py::test_slave_for_slave_not_found_error PASSED
 tests/test_sentinel.py::test_slave_round_robin PASSED
 
 =============================== warnings summary ===============================
-tests/test_asyncio/test_connection.py::test_close_is_aclose
-  $(@D)/tests/test_asyncio/test_connection.py:319: DeprecationWarning: Call to deprecated close. (Use aclose() instead) -- Deprecated since version 5.0.0.
-    await r1.close()
+tests/test_asyncio/test_lock.py:107
+  tests/test_asyncio/test_lock.py:107: PytestDeprecationWarning: test_blocking_timeout[single-python-parser] is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+    async def test_blocking_timeout(self, r, event_loop):
 
-tests/test_asyncio/test_sentinel.py::test_auto_close_pool[master_for]
-tests/test_asyncio/test_sentinel.py::test_auto_close_pool[slave_for]
-  $(@D)/tests/test_asyncio/test_sentinel.py:263: DeprecationWarning: Call to deprecated close. (Use aclose() instead) -- Deprecated since version 5.0.0.
-    await client.close()
+tests/test_asyncio/test_lock.py:107
+  tests/test_asyncio/test_lock.py:107: PytestDeprecationWarning: test_blocking_timeout[pool-python-parser] is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+    async def test_blocking_timeout(self, r, event_loop):
+
+tests/test_asyncio/test_lock.py:107
+  tests/test_asyncio/test_lock.py:107: PytestDeprecationWarning: test_blocking_timeout[single-hiredis] is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+    async def test_blocking_timeout(self, r, event_loop):
+
+tests/test_asyncio/test_lock.py:107
+  tests/test_asyncio/test_lock.py:107: PytestDeprecationWarning: test_blocking_timeout[pool-hiredis] is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+    async def test_blocking_timeout(self, r, event_loop):
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1743 passed, 1038 skipped, 1466 deselected, 22 xpassed, 3 warnings ========
+======== 1750 passed, 1038 skipped, 1048 deselected, 22 xpassed, 4 warnings ========

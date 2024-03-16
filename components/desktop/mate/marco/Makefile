@@ -22,10 +22,10 @@ include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		marco
-COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.28
+COMPONENT_MNR_VERSION=	1
 COMPONENT_SUMMARY=	MATE Window Manager
-COMPONENT_ARCHIVE_HASH= sha256:12f1a254fe1072f0304884711e089a5682780a011593402ed38de6b9480e07a3
+COMPONENT_ARCHIVE_HASH= sha256:2496e5e40ee980cd6849493ac3e0f8fd0dec8b81c674da8d9ba19a577f0ac2e1
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
@@ -47,6 +47,7 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra

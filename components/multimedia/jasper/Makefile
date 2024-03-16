@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= jasper
-COMPONENT_VERSION= 4.2.0
+COMPONENT_VERSION= 4.2.2
 COMPONENT_SUMMARY= A free software-based reference implementation of the JPEG-2000 Part-1 CODEC
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:69f0b08a0cc281a06eaf7feed510736854bbff9af89ab1d01b77382ad57ec957
+COMPONENT_ARCHIVE_HASH=	sha256:5e397570b3110a8edef6d50127e20a2297939809cea25d29068823b442ecdd6d
 COMPONENT_PROJECT_URL=	https://www.ece.uvic.ca/~frodo/jasper
 COMPONENT_ARCHIVE_URL=	https://github.com/jasper-software/$(COMPONENT_NAME)/releases/download/version-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= codec/jasper
@@ -47,6 +47,7 @@ COMPONENT_TEST_TRANSFORMS += '-e "/Output/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/freeglut
