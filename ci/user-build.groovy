@@ -51,11 +51,6 @@ pipeline {
                 }
             }
         }
-        stage('copy packages') {
-            steps {
-                pkgcopy()
-            }
-        }
         stage('update system') {
             steps {
                 update()

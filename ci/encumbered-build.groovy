@@ -35,11 +35,6 @@ pipeline {
                 }
             }
         }
-        stage('copy packages') {
-            steps {
-                pkgcopyEncumbered()
-            }
-        }
         stage('update system') {
             steps {
                 update()
