@@ -57,7 +57,7 @@ stage_setup() {
 stage_build_changed() {
 	echo "Last successful commit $1"
 	worst=0
-	for f in $(git diff --name-only HEAD^1 | grep Makefile; exit 0); do
+	for f in $(cat changed_files.txt | grep Makefile; exit 0); do
 		echo "jenkinshelper: building for ${f%/*}..."
 		curpwd=$(pwd)
 		cd "${f%/*}" && COMPONENT_BUILD_ARGS=-j$(psrinfo -t -c) gmake publish
