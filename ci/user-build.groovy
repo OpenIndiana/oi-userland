@@ -56,8 +56,7 @@ pipeline {
             steps {
                 withPublisher('openindiana.org', 'incremental') {
                     script {
-                        var changed_files = getChangedFilesList()
-                        writeFile file: 'changed_files.txt', text: changed_list.join("\n")
+                        writeFile file: 'changed_files.txt', text: getChangedFilesList().join("\n")
                     }
                     sh './tools/jenkinshelper-main.ksh -s build_changed'
                 }
