@@ -11,6 +11,19 @@ def commitHashForBuild( build ) {
   return scmAction?.revision?.hash
 }
 
+@NonCPS
+String getChangedFilesList() {
+    changedFiles = []
+    for (changeLogSet in currentBuild.changeSets) {
+        for (entry in changeLogSet.getItems()) { // for each commit in the detected changes
+            for (file in entry.getAffectedFiles()) {
+                changedFiles.add(file.getPath()) // add changed file to list
+            }
+        }
+    }
+    return changedFiles
+}
+
 pipeline {
     agent {
         node {
@@ -43,17 +56,10 @@ pipeline {
             steps {
                 withPublisher('openindiana.org', 'incremental') {
                     script {
-                        def last_build = Jenkins.instance.getItem('OpenIndiana').getItem('Userland').lastSuccessfulBuild
-                        def last_commit = commitHashForBuild(last_build)
-                    
+                        writeFile file: 'changed_files.txt', text: getChangedFilesList().join("\n")
                     }
                     sh './tools/jenkinshelper-main.ksh -s build_changed'
                 }
-            }
-        }
-        stage('copy packages') {
-            steps {
-                pkgcopy()
             }
         }
         stage('update system') {

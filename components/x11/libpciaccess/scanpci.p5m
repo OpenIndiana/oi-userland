@@ -24,17 +24,18 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/exec_attr path=etc/security/exec_attr.d/scanpci restart_fmri=svc:/system/rbac:default
+file files/scanpci.1 path=usr/share/man/man1/scanpci.1
 
 link path=usr/X11/bin/scanpci target=../../bin/scanpci
 
-file path=usr/bin/scanpci
+# owner & mode are being set to work together with the exec_attr settings
+file path=usr/bin/scanpci owner=root mode=04555
 file path=usr/include/pciaccess.h
-link path=usr/lib/$(MACH64)/libpciaccess.so target=libpciaccess.so.0.11.1
+link path=usr/lib/$(MACH64)/libpciaccess.so target=libpciaccess.so.0
 link path=usr/lib/$(MACH64)/libpciaccess.so.0 target=libpciaccess.so.0.11.1
 file path=usr/lib/$(MACH64)/libpciaccess.so.0.11.1
 file path=usr/lib/$(MACH64)/pkgconfig/pciaccess.pc
-link path=usr/lib/libpciaccess.so target=libpciaccess.so.0.11.1
+link path=usr/lib/libpciaccess.so target=libpciaccess.so.0
 link path=usr/lib/libpciaccess.so.0 target=libpciaccess.so.0.11.1
 file path=usr/lib/libpciaccess.so.0.11.1
 file path=usr/lib/pkgconfig/pciaccess.pc
-file path=usr/share/man/man1/scanpci.1
