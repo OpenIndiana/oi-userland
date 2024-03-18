@@ -14,18 +14,15 @@
 #   $WS_TOOLS/python-integrate-project autopep8
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		autopep8
-HUMAN_VERSION =			2.0.4
+HUMAN_VERSION =			2.1.0
 COMPONENT_SUMMARY =		autopep8 - A tool that automatically formats Python code to conform to the PEP 8 style guide
-COMPONENT_PROJECT_URL =		https://github.com/hhatto/autopep8
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e0/8a/9be661f5400867a09706e29f5ab99a59987fd3a4c337757365e7491fa90b/autopep8-2.0.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2913064abd97b3419d1cc83ea71f042cb821f87e45b9c88cad5ad3c4ea87fe0c
+	sha256:1fa8964e4618929488f4ec36795c7ff12924a68b8bf01366c094fc52f770b6e7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,10 +32,10 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(/autopep8test\)......../|\1XXXXXXXX/|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/pycodestyle
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pycodestyle
 TEST_REQUIRED_PACKAGES.python += library/python/pydiff
