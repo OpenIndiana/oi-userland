@@ -1,0 +1,722 @@
+gnome-shell cores dump on sparc when mesa is build with llvm without this.
+(to be submitted to upstream).
+
+------------  lwp# 1 / thread# 1  ---------------
+ 00000000e7a01a84 fail (e7a017d8, 21, e7a017b0, 1d, f71a7cee, 0) + 108 (ssp.c:169)
+ 00000000e7a01ad8 __stack_chk_fail (ff000000, ff000000, ff000000, 0, f3e29970, f3e33d44) + 28
+ 00000000ea6c6328 llvm::RuntimeDyldELF::resolveRelocation(const llvm::SectionEntry&,unsigned long,unsignedlong,unsigned,long,unsigned long,unsigned) (3cd2e10, 3cd2ee8, 20, f30a6000, 6, 0) + 1c0
+ 00000000ea6c639c llvm::RuntimeDyldELF::resolveRelocation(const llvm::RelocationEntry&,unsigned long) (3cd2e10, 3ee67d8, f30a6000, 0, 0, e7b04430) + 64
+ 00000000ea6ab3e0 llvm::RuntimeDyldImpl::resolveRelocationList(const llvm::SmallVector<llvm::RelocationEntry, (unsigned)64>&,unsigned long) (3cd2e10, 3ee67c0, f30a6000, e7b04430, 0, 38) + e0
+ 00000000ea6af60c llvm::RuntimeDyldImpl::resolveRelocations() (3cd2e10, 6, 1, e7b04430, 3cd42d0, 3ee67b0) + 2dc
+ 00000000ea6af888 llvm::RuntimeDyld::resolveRelocations() (3e13038, 3d801a0, 3fa49a0, 3fa49b0, e7b04430, e7b04430) + 30 
+
+--- llvm-13.0.0.src/include/llvm/BinaryFormat/ELFRelocs/Sparc.def
++++ llvm-13.0.0.src/include/llvm/BinaryFormat/ELFRelocs/Sparc.def
+@@ -87,3 +87,8 @@
+ ELF_RELOC(R_SPARC_GOTDATA_OP_HIX22,  82)
+ ELF_RELOC(R_SPARC_GOTDATA_OP_LOX10,  83)
+ ELF_RELOC(R_SPARC_GOTDATA_OP,     84)
++ELF_RELOC(R_SPARC_H34,            85)
++ELF_RELOC(R_SPARC_SIZE32,         86)
++ELF_RELOC(R_SPARC_SIZE64,         87)
++ELF_RELOC(R_SPARC_WDISP10,        88)
++ELF_RELOC(R_SPARC_NUM,            89)
+--- llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldImpl.h.~1~	2021-09-24 19:18:10.000000000 +0000
++++ llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldImpl.h	2022-01-02 14:26:31.003875610 +0000
+@@ -109,6 +109,11 @@
+     assert(StubOffset <= AllocationSize && "Not enough space allocated!");
+   }
+ 
++  void setStubOffset(unsigned Value) {
++    StubOffset = Value;
++    assert(StubOffset <= AllocationSize && "Not enough space allocated!");
++  }
++
+   uintptr_t getObjAddress() const { return ObjAddress; }
+ };
+ 
+--- llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.h.~1~	2021-09-24 19:18:10.000000000 +0000
++++ llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.h	2022-01-02 14:26:31.004157633 +0000
+@@ -54,6 +54,14 @@
+   void resolvePPC64Relocation(const SectionEntry &Section, uint64_t Offset,
+                               uint64_t Value, uint32_t Type, int64_t Addend);
+ 
++  void resolveSPARC3264Relocation(const SectionEntry &Section,
++                                  uint64_t Offset, uint64_t Value,
++                                  uint32_t Type, int32_t Addend);
++
++  void resolveSPARC64Relocation(const SectionEntry &Section,
++                                uint64_t Offset, uint64_t Value,
++                                uint32_t Type, int64_t Addend);
++
+   void resolveSystemZRelocation(const SectionEntry &Section, uint64_t Offset,
+                                 uint64_t Value, uint32_t Type, int64_t Addend);
+ 
+@@ -71,6 +79,10 @@
+       return 32;
+     else if (Arch == Triple::ppc64 || Arch == Triple::ppc64le)
+       return 44;
++    else if (Arch == Triple::sparc)
++      return 16;
++    else if (Arch == Triple::sparcv9)
++      return 32;
+     else if (Arch == Triple::x86_64)
+       return 6; // 2-byte jmp instruction + 32-bit relative address
+     else if (Arch == Triple::systemz)
+--- llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp.~1~	2021-09-24 19:18:10.000000000 +0000
++++ llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp	2022-01-02 14:26:31.005058486 +0000
+@@ -887,6 +887,448 @@
+   }
+ }
+ 
++/// SPARC ELF Relocations - common to 32-bit and 64-bit.
++/// https://docs.oracle.com/cd/E19683-01/817-3677/chapter6-24/index.html
++void RuntimeDyldELF::resolveSPARC3264Relocation(const SectionEntry &Section,
++                                                uint64_t Offset,
++                                                uint64_t Value,
++                                                uint32_t Type,
++                                                int32_t Addend) {
++  uint64_t *TargetAddress =
++    reinterpret_cast<uint64_t*>(reinterpret_cast<void*>(Section.getAddress()));
++  uint64_t *TargetPtr =
++    reinterpret_cast<uint64_t*>(Section.getAddressWithOffset(Offset));
++  uint32_t Reloc = 0U;
++  uint8_t *TargetPtr8 = nullptr;
++  uint16_t *TargetPtr16 = nullptr;
++  uint32_t *TargetPtr32 = nullptr;
++  uint32_t LoadAddress = Section.getLoadAddressWithOffset(Offset) & 0xFFFFFFFF;
++  uint32_t TargetValue = 0U;
++  int32_t RS = 0;
++  int32_t RM = 0;
++
++  switch (Type) {
++  default:
++    llvm_unreachable("Unimplemented SPARC32 Relocation Type!");
++    break;
++  case ELF::R_SPARC_NONE:
++    break;
++  case ELF::R_SPARC_SIZE32:
++    *TargetPtr = Section.getSize() + Addend;
++    break;
++  case ELF::R_SPARC_RELATIVE:
++    *TargetPtr = LoadAddress + Addend;
++    break;
++  case ELF::R_SPARC_COPY:
++    Value += Addend;
++    (void) std::memcpy(TargetPtr,
++                       reinterpret_cast<void*>(static_cast<uintptr_t>(Value)),
++                       Section.getSize());
++    break;
++  case ELF::R_SPARC_8:
++    TargetPtr8 = reinterpret_cast<uint8_t*>(TargetPtr);
++    Value += Addend;
++    *TargetPtr8 = Value;
++    break;
++  case ELF::R_SPARC_16:
++    TargetPtr16 = reinterpret_cast<uint16_t*>(TargetPtr);
++    Value += Addend;
++    *TargetPtr16 = Value;
++    break;
++  case ELF::R_SPARC_32:
++  case ELF::R_SPARC_GLOB_DAT:
++    Value += Addend;
++    *TargetPtr = Value;
++    break;
++  case ELF::R_SPARC_JMP_SLOT:
++    break;
++  case ELF::R_SPARC_TLS_DTPOFF32:
++    Value += Addend;
++    *TargetPtr = Value;
++    break;
++  case ELF::R_SPARC_TLS_TPOFF32:
++    Value += Addend;
++    *TargetPtr = Value - Offset;
++    break;
++  case ELF::R_SPARC_TLS_LE_HIX22:
++    Value -= Offset;
++    Value += Addend;
++    *TargetPtr = (*TargetPtr & 0xFFC00000) | ((~Value) & 0x003FFFFFLL);
++    break;
++  case ELF::R_SPARC_TLS_LE_LOX10:
++    Value -= Offset;
++    Value += Addend;
++    *TargetPtr = (*TargetPtr & 0xFFFFE000) | (Value & 0x000003FFLL);
++    break;
++  case ELF::R_SPARC_DISP8:
++    Value += Addend;
++    TargetPtr8 = reinterpret_cast<uint8_t*>(TargetAddress);
++    *TargetPtr8 = (Value - reinterpret_cast<uintptr_t>(TargetPtr8));
++    break;
++  case ELF::R_SPARC_DISP16:
++    Value += Addend;
++    TargetPtr16 = reinterpret_cast<uint16_t*>(TargetAddress);
++    *TargetPtr16 = (Value - reinterpret_cast<uintptr_t>(TargetPtr16));
++    break;
++  case ELF::R_SPARC_DISP32:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetAddress);
++    *TargetPtr32 = (Value - reinterpret_cast<uintptr_t>(TargetPtr32));
++    break;
++  case ELF::R_SPARC_WDISP30:
++  case ELF::R_SPARC_WDISP22:
++  case ELF::R_SPARC_WDISP19:
++  case ELF::R_SPARC_WDISP16:
++  case ELF::R_SPARC_WDISP10:
++    switch (Type) {
++    default:
++      llvm_unreachable("Impossible default case!");
++      break;
++    case ELF::R_SPARC_WDISP30:
++      RS = 2;
++      RM = 0x3FFFFFFF;
++      break;
++    case ELF::R_SPARC_WDISP22:
++      RS = 2;
++      RM = 0x003FFFFF;
++      break;
++    case ELF::R_SPARC_WDISP19:
++      RS = 2;
++      RM = 0x0007FFFF;
++      break;
++    case ELF::R_SPARC_WDISP16:
++      RS = 2;
++      break;
++    case ELF::R_SPARC_WDISP10:
++      RS = 2;
++      break;
++    }
++
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    Reloc = (((Value + Addend) - LoadAddress) >> RS);
++    TargetValue = *TargetPtr32;
++
++    switch (Type) {
++    default:
++      llvm_unreachable("Impossible default case!");
++      break;
++    case ELF::R_SPARC_WDISP16:
++      TargetValue &= ~((0x3 << 20) | 0x3FFF);
++      Reloc = (((Reloc & 0xC000) << (7 - 1)) | (Reloc & 0x3FFFF));
++      *TargetPtr32 = TargetValue | Reloc;
++      break;
++    case ELF::R_SPARC_WDISP10:
++      TargetValue &= ~((0x3 << 19) | (0xFF << 5));
++      Reloc = (((Reloc & 0x300) << (13 - 2)) | ((Reloc & 0xFF) | (7 - 2)));
++      *TargetPtr32 = TargetValue | Reloc;
++      break;
++    case ELF::R_SPARC_WDISP30:
++    case ELF::R_SPARC_WDISP22:
++    case ELF::R_SPARC_WDISP19:
++      TargetValue &= ~RM;
++      Reloc &= RM;
++      *TargetPtr32 = TargetValue | Reloc;
++      break;
++    }
++    break;
++  case ELF::R_SPARC_HI22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_10:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = Value;
++    break;
++  case ELF::R_SPARC_11:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = Value;
++    break;
++  case ELF::R_SPARC_13:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = Value;
++    break;
++  case ELF::R_SPARC_22:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = Value;
++    break;
++  case ELF::R_SPARC_LO10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 0;
++    RM = 0x000003FF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_LM22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_HIX22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x3FFFFF;
++    Reloc = Value + Addend;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc ^= ~0;
++    Reloc >>= RS;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_LOX10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    Reloc = Value + Addend;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~0x1FFF;
++    Reloc &= 0x3FF;
++    Reloc |= 0x1C00;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_HH22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 42;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_HM10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 32;
++    RM = 0x000003FF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_H44:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 22;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_M44:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 12;
++    RM = 0x000003FF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_L44:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 0;
++    RM = 0x00000FFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_GOT10:
++    assert((Offset != static_cast<uint64_t>(-1)) &&
++           "R_SPARC_GOT10: Invalid offset!");
++    if ((Offset & 1) != 0)
++      Offset &= ~1;
++    else
++      Offset |= 1;
++
++    RS = 0;
++    RM = 0x000003FF;
++    Reloc = (Value + Addend) >> RS;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_GOT13:
++    assert((Offset != static_cast<uint64_t>(-1)) &&
++           "R_SPARC_GOT13: Invalid offset!");
++    if ((Offset & 1) != 0)
++      Offset &= ~1;
++    else
++      Offset |= 1;
++
++    RS = 0;
++    RM = 0x00001FFF;
++    Reloc = (Value + Addend) >> RS;
++
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_GOT22:
++    assert((Offset != static_cast<uint64_t>(-1)) &&
++           "R_SPARC_GOT22: Invalid offset!");
++    if ((Offset & 1) != 0)
++      Offset &= ~1;
++    else
++      Offset |= 1;
++
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_PC10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 0;
++    RM =0x000003FF;
++    Reloc = ((Value + Addend) - LoadAddress) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_PC22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = ((Value + Addend) - LoadAddress) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_UA16:
++    TargetPtr8 = reinterpret_cast<uint8_t*>(TargetPtr);
++    TargetPtr8[0] = Value >> 8U;
++    TargetPtr8[1] = Value;
++    break;
++  case ELF::R_SPARC_UA32:
++    TargetPtr8 = reinterpret_cast<uint8_t*>(TargetPtr);
++    TargetPtr8[0] = Value >> 24U;
++    TargetPtr8[1] = Value >> 16U;
++    TargetPtr8[2] = Value >> 8U;
++    TargetPtr8[3] = Value;
++    break;
++  case ELF::R_SPARC_WPLT30:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 2;
++    RM = 0x3FFFFFFF;
++    Reloc = ((Value + Addend) - LoadAddress) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    TargetValue = *TargetPtr32;
++    break;
++  }
++}
++
++/// SPARCV9 ELF Relocatinos - valid in 64-bit only.
++/// https://docs.oracle.com/cd/E19683-01/817-3677/chapter6-24-1/index.html
++void RuntimeDyldELF::resolveSPARC64Relocation(const SectionEntry &Section,
++                                              uint64_t Offset, uint64_t Value,
++                                              uint32_t Type, int64_t Addend) {
++  uint64_t *TargetAddress =
++    reinterpret_cast<uint64_t*>(reinterpret_cast<void*>(Section.getAddress()));
++  uint64_t *TargetPtr =
++    reinterpret_cast<uint64_t*>(Section.getAddressWithOffset(Offset));
++  uint32_t Reloc;
++  uintptr_t TargetPtrVal = reinterpret_cast<uintptr_t>(TargetPtr);
++  uint8_t *TargetPtr8 = nullptr;
++  uint16_t *TargetPtr16 = nullptr;
++  uint32_t *TargetPtr32 = nullptr;
++  uint64_t LoadAddress = Section.getLoadAddressWithOffset(Offset);
++  uint64_t TargetValue = 0ULL;
++  int32_t RS;
++  int32_t RM;
++
++  switch (Type) {
++  case ELF::R_SPARC_HI22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_64:
++  case ELF::R_SPARC_GLOB_DAT:
++    Value += Addend;
++    *TargetPtr = Value;
++    break;
++  case ELF::R_SPARC_RELATIVE:
++    *TargetPtr = LoadAddress + Addend;
++    break;
++  case ELF::R_SPARC_OLO10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = (*TargetPtr32 & ~0x1FFF) | (((Value + Addend) & 0x3FF) +
++                                               ((Offset >> 8) & 0x1FFF));
++    break;
++  case ELF::R_SPARC_DISP64:
++    Value += Addend;
++    *TargetPtr = (Value - reinterpret_cast<uintptr_t>(TargetPtr));
++    break;
++  case ELF::R_SPARC_REGISTER:
++    Value += Addend;
++    *TargetPtr = Value;
++    break;
++  case ELF::R_SPARC_PLT64:
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": Warning: Unimplemented R_SPARC_PLT64 Relocation type.\n" ;
++    break;
++  case ELF::R_SPARC_UA64:
++    Value += Addend;
++    if (0 == (TargetPtrVal & 3)) {
++      TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++      TargetPtr32[0] = Value >> 32;
++      TargetPtr32[1] = Value;
++    } else {
++      TargetPtr8 = reinterpret_cast<uint8_t*>(TargetPtr);
++      TargetPtr8[0] = Value >> 56;
++      TargetPtr8[0] = Value >> 48;
++      TargetPtr8[0] = Value >> 40;
++      TargetPtr8[0] = Value >> 32;
++      TargetPtr8[0] = Value >> 24;
++      TargetPtr8[0] = Value >> 16;
++      TargetPtr8[0] = Value >> 8;
++      TargetPtr8[0] = Value;
++    }
++    break;
++  default:
++    resolveSPARC3264Relocation(Section, Offset, Value, Type, Addend);
++    break;
++  }
++}
++
+ void RuntimeDyldELF::resolveSystemZRelocation(const SectionEntry &Section,
+                                               uint64_t Offset, uint64_t Value,
+                                               uint32_t Type, int64_t Addend) {
+@@ -1037,6 +1479,12 @@
+   case Triple::bpfeb:
+     resolveBPFRelocation(Section, Offset, Value, Type, Addend);
+     break;
++  case Triple::sparc:
++    resolveSPARC3264Relocation(Section, Offset, Value, Type, Addend);
++    break;
++  case Triple::sparcv9:
++    resolveSPARC64Relocation(Section, Offset, Value, Type, Addend);
++    break;
+   default:
+     llvm_unreachable("Unsupported CPU type!");
+   }
+@@ -1672,6 +2120,160 @@
+       else
+         addRelocationForSection(RE, Value.SectionID);
+     }
++  } else if (Arch == Triple::sparc) {
++    LLVM_DEBUG(dbgs() << "This is a SPARC32 relocation.\n");
++    SectionEntry &Section = Sections[SectionID];
++    uint8_t *Target = Section.getAddressWithOffset(Offset);
++    uint32_t *TargetAddress = reinterpret_cast<uint32_t*>(Target);
++    uint8_t *SectionAddress = Section.getAddress();
++    uintptr_t StubOffset = Section.getStubOffset();
++    uintptr_t StubAddress = static_cast<uintptr_t>(-1);
++
++    if (RelType == ELF::R_SPARC_WDISP30) {
++      //  Look up for existing stub.
++      StubMap::const_iterator i = Stubs.find(Value);
++
++      if (i != Stubs.end()) {
++        LLVM_DEBUG(dbgs() << " Stub function found\n");
++        StubAddress =
++          reinterpret_cast<uintptr_t>(Section.getAddressWithOffset(i->second));
++
++        resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++        Section.advanceStubOffset(getMaxStubSize());
++      } else {
++        // Create a new stub function.
++        LLVM_DEBUG(dbgs() << " Create a new stub function\n");
++
++        uintptr_t BaseAddress =
++          reinterpret_cast<uintptr_t>(Section.getAddress());
++        uintptr_t StubAlignment = getStubAlignment();
++        StubAddress = BaseAddress + StubOffset;
++        StubAddress = llvm::alignTo(StubAddress, 4U);
++        StubOffset = StubAddress - BaseAddress;
++
++        Stubs[Value] = StubOffset;
++        uint8_t *StubTargetAddr =
++          createStubFunction(reinterpret_cast<uint8_t*>(StubAddress));
++
++        // Creating Hi and Lo relocations for the filled stub instructions.
++        RelocationEntry REhi(SectionID,
++                             StubTargetAddr - SectionAddress,
++                             ELF::R_SPARC_HI22, Value.Addend);
++        RelocationEntry RElo(SectionID,
++                             StubTargetAddr - SectionAddress + 4,
++                             ELF::R_SPARC_LO10, Value.Addend);
++
++        if (Value.SymbolName) {
++          addRelocationForSymbol(REhi, Value.SymbolName);
++          addRelocationForSymbol(RElo, Value.SymbolName);
++        } else {
++          addRelocationForSection(REhi, Value.SectionID);
++          addRelocationForSection(RElo, Value.SectionID);
++        }
++
++        resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++        Section.advanceStubOffset(getMaxStubSize());
++      }
++    } else {
++      uintptr_t BaseAddress =
++        reinterpret_cast<uintptr_t>(Section.getAddress());
++      uintptr_t StubAlignment = getStubAlignment();
++      StubAddress = BaseAddress + StubOffset;
++      StubAddress = llvm::alignTo(StubAddress, 4U);
++      StubOffset = StubAddress - BaseAddress;
++
++      RelocationEntry RE(SectionID, Offset, RelType, Addend);
++      if (Value.SymbolName)
++        addRelocationForSymbol(RE, Value.SymbolName);
++      else
++        addRelocationForSection(RE, Value.SectionID);
++
++      resolveRelocation(Section, Offset, StubOffset, RelType, 0);
++      Section.advanceStubOffset(getMaxStubSize());
++    }
++  } else if (Arch == Triple::sparcv9) {
++    LLVM_DEBUG(dbgs() << "This is a SPARC64 relocation.\n");
++
++    SectionEntry &Section = Sections[SectionID];
++    uint8_t *Target = Section.getAddressWithOffset(Offset);
++    uint32_t *TargetAddress = reinterpret_cast<uint32_t*>(Target);
++    uint8_t *SectionAddress = Section.getAddress();
++    uintptr_t StubOffset = Section.getStubOffset();
++    uintptr_t StubAddress = static_cast<uintptr_t>(-1);
++
++    if (RelType == ELF::R_SPARC_WDISP30) {
++      //  Look up for existing stub.
++      StubMap::const_iterator i = Stubs.find(Value);
++      if (i != Stubs.end()) {
++        LLVM_DEBUG(dbgs() << " Stub function found\n");
++
++        StubAddress =
++          reinterpret_cast<uintptr_t>(Section.getAddressWithOffset(i->second));
++
++        resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++        Section.advanceStubOffset(getMaxStubSize());
++      } else {
++        // Create a new stub function.
++        LLVM_DEBUG(dbgs() << " Create a new stub function\n");
++
++        uintptr_t BaseAddress =
++          reinterpret_cast<uintptr_t>(Section.getAddress());
++        uintptr_t StubAlignment = getStubAlignment();
++
++        StubAddress = BaseAddress + StubOffset;
++        StubAddress = llvm::alignTo(StubAddress, 8U);
++        StubOffset = StubAddress - BaseAddress;
++        Stubs[Value] = StubOffset;
++
++        uint8_t *StubTargetAddr =
++          createStubFunction(reinterpret_cast<uint8_t*>(StubAddress));
++
++        // Creating Hi and Lo relocations for the filled stub instructions.
++        RelocationEntry REhh(SectionID,
++                             StubTargetAddr - SectionAddress,
++                             ELF::R_SPARC_HH22, Value.Addend);
++        RelocationEntry REhm(SectionID,
++                             StubTargetAddr - SectionAddress + 8,
++                             ELF::R_SPARC_HM10, Value.Addend);
++        RelocationEntry RElm(SectionID,
++                             StubTargetAddr - SectionAddress + 16,
++                             ELF::R_SPARC_LM22, Value.Addend);
++        RelocationEntry RElo(SectionID,
++                             StubTargetAddr - SectionAddress + 24,
++                             ELF::R_SPARC_LO10, Value.Addend);
++
++        if (Value.SymbolName) {
++          addRelocationForSymbol(REhh, Value.SymbolName);
++          addRelocationForSymbol(REhm, Value.SymbolName);
++          addRelocationForSymbol(RElm, Value.SymbolName);
++          addRelocationForSymbol(RElo, Value.SymbolName);
++        } else {
++          addRelocationForSection(REhh, Value.SectionID);
++          addRelocationForSection(REhm, Value.SectionID);
++          addRelocationForSection(RElm, Value.SectionID);
++          addRelocationForSection(RElo, Value.SectionID);
++        }
++
++        resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++        Section.advanceStubOffset(getMaxStubSize());
++      }
++    } else {
++      uintptr_t BaseAddress =
++        reinterpret_cast<uintptr_t>(Section.getAddress());
++      uintptr_t StubAlignment = getStubAlignment();
++      StubAddress = BaseAddress + StubOffset;
++      StubAddress = llvm::alignTo(StubAddress, 8U);
++      StubOffset = StubAddress - BaseAddress;
++
++      RelocationEntry RE(SectionID, Offset, RelType, Addend);
++      if (Value.SymbolName)
++        addRelocationForSymbol(RE, Value.SymbolName);
++      else
++        addRelocationForSection(RE, Value.SectionID);
++
++      resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++      Section.advanceStubOffset(getMaxStubSize());
++    }
+   } else if (Arch == Triple::systemz &&
+              (RelType == ELF::R_390_PLT32DBL || RelType == ELF::R_390_GOTENT)) {
+     // Create function stubs for both PLT and GOT references, regardless of
+--- llvm-13.0.0.src/include/llvm/Object/ELFObjectFile.h.~1~	2021-09-24 19:18:10.000000000 +0000
++++ llvm-13.0.0.src/include/llvm/Object/ELFObjectFile.h	2022-01-02 14:26:31.005542785 +0000
+@@ -1190,8 +1190,9 @@
+     case ELF::EM_CSKY:
+       return "elf32-csky";
+     case ELF::EM_SPARC:
+-    case ELF::EM_SPARC32PLUS:
+       return "elf32-sparc";
++    case ELF::EM_SPARC32PLUS:
++      return "elf32-sparc32plus";
+     case ELF::EM_AMDGPU:
+       return "elf32-amdgpu";
+     default:
+@@ -1212,7 +1213,7 @@
+     case ELF::EM_S390:
+       return "elf64-s390";
+     case ELF::EM_SPARCV9:
+-      return "elf64-sparc";
++      return "elf64-sparcv9";
+     case ELF::EM_MIPS:
+       return "elf64-mips";
+     case ELF::EM_AMDGPU:
+@@ -1278,8 +1279,8 @@
+     return Triple::systemz;
+ 
+   case ELF::EM_SPARC:
+-  case ELF::EM_SPARC32PLUS:
+     return IsLittleEndian ? Triple::sparcel : Triple::sparc;
++  case ELF::EM_SPARC32PLUS:
+   case ELF::EM_SPARCV9:
+     return Triple::sparcv9;
+ 
