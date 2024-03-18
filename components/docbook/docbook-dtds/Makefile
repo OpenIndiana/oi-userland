@@ -19,19 +19,21 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= docbook-dtds
 
 COMPONENT_VERSION= 1.0
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUBVERSION= 30.1
 COMPONENT_SUMMARY= SGML and XML document type definitions for DocBook.
 COMPONENT_SRC= 3.0-sgml
 COMPONENT_ARCHIVE= docbk30.zip
-COMPONENT_ARCHIVE_HASH= \
-  sha256:ecf71cbe8ddbad7494ff520d5b4edf73a428c0b159178cb0cb619cba685e61c6
-COMPONENT_ARCHIVE_URL= \
-  http://www.oasis-open.org/docbook/sgml/3.0/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.oasis-open.org/docbook/
-UNPACK_ARGS+=-r $(COMPONENT_SRC)
+COMPONENT_ARCHIVE_HASH= sha256:ecf71cbe8ddbad7494ff520d5b4edf73a428c0b159178cb0cb619cba685e61c6
+COMPONENT_ARCHIVE_URL= https://www.oasis-open.org/docbook/sgml/3.0/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://www.oasis-open.org/docbook/
+COMPONENT_FMRI= data/docbook/dtds
+COMPONENT_CLASSIFICATION= System/Text Tools
+COMPONENT_LICENSE= docbook
 
-PATCH_EACH_ARCHIVE=1
+UNPACK_ARGS += -r $(COMPONENT_SRC)
+
+PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_SRC_1=    3.1-sgml
 COMPONENT_ARCHIVE_1=    docbk31.zip
@@ -179,8 +181,10 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 
 CONFIGURE_PREFIX= /usr/clang/$(COMPONENT_VERSION)
 
-PATH=/usr/sbin:/usr/bin:/usr/perl5/bin
+PATH= $(PATH.illumos)
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
+
+# Auto-generated dependencies
