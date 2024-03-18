@@ -19,14 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		SCons
-HUMAN_VERSION =			4.6.0.post1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.7.0
 COMPONENT_SUMMARY =		SCons - Open Source next-generation build tool.
 COMPONENT_PROJECT_URL =		https://www.scons.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f2/4d/ba49913c68c780eab6bff891f8174c15765cc1bcc37cf6ea2c57b2b3f819/SCons-4.6.0.post1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d467a34546f5366a32e4d4419611d0138dd680210f24aa8491ebe9e4b83456cf
+	sha256:d8b617f6610a73e46509de70dcf82f76861b79762ff602d546f4e80918ec81f3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,7 +44,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MV) $(PROTOUSRDIR)/*.1 $(PROTOUSRSHAREMAN1DIR) ;
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/build
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
