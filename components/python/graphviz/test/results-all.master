@@ -1,23 +1,15 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -X dev run-tests.py
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -X dev run-tests.py
 run ['run-tests.py']
 pytest.main([])
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg, testpaths: README.rst, docs, graphviz, tests
-collecting ... collected 366 items
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: README.rst, docs, graphviz, tests
+collecting ... collected 369 items
 
-  @pytest.mark.tryfirst
-  @pytest.mark.trylast  # to let 'terminalreporter' be registered first
- See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
- See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
- to configure the hooks.
- to configure the hooks.
-$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:136: PytestDeprecationWarning: The hookimpl pytest_load_initial_conftests uses old-style configuration options (marks or attributes).
-Please use the pytest.hookimpl(tryfirst=True) decorator instead
-Please use the pytest.hookimpl(trylast=True) decorator instead
 README.rst::README.rst PASSED
 docs/api.rst::api.rst PASSED
 docs/attributes.rst::attributes.rst PASSED
@@ -217,6 +209,9 @@ tests/test_all_classes.py::test_neato_no_op_mocked[quiet=True-Source-2] PASSED
 tests/test_all_classes.py::test_neato_no_op_mocked[quiet=True-Source-False] PASSED
 tests/test_all_classes.py::test_neato_no_op_mocked[quiet=True-Source-None] PASSED
 tests/test_all_classes.py::test_neato_no_op_mocked[quiet=True-Source-True] PASSED
+tests/test_all_classes.py::test_pipe[Digraph] PASSED
+tests/test_all_classes.py::test_pipe[Graph] PASSED
+tests/test_all_classes.py::test_pipe[Source] PASSED
 tests/test_all_classes.py::test_pipe_lines_called_process_error[Digraph] PASSED
 tests/test_all_classes.py::test_pipe_lines_called_process_error[Graph] PASSED
 tests/test_all_classes.py::test_pipe_lines_called_process_error[Source] PASSED
@@ -367,7 +362,7 @@ tests/test_quoting.py::test_quote[\\\\\\\\"spam-"\\\\\\\\\\"spam"] PASSED
 tests/test_quoting.py::test_quote[\\\\n-"\\\\n"] PASSED
 tests/test_quoting.py::test_quote[\\n \\l \\r-"\\n \\l \\r"] PASSED
 tests/test_quoting.py::test_quote[\r\n-"\r\n"] PASSED
-tests/test_quoting.py::test_quote[\u0665.\u0660-"\u0665.\u0660"] PASSED  [100%]$(PYTHON_DIR)/vendor-packages/pytest_travis_fold.py:186: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
+tests/test_quoting.py::test_quote[\u0665.\u0660-"\u0665.\u0660"] PASSED
 tests/test_quoting.py::test_quote[node-"node"] PASSED
 tests/test_saving.py::test_saves_source_from_file PASSED
 tests/test_sources.py::test_filepath PASSED
@@ -386,25 +381,7 @@ tests/test_tools.py::test_mkdirs PASSED
 tests/test_tools.py::test_mkdirs_invalid PASSED
 
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_configure_node uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_configure_node(self, node):
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_testnodedown uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_testnodedown(self, node, error):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
 ============================= slowest 10 durations =============================
-======== 366 passed, 2 warnings ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 369 passed ========
+  py$(PYV): OK
   congratulations :)
