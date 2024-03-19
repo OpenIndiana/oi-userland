@@ -1,0 +1,26 @@
+Hardware Webrender stops working on nVidia GPU with Bug 1875369.
+
+Mozilla claims that if a XWindow doesn't have mIsMapped, then 
+hardware WebRender should be disabled. There is a crashing bug if moving tabs.
+Some info here at https://bugzilla.mozilla.org/show_bug.cgi?id=1882021
+
+--- firefox-124.0/widget/gtk/nsWindow.cpp.~1~	2024-02-26 08:15:39.000000000 -0500
++++ firefox-124.0/widget/gtk/nsWindow.cpp	2024-02-28 23:27:47.907263416 -0500
+@@ -5809,7 +5809,9 @@
+ }
+ 
+ void nsWindow::EnsureGdkWindow() {
++/* this causes firefox to crash: Assertion failure: mIsMapped
+   MOZ_DIAGNOSTIC_ASSERT(mIsMapped);
++*/
+   if (!mGdkWindow) {
+     mGdkWindow = gtk_widget_get_window(GTK_WIDGET(mContainer));
+     g_object_set_data(G_OBJECT(mGdkWindow), "nsWindow", this);
+@@ -9538,6 +9540,7 @@
+   nsCString displayName;
+ 
+   LOG("nsWindow::GetCompositorWidgetInitData");
++  EnsureGdkWindow();
+ 
+   *aInitData = mozilla::widget::GtkCompositorWidgetInitData(
+       GetX11Window(), displayName, GetShapedState(), GdkIsX11Display(),
