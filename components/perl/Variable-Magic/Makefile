@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Variable::Magic
-HUMAN_VERSION =			0.63
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.64
 COMPONENT_SUMMARY =		Variable::Magic - Associate user-defined magic to variables from Perl.
 COMPONENT_CPAN_AUTHOR =		VPIT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ba4083b2c31ff2694f2371333d554c826aaf24b4d98d03e48b5b4a43a2a0e679
+	sha256:9f7853249c9ea3b4df92fb6b790c03a60680fc029f44c8bf9894dccf019516bd
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
