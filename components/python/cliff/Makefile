@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cliff
-HUMAN_VERSION =			4.5.0
+HUMAN_VERSION =			4.6.0
 COMPONENT_SUMMARY =		cliff - Command Line Interface Formulation Framework
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/cliff/latest/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7f/a3/f4b583e5639cf778cf7f6f915532729b1cf10175f09344dbda115c08c2ea/cliff-4.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:61beeac238530beb3ae19eefb421b8b290b97dcc9efee01fc32fe62fb75a31d9
+	sha256:2f38ce8bd1ea4958d66f15b066ac47e65d61f600b9319b921e12e9e9cbcd99d0
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,6 +40,9 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Ignore stdout and stderr of successfull tests
+TOX_POSARGS += --suppress-attachments
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/autopage
 PYTHON_REQUIRED_PACKAGES += library/python/cmd2
@@ -51,7 +52,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
 PYTHON_REQUIRED_PACKAGES += library/python/stevedore
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/autopage
-TEST_REQUIRED_PACKAGES.python += library/python/bandit
 TEST_REQUIRED_PACKAGES.python += library/python/cmd2
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
