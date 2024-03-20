@@ -1,4 +1,3 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> pytest .
 ============================= test session starts ==============================
@@ -6,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 553 items
+collecting ... collected 596 items
 
 tests/i18n/test_es.py::test_returns_false_on_invalid_cif[12345] PASSED
 tests/i18n/test_es.py::test_returns_false_on_invalid_cif[ABCDEFGHI] PASSED
@@ -96,6 +95,40 @@ tests/i18n/test_fi.py::test_returns_true_on_valid_ssn[010190-002R] PASSED
 tests/i18n/test_fi.py::test_returns_true_on_valid_ssn[010190-900P] PASSED
 tests/i18n/test_fi.py::test_returns_true_on_valid_ssn[010594Y9032] PASSED
 tests/i18n/test_fi.py::test_returns_true_on_valid_ssn[020516C903K] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[00] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[0] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[20_0] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[20_1] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[2C] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[96] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[978] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[97] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[98] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[None] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_department[] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[1 84 00 76 451 089] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[1 84 12 00 451 089] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[1 84 12 2C 451 089] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[1 84 12 76 451 089 47] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[1 84 12 98 451 089] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[1 84 13 76 451 089] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[3 84 12 76 451 089 46] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[None] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_department[01] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_department[14] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_department[2A] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_department[2B] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_department[95] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_department[971_0] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_department[971_1] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[1 84 12 76 451 089 46] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[1 84 12 76 451 089] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 2A 202 817 58] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 2B 202 817 85] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 75 202 817 01] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 75 202 818 97] PASSED
+tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 971 12 817 70] PASSED
 tests/test__extremes.py::test_abs_max_is_greater_than_every_other_value[12] PASSED
 tests/test__extremes.py::test_abs_max_is_greater_than_every_other_value[None] PASSED
 tests/test__extremes.py::test_abs_max_is_greater_than_every_other_value[] PASSED
@@ -113,9 +146,11 @@ tests/test_between.py::test_returns_failed_validation_on_invalid_range[12-13-Non
 tests/test_between.py::test_returns_failed_validation_on_invalid_range[12-13.5-max_val4] PASSED
 tests/test_between.py::test_returns_failed_validation_on_invalid_range[12-20.5-None] PASSED
 tests/test_between.py::test_returns_failed_validation_on_invalid_range[12-None-11] PASSED
-tests/test_between.py::test_returns_failed_validation_on_invalid_range[12-None-None] PASSED
 tests/test_between.py::test_returns_failed_validation_on_invalid_range[30-40-string] PASSED
+tests/test_between.py::test_returns_failed_validation_on_invalid_range[None-13-14] PASSED
 tests/test_between.py::test_returns_failed_validation_on_invalid_range[value6-20-string] PASSED
+tests/test_between.py::test_returns_true_on_valid_range[0--1-3] PASSED
+tests/test_between.py::test_returns_true_on_valid_range[0-0-0] PASSED
 tests/test_between.py::test_returns_true_on_valid_range[12-11-13] PASSED
 tests/test_between.py::test_returns_true_on_valid_range[12-11-None] PASSED
 tests/test_between.py::test_returns_true_on_valid_range[12-12-12] PASSED
@@ -411,8 +446,9 @@ tests/test_length.py::test_returns_failed_validation_on_invalid_range[something-
 tests/test_length.py::test_returns_failed_validation_on_invalid_range[something-13-14] PASSED
 tests/test_length.py::test_returns_failed_validation_on_invalid_range[something-14-12] PASSED
 tests/test_length.py::test_returns_true_on_valid_length[password-0-10] PASSED
-tests/test_length.py::test_returns_true_on_valid_length[password-2-10] PASSED
+tests/test_length.py::test_returns_true_on_valid_length[password-2-None] PASSED
 tests/test_length.py::test_returns_true_on_valid_length[password-8-8] PASSED
+tests/test_length.py::test_returns_true_on_valid_length[password-None-None] PASSED
 tests/test_mac_address.py::test_returns_failed_validation_on_invalid_mac_address[00-00:-00-00-00] PASSED
 tests/test_mac_address.py::test_returns_failed_validation_on_invalid_mac_address[01:23-45:67-89:gh] PASSED
 tests/test_mac_address.py::test_returns_failed_validation_on_invalid_mac_address[01:23:45:67:89:] PASSED
@@ -473,6 +509,10 @@ tests/test_url.py::test_returns_failed_validation_on_invalid_url[http://foobar.1
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[http://foobar.d] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[http://www.\ufffd.ch] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[http://www.foo.bar./] PASSED
+tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://example.com/foo/?bar#!baz/inga/8SA-M3as7A8] PASSED
+tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://foo.bar.net/baz.php?-/inga/test-lenient-query/] PASSED
+tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://foo.com/img/bar/baz.jpg?-62169987208] PASSED
+tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://www.example.com/foo/?bar=baz&inga=42&quux] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[rdar://1234] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[ftp://foo.bar/baz] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://-.~_!$&'()*+,;=:%40:80%2f::::::@example.com] PASSED
@@ -545,10 +585,12 @@ tests/test_url.py::test_returns_true_on_valid_url[http://www.\U0001f609.com] PAS
 tests/test_url.py::test_returns_true_on_valid_url[http://www.example.com/wpstyle/?p=364] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://xn----gtbybh.xn--p1ai/1/asdf] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://xn--d5b6ci4b4b3a.xn--54b7fta0cc] PASSED
+tests/test_url.py::test_returns_true_on_valid_url[https://example.org/path#2022%201040%20(Cornelius%20Morgan%20G).pdf] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[https://exchange.jetswap.finance/#/swap] PASSED
+tests/test_url.py::test_returns_true_on_valid_url[https://matrix.to/#/!BSqRHgvCtIsGittkBG:talk.puri.sm/$1551464398853539kMJNP:matrix.org?via=talk.puri.sm&via=matrix.org&via=disroot.org] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[https://travel-usa.com/wisconsin/\u65c5\u884c/] PASSED
-tests/test_url.py::test_returns_true_on_valid_url[https://www.example.com/foo/?bar=baz&inga=42&quux] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[https://www.example.com?bar=baz] PASSED
+tests/test_url.py::test_returns_true_on_valid_url[https://www.foo.com/bar#/baz/test] PASSED
 tests/test_uuid.py::test_returns_failed_validation_on_invalid_uuid[2bc1c94f 0deb-43e9-92a1-4775189ec9f8] PASSED
 tests/test_uuid.py::test_returns_failed_validation_on_invalid_uuid[2bc1c94f-0deb-43e9-92a1-4775189ec9f] PASSED
 tests/test_uuid.py::test_returns_failed_validation_on_invalid_uuid[2bc1c94f-deb-43e9-92a1-4775189ec9f8] PASSED
@@ -562,6 +604,6 @@ tests/test_validation_failure.py::TestValidationError::test_boolean_coerce PASSE
 tests/test_validation_failure.py::TestValidationError::test_repr PASSED
 tests/test_validation_failure.py::TestValidationError::test_string PASSED
 
-======== 553 passed ========
+======== 596 passed ========
   py$(PYV): OK
   congratulations :)
