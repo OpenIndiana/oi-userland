@@ -19,24 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		stevedore
-HUMAN_VERSION =			5.1.0
+HUMAN_VERSION =			5.2.0
 COMPONENT_SUMMARY =		stevedore - Manage dynamic plugins for Python applications
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/stevedore/latest/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ac/d6/77387d3fc81f07bc8877e6f29507bd7943569093583b0a07b28cfa286780/stevedore-5.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a54534acf9b89bc7ed264807013b505bf07f74dbe4bcfa37d32bd063870b087c
+	sha256:46b93ca40e1114cea93d738a6c1e365396981bb6bb78c27045b7587c9473544d
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# stevedore >= 4.0.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
 # run tests', and 'A ==> B' means 'A needs B for build and/or run'):
 #
-# stevedore --> bandit ==> stevedore
 # stevedore --> stestr ==> cliff ==> stevedore
 #
 # To break loops we need to allow this project to integrate without testing in
@@ -49,9 +43,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pbr
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/bandit
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pbr
-TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/stestr
