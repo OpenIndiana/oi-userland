@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 429 items
+collecting ... collected 457 items
 
 tests/cadata_test.py::CaCertsTest::test_request_with_verifypeer PASSED
 tests/cadata_test.py::CaCertsTest::test_set_ca_certs_bogus_type PASSED
@@ -130,7 +130,7 @@ tests/memory_mgmt_test.py::MemoryMgmtTest::test_writefunction_refcounting PASSED
 tests/memory_mgmt_test.py::MemoryMgmtTest::test_writeheader_refcounting PASSED
 tests/memory_mgmt_test.py::MemoryMgmtTest::test_xferinfofunction_collection PASSED
 tests/multi_callback_test.py::MultiCallbackTest::test_easy_close PASSED
-tests/multi_callback_test.py::MultiCallbackTest::test_easy_pause_unpause PASSED
+tests/multi_callback_test.py::MultiCallbackTest::test_easy_pause_unpause XPASS
 tests/multi_callback_test.py::MultiCallbackTest::test_multi_add_handle PASSED
 tests/multi_callback_test.py::MultiCallbackTest::test_multi_remove_handle PASSED
 tests/multi_callback_test.py::MultiCallbackTest::test_multi_socket_action SKIPPED
@@ -155,6 +155,7 @@ tests/multi_test.py::MultiTest::test_multi PASSED
 tests/multi_test.py::MultiTest::test_multi_close PASSED
 tests/multi_test.py::MultiTest::test_multi_close_twice PASSED
 tests/multi_test.py::MultiTest::test_multi_info_read PASSED
+tests/multi_test.py::MultiTest::test_multi_info_read_some PASSED
 tests/multi_test.py::MultiTest::test_multi_select PASSED
 tests/multi_test.py::MultiTest::test_multi_select_fdset PASSED
 tests/multi_test.py::MultiTest::test_multi_status_codes PASSED
@@ -199,7 +200,9 @@ tests/option_constants_test.py::OptionConstantsSettingTest::test_tlsauth PASSED
 tests/option_constants_test.py::OptionConstantsSettingTest::test_transfer_encoding PASSED
 tests/option_constants_test.py::OptionConstantsSettingTest::test_use_ssl PASSED
 tests/option_constants_test.py::OptionConstantsSettingTest::test_xauth_bearer PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_aws_sigv4 PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_cainfo PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_cainfo_blob PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_capath PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_crlfile PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_curlproxy_http_1_0_setopt PASSED
@@ -209,8 +212,10 @@ tests/option_constants_test.py::OptionConstantsTest::test_gssapi_delegation_opti
 tests/option_constants_test.py::OptionConstantsTest::test_http09_allowed_option PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_httpauth_digest_ie PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_issuercert PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_issuercert_blob PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_krb4level PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_krblevel PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_legacy_proxy_sslversion_options SKIPPED
 tests/option_constants_test.py::OptionConstantsTest::test_legacy_sslversion_options SKIPPED
 tests/option_constants_test.py::OptionConstantsTest::test_mail_auth PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_mail_from PASSED
@@ -223,18 +228,31 @@ tests/option_constants_test.py::OptionConstantsTest::test_postredir_flags PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_postredir_post_303 PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_postredir_setopt PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_protocols_setopt PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_cainfo_blob PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_proxy_capath PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_crlfile PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_issuercert PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_issuercert_blob PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_keypasswd PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_pinnedpublickey PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_proxy_service_name PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_ssl_cipher_list PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_ssl_options PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_proxy_ssl_verifyhost PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_proxy_ssl_verifypeer PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_proxy_sslcert PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_sslcert_blob PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_proxy_sslcerttype PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_proxy_sslkey PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_sslkey_blob PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_proxy_sslkeytype PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_sslversion_options PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_proxy_tls13_ciphers PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_proxy_tlsauth SKIPPED
 tests/option_constants_test.py::OptionConstantsTest::test_random_file PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_redir_post_303 PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_redir_protocols_setopt PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_request_target_option PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_service_name PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_socks5_gssapi_nec_setopt PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_socks5_gssapi_service_setopt PASSED
@@ -248,6 +266,8 @@ tests/option_constants_test.py::OptionConstantsTest::test_ssl_options PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_ssl_sessionid_cache PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_ssl_verifyhost PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_ssl_verifystatus PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_sslcert_blob PASSED
+tests/option_constants_test.py::OptionConstantsTest::test_sslkey_blob PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_sslversion_7_34_0 PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_sslversion_options PASSED
 tests/option_constants_test.py::OptionConstantsTest::test_tftp_blksize_setopt PASSED
@@ -381,19 +401,25 @@ tests/subclass_test.py::SubclassTest::test_subclass_method_override PASSED
 tests/unset_range_test.py::UnsetRangeTest::test_unset_range PASSED
 tests/user_agent_string_test.py::UserAgentStringTest::test_pycurl_user_agent_string PASSED
 tests/version_comparison_test.py::VersionComparisonTest::test_comparison PASSED
+tests/version_constants_test.py::VersionConstantsTest::test_altsvc PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_asynchdns PASSED
+tests/version_constants_test.py::VersionConstantsTest::test_brotli PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_conv PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_curldebug PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_debug PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_gssapi PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_gssnegotiate PASSED
+tests/version_constants_test.py::VersionConstantsTest::test_hsts PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_http2 PASSED
+tests/version_constants_test.py::VersionConstantsTest::test_http3 PASSED
+tests/version_constants_test.py::VersionConstantsTest::test_https_proxy PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_idn PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_ipv6 PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_kerberos4 PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_kerberos5 PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_largefile PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_libz PASSED
+tests/version_constants_test.py::VersionConstantsTest::test_multi_ssl PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_ntlm PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_ntlm_wb PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_psl PASSED
@@ -401,7 +427,9 @@ tests/version_constants_test.py::VersionConstantsTest::test_spnego PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_ssl PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_sspi PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_tlsauth_srp PASSED
+tests/version_constants_test.py::VersionConstantsTest::test_unicode PASSED
 tests/version_constants_test.py::VersionConstantsTest::test_unix_sockets PASSED
+tests/version_constants_test.py::VersionConstantsTest::test_zstd PASSED
 tests/version_test.py::VersionTest::test_libcurl_presence PASSED
 tests/version_test.py::VersionTest::test_pycurl_presence_and_case PASSED
 tests/weakref_test.py::WeakrefTest::test_easy PASSED
@@ -435,5 +463,5 @@ tests/xferinfo_cb_test.py::XferinfoCbTest::test_sockoptfunction_exception PASSED
 tests/xferinfo_cb_test.py::XferinfoCbTest::test_sockoptfunction_fail PASSED
 tests/xferinfo_cb_test.py::XferinfoCbTest::test_xferinfo_cb PASSED
 
-======== 408 passed, 21 skipped ========
+======== 433 passed, 23 skipped, 1 xpassed ========
 successsuccesssuccesssuccesssuccesssuccesspart1part2
