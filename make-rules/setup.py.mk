@@ -535,6 +535,22 @@ COMPONENT_TEST_TRANSFORMS += \
 		$(CAT) \
 	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
 
+# Normalize stestr test results
+USE_STESTR = $(filter library/python/stestr-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES))
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(strip $(USE_STESTR)),"| ( \
+			$(GSED) -e '0,/^{[0-9]\{1,\}}/{//i\'\$$'\\\n{0}\\\n}' \
+				-e 's/^\(Ran: [0-9]\{1,\} tests\{0,1\}\) in .*\$$/\1/' \
+				-e '/^Sum of execute time for each test/d' \
+				-e '/^ - Worker /d' \
+		) | ( \
+			$(GSED) -u -e '/^{0}\$$/Q' ; \
+			$(GSED) -u -e 's/^{[0-9]\{1,\}} //' \
+				-e 's/\[[.0-9]\{1,\}s\] \.\.\./.../' \
+				-e '/^\$$/Q' | $(SORT) | $(GSED) -e '\$$a\'\$$'\\\n\\\n' ; \
+			$(CAT) \
+		) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
+
 # Normalize setup.py test results.  The setup.py testing could be used either
 # directly or via tox so add these transforms for all test styles
 # unconditionally.
