@@ -16,12 +16,12 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bluefish
-COMPONENT_VERSION=	2.2.14
+COMPONENT_VERSION=	2.2.15
 COMPONENT_SUMMARY=	Bluefish, a powerful editor for experienced web designers
 COMPONENT_PROJECT_URL=	https://bluefish.openoffice.nl/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:22ccdf9ce4e5c9621063e6cf7d73abfb0736ab7a72bce086d06c5cf5ee125ede
+COMPONENT_ARCHIVE_HASH= sha256:6143e51c6b5579d596f3a9a85e0f0d8580c9f58f828575b119880e0ca1d941bc
 COMPONENT_ARCHIVE_URL=	https://www.bennewitz.com/bluefish/stable/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/editor/bluefish
 COMPONENT_CLASSIFICATION=	Development/Editors
@@ -35,8 +35,7 @@ PATH= $(PATH.gnu)
 
 CFLAGS += -DANSICPP
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --sysconfdir=/$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-update-databases
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
