@@ -29,12 +29,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
-COMPONENT_VERSION=	0.22.4
+COMPONENT_VERSION=	0.22.5
 COMPONENT_SUMMARY=	GNU gettext - message handling utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:29217f1816ee2e777fa9a01f9956a14139c0c23cc1b20368f06b2888e8a34116
+COMPONENT_ARCHIVE_HASH=	sha256:fe10c37353213d78a5b83d48af231e005c4da84db5ce88037d88355938259640
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-gettext
 COMPONENT_CLASSIFICATION=	Development/GNU
@@ -58,7 +58,7 @@ COMPONENT_POST_INSTALL_ACTION.64 += \
 	done ;
 
 # Tests should run in a clean environment
-COMPONENT_TEST_ENV= -i PATH=${PATH}
+COMPONENT_TEST_ENV= -i PATH=$(PATH)
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/=========/p" ' \
@@ -66,7 +66,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Manually added dependencies
 REQUIRED_PACKAGES += library/libcroco
-# for tests
+
 TEST_REQUIRED_PACKAGES += library/guile
 TEST_REQUIRED_PACKAGES += runtime/clisp
 TEST_REQUIRED_PACKAGES += runtime/tcl-8
