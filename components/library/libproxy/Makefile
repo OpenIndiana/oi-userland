@@ -16,13 +16,14 @@
 
 BUILD_BITS= 64_and_32
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 USE_COMMON_TEST_MASTER= false
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libproxy
 COMPONENT_VERSION=      0.4.18
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      Libproxy is a library that provides automatic proxy configuration management
 COMPONENT_PROJECT_URL=  https://libproxy.github.io/libproxy/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,7 +37,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
@@ -67,13 +68,14 @@ CMAKE_OPTIONS += -DBIPR=ON
 LDFLAGS += -lsocket -lxnet -lnsl
 
 # Assumes "make" is GNU make, turns into fork bomb if it finds illumos make
-COMPONENT_BUILD_ENV += PATH=$(PATH.gnu)
+COMPONENT_BUILD_ENV += PATH=$(PATH)
 
 COMPONENT_POST_INSTALL_ACTION=  \
-    [ $(BITS) -eq 64 ] && $(PYTHON) -m py_compile $(PROTO_DIR)/$(PYTHON_LIB)/libproxy.py || truea ;
+    [ $(BITS) -eq 64 ] && $(PYTHON) -m py_compile $(PROTO_DIR)/$(PYTHON_LIB)/libproxy.py || true ;
 
 # Drop 32-bit binaries
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
+
 # Move the 'proxy' binary to demos
 $(INSTALL_64):	COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTOUSRDIR)/demo/jds/bin/ ;
 $(INSTALL_64):	COMPONENT_POST_INSTALL_ACTION += $(MV) $(PROTOUSRBINDIR)/proxy $(PROTOUSRDIR)/demo/jds/bin/ ;
