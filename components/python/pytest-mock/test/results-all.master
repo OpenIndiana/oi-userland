@@ -35,17 +35,16 @@ tests/test_pytest_mock.py::test_assert_has_calls_no_calls PASSED
 tests/test_pytest_mock.py::test_assert_not_called_wrapper PASSED
 tests/test_pytest_mock.py::test_callable_like_spy PASSED
 tests/test_pytest_mock.py::test_class_method_spy PASSED
-tests/test_pytest_mock.py::test_class_method_spy_autospec_false PASSED
 tests/test_pytest_mock.py::test_class_method_subclass_spy PASSED
 tests/test_pytest_mock.py::test_class_method_with_metaclass_spy PASSED
 tests/test_pytest_mock.py::test_context_manager_patch_example PASSED
 tests/test_pytest_mock.py::test_detailed_introspection SKIPPED (this...)
 tests/test_pytest_mock.py::test_detailed_introspection_async SKIPPED
 tests/test_pytest_mock.py::test_instance_async_method_spy PASSED
+tests/test_pytest_mock.py::test_instance_class_static_method_spy_autospec_true PASSED
 tests/test_pytest_mock.py::test_instance_method_by_class_spy PASSED
 tests/test_pytest_mock.py::test_instance_method_by_subclass_spy PASSED
 tests/test_pytest_mock.py::test_instance_method_spy PASSED
-tests/test_pytest_mock.py::test_instance_method_spy_autospec_true PASSED
 tests/test_pytest_mock.py::test_instance_method_spy_exception[BaseException] PASSED
 tests/test_pytest_mock.py::test_instance_method_spy_exception[Exception] PASSED
 tests/test_pytest_mock.py::test_instance_method_spy_exception[GeneratorExit] PASSED
@@ -82,6 +81,7 @@ tests/test_pytest_mock.py::test_static_method_spy PASSED
 tests/test_pytest_mock.py::test_static_method_subclass_spy PASSED
 tests/test_pytest_mock.py::test_stop_instance_patch PASSED
 tests/test_pytest_mock.py::test_stop_instance_spy PASSED
+tests/test_pytest_mock.py::test_stop_multiple_patches PASSED
 tests/test_pytest_mock.py::test_stop_patch PASSED
 tests/test_pytest_mock.py::test_stop_spy PASSED
 tests/test_pytest_mock.py::test_used_with_class_scope PASSED
@@ -91,75 +91,7 @@ tests/test_pytest_mock.py::test_used_with_session_scope PASSED
 tests/test_pytest_mock.py::test_warn_patch_context_manager PASSED
 tests/test_pytest_mock.py::test_warn_patch_object_context_manager PASSED
 
-=============================== warnings summary ===============================
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-  $(PYTHON_DIR)/vendor-packages/pytest_reporter/__init__.py:1: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
-    from pkg_resources import get_distribution, DistributionNotFound
-
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(parent)
-
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-tests/test_pytest_mock.py::test_missing_introspection
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-tests/test_pytest_mock.py::test_abort_patch_context_manager_with_stale_pyc
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-tests/test_pytest_mock.py: 45 warnings
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 78 passed, 4 skipped, 75 warnings ========
+======== 78 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
