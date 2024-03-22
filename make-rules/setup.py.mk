@@ -661,10 +661,13 @@ COMPONENT_POST_INSTALL_ACTION += \
 	| $(PYTHON) $(WS_TOOLS)/python-requires - >> $(@D)/.depend-test ;
 
 # Convert raw per version lists of test dependencies to single list of
-# TEST_REQUIRED_PACKAGES entries
+# TEST_REQUIRED_PACKAGES entries.  Some Python projects lists their own project
+# as a test dependency so filter this out here too.
 $(BUILD_DIR)/META.depend-test.required:	$(INSTALL_$(MK_BITS))
 	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-test) | $(SORT) -u \
-		| $(GSED) -e 's/.*/TEST_REQUIRED_PACKAGES.python += library\/python\/&/' > $@
+		| $(GSED) -e 's/.*/TEST_REQUIRED_PACKAGES.python += library\/python\/&/' \
+		| $(GNU_GREP) -v ' $(COMPONENT_FMRI)$$' \
+		> $@
 
 # Add META.depend-test.required to the generated list of REQUIRED_PACKAGES
 REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'
