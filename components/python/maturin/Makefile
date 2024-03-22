@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		maturin
-HUMAN_VERSION =			1.5.0
+HUMAN_VERSION =			1.5.1
 COMPONENT_SUMMARY =		maturin - Build and publish crates with pyo3, rust-cpython and cffi bindings as well as rust binaries as python packages
 COMPONENT_PROJECT_URL =		https://github.com/pyo3/maturin
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e046ea2aed687991d58c42f6276dfcc0c037092934654f538b5877fd57dd3a9c
+	sha256:3dd834ece80edb866af18cbd4635e0ecac40139c726428d5f1849ae154b26dca
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 
 # https://github.com/PyO3/maturin/issues/1674
