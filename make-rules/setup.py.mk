@@ -666,7 +666,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 $(BUILD_DIR)/META.depend-test.required:	$(INSTALL_$(MK_BITS))
 	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-test) | $(SORT) -u \
 		| $(GSED) -e 's/.*/TEST_REQUIRED_PACKAGES.python += library\/python\/&/' \
-		| $(GNU_GREP) -v ' $(COMPONENT_FMRI)$$' \
+		| ( $(GNU_GREP) -v ' $(COMPONENT_FMRI)$$' || true ) \
 		> $@
 
 # Add META.depend-test.required to the generated list of REQUIRED_PACKAGES
