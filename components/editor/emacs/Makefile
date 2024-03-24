@@ -24,14 +24,15 @@
 # Copyright (c) 2023, Klaus Ziegler
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
-COMPONENT_VERSION=      29.2
+COMPONENT_VERSION=      29.3
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:7d3d2448988720bf4bf57ad77a5a08bf22df26160f90507a841ba986be2670dc
+COMPONENT_ARCHIVE_HASH= sha256:c34c05d3ace666ed9c7f7a0faf070fea3217ff1910d004499bd5453233d742a0
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			editor/gnu-emacs
 COMPONENT_CLASSIFICATION=	Development/Editors
@@ -224,6 +225,7 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += image/imagemagick
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
