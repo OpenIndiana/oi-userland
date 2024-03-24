@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_metadata
-HUMAN_VERSION =			7.0.2
+HUMAN_VERSION =			7.1.0
 COMPONENT_SUMMARY =		importlib_metadata - Read metadata from Python packages
 COMPONENT_PROJECT_URL =		https://github.com/python/importlib_metadata
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:198f568f3230878cb1b44fbd7975f87906c22336dba2e4a7f05278c281fbd792
+	sha256:b78938b926ee8d5f020fc4772d487045805a55ddbad2ecf21c6d60938dc7fcd2
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,6 +45,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += library/python/zipp
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flufl-flake8
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pyfakefs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

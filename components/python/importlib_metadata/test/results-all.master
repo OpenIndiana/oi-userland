@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 138 items
+collecting ... collected 141 items
 
 .::project PASSED
 .::project PASSED
@@ -33,9 +33,10 @@ importlib_metadata/_functools.py::mypy PASSED
 importlib_metadata/_itertools.py::importlib_metadata._itertools.always_iterable PASSED
 importlib_metadata/_itertools.py::mypy PASSED
 importlib_metadata/_meta.py::mypy PASSED
-importlib_metadata/_py$(PYV)compat.py::mypy PASSED
 importlib_metadata/_text.py::importlib_metadata._text.FoldedCase PASSED
 importlib_metadata/_text.py::mypy PASSED
+importlib_metadata/compat/__init__.py::mypy PASSED
+importlib_metadata/compat/py$(PYV).py::mypy PASSED
 importlib_metadata/diagnose.py::mypy PASSED
 tests/__init__.py::mypy PASSED
 tests/_context.py::mypy PASSED
@@ -43,12 +44,16 @@ tests/_context.py::tests._context.suppress PASSED
 tests/_path.py::mypy PASSED
 tests/_path.py::tests._path.Recording PASSED
 tests/_path.py::tests._path.build PASSED
+tests/compat/__init__.py::mypy PASSED
+tests/compat/py$(PYV).py::mypy PASSED
+tests/compat/py312.py::mypy PASSED
+tests/compat/test_py$(PYV)_compat.py::OldStdlibFinderTests::test_compatibility_with_old_stdlib_path_distribution PASSED
+tests/compat/test_py$(PYV)_compat.py::mypy PASSED
 tests/data/__init__.py::mypy PASSED
 tests/data/sources/example/example/__init__.py::mypy PASSED
 tests/data/sources/example2/example2/__init__.py::mypy PASSED
 tests/data/sources/example2::project PASSED
 tests/fixtures.py::mypy PASSED
-tests/py$(PYV)compat.py::mypy PASSED
 tests/test_api.py::APITests::test_as_json PASSED
 tests/test_api.py::APITests::test_as_json_egg_info PASSED
 tests/test_api.py::APITests::test_as_json_odd_case PASSED
@@ -127,8 +132,6 @@ tests/test_main.py::TestEntryPoints::test_positional_args PASSED
 tests/test_main.py::TestEntryPoints::test_repr PASSED
 tests/test_main.py::TestEntryPoints::test_sortable PASSED
 tests/test_main.py::mypy PASSED
-tests/test_py$(PYV)compat.py::OldStdlibFinderTests::test_compatibility_with_old_stdlib_path_distribution PASSED
-tests/test_py$(PYV)compat.py::mypy PASSED
 tests/test_zip.py::TestEgg::test_case_insensitive PASSED
 tests/test_zip.py::TestEgg::test_files PASSED
 tests/test_zip.py::TestEgg::test_missing_metadata PASSED
@@ -148,7 +151,7 @@ tests/test_zip.py::mypy PASSED
 
 ===================================== mypy =====================================
 
-Success: no issues found in 27 source files
-======== 134 passed, 4 skipped ========
+Success: no issues found in 30 source files
+======== 137 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
