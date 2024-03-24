@@ -1,0 +1,357 @@
+Revert 6aa210e6af965a972a1c3a03e9abd556c45872ac 
+Required for some customers - see 31814220
+
+--- a/meson_options.txt	2023-06-26 07:39:05.868503104 -0700
++++ b/meson_options.txt	2023-06-26 07:39:26.039681486 -0700
+@@ -77,6 +77,11 @@
+        value : false,
+        description : 'Also use posix threads in case the platform defaults to another implementation (on Windows for example)')
+ 
++option('fam',
++       type : 'boolean',
++       value : false,
++       description : 'Use fam for file system monitoring')
++
+ option('tests',
+        type : 'boolean',
+        value : true,
+--- a/gio/meson.build	2023-06-26 07:39:55.405741615 -0700
++++ b/gio/meson.build	2023-06-26 07:40:20.914170757 -0700
+@@ -1100,6 +1100,7 @@
+   endforeach
+ endif
+ 
++subdir('fam')
+ if build_tests
+     subdir('tests')
+ endif
+--- a/docs/reference/gio/overview.xml	2023-06-26 07:43:32.574491070 -0700
++++ b/docs/reference/gio/overview.xml	2023-06-26 07:44:52.171474717 -0700
+@@ -392,7 +392,7 @@
+         The #GFileMonitor implementation for local files that is included
+         in GIO on Linux has the name <literal>inotify</literal>, others that are built
+         are built as modules (depending on the platform) are called
+-        <literal>kqueue</literal> and <literal>win32filemonitor</literal>.
++        <literal>fam</literal>, <literal>kqueue</literal> and <literal>win32filemonitor</literal>.
+       </para><para>
+         The special value <literal>help</literal> can be used to print a list of
+         available implementations to standard output.
+@@ -665,7 +665,7 @@
+       </para>
+       <para>
+         GIO uses this extension point internally, to switch between
+-        its kqueue-based and inotify-based file monitoring implementations.
++        its fam-based and inotify-based file monitoring implementations.
+       </para>
+    </formalpara>
+ 
+--- a/docs/reference/gio/meson.build	2023-06-26 07:45:17.347220450 -0700
++++ b/docs/reference/gio/meson.build	2023-06-26 07:45:33.867624140 -0700
+@@ -3,6 +3,7 @@
+   subdir('xml')
+ 
+   ignore_headers = [
++    'fam',
+     'gdbus-2.0',
+     'inotify',
+     'kqueue',
+--- a/gio/fam/gfamfilemonitor.map	2023-06-26 07:48:33.508579231 -0700
++++ b/gio/fam/gfamfilemonitor.map	2023-06-26 07:42:21.369994717 -0700
+@@ -0,0 +1,8 @@
++{
++global:
++  g_io_module_load;
++  g_io_module_unload;
++  g_io_module_query;
++local:
++  *;
++};
+--- a/gio/fam/gfamfilemonitor.c	2023-06-26 07:48:25.344771924 -0700
++++ b/gio/fam/gfamfilemonitor.c	2023-06-26 07:42:21.365393800 -0700
+@@ -0,0 +1,235 @@
++/*
++ * Copyright © 2015 Canonical Limited
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
++ *
++ * Author: Ryan Lortie <desrt@desrt.ca>
++ */
++
++#include "config.h"
++
++#include <gio/glocalfilemonitor.h>
++#include <gio/giomodule.h>
++#include "glib-private.h"
++#include <glib-unix.h>
++#include <fam.h>
++
++static GMutex         fam_lock;
++static gboolean       fam_initialised;
++static FAMConnection  fam_connection;
++static GSource       *fam_source;
++
++#define G_TYPE_FAM_FILE_MONITOR      (g_fam_file_monitor_get_type ())
++#define G_FAM_FILE_MONITOR(inst)     (G_TYPE_CHECK_INSTANCE_CAST ((inst), \
++                                      G_TYPE_FAM_FILE_MONITOR, GFamFileMonitor))
++
++typedef GLocalFileMonitorClass GFamFileMonitorClass;
++
++typedef struct
++{
++  GLocalFileMonitor parent_instance;
++
++  FAMRequest request;
++} GFamFileMonitor;
++
++static GType g_fam_file_monitor_get_type (void);
++G_DEFINE_DYNAMIC_TYPE (GFamFileMonitor, g_fam_file_monitor, G_TYPE_LOCAL_FILE_MONITOR)
++
++static gboolean
++g_fam_file_monitor_callback (gint         fd,
++                             GIOCondition condition,
++                             gpointer     user_data)
++{
++  gint64 now = g_source_get_time (fam_source);
++
++  g_mutex_lock (&fam_lock);
++
++  while (FAMPending (&fam_connection))
++    {
++      const gchar *child;
++      FAMEvent ev;
++
++      if (FAMNextEvent (&fam_connection, &ev) != 1)
++        {
++          /* The daemon died.  We're in a really bad situation now
++           * because we potentially have a bunch of request structures
++           * outstanding which no longer make any sense to anyone.
++           *
++           * The best thing that we can do is do nothing.  Notification
++           * won't work anymore for this process.
++           */
++          g_mutex_unlock (&fam_lock);
++
++          g_warning ("Lost connection to FAM (file monitoring) service.  Expect no further file monitor events.");
++
++          return FALSE;
++        }
++
++      /* We expect ev.filename to be a relative path for children in a
++       * monitored directory, and an absolute path for a monitored file
++       * or the directory itself.
++       */
++      if (ev.filename[0] != '/')
++        child = ev.filename;
++      else
++        child = NULL;
++
++      switch (ev.code)
++        {
++        case FAMAcknowledge:
++          g_source_unref (ev.userdata);
++          break;
++
++        case FAMChanged:
++          g_file_monitor_source_handle_event (ev.userdata, G_FILE_MONITOR_EVENT_CHANGED, child, NULL, NULL, now);
++          break;
++
++        case FAMDeleted:
++          g_file_monitor_source_handle_event (ev.userdata, G_FILE_MONITOR_EVENT_DELETED, child, NULL, NULL, now);
++          break;
++
++        case FAMCreated:
++          g_file_monitor_source_handle_event (ev.userdata, G_FILE_MONITOR_EVENT_CREATED, child, NULL, NULL, now);
++          break;
++
++        default:
++          /* unknown type */
++          break;
++        }
++    }
++
++  g_mutex_unlock (&fam_lock);
++
++  return TRUE;
++}
++
++static gboolean
++g_fam_file_monitor_is_supported (void)
++{
++  g_mutex_lock (&fam_lock);
++
++  if (!fam_initialised)
++    {
++      fam_initialised = FAMOpen2 (&fam_connection, "GLib GIO") == 0;
++
++      if (fam_initialised)
++        {
++#ifdef HAVE_FAM_NO_EXISTS
++          /* This is a gamin extension that avoids sending all the
++           * Exists event for dir monitors
++           */
++          FAMNoExists (&fam_connection);
++#endif
++
++          fam_source = g_unix_fd_source_new (FAMCONNECTION_GETFD (&fam_connection), G_IO_IN);
++          g_source_set_callback (fam_source, (GSourceFunc) g_fam_file_monitor_callback, NULL, NULL);
++          g_source_attach (fam_source, GLIB_PRIVATE_CALL(g_get_worker_context) ());
++        }
++    }
++
++  g_mutex_unlock (&fam_lock);
++
++  return fam_initialised;
++}
++
++static gboolean
++g_fam_file_monitor_cancel (GFileMonitor *monitor)
++{
++  GFamFileMonitor *gffm = G_FAM_FILE_MONITOR (monitor);
++
++  g_mutex_lock (&fam_lock);
++
++  g_assert (fam_initialised);
++
++  FAMCancelMonitor (&fam_connection, &gffm->request);
++
++  g_mutex_unlock (&fam_lock);
++
++  return TRUE;
++}
++
++static void
++g_fam_file_monitor_start (GLocalFileMonitor  *local_monitor,
++                          const gchar        *dirname,
++                          const gchar        *basename,
++                          const gchar        *filename,
++                          GFileMonitorSource *source)
++{
++  GFamFileMonitor *gffm = G_FAM_FILE_MONITOR (local_monitor);
++
++  g_mutex_lock (&fam_lock);
++
++  g_assert (fam_initialised);
++
++  g_source_ref ((GSource *) source);
++
++  if (dirname)
++    FAMMonitorDirectory (&fam_connection, dirname, &gffm->request, source);
++  else
++    FAMMonitorFile (&fam_connection, filename, &gffm->request, source);
++
++  g_mutex_unlock (&fam_lock);
++}
++
++static void
++g_fam_file_monitor_init (GFamFileMonitor* monitor)
++{
++}
++
++static void
++g_fam_file_monitor_class_init (GFamFileMonitorClass *class)
++{
++  GFileMonitorClass *file_monitor_class = G_FILE_MONITOR_CLASS (class);
++
++  class->is_supported = g_fam_file_monitor_is_supported;
++  class->start = g_fam_file_monitor_start;
++  file_monitor_class->cancel = g_fam_file_monitor_cancel;
++}
++
++static void
++g_fam_file_monitor_class_finalize (GFamFileMonitorClass *class)
++{
++}
++
++void
++g_io_module_load (GIOModule *module)
++{
++  g_type_module_use (G_TYPE_MODULE (module));
++
++  g_fam_file_monitor_register_type (G_TYPE_MODULE (module));
++
++  g_io_extension_point_implement (G_LOCAL_FILE_MONITOR_EXTENSION_POINT_NAME,
++                                 G_TYPE_FAM_FILE_MONITOR, "fam", 10);
++
++  g_io_extension_point_implement (G_NFS_FILE_MONITOR_EXTENSION_POINT_NAME,
++                                 G_TYPE_FAM_FILE_MONITOR, "fam", 10);
++}
++
++void
++g_io_module_unload (GIOModule *module)
++{
++  g_assert_not_reached ();
++}
++
++char **
++g_io_module_query (void)
++{
++  char *eps[] = {
++    G_LOCAL_FILE_MONITOR_EXTENSION_POINT_NAME,
++    G_NFS_FILE_MONITOR_EXTENSION_POINT_NAME,
++    NULL
++  };
++
++  return g_strdupv (eps);
++}
+--- a/gio/fam/meson.build	2023-06-26 07:51:35.321884298 -0700
++++ b/gio/fam/meson.build	2023-06-26 07:42:21.397568522 -0700
+@@ -0,0 +1,36 @@
++if not get_option('fam')
++  subdir_done()
++endif
++
++fam_dep = cc.find_library('fam')
++fam_c_args = gio_c_args
++if cc.has_function('FAMNoExists', dependencies : fam_dep)
++  fam_c_args += '-DHAVE_FAM_NO_EXISTS=1'
++endif
++
++deps = [
++  fam_dep,
++  libglib_dep,
++  libgobject_dep,
++  libgio_dep,
++]
++
++symbol_map = join_paths(meson.current_source_dir(), 'gfamfilemonitor.map')
++fam_ldflags = cc.get_supported_link_arguments([
++  '-Wl,--version-script,' + symbol_map,
++  '-Wl,-no-undefined',
++])
++
++module = shared_module('giofam', 'gfamfilemonitor.c',
++  include_directories : [gmoduleinc],
++  dependencies : deps,
++  c_args : [fam_c_args, gio_c_args_internal],
++  link_args : fam_ldflags,
++  link_depends : symbol_map,
++  install_dir : glib_giomodulesdir,
++  install : true,
++)
++
++if not meson.is_cross_build()
++  meson.add_install_script('../gio-querymodules-wrapper.py', gio_querymodules.full_path(), glib_giomodulesdir)
++endif
+--- a/gio/gio-querymodules-wrapper.py	2023-06-26 08:02:42.885690403 -0700
++++ b/gio/gio-querymodules-wrapper.py	2023-06-26 08:02:36.411976824 -0700
+@@ -0,0 +1,9 @@
++#!/usr/bin/env python3
++
++import os
++import subprocess
++import sys
++
++if not os.environ.get("DESTDIR"):
++    print("GIO module cache creation...")
++    subprocess.call([sys.argv[1], sys.argv[2]])
