@@ -1,0 +1,50 @@
+This is causing a regression with coredumps of all gtk-demos and majority
+of the integrated tests
+
+core 'core' of 4134:    gtk4-demo
+------------  lwp# 1 / thread# 1  ---------------
+ 00007fc35911a7b6 gtk_css_node_invalidate () + 26
+ 00007fc35911a8ef gtk_css_node_do_ensure_style () + 7f
+ 00007fc35911adb6 gtk_css_node_validate_internal () + c6
+ 00007fc35911ae17 gtk_css_node_validate_internal () + 127
+ 00007fc35911ae17 gtk_css_node_validate_internal () + 127
+ 00007fc35911ae17 gtk_css_node_validate_internal () + 127
+ 00007fc35911ae17 gtk_css_node_validate_internal () + 127
+ 00007fc35911cbe2 gtk_css_node_validate () + 62
+ 00007fc3590d9052 gtk_window_show () + 32
+ 00007fc3584397a0 _g_closure_invoke_va () + d0
+ 00007fc358459ebf g_signal_emit_valist () + f6f
+ 00007fc35845a3dd g_signal_emit () + 7d
+ 00007fc3590babf9 gtk_widget_show () + 129
+ 00007fc35a2447f8 command_line () + 218
+ 00007fc35814f1a3 _g_cclosure_marshal_INT__OBJECT () + 53
+ 00007fc3584395a5 g_closure_invoke () + c5
+ 00007fc35844eda6 ???????? ()
+ 00007fc358459688 g_signal_emit_valist () + 738
+ 00007fc35845a3dd g_signal_emit () + 7d
+ 00007fc3581ad453 g_application_call_command_line () + a3
+ 00007fc3581af7f1 g_application_real_local_command_line () + 221
+ 00007fc3581af933 g_application_run () + f3
+ 00007fc35a2449d4 main () + 1a4
+ 00007fc35a2174b3 _start () + 43
+
+--- a/meson.build	2023-12-28 19:25:40.196383242 -0800
++++ b/meson.build	2023-12-28 19:26:32.521420680 -0800
+@@ -214,17 +214,6 @@
+   endif
+ endforeach
+ 
+-# We use links() because sigsetjmp() is often a macro hidden behind other macros
+-cdata.set('HAVE_SIGSETJMP',
+-  cc.links('''#define _POSIX_SOURCE
+-              #include <setjmp.h>
+-              int main (void) {
+-                sigjmp_buf env;
+-                sigsetjmp (env, 0);
+-                return 0;
+-              }''', name: 'sigsetjmp'),
+-)
+-
+ # Check for __uint128_t (gcc) by checking for 128-bit division
+ uint128_t_src = '''int main() {
+ static __uint128_t v1 = 100;
