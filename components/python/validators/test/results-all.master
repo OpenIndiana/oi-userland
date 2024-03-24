@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 596 items
+collecting ... collected 599 items
 
 tests/i18n/test_es.py::test_returns_false_on_invalid_cif[12345] PASSED
 tests/i18n/test_es.py::test_returns_false_on_invalid_cif[ABCDEFGHI] PASSED
@@ -298,13 +298,15 @@ tests/test_domain.py::test_returns_true_on_valid_domain[3.cn.-True-False] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[\xfcber.com-False-False] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[_example.com-False-True] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[a.cn-False-False] PASSED
+tests/test_domain.py::test_returns_true_on_valid_domain[exa_mple.com-False-True] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[example.com-False-False] PASSED
+tests/test_domain.py::test_returns_true_on_valid_domain[example_.com-False-True] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[kr\xe4uter.com.-True-False] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[someThing.versicherung.-True-False] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[somerandomexample.xn--fiqs8s-False-False] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[something.versicherung-False-False] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[sub1.sub2.sample.co.uk-False-False] PASSED
-tests/test_domain.py::test_returns_true_on_valid_domain[underscore_subdomain.example.com-False-False] PASSED
+tests/test_domain.py::test_returns_true_on_valid_domain[underscore_subdomain.example.com-False-True] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[xn----gtbspbbmkef.xn--p1ai-False-False] PASSED
 tests/test_email.py::test_returns_failed_validation_on_invalid_email["\\\n"@here.com] PASSED
 tests/test_email.py::test_returns_failed_validation_on_invalid_email["test@test"@example.com] PASSED
@@ -510,6 +512,7 @@ tests/test_url.py::test_returns_failed_validation_on_invalid_url[http://foobar.d
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[http://www.\ufffd.ch] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[http://www.foo.bar./] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://example.com/foo/?bar#!baz/inga/8SA-M3as7A8] PASSED
+tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://example.org?q=search');alert(document.domain);] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://foo.bar.net/baz.php?-/inga/test-lenient-query/] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://foo.com/img/bar/baz.jpg?-62169987208] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://www.example.com/foo/?bar=baz&inga=42&quux] PASSED
@@ -604,6 +607,6 @@ tests/test_validation_failure.py::TestValidationError::test_boolean_coerce PASSE
 tests/test_validation_failure.py::TestValidationError::test_repr PASSED
 tests/test_validation_failure.py::TestValidationError::test_string PASSED
 
-======== 596 passed ========
+======== 599 passed ========
   py$(PYV): OK
   congratulations :)
