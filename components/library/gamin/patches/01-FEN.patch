@@ -1,3 +1,111 @@
+Solaris FEN support in Gamin
+
+https://bugzilla.gnome.org/show_bug.cgi?id=730679
+http://osdyson.org/issues/172
+http://hg.osdyson.org/solaris-desktop-spec-files/raw-file/8f7c0cd200a9/patches/gamin-01-all.diff
+
+Fixed issues after the initial integration:
+1) Using freed node_t pointer in node_add function.
+Mitigation: When a node is removed, we also remove all the events in the
+event queue that contain a reference to this node to avoid future memory errors.
+2) A missing call to node_lstat before calling port_add function.
+When the system is under load, the timing of callbacks might cause that port_add is
+called on a node which access, change, and modification time was not read/updated.
+Mitigation: Call node_lstat before port_add in node_add_event function.
+
+diff --git a/configure.in b/configure.in
+index e4b684e..5836bb7 100644
+--- a/configure.in
++++ b/configure.in
+@@ -42,6 +42,12 @@ if test -z "$ENV_CFLAGS"; then
+ 	CFLAGS=""
+ fi
+ 
++dnl If the user set no CFLAGS, then don't assume the autotools defaults of
++dnl "-g -O2". We set default CFLAGS later based on the --disable-debug flag.
++if test -z "$ENV_CFLAGS"; then
++	CFLAGS=""
++fi
++
+ dnl for the spec file
+ RELDATE=`date +'%a %b %e %Y'`
+ AC_SUBST(RELDATE)
+@@ -279,6 +285,43 @@ if test x$kqueue = xtrue; then
+ 	backends="${backends}, kqueue"
+ fi
+ 
++case "$os" in
++    solaris*)
++	AM_CONDITIONAL(ON_SOLARIS, true)
++	AC_COMPILE_IFELSE([
++		#include <port.h>
++		#ifndef PORT_SOURCE_FILE
++		#error "Please upgrade to Nevada 72 or above to suppoert FEN"
++		#endif
++		int main() { return 0; }
++		],[have_fen=1],)
++	if test x$have_fen = x1 ; then
++            AC_ARG_ENABLE(fen,
++		AC_HELP_STRING([--disable-fen], [Disable the FEN backend]),
++                       [fen="${enableval}"], [fen=true])
++
++		if test x$fen = xyes; then
++                       fen=true
++		elif test x$fen = xno; then
++                       fen=false
++		elif test x$fen != xtrue; then
++                       AC_MSG_ERROR(bad value ${enableval} for --disable-fen)
++		fi
++	fi
++	break;
++	;;
++    *)
++	fen=false
++	break;
++	;;
++esac
++
++AM_CONDITIONAL(ENABLE_FEN, test x$fen = xtrue)
++if test x$fen = xtrue; then
++	AC_DEFINE(ENABLE_FEN,1,[Use Solaris FEN as backend])
++	backends="${backends}, FEN"
++fi
++
+ dnl pthread support for reentrance of the client library.
+ AC_ARG_WITH(threads,
+ [  --with-threads          add multithread support(on)])
+@@ -385,6 +428,14 @@ if test x$dbus_have_struct_cmsgcred = xyes; then
+     AC_DEFINE(HAVE_CMSGCRED,1,[Have cmsgcred structure])
+ fi
+ 
++dnl Check for getpeerucred support - Solaris
++
++AC_CHECK_HEADER(ucred.h,
++    AC_CHECK_LIB(c, getpeerucred,[
++        AC_DEFINE([HAVE_GETPEERUCRED],[],[Define if has getpeerucred])
++        AC_DEFINE([HAVE_UCRED_H],[],[Define if <ucred.h> exists])]))
++
++
+ #### Abstract sockets
+ 
+ AC_MSG_CHECKING(abstract socket namespace)
+@@ -529,6 +580,16 @@ AC_SUBST(PYTHON_VERSION)
+ AC_SUBST(PYTHON_INCLUDES)
+ AC_SUBST(PYTHON_SITE_PACKAGES)
+ 
++dnl Check for -lsocket -lnsl
++
++AC_CHECK_FUNC(gethostent, , AC_CHECK_LIB(nsl, gethostent))
++AC_CHECK_FUNC(setsockopt, , AC_CHECK_LIB(socket, setsockopt))
++
++dnl Check for <sys/mnttab.h>
++
++AC_CHECK_HEADER(sys/mnttab.h,
++	AC_DEFINE([HAVE_SYS_MNTTAB_H], [], [Define if <sys/mnttab.h> is there]))
++
+ dnl After all config-related tweaking of CFLAGS, set it to its "build" value
+ 
+ AC_MSG_CHECKING(for more compiler warnings)
 diff --git a/libgamin/Makefile.am b/libgamin/Makefile.am
 index 35aa740..4f725a2 100644
 --- a/libgamin/Makefile.am
@@ -491,9 +599,9 @@ index 0000000..25df38f
 diff --git a/server/fen-kernel.c b/server/fen-kernel.c
 new file mode 100644
 index 0000000..8b9c58b
---- /dev/null
-+++ b/server/fen-kernel.c
-@@ -0,0 +1,557 @@
+--- /dev/null	2019-12-10 11:10:35.000000000 +0000
++++ gamin-0.1.10/server/fen-kernel.c	2019-12-10 11:10:23.000742017 +0000
+@@ -0,0 +1,574 @@
 +/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:set expandtab ts=4 shiftwidth=4: */
 +/* 
@@ -905,6 +1013,23 @@ index 0000000..8b9c58b
 +}
 +
 +/**
++ * When a node is deleted, we need to remove
++ * all events referencing this node from event queue.
++ *
++ * Unsafe, need lock fen_lock.
++ */
++void prune_queue (node_t *f)
++{
++    node_event_t* ev;
++    GQueue *c = g_queue_copy(g_eventq);
++    while (ev = (node_event_t*) g_queue_pop_head(c))    {
++        if (ev->user_data == f || ev->pair_data == f)
++            g_queue_remove(g_eventq, ev);
++    }
++    g_queue_free(c);
++}
++
++/**
 + * Get Solaris resouce values.
 + *
 + */
@@ -1054,9 +1179,9 @@ index 0000000..8b9c58b
 diff --git a/server/fen-kernel.h b/server/fen-kernel.h
 new file mode 100644
 index 0000000..6d2c49b
---- /dev/null
-+++ b/server/fen-kernel.h
-@@ -0,0 +1,43 @@
+--- /dev/null	2019-12-10 11:10:35.000000000 +0000
++++ gamin-0.1.10/server/fen-kernel.h	2019-12-10 11:10:22.999527865 +0000
+@@ -0,0 +1,44 @@
 +/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:set expandtab ts=4 shiftwidth=4: */
 +/* 
@@ -1096,6 +1221,7 @@ index 0000000..6d2c49b
 +
 +gint port_add (node_t* f);
 +void port_remove (node_t *f);
++void prune_queue (node_t *f);
 +
 +gboolean port_class_init ();
 +
@@ -1103,9 +1229,9 @@ index 0000000..6d2c49b
 diff --git a/server/fen-node.c b/server/fen-node.c
 new file mode 100644
 index 0000000..d4d7ddb
---- /dev/null
-+++ b/server/fen-node.c
-@@ -0,0 +1,642 @@
+--- /dev/null	2019-12-10 11:10:35.000000000 +0000
++++ gamin-0.1.10/server/fen-node.c	2019-12-10 11:10:23.002327705 +0000
+@@ -0,0 +1,643 @@
 +/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:set expandtab ts=4 shiftwidth=4: */
 +/* 
@@ -1399,10 +1525,11 @@ index 0000000..d4d7ddb
 +        /* Actually ignore the ROOT node. */
 +        if (node->state == 0 && NODE_PARENT(node)) {
 +            children_remove(NODE_PARENT(node), node);
++            /* Remove the pending events in the queue. */
++            prune_queue(node);
 +            /* Do clean instead of returning TRUE. */
 +            node_delete (node);
 +        }
-+        /* else, we have events, clean event queue? */
 +    }
 +    return FALSE;
 +}
@@ -1610,7 +1737,7 @@ index 0000000..d4d7ddb
 +     */
 +    if (NODE_NEED_MONITOR(f)) {
 +        if (HAS_NO_EXCEPTION_EVENTS(ev->e)) {
-+            if (NODE_HAS_STATE(f, NODE_STATE_ASSOCIATED) || port_add(f) == 0) {
++            if (NODE_HAS_STATE(f, NODE_STATE_ASSOCIATED) || (node_lstat(f) == 0 && port_add(f) == 0)) {
 +                if ((ev->e & FILE_MODIFIED) && NODE_HAS_FLAG(f, NODE_FLAG_DIR)) {
 +                    if (f->dir_subs) {
 +                        node_create_children_snapshot(f, FN_EVENT_CREATED, TRUE);

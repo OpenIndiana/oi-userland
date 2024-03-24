@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gamin
 COMPONENT_VERSION= 0.1.10
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= Library providing the FAM File Alteration Monitor API
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -46,12 +46,13 @@ COMPONENT_POST_INSTALL_ACTION.64 += \
 	$(MV) $(PROTO_DIR)$(PYTHON_LIB)/_gamin.so $(PROTO_DIR)$(PYTHON_LIB)/_gamin$$EXT_SUFFIX ;
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS.32 += --with-python=no
 CONFIGURE_OPTIONS.64 += --with-python=/usr
+CONFIGURE_OPTIONS += DAEMON_LIBS="-lglib-2.0 -lgobject-2.0 -lgio-2.0"
+
+PYTHON_REQUIRED_PACKAGES  += runtime/python
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
