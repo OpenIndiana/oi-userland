@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
 COMPONENT_VERSION=	1.3.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 # COMPONENT_ITEM_NO is part of the download path
 # (find it on https://inkscape.org/release/1.3/platforms/ under "Download")
 # eg. https://inkscape.org/gallery/item/42328/inkscape-1.3.tar.xz
@@ -47,8 +48,6 @@ PKG_MACROS += PYV=$(PYV)
 
 PATH = $(PATH.gnu)
 
-LDFLAGS += $(JPEG_LDFLAGS)
-
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DCMAKE_ENABLE_LCMS=ON
 CMAKE_OPTIONS += -DLCMS2_INCLUDE_DIR=$(USRINCDIR)/lcms2
@@ -63,8 +62,6 @@ CMAKE_OPTIONS += -DWITH_LIBWPG=ON
 CMAKE_OPTIONS += -DCMAKE_ENABLE_BINRELOC=OFF
 CMAKE_OPTIONS += -DWITH_GNOME_VFS=ON
 CMAKE_OPTIONS += -DWITH_OPENMP=ON
-CMAKE_OPTIONS += -DJPEG_INCLUDE_DIR=$(JPEG_INCDIR)
-CMAKE_OPTIONS += -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -72,6 +69,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += developer/gsl
 REQUIRED_PACKAGES += image/graphicsmagick
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/potrace
 REQUIRED_PACKAGES += library/c++/glibmm
