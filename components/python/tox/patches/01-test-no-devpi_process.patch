@@ -1,7 +1,7 @@
 We do not have devpi_process available (yet)
 
---- tox-4.14.1/pyproject.toml.orig
-+++ tox-4.14.1/pyproject.toml
+--- tox-4.14.2/pyproject.toml.orig
++++ tox-4.14.2/pyproject.toml
 @@ -74,7 +74,6 @@
    "build[virtualenv]>=1.0.3",
    "covdefaults>=2.3",
@@ -10,8 +10,8 @@ We do not have devpi_process available (yet)
    "diff-cover>=8.0.2",
    "distlib>=0.3.8",
    "flaky>=3.7",
---- tox-4.14.1/src/tox/pytest.py.orig
-+++ tox-4.14.1/src/tox/pytest.py
+--- tox-4.14.2/src/tox/pytest.py.orig
++++ tox-4.14.2/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
@@ -36,8 +36,8 @@ We do not have devpi_process available (yet)
  def _invalid_index_fake_port() -> int:  # noqa: PT005
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.14.1/tests/test_provision.py.orig
-+++ tox-4.14.1/tests/test_provision.py
+--- tox-4.14.2/tests/test_provision.py.orig
++++ tox-4.14.2/tests/test_provision.py
 @@ -16,8 +16,6 @@
  from packaging.requirements import Requirement
  
@@ -71,7 +71,7 @@ We do not have devpi_process available (yet)
  def test_provision_requires_nok(tox_project: ToxProjectCreator) -> None:
      ini = "[tox]\nrequires = pkg-does-not-exist\n setuptools==1\nskipsdist=true\n"
      outcome = tox_project({"tox.ini": ini}).run("c", "-e", "py")
-@@ -122,110 +103,9 @@
+@@ -122,96 +103,6 @@
  
  
  @pytest.mark.integration()
@@ -168,11 +168,10 @@ We do not have devpi_process available (yet)
  def test_provision_plugin_runner_in_provision(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
      """Ensure that provision environment can be explicitly configured."""
      log = tmp_path / "out.log"
-     proj = tox_project({"tox.ini": "[tox]\nrequires=somepkg123xyz\n[testenv:.tox]\nrunner=example"})
-     with pytest.raises(KeyError, match="example"):
+@@ -220,17 +111,6 @@
          proj.run("r", "-e", "py", "--result-json", str(log))
--
--
+ 
+ 
 -@pytest.mark.integration()
 -@pytest.mark.usefixtures("_pypi_index_self")
 -@pytest.mark.parametrize("relative_path", [True, False], ids=["relative", "absolute"])
@@ -182,3 +181,18 @@ We do not have devpi_process available (yet)
 -    conf_path = str(Path(project.path.name) / "tox.ini") if relative_path else str(project.path / "tox.ini")
 -    result = project.run("c", "--conf", conf_path, "-e", "py", from_cwd=tmp_path)
 -    result.assert_success()
+-
+-
+ @pytest.mark.parametrize("subcommand", ["r", "p", "de", "l", "d", "c", "q", "e", "le"])
+ def test_provision_default_arguments_exists(tox_project: ToxProjectCreator, subcommand: str) -> None:
+     ini = r"""
+--- tox-4.14.2/PKG-INFO.orig
++++ tox-4.14.2/PKG-INFO
+@@ -54,7 +54,6 @@
+ Requires-Dist: build[virtualenv]>=1.0.3; extra == 'testing'
+ Requires-Dist: covdefaults>=2.3; extra == 'testing'
+ Requires-Dist: detect-test-pollution>=1.2; extra == 'testing'
+-Requires-Dist: devpi-process>=1; extra == 'testing'
+ Requires-Dist: diff-cover>=8.0.2; extra == 'testing'
+ Requires-Dist: distlib>=0.3.8; extra == 'testing'
+ Requires-Dist: flaky>=3.7; extra == 'testing'
