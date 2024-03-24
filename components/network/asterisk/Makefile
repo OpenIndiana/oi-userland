@@ -17,14 +17,15 @@
 
 OPENSSL_VERSION= 3.1
 BUILD_BITS= 64
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	21.1.0
+COMPONENT_VERSION=	21.2.0
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:488100fe1d5648f629e22b52c87d9133892bf556f0c544eea659185cea6e8a69
+COMPONENT_ARCHIVE_HASH=	sha256:5737a976e9252e2d5e87d2e8176b1e07415057291c656b7547d0a79e0e8c3969
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk
@@ -83,6 +84,7 @@ CONFIGURE_OPTIONS +=    --with-gnu-ld=no
 CONFIGURE_OPTIONS +=	--with-crypto=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	--with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	--with-pjproject-bundled
+#CONFIGURE_OPTIONS +=	--with-libjwt-bundled
 CONFIGURE_OPTIONS +=	--with-gsm=internal
 CONFIGURE_OPTIONS +=	--with-ilbc=internal
 CONFIGURE_OPTIONS +=	--with-unixodbc
