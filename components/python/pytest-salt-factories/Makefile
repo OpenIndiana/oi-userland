@@ -19,17 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-salt-factories
-HUMAN_VERSION =			0.912.2
+HUMAN_VERSION =			1.0.1
 COMPONENT_SUMMARY =		pytest-salt-factories - Pytest Salt Plugin
 COMPONENT_PROJECT_URL =		https://github.com/saltstack/pytest-salt-factories
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/67/98/87d7a4f2a14681ee10e7032c8be0871e966037d650a4c8dfd7b6b75a0d40/pytest-salt-factories-0.912.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:214480495fd20b239360703a608b7d81e9396fba2d71cc34080ab844989082b6
+	sha256:daf267a4810d01c91f5e9ae09cd084c4732d9c8a0cad7e207264a2b78c3199c5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+# https://github.com/saltstack/pytest-system-statistics/issues/4
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -39,8 +38,10 @@ PYTHON_REQUIRED_PACKAGES += library/python/msgpack
 PYTHON_REQUIRED_PACKAGES += library/python/psutil
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/pytest-helpers-namespace
+PYTHON_REQUIRED_PACKAGES += library/python/pytest-shell-utilities
 PYTHON_REQUIRED_PACKAGES += library/python/pytest-skip-markers
-PYTHON_REQUIRED_PACKAGES += library/python/pytest-tempdir
+PYTHON_REQUIRED_PACKAGES += library/python/pytest-system-statistics
+PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
 PYTHON_REQUIRED_PACKAGES += library/python/pyzmq
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-declarative-requirements
