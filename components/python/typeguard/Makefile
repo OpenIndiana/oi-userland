@@ -19,16 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typeguard
-HUMAN_VERSION =			4.1.5
+HUMAN_VERSION =			4.2.1
 COMPONENT_SUMMARY =		typeguard - Run-time type checker for Python
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/90/fb/e5d68ef7b0bca67d06bb4a15f9317decbd1a3f323c3d89221d2ca4c11512/typeguard-4.1.5.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ea0a113bbc111bcffc90789ebb215625c963411f7096a7e9062d4e4630c155fd
+	sha256:c556a1b95948230510070ca53fa0341fb0964611bd05d598d87fb52115d65fee
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/pytest-dev/pluggy/issues/457
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
@@ -40,3 +42,4 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/tomli

@@ -1,12 +1,12 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> coverage run -m pytest
+py$(PYV): commands[0]> python -m coverage run -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 433 items
+collecting ... collected 453 items
 
 tests/mypy/test_type_annotations.py::test_negative PASSED
 tests/mypy/test_type_annotations.py::test_positive PASSED
@@ -47,6 +47,7 @@ tests/test_checkers.py::TestDict::test_bad_key_type_full_check PASSED
 tests/test_checkers.py::TestDict::test_bad_type PASSED
 tests/test_checkers.py::TestDict::test_bad_value_type PASSED
 tests/test_checkers.py::TestDict::test_bad_value_type_full_check PASSED
+tests/test_checkers.py::TestDict::test_custom_dict_generator_items PASSED
 tests/test_checkers.py::TestFloat::test_bad_type PASSED
 tests/test_checkers.py::TestFloat::test_valid[float] PASSED
 tests/test_checkers.py::TestFloat::test_valid[int] PASSED
@@ -133,6 +134,8 @@ tests/test_checkers.py::TestTuple::test_unparametrized_tuple[typing] PASSED
 tests/test_checkers.py::TestTuple::test_unparametrized_tuple_fail[builtin] PASSED
 tests/test_checkers.py::TestTuple::test_unparametrized_tuple_fail[typing] PASSED
 tests/test_checkers.py::TestType::test_any PASSED
+tests/test_checkers.py::TestType::test_generic_aliase[check_against1] PASSED
+tests/test_checkers.py::TestType::test_generic_aliase[type] PASSED
 tests/test_checkers.py::TestType::test_parametrized[exact] PASSED
 tests/test_checkers.py::TestType::test_parametrized[subclass] PASSED
 tests/test_checkers.py::TestType::test_parametrized_fail PASSED
@@ -147,15 +150,28 @@ tests/test_checkers.py::TestType::test_unparametrized_fail[annotation0] PASSED
 tests/test_checkers.py::TestType::test_unparametrized_fail[type] PASSED
 tests/test_checkers.py::TestTypeGuard::test_fail PASSED
 tests/test_checkers.py::TestTypeGuard::test_valid PASSED
-tests/test_checkers.py::TestTypedDict::test_inconsistent_keys_invalid PASSED
-tests/test_checkers.py::TestTypedDict::test_typed_dict[correct] PASSED
-tests/test_checkers.py::TestTypedDict::test_typed_dict[missing_x] PASSED
-tests/test_checkers.py::TestTypedDict::test_typed_dict[missing_y_error] PASSED
-tests/test_checkers.py::TestTypedDict::test_typed_dict[missing_y_ok] PASSED
-tests/test_checkers.py::TestTypedDict::test_typed_dict[not_dict] PASSED
-tests/test_checkers.py::TestTypedDict::test_typed_dict[unknown_key] PASSED
-tests/test_checkers.py::TestTypedDict::test_typed_dict[wrong_x] PASSED
-tests/test_checkers.py::TestTypedDict::test_typed_dict[wrong_y] PASSED
+tests/test_checkers.py::TestTypedDict::test_inconsistent_keys_invalid[typing] PASSED
+tests/test_checkers.py::TestTypedDict::test_inconsistent_keys_invalid[typing_extensions] PASSED
+tests/test_checkers.py::TestTypedDict::test_notrequired_fail[typing] SKIPPED
+tests/test_checkers.py::TestTypedDict::test_notrequired_fail[typing_extensions] PASSED
+tests/test_checkers.py::TestTypedDict::test_notrequired_pass[typing] SKIPPED
+tests/test_checkers.py::TestTypedDict::test_notrequired_pass[typing_extensions] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing-correct] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing-missing_x] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing-missing_y_error] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing-missing_y_ok] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing-not_dict] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing-unknown_key] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing-wrong_x] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing-wrong_y] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing_extensions-correct] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing_extensions-missing_x] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing_extensions-missing_y_error] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing_extensions-missing_y_ok] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing_extensions-not_dict] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing_extensions-unknown_key] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing_extensions-wrong_x] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[typing_extensions-wrong_y] PASSED
 tests/test_checkers.py::TestTypevar::test_bound PASSED
 tests/test_checkers.py::TestTypevar::test_bound_fail PASSED
 tests/test_checkers.py::TestTypevar::test_collection_constraints[int] PASSED
@@ -167,6 +183,7 @@ tests/test_checkers.py::TestUnion::test_union_fail[bytes-pep484] PASSED
 tests/test_checkers.py::TestUnion::test_union_fail[bytes-pep604] SKIPPED
 tests/test_checkers.py::TestUnion::test_union_fail[float-pep484] PASSED
 tests/test_checkers.py::TestUnion::test_union_fail[float-pep604] SKIPPED
+tests/test_checkers.py::TestUnion::test_union_reference_leak PASSED
 tests/test_checkers.py::TestUnion::test_valid[int] PASSED
 tests/test_checkers.py::TestUnion::test_valid[str] PASSED
 tests/test_checkers.py::test_any PASSED
@@ -283,6 +300,8 @@ tests/test_instrumentation.py::test_unpacking_assign_star_no_annotation_success[
 tests/test_instrumentation.py::test_unpacking_assign_star_with_annotation[importhook] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_star_with_annotation[typechecked] PASSED
 tests/test_plugins.py::test_custom_type_checker PASSED
+tests/test_pytest_plugin.py::test_commandline_options PASSED
+tests/test_pytest_plugin.py::test_config_options PASSED
 tests/test_suppression.py::test_contextmanager_check_type PASSED
 tests/test_suppression.py::test_contextmanager_exception PASSED
 tests/test_suppression.py::test_contextmanager_nesting PASSED
@@ -325,6 +344,7 @@ tests/test_transformer.py::TestTypecheckingImport::test_collection_parameter PAS
 tests/test_transformer.py::TestTypecheckingImport::test_direct_references PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_generator_function PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_optional PASSED
+tests/test_transformer.py::TestTypecheckingImport::test_optional_nested PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_pep604_union PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_subscript_within_union PASSED
 tests/test_transformer.py::TestTypecheckingImport::test_variable_annotations PASSED
@@ -442,7 +462,14 @@ tests/test_utils.py::test_qualified_name[instance] PASSED
 tests/test_warn_on_error.py::test_check_type PASSED
 tests/test_warn_on_error.py::test_typechecked PASSED
 
+================================== XFAILURES ===================================
+$(@D)/tests/dummymodule.py:118: NameError: name 'Inner' is not defined
+$(@D)/tests/dummymodule.py:122: NameError: name 'Inner' is not defined
+$(@D)/tests/dummymodule.py:126: NameError: name 'Inner' is not defined
+$(@D)/tests/dummymodule.py:118: NameError: name 'Inner' is not defined
+$(@D)/tests/dummymodule.py:122: NameError: name 'Inner' is not defined
+$(@D)/tests/dummymodule.py:126: NameError: name 'Inner' is not defined
 =========================== short test summary info ============================
-======== 425 passed, 2 skipped, 6 xfailed ========
+======== 443 passed, 4 skipped, 6 xfailed ========
   py$(PYV): OK
   congratulations :)
