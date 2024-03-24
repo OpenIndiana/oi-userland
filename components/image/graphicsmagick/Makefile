@@ -18,14 +18,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= GraphicsMagick
 COMPONENT_MAJOR_VERSION= 1.3
-COMPONENT_MINOR_VERSION= 42
-COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION= 2
-COMPONENT_PROJECT_URL= http://www.graphicsmagick.org/
+COMPONENT_MINOR_VERSION= 43
 COMPONENT_SUMMARY= A collection of utilities to support file format conversion,image processing, and 2D vector rendering.
+COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
+COMPONENT_PROJECT_URL= http://www.graphicsmagick.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:484fccfd2b2faf6c2ba9151469ece5072bcb91ba4ed73e75ed3d8e46c759d557
+COMPONENT_ARCHIVE_HASH=	sha256:2b88580732cd7e409d9e22c6116238bef4ae06fcda11451bf33d259f9cbf399f
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI= image/graphicsmagick
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
@@ -34,13 +33,8 @@ COMPONENT_LICENSE_FILE=	Copyright.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-LDFLAGS += $(JPEG_LDFLAGS)
-
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
-
-unexport SHELLOPTS
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/=========/p" ' \
@@ -53,6 +47,7 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/lcms2
