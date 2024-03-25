@@ -13,24 +13,24 @@
 # Copyright 2020 Andreas Wacknitz
 # Copyright 2022 Benjamin S. Osenbach
 #
-BUILD_BITS=			64
-BUILD_STYLE=		justmake
+BUILD_BITS= 64
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dmenu
-COMPONENT_VERSION=	5.2
-COMPONENT_PROJECT_URL=	https://tools.suckless.org/dmenu/
+COMPONENT_VERSION=	5.3
 COMPONENT_SUMMARY=	dmenu is a dynamic menu for X, originally designed for dwm
-COMPONENT_FMRI=		desktop/dmenu
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_PROJECT_URL=	https://tools.suckless.org/dmenu/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d4d4ca77b59140f272272db537e05bb91a5914f56802652dc57e61a773d43792
+COMPONENT_ARCHIVE_HASH= sha256:1a8f53e6fd2d749839ec870c5e27b3e14da5c3eeacbfcb945d159e1d5433795f
 COMPONENT_ARCHIVE_URL=	https://dl.suckless.org/tools/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		desktop/dmenu
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	MIT/X
 COMPONENT_LICENSE_FILE=	LICENSE
 
-TEST_TARGET:		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
