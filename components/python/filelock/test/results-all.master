@@ -4,7 +4,8 @@ py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 103 items
+configfile: pyproject.toml
+collecting ... collected 105 items
 
 tests/test_error.py::test_timeout_lock_file PASSED
 tests/test_error.py::test_timeout_pickle PASSED
@@ -86,6 +87,8 @@ tests/test_filelock.py::test_simple[new2/new3/c-str-SoftFileLock] PASSED
 tests/test_filelock.py::test_simple[new2/new3/c-str-UnixFileLock] PASSED
 tests/test_filelock.py::test_singleton_and_non_singleton_locks_are_distinct[SoftFileLock] PASSED
 tests/test_filelock.py::test_singleton_and_non_singleton_locks_are_distinct[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_instance_tracking_is_unique_per_subclass[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_instance_tracking_is_unique_per_subclass[UnixFileLock] PASSED
 tests/test_filelock.py::test_singleton_locks_are_deleted_when_no_external_references_exist[SoftFileLock] PASSED
 tests/test_filelock.py::test_singleton_locks_are_deleted_when_no_external_references_exist[UnixFileLock] PASSED
 tests/test_filelock.py::test_singleton_locks_are_distinct_per_lock_file[SoftFileLock] PASSED
@@ -112,14 +115,14 @@ tests/test_filelock.py::test_wrong_platform PASSED
 
 =============================== warnings summary ===============================
 tests/test_filelock.py::test_subclass_compatibility
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:78: PytestUnraisableExceptionWarning: Exception ignored in: <function BaseFileLock.__del__ at $(POINTER)>
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:80: PytestUnraisableExceptionWarning: Exception ignored in: <function BaseFileLock.__del__ at $(POINTER)>
   
   Traceback (most recent call last):
-    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 317, in __del__
+    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 327, in __del__
       self.release(force=True)
-    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 280, in release
+    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 288, in release
       if self.is_locked:
-    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 190, in is_locked
+    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 197, in is_locked
       return self._context.lock_file_fd is not None
   AttributeError: 'MySoftFileLock' object has no attribute '_context'
   
@@ -132,7 +135,7 @@ tests/test_filelock.py::test_subclass_compatibility
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 76.0% reached. Total coverage: 98.67%
-======== 83 passed, 20 skipped, 1 warning ========
+Required test coverage of 76.0% reached. Total coverage: 98.71%
+======== 85 passed, 20 skipped, 1 warning ========
   py$(PYV): OK
   congratulations :)
