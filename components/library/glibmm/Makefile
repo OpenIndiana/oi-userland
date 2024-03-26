@@ -16,20 +16,18 @@
 #
 
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
-USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glibmm
-COMPONENT_MJR_VERSION=	2.66
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).6
-COMPONENT_REVISION=	1
+COMPONENT_MJR_VERSION=	2.76
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).0
 COMPONENT_SUMMARY=	glibmm - C++ Wrapper for the Glib2 Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5358742598181e5351d7bf8da072bf93e6dd5f178d27640d4e462bc8f14e152f
+COMPONENT_ARCHIVE_HASH=	sha256:8637d80ceabd94fddd6e48970a082a264558d4ab82684e15ffc87e7ef3462ab2
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/glibmm/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtkmm.org/
 COMPONENT_FMRI=		library/c++/glibmm
@@ -43,7 +41,7 @@ CXXFLAGS += -std=c++17
 
 PATH= $(PATH.gnu)
 
-# Build dependency
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/build/pkg-config
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/macro/gnu-m4
@@ -54,6 +52,6 @@ REQUIRED_PACKAGES += library/libxslt
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/c++/sigcpp3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
