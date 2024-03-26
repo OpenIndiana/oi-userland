@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= lndir
-COMPONENT_VERSION= 1.0.4
+COMPONENT_VERSION= 1.0.5
 COMPONENT_SUMMARY= lndir - create a shadow directory of symbolic links to another directory tree
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:3e3437a9d3bb377755dd04a2c90d4c014d9fe90987ff73450bf5b8d161795e87
+COMPONENT_ARCHIVE_HASH= sha256:3b65577a5575cce095664f5492164a96941800fe6290a123731d47f3e7104ddb
 COMPONENT_ARCHIVE_URL= https://www.x.org/releases/individual/util/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= file/lndir
 COMPONENT_CLASSIFICATION= Applications/System Utilities
