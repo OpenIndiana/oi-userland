@@ -19,12 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::Copy::Recursive::Reduced
-HUMAN_VERSION =			0.007
+HUMAN_VERSION =			0.008
 COMPONENT_SUMMARY =		File::Copy::Recursive::Reduced - Recursive copying of files and directories within Perl 5 toolchain
 COMPONENT_CPAN_AUTHOR =		JKEENAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d3b58522e69803a91437e29c099eb706e8373f1eef0518a4dc3669dd3dfcdc27
-COMPONENT_LICENSE =		Artistic-1.0-cl8 OR GPL-2.0-or-later
+	sha256:462bd66bf55e74b78f29ebdc9626af622d4f0115b5191b03167e82164db98f5a
+COMPONENT_LICENSE =		Artistic-1.0-cl8 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
