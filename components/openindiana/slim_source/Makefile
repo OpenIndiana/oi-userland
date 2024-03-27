@@ -35,19 +35,19 @@ ONNV_BUILDNUM=$(BRANCHID)
 PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/nightly-nd/repo.redist
 
 CLEAN_PATHS += $(BUILD_DIR)
+CLOBBER_PATHS += $(SOURCE_DIR)
 
 COMPONENT_PREP_GIT=no
 include $(WS_MAKE_RULES)/prep.mk
 
-$(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
-	@[ -d $(SOURCE_DIR) ] || \
+$(SOURCE_DIR):
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
+
+$(SOURCE_DIR)/.downloaded: $(SOURCE_DIR)
 	@cd $(SOURCE_DIR); $(GIT) checkout $(GIT_BRANCH); $(GIT) pull \
 	  $(GIT_REPO); $(GIT) log -1 --format=%H > .downloaded
 
-update:
-	@[ -d $(SOURCE_DIR) ] || \
-	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
+update:	$(SOURCE_DIR)
 	cd $(SOURCE_DIR); $(GIT) pull $(GIT_REPO); \
 	  [ "$$($(GIT) log -1 --format=%H)" == "$$(cat .downloaded)" ] || \
 	  $(GIT) log -1 --format=%H > .downloaded
