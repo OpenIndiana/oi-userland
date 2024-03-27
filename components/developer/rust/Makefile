@@ -36,7 +36,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
 COMPONENT_VERSION=	1.76.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
@@ -48,36 +48,36 @@ COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=	MIT or Apache-2.0
 COMPONENT_LICENSE_FILE=	LICENSE-APACHE
 
-RUST_BOOTSTRAP_PATH=	$(BUILD_DIR)/$(MACH64)
-RUST_ARCH=		x86_64-unknown-illumos
+RUST_BOOTSTRAP_PATH= $(BUILD_DIR)/$(MACH64)
+RUST_ARCH= x86_64-unknown-illumos
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-CLANG_VERSION=		17
+CLANG_VERSION= 17
 
 # Need some help to pick the correct ar binary
-GNUAR=$(GNUBIN)/ar
+GNUAR= $(GNUBIN)/ar
 
 # Put the bits cargo downloads in a private directory.  This could be cached
 # somewhere more permanent, but it's important to make sure that a person's
 # $HOME/.cargo isn't used.
-CARGO_HOME=             $(@D)/.cargo
+CARGO_HOME= $(@D)/.cargo
 
-PATH=                   $(PATH.gnu)
+PATH= $(PATH.gnu)
 
-RUSTC_BIN_POST=		cargo
-RUSTC_BIN_POST+=	clippy-driver
-RUSTC_BIN_POST+=	rls
-RUSTC_BIN_POST+=	rustc
-RUSTC_BIN_POST+=	rustdoc
+RUSTC_BIN_POST =  cargo
+RUSTC_BIN_POST += clippy-driver
+RUSTC_BIN_POST += rls
+RUSTC_BIN_POST += rustc
+RUSTC_BIN_POST += rustdoc
 
 # Add arch triplet to pkg macros
-PKG_MACROS+=		RUST_ARCH="$(RUST_ARCH)"
+PKG_MACROS += RUST_ARCH="$(RUST_ARCH)"
 
 # Rust expects the library path to be /usr/lib and is broken otherwise 
-RUSTC_LIBDIR=		$(USRLIBDIR)
+RUSTC_LIBDIR= $(USRLIBDIR)
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( CLONEY_MODE=hardlink $(CLONEY) $(SOURCE_DIR) $(@D); )
 
@@ -133,10 +133,10 @@ COMPONENT_POST_INSTALL_ACTION +=  $(TOUCH) $(BUILD_DIR)/META.depend-runtime.res
 
 # Cleanup standard environment
 COMPONENT_INSTALL_ENV= 
-COMPONENT_INSTALL_ENV+=	$(COMPONENT_BUILD_ENV)
-COMPONENT_INSTALL_ENV+=	CARGO_HOME=$(CARGO_HOME)
+COMPONENT_INSTALL_ENV += $(COMPONENT_BUILD_ENV)
+COMPONENT_INSTALL_ENV += CARGO_HOME=$(CARGO_HOME)
 # Set install path
-COMPONENT_INSTALL_ENV+=	DESTDIR=$(PROTO_DIR)
+COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 
 # manually added dependencies
 REQUIRED_PACKAGES += developer/lang/rustc # previous before build version
