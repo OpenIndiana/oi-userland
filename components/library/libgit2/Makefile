@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgit2
 COMPONENT_VERSION=	1.8.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Portable implementation of the Git core methods provided as a library
 COMPONENT_PROJECT_URL=	https://libgit2.github.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
