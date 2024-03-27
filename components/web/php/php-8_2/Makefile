@@ -32,10 +32,9 @@ COMPONENT_FMRI=         web/$(COMPONENT_NAME)-82
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
 COMPONENT_LICENSE=      PHP License
 COMPONENT_LICENSE_FILE= LICENSE
+COMPONENT_REVISION= 1
 
 include $(WS_MAKE_RULES)/common.mk
-
-MYSQL_DIR=		$(MYSQL_HOME)
 
 # Apache Paths
 AP_PREFIX=		/usr/apache2/2.4
@@ -52,9 +51,6 @@ CFLAGS +=        	$(CC_BITS) -D_XPG4_2 -D__EXTENSIONS__ -D__solaris__
 CFLAGS +=		-I/usr/include/openldap
 CPPFLAGS +=      	$(CPP_XPG6MODE)
 LDFLAGS +=       	-lldap_r
-CPPFLAGS +=      	-I$(MYSQL_INCDIR)
-CFLAGS +=        	-I$(MYSQL_INCDIR)
-LDFLAGS +=       	-L$(MYSQL_LIBDIR)
 
 # build with the system default libjpeg
 CFLAGS+=                $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -137,12 +133,10 @@ CONFIGURE_OPTIONS += --enable-soap=shared
 CONFIGURE_OPTIONS += --enable-sockets=shared
 CONFIGURE_OPTIONS += --enable-mysqlnd=shared
 CONFIGURE_OPTIONS += --with-snmp=shared
+CONFIGURE_OPTIONS += --with-mysqli=shared,mysqlnd
+CONFIGURE_OPTIONS += --with-pdo-mysql=shared,mysqlnd
 
 # Extensions, dependent on other packages
-
-# Since PHP 8.2 and later, compiling mysqli extension with libmysql is no longer supported.
-#CONFIGURE_OPTIONS += --with-mysqli=shared,$(MYSQL_BINDIR)/mysql_config
-CONFIGURE_OPTIONS += --with-pdo-mysql=shared,$(MYSQL_DIR)
 CONFIGURE_OPTIONS += --with-pgsql=shared,$(PG_BINDIR)
 CONFIGURE_OPTIONS += --with-pdo-pgsql=shared,$(PG_BINDIR)
 
@@ -222,7 +216,6 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/.*/d" '
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += $(PG_SERVICE_PKG)
 REQUIRED_PACKAGES += web/server/apache-24
@@ -231,7 +224,6 @@ REQUIRED_PACKAGES += web/server/apache-24
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
-REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
