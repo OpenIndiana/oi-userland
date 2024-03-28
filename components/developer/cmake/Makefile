@@ -25,12 +25,13 @@
 # Copyright 2023 Niklas Poslovski
 #
 
+USE_PARALLEL_BUILD= yes
 USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION= 3.28
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).3
+COMPONENT_MAJOR_VERSION= 3.29
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).0
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
@@ -41,11 +42,11 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_PROJECT_URL=  https://www.cmake.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:72b7570e5c8593de6ac4ab433b73eab18c5fb328880460c86ce32608141ad5c1
+COMPONENT_ARCHIVE_HASH=	sha256:a0669630aae7baa4a8228048bf30b622f9e9fd8ee8cedb941754e9e38686c778
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
-COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
+COMPONENT_LICENSE=      BSD 3 Clause, MIT, GPLv2, LGPLv2.1, LGPLv3, Curl, PD
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -74,33 +75,33 @@ COMPONENT_PRE_INSTALL_ACTION = \
 # contradict cmake.
 gcc_OPT = -O2
 
-CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS +=	--datadir=/share/cmake-$(COMPONENT_MAJOR_VERSION)
-CONFIGURE_OPTIONS +=	--docdir=/share/doc/cmake-$(COMPONENT_MAJOR_VERSION)
-CONFIGURE_OPTIONS += 	--mandir=/share/man
+CONFIGURE_OPTIONS  = --prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --datadir=/share/cmake-$(COMPONENT_MAJOR_VERSION)
+CONFIGURE_OPTIONS += --docdir=/share/doc/cmake-$(COMPONENT_MAJOR_VERSION)
+CONFIGURE_OPTIONS += --mandir=/share/man
 
 # Use system-installed third-party libraries, rather than the private
 # copies in the cmake source.
-CONFIGURE_OPTIONS +=   --system-bzip2
-CONFIGURE_OPTIONS +=   --system-curl
-CONFIGURE_OPTIONS +=   --system-expat
-CONFIGURE_OPTIONS +=   --system-jsoncpp
-CONFIGURE_OPTIONS +=   --system-libarchive
-CONFIGURE_OPTIONS +=   --system-liblzma
-CONFIGURE_OPTIONS +=   --system-libuv
-CONFIGURE_OPTIONS +=   --system-nghttp2
-CONFIGURE_OPTIONS +=   --system-zlib
-CONFIGURE_OPTIONS +=   --system-zstd
+CONFIGURE_OPTIONS += --system-bzip2
+CONFIGURE_OPTIONS += --system-curl
+CONFIGURE_OPTIONS += --system-expat
+CONFIGURE_OPTIONS += --system-jsoncpp
+CONFIGURE_OPTIONS += --system-libarchive
+CONFIGURE_OPTIONS += --system-liblzma
+CONFIGURE_OPTIONS += --system-libuv
+CONFIGURE_OPTIONS += --system-nghttp2
+CONFIGURE_OPTIONS += --system-zlib
+CONFIGURE_OPTIONS += --system-zstd
 
-COMPONENT_BUILD_ENV +=	CC="$(CC)"
-COMPONENT_BUILD_ENV +=	CXX="$(CXX)"
-COMPONENT_BUILD_ENV +=	FC="$(FC)"
-COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV +=	CXXFLAGS="$(CXXFLAGS)"
-COMPONENT_BUILD_ENV +=	FCFLAGS="$(FCFLAGS)"
-COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"
-COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"
-COMPONENT_BUILD_TARGETS =	all
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CXX="$(CXX)"
+COMPONENT_BUILD_ENV += FC="$(FC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_BUILD_ENV += CFLAGS="$(FCFLAGS)"
+COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
+COMPONENT_BUILD_ENV += MAKE="$(GMAKE)"
+COMPONENT_BUILD_TARGETS= all
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -120,7 +121,6 @@ COMPONENT_TEST_ENV += CLICOLOR=0
 # Results output is different on Intel vs. SPARC.
 # The tests should run by a user with default privileges. Otherwise some tests will fail.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
-
 COMPONENT_TEST_TARGETS = test
 
 COMPONENT_TEST_TRANSFORMS += \

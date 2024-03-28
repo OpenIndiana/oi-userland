@@ -465,6 +465,7 @@ $(eval $(call disable-pytest-plugin,skip-markers,pytest-skip-markers))
 $(eval $(call disable-pytest-plugin,socket,pytest-socket))
 $(eval $(call disable-pytest-plugin,subprocess,pytest-subprocess))
 $(eval $(call disable-pytest-plugin,subtests,pytest-subtests))
+$(eval $(call disable-pytest-plugin,system-statistics,pytest-system-statistics))
 $(eval $(call disable-pytest-plugin,tempdir,pytest-tempdir))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,time_machine,time-machine))
 $(eval $(call disable-pytest-plugin,timeout,pytest-timeout))
@@ -534,6 +535,22 @@ COMPONENT_TEST_TRANSFORMS += \
 		) ; \
 		$(CAT) \
 	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
+
+# Normalize stestr test results
+USE_STESTR = $(filter library/python/stestr-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES))
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(strip $(USE_STESTR)),"| ( \
+			$(GSED) -e '0,/^{[0-9]\{1,\}}/{//i\'\$$'\\\n{0}\\\n}' \
+				-e 's/^\(Ran: [0-9]\{1,\} tests\{0,1\}\) in .*\$$/\1/' \
+				-e '/^Sum of execute time for each test/d' \
+				-e '/^ - Worker /d' \
+		) | ( \
+			$(GSED) -u -e '/^{0}\$$/Q' ; \
+			$(GSED) -u -e 's/^{[0-9]\{1,\}} //' \
+				-e 's/\[[.0-9]\{1,\}s\] \.\.\./.../' \
+				-e '/^\$$/Q' | $(SORT) | $(GSED) -e '\$$a\'\$$'\\\n\\\n' ; \
+			$(CAT) \
+		) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
 
 # Normalize setup.py test results.  The setup.py testing could be used either
 # directly or via tox so add these transforms for all test styles
@@ -645,10 +662,13 @@ COMPONENT_POST_INSTALL_ACTION += \
 	| $(PYTHON) $(WS_TOOLS)/python-requires - >> $(@D)/.depend-test ;
 
 # Convert raw per version lists of test dependencies to single list of
-# TEST_REQUIRED_PACKAGES entries
+# TEST_REQUIRED_PACKAGES entries.  Some Python projects lists their own project
+# as a test dependency so filter this out here too.
 $(BUILD_DIR)/META.depend-test.required:	$(INSTALL_$(MK_BITS))
 	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-test) | $(SORT) -u \
-		| $(GSED) -e 's/.*/TEST_REQUIRED_PACKAGES.python += library\/python\/&/' > $@
+		| $(GSED) -e 's/.*/TEST_REQUIRED_PACKAGES.python += library\/python\/&/' \
+		| ( $(GNU_GREP) -v ' $(COMPONENT_FMRI)$$' || true ) \
+		> $@
 
 # Add META.depend-test.required to the generated list of REQUIRED_PACKAGES
 REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'

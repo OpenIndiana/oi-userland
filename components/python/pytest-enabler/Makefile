@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-enabler
-HUMAN_VERSION =			3.0.0
+HUMAN_VERSION =			3.1.1
 COMPONENT_SUMMARY =		pytest-enabler - Enable installed pytest plugins
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-enabler
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/93/d8/f0032af0f705b9141c2baceb09275262a2b145de8be969a5374ffa15bcdc/pytest-enabler-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:62376d2fdae65ee967849fa3586f8ce68506988e94c64030c8ff2b038d6422c5
+	sha256:9ea1157e716801f9ba3f1c3db4474ec2114a0b8e77b909c1eb0f7a630a325483
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

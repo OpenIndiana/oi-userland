@@ -1,0 +1,23 @@
+--- gtk-4.8.3/gdk/x11/gdkdisplay-x11.c.old	2023-02-28 11:16:49.726520126 -0500
++++ gtk-4.8.3/gdk/x11/gdkdisplay-x11.c	2023-02-28 11:22:55.822098612 -0500
+@@ -2966,6 +2966,12 @@
+    * EGL, we want to avoid using it in favor of GLX.
+    */
+ 
++   /*  EGL does not work on openindiana. Only test for GLX. */
++#ifdef __sun
++   if (gdk_x11_display_init_glx (self, out_visual, out_depth, error))
++     return TRUE;
++   return FALSE;
++#else
+   if (!gdk_display_init_egl (display, EGL_PLATFORM_X11_KHR, dpy, FALSE, error))
+     {
+       g_clear_error (error);
+@@ -2996,6 +3002,7 @@
+   self->egl_version = epoxy_egl_version (egl_display);
+ 
+   return TRUE;
++#endif
+ }
+ 
+ static GdkGLContext *

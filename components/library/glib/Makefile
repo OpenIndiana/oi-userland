@@ -20,14 +20,13 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-COMPONENT_MJR_VERSION=	2.74
-COMPONENT_MNR_VERSION=	7
+COMPONENT_MJR_VERSION=	2.76
+COMPONENT_MNR_VERSION=	4
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:196ab86c27127a61b7a70c3ba6af7b97bdc01c07cd3b21abd5e778b955eccb1b
+COMPONENT_ARCHIVE_HASH=	sha256:5a5a191c96836e166a7771f7ea6ca2b0069c603c7da3cba1cd38d1694a395dda
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GLib/
 COMPONENT_FMRI=		library/glib2
@@ -46,7 +45,7 @@ LDFLAGS += -lsocket -lnsl
 # Support for hexadecimal strings in strtod() is available in C99 mode only,
 # but we cannot use -std=c99 because float/double support is broken there
 # (https://www.illumos.org/issues/14935)
-CFLAGS += -std=gnu99
+CFLAGS += -std=gnu11
 
 # We need standard conforming getpwnam_r()/getpwuid_r()
 CPPFLAGS += $(CPP_XPG6MODE)
@@ -58,6 +57,15 @@ CFLAGS += -Wno-error=format-security
 # We do not have getxattr() so disable xattr
 CONFIGURE_OPTIONS += -Dxattr=false
 CONFIGURE_OPTIONS += -Dman=true
+CONFIGURE_OPTIONS += -Druntime_libdir=$(USRLIBDIR)
+CONFIGURE_OPTIONS += -Dcharsetalias_dir=$(USRLIBDIR)
+CONFIGURE_OPTIONS += -Druntime_dir=$(VARDIR)/run
+CONFIGURE_OPTIONS += -Dselinux=disabled
+CONFIGURE_OPTIONS += -Dxattr=false
+CONFIGURE_OPTIONS += -Dlibmount=disabled
+CONFIGURE_OPTIONS += -Dbsymbolic_functions=false
+CONFIGURE_OPTIONS += -Dman=true
+CONFIGURE_OPTIONS += -Dfam=true
 
 COMPONENT_POST_CONFIGURE_ACTION= \
   ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
@@ -97,6 +105,7 @@ TEST_REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib

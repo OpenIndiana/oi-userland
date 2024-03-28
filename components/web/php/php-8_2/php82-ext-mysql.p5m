@@ -29,7 +29,11 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend type=require fmri=pkg:/$(COMPONENT_FMRI)/php-common
 
+# has to be loaded before mysqli and pdo_mysql
+file files/first_mysqlnd.ini path=etc/php/8.2/conf.d/first_mysqlnd.ini preserve=true mode=0644
+
 file files/pdo_mysql.ini path=etc/php/8.2/conf.d/pdo_mysql.ini preserve=true mode=0644
+file files/mysqli.ini path=etc/php/8.2/conf.d/mysqli.ini preserve=true mode=0644
 
 file path=usr/php/8.2/include/php/ext/mysqlnd/config-win.h
 file path=usr/php/8.2/include/php/ext/mysqlnd/mysql_float_to_double.h
@@ -58,6 +62,6 @@ file path=usr/php/8.2/include/php/ext/mysqlnd/mysqlnd_structs.h
 file path=usr/php/8.2/include/php/ext/mysqlnd/mysqlnd_vio.h
 file path=usr/php/8.2/include/php/ext/mysqlnd/mysqlnd_wireprotocol.h
 file path=usr/php/8.2/include/php/ext/mysqlnd/php_mysqlnd.h
-#file path=usr/php/8.2/extensions/mysqli.so
+file path=usr/php/8.2/extensions/mysqli.so
 file path=usr/php/8.2/extensions/pdo_mysql.so
 file path=usr/php/8.2/extensions/mysqlnd.so

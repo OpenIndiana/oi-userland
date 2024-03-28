@@ -21,19 +21,19 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-
 set name=pkg.fmri value=pkg:/library/libtorrent@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="libtorrent - a Bittorrent library for rtorrent"
-set name=com.oracle.info.description value="the bittorrent library for rtorrent"
-set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2009/336
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license libtorrent.license license='GPLv2'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+file libtorrent.3 path=usr/share/man/man3/libtorrent.3
 
 file path=usr/include/torrent/bitfield.h
 file path=usr/include/torrent/chunk_manager.h
@@ -103,9 +103,3 @@ link path=usr/lib/$(MACH64)/libtorrent.so target=libtorrent.so.21.0.0
 link path=usr/lib/$(MACH64)/libtorrent.so.21 target=libtorrent.so.21.0.0
 file path=usr/lib/$(MACH64)/libtorrent.so.21.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/libtorrent.pc
-link path=usr/lib/libtorrent.so target=libtorrent.so.21.0.0
-link path=usr/lib/libtorrent.so.21 target=libtorrent.so.21.0.0
-file path=usr/lib/libtorrent.so.21.0.0
-file path=usr/lib/pkgconfig/libtorrent.pc
-
-file libtorrent.3 path=usr/share/man/man3/libtorrent.3

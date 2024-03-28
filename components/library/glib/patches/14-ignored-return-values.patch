@@ -1,0 +1,39 @@
+This patch fixes ON builds where linter is not happy with unused variables.
+https://bug.oraclecorp.com/pls/bug/webbug_print.show?c_rptno=28964691
+
+Even though it fixes specific behavior of our build environment,
+it can be suitable for upstream.
+
+--- glib-2.52.0/glib/gstring.h	2018-11-27 01:02:11.709901563 +0000
++++ glib-2.52.0/glib/gstring.h	2018-11-27 00:58:52.732310445 +0000
+@@ -167,7 +167,7 @@ g_string_append_c_inline (GString *gstri
+       gstring->str[gstring->len] = 0;
+     }
+   else
+-    g_string_insert_c (gstring, -1, c);
++    (void) g_string_insert_c (gstring, -1, c);
+   return gstring;
+ }
+ #define g_string_append_c(gstr,c)       g_string_append_c_inline (gstr, c)
+--- glib-2.52.0/glib/glib-autocleanups.h	2018-11-27 01:02:26.482700505 +0000
++++ glib-2.52.0/glib/glib-autocleanups.h	2018-11-27 00:59:39.293472971 +0000
+@@ -32,7 +32,7 @@ static inline void
+ g_autoptr_cleanup_gstring_free (GString *string)
+ {
+   if (string)
+-    g_string_free (string, TRUE);
++    (void) g_string_free (string, TRUE);
+ }
+ 
+ /* If adding a cleanup here, please also add a test case to
+--- glib-2.52.0/gobject/gobject.h	2018-11-27 01:02:40.257225970 +0000
++++ glib-2.52.0/gobject/gobject.h	2018-11-27 01:01:12.039457270 +0000
+@@ -722,7 +722,7 @@ 
+     return FALSE;
+ 
+   if (new_object != NULL)
+-    g_object_ref (new_object);
++    (void) g_object_ref (new_object);
+ 
+   *object_ptr = new_object;
+ 
