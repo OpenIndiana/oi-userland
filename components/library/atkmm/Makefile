@@ -15,18 +15,18 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atkmm
-COMPONENT_VERSION=	2.28.3
-COMPONENT_REVISION=	1
+COMPONENT_MJR_VERSION=	2.36
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).3
 COMPONENT_SUMMARY=	atkmm - C++ Wrapper for the atk Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=  sha256:7c2088b486a909be8da2b18304e56c5f90884d1343c8da7367ea5cd3258b9969
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/atkmm/2.28/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=  sha256:6ec264eaa0c4de0adb7202c600170bde9a7fbe4d466bfbe940eaf7faaa6c5974
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/atkmm/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtkmm.org/
 COMPONENT_FMRI=		library/desktop/c++/atkmm
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
@@ -41,7 +41,7 @@ CXXFLAGS += -std=c++17
 
 PATH= $(PATH.gnu)
 
-# Build dependency
+# Manually added build dependency
 REQUIRED_PACKAGES += developer/build/pkg-config
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/macro/gnu-m4
@@ -53,7 +53,7 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/glibmm
-REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/c++/sigcpp3
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
