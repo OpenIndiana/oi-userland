@@ -1,0 +1,40 @@
+https://github.com/python/cpython/pull/22374
+
+From b415ba00a73229ad102d590226decea014be11cc Mon Sep 17 00:00:00 2001
+From: Jakub Kulik <kulikjak@gmail.com>
+Date: Fri, 6 Nov 2020 14:58:33 +0100
+Subject: [PATCH 4/4] Make the error checking more robust
+
+---
+ Modules/posixmodule.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+--- Python-3.12.1/Modules/posixmodule.c.orig
++++ Python-3.12.1/Modules/posixmodule.c
+@@ -7751,8 +7751,10 @@
+ {
+     int max;
+ 
++    /* make sure that errno is cleared before the call */
++    errno = 0;
+     max = sched_get_priority_max(policy);
+-    if (max < 0)
++    if (max == -1 && errno == EINVAL)
+         return posix_error();
+     return PyLong_FromLong(max);
+ }
+@@ -7770,8 +7772,12 @@
+ os_sched_get_priority_min_impl(PyObject *module, int policy)
+ /*[clinic end generated code: output=7595c1138cc47a6d input=21bc8fa0d70983bf]*/
+ {
+-    int min = sched_get_priority_min(policy);
+-    if (min < 0)
++    int min;
++
++    /* make sure that errno is cleared before the call */
++    errno = 0;
++    min = sched_get_priority_min(policy);
++    if (min == -1 && errno == EINVAL)
+         return posix_error();
+     return PyLong_FromLong(min);
+ }

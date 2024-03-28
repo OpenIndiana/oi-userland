@@ -1,0 +1,20 @@
+Illumos doesn't seem to mind self-sendfile but doesn't corrupt the
+file; make the test a little more forgiving.
+
+--- Python-3.12.1/Lib/test/test_shutil.py.~1~	Thu Dec  7 12:45:44 2023
++++ Python-3.12.1/Lib/test/test_shutil.py	Wed Feb  7 10:22:17 2024
+@@ -2874,8 +2874,13 @@
+     def test_same_file(self):
+         self.addCleanup(self.reset)
+         with self.get_files() as (src, dst):
+-            with self.assertRaises((OSError, _GiveupOnFastCopy)):
++            try:
+                 self.zerocopy_fun(src, src)
++            except OSError:
++                pass
++            except _GiveupOn_FastCopy:
++                pass
++
+         # Make sure src file is not corrupted.
+         self.assertEqual(read_file(TESTFN, binary=True), self.FILEDATA)
+ 

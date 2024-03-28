@@ -1,0 +1,50 @@
+--- Python-3.12.2/Python/generated_cases.c.h.~1~	Thu Feb  8 23:06:41 2024
++++ Python-3.12.2/Python/generated_cases.c.h	Thu Feb  8 23:09:38 2024
+@@ -933,6 +933,7 @@
+             STACK_SHRINK(1);
+             assert(EMPTY());
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             assert(frame != &entry_frame);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+@@ -955,6 +956,7 @@
+             STACK_SHRINK(1);
+             assert(EMPTY());
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             assert(frame != &entry_frame);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+@@ -973,6 +975,7 @@
+             Py_INCREF(retval);
+             assert(EMPTY());
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             assert(frame != &entry_frame);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+@@ -995,6 +998,7 @@
+             Py_INCREF(retval);
+             assert(EMPTY());
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             assert(frame != &entry_frame);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+@@ -1229,6 +1233,7 @@
+             PyGenObject *gen = _PyFrame_GetGenerator(frame);
+             gen->gi_frame_state = FRAME_SUSPENDED;
+             _PyFrame_SetStackPointer(frame, stack_pointer - 1);
++	    DTRACE_FUNCTION_EXIT();
+             int err = _Py_call_instrumentation_arg(
+                     tstate, PY_MONITORING_EVENT_PY_YIELD,
+                     frame, next_instr-1, retval);
+@@ -1254,6 +1259,7 @@
+             PyGenObject *gen = _PyFrame_GetGenerator(frame);
+             gen->gi_frame_state = FRAME_SUSPENDED;
+             _PyFrame_SetStackPointer(frame, stack_pointer - 1);
++	    DTRACE_FUNCTION_EXIT();
+             tstate->exc_info = gen->gi_exc_state.previous_item;
+             gen->gi_exc_state.previous_item = NULL;
+             _Py_LeaveRecursiveCallPy(tstate);
