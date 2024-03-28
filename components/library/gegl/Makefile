@@ -15,12 +15,14 @@
 #
 
 BUILD_STYLE= meson
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).48
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -71,6 +73,7 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += image/library/babl
 REQUIRED_PACKAGES += image/library/lensfun
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
