@@ -15,18 +15,17 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cairomm
-COMPONENT_VERSION=	1.14.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.18.0
 COMPONENT_SUMMARY=	cairomm - C++ Wrapper for the cairo Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:70136203540c884e89ce1c9edfb6369b9953937f6cd596d97c78c9758a5d48db
+COMPONENT_ARCHIVE_HASH= sha256:b81255394e3ea8e8aa887276d22afa8985fc8daef60692eb2407d23049f03cfb
 COMPONENT_ARCHIVE_URL=	https://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://cairographics.org/cairomm/
 COMPONENT_FMRI=			library/desktop/c++/cairomm
@@ -56,6 +55,6 @@ REQUIRED_PACKAGES += system/library/fontconfig
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/c++/sigcpp3
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += system/library
