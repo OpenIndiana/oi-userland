@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mm-common
 COMPONENT_VERSION=      1.0.6
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME C++ bindings effort https://www.gtkmm.org support tools
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -47,7 +48,12 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
 
-COMPONENT_POST_INSTALL_ACTION.64= $(GSED) -i -e 's:env python3:python$(PYTHON_VERSION):' $(PROTOUSRBINDIR)/mm-common-get
+# Fix scripts
+COMPONENT_POST_INSTALL_ACTION= ( \
+	$(GSED) -i -e 's:env python3:python$(PYTHON_VERSION):' $(PROTOUSRBINDIR)/mm-common-get; \
+	$(GSED) -i -e 's:@datadir_py@:/usr/share:' $(PROTOUSRBINDIR)/mm-common-get; \
+	$(GSED) -i -e 's:env python3:python$(PYTHON_VERSION):' $(PROTOUSRSHAREDIR)/mm-common/build/*.py; \
+	$(GSED) -i -e 's:env python3:python$(PYTHON_VERSION):' $(PROTOUSRSHAREDIR)/mm-common/doctool/*.py; )
 
 # Configure checks
 REQUIRED_PACKAGES += text/gawk
