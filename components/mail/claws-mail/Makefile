@@ -16,11 +16,12 @@
 
 BUILD_BITS= 64
 SINGLE_PYTHON_VERSION= yes
+USE_PARALLEL_BUILD= Yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
 COMPONENT_VERSION=	4.2.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
