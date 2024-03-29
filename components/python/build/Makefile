@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		build
-HUMAN_VERSION =			1.1.1
+HUMAN_VERSION =			1.2.1
 COMPONENT_SUMMARY =		build - A simple, correct Python build frontend
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8eea65bb45b1aac2e734ba2cc8dad3a6d97d97901a395bd0ed3e7b46953d2a31
+	sha256:526263f4870c26f26c433545579475377b2b7588b6f1eac76a001e873ae3e19d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
