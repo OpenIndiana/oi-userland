@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
 COMPONENT_VERSION=	5.6.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	XZ Utils - loss-less file compression application and library
 COMPONENT_PROJECT_URL=	https://tukaani.org/xz/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,6 +40,8 @@ COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	0BSD, GPLv2+,GPLv3+, LGPLv2.1, CC BY-SA 4.0
 
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PRE_CONFIGURE_ACTION= ( cd $(SOURCE_DIR) && rm m4/build-to-host.m4 && autoreconf -fi )
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-rpath
