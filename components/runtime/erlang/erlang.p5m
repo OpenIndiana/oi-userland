@@ -30,12 +30,33 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/lib/$(MACH64)/erlang/erts-([\d\.]+)/bin/beam\.smp -> default mode 0555>
 <transform file path=usr/lib/$(MACH64)/erlang/lib/tools-([\d\.]+)/bin/emem -> default mode 0555>
 
-# Put the various erlang man pages in the right directories.
+# Set file modes for some files
 <transform file path=.*lib/.*app ->   default mode 0444>
 <transform file path=.*lib/.*appup -> default mode 0444>
 <transform file path=.*lib/.*beam ->  default mode 0444>
 <transform file path=.*lib/.*gif ->   default mode 0444>
 <transform file path=.*lib/.*tool ->  default mode 0444>
+
+# Put man pages into separate folders in order to prevent collisions
+<transform file -> edit path man/man3/ man/man3erl/>
+<transform file path=(.*)/man3(.*) -> edit path .3$ .3erl >
+<transform file path=usr/share/man/man3erl/(.+)erl$ -> \
+    set action.hash usr/share/man/man3/%<1> >
+
+<transform file -> edit path man/man4/ man/man4erl/>
+<transform file path=(.*)/man4(.*) -> edit path .4$ .4erl >
+<transform file path=usr/share/man/man4erl/(.+)erl$ -> \
+    set action.hash usr/share/man/man4/%<1> >
+
+<transform file -> edit path man/man6/ man/man6erl/>
+<transform file path=(.*)/man6(.*) -> edit path .6$ .6erl >
+<transform file path=usr/share/man/man6erl/(.+)erl$ -> \
+    set action.hash usr/share/man/man6/%<1> >
+
+<transform file -> edit path man/man7/ man/man7erl/>
+<transform file path=(.*)/man7(.*) -> edit path .7$ .7erl >
+<transform file path=usr/share/man/man7erl/(.+)erl$ -> \
+    set action.hash usr/share/man/man7/%<1> >
 
 link path=usr/bin/ct_run target=../lib/$(MACH64)/erlang/bin/ct_run
 link path=usr/bin/dialyzer target=../lib/$(MACH64)/erlang/bin/dialyzer

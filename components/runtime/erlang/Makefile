@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_FMRI= runtime/erlang
 COMPONENT_NAME= erlang
 COMPONENT_VERSION= 26.2.3
+COMPONENT_REVISION= 1
 COMPONENT_PROJECT_URL= https://erlang.org/
 COMPONENT_SRC_NAME= otp_src
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
