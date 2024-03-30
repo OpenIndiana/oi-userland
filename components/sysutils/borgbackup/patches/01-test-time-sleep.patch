@@ -1,0 +1,10 @@
+--- borgbackup-1.2.8/src/borg/testsuite/locking.py.orig
++++ borgbackup-1.2.8/src/borg/testsuite/locking.py
+@@ -35,6 +35,7 @@
+         time.sleep(timeout * 1.5)
+         assert t.timed_out()
+ 
++    @pytest.mark.skip(reason="fails: https://www.illumos.org/issues/16432")
+     def test_notimeout_sleep(self):
+         timeout, sleep = None, 0.5
+         t = TimeoutTimer(timeout, sleep).start()
