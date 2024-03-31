@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ZODB
-HUMAN_VERSION =			5.8.1
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		ZODB - ZODB, a Python object-oriented database
 COMPONENT_PROJECT_URL =		http://zodb-docs.readthedocs.io
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/68/8f/ba84246f531ffe594f78e417ab9069673e2ffd12f210939f42d2c1b86aa9/ZODB-5.8.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c6c73abd3660d606ffc1f21f97def14b52b46f4a702ec9e6ee449a6e2be264df
+	sha256:e51c792115c5daad4e806757bafa2f754c000c23e6babc3be5e40775fe49b5dc
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -44,7 +42,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/btrees
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/persistent
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/six
 PYTHON_REQUIRED_PACKAGES += library/python/transaction
 PYTHON_REQUIRED_PACKAGES += library/python/zc-lockfile
 PYTHON_REQUIRED_PACKAGES += library/python/zconfig
