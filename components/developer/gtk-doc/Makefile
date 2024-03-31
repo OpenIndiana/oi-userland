@@ -16,35 +16,34 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk-doc
-COMPONENT_MAJOR_VERSION=        1.33
-COMPONENT_MINOR_VERSION=        2
+COMPONENT_MAJOR_VERSION=        1.34
+COMPONENT_MINOR_VERSION=        0
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gtk-doc
 COMPONENT_SUMMARY=	GTK+ DocBook Documentation Generator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:cc1b709a20eb030a278a1f9842a362e00402b7f834ae1df4c1998a723152bf43
+COMPONENT_ARCHIVE_HASH=	sha256:b20b72b32a80bc18c7f975c9d4c16460c2276566a0b50f87d6852dff3aa7861c
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/documentation-tool/gtk-doc
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	GPLv3, FDLv1.1
 
 # The built-in tests assume the package has already been installed
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Build configure script
-COMPONENT_PREP_ACTION += (cd $(@D); PATH="$(PATH)" autoreconf -fiv)
+COMPONENT_PREP_ACTION += ( cd $(@D); PATH="$(PATH)" autoreconf -fiv )
 
-CONFIGURE_OPTIONS+=	--bindir=$(USRBINDIR)
-CONFIGURE_OPTIONS+=	--sbindir=$(USRSBINDIR)
-CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
-CONFIGURE_ENV+=		PYTHON=$(PYTHON)
+CONFIGURE_OPTIONS +=--bindir=$(USRBINDIR)
+CONFIGURE_OPTIONS +=--sbindir=$(USRSBINDIR)
+CONFIGURE_OPTIONS +=--sysconfdir=$(ETCDIR)
+
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 # Manually added build and runtime dependencies
 REQUIRED_PACKAGES += text/itstool
