@@ -91,6 +91,7 @@ SKIP: tests/seq/seq-long-double.sh
 PASS: tests/seq/seq-precision.sh
 PASS: tests/head/head.pl
 PASS: tests/head/head-elide-tail.pl
+SKIP: tests/tail/tail-sysfs.sh
 SKIP: tests/tail/tail-n0f.sh
 PASS: tests/ls/ls-misc.pl
 PASS: tests/date/date.pl
@@ -104,7 +105,6 @@ PASS: tests/od/od-endian.sh
 PASS: tests/od/od-float.sh
 PASS: tests/misc/mktemp.pl
 SKIP: tests/misc/arch.sh
-PASS: tests/misc/join.pl
 PASS: tests/pr/pr-tests.pl
 PASS: tests/pwd/pwd-option.sh
 PASS: tests/chcon/chcon-fail.sh
@@ -122,9 +122,9 @@ PASS: tests/cat/cat-E.sh
 SKIP: tests/cat/cat-proc.sh
 PASS: tests/cat/cat-buf.sh
 PASS: tests/cat/cat-self.sh
-PASS: tests/misc/base64.pl
 PASS: tests/misc/basename.pl
-PASS: tests/misc/basenc.pl
+PASS: tests/basenc/base64.pl
+PASS: tests/basenc/basenc.pl
 PASS: tests/misc/close-stdout.sh
 PASS: tests/chroot/chroot-fail.sh
 PASS: tests/cksum/cksum.sh
@@ -165,6 +165,8 @@ PASS: tests/cksum/md5sum.pl
 PASS: tests/cksum/md5sum-bsd.sh
 PASS: tests/cksum/md5sum-newline.pl
 PASS: tests/cksum/md5sum-parallel.sh
+PASS: tests/join/join.pl
+PASS: tests/join/join-utf8.sh
 PASS: tests/misc/mknod.sh
 PASS: tests/nice/nice.sh
 PASS: tests/nice/nice-fail.sh
@@ -173,7 +175,7 @@ PASS: tests/misc/nohup.sh
 PASS: tests/nproc/nproc-avail.sh
 PASS: tests/nproc/nproc-positive.sh
 PASS: tests/nproc/nproc-override.sh
-PASS: tests/misc/numfmt.pl
+FAIL: tests/misc/numfmt.pl
 PASS: tests/od/od-N.sh
 PASS: tests/od/od-j.sh
 PASS: tests/od/od-multiple-t.sh
@@ -230,7 +232,7 @@ PASS: tests/sort/sort-unique.sh
 PASS: tests/sort/sort-unique-segv.sh
 PASS: tests/sort/sort-version.sh
 PASS: tests/sort/sort-NaN-infloop.sh
-PASS: tests/sort/sort-u-FMR.sh
+SKIP: tests/sort/sort-u-FMR.sh
 PASS: tests/split/filter.sh
 PASS: tests/split/suffix-auto-length.sh
 PASS: tests/split/suffix-length.sh
@@ -307,6 +309,7 @@ PASS: tests/chmod/silent.sh
 PASS: tests/chmod/thru-dangling.sh
 PASS: tests/chmod/umask-x.sh
 PASS: tests/chmod/usage.sh
+PASS: tests/chmod/symlinks.sh
 PASS: tests/chown/deref.sh
 PASS: tests/chown/preserve-root.sh
 PASS: tests/chown/separator.sh
@@ -329,8 +332,9 @@ PASS: tests/cp/dir-vs-file.sh
 PASS: tests/cp/existing-perm-dir.sh
 PASS: tests/cp/existing-perm-race.sh
 FAIL: tests/cp/fail-perm.sh
+PASS: tests/cp/keep-directory-symlink.sh
 SKIP: tests/cp/sparse-extents.sh
-PASS: tests/cp/copy-FMR.sh
+SKIP: tests/cp/copy-FMR.sh
 PASS: tests/cp/sparse-perf.sh
 PASS: tests/cp/sparse-2.sh
 PASS: tests/cp/file-perm-race.sh
@@ -442,6 +446,7 @@ PASS: tests/ln/sf-1.sh
 PASS: tests/ln/slash-decorated-nonexistent-dest.sh
 PASS: tests/ln/target-1.sh
 PASS: tests/ls/a-option.sh
+SKIP: tests/ls/acl.sh
 PASS: tests/ls/abmon-align.sh
 PASS: tests/ls/birthtime.sh
 PASS: tests/ls/block-size.sh
@@ -468,6 +473,7 @@ PASS: tests/ls/no-arg.sh
 SKIP: tests/ls/no-cap.sh
 PASS: tests/ls/selinux-segfault.sh
 PASS: tests/ls/quote-align.sh
+PASS: tests/ls/size-align.sh
 PASS: tests/ls/readdir-mountpoint-inode.sh
 PASS: tests/ls/recursive.sh
 SKIP: tests/ls/removed-directory.sh
@@ -526,6 +532,7 @@ PASS: tests/mv/into-self-2.sh
 PASS: tests/mv/into-self-3.sh
 PASS: tests/mv/into-self-4.sh
 SKIP: tests/mv/leak-fd.sh
+PASS: tests/mv/mv-exchange.sh
 PASS: tests/mv/mv-n.sh
 PASS: tests/mv/mv-special-1.sh
 PASS: tests/mv/no-copy.sh
@@ -573,6 +580,7 @@ PASS: tests/touch/read-only.sh
 PASS: tests/touch/relative.sh
 PASS: tests/touch/trailing-slash.sh
 SKIP: tests/chown/basic.sh
+SKIP: tests/chgrp/from.sh
 SKIP: tests/cp/cp-a-selinux.sh
 SKIP: tests/cp/preserve-gid.sh
 SKIP: tests/cp/special-bits.sh
@@ -643,11 +651,11 @@ SKIP: tests/factor/t33.sh
 SKIP: tests/factor/t34.sh
 SKIP: tests/factor/t35.sh
 SKIP: tests/factor/t36.sh
-# TOTAL: 645
-# PASS:  486
-# SKIP:  140
+# TOTAL: 653
+# PASS:  488
+# SKIP:  145
 # XFAIL: 0
-# FAIL:  18
+# FAIL:  19
 # XPASS: 0
 # ERROR: 1
 SKIP: tests/tail/inotify-race
@@ -672,10 +680,12 @@ FAIL: tests/rm/unread2
 FAIL: tests/rm/unreadable
 SKIP: tests/rm/many-dir-entries-vs-OOM
 SKIP: tests/seq/seq-long-double
+SKIP: tests/tail/tail-sysfs
 SKIP: tests/tail/tail-n0f
 SKIP: tests/misc/arch
 SKIP: tests/misc/coreutils
 SKIP: tests/cat/cat-proc
+FAIL: tests/misc/numfmt
 SKIP: tests/runcon/runcon-compute
 FAIL: tests/shred/shred-remove
 SKIP: tests/shuf/shuf-reservoir
@@ -687,6 +697,7 @@ SKIP: tests/sort/sort-month
 FAIL: tests/sort/sort-exit-early
 SKIP: tests/sort/sort-spinlock-abuse
 SKIP: tests/sort/sort-stale-thread-mem
+SKIP: tests/sort/sort-u-FMR
 SKIP: tests/stty/stty
 SKIP: tests/stty/stty-pairs
 SKIP: tests/tac/tac-continue
@@ -697,6 +708,7 @@ SKIP: tests/misc/xattr
 SKIP: tests/cp/acl
 FAIL: tests/cp/fail-perm
 SKIP: tests/cp/sparse-extents
+SKIP: tests/cp/copy-FMR
 SKIP: tests/cp/nfs-removal-race
 SKIP: tests/cp/perm
 SKIP: tests/cp/proc-short-read
@@ -717,6 +729,7 @@ SKIP: tests/id/context
 SKIP: tests/id/smack
 SKIP: tests/install/install-C-selinux
 SKIP: tests/install/install-Z-selinux
+SKIP: tests/ls/acl
 SKIP: tests/ls/no-cap
 SKIP: tests/ls/removed-directory
 SKIP: tests/ls/slink-acl
@@ -740,6 +753,7 @@ SKIP: tests/mv/symlink-onto-hardlink-to-self
 ERROR: tests/rmdir/ignore
 SKIP: tests/tail/big-4gb
 SKIP: tests/chown/basic
+SKIP: tests/chgrp/from
 SKIP: tests/cp/cp-a-selinux
 SKIP: tests/cp/preserve-gid
 SKIP: tests/cp/special-bits
@@ -809,10 +823,10 @@ SKIP: tests/factor/t33
 SKIP: tests/factor/t34
 SKIP: tests/factor/t35
 SKIP: tests/factor/t36
-# TOTAL: 645
-# PASS:  486
-# SKIP:  140
+# TOTAL: 653
+# PASS:  488
+# SKIP:  145
 # XFAIL: 0
-# FAIL:  18
+# FAIL:  19
 # XPASS: 0
 # ERROR: 1
