@@ -15,17 +15,15 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::SpamAssassin
-HUMAN_VERSION =			4.0.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.0.1
 COMPONENT_SUMMARY =		Mail::SpamAssassin - Spam detector and markup engine
 COMPONENT_CPAN_AUTHOR =		SIDNEY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:65979da7d103e3c37563f23a1a24f470090afb33664348968a00bf3d09a84f36
+	sha256:5c6bb222e18405f1a276816d04e1ffc5cc90785e1265714b4506c2b541d6d5e5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -64,7 +62,7 @@ PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl
 PERL_REQUIRED_PACKAGES += library/perl-5/io-string
 PERL_REQUIRED_PACKAGES += library/perl-5/ip-country
 PERL_REQUIRED_PACKAGES += library/perl-5/ip-country-db_file
-PERL_REQUIRED_PACKAGES += library/perl-5/libwww-perl
+PERL_REQUIRED_PACKAGES += library/perl-5/lwp-protocol-https
 PERL_REQUIRED_PACKAGES += library/perl-5/mail-dkim
 PERL_REQUIRED_PACKAGES += library/perl-5/mail-dmarc
 PERL_REQUIRED_PACKAGES += library/perl-5/mail-spf
