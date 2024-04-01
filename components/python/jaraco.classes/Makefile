@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.classes
-HUMAN_VERSION =			3.3.1
+HUMAN_VERSION =			3.4.0
 COMPONENT_SUMMARY =		jaraco.classes - Utility functions for Python class constructs
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.classes
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cb28a5ebda8bc47d8c8015307d93163464f9f2b91ab4006e09ff0ce07e8bfb30
+	sha256:47a024b51d0239c0dd8c8540c6c7f484be3b8fcf0b2d85c13825780d3b3f3acd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
