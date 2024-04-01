@@ -30,12 +30,12 @@ BUILD_STYLE =			waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_VERSION =		4.19.5
+COMPONENT_VERSION =		4.20.0
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:0e2405b4cec29d0459621f4340a1a74af771ec7cffedff43250cad7f1f87605e
+COMPONENT_ARCHIVE_HASH = 	sha256:02672542510ac6e5d0c91c0c14d90ab4e6ec397c709e952c6da3a6e0b4d5a42f
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI =		service/network/samba
@@ -58,14 +58,12 @@ PKG_OPTIONS +=		-I$(COMPONENT_DIR)
 # Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 
-$(BUILD_DIR_64)/%:      MACHLIBDIR=/$(MACH64)
-
 CFLAGS +=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto
 CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
 CPPFLAGS +=	-I/usr/include/openldap -I/usr/include/jansson
 
-LDFLAGS +=	-R/usr/lib/samba$(MACHLIBDIR)
-LDFLAGS +=	-R/usr/lib/samba/private$(MACHLIBDIR)
+LDFLAGS +=	-R/usr/lib/samba
+LDFLAGS +=	-R/usr/lib/samba/private
 LDFLAGS +=	-L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
 
 LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile
@@ -96,12 +94,12 @@ CONFIGURE_ENV +=	PYTHONARCHDIR=$(PYTHON_VENDOR_PACKAGES)/samba
 # --enable-fhs should not be on
 CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS +=    --exec-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS +=	--bindir=$(CONFIGURE_PREFIX)/bin/$(MACH64)
-CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_PREFIX)/sbin/$(MACH64)
-CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_PREFIX)/$(MACH64)
-CONFIGURE_OPTIONS +=	--with-privatelibdir=$(CONFIGURE_PREFIX)/private/$(MACH64)
+CONFIGURE_OPTIONS +=	--bindir=$(CONFIGURE_PREFIX)/bin
+CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_PREFIX)/sbin
+CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--with-privatelibdir=$(CONFIGURE_PREFIX)/private
 CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)/samba
-CONFIGURE_OPTIONS +=	--with-pammodulesdir=$(CONFIGURE_PREFIX)/security/$(MACH64)
+CONFIGURE_OPTIONS +=	--with-pammodulesdir=$(CONFIGURE_PREFIX)/security
 CONFIGURE_OPTIONS +=    --datarootdir=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS +=    --mandir=$(USRSHAREMANDIR)
 CONFIGURE_OPTIONS +=    --htmldir=/usr/share/samba/swat/help
@@ -110,7 +108,7 @@ CONFIGURE_OPTIONS +=    --with-privatedir=$(ETCDIR)/samba/private
 CONFIGURE_OPTIONS +=    --localstatedir=$(VARDIR)/samba
 CONFIGURE_OPTIONS +=    --with-logfilebase=$(VARDIR)/samba/log
 CONFIGURE_OPTIONS +=    --sharedstatedir=$(VARDIR)/samba/com
-CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec/$(MACH64)
+CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS +=	--with-bind-dns-dir=$(CONFIGURE_PREFIX)/bind-dns
 
 CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl,vfs_zfsacl
@@ -141,7 +139,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 # Build dependencies
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/perl-5/parse-yapp
-REQUIRED_PACKAGES += library/perl-5/json
 REQUIRED_PACKAGES += library/python/dnspython
 REQUIRED_PACKAGES += library/python/markdown
 
