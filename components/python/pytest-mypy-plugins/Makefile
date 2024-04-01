@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-mypy-plugins
-HUMAN_VERSION =			3.1.1
+HUMAN_VERSION =			3.1.2
 COMPONENT_SUMMARY =		pytest-mypy-plugins - pytest plugin for writing tests for mypy plugins
 COMPONENT_PROJECT_URL =		https://github.com/TypedDjango/pytest-mypy-plugins
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:968dbfafb7cce247571f53cfe6e4e7d947ab2f6424082a097a98d546c1669be0
+	sha256:14fa9b00e59713a6fdb88fcf04e8139b9467e117b98d61fc12038c60afb7febe
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
