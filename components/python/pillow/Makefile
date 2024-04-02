@@ -19,28 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pillow
-HUMAN_VERSION =			10.2.0
+HUMAN_VERSION =			10.3.0
 COMPONENT_SUMMARY =		pillow - Python Imaging Library (Fork)
 COMPONENT_PROJECT_URL =		https://python-pillow.org
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f8/3e/32cbd0129a28686621434cbf17bb64bf1458bfb838f1f668262fefce145c/pillow-10.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e87f0b2c78157e12d7686b27d63c070fd65d994e8ddae6f328e0dcf4a0cd007e
+	sha256:9d2455fbf44c914840c793e89aa82d0e1763a14253a000743719ae5946814b2d
 COMPONENT_LICENSE =		HPND
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += image/library/openjpeg
 REQUIRED_PACKAGES += library/lcms2
@@ -54,6 +48,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/check-manifest
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/defusedxml
 TEST_REQUIRED_PACKAGES.python += library/python/markdown2
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/olefile
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pyroma
