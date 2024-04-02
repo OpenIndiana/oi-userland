@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		frozendict
-HUMAN_VERSION =			2.4.0
+HUMAN_VERSION =			2.4.1
 COMPONENT_SUMMARY =		frozendict - A simple immutable dictionary
 COMPONENT_PROJECT_URL =		https://github.com/Marco-Sulla/python-frozendict
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8d/af/ea169c16f17f1c11a3fb2db3d56ca51cfec6b9bce8765cab58eed5ad1a49/frozendict-2.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c26758198e403337933a92b01f417a8240c954f553e1d4b5e0f8e39d9c8e3f0a
+	sha256:1b32eb2f30bb734b7a699ee7003c86f81964f1c3b6e0e0f18efcbbdeb5b220bf
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
