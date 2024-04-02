@@ -466,7 +466,6 @@ $(eval $(call disable-pytest-plugin,socket,pytest-socket))
 $(eval $(call disable-pytest-plugin,subprocess,pytest-subprocess))
 $(eval $(call disable-pytest-plugin,subtests,pytest-subtests))
 $(eval $(call disable-pytest-plugin,system-statistics,pytest-system-statistics))
-$(eval $(call disable-pytest-plugin,tempdir,pytest-tempdir))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,time_machine,time-machine))
 $(eval $(call disable-pytest-plugin,timeout,pytest-timeout))
 $(eval $(call disable-pytest-plugin,travis-fold,pytest-travis-fold))
