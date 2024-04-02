@@ -1,0 +1,33 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pytest.ini
+collecting ... collected 11 items
+
+.::project PASSED
+.::project PASSED
+conftest.py::mypy PASSED
+conftest.py::mypy-status PASSED
+docs/conf.py::mypy PASSED
+jaraco/packaging/__init__.py::mypy PASSED
+jaraco/packaging/make-tree.py::mypy PASSED
+jaraco/packaging/metadata.py::mypy PASSED
+jaraco/packaging/sphinx.py::jaraco.packaging.sphinx PASSED
+jaraco/packaging/sphinx.py::jaraco.packaging.sphinx._load_metadata_from_wheel PASSED
+jaraco/packaging/sphinx.py::mypy PASSED
+
+=============================== warnings summary ===============================
+jaraco/packaging/sphinx.py::jaraco.packaging.sphinx._load_metadata_from_wheel
+  $(@D)/jaraco/packaging/sphinx.py:100: DeprecationWarning: JARACO_PACKAGING_SPHINX_WHEEL is deprecated; use BUILD_ENVIRONMENT=current instead
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+===================================== mypy =====================================
+Success: no issues found in 6 source files
+======== 11 passed, 1 warning ========
+  py$(PYV): OK
+  congratulations :)
