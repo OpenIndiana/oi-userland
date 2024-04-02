@@ -19,14 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyNUTClient
-HUMAN_VERSION =			2.8.1.post1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.8.2
 COMPONENT_SUMMARY =		PyNUTClient - Python client bindings for NUT
 COMPONENT_PROJECT_URL =		https://github.com/networkupstools/nut/tree/master/scripts/python/module
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e1/2e/b78b0e65811b9b12a151074805da63199522d34514d70ffa72f5df5e4c3b/PyNUTClient-2.8.1.post1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f7b1c646950951fed8a0725d962c4324c2429c3f5f5b0d59762778c6a2dddd79
+	sha256:b32af28ac141bb1d05a97814ab22b1dc90f2e55a73657f99c5126384ca2df85a
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE-GPL3
 
