@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		validators
-HUMAN_VERSION =			0.24.0
+HUMAN_VERSION =			0.26.0
 COMPONENT_SUMMARY =		validators - Python Data Validation for Humans™
 COMPONENT_PROJECT_URL =		https://yozachar.github.io/pyvalidators
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cd23defb36de42d14e7559cf0757f761bb46b10d9de2998e6ef805f769d859e3
+	sha256:004e15ed83145454e8db90d66dcee063f1084b81e447310b52c5f91022823150
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
