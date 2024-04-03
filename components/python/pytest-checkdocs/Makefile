@@ -19,19 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-checkdocs
-HUMAN_VERSION =			2.11.0
+HUMAN_VERSION =			2.12.0
 COMPONENT_SUMMARY =		pytest-checkdocs - check the README when running tests
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-checkdocs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3270668c5d0758f6084c8dc1890d4e95321f0b1c46bda7aa18d8b6cc314e4b5c
+	sha256:7e5ff61b67f728840e0b6d07334c97a80aebfbea9148e5f2f261870f513d5db5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/build
 PYTHON_REQUIRED_PACKAGES += library/python/docutils
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
