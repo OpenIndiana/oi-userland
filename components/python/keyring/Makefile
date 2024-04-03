@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		keyring
-HUMAN_VERSION =			25.0.0
+HUMAN_VERSION =			25.1.0
 COMPONENT_SUMMARY =		keyring - Store and access your passwords safely.
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/keyring
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fc024ed53c7ea090e30723e6bd82f58a39dc25d9a6797d866203ecd0ee6306cb
+	sha256:7230ea690525133f6ad536a9b5def74a4bd52642abe594761028fc044d7c7893
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
