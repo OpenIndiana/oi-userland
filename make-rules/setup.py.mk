@@ -470,7 +470,6 @@ $(eval $(call disable-pytest-plugin,time_machine,time-machine))
 $(eval $(call disable-pytest-plugin,timeout,pytest-timeout))
 $(eval $(call disable-pytest-plugin,travis-fold,pytest-travis-fold))
 $(eval $(call disable-pytest-plugin,typeguard,typeguard))
-$(eval $(call disable-pytest-plugin,unittest_mock,backports-unittest-mock))
 $(eval $(call disable-pytest-plugin,xdist,pytest-xdist))
 $(eval $(call disable-pytest-plugin,xdist.looponfail,pytest-xdist))
 $(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminder line to test output
