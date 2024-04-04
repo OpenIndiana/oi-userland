@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 640 items
+collecting ... collected 720 items
 
 tests/i18n/test_es.py::test_returns_false_on_invalid_cif[12345] PASSED
 tests/i18n/test_es.py::test_returns_false_on_invalid_cif[ABCDEFGHI] PASSED
@@ -129,6 +129,16 @@ tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 2B 202 817 85] PAS
 tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 75 202 817 01] PASSED
 tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 75 202 818 97] PASSED
 tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 971 12 817 70] PASSED
+tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_aadhar[3675 9834 6012 8] PASSED
+tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_aadhar[3675 98AF 60#2] PASSED
+tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_aadhar[417598346012] PASSED
+tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_pan[417598346012] PASSED
+tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_pan[ABC5d7896B] PASSED
+tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_pan[AaaPL1234C] PASSED
+tests/i18n/test_ind.py::test_returns_true_on_valid_ind_aadhar[3675 9834 6012] PASSED
+tests/i18n/test_ind.py::test_returns_true_on_valid_ind_aadhar[5046 3182 4299] PASSED
+tests/i18n/test_ind.py::test_returns_true_on_valid_ind_pan[AAAPL1234C] PASSED
+tests/i18n/test_ind.py::test_returns_true_on_valid_ind_pan[ABCDE9999K] PASSED
 tests/test__extremes.py::test_abs_max_is_greater_than_every_other_value[12] PASSED
 tests/test__extremes.py::test_abs_max_is_greater_than_every_other_value[None] PASSED
 tests/test__extremes.py::test_abs_max_is_greater_than_every_other_value[] PASSED
@@ -262,22 +272,32 @@ tests/test_card.py::test_returns_true_on_valid_mastercard[5555555555554444] PASS
 tests/test_card.py::test_returns_true_on_valid_unionpay[6200000000000005] PASSED
 tests/test_card.py::test_returns_true_on_valid_visa[4000002760003184] PASSED
 tests/test_card.py::test_returns_true_on_valid_visa[4242424242424242] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[-auto] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[123-numeric] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[123456-auto] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[1ND-unknown] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[ISR-None] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[None-auto] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[PPP-alpha3] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[U.S-auto] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[US -auto] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[XY-alpha2] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[uSa-auto] PASSED
-tests/test_country_code.py::test_returns_failed_validation_on_invalid_country_code[us-auto] PASSED
-tests/test_country_code.py::test_returns_true_on_valid_country_code[840-numeric] PASSED
-tests/test_country_code.py::test_returns_true_on_valid_country_code[ISR-auto] PASSED
-tests/test_country_code.py::test_returns_true_on_valid_country_code[US-alpha2] PASSED
-tests/test_country_code.py::test_returns_true_on_valid_country_code[USA-alpha3] PASSED
+tests/test_country.py::test_returns_failed_validation_invalid_calling_code[+19] PASSED
+tests/test_country.py::test_returns_failed_validation_invalid_calling_code[+37] PASSED
+tests/test_country.py::test_returns_failed_validation_invalid_calling_code[-9] PASSED
+tests/test_country.py::test_returns_failed_validation_invalid_currency[$-True-False] PASSED
+tests/test_country.py::test_returns_failed_validation_invalid_currency[Bucks-True-True] PASSED
+tests/test_country.py::test_returns_failed_validation_invalid_currency[uSd-True-False] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[-auto] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[123-numeric] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[123456-auto] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[1ND-unknown] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[ISR-None] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[None-auto] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[PPP-alpha3] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[U.S-auto] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[US -auto] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[XY-alpha2] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[uSa-auto] PASSED
+tests/test_country.py::test_returns_failed_validation_on_invalid_country_code[us-auto] PASSED
+tests/test_country.py::test_returns_true_on_valid_calling_code[+1] PASSED
+tests/test_country.py::test_returns_true_on_valid_calling_code[+371] PASSED
+tests/test_country.py::test_returns_true_on_valid_country_code[840-numeric] PASSED
+tests/test_country.py::test_returns_true_on_valid_country_code[ISR-auto] PASSED
+tests/test_country.py::test_returns_true_on_valid_country_code[US-alpha2] PASSED
+tests/test_country.py::test_returns_true_on_valid_country_code[USA-alpha3] PASSED
+tests/test_country.py::test_returns_true_on_valid_currency[$-False-False] PASSED
+tests/test_country.py::test_returns_true_on_valid_currency[uSd-True-True] PASSED
 tests/test_cron.py::test_returns_failed_validation_on_invalid_cron[& * * & * *] PASSED
 tests/test_cron.py::test_returns_failed_validation_on_invalid_cron[* * * * * *] PASSED
 tests/test_cron.py::test_returns_failed_validation_on_invalid_cron[* * * *] PASSED
@@ -304,6 +324,16 @@ tests/test_cron.py::test_returns_true_on_valid_cron[0 12 1 */2 *] PASSED
 tests/test_cron.py::test_returns_true_on_valid_cron[0 3-6 * * *] PASSED
 tests/test_cron.py::test_returns_true_on_valid_cron[15 5 * * 1,3,5] PASSED
 tests/test_cron.py::test_returns_true_on_valid_cron[30 3 * * 1-5] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[11.twitter-True-False-False] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[3.cnx.-True-True-False] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[_example.#13-True-False-True] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[exa_mple.org_-True-False-True] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[example.266-True-False-False] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[example_.fo-ul-True-False-True] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[someThing.versicherung.reddit.-True-True-False] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[somerandomexample.xn-n-fiqs8s-True-False-False] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[underscore_subdomain.example.flat-True-False-True] PASSED
+tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[xn----gtbspbbmkef.xn-p1ai-True-False-False] PASSED
 tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[-example.com-False-False] PASSED
 tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[123.123-False-False] PASSED
 tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[123.123.123.-True-False] PASSED
@@ -334,6 +364,16 @@ tests/test_domain.py::test_returns_true_on_valid_domain[something.versicherung-F
 tests/test_domain.py::test_returns_true_on_valid_domain[sub1.sub2.sample.co.uk-False-False] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[underscore_subdomain.example.com-False-True] PASSED
 tests/test_domain.py::test_returns_true_on_valid_domain[xn----gtbspbbmkef.xn--p1ai-False-False] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[11.com-True-False-False] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[3.cn.-True-True-False] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[_example.com-True-False-True] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[exa_mple.com-True-False-True] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[example.com-True-False-False] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[example_.com-True-False-True] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[someThing.versicherung.-True-True-False] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[somerandomexample.xn--fiqs8s-True-False-False] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[underscore_subdomain.example.com-True-False-True] PASSED
+tests/test_domain.py::test_returns_true_on_valid_top_level_domain[xn----gtbspbbmkef.xn--p1ai-True-False-False] PASSED
 tests/test_email.py::test_returns_failed_validation_on_invalid_email["\\\n"@here.com] PASSED
 tests/test_email.py::test_returns_failed_validation_on_invalid_email["test@test"@example.com] PASSED
 tests/test_email.py::test_returns_failed_validation_on_invalid_email[None] PASSED
@@ -361,6 +401,39 @@ tests/test_email.py::test_returns_true_on_valid_email[example@valid-----hyphens.
 tests/test_email.py::test_returns_true_on_valid_email[example@valid-with-hyphens.com] PASSED
 tests/test_email.py::test_returns_true_on_valid_email[test@domain.with.idn.tld.\u0909\u0926\u093e\u0939\u0930\u0923.\u092a\u0930\u0940\u0915\u094d\u0937\u093e] PASSED
 tests/test_email.py::test_returns_true_on_valid_email[weirder-email@here.and.there.com] PASSED
+tests/test_encoding.py::test_returns_failed_validation_on_invalid_base58[InvalidBase58!] PASSED
+tests/test_encoding.py::test_returns_failed_validation_on_invalid_base58[ThisIsAReallyLongStringThatIsDefinitelyNotBase58Encoded] PASSED
+tests/test_encoding.py::test_returns_failed_validation_on_invalid_base58[abcABC!@#] PASSED
+tests/test_encoding.py::test_returns_failed_validation_on_invalid_base64[SGVsbG8gV29ybGQ] PASSED
+tests/test_encoding.py::test_returns_failed_validation_on_invalid_base64[U29tZSBkYXRhIHN0cmluZw] PASSED
+tests/test_encoding.py::test_returns_failed_validation_on_invalid_base64[YW55IGNhcm5hbCBwbGVhc] PASSED
+tests/test_encoding.py::test_returns_true_on_valid_base58[18KToMF5ckjXBYt2HAj77qsG3GPeej3PZn] PASSED
+tests/test_encoding.py::test_returns_true_on_valid_base58[38XzQ9dPGb1uqbZsjPtUajp7omy8aefjqj] PASSED
+tests/test_encoding.py::test_returns_true_on_valid_base58[cUSECaVvAiV3srWbFRvVPzm5YzcXJwPSwZfE7veYPHoXmR9h6YMQ] PASSED
+tests/test_encoding.py::test_returns_true_on_valid_base58[n4FFXRNNEW1aA2WPscSuzHTCjzjs4TVE2Z] PASSED
+tests/test_encoding.py::test_returns_true_on_valid_base64[SGVsbG8gV29ybGQ=] PASSED
+tests/test_encoding.py::test_returns_true_on_valid_base64[U29tZSBkYXRhIHN0cmluZw==] PASSED
+tests/test_encoding.py::test_returns_true_on_valid_base64[YW55IGNhcm5hbCBwbGVhcw==] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_cusip[00^^^1234] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_cusip[912796T67] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_cusip[912796T68] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_cusip[XCVF] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[00^^^1234] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[010378331005XCVF] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[A000009] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_sedol[00^^^1234] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_sedol[0540526] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_sedol[A000009] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_sedol[XCVF] PASSED
+tests/test_finance.py::test_returns_true_on_valid_cusip[912796X20] PASSED
+tests/test_finance.py::test_returns_true_on_valid_cusip[912796X38] PASSED
+tests/test_finance.py::test_returns_true_on_valid_cusip[912796x20] PASSED
+tests/test_finance.py::test_returns_true_on_valid_isin[JP000K0VF054] PASSED
+tests/test_finance.py::test_returns_true_on_valid_isin[US0004026250] PASSED
+tests/test_finance.py::test_returns_true_on_valid_isin[US0378331005] PASSED
+tests/test_finance.py::test_returns_true_on_valid_sedol[0263494] PASSED
+tests/test_finance.py::test_returns_true_on_valid_sedol[0540528] PASSED
+tests/test_finance.py::test_returns_true_on_valid_sedol[B000009] PASSED
 tests/test_hashes.py::test_returns_failed_validation_on_invalid_base58[InvalidBase58!] PASSED
 tests/test_hashes.py::test_returns_failed_validation_on_invalid_base58[ThisIsAReallyLongStringThatIsDefinitelyNotBase58Encoded] PASSED
 tests/test_hashes.py::test_returns_failed_validation_on_invalid_base58[abcABC!@#] PASSED
@@ -508,6 +581,10 @@ tests/test_slug.py::test_returns_true_on_valid_slug[123-asd-7sda] PASSED
 tests/test_slug.py::test_returns_true_on_valid_slug[123-k-123] PASSED
 tests/test_slug.py::test_returns_true_on_valid_slug[dac-12sa-459] PASSED
 tests/test_slug.py::test_returns_true_on_valid_slug[dac-12sa7-ad31as] PASSED
+tests/test_url.py::test_returns_failed_validation_on_invalid_private_url[http://10.0.10.1-False] PASSED
+tests/test_url.py::test_returns_failed_validation_on_invalid_private_url[http://255.255.255.255-False] PASSED
+tests/test_url.py::test_returns_failed_validation_on_invalid_private_url[http://username:password@127.0.0.1:8080-False] PASSED
+tests/test_url.py::test_returns_failed_validation_on_invalid_private_url[http://username:password@192.168.10.10:4010-False] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[///] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[///a] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[//] PASSED
@@ -558,6 +635,9 @@ tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://foo.bar
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://foo.com/img/bar/baz.jpg?-62169987208] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[https://www.example.com/foo/?bar=baz&inga=42&quux] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_url[rdar://1234] PASSED
+tests/test_url.py::test_returns_true_on_valid_private_url[http://127.0.0.1-True] PASSED
+tests/test_url.py::test_returns_true_on_valid_private_url[http://username:password@10.0.10.1/-True] PASSED
+tests/test_url.py::test_returns_true_on_valid_private_url[http://username:password@192.168.10.10:4010/-True] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[ftp://foo.bar/baz] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://-.~_!$&'()*+,;=:%40:80%2f::::::@example.com] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://0.0.0.0] PASSED
@@ -648,6 +728,6 @@ tests/test_validation_failure.py::TestValidationError::test_boolean_coerce PASSE
 tests/test_validation_failure.py::TestValidationError::test_repr PASSED
 tests/test_validation_failure.py::TestValidationError::test_string PASSED
 
-======== 640 passed ========
+======== 720 passed ========
   py$(PYV): OK
   congratulations :)
