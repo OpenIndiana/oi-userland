@@ -28,12 +28,12 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         quilt
-COMPONENT_VERSION=      0.67
+COMPONENT_VERSION=      0.68
 COMPONENT_SUMMARY=      Quilt - tool to manage series of patches
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://savannah.nongnu.org/projects/quilt/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:3be3be0987e72a6c364678bb827e3e1fcc10322b56bc5f02b576698f55013cc2
+COMPONENT_ARCHIVE_HASH=	sha256:fe8c09de03c106e85b3737c8f03ade147c956b79ed7af485a1c8a3858db38426
 COMPONENT_ARCHIVE_URL= 	https://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/quilt
 COMPONENT_CLASSIFICATION= Development/Source Code Management
