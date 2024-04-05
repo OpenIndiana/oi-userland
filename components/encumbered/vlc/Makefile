@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 3.0.20
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -32,7 +33,7 @@ COMPONENT_LICENSE= GPLv2.0,LGPLv2.1
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Required for POSIX recvmsg/sendmsg
 LDFLAGS += -lnsl -lsocket
@@ -48,12 +49,7 @@ CFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
 # Use Qt5
-PKG_CONFIG_PATH +=:/usr/lib/qt/5.15/lib/$(MACH64)/pkgconfig
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
+PKG_CONFIG_PATH +=:$(QT5_LIBDIR)/pkgconfig
 
 COMPONENT_PREP_ACTION = ( cd $(@D); autoreconf )
 
@@ -205,6 +201,7 @@ REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/sdl-image
