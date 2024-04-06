@@ -116,9 +116,9 @@ test_kwarg_refs (greenlet.tests.test_leaks.TestLeaks) ... ok
 test_threaded_adv_leak (greenlet.tests.test_leaks.TestLeaks) ... ok
 test_threaded_leak (greenlet.tests.test_leaks.TestLeaks) ... ok
 test_untracked_memory_doesnt_increase (greenlet.tests.test_leaks.TestLeaks) ... skipped 'uss not supported'
-test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_main (greenlet.tests.test_leaks.TestLeaks) ... Exception in thread Thread-248:
+test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_main (greenlet.tests.test_leaks.TestLeaks) ... Exception in thread Thread-250:
 Traceback (most recent call last):
-  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/__init__.py", line 200, in get_process_uss
+  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/__init__.py", line 204, in get_process_uss
     return psutil.Process().memory_full_info().uss
 AttributeError: 'pmem' object has no attribute 'uss'
 
@@ -131,7 +131,7 @@ Traceback (most recent call last):
     self._target(*self._args, **self._kwargs)
   File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/test_leaks.py", line 386, in __call__
     self.uss_before = test.get_process_uss()
-  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/__init__.py", line 202, in get_process_uss
+  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/__init__.py", line 206, in get_process_uss
     raise unittest.SkipTest("uss not supported") from e
 unittest.case.SkipTest: uss not supported
 skipped 'uss not supported'
@@ -165,18 +165,35 @@ Ran 139 tests
 OK (skipped=4)
 Time limit exceeded.
 Threads: Waiting for only 1 --> 1
-MGlets : Waiting for only 2 --> 3
+MGlets : Waiting for only 4 --> 5
 py$(PYV): commands[2]> python -m sphinx.cmd.build -b doctest -d docs/_build/doctrees-py$(PYV) docs docs/_build/doctest-py$(PYV)
-Running Sphinx v7.2.6
+Running Sphinx v7.4.7
+loading translations [en]... done
 making output directory... done
-loading intersphinx inventory from https://docs.python.org/objects.inv...
-loading intersphinx inventory from https://www.gevent.org/objects.inv...
+Converting `source_suffix = '.rst'` to `source_suffix = {'.rst': 'restructuredtext'}`.
+loading intersphinx inventory 'python' from https://docs.python.org/objects.inv...
+loading intersphinx inventory 'gevent' from https://www.gevent.org/objects.inv...
 intersphinx inventory has moved: https://docs.python.org/objects.inv -> https://docs.python.org/3/objects.inv
 building [mo]: targets for 0 po files that are out of date
 writing output... 
 building [doctest]: targets for 15 source files that are out of date
 updating environment: [new config] 15 added, 0 changed, 0 removed
-[2Kreading sources... [  7%] api[2Kreading sources... [ 13%] c_api[2Kreading sources... [ 20%] caveats[2Kreading sources... [ 27%] changes[2Kreading sources... [ 33%] contextvars[2Kreading sources... [ 40%] creating_executing_greenlets[2Kreading sources... [ 47%] development[2Kreading sources... [ 53%] greenlet[2Kreading sources... [ 60%] greenlet_gc[2Kreading sources... [ 67%] gui_example[2Kreading sources... [ 73%] history[2Kreading sources... [ 80%] index[2Kreading sources... [ 87%] python_threads[2Kreading sources... [ 93%] switching[2Kreading sources... [100%] tracing
+reading sources... [  7%] api
+reading sources... [ 13%] c_api
+reading sources... [ 20%] caveats
+reading sources... [ 27%] changes
+reading sources... [ 33%] contextvars
+reading sources... [ 40%] creating_executing_greenlets
+reading sources... [ 47%] development
+reading sources... [ 53%] greenlet
+reading sources... [ 60%] greenlet_gc
+reading sources... [ 67%] gui_example
+reading sources... [ 73%] history
+reading sources... [ 80%] index
+reading sources... [ 87%] python_threads
+reading sources... [ 93%] switching
+reading sources... [100%] tracing
+
 CHANGES.rst:3: WARNING: Duplicate explicit target name: "pr".
 looking for now-outdated files... none found
 pickling environment... done
