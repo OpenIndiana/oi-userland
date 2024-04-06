@@ -1,0 +1,10 @@
+--- gevent-24.2.1/src/greentest/3.9/test_threading.py.orig
++++ gevent-24.2.1/src/greentest/3.9/test_threading.py
+@@ -815,6 +815,7 @@
+             threading.Thread(target=noop).start()
+             # Thread.join() is not called
+ 
++    @unittest.skip("always fails: https://github.com/gevent/gevent/issues/2030")
+     def test_import_from_another_thread(self):
+         # bpo-1596321: If the threading module is first import from a thread
+         # different than the main thread, threading._shutdown() must handle
