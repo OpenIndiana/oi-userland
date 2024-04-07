@@ -98,6 +98,9 @@ PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 empty :=
 space := $(empty) $(empty)
 
+# Define $(comma) as single comma so we can use it in text transforming functions
+comma = ,
+
 ROOT =			/
 
 # Distribution name and version
