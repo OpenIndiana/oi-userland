@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test2::Plugin::NoWarnings
-HUMAN_VERSION =			0.09
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.10
 COMPONENT_SUMMARY =		Test2::Plugin::NoWarnings - Fail if tests warn
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:be3dd800042eef362bf17d2056cf9e934dee91ccce98e4f178b8fb5772f2fb74
+	sha256:c97cb1122cc6e3e4a079059da71e12f65760bfb0671d19d25a7ec7c5f1f240fb
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,4 +32,5 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/ipc-run3
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/module-pluggable
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite
