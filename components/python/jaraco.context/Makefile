@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.context
-HUMAN_VERSION =			5.1.0
+HUMAN_VERSION =			5.3.0
 COMPONENT_SUMMARY =		jaraco.context - Useful decorators and context managers
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.context
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:24ec1f739aec2c5766c68027ccc70d91d7b0cb931699442f5c7ed93515b955e7
+	sha256:c2f67165ce1f9be20f32f650f25d8edfc1646a8aeee48ae06fb35f90763576d2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,10 +41,12 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/backports-tarfile
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/portend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
