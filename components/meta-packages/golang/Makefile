@@ -17,7 +17,7 @@ BUILD_STYLE = pkg
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		golang
-COMPONENT_VERSION =		1.21.1
+COMPONENT_VERSION =		1.22
 COMPONENT_SUMMARY =		The Go Programming Language
 COMPONENT_PROJECT_URL =		https://go.dev/
 COMPONENT_FMRI =		developer/golang
@@ -25,6 +25,6 @@ COMPONENT_CLASSIFICATION =	Development/Other Languages
 
 include $(WS_MAKE_RULES)/common.mk
 
-PKG_MACROS += GOV=$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\(\.[^.]*\)\..*/\1/' | tr -d .)
+PKG_MACROS += GOV=$(subst .,,$(COMPONENT_VERSION))
 
 # Auto-generated dependencies
