@@ -1,13 +1,23 @@
-https://github.com/jaraco/pytest-enabler/issues/11
+https://github.com/pytest-dev/pytest/issues/12186
 
---- pytest-ignore-flaky-2.1.0/tests/test_functional.py.orig
-+++ pytest-ignore-flaky-2.1.0/tests/test_functional.py
-@@ -34,7 +34,7 @@
+Please note it is currently impossible to uninstall typeguard because
+package/pkg transitionally depends on it.  The dependency chain is:
+
+package/pkg -> cherrypy -> jaraco-collections -> jaraco-text -> inflect -> typeguard
+
+--- pytest-ignore-flaky-2.2.0/tests/test_functional.py.orig
++++ pytest-ignore-flaky-2.2.0/tests/test_functional.py
+@@ -1,3 +1,5 @@
++import pytest
++
+ pytest_plugins = ('pytester',)
  
- def test_fail_flaky(testdir, capsys):
-     test = testdir.makepyfile(TEST_SAMPLE)
--    rec = testdir.inline_run(test)
-+    rec = testdir.inline_run('-p', 'no:plugin-enabled options', test)
-     results = get_results(rec)
-     assert results['test_ok', 'call'] == 'passed'
-     assert results['test_mf', 'call'] == 'failed'
+ 
+@@ -50,6 +52,7 @@
+ """
+ 
+ 
++@pytest.mark.skip(reason="fails with typeguard installed")
+ def test_success_flaky(testdir, capsys):
+     test = testdir.makepyfile(TEST_SAMPLE_SUCCEED)
+     rec = testdir.inline_run('--ignore-flaky', test)

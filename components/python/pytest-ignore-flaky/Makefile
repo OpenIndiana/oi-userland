@@ -14,18 +14,16 @@
 #   $WS_TOOLS/python-integrate-project pytest-ignore-flaky
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-ignore-flaky
-HUMAN_VERSION =			2.1.0
+HUMAN_VERSION =			2.2.0
 COMPONENT_SUMMARY =		pytest-ignore-flaky - ignore failures from flaky tests (pytest plugin)
-COMPONENT_PROJECT_URL =		https://github.com/schettino72/pytest-ignore-flaky
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5e/1d/ec566a60a02fad11b5a5a73be05e6bfae0b776d006be758e70d1cc5011a0/pytest-ignore-flaky-2.1.0.tar.gz
+COMPONENT_PROJECT_URL =		https://github.com/coherent-oss/pytest-ignore-flaky
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bbdb2615df1a4854661ec52fff102b9ea47dcc08df6e46da521e0468d36467e1
+	sha256:e3fb91f3513babf8ad1a4175592be81da208ebd99b2f772cf6ce5cbfb94c7e64
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,6 +31,16 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/pytest-dev/pytest/issues/12186
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-ignore-flaky
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-salt-factories
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-system-statistics
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
