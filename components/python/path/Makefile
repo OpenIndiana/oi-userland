@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		path
-HUMAN_VERSION =			16.12.1
+HUMAN_VERSION =			16.14.0
 COMPONENT_SUMMARY =		path - A module wrapper for os.path
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/path
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c874277418e79ad95356d53dba9f8e14973b50f99cbf3365c852e830c2e9af1a
+	sha256:dbaaa7efd4602fd6ba8d82890dc7823d69e5de740a6e842d9919b0faaf2b6a8e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
