@@ -35,6 +35,6 @@ COMPONENT_BUILD_ACTION=pwd
 COMPONENT_INSTALL_ACTION=cd $(@D) && bash $(@D)/install-sh $(PROTO_DIR)/usr
 
 # Build dependencies
-REQUIRED_PACKAGES+=web/php-81/php-cli
+REQUIRED_PACKAGES+=web/php-82/php-cli
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
