@@ -1,5 +1,5 @@
---- hpn-ssh-hpn-18.3.1/readconf.c.orig
-+++ hpn-ssh-hpn-18.3.1/readconf.c
+--- hpn-ssh-hpn-18.4.0/readconf.c.orig
++++ hpn-ssh-hpn-18.4.0/readconf.c
 @@ -168,6 +168,9 @@
  	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
  	oSendEnv, oSetEnv, oControlPath, oControlMaster, oControlPersist,
@@ -20,7 +20,7 @@
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -1026,6 +1032,17 @@
+@@ -1040,6 +1046,17 @@
  	return -1;
  }
  
@@ -38,7 +38,7 @@
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2425,6 +2442,13 @@
+@@ -2460,6 +2477,13 @@
  		}
  		break;
  
@@ -52,7 +52,7 @@
  	case oDeprecated:
  		debug("%s line %d: Deprecated option \"%s\"",
  		    filename, linenum, keyword);
-@@ -2672,6 +2696,9 @@
+@@ -2709,6 +2733,9 @@
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -62,7 +62,7 @@
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2906,6 +2933,10 @@
+@@ -2945,6 +2972,10 @@
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -73,8 +73,8 @@
  	if (options->fingerprint_hash == -1)
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
---- hpn-ssh-hpn-18.3.1/readconf.h.orig
-+++ hpn-ssh-hpn-18.3.1/readconf.h
+--- hpn-ssh-hpn-18.4.0/readconf.h.orig
++++ hpn-ssh-hpn-18.4.0/readconf.h
 @@ -198,6 +198,9 @@
  	u_int	num_channel_timeouts;
  
@@ -98,9 +98,9 @@
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
      const char *portstr, const char *user, const char *jump_host);
---- hpn-ssh-hpn-18.3.1/hpnssh_config.5.orig
-+++ hpn-ssh-hpn-18.3.1/hpnssh_config.5
-@@ -713,6 +713,14 @@
+--- hpn-ssh-hpn-18.4.0/hpnssh_config.5.orig
++++ hpn-ssh-hpn-18.4.0/hpnssh_config.5
+@@ -723,6 +723,14 @@
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -112,11 +112,11 @@
 +The default value is no, which means that the banner is displayed unless the
 +log level  is  QUIET, FATAL, or ERROR. See also the Banner option in
 +.Xr sshd_config 4 . This option applies to protocol version 2 only.
- .It Cm DisableMTAES
- Switch the encryption cipher being used from the multithreaded MT-AES-CTR cipher
- back to the stock single-threaded AES-CTR cipher. This may prove to be more
---- hpn-ssh-hpn-18.3.1/sshconnect2.c.orig
-+++ hpn-ssh-hpn-18.3.1/sshconnect2.c
+ .It Cm DynamicForward
+ Specifies that a TCP port on the local machine be forwarded
+ over the secure channel, and the application
+--- hpn-ssh-hpn-18.4.0/sshconnect2.c.orig
++++ hpn-ssh-hpn-18.4.0/sshconnect2.c
 @@ -85,6 +85,10 @@
  extern char *server_version_string;
  extern Options options;
@@ -128,7 +128,7 @@
  /*
   * tty_flag is set in ssh.c. Use this in ssh_userauth2:
   * if it is set, then prevent the switch to the null cipher.
-@@ -630,8 +634,28 @@
+@@ -621,8 +625,28 @@
  	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
  	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
  		goto out;
