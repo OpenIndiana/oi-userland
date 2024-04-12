@@ -55,6 +55,12 @@
 <transform file link hardlink path=usr/share/lib/zoneinfo/.+ -> add refresh_fmri "svc:/system/timezone:default">
 
 #
+# HPN-SSH configuration files should be preserved and cause the service restart
+#
+<transform file path=etc/hpnssh/sshd?_config -> default preserve renamenew>
+<transform file path=etc/hpnssh/sshd_config -> default restart_fmri svc:/network/hpnssh:default>
+
+#
 # Most directories and files under /etc/security are group sys
 #
 <transform dir path=etc/security$ -> default group sys>
