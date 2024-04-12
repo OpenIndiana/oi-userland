@@ -19,26 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic_core
-HUMAN_VERSION =			2.18.0
+HUMAN_VERSION =			2.18.1
 COMPONENT_SUMMARY =		pydantic_core - Core functionality for Pydantic validation and serialization
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a6d075404af8b8feb42f86196e08053bfae282af2701321f36a1553e966ce1f0
+	sha256:de9d3e8717560eb05e28739d1b35e4eac2e458553a52a301e51352a7ffc86a35
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
-
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# pydantic_core --> dirty_equals --> pydantic ==> pydantic_core
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,6 +38,24 @@ LD_Z_IGNORE=
 # manually.
 TEST_REQUIREMENTS += tests/requirements.txt
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
+
+# Normalize pointers
+COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{16\}/\$$(POINTER)/g'"
+COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12\}/\$$(POINTER)/g'"
+# Normalize random uuids
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(core_schema_right11-\)[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}/\1\$$(UUID)/g'"
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(core_schema_right11-.*\)[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}/\1\$$(UUID)/g'"
+# Normalize order of items in lists
+COMPONENT_TEST_TRANSFORMS += "-e \"s/{'\([bc]\)', 'a'}/{'a', '\1'}/g\""
+COMPONENT_TEST_TRANSFORMS += "-e \"s/{'[abc]', '[abc]', '[abc]'}/{'a', 'b', 'c'}/g\""
+COMPONENT_TEST_TRANSFORMS += "-e 's/\"b\(\": SerField.*\"\)a\(\": SerField\)/\"a\1b\2/g'"
+COMPONENT_TEST_TRANSFORMS += "-e \"s/\({[12', ]*\)b'3'\([12', ]*}\)/b\1'3'\2/g\""
+COMPONENT_TEST_TRANSFORMS += "-e \"s/\({[13', ]*\)'2'\([13', ]*}\)/'\12\2/g\""
+COMPONENT_TEST_TRANSFORMS += "-e \"s/\({[12, ]*\)'3'\([12, ]*}\)/\13\2'/g\""
+COMPONENT_TEST_TRANSFORMS += "-e 's/{[123], [123], [123]}/{1, 2, 3}/g'"
+COMPONENT_TEST_TRANSFORMS += "-e \"s/\({[12, ]*\)3\([12, ]*}\)'/\1'3'\2/g\""
+COMPONENT_TEST_TRANSFORMS += "-e \"s/'\({[13', ]*\)2\([13', ]*}\)/\1'2'\2/g\""
+COMPONENT_TEST_TRANSFORMS += "-e \"s/b\({[12', ]*\)'3'\([12', ]*}\)/\1b'3'\2/g\""
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/maturin
