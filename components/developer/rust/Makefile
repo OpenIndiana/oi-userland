@@ -35,13 +35,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.76.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.77.2
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9e5cff033a7f0d2266818982ad90e4d3e4ef8f8ee1715776c6e25073a136c021
+COMPONENT_ARCHIVE_HASH=	sha256:c61457ef8f596638fddbc7716778b2f6b99ff12513a3b0f13994c3bc521638c3
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -142,10 +141,8 @@ COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 REQUIRED_PACKAGES += developer/lang/rustc # previous before build version
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
