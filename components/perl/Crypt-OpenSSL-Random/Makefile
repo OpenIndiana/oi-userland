@@ -19,22 +19,19 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Random
-HUMAN_VERSION =			0.15
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.16
 COMPONENT_SUMMARY =		Crypt::OpenSSL::Random - OpenSSL/LibreSSL pseudo-random number generator access
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f0876faa1ba3111e39b86aa730c603211eff2905e460c72a57b61e8cf475cef4
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
+	sha256:fcf58cb2af4c3eda2fe1405527d9373efe9576268fce8adb34df9ce9b6b44d1e
+COMPONENT_LICENSE =		Artistic-1.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Optional test dependencies missing from metadata
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-guess
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
