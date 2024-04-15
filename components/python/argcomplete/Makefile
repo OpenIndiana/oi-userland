@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		argcomplete
-HUMAN_VERSION =			3.2.3
+HUMAN_VERSION =			3.3.0
 COMPONENT_SUMMARY =		argcomplete - Bash tab completion for argparse
 COMPONENT_PROJECT_URL =		https://github.com/kislyuk/argcomplete
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bf7900329262e481be5a15f56f19736b376df6f82ed27576fa893652c5de6c23
+	sha256:fd03ff4a5b9e6580569d34b273f741e85cd9e072f3feeeee3eba4891c70eda62
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
