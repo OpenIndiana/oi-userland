@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinx_issues
-HUMAN_VERSION =			4.0.0
+HUMAN_VERSION =			4.1.0
 COMPONENT_SUMMARY =		sphinx_issues - A Sphinx extension for linking to your project's issue tracker
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/dd/8b/d0c10bb1a98273c08cbe6fe773bada84597d250960c91dbe7d1a97f6df7d/sphinx_issues-4.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5b8fcc229ffaeaef53fef0dca88dc89bc14b4aa81f221d9682a64ecced02e25d
+	sha256:a67f7ef31d164b420b2f21b6c9b020baeb4a014afd4045f5be314c984e8ee520
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
