@@ -1,0 +1,25 @@
+--- objfw-1.1.1/src/OFFileIRIHandler.m
++++ objfw-1.1.1/src/OFFileIRIHandler.m
+@@ -1430,10 +1430,21 @@
+ 		@throw e;
+ 	}
+ # endif
+ 
+ 	@try {
++# if defined(OF_SOLARIS) && defined(__clang__)
++		/*
++		 * Stupid workaround for a compiler bug. Without this, pool
++		 * contains garbage at the end of this function.
++		 */
++		__asm__ (
++		    ""
++		    :: "r"(pool)
++		);
++# endif
++
+ 		for (;;) {
+ 			struct dirent *dirent;
+ # ifdef HAVE_READDIR_R
+ 			struct dirent buffer;
+ # endif
+
