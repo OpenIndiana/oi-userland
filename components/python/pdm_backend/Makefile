@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pdm_backend
-HUMAN_VERSION =			2.1.8
+HUMAN_VERSION =			2.2.0
 COMPONENT_SUMMARY =		pdm_backend - The build backend used by PDM that supports latest packaging standards
 COMPONENT_PROJECT_URL =		https://github.com/pdm-project/pdm-backend
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8f/a5/8bf3212db8036d54bc735439445a9345f5d58169c91733dd9aec649cecc6/pdm_backend-2.1.8.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2487dfbd13f69d80fb4e6a08006a3ee68272833970813047dc5fcfacdfdc0151
+	sha256:ec90e4a32f8c402999e2f1512721d2561d02766f5cc7fa249b79a073a605dd92
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
