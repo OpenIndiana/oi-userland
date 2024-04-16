@@ -11,28 +11,28 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project matplotlib-inline
+#   $WS_TOOLS/python-integrate-project -d python/matplotlib-inline matplotlib_inline
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		matplotlib-inline
-HUMAN_VERSION =			0.1.6
-COMPONENT_SUMMARY =		matplotlib-inline - Inline Matplotlib backend for Jupyter
+COMPONENT_NAME =		matplotlib_inline
+HUMAN_VERSION =			0.1.7
+COMPONENT_SUMMARY =		matplotlib_inline - Inline Matplotlib backend for Jupyter
 COMPONENT_PROJECT_URL =		https://github.com/ipython/matplotlib-inline
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d9/50/3af8c0362f26108e54d58c7f38784a3bdae6b9a450bab48ee8482d737f44/matplotlib-inline-0.1.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f887e5f10ba98e8d2b150ddcf4702c1e5f8b3a20005eb0f74bfdbd360ee6f304
+	sha256:8423b23ec666be3d16e16b60bdd8ac4e86e840ebd1dd11a30b9f117f2fa0ab90
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/traitlets
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
