@@ -1,9 +1,9 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PYTHON_DIR)/site-packages/pyproject_fmt --cov $(@D)/tests --cov-fail-under=100 --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
+py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov pyproject_fmt --cov $(@D)/tests --cov-fail-under=100 --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
 Error processing line 1 of $(PYTHON_DIR)/vendor-packages/coverage_enable_subprocess.pth:
 
   Traceback (most recent call last):
-    File "$(PYTHON_DIR)/site.py", line 169, in addpackage
+    File "$(PYTHON_DIR)/site.py", line 177, in addpackage
       exec(line)
     File "<string>", line 1, in <module>
     File "<string>", line 7, in <module>
@@ -21,117 +21,116 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 99 items
+collecting ... collected 100 items
 
-  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
-$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:503: CoverageWarning: Module $(PYTHON_DIR)/site-packages/pyproject_fmt was never imported. (module-not-imported)
-tests/formatter/test_build_system.py::test_backend_path PASSED
-tests/formatter/test_build_system.py::test_build_backend_order PASSED
 tests/formatter/test_build_system.py::test_build_system_missing PASSED
+tests/formatter/test_build_system.py::test_backend_path PASSED
+tests/formatter/test_build_system.py::test_requires PASSED
+tests/formatter/test_build_system.py::test_build_backend_order PASSED
 tests/formatter/test_build_system.py::test_indent[0] PASSED
 tests/formatter/test_build_system.py::test_indent[2] PASSED
 tests/formatter/test_build_system.py::test_indent[4] PASSED
-tests/formatter/test_build_system.py::test_keep_full_version_off PASSED
 tests/formatter/test_build_system.py::test_keep_full_version_on PASSED
-tests/formatter/test_build_system.py::test_requires PASSED
-tests/formatter/test_pep508.py::test_bad_syntax_requires[ ] PASSED
+tests/formatter/test_build_system.py::test_keep_full_version_off PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[a-a] PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[packaging>=20.0;python_version>"3.4"-packaging>=20; python_version > "3.4"] PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[xonsh>=0.9.16;python_version>'3.4' and python_version!='3.9'-xonsh>=0.9.16; python_version > "3.4" and python_version != "3.9"] PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[pytest-xdist>=1.31.0-pytest-xdist>=1.31] PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[foo@http://foo.com-foo@ http://foo.com] PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[bar [fred,al] @ http://bat.com ;python_version=='2.7'-bar[al,fred]@ http://bat.com ; python_version == "2.7"] PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[baz [quux, strange];python_version<"2.7" and platform_version=='2'-baz[quux,strange]; python_version < "2.7" and platform_version == "2"] PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[pytest>=6.0.0-pytest>=6] PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[pytest==6.0.0-pytest==6] PASSED
+tests/formatter/test_pep508.py::test_requires_fmt[pytest~=6.0.0-pytest~=6.0.0] PASSED
 tests/formatter/test_pep508.py::test_bad_syntax_requires[!] PASSED
-tests/formatter/test_pep508.py::test_bad_syntax_requires[<] PASSED
 tests/formatter/test_pep508.py::test_bad_syntax_requires[=] PASSED
 tests/formatter/test_pep508.py::test_bad_syntax_requires[>] PASSED
-tests/formatter/test_pep508.py::test_bad_syntax_requires[@] PASSED
+tests/formatter/test_pep508.py::test_bad_syntax_requires[<] PASSED
+tests/formatter/test_pep508.py::test_bad_syntax_requires[ ] PASSED
 tests/formatter/test_pep508.py::test_bad_syntax_requires[\t] PASSED
+tests/formatter/test_pep508.py::test_bad_syntax_requires[@] PASSED
 tests/formatter/test_pep508.py::test_normalize_pep508_array[0] PASSED
 tests/formatter/test_pep508.py::test_normalize_pep508_array[2] PASSED
 tests/formatter/test_pep508.py::test_normalize_pep508_array[4] PASSED
 tests/formatter/test_pep508.py::test_normalize_pep508_array_keep_versions PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[a-a] PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[bar [fred,al] @ http://bat.com ;python_version=='2.7'-bar[al,fred]@ http://bat.com ; python_version == "2.7"] PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[baz [quux, strange];python_version<"2.7" and platform_version=='2'-baz[quux,strange]; python_version < "2.7" and platform_version == "2"] PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[foo@http://foo.com-foo@ http://foo.com] PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[packaging>=20.0;python_version>"3.4"-packaging>=20; python_version > "3.4"] PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[pytest-xdist>=1.31.0-pytest-xdist>=1.31] PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[pytest==6.0.0-pytest==6] PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[pytest>=6.0.0-pytest>=6] PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[pytest~=6.0.0-pytest~=6.0.0] PASSED
-tests/formatter/test_pep508.py::test_requires_fmt[xonsh>=0.9.16;python_version>'3.4' and python_version!='3.9'-xonsh>=0.9.16; python_version > "3.4" and python_version != "3.9"] PASSED
-tests/formatter/test_project.py::test_classifier_eq PASSED
-tests/formatter/test_project.py::test_classifier_gt PASSED
-tests/formatter/test_project.py::test_classifier_gt_tox PASSED
-tests/formatter/test_project.py::test_classifier_gt_tox_conf_missing PASSED
-tests/formatter/test_project.py::test_classifier_gt_tox_no_py_ver PASSED
-tests/formatter/test_project.py::test_classifier_gte PASSED
-tests/formatter/test_project.py::test_classifier_high_range PASSED
-tests/formatter/test_project.py::test_classifier_lt PASSED
-tests/formatter/test_project.py::test_classifier_neq PASSED
-tests/formatter/test_project.py::test_classifier_none PASSED
-tests/formatter/test_project.py::test_classifier_prerelease PASSED
-tests/formatter/test_project.py::test_classifier_range PASSED
-tests/formatter/test_project.py::test_classifier_range_neq PASSED
-tests/formatter/test_project.py::test_classifier_tox_exe_bad PASSED
-tests/formatter/test_project.py::test_classifier_tox_fails_call PASSED
-tests/formatter/test_project.py::test_classifier_two_upper_bounds PASSED
-tests/formatter/test_project.py::test_classifier_upper_bound PASSED
-tests/formatter/test_project.py::test_entry_points PASSED
-tests/formatter/test_project.py::test_indent[0] PASSED
-tests/formatter/test_project.py::test_indent[2] PASSED
-tests/formatter/test_project.py::test_indent[4] PASSED
-tests/formatter/test_project.py::test_keep_full_version_off PASSED
-tests/formatter/test_project.py::test_keep_full_version_on PASSED
+tests/formatter/test_project.py::test_project_name[[project]\nname='a-b'] PASSED
+tests/formatter/test_project.py::test_project_name[[project]\nname='A_B'] PASSED
+tests/formatter/test_project.py::test_project_name[[project]\nname='a.-..-__B'] PASSED
 tests/formatter/test_project.py::test_project_classifiers PASSED
 tests/formatter/test_project.py::test_project_dependencies PASSED
 tests/formatter/test_project.py::test_project_dependencies_with_double_quotes PASSED
 tests/formatter/test_project.py::test_project_dependencies_with_mixed_quotes PASSED
 tests/formatter/test_project.py::test_project_description PASSED
-tests/formatter/test_project.py::test_project_name[[project]\nname='A_B'] PASSED
-tests/formatter/test_project.py::test_project_name[[project]\nname='a-b'] PASSED
-tests/formatter/test_project.py::test_project_name[[project]\nname='a.-..-__B'] PASSED
-tests/formatter/test_project.py::test_project_optional_dependencies PASSED
+tests/formatter/test_project.py::test_project_description_multiline PASSED
 tests/formatter/test_project.py::test_project_scripts PASSED
+tests/formatter/test_project.py::test_project_optional_dependencies PASSED
+tests/formatter/test_project.py::test_entry_points PASSED
+tests/formatter/test_project.py::test_classifier_none PASSED
+tests/formatter/test_project.py::test_classifier_lt PASSED
+tests/formatter/test_project.py::test_classifier_gt PASSED
+tests/formatter/test_project.py::test_classifier_gte PASSED
+tests/formatter/test_project.py::test_classifier_eq PASSED
+tests/formatter/test_project.py::test_classifier_neq PASSED
+tests/formatter/test_project.py::test_classifier_range PASSED
+tests/formatter/test_project.py::test_classifier_range_neq PASSED
+tests/formatter/test_project.py::test_classifier_high_range PASSED
+tests/formatter/test_project.py::test_classifier_upper_bound PASSED
+tests/formatter/test_project.py::test_classifier_two_upper_bounds PASSED
+tests/formatter/test_project.py::test_classifier_prerelease PASSED
+tests/formatter/test_project.py::test_classifier_gt_tox PASSED
+tests/formatter/test_project.py::test_classifier_gt_tox_no_py_ver PASSED
+tests/formatter/test_project.py::test_classifier_gt_tox_conf_missing PASSED
+tests/formatter/test_project.py::test_classifier_tox_fails_call PASSED
+tests/formatter/test_project.py::test_classifier_tox_exe_bad PASSED
+tests/formatter/test_project.py::test_indent[0] PASSED
+tests/formatter/test_project.py::test_indent[2] PASSED
+tests/formatter/test_project.py::test_indent[4] PASSED
+tests/formatter/test_project.py::test_keep_full_version_on PASSED
+tests/formatter/test_project.py::test_keep_full_version_off PASSED
 tests/formatter/test_project.py::test_pyproject_toml_config PASSED
+tests/formatter/test_tools.py::test_tools_ordering PASSED
 tests/formatter/test_tools.py::test_sub_table_newline PASSED
 tests/formatter/test_tools.py::test_sub_table_no_op PASSED
-tests/formatter/test_tools.py::test_tools_ordering PASSED
+tests/test_cli.py::test_cli_version PASSED
+tests/test_cli.py::test_cli_pyproject_toml_ok PASSED
 tests/test_cli.py::test_cli_inputs_ok PASSED
 tests/test_cli.py::test_cli_pyproject_toml_not_exists PASSED
 tests/test_cli.py::test_cli_pyproject_toml_not_file PASSED
-tests/test_cli.py::test_cli_pyproject_toml_ok PASSED
-tests/test_cli.py::test_cli_pyproject_toml_permission_fail[128-read] PASSED
 tests/test_cli.py::test_cli_pyproject_toml_permission_fail[256-write] PASSED
-tests/test_cli.py::test_cli_version PASSED
-tests/test_cli.py::test_pyproject_toml_dir PASSED
+tests/test_cli.py::test_cli_pyproject_toml_permission_fail[128-read] PASSED
 tests/test_cli.py::test_pyproject_toml_resolved PASSED
+tests/test_cli.py::test_pyproject_toml_dir PASSED
 tests/test_main.py::test_color_diff PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-True-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-True-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-False-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-False-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-True-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-True-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-False-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-False-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-True-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-True-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-False-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-False-False] PASSED
 tests/test_main.py::test_indent[0] PASSED
 tests/test_main.py::test_indent[2] PASSED
 tests/test_main.py::test_indent[4] PASSED
 tests/test_main.py::test_keep_full_version_cli PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-False-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-True-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-False-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-True-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-False-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-True-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-True] PASSED
 tests/test_pyproject_toml_fmt.py::test_help_invocation_as_module PASSED
 tests/test_pyproject_toml_fmt.py::test_help_invocation_as_script PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-9 files skipped due to complete coverage.
+19 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
 Required test coverage of 100% reached. Total coverage: 100.00%
-======== 99 passed ========
+======== 100 passed ========
   py$(PYV): OK
   congratulations :)
