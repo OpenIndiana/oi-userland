@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 # This is the latest NVIDIA Production Branch driver
 
 COMPONENT_NAME =		nvidia
-HUMAN_VERSION =			550.67
+HUMAN_VERSION =			550.76
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
 COMPONENT_FMRI =		driver/graphics/nvidia
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
@@ -30,7 +30,7 @@ COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:9206e9d33a3a034b243c32e0540211fe90efc72423dbe67a0abf0c7634d9772f
+COMPONENT_ARCHIVE_HASH =	sha256:60c57275c652edb149be13b1873d491daa7402b8e74f135b79cebc4395c8ad31
 COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
 COMPONENT_LICENSE_FILE =	NVDAgraphics/install/copyright
