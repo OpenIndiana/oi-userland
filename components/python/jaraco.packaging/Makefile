@@ -19,13 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.packaging
-HUMAN_VERSION =			9.5.0
+HUMAN_VERSION =			10.0.0
 COMPONENT_SUMMARY =		jaraco.packaging - tools to supplement packaging Python releases
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.packaging
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4d73cd8c5080ea42d19748025426fbe4998fe24123f96fade8278f0453de1880
+	sha256:b037dc174786278d8f55afa7ec2e0232fc3157c2aaef0bb99d196fdc62c8af61
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =			jaraco_packaging-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
