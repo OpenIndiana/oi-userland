@@ -10,8 +10,7 @@
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
-# Copyright 2022 Friedrich Kink
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,12 +23,23 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# We don't deliver binaries
+<transform path=usr/bin -> drop>
+
+file path=usr/bin/$(MACH32)/tdbbackup
+file path=usr/bin/$(MACH32)/tdbdump
+file path=usr/bin/$(MACH32)/tdbrestore
+file path=usr/bin/$(MACH32)/tdbtool
+file path=usr/bin/tdbbackup
+file path=usr/bin/tdbdump
+file path=usr/bin/tdbrestore
+file path=usr/bin/tdbtool
 file path=usr/include/tdb.h
-link path=usr/lib/$(MACH64)/libtdb.so target=libtdb.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libtdb.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libtdb.so.1 target=libtdb.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libtdb.so target=libtdb.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libtdb.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libtdb.so.1 target=libtdb.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/tdb.pc
-link path=usr/lib/libtdb.so target=libtdb.so.$(COMPONENT_VERSION)
-file path=usr/lib/libtdb.so.$(COMPONENT_VERSION)
-link path=usr/lib/libtdb.so.1 target=libtdb.so.$(COMPONENT_VERSION)
+link path=usr/lib/libtdb.so target=libtdb.so.$(HUMAN_VERSION)
+file path=usr/lib/libtdb.so.$(HUMAN_VERSION)
+link path=usr/lib/libtdb.so.1 target=libtdb.so.$(HUMAN_VERSION)
 file path=usr/lib/pkgconfig/tdb.pc
