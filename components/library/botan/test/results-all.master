@@ -1,7 +1,7 @@
-Testing Botan 3.3.0 (release, dated 20240220, revision git:9074b04c1303a24e2084f8325fa570a5ad4f2478, distribution unspecified)
+Testing Botan 3.4.0 (release, dated 20240408, revision git:afd43c536ff96e85d45837caa6f99125483c160a, distribution unspecified)
 Properties:
-  CPU flags: rdtsc sse2 ssse3 avx2 bmi2 aes_ni clmul rdrand
-  drbg_seed: 17BA8A35E7F42DE8
+  CPU flags: rdtsc sse2 ssse3 avx2 bmi2 adx aes_ni clmul rdrand rdseed
+  drbg_seed: 17C4B5A6F67F18BE
 aead:
 AES-128/CCM(10,2) ran 86 tests all ok
 AES-128/CCM(12,2) ran 43 tests all ok
@@ -295,9 +295,19 @@ SHAKE-128 ran 21755 tests all ok
 SHAKE-256 ran 21755 tests all ok
 Salsa20 ran 227 tests all ok
 util:
-Util load/store ran 251 tests all ok
+Util load/store ran 313 tests all ok
+Util load/store constexpr ran 47 tests all ok
+Util load/store fallback ran 12 tests all ok
 Util round_down ran 6 tests all ok
 Util round_up ran 11 tests all ok
+copy_out_be with 16bit input (partial words) ran 1 tests all ok
+copy_out_be with 16bit input (word aligned) ran 1 tests all ok
+copy_out_be with 64bit input (partial words) ran 1 tests all ok
+copy_out_be with 64bit input (word aligned) ran 1 tests all ok
+copy_out_le with 16bit input (partial words) ran 1 tests all ok
+copy_out_le with 16bit input (word aligned) ran 1 tests all ok
+copy_out_le with 64bit input (partial words) ran 1 tests all ok
+copy_out_le with 64bit input (word aligned) ran 1 tests all ok
 argon2:
 Argon2d ran 12 tests all ok
 Argon2i ran 15 tests all ok
@@ -344,6 +354,10 @@ BigInt encoding functions ran 1 tests all ok
 BigInt get_substring ran 34816 tests all ok
 BigInt prime generation ran 65 tests all ok
 BigInt size functions ran 72 tests all ok
+bignum_auxiliary:
+BigInt binary serialization ran 3 tests all ok
+BigInt const time shift ran 2048 tests all ok
+BigInt truncated/padded binary serialization ran 5 tests all ok
 bit_ops:
 ctz ran 6 tests all ok
 is_power_of_2 ran 15 tests all ok
@@ -356,8 +370,6 @@ bn_cmp:
 BigInt Comparison EQ ran 6 tests all ok
 BigInt Comparison LT ran 12 tests all ok
 BigInt Comparison LTE ran 14 tests all ok
-bn_ct_lshift:
-BigInt const time shift ran 2048 tests all ok
 bn_div:
 BigInt Divide ran 4344 tests all ok
 bn_gcd:
@@ -857,6 +869,22 @@ Ed25519/Pure signature generation ran 8508 tests all ok
 Ed25519/SHA-256 signature generation ran 12 tests all ok
 ed25519_verify:
 Ed25519/Pure signature verification ran 120 tests all ok
+ed448_general:
+Ed448 general tests ran 38 tests all ok
+ed448_keygen:
+Ed448 Ed448ph keygen ran 33 tests all ok
+Ed448 SHAKE-256(72) keygen ran 33 tests all ok
+Ed448 keygen ran 33 tests all ok
+ed448_sign:
+Ed448/Ed448ph signature generation ran 12 tests all ok
+Ed448/Pure signature generation ran 204 tests all ok
+Ed448/SHAKE-256(512) signature generation ran 12 tests all ok
+ed448_utils:
+Reduce mod L test ran 6 tests all ok
+ed448_verify:
+Ed448/Ed448ph signature verification ran 8 tests all ok
+Ed448/Pure signature verification ran 274 tests all ok
+Ed448/SHAKE-256(512) signature verification ran 8 tests all ok
 elgamal_decrypt:
 ElGamal/EME-PKCS1-v1_5 decryption ran 1 tests all ok
 ElGamal/Raw decryption ran 96 tests all ok
@@ -869,7 +897,7 @@ PKCSv15 Decoding ran 65 tests all ok
 entropy:
 Entropy source getentropy ran 9 tests all ok
 Entropy source rdrand ran 9 tests all ok
-Entropy source rdseed ran 1 tests all ok
+Entropy source rdseed ran 9 tests all ok
 Entropy source system_rng ran 9 tests all ok
 extendable_output_functions:
 AES-256/CTR XOF failure modes ran 3 tests all ok
@@ -879,6 +907,8 @@ SHAKE-256 ran 1995 tests all ok
 cSHAKE without a name ran 6 tests all ok
 cSHAKE-128 ran 81 tests all ok
 cSHAKE-256 ran 81 tests all ok
+ffi_aead:
+FFI AEAD ran 345 tests all ok
 ffi_base64:
 FFI base64 ran 7 tests all ok
 ffi_blockcipher:
@@ -887,6 +917,8 @@ ffi_cbc_cipher:
 FFI CBC cipher ran 41 tests all ok
 ffi_cert_validation:
 FFI Cert Validation ran 39 tests all ok
+ffi_chacha:
+FFI ChaCha20Poly1305 ran 55 tests all ok
 ffi_crl:
 FFI CRL ran 11 tests all ok
 ffi_dh:
@@ -903,6 +935,8 @@ ffi_ecdsa_certificate:
 FFI ECDSA cert ran 42 tests all ok
 ffi_ed25519:
 FFI Ed25519 ran 20 tests all ok
+ffi_ed448:
+FFI Ed448 ran 20 tests all ok
 ffi_elgamal:
 FFI ElGamal ran 98 tests all ok
 ffi_errorhandling:
@@ -955,6 +989,8 @@ ffi_utils:
 FFI Utils ran 20 tests all ok
 ffi_x25519:
 FFI X25519 ran 16 tests all ok
+ffi_x448:
+FFI X448 ran 16 tests all ok
 ffi_zfec:
 FFI ZFEC ran 35 tests all ok
 filter:
@@ -1253,7 +1289,7 @@ RSA/OAEP(SHA-512,MGF1(SHA-512),TCPA) decryption ran 1 tests all ok
 rsa_encrypt:
 RSA/EME-PKCS1-v1_5 encryption ran 60 tests all ok
 RSA/OAEP(SHA-1) encryption ran 228 tests all ok
-RSA/Raw encryption ran 824 tests all ok
+RSA/Raw encryption ran 825 tests all ok
 rsa_kem:
 RSA/KDF1-18033(SHA-1) KEM ran 16 tests all ok
 RSA/KDF1-18033(SHA-256) KEM ran 16 tests all ok
@@ -1330,6 +1366,11 @@ RSA/EMSA4(SHA-256) verify invalid signature ran 45 tests all ok
 RSA/EMSA4(SHA-384) verify invalid signature ran 45 tests all ok
 RSA/EMSA4(SHA-512) verify invalid signature ran 45 tests all ok
 RSA/EMSA_PKCS1(SHA-256) verify invalid signature ran 141 tests all ok
+scoped_cleanup:
+cleanup isn't called after disengaging ran 1 tests all ok
+leaving a function, results in cleanup ran 3 tests all ok
+leaving a scope results in cleanup ran 1 tests all ok
+stack unwinding results in cleanup ran 4 tests all ok
 scrypt:
 scrypt ran 13 tests all ok
 simd_32:
@@ -1728,13 +1769,13 @@ DTLS v1.2 3DES RSA ran 112 tests all ok
 DTLS v1.2 AES-128 DH ran 55 tests all ok
 DTLS v1.2 AES-128 ECDH ran 112 tests all ok
 DTLS v1.2 AES-128 RSA ran 112 tests all ok
-DTLS v1.2 AES-128/CCM PSK ran 55 tests all ok
+DTLS v1.2 AES-128/CCM PSK ran 56 tests all ok
 DTLS v1.2 AES-128/CCM-8 PSK ran 56 tests all ok
 DTLS v1.2 AES-128/GCM ECDH ran 54 tests all ok
-DTLS v1.2 AES-128/GCM ECDH RSA ran 54 tests all ok
-DTLS v1.2 AES-128/GCM ECDH no OCSP ran 54 tests all ok
+DTLS v1.2 AES-128/GCM ECDH RSA ran 56 tests all ok
+DTLS v1.2 AES-128/GCM ECDH no OCSP ran 56 tests all ok
 DTLS v1.2 AES-128/GCM ECDHE_PSK ran 56 tests all ok
-DTLS v1.2 AES-128/GCM FFDHE-2048 ran 55 tests all ok
+DTLS v1.2 AES-128/GCM FFDHE-2048 ran 56 tests all ok
 DTLS v1.2 AES-128/GCM PSK ran 56 tests all ok
 DTLS v1.2 AES-128/GCM RSA ran 56 tests all ok
 DTLS v1.2 AES-128/GCM bp256r1 ran 56 tests all ok
@@ -1743,7 +1784,7 @@ DTLS v1.2 AES-128/GCM x25519 ran 56 tests all ok
 DTLS v1.2 AES-256/GCM client certs ran 62 tests all ok
 DTLS v1.2 AES-256/GCM p521 ran 56 tests all ok
 DTLS v1.2 AES-256/GCM secp112r1 ran 16 tests all ok
-DTLS v1.2 AES-256/OCB ECDH ran 55 tests all ok
+DTLS v1.2 AES-256/OCB ECDH ran 56 tests all ok
 DTLS v1.2 ARIA/GCM ECDH ran 56 tests all ok
 DTLS v1.2 Camellia-128/GCM ECDH ran 56 tests all ok
 DTLS v1.2 ChaCha20Poly1305 ECDH ran 56 tests all ok
@@ -1768,7 +1809,7 @@ TLS v1.2 AES-128/CCM PSK ran 52 tests all ok
 TLS v1.2 AES-128/CCM-8 PSK ran 52 tests all ok
 TLS v1.2 AES-128/GCM ECDH ran 52 tests all ok
 TLS v1.2 AES-128/GCM ECDH RSA ran 52 tests all ok
-TLS v1.2 AES-128/GCM ECDH no OCSP ran 52 tests all ok
+TLS v1.2 AES-128/GCM ECDH no OCSP ran 50 tests all ok
 TLS v1.2 AES-128/GCM ECDHE_PSK ran 52 tests all ok
 TLS v1.2 AES-128/GCM FFDHE-2048 ran 51 tests all ok
 TLS v1.2 AES-128/GCM PSK ran 52 tests all ok
@@ -1799,6 +1840,10 @@ uuid:
 UUID ran 12 tests all ok
 versioning:
 Versions ran 6 tests all ok
+x448_agree:
+X448/Raw key agreement ran 1494 tests all ok
+x448_keygen:
+X448 keygen ran 33 tests all ok
 x509_cve_2020_0601:
 CVE-2020-0601 ran 5 tests all ok
 x509_dn_cmp:
@@ -1845,23 +1890,25 @@ X509test path validation softfail ran 4 tests all ok
 x509_path_xmss:
 XMSS path validation with certificate created by BouncyCastle ran 1 tests all ok
 XMSS path validation with certificate created by ISARA corp ran 1 tests all ok
+x509_root_cert_time_check:
+Root cert time check ran 30 tests all ok
 x509_unit:
 CRL DN name ran 2 tests all ok
 Certificate_Status_Code to_string ran 89 tests all ok
 DN with multiple elements in RDN ran 2 tests all ok
-PKCS10 extensions ran 36 tests all ok
+PKCS10 extensions ran 40 tests all ok
 RSA OAEP decoding ran 2 tests all ok
-X509 Custom DN ran 90 tests all ok
-X509 Extensions ran 153 tests all ok
+X509 Custom DN ran 100 tests all ok
+X509 Extensions ran 170 tests all ok
 X509 Extensions API ran 16 tests all ok
 X509 GOST-2012 certificates ran 1 tests all ok
-X509 Hashes ran 160 tests all ok
+X509 Hashes ran 180 tests all ok
 X509 Padding Config ran 10 tests all ok
 X509 RSA-PSS certificate ran 1 tests all ok
-X509 Self Issued ran 9 tests all ok
+X509 Self Issued ran 10 tests all ok
 X509 Time ran 75 tests all ok
-X509 Unit ran 261 tests all ok
-X509 Usage ran 82 tests all ok
+X509 Unit ran 290 tests all ok
+X509 Usage ran 92 tests all ok
 X509 Valid Constraints DH ran 12 tests all ok
 X509 Valid Constraints DSA ran 12 tests all ok
 X509 Valid Constraints Dilithium ran 12 tests all ok
@@ -1870,6 +1917,7 @@ X509 Valid Constraints ECDSA ran 12 tests all ok
 X509 Valid Constraints ECGDSA ran 12 tests all ok
 X509 Valid Constraints ECKCDSA ran 12 tests all ok
 X509 Valid Constraints Ed25519 ran 1 tests all ok
+X509 Valid Constraints Ed448 ran 1 tests all ok
 X509 Valid Constraints ElGamal ran 10 tests all ok
 X509 Valid Constraints FrodoKEM ran 10 tests all ok
 X509 Valid Constraints GOST-34.10 ran 12 tests all ok
@@ -1937,4 +1985,4 @@ XMSS/SHAKE_20_256 verify invalid signature ran 28 tests all ok
 XMSS/SHAKE_20_512 verify invalid signature ran 28 tests all ok
 zfec:
 ZFEC encoding/decoding ran 3483 tests all ok
-Tests complete ran 2744504 tests all tests ok
+Tests complete ran 2747410 tests all tests ok
