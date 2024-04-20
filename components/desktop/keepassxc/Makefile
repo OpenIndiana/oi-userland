@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keepassxc
 COMPONENT_VERSION=	2.7.7
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Cross-platform community-driven port of Keepass password manager
 COMPONENT_PROJECT_URL=	https://keepassxc.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,7 +34,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-LDFLAGS += -lsocket
+LDFLAGS += -lsocket -lcurses
 
 CMAKE_OPTIONS += -DCMAKE_VERBOSE_MAKEFILE=ON
 CMAKE_OPTIONS += -DKEEPASSXC_BUILD_TYPE=Release
