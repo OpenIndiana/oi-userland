@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_TEST_DIR = $(@D)/tests
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.18.25
+COMPONENT_VERSION=	9.18.26
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -37,7 +37,7 @@ COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain N
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:5a4a70432a33d009f0e6e9dbb328aae7a5e27507e98e28bf3c0c6b250ccb2ab3
+COMPONENT_ARCHIVE_HASH=	sha256:75ffee52731e9604c849b658df29e927f1c4f01d5a71ea3ebcbeb63702cb6651
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -53,7 +53,7 @@ COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fi )
 # Missing files in build dir without this (mainly man pages).
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CFLAGS += $(CPP_XPG6MODE)
+CFLAGS += $(XPG6MODE)
 
 # Build.
 #
@@ -100,19 +100,19 @@ CONFIGURE_OPTIONS += READLINE_LIBS="-lreadline -ltermcap"
 # prototype directory, they are simply referenced in relevant manifest
 # (p5m) file.
 
-COMPONENT_TEST_ENV_CMD =
-COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
-COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
-# The user running the test needs an profiles=Network Management entry in /etc/user_attr in order to successfully run the following ifconfig.sh up script:
-COMPONENT_PRE_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh up )
-COMPONENT_POST_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh down )
-
 # If SHELLOPTS is exported (as it is by the userland makefiles),
 # then all shell options get exported to child invocations of bash,
 # which results in test failures due to nounset and xtrace being
 # set unexpectedly, and errors such as "$1: unbound variable" and
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
+
+COMPONENT_TEST_ENV_CMD =
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
+COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
+# The user running the test needs an profiles=Network Management entry in /etc/user_attr in order to successfully run the following ifconfig.sh up script:
+COMPONENT_PRE_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh up )
+COMPONENT_POST_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh down )
 
 # Fix the hard link direction
 PKG_HARDLINKS += usr/bin/named-checkzone
