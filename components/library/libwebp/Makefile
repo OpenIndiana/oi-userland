@@ -15,15 +15,15 @@
 #
 
 BUILD_BITS= 64_and_32
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
-COMPONENT_VERSION= 1.3.2
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 1.4.0
 COMPONENT_SUMMARY= WebP image format library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2a499607df669e40258e53d0ade8035ba4ec0175244869d1025d460562aa09b4
+COMPONENT_ARCHIVE_HASH= sha256:61f873ec69e3be1b99535634340d5bde750b2e4447caa1db9f61be3fd49ab1e5
 COMPONENT_ARCHIVE_URL= https://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://developers.google.com/speed/webp/
 COMPONENT_FMRI= library/libwebp
@@ -35,11 +35,6 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
@@ -54,6 +49,7 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/giflib
