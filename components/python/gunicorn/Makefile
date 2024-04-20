@@ -14,18 +14,16 @@
 #   $WS_TOOLS/python-integrate-project gunicorn
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gunicorn
-HUMAN_VERSION =			21.2.0
+HUMAN_VERSION =			22.0.0
 COMPONENT_SUMMARY =		gunicorn - WSGI HTTP Server for UNIX
 COMPONENT_PROJECT_URL =		https://gunicorn.org
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/06/89/acd9879fa6a5309b4bf16a5a8855f1e58f26d38e0c18ede9b3a70996b021/gunicorn-21.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:88ec8bff1d634f98e61b9f65bc4bf3cd918a90806c6f5c48bc5603849ec81033
+	sha256:4a0b436239ff76fb33f11c07a16482c521a7e09c1ce3cc293c2330afe01bec63
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,12 +36,11 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS += requirements_test.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/cryptography
 TEST_REQUIRED_PACKAGES.python += library/python/eventlet
 TEST_REQUIRED_PACKAGES.python += library/python/gevent
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
