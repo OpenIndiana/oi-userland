@@ -13,6 +13,7 @@
 # Copyright 2021, 2024 Andreas Wacknitz
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= botan
