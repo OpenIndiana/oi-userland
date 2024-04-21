@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pluggy
-HUMAN_VERSION =			1.4.0
+HUMAN_VERSION =			1.5.0
 COMPONENT_SUMMARY =		pluggy - plugin and hook calling mechanisms for python
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pluggy
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/54/c6/43f9d44d92aed815e781ca25ba8c174257e27253a94630d21be8725a2b59/pluggy-1.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8c85c2876142a764e5b7548e7d9a0e0ddb46f5185161049a79b7e974454223be
+	sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
