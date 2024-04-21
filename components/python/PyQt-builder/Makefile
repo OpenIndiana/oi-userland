@@ -11,19 +11,20 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project PyQt-builder
+#   $WS_TOOLS/python-integrate-project -d python/PyQt-builder pyqt_builder
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		PyQt-builder
-HUMAN_VERSION =			1.16.0
-COMPONENT_SUMMARY =		PyQt-builder - The PyQt build system
+COMPONENT_NAME =		pyqt_builder
+HUMAN_VERSION =			1.16.1
+COMPONENT_SUMMARY =		pyqt_builder - The PyQt build system
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:47bbd2cfa5430020108f9f40301e166cbea98b6ef3e53953350bdd4c6b31ab18
+	sha256:25fd79248ee29779ca2d83cfd5a35f6da962c6e9711b7434182d6ef30827cb49
 COMPONENT_LICENSE =		BSD-2-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
 
