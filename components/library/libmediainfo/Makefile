@@ -10,21 +10,22 @@
 
 #
 # Copyright 2022, Daniel Chan
-# Copyright 2023, Andreas Wacknitz
+# Copyright 2024, Andreas Wacknitz
 #
 
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		MediaInfoLib
-COMPONENT_VERSION=	24.1
-HUMAN_VERSION=		24.01
+COMPONENT_VERSION=	24.4
+HUMAN_VERSION=		24.04
 COMPONENT_SUMMARY=	MediaInfo(Lib) is a convenient unified display of the most relevant technical and tag data for video and audio files.
 COMPONENT_PROJECT_URL=	https://github.com/MediaArea/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:132198e65e62d82ad8f15ec74d786a01d2d1866e97fa7fe5cf46cbf982b93e31
+COMPONENT_ARCHIVE_HASH=	sha256:ab81016e2e0f8c385d440487f2f202df407ef00b5f0bc26f06da4523d712f788
 COMPONENT_FMRI=		library/libmediainfo
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	BSD 2-Clause
@@ -32,8 +33,9 @@ COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION= ( cp -Rp $(SOURCE_DIR)/* $(@D) && \
-	cd $(@D)/Project/GNU/Library/ && ./autogen.sh; )
+COMPONENT_PRE_CONFIGURE_ACTION= ( \
+	cp -Rp $(SOURCE_DIR)/* $(@D) && \
+	cd $(@D)/Project/GNU/Library/ && ./autogen.sh );
 
 CONFIGURE_SCRIPT= $(@D)/Project/GNU/Library/configure
 
@@ -55,8 +57,6 @@ COMPONENT_PRE_TEST_ACTION= ( \
 
 # clone_regression_files target clones the test data
 COMPONENT_TEST_TARGETS= clone_regression_files check
-
-unexport SHELLOPTS
 
 # Manually added dependencies
 REQUIRED_PACKAGES += image/graphviz
