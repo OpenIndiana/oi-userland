@@ -1,0 +1,92 @@
+Prerequisite for 04-test-pillow.patch
+
+--- docutils-0.21.1/test/test_writers/test_html5_polyglot_parts.py.orig
++++ docutils-0.21.1/test/test_writers/test_html5_polyglot_parts.py
+@@ -698,6 +698,24 @@
+ </aside>
+ """,
+ }],
++[f"""\
++.. image:: {DATA_ROOT}/circle-broken.svg
++   :loading: embed
++""",
++
++{'fragment': f"""\
++<svg xmlns="http://www.w3.org/2000/svg"
++     viewBox="0 0 10 10">
++  <circle cx="5" cy="5" r="4" fill="lightblue" x/>
++</svg>
++
++<aside class="system-message">
++<p class="system-message-title">System Message: ERROR/3 (<span class="docutils literal">&lt;string&gt;</span>, line 1)</p>
++<p>Cannot parse SVG image &quot;{DATA_ROOT}/circle-broken.svg&quot;:
++  not well-formed (invalid token): line 3, column 48</p>
++</aside>
++"""
++}],
+ [r"""Broken :math:`\sin \my`.
+ """,
+ {'fragment': """\
+@@ -730,60 +748,18 @@
+ </video>
+ """,
+ }],
+-[r'Broken :math:`\sin \my`.',
+-{'fragment': '<p>Broken <tt class="math">\\sin \\my</tt>.</p>\n'
+-}],
+ [f"""\
+ .. image:: {DATA_ROOT}/circle-broken.svg
+    :loading: embed
+ """,
+-{'fragment': f"""\
++{'fragment': """\
+ <svg xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 10 10">
+   <circle cx="5" cy="5" r="4" fill="lightblue" x/>
+ </svg>
+ 
+-<aside class="system-message">
+-<p class="system-message-title">System Message: ERROR/3 (<span class="docutils literal">&lt;string&gt;</span>, line 1)</p>
+-<p>Cannot parse SVG image &quot;{DATA_ROOT}/circle-broken.svg&quot;:
+-  not well-formed (invalid token): line 3, column 48</p>
+-</aside>
+ """}],
+-[r"""Broken :math:`\sin \my`.
+-""",
+-{'fragment': '<p>Broken <span class="problematic">\\sin \\my</span>.</p>\n'
+-             '<aside class="system-message">\n'
+-             '<p class="system-message-title">System Message: ERROR/3 (<span '
+-             'class="docutils literal">&lt;string&gt;</span>, line 1)</p>\n'
+-             '<p>Unknown TeX command &quot;\\my&quot;.</p>\n'
+-             '<pre class="literal-block">\\sin \\my</pre>\n'
+-             '</aside>\n'
+-}],
+-])
+-
+-totest['no_system_messages'] = ({'stylesheet_path': '',
+-                                 'embed_stylesheet': False,
+-                                 'math_output': 'mathml',
+-                                 'report_level': 4,
+-                                 'warning_stream': '',
+-                                 }, [
+-["""\
+-.. image:: dummy.png
+-   :scale: 100%
+-   :loading: embed
+-
+-.. image:: dummy.mp4
+-   :scale: 100%
+-""",
+-{'fragment': '''\
+-<img alt="dummy.png" src="dummy.png" />
+-<video src="dummy.mp4" title="dummy.mp4">
+-<a href="dummy.mp4">dummy.mp4</a>
+-</video>
+-''',
+-}],
+-[r"""Broken :math:`\sin \my`.
+-""",
++[r'Broken :math:`\sin \my`.',
+ {'fragment': '<p>Broken <tt class="math">\\sin \\my</tt>.</p>\n'
+ }],
+ ])
