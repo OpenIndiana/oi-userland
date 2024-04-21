@@ -11,29 +11,26 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pyproject-metadata
+#   $WS_TOOLS/python-integrate-project -d python/pyproject-metadata pyproject_metadata
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pyproject-metadata
-HUMAN_VERSION =			0.7.1
-COMPONENT_SUMMARY =		pyproject-metadata - PEP 621 metadata parsing
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/38/af/b0e6a9eba989870fd26e10889446d1bec2e6d5be0a1bae2dc4dcda9ce199/pyproject-metadata-0.7.1.tar.gz
+COMPONENT_NAME =		pyproject_metadata
+HUMAN_VERSION =			0.8.0
+COMPONENT_SUMMARY =		pyproject_metadata - PEP 621 metadata parsing
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0a94f18b108b9b21f3a26a3d541f056c34edcb17dc872a144a15618fed7aef67
+	sha256:376d5a00764ac29440a54579f88e66b7d9cb7e629d35c35a1c7248bfebc9b455
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = none
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
