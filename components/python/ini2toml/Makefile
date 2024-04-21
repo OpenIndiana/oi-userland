@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ini2toml
-HUMAN_VERSION =			0.13
+HUMAN_VERSION =			0.14
 COMPONENT_SUMMARY =		ini2toml - Automatically conversion of .ini/.cfg files to TOML equivalents
 COMPONENT_PROJECT_URL =		https://github.com/abravalheri/ini2toml/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fb/35/b499b4af9cc3250ec866545b0e1ffe8a9c263f12b836349688b1b46a7dd0/ini2toml-0.13.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c800b204b4b431ee4c7008da3d2688c91ce868c7994331e80b36ca54c3624978
+	sha256:bc53259cc2c6af79cd768bc23f5e10f06dd40225770b9bf5b4d37601fedd411e
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
