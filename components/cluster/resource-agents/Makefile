@@ -13,13 +13,11 @@
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         resource-agents
 COMPONENT_VERSION=      4.1.0
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_FMRI=         application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,7 +35,7 @@ CFLAGS += "-lnsl"
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
 CONFIGURE_OPTIONS += --localstatedir=/var
@@ -53,13 +51,11 @@ COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 COMPONENT_PRE_INSTALL_ACTION = ( $(RM) -r $(PROTO_DIR)/usr/lib/ocf/; ) 
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += application/cluster/cluster-glue
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libnet
 REQUIRED_PACKAGES += text/gawk
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
