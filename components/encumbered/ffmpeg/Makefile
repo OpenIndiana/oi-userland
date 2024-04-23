@@ -21,11 +21,11 @@ COMPONENT_NAME=         ffmpeg
 # Many projects still rely on the old libavcodec api which has been deprecated with ffmpeg-6.0.
 # Version 7.0 removed its compatibility fallback mechanisms and firefox does not support the new api yet.
 # Thus, we have to revert the update to 7.0 and deliver 6.1.1 with a fake version 7.0.
-COMPONENT_VERSION=      6.1.1
-IPS_COMPONENT_VERSION=	7.0
-COMPONENT_REVISION=		1
+HUMAN_VERSION=		6.1.1
+COMPONENT_VERSION=	7.0
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      A very fast video and audio converter
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:8684f4b00f94b85461884c3719382f1261f0d9eb3d59640a1f4ac0873616f968
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
@@ -33,6 +33,9 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
+
+COMPONENT_FMRI.library =	library/ffmpeg-6
+COMPONENT_SUMMARY.library =	$(COMPONENT_SUMMARY) (runtime libraries)
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
@@ -133,7 +136,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += video/rtmpdump
-REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
