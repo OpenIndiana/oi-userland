@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		docutils
-HUMAN_VERSION =			0.21.1
+HUMAN_VERSION =			0.21.2
 COMPONENT_SUMMARY =		docutils - Docutils -- Python Documentation Utilities
 COMPONENT_PROJECT_URL =		https://docutils.sourceforge.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:65249d8a5345bc95e0f40f280ba63c98eb24de35c6c8f5b662e3e8948adea83f
+	sha256:3a6b18732edf182daa3cd12775bbb338cf5691468f91eeeb109deff6ebfa986f
 COMPONENT_LICENSE =		CC-PDDC AND BSD-3-Clause AND BSD-2-Clause AND ZPL-2.1
 COMPONENT_LICENSE_FILE =	COPYING.txt
 
