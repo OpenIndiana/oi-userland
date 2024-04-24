@@ -97,9 +97,13 @@ PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 # $(subst $(space),:,$(strip $(SPATHS)))
 empty :=
 space := $(empty) $(empty)
-
 # Define $(comma) as single comma so we can use it in text transforming functions
 comma = ,
+# Define $(newline) as single newline so we can embed newline into make variables
+define newline
+
+
+endef
 
 ROOT =			/
 

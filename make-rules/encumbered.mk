@@ -22,3 +22,12 @@ PUBLISHER  = hipster-encumbered
 BASS_O_MATIC =  $(WS_TOOLS)/bass-o-matic --subdir=components/encumbered
 
 ENCUMBERED = encumbered/
+
+# If a component needs ffmpeg libraries then it also needs ffmpeg development
+# files (the video/ffmpeg package) for building.  To avoid the need to manually
+# add the video/ffmpeg package into the REQUIRED_PACKAGES list of all
+# components that needs it we do so automatically here.
+#
+# Since both ffmpeg libraries and the video/ffmpeg packages are encumbered we
+# do this here instead of ips.mk.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/ffmpeg/a\$(newline)REQUIRED_PACKAGES += video/ffmpeg'
