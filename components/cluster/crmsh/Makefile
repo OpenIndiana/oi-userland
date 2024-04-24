@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         crmsh
 COMPONENT_VERSION=      4.6.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      crmsh is a command-line interface for High-Availability cluster management and part of the Clusterlabs project.
 COMPONENT_PROJECT_URL=  https://github.com/ClusterLabs/crmsh
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
