@@ -17,7 +17,7 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-python
-COMPONENT_VERSION=	1.22.10
+COMPONENT_VERSION=	1.22.11
 COMPONENT_SUMMARY=	Python bindings for the GStreamer streaming media framework
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,7 +40,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Ok:/,/^Timeout:/p" '
 
 # Build dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
