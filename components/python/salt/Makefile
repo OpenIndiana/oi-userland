@@ -19,27 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		salt
-HUMAN_VERSION =			3006.7
+HUMAN_VERSION =			3007.0
 COMPONENT_SUMMARY =		salt - Portable, distributed, remote execution and configuration management system
 COMPONENT_PROJECT_URL =		https://saltproject.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ed92d21b84eb9d479f93ba89468453408117e0dc1010614214999e8d0c210afd
+	sha256:41bf84e71fc655bf8a4b52eb440d0621ae961096a086d20e132e1512e2eddff8
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+TEST_STYLE = pytest
+
 COMPONENT_FMRI =		system/management/salt
 COMPONENT_CLASSIFICATION =	System/Administration and Configuration
-
-# Needs pytest-salt-factories >= 1.0.0rc21 to run tests, but such version is
-# still pre-release.
-TEST_STYLE = none
 
 # This is a standalone application.  Since no other Python project depends on
 # it we just provide single unversioned package.
 SINGLE_PYTHON_VERSION = yes
 
 # The installer is unable to install salt wheel due to some bug (see
-# https://github.com/pypa/installer/issues/194) so we need to switch to
+# https://github.com/saltstack/salt/issues/65083) so we need to switch to
 # pyproject_installer.  The pyproject_installer is used during bootstrap so we
 # just pretend we are bootstapping and we will get the pyproject_installer
 # based build and install.
@@ -57,8 +55,12 @@ COMPONENT_POST_INSTALL_ACTION += \
 TEST_REQUIREMENTS += requirements/pytest.txt
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/aiohttp
+PYTHON_REQUIRED_PACKAGES += library/python/cherrypy
 PYTHON_REQUIRED_PACKAGES += library/python/contextvars
+PYTHON_REQUIRED_PACKAGES += library/python/cryptography
 PYTHON_REQUIRED_PACKAGES += library/python/distro
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/jinja2
 PYTHON_REQUIRED_PACKAGES += library/python/jmespath
 PYTHON_REQUIRED_PACKAGES += library/python/looseversion
@@ -67,14 +69,16 @@ PYTHON_REQUIRED_PACKAGES += library/python/msgpack
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/psutil
 PYTHON_REQUIRED_PACKAGES += library/python/pycryptodomex
+PYTHON_REQUIRED_PACKAGES += library/python/pyopenssl
+PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
 PYTHON_REQUIRED_PACKAGES += library/python/pyzmq
 PYTHON_REQUIRED_PACKAGES += library/python/requests
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/tornado
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += SUNWcs
-TEST_REQUIRED_PACKAGES.python += library/python/docker
 TEST_REQUIRED_PACKAGES.python += library/python/flaky
 TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/more-itertools
