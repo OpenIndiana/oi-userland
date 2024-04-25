@@ -22,7 +22,7 @@ COMPONENT_NAME=		pyatspi
 # Notes: updating this package would also need to update at-spi2-core, orca and possibly others, too. pyatspi > 2.35 use gtk3.
 COMPONENT_MJR_VERSION=	2.24
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY=	Python API to AT-SPI on D-Bus
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Accessibility
