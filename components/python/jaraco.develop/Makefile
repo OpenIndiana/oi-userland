@@ -19,20 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.develop
-HUMAN_VERSION =			8.11.1
+HUMAN_VERSION =			8.13.0
 COMPONENT_SUMMARY =		jaraco.develop - Development utilities by jaraco
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.develop
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4e2fe463e820e6b61d8340d5347d8effffa4994f0a50ab21d7d436b6f6c0e17b
+	sha256:3a3469b26272f03406e89297bb0ff26b67ce29c9557739e0dbd5fd0aab3ead36
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =			jaraco_develop-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/autocommand
 PYTHON_REQUIRED_PACKAGES += library/python/build
+PYTHON_REQUIRED_PACKAGES += library/python/configupdater
+PYTHON_REQUIRED_PACKAGES += library/python/ini2toml
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-packaging
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-ui
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/keyring
@@ -45,6 +50,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/requests-toolbelt
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/subprocess-tee
+PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

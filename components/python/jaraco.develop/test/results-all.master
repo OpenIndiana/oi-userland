@@ -5,10 +5,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 42 items
+collecting ... collected 43 items
 
-.::project PASSED
-.::project PASSED
 conftest.py::mypy PASSED
 conftest.py::mypy-status PASSED
 docs/conf.py::mypy PASSED
@@ -22,37 +20,48 @@ jaraco/develop/compat/py38.py::mypy PASSED
 jaraco/develop/compiler.py::mypy PASSED
 jaraco/develop/cpython-sync.py::mypy PASSED
 jaraco/develop/create-github-release.py::mypy PASSED
-jaraco/develop/filters.py::develop.filters PASSED
 jaraco/develop/filters.py::mypy PASSED
+jaraco/develop/filters.py::jaraco.develop.filters PASSED
 jaraco/develop/finalize.py::mypy PASSED
-jaraco/develop/git.py::develop.git.Project PASSED
-jaraco/develop/git.py::develop.git.URLScheme PASSED
-jaraco/develop/git.py::develop.git.make_args PASSED
-jaraco/develop/git.py::develop.git.resolve PASSED
 jaraco/develop/git.py::mypy PASSED
-jaraco/develop/github.py::develop.github.Repo.find_needed_secrets PASSED
+jaraco/develop/git.py::jaraco.develop.git.Project PASSED
+jaraco/develop/git.py::jaraco.develop.git.URLScheme PASSED
+jaraco/develop/git.py::jaraco.develop.git.make_args PASSED
+jaraco/develop/git.py::jaraco.develop.git.resolve PASSED
 jaraco/develop/github.py::mypy PASSED
-jaraco/develop/indent.py::develop.indent.to_spaces PASSED
+jaraco/develop/github.py::jaraco.develop.github.Repo.find_needed_secrets PASSED
 jaraco/develop/indent.py::mypy PASSED
+jaraco/develop/indent.py::jaraco.develop.indent.to_spaces PASSED
 jaraco/develop/init-azure.py::mypy PASSED
 jaraco/develop/macos-build-python.py::mypy PASSED
-jaraco/develop/merge.py::develop.merge.Conflict PASSED
-jaraco/develop/merge.py::develop.merge._enable_rtd PASSED
-jaraco/develop/merge.py::develop.merge._retain_rtd PASSED
 jaraco/develop/merge.py::mypy PASSED
+jaraco/develop/merge.py::jaraco.develop.merge.Conflict PASSED
+jaraco/develop/merge.py::jaraco.develop.merge._enable_rtd PASSED
+jaraco/develop/merge.py::jaraco.develop.merge._retain_rtd PASSED
+jaraco/develop/migrate-config.py::mypy PASSED
 jaraco/develop/print-meta.py::mypy PASSED
 jaraco/develop/projects-run.py::mypy PASSED
 jaraco/develop/pypi.py::mypy PASSED
 jaraco/develop/repo.py::mypy PASSED
 jaraco/develop/rst-header-replace.py::mypy PASSED
 jaraco/develop/rtd.py::mypy PASSED
-jaraco/develop/towncrier.py::develop.towncrier.get_version PASSED
 jaraco/develop/towncrier.py::mypy PASSED
+jaraco/develop/towncrier.py::jaraco.develop.towncrier.get_version PASSED
 jaraco/develop/update-projects.py::mypy PASSED
+.::project PASSED
+.::project PASSED
+
+=============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/jaraco/packaging/metadata.py:22
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/jaraco/packaging/metadata.py:22
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/jaraco/packaging/metadata.py:22
+  $(PYTHON_DIR)/vendor-packages/jaraco/packaging/metadata.py:22: DeprecationWarning: Implicit None on return values is deprecated and will raise KeyErrors.
+    return meta['Home-page'] or get_best(meta.get_all('Project-URL'))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
 ===================================== mypy =====================================
-
-Success: no issues found in 28 source files
-======== 42 passed ========
+Success: no issues found in 29 source files
+======== 43 passed, 3 warnings ========
   py$(PYV): OK
   congratulations :)
