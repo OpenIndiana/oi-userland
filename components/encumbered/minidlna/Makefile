@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= minidlna
 COMPONENT_VERSION= 1.3.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=  MiniDLNA DLNA/UPnP-AV media server
 COMPONENT_PROJECT_URL= https://sourceforge.net/projects/minidlna/
 COMPONENT_FMRI= media/minidlna
@@ -32,26 +33,23 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS        +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS      +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS       +=    $(JPEG_LDFLAGS)
-
 CFLAGS += $(CPP_XPG5MODE)
 
-CONFIGURE_OPTIONS += --with-log-path=/var/log/minidlna
+CONFIGURE_OPTIONS += --with-log-path=$(VARDIR)/log/minidlna
 
 LDFLAGS += -lsocket -lnsl -lsendfile
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libexif
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += library/audio/libid3tag
+REQUIRED_PACKAGES += library/ffmpeg-6
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += video/ffmpeg
