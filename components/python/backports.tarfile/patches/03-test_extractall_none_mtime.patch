@@ -1,0 +1,21 @@
+https://github.com/jaraco/backports.tarfile/issues/7
+
+--- backports_tarfile-1.1.1/tests/test_tarfile.py.orig
++++ backports_tarfile-1.1.1/tests/test_tarfile.py
+@@ -22,6 +22,8 @@
+ from .compat.py38 import warnings_helper
+ from .compat.py38 import removesuffix
+ 
++import pytest
++
+ # Check for our compression modules.
+ try:
+     import gzip
+@@ -3129,6 +3131,7 @@
+             self.check_files_present(DIR)
+             yield DIR
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/jaraco/backports.tarfile/issues/7")
+     def test_extractall_none_mtime(self):
+         # mtimes of extracted files should be later than 'now' -- the mtime
+         # of a previously created directory.
