@@ -31,13 +31,13 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	115.9.0
+COMPONENT_VERSION =	125.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:2aeb77ca7038df6f3d306f9c3d2a4ea615af0edcf0f7290215ca5f30c1290e57
+	 sha256:59bbabbe10186fe2d962b5013b383defac58be8ee7d9c9a4dc137fb4d8abcab0
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -169,7 +169,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         rustup install $(RUST_VERSION); \
         rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
         rustup show; \
-	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.24.3 cbindgen; \
+	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.26.0 cbindgen; \
 	);
 
 # COMPONENT_POST_BUILD_ACTION = \
@@ -195,16 +195,6 @@ license: install
 	@echo "regenerating license text"
 	unzip -c $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME)/omni.ja chrome/messenger/content/messenger/license.html \
 	    | lynx  -stdin --dump -nolist > $(COMPONENT_NAME).license
-
-SIGNED_LIST.amd64 = libsoftokn3.so libnssdbm3.so libfreebl3.so
-SIGNED_LIST.sparc = libsoftokn3.so libnssdbm3.so libfreebl_64fpu_3.so libfreebl_64int_3.so
-SIGNED_LIST = $(SIGNED_LIST.$(MACH))
-
-COMPONENT_POST_INSTALL_ACTION += \
-	slist='$(SIGNED_LIST)' ; for f in $$slist ; do \
-	    mcs -d $(PROT_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME)/$$f ; \
-	    LD_LIBRARY_PATH=$(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME) $(BUILD_DIR_64)/dist/bin/shlibsign -v -i $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME)/$$f ; \
-        done ;
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
@@ -243,7 +233,6 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
