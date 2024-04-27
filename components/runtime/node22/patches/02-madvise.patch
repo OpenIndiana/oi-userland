@@ -1,0 +1,11 @@
+--- node-v18.0.0/deps/v8/src/base/platform/platform-posix.cc.orig	2022-04-19 01:22:37.000000000 +0000
++++ node-v18.0.0/deps/v8/src/base/platform/platform-posix.cc	2022-04-22 20:48:24.264841344 +0000
+@@ -74,7 +74,7 @@
+ 
+ #if defined(V8_OS_SOLARIS)
+ #if (defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE > 2) || defined(__EXTENSIONS__)
+-extern "C" int madvise(caddr_t, size_t, int);
++extern "C" int madvise(void *, size_t, int);
+ #else
+ extern int madvise(caddr_t, size_t, int);
+ #endif
