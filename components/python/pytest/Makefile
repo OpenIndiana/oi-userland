@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
-HUMAN_VERSION =			8.1.1
+HUMAN_VERSION =			8.2.0
 COMPONENT_SUMMARY =		pytest - pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ac978141a75948948817d360297b7aae0fcb9d6ff6bc9ec6d514b85d5a65c044
+	sha256:d507d4482197eac0ba2bae2e9babf0672eb333017bcedaa5fb1a3d42c1174b3f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,19 +40,6 @@ include $(WS_MAKE_RULES)/common.mk
 # following bug in tox-current-env:
 # https://github.com/fedora-python/tox-current-env/issues/68
 COMPONENT_TEST_ENV += _PYTEST_TOX_COVERAGE_RUN="python -m"
-
-# https://github.com/pytest-dev/pluggy/issues/457
-# https://github.com/bitprophet/pytest-relaxed/issues/28
-# https://github.com/christiansandberg/pytest-reporter/issues/8
-# https://github.com/jaraco/pytest-enabler/issues/10
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-metadata
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-reporter
-TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
 
 # This is needed to get consistent test results.
 # See also https://github.com/pytest-dev/pytest/issues/11761
