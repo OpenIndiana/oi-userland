@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= jasper
-COMPONENT_VERSION= 4.2.3
+COMPONENT_VERSION= 4.2.4
 COMPONENT_SUMMARY= A free software-based reference implementation of the JPEG-2000 Part-1 CODEC
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:68131ddf9f62d6944cc4c58977dd177c283adb0228140b76382a2dbdadadaa4f
+COMPONENT_ARCHIVE_HASH=	sha256:6a597613d8d84c500b5b83bf0eec06cd3707c23d19957f70354ac2394c9914e7
 COMPONENT_PROJECT_URL=	https://www.ece.uvic.ca/~frodo/jasper
 COMPONENT_ARCHIVE_URL=	https://github.com/jasper-software/$(COMPONENT_NAME)/releases/download/version-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= codec/jasper
@@ -32,16 +32,6 @@ COMPONENT_LICENSE= BSD-like
 COMPONENT_LICENSE_FILE= LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
-# jpeg-turbo is not detected without this.
-CMAKE_OPTIONS += -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
-
-unexport SHELLOPTS
 
 COMPONENT_TEST_TRANSFORMS += '-e "/Output/p" '
 
