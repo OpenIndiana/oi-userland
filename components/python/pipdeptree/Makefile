@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipdeptree
-HUMAN_VERSION =			2.18.1
+HUMAN_VERSION =			2.19.0
 COMPONENT_SUMMARY =		pipdeptree - Command line utility to show dependency tree of packages.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/pipdeptree
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cb6cacc5434dc04811bdc91d659622689107e60a163b79a5758e593577fdb875
+	sha256:2051bc730fa878846ff3184c1b6b83d348f606cd1a92b9afca9709334d3d0c03
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
