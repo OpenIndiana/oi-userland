@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [1706 items]
+X workers [1716 items]
 
 scheduling tests via LoadScheduling
 
@@ -776,6 +776,8 @@ tests/config/loader/test_loader.py::test_override_append[-x] PASSED
 tests/config/loader/test_loader.py::test_override_equals PASSED
 tests/config/loader/test_loader.py::test_override_incorrect[--override] PASSED
 tests/config/loader/test_loader.py::test_override_incorrect[-x] PASSED
+tests/config/loader/test_loader.py::test_override_multiple[--override] PASSED
+tests/config/loader/test_loader.py::test_override_multiple[-x] PASSED
 tests/config/loader/test_loader.py::test_override_not_equals PASSED
 tests/config/loader/test_loader.py::test_override_not_equals_different_type PASSED
 tests/config/loader/test_loader.py::test_override_repr PASSED
@@ -998,11 +1000,17 @@ tests/config/source/test_source_ini.py::test_source_ini_with_interpolated PASSED
 tests/config/test_main.py::test_args_are_paths_when_disabled PASSED
 tests/config/test_main.py::test_args_are_paths_when_from_child_dir PASSED
 tests/config/test_main.py::test_args_are_paths_when_with_change_dir PASSED
+tests/config/test_main.py::test_config_multiple_overrides PASSED
 tests/config/test_main.py::test_config_override_appends_to_empty_list PASSED
+tests/config/test_main.py::test_config_override_appends_to_empty_pythondeps PASSED
 tests/config/test_main.py::test_config_override_appends_to_empty_setenv PASSED
 tests/config/test_main.py::test_config_override_appends_to_list PASSED
+tests/config/test_main.py::test_config_override_appends_to_pythondeps PASSED
 tests/config/test_main.py::test_config_override_appends_to_setenv PASSED
+tests/config/test_main.py::test_config_override_appends_to_setenv_multiple PASSED
 tests/config/test_main.py::test_config_override_cannot_append PASSED
+tests/config/test_main.py::test_config_override_sequence PASSED
+tests/config/test_main.py::test_config_override_sequential_processing PASSED
 tests/config/test_main.py::test_config_override_wins_memory_loader PASSED
 tests/config/test_main.py::test_config_overrides PASSED
 tests/config/test_main.py::test_config_some_envs PASSED
@@ -1052,6 +1060,7 @@ tests/config/test_types.py::tests_command_eq PASSED
 tests/config/test_types.py::tests_command_ne PASSED
 tests/config/test_types.py::tests_command_repr PASSED
 tests/config/test_types.py::tests_command_repr_ignore PASSED
+tests/config/test_types.py::tests_command_repr_invert PASSED
 tests/config/test_types.py::tests_env_list_eq PASSED
 tests/config/test_types.py::tests_env_list_ne PASSED
 tests/config/test_types.py::tests_env_list_repr PASSED
@@ -1500,6 +1509,7 @@ tests/tox_env/python/pip/test_req_file.py::test_deps_with_requirements_with_hash
 tests/tox_env/python/pip/test_req_file.py::test_legacy_requirement_file[-c] PASSED
 tests/tox_env/python/pip/test_req_file.py::test_legacy_requirement_file[-r] PASSED
 tests/tox_env/python/pip/test_req_file.py::test_opt_only_req_file PASSED
+tests/tox_env/python/pip/test_req_file.py::test_req_iadd PASSED
 tests/tox_env/python/pip/test_req_file.py::test_req_with_no_deps PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3-py2-py3-py2-False] PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3-py2-py3-py2-True] PASSED
@@ -1716,28 +1726,15 @@ tests/util/test_spinner.py::test_td_human_readable[42.12345-42.12 seconds] PASSE
 tests/util/test_spinner.py::test_td_human_readable[60-1 minute] PASSED
 tests/util/test_spinner.py::test_td_human_readable[61-1 minute 1 second] PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-  $(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252: DeprecationWarning: The --rsyncdir command line argument and rsyncdirs config variable are deprecated.
-  The rsync feature will be removed in pytest-xdist 4.0.
-    config.issue_config_time_warning(warning, 2)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-174 files skipped due to complete coverage.
+173 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 88.0% reached. Total coverage: 98.76%
+Required test coverage of 88.0% reached. Total coverage: 98.70%
 ============================= slowest 5 durations ==============================
 =========================== short test summary info ============================
-======== 1705 passed, 1 skipped, 7 warnings ========
+======== 1715 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)
