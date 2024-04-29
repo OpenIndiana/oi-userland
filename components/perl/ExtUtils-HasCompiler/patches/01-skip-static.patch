@@ -1,0 +1,10 @@
+--- ExtUtils-HasCompiler-0.024/t/compare.t.orig
++++ ExtUtils-HasCompiler-0.024/t/compare.t
+@@ -56,6 +56,7 @@
+ 	my $checker = $types{$linktype};
+ 	SKIP: {
+ 		skip 'static is unreliable on EUMM < 7.26', 1 if $linktype eq 'static' && !$ENV{AUTHOR_TESTING} && not eval { require ExtUtils::MakeMaker; ExtUtils::MakeMaker->VERSION('7.26') };
++		skip 'static fails: https://github.com/Leont/extutils-hascompiler/issues/14', 1 if $linktype eq 'static';
+ 		my @warnings;
+ 		local $SIG{__WARN__} = sub { push @warnings, @_ };
+ 		my $output;
