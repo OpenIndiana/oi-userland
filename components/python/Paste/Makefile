@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Paste
-HUMAN_VERSION =			3.9.0
+HUMAN_VERSION =			3.10.0
 COMPONENT_SUMMARY =		Paste - Tools for using a Web Server Gateway Interface stack
 COMPONENT_PROJECT_URL =		https://pythonpaste.readthedocs.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:556e3c24208fcfae269684fc3b888f46783c80208516bcecc410c00c7f678fef
+	sha256:7dd2a4814c98aaa435d4d0b92717e3e8e6ca620175d1412763346234739e6223
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	docs/license.txt
 
