@@ -18,20 +18,17 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=	7.0
+COMPONENT_VERSION=	6.1.1
 COMPONENT_REVISION=	3
-COMPONENT_SUMMARY=      A very fast video and audio converter
+COMPONENT_SUMMARY=	A very fast video and audio converter (runtime libraries)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:4426a94dd2c814945456600c8adfc402bee65ec14a70e8c531ec9a2cd651da7b
+COMPONENT_ARCHIVE_HASH= sha256:8684f4b00f94b85461884c3719382f1261f0d9eb3d59640a1f4ac0873616f968
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=         video/ffmpeg
+COMPONENT_FMRI=		library/ffmpeg-6
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
-
-COMPONENT_FMRI.library =	library/ffmpeg-7
-COMPONENT_SUMMARY.library =	$(COMPONENT_SUMMARY) (runtime libraries)
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
@@ -46,7 +43,7 @@ CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --cc=$(CC)
-CONFIGURE_OPTIONS += --enable-runtime-cpudetect
+CONFIGURE_OPTIONS += --enable-runtime-cpudetect 
 CONFIGURE_OPTIONS += --enable-mmx --enable-sse --enable-ssse3
 # force additional new CPU instruction enablement
 CONFIGURE_OPTIONS += --enable-avx
@@ -62,7 +59,7 @@ CONFIGURE_OPTIONS += --enable-libx264
 CONFIGURE_OPTIONS += --enable-libx265
 CONFIGURE_OPTIONS += --enable-libdav1d
 CONFIGURE_OPTIONS += --enable-libwebp
-# Don't enable it, resulting binary is not
+# Don't enable it, resulting binary is not 
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
 CONFIGURE_OPTIONS += --enable-libtheora
@@ -132,7 +129,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += video/rtmpdump
-REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
