@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nagios-plugins
-COMPONENT_VERSION =		2.4.9
+COMPONENT_VERSION =		2.4.10
 COMPONENT_SUMMARY =		Nagios Plugins
 COMPONENT_PROJECT_URL =		https://github.com/nagios-plugins/nagios-plugins
 COMPONENT_FMRI =		system/management/nagios/plugins
@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL =		\
 	$(COMPONENT_PROJECT_URL)/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:74da12037c0ab62ad34f9d9f00f475c472cef0913d2ffa9810c17fef101cd5cf
+	sha256:e43d4a655141aa66132f92fe03dfc97db9dfb4173c4c845f1af9574001117a25
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
