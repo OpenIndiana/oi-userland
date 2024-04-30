@@ -16,7 +16,7 @@
 OPENSSL_VERSION= 3.1
 USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
-BITS= 64
+BITS=64
 ENV = /usr/bin/env
 
 # BUILD_BETA is the beta version; define with build number for beta release
@@ -312,8 +312,12 @@ COMPONENT_ARCHIVE_55 = phc-winner-argon2-20190702.tar.gz
 COMPONENT_ARCHIVE_HASH_55 = sha256:4d1dac6ef66528b7a2bc910ff45c1015a1b83cb928515ca18a78dc76e688627b
 COMPONENT_ARCHIVE_URL_55 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_55)
 
+COMPONENT_ARCHIVE_56 = icu4c-73_2-src.tgz
+COMPONENT_ARCHIVE_HASH_56 = sha256:818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1
+COMPONENT_ARCHIVE_URL_56 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_56)
+
 # ignore archive 21 (boost)
-NUM_EXTRA_ARCHIVES = $(shell seq 1 20) $(shell 22 54)
+NUM_EXTRA_ARCHIVES = $(shell seq 1 20) $(shell 22 56)
 
 # github source archive files are a different compression than what is found on
 # the documentfoundation site
@@ -406,7 +410,9 @@ CONFIGURE_OPTIONS += --disable-odk
 CONFIGURE_OPTIONS += --with-system-cairo
 CONFIGURE_OPTIONS += --with-system-expat
 CONFIGURE_OPTIONS += --with-system-libxml
-CONFIGURE_OPTIONS += --with-system-icu
+# ICU 75 breaks i18npool/source/breakiterator/data/sent.txt.  See LO bug 160570
+# Use LO's ICU until there is a fix.
+# CONFIGURE_OPTIONS += --with-system-icu
 CONFIGURE_OPTIONS += --with-system-poppler
 CONFIGURE_OPTIONS += --with-system-curl
 CONFIGURE_OPTIONS += --with-system-boost
@@ -528,7 +534,9 @@ REQUIRED_PACKAGES += developer/assembler/nasm
 REQUIRED_PACKAGES += developer/build/ant
 REQUIRED_PACKAGES += developer/cppunit
 REQUIRED_PACKAGES += developer/gperf
-REQUIRED_PACKAGES += developer/icu
+# ICU 75 breaks i18npool/source/breakiterator/data/sent.txt.  See LO bug 160570
+# Use LO's ICU until there is a fix.
+# REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/c++/mdds
 REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
@@ -537,7 +545,6 @@ REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += gnome/config/dconf
