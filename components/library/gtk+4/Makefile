@@ -18,6 +18,7 @@ ENV= /usr/bin/env
 
 COMPONENT_NAME=		gtk4
 COMPONENT_VERSION=	4.10.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GTK+4 - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=		gtk-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -38,6 +39,9 @@ PATH=$(PATH.gnu)
 
 # Uses isinf, etc. only available in c99 and newer
 CFLAGS.gcc += -std=gnu11
+
+#needed to produce /usr/lib/amd64/girepository-1.0 files
+CONFIGURE_OPTIONS += -Dintrospection=enabled
 
 CONFIGURE_OPTIONS += -Dman-pages=true
 # requires encumbered x264 support
