@@ -18,12 +18,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
-COMPONENT_VERSION=	7.2
+COMPONENT_VERSION=	8.0
 COMPONENT_SUMMARY=	GNU implementation of nano, a text editor emulating pico
 COMPONENT_PROJECT_URL=	https://www.nano-editor.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:86f3442768bd2873cec693f83cdf80b4b444ad3cc14760b74361474fc87a4526
+COMPONENT_ARCHIVE_HASH= sha256:c17f43fc0e37336b33ee50a209c701d5beb808adc2d9f089ca831b40539c9ac4
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/nano/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		editor/nano
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -32,15 +32,15 @@ COMPONENT_LICENSE=	GPLv3
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(GNUBIN64):$(PATH.gnu)
+PATH= $(GNUBIN64):$(PATH.gnu)
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--enable-color
-CONFIGURE_OPTIONS +=	--enable-multibuffer
-CONFIGURE_OPTIONS +=	--enable-utf8
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --enable-color
+CONFIGURE_OPTIONS += --enable-multibuffer
+CONFIGURE_OPTIONS += --enable-utf8
 # magic does not identify files given their content
-CONFIGURE_OPTIONS +=	--disable-libmagic
-CONFIGURE_OPTIONS +=	get_wch=getwch
+CONFIGURE_OPTIONS += --disable-libmagic
+CONFIGURE_OPTIONS += get_wch=getwch
 
 CPPFLAGS += -I$(USRINCDIR)/ncurses
 CFLAGS += -I$(USRINCDIR)/ncurses
