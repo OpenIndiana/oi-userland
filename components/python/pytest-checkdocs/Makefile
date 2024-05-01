@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-checkdocs
+#   $WS_TOOLS/python-integrate-project -d python/pytest-checkdocs pytest_checkdocs
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-checkdocs
-HUMAN_VERSION =			2.12.0
-COMPONENT_SUMMARY =		pytest-checkdocs - check the README when running tests
+COMPONENT_NAME =		pytest_checkdocs
+HUMAN_VERSION =			2.13.0
+COMPONENT_SUMMARY =		pytest_checkdocs - check the README when running tests
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-checkdocs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7e5ff61b67f728840e0b6d07334c97a80aebfbea9148e5f2f261870f513d5db5
+	sha256:b0e67169c543986142e15afbc17c772da87fcdb0922c7b1e4f6c60f8769f11f9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
