@@ -1,0 +1,495 @@
+From 7b7b7819bd21cc92ac07f6696b0e7f26fa8f9834 Mon Sep 17 00:00:00 2001
+From: Andreas Rheinhardt <andreas.rheinhardt@outlook.com>
+Date: Fri, 5 Apr 2024 17:15:15 +0200
+Subject: [PATCH] fate/ffmpeg: Avoid dependency on samples
+
+Creating vsynth_lena.yuv needs the FATE suite,
+yet several tests in ffmpeg.mak without a dependency
+on samples used it as input file. Fix this by using
+vsynth1.yuv (which does not have such a dependency)
+instead.
+Also use vsynth1.yuv in fate-shortest to avoid
+the samples dependency in this test, too.
+
+Fixes ticket #10947.
+
+Reviewed-by: Anton Khirnov <anton@khirnov.net>
+Signed-off-by: Andreas Rheinhardt <andreas.rheinhardt@outlook.com>
+---
+ tests/fate/ffmpeg.mak                   |  30 +++----
+ tests/ref/fate/ffmpeg-filter-in-eof     | 100 +++++++++++------------
+ tests/ref/fate/ffmpeg-loopback-decoding | 104 ++++++++++++------------
+ tests/ref/fate/force_key_frames         |   8 +-
+ tests/ref/fate/shortest                 | 100 +++++++++++------------
+ 5 files changed, 171 insertions(+), 171 deletions(-)
+
+diff --git a/tests/fate/ffmpeg.mak b/tests/fate/ffmpeg.mak
+index 49dbba4a6b..dc102750a0 100644
+--- a/tests/fate/ffmpeg.mak
++++ b/tests/fate/ffmpeg.mak
+@@ -16,10 +16,10 @@ fate-ffmpeg-filter_colorkey: CMD = framecrc -auto_conversion_filters -idct simpl
+ FATE_FFMPEG-$(call FILTERFRAMECRC, COLOR) += fate-ffmpeg-lavfi
+ fate-ffmpeg-lavfi: CMD = framecrc -lavfi color=d=1:r=5 -fflags +bitexact
+ 
+-FATE_SAMPLES_FFMPEG-$(call ENCDEC2, MPEG4, RAWVIDEO, AVI, RAWVIDEO_DEMUXER FRAMECRC_MUXER) += fate-force_key_frames
+-fate-force_key_frames: tests/data/vsynth_lena.yuv
++FATE_FFMPEG-$(call ENCDEC2, MPEG4, RAWVIDEO, AVI, RAWVIDEO_DEMUXER FRAMECRC_MUXER) += fate-force_key_frames
++fate-force_key_frames: tests/data/vsynth1.yuv
+ fate-force_key_frames: CMD = enc_dec \
+-  "rawvideo -s 352x288 -pix_fmt yuv420p" tests/data/vsynth_lena.yuv \
++  "rawvideo -s 352x288 -pix_fmt yuv420p" tests/data/vsynth1.yuv    \
+   avi "-c mpeg4 -g 240 -qscale 10 -force_key_frames 0.5,0:00:01.5" \
+   framecrc "" "-skip_frame nokey"
+ 
+@@ -89,12 +89,12 @@ fate-unknown_layout-ac3: CMD = md5 -auto_conversion_filters \
+   -guess_layout_max 0 -f s32le -ac 1 -ar 44100 -i $(TARGET_PATH)/$(AREF) \
+   -f ac3 -flags +bitexact -c ac3_fixed
+ 
+-FATE_SAMPLES_FFMPEG-$(call FILTERDEMDEC, AMIX ARESAMPLE SINE, RAWVIDEO, \
++FATE_FFMPEG-$(call FILTERDEMDEC, AMIX ARESAMPLE SINE, RAWVIDEO, \
+                            PCM_S16LE RAWVIDEO, LAVFI_INDEV  \
+                            MPEG4_ENCODER AC3_FIXED_ENCODER) \
+                            += fate-shortest
+-fate-shortest: tests/data/vsynth_lena.yuv
+-fate-shortest: CMD = framecrc -auto_conversion_filters -f lavfi -i "sine=3000:d=10" -f lavfi -i "sine=1000:d=1" -sws_flags +accurate_rnd+bitexact -fflags +bitexact -flags +bitexact -idct simple -f rawvideo -s 352x288 -pix_fmt yuv420p -i $(TARGET_PATH)/tests/data/vsynth_lena.yuv -filter_complex "[0:a:0][1:a:0]amix=inputs=2[audio]" -map 2:v:0 -map "[audio]" -sws_flags +accurate_rnd+bitexact -fflags +bitexact -flags +bitexact -idct simple -dct fastint -qscale 10 -threads 1 -c:v mpeg4 -c:a ac3_fixed -shortest
++fate-shortest: tests/data/vsynth1.yuv
++fate-shortest: CMD = framecrc -auto_conversion_filters -f lavfi -i "sine=3000:d=10" -f lavfi -i "sine=1000:d=1" -sws_flags +accurate_rnd+bitexact -fflags +bitexact -flags +bitexact -idct simple -f rawvideo -s 352x288 -pix_fmt yuv420p -i $(TARGET_PATH)/tests/data/vsynth1.yuv -filter_complex "[0:a:0][1:a:0]amix=inputs=2[audio]" -map 2:v:0 -map "[audio]" -sws_flags +accurate_rnd+bitexact -fflags +bitexact -flags +bitexact -idct simple -dct fastint -qscale 10 -threads 1 -c:v mpeg4 -c:a ac3_fixed -shortest
+ 
+ # test interleaving video with a sparse subtitle stream
+ FATE_SAMPLES_FFMPEG-$(call ALLYES, COLOR_FILTER, VOBSUB_DEMUXER, MATROSKA_DEMUXER,, \
+@@ -242,24 +242,24 @@ FATE_SAMPLES_FFMPEG-$(call FRAMECRC, MOV, , SETTS_BSF) += fate-ffmpeg-bsf-input
+ # Test behaviour when a complex filtergraph returns EOF on one of its inputs,
+ # but other inputs are still active.
+ # cf. #10803
+-fate-ffmpeg-filter-in-eof: tests/data/vsynth_lena.yuv
+-fate-ffmpeg-filter-in-eof: CMD = framecrc                                                      \
+-    -f rawvideo -s 352x288 -pix_fmt yuv420p -t 1 -i $(TARGET_PATH)/tests/data/vsynth_lena.yuv  \
+-    -f rawvideo -s 352x288 -pix_fmt yuv420p -t 1 -i $(TARGET_PATH)/tests/data/vsynth_lena.yuv  \
++fate-ffmpeg-filter-in-eof: tests/data/vsynth1.yuv
++fate-ffmpeg-filter-in-eof: CMD = framecrc                                                  \
++    -f rawvideo -s 352x288 -pix_fmt yuv420p -t 1 -i $(TARGET_PATH)/tests/data/vsynth1.yuv  \
++    -f rawvideo -s 352x288 -pix_fmt yuv420p -t 1 -i $(TARGET_PATH)/tests/data/vsynth1.yuv  \
+     -filter_complex "[0][1]concat" -c:v rawvideo
+ FATE_FFMPEG-$(call FRAMECRC, RAWVIDEO, RAWVIDEO, CONCAT_FILTER) += fate-ffmpeg-filter-in-eof
+ 
+ # Test termination on streamcopy with -t as an output option.
+-fate-ffmpeg-streamcopy-t: tests/data/vsynth_lena.yuv
++fate-ffmpeg-streamcopy-t: tests/data/vsynth1.yuv
+ fate-ffmpeg-streamcopy-t: CMP = null
+-fate-ffmpeg-streamcopy-t: CMD = ffmpeg                                                                    \
+-    -stream_loop -1 -f rawvideo -s 352x288 -pix_fmt yuv420p -i $(TARGET_PATH)/tests/data/vsynth_lena.yuv  \
++fate-ffmpeg-streamcopy-t: CMD = ffmpeg                                                                \
++    -stream_loop -1 -f rawvideo -s 352x288 -pix_fmt yuv420p -i $(TARGET_PATH)/tests/data/vsynth1.yuv  \
+     -c copy -f null -t 1 -
+ FATE_FFMPEG-$(call REMUX, RAWVIDEO) += fate-ffmpeg-streamcopy-t
+ 
+ # Test loopback decoding and passing the output to a complex graph.
+-fate-ffmpeg-loopback-decoding: tests/data/vsynth_lena.yuv
++fate-ffmpeg-loopback-decoding: tests/data/vsynth1.yuv
+ fate-ffmpeg-loopback-decoding: CMD = transcode \
+-    "rawvideo -s 352x288 -pix_fmt yuv420p" $(TARGET_PATH)/tests/data/vsynth_lena.yuv nut \
++    "rawvideo -s 352x288 -pix_fmt yuv420p" $(TARGET_PATH)/tests/data/vsynth1.yuv nut \
+     "-map 0:v:0 -c:v mpeg2video -f null - -flags +bitexact -idct simple -threads $$threads -dec 0:0 -filter_complex '[0:v][dec:0]hstack[stack]' -map '[stack]' -c:v ffv1" ""
+ FATE_FFMPEG-$(call ENCDEC2, MPEG2VIDEO, FFV1, NUT, HSTACK_FILTER PIPE_PROTOCOL FRAMECRC_MUXER) += fate-ffmpeg-loopback-decoding
+diff --git a/tests/ref/fate/ffmpeg-filter-in-eof b/tests/ref/fate/ffmpeg-filter-in-eof
+index 77be842408..5b376bd8c3 100644
+--- a/tests/ref/fate/ffmpeg-filter-in-eof
++++ b/tests/ref/fate/ffmpeg-filter-in-eof
+@@ -3,53 +3,53 @@
+ #codec_id 0: rawvideo
+ #dimensions 0: 352x288
+ #sar 0: 0/1
+-0,          0,          0,        1,   152064, 0x07945924
+-0,          1,          1,        1,   152064, 0x08472470
+-0,          2,          2,        1,   152064, 0x63fde13b
+-0,          3,          3,        1,   152064, 0x67ba9c55
+-0,          4,          4,        1,   152064, 0x8aa34b24
+-0,          5,          5,        1,   152064, 0x9fba089e
+-0,          6,          6,        1,   152064, 0xb040d8e3
+-0,          7,          7,        1,   152064, 0x3061ae08
+-0,          8,          8,        1,   152064, 0xf5907946
+-0,          9,          9,        1,   152064, 0x0ea24935
+-0,         10,         10,        1,   152064, 0x7d87276b
+-0,         11,         11,        1,   152064, 0x122c252b
+-0,         12,         12,        1,   152064, 0xdb0f3889
+-0,         13,         13,        1,   152064, 0x88466739
+-0,         14,         14,        1,   152064, 0xca87a583
+-0,         15,         15,        1,   152064, 0x34f9da44
+-0,         16,         16,        1,   152064, 0x1d4e1646
+-0,         17,         17,        1,   152064, 0x29975c2b
+-0,         18,         18,        1,   152064, 0xbf82aae9
+-0,         19,         19,        1,   152064, 0x33c2fd7c
+-0,         20,         20,        1,   152064, 0xa3c95f44
+-0,         21,         21,        1,   152064, 0x5f93bc9d
+-0,         22,         22,        1,   152064, 0xa6f11b51
+-0,         23,         23,        1,   152064, 0x39bc6b45
+-0,         24,         24,        1,   152064, 0xfd509e1d
+-0,         25,         25,        1,   152064, 0x07945924
+-0,         26,         26,        1,   152064, 0x08472470
+-0,         27,         27,        1,   152064, 0x63fde13b
+-0,         28,         28,        1,   152064, 0x67ba9c55
+-0,         29,         29,        1,   152064, 0x8aa34b24
+-0,         30,         30,        1,   152064, 0x9fba089e
+-0,         31,         31,        1,   152064, 0xb040d8e3
+-0,         32,         32,        1,   152064, 0x3061ae08
+-0,         33,         33,        1,   152064, 0xf5907946
+-0,         34,         34,        1,   152064, 0x0ea24935
+-0,         35,         35,        1,   152064, 0x7d87276b
+-0,         36,         36,        1,   152064, 0x122c252b
+-0,         37,         37,        1,   152064, 0xdb0f3889
+-0,         38,         38,        1,   152064, 0x88466739
+-0,         39,         39,        1,   152064, 0xca87a583
+-0,         40,         40,        1,   152064, 0x34f9da44
+-0,         41,         41,        1,   152064, 0x1d4e1646
+-0,         42,         42,        1,   152064, 0x29975c2b
+-0,         43,         43,        1,   152064, 0xbf82aae9
+-0,         44,         44,        1,   152064, 0x33c2fd7c
+-0,         45,         45,        1,   152064, 0xa3c95f44
+-0,         46,         46,        1,   152064, 0x5f93bc9d
+-0,         47,         47,        1,   152064, 0xa6f11b51
+-0,         48,         48,        1,   152064, 0x39bc6b45
+-0,         49,         49,        1,   152064, 0xfd509e1d
++0,          0,          0,        1,   152064, 0x05b789ef
++0,          1,          1,        1,   152064, 0x4bb46551
++0,          2,          2,        1,   152064, 0x9dddf64a
++0,          3,          3,        1,   152064, 0x2a8380b0
++0,          4,          4,        1,   152064, 0x4de3b652
++0,          5,          5,        1,   152064, 0xedb5a8e6
++0,          6,          6,        1,   152064, 0xe20f7c23
++0,          7,          7,        1,   152064, 0x5ab58bac
++0,          8,          8,        1,   152064, 0x1f1b8026
++0,          9,          9,        1,   152064, 0x91373915
++0,         10,         10,        1,   152064, 0x02344760
++0,         11,         11,        1,   152064, 0x30f5fcd5
++0,         12,         12,        1,   152064, 0xc711ad61
++0,         13,         13,        1,   152064, 0x24eca223
++0,         14,         14,        1,   152064, 0x52a48ddd
++0,         15,         15,        1,   152064, 0xa91c0f05
++0,         16,         16,        1,   152064, 0x8e364e18
++0,         17,         17,        1,   152064, 0xb15d38c8
++0,         18,         18,        1,   152064, 0xf25f6acc
++0,         19,         19,        1,   152064, 0xf34ddbff
++0,         20,         20,        1,   152064, 0xfc7bf570
++0,         21,         21,        1,   152064, 0x9dc72412
++0,         22,         22,        1,   152064, 0x445d1d59
++0,         23,         23,        1,   152064, 0x2f2768ef
++0,         24,         24,        1,   152064, 0xce09f9d6
++0,         25,         25,        1,   152064, 0x05b789ef
++0,         26,         26,        1,   152064, 0x4bb46551
++0,         27,         27,        1,   152064, 0x9dddf64a
++0,         28,         28,        1,   152064, 0x2a8380b0
++0,         29,         29,        1,   152064, 0x4de3b652
++0,         30,         30,        1,   152064, 0xedb5a8e6
++0,         31,         31,        1,   152064, 0xe20f7c23
++0,         32,         32,        1,   152064, 0x5ab58bac
++0,         33,         33,        1,   152064, 0x1f1b8026
++0,         34,         34,        1,   152064, 0x91373915
++0,         35,         35,        1,   152064, 0x02344760
++0,         36,         36,        1,   152064, 0x30f5fcd5
++0,         37,         37,        1,   152064, 0xc711ad61
++0,         38,         38,        1,   152064, 0x24eca223
++0,         39,         39,        1,   152064, 0x52a48ddd
++0,         40,         40,        1,   152064, 0xa91c0f05
++0,         41,         41,        1,   152064, 0x8e364e18
++0,         42,         42,        1,   152064, 0xb15d38c8
++0,         43,         43,        1,   152064, 0xf25f6acc
++0,         44,         44,        1,   152064, 0xf34ddbff
++0,         45,         45,        1,   152064, 0xfc7bf570
++0,         46,         46,        1,   152064, 0x9dc72412
++0,         47,         47,        1,   152064, 0x445d1d59
++0,         48,         48,        1,   152064, 0x2f2768ef
++0,         49,         49,        1,   152064, 0xce09f9d6
+diff --git a/tests/ref/fate/ffmpeg-loopback-decoding b/tests/ref/fate/ffmpeg-loopback-decoding
+index e535b9060f..ae92f32a37 100644
+--- a/tests/ref/fate/ffmpeg-loopback-decoding
++++ b/tests/ref/fate/ffmpeg-loopback-decoding
+@@ -1,57 +1,57 @@
+-faefe475118cacc36dff3cab59baa6cf *tests/data/fate/ffmpeg-loopback-decoding.nut
+-6478832 tests/data/fate/ffmpeg-loopback-decoding.nut
++e4e0e27eb8ed99eedc2458d92401c5e4 *tests/data/fate/ffmpeg-loopback-decoding.nut
++7435259 tests/data/fate/ffmpeg-loopback-decoding.nut
+ #tb 0: 1/25
+ #media_type 0: video
+ #codec_id 0: rawvideo
+ #dimensions 0: 704x288
+ #sar 0: 0/1
+-0,          0,          0,        1,   304128, 0xe07dafdd
+-0,          1,          1,        1,   304128, 0xc5734e5d
+-0,          2,          2,        1,   304128, 0x855acdcc
+-0,          3,          3,        1,   304128, 0x4ad94309
+-0,          4,          4,        1,   304128, 0x174ebea3
+-0,          5,          5,        1,   304128, 0xdb416da6
+-0,          6,          6,        1,   304128, 0x72442b79
+-0,          7,          7,        1,   304128, 0x00ddf9ed
+-0,          8,          8,        1,   304128, 0xe7e7a773
+-0,          9,          9,        1,   304128, 0x7df26501
+-0,         10,         10,        1,   304128, 0x4f5a3eb3
+-0,         11,         11,        1,   304128, 0x1ad35b6c
+-0,         12,         12,        1,   304128, 0xec8e6f56
+-0,         13,         13,        1,   304128, 0xb237e0ef
+-0,         14,         14,        1,   304128, 0x55b26ce2
+-0,         15,         15,        1,   304128, 0x22920436
+-0,         16,         16,        1,   304128, 0x54eea0c0
+-0,         17,         17,        1,   304128, 0x17113686
+-0,         18,         18,        1,   304128, 0xeb9ae1af
+-0,         19,         19,        1,   304128, 0x1ba09d4c
+-0,         20,         20,        1,   304128, 0x0100748f
+-0,         21,         21,        1,   304128, 0xcc914570
+-0,         22,         22,        1,   304128, 0x9bc21952
+-0,         23,         23,        1,   304128, 0xc118d0af
+-0,         24,         24,        1,   304128, 0x7e4b2df0
+-0,         25,         25,        1,   304128, 0x1078bff2
+-0,         26,         26,        1,   304128, 0xeedbeda1
+-0,         27,         27,        1,   304128, 0x35ac0a1b
+-0,         28,         28,        1,   304128, 0x3644fb76
+-0,         29,         29,        1,   304128, 0x5efa175c
+-0,         30,         30,        1,   304128, 0x72c14f39
+-0,         31,         31,        1,   304128, 0xd7c46bb0
+-0,         32,         32,        1,   304128, 0x20f368ab
+-0,         33,         33,        1,   304128, 0x9bea7ced
+-0,         34,         34,        1,   304128, 0xf1b66b94
+-0,         35,         35,        1,   304128, 0x3e5e6815
+-0,         36,         36,        1,   304128, 0x6c2d5e3a
+-0,         37,         37,        1,   304128, 0x763046b0
+-0,         38,         38,        1,   304128, 0x05f71f4c
+-0,         39,         39,        1,   304128, 0x3db72dff
+-0,         40,         40,        1,   304128, 0x86e34c11
+-0,         41,         41,        1,   304128, 0x09334889
+-0,         42,         42,        1,   304128, 0xc8566851
+-0,         43,         43,        1,   304128, 0x4a7ec9da
+-0,         44,         44,        1,   304128, 0x609a176b
+-0,         45,         45,        1,   304128, 0x98deede0
+-0,         46,         46,        1,   304128, 0x59ee66a3
+-0,         47,         47,        1,   304128, 0x0fc5c8c2
+-0,         48,         48,        1,   304128, 0x0371d7b0
+-0,         49,         49,        1,   304128, 0xd81c18cf
++0,          0,          0,        1,   304128, 0xf6aa0942
++0,          1,          1,        1,   304128, 0x5752d4ab
++0,          2,          2,        1,   304128, 0x3052ede5
++0,          3,          3,        1,   304128, 0xdaf807b7
++0,          4,          4,        1,   304128, 0x8f5c9990
++0,          5,          5,        1,   304128, 0x75b58b80
++0,          6,          6,        1,   304128, 0x5b9c7b06
++0,          7,          7,        1,   304128, 0xee9c177a
++0,          8,          8,        1,   304128, 0x4fefb449
++0,          9,          9,        1,   304128, 0x0a6d565d
++0,         10,         10,        1,   304128, 0x25fe7635
++0,         11,         11,        1,   304128, 0x1d36be60
++0,         12,         12,        1,   304128, 0xa63f571a
++0,         13,         13,        1,   304128, 0x7ec1f6b5
++0,         14,         14,        1,   304128, 0x8c240ccf
++0,         15,         15,        1,   304128, 0x41bbbc2a
++0,         16,         16,        1,   304128, 0x611319e8
++0,         17,         17,        1,   304128, 0x929d83ad
++0,         18,         18,        1,   304128, 0x45ae42a0
++0,         19,         19,        1,   304128, 0x9dd20a04
++0,         20,         20,        1,   304128, 0x61230985
++0,         21,         21,        1,   304128, 0x643a6d0f
++0,         22,         22,        1,   304128, 0x5dd530dd
++0,         23,         23,        1,   304128, 0x92c56539
++0,         24,         24,        1,   304128, 0xc364f034
++0,         25,         25,        1,   304128, 0x7a476be9
++0,         26,         26,        1,   304128, 0xee4ac625
++0,         27,         27,        1,   304128, 0x9e9c13c4
++0,         28,         28,        1,   304128, 0x6097cda9
++0,         29,         29,        1,   304128, 0x3a6c370c
++0,         30,         30,        1,   304128, 0xfa740b74
++0,         31,         31,        1,   304128, 0x9d13798e
++0,         32,         32,        1,   304128, 0x61b5ffc1
++0,         33,         33,        1,   304128, 0x34b30667
++0,         34,         34,        1,   304128, 0x303681b4
++0,         35,         35,        1,   304128, 0xe63508fc
++0,         36,         36,        1,   304128, 0x10ef6b65
++0,         37,         37,        1,   304128, 0x17c8d2b5
++0,         38,         38,        1,   304128, 0x053d9db5
++0,         39,         39,        1,   304128, 0x43dd5c5b
++0,         40,         40,        1,   304128, 0xba4b65f2
++0,         41,         41,        1,   304128, 0x4dc70aa2
++0,         42,         42,        1,   304128, 0x9e2a528f
++0,         43,         43,        1,   304128, 0x53df2931
++0,         44,         44,        1,   304128, 0xe1d12fbd
++0,         45,         45,        1,   304128, 0xcb863c4c
++0,         46,         46,        1,   304128, 0x528e2e81
++0,         47,         47,        1,   304128, 0x880c0b66
++0,         48,         48,        1,   304128, 0x83ec648a
++0,         49,         49,        1,   304128, 0xa5d2555d
+diff --git a/tests/ref/fate/force_key_frames b/tests/ref/fate/force_key_frames
+index 26de0905e8..ef8ca5af32 100644
+--- a/tests/ref/fate/force_key_frames
++++ b/tests/ref/fate/force_key_frames
+@@ -1,4 +1,4 @@
+-07567b9528b8de523faaf49e4e1e0fc6 *tests/data/fate/force_key_frames.avi
+-113312 tests/data/fate/force_key_frames.avi
+-b2e92b97bac0243242281d71108ffdbd *tests/data/fate/force_key_frames.out.framecrc
+-stddev:34612.83 PSNR:  5.54 MAXDIFF:61408 bytes:  7603200/      264
++1cd5f12691d602ef806606b0dc22fddc *tests/data/fate/force_key_frames.avi
++574816 tests/data/fate/force_key_frames.avi
++7c41fec64a8d44148f4fb81d31c5027c *tests/data/fate/force_key_frames.out.framecrc
++stddev:29597.16 PSNR:  6.90 MAXDIFF:60652 bytes:  7603200/      264
+diff --git a/tests/ref/fate/shortest b/tests/ref/fate/shortest
+index b5845508cf..0690799d8d 100644
+--- a/tests/ref/fate/shortest
++++ b/tests/ref/fate/shortest
+@@ -9,109 +9,109 @@
+ #sample_rate 1: 44100
+ #channel_layout_name 1: mono
+ 1,       -256,       -256,     1536,      416, 0x69efcbcc
+-0,          0,          0,        1,     8749, 0x57039d10, S=1,        8
++0,          0,          0,        1,    27867, 0x1426a0d6, S=1,        8
+ 1,       1280,       1280,     1536,      418, 0xa0ccc09d
+-0,          1,          1,        1,      975, 0x2fcf0617, F=0x0, S=1,        8
++0,          1,          1,        1,     9806, 0xbebc2826, F=0x0, S=1,        8
+ 1,       2816,       2816,     1536,      418, 0xb873cb60
+-0,          2,          2,        1,     1167, 0x6d32482b, F=0x0, S=1,        8
++0,          2,          2,        1,    10453, 0x4a188450, F=0x0, S=1,        8
+ 1,       4352,       4352,     1536,      418, 0x1366c008
+-0,          3,          3,        1,     1274, 0xab1d80c9, F=0x0, S=1,        8
++0,          3,          3,        1,    10248, 0x4c831c08, F=0x0, S=1,        8
+ 1,       5888,       5888,     1536,      418, 0xeb24c8da
+-0,          4,          4,        1,     1361, 0x9dc28a69, F=0x0, S=1,        8
++0,          4,          4,        1,    11680, 0x5508c44d, F=0x0, S=1,        8
+ 1,       7424,       7424,     1536,      418, 0xc75ac55e
+-0,          5,          5,        1,     1415, 0x41d8ba3e, F=0x0, S=1,        8
++0,          5,          5,        1,    11046, 0x096ca433, F=0x0, S=1,        8
+ 1,       8960,       8960,     1536,      418, 0xe336d28d
+ 1,      10496,      10496,     1536,      418, 0xd0acc452
+-0,          6,          6,        1,     1421, 0x8c83ad35, F=0x0, S=1,        8
++0,          6,          6,        1,     9888, 0x440a5b45, F=0x0, S=1,        8
+ 1,      12032,      12032,     1536,      418, 0xae88c75f
+-0,          7,          7,        1,     1474, 0x1025b9b0, F=0x0, S=1,        8
++0,          7,          7,        1,    10165, 0x116d4909, F=0x0, S=1,        8
+ 1,      13568,      13568,     1536,      418, 0xa200b8f0
+-0,          8,          8,        1,     1467, 0xf3c0c714, F=0x0, S=1,        8
++0,          8,          8,        1,    11704, 0xb334a24c, F=0x0, S=1,        8
+ 1,      15104,      15104,     1536,      418, 0x009dccf6
+-0,          9,          9,        1,     1469, 0x1b9faf72, F=0x0, S=1,        8
++0,          9,          9,        1,    11059, 0x49aa6515, F=0x0, S=1,        8
+ 1,      16640,      16640,     1536,      418, 0x585ec129
+-0,         10,         10,        1,     1506, 0x18a9c359, F=0x0, S=1,        8
++0,         10,         10,        1,     8764, 0x8214fab0, F=0x0, S=1,        8
+ 1,      18176,      18176,     1536,      418, 0xda1acf75
+-0,         11,         11,        1,     1520, 0x0ec1d39a, F=0x0, S=1,        8
++0,         11,         11,        1,     9328, 0x92987740, F=0x0, S=1,        8
+ 1,      19712,      19712,     1536,      418, 0xd326d279
+-0,         12,         12,        1,     8554, 0xfab776e0, S=1,        8
++0,         12,         12,        1,    27955, 0xe25edb6c, S=1,        8
+ 1,      21248,      21248,     1536,      418, 0x1b54bf76
+ 1,      22784,      22784,     1536,      418, 0xdb39cbd1
+-0,         13,         13,        1,     1079, 0x13e40cb3, F=0x0, S=1,        8
++0,         13,         13,        1,    11181, 0x3cf56687, F=0x0, S=1,        8
+ 1,      24320,      24320,     1536,      418, 0x6813cefa
+-0,         14,         14,        1,     1343, 0xf0058d2e, F=0x0, S=1,        8
++0,         14,         14,        1,    12002, 0x87942530, F=0x0, S=1,        8
+ 1,      25856,      25856,     1536,      418, 0xb402d2ec
+-0,         15,         15,        1,     1486, 0x1da1c64e, F=0x0, S=1,        8
++0,         15,         15,        1,    10122, 0xbb10e8d9, F=0x0, S=1,        8
+ 1,      27392,      27392,     1536,      418, 0x80c4c8d2
+-0,         16,         16,        1,     1491, 0x872dd43d, F=0x0, S=1,        8
++0,         16,         16,        1,     9715, 0xa4a1325c, F=0x0, S=1,        8
+ 1,      28928,      28928,     1536,      418, 0xaeaac123
+-0,         17,         17,        1,     1504, 0x5907c6ca, F=0x0, S=1,        8
++0,         17,         17,        1,    11222, 0x15118a48, F=0x0, S=1,        8
+ 1,      30464,      30464,     1536,      418, 0xe2c9c038
+-0,         18,         18,        1,     1481, 0xde66ba0a, F=0x0, S=1,        8
++0,         18,         18,        1,    11384, 0xd4304391, F=0x0, S=1,        8
+ 1,      32000,      32000,     1536,      418, 0x3f37c65b
+-0,         19,         19,        1,     1521, 0xf46dcef9, F=0x0, S=1,        8
++0,         19,         19,        1,     9141, 0xabd1eb90, F=0x0, S=1,        8
+ 1,      33536,      33536,     1536,      418, 0xf9a2cf98
+ 1,      35072,      35072,     1536,      418, 0xc951cbb5
+-0,         20,         20,        1,     1514, 0x001ed7b1, F=0x0, S=1,        8
++0,         20,         20,        1,    10049, 0x5b388bc2, F=0x0, S=1,        8
+ 1,      36608,      36608,     1536,      418, 0x4e92be94
+-0,         21,         21,        1,     1562, 0x3974e095, F=0x0, S=1,        8
++0,         21,         21,        1,     9049, 0x214505c3, F=0x0, S=1,        8
+ 1,      38144,      38144,     1536,      418, 0xa9d8c8d0
+-0,         22,         22,        1,     1562, 0xa94bf1fc, F=0x0, S=1,        8
++0,         22,         22,        1,     9101, 0xdba6e5ba, F=0x0, S=1,        8
+ 1,      39680,      39680,     1536,      418, 0xe4c8bc20
+-0,         23,         23,        1,     1629, 0xdfcc0234, F=0x0, S=1,        8
++0,         23,         23,        1,    10351, 0x0aea5644, F=0x0, S=1,        8
+ 1,      41216,      41216,     1536,      418, 0x2ccac571
+-0,         24,         24,        1,     9664, 0xbf319bb0, S=1,        8
++0,         24,         24,        1,    27864, 0xd0287877, S=1,        8
+ 1,      42752,      42752,     1536,      418, 0xd2a0cbff
+-0,         25,         25,        1,     1239, 0x1f9662f7, F=0x0, S=1,        8
++0,         25,         25,        1,     9026, 0x01ec7d47, F=0x0, S=1,        8
+ 1,      44288,      44288,     1536,      418, 0xffadb489
+ 1,      45824,      45824,     1536,      418, 0x1246cae7
+-0,         26,         26,        1,     1568, 0xfbf8ed9d, F=0x0, S=1,        8
++0,         26,         26,        1,     8894, 0x5917d83b, F=0x0, S=1,        8
+ 1,      47360,      47360,     1536,      418, 0xa74eb1f7
+-0,         27,         27,        1,     1641, 0x46aafde5, F=0x0, S=1,        8
++0,         27,         27,        1,    10119, 0x3a2ede3a, F=0x0, S=1,        8
+ 1,      48896,      48896,     1536,      418, 0x98cfc032
+-0,         28,         28,        1,     1735, 0xa9363e9b, F=0x0, S=1,        8
++0,         28,         28,        1,    10290, 0xea641449, F=0x0, S=1,        8
+ 1,      50432,      50432,     1536,      418, 0x8045c0a7
+-0,         29,         29,        1,     1760, 0x99b82cbc, F=0x0, S=1,        8
++0,         29,         29,        1,    10922, 0xeb7e9700, F=0x0, S=1,        8
+ 1,      51968,      51968,     1536,      418, 0x2180c196
+-0,         30,         30,        1,     1798, 0xc0ba5286, F=0x0, S=1,        8
++0,         30,         30,        1,     9680, 0x929d1f59, F=0x0, S=1,        8
+ 1,      53504,      53504,     1536,      418, 0x35f2b4d1
+-0,         31,         31,        1,     1830, 0x4e8b4b80, F=0x0, S=1,        8
++0,         31,         31,        1,     8733, 0x8fa8fc4e, F=0x0, S=1,        8
+ 1,      55040,      55040,     1536,      418, 0x876ec74d
+-0,         32,         32,        1,     1835, 0x218a69cb, F=0x0, S=1,        8
++0,         32,         32,        1,     9878, 0xe3f555e9, F=0x0, S=1,        8
+ 1,      56576,      56576,     1536,      418, 0xbccebddd
+ 1,      58112,      58112,     1536,      418, 0x40a1bcc7
+-0,         33,         33,        1,     1902, 0x8f2b67d2, F=0x0, S=1,        8
++0,         33,         33,        1,    10926, 0x2a2bed74, F=0x0, S=1,        8
+ 1,      59648,      59648,     1536,      418, 0xbd10bf09
+-0,         34,         34,        1,     1886, 0xf4087481, F=0x0, S=1,        8
++0,         34,         34,        1,    12170, 0x70c8ab23, F=0x0, S=1,        8
+ 1,      61184,      61184,     1536,      418, 0xb8e4b630
+-0,         35,         35,        1,     1949, 0x142c8ac1, F=0x0, S=1,        8
++0,         35,         35,        1,    11631, 0x7d5e8297, F=0x0, S=1,        8
+ 1,      62720,      62720,     1536,      418, 0xc667bd39
+-0,         36,         36,        1,    10806, 0x603680c3, S=1,        8
++0,         36,         36,        1,    28056, 0x10bef294, S=1,        8
+ 1,      64256,      64256,     1536,      418, 0x2985c4ac
+-0,         37,         37,        1,     1413, 0xc52395a2, F=0x0, S=1,        8
++0,         37,         37,        1,    11067, 0x490af43b, F=0x0, S=1,        8
+ 1,      65792,      65792,     1536,      418, 0xb229b697
+-0,         38,         38,        1,     1731, 0xa26a2fb2, F=0x0, S=1,        8
++0,         38,         38,        1,    11046, 0x6dba2441, F=0x0, S=1,        8
+ 1,      67328,      67328,     1536,      418, 0xd2eec6d8
+-0,         39,         39,        1,     1888, 0xa2995d2a, F=0x0, S=1,        8
++0,         39,         39,        1,    10922, 0x069cfa74, F=0x0, S=1,        8
+ 1,      68864,      68864,     1536,      418, 0x74a9c1a9
+ 1,      70400,      70400,     1536,      418, 0x2d1cc383
+-0,         40,         40,        1,     1989, 0x0274904a, F=0x0, S=1,        8
++0,         40,         40,        1,    11477, 0x18baebc1, F=0x0, S=1,        8
+ 1,      71936,      71936,     1536,      418, 0x0ad9c88a
+-0,         41,         41,        1,     1949, 0x66fa8de9, F=0x0, S=1,        8
++0,         41,         41,        1,    10285, 0x792623a6, F=0x0, S=1,        8
+ 1,      73472,      73472,     1536,      418, 0x9aa3d0a7
+-0,         42,         42,        1,     1956, 0x4e2e831d, F=0x0, S=1,        8
++0,         42,         42,        1,     9961, 0x69d8a3b1, F=0x0, S=1,        8
+ 1,      75008,      75008,     1536,      416, 0x99f5b2b6
+-0,         43,         43,        1,     2012, 0x1d75ac7a, F=0x0, S=1,        8
++0,         43,         43,        1,    11162, 0x6f3788c6, F=0x0, S=1,        8
+ 1,      76544,      76544,     1536,      418, 0xfb7dc20d
+-0,         44,         44,        1,     1995, 0xdc478fec, F=0x0, S=1,        8
++0,         44,         44,        1,    10696, 0x524ad4f8, F=0x0, S=1,        8
+ 1,      78080,      78080,     1536,      418, 0xebc8c568
+-0,         45,         45,        1,     2078, 0x416aaf11, F=0x0, S=1,        8
++0,         45,         45,        1,    10319, 0x9d6ff8f7, F=0x0, S=1,        8
+ 1,      79616,      79616,     1536,      418, 0x7361c949
+-0,         46,         46,        1,     2116, 0x1416cc81, F=0x0, S=1,        8
++0,         46,         46,        1,     8796, 0xb0cc869e, F=0x0, S=1,        8
+ 1,      81152,      81152,     1536,      418, 0x85d8bbd0
+ 1,      82688,      82688,     1536,      418, 0x72e8bad1
+-0,         47,         47,        1,     2024, 0xf1c1ad7d, F=0x0, S=1,        8
++0,         47,         47,        1,     8779, 0x2027399c, F=0x0, S=1,        8
+ 1,      84224,      84224,     1536,      418, 0x4febb56f
+-0,         48,         48,        1,    11212, 0xc61a3f0a, S=1,        8
++0,         48,         48,        1,    28143, 0x1df268c5, S=1,        8
+ 1,      85760,      85760,     1536,      418, 0xae06ca91
+-0,         49,         49,        1,     1423, 0x45fba9e4, F=0x0, S=1,        8
++0,         49,         49,        1,    10073, 0xedb9f031, F=0x0, S=1,        8
+-- 
+2.30.2
+
