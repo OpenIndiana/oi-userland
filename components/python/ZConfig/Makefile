@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project ZConfig
+#   $WS_TOOLS/python-integrate-project -d python/ZConfig zconfig
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		ZConfig
-HUMAN_VERSION =			4.0
-COMPONENT_SUMMARY =		ZConfig - Structured Configuration Library
+COMPONENT_NAME =		zconfig
+HUMAN_VERSION =			4.1
+COMPONENT_SUMMARY =		zconfig - Structured Configuration Library
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/ZConfig/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/05/1b/24f8eba7b5a51beed8eb256f08610afeddde3190475fa4f342902e4f7a0e/ZConfig-4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f8d642fba6ba98d08631be2c1f71ad1957c051fef4aa3d3fb9f1e08dc61d0156
+	sha256:b6a79dda157f3698c8768d2cedc263216e8af240d3cf9d09a02a64291114eb20
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
