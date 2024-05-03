@@ -56,6 +56,15 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ; \
 	fi ;
 
+# Generate raw lists of pdm test dependencies per Python version
+COMPONENT_POST_INSTALL_ACTION += \
+	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
+	for p in $(TEST_REQUIREMENTS_PDM) ; do \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps_pdm_$$p.json add $$p pdm $$p ; \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps_pdm_$$p.json sync ; \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps_pdm_$$p.json eval --depformat '$$nname' ; \
+	done >> $(@D)/.depend-test ;
+
 # Add build dependencies from project metadata to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
 $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
