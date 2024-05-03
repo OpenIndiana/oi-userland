@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tqdm
-HUMAN_VERSION =			4.66.2
+HUMAN_VERSION =			4.66.4
 COMPONENT_SUMMARY =		tqdm - Fast, Extensible Progress Meter
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6cd52cdf0fef0e0f543299cfc96fec90d7b8a7e88745f411ec33eb44d5ed3531
+	sha256:e4d936c9de8727928f3be6079590e97d9abfe8d39a590be678eb5919ffc186bb
 COMPONENT_LICENSE =		MIT AND MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENCE
 
@@ -37,6 +37,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/codecov
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/coveralls
 TEST_REQUIRED_PACKAGES.python += library/python/cython
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
