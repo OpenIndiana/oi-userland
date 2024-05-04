@@ -19,7 +19,7 @@ BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		znapzend
-COMPONENT_VERSION =		0.21.2
+COMPONENT_VERSION =		0.22.0
 COMPONENT_SUMMARY =		zfs backup with remote capabilities and mbuffer integration
 COMPONENT_DESCRIPTION =		ZnapZend is a ZFS centric backup tool. It relies on snapshot,\
  send and receive to do its work. It has the built-in ability to manage both local\
@@ -29,7 +29,7 @@ COMPONENT_DESCRIPTION =		ZnapZend is a ZFS centric backup tool. It relies on sna
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c3753d663c2f4d87f87da0191441c5cd2cb32aca7ded913d97565472413e3823
+	sha256:95bf10167237522857c0fcdc5e3dfa096c4b5767bdd3c5fc8b1a1a36131dd43e
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/oetiker/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =		https://github.com/oetiker/$(COMPONENT_NAME)
@@ -54,10 +54,10 @@ COMPONENT_TEST_ARGS += SUBDIRS=lib
 COMPONENT_TEST_TRANSFORMS += -n
 COMPONENT_TEST_TRANSFORMS += "-e '/\<ok\>/p'"
 
-# We are not able to detect these dependencies automatically.
+# We are not able to detect these test dependencies automatically.
 # The list is based on $(SOURCE_DIR)/cpanfile.
-REQUIRED_PACKAGES += library/perl-5/mojolicious
-REQUIRED_PACKAGES += library/perl-5/mojo-log-clearable
+TEST_REQUIRED_PACKAGES += library/perl-5/mojolicious
+TEST_REQUIRED_PACKAGES += library/perl-5/mojo-log-clearable
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
