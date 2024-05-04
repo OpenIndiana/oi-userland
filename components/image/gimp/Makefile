@@ -17,13 +17,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
-COMPONENT_VERSION=	2.10.36
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	2.10.38
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:3d3bc3c69a4bdb3aea9ba2d5385ed98ea03953f3857aafd1d6976011ed7cdbb2
+COMPONENT_ARCHIVE_HASH= sha256:50a845eec11c8831fe8661707950f5b8446e35f30edfb9acf98f85c1133f856e
 COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/gimp/v2.10/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/editor/gimp
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -41,12 +40,13 @@ PYTHON=/usr/bin/$(MACH64)/python2.7
 CFLAGS += -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include
 CFLAGS += -I/usr/include/libmng
 
-COMPONENT_PREP_ACTION =	( cd $(@D)  && \
-				PATH="$(PATH)" libtoolize --force &&\
-				intltoolize --force --copy --automake &&\
-				aclocal -I. &&\
-				automake -a -c -f &&\
-				autoconf)
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D)  && \
+	PATH="$(PATH)" libtoolize --force && \
+	intltoolize --force --copy --automake && \
+	aclocal -I. && \
+	automake -a -c -f && \
+	autoconf )
 
 CONFIGURE_OPTIONS += --datarootdir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
@@ -55,19 +55,19 @@ CONFIGURE_OPTIONS += --enable-default-binary
 CONFIGURE_OPTIONS += --enable-mmx=no
 CONFIGURE_OPTIONS += --with-lcms=2
 
-CONFIGURE_ENV+= PYTHON=$(PYTHON)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
-COMPONENT_POST_CONFIGURE_ACTION = \
-		( cd $(@D) && \
-		  $(GSED) -e 's@^ECHO=.*@ECHO="echo"@g' libtool > print.patch && \
-		  $(MV) print.patch libtool && \
-		  $(CHMOD) 755 libtool && \
-		  $(RM) print.patch )
+COMPONENT_POST_CONFIGURE_ACTION= ( \
+	cd $(@D) && \
+	$(GSED) -e 's@^ECHO=.*@ECHO="echo"@g' libtool > print.patch && \
+	$(MV) print.patch libtool && \
+	$(CHMOD) 755 libtool && \
+	$(RM) print.patch )
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
-COMPONENT_POST_INSTALL_ACTION = \
-        /usr/bin/find $(PROTO_DIR) -name *.py \
-                -exec $(GSED) -i -e '1s|env python.*|$(MACH64)/python$(PYTHON_VERSION)|' "{}" \; ;
+COMPONENT_POST_INSTALL_ACTION= \
+	/usr/bin/find $(PROTO_DIR) -name *.py \
+		-exec $(GSED) -i -e '1s|env python.*|$(MACH64)/python$(PYTHON_VERSION)|' "{}" \; ;
 
 # Tests need a display and some fail.
 
