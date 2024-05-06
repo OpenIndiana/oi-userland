@@ -35,7 +35,8 @@ ENV = /usr/bin/env
 
 COMPONENT_NAME=         libreoffice
 COMPONENT_VERSION=      24.2.3
-COMPONENT_RC_VERSION=	1
+COMPONENT_RC_VERSION=	2
+COMPONENT_REVISION=	2
 ifdef BUILD_ALPHA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).alpha$(BUILD_ALPHA)
 else ifdef BUILD_BETA
@@ -316,8 +317,12 @@ COMPONENT_ARCHIVE_56 = icu4c-73_2-src.tgz
 COMPONENT_ARCHIVE_HASH_56 = sha256:818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1
 COMPONENT_ARCHIVE_URL_56 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_56)
 
+COMPONENT_ARCHIVE_57 = icu4c-73_2-data.zip
+COMPONENT_ARCHIVE_HASH_57 = sha256:ca1ee076163b438461e484421a7679fc33a64cd0a54f9d4b401893fa1eb42701
+COMPONENT_ARCHIVE_URL_57 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_57)
+
 # ignore archive 21 (boost)
-NUM_EXTRA_ARCHIVES = $(shell seq 1 20) $(shell 22 56)
+NUM_EXTRA_ARCHIVES = $(shell seq 1 20) $(shell 22 57)
 
 # github source archive files are a different compression than what is found on
 # the documentfoundation site
