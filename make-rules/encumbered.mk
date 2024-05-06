@@ -23,6 +23,11 @@ BASS_O_MATIC =  $(WS_TOOLS)/bass-o-matic --subdir=components/encumbered
 
 ENCUMBERED = encumbered/
 
+# Support for building with the (non-default) ffmpeg version 6
+ifeq ($(strip $(FFMPEG_VERSION)),6)
+PKG_CONFIG_PATH.64 := /usr/lib/$(MACH64)/pkgconfig/ffmpeg-6:$(PKG_CONFIG_PATH.64)
+endif
+
 # If a component needs ffmpeg libraries then it also needs ffmpeg development
 # files (the versioned developer/ffmpeg package) for building.  To avoid the
 # need to manually add the ffmpeg development package into the

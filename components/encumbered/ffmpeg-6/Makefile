@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
 COMPONENT_VERSION=	6.1.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	A very fast video and audio converter (runtime libraries)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -29,6 +29,9 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/ffmpeg-6
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
+
+COMPONENT_FMRI.developer =	developer/ffmpeg-6
+COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
@@ -93,6 +96,17 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --ignore-tests=source
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+
+# We do not need documentation for old ffmpeg version
+CONFIGURE_OPTIONS += --disable-doc
+# Install ffmpeg-6 development support into dedicated directories
+CONFIGURE_OPTIONS += --incdir=$(CONFIGURE_PREFIX)/include/ffmpeg-6
+CONFIGURE_OPTIONS += --pkgconfigdir=$(PKG_CONFIG_PATH.$(BITS))/ffmpeg-6
+# We do not need programs in /usr/bin.  We cannot use --disable-programs
+# configure option because testing needs the ffmpeg binary.
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR) ;
+# We do not need examples and other share files needed for programs
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRSHAREDIR)/ffmpeg ;
 
 COMPONENT_TEST_ENV += PATH=$(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS)):$(PATH)
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
