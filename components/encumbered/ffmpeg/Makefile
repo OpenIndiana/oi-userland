@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
 COMPONENT_VERSION=	7.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -32,6 +32,9 @@ COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
 
 COMPONENT_FMRI.library =	library/ffmpeg-7
 COMPONENT_SUMMARY.library =	$(COMPONENT_SUMMARY) (runtime libraries)
+
+COMPONENT_FMRI.developer =	developer/ffmpeg-7
+COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
