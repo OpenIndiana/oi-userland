@@ -11,27 +11,25 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Jinja2
+#   $WS_TOOLS/python-integrate-project -d python/Jinja2 jinja2
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Jinja2
-HUMAN_VERSION =			3.1.3
-COMPONENT_SUMMARY =		Jinja2 - A very fast and expressive template engine.
-COMPONENT_PROJECT_URL =		https://palletsprojects.com/p/jinja/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b2/5e/3a21abf3cd467d7876045335e681d276ac32492febe6d98ad89562d1a7e1/Jinja2-3.1.3.tar.gz
+COMPONENT_NAME =		jinja2
+HUMAN_VERSION =			3.1.4
+COMPONENT_SUMMARY =		A very fast and expressive template engine.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ac8bd6544d4bb2c9792bf3a159e80bba8fda7f07e81bc3aed565432d5925ba90
+	sha256:4a3aee7acbbe7303aede8e9648d13b8bf88a429282aa6122a993f0ac800cb369
 COMPONENT_LICENSE =		BSD-3-Clause
-COMPONENT_LICENSE_FILE =	LICENSE.rst
+COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/exceptiongroup
