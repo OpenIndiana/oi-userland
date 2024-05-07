@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		blinker
-HUMAN_VERSION =			1.8.1
-COMPONENT_SUMMARY =		blinker - Fast, simple object-to-object and broadcast signaling
+HUMAN_VERSION =			1.8.2
+COMPONENT_SUMMARY =		Fast, simple object-to-object and broadcast signaling
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:da44ec748222dcd0105ef975eed946da197d5bdf8bafb6aa92f5bc89da63fa25
+	sha256:8f77b09d3bf7c795e969e9486f39c2c5e9c39d4ee07424be2bc594ece9642d83
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
