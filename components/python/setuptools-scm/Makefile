@@ -11,21 +11,18 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project setuptools-scm
+#   $WS_TOOLS/python-integrate-project -d python/setuptools-scm setuptools_scm
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		setuptools-scm
-HUMAN_VERSION =			8.0.4
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		setuptools-scm - the blessed package to manage your versions by scm tags
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/eb/b1/0248705f10f6de5eefe7ff93e399f7192257b23df4d431d2f5680bb2778f/setuptools-scm-8.0.4.tar.gz
+COMPONENT_NAME =		setuptools_scm
+HUMAN_VERSION =			8.1.0
+COMPONENT_SUMMARY =		the blessed package to manage your versions by scm tags
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b5f43ff6800669595193fd09891564ee9d1d7dcb196cab4b2506d53a2e1c95c7
+	sha256:42dea1b65771cba93b7a515d65a65d8246e560768a66b9106a592c8e7f26c8a7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,9 +38,6 @@ PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/PyO3/setuptools-rust/issues/358
-TEST_CONFLICTING_PACKAGES.python += library/python/setuptools-rust
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
@@ -55,3 +49,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/rich
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/wheel
