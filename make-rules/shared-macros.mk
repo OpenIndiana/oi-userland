@@ -1201,6 +1201,9 @@ gcc_XREGS.sparc =	-mno-app-regs
 gcc_XREGS.i386 =
 gcc_XREGS =		$(gcc_XREGS.$(MACH))
 
+# See CPP_XPG7MODE comment above.
+XPG7MODE =		$(CPP_XPG7MODE)
+
 # See CPP_XPG6MODE comment above.
 XPG6MODE =		$(CPP_XPG6MODE)
 
