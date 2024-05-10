@@ -30,6 +30,7 @@ UID   | User name
 31    | opendmarc
 32    | spfmilter
 37    | listen
+39    | lldp
 40    | puppet
 50    | gdm
 51    | zfssnap
@@ -104,6 +105,7 @@ GID   | Group name
 30    | opendkim
 31    | opendmarc
 32    | spfmilter
+39    | lldp
 40    | puppet
 50    | gdm
 52    | upnp
