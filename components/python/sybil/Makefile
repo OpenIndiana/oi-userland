@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sybil
-HUMAN_VERSION =			6.1.0
-COMPONENT_SUMMARY =		sybil - Automated testing for the examples in your code and documentation.
+HUMAN_VERSION =			6.1.1
+COMPONENT_SUMMARY =		Automated testing for the examples in your code and documentation.
 COMPONENT_PROJECT_URL =		https://github.com/simplistix/sybil
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/simplistix/sybil/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6a50c5ee9cc289f8c1055aa4f922c9ed9c3d8529ec002b70dbc73fd1906d094a
+	sha256:b31713d16d5187ff461f51ea93d4efdc3a90c79ad5871f304b430f11078e5e83
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
