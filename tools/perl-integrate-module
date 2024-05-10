@@ -426,7 +426,7 @@ if [[ -z "$LICENSE" ]] ; then
 		((D)) && [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" && "$(/usr/bin/jq -r '.license[]' < "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
 		((D)) && [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" && "$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" \
 			| python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
-			| /usr/bin/jq -r '.license[]' 2>/dev/null)" == "perl_5" ]] && D=0
+			| /usr/bin/jq -r '.license' 2>/dev/null)" == "perl" ]] && D=0
 
 		((D)) && printf "ERROR: Heuristics failed to detect license type, using default Perl license\n" >&2
 
