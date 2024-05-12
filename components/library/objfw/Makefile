@@ -29,11 +29,11 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = objfw
-COMPONENT_VERSION = 1.1.2
+COMPONENT_VERSION = 1.1.3
 COMPONENT_SUMMARY = A portable, lightweight framework for the Objective-C language
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = sha256:5d9f9a70d583298e780ae11fc75a7ae2beeef904b301e1bc4f4ffa8d7ee31d9f
+COMPONENT_ARCHIVE_HASH = sha256:e66ff27ac93c5747019aaa5c8a72b2e4508938e59b3ce08909e54e566ebb2e41
 COMPONENT_ARCHIVE_URL = https://objfw.nil.im/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://objfw.nil.im/
 COMPONENT_FMRI = library/objfw
