@@ -19,16 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Path::Tiny
-HUMAN_VERSION =			0.144
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.146
 COMPONENT_SUMMARY =		Path::Tiny - File path utility
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f6ea094ece845c952a02c2789332579354de8d410a707f9b7045bd241206487d
+	sha256:861ef09bca68254e9ab24337bb6ec9d58593a792e9d68a27ee6bec2150f06741
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/unicode-utf8
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-failwarnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-mockrandom
