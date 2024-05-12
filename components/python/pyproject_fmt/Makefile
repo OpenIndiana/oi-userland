@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt
-HUMAN_VERSION =			1.8.0
-COMPONENT_SUMMARY =		pyproject_fmt - Format your pyproject.toml file
+HUMAN_VERSION =			2.0.3
+COMPONENT_SUMMARY =		Format your pyproject.toml file
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e4671fe01b22b731c0d17580334775ae6d257c7db4c40fed7352136091628aeb
+	sha256:04ee181e8e9688a5dc5654f602aee4ec71556f09237b212051eec37cb0adaafe
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -31,9 +31,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/natsort
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
+PYTHON_REQUIRED_PACKAGES += library/python/pyproject-fmt-rust
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
