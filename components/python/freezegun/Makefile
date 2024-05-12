@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		freezegun
-HUMAN_VERSION =			1.5.0
-COMPONENT_SUMMARY =		freezegun - Let your Python tests travel through time
+HUMAN_VERSION =			1.5.1
+COMPONENT_SUMMARY =		Let your Python tests travel through time
 COMPONENT_PROJECT_URL =		https://github.com/spulec/freezegun
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:200a64359b363aa3653d8aac289584078386c7c3da77339d257e46a01fb5c77c
+	sha256:b29dedfcda6d5e8e083ce71b2b542753ad48cfec44037b3fc79702e2980a89e9
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
