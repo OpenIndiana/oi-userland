@@ -113,26 +113,28 @@ refresh-patches: $(QUILT) patch
 	done
 	# Make sure the series file does not exist
 	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
-	# Apply and refresh patches, then unapply them
+	# Apply and refresh patches, then unapply them to prepare the tree for
+	# the next quilt run loop
 	cd $(SOURCE_DIR) ; for p in $(PATCHES) ; do \
-		QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) import --quiltrc /dev/null "../$$p" \
+		QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) import --quiltrc /dev/null -p $(PATCH_LEVEL) "../$$p" \
 		&& QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) push --quiltrc /dev/null -q \
-		&& QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) refresh --quiltrc /dev/null -p 1 --no-timestamps --no-index \
+		&& QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) refresh --quiltrc /dev/null -p $(if $(filter 0,$(PATCH_LEVEL)),0,1) --no-timestamps --no-index \
 		&& continue ; \
 		exit 1 ; \
 	done ; \
-	[ ! -e $(COMPONENT_DIR)/$(PATCH_DIR)/series ] || QUILT_PATCHES=../$(PATCH_DIR) quilt pop --quiltrc /dev/null -a -q
-	# cleanup
+	[ ! -e $(COMPONENT_DIR)/$(PATCH_DIR)/series ] || (($(PATCH_LEVEL) == 0)) || QUILT_PATCHES=../$(PATCH_DIR) quilt pop --quiltrc /dev/null -a -q
+	# Remove unneeded quilt files
 	$(RM) -r $(SOURCE_DIR)/.pc
 	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
 	# Apply and refresh patches again to get the desired patch format
-	for p in $(PATCHES) ; do \
+	# (needed only with non-zero PATCH_LEVEL)
+	(($(PATCH_LEVEL) == 0)) || for p in $(PATCHES) ; do \
 		QUILT_PATCHES=$(PATCH_DIR) $(QUILT) import --quiltrc /dev/null -p 0 "$$p" \
 		&& QUILT_PATCHES=$(PATCH_DIR) $(QUILT) push --quiltrc /dev/null -q \
 		&& QUILT_PATCHES=$(PATCH_DIR) $(QUILT) refresh --quiltrc /dev/null -p 0 --no-timestamps --no-index \
 		&& continue ; \
 		exit 1 ; \
 	done
-	# final cleanup
-	$(RM) -r $(COMPONENT_DIR)/.pc
-	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
+	# Remove unneeded quilt files
+	(($(PATCH_LEVEL) == 0)) || $(RM) -r $(COMPONENT_DIR)/.pc
+	(($(PATCH_LEVEL) == 0)) || $(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
