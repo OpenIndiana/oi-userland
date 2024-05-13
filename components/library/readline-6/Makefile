@@ -27,22 +27,20 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		readline
-HUMAN_VERSION=		8.2p10
-COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
+HUMAN_VERSION=		6.3p8
+COMPONENT_VERSION=	8.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU readline provides interactive line-editing and history
 COMPONENT_DESCRIPTION= The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in
 COMPONENT_PROJECT_URL= https://tiswww.cwru.edu/php/chet/readline/rltop.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(firstword $(subst p, ,$(HUMAN_VERSION)))
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:08835e57b5eb84f07f8fa50c7530e4b13b08265ffef340e4a4cce4ad6fb575fe
+COMPONENT_ARCHIVE_HASH=	sha256:56ba6071b9462f980c5a72ab0023893b65ba6debb4eeb475d7a563dc65cafd43
 COMPONENT_ARCHIVE_URL= https://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE)
-COMPONENT_VERSION_MAJOR=	$(firstword $(subst ., ,$(HUMAN_VERSION)))
-COMPONENT_FMRI=		library/readline-$(COMPONENT_VERSION_MAJOR)
+COMPONENT_FMRI=		library/readline
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	GPL-3.0-only
 COMPONENT_LICENSE_FILE= COPYING
-
-COMPONENT_FMRI.readline-32=	$(COMPONENT_FMRI)/32
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -51,17 +49,6 @@ PATCH_LEVEL = 0
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --with-shared-termcap-library
-
-# Build the readline examples as well (see the INSTALL file).
-COMPONENT_BUILD_TARGETS= everything
-
-# Install the additional file
-COMPONENT_POST_INSTALL_ACTION += \
-	$(INSTALL) -Dm0444 $(SOURCE_DIR)/examples/Inputrc $(PROTOUSRDIR)/demo/readline/Inputrc ;
-
-# We do not want the info index file
-COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
 COMPONENT_TEST_DIR= $(@D)/examples
 COMPONENT_TEST_CMD= $(CAT) $(SOURCE_DIR)/examples/Inputrc | ./rlcat
@@ -81,11 +68,6 @@ TEST_LIBPATH.64= $(PROTOUSRLIBDIR64)
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 
 test:		install $(TEST_64_and_32)
-
-# Sanity check
-ifneq ($(strip $(COMPONENT_VERSION_MAJOR)),$(strip $(READLINE_VERSION)))
-$(error READLINE_VERSION does not match the readline version)
-endif
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
