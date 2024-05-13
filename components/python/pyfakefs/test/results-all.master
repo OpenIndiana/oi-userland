@@ -1999,6 +1999,7 @@ test_too_many_links (pyfakefs.tests.fake_open_test.ResolvePathTest) ... ok
 test_utime_link (pyfakefs.tests.fake_open_test.ResolvePathTest)
 os.utime() and os.stat() via symbolic link (issue #49) ... ok
 test_write_link_to_link (pyfakefs.tests.fake_open_test.ResolvePathTest) ... ok
+test_open_in_skipped_module (pyfakefs.tests.fake_open_test.SkipOpenTest) ... ok
 test_mkdtemp (pyfakefs.tests.fake_tempfile_test.FakeTempfileModuleTest) ... ok
 test_mkstemp (pyfakefs.tests.fake_tempfile_test.FakeTempfileModuleTest) ... ok
 test_mkstemp_dir (pyfakefs.tests.fake_tempfile_test.FakeTempfileModuleTest)
@@ -2225,6 +2226,10 @@ test_init_with_segments (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializat
 Basic initialization tests - taken from pathlib.Path ... skipped 'Windows specific behavior'
 test_is_absolute (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationWithDriveTest) ... skipped 'Windows specific behavior'
 test_path_parts (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationWithDriveTest) ... skipped 'Windows specific behavior'
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest)
+Verify faked pure POSIX paths use filesystem-independent separators. ... ok
+test_windows_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest)
+Verify faked pure Windows paths use filesystem-independent separators. ... ok
 test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
 test_glob (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
 test_glob_case_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
@@ -2427,11 +2432,368 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_walk (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... skipped 'Only tests fake FS'
+test_open_pathlib_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipOpenTest) ... ok
+test_pathlib2_warning (pyfakefs.tests.fake_legacy_modules_test.DeprecationWarningTest) ... ok
+test_scandir_warning (pyfakefs.tests.fake_legacy_modules_test.DeprecationWarningTest) ... skipped 'The scandir package is not installed'
+test_chmod (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_chmod_no_followsymlinks (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'follow_symlinks argument new in Python 3.10'
+test_cwd (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_exists (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_expanduser_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_expanduser_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'Windows specific test'
+test_home_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_home_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'Windows specific test'
+test_is_dir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_is_file (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_is_symlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_iterdir_and_glob_without_exe_permission (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_iterdir_impossible_without_read_permission (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_iterdir_in_unreadable_dir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_lchmod (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_lstat_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_lstat_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'Windows specific behavior'
+test_resolve (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_resolve_nonexisting_file (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_stat (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
+test_init_collapse (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest)
+Tests for collapsing path during initialization. ... ok
+test_init_with_segments (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest)
+Basic initialization tests - taken from ... ok
+test_initialization_type (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest)
+Make sure tests for class type will work ... ok
+test_is_absolute_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest) ... ok
+test_is_absolute_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest) ... skipped 'Windows specific behavior'
+test_path_parts (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest) ... ok
+test_exists (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_glob (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_glob_case_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_glob_case_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'Windows specific test'
+test_hardlink_to (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'hardlink_to new in Python 3.10'
+test_is_junction (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_iterdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_link_to (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_mkdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_mkdir_exist_ok (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_mkdir_with_automount_drive (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'Windows specific behavior'
+test_mkdir_with_automount_unc_path (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'Windows specific behavior'
+test_open (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_read_bytes (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_read_text (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_read_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_readlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_rename (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_replace (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_rmdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_samefile (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_symlink_to (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_touch_existing (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_touch_non_existing (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_unlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_write_bytes (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_write_text (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_write_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... ok
+test_write_with_newline_arg (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'newline argument new in Python 3.10'
+test_abspath (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_access (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_changed_owner_and_group (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_chdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_chmod (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_exists (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_expanduser (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_getatime (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_getctime (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_getmtime (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_getsize (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_isabs (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_isdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_isfile (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_isfile_not_readable (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_islink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_ismount (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_join (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_lexists (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_link (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_listdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_makedirs (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_mkdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_normcase (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_normpath (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_owner_and_group_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_owner_and_group_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_readlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_readlink_bytes (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_realpath (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_relpath (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_remove (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_rename (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_replace (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_rmdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_scandir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_split (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_splitdrive (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_stat (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_stat_follow_symlinks (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'New in Python 3.10'
+test_symlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_truncate (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_utime (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... ok
+test_walk (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest)
+Regression test for #915 - walk results shall be strings. ... ok
+test_chmod (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_chmod_no_followsymlinks (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... skipped 'follow_symlinks argument new in Python 3.10'
+test_cwd (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_expanduser_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_expanduser_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... skipped 'Windows specific test'
+test_home_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_home_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... skipped 'Windows specific test'
+test_is_dir (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_is_file (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_is_symlink (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_iterdir_and_glob_without_exe_permission (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_iterdir_impossible_without_read_permission (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_iterdir_in_unreadable_dir (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_lchmod (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_lstat_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_lstat_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... skipped 'Windows specific behavior'
+test_resolve (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_resolve_nonexisting_file (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_stat (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_init_collapse (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest)
+Tests for collapsing path during initialization. ... ok
+test_init_with_segments (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest)
+Basic initialization tests - taken from ... ok
+test_initialization_type (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest)
+Make sure tests for class type will work ... ok
+test_is_absolute_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest) ... ok
+test_is_absolute_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest) ... skipped 'Windows specific behavior'
+test_path_parts (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest) ... ok
+test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_glob (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_glob_case_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_glob_case_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'Windows specific test'
+test_hardlink_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'hardlink_to new in Python 3.10'
+test_is_junction (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'is_junction method new in Python 3.12'
+test_iterdir (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_link_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_mkdir (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_mkdir_exist_ok (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_mkdir_with_automount_drive (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'Windows specific behavior'
+test_mkdir_with_automount_unc_path (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'Windows specific behavior'
+test_open (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_read_bytes (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_read_text (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_read_text_with_encoding (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_readlink (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_rename (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_replace (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_rmdir (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_samefile (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_symlink_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_touch_existing (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_touch_non_existing (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_unlink (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_write_bytes (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_write_text (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_write_text_with_encoding (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_write_with_newline_arg (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'newline argument new in Python 3.10'
+test_abspath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_access (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_changed_owner_and_group (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_chdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_chmod (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_expanduser (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_getatime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_getctime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_getmtime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_getsize (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_isabs (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_isdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_isfile (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_isfile_not_readable (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_islink (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_ismount (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_join (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_lexists (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_link (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_listdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_makedirs (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_mkdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_normcase (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_normpath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_owner_and_group_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_owner_and_group_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_readlink (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_readlink_bytes (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_realpath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_relpath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_remove (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_rename (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_replace (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_rmdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_scandir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_split (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_splitdrive (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_stat (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_stat_follow_symlinks (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... skipped 'New in Python 3.10'
+test_symlink (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_truncate (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_utime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_walk (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest)
+Regression test for #915 - walk results shall be strings. ... ok
+test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_inode (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_is_link (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_isdir (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_isfile (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_non_existing_dir (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_path_like (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_path_links_not_resolved (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_paths (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_scandir_stat_nlink (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_scandir_with_fd (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_ino_dev (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_inode (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_is_link (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_isdir (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_isfile (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_non_existing_dir (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_path_like (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_path_links_not_resolved (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_paths (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_scandir_stat_nlink (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_scandir_with_fd (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_stat_ino_dev (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_stat_posix (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_stat_windows (pyfakefs.tests.fake_os_test.FakeScandirTest) ... skipped 'Windows specific behavior'
+test_chmod (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_chmod_no_followsymlinks (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'follow_symlinks argument new in Python 3.10'
+test_cwd (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_exists (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_expanduser_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_expanduser_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Windows specific test'
+test_home_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_home_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Windows specific test'
+test_is_dir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_is_file (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_is_symlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_iterdir_and_glob_without_exe_permission (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_iterdir_impossible_without_read_permission (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_iterdir_in_unreadable_dir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_lchmod (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_lstat_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_lstat_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Windows specific behavior'
+test_resolve (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_resolve_nonexisting_file (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_stat (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'Only tests fake FS'
+test_init_collapse (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest)
+Tests for collapsing path during initialization. ... skipped 'Only tests fake FS'
+test_init_with_segments (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest)
+Basic initialization tests - taken from ... skipped 'Only tests fake FS'
+test_initialization_type (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest)
+Make sure tests for class type will work ... skipped 'Only tests fake FS'
+test_is_absolute_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest) ... skipped 'Only tests fake FS'
+test_is_absolute_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest) ... skipped 'Windows specific behavior'
+test_path_parts (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest) ... skipped 'Only tests fake FS'
+test_abspath (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_access (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_changed_owner_and_group (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_chdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_chmod (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_exists (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_expanduser (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_getatime (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_getctime (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_getmtime (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_getsize (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_isabs (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_isdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_isfile (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_isfile_not_readable (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_islink (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_ismount (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_join (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_lexists (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_link (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_listdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_makedirs (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_mkdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_normcase (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_normpath (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_owner_and_group_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_owner_and_group_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_readlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_readlink_bytes (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_realpath (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_relpath (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_remove (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_rename (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_replace (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_rmdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_scandir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_split (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_splitdrive (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_stat (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_stat_follow_symlinks (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'New in Python 3.10'
+test_symlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_truncate (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_utime (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
+test_walk (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest)
+Regression test for #915 - walk results shall be strings. ... skipped 'Only tests fake FS'
+test_exists (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_glob (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_glob_case_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_glob_case_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Windows specific test'
+test_hardlink_to (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'hardlink_to new in Python 3.10'
+test_is_junction (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_iterdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_link_to (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_mkdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_mkdir_exist_ok (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_mkdir_with_automount_drive (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Windows specific behavior'
+test_mkdir_with_automount_unc_path (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Windows specific behavior'
+test_open (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_read_bytes (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_read_text (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_read_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_readlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_rename (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_replace (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_rmdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_samefile (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_symlink_to (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_touch_existing (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_touch_non_existing (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_unlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_write_bytes (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_write_text (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_write_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
+test_write_with_newline_arg (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'newline argument new in Python 3.10'
+test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_inode (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_is_link (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_isdir (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_isfile (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_non_existing_dir (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_path_like (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_path_links_not_resolved (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_paths (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_scandir_stat_nlink (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_scandir_with_fd (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_ino_dev (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2214 tests
+Ran 2562 tests
 
-OK (skipped=907, expected failures=2)
+OK (skipped=1060, expected failures=2)
 py$(PYV): commands[1]> python -m pyfakefs.tests.all_tests_without_extra_packages
 test_alt_sep (pyfakefs.tests.fake_filesystem_test.AlternativePathSeparatorTest) ... ok
 test_collapse_path_with_mixed_separators (pyfakefs.tests.fake_filesystem_test.AlternativePathSeparatorTest) ... ok
@@ -4432,6 +4794,7 @@ test_too_many_links (pyfakefs.tests.fake_open_test.ResolvePathTest) ... ok
 test_utime_link (pyfakefs.tests.fake_open_test.ResolvePathTest)
 os.utime() and os.stat() via symbolic link (issue #49) ... ok
 test_write_link_to_link (pyfakefs.tests.fake_open_test.ResolvePathTest) ... ok
+test_open_in_skipped_module (pyfakefs.tests.fake_open_test.SkipOpenTest) ... ok
 test_mkdtemp (pyfakefs.tests.fake_tempfile_test.FakeTempfileModuleTest) ... ok
 test_mkstemp (pyfakefs.tests.fake_tempfile_test.FakeTempfileModuleTest) ... ok
 test_mkstemp_dir (pyfakefs.tests.fake_tempfile_test.FakeTempfileModuleTest)
@@ -4658,6 +5021,10 @@ test_init_with_segments (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializat
 Basic initialization tests - taken from pathlib.Path ... skipped 'Windows specific behavior'
 test_is_absolute (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationWithDriveTest) ... skipped 'Windows specific behavior'
 test_path_parts (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationWithDriveTest) ... skipped 'Windows specific behavior'
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest)
+Verify faked pure POSIX paths use filesystem-independent separators. ... ok
+test_windows_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest)
+Verify faked pure Windows paths use filesystem-independent separators. ... ok
 test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
 test_glob (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
 test_glob_case_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
@@ -4860,11 +5227,368 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_walk (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... skipped 'Only tests fake FS'
+test_open_pathlib_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipOpenTest) ... ok
+test_pathlib2_warning (pyfakefs.tests.fake_legacy_modules_test.DeprecationWarningTest) ... skipped 'The pathlib2 package is not installed'
+test_scandir_warning (pyfakefs.tests.fake_legacy_modules_test.DeprecationWarningTest) ... skipped 'The scandir package is not installed'
+test_chmod (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_chmod_no_followsymlinks (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_cwd (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_exists (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_expanduser_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_expanduser_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_home_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_home_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_is_dir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_is_file (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_is_symlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_iterdir_and_glob_without_exe_permission (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_iterdir_impossible_without_read_permission (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_iterdir_in_unreadable_dir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_lchmod (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_lstat_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_lstat_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_resolve (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_resolve_nonexisting_file (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_stat (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_init_collapse (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest)
+Tests for collapsing path during initialization. ... skipped 'The pathlib2 package is not installed'
+test_init_with_segments (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest)
+Basic initialization tests - taken from ... skipped 'The pathlib2 package is not installed'
+test_initialization_type (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest)
+Make sure tests for class type will work ... skipped 'The pathlib2 package is not installed'
+test_is_absolute_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest) ... skipped 'The pathlib2 package is not installed'
+test_is_absolute_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest) ... skipped 'The pathlib2 package is not installed'
+test_path_parts (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2InitializationTest) ... skipped 'The pathlib2 package is not installed'
+test_exists (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_glob (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_glob_case_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_glob_case_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_hardlink_to (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_is_junction (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_iterdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_link_to (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir_exist_ok (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir_with_automount_drive (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir_with_automount_unc_path (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_open (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_read_bytes (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_read_text (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_read_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_readlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_rename (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_replace (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_rmdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_samefile (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_symlink_to (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_touch_existing (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_touch_non_existing (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_unlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_write_bytes (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_write_text (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_write_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_write_with_newline_arg (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2PathFileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_abspath (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_access (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_changed_owner_and_group (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_chdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_chmod (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_exists (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_expanduser (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_getatime (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_getctime (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_getmtime (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_getsize (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_isabs (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_isdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_isfile (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_isfile_not_readable (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_islink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_ismount (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_join (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_lexists (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_link (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_listdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_makedirs (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_normcase (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_normpath (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_owner_and_group_posix (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_owner_and_group_windows (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_readlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_readlink_bytes (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_realpath (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_relpath (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_remove (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_rename (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_replace (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_rmdir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_scandir (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_split (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_splitdrive (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_stat (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_stat_follow_symlinks (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_symlink (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_truncate (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_utime (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_walk (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2UsageInOsFunctionsTest)
+Regression test for #915 - walk results shall be strings. ... skipped 'The pathlib2 package is not installed'
+test_chmod (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_chmod_no_followsymlinks (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... skipped 'follow_symlinks argument new in Python 3.10'
+test_cwd (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_expanduser_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_expanduser_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... skipped 'Windows specific test'
+test_home_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_home_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... skipped 'Windows specific test'
+test_is_dir (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_is_file (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_is_symlink (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_iterdir_and_glob_without_exe_permission (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_iterdir_impossible_without_read_permission (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_iterdir_in_unreadable_dir (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_lchmod (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_lstat_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_lstat_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... skipped 'Windows specific behavior'
+test_resolve (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_resolve_nonexisting_file (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_stat (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest) ... ok
+test_init_collapse (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest)
+Tests for collapsing path during initialization. ... ok
+test_init_with_segments (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest)
+Basic initialization tests - taken from ... ok
+test_initialization_type (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest)
+Make sure tests for class type will work ... ok
+test_is_absolute_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest) ... ok
+test_is_absolute_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest) ... skipped 'Windows specific behavior'
+test_path_parts (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationTest) ... ok
+test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_glob (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_glob_case_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_glob_case_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'Windows specific test'
+test_hardlink_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'hardlink_to new in Python 3.10'
+test_is_junction (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'is_junction method new in Python 3.12'
+test_iterdir (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_link_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_mkdir (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_mkdir_exist_ok (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_mkdir_with_automount_drive (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'Windows specific behavior'
+test_mkdir_with_automount_unc_path (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'Windows specific behavior'
+test_open (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_read_bytes (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_read_text (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_read_text_with_encoding (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_readlink (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_rename (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_replace (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_rmdir (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_samefile (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_symlink_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_touch_existing (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_touch_non_existing (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_unlink (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_write_bytes (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_write_text (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_write_text_with_encoding (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
+test_write_with_newline_arg (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... skipped 'newline argument new in Python 3.10'
+test_abspath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_access (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_changed_owner_and_group (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_chdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_chmod (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_expanduser (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_getatime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_getctime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_getmtime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_getsize (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_isabs (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_isdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_isfile (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_isfile_not_readable (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_islink (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_ismount (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_join (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_lexists (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_link (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_listdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_makedirs (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_mkdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_normcase (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_normpath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_owner_and_group_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_owner_and_group_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_readlink (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_readlink_bytes (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_realpath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_relpath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_remove (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_rename (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_replace (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_rmdir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_scandir (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_split (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_splitdrive (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_stat (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_stat_follow_symlinks (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... skipped 'New in Python 3.10'
+test_symlink (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_truncate (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_utime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
+test_walk (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest)
+Regression test for #915 - walk results shall be strings. ... ok
+test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_inode (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_is_link (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_isdir (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_isfile (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_non_existing_dir (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_path_like (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_path_links_not_resolved (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_paths (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_scandir_stat_nlink (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_scandir_with_fd (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_ino_dev (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_inode (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_is_link (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_isdir (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_isfile (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_non_existing_dir (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_path_like (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_path_links_not_resolved (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_paths (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_scandir_stat_nlink (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_scandir_with_fd (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_stat_ino_dev (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_stat_posix (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
+test_stat_windows (pyfakefs.tests.fake_os_test.FakeScandirTest) ... skipped 'Windows specific behavior'
+test_chmod (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_chmod_no_followsymlinks (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_cwd (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_exists (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_expanduser_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_expanduser_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_home_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_home_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_is_dir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_is_file (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_is_symlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_iterdir_and_glob_without_exe_permission (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_iterdir_impossible_without_read_permission (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_iterdir_in_unreadable_dir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_lchmod (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_lstat_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_lstat_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_resolve (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_resolve_nonexisting_file (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_stat (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
+test_init_collapse (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest)
+Tests for collapsing path during initialization. ... skipped 'The pathlib2 package is not installed'
+test_init_with_segments (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest)
+Basic initialization tests - taken from ... skipped 'The pathlib2 package is not installed'
+test_initialization_type (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest)
+Make sure tests for class type will work ... skipped 'The pathlib2 package is not installed'
+test_is_absolute_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest) ... skipped 'The pathlib2 package is not installed'
+test_is_absolute_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest) ... skipped 'The pathlib2 package is not installed'
+test_path_parts (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2InitializationTest) ... skipped 'The pathlib2 package is not installed'
+test_abspath (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_access (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_changed_owner_and_group (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_chdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_chmod (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_exists (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_expanduser (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_getatime (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_getctime (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_getmtime (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_getsize (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_isabs (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_isdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_isfile (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_isfile_not_readable (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_islink (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_ismount (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_join (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_lexists (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_link (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_listdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_makedirs (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_normcase (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_normpath (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_owner_and_group_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_owner_and_group_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_readlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_readlink_bytes (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_realpath (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_relpath (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_remove (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_rename (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_replace (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_rmdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_scandir (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_split (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_splitdrive (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_stat (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_stat_follow_symlinks (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_symlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_truncate (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_utime (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest) ... skipped 'The pathlib2 package is not installed'
+test_walk (pyfakefs.tests.fake_legacy_modules_test.RealPathlib2UsageInOsFunctionsTest)
+Regression test for #915 - walk results shall be strings. ... skipped 'The pathlib2 package is not installed'
+test_exists (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_glob (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_glob_case_posix (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_glob_case_windows (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_hardlink_to (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_is_junction (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_iterdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_link_to (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir_exist_ok (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir_with_automount_drive (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_mkdir_with_automount_unc_path (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_open (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_read_bytes (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_read_text (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_read_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_readlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_rename (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_replace (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_rmdir (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_samefile (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_symlink_to (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_touch_existing (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_touch_non_existing (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_unlink (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_write_bytes (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_write_text (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_write_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_write_with_newline_arg (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_inode (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_is_link (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_isdir (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_isfile (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_non_existing_dir (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_path_like (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_path_links_not_resolved (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_paths (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_scandir_stat_nlink (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_scandir_with_fd (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_ino_dev (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2214 tests
+Ran 2562 tests
 
-OK (skipped=907, expected failures=2)
+OK (skipped=1150, expected failures=2)
 py$(PYV): commands[2]> python -m pytest pyfakefs/pytest_tests/pytest_plugin_test.py
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
