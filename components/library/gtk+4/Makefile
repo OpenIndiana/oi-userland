@@ -18,7 +18,7 @@ ENV= /usr/bin/env
 
 COMPONENT_NAME=		gtk4
 COMPONENT_VERSION=	4.10.5
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	GTK+4 - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=		gtk-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -51,7 +51,7 @@ CONFIGURE_OPTIONS += -Dwayland-backend=false
 COMPONENT_BUILD_ENV += CC=$(CC)
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# Add missing rpaths 
+# Add missing rpaths
 COMPONENT_POST_INSTALL_ACTION  = \
    /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(JPEG_LIBDIR)"' $(PROTO_DIR)/usr/bin/gtk4-encode-symbolic-svg ; \
    /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(JPEG_LIBDIR)"' $(PROTO_DIR)/usr/bin/gtk4-encode-symbolic-svg ; \
@@ -68,11 +68,23 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/OK/p" '
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
 
+# Tests are run using an X virtual framebuffer.
+COMPONENT_TEST_ENV= DISPLAY=:1
+
+COMPONENT_PRE_TEST_ACTION = \
+    $(SHELL) $(COMPONENT_DIR)/start_Xvfb $(COMPONENT_DIR)
+COMPONENT_POST_TEST_ACTION = \
+    $(SHELL) $(COMPONENT_DIR)/stop_Xvfb $(COMPONENT_DIR)
+
+# Test dependencies
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+
 # Build dependencies
 REQUIRED_PACKAGES += library/python/docutils
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
