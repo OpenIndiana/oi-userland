@@ -1,0 +1,91 @@
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3553
+
+--- gstreamer-1.24.3/libs/gst/helpers/ptp/ffi.rs.orig
++++ gstreamer-1.24.3/libs/gst/helpers/ptp/ffi.rs
+@@ -220,13 +220,25 @@
+     #[cfg(target_os = "linux")]
+     pub const AF_PACKET: c_int = 17;
+ 
+-    pub const IFF_UP: c_int = 0x1;
+-    pub const IFF_LOOPBACK: c_int = 0x8;
++    #[cfg(any(
++        target_os = "linux",
++        target_os = "freebsd",
++        target_os = "openbsd",
++        target_os = "netbsd",
++        target_os = "dragonfly",
++        target_os = "macos",
++    ))]
++    pub type ifa_flags = c_uint;
++    #[cfg(any(target_os = "solaris", target_os = "illumos"))]
++    pub type ifa_flags = u64;
++
++    pub const IFF_UP: ifa_flags = 0x1;
++    pub const IFF_LOOPBACK: ifa_flags = 0x8;
+ 
+     #[cfg(target_os = "linux")]
+-    pub const IFF_MULTICAST: c_int = 0x1000;
++    pub const IFF_MULTICAST: ifa_flags = 0x1000;
+     #[cfg(any(target_os = "solaris", target_os = "illumos"))]
+-    pub const IFF_MULTICAST: ::c_int = 0x0800;
++    pub const IFF_MULTICAST: ifa_flags = 0x0800;
+     #[cfg(any(
+         target_os = "freebsd",
+         target_os = "openbsd",
+@@ -234,7 +246,7 @@
+         target_os = "dragonfly",
+         target_os = "macos",
+     ))]
+-    pub const IFF_MULTICAST: c_int = 0x08000;
++    pub const IFF_MULTICAST: ifa_flags = 0x08000;
+ 
+     #[cfg(any(target_os = "solaris", target_os = "illumos"))]
+     pub const IF_NAMESIZE: usize = 32;
+@@ -342,7 +354,7 @@
+     pub struct ifaddrs {
+         pub ifa_next: *mut ifaddrs,
+         pub ifa_name: *mut c_char,
+-        pub ifa_flags: c_ulong,
++        pub ifa_flags: ifa_flags,
+         pub ifa_addr: *mut sockaddr,
+         pub ifa_netmask: *mut sockaddr,
+         pub ifa_dstaddr: *mut sockaddr,
+@@ -354,7 +366,7 @@
+     pub struct ifaddrs {
+         pub ifa_next: *mut ifaddrs,
+         pub ifa_name: *mut c_char,
+-        pub ifa_flags: c_uint,
++        pub ifa_flags: ifa_flags,
+         pub ifa_addr: *mut sockaddr,
+         pub ifa_netmask: *mut sockaddr,
+         pub ifa_ifu: *mut sockaddr,
+@@ -372,7 +384,7 @@
+     pub struct ifaddrs {
+         pub ifa_next: *mut ifaddrs,
+         pub ifa_name: *mut c_char,
+-        pub ifa_flags: c_uint,
++        pub ifa_flags: ifa_flags,
+         pub ifa_addr: *mut sockaddr,
+         pub ifa_netmask: *mut sockaddr,
+         pub ifa_dstaddr: *mut sockaddr,
+--- gstreamer-1.24.3/libs/gst/helpers/ptp/net.rs.orig
++++ gstreamer-1.24.3/libs/gst/helpers/ptp/net.rs
+@@ -116,15 +116,15 @@
+             // Skip loopback interfaces, interfaces that are not up and interfaces that can't do
+             // multicast. These are all unusable for PTP purposes.
+             let flags = ifaddr.ifa_flags;
+-            if flags & IFF_LOOPBACK as u32 != 0 {
++            if flags & IFF_LOOPBACK != 0 {
+                 debug!("Interface {} is loopback interface", name);
+                 continue;
+             }
+-            if flags & IFF_UP as u32 == 0 {
++            if flags & IFF_UP == 0 {
+                 debug!("Interface {} is not up", name);
+                 continue;
+             }
+-            if flags & IFF_MULTICAST as u32 == 0 {
++            if flags & IFF_MULTICAST == 0 {
+                 debug!("Interface {} does not support multicast", name);
+                 continue;
+             }
