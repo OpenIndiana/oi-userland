@@ -30,9 +30,9 @@ USE_COMMON_TEST_MASTER=	no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-HUMAN_VERSION=		2.12.6
+HUMAN_VERSION=		2.12.7
 COMPONENT_SUMMARY=	Libxml2 is the XML C parser and toolkit developed for the Gnome project
-COMPONENT_ARCHIVE_HASH=	sha256:889c593a881a3db5fdd96cc9318c87df34eb648edfc458272ad46fd607353fbb
+COMPONENT_ARCHIVE_HASH=	sha256:24ae78ff1363a973e6d8beba941a7945da2ac056e19b53956aeb6927fd6cfb56
 COMPONENT_FMRI=		library/libxml2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	MIT
@@ -102,8 +102,9 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/.*/d" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)/32
 REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
