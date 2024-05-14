@@ -30,14 +30,14 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
-COMPONENT_VERSION=      8.4.0
+COMPONENT_VERSION=      8.5.0
 COMPONENT_FMRI=         library/c++/harfbuzz
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/HarfBuzz/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:af4ea73e25ab748c8c063b78c2f88e48833db9b2ac369e29bd115702e789755e
+COMPONENT_ARCHIVE_HASH= sha256:77e4f7f98f3d86bf8788b53e6832fb96279956e1c3961988ea3d4b7ca41ddc27
 COMPONENT_ARCHIVE_URL=  https://github.com/harfbuzz/harfbuzz/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= COPYING
@@ -55,6 +55,7 @@ CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
 # Building benchmark fails:
 CONFIGURE_OPTIONS.64 += -Dbenchmark=disabled
 
+CXXFLAGS += -std=c++17
 LDFLAGS += -lm
 
 # Workaround for build failures due to pango Makefiles not passing CFLAGS or
