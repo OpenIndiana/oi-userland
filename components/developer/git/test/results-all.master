@@ -86,12 +86,13 @@ ok 84 - git commit-tree records the correct parent in a commit
 ok 85 - git commit-tree omits duplicated parent in a commit
 ok 86 - update-index D/F conflict
 ok 87 - very long name in the index handled sanely
-ok 88 - test_must_fail on a failing git command
-ok 89 - test_must_fail on a failing git command with env
-ok 90 - test_must_fail rejects a non-git command
-ok 91 - test_must_fail rejects a non-git command with env
-# passed all 91 test(s)
-1..91
+ok 88 - more update-index D/F conflicts
+ok 89 - test_must_fail on a failing git command
+ok 90 - test_must_fail on a failing git command with env
+ok 91 - test_must_fail rejects a non-git command
+ok 92 - test_must_fail rejects a non-git command with env
+# passed all 92 test(s)
+1..92
 *** t0001-init.sh ***
 ok 1 - plain
 ok 2 - plain nested in bare
@@ -3847,8 +3848,10 @@ ok 9 - safe.directory matches, but is reset
 ok 10 - safe.directory=*
 ok 11 - safe.directory=*, but is reset
 ok 12 - safe.directory in included file
-# passed all 12 test(s)
-1..12
+ok 13 - local clone of unowned repo refused in unsafe directory
+ok 14 - local clone of unowned repo accepted in safe directory
+# passed all 14 test(s)
+1..14
 *** t0034-root-safe-directory.sh ***
 1..0 # SKIP You must set env var GIT_TEST_ALLOW_SUDO=YES in order to run this test
 *** t0035-safe-bare-repository.sh ***
@@ -4244,8 +4247,9 @@ ok 215 - match .mailmap
 ok 216 # skip is_valid_path() on Windows (missing MINGW)
 ok 217 # skip RUNTIME_PREFIX works (missing RUNTIME_PREFIX of !VALGRIND,RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
 ok 218 # skip %(prefix)/ works (missing RUNTIME_PREFIX of !VALGRIND,RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
-# passed all 218 test(s)
-1..218
+ok 219 - do_files_match()
+# passed all 219 test(s)
+1..219
 *** t0061-run-command.sh ***
 ok 1 # skip subprocess inherits only std handles (missing MINGW)
 ok 2 - start_command reports ENOENT (slash)
@@ -4838,6 +4842,16 @@ ok 32 - lazy-fetch when accessing object not in the_repository
 # passed all 32 test(s)
 # SKIP no web server found at ''
 1..32
+*** t0411-clone-from-partial.sh ***
+ok 1 - create evil repo
+ok 2 - local clone must not fetch from promisor remote and execute script
+ok 3 - clone from file://... must not fetch from promisor remote and execute script
+ok 4 - fetch from file://... must not fetch from promisor remote and execute script
+ok 5 - pack-objects should fetch from promisor remote and execute script
+ok 6 - clone from promisor remote does not lazy-fetch by default
+ok 7 - promisor lazy-fetching can be re-enabled
+# passed all 7 test(s)
+1..7
 *** t0450-txt-doc-vs-help.sh ***
 ok 1 - setup: list of builtins
 ok 2 - list of txt and help mismatches is sorted
@@ -8186,8 +8200,10 @@ ok 91 - fsck error on gitattributes with excessive line lengths
 ok 92 - fsck error on gitattributes with excessive size
 ok 93 - fsck detects problems in worktree index
 ok 94 - fsck reports problems in current worktree index without filename
-# passed all 94 test(s)
-1..94
+ok 95 - fsck warning on symlink target with excessive length
+ok 96 - fsck warning on symlink target pointing inside git dir
+# passed all 96 test(s)
+1..96
 *** t1451-fsck-buffer.sh ***
 ok 1 - create valid objects
 ok 2 - reset input to empty
@@ -8933,8 +8949,9 @@ ok 14 # skip git hook run: stdout and stderr are connected to a TTY (missing TTY
 ok 15 # skip git commit: stdout and stderr are connected to a TTY (missing TTY)
 ok 16 - git hook run a hook with a bad shebang
 ok 17 - stdin to hooks
-# passed all 17 test(s)
-1..17
+ok 18 - clone protections
+# passed all 18 test(s)
+1..18
 *** t2000-conflict-when-checking-files-out.sh ***
 ok 1 - git update-index --add various paths.
 ok 2 - git checkout-index without -f should fail on conflicting work tree.
@@ -22445,9 +22462,10 @@ ok 182 - --negotiation-tip limits "have" lines sent
 ok 183 - --negotiation-tip understands globs
 ok 184 - --negotiation-tip understands abbreviated SHA-1
 ok 185 - --negotiation-tip rejects missing OIDs
-# passed all 185 test(s)
+ok 186 - clone does not get confused by a D/F conflict
+# passed all 186 test(s)
 # SKIP no web server found at ''
-1..185
+1..186
 *** t5511-refspec.sh ***
 ok 1 - push  (invalid)
 ok 2 - push :
@@ -23687,15 +23705,17 @@ ok 98 - shallow clone locally
 ok 99 - GIT_TRACE_PACKFILE produces a usable pack
 ok 100 - clone on case-insensitive fs
 ok 101 # skip colliding file detection (missing CASE_INSENSITIVE_FS)
-ok 102 - clone with GIT_DEFAULT_HASH
-ok 103 - partial clone
-ok 104 - partial clone with -o
-ok 105 - partial clone: warn if server does not support object filtering
-ok 106 - batch missing blob request during checkout
-ok 107 - batch missing blob request does not inadvertently try to fetch gitlinks
-# passed all 107 test(s)
+ok 102 # skip colliding symlink/directory keeps directory (missing CASE_INSENSITIVE_FS of CASE_INSENSITIVE_FS,SYMLINKS)
+ok 103 - clone with GIT_DEFAULT_HASH
+ok 104 - partial clone
+ok 105 - partial clone with -o
+ok 106 - partial clone: warn if server does not support object filtering
+ok 107 - batch missing blob request during checkout
+ok 108 - batch missing blob request does not inadvertently try to fetch gitlinks
+ok 109 - clone with init.templatedir runs hooks
+# passed all 109 test(s)
 # SKIP no web server found at ''
-1..107
+1..109
 *** t5602-clone-remote-exec.sh ***
 ok 1 - setup
 ok 2 - clone calls git upload-pack unqualified with no -u option
@@ -28488,8 +28508,9 @@ ok 117 - clone with multiple --recurse-submodules options
 ok 118 - clone and subsequent updates correctly auto-initialize submodules
 ok 119 - init properly sets the config
 ok 120 - recursive clone respects -q
-# passed all 120 test(s)
-1..120
+ok 121 - `submodule init` and `init.templateDir`
+# passed all 121 test(s)
+1..121
 *** t7401-submodule-summary.sh ***
 Initialized empty Git repository in $(@D)/t/trash directory.t7401-submodule-summary/sm1/.git/
 ok 1 - added submodule
@@ -28616,8 +28637,9 @@ ok 64 - submodule update --recursive skip submodules with strategy=none
 ok 65 - commit with staged submodule change
 ok 66 - commit with staged submodule change with ignoreSubmodules dirty
 ok 67 - commit with staged submodule change with ignoreSubmodules all
-# passed all 67 test(s)
-1..67
+ok 68 # skip submodule paths must not follow symlinks (missing CASE_INSENSITIVE_FS of CASE_INSENSITIVE_FS,SYMLINKS)
+# passed all 68 test(s)
+1..68
 *** t7407-submodule-foreach.sh ***
 ok 1 - setup a submodule tree
 ok 2 - test basic "submodule foreach" usage
@@ -28814,6 +28836,15 @@ ok 16 - git submodule status --cached --recursive
 ok 17 - git submodule --cached status --recursive
 # passed all 17 test(s)
 1..17
+*** t7423-submodule-symlinks.sh ***
+ok 1 - prepare
+ok 2 - git submodule update must not create submodule behind symlink
+ok 3 # skip git submodule update must not create submodule behind symlink on case insensitive fs (missing CASE_INSENSITIVE_FS of SYMLINKS,CASE_INSENSITIVE_FS)
+ok 4 - git restore --recurse-submodules must not be confused by a symlink
+ok 5 - git restore --recurse-submodules must not migrate git dir of symlinked repo
+ok 6 - git checkout -f --recurse-submodules must not migrate git dir of symlinked repo when removing submodule
+# passed all 6 test(s)
+1..6
 *** t7450-bad-git-dotfiles.sh ***
 ok 1 - setup
 ok 2 - check names
@@ -28860,9 +28891,12 @@ ok 42 - fsck detects symlinked mailmap (hfs)
 ok 43 - fsck detects non-blob .gitmodules
 ok 44 - fsck detects corrupt .gitmodules
 ok 45 # skip prevent git~1 squatting on Windows (missing WINDOWS)
-ok 46 - git dirs of sibling submodules must not be nested
-# passed all 46 test(s)
-1..46
+ok 46 - setup submodules with nested git dirs
+ok 47 - git dirs of sibling submodules must not be nested
+ok 48 - submodule git dir nesting detection must work with parallel cloning
+ok 49 - checkout -f --recurse-submodules must not use a nested gitdir
+# passed all 49 test(s)
+1..49
 *** t7500-commit-template-squash-signoff.sh ***
 ok 1 - a basic commit in an empty tree should succeed
 ok 2 - nonexistent template file should return error
@@ -33575,7 +33609,7 @@ missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS ADD_OUT AUTOIDENT BUILTIN_TXT_CHE
 failed test(s): t0211 t0600 t1404 t1700 t2501 t3404 t4150 t4202 t7609 t9001 t9118 t9210 t9902
 
 fixed   1
-success 29216
+success 29241
 failed  38
 broken  269
-total   30130
+total   30158
