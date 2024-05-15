@@ -25,11 +25,13 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
-OPENSSL_VERSION= 3.1
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
 COMPONENT_VERSION=	2.45.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_PROJECT_URL=	https://git-scm.com/
@@ -39,7 +41,8 @@ COMPONENT_ARCHIVE_HASH=	sha256:e64d340a8e627ae22cfb8bcc651cca0b497cf1e9fdf523735
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
-COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE=	GPL-2.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 #
 # man pages are a separate archive
@@ -50,14 +53,10 @@ COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT
 
 include $(WS_MAKE_RULES)/common.mk
 
-# With PATH.gnu gmake test gives a slightly better success rate:
+# https://www.illumos.org/issues/16566
 PATH= $(PATH.gnu)
 
-LDFLAGS += -lnsl -lsocket
-
-CONFIGURE_PREFIX= /usr
 CONFIGURE_OPTIONS += --with-libpcre2
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
 CONFIGURE_OPTIONS += --with-perl=$(PERL)
 CONFIGURE_OPTIONS += --with-python=$(PYTHON)
 CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
@@ -99,20 +98,21 @@ COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
 # many failures; keep going; later versions of git are much cleaner
 COMPONENT_TEST_ARGS += -k -i
-# If GITTEST_JOBS is set, then run the jobs in parallel (to that number)
+# Run tests in parallel by default
+GITTEST_JOBS ?= $(PARALLEL_JOBS)
 COMPONENT_TEST_ARGS += $(if $(GITTEST_JOBS),-j$(GITTEST_JOBS),)
 COMPONENT_TEST_TARGETS = test
 # Put each test result in a file; necessary if jobs run in parallel
 COMPONENT_TEST_TARGETS += GIT_TEST_OPTS=--tee
 COMPONENT_TEST_TARGETS += DEFAULT_TEST_TARGET=test-noclean
 # Compile the test results and put that into the test output file instead
-COMPONENT_POST_TEST_ACTION= \
+COMPONENT_POST_TEST_ACTION += \
 	(cd $(COMPONENT_TEST_DIR)/t/test-results; for i in *.out; do \
 		echo "*** $${i%.out}.sh ***"; \
 		cat $$i; \
 	done; \
 	cd ..; \
-	$(GMAKE) -s aggregate-results) &> $(COMPONENT_TEST_OUTPUT)
+	PATH="$(PATH)" $(GMAKE) -s aggregate-results) &> $(COMPONENT_TEST_OUTPUT) ;
 
 # These man pages come in a separate archive with no Makefile
 # and Solaris likes some of them moved around hence we'll just
@@ -160,12 +160,13 @@ TEST_REQUIRED_PACKAGES += developer/versioning/cvs
 TEST_REQUIRED_PACKAGES += system/library/iconv/extra
 TEST_REQUIRED_PACKAGES += system/library/iconv/unicode
 TEST_REQUIRED_PACKAGES += system/library/iconv/utf-8
-TEST_REQUIRED_PACKAGES += library/perl-5/cgi
-TEST_REQUIRED_PACKAGES += library/perl-5/dbi
-TEST_REQUIRED_PACKAGES += library/perl-5/dbd-sqlite
 TEST_REQUIRED_PACKAGES += library/perl-5/subversion
 TEST_REQUIRED_PACKAGES += locale/is
 TEST_REQUIRED_PACKAGES += locale/is-extra
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cgi
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/dbi
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/dbd-sqlite
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/html-parser
 
 # Needed to generate git-subtree documentation
 REQUIRED_PACKAGES += text/asciidoc
@@ -176,9 +177,9 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
