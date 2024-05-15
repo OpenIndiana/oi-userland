@@ -2,18 +2,18 @@
 Split the SUNWvbox.pkg rule into two so that files can be installed into
 the default layout without building the package file.
 
-diff -wpruN '--exclude=*.orig' a~/src/VBox/Installer/solaris/Makefile.kmk a/src/VBox/Installer/solaris/Makefile.kmk
+diff -wpruN --no-dereference '--exclude=*.orig' a~/src/VBox/Installer/solaris/Makefile.kmk a/src/VBox/Installer/solaris/Makefile.kmk
 --- a~/src/VBox/Installer/solaris/Makefile.kmk	1970-01-01 00:00:00
 +++ a/src/VBox/Installer/solaris/Makefile.kmk	1970-01-01 00:00:00
-@@ -553,7 +553,6 @@
+@@ -545,7 +545,6 @@ $(VBOX_PATH_SI_SCRATCH)/dist-copy.ts: \
  		$(VBOX_PATH_SOL_INST_SRC)/vbox.pkginfo \
  		$(VBOX_PATH_SOL_INST_SRC)/vbox-ips.mog \
  		\
 -		$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING),$(PATH_STAGE_BIN)/additions/VBoxGuestAdditions.iso,) \
- 		$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL), $(PATH_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2,) \
+ 		$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL), $(KBUILD_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2,) \
  		\
- 		$(if $(VBOX_OSE),,$(foreach arch, x86 amd64, $(foreach lib, libgcc_s.so.1 libstdc++.so.6, \
-@@ -614,8 +613,6 @@
+ 		$(foreach var, $(SOLARIS_FILE_LIST_VARS),$(foreach file, $($(var)), $($(var).SRC)/$(file))) \
+@@ -598,8 +597,6 @@ $(VBOX_PATH_SI_SCRATCH)/dist-copy.ts: \
  		"$($(var).SRC)/$(file)" "$($(var).DST)/$(file)")))
  
  # VirtualBox: Common files.
@@ -22,17 +22,17 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/Installer/solaris/Makefile.kmk a/src/
  	$(LN_SYMLINK) -f ./pkginstall.sh $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/ipsinstall.sh
  	$(SED) -e "s/_HARDENED_/$(if $(VBOX_WITH_HARDENED),hardened,)/" \
  		--output $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/vboxconfig.sh \
-@@ -631,9 +628,6 @@
- 	$(if-expr defined(VBOX_WITH_QTGUI) \
- 	,$(NLTAB)$(LN_SYMLINK) ../rdesktop-vrdp-keymaps/ $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/rdesktop-vrdp-keymaps,)
+@@ -613,9 +610,6 @@ $(VBOX_PATH_SI_SCRATCH)/dist-copy.ts: \
+ 	$(NLTAB)$(CHMOD) 0755 $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/vboxshell.py,)
  
+ # VirtualBox: Arch specific files.
 -	$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING) \
 -	,$(NLTAB)$(LN_SYMLINK) ../VBoxGuestAdditions.iso $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/,)
 -
  	$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL) \
- 	,$(INSTALL) -s -m 0644 $(PATH_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2 \
+ 	,$(INSTALL) -s -m 0644 $(KBUILD_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2 \
  		$(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/libSDL-1.2.so.0,)
-@@ -700,7 +694,7 @@
+@@ -678,7 +672,7 @@ $(VBOX_PATH_SI_SCRATCH)/dist-copy.ts: \
  # Creates the System V style installer package.
  #
  solaris-package:: $(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg

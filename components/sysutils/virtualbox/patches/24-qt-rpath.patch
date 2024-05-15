@@ -1,0 +1,29 @@
+UICommon.so needs the rpath for Qt5 libs too
+
+diff --git a/Config.kmk b/Config.kmk
+index 6aa250b..a975d62 100644
+--- a/Config.kmk
++++ b/Config.kmk
+@@ -7932,7 +7932,7 @@ ifdef VBOX_WITH_QTGUI
+        /usr/local/lib
+    endif
+    ifeq ($(KBUILD_TARGET),solaris)
+-    TEMPLATE_VBoxQtGuiExe_LDFLAGS.solaris = -Wl,-z,ignore # Same as VBOX_LD_as_needed.
++    TEMPLATE_VBoxQtGuiExe_LDFLAGS.solaris = -Wl,-z,ignore '$(VBOX_GCC_RPATH_OPT)$(VBOX_PATH_QT_LIB)' # Same as VBOX_LD_as_needed.
+     TEMPLATE_VBoxQtGuiExe_LIBS += \
+        rt socket nsl
+    endif
+diff --git a/configure b/configure
+index 777d862..4e3c970 100755
+--- a/configure
++++ b/configure
+@@ -1686,7 +1686,8 @@ EOF
+           # store only the first path, remove all other paths
+           # most likely pkg-config gave us -I/usr/include/qt5 -I/usr/include/qt5/QtCore
+           INCQT5=`echo "$INCQT5"|$KBUILD_SED 's|\([^ ]*\) .*|\1|'`
+-          cnf_append "VBOX_PATH_QT_LIB" "`strip_L "$LIBQT5"`"
++          # This is not quite right since the qt libpath does not have to be first but only one entry works...
++          cnf_append "VBOX_PATH_QT_LIB" '$'"(firstword `strip_L "$LIBQT5"`)"
+           cnf_append "PATH_SDK_QT5_INC" "$INCQT5"
+           # This is not quite right since the qt libpath does not have to be first...
+           cnf_append "PATH_SDK_QT5_LIB" '$'"(firstword `strip_L "$LIBQT5"`)"
