@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		coveralls
-HUMAN_VERSION =			4.0.0
-COMPONENT_SUMMARY =		coveralls - Show coverage stats online via coveralls.io
+HUMAN_VERSION =			4.0.1
+COMPONENT_SUMMARY =		Show coverage stats online via coveralls.io
 COMPONENT_PROJECT_URL =		http://github.com/TheKevJames/coveralls-python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9486f353176d309066053d38edbade3aad6346c5eb8a5edde7090d3116219414
+	sha256:7b2a0a2bcef94f295e3cf28dcc55ca40b71c77d1c2446b538e85f0f7bc21aa69
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
