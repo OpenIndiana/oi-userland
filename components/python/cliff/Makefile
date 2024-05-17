@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cliff
-HUMAN_VERSION =			4.6.0
-COMPONENT_SUMMARY =		cliff - Command Line Interface Formulation Framework
+HUMAN_VERSION =			4.7.0
+COMPONENT_SUMMARY =		Command Line Interface Formulation Framework
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/cliff/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2f38ce8bd1ea4958d66f15b066ac47e65d61f600b9319b921e12e9e9cbcd99d0
+	sha256:6ca45f8df519bbc0722c61049de7b7e442a465fa7f3f552b96d735fa26fd5b26
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -54,6 +54,7 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/autopage
 TEST_REQUIRED_PACKAGES.python += library/python/cmd2
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/fixtures
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/prettytable
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
