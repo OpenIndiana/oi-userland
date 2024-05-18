@@ -26,25 +26,22 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncftp
-COMPONENT_VERSION=	3.2.6
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=         network/ftp/ncftp
+COMPONENT_VERSION=	3.2.7
 COMPONENT_SUMMARY=      NcFTP - client application implementing FTP
-COMPONENT_CLASSIFICATION=Applications/Internet
-COMPONENT_PROJECT_URL=	http://www.ncftp.com/ncftp/
+COMPONENT_PROJECT_URL=	https://www.ncftp.com/ncftp/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:5f200687c05d0807690d9fb770327b226f02dd86155b49e750853fce4e31098d
-COMPONENT_ARCHIVE_URL=	ftp://ftp.ncftp.com/ncftp/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:d41c5c4d6614a8eae2ed4e4d7ada6b6d3afcc9fb65a4ed9b8711344bef24f7e8
+COMPONENT_ARCHIVE_URL=	https://www.ncftp.com/public_ftp/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         network/ftp/ncftp
+COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_LICENSE= Artistic
+COMPONENT_LICENSE_FILE=	doc/LICENSE.txt
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
@@ -53,12 +50,6 @@ CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR_$(BITS))
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:	$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
