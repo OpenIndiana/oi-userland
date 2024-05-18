@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         numpy
 COMPONENT_VERSION=      1.26.4
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=         library/python/numpy
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=      Fundamental package for scientific computing with Python
@@ -30,21 +31,19 @@ COMPONENT_PROJECT_URL=  https://numpy.org/
 COMPONENT_LICENSE=      NUMPY
 COMPONENT_LICENSE_FILE= LICENSE.txt
 
-# gmake test fails after writing the results file, but before it generates
-# the snapshot file.   These four tests fail:
-# FAILED numpy/core/tests/test_longdouble.py::test_repr_roundtrip - AssertionEr...
-# FAILED numpy/core/tests/test_print.py::TestCommaDecimalPointLocale::test_locale_longdouble
-# FAILED numpy/core/tests/test_scalarprint.py::TestRealScalars::test_dragon4_interface
-# FAILED numpy/core/tests/test_umath.py::TestSpecialFloats::test_exp2 - Asserti...
-TEST_TARGET= $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 LD_OPTIONS      += -lm
 
-CFLAGS+= -D_GLIBCXX_NO_C99_ROUNDING_FUNCS
-
-
 PYTHON_ENV +=   CC="$(CC) $(CC_BITS)"
+PYTHON_ENV +=   CXX="$(CXX) $(CC_BITS)"
+
+# reset COMPONENT_INSTALL_ARGS. numpy does not generate dynamicly generated
+# header/data files with --skip-build
+COMPONENT_INSTALL_ARGS =
+COMPONENT_INSTALL_ARGS +=       --root $(PROTO_DIR)
+COMPONENT_INSTALL_ARGS +=       --install-lib=$(PYTHON_LIB)
+COMPONENT_INSTALL_ARGS +=       --install-data=$(PYTHON_DATA)
+COMPONENT_INSTALL_ARGS +=       --force
 
 # .pyc files have to be recompiled after changing shebang path
 COMPONENT_POST_INSTALL_ACTION += \
@@ -58,14 +57,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -i 's/env\ python3/python$(PYTHON_VERSION)/' $$file ; \
 	done; \
 	$(PYTHON) -m compileall $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages
-
-COMPONENT_TEST_TRANSFORMS += \
-        '-nE -e "s/ ?=+ ?//g" ' \
-        '-e "s/ in [0-9]+(\.[0-9]*)?s.*//" ' \
-        '-e "s/[0-9]+ warnings/x warnings/g" ' \
-        '-e "/^FAILED/p" ' \
-        '-e "/^ERROR/p" ' \
-        '-e "/passed,/p"'
 
 # Build dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cython
