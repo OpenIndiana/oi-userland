@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_TEST_DIR = $(@D)/tests
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.18.26
+COMPONENT_VERSION=	9.18.27
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -37,7 +37,7 @@ COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain N
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:75ffee52731e9604c849b658df29e927f1c4f01d5a71ea3ebcbeb63702cb6651
+COMPONENT_ARCHIVE_HASH=	sha256:ea3f3d8cfa2f6ae78c8722751d008f54bc17a3aed2be3f7399eb7bf5f4cda8f1
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -121,6 +121,8 @@ PKG_HARDLINKS += usr/bin/named-checkzone
 REQUIRED_PACKAGES += library/cmocka
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/json-c
@@ -128,8 +130,6 @@ REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libuv
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nghttp2
-REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
