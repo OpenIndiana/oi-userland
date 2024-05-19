@@ -19,18 +19,18 @@
 
 BUILD_STYLE= cmake
 USE_PARALLEL_BUILD = yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	10.6.17
+COMPONENT_VERSION=	10.6.18
 COMPONENT_MAJOR_VERSION=$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:fb41b0702059c046832d60138733acb73e4c0e5a1a0681061709d25591e4b086
+COMPONENT_ARCHIVE_HASH=	sha256:6898a1111f47130709e28ba2c7bd1a57e4bb57101f6e109e597d51e6d385cf18
 COMPONENT_PROJECT_URL=	https://www.mariadb.org/
-COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/3713563/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
-#COMPONENT_SIG_URL=	https://dlm.mariadb.com/3588623/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
+# For the source files look at https://dlm.mariadb.com/browse/mariadb_server/163
+COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/3795487/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	https://dlm.mariadb.com/3795488/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
@@ -38,7 +38,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 MARIADBV = $(subst .,,$(COMPONENT_MAJOR_VERSION))
 
-JAVA_HOME=/usr/jdk/openjdk1.8.0
 AR=/usr/bin/gar
 RANLIB=/usr/bin/granlib
 PCRE_INCLUDE=/usr/include/pcre
@@ -142,6 +141,7 @@ TEST_REQUIRED_PACKAGES += library/perl-5/dbi
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
@@ -151,7 +151,6 @@ REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/security/cracklib
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
