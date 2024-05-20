@@ -16,32 +16,25 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gstreamer1
-COMPONENT_VERSION=      1.22.12
+COMPONENT_VERSION=	1.24.3
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC_NAME=		gstreamer
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ac352f3d02caa67f3b169daa9aa78b04dea0fc08a727de73cb28d89bd54c6f61
+COMPONENT_ARCHIVE_HASH=	sha256:1225ef4a329fae1cadc5ec727dab249ad567e8072879493561ceb91ed34aa414
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(PATH.gnu)
-
-CFLAGS += -I/usr/X11/include
-
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
 CONFIGURE_OPTIONS += -Dexamples=disabled
 CONFIGURE_OPTIONS += -Dintrospection=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
@@ -52,7 +45,14 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CC="$(CC)"
 
-# As test results keep only everything betweeni the lines containing Ok: and Timeout:
+# Install additional file
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) -D files/prof_attr $(PROTOETCSECDIR)/prof_attr.d/library-audio-gstreamer1
+
+# Testing fails without TZ set
+COMPONENT_TEST_ENV += TZ=UTC
+
+# As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/^Ok:/,/^Timeout:/p" '
@@ -64,8 +64,20 @@ REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 TEST_REQUIRED_PACKAGES += library/gmp
 TEST_REQUIRED_PACKAGES += developer/gsl
 
+# gst-devtools is optional testing dependency.  However, if it is available it
+# must be at the same major version as the main gstreamer package to run tests
+# successfully.
+GST_DEVTOOLS_VERSION = \
+	$(shell $(GMAKE) -f $(WS_COMPONENTS)/encumbered/gst-devtools1/Makefile print-value-COMPONENT_VERSION)
+ifeq ($(basename $(GST_DEVTOOLS_VERSION)),$(basename $(COMPONENT_VERSION)))
+TEST_REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
+else
+TEST_CONFLICTING_PACKAGES += library/audio/gstreamer1/devtools
+endif
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
