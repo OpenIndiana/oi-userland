@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project ansible-core
+#   $WS_TOOLS/python-integrate-project -d python/ansible-core ansible_core
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		ansible-core
-HUMAN_VERSION =			2.15.10
-COMPONENT_SUMMARY =		ansible-core - Radically simple IT automation
+COMPONENT_NAME =		ansible_core
+HUMAN_VERSION =			2.15.12
+COMPONENT_SUMMARY =		Radically simple IT automation
 COMPONENT_PROJECT_URL =		https://ansible.com/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:954dbe8e4e802a4dd5df0366193975b692a05806aa8d7358418a7e617346b20f
+	sha256:5fde82cd3928d9857ad880782c644f27d3168b0f25321d5a8d6befa524aa1818
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
