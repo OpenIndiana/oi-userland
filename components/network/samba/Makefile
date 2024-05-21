@@ -30,12 +30,12 @@ BUILD_STYLE =			waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_VERSION =		4.20.0
+COMPONENT_VERSION =		4.20.1
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:02672542510ac6e5d0c91c0c14d90ab4e6ec397c709e952c6da3a6e0b4d5a42f
+COMPONENT_ARCHIVE_HASH = 	sha256:f93c3af5295340d08106c7c0dcfb85e4f85057dfd14587aa8817beb31aff88f7
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI =		service/network/samba
@@ -58,7 +58,7 @@ PKG_OPTIONS +=		-I$(COMPONENT_DIR)
 # Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 
-CFLAGS +=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto
+CFLAGS +=	-std=c17 -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto -DHAVE_FREEBSD_SUNACL_H -DACE_INHERITED_ACE
 CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
 CPPFLAGS +=	-I/usr/include/openldap -I/usr/include/jansson
 
@@ -75,7 +75,6 @@ LDFLAGS +=     $(LD_SSP)
 LD_OPTIONS +=	-B direct
 
 # to avoid a clash with system gssapi.h (some declaration are not compatible)
-# and to work around cups-config (64bit vs 32bit)
 COMPONENT_POST_CONFIGURE_ACTION= ( \
 	$(RM) $(@D)/third_party/heimdal/lib/gssapi/gssapi.h; \
 	$(GSED) -i -e 's:/usr/lib/amd64:/usr/lib:' $(@D)/bin/c4che/default_cache.py; \
@@ -111,8 +110,8 @@ CONFIGURE_OPTIONS +=    --sharedstatedir=$(VARDIR)/samba/com
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS +=	--with-bind-dns-dir=$(CONFIGURE_PREFIX)/bind-dns
 
-CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl,vfs_zfsacl
-CONFIGURE_OPTIONS +=	--with-shared-modules=ALL,vfs_cacheprime
+CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl
+CONFIGURE_OPTIONS +=	--with-shared-modules=ALL,vfs_cacheprime,vfs_zfsacl,vfs_nfs4acl_xattr,vfs_acl_common
 CONFIGURE_OPTIONS +=	--with-acl-support
 CONFIGURE_OPTIONS +=	--with-ads
 CONFIGURE_OPTIONS +=	--with-winbind
@@ -145,6 +144,7 @@ REQUIRED_PACKAGES += library/python/markdown
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/file-monitor/gamin
@@ -154,7 +154,6 @@ REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
