@@ -19,15 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		domdf_python_tools
-HUMAN_VERSION =			3.8.0.post2
-COMPONENT_SUMMARY =		domdf_python_tools - Helpful functions for Python
+HUMAN_VERSION =			3.8.1
+COMPONENT_SUMMARY =		Helpful functions for Python
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/domdf_python_tools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a1fd255ea29f767b08de462d2da39d360262304389227d980bc307ee8aa3366a
+	sha256:f45e34cf4d3363af59c32da28a9de9480ed916eff06bd0cf9a1644b6b460fb88
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+TEST_STYLE = setup.py
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
