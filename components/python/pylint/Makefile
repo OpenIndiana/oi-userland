@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pylint
-HUMAN_VERSION =			3.0.3
-COMPONENT_SUMMARY =		pylint - python code static checker
+HUMAN_VERSION =			3.2.2
+COMPONENT_SUMMARY =		python code static checker
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pylint-dev/pylint/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2880998fc9f3a53fab8989f373faba3f47a3097df0ff2e201ec286bdef0c3aa5
+	sha256:04083d8df982caf984e1a9908ced17abc0005a1cd51b1ac568fac1ac22473ad6
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,6 +32,27 @@ COMPONENT_LICENSE_FILE =	LICENSE
 COMPONENT_FMRI.pylint-meta =		developer/python/pylint
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Some tests are failing when run under pytest 8 so we simply remove them.
+# https://github.com/pylint-dev/pylint/issues/9477
+# https://github.com/pylint-dev/pylint/pull/9576
+COMPONENT_PREP_ACTION += \
+	for t in \
+		i/inconsistent/inconsistent_returns \
+		i/invalid/invalid_all/invalid_all_format_valid_5 \
+		i/invalid/invalid_all/invalid_all_format_valid_6 \
+		n/no/no_name_in_module \
+		r/recursion/recursion_error_3159 \
+		r/regression/regression_4680 \
+		u/unreachable \
+		u/undefined/undefined_variable_typing \
+		u/unused/unused_import_assigned_to \
+		u/use/use_yield_from \
+		u/used/used_before_assignment \
+		u/used/used_before_assignment_else_return \
+	; do \
+		$(RM) -r $(SOURCE_DIR)/tests/functional/$${t}.* ; \
+	done ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/astroid
