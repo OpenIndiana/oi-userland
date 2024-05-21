@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-perf
+#   $WS_TOOLS/python-integrate-project -d python/pytest-perf pytest_perf
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-perf
-HUMAN_VERSION =			0.14.0
-COMPONENT_SUMMARY =		pytest-perf - Run performance tests against the mainline code.
+COMPONENT_NAME =		pytest_perf
+HUMAN_VERSION =			0.15.0
+COMPONENT_SUMMARY =		Run performance tests against the mainline code.
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-perf
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/83/a7/12fd7c5a21e45c5afa13a174755cc76a0e4ae97f915f4dc01c56b8d3a98a/pytest-perf-0.14.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c8732821e3c2458d116539ab620836aa097c337c2b4c18206719d91e138a006d
+	sha256:900fe2ed9f74b25a5401210fb9a010010b3db945244951a4e878e745c9bc32d2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
