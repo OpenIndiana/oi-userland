@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt_rust
-HUMAN_VERSION =			1.1.1
+HUMAN_VERSION =			1.1.3
 COMPONENT_SUMMARY =		Format your pyproject.toml file
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eb80bf9c42858acfcf9fd06f9f3b1ed2382f0355a5eb6e85f5d7436a8747eaeb
+	sha256:5b8874b2f79eab2556202f3e5f621025b3867aa1a704fabefefac48ad7a12485
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
