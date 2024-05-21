@@ -446,7 +446,7 @@ CONFIGURE_64 =		$(BUILD_DIR_64)/.configured
 # not the case.  So by default we do not run parallel build and allow
 # components to opt-in for parallel build by setting USE_PARALLEL_BUILD = yes
 # before the shared-macros.mk file is included.
-PARALLEL_JOBS ?= 8
+PARALLEL_JOBS ?= $(shell /usr/sbin/psrinfo -t -c)
 ifeq ($(strip $(USE_PARALLEL_BUILD)),yes)
 COMPONENT_BUILD_GMAKE_ARGS += -j$(PARALLEL_JOBS)
 COMPONENT_BUILD_SETUP_PY_ARGS += -j$(PARALLEL_JOBS)
