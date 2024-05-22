@@ -1115,6 +1115,7 @@ DOS2UNIX =	/usr/bin/dos2unix
 TAC =		/usr/bin/tac
 QUILT =		/usr/bin/quilt
 CTFCONVERT =	/opt/onbld/bin/$(MACH)/ctfconvert
+ELFEDIT =	/usr/bin/elfedit
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
