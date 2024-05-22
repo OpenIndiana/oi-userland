@@ -22,11 +22,11 @@ BUILD_BITS= 64
 # and thus, it doesn't find anything else than the default which is 1.0 at the moment.
 USE_OPENSSL10= yes
 include ../../../make-rules/shared-macros.mk
-GCC_VERSION= 12
+GCC_VERSION= 13
 gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      6.1.48
+COMPONENT_VERSION=      7.0.18
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
@@ -186,9 +186,6 @@ CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(FLAVOUR))
 
 VBOX_PREFIX   = /opt/VirtualBox
-VBOX_LIBDIR   = $(VBOX_PREFIX)/$(MACH64)
-VBOX_QT5_LIBS = VirtualBoxVM.so VBoxDbg.so UICommon.so
-VBOX_QT5_RPATH= $(VBOX_LIBDIR):$(GCC_LIBDIR):$(QT5_ROOT)/lib/$(MACH64)
 
 # As IPS is "no scripting land", user has to install the VNC extension Pack manually:
 # https://www.virtualbox.org/manual/UserManual.html#otherextpacks.
@@ -198,13 +195,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 	mkdir -p $(PROTO_DIR)$(VBOX_PREFIX)/ExtensionPacks/; \
 	install -m 644 VNC-*.vbox-extpack $(PROTO_DIR)$(VBOX_PREFIX)/ExtensionPacks/VNC-$(COMPONENT_VERSION).vbox-extpack; \
 	popd; \
-	for file in $(VBOX_QT5_LIBS); \
-	do \
-		/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(VBOX_QT5_RPATH)"' $(PROTO_DIR)$(VBOX_LIBDIR)/$$file; \
-		/usr/bin/elfedit -e 'dyn:value -s RPATH   "$(VBOX_QT5_RPATH)"' $(PROTO_DIR)$(VBOX_LIBDIR)/$$file; \
-	done; \
-	/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(VBOX_QT5_RPATH)"' $(PROTO_DIR)$(VBOX_PREFIX)/$(MACH64)/VirtualBox; \
-	/usr/bin/elfedit -e 'dyn:value -s RPATH   "$(VBOX_QT5_RPATH)"' $(PROTO_DIR)$(VBOX_PREFIX)/$(MACH64)/VirtualBox; \
 	echo "$(COMPONENT_VERSION)" > $(PROTO_DIR)$(VBOX_PREFIX)/VERSION
 
 $(INSTALL_ADDITIONS):	$(INSTALL_64)

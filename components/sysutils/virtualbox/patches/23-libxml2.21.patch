@@ -1,19 +1,6 @@
 with this patch it is possible to compile Vbox on libxml-2.12
 
 diff --git a/src/VBox/Runtime/r3/xml.cpp b/src/VBox/Runtime/r3/xml.cpp
-index 7b3317d..8e1ac5f 100644
---- a/src/VBox/Runtime/r3/xml.cpp
-+++ b/src/VBox/Runtime/r3/xml.cpp
-@@ -1837,7 +1837,7 @@ static void xmlParserBaseGenericError(void *pCtx, const char *pszMsg, ...)
-     va_end(args);
- }
- 
--static void xmlParserBaseStructuredError(void *pCtx, xmlErrorPtr error)
-+static void xmlParserBaseStructuredError(void *pCtx, const xmlError *error)
- {
-     NOREF(pCtx);
-     /* we expect that there is always a trailing NL */
-diff --git a/src/VBox/Runtime/r3/xml.cpp b/src/VBox/Runtime/r3/xml.cpp
 index 8e1ac5f..20f36d7 100644
 --- a/src/VBox/Runtime/r3/xml.cpp
 +++ b/src/VBox/Runtime/r3/xml.cpp
