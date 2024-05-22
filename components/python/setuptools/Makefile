@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			69.5.1
-COMPONENT_SUMMARY =		setuptools - Easily download, build, install, upgrade, and uninstall Python packages
+HUMAN_VERSION =			70.0.0
+COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_PROJECT_URL =		https://github.com/pypa/setuptools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6c1fccdac05a97e598fb0ae3bbed5904ccb317337a51139dcd51453611bbb987
+	sha256:f211a66637b8fa059bb28183da127d4e86396c991a942b028c6650d4319c3fd0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -60,12 +60,14 @@ TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pip
+TEST_REQUIRED_PACKAGES.python += library/python/pyproject-hooks
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-home
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-subprocess
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/tomli
