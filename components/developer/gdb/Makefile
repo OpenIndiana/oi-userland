@@ -34,14 +34,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdb
-COMPONENT_VERSION=      13.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      14.2
+COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7ead13d9e19fa0c57bb19104e1a5f67eefa9fc79f2e6360de491e8fddeda1e30
+	sha256:2de5174762e959a5e529e20c20d88a04735469d8fffd98f61664e70b341dc47c
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gdb/
 COMPONENT_FMRI= developer/debug/gdb
@@ -207,6 +207,7 @@ REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += developer/babeltrace
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/libxxhash
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
