@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		salt
-HUMAN_VERSION =			3007.0
-COMPONENT_SUMMARY =		salt - Portable, distributed, remote execution and configuration management system
+HUMAN_VERSION =			3007.1
+COMPONENT_SUMMARY =		Portable, distributed, remote execution and configuration management system
 COMPONENT_PROJECT_URL =		https://saltproject.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:41bf84e71fc655bf8a4b52eb440d0621ae961096a086d20e132e1512e2eddff8
+	sha256:b933ac4cb3e4b1118b46dada55c9cc6bdc6f0f94b4c92877aec44b25c6a28c9a
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
