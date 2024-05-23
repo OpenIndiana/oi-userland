@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		autopep8
-HUMAN_VERSION =			2.1.0
-COMPONENT_SUMMARY =		autopep8 - A tool that automatically formats Python code to conform to the PEP 8 style guide
+HUMAN_VERSION =			2.1.1
+COMPONENT_SUMMARY =		A tool that automatically formats Python code to conform to the PEP 8 style guide
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1fa8964e4618929488f4ec36795c7ff12924a68b8bf01366c094fc52f770b6e7
+	sha256:bc9b267f14d358a9af574b95e95a661681c60a275ffce419ba5fb4eae9920bcc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -30,6 +30,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Normalize random temporary directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(/autopep8test\)......../|\1XXXXXXXX/|'"
+# Normalize random temporary file name
+COMPONENT_TEST_TRANSFORMS += "-e 's|^/tmp/.\{11\}\.py|/tmp/XXXXXXXXXXX.py|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pycodestyle

@@ -593,5 +593,24 @@ OK (skipped=2)
 read config path: /dev/null
 read config path: $(@D)/test/fake_configuration/.pep8
 enable config: section=pep8, key=indent-size, value=2
+py$(PYV): commands[1]> python test/acid.py --aggressive test/example.py
+--->  Testing with $(@D)/test/example.py
+$(@D)/.tox/py$(PYV)/bin/python $(@D)/autopep8.py --max-line-length=79 --ignore= $(@D)/test/example.py --aggressive
+py$(PYV): commands[2]> python test/acid.py --compare-bytecode test/example.py
+--->  Testing with $(@D)/test/example.py
+$(@D)/.tox/py$(PYV)/bin/python $(@D)/autopep8.py --max-line-length=79 --ignore=E71,E721,W $(@D)/test/example.py
+/tmp/XXXXXXXXXXX.py:70:1: E704 multiple statements on one line (def)
+def func_oneline(): print(1)
+^
+/tmp/XXXXXXXXXXX.py:182:1: E101 indentation contains mixed spaces and tabs
+	print('abc')
+^
+/tmp/XXXXXXXXXXX.py:184:2: E101 indentation contains mixed spaces and tabs
+	    print('hello')
+	^
+/tmp/XXXXXXXXXXX.py:188:1: E101 indentation contains mixed spaces and tabs
+    func_last()
+^
+autopep8 did not completely fix $(@D)/test/example.py
   py$(PYV): OK
   congratulations :)
