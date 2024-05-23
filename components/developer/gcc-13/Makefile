@@ -14,13 +14,12 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_VERSION= 13.2.0
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 13.3.0
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:80821c441131ed24ed44a1bc4cc7ad3a636636e8e82cf97987b210de3d2ae9e4
+  sha256:bdc80b99f448888bbf33d0432039391634a7210e7c6d014658856ded0347c731
 
 MPFR_VERSION=4.2.1
 MPFR_ARCHIVE_HASH= \
@@ -36,8 +35,8 @@ GMP_ARCHIVE_HASH= \
 
 include $(WS_MAKE_RULES)/gcc-component.mk
 
-CC=/usr/gcc/12/bin/gcc
-CXX=/usr/gcc/12/bin/g++
+CC=/usr/gcc/13/bin/gcc
+CXX=/usr/gcc/13/bin/g++
 
 CPPFLAGS+=" -D_TS_ERRNO"
 LDFLAGS="-R$OPT/lib"
