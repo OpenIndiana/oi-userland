@@ -1,0 +1,19 @@
+--- VirtualBox-7.0.18/configure.orig
++++ VirtualBox-7.0.18/configure
+@@ -892,6 +892,7 @@
+       if test_execute nofatal; then
+         cnf_append "SDK_VBoxOpenSslStatic_INCS" "`strip_I "$INCCRYPTO"`"
+         cnf_append "SDK_VBoxOpenSslStatic_LIBS" "`strip_l "$LIBCRYPTO"`"
++        cnf_append "SDK_VBoxOpenSslStatic_LIBPATH" "`strip_L "$LIBCRYPTO"`"
+         cnf_append "SDK_VBoxOpenSslBldProg_LIBS" "`strip_l "$LIBCRYPTO"`"
+       fi
+     fi
+@@ -2666,6 +2667,8 @@
+       [ "$OS" = "darwin" ] && LIBCRYPTO="$LIBCRYPTO ${OPENSSLDIR}/lib/libz.a"
+       # On Linux static OpenSSL typically needs a few additional libraries.
+       [ "$OS" = "linux" ] && LIBCRYPTO="-ldl $LIBPTHREAD -lm"
++      # Use dynamic openssl libs for OpenIndiana
++      [ "$OS" = "solaris" ] && LIBCRYPTO="-L${OPENSSLDIR}/lib/amd64 -lssl -lcrypto"
+       ;;
+     --with-ow-dir=*)
+       WATCOM=`echo $option | cut -d'=' -f2`

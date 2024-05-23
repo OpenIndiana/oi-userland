@@ -2,10 +2,9 @@
 Split the SUNWvbox.pkg rule into two so that files can be installed into
 the default layout without building the package file.
 
-diff -wpruN --no-dereference '--exclude=*.orig' a~/src/VBox/Installer/solaris/Makefile.kmk a/src/VBox/Installer/solaris/Makefile.kmk
---- a~/src/VBox/Installer/solaris/Makefile.kmk	1970-01-01 00:00:00
-+++ a/src/VBox/Installer/solaris/Makefile.kmk	1970-01-01 00:00:00
-@@ -545,7 +545,6 @@ $(VBOX_PATH_SI_SCRATCH)/dist-copy.ts: \
+--- VirtualBox-7.0.18/src/VBox/Installer/solaris/Makefile.kmk.orig
++++ VirtualBox-7.0.18/src/VBox/Installer/solaris/Makefile.kmk
+@@ -545,7 +545,6 @@
  		$(VBOX_PATH_SOL_INST_SRC)/vbox.pkginfo \
  		$(VBOX_PATH_SOL_INST_SRC)/vbox-ips.mog \
  		\
@@ -13,7 +12,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/src/VBox/Installer/solaris/Ma
  		$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL), $(KBUILD_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2,) \
  		\
  		$(foreach var, $(SOLARIS_FILE_LIST_VARS),$(foreach file, $($(var)), $($(var).SRC)/$(file))) \
-@@ -598,8 +597,6 @@ $(VBOX_PATH_SI_SCRATCH)/dist-copy.ts: \
+@@ -598,8 +597,6 @@
  		"$($(var).SRC)/$(file)" "$($(var).DST)/$(file)")))
  
  # VirtualBox: Common files.
@@ -22,7 +21,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/src/VBox/Installer/solaris/Ma
  	$(LN_SYMLINK) -f ./pkginstall.sh $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/ipsinstall.sh
  	$(SED) -e "s/_HARDENED_/$(if $(VBOX_WITH_HARDENED),hardened,)/" \
  		--output $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/vboxconfig.sh \
-@@ -613,9 +610,6 @@ $(VBOX_PATH_SI_SCRATCH)/dist-copy.ts: \
+@@ -613,9 +610,6 @@
  	$(NLTAB)$(CHMOD) 0755 $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/vboxshell.py,)
  
  # VirtualBox: Arch specific files.
@@ -32,7 +31,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/src/VBox/Installer/solaris/Ma
  	$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL) \
  	,$(INSTALL) -s -m 0644 $(KBUILD_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2 \
  		$(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/libSDL-1.2.so.0,)
-@@ -678,7 +672,7 @@ $(VBOX_PATH_SI_SCRATCH)/dist-copy.ts: \
+@@ -678,7 +672,7 @@
  # Creates the System V style installer package.
  #
  solaris-package:: $(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg

@@ -1,6 +1,6 @@
---- VirtualBox-5.2.22/src/VBox/Installer/solaris/smf-vboxballoonctrl.sh.1	2018-12-10 09:54:40.286527019 +0000
-+++ VirtualBox-5.2.22/src/VBox/Installer/solaris/smf-vboxballoonctrl.sh	2018-12-10 09:56:21.557797022 +0000
-@@ -23,15 +23,17 @@
+--- VirtualBox-7.0.18/src/VBox/Installer/solaris/smf-vboxballoonctrl.sh.orig
++++ VirtualBox-7.0.18/src/VBox/Installer/solaris/smf-vboxballoonctrl.sh
+@@ -33,15 +33,17 @@
  VW_OPT="$1"
  VW_EXIT=0
  
@@ -22,7 +22,7 @@
              return $SMF_EXIT_ERR_CONFIG
          fi
  
-@@ -91,7 +93,7 @@
+@@ -101,7 +103,7 @@
          [ -n "$VBOXWATCHDOG_LOGSIZE" ]      && PARAMS="$PARAMS -S \"$VBOXWATCHDOG_LOGSIZE\""
          [ -n "$VBOXWATCHDOG_LOGINTERVAL" ]  && PARAMS="$PARAMS -I \"$VBOXWATCHDOG_LOGINTERVAL\""
  
@@ -31,9 +31,9 @@
  
          VW_EXIT=$?
          if [ $VW_EXIT != 0 ]; then
---- VirtualBox-6.0.6/src/VBox/Installer/solaris/smf-vboxautostart.sh	2019-04-16 12:16:47.000000000 +0000
-+++ VirtualBox-6.0.6/src/VBox/Installer/solaris/smf-vboxautostart.sh.new	2019-04-28 13:57:00.266238704 +0000
-@@ -23,15 +23,17 @@
+--- VirtualBox-7.0.18/src/VBox/Installer/solaris/smf-vboxautostart.sh.orig
++++ VirtualBox-7.0.18/src/VBox/Installer/solaris/smf-vboxautostart.sh
+@@ -33,15 +33,17 @@
  VW_OPT="$1"
  VW_EXIT=0
  
@@ -55,7 +55,7 @@
              return $SMF_EXIT_ERR_CONFIG
          fi
  
-@@ -57,7 +59,7 @@ case $VW_OPT in
+@@ -67,7 +69,7 @@
          # Get all users
          for VW_USER in `logins -g $VW_VBOXGROUP | cut -d' ' -f1`
          do
@@ -64,7 +64,7 @@
  
              VW_EXIT=$?
              if [ $VW_EXIT != 0 ]; then
-@@ -68,13 +70,13 @@ case $VW_OPT in
+@@ -78,13 +80,13 @@
          done
      ;;
      stop)
@@ -82,7 +82,7 @@
              return $SMF_EXIT_ERR_CONFIG
          fi
  
-@@ -100,7 +102,7 @@ case $VW_OPT in
+@@ -110,7 +112,7 @@
          # Get all users
          for VW_USER in `logins -g $VW_VBOXGROUP | cut -d' ' -f1`
          do
@@ -91,9 +91,9 @@
  
              VW_EXIT=$?
              if [ $VW_EXIT != 0 ]; then
---- VirtualBox-6.0.6/src/VBox/Installer/solaris/smf-vboxwebsrv.sh	2019-04-16 12:16:47.000000000 +0000
-+++ VirtualBox-6.0.6/src/VBox/Installer/solaris/smf-vboxwebsrv.sh.new	2019-04-28 14:07:30.052760659 +0000
-@@ -23,15 +23,17 @@
+--- VirtualBox-7.0.18/src/VBox/Installer/solaris/smf-vboxwebsrv.sh.orig
++++ VirtualBox-7.0.18/src/VBox/Installer/solaris/smf-vboxwebsrv.sh
+@@ -33,15 +33,17 @@
  VW_OPT="$1"
  VW_EXIT=0
  
@@ -115,7 +115,7 @@
              return $SMF_EXIT_ERR_CONFIG
          fi
  
-@@ -102,19 +104,19 @@ case $VW_OPT in
+@@ -112,19 +114,19 @@
  
          # Set authentication method + password hash
          if [ -n "$VW_AUTH_LIBRARY" ]; then

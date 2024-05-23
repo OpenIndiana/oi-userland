@@ -1,10 +1,8 @@
 with this patch it is possible to compile Vbox on libxml-2.12
 
-diff --git a/src/VBox/Runtime/r3/xml.cpp b/src/VBox/Runtime/r3/xml.cpp
-index 8e1ac5f..20f36d7 100644
---- a/src/VBox/Runtime/r3/xml.cpp
-+++ b/src/VBox/Runtime/r3/xml.cpp
-@@ -117,7 +117,7 @@ LogicError::LogicError(RT_SRC_POS_DECL)
+--- VirtualBox-7.0.18/src/VBox/Runtime/r3/xml.cpp.orig
++++ VirtualBox-7.0.18/src/VBox/Runtime/r3/xml.cpp
+@@ -131,7 +131,7 @@
      RTStrFree(msg);
  }
  
@@ -13,7 +11,7 @@ index 8e1ac5f..20f36d7 100644
  {
      if (!aErr)
          throw EInvalidArg(RT_SRC_POS);
-@@ -131,7 +131,7 @@ XmlError::XmlError(xmlErrorPtr aErr)
+@@ -145,7 +145,7 @@
   * Composes a single message for the given error. The caller must free the
   * returned string using RTStrFree() when no more necessary.
   */
@@ -22,11 +20,9 @@ index 8e1ac5f..20f36d7 100644
  {
      const char *msg = aErr->message ? aErr->message : "<none>";
      size_t msgLen = strlen(msg);
-diff --git a/include/iprt/cpp/xml.h b/include/iprt/cpp/xml.h
-index be6b7c0..900cd73 100644
---- a/include/iprt/cpp/xml.h
-+++ b/include/iprt/cpp/xml.h
-@@ -100,9 +100,9 @@ public:
+--- VirtualBox-7.0.18/include/iprt/cpp/xml.h.orig
++++ VirtualBox-7.0.18/include/iprt/cpp/xml.h
+@@ -113,9 +113,9 @@
  class RT_DECL_CLASS XmlError : public RuntimeError
  {
  public:

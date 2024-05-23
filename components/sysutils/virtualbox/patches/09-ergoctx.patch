@@ -1,8 +1,6 @@
-diff --git a/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c b/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c
-index e8dd270..790fce5 100644
---- a/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c
-+++ b/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c
-@@ -68,6 +68,7 @@ bool                            g_frtSolOldIPIUlong = false;
+--- VirtualBox-7.0.18/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c.orig
++++ VirtualBox-7.0.18/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c
+@@ -78,6 +78,7 @@
  RTR0FNSOLXCCALL                 g_rtSolXcCall;
  /** Whether to use the old-style installctx()/removectx() routines. */
  bool                            g_frtSolOldThreadCtx = false;
@@ -10,7 +8,7 @@ index e8dd270..790fce5 100644
  /** The thread-context hooks callout table structure. */
  RTR0FNSOLTHREADCTX              g_rtSolThreadCtx;
  /** Thread preemption offset in the thread structure. */
-@@ -212,18 +213,6 @@ DECLHIDDEN(int) rtR0InitNative(void)
+@@ -222,18 +223,6 @@
          /*
           * Mandatory: Thread-context hooks.
           */
@@ -29,11 +27,9 @@ index e8dd270..790fce5 100644
  
          /*
           * Mandatory: map_addr() hooks.
-diff --git a/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h b/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h
-index 4a69c97..8a07dfb 100644
---- a/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h
-+++ b/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h
-@@ -163,6 +163,15 @@ typedef struct RTR0FNSOLTHREADCTX
+--- VirtualBox-7.0.18/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h.orig
++++ VirtualBox-7.0.18/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h
+@@ -173,6 +173,15 @@
  {
      union
      {
@@ -49,7 +45,7 @@ index 4a69c97..8a07dfb 100644
          void *(*pfnSol_installctx)        (kthread_t *pThread, void *pvArg,
                                             void (*pfnSave)(void *pvArg),
                                             void (*pfnRestore)(void *pvArg),
-@@ -181,6 +190,14 @@ typedef struct RTR0FNSOLTHREADCTX
+@@ -191,6 +200,14 @@
  
      union
      {
@@ -64,7 +60,7 @@ index 4a69c97..8a07dfb 100644
          int (*pfnSol_removectx)           (kthread_t *pThread, void *pvArg,
                                             void (*pfnSave)(void *pvArg),
                                             void (*pfnRestore)(void *pvArg),
-@@ -201,6 +218,7 @@ typedef RTR0FNSOLTHREADCTX *PRTR0FNSOLTHREADCTX;
+@@ -211,6 +228,7 @@
  
  extern RTR0FNSOLTHREADCTX       g_rtSolThreadCtx;
  extern bool                     g_frtSolOldThreadCtx;
@@ -72,11 +68,9 @@ index 4a69c97..8a07dfb 100644
  
  /*
   * Workaround for older Solaris versions which called map_addr()/choose_addr()/
-diff --git a/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c b/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c
-index 665549f..1563e86 100644
---- a/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c
-+++ b/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c
-@@ -153,6 +153,12 @@ static void rtThreadCtxHookSolFree(void *pvThreadCtxInt, int fIsExec)
+--- VirtualBox-7.0.18/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c.orig
++++ VirtualBox-7.0.18/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c
+@@ -163,6 +163,12 @@
      }
  }
  
@@ -89,7 +83,7 @@ index 665549f..1563e86 100644
  
  RTDECL(int) RTThreadCtxHookCreate(PRTTHREADCTXHOOK phCtxHook, uint32_t fFlags, PFNRTTHREADCTXHOOK pfnCallback, void *pvUser)
  {
-@@ -182,27 +188,7 @@ RTDECL(int) RTThreadCtxHookCreate(PRTTHREADCTXHOOK phCtxHook, uint32_t fFlags, P
+@@ -192,27 +198,7 @@
       * with preemption disabled. We allocate the context-hooks here and use 'fEnabled' to determine if we can
       * invoke the consumer's hook or not.
       */
@@ -118,7 +112,7 @@ index 665549f..1563e86 100644
  
      *phCtxHook = pThis;
      return VINF_SUCCESS;
-@@ -244,27 +230,8 @@ RTDECL(int) RTThreadCtxHookDestroy(RTTHREADCTXHOOK hCtxHook)
+@@ -254,27 +240,8 @@
           * ring-0 thread dies, Solaris will call rtThreadCtxHookSolFree() which will free the hook object.
           */
          int rc;
