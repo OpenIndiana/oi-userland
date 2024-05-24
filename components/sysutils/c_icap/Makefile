@@ -15,6 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c_icap
 COMPONENT_VERSION=	0.6.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The c-icap project
 COMPONENT_DESCRIPTION=	c-icap is an implementation of an ICAP server. It can be \
 			used with HTTP proxies that support the ICAP protocol to \
@@ -36,10 +37,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS += -std=c++11
 
-COMPONENT_PREP_ACTION=( cd $(@D) && PATH="$(PATH)" autoreconf -f -i -v -W all )
+COMPONENT_PREP_ACTION= ( cd $(@D) && PATH="$(PATH)" autoreconf -f -i -v -W all )
 
 CONFIGURE_OPTIONS += CPPFLAGS=-I/usr/include/openldap
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 # Auto-generated dependencies
