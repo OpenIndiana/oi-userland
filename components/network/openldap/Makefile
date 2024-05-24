@@ -29,12 +29,12 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
-COMPONENT_VERSION=      2.6.7
+COMPONENT_VERSION=      2.6.8
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=  https://www.openldap.org/
-COMPONENT_ARCHIVE_HASH= sha256:cd775f625c944ed78a3da18a03b03b08eea73c8aabc97b41bb336e9a10954930
+COMPONENT_ARCHIVE_HASH= sha256:48969323e94e3be3b03c6a132942dcba7ef8d545f2ad35401709019f696c3c4e
 COMPONENT_ARCHIVE_URL=  https://openldap.org/software/download/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/openldap
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -50,7 +50,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR$(BITS))
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)/openldap
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/openldap
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
@@ -110,10 +110,10 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += security/argon2
 REQUIRED_PACKAGES += shell/ksh93
