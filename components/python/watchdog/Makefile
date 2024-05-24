@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		watchdog
-HUMAN_VERSION =			4.0.0
-COMPONENT_SUMMARY =		watchdog - Filesystem events monitoring
+HUMAN_VERSION =			4.0.1
+COMPONENT_SUMMARY =		Filesystem events monitoring
 COMPONENT_PROJECT_URL =		https://github.com/gorakhargosh/watchdog
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e3e7065cbdabe6183ab82199d7a4f6b3ba0a438c5a512a68559846ccb76a78ec
+	sha256:eebaacf674fa25511e8867028d281e602ee6500045b57f43b08778082f7f8b44
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
