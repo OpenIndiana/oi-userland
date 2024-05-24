@@ -26,10 +26,10 @@
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
-COMPONENT_TEST_DIR = $(@D)/tests
 
 COMPONENT_NAME=		bind
 COMPONENT_VERSION=	9.18.27
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -70,9 +70,9 @@ CONFIGURE_LIBDIR.64= $(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --with-openssl=/usr
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --with-openssl=$(USRDIR)
 CONFIGURE_OPTIONS += --enable-warn-error
 CONFIGURE_OPTIONS += --enable-fixed-rrset
 CONFIGURE_OPTIONS += --enable-full-report
@@ -105,8 +105,9 @@ CONFIGURE_OPTIONS += READLINE_LIBS="-lreadline -ltermcap"
 # which results in test failures due to nounset and xtrace being
 # set unexpectedly, and errors such as "$1: unbound variable" and
 # diffs failing due to script tracing in output files.
-unexport SHELLOPTS
+#unexport SHELLOPTS
 
+COMPONENT_TEST_DIR = $(@D)/tests
 COMPONENT_TEST_ENV_CMD =
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
