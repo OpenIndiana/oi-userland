@@ -1,7 +1,6 @@
-diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/SUPDrv.cpp a/src/VBox/HostDrivers/Support/SUPDrv.cpp
---- a~/src/VBox/HostDrivers/Support/SUPDrv.cpp	1970-01-01 00:00:00
-+++ a/src/VBox/HostDrivers/Support/SUPDrv.cpp	1970-01-01 00:00:00
-@@ -4160,7 +4160,7 @@ SUPR0DECL(RTCCUINTREG) SUPR0ChangeCR4(RT
+--- VirtualBox-7.0.18/src/VBox/HostDrivers/Support/SUPDrv.cpp.orig
++++ VirtualBox-7.0.18/src/VBox/HostDrivers/Support/SUPDrv.cpp
+@@ -4249,7 +4249,7 @@
   */
  SUPR0DECL(int) SUPR0EnableVTx(bool fEnable)
  {
@@ -10,7 +9,7 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/SUPDrv.cpp a/src/
      return supdrvOSEnableVTx(fEnable);
  #else
      RT_NOREF1(fEnable);
-@@ -4178,7 +4178,7 @@ SUPR0DECL(int) SUPR0EnableVTx(bool fEnab
+@@ -4268,7 +4268,7 @@
   */
  SUPR0DECL(bool) SUPR0SuspendVTxOnCpu(void)
  {
@@ -19,7 +18,7 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/SUPDrv.cpp a/src/
      return supdrvOSSuspendVTxOnCpu();
  #else
      return false;
-@@ -4195,7 +4195,7 @@ SUPR0DECL(bool) SUPR0SuspendVTxOnCpu(voi
+@@ -4286,7 +4286,7 @@
   */
  SUPR0DECL(void) SUPR0ResumeVTxOnCpu(bool fSuspended)
  {
@@ -28,10 +27,9 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/SUPDrv.cpp a/src/
      supdrvOSResumeVTxOnCpu(fSuspended);
  #else
      RT_NOREF1(fSuspended);
-diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c a/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c
---- a~/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c	1970-01-01 00:00:00
-+++ a/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c	1970-01-01 00:00:00
-@@ -47,6 +47,7 @@
+--- VirtualBox-7.0.18/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c.orig
++++ VirtualBox-7.0.18/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c
+@@ -57,6 +57,7 @@
  #include <sys/priv_names.h>
  #include <vm/hat.h>
  #undef u /* /usr/include/sys/user.h:249:1 is where this is defined to (curproc->p_user). very cool. */
@@ -39,7 +37,7 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/solaris/SUPDrv-so
  
  #include "../SUPDrvInternal.h"
  #include <VBox/log.h>
-@@ -976,6 +977,53 @@ bool VBOXCALL  supdrvOSAreTscDeltasInSyn
+@@ -986,6 +987,53 @@
      return false;
  }
  

@@ -16,18 +16,12 @@
 # Copyright 2021 omnios.org wrt the ctx patches
 # Copyright 2022 Daniel Bell
 
-BUILD_STYLE= configure
-BUILD_BITS= 64
-# Virtualbox uses the default openssl. It was not possible to provide configure the include and library paths separately
-# and thus, it doesn't find anything else than the default which is 1.0 at the moment.
-USE_OPENSSL10= yes
 include ../../../make-rules/shared-macros.mk
-GCC_VERSION= 13
 gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      7.0.18
-COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
 COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
@@ -36,7 +30,8 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         system/virtualbox
 COMPONENT_CLASSIFICATION=System/Virtualization
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE=      GPL-3.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 HASH_DIR= $(COMPONENT_DIR)/hashes
 export HASH_DIR
@@ -57,7 +52,7 @@ COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-$(SDK_BUILD_NUM)
 COMPONENT_SRC_1=        $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
-COMPONENT_LICENSE_1=	GPLv2
+COMPONENT_LICENSE_1=	GPL-3.0-only
 
 UNPACK_ARGS_1=		-r $(COMPONENT_SRC_1)
 
@@ -69,22 +64,14 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 FLAVOUR=release
-#FLAVOUR=debug
-CC= /usr/gcc/$(GCC_VERSION_MAJOR)/bin/gcc
-CXX= /usr/gcc/$(GCC_VERSION_MAJOR)/bin/g++
 
 INSTALL_ADDITIONS = $(BUILD_DIR)/.install_additions
 
-X11_SERVERDRV_DIR.32=/usr/lib/xorg/modules/drivers
-X11_SERVERDRV_DIR.64=/usr/lib/xorg/modules/drivers/$(MACH64)
-X11_SERVERDRV_DIR=$(X11_SERVERDRV_DIR.64)
+X11_SERVERDRV_DIR = /usr/lib/xorg/modules/drivers/$(MACH64)
 
-X11_SERVERINP_DIR.32=/usr/lib/xorg/modules/input
-X11_SERVERINP_DIR.64=/usr/lib/xorg/modules/input/$(MACH64)
-X11_SERVERINP_DIR=$(X11_SERVERMODS_DIR.64)
+X11_SERVERINP_DIR = /usr/lib/xorg/modules/input/$(MACH64)
 
 VBOX_BINDIR= $(BUILD_DIR_64)/out/solaris.$(MACH64)/$(FLAVOUR)/bin/additions/
-VBOX_BINDIR.32= $(BUILD_DIR_32)/out/solaris.x86/$(FLAVOUR)/bin/additions/
 VBOX_MODULES= vboxguest vboxms vboxvideo
 VBOX_FS_MODULES= vboxfs
 
@@ -111,20 +98,16 @@ COMPONENT_INSTALL_GMAKE_ARGS=
 COMPONENT_INSTALL_ARGS=
 COMPONENT_INSTALL_TARGETS=
 
-LOCAL_CONFIG.64+='\nVBOX_WITH_VBOXDRV = 1'
-LOCAL_CONFIG.64+='\nVBOX_WITH_NETFLT = 1'
-LOCAL_CONFIG.64+='\nVBOX_WITH_NETADP = 1'
+LOCAL_CONFIG += '\nVBOX_WITH_VBOXDRV = 1'
+LOCAL_CONFIG += '\nVBOX_WITH_NETFLT = 1'
+LOCAL_CONFIG += '\nVBOX_WITH_NETADP = 1'
 
 # Disable audio/video-recording 
-LOCAL_CONFIG.64+='\nVBOX_WITH_VIDEOREC ='
-LOCAL_CONFIG.64+='\nVBOX_WITH_AUDIO_VIDEOREC ='
+LOCAL_CONFIG += '\nVBOX_WITH_VIDEOREC ='
+LOCAL_CONFIG += '\nVBOX_WITH_AUDIO_VIDEOREC ='
 
 # Enable building with pulse audio support
-LOCAL_CONFIG.64 +='\nVBOX_WITH_AUDIO_PULSE = 1'
-
-LOCAL_CONFIG.32 +='\nVBOX_ONLY_ADDITIONS  = 1'
-
-LOCAL_CONFIG += $(LOCAL_CONFIG.$(BITS))
+LOCAL_CONFIG +='\nVBOX_WITH_AUDIO_PULSE = 1'
 
 LOCAL_CONFIG +='\nVBOX_GCC_OPT=$(CXXFLAGS)'
 LOCAL_CONFIG +='\nVBOX_GCC_std = -std=c++11'
@@ -158,7 +141,7 @@ COMPONENT_PRE_CONFIGURE_ACTION= \
 
 # Note: VirtualBox does not use a fully featured autoconf-style script,
 # so we must define the full set of command line options here, not using
-# values set via our configure.mk. Same for .32/.64 values added below.
+# values set via our configure.mk.
 CONFIGURE_OPTIONS = --with-gcc="$(CC)"
 CONFIGURE_OPTIONS+= --with-g++="$(CXX)"
 
@@ -176,11 +159,11 @@ CONFIGURE_OPTIONS+= --disable-libvpx
 # CONFIGURE_OPTIONS+= --nofatal
 CONFIGURE_OPTIONS+= --enable-webservice
 CONFIGURE_OPTIONS+= --enable-vnc
+# VirtualBox does not use pkg-config so we need to provide little help
+CONFIGURE_OPTIONS += --with-openssl-dir=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS.debug += --build-debug
 
-CONFIGURE_OPTIONS.32 = --only-additions
-CONFIGURE_OPTIONS.32 += --target-arch=x86
-CONFIGURE_OPTIONS.64 = --enable-qt5
+CONFIGURE_OPTIONS += --enable-qt5
 
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(FLAVOUR))
@@ -230,10 +213,7 @@ $(INSTALL_ADDITIONS):	$(INSTALL_64)
 	cp $(VBOX_BINDIR)/vbox_vendor_select $(PROTO_DIR)/lib/opengl/ogl_select
 	$(TOUCH) $@
 
-$(BUILD_32_and_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)/env.sh && kmk KBUILD_VERBOSE=3"
-
-# Sometimes 32-bit build is skipped silently. Better build like this:
-#	gmake build install sample-manifest
+$(BUILD_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)/env.sh && kmk KBUILD_VERBOSE=3"
 
 $(INSTALL_64): GMAKE= cd $(@D)/src/VBox/Installer && $(SHELL) -c ". $(@D)/env.sh && kmk solaris-install VBOX_PATH_SI_SCRATCH_PKG=$(PROTO_DIR)"
 
@@ -253,21 +233,19 @@ REQUIRED_PACKAGES += developer/object-file
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/gsoap
 REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/qt5
-REQUIRED_PACKAGES += library/sdl
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
-REQUIRED_PACKAGES += x11/library/libxcursor
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
