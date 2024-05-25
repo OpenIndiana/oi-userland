@@ -24,19 +24,19 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         npth
-COMPONENT_VERSION=      1.6
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.7
 COMPONENT_SUMMARY=      The New GNU Portable Threads Library
 COMPONENT_DESCRIPTION=	A portable library that uses the system's standard threads library to provid non-preemptive priority-based scheduling for multiple threads using the npth API
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.gnupg.org/related_software/npth/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:1393abd9adcf0762d34798dc34fdcf4d0d22a8410721e76f1e3afcd1daa4e2d1
-COMPONENT_ARCHIVE_URL=  https://ftp.gnupg.org/gcrypt/npth/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:8589f56937b75ce33b28d312fccbf302b3b71ec3f3945fde6aaa74027914ad05
+COMPONENT_ARCHIVE_URL=  https://gnupg.org/ftp/gcrypt/npth/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/npth
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=		LGPLv2.1
@@ -46,17 +46,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Enable C99 mode + -Xc for its additional warnings.
 CFLAGS += -std=gnu99
-
-# -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -fno-builtin
-
-CFLAGS += -D_XPG6
-CFLAGS += $(CPP_POSIX)
+CFLAGS += $(XPG6MODE)
 CFLAGS += -fPIC
 
-CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
+CPPFLAGS += $(CPP_LARGEFILES)
 
-LDFLAGS=	-lpthread -lposix4 -lrt
+LDFLAGS= -lpthread -lposix4 -lrt
 
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --with-pic
@@ -65,8 +60,5 @@ CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV += CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-COMPONENT_TEST_TRANSFORMS += '-e "s|\(^Pth:\).*|\1|" '
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
