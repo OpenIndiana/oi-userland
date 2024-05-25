@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 724 items
+collecting ... collected 741 items
 
 tests/i18n/test_es.py::test_returns_true_on_valid_cif[B25162520] PASSED
 tests/i18n/test_es.py::test_returns_true_on_valid_cif[U4839822F] PASSED
@@ -561,6 +561,22 @@ tests/test_ip_address.py::test_returns_failed_validation_on_invalid_ipv6_cidr_ad
 tests/test_ip_address.py::test_returns_failed_validation_on_invalid_ipv6_cidr_address[::1/129-True-False-True] PASSED
 tests/test_ip_address.py::test_returns_failed_validation_on_invalid_ipv6_cidr_address[dead:beef:0:0:0:0:42:1/8-True-True-False] PASSED
 tests/test_ip_address.py::test_returns_failed_validation_on_invalid_ipv6_cidr_address[::1/-130-True-True-True] PASSED
+tests/test_ip_address.py::test_returns_true_on_valid_private_ipv4_address[10.1.1.1-True] PASSED
+tests/test_ip_address.py::test_returns_true_on_valid_private_ipv4_address[192.168.1.1-True] PASSED
+tests/test_ip_address.py::test_returns_true_on_valid_private_ipv4_address[169.254.1.1-True] PASSED
+tests/test_ip_address.py::test_returns_true_on_valid_private_ipv4_address[127.0.0.1-True] PASSED
+tests/test_ip_address.py::test_returns_true_on_valid_private_ipv4_address[0.0.0.0-True] PASSED
+tests/test_ip_address.py::test_returns_failed_validation_on_invalid_private_ipv4_address[1.1.1.1-True] PASSED
+tests/test_ip_address.py::test_returns_failed_validation_on_invalid_private_ipv4_address[192.169.1.1-True] PASSED
+tests/test_ip_address.py::test_returns_failed_validation_on_invalid_private_ipv4_address[7.53.12.1-True] PASSED
+tests/test_ip_address.py::test_returns_true_on_valid_public_ipv4_address[1.1.1.1-False] PASSED
+tests/test_ip_address.py::test_returns_true_on_valid_public_ipv4_address[192.169.1.1-False] PASSED
+tests/test_ip_address.py::test_returns_true_on_valid_public_ipv4_address[7.53.12.1-False] PASSED
+tests/test_ip_address.py::test_returns_failed_validation_on_invalid_public_ipv4_address[10.1.1.1-False] PASSED
+tests/test_ip_address.py::test_returns_failed_validation_on_invalid_public_ipv4_address[192.168.1.1-False] PASSED
+tests/test_ip_address.py::test_returns_failed_validation_on_invalid_public_ipv4_address[169.254.1.1-False] PASSED
+tests/test_ip_address.py::test_returns_failed_validation_on_invalid_public_ipv4_address[127.0.0.1-False] PASSED
+tests/test_ip_address.py::test_returns_failed_validation_on_invalid_public_ipv4_address[0.0.0.0-False] PASSED
 tests/test_length.py::test_returns_true_on_valid_length[password-2-None] PASSED
 tests/test_length.py::test_returns_true_on_valid_length[password-None-None] PASSED
 tests/test_length.py::test_returns_true_on_valid_length[password-0-10] PASSED
@@ -648,6 +664,7 @@ tests/test_url.py::test_returns_true_on_valid_url[http://[::192.9.5.5]/ipng] PAS
 tests/test_url.py::test_returns_true_on_valid_url[http://[::FFFF:129.144.52.38]:80/index.html] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://[2010:836B:4179::836B:4179]] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://foo.bar] PASSED
+tests/test_url.py::test_returns_true_on_valid_url[http://foo.bar/\U0001f4cd] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://google.com:9/test] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://5.196.190.0/] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://username:password@example.com:4010/] PASSED
@@ -732,6 +749,6 @@ tests/test_validation_failure.py::TestValidationError::test_repr PASSED
 tests/test_validation_failure.py::TestValidationError::test_string PASSED
 tests/test_validation_failure.py::TestValidationError::test_arguments_as_properties PASSED
 
-======== 724 passed ========
+======== 741 passed ========
   py$(PYV): OK
   congratulations :)

@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		validators
-HUMAN_VERSION =			0.28.1
-COMPONENT_SUMMARY =		validators - Python Data Validation for Humans™
+HUMAN_VERSION =			0.28.3
+COMPONENT_SUMMARY =		Python Data Validation for Humans™
 COMPONENT_PROJECT_URL =		https://python-validators.github.io/validators
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5ac88e7916c3405f0ce38ac2ac82a477fcf4d90dbbeddd04c8193171fc17f7dc
+	sha256:c6c79840bcde9ba77b19f6218f7738188115e27830cbaff43264bc4ed24c429d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
