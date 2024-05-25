@@ -16,20 +16,19 @@ BUILD_STYLE = cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         nlohmann-json
-COMPONENT_VERSION=      3.11.2
+COMPONENT_VERSION=      3.11.3
 COMPONENT_PROJECT_URL=  https://github.com/nlohmann/json
 COMPONENT_SUMMARY=      JSON for Modern C++
 COMPONENT_FMRI=         library/c++/nlohmann-json
 COMPONENT_SRC=          json
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:8c4b26bf4b422252e13f332bc5e388ec0ab5c3443d24399acb675e68278d341f
+COMPONENT_ARCHIVE_HASH= sha256:d6c65aca6b1ed68e7a182f4757257b107ae403032760ed6ef121c9d55e81757d
 COMPONENT_ARCHIVE_URL=	https://github.com/nlohmann/json/releases/download/v$(COMPONENT_VERSION)/json.tar.xz
-COMPONENT_CLASSIFICATION=       Development/C++
+COMPONENT_CLASSIFICATION= Development/C++
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= LICENSE.MIT
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS += -DJSON_BuildTests=OFF
