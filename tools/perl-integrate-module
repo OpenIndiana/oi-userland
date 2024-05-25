@@ -108,6 +108,7 @@ git checkout . > /dev/null 2>&1
 VERSION=
 DOWNLOAD_URL=
 LICENSE_FILE=
+SUMMARY=
 
 # Execute hook-begin snippet
 if [[ -f "$CONF" ]] ; then
@@ -281,41 +282,45 @@ COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
 # Switch to modulebuild if possible
 [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/Build.PL" ]] && sed -i -e 's/makemaker/modulebuild/g' Makefile
 
-# Get abstract.  Either from metacpan, or directly from sources.
-ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
-if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
-	printf "WARNING: Failed to get abstract for module %s from metacpan\n" "$MODULE" >&2
-	ABSTRACT="TODO"
-fi
-if [[ "$ABSTRACT" == "TODO" ]] ; then
-	if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" ]] ; then
-		printf "WARNING: META.json missing\n" >&2
-	else
-		ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" | /usr/bin/jq -r '.abstract')
-		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
-			printf "WARNING: Failed to get abstract from META.json\n" >&2
-			ABSTRACT="TODO"
+# Get summary if not already provided
+if [[ -z "$SUMMARY" ]] ; then
+	# Get abstract and use it as summary.  Either from metacpan, or directly from sources.
+	ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
+	if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
+		printf "WARNING: Failed to get abstract for module %s from metacpan\n" "$MODULE" >&2
+		ABSTRACT="TODO"
+	fi
+	if [[ "$ABSTRACT" == "TODO" ]] ; then
+		if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" ]] ; then
+			printf "WARNING: META.json missing\n" >&2
+		else
+			ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" | /usr/bin/jq -r '.abstract')
+			if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
+				printf "WARNING: Failed to get abstract from META.json\n" >&2
+				ABSTRACT="TODO"
+			fi
 		fi
 	fi
-fi
-if [[ "$ABSTRACT" == "TODO" ]] ; then
-	if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" ]] ; then
-		printf "WARNING: META.yml missing\n" >&2
-	else
-		ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | /usr/bin/jq -r '.abstract')
-		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
-			printf "WARNING: Failed to get abstract from META.yml\n" >&2
-			ABSTRACT="TODO"
+	if [[ "$ABSTRACT" == "TODO" ]] ; then
+		if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" ]] ; then
+			printf "WARNING: META.yml missing\n" >&2
+		else
+			ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | /usr/bin/jq -r '.abstract')
+			if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
+				printf "WARNING: Failed to get abstract from META.yml\n" >&2
+				ABSTRACT="TODO"
+			fi
 		fi
 	fi
+	SUMMARY="$ABSTRACT"
 fi
-# Abstract needs to be sanitized
-ABSTRACT="${ABSTRACT//\`/\\\\\`}"
-ABSTRACT="${ABSTRACT//\"/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"}"
-ABSTRACT="${ABSTRACT//\//\/}"
-ABSTRACT="${ABSTRACT//\$/\\\\\$\$}"
-ABSTRACT="${ABSTRACT//\&/\\&}"
-sed -i -e 's/\(COMPONENT_SUMMARY.*\)TODO$/\1'"$ABSTRACT"'/g' Makefile
+# Summary needs to be sanitized
+SUMMARY="${SUMMARY//\`/\\\\\`}"
+SUMMARY="${SUMMARY//\"/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"}"
+SUMMARY="${SUMMARY//\//\/}"
+SUMMARY="${SUMMARY//\$/\\\\\$\$}"
+SUMMARY="${SUMMARY//\&/\\&}"
+sed -i -e 's/\(COMPONENT_SUMMARY.*\)TODO$/\1'"$SUMMARY"'/g' Makefile
 
 
 # Try to detect license type(s)
