@@ -642,11 +642,11 @@ GCC_VERSION ?=	$(GCC_DEFAULT)
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
 # Define runtime package names to be used in dependencies
-GCC_VERSION_MAJOR    = $(shell echo $(GCC_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
-GCC_RUNTIME_PKG      = system/library/gcc-$(GCC_VERSION_MAJOR)-runtime
-GXX_RUNTIME_PKG      = system/library/g++-$(GCC_VERSION_MAJOR)-runtime
-GFORTRAN_RUNTIME_PKG = system/library/gfortran-$(GCC_VERSION_MAJOR)-runtime
-GOBJC_RUNTIME_PKG    = system/library/gobjc-$(GCC_VERSION_MAJOR)-runtime
+GCC_RUNTIME_PKG =	system/library/gcc-$(GCC_VERSION)-runtime
+GXX_RUNTIME_PKG =	system/library/g++-$(GCC_VERSION)-runtime
+GCCGO_RUNTIME_PKG =	system/library/gccgo-$(GCC_VERSION)-runtime
+GFORTRAN_RUNTIME_PKG =	system/library/gfortran-$(GCC_VERSION)-runtime
+GOBJC_RUNTIME_PKG =	system/library/gobjc-$(GCC_VERSION)-runtime
 
 CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
@@ -1487,6 +1487,7 @@ USERLAND_REQUIRED_PACKAGES += metapackages/build-essential
 # Runtime package names are changed at compiler version major bumps.
 REQUIRED_PACKAGES_SUBST+= GCC_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GXX_RUNTIME_PKG
+REQUIRED_PACKAGES_SUBST+= GCCGO_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GFORTRAN_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 
