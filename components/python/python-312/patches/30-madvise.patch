@@ -1,0 +1,11 @@
+--- Python-3.12.1/Modules/mmapmodule.c.orig
++++ Python-3.12.1/Modules/mmapmodule.c
+@@ -874,7 +874,7 @@
+     }
+ 
+     CHECK_VALID(NULL);
+-    if (madvise(self->data + start, length, option) != 0) {
++    if (posix_madvise(self->data + start, length, option) != 0) {
+         PyErr_SetFromErrno(PyExc_OSError);
+         return NULL;
+     }

@@ -171,13 +171,14 @@ endif
 # | Python version | Obsolete after |
 # +----------------+----------------+
 # |      3.9       |   2025-10      |
+# |      3.12      |   2028-10      |
 # +----------------+----------------+
 #
 # See https://devguide.python.org/versions/
 #
 
 PYTHON_VERSION = 3.9
-PYTHON_VERSIONS = 3.9
+PYTHON_VERSIONS = 3.9 3.12
 
 # Python up to 2.7 was built both 32-bit and 64-bit.  Starting with Python 3.x
 # the python package is built 64-bit only.  So now all PYTHON_VERSIONS are
@@ -662,6 +663,9 @@ FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 GCC_FULL_VERSION = $(shell $(GCC_ROOT)/bin/gcc -dumpversion)
 # Since gcc-9 the GNU triplet is x86_64-pc-solaris2.11 instead of i386-pc-solaris2.11
 GCC_GNU_TRIPLET  = $(shell $(GCC_ROOT)/bin/gcc -dumpmachine)
+GCC_GNU_TRIPLET  = $(shell $(GCC_ROOT)/bin/gcc -dumpmachine)
+# GCC triplet with shorter version ( ..-solaris2 rather than ..-solaris2.11)
+GCC_GNU_SHORT_TRIPLET = $(shell $(GCC_ROOT)/bin/gcc -dumpmachine | /usr/bin/sed -E 's/\.[0-9]+$$//')
 GCC_BINDIR =	$(GCC_ROOT)/bin
 GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
 GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
@@ -712,6 +716,10 @@ PATH.prepend +=		$(CLANG_BINDIR)
 PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES.32 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES = $(PYTHON.3.9.VENDOR_PACKAGES.$(BITS))
+
+PYTHON.3.12.VENDOR_PACKAGES.64 = /usr/lib/python3.12/vendor-packages
+PYTHON.3.12.VENDOR_PACKAGES.32 = /usr/lib/python3.12/vendor-packages
+PYTHON.3.12.VENDOR_PACKAGES = $(PYTHON.3.12.VENDOR_PACKAGES.$(BITS))
 
 CC =		$(CC.$(COMPILER).$(BITS))
 CXX =		$(CXX.$(COMPILER).$(BITS))
@@ -764,6 +772,9 @@ PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
 PYTHON.3.9 =	/usr/bin/python3.9
 PYTHON.3.9.64 =	$(PYTHON.3.9)
+
+PYTHON.3.12 =	/usr/bin/python3.12
+PYTHON.3.12.64 = $(PYTHON.3.12)
 
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
 PYTHON =	$(PYTHON.$(PYTHON_VERSION))
