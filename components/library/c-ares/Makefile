@@ -29,13 +29,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c-ares
-COMPONENT_VERSION=	1.28.1
+COMPONENT_VERSION=	1.29.0
 COMPONENT_SUMMARY=	c-ares - C library for asynchronous DNS requests
 COMPONENT_DESCRIPTION=	c-ares is a C library for asynchronous DNS requests including name resolves
 COMPONENT_PROJECT_URL=	https://c-ares.haxx.se/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:675a69fc54ddbf42e6830bc671eeb6cd89eeca43828eb413243fd2c0a760809d
+COMPONENT_ARCHIVE_HASH= sha256:0b89fa425b825c4c7bc708494f374ae69340e4d1fdc64523bdbb2750bfc02ea7
 COMPONENT_ARCHIVE_URL=	https://c-ares.haxx.se/download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libcares
 COMPONENT_CLASSIFICATION=	System/Libraries
