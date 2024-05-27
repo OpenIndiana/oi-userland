@@ -4,8 +4,8 @@ py$(PYV): commands[0]> python -m pytest '-m not download'
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: setup.cfg
-collecting ... collected 6637 items / 5734 deselected / 903 selected
+configfile: pyproject.toml
+collecting ... collected 6748 items / 5785 deselected / 963 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
@@ -21,6 +21,7 @@ test/test_InfoExtractor.py::TestInfoExtractor::test_parse_mpd_formats PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_parse_xspf PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_response_with_expected_status_returns_content PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_search_json_ld_realworld PASSED
+test/test_InfoExtractor.py::TestInfoExtractor::test_search_nextjs_data PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_audio_only_extractor_format_selection PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_default_format_spec PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_filtering PASSED
@@ -117,6 +118,41 @@ test/test_execution.py::TestExecution::test_import PASSED
 test/test_execution.py::TestExecution::test_lazy_extractors PASSED
 test/test_execution.py::TestExecution::test_main_exec PASSED
 test/test_execution.py::TestExecution::test_module_exec PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_http_no_auth[http-Urllib] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_http_no_auth[http-Requests] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_http_no_auth[http-CurlCFFI] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_http_auth[http-Urllib] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_http_auth[http-Requests] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_http_auth[http-CurlCFFI] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_http_bad_auth[http-Urllib] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_http_bad_auth[http-Requests] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_http_bad_auth[http-CurlCFFI] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_http_source_address[http-Urllib] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_http_source_address[http-Requests] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_http_source_address[http-CurlCFFI] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_https[http-Urllib] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_https[http-Requests] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_https[http-CurlCFFI] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_https_verify_failed[http-Urllib] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_https_verify_failed[http-Requests] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_https_verify_failed[http-CurlCFFI] SKIPPED
+test/test_http_proxy.py::TestHTTPProxy::test_http_with_idn[http-Urllib] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_http_with_idn[http-Requests] PASSED
+test/test_http_proxy.py::TestHTTPProxy::test_http_with_idn[http-CurlCFFI] SKIPPED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_http_connect_no_auth[Requests-https] PASSED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_http_connect_no_auth[CurlCFFI-https] SKIPPED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_http_connect_auth[Requests-https] PASSED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_http_connect_auth[CurlCFFI-https] SKIPPED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_http_connect_bad_auth[Requests-https] SKIPPEDib3/issues/3374)
+test/test_http_proxy.py::TestHTTPConnectProxy::test_http_connect_bad_auth[CurlCFFI-https] SKIPPED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_http_connect_source_address[Requests-https] SKIPPED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_http_connect_source_address[CurlCFFI-https] SKIPPED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_https_connect_proxy[Requests-https] PASSED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_https_connect_proxy[CurlCFFI-https] SKIPPED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_https_connect_verify_failed[Requests-https] PASSED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_https_connect_verify_failed[CurlCFFI-https] SKIPPED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_https_connect_proxy_auth[Requests-https] PASSED
+test/test_http_proxy.py::TestHTTPConnectProxy::test_https_connect_proxy_auth[CurlCFFI-https] SKIPPED
 test/test_jsinterp.py::TestJSInterpreter::test_add PASSED
 test/test_jsinterp.py::TestJSInterpreter::test_array_access PASSED
 test/test_jsinterp.py::TestJSInterpreter::test_assignments PASSED
@@ -187,6 +223,7 @@ test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[/redir
 test/test_networking.py::TestHTTPRequestHandler::test_remove_dot_segments[/redirect_dotsegments_absolute-CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPRequestHandler::test_unicode_path_redirection[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_unicode_path_redirection[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_unicode_path_redirection[CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPRequestHandler::test_raise_http_error[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_raise_http_error[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_raise_http_error[CurlCFFI] SKIPPED
@@ -249,8 +286,10 @@ test/test_networking.py::TestHTTPRequestHandler::test_source_address[Requests] S
 test/test_networking.py::TestHTTPRequestHandler::test_source_address[CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPRequestHandler::test_gzip_trailing_garbage[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_gzip_trailing_garbage[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_gzip_trailing_garbage[CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPRequestHandler::test_brotli[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_brotli[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_brotli[CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPRequestHandler::test_deflate[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_deflate[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_deflate[CurlCFFI] SKIPPED
@@ -262,21 +301,19 @@ test/test_networking.py::TestHTTPRequestHandler::test_multiple_encodings[Request
 test/test_networking.py::TestHTTPRequestHandler::test_multiple_encodings[CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPRequestHandler::test_unsupported_encoding[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_unsupported_encoding[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_unsupported_encoding[CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPRequestHandler::test_read[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_read[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_read[CurlCFFI] SKIPPED
-test/test_networking.py::TestHTTPProxy::test_http_proxy[Urllib] PASSED
-test/test_networking.py::TestHTTPProxy::test_http_proxy[Requests] PASSED
-test/test_networking.py::TestHTTPProxy::test_http_proxy[CurlCFFI] SKIPPED
-test/test_networking.py::TestHTTPProxy::test_noproxy[Urllib] PASSED
-test/test_networking.py::TestHTTPProxy::test_noproxy[Requests] PASSED
-test/test_networking.py::TestHTTPProxy::test_noproxy[CurlCFFI] SKIPPED
-test/test_networking.py::TestHTTPProxy::test_allproxy[Urllib] PASSED
-test/test_networking.py::TestHTTPProxy::test_allproxy[Requests] PASSED
-test/test_networking.py::TestHTTPProxy::test_allproxy[CurlCFFI] SKIPPED
-test/test_networking.py::TestHTTPProxy::test_http_proxy_with_idn[Urllib] PASSED
-test/test_networking.py::TestHTTPProxy::test_http_proxy_with_idn[Requests] PASSED
-test/test_networking.py::TestHTTPProxy::test_http_proxy_with_idn[CurlCFFI] SKIPPED
+test/test_networking.py::TestHTTPRequestHandler::test_request_disable_proxy[Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_request_disable_proxy[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_request_disable_proxy[CurlCFFI] SKIPPED
+test/test_networking.py::TestHTTPRequestHandler::test_noproxy[Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_noproxy[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_noproxy[CurlCFFI] SKIPPED
+test/test_networking.py::TestHTTPRequestHandler::test_allproxy[Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_allproxy[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_allproxy[CurlCFFI] SKIPPED
 test/test_networking.py::TestClientCertificate::test_certificate_combined_nopass[Urllib] PASSED
 test/test_networking.py::TestClientCertificate::test_certificate_combined_nopass[Requests] PASSED
 test/test_networking.py::TestClientCertificate::test_certificate_combined_nopass[CurlCFFI] SKIPPED
@@ -290,6 +327,8 @@ test/test_networking.py::TestClientCertificate::test_certificate_nocombined_pass
 test/test_networking.py::TestClientCertificate::test_certificate_nocombined_pass[Requests] PASSED
 test/test_networking.py::TestClientCertificate::test_certificate_nocombined_pass[CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPImpersonateRequestHandler::test_supported_impersonate_targets[CurlCFFI] SKIPPED
+test/test_networking.py::TestHTTPImpersonateRequestHandler::test_response_extensions[CurlCFFI] SKIPPED
+test/test_networking.py::TestHTTPImpersonateRequestHandler::test_http_error_response_extensions[CurlCFFI] SKIPPED
 test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Requests-urllib3] PASSED
 test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Websockets-websockets.client] PASSED
 test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Websockets-websockets.server] PASSED
@@ -332,6 +371,35 @@ test/test_networking.py::TestCurlCFFIRequestHandler::test_request_error_mapping[
 test/test_networking.py::TestCurlCFFIRequestHandler::test_request_error_mapping[<lambda>-HTTPError-None-CurlCFFI] SKIPPED
 test/test_networking.py::TestCurlCFFIRequestHandler::test_request_error_mapping[<lambda>-ProxyError-None-CurlCFFI] SKIPPED
 test/test_networking.py::TestCurlCFFIRequestHandler::test_response_reader[CurlCFFI] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[Urllib-False-http] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[Requests-False-http] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[CurlCFFI-False-http] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[Websockets-False-ws] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[Urllib-http] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[HTTPSupportedRH-http] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[Requests-http] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[CurlCFFI-http] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[Websockets-ws] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Urllib-http-//example.com] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Urllib-http-example.com] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Urllib-http-127.0.0.1] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Urllib-http-/a/b/c] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[HTTPSupportedRH-http-//example.com] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[HTTPSupportedRH-http-example.com] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[HTTPSupportedRH-http-127.0.0.1] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[HTTPSupportedRH-http-/a/b/c] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Requests-http-//example.com] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Requests-http-example.com] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Requests-http-127.0.0.1] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Requests-http-/a/b/c] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[CurlCFFI-http-//example.com] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[CurlCFFI-http-example.com] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[CurlCFFI-http-127.0.0.1] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[CurlCFFI-http-/a/b/c] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Websockets-ws-//example.com] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Websockets-ws-example.com] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Websockets-ws-127.0.0.1] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Websockets-ws-/a/b/c] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-http-False-handler_kwargs0] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-https-False-handler_kwargs1] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-data-False-handler_kwargs2] PASSED
@@ -346,18 +414,38 @@ test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[CurlCFFI-
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[CurlCFFI-https-False-handler_kwargs11] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[NoCheckRH-http-False-handler_kwargs12] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[ValidationRH-http-UnsupportedRequest-handler_kwargs13] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[Urllib-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[Requests-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[CurlCFFI-False] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Urllib-all-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Urllib-unrelated-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Requests-all-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Requests-unrelated-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[CurlCFFI-all-False] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[CurlCFFI-unrelated-False] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[NoCheckRH-all-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[HTTPSupportedRH-all-UnsupportedRequest] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[HTTPSupportedRH-no-UnsupportedRequest] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Urllib-http-all-http-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Urllib-http-unrelated-http-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Requests-http-all-http-False] PASSED
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 34825)
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
+    self.handle()
+  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
+    method()
+  File "$(@D)/test/test_networking.py", line 259, in do_GET
+    self._headers()
+  File "$(@D)/test/test_networking.py", line 84, in _headers
+    self.wfile.write(payload)
+  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Requests-http-unrelated-http-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[CurlCFFI-http-all-http-False] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[CurlCFFI-http-unrelated-http-False] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Websockets-ws-all-socks5-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[Websockets-ws-unrelated-socks5-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[NoCheckRH-http-all-http-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[HTTPSupportedRH-http-all-http-UnsupportedRequest] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[HTTPSupportedRH-http-no-http-UnsupportedRequest] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-http-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-https-UnsupportedRequest] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-socks4-False] PASSED
@@ -377,27 +465,16 @@ test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[CurlCFF
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[CurlCFFI-http-socks4a-False] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[CurlCFFI-http-socks5-False] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[CurlCFFI-http-socks5h-False] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Websockets-ws-http-UnsupportedRequest] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Websockets-ws-https-UnsupportedRequest] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Websockets-ws-socks4-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Websockets-ws-socks4a-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Websockets-ws-socks5-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Websockets-ws-socks5h-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[NoCheckRH-http-http-False0] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[HTTPSupportedRH-http-http-UnsupportedRequest0] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Websockets-ws-http-UnsupportedRequest] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[NoCheckRH-http-http-False1] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[HTTPSupportedRH-http-http-UnsupportedRequest1] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[Urllib] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[HTTPSupportedRH] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[Requests] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[CurlCFFI] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Urllib-//example.com] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Urllib-example.com] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Urllib-127.0.0.1] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Urllib-/a/b/c] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Requests-//example.com] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Requests-example.com] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Requests-127.0.0.1] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[Requests-/a/b/c] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[CurlCFFI-//example.com] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[CurlCFFI-example.com] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[CurlCFFI-127.0.0.1] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[CurlCFFI-/a/b/c] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions0-AssertionError] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions1-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions2-AssertionError] PASSED
@@ -751,8 +828,6 @@ test/test_update.py::TestUpdate::test_query_update PASSED
 test/test_update.py::TestUpdate::test_update_spec PASSED
 test/test_utils.py::TestUtil::test_LazyList PASSED
 test/test_utils.py::TestUtil::test_LazyList_laziness PASSED
-test/test_utils.py::TestUtil::test_Popen_windows_escaping SKIPPED (Only
-relevant on Windows)
 test/test_utils.py::TestUtil::test_age_restricted PASSED
 test/test_utils.py::TestUtil::test_args_to_str PASSED
 test/test_utils.py::TestUtil::test_base_url PASSED
@@ -858,6 +933,8 @@ test/test_utils.py::TestUtil::test_urljoin PASSED
 test/test_utils.py::TestUtil::test_urshift PASSED
 test/test_utils.py::TestUtil::test_variadic PASSED
 test/test_utils.py::TestUtil::test_version_tuple PASSED
+test/test_utils.py::TestUtil::test_windows_escaping SKIPPED (Only
+relevant on Windows)
 test/test_utils.py::TestUtil::test_xpath_attr PASSED
 test/test_utils.py::TestUtil::test_xpath_element PASSED
 test/test_utils.py::TestUtil::test_xpath_text PASSED
@@ -867,8 +944,8 @@ test/test_verbose_output.py::TestVerboseOutput::test_private_info_eq PASSED
 test/test_verbose_output.py::TestVerboseOutput::test_private_info_shortarg PASSED
 test/test_verbose_output.py::TestVerboseOutput::test_private_info_shortarg_eq PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_basic_websockets[Websockets] PASSED
-test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_send_types[Websockets-str-1] PASSED
-test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_send_types[Websockets-bytes-2] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_send_types[str-1-Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_send_types[bytes-2-Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_verify_cert[Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_ssl_error[Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_percent_encode[/\u4e2d\u6587-/%E4%B8%AD%E6%96%87-Websockets] PASSED
@@ -882,16 +959,20 @@ test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_raise_htt
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_raise_http_error[400-Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_raise_http_error[500-Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_raise_http_error[511-Websockets] PASSED
-test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_timeout[params0-extensions0-Websockets] PASSED
-test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_timeout[params1-extensions1-Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_read_timeout[params0-extensions0-Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_read_timeout[params1-extensions1-Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_connect_timeout[Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_cookies[Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_source_address[Websockets] SKIPPED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_response_url[Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_request_headers[Websockets] PASSED
-test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_mtls[Websockets-client_cert0] PASSED
-test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_mtls[Websockets-client_cert1] PASSED
-test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_mtls[Websockets-client_cert2] PASSED
-test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_mtls[Websockets-client_cert3] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_mtls[client_cert0-Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_mtls[client_cert1-Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_mtls[client_cert2-Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_mtls[client_cert3-Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_request_disable_proxy[Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_noproxy[Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_allproxy[Websockets] PASSED
 test/test_websockets.py::TestWebsocketsRequestHandler::test_request_error_mapping[<lambda>-RequestError-Websockets] PASSED
 test/test_websockets.py::TestWebsocketsRequestHandler::test_request_error_mapping[<lambda>-TransportError0-Websockets] PASSED
 test/test_websockets.py::TestWebsocketsRequestHandler::test_request_error_mapping[<lambda>-TransportError1-Websockets] PASSED
@@ -916,6 +997,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 783 passed, 120 skipped, 5734 deselected ========
+======== 818 passed, 145 skipped, 5785 deselected ========
   py$(PYV): OK
   congratulations :)
