@@ -18,12 +18,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=	7.0
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	7.0.1
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:4426a94dd2c814945456600c8adfc402bee65ec14a70e8c531ec9a2cd651da7b
+COMPONENT_ARCHIVE_HASH=	sha256:bce9eeb0f17ef8982390b1f37711a61b4290dc8c2a0c1a37b5857e85bfb0e4ff
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
@@ -112,6 +111,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
 test:	install $(TEST_64)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += codec/dav1d
 REQUIRED_PACKAGES += codec/libtheora
@@ -125,7 +125,6 @@ REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/sdl2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
