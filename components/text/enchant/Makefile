@@ -18,11 +18,11 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= enchant
-COMPONENT_VERSION= 2.7.3
+COMPONENT_VERSION= 2.8.0
 COMPONENT_SUMMARY= GNOME spell checker component
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:fe6ad4cbe8c71b9384ffdef962be52d4d2bd5ebfb6351435bb390543d4f78b1e
+COMPONENT_ARCHIVE_HASH=	sha256:c57add422237b8a7eed116a9a88d8be4f7b9281778fa36f03e1f2c051ecb0372
 COMPONENT_ARCHIVE_URL=	https://github.com/AbiWord/enchant/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://abiword.github.io/enchant/
 COMPONENT_FMRI=			library/spell-checking/enchant
@@ -37,7 +37,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PREP_ACTION = ( cd $(@D)  && autoreconf -vif )
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --with-hunspell-dir=$(USRSHAREDIR)/spell/hunspell
 CONFIGURE_OPTIONS += --disable-aspell
