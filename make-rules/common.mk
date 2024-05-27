@@ -236,3 +236,12 @@ endif
 ifneq ($(strip $(CLANG_VERSION)),$(CLANG_DEFAULT))
 USERLAND_REQUIRED_PACKAGES += developer/clang-$(CLANG_VERSION)
 endif
+
+# In an ideal world all components should support parallel build but it is
+# often not the case.  So by default we do not run parallel build and allow
+# components to opt-in for parallel build by setting USE_PARALLEL_BUILD = yes.
+PARALLEL_JOBS ?= $(shell /usr/sbin/psrinfo -t -c)
+ifeq ($(strip $(USE_PARALLEL_BUILD)),yes)
+COMPONENT_BUILD_GMAKE_ARGS += -j$(PARALLEL_JOBS)
+COMPONENT_BUILD_SETUP_PY_ARGS += -j$(PARALLEL_JOBS)
+endif
