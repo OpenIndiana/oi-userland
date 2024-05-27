@@ -121,12 +121,22 @@ SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 # Target OS version
 PKG_SOLARIS_VERSION ?= 5.11
 PKG_OS_VERSION ?= 0.$(PKG_SOLARIS_VERSION)
-# auto-conf-y platform
-i386_PLAT = pc
-sparc_PLAT = sun
-PLAT=$($(MACH)_PLAT)
-# For pre-gcc-9 the triplet matches the legacy definition
-GNU_TRIPLET=$(MACH)-$(PLAT)-solaris$(SOLARIS_VERSION)
+
+# GNU target triplet
+GNU_TRIPLET=$(GNU_CPU)-$(GNU_VENDOR)-$(GNU_OS)
+# The cpu part of the triplet is basically the same as $(MACH):
+# i386 - for x86 and GCC version older than 9
+# x86_64 - for x86 and GCC version 9 and newer
+# sparc - for SPARC
+GNU_CPU = $(if $(filter $(GCC_VERSION),3 4 7),$(MACH),$(MACH:i386=x86_64))
+# The vendor part of the triplet is:
+# pc - for x86
+# sun - for SPARC
+GNU_VENDOR.i386 = pc
+GNU_VENDOR.sparc = sun
+GNU_VENDOR = $(GNU_VENDOR.$(MACH))
+# The os part of the triplet is solaris2.11
+GNU_OS = solaris$(SOLARIS_VERSION)
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
@@ -660,8 +670,7 @@ FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
 # GCC directory macros
 GCC_FULL_VERSION = $(shell $(GCC_ROOT)/bin/gcc -dumpversion)
-# Since gcc-9 the GNU triplet is x86_64-pc-solaris2.11 instead of i386-pc-solaris2.11
-GCC_GNU_TRIPLET  = $(shell $(GCC_ROOT)/bin/gcc -dumpmachine)
+GCC_GNU_TRIPLET  = $(GNU_TRIPLET)
 GCC_BINDIR =	$(GCC_ROOT)/bin
 GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
 GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
