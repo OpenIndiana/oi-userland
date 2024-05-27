@@ -23,21 +23,21 @@
 # Copyright (c) 2011, 2023, Oracle and/or its affiliates.
 # Copyright (c) 2018, Michal Nowak
 # Copyright (c) 2022, Friedrich Kink
-# Copyright (c) 2023, Andreas Wacknitz
+# Copyright (c) 2024, Andreas Wacknitz
 #
-BUILD_BITS = 64
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
-COMPONENT_VERSION=      10.2.1
-HUMAN_VERSION=		10.02.1
+COMPONENT_VERSION=      10.3.1
+HUMAN_VERSION=		10.03.1
 NUMERICAL_VERSION=	$(subst .,,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	Ghostscript is an interpreter for the PostScript language and PDF files
 COMPONENT_PROJECT_URL=	https://ghostscript.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8c58c948b0721becefcd0029c8db95f9bb3268affc25ea01d4c5a6b07fa1ab08
+COMPONENT_ARCHIVE_HASH= sha256:157212edc96b8ccc409475dce2e49833fb4427f150c455258ded9632c106abee
 COMPONENT_DOWNLOAD_URL= https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/gs$(NUMERICAL_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	print/filter/ghostscript
@@ -53,6 +53,8 @@ COMPONENT_ARCHIVE_HASH_1= sha256:bb05b738298ae73e7130e2913ed002b49d94cd1cea508e6
 
 include $(WS_MAKE_RULES)/common.mk
 
+CXXFLAGS += -std=c++17
+
 COMPONENT_POST_UNPACK_ACTION= ( \
 	$(RM) $(COMPONENT_LICENSE_FILE) && \
 	$(TOUCH) $(COMPONENT_LICENSE_FILE) && \
@@ -66,12 +68,11 @@ COMPONENT_POST_UNPACK_ACTION= ( \
 
 PATH= $(PATH.gnu)
 
-CFLAGS += $(XPG6MODE)
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
+CFLAGS += $(XPG7MODE)
+# Prevent from errors like this: regutils.h:123:5: error: 'l_atomic' does not name a type
+CFLAGS += -D__STDC_NO_ATOMICS__=1
+# Honour encrypted PDF permissions
+CFLAGS += -DUSE_PDF_PERMISSIONS=1
 
 # configure(1) options to use
 CONFIGURE_OPTIONS += --with-drivers=ALL
@@ -139,6 +140,7 @@ COMPONENT_TEST_TRANSFORMS += "-e '/extract.c:.*:extract_subpage_free/d'"
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo
