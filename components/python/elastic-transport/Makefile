@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project elastic-transport
+#   $WS_TOOLS/python-integrate-project -d python/elastic-transport elastic_transport
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		elastic-transport
-HUMAN_VERSION =			8.13.0
-COMPONENT_SUMMARY =		elastic-transport - Transport classes and utilities shared among Python Elastic client libraries
+COMPONENT_NAME =		elastic_transport
+HUMAN_VERSION =			8.13.1
+COMPONENT_SUMMARY =		Transport classes and utilities shared among Python Elastic client libraries
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elastic-transport-python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2410ec1ff51221e8b3a01c0afa9f0d0498e1386a269283801f5c12f98e42dc45
+	sha256:16339d392b4bbe86ad00b4bdeecff10edf516d32bc6c16053846625f2c6ea250
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
