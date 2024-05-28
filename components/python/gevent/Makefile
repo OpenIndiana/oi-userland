@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gevent
-HUMAN_VERSION =			22.10.2
-COMPONENT_SUMMARY =		gevent - Coroutine-based network library
+HUMAN_VERSION =			24.2.1
+COMPONENT_SUMMARY =		Coroutine-based network library
 COMPONENT_PROJECT_URL =		http://www.gevent.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9f/4a/e9e57cb9495f0c7943b1d5965c4bdd0d78bc4a433a7c96ee034b16c01520/gevent-22.10.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1ca01da176ee37b3527a2702f7d40dbc9ffb8cfc7be5a03bfa4f9eec45e55c46
+	sha256:432fc76f680acf7cf188c2ee0f5d3ab73b63c1f03114c7cd8a34cebbe5aa2056
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -53,10 +50,6 @@ COMPONENT_TEST_TRANSFORMS += "-e '/New connection from 127\.0\.0\.1:/d'"							#
 COMPONENT_TEST_TRANSFORMS += "-e '/echoed b/d'"											# could be out of order
 COMPONENT_TEST_TRANSFORMS += "-e '/^Longest-running tests:/,/^\$$/d'"								# list changes with every run
 
-# This project uses both cpython and abi3 ABI depending on particular library.
-# To deal with this we need to disable automatic ABI library name transforms.
-PY3_CPYTHON_NAMING=\#
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cffi
 PYTHON_REQUIRED_PACKAGES += library/python/cython
@@ -69,7 +62,6 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/cffi
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/coveralls
 TEST_REQUIRED_PACKAGES.python += library/python/dnspython
 TEST_REQUIRED_PACKAGES.python += library/python/idna
 TEST_REQUIRED_PACKAGES.python += library/python/objgraph
