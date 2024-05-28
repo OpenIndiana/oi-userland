@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pylint
-HUMAN_VERSION =			3.2.2
+HUMAN_VERSION =			3.2.3
 COMPONENT_SUMMARY =		python code static checker
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/pylint-dev/pylint/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:04083d8df982caf984e1a9908ced17abc0005a1cd51b1ac568fac1ac22473ad6
+	sha256:02f6c562b215582386068d52a30f520d84fdbcf2a95fc7e855b816060d048b60
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -53,6 +51,9 @@ COMPONENT_PREP_ACTION += \
 	; do \
 		$(RM) -r $(SOURCE_DIR)/tests/functional/$${t}.* ; \
 	done ;
+
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/astroid
