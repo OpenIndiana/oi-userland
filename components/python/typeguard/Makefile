@@ -19,18 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typeguard
-HUMAN_VERSION =			4.2.1
-COMPONENT_SUMMARY =		typeguard - Run-time type checker for Python
+HUMAN_VERSION =			4.3.0
+COMPONENT_SUMMARY =		Run-time type checker for Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c556a1b95948230510070ca53fa0341fb0964611bd05d598d87fb52115d65fee
+	sha256:92ee6a0aec9135181eae6067ebd617fd9de8d75d714fb548728a4933b1dea651
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/pytest-dev/pluggy/issues/457
+# https://github.com/pytest-dev/pytest/issues/12186
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-black
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-flake8
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-salt-factories
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
