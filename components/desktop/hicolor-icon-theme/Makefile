@@ -12,34 +12,27 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hicolor-icon-theme
-COMPONENT_VERSION=      0.17
-COMPONENT_PROJECT_URL=  https://freedesktop.org/wiki/Software/icon-theme/
+COMPONENT_VERSION=      0.18
 COMPONENT_SUMMARY=      GNOME Hi Color Icon Theme
+COMPONENT_PROJECT_URL=  https://freedesktop.org/wiki/Software/icon-theme/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:317484352271d18cbbcfac3868eab798d67fff1b8402e740baa6ff41d588a9d8
+COMPONENT_ARCHIVE_HASH= sha256:db0e50a80aa3bf64bb45cbca5cf9f75efd9348cf2ac690b907435238c3cf81d7
 COMPONENT_ARCHIVE_URL=  https://icon-theme.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Theming
 COMPONENT_FMRI=	gnome/theme/hicolor-icon-theme
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Theming
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
