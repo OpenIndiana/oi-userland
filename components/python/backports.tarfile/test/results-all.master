@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 598 items
+collecting ... collected 618 items
 
 .::project PASSED
 .::project PASSED
@@ -67,14 +67,16 @@ tests/test_tarfile.py::LzmaListTest::test_list_members PASSED
 tests/test_tarfile.py::LzmaListTest::test_list_verbose PASSED
 tests/test_tarfile.py::MiscReadTest::test_bytes_name_attribute PASSED
 tests/test_tarfile.py::MiscReadTest::test_check_members PASSED
+tests/test_tarfile.py::MiscReadTest::test_deprecation_if_no_filter_passed_to_extract PASSED
+tests/test_tarfile.py::MiscReadTest::test_deprecation_if_no_filter_passed_to_extractall PASSED
 tests/test_tarfile.py::MiscReadTest::test_empty_name_attribute PASSED
 tests/test_tarfile.py::MiscReadTest::test_empty_tarfile PASSED
 tests/test_tarfile.py::MiscReadTest::test_extract_directory PASSED
 tests/test_tarfile.py::MiscReadTest::test_extract_hardlink PASSED
-tests/test_tarfile.py::MiscReadTest::test_extract_pathlike_name PASSED
+tests/test_tarfile.py::MiscReadTest::test_extract_pathlike_dir PASSED
 tests/test_tarfile.py::MiscReadTest::test_extractall PASSED
-tests/test_tarfile.py::MiscReadTest::test_extractall_pathlike_name PASSED
-tests/test_tarfile.py::MiscReadTest::test_extractfile_name PASSED
+tests/test_tarfile.py::MiscReadTest::test_extractall_pathlike_dir PASSED
+tests/test_tarfile.py::MiscReadTest::test_extractfile_attrs PASSED
 tests/test_tarfile.py::MiscReadTest::test_fileobj_with_offset PASSED
 tests/test_tarfile.py::MiscReadTest::test_find_members PASSED
 tests/test_tarfile.py::MiscReadTest::test_ignore_zeros PASSED
@@ -91,6 +93,7 @@ tests/test_tarfile.py::MiscReadTest::test_no_name_attribute PASSED
 tests/test_tarfile.py::MiscReadTest::test_non_existent_tarfile PASSED
 tests/test_tarfile.py::MiscReadTest::test_null_tarfile PASSED
 tests/test_tarfile.py::MiscReadTest::test_parallel_iteration PASSED
+tests/test_tarfile.py::MiscReadTest::test_pathlike_bytes_name PASSED
 tests/test_tarfile.py::MiscReadTest::test_pathlike_name PASSED
 tests/test_tarfile.py::MiscReadTest::test_premature_end_of_archive PASSED
 tests/test_tarfile.py::MiscReadTest::test_v7_dirtype PASSED
@@ -98,14 +101,16 @@ tests/test_tarfile.py::MiscReadTest::test_xstar_type PASSED
 tests/test_tarfile.py::MiscReadTest::test_zlib_error_does_not_leak PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_bytes_name_attribute PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_check_members PASSED
+tests/test_tarfile.py::GzipMiscReadTest::test_deprecation_if_no_filter_passed_to_extract PASSED
+tests/test_tarfile.py::GzipMiscReadTest::test_deprecation_if_no_filter_passed_to_extractall PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_empty_name_attribute PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_empty_tarfile PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_extract_directory PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_extract_hardlink PASSED
-tests/test_tarfile.py::GzipMiscReadTest::test_extract_pathlike_name PASSED
+tests/test_tarfile.py::GzipMiscReadTest::test_extract_pathlike_dir PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_extractall PASSED
-tests/test_tarfile.py::GzipMiscReadTest::test_extractall_pathlike_name PASSED
-tests/test_tarfile.py::GzipMiscReadTest::test_extractfile_name PASSED
+tests/test_tarfile.py::GzipMiscReadTest::test_extractall_pathlike_dir PASSED
+tests/test_tarfile.py::GzipMiscReadTest::test_extractfile_attrs PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_fail_comp PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_fileobj_with_offset PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_find_members PASSED
@@ -123,21 +128,24 @@ tests/test_tarfile.py::GzipMiscReadTest::test_no_name_attribute PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_non_existent_tarfile PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_null_tarfile PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_parallel_iteration PASSED
+tests/test_tarfile.py::GzipMiscReadTest::test_pathlike_bytes_name PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_pathlike_name PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_premature_end_of_archive PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_v7_dirtype PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_xstar_type PASSED
 tests/test_tarfile.py::GzipMiscReadTest::test_zlib_error_does_not_leak PASSED
-tests/test_tarfile.py::Bz2MiscReadTest::test_bytes_name_attribute SKIPPED
+tests/test_tarfile.py::Bz2MiscReadTest::test_bytes_name_attribute PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_check_members PASSED
+tests/test_tarfile.py::Bz2MiscReadTest::test_deprecation_if_no_filter_passed_to_extract PASSED
+tests/test_tarfile.py::Bz2MiscReadTest::test_deprecation_if_no_filter_passed_to_extractall PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_empty_name_attribute PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_empty_tarfile PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_extract_directory PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_extract_hardlink PASSED
-tests/test_tarfile.py::Bz2MiscReadTest::test_extract_pathlike_name PASSED
+tests/test_tarfile.py::Bz2MiscReadTest::test_extract_pathlike_dir PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_extractall PASSED
-tests/test_tarfile.py::Bz2MiscReadTest::test_extractall_pathlike_name PASSED
-tests/test_tarfile.py::Bz2MiscReadTest::test_extractfile_name PASSED
+tests/test_tarfile.py::Bz2MiscReadTest::test_extractall_pathlike_dir PASSED
+tests/test_tarfile.py::Bz2MiscReadTest::test_extractfile_attrs PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_fail_comp PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_fileobj_with_offset PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_find_members PASSED
@@ -150,26 +158,29 @@ tests/test_tarfile.py::Bz2MiscReadTest::test_is_tarfile_keeps_position PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_is_tarfile_valid PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_length_zero_header PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_next_on_empty_tarfile PASSED
-tests/test_tarfile.py::Bz2MiscReadTest::test_no_name_argument SKIPPED
+tests/test_tarfile.py::Bz2MiscReadTest::test_no_name_argument PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_no_name_attribute PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_non_existent_tarfile PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_null_tarfile PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_parallel_iteration PASSED
+tests/test_tarfile.py::Bz2MiscReadTest::test_pathlike_bytes_name PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_pathlike_name PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_premature_end_of_archive PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_v7_dirtype PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_xstar_type PASSED
 tests/test_tarfile.py::Bz2MiscReadTest::test_zlib_error_does_not_leak PASSED
-tests/test_tarfile.py::LzmaMiscReadTest::test_bytes_name_attribute SKIPPED
+tests/test_tarfile.py::LzmaMiscReadTest::test_bytes_name_attribute PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_check_members PASSED
+tests/test_tarfile.py::LzmaMiscReadTest::test_deprecation_if_no_filter_passed_to_extract PASSED
+tests/test_tarfile.py::LzmaMiscReadTest::test_deprecation_if_no_filter_passed_to_extractall PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_empty_name_attribute PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_empty_tarfile PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_extract_directory PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_extract_hardlink PASSED
-tests/test_tarfile.py::LzmaMiscReadTest::test_extract_pathlike_name PASSED
+tests/test_tarfile.py::LzmaMiscReadTest::test_extract_pathlike_dir PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_extractall PASSED
-tests/test_tarfile.py::LzmaMiscReadTest::test_extractall_pathlike_name PASSED
-tests/test_tarfile.py::LzmaMiscReadTest::test_extractfile_name PASSED
+tests/test_tarfile.py::LzmaMiscReadTest::test_extractall_pathlike_dir PASSED
+tests/test_tarfile.py::LzmaMiscReadTest::test_extractfile_attrs PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_fail_comp PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_fileobj_with_offset PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_find_members PASSED
@@ -182,11 +193,12 @@ tests/test_tarfile.py::LzmaMiscReadTest::test_is_tarfile_keeps_position PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_is_tarfile_valid PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_length_zero_header PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_next_on_empty_tarfile PASSED
-tests/test_tarfile.py::LzmaMiscReadTest::test_no_name_argument SKIPPED
+tests/test_tarfile.py::LzmaMiscReadTest::test_no_name_argument PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_no_name_attribute PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_non_existent_tarfile PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_null_tarfile PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_parallel_iteration PASSED
+tests/test_tarfile.py::LzmaMiscReadTest::test_pathlike_bytes_name PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_pathlike_name PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_premature_end_of_archive PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_v7_dirtype PASSED
@@ -194,7 +206,7 @@ tests/test_tarfile.py::LzmaMiscReadTest::test_xstar_type PASSED
 tests/test_tarfile.py::LzmaMiscReadTest::test_zlib_error_does_not_leak PASSED
 tests/test_tarfile.py::StreamReadTest::test_compare_members PASSED
 tests/test_tarfile.py::StreamReadTest::test_empty_tarfile PASSED
-tests/test_tarfile.py::StreamReadTest::test_extractfile_name PASSED
+tests/test_tarfile.py::StreamReadTest::test_extractfile_attrs PASSED
 tests/test_tarfile.py::StreamReadTest::test_fileobj_regular_file PASSED
 tests/test_tarfile.py::StreamReadTest::test_ignore_zeros PASSED
 tests/test_tarfile.py::StreamReadTest::test_is_tarfile_erroneous PASSED
@@ -208,7 +220,7 @@ tests/test_tarfile.py::StreamReadTest::test_provoke_stream_error PASSED
 tests/test_tarfile.py::StreamReadTest::test_read_through PASSED
 tests/test_tarfile.py::GzipStreamReadTest::test_compare_members PASSED
 tests/test_tarfile.py::GzipStreamReadTest::test_empty_tarfile PASSED
-tests/test_tarfile.py::GzipStreamReadTest::test_extractfile_name PASSED
+tests/test_tarfile.py::GzipStreamReadTest::test_extractfile_attrs PASSED
 tests/test_tarfile.py::GzipStreamReadTest::test_fileobj_regular_file PASSED
 tests/test_tarfile.py::GzipStreamReadTest::test_ignore_zeros PASSED
 tests/test_tarfile.py::GzipStreamReadTest::test_is_tarfile_erroneous PASSED
@@ -222,7 +234,7 @@ tests/test_tarfile.py::GzipStreamReadTest::test_provoke_stream_error PASSED
 tests/test_tarfile.py::GzipStreamReadTest::test_read_through PASSED
 tests/test_tarfile.py::Bz2StreamReadTest::test_compare_members PASSED
 tests/test_tarfile.py::Bz2StreamReadTest::test_empty_tarfile PASSED
-tests/test_tarfile.py::Bz2StreamReadTest::test_extractfile_name PASSED
+tests/test_tarfile.py::Bz2StreamReadTest::test_extractfile_attrs PASSED
 tests/test_tarfile.py::Bz2StreamReadTest::test_fileobj_regular_file PASSED
 tests/test_tarfile.py::Bz2StreamReadTest::test_ignore_zeros PASSED
 tests/test_tarfile.py::Bz2StreamReadTest::test_is_tarfile_erroneous PASSED
@@ -236,7 +248,7 @@ tests/test_tarfile.py::Bz2StreamReadTest::test_provoke_stream_error PASSED
 tests/test_tarfile.py::Bz2StreamReadTest::test_read_through PASSED
 tests/test_tarfile.py::LzmaStreamReadTest::test_compare_members PASSED
 tests/test_tarfile.py::LzmaStreamReadTest::test_empty_tarfile PASSED
-tests/test_tarfile.py::LzmaStreamReadTest::test_extractfile_name PASSED
+tests/test_tarfile.py::LzmaStreamReadTest::test_extractfile_attrs PASSED
 tests/test_tarfile.py::LzmaStreamReadTest::test_fileobj_regular_file PASSED
 tests/test_tarfile.py::LzmaStreamReadTest::test_ignore_zeros PASSED
 tests/test_tarfile.py::LzmaStreamReadTest::test_is_tarfile_erroneous PASSED
@@ -248,6 +260,10 @@ tests/test_tarfile.py::LzmaStreamReadTest::test_null_tarfile PASSED
 tests/test_tarfile.py::LzmaStreamReadTest::test_premature_end_of_archive PASSED
 tests/test_tarfile.py::LzmaStreamReadTest::test_provoke_stream_error PASSED
 tests/test_tarfile.py::LzmaStreamReadTest::test_read_through PASSED
+tests/test_tarfile.py::TarStreamModeReadTest::test_stream_mode_no_cache PASSED
+tests/test_tarfile.py::GzipStreamModeReadTest::test_stream_mode_no_cache PASSED
+tests/test_tarfile.py::Bz2StreamModeReadTest::test_stream_mode_no_cache PASSED
+tests/test_tarfile.py::LzmaStreamModeReadTest::test_stream_mode_no_cache PASSED
 tests/test_tarfile.py::DetectReadTest::test_detect_file PASSED
 tests/test_tarfile.py::DetectReadTest::test_detect_fileobj PASSED
 tests/test_tarfile.py::GzipDetectReadTest::test_detect_file PASSED
@@ -304,6 +320,7 @@ tests/test_tarfile.py::WriteTest::test_fileobj_no_close PASSED
 tests/test_tarfile.py::WriteTest::test_filter PASSED
 tests/test_tarfile.py::WriteTest::test_gettarinfo_pathlike_name PASSED
 tests/test_tarfile.py::WriteTest::test_link_size PASSED
+tests/test_tarfile.py::WriteTest::test_missing_fileobj PASSED
 tests/test_tarfile.py::WriteTest::test_open_nonwritable_fileobj PASSED
 tests/test_tarfile.py::WriteTest::test_ordered_recursion PASSED
 tests/test_tarfile.py::WriteTest::test_pathnames PASSED
@@ -321,6 +338,7 @@ tests/test_tarfile.py::GzipWriteTest::test_fileobj_no_close PASSED
 tests/test_tarfile.py::GzipWriteTest::test_filter PASSED
 tests/test_tarfile.py::GzipWriteTest::test_gettarinfo_pathlike_name PASSED
 tests/test_tarfile.py::GzipWriteTest::test_link_size PASSED
+tests/test_tarfile.py::GzipWriteTest::test_missing_fileobj PASSED
 tests/test_tarfile.py::GzipWriteTest::test_open_nonwritable_fileobj PASSED
 tests/test_tarfile.py::GzipWriteTest::test_ordered_recursion PASSED
 tests/test_tarfile.py::GzipWriteTest::test_pathnames PASSED
@@ -338,6 +356,7 @@ tests/test_tarfile.py::Bz2WriteTest::test_fileobj_no_close PASSED
 tests/test_tarfile.py::Bz2WriteTest::test_filter PASSED
 tests/test_tarfile.py::Bz2WriteTest::test_gettarinfo_pathlike_name PASSED
 tests/test_tarfile.py::Bz2WriteTest::test_link_size PASSED
+tests/test_tarfile.py::Bz2WriteTest::test_missing_fileobj PASSED
 tests/test_tarfile.py::Bz2WriteTest::test_open_nonwritable_fileobj PASSED
 tests/test_tarfile.py::Bz2WriteTest::test_ordered_recursion PASSED
 tests/test_tarfile.py::Bz2WriteTest::test_pathnames PASSED
@@ -355,6 +374,7 @@ tests/test_tarfile.py::LzmaWriteTest::test_fileobj_no_close PASSED
 tests/test_tarfile.py::LzmaWriteTest::test_filter PASSED
 tests/test_tarfile.py::LzmaWriteTest::test_gettarinfo_pathlike_name PASSED
 tests/test_tarfile.py::LzmaWriteTest::test_link_size PASSED
+tests/test_tarfile.py::LzmaWriteTest::test_missing_fileobj PASSED
 tests/test_tarfile.py::LzmaWriteTest::test_open_nonwritable_fileobj PASSED
 tests/test_tarfile.py::LzmaWriteTest::test_ordered_recursion PASSED
 tests/test_tarfile.py::LzmaWriteTest::test_pathnames PASSED
@@ -541,28 +561,28 @@ tests/test_tarfile.py::ReplaceTests::test_replace_shallow PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Data::test_extractall_none_gid PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Data::test_extractall_none_gname PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Data::test_extractall_none_mode PASSED
-tests/test_tarfile.py::NoneInfoExtractTests_Data::test_extractall_none_mtime SKIPPED
+tests/test_tarfile.py::NoneInfoExtractTests_Data::test_extractall_none_mtime PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Data::test_extractall_none_ownership PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Data::test_extractall_none_uid PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Data::test_extractall_none_uname PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_FullyTrusted::test_extractall_none_gid PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_FullyTrusted::test_extractall_none_gname PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_FullyTrusted::test_extractall_none_mode PASSED
-tests/test_tarfile.py::NoneInfoExtractTests_FullyTrusted::test_extractall_none_mtime SKIPPED
+tests/test_tarfile.py::NoneInfoExtractTests_FullyTrusted::test_extractall_none_mtime PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_FullyTrusted::test_extractall_none_ownership PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_FullyTrusted::test_extractall_none_uid PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_FullyTrusted::test_extractall_none_uname PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Tar::test_extractall_none_gid PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Tar::test_extractall_none_gname PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Tar::test_extractall_none_mode PASSED
-tests/test_tarfile.py::NoneInfoExtractTests_Tar::test_extractall_none_mtime SKIPPED
+tests/test_tarfile.py::NoneInfoExtractTests_Tar::test_extractall_none_mtime PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Tar::test_extractall_none_ownership PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Tar::test_extractall_none_uid PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Tar::test_extractall_none_uname PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Default::test_extractall_none_gid PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Default::test_extractall_none_gname PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Default::test_extractall_none_mode PASSED
-tests/test_tarfile.py::NoneInfoExtractTests_Default::test_extractall_none_mtime SKIPPED
+tests/test_tarfile.py::NoneInfoExtractTests_Default::test_extractall_none_mtime PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Default::test_extractall_none_ownership PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Default::test_extractall_none_uid PASSED
 tests/test_tarfile.py::NoneInfoExtractTests_Default::test_extractall_none_uname PASSED
@@ -607,6 +627,6 @@ tests/test_tarfile.py::OverwriteTests::test_overwrite_file_as_implicit_dir PASSE
 tests/test_tarfile.py::OverwriteTests::test_overwrite_file_symlink_as_file PASSED
 
 
-======== 575 passed, 23 skipped ========
+======== 603 passed, 15 skipped ========
   py$(PYV): OK
   congratulations :)

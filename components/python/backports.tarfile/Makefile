@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		backports.tarfile
-HUMAN_VERSION =			1.1.1
-COMPONENT_SUMMARY =		backports.tarfile - Backport of CPython tarfile module
+HUMAN_VERSION =			1.2.0
+COMPONENT_SUMMARY =		Backport of CPython tarfile module
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/backports.tarfile
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9c2ef9696cb73374f7164e17fc761389393ca76777036f5aad42e8b93fcd8009
+	sha256:d75e02c268746e1b8144c278978b6e98e85de6ad16f8e4b0844a154557eca991
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
