@@ -1,5 +1,5 @@
---- pydantic-2.7.1/tests/test_config.py.orig
-+++ pydantic-2.7.1/tests/test_config.py
+--- pydantic-2.7.2/tests/test_config.py.orig
++++ pydantic-2.7.2/tests/test_config.py
 @@ -345,6 +345,7 @@
          m = Model(a=40, b=10)
          assert m == m.model_copy()
@@ -16,8 +16,8 @@
      def test_config_class_attributes_are_deprecated(self):
          with pytest.warns(
              PydanticDeprecatedSince20,
---- pydantic-2.7.1/tests/test_deprecated.py.orig
-+++ pydantic-2.7.1/tests/test_deprecated.py
+--- pydantic-2.7.2/tests/test_deprecated.py.orig
++++ pydantic-2.7.2/tests/test_deprecated.py
 @@ -268,6 +268,7 @@
      State(**{'user': {'first_name': 'John', 'last_name': 'Appleseed'}})
  
@@ -58,18 +58,8 @@
  def test_deprecated_module(tmp_path: Path) -> None:
      class Model(BaseModel):
          x: int
---- pydantic-2.7.1/tests/test_generics.py.orig
-+++ pydantic-2.7.1/tests/test_generics.py
-@@ -2733,6 +2733,7 @@
-     }
- 
- 
-+@pytest.mark.skip(reason="always fails: https://github.com/pydantic/pydantic/issues/9046")
- def test_serialize_unsubstituted_typevars_bound_default_supported() -> None:
-     class ErrorDetails(BaseModel):
-         foo: str
---- pydantic-2.7.1/tests/test_json_schema.py.orig
-+++ pydantic-2.7.1/tests/test_json_schema.py
+--- pydantic-2.7.2/tests/test_json_schema.py.orig
++++ pydantic-2.7.2/tests/test_json_schema.py
 @@ -1376,6 +1376,7 @@
          r'Default value .* is not JSON serializable; excluding default from JSON schema \[non-serializable-default\]',
      ),
@@ -78,8 +68,8 @@
  def test_callable_fallback_with_non_serializable_default(warning_match):
      class Model(BaseModel):
          callback: Union[int, Callable[[int], int]] = lambda x: x  # noqa E731
---- pydantic-2.7.1/tests/test_validators.py.orig
-+++ pydantic-2.7.1/tests/test_validators.py
+--- pydantic-2.7.2/tests/test_validators.py.orig
++++ pydantic-2.7.2/tests/test_validators.py
 @@ -2551,6 +2551,7 @@
      assert Model(x=1, y=2).model_dump() == {'x': 2, 'y': 3}
  
