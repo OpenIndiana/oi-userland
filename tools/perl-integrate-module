@@ -581,6 +581,12 @@ if [[ "$common_results" == "yes" ]] ; then
 fi
 
 
+# Create .gitignore
+COMPONENT_SRC=$($GMAKE print-value-COMPONENT_SRC)
+printf '/%s/\n' "$COMPONENT_SRC" > .gitignore
+git add .gitignore
+
+
 # Construct the commit message
 MSG=
 if ((NEW)) ; then
