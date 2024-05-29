@@ -9,7 +9,7 @@ testpaths: tests
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 4402 items
+collecting ... collected 4422 items
 
 tests/benchmarks/test_complete_benchmark.py::test_complete_valid PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_invalid PASSED
@@ -1293,6 +1293,14 @@ tests/validators/test_arguments.py::test_positional_or_keyword[json-ArgsKwargs((
 tests/validators/test_arguments.py::test_positional_or_keyword[json-ArgsKwargs((1,), {'a': 11, 'b': 'bb', 'c': True})-Err('type=multiple_argument_values,', errors=[{'type': 'multiple_argument_values', 'loc': ('a',), 'msg': 'Got multiple values for argument', 'input': 11}])] SKIPPED
 tests/validators/test_arguments.py::test_positional_or_keyword[json-ArgsKwargs((1, 'bb', 'cc'), {'b': 'bb', 'c': True})-Err('type=unexpected_positional_argument,', errors=[{'type': 'multiple_argument_values', 'loc': ('b',), 'msg': 'Got multiple values for argument', 'input': 'bb'}, {'type': 'unexpected_positional_argument', 'loc': (2,), 'msg': 'Unexpected positional argument', 'input': 'cc'}])] SKIPPED
 tests/validators/test_arguments.py::test_positional_or_keyword[json-ArgsKwargs((1, 'b1'), {'a': 11, 'b': 'b2', 'c': True})-Err('type=multiple_argument_values,', errors=[{'type': 'multiple_argument_values', 'loc': ('a',), 'msg': 'Got multiple values for argument', 'input': 11}, {'type': 'multiple_argument_values', 'loc': ('b',), 'msg': 'Got multiple values for argument', 'input': 'b2'}])] SKIPPED
+tests/validators/test_arguments.py::test_keyword_only_non_default[python-input_value0-expected0-arguments_schema0] PASSED
+tests/validators/test_arguments.py::test_keyword_only_non_default[python-input_value1-expected1-arguments_schema1] PASSED
+tests/validators/test_arguments.py::test_keyword_only_non_default[python-input_value2-expected2-arguments_schema2] PASSED
+tests/validators/test_arguments.py::test_keyword_only_non_default[python-input_value3-expected3-arguments_schema3] PASSED
+tests/validators/test_arguments.py::test_keyword_only_non_default[json-input_value0-expected0-arguments_schema0] PASSED
+tests/validators/test_arguments.py::test_keyword_only_non_default[json-input_value1-expected1-arguments_schema1] PASSED
+tests/validators/test_arguments.py::test_keyword_only_non_default[json-input_value2-expected2-arguments_schema2] PASSED
+tests/validators/test_arguments.py::test_keyword_only_non_default[json-input_value3-expected3-arguments_schema3] PASSED
 tests/validators/test_arguments.py::test_positional_optional[python-(1,)-((1,), {})] PASSED
 tests/validators/test_arguments.py::test_positional_optional[python-()-((42,), {})] PASSED
 tests/validators/test_arguments.py::test_positional_optional[json-(1,)-((1,), {})] PASSED
@@ -2131,7 +2139,11 @@ tests/validators/test_enums.py::test_enum_missing_wrong PASSED
 tests/validators/test_enums.py::test_enum_exactness PASSED
 tests/validators/test_enums.py::test_plain_enum_lists PASSED
 tests/validators/test_enums.py::test_plain_enum_empty PASSED
+tests/validators/test_enums.py::test_enum_with_str_subclass PASSED
+tests/validators/test_enums.py::test_enum_with_int_subclass PASSED
+tests/validators/test_enums.py::test_validate_float_for_int_enum PASSED
 tests/validators/test_enums.py::test_missing_error_converted_to_val_error PASSED
+tests/validators/test_enums.py::test_big_int PASSED
 tests/validators/test_float.py::test_float[python-0-0] PASSED
 tests/validators/test_float.py::test_float[python-1-1] PASSED
 tests/validators/test_float.py::test_float[python-42-42_0] PASSED
@@ -2483,6 +2495,8 @@ tests/validators/test_int.py::test_int_py_and_json[python-+000-0] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-+0_000-0] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-1-1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-  1  -1] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python--1--1] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python--1.0--1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-42-42_0] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-42-42_1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-42.0-42_0] PASSED
@@ -2494,29 +2508,30 @@ tests/validators/test_int.py::test_int_py_and_json[python-42.00-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-042-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-01-1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-09-9] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-00_-expected24] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-0:-expected25] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-00_-expected26] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-0:-expected27] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-+4_2-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-+0_42-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-+4_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-+04_2.0-42] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-++4_2-expected30] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-+-1-expected31] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-++4_2-expected32] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python--+1-expected33] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-+-1-expected34] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-4_2-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-0_42-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-4_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-04_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-  04_2.0 -42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-  0_42.0 -42] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-  _042.0 -expected38] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-42_-expected39] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-42_.0-expected40] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-  _042.0 -expected41] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-42_-expected42] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-42_.0-expected43] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-000001-1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-123456789.0-123456789] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python- -expected43] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-1.-expected44] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-42.-expected45] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-123456789123456.00001-expected46] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python- -expected46] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-1.-expected47] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-42.-expected48] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-123456789123456.00001-expected49] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-10000000000-10000000000] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-9223372036854775807-9223372036854775807] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-9223372036854775808-9223372036854775808] PASSED
@@ -2538,6 +2553,8 @@ tests/validators/test_int.py::test_int_py_and_json[json-+000-0] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-+0_000-0] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-1-1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-  1  -1] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json--1--1] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json--1.0--1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-42-42_0] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-42-42_1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-42.0-42_0] PASSED
@@ -2549,29 +2566,30 @@ tests/validators/test_int.py::test_int_py_and_json[json-42.00-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-042-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-01-1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-09-9] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-00_-expected24] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-0:-expected25] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-00_-expected26] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-0:-expected27] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-+4_2-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-+0_42-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-+4_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-+04_2.0-42] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-++4_2-expected30] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-+-1-expected31] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-++4_2-expected32] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json--+1-expected33] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-+-1-expected34] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-4_2-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-0_42-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-4_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-04_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-  04_2.0 -42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-  0_42.0 -42] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-  _042.0 -expected38] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-42_-expected39] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-42_.0-expected40] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-  _042.0 -expected41] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-42_-expected42] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-42_.0-expected43] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-000001-1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-123456789.0-123456789] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json- -expected43] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-1.-expected44] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-42.-expected45] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-123456789123456.00001-expected46] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json- -expected46] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-1.-expected47] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-42.-expected48] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-123456789123456.00001-expected49] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-10000000000-10000000000] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-9223372036854775807-9223372036854775807] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-9223372036854775808-9223372036854775808] PASSED
@@ -2903,6 +2921,7 @@ tests/validators/test_literal.py::test_mix_int_enum_with_int[<lambda>-err0] PASS
 tests/validators/test_literal.py::test_mix_int_enum_with_int[<lambda>-err1] PASSED
 tests/validators/test_literal.py::test_mix_str_enum_with_str[<lambda>-err0] PASSED
 tests/validators/test_literal.py::test_mix_str_enum_with_str[<lambda>-err1] PASSED
+tests/validators/test_literal.py::test_big_int PASSED
 tests/validators/test_model.py::test_model_class PASSED
 tests/validators/test_model.py::test_model_class_extra PASSED
 tests/validators/test_model.py::test_model_class_extra_forbid PASSED
@@ -4221,24 +4240,25 @@ tests/validators/test_uuid.py::test_uuid[886313e1-3b8a-5372-9b90-0c9aee199e5d-ex
 tests/validators/test_uuid.py::test_uuid[c0a8f9a8-aa5e-482b-a067-9cb3a51f5c11-expected9] PASSED
 tests/validators/test_uuid.py::test_uuid[00000000-8000-4000-8000-000000000000-expected10] PASSED
 tests/validators/test_uuid.py::test_uuid[00000000-0000-4000-0000-000000000000-expected11] PASSED
-tests/validators/test_uuid.py::test_uuid[\x124Vx\x124Vx\x124Vx\x124Vx-expected12] PASSED
-tests/validators/test_uuid.py::test_uuid[\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00-expected13] PASSED
-tests/validators/test_uuid.py::test_uuid[ebcdab58-6eb8-46fb-a190-d07a33e9eac8-expected14] PASSED
-tests/validators/test_uuid.py::test_uuid[input_value15-expected15] PASSED
+tests/validators/test_uuid.py::test_uuid[00000000-0000-4000-0000-000000000000-expected12] PASSED
+tests/validators/test_uuid.py::test_uuid[\x124Vx\x124Vx\x124Vx\x124Vx-expected13] PASSED
+tests/validators/test_uuid.py::test_uuid[\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00-expected14] PASSED
+tests/validators/test_uuid.py::test_uuid[ebcdab58-6eb8-46fb-a190-d07a33e9eac8-expected15] PASSED
 tests/validators/test_uuid.py::test_uuid[input_value16-expected16] PASSED
-tests/validators/test_uuid.py::test_uuid[not-a-valid-uuid-expected17] PASSED
-tests/validators/test_uuid.py::test_uuid[12345678-1234-5678-1234-5678123456789-expected18] PASSED
-tests/validators/test_uuid.py::test_uuid[12345678-1234-1234-1234-1234567890123-expected19] PASSED
-tests/validators/test_uuid.py::test_uuid[\x00\x00\x00\x000\x00\x00\x00\x000\x00\x00\x00\x000\x00\x00\x00\x000-expected20] PASSED
-tests/validators/test_uuid.py::test_uuid[550e8400-e29b-41d4-a716-expected21] PASSED
-tests/validators/test_uuid.py::test_uuid[f47ac10b-58cc-4372-a567-0e02b2c3d47-expected22] PASSED
-tests/validators/test_uuid.py::test_uuid[de305d54-75b4-431b-adb2-eb6b9e54601-expected23] PASSED
-tests/validators/test_uuid.py::test_uuid[1b4e28ba-2fa1-11d2-883f-0016d3cca42-expected24] PASSED
-tests/validators/test_uuid.py::test_uuid[6ba7b810-9dad-11d1-80b4-00c04fd430c-expected25] PASSED
-tests/validators/test_uuid.py::test_uuid[886313e1-3b8a-5372-9b90-0c9aee199e5-expected26] PASSED
-tests/validators/test_uuid.py::test_uuid[c0a8f9a8-aa5e-482b-a067-9cb3a51f5c1-expected27] PASSED
-tests/validators/test_uuid.py::test_uuid[214850178493633095719753750962310141912-expected28] PASSED
-tests/validators/test_uuid.py::test_uuid[0-expected29] PASSED
+tests/validators/test_uuid.py::test_uuid[input_value17-expected17] PASSED
+tests/validators/test_uuid.py::test_uuid[not-a-valid-uuid-expected18] PASSED
+tests/validators/test_uuid.py::test_uuid[12345678-1234-5678-1234-5678123456789-expected19] PASSED
+tests/validators/test_uuid.py::test_uuid[12345678-1234-1234-1234-1234567890123-expected20] PASSED
+tests/validators/test_uuid.py::test_uuid[\x00\x00\x00\x000\x00\x00\x00\x000\x00\x00\x00\x000\x00\x00\x00\x000-expected21] PASSED
+tests/validators/test_uuid.py::test_uuid[550e8400-e29b-41d4-a716-expected22] PASSED
+tests/validators/test_uuid.py::test_uuid[f47ac10b-58cc-4372-a567-0e02b2c3d47-expected23] PASSED
+tests/validators/test_uuid.py::test_uuid[de305d54-75b4-431b-adb2-eb6b9e54601-expected24] PASSED
+tests/validators/test_uuid.py::test_uuid[1b4e28ba-2fa1-11d2-883f-0016d3cca42-expected25] PASSED
+tests/validators/test_uuid.py::test_uuid[6ba7b810-9dad-11d1-80b4-00c04fd430c-expected26] PASSED
+tests/validators/test_uuid.py::test_uuid[886313e1-3b8a-5372-9b90-0c9aee199e5-expected27] PASSED
+tests/validators/test_uuid.py::test_uuid[c0a8f9a8-aa5e-482b-a067-9cb3a51f5c1-expected28] PASSED
+tests/validators/test_uuid.py::test_uuid[214850178493633095719753750962310141912-expected29] PASSED
+tests/validators/test_uuid.py::test_uuid[0-expected30] PASSED
 tests/validators/test_uuid.py::test_uuid_strict[input_value0-expected0] PASSED
 tests/validators/test_uuid.py::test_uuid_strict[12345678-1234-5678-1234-567812345678-expected1] PASSED
 tests/validators/test_uuid.py::test_uuid_strict[12345678-1234-5678-1234-567812345678-expected2] PASSED
@@ -4414,4 +4434,4 @@ tests/validators/test_with_default.py::test_validate_default_raises_dataclass[in
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value9-expected9] PASSED
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value10-expected10] PASSED
 
-======== 4309 passed, 91 skipped, 2 xfailed ========
+======== 4329 passed, 91 skipped, 2 xfailed ========
