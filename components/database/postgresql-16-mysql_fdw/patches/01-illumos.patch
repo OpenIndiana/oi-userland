@@ -1,0 +1,11 @@
+--- mysql_fdw-REL-2_9_1/mysql_fdw.c.orig	2023-07-14 12:00:14.000000000 +0200
++++ mysql_fdw-REL-2_9_1/mysql_fdw.c	2023-12-02 20:31:58.742207075 +0100
+@@ -385,7 +385,7 @@
+ bool
+ mysql_load_library(void)
+ {
+-#if defined(__APPLE__) || defined(__FreeBSD__)
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__illumos__)
+ 	/*
+ 	 * Mac OS/BSD does not support RTLD_DEEPBIND, but it still works without
+ 	 * the RTLD_DEEPBIND
