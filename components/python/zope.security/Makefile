@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.security
-HUMAN_VERSION =			6.2
-COMPONENT_SUMMARY =		zope.security - Zope Security Framework
+HUMAN_VERSION =			7.0
+COMPONENT_SUMMARY =		Zope Security Framework
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.security
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/19/63/ab9cf7529413330069c69d2338e077d418c75ab34554a7c62d333eb9d42d/zope.security-6.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6af7704e7d8138b7d6c745601cac2d16fef27361e5d99c61b746f650a8fba1f7
+	sha256:6f4ef50b5bd40ccb9b22fb74f845fd0edf67e29dcf3233d923915959f94f16ff
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -46,6 +44,7 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/btrees
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-component
