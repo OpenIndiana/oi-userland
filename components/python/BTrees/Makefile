@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		BTrees
-HUMAN_VERSION =			5.2
-COMPONENT_SUMMARY =		BTrees - Scalable persistent object containers
+HUMAN_VERSION =			6.0
+COMPONENT_SUMMARY =		Scalable persistent object containers
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/BTrees
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6e4a0af01a4bbec95a9f931baf5c545979f4341a13a7661ff8a497af4f3d8381
+	sha256:f69b8cdd33434e13e180216bb82ae0b7cd31fadfb7cc559695cb37319ca35ff0
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -41,6 +41,7 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/persistent
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/transaction
