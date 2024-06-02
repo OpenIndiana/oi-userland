@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zipp
-HUMAN_VERSION =			3.19.0
+HUMAN_VERSION =			3.19.1
 COMPONENT_SUMMARY =		Backport of pathlib-compatible object wrapper for zip files
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/zipp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:952df858fb3164426c976d9338d3961e8e8b3758e2e059e0f754b8c4262625ee
+	sha256:35427f6d5594f4acf82d25541438348c26736fa9b3afa2754bcd63cdb99d8e8f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,11 +33,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/jaraco/zipp/issues/112
-# https://github.com/pydantic/pydantic/issues/7689
-PYTEST_ADDOPTS += --ignore tests/test_path.py
-PYTEST_ADDOPTS += --ignore tests/write-alpharep.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
