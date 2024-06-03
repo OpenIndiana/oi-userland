@@ -26,18 +26,16 @@
 #
 
 USE_PARALLEL_BUILD = yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.45.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.45.2
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:e64d340a8e627ae22cfb8bcc651cca0b497cf1e9fdf523735544ff4a732f12bf
+COMPONENT_ARCHIVE_HASH=	sha256:51bfe87eb1c02fed1484051875365eeab229831d30d0cec5d89a14f9e40e9adb
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
@@ -48,7 +46,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:e622d7ab1114b4f67cb9d8d4ab81f6e0fcf3d1291711569befda29172315d9f0
+COMPONENT_ARCHIVE_HASH_1=	sha256:0938309e86537063b9d6c39b12aa4a786e16e03d02a4d12866be2f3e0db919df
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -95,6 +93,9 @@ COMPONENT_INSTALL_ARGS += PERLPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Confi
 COMPONENT_INSTALL_ARGS += INSTALLVENDORLIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
 
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
+# Create predictable test environment - see git(1)
+COMPONENT_TEST_ENV += GIT_CONFIG_GLOBAL=/dev/null
+COMPONENT_TEST_ENV += GIT_CONFIG_NOSYSTEM=true
 
 # many failures; keep going; later versions of git are much cleaner
 COMPONENT_TEST_ARGS += -k -i
@@ -167,6 +168,10 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/cgi
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/dbi
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/dbd-sqlite
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/html-parser
+# The check for the TTY prereq needs IO::Pty.
+# See t/lib-terminal.sh and t/test-terminal.perl.
+# The IO::Pty module is in the io-tty package.
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-tty
 
 # Needed to generate git-subtree documentation
 REQUIRED_PACKAGES += text/asciidoc

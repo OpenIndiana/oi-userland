@@ -363,7 +363,7 @@ ok 100 - human date 621660000
 *** t0007-git-var.sh ***
 ok 1 - get GIT_AUTHOR_IDENT
 ok 2 - get GIT_COMMITTER_IDENT
-ok 3 # skip requested identities are strict (missing !AUTOIDENT of !FAIL_PREREQS,!AUTOIDENT)
+ok 3 - requested identities are strict
 ok 4 - get GIT_DEFAULT_BRANCH without configuration
 ok 5 - get GIT_DEFAULT_BRANCH with configuration
 ok 6 - get GIT_EDITOR without configuration
@@ -4247,9 +4247,8 @@ ok 215 - match .mailmap
 ok 216 # skip is_valid_path() on Windows (missing MINGW)
 ok 217 # skip RUNTIME_PREFIX works (missing RUNTIME_PREFIX of !VALGRIND,RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
 ok 218 # skip %(prefix)/ works (missing RUNTIME_PREFIX of !VALGRIND,RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
-ok 219 - do_files_match()
-# passed all 219 test(s)
-1..219
+# passed all 218 test(s)
+1..218
 *** t0061-run-command.sh ***
 ok 1 # skip subprocess inherits only std handles (missing MINGW)
 ok 2 - start_command reports ENOENT (slash)
@@ -7345,8 +7344,9 @@ ok 5 - does not allow --default without --get
 ok 1 - set up a pre-commit hook in core.hooksPath
 ok 2 - Check that various forms of specifying core.hooksPath work
 ok 3 - git rev-parse --git-path hooks
-# passed all 3 test(s)
-1..3
+ok 4 - core.hooksPath=/dev/null
+# passed all 4 test(s)
+1..4
 *** t1400-update-ref.sh ***
 ok 1 - setup
 ok 2 - create refs/heads/main
@@ -8101,10 +8101,8 @@ ok 91 - fsck error on gitattributes with excessive line lengths
 ok 92 - fsck error on gitattributes with excessive size
 ok 93 - fsck detects problems in worktree index
 ok 94 - fsck reports problems in current worktree index without filename
-ok 95 - fsck warning on symlink target with excessive length
-ok 96 - fsck warning on symlink target pointing inside git dir
-# passed all 96 test(s)
-1..96
+# passed all 94 test(s)
+1..94
 *** t1451-fsck-buffer.sh ***
 ok 1 - create valid objects
 ok 2 - reset input to empty
@@ -8828,9 +8826,8 @@ ok 14 - git hook run: stdout and stderr are connected to a TTY
 ok 15 - git commit: stdout and stderr are connected to a TTY
 ok 16 - git hook run a hook with a bad shebang
 ok 17 - stdin to hooks
-ok 18 - clone protections
-# passed all 18 test(s)
-1..18
+# passed all 17 test(s)
+1..17
 *** t2000-conflict-when-checking-files-out.sh ***
 ok 1 - git update-index --add various paths.
 ok 2 - git checkout-index without -f should fail on conflicting work tree.
@@ -23465,10 +23462,9 @@ ok 105 - partial clone with -o
 ok 106 - partial clone: warn if server does not support object filtering
 ok 107 - batch missing blob request during checkout
 ok 108 - batch missing blob request does not inadvertently try to fetch gitlinks
-ok 109 - clone with init.templatedir runs hooks
-# passed all 109 test(s)
+# passed all 108 test(s)
 # SKIP no web server found at ''
-1..109
+1..108
 *** t5602-clone-remote-exec.sh ***
 ok 1 - setup
 ok 2 - clone calls git upload-pack unqualified with no -u option
@@ -28840,8 +28836,8 @@ ok 48 - cleanup commit message (whitespace config, -m)
 ok 49 - message shows author when it is not equal to committer
 ok 50 - message shows date when it is explicitly set
 ok 51 - message does not have multiple scissors lines
-ok 52 - message shows committer when it is automatic
-ok 53 # skip do not fire editor when committer is bogus (missing !AUTOIDENT of !FAIL_PREREQS,!AUTOIDENT)
+ok 52 # skip message shows committer when it is automatic (missing AUTOIDENT)
+ok 53 - do not fire editor when committer is bogus
 ok 54 - do not fire editor if -m <msg> was given
 ok 55 - do not fire editor if -m "" was given
 ok 56 - do not fire editor in the presence of conflicts
@@ -31201,8 +31197,8 @@ ok 24 - long non-ascii self name is suppressed
 ok 25 - sanitized self name is suppressed
 ok 26 - Show all headers
 ok 27 - Prompting works
-ok 28 - implicit ident is allowed
-ok 29 # skip broken implicit ident aborts send-email (missing !AUTOIDENT of PERL,!AUTOIDENT)
+ok 28 # skip implicit ident is allowed (missing AUTOIDENT of PERL,AUTOIDENT)
+ok 29 - broken implicit ident aborts send-email
 ok 30 - setup cmd scripts
 ok 31 - tocmd works
 ok 32 - cccmd works
@@ -33208,10 +33204,10 @@ ok 67 - prompt - conflict indicator
 # passed all 67 test(s)
 1..67
 
-missing prereq: !AUTOIDENT !LONG_IS_64BIT !PCRE !PTHREADS BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UTF8_NFD_TO_NFC WINDOWS
+missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UTF8_NFD_TO_NFC WINDOWS
 
 fixed   1
-success 29439
+success 29436
 failed  0
 broken  272
-total   30158
+total   30154
