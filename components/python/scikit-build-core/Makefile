@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scikit_build_core
-HUMAN_VERSION =			0.9.4
+HUMAN_VERSION =			0.9.5
 COMPONENT_SUMMARY =		Build backend for CMake based projects
 COMPONENT_PROJECT_URL =		https://github.com/scikit-build/scikit-build-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:316e6a3a8176ed783063eaddaba52b8db022a4e794d2c7bb493a73539795c759
+	sha256:2a4cb119cc968fe87ae05582979657cc0e7be45655798446eabbe490e61ce072
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,7 +38,9 @@ COMPONENT_TEST_ENV += CMAKE_PREFIX_PATH=$(shell /usr/bin/pybind11-config-$(PYTHO
 # manually.
 TEST_REQUIREMENTS_EXTRAS += test
 
-# https://github.com/OpenIndiana/oi-userland/pull/16549#issuecomment-2037519250
+# When testing finds numpy already pre-installed it tries to install own copy
+# of numpy using pip.  This fails because of
+# https://github.com/numpy/numpy/issues/25366
 TEST_CONFLICTING_PACKAGES.python += library/python/numpy
 # When pbr is installed the testing is failing because of the pkg_resources
 # DeprecationWarning.
