@@ -14,17 +14,15 @@
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsodium
-COMPONENT_VERSION= 1.0.19
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.0.20
 COMPONENT_SUMMARY= Sodium is an easy-to-use software library for encryption, decryption, signatures, password hashing, and more
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:018d79fe0a045cca07331d37bd0cb57b2e838c51bc48fd837a1472e50068bbea
+COMPONENT_ARCHIVE_HASH= sha256:ebb65ef6ca439333c2bb41a0c1990587288da07f6c7fd07cb3a18cc18d30ce19
 COMPONENT_ARCHIVE_URL=	https://download.libsodium.org/$(COMPONENT_NAME)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://download.libsodium.org/doc/
 COMPONENT_FMRI= library/security/libsodium
@@ -34,12 +32,7 @@ COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_UNPACK_ACTION = ( $(MV) $(COMPONENT_NAME)-stable $(COMPONENT_SRC) )
-
 CONFIGURE_OPTIONS += --disable-static
-
-# For tests to pass
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
