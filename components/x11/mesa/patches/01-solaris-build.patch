@@ -1,0 +1,42 @@
+
+patch to find Solaris libdrm include files 
+
+not suitable for upstream
+
+--- src/gbm/meson.build	2022-03-10 19:38:32.863605150 -0800
++++ src/gbm/meson.build	2022-03-10 19:39:33.969269587 -0800
+@@ -48,7 +48,7 @@
+ libgbm = shared_library(
+   'gbm',
+   files_gbm,
+-  include_directories : incs_gbm,
++  include_directories : [incs_gbm, '/usr/include/libdrm'],
+   c_args : [args_gbm],
+   link_args : [ld_args_gc_sections],
+   link_with : libloader,
+
+--- src/mesa/drivers/x11/meson.build	2022-03-11 13:30:50.456660787 -0800
++++ src/mesa/drivers/x11/meson.build	2022-03-11 13:30:38.493435068 -0800
+@@ -34,6 +34,6 @@
+   ],
+   link_with : [libmesa_classic, libglapi_static, gl_link_with],
+   dependencies : [idep_mesautil, dep_x11, dep_xext, dep_xcb, dep_thread],
+-  version : '1.6.0',
++  version : '1.2.0',
+   install : true,
+ )
+
+Without forcing dri to true, we cannot build libEGL
+
+Not suitable for upstream
+
+--- meson.build	2022-03-15 20:23:43.570325697 -0700
++++ meson.build	2022-03-15 20:28:41.286497416 -0700
+@@ -196,6 +196,7 @@
+ with_dri_nouveau = dri_drivers.contains('nouveau')
+ 
+ with_dri = dri_drivers.length() != 0
++with_dri = true
+ 
+ gallium_drivers = get_option('gallium-drivers')
+ if gallium_drivers.contains('auto')
