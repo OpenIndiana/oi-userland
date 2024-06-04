@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		persistent
-HUMAN_VERSION =			5.2
-COMPONENT_SUMMARY =		persistent - Translucent persistent objects
+HUMAN_VERSION =			6.0
+COMPONENT_SUMMARY =		Translucent persistent objects
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/persistent/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dbea5d1ff9db4e451ca39bc0b42a9ea537e6cac9282ae8c0780fb8ffae3ec834
+	sha256:083650c0ffedcb880328963c294b9511a02b6b05e421e737a7d55f9eed88fb5f
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -32,21 +32,15 @@ include $(WS_MAKE_RULES)/common.mk
 # Force no colors and more verbose output via tox posargs
 TOX_POSARGS += -vv
 
-# This project uses both cpython and abi3 ABI depending on particular library.
-# To deal with this we need to disable automatic ABI library name transforms.
-PY3_CPYTHON_NAMING=\#
-
-# Replace Python version in include file paths
-GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's|\(usr/include/python\)3.[0-9]\{1,\}/|\1$$(PYVER)/|' | uniq
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cffi
+PYTHON_REQUIRED_PACKAGES += library/python/zope-deferredimport
 PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/manuel
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
