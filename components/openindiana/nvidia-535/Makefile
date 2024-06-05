@@ -19,19 +19,20 @@ BUILD_BITS = NO_ARCH
 
 include ../../../make-rules/shared-macros.mk
 
-# This is the active NVIDIA 535 Branch driver
+# Support for this NVIDIA Long Term Support Branch driver ends in June 2026
+# https://docs.nvidia.com/datacenter/tesla/drivers/index.html
 
-COMPONENT_MJR_VERSION = 	535
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
-HUMAN_VERSION =			$(COMPONENT_MJR_VERSION).179
+HUMAN_VERSION =			535.183.01
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
-COMPONENT_FMRI =		driver/graphics/$(COMPONENT_NAME)
+COMPONENT_MJR_VERSION =		$(firstword $(subst ., ,$(HUMAN_VERSION)))
+COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:2dde7460ea052919d592b2959b31bc504180c2ce7d5c0a273410d7dffcc23faa
+COMPONENT_ARCHIVE_HASH =	sha256:5943ffb563b6196ce7dec3712cea74a63f4c975eb655f6290155c6cfdfcb6fd2
 COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
 COMPONENT_LICENSE_FILE =	nvidia.license
