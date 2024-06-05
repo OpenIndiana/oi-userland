@@ -39,13 +39,13 @@ COMPONENT_SUMMARY.library-32 =	$(COMPONENT_SUMMARY) (32-bit)
 COMPONENT_FMRI.developer =	developer/icu
 COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
 
-# https://unicode-org.atlassian.net/browse/ICU-22629
-GCC_VERSION = 12
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Testing expects GNU diff in PATH
 PATH = $(PATH.gnu)
+
+# https://unicode-org.atlassian.net/browse/ICU-22629
+CXXFLAGS += -fexcess-precision=fast
 
 COMPONENT_BUILD_TARGETS = all
 
