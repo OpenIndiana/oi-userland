@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icu
 COMPONENT_VERSION =		75.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		International Components for Unicode
 COMPONENT_SRC =			$(COMPONENT_NAME)
 COMPONENT_ARCHIVE =		icu4c-$(subst .,_,$(HUMAN_VERSION))-src.tgz
