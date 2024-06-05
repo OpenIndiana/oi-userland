@@ -12,20 +12,18 @@
 # Copyright 2016 Andrey Sokolov. All rights reserved.
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2021 Olaf Bohlen
-# Copyright 2023 Friedrich Kink
+# Copyright 2023,2024 Friedrich Kink
 #
 
-OPENSSL_VERSION= 3.1
-BUILD_BITS= 64
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	21.2.0
+COMPONENT_VERSION=	21.3.1
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5737a976e9252e2d5e87d2e8176b1e07415057291c656b7547d0a79e0e8c3969
+COMPONENT_ARCHIVE_HASH=	sha256:cf59196b94851fbfdbcc63d1d6a8d2b83a4ae093c89c3d37b5d460b3a3d20f15
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk
@@ -47,6 +45,11 @@ COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 # no workaround known so far
 # also remove deprecated functions
 #
+# does not work currently
+# contrib/scripts/get_mp3_source.sh
+# therefore exclude
+#	./menuselect/menuselect --enable format_mp3 menuselect.makeopts; \
+
 COMPONENT_POST_CONFIGURE_ACTION += ( \
 	cd $(@D); \
 	$(GSED) -i -e 's:LDAP_INCLUDE=:LDAP_INCLUDE=-I/usr/include/openldap:' makeopts; \
@@ -58,7 +61,6 @@ COMPONENT_POST_CONFIGURE_ACTION += ( \
 	$(GSED) -i -e "s:-L$(PG_LIBDIR.$(BITS)):-L$(PG_LIBDIR.$(BITS)) -R$(PG_LIBDIR.$(BITS)):" makeopts; \
 	$(GMAKE) menuselect.makeopts; \
 	./menuselect/menuselect --disable res_geolocation menuselect.makeopts; \
-	./menuselect/menuselect --enable format_mp3 menuselect.makeopts; \
 	./menuselect/menuselect --enable res_config_mysql menuselect.makeopts; \
 	./menuselect/menuselect --enable res_mwi_external menuselect.makeopts; \
 	./menuselect/menuselect --enable res_chan_stats menuselect.makeopts; \
@@ -128,6 +130,7 @@ REQUIRED_PACKAGES += library/popt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/speex
@@ -144,7 +147,6 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/spandsp
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/unixodbc
