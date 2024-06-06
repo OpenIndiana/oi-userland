@@ -21,14 +21,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icu
 COMPONENT_VERSION =		74.2
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		International Components for Unicode
 COMPONENT_SRC =			$(COMPONENT_NAME)
 COMPONENT_ARCHIVE =		icu4c-$(subst .,_,$(HUMAN_VERSION))-src.tgz
-COMPONENT_ARCHIVE_HASH =	sha256:5e4fb11d6a3e6b85afb55de8da8a71538f1d8fd64fce893986b37d60e5bb0091
+COMPONENT_ARCHIVE_HASH =	sha256:68db082212a96d6f53e35d60f47d38b962e9f9d207a74cfac78029ae8ff5e08c
 COMPONENT_PROJECT_URL =		https://icu.unicode.org/
 COMPONENT_ARCHIVE_URL =		https://github.com/unicode-org/icu/releases/download/release-$(subst .,-,$(HUMAN_VERSION))/$(COMPONENT_ARCHIVE)
-COMPONENT_VERSION_MAJOR =	$(word 1,$(subst ., ,$(HUMAN_VERSION)))
+COMPONENT_VERSION_MAJOR =	$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_FMRI =		library/icu-$(COMPONENT_VERSION_MAJOR)
 COMPONENT_CLASSIFICATION =	System/Internationalization
 COMPONENT_LICENSE =		ICU
@@ -42,10 +42,8 @@ include $(WS_MAKE_RULES)/common.mk
 # Testing expects GNU diff in PATH
 PATH = $(PATH.gnu)
 
-# Workaround for https://unicode-org.atlassian.net/browse/ICU-22632
-COMPONENT_POST_UNPACK_ACTION += \
-	$(RM) $(SOURCE_DIR)/LICENSE ; \
-	$(CP) $(COMPONENT_DIR)/files/LICENSE $(SOURCE_DIR) ;
+# https://unicode-org.atlassian.net/browse/ICU-22629
+CXXFLAGS += -fexcess-precision=fast
 
 COMPONENT_BUILD_TARGETS = all
 
@@ -62,8 +60,6 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-samples
 CONFIGURE_OPTIONS += --enable-renaming
 
-# Tests fails when compiled using gcc 13
-# https://unicode-org.atlassian.net/browse/ICU-22629
 COMPONENT_TEST_TRANSFORMS += \
     '-n ' \
     '-e "/^All tests OK:  testdata intltest iotest cintltst/p" ' \
@@ -73,6 +69,13 @@ COMPONENT_TEST_TRANSFORMS += \
 GENERATE_EXTRA_CMD += | \
 	$(GSED) -e 's|^\(link .*path=usr/lib/.*lib.*\.so\.\)$(COMPONENT_VERSION_MAJOR) |\1$$(COMPONENT_VERSION_MAJOR) |'
 PKG_MACROS += COMPONENT_VERSION_MAJOR=$(COMPONENT_VERSION_MAJOR)
+
+# Sanity check
+ifneq ($(strip $(COMPONENT_FMRI.developer)),)
+ifneq ($(strip $(COMPONENT_VERSION_MAJOR)),$(strip $(ICU_VERSION)))
+$(error ICU_VERSION does not match developer/icu version)
+endif
+endif
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
