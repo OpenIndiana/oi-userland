@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		marshmallow
-HUMAN_VERSION =			3.21.2
-COMPONENT_SUMMARY =		marshmallow - A lightweight library for converting complex datatypes to and from native Python datatypes.
+HUMAN_VERSION =			3.21.3
+COMPONENT_SUMMARY =		A lightweight library for converting complex datatypes to and from native Python datatypes.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:82408deadd8b33d56338d2182d455db632c6313aa2af61916672146bb32edc56
+	sha256:4f57c5e050a54d66361e826f94fba213eb10b67b2fdb02c3e0343ce207ba1662
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
