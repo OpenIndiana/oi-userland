@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elasticsearch
-HUMAN_VERSION =			8.13.2
+HUMAN_VERSION =			8.14.0
 COMPONENT_SUMMARY =		Python client for Elasticsearch
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elasticsearch-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/elastic/elasticsearch-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e8086b7f335c75eb5ca3200948095b95ae4d1eb2e9973c84219b72904cfd17f4
+	sha256:1f9e8c96a281e8e4330e0ae4b8bd60715bde408631292a0cf0bf18688d10d8fd
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
