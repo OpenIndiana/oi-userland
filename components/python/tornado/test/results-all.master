@@ -95,6 +95,7 @@ test_future_http_error_no_raise (tornado.test.curl_httpclient_test.CurlHTTPClien
 test_future_interface (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_gzip (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_header_callback (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
+test_header_crlf (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_header_encoding (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_header_types (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_hello_world (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
@@ -221,6 +222,7 @@ test_future_http_error_no_raise (tornado.test.httpclient_test.HTTPClientCommonTe
 test_future_interface (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_gzip (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_header_callback (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
+test_header_crlf (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_header_encoding (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_header_types (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_hello_world (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
@@ -282,7 +284,10 @@ test_100_continue (tornado.test.httpserver_test.HTTPConnectionTest) ... ok
 test_multipart_form (tornado.test.httpserver_test.HTTPConnectionTest) ... ok
 test_newlines (tornado.test.httpserver_test.HTTPConnectionTest) ... ok
 test_chunked_request_body (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
+test_chunked_request_body_duplicate_header (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_chunked_request_body_invalid_size (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
+test_chunked_request_body_transfer_encoding_and_content_length (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
+test_chunked_request_body_unsupported_transfer_encoding (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_chunked_request_uppercase (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_empty_request (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_invalid_content_length (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
@@ -355,6 +360,7 @@ test_pickle_roundtrip (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_setdefault (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_string (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_unicode_newlines (tornado.test.httputil_test.HTTPHeadersTest) ... ok
+test_unicode_whitespace (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_body_is_a_byte_string (tornado.test.httputil_test.HTTPServerRequestTest) ... ok
 test_default_constructor (tornado.test.httputil_test.HTTPServerRequestTest) ... ok
 test_repr_does_not_contain_headers (tornado.test.httputil_test.HTTPServerRequestTest) ... ok
@@ -783,6 +789,7 @@ test_future_http_error_no_raise (tornado.test.simple_httpclient_test.SimpleHTTPC
 test_future_interface (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_gzip (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_header_callback (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
+test_header_crlf (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_header_encoding (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_header_types (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_hello_world (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
@@ -948,14 +955,13 @@ test_unicode_template (tornado.test.template_test.TemplateTest) ... ok
 test_tear_down_releases_app_and_http_server (tornado.test.testing_test.AsyncHTTPTestCaseSetUpTearDownTest) ... ok
 test_fetch_full_http_url (tornado.test.testing_test.AsyncHTTPTestCaseTest) ... ok
 test_fetch_segment (tornado.test.testing_test.AsyncHTTPTestCaseTest) ... ok
+test_other_return (tornado.test.testing_test.AsyncTestCaseReturnAssertionsTest) ... ok
+test_undecorated_coroutine (tornado.test.testing_test.AsyncTestCaseReturnAssertionsTest) ... ok
+test_undecorated_generator (tornado.test.testing_test.AsyncTestCaseReturnAssertionsTest) ... ok
+test_undecorated_generator_with_skip (tornado.test.testing_test.AsyncTestCaseReturnAssertionsTest) ... ok
 test_subsequent_wait_calls (tornado.test.testing_test.AsyncTestCaseTest)
 This test makes sure that a second call to wait() ... ok
 test_wait_timeout (tornado.test.testing_test.AsyncTestCaseTest) ... ok
-test_other_return (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
-test_undecorated_coroutine (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
-test_undecorated_generator (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
-test_undecorated_generator_with_skip (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
-test_unwrap (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
 test_async (tornado.test.testing_test.GenTest) ... ok
 test_native_coroutine (tornado.test.testing_test.GenTest) ... ok
 test_native_coroutine_timeout (tornado.test.testing_test.GenTest) ... ok
@@ -1242,7 +1248,7 @@ test_concurrent_streaming_barrier (tornado.test.wsgi_test.WSGIContainerThreadPoo
 test_simple (tornado.test.wsgi_test.WSGIContainerThreadPoolTest) ... ok
 
 ----------------------------------------------------------------------
-Ran 1208 tests
+Ran 1214 tests
 
 OK (skipped=6)
 Some tests were skipped because: No SO_REUSEPORT support, SO_REUSEPORT
