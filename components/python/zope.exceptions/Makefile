@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.exceptions
-HUMAN_VERSION =			5.0.1
-COMPONENT_SUMMARY =		zope.exceptions - Zope Exceptions
+HUMAN_VERSION =			5.1
+COMPONENT_SUMMARY =		Zope Exceptions
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.exceptions
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/31/e1/557986e906763755c5de872f9a9854aca22fb546de578f735495963b5b9a/zope.exceptions-5.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:30fc53e5339f5fbd9d1335e0f7b69f77f15e3f06e2b17b7fb7ef925cc24fdd96
+	sha256:611b4c4946c30160db4b7bbd4f38613b32684af167d319650af9b73bc7b0e978
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
