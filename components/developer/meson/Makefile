@@ -19,13 +19,13 @@ TEST_STYLE = run_tests.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         meson
-COMPONENT_VERSION=      1.4.0
+COMPONENT_VERSION=      1.4.1
 COMPONENT_SUMMARY=      The Meson Build system
 COMPONENT_PROJECT_URL=  https://mesonbuild.com/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mesonbuild/meson/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:61382f295378bddcd9bebb3a9a9065b1cbc671fa41b80964ab02726f9a5f3a88
+COMPONENT_ARCHIVE_HASH= sha256:a7efc72ecb873c5a62031ade1921a7177b67cfdcb2e9410a7ab023f9e8192f4b
 COMPONENT_FMRI=         developer/build/meson
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_LICENSE=      APLv2
