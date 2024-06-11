@@ -1,13 +1,13 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-configfile: pytest.ini
+configfile: setup.cfg
 testpaths: rbtools
-asyncio: mode=strict
-collecting ... collected 786 items
+collecting ... collected 877 items
 
+rbtools/api/tests/test_capabilities.py::CapabilitiesTests::test_get_capability PASSED
+rbtools/api/tests/test_capabilities.py::CapabilitiesTests::test_get_capability_with_unknown_capability PASSED
 rbtools/api/tests/test_capabilities.py::CapabilitiesTests::test_has_capability PASSED
 rbtools/api/tests/test_capabilities.py::CapabilitiesTests::test_has_capability_with_partial_path PASSED
 rbtools/api/tests/test_capabilities.py::CapabilitiesTests::test_has_capability_with_unknown_capability PASSED
@@ -64,7 +64,19 @@ rbtools/api/tests/test_resource.py::ListResourceTests::test_create_with_extra_da
 rbtools/api/tests/test_resource.py::ListResourceTests::test_link_field PASSED
 rbtools/api/tests/test_resource.py::ListResourceTests::test_list_resource_links PASSED
 rbtools/api/tests/test_resource.py::ListResourceTests::test_list_resource_list PASSED
+rbtools/api/tests/test_resource.py::ListResourceTests::test_list_resource_list_without_total_results PASSED
 rbtools/api/tests/test_resource.py::ListResourceTests::test_root_resource_templates PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_clear PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_fields PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_getattr PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_getattr_with_invalid_key PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_getitem PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_getitem_with_invalid_key PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_pop PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_popitem PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_setdefault PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_setitem PASSED
+rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_update PASSED
 rbtools/api/tests/test_resource.py::ResourceExtraDataFieldTests::test_copy PASSED
 rbtools/api/tests/test_resource.py::ResourceExtraDataFieldTests::test_setitem PASSED
 rbtools/api/tests/test_resource.py::ResourceExtraDataFieldTests::test_wrapped_fields PASSED
@@ -74,18 +86,6 @@ rbtools/api/tests/test_resource.py::ResourceFactoryTests::test_list_construction
 rbtools/api/tests/test_resource.py::ResourceFactoryTests::test_no_token_guessing PASSED
 rbtools/api/tests/test_resource.py::ResourceFactoryTests::test_resource_specific_base_class PASSED
 rbtools/api/tests/test_resource.py::ResourceFactoryTests::test_token_guessing PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_clear PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_fields PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_getattr PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_getattr_with_invalid_key PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_getitem PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_getitem_with_invalid_key PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_iterfields PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_pop PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_popitem PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_setdefault PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_setitem PASSED
-rbtools/api/tests/test_resource.py::ResourceFieldDictTests::test_update PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_diff_tool_with_requires_false PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_diff_tool_with_requires_ids PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_diff_tool_with_requires_true PASSED
@@ -130,10 +130,10 @@ rbtools/clients/tests/test_bzr.py::BazaarClientTests::test_parse_revision_spec_o
 rbtools/clients/tests/test_bzr.py::BazaarClientTests::test_parse_revision_spec_one_arg_split SKIPPED
 rbtools/clients/tests/test_bzr.py::BazaarClientTests::test_parse_revision_spec_two_args SKIPPED
 rbtools/clients/tests/test_bzr.py::BazaarClientTests::test_too_many_revisions SKIPPED
-rbtools/clients/tests/test_clearcase.py::ClearCaseClientTests::test_activity_changeset PASSED
+rbtools/clients/tests/test_clearcase.py::ClearCaseClientTests::test_activity_changelist PASSED
 rbtools/clients/tests/test_clearcase.py::ClearCaseClientTests::test_check_dependencies_with_found PASSED
 rbtools/clients/tests/test_clearcase.py::ClearCaseClientTests::test_check_dependencies_with_missing PASSED
-rbtools/clients/tests/test_clearcase.py::ClearCaseClientTests::test_checkedout_changeset PASSED
+rbtools/clients/tests/test_clearcase.py::ClearCaseClientTests::test_checkedout_changelist PASSED
 rbtools/clients/tests/test_clearcase.py::ClearCaseClientTests::test_diff_diffx PASSED
 rbtools/clients/tests/test_clearcase.py::ClearCaseClientTests::test_diff_directory_diffx PASSED
 rbtools/clients/tests/test_clearcase.py::ClearCaseClientTests::test_diff_directory_legacy PASSED
@@ -190,6 +190,10 @@ rbtools/clients/tests/test_git.py::GitClientTests::test_diff_with_tracking_branc
 rbtools/clients/tests/test_git.py::GitClientTests::test_diff_with_tracking_branch_no_origin PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_diff_with_tracking_branch_option PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_diff_with_tracking_branch_slash PASSED
+rbtools/clients/tests/test_git.py::GitClientTests::test_get_file_content PASSED
+rbtools/clients/tests/test_git.py::GitClientTests::test_get_file_content_invalid_revision PASSED
+rbtools/clients/tests/test_git.py::GitClientTests::test_get_file_size PASSED
+rbtools/clients/tests/test_git.py::GitClientTests::test_get_file_size_invalid_revision PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_get_local_path_with_deps_missing PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_get_local_path_with_deps_not_checked PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_get_parent_branch_with_non_master_default PASSED
@@ -265,6 +269,12 @@ rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_diff_with_pa
 rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_commit_message_with_commit_range PASSED
 rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_commit_message_with_one_commit_in_range PASSED
 rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_commit_message_with_specific_commit PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_file_content PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_file_content_invalid_filename PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_file_content_invalid_revision PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_file_size PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_file_size_invalid_filename PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_file_size_invalid_revision PASSED
 rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_hg_ref_type PASSED
 rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_local_path_with_deps_missing PASSED
 rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_get_local_path_with_deps_not_checked PASSED
@@ -304,6 +314,14 @@ rbtools/clients/tests/test_p4.py::PerforceClientTests::test_diff_for_submitted_c
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_diff_with_moved_files_cap_off PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_diff_with_moved_files_cap_on PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_diff_with_pending_changelist PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_file_content_pending_changelist PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_file_content_pending_changelist_invalid_file PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_file_content_submitted_changelist PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_file_content_submitted_changelist_invalid_file PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_file_size_pending_changelist PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_file_size_pending_changelist_invalid_file PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_file_size_submitted_changelist PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_file_size_submitted_changelist_invalid_file PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_local_path_with_deps_missing PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_local_path_with_deps_not_checked PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_get_repository_info_outside_client_root PASSED
@@ -333,13 +351,11 @@ rbtools/clients/tests/test_scanning.py::ScanningTests::test_scanning_nested_repo
 rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_get_with_builtin PASSED
 rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_get_with_entrypoint PASSED
 rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_get_with_entrypoint_and_missing PASSED
-rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_get_with_entrypoint_no_scmclient_id PASSED
 rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_init PASSED
 rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_iter PASSED
 rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_register PASSED
 rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_register_with_already_registered PASSED
 rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_register_with_id_already_used PASSED
-rbtools/clients/tests/test_scmclient_registry.py::SCMClientRegistryTests::test_register_with_no_scmclient_id PASSED
 rbtools/clients/tests/test_sos.py::SOSClientTests::test_check_dependencies_with_found PASSED
 rbtools/clients/tests/test_sos.py::SOSClientTests::test_check_dependencies_with_missing PASSED
 rbtools/clients/tests/test_sos.py::SOSClientTests::test_diff_with_changelist PASSED
@@ -376,6 +392,10 @@ rbtools/clients/tests/test_sos.py::SOSClientTests::test_parse_revision_spec_with
 rbtools/clients/tests/test_sos.py::SOSClientTests::test_parse_revision_spec_with_1_arg_changelist_supported PASSED
 rbtools/clients/tests/test_sos.py::SOSClientTests::test_parse_revision_spec_with_1_arg_select PASSED
 rbtools/clients/tests/test_sos.py::SOSClientTests::test_parse_revision_spec_with_multiple_args PASSED
+rbtools/clients/tests/test_svn.py::SVNRepositoryMatchTests::test_find_matching_server_repository_with_mirror_path_match PASSED
+rbtools/clients/tests/test_svn.py::SVNRepositoryMatchTests::test_find_matching_server_repository_with_path_match PASSED
+rbtools/clients/tests/test_svn.py::SVNRepositoryMatchTests::test_find_matching_server_repository_with_uuid_match PASSED
+rbtools/clients/tests/test_svn.py::SVNRepositoryMatchTests::test_relative_paths PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_apply_patch PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_apply_patch_with_applied_and_conflicts PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_apply_patch_with_conflicts PASSED
@@ -395,6 +415,14 @@ rbtools/clients/tests/test_svn.py::SVNClientTests::test_diff_with_empty_files PA
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_commit_message_committed_revision PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_commit_message_committed_revisions PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_commit_message_working_copy PASSED
+rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_file_content_HEAD PASSED
+rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_file_content_HEAD_invalid_file PASSED
+rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_file_content_committed PASSED
+rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_file_content_committed_invalid_file PASSED
+rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_file_size_HEAD PASSED
+rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_file_size_HEAD_invalid_file PASSED
+rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_file_size_committed PASSED
+rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_file_size_committed_invalid_file PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_local_path_with_deps_missing PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_local_path_with_deps_not_checked PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_get_repository_info_with_deps_missing PASSED
@@ -410,7 +438,7 @@ rbtools/clients/tests/test_svn.py::SVNClientTests::test_parse_revision_spec_non_
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_parse_revision_spec_one_arg_two_revisions PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_parse_revision_spec_one_revision PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_parse_revision_spec_one_revision_changelist PASSED
-rbtools/clients/tests/test_svn.py::SVNClientTests::test_parse_revision_spec_one_revision_nonexistant_changelist PASSED
+rbtools/clients/tests/test_svn.py::SVNClientTests::test_parse_revision_spec_one_revision_nonexistent_changelist PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_parse_revision_spec_one_revision_url PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_parse_revision_spec_two_arguments PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_parse_revision_spec_two_revisions_url PASSED
@@ -419,25 +447,6 @@ rbtools/clients/tests/test_svn.py::SVNClientTests::test_same_diff_multiple_metho
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_show_copies_as_adds_disabled PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_show_copies_as_adds_disabled_and_no_empty_files_cap PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_show_copies_as_adds_enabled PASSED
-rbtools/clients/tests/test_svn.py::SVNRepositoryMatchTests::test_find_matching_server_repository_with_mirror_path_match PASSED
-rbtools/clients/tests/test_svn.py::SVNRepositoryMatchTests::test_find_matching_server_repository_with_path_match PASSED
-rbtools/clients/tests/test_svn.py::SVNRepositoryMatchTests::test_find_matching_server_repository_with_uuid_match PASSED
-rbtools/clients/tests/test_svn.py::SVNRepositoryMatchTests::test_relative_paths PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_check_dependencies_with_found_on_linux PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_check_dependencies_with_found_on_windows PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_check_dependencies_with_found_with_custom PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_check_dependencies_with_not_found PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_add PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_delete PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_edit PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_edit_branch PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_non_working_copy_tip PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_0_revisions PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_1_revision PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_2_revisions PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_3_revisions PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_no_changeset_found PASSED
-rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_r1_tilde_t2 PASSED
 rbtools/clients/tests/test_tfs.py::TFExeWrapperTests::test_check_dependencies_with_found PASSED
 rbtools/clients/tests/test_tfs.py::TFExeWrapperTests::test_check_dependencies_with_found_wrong_version PASSED
 rbtools/clients/tests/test_tfs.py::TFExeWrapperTests::test_check_dependencies_with_not_found PASSED
@@ -466,6 +475,21 @@ rbtools/clients/tests/test_tfs.py::TFHelperWrapperTests::test_parse_revision_spe
 rbtools/clients/tests/test_tfs.py::TFHelperWrapperTests::test_parse_revision_spec_with_no_changeset_found PASSED
 rbtools/clients/tests/test_tfs.py::TFHelperWrapperTests::test_parse_revision_spec_with_no_changeset_found_no_error PASSED
 rbtools/clients/tests/test_tfs.py::TFHelperWrapperTests::test_parse_revision_spec_with_r1_tilde_t2 PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_check_dependencies_with_found_on_linux PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_check_dependencies_with_found_on_windows PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_check_dependencies_with_found_with_custom PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_check_dependencies_with_not_found PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_add PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_delete PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_edit PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_edit_branch PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_diff_with_non_working_copy_tip PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_0_revisions PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_1_revision PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_2_revisions PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_3_revisions PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_no_changeset_found PASSED
+rbtools/clients/tests/test_tfs.py::TEEWrapperTests::test_parse_revision_spec_with_r1_tilde_t2 PASSED
 rbtools/clients/tests/test_tfs.py::TFSClientTests::test_check_dependencies_with_not_found PASSED
 rbtools/clients/tests/test_tfs.py::TFSClientTests::test_check_dependencies_with_tee_found PASSED
 rbtools/clients/tests/test_tfs.py::TFSClientTests::test_check_dependencies_with_tf_exe_found PASSED
@@ -479,6 +503,27 @@ rbtools/commands/tests/test_alias.py::AliasCommandTests::test_alias_dry_run_unde
 rbtools/commands/tests/test_alias.py::AliasCommandTests::test_alias_list_debug PASSED
 rbtools/commands/tests/test_alias.py::AliasCommandTests::test_alias_list_defined PASSED
 rbtools/commands/tests/test_alias.py::AliasCommandTests::test_alias_list_undefined PASSED
+rbtools/commands/tests/test_base_output.py::JSONOutputTests::test_add PASSED
+rbtools/commands/tests/test_base_output.py::JSONOutputTests::test_add_error PASSED
+rbtools/commands/tests/test_base_output.py::JSONOutputTests::test_add_warning PASSED
+rbtools/commands/tests/test_base_output.py::JSONOutputTests::test_append PASSED
+rbtools/commands/tests/test_base_output.py::JSONOutputTests::test_append_with_invalid_key PASSED
+rbtools/commands/tests/test_base_output.py::JSONOutputTests::test_append_with_non_list PASSED
+rbtools/commands/tests/test_base_output.py::JSONOutputTests::test_print_to_stream PASSED
+rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_bytes_new_line PASSED
+rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_bytes_write PASSED
+rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_bytes_write_with_end PASSED
+rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_bytes_write_with_end_empty PASSED
+rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_str_new_line PASSED
+rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_str_write PASSED
+rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_str_write_with_end PASSED
+rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_str_write_with_end_empty PASSED
+rbtools/commands/tests/test_main.py::MainCommandTests::test_help_command PASSED
+rbtools/commands/tests/test_main.py::MainCommandTests::test_help_invalid_command PASSED
+rbtools/commands/tests/test_main.py::MainCommandTests::test_help_multiple_args PASSED
+rbtools/commands/tests/test_main.py::MainCommandTests::test_help_options_after PASSED
+rbtools/commands/tests/test_main.py::MainCommandTests::test_help_options_before PASSED
+rbtools/commands/tests/test_main.py::MainCommandTests::test_version_command PASSED
 rbtools/commands/tests/test_main.py::JSONOutputTests::test_add PASSED
 rbtools/commands/tests/test_main.py::JSONOutputTests::test_add_error_with_key PASSED
 rbtools/commands/tests/test_main.py::JSONOutputTests::test_add_error_without_key PASSED
@@ -486,12 +531,33 @@ rbtools/commands/tests/test_main.py::JSONOutputTests::test_add_warning_with_key 
 rbtools/commands/tests/test_main.py::JSONOutputTests::test_add_warning_without_key PASSED
 rbtools/commands/tests/test_main.py::JSONOutputTests::test_append PASSED
 rbtools/commands/tests/test_main.py::JSONOutputTests::test_init PASSED
-rbtools/commands/tests/test_main.py::MainCommandTests::test_help_command PASSED
-rbtools/commands/tests/test_main.py::MainCommandTests::test_help_invalid_command PASSED
-rbtools/commands/tests/test_main.py::MainCommandTests::test_help_multiple_args PASSED
-rbtools/commands/tests/test_main.py::MainCommandTests::test_help_options_after PASSED
-rbtools/commands/tests/test_main.py::MainCommandTests::test_help_options_before PASSED
-rbtools/commands/tests/test_main.py::MainCommandTests::test_version_command PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_arg_field_set_again_by_custom_fields PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_multiple_delimiter PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_native_fields_through_extra_fields PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_default_target_groups PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_default_target_users PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_multiple_extra_fields PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_no_default_target_groups_update PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_no_default_target_users_update PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_one_extra_fields PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_setting_target_groups PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_setting_target_groups_on_update PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_setting_target_users PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_post_setting_target_users_on_update PASSED
+rbtools/commands/tests/test_post.py::PostCommandTests::test_wrong_argument_entry PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_defaults PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_can_bookmark PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_can_bookmark_and_no_json_patching_cap PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_can_branch PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_can_branch_and_no_json_patching_cap PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_diff_history_extra_data PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_diff_history_extra_data_no_json_patching_cap PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_changeunm PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_commit_id PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_commit_id_no_capability PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_extra_data PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_extra_data_no_json_patching_cap PASSED
+rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_submit_as PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_defaults PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_can_bookmark PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_can_bookmark_and_no_json_patching_cap PASSED
@@ -502,7 +568,7 @@ rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_change_description PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_change_description_and_markdown PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_diff_history_extra_data PASSED
-rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_diff_history_extra_data_and_review_requst_is_new PASSED
+rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_diff_history_extra_data_and_review_request_is_new PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_diff_history_extra_data_no_json_patching_cap PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_guess_auto PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_guess_auto_and_review_request_id PASSED
@@ -532,37 +598,16 @@ rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_squashed_diff_and_commit_id_no_cap PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_squashed_diff_and_commit_id_no_change PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_squashed_diff_extra_data PASSED
-rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_squashed_diff_extra_data_and_review_requst_is_new PASSED
+rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_squashed_diff_extra_data_and_review_request_is_new PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_squashed_diff_extra_data_no_json_patching_cap PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_trivial_publish PASSED
 rbtools/commands/tests/test_post.py::BuildReviewRequestDraftDataTests::test_with_trivial_publish_no_cap PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_defaults PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_can_bookmark PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_can_bookmark_and_no_json_patching_cap PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_can_branch PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_can_branch_and_no_json_patching_cap PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_diff_history_extra_data PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_diff_history_extra_data_no_json_patching_cap PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_changeunm PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_commit_id PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_commit_id_no_capability PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_extra_data PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_squashed_diff_extra_data_no_json_patching_cap PASSED
-rbtools/commands/tests/test_post.py::PostBuildNewReviewRequestDataTests::test_with_submit_as PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_arg_field_set_again_by_custom_fields PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_multiple_delimiter PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_native_fields_through_extra_fields PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_default_target_groups PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_default_target_users PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_multiple_extra_fields PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_no_default_target_groups_update PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_no_default_target_users_update PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_one_extra_fields PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_setting_target_groups PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_setting_target_groups_on_update PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_setting_target_users PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_post_setting_target_users_on_update PASSED
-rbtools/commands/tests/test_post.py::PostCommandTests::test_wrong_argument_entry PASSED
+rbtools/commands/tests/test_setup_completion.py::SetupCompletionTest::test_with_bash PASSED
+rbtools/commands/tests/test_setup_completion.py::SetupCompletionTest::test_with_json PASSED
+rbtools/commands/tests/test_setup_completion.py::SetupCompletionTest::test_with_shell_env PASSED
+rbtools/commands/tests/test_setup_completion.py::SetupCompletionTest::test_with_shell_unknown PASSED
+rbtools/commands/tests/test_setup_completion.py::SetupCompletionTest::test_with_unsupported PASSED
+rbtools/commands/tests/test_setup_completion.py::SetupCompletionTest::test_with_zsh PASSED
 rbtools/commands/tests/test_setup_repo.py::SetupRepoTest::test_generate_config_file PASSED
 rbtools/commands/tests/test_setup_repo.py::SetupRepoTest::test_generate_config_file_contents PASSED
 rbtools/commands/tests/test_setup_repo.py::SetupRepoTest::test_perforce_options PASSED
@@ -570,6 +615,29 @@ rbtools/commands/tests/test_setup_repo.py::SetupRepoTest::test_prompt_rb_reposit
 rbtools/commands/tests/test_setup_repo.py::SetupRepoTest::test_prompt_rb_repository_repos_found PASSED
 rbtools/commands/tests/test_setup_repo.py::SetupRepoTest::test_server_options PASSED
 rbtools/commands/tests/test_setup_repo.py::SetupRepoTest::test_tfs_options PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_contains PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_copy PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_get PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_get_with_caller_default PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_get_with_class_default PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_get_with_no_value PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_getattr PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_getattr_with_class_default PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_getattr_with_no_value PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_getitem PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_getitem_with_class_default PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_getitem_with_no_value PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_merge PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_with_defaults PASSED
+rbtools/config/tests/test_config.py::ConfigDataTests::test_with_loaded PASSED
+rbtools/config/tests/test_loader.py::GetConfigPathsTests::test_with_home_and_repo_dir PASSED
+rbtools/config/tests/test_loader.py::GetConfigPathsTests::test_with_home_dir_only PASSED
+rbtools/config/tests/test_loader.py::GetConfigPathsTests::test_with_no_files PASSED
+rbtools/config/tests/test_loader.py::GetConfigPathsTests::test_with_rbtools_config_path PASSED
+rbtools/config/tests/test_loader.py::ParseConfigFileTests::test_with_syntax_error PASSED
+rbtools/config/tests/test_loader.py::ParseConfigFileTests::test_with_valid_config PASSED
+rbtools/config/tests/test_loader.py::LoadConfigTests::test_with_files PASSED
+rbtools/config/tests/test_loader.py::LoadConfigTests::test_with_no_files PASSED
 rbtools/diffs/tests/test_apple_diff_tool.py::AppleDiffToolTests::test_check_available_with_found PASSED
 rbtools/diffs/tests/test_apple_diff_tool.py::AppleDiffToolTests::test_check_available_with_not_found PASSED
 rbtools/diffs/tests/test_apple_diff_tool.py::AppleDiffToolTests::test_get_install_instructions PASSED
@@ -696,9 +764,6 @@ rbtools/utils/tests/test_buffered_iterator.py::BufferedIteratorTests::test_peek_
 rbtools/utils/tests/test_buffered_iterator.py::BufferedIteratorTests::test_peek_overflow PASSED
 rbtools/utils/tests/test_checks.py::ChecksTests::test_check_install_with_found PASSED
 rbtools/utils/tests/test_checks.py::ChecksTests::test_check_install_with_not_found PASSED
-rbtools/utils/tests/test_checks.py::ChecksTests::test_is_valid_version PASSED
-rbtools/utils/tests/test_console.py::ConfirmSelectTests::test_with_invalid_response PASSED
-rbtools/utils/tests/test_console.py::ConfirmSelectTests::test_with_valid_response PASSED
 rbtools/utils/tests/test_console.py::ConfirmTests::test_with_0 PASSED
 rbtools/utils/tests/test_console.py::ConfirmTests::test_with_1 PASSED
 rbtools/utils/tests/test_console.py::ConfirmTests::test_with_f PASSED
@@ -712,6 +777,8 @@ rbtools/utils/tests/test_console.py::ConfirmTests::test_with_t PASSED
 rbtools/utils/tests/test_console.py::ConfirmTests::test_with_true PASSED
 rbtools/utils/tests/test_console.py::ConfirmTests::test_with_y PASSED
 rbtools/utils/tests/test_console.py::ConfirmTests::test_with_yes PASSED
+rbtools/utils/tests/test_console.py::ConfirmSelectTests::test_with_invalid_response PASSED
+rbtools/utils/tests/test_console.py::ConfirmSelectTests::test_with_valid_response PASSED
 rbtools/utils/tests/test_console.py::EditFileTests::test_edit_file PASSED
 rbtools/utils/tests/test_console.py::EditFileTests::test_edit_file_with_editor_priority PASSED
 rbtools/utils/tests/test_console.py::EditFileTests::test_edit_file_with_file_deleted PASSED
@@ -729,12 +796,25 @@ rbtools/utils/tests/test_console.py::GetPassTests::test_with_require_false_and_n
 rbtools/utils/tests/test_console.py::GetPassTests::test_with_require_false_and_value PASSED
 rbtools/utils/tests/test_console.py::GetPassTests::test_with_require_true_and_blank_value_initially_provided PASSED
 rbtools/utils/tests/test_console.py::GetPassTests::test_with_require_true_and_value PASSED
+rbtools/utils/tests/test_encoding.py::ForceBytesTests::test_with_bytes PASSED
+rbtools/utils/tests/test_encoding.py::ForceBytesTests::test_with_cast_to_bytes PASSED
+rbtools/utils/tests/test_encoding.py::ForceBytesTests::test_with_cast_to_bytes_and_strings_only_false PASSED
+rbtools/utils/tests/test_encoding.py::ForceBytesTests::test_with_cast_to_str PASSED
+rbtools/utils/tests/test_encoding.py::ForceBytesTests::test_with_cast_to_str_and_strings_only_false PASSED
+rbtools/utils/tests/test_encoding.py::ForceBytesTests::test_with_str PASSED
+rbtools/utils/tests/test_encoding.py::ForceUnicodeTests::test_with_bytes PASSED
+rbtools/utils/tests/test_encoding.py::ForceUnicodeTests::test_with_cast_to_str PASSED
+rbtools/utils/tests/test_encoding.py::ForceUnicodeTests::test_with_cast_to_str_and_strings_only_false PASSED
+rbtools/utils/tests/test_encoding.py::ForceUnicodeTests::test_with_str PASSED
 rbtools/utils/tests/test_filesystem.py::FilesystemTests::test_make_empty_files PASSED
 rbtools/utils/tests/test_filesystem.py::FilesystemTests::test_make_tempfile PASSED
 rbtools/utils/tests/test_filesystem.py::FilesystemTests::test_make_tempfile_with_filename PASSED
 rbtools/utils/tests/test_filesystem.py::FilesystemTests::test_make_tempfile_with_prefix PASSED
 rbtools/utils/tests/test_filesystem.py::FilesystemTests::test_make_tempfile_with_suffix PASSED
-rbtools/utils/tests/test_process.py::ExecuteTests::test_execute PASSED
+rbtools/utils/tests/test_mimetypes.py::MIMETypeTests::test_match_mimetype PASSED
+rbtools/utils/tests/test_mimetypes.py::MIMETypeTests::test_parse PASSED
+rbtools/utils/tests/test_mimetypes.py::MIMETypeTests::test_parse_invalid PASSED
+rbtools/utils/tests/test_mimetypes.py::MIMETypeTests::test_parse_with_vendor PASSED
 rbtools/utils/tests/test_process.py::RunProcessTests::test_with_command_bytes PASSED
 rbtools/utils/tests/test_process.py::RunProcessTests::test_with_command_list_bytes PASSED
 rbtools/utils/tests/test_process.py::RunProcessTests::test_with_command_list_str PASSED
@@ -752,6 +832,7 @@ rbtools/utils/tests/test_process.py::RunProcessTests::test_with_permission_error
 rbtools/utils/tests/test_process.py::RunProcessTests::test_with_redirect_stderr PASSED
 rbtools/utils/tests/test_process.py::RunProcessTests::test_with_stderr PASSED
 rbtools/utils/tests/test_process.py::RunProcessTests::test_with_stdout PASSED
+rbtools/utils/tests/test_process.py::ExecuteTests::test_execute PASSED
 rbtools/utils/tests/test_repository.py::RepositoryMatchTests::test_find_matching_server_repository_no_match PASSED
 rbtools/utils/tests/test_repository.py::RepositoryMatchTests::test_find_matching_server_repository_with_mirror_path_match PASSED
 rbtools/utils/tests/test_repository.py::RepositoryMatchTests::test_find_matching_server_repository_with_multiple_matches PASSED
@@ -794,29 +875,23 @@ rbtools/utils/tests/test_source_tree.py::ScanSCMClientsForPathTests::test_with_s
 rbtools/utils/tests/test_source_tree.py::ScanSCMClientsForPathTests::test_with_scmclient_errors_from_init PASSED
 rbtools/utils/tests/test_source_tree.py::ScanSCMClientsForPathTests::test_with_scmclient_errors_from_is_remote_only PASSED
 rbtools/utils/tests/test_source_tree.py::ScanSCMClientsForPathTests::test_with_single_match PASSED
+rbtools/utils/tests/test_web_login.py::WebLoginHandlerTests::test_get PASSED
+rbtools/utils/tests/test_web_login.py::WebLoginHandlerTests::test_get_login PASSED
+rbtools/utils/tests/test_web_login.py::WebLoginHandlerTests::test_options PASSED
+rbtools/utils/tests/test_web_login.py::WebLoginHandlerTests::test_post PASSED
+rbtools/utils/tests/test_web_login.py::WebLoginHandlerTests::test_post_login PASSED
+rbtools/utils/tests/test_web_login.py::WebLoginHandlerTests::test_post_login_no_api_token PASSED
+rbtools/utils/tests/test_web_login.py::WebLoginHandlerTests::test_put PASSED
+rbtools/utils/tests/test_web_login.py::WebLoginHandlerTests::test_user_agent PASSED
 
 =============================== warnings summary ===============================
-rbtools/utils/appdirs.py:129
-  $(@D)/rbtools/utils/appdirs.py:129: DeprecationWarning: invalid escape sequence \D
-    """
+rbtools/utils/appdirs.py:100
+  $(@D)/rbtools/utils/appdirs.py:100: DeprecationWarning: invalid escape sequence \D
+    """Return full path to the user-shared data dir for this application.
 
-rbtools/utils/appdirs.py:234
-  $(@D)/rbtools/utils/appdirs.py:234: DeprecationWarning: invalid escape sequence \P
-    """
-
-rbtools/api/tests/test_resource.py::ItemResourceTests::test_update_with_extra_data
-rbtools/api/tests/test_resource.py::ItemResourceTests::test_update_with_extra_data
-  $(@D)/rbtools/api/resource.py:244: RemovedInRBTools50Warning: A value of type %s was passed to HttpRequest.add_field. In RBTools 5.0, only values of bytes or str types will be accepted.
-    request.add_field(name, value)
-
-rbtools/api/tests/test_resource.py::ListResourceTests::test_create_with_extra_data
-rbtools/api/tests/test_resource.py::ListResourceTests::test_create_with_extra_data
-  $(@D)/rbtools/api/resource.py:180: RemovedInRBTools50Warning: A value of type %s was passed to HttpRequest.add_field. In RBTools 5.0, only values of bytes or str types will be accepted.
-    request.add_field(name, value)
-
-rbtools/api/tests/test_http_request.py::HttpRequestTests::test_encode_multipart_formdata
-  $(@D)/rbtools/api/tests/test_http_request.py:64: RemovedInRBTools50Warning: A value of type %s was passed to HttpRequest.add_field. In RBTools 5.0, only values of bytes or str types will be accepted.
-    request.add_field('bar', 42)
+rbtools/utils/appdirs.py:206
+  $(@D)/rbtools/utils/appdirs.py:206: DeprecationWarning: invalid escape sequence \P
+    """Return full path to the user-shared data dir for this application.
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 750 passed, 36 skipped, 7 warnings ========
+======== 841 passed, 36 skipped, 2 warnings ========

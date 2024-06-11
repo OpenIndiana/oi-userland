@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		RBTools
-HUMAN_VERSION =			4.1
-COMPONENT_SUMMARY =		RBTools - Command line tools and API for working with code and document reviews on Review Board
+HUMAN_VERSION =			5.0
+COMPONENT_SUMMARY =		Command line tools and API for working with code and document reviews on Review Board
 COMPONENT_PROJECT_URL =		https://www.reviewboard.org/downloads/rbtools/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/19/ef/8900501b1af41d2485ee1eabb9f3e309f80fdae911c97927d8917ae99f9f/RBTools-4.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:24efb20346b905c9be0464e747ee1bdee7967d1b94175697ea0c830d929475ff
+	sha256:beb373100d0f2d707370a6ce449b6f98110dd0081accffd766d955cea16f08bc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -39,7 +36,7 @@ COMPONENT_ARCHIVE_1 =		release-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL_1 =	\
 	https://github.com/reviewboard/rbtools/archive/refs/tags/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1 =	\
-	sha256:c840655f46b3cbded1803e77b53a4f8df74dcd2d7bfa1391b15646345f08ac99
+	sha256:7efd4efa3966830532b71f8408ff2ed0d11c7aff9fdf6021f261b9380cfcd37a
 CLEAN_PATHS += $(COMPONENT_SRC_1)
 # https://hellosplat.com/s/beanbag/tickets/4993/
 COMPONENT_POST_UNPACK_ACTION_1 += \
@@ -55,18 +52,26 @@ include $(WS_MAKE_RULES)/common.mk
 # Tests needs GNU tools
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
+# Testing needs HOME environment variable (the directory does not need to
+# exist)
+COMPONENT_TEST_ENV += HOME="$(@D)/.test_home"
+
 # Manually added dependencies
 TEST_REQUIRED_PACKAGES += developer/versioning/cvs
 TEST_REQUIRED_PACKAGES += developer/versioning/mercurial
 TEST_REQUIRED_PACKAGES += developer/versioning/subversion
 TEST_REQUIRED_PACKAGES += developer/versioning/git
+# see setup.cfg
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-env
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/certifi
 PYTHON_REQUIRED_PACKAGES += library/python/colorama
+PYTHON_REQUIRED_PACKAGES += library/python/housekeeping
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-resources
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pydiffx
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/texttable
 PYTHON_REQUIRED_PACKAGES += library/python/tqdm
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
