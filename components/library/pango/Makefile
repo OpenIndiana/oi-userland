@@ -15,18 +15,17 @@
 # Copyright 2020, 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
-COMPONENT_MJR_VERSION=	1.52
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).2
+COMPONENT_MJR_VERSION=	1.54
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:73919f3e0290349ce3959aa81d921b15de444f1a84e4447b8902a8d6ad42b35f
+COMPONENT_ARCHIVE_HASH= sha256:efa7738ca24039e5cd02739945f0343f08d6ffb74f75366c44b920027fd496e6
 COMPONENT_ARCHIVE_URL=  https://gitlab.gnome.org/GNOME/pango/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
@@ -38,18 +37,15 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS += -Dinstall-tests=true
-
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-COMPONENT_POST_INSTALL_ACTION.64 = ( $(RM) -fr $(PROTO_DIR)/etc/$(MACH64)/pango && $(MKDIR) $(PROTO_DIR)/etc/$(MACH64)/pango &&\
+COMPONENT_POST_INSTALL_ACTION = ( \
+	$(RM) -fr $(PROTO_DIR)/etc/$(MACH64)/pango && $(MKDIR) $(PROTO_DIR)/etc/$(MACH64)/pango &&\
 	$(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) \
 	$(PROTO_DIR)/usr/bin/$(MACH64)/pango-querymodules \
 	  $(PROTO_DIR)/usr/lib/$(MACH64)/pango/*/modules/*.so | sed -e "s:$(PROTO_DIR)::" \
 	  > $(PROTO_DIR)/etc/$(MACH64)/pango/pango.modules )
-
-COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 
 # cp boundaries.utf8 to tests directory in the build area
 COMPONENT_PRE_TEST_ACTION += \
