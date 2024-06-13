@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Geography::Countries
 HUMAN_VERSION =			2009041301
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Geography::Countries - 2-letter, 3-letter, and numerical codes for countries.
 COMPONENT_CPAN_AUTHOR =		ABIGAIL
 COMPONENT_ARCHIVE_HASH =	\
