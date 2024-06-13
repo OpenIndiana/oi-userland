@@ -1,15 +1,15 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=True warmup_iterations=100000)
 hypothesis profile 'fast' -> max_examples=2, database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
+benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=True warmup_iterations=100000)
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 4422 items
+collecting ... collected 4428 items
 
 tests/benchmarks/test_complete_benchmark.py::test_complete_valid PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_invalid PASSED
@@ -637,6 +637,9 @@ tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[nan-null-co
 tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[inf-Infinity-config6] PASSED
 tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[-inf--Infinity-config7] PASSED
 tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[nan-NaN-config8] PASSED
+tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[inf-"Infinity"-config9] PASSED
+tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[-inf-"-Infinity"-config10] PASSED
+tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[nan-"NaN"-config11] PASSED
 tests/serializers/test_string.py::test_str PASSED
 tests/serializers/test_string.py::test_str_fallback PASSED
 tests/serializers/test_string.py::test_str_no_warnings PASSED
@@ -3374,6 +3377,9 @@ tests/validators/test_string.py::test_coerce_numbers_to_str_schema_precedence[10
 tests/validators/test_string.py::test_coerce_numbers_to_str_schema_with_strict_mode[42] PASSED
 tests/validators/test_string.py::test_coerce_numbers_to_str_schema_with_strict_mode[443] PASSED
 tests/validators/test_string.py::test_coerce_numbers_to_str_schema_with_strict_mode[10242] PASSED
+tests/validators/test_string.py::test_compiled_regex[None] PASSED
+tests/validators/test_string.py::test_compiled_regex[rust-regex] PASSED
+tests/validators/test_string.py::test_compiled_regex[python-re] PASSED
 tests/validators/test_tagged_union.py::test_simple_tagged_union[python-{'foo': 'apple', 'bar': '123'}-{'foo': 'apple', 'bar': 123}] PASSED
 tests/validators/test_tagged_union.py::test_simple_tagged_union[python-{'foo': 'banana', 'spam': [1, 2, '3']}-{'foo': 'banana', 'spam': [1, 2, 3]}] PASSED
 tests/validators/test_tagged_union.py::test_simple_tagged_union[python-{'foo': 'apple', 'bar': 'wrong'}-Err('Input should be a valid integer', errors=[{'type': 'int_parsing', 'loc': ('apple', 'bar'), 'msg': 'Input should be a valid integer, unable to parse string as an integer', 'input': 'wrong'}])] PASSED
@@ -4434,4 +4440,4 @@ tests/validators/test_with_default.py::test_validate_default_raises_dataclass[in
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value9-expected9] PASSED
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value10-expected10] PASSED
 
-======== 4329 passed, 91 skipped, 2 xfailed ========
+======== 4335 passed, 91 skipped, 2 xfailed ========
