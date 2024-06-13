@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::Tty
 HUMAN_VERSION =			1.20
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IO::Tty - Low-level allocate a pseudo-Tty, import constants.
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
