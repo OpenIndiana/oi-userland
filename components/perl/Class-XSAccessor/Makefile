@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Class::XSAccessor
 HUMAN_VERSION =			1.19
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Class::XSAccessor - Generate fast XS accessors without runtime compilation
 COMPONENT_CPAN_AUTHOR =		SMUELLER
 COMPONENT_ARCHIVE_HASH =	\
