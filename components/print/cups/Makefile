@@ -23,16 +23,15 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 64
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
-COMPONENT_VERSION=	2.4.8
+COMPONENT_VERSION=	2.4.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4cca3693f076542006c663a8debc883ddac3050da3d4a4a43e760efcb12cd4b3
+COMPONENT_ARCHIVE_HASH=	sha256:b01fe197e9e81c1516412c73c782f5d9fef671ce998e3ee207cdf6e09155b76f
 COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_LICENSE=	Apache 2.0 with an exception to allow linking against GNU GPL2-only software
 
