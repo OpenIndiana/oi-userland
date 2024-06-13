@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		ExtUtils::HasCompiler
 HUMAN_VERSION =			0.025
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		ExtUtils::HasCompiler - Check for the presence of a compiler
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
