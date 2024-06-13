@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Archive::Zip
 HUMAN_VERSION =			1.68
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Archive::Zip - Provide an interface to ZIP archive files.
 COMPONENT_CPAN_AUTHOR =		PHRED
 COMPONENT_ARCHIVE_HASH =	\
