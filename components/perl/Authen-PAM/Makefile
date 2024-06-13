@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Authen::PAM
 HUMAN_VERSION =			0.16
-COMPONENT_REVISION =		7
+COMPONENT_REVISION =		8
 COMPONENT_SUMMARY =		Authen::PAM - Perl interface to PAM library
 COMPONENT_CPAN_AUTHOR =		NIKIP
 COMPONENT_ARCHIVE_HASH =	\
