@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::RIPEMD160
 HUMAN_VERSION =			0.08
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::RIPEMD160 - Perl extension for the RIPEMD-160 Hash function
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
