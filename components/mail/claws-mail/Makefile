@@ -14,19 +14,17 @@
 # Copyright 2021 Gary Mills
 #
 
-BUILD_BITS= 64
 SINGLE_PYTHON_VERSION= yes
 USE_PARALLEL_BUILD= Yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	4.2.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.3.0
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:446c89f27c2205277f08e776b53d9d151be013211d91e7d9da006bc95c051c60
+COMPONENT_ARCHIVE_HASH= sha256:24a4d024c36f98add0e0b935cfa03cc6df01bc1b3f479a7a9d6df57705b04b2f
 COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/download.php?file=releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_CLASSIFICATION= Applications/Internet
