@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sort::Versions
 HUMAN_VERSION =			1.62
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Sort::Versions - a perl 5 module for sorting of revision-like numbers
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
