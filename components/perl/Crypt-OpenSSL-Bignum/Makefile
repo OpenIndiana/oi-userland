@@ -20,11 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Bignum
 HUMAN_VERSION =			0.09
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::OpenSSL::Bignum - OpenSSL's multiprecision integer arithmetic
 COMPONENT_CPAN_AUTHOR =		KMX
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:234e72fb8396d45527e6fd45e43759c5c3f3a208cf8f29e6a22161a996fd42dc
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
+COMPONENT_LICENSE =		Artistic-1.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
