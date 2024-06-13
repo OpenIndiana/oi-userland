@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Math::Base::Convert
 HUMAN_VERSION =			0.11
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Math::Base::Convert - very fast base to base conversion
 COMPONENT_CPAN_AUTHOR =		MIKER
 COMPONENT_ARCHIVE_HASH =	\
