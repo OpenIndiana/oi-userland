@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testfixtures
-HUMAN_VERSION =			8.2.0
-COMPONENT_SUMMARY =		testfixtures - A collection of helpers and mock objects for unit tests and doc tests.
+HUMAN_VERSION =			8.3.0
+COMPONENT_SUMMARY =		A collection of helpers and mock objects for unit tests and doc tests.
 COMPONENT_PROJECT_URL =		https://github.com/Simplistix/testfixtures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ef43b657134c87e8a3044f4b02a32ae2ebddf44b2b97bc7989a20116403988ee
+	sha256:d4c0b84af2f267610f908009b50d6f983a4e58ade22c67bab6787b5a402d59c0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

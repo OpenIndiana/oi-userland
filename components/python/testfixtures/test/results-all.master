@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 943 items
+collecting ... collected 950 items
 
 testfixtures/tests/configparser-read.txt::line:3,column:1 PASSED
 testfixtures/tests/configparser-read.txt::line:13,column:1 PASSED
@@ -18,6 +18,7 @@ testfixtures/tests/directory-contents.txt::line:4,column:1 PASSED
 testfixtures/tests/directory-contents.txt::line:18,column:1 PASSED
 testfixtures/tests/directory-contents.txt::line:20,column:1 PASSED
 testfixtures/tests/directory-contents.txt::line:29,column:1 PASSED
+testfixtures/tests/test_compare.py::TestCompare::test_bug PASSED
 testfixtures/tests/test_compare.py::TestCompare::test_bytes_different PASSED
 testfixtures/tests/test_compare.py::TestCompare::test_bytes_same_strict PASSED
 testfixtures/tests/test_compare.py::TestCompare::test_call_args_different PASSED
@@ -70,6 +71,7 @@ testfixtures/tests/test_compare.py::TestCompare::test_explicit_and_labels PASSED
 testfixtures/tests/test_compare.py::TestCompare::test_explicit_both PASSED
 testfixtures/tests/test_compare.py::TestCompare::test_explicit_expected PASSED
 testfixtures/tests/test_compare.py::TestCompare::test_extra_comparers_leave_existing PASSED
+testfixtures/tests/test_compare.py::TestCompare::test_float_int_strict PASSED
 testfixtures/tests/test_compare.py::TestCompare::test_float_subclass_strict PASSED
 testfixtures/tests/test_compare.py::TestCompare::test_generator_and_iterable PASSED
 testfixtures/tests/test_compare.py::TestCompare::test_generator_and_sequence PASSED
@@ -404,9 +406,12 @@ testfixtures/tests/test_logcapture.py::TestLogCapture::test_uninstall_more_than_
 testfixtures/tests/test_logcapture.py::TestLogCapture::test_with_statement PASSED
 testfixtures/tests/test_logcapture.py::LogCaptureTests::test_atexit PASSED
 testfixtures/tests/test_logcapture.py::LogCaptureTests::test_enable_disabled_logger PASSED
+testfixtures/tests/test_logcapture.py::LogCaptureTests::test_len_and_getitem PASSED
 testfixtures/tests/test_logcapture.py::LogCaptureTests::test_no_propogate PASSED
 testfixtures/tests/test_logcapture.py::LogCaptureTests::test_numeric_log_level PASSED
 testfixtures/tests/test_logcapture.py::LogCaptureTests::test_remove_existing_handlers PASSED
+testfixtures/tests/test_logcapture.py::LogCaptureTests::test_shutdown_while_installed PASSED
+testfixtures/tests/test_logcapture.py::LogCaptureTests::test_truthiness_when_empty PASSED
 testfixtures/tests/test_logcapture.py::TestCheckPresent::test_order_matters_ok PASSED
 testfixtures/tests/test_logcapture.py::TestCheckPresent::test_order_matters_not_okay PASSED
 testfixtures/tests/test_logcapture.py::TestCheckPresent::test_order_matters_not_okay_recursive PASSED
@@ -779,6 +784,8 @@ testfixtures/tests/test_should_raise.py::TestShouldRaise::test_catch_baseexcepti
 testfixtures/tests/test_should_raise.py::TestShouldRaise::test_class_class PASSED
 testfixtures/tests/test_should_raise.py::TestShouldRaise::test_custom_exception PASSED
 testfixtures/tests/test_should_raise.py::TestShouldRaise::test_decorator_usage PASSED
+testfixtures/tests/test_should_raise.py::TestShouldRaise::test_exception_group_different SKIPPED
+testfixtures/tests/test_should_raise.py::TestShouldRaise::test_exception_group_okay SKIPPED
 testfixtures/tests/test_should_raise.py::TestShouldRaise::test_identical_reprs PASSED
 testfixtures/tests/test_should_raise.py::TestShouldRaise::test_identical_reprs_but_args_different PASSED
 testfixtures/tests/test_should_raise.py::TestShouldRaise::test_import_errors_1 PASSED
@@ -950,10 +957,10 @@ testfixtures/tests/test_wrap.py::TestWrap::test_wrapping_wants_arguments PASSED
 testfixtures/tests/test_wrap.py::TestWrap::test_wrapping_wants_return PASSED
 
 =============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1439
-  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1439: PytestConfigWarning: Unknown config option: DJANGO_SETTINGS_MODULE
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1448
+  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1448: PytestConfigWarning: Unknown config option: DJANGO_SETTINGS_MODULE
   
     self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 943 passed, 1 warning ========
+======== 948 passed, 2 skipped, 1 warning ========
