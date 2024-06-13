@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::IDEA
 HUMAN_VERSION =			1.10
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::IDEA - Perl interface to IDEA block cipher
 COMPONENT_CPAN_AUTHOR =		DPARIS
 COMPONENT_ARCHIVE_HASH =	\
