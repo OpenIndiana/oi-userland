@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Digest::MD2
 HUMAN_VERSION =			2.04
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Digest::MD2 - Perl interface to the MD2 Algorithm
 COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\
