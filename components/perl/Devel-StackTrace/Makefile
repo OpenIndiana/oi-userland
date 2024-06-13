@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Devel::StackTrace
 HUMAN_VERSION =			2.05
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Devel::StackTrace - An object representing a stack trace
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
