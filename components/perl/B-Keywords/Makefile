@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		B::Keywords
 HUMAN_VERSION =			1.27
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		B::Keywords - Lists of reserved barewords and symbol names
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
