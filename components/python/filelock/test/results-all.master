@@ -5,8 +5,52 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 107 items
+asyncio: mode=strict
+collecting ... collected 152 items
 
+tests/test_async_filelock.py::test_simple[a-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_non_blocking[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_non_blocking[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_non_executor[True-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_non_executor[True-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_non_executor[False-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_non_executor[False-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_coroutine_function PASSED
 tests/test_error.py::test_timeout_str PASSED
 tests/test_error.py::test_timeout_repr PASSED
 tests/test_error.py::test_timeout_lock_file PASSED
@@ -65,6 +109,8 @@ tests/test_filelock.py::test_nested_acquire[UnixFileLock] PASSED
 tests/test_filelock.py::test_nested_acquire[SoftFileLock] PASSED
 tests/test_filelock.py::test_nested_forced_release[UnixFileLock] PASSED
 tests/test_filelock.py::test_nested_forced_release[SoftFileLock] PASSED
+tests/test_filelock.py::test_nested_contruct[UnixFileLock] PASSED
+tests/test_filelock.py::test_nested_contruct[SoftFileLock] PASSED
 tests/test_filelock.py::test_threaded_shared_lock_obj[UnixFileLock] PASSED
 tests/test_filelock.py::test_threaded_shared_lock_obj[SoftFileLock] PASSED
 tests/test_filelock.py::test_threaded_lock_different_lock_obj[UnixFileLock] PASSED
@@ -115,29 +161,13 @@ tests/test_filelock.py::test_singleton_locks_are_deleted_when_no_external_refere
 tests/test_filelock.py::test_singleton_instance_tracking_is_unique_per_subclass[UnixFileLock] PASSED
 tests/test_filelock.py::test_singleton_instance_tracking_is_unique_per_subclass[SoftFileLock] PASSED
 
-=============================== warnings summary ===============================
-tests/test_filelock.py::test_subclass_compatibility
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:80: PytestUnraisableExceptionWarning: Exception ignored in: <function BaseFileLock.__del__ at $(POINTER)>
-  
-  Traceback (most recent call last):
-    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 360, in __del__
-      self.release(force=True)
-    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 321, in release
-      if self.is_locked:
-    File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py", line 227, in is_locked
-      return self._context.lock_file_fd is not None
-  AttributeError: 'MySoftFileLock' object has no attribute '_context'
-  
-    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-5 files skipped due to complete coverage.
+6 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 76.0% reached. Total coverage: 98.56%
-======== 87 passed, 20 skipped, 1 warning ========
+Required test coverage of 76.0% reached. Total coverage: 97.87%
+======== 132 passed, 20 skipped ========
   py$(PYV): OK
   congratulations :)
