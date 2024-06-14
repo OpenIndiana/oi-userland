@@ -12,7 +12,7 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2018 Michal Nowak
-# Copyright 2023 Friedrich Kink
+# Copyright 2023,2024 Friedrich Kink
 #
 
 BUILD_BITS= 64
@@ -20,13 +20,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
-COMPONENT_VERSION=	2.57.1
+COMPONENT_VERSION=	2.58.1
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/LibRsvg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:074671a3ed6fbcd67cae2a40e539107f4f097ca8a4ab1a894c05e2524ff340ef
+COMPONENT_ARCHIVE_HASH= sha256:3728596290a8576d305d06ec8afdf473516feee9dff22e03235eac433d56824e
 COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/library/librsvg
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -59,13 +59,12 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "s/finished in.*s$$//"' \
         '-e "/^test result:/p" '
 
-
-# To prevent "ERROR: loading - missing test plan"
-unexport SHELLOPTS
-
 # Manually added dependencies
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES += system/library/fontconfig
+#needed to build the man page
+REQUIRED_PACKAGES += library/python/docutils-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -78,6 +77,5 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += service/gnome/desktop-cache
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
