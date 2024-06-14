@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Object
 HUMAN_VERSION =			0.08
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Object - Thoroughly testing objects via registered handlers
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
