@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::MockRandom
 HUMAN_VERSION =			1.01
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::MockRandom - Replaces random number generation with non-random number generation
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
