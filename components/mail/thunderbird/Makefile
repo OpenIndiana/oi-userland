@@ -30,14 +30,18 @@
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
+# CANDIDATE_BUILD is the build number found in the candidates directory.
+# Do not define for final release build.
+# CANDIDATE_BUILD= 1
+
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	125.0
+COMPONENT_VERSION =	127.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:59bbabbe10186fe2d962b5013b383defac58be8ee7d9c9a4dc137fb4d8abcab0
+	 sha256:3b55b7c9de645c731aed1efdb0f8a4188d4436eb15e38792d82095cb8e262452
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -46,9 +50,8 @@ endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = mail/thunderbird
 COMPONENT_CLASSIFICATION = Applications/Internet
-COMPONENT_LICENSE = MPL v2.0
 
-RUST_VERSION = 1.76.0
+RUST_VERSION = 1.77.2
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -67,9 +70,14 @@ LANG_LIST = af ar ast be bg br ca cak cs cy \
        nb-NO nl nn-NO pa-IN pl pt-BR pt-PT rm ro ru sk sl \
        sq sr sv-SE th tr uk uz vi zh-CN zh-TW
 
+    ifdef CANDIDATE_BUILD
+LANG_FILES_LOCATION= \
+        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+    else
 LANG_FILES_LOCATION= \
         https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)/linux-x86_64/xpi
-#        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
+endif
+
 CLEAN_PATHS += $(COMPONENT_DIR)/xpi
 
 CONFIGURE_DEFAULT_DIRS=no
@@ -130,7 +138,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
         echo "ac_add_options --without-wasm-sandboxed-libraries" >> $(MOZCONFIG) ; \
 
 # xpcom uses DEF XP_SOLARIS
-CXXFLAGS += -DXP_SOLARIS -Wno-invalid-offsetof -fpermissive 
+CXXFLAGS += -DXP_SOLARIS -Wno-invalid-offsetof -fpermissive
 
 # 28395728
 LD_MAP_NOEXBSS.sparc=
@@ -183,18 +191,19 @@ COMPONENT_POST_INSTALL_ACTION  += \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $$file ; \
     done ; \
     /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/plugin-container ; \
-    
+
+# generate license file for package by using the contents from license.html   
+COMPONENT_POST_INSTALL_ACTION  += \
+    unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/messenger/content/messenger/license.html \
+    | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
+
+
 COMPONENT_POST_INSTALL_ACTION += \
         $(MKDIR) $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/extensions/; \
         list1='$(LANG_LIST)' ; for f in $$list1 ; do \
             $(CP) $$f.xpi \
                 $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/extensions/langpack-$$f@thunderbird.mozilla.org.xpi ; \
         done ;
-
-license: install
-	@echo "regenerating license text"
-	unzip -c $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME)/omni.ja chrome/messenger/content/messenger/license.html \
-	    | lynx  -stdin --dump -nolist > $(COMPONENT_NAME).license
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
@@ -205,16 +214,22 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/^FAILURES:/,/Failed:/p" ' \
 	'-e "/.*/d" '
 
+# the license file is dynamically build, thus we need to remove it:
+clean::
+	$(RM) $(COMPONENT_LICENSE_FILE)
+
 # Build dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/psutil
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += developer/clang-17
+REQUIRED_PACKAGES += developer/clang-18
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
-REQUIRED_PACKAGES += library/python/psutil
+REQUIRED_PACKAGES += runtime/nodejs-22
 REQUIRED_PACKAGES += system/header/header-audio
+REQUIRED_PACKAGES += web/browser/lynx
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
