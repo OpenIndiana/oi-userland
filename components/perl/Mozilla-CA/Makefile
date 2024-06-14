@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mozilla::CA
 HUMAN_VERSION =			20240313
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mozilla::CA - Mozilla's CA cert bundle in PEM format
 COMPONENT_CPAN_AUTHOR =		LWP
 COMPONENT_ARCHIVE_HASH =	\
