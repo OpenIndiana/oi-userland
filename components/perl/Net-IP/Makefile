@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::IP
 HUMAN_VERSION =			1.26
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::IP - Perl extension for manipulating IPv4/IPv6 addresses
 COMPONENT_CPAN_AUTHOR =		MANU
 COMPONENT_ARCHIVE_HASH =	\
