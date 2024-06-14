@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Proc::ProcessTable
 HUMAN_VERSION =			0.636
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Proc::ProcessTable - Perl extension to access the unix process table
 COMPONENT_CPAN_AUTHOR =		JWB
 COMPONENT_ARCHIVE_HASH =	\
