@@ -20,16 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		common::sense
 HUMAN_VERSION =			3.75
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		common::sense - unknown
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		common::sense - save a tree AND a kitten, use common::sense!
 COMPONENT_CPAN_AUTHOR =		MLEHMANN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a86a1c4ca4f3006d7479064425a09fa5b6689e57261fcb994fe67d061cba0e7e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
-
-# This module does not publish valid abstract, so we need to overwrite the
-# detected COMPONENT_SUMMARY
-COMPONENT_SUMMARY =		common::sense - save a tree AND a kitten, use common::sense!
 
 include $(WS_MAKE_RULES)/common.mk
 
