@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Math::Prime::Util::GMP
 HUMAN_VERSION =			0.52
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Math::Prime::Util::GMP - Utilities related to prime numbers and factoring, using GMP
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\
