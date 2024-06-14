@@ -15,23 +15,24 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cl-ppcre
-COMPONENT_VERSION=	2.1.1
+COMPONENT_VERSION=	2.1.2
+COMPONENT_SUMMARY=	CL-PPCRE is a portable regular expression library for Common Lisp
 COMPONENT_PROJECT_URL=	https://edicl.github.io/cl-ppcre/
-COMPONENT_FMRI=		library/common-lisp/cl-ppcre
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:89631179b71648d9e6c565a928f6896a9d5742aa2083b9c1b705fe0b45d85def
+COMPONENT_ARCHIVE_HASH=	sha256:2ddd99706fa2b442d3eb12ea36bb25f57613fc82e5eb91c4fcaec3b7ce4cfe85
 COMPONENT_ARCHIVE_URL=	https://github.com/edicl/cl-ppcre/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE=	BSD-style
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_SUMMARY=	CL-PPCRE is a portable regular expression library for Common Lisp
+COMPONENT_FMRI=		library/common-lisp/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Development/Other Languages
+COMPONENT_LICENSE=	BSD-style
+COMPONENT_LICENSE_FILE=	LICENSE
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/common-lisp.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/common-lisp.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
+
+# Auto-generated dependencies
