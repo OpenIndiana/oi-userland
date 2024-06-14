@@ -15,13 +15,12 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sub::Quote
 HUMAN_VERSION =			2.006008
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Sub::Quote - Efficient generation of subroutines via string eval
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
