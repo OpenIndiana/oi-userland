@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Text::CSV_XS
 HUMAN_VERSION =			1.54
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Text::CSV_XS - comma-separated values manipulation routines
 COMPONENT_ARCHIVE_URL =		\
 	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Text-CSV_XS-1.54.tgz
