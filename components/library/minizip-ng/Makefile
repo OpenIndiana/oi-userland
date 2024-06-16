@@ -12,19 +12,18 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		minizip-ng
-COMPONENT_VERSION=	4.0.5
+COMPONENT_VERSION=	4.0.7
 COMPONENT_SUMMARY=	minizip-ng is a zip manipulation library written in C
 COMPONENT_PROJECT_URL=	https://github.com/zlib-ng/minizip-ng
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9bb636474b8a4269280d32aca7de4501f5c24cc642c9b4225b4ed7b327f4ee73
+COMPONENT_ARCHIVE_HASH=	sha256:a87f1f734f97095fe1ef0018217c149d53d0f78438bcb77af38adc21dff2dfbc
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=		BSD 3-Clause
@@ -46,9 +45,9 @@ unexport SHELLOPTS
 COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9. ]*sec//g"'
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
