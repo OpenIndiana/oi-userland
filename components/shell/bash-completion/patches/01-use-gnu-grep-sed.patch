@@ -1,19 +1,19 @@
 Result of following commands:
 
-cp -a bash-completion-2.12.0 bash-completion-2.12.0.old
+cp -a bash-completion-2.14.0 bash-completion-2.14.0.old
 
-find bash-completion-2.12.0/completions/ -type f -exec sed -i 's/ grep / ggrep /g' {} \;
-find bash-completion-2.12.0/completions/ -type f -exec sed -i 's/ sed / gsed /g' {} \;
+find bash-completion-2.14.0/completions/ -type f -exec sed -i 's/ grep / ggrep /g' {} \;
+find bash-completion-2.14.0/completions/ -type f -exec sed -i 's/ sed / gsed /g' {} \;
 
-find bash-completion-2.12.0/bash_completion -type f -exec sed -i 's/ grep / ggrep /g' {} \;
-find bash-completion-2.12.0/bash_completion -type f -exec sed -i 's/ sed / gsed /g' {} \;
+find bash-completion-2.14.0/bash_completion -type f -exec sed -i 's/ grep / ggrep /g' {} \;
+find bash-completion-2.14.0/bash_completion -type f -exec sed -i 's/ sed / gsed /g' {} \;
 
-gdiff -pruN bash-completion-2.12.0.old bash-completion-2.12.0 | less
+gdiff -pruN bash-completion-2.14.0.old bash-completion-2.14.0 | less
 
 And check the result.
-diff -pruN bash-completion-2.12.0.old/bash_completion bash-completion-2.12.0/bash_completion
---- bash-completion-2.12.0.old/bash_completion	2024-02-21 07:55:15.173887322 +0100
-+++ bash-completion-2.12.0/bash_completion	2024-03-04 12:47:38.529720520 +0100
+diff -pruN bash-completion-2.14.0.old/bash_completion bash-completion-2.14.0/bash_completion
+--- bash-completion-2.14.0.old/bash_completion	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/bash_completion	2024-06-16 21:23:04.908232895 +0200
 @@ -1627,7 +1627,7 @@ _comp_compgen_mac_addresses()
      _comp_compgen -v addresses split -- "$(
          {
@@ -171,7 +171,7 @@ diff -pruN bash-completion-2.12.0.old/bash_completion bash-completion-2.12.0/bas
 @@ -2992,9 +2992,9 @@ _comp_complete_longopt()
  complete -F _comp_complete_longopt \
      a2ps awk base64 bash bc bison cat chroot colordiff cp \
-     csplit cut date df diff dir du enscript env expand fmt fold gperf \
+     csplit cut date df diff dir du enscript expand fmt fold gperf \
 -    grep grub head irb ld ldd less ln ls m4 mkdir mkfifo mknod \
 +    ggrep grub head irb ld ldd less ln ls m4 mkdir mkfifo mknod \
      mv netstat nl nm objcopy objdump od paste pr ptx readelf rm rmdir \
@@ -180,9 +180,9 @@ diff -pruN bash-completion-2.12.0.old/bash_completion bash-completion-2.12.0/bas
      texindex touch tr uname unexpand uniq units vdir wc who
  
  # @since 2.12
-diff -pruN bash-completion-2.12.0.old/completions/_adb bash-completion-2.12.0/completions/_adb
---- bash-completion-2.12.0.old/completions/_adb	2024-02-21 07:55:15.177887345 +0100
-+++ bash-completion-2.12.0/completions/_adb	2024-03-04 12:47:38.077015004 +0100
+diff -pruN bash-completion-2.14.0.old/completions/_adb bash-completion-2.14.0/completions/_adb
+--- bash-completion-2.14.0.old/completions/_adb	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/_adb	2024-06-16 21:23:04.531727246 +0200
 @@ -6,7 +6,7 @@
  _comp_cmd_adb__command_usage()
  {
@@ -201,9 +201,9 @@ diff -pruN bash-completion-2.12.0.old/completions/_adb bash-completion-2.12.0/co
              ;;
          reboot)
              _comp_compgen -- -W 'bootloader recovery'
-diff -pruN bash-completion-2.12.0.old/completions/_mock bash-completion-2.12.0/completions/_mock
---- bash-completion-2.12.0.old/completions/_mock	2024-02-21 07:55:15.177887345 +0100
-+++ bash-completion-2.12.0/completions/_mock	2024-03-04 12:47:38.027438396 +0100
+diff -pruN bash-completion-2.14.0.old/completions/_mock bash-completion-2.14.0/completions/_mock
+--- bash-completion-2.14.0.old/completions/_mock	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/_mock	2024-06-16 21:23:04.731668354 +0200
 @@ -47,7 +47,7 @@ _comp_cmd_mock()
              # (e.g. ix86 chroot builds in x86_64 mock host)
              # This would actually depend on what the target root
@@ -213,9 +213,9 @@ diff -pruN bash-completion-2.12.0.old/completions/_mock bash-completion-2.12.0/c
                  "s/^[[:space:]]*${regex_header}[[:space:]]*:[[:space:]]*\(.*\)/\1/p")"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/_modules bash-completion-2.12.0/completions/_modules
---- bash-completion-2.12.0.old/completions/_modules	2024-02-21 07:55:15.177887345 +0100
-+++ bash-completion-2.12.0/completions/_modules	2024-03-04 12:47:38.216353901 +0100
+diff -pruN bash-completion-2.14.0.old/completions/_modules bash-completion-2.14.0/completions/_modules
+--- bash-completion-2.14.0.old/completions/_modules	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/_modules	2024-06-16 21:23:04.803218150 +0200
 @@ -23,13 +23,13 @@
  
  _comp_cmd_module__compgen_list()
@@ -254,9 +254,9 @@ diff -pruN bash-completion-2.12.0.old/completions/_modules bash-completion-2.12.
  
          _comp_compgen -- -W "$options"
  
-diff -pruN bash-completion-2.12.0.old/completions/_mount bash-completion-2.12.0/completions/_mount
---- bash-completion-2.12.0.old/completions/_mount	2024-02-21 07:55:15.177887345 +0100
-+++ bash-completion-2.12.0/completions/_mount	2024-03-04 12:47:38.496644268 +0100
+diff -pruN bash-completion-2.14.0.old/completions/_mount bash-completion-2.14.0/completions/_mount
+--- bash-completion-2.14.0.old/completions/_mount	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/_mount	2024-06-16 21:23:04.742552584 +0200
 @@ -46,8 +46,8 @@ _comp_cmd_mount()
          if [[ $host ]]; then
              _comp_compgen -c "${cur#//"$host"}" split -P "//$host" -- "$(
@@ -268,9 +268,9 @@ diff -pruN bash-completion-2.12.0.old/completions/_mount bash-completion-2.12.0/
              )"
          fi
      elif [[ -r /etc/vfstab ]]; then
-diff -pruN bash-completion-2.12.0.old/completions/_mount.linux bash-completion-2.12.0/completions/_mount.linux
---- bash-completion-2.12.0.old/completions/_mount.linux	2024-02-21 07:55:15.177887345 +0100
-+++ bash-completion-2.12.0/completions/_mount.linux	2024-03-04 12:47:37.992899406 +0100
+diff -pruN bash-completion-2.14.0.old/completions/_mount.linux bash-completion-2.14.0/completions/_mount.linux
+--- bash-completion-2.14.0.old/completions/_mount.linux	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/_mount.linux	2024-06-16 21:23:04.566905388 +0200
 @@ -238,8 +238,8 @@ _comp_cmd_mount()
          if [[ $host ]]; then
              _comp_compgen -c "${cur#//"$host"}" split -P "//$host" -- "$(
@@ -282,21 +282,21 @@ diff -pruN bash-completion-2.12.0.old/completions/_mount.linux bash-completion-2
              )"
          fi
      fi
-diff -pruN bash-completion-2.12.0.old/completions/_nox bash-completion-2.12.0/completions/_nox
---- bash-completion-2.12.0.old/completions/_nox	2024-02-21 07:55:15.181887368 +0100
-+++ bash-completion-2.12.0/completions/_nox	2024-03-04 12:47:38.231204831 +0100
+diff -pruN bash-completion-2.14.0.old/completions/_nox bash-completion-2.14.0/completions/_nox
+--- bash-completion-2.14.0.old/completions/_nox	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/_nox	2024-06-16 21:23:04.387820715 +0200
 @@ -4,7 +4,7 @@
  # This serves as a fallback in case the completion is not installed otherwise.
  
  eval -- "$(
--    bin_path=$(type -P "$1" 2>/dev/null | command sed 's,/[^/]*$,,')
-+    bin_path=$(type -P "$1" 2>/dev/null | command gsed 's,/[^/]*$,,')
-     [[ $bin_path ]] && PATH=$bin_path${PATH:+:$PATH}
+-    pathcmd=$(type -P -- "$1" 2>/dev/null | command sed 's,/[^/]*$,,')
++    pathcmd=$(type -P -- "$1" 2>/dev/null | command gsed 's,/[^/]*$,,')
+     [[ $pathcmd ]] && PATH=$pathcmd${PATH:+:$PATH}
      register-python-argcomplete --shell bash "$1" 2>/dev/null ||
          register-python-argcomplete3 --shell bash "$1" 2>/dev/null
-diff -pruN bash-completion-2.12.0.old/completions/_yum bash-completion-2.12.0/completions/_yum
---- bash-completion-2.12.0.old/completions/_yum	2024-02-21 07:55:15.181887368 +0100
-+++ bash-completion-2.12.0/completions/_yum	2024-03-04 12:47:38.080218068 +0100
+diff -pruN bash-completion-2.14.0.old/completions/_yum bash-completion-2.14.0/completions/_yum
+--- bash-completion-2.14.0.old/completions/_yum	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/_yum	2024-06-16 21:23:04.532819704 +0200
 @@ -9,12 +9,12 @@ _comp_cmd_yum__list()
          # Try to strip in between headings like "Available Packages"
          # This will obviously only work for English :P
@@ -330,9 +330,9 @@ diff -pruN bash-completion-2.12.0.old/completions/_yum bash-completion-2.12.0/co
      )"
  }
  
-diff -pruN bash-completion-2.12.0.old/completions/2to3 bash-completion-2.12.0/completions/2to3
---- bash-completion-2.12.0.old/completions/2to3	2024-02-21 07:55:15.177887345 +0100
-+++ bash-completion-2.12.0/completions/2to3	2024-03-04 12:47:38.458297299 +0100
+diff -pruN bash-completion-2.14.0.old/completions/2to3 bash-completion-2.14.0/completions/2to3
+--- bash-completion-2.14.0.old/completions/2to3	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/2to3	2024-06-16 21:23:04.740409010 +0200
 @@ -11,7 +11,7 @@ _comp_cmd_2to3()
              ;;
          -f | --fix | -x | --nofix)
@@ -342,9 +342,9 @@ diff -pruN bash-completion-2.12.0.old/completions/2to3 bash-completion-2.12.0/co
              )"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/7z bash-completion-2.12.0/completions/7z
---- bash-completion-2.12.0.old/completions/7z	2024-02-21 07:55:15.177887345 +0100
-+++ bash-completion-2.12.0/completions/7z	2024-03-04 12:47:37.977004090 +0100
+diff -pruN bash-completion-2.14.0.old/completions/7z bash-completion-2.14.0/completions/7z
+--- bash-completion-2.14.0.old/completions/7z	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/7z	2024-06-16 21:23:04.798964615 +0200
 @@ -102,7 +102,7 @@ _comp_cmd_7z()
      else
          if [[ ${words[1]} == d ]]; then
@@ -354,9 +354,9 @@ diff -pruN bash-completion-2.12.0.old/completions/7z bash-completion-2.12.0/comp
                      '/^Path =/s/^Path = \(.*\)$/\1/p' 2>/dev/null | tail -n+2
              )"
              compopt -o filenames
-diff -pruN bash-completion-2.12.0.old/completions/abook bash-completion-2.12.0/completions/abook
---- bash-completion-2.12.0.old/completions/abook	2024-02-21 07:55:15.181887368 +0100
-+++ bash-completion-2.12.0/completions/abook	2024-03-04 12:47:38.035876404 +0100
+diff -pruN bash-completion-2.14.0.old/completions/abook bash-completion-2.14.0/completions/abook
+--- bash-completion-2.14.0.old/completions/abook	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/abook	2024-06-16 21:23:04.720271147 +0200
 @@ -23,11 +23,11 @@ _comp_cmd_abook()
      case $prev in
          --informat)
@@ -371,9 +371,9 @@ diff -pruN bash-completion-2.12.0.old/completions/abook bash-completion-2.12.0/c
              ;;
          --infile)
              _comp_compgen -- -W stdin
-diff -pruN bash-completion-2.12.0.old/completions/alias bash-completion-2.12.0/completions/alias
---- bash-completion-2.12.0.old/completions/alias	2024-02-21 07:55:15.185887389 +0100
-+++ bash-completion-2.12.0/completions/alias	2024-03-04 12:47:38.413288303 +0100
+diff -pruN bash-completion-2.14.0.old/completions/alias bash-completion-2.14.0/completions/alias
+--- bash-completion-2.14.0.old/completions/alias	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/alias	2024-06-16 21:23:04.560498092 +0200
 @@ -13,7 +13,7 @@ _comp_cmd_alias()
              _comp_compgen -- -A alias
              ;;
@@ -383,9 +383,9 @@ diff -pruN bash-completion-2.12.0.old/completions/alias bash-completion-2.12.0/c
                  -e 's|^alias '"$cur"'\(.*\)$|\1|')")
              ;;
      esac
-diff -pruN bash-completion-2.12.0.old/completions/appdata-validate bash-completion-2.12.0/completions/appdata-validate
---- bash-completion-2.12.0.old/completions/appdata-validate	2024-02-21 07:55:15.185887389 +0100
-+++ bash-completion-2.12.0/completions/appdata-validate	2024-03-04 12:47:38.430230854 +0100
+diff -pruN bash-completion-2.14.0.old/completions/appdata-validate bash-completion-2.14.0/completions/appdata-validate
+--- bash-completion-2.14.0.old/completions/appdata-validate	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/appdata-validate	2024-06-16 21:23:04.887013390 +0200
 @@ -10,7 +10,7 @@ _comp_cmd_appdata_validate()
              return
              ;;
@@ -395,21 +395,21 @@ diff -pruN bash-completion-2.12.0.old/completions/appdata-validate bash-completi
                  's/--output-format.*\[\(.*\)\]/\1/' -e 's/|/ /gp')"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/apt-get bash-completion-2.12.0/completions/apt-get
---- bash-completion-2.12.0.old/completions/apt-get	2024-02-21 07:55:15.185887389 +0100
-+++ bash-completion-2.12.0/completions/apt-get	2024-03-04 12:47:38.492005219 +0100
+diff -pruN bash-completion-2.14.0.old/completions/apt-get bash-completion-2.14.0/completions/apt-get
+--- bash-completion-2.14.0.old/completions/apt-get	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/apt-get	2024-06-16 21:23:04.458177191 +0200
 @@ -80,7 +80,7 @@ _comp_cmd_apt_get()
              # Prefer `apt-cache` in the same dir as command
              local pathcmd
-             pathcmd=$(type -P "$1") && local PATH=${pathcmd%/*}:$PATH
+             pathcmd=$(type -P -- "$1") && local PATH=${pathcmd%/*}:$PATH
 -            _comp_compgen_split -- "$(apt-cache policy | command sed -ne \
 +            _comp_compgen_split -- "$(apt-cache policy | command gsed -ne \
                  's/^ *release.*[ ,]o=\(Debian\|Ubuntu\),a=\(\w*\).*/\2/p')"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/aptitude bash-completion-2.12.0/completions/aptitude
---- bash-completion-2.12.0.old/completions/aptitude	2024-02-21 07:55:15.185887389 +0100
-+++ bash-completion-2.12.0/completions/aptitude	2024-03-04 12:47:38.119217927 +0100
+diff -pruN bash-completion-2.14.0.old/completions/aptitude bash-completion-2.14.0/completions/aptitude
+--- bash-completion-2.14.0.old/completions/aptitude	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/aptitude	2024-06-16 21:23:04.890210198 +0200
 @@ -53,13 +53,13 @@ _comp_cmd_aptitude()
              ;;
          --target-release | --default-release | -${noargopts}t)
@@ -426,9 +426,9 @@ diff -pruN bash-completion-2.12.0.old/completions/aptitude bash-completion-2.12.
              's/--with(out)-recommends/--without-recommends\n--with-recommends/')"
          ((${#COMPREPLY[@]})) || return 0
  
-diff -pruN bash-completion-2.12.0.old/completions/arp bash-completion-2.12.0/completions/arp
---- bash-completion-2.12.0.old/completions/arp	2024-02-21 07:55:15.185887389 +0100
-+++ bash-completion-2.12.0/completions/arp	2024-03-04 12:47:38.349334789 +0100
+diff -pruN bash-completion-2.14.0.old/completions/arp bash-completion-2.14.0/completions/arp
+--- bash-completion-2.14.0.old/completions/arp	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/arp	2024-06-16 21:23:04.796767308 +0200
 @@ -37,7 +37,7 @@ _comp_cmd_arp()
      _comp_count_args -a "@(--device|--protocol|--file|--hw-type|-${noargopts}[iApfHt])"
      case $REPLY in
@@ -438,9 +438,9 @@ diff -pruN bash-completion-2.12.0.old/completions/arp bash-completion-2.12.0/com
                  's/.*(\([0-9]\{1,3\}\(\.[0-9]\{1,3\}\)\{3\}\)).*/\1/p')
              _comp_compgen -- -W '$ips'
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/beadm bash-completion-2.12.0/completions/beadm
---- bash-completion-2.12.0.old/completions/beadm	2020-01-11 19:58:32.000000000 +0100
-+++ bash-completion-2.12.0/completions/beadm	2024-03-04 12:47:38.043368454 +0100
+diff -pruN bash-completion-2.14.0.old/completions/beadm bash-completion-2.14.0/completions/beadm
+--- bash-completion-2.14.0.old/completions/beadm	2020-01-11 19:58:32.000000000 +0100
++++ bash-completion-2.14.0/completions/beadm	2024-06-16 21:23:04.651139428 +0200
 @@ -138,7 +138,7 @@ _beadm()
                            # entered BE name, so find snapshot for the particuler BE
                            if [[ "${prev}" != "rollback" ]]
@@ -468,9 +468,9 @@ diff -pruN bash-completion-2.12.0.old/completions/beadm bash-completion-2.12.0/c
                    compopt -o nospace
                    compopt -o nosort
                    COMPREPLY=( $(compgen -W "${zfsvals[*]}" -- "${realcur}") )
-diff -pruN bash-completion-2.12.0.old/completions/carton bash-completion-2.12.0/completions/carton
---- bash-completion-2.12.0.old/completions/carton	2024-02-21 07:55:15.189887412 +0100
-+++ bash-completion-2.12.0/completions/carton	2024-03-04 12:47:38.144515011 +0100
+diff -pruN bash-completion-2.14.0.old/completions/carton bash-completion-2.14.0/completions/carton
+--- bash-completion-2.14.0.old/completions/carton	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/carton	2024-06-16 21:23:04.402797356 +0200
 @@ -3,7 +3,7 @@
  _comp_cmd_carton__commands()
  {
@@ -480,9 +480,9 @@ diff -pruN bash-completion-2.12.0.old/completions/carton bash-completion-2.12.0/
      _comp_compgen -aF $' \t\n,' -- -W "$cmds"
  }
  
-diff -pruN bash-completion-2.12.0.old/completions/ccze bash-completion-2.12.0/completions/ccze
---- bash-completion-2.12.0.old/completions/ccze	2024-02-21 07:55:15.189887412 +0100
-+++ bash-completion-2.12.0/completions/ccze	2024-03-04 12:47:38.197439370 +0100
+diff -pruN bash-completion-2.14.0.old/completions/ccze bash-completion-2.14.0/completions/ccze
+--- bash-completion-2.14.0.old/completions/ccze	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ccze	2024-06-16 21:23:04.343062923 +0200
 @@ -30,7 +30,7 @@ _comp_cmd_ccze()
              ;;
          --plugin | -${noargopts}p)
@@ -492,9 +492,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ccze bash-completion-2.12.0/co
              return
              ;;
      esac
-diff -pruN bash-completion-2.12.0.old/completions/cfrun bash-completion-2.12.0/completions/cfrun
---- bash-completion-2.12.0.old/completions/cfrun	2024-02-21 07:55:15.189887412 +0100
-+++ bash-completion-2.12.0/completions/cfrun	2024-03-04 12:47:38.518506998 +0100
+diff -pruN bash-completion-2.14.0.old/completions/cfrun bash-completion-2.14.0/completions/cfrun
+--- bash-completion-2.14.0.old/completions/cfrun	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/cfrun	2024-06-16 21:23:04.524385517 +0200
 @@ -33,7 +33,7 @@ _comp_cmd_cfrun()
                  done
                  [[ ! -f $hostfile ]] && return
@@ -504,9 +504,9 @@ diff -pruN bash-completion-2.12.0.old/completions/cfrun bash-completion-2.12.0/c
                      "$hostfile")"
              fi
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/checksec bash-completion-2.12.0/completions/checksec
---- bash-completion-2.12.0.old/completions/checksec	2024-02-21 07:55:15.189887412 +0100
-+++ bash-completion-2.12.0/completions/checksec	2024-03-04 12:47:37.997091558 +0100
+diff -pruN bash-completion-2.14.0.old/completions/checksec bash-completion-2.14.0/completions/checksec
+--- bash-completion-2.14.0.old/completions/checksec	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/checksec	2024-06-16 21:23:04.719225962 +0200
 @@ -27,11 +27,11 @@ _comp_cmd_checksec()
              ;;
          --format)
@@ -521,9 +521,9 @@ diff -pruN bash-completion-2.12.0.old/completions/checksec bash-completion-2.12.
              ;;
      esac
  
-diff -pruN bash-completion-2.12.0.old/completions/complete bash-completion-2.12.0/completions/complete
---- bash-completion-2.12.0.old/completions/complete	2024-02-21 07:55:15.193887436 +0100
-+++ bash-completion-2.12.0/completions/complete	2024-03-04 12:47:38.241733671 +0100
+diff -pruN bash-completion-2.14.0.old/completions/complete bash-completion-2.14.0/completions/complete
+--- bash-completion-2.14.0.old/completions/complete	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/complete	2024-06-16 21:23:04.762805300 +0200
 @@ -29,7 +29,7 @@ _comp_cmd_complete()
              return
              ;;
@@ -533,9 +533,9 @@ diff -pruN bash-completion-2.12.0.old/completions/complete bash-completion-2.12.
              return
              ;;
      esac
-diff -pruN bash-completion-2.12.0.old/completions/configure bash-completion-2.12.0/completions/configure
---- bash-completion-2.12.0.old/completions/configure	2024-02-21 07:55:15.193887436 +0100
-+++ bash-completion-2.12.0/completions/configure	2024-03-04 12:47:38.208972073 +0100
+diff -pruN bash-completion-2.14.0.old/completions/configure bash-completion-2.14.0/completions/configure
+--- bash-completion-2.14.0.old/completions/configure	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/configure	2024-06-16 21:23:04.395298926 +0200
 @@ -33,7 +33,7 @@ _comp_cmd_configure()
      if [[ ${BASH_COMPLETION_CMD_CONFIGURE_HINTS-} ]]; then
          _comp_compgen_split -- "$("$1" --help 2>&1 |
@@ -545,9 +545,9 @@ diff -pruN bash-completion-2.12.0.old/completions/configure bash-completion-2.12
          [[ ${COMPREPLY-} == *=* ]] && compopt -o nospace
      else
          _comp_compgen_help
-diff -pruN bash-completion-2.12.0.old/completions/cpan2dist bash-completion-2.12.0/completions/cpan2dist
---- bash-completion-2.12.0.old/completions/cpan2dist	2024-02-21 07:55:15.193887436 +0100
-+++ bash-completion-2.12.0/completions/cpan2dist	2024-03-04 12:47:38.139280046 +0100
+diff -pruN bash-completion-2.14.0.old/completions/cpan2dist bash-completion-2.14.0/completions/cpan2dist
+--- bash-completion-2.14.0.old/completions/cpan2dist	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/cpan2dist	2024-06-16 21:23:04.459220493 +0200
 @@ -29,7 +29,7 @@ _comp_cmd_cpan2dist()
          done
          [[ $packagelist ]] && _comp_split COMPREPLY "$(zgrep "^${cur//-/::}" \
@@ -557,9 +557,9 @@ diff -pruN bash-completion-2.12.0.old/completions/cpan2dist bash-completion-2.12
      fi
  } &&
      complete -F _comp_cmd_cpan2dist -o default cpan2dist
-diff -pruN bash-completion-2.12.0.old/completions/curl bash-completion-2.12.0/completions/curl
---- bash-completion-2.12.0.old/completions/curl	2024-02-21 07:55:15.193887436 +0100
-+++ bash-completion-2.12.0/completions/curl	2024-03-04 12:47:38.190052906 +0100
+diff -pruN bash-completion-2.14.0.old/completions/curl bash-completion-2.14.0/completions/curl
+--- bash-completion-2.14.0.old/completions/curl	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/curl	2024-06-16 21:23:04.346256944 +0200
 @@ -79,7 +79,7 @@ _comp_cmd_curl()
          --engine)
              local engines=$(
@@ -569,9 +569,18 @@ diff -pruN bash-completion-2.12.0.old/completions/curl bash-completion-2.12.0/co
              )
              _comp_compgen -- -W '$engines list'
              return
-diff -pruN bash-completion-2.12.0.old/completions/cvs bash-completion-2.12.0/completions/cvs
---- bash-completion-2.12.0.old/completions/cvs	2024-02-21 07:55:15.193887436 +0100
-+++ bash-completion-2.12.0/completions/cvs	2024-03-04 12:47:38.147807336 +0100
+@@ -128,7 +128,7 @@ _comp_cmd_curl()
+             return
+             ;;
+         --proto-default)
+-            _comp_compgen_split "$("$1" --version 2>/dev/null | command sed -e '/Protocols/!d' -e 's/Protocols://')"
++            _comp_compgen_split "$("$1" --version 2>/dev/null | command gsed -e '/Protocols/!d' -e 's/Protocols://')"
+             ;;
+         --pubkey)
+             _comp_compgen -x ssh identityfile pub
+diff -pruN bash-completion-2.14.0.old/completions/cvs bash-completion-2.14.0/completions/cvs
+--- bash-completion-2.14.0.old/completions/cvs	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/cvs	2024-06-16 21:23:04.445444559 +0200
 @@ -262,7 +262,7 @@ _comp_cmd_cvs()
                      # far, but other changes (something other than
                      # changed/removed/new) may be missing.
@@ -581,9 +590,9 @@ diff -pruN bash-completion-2.12.0.old/completions/cvs bash-completion-2.12.0/com
                              # changed
                              s/^Files [^ ]* and \([^ ]*\) differ$/\1/p
                              # new/removed
-diff -pruN bash-completion-2.12.0.old/completions/dict bash-completion-2.12.0/completions/dict
---- bash-completion-2.12.0.old/completions/dict	2024-02-21 07:55:15.193887436 +0100
-+++ bash-completion-2.12.0/completions/dict	2024-03-04 12:47:38.267336503 +0100
+diff -pruN bash-completion-2.14.0.old/completions/dict bash-completion-2.14.0/completions/dict
+--- bash-completion-2.14.0.old/completions/dict	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/dict	2024-06-16 21:23:04.853136434 +0200
 @@ -4,7 +4,7 @@ _comp_cmd_dict__compgen_dictdata()
  {
      # shellcheck disable=SC2086
@@ -607,9 +616,9 @@ diff -pruN bash-completion-2.12.0.old/completions/dict bash-completion-2.12.0/co
              )"
          else
              _comp_compgen_split -- "$(cat "$dictfile")"
-diff -pruN bash-completion-2.12.0.old/completions/dladm bash-completion-2.12.0/completions/dladm
---- bash-completion-2.12.0.old/completions/dladm	2020-01-11 19:58:32.000000000 +0100
-+++ bash-completion-2.12.0/completions/dladm	2024-03-04 12:47:38.275686767 +0100
+diff -pruN bash-completion-2.14.0.old/completions/dladm bash-completion-2.14.0/completions/dladm
+--- bash-completion-2.14.0.old/completions/dladm	2020-01-11 19:58:32.000000000 +0100
++++ bash-completion-2.14.0/completions/dladm	2024-06-16 21:23:04.431444356 +0200
 @@ -14,7 +14,7 @@ _dladm()
        COMPREPLY=( $(compgen -W "${cmds}" -- ${cur}) )
      elif [[ ${prev} =~ "-z" ]]; then
@@ -619,9 +628,9 @@ diff -pruN bash-completion-2.12.0.old/completions/dladm bash-completion-2.12.0/c
        COMPREPLY=( $(compgen -W "${zones}" -- ${cur}) )
      elif [[ ${prev} =~ 'delete-vnic' ]]; then
        # Redirect stderr to /dev/null not to polute console, e.g.:
-diff -pruN bash-completion-2.12.0.old/completions/dmypy bash-completion-2.12.0/completions/dmypy
---- bash-completion-2.12.0.old/completions/dmypy	2024-02-21 07:55:15.193887436 +0100
-+++ bash-completion-2.12.0/completions/dmypy	2024-03-04 12:47:38.419595732 +0100
+diff -pruN bash-completion-2.14.0.old/completions/dmypy bash-completion-2.14.0/completions/dmypy
+--- bash-completion-2.14.0.old/completions/dmypy	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/dmypy	2024-06-16 21:23:04.562649495 +0200
 @@ -38,8 +38,8 @@ _comp_cmd_dmypy()
  
      if [[ ! $has_cmd ]]; then
@@ -633,9 +642,9 @@ diff -pruN bash-completion-2.12.0.old/completions/dmypy bash-completion-2.12.0/c
          _comp_compgen -F , -- -W '$cmds'
          return
      fi
-diff -pruN bash-completion-2.12.0.old/completions/dnssec-keygen bash-completion-2.12.0/completions/dnssec-keygen
---- bash-completion-2.12.0.old/completions/dnssec-keygen	2024-02-21 07:55:15.193887436 +0100
-+++ bash-completion-2.12.0/completions/dnssec-keygen	2024-03-04 12:47:38.032689922 +0100
+diff -pruN bash-completion-2.14.0.old/completions/dnssec-keygen bash-completion-2.14.0/completions/dnssec-keygen
+--- bash-completion-2.14.0.old/completions/dnssec-keygen	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/dnssec-keygen	2024-06-16 21:23:04.735055801 +0200
 @@ -3,9 +3,9 @@
  _comp_cmd_dnssec_keygen__optarg()
  {
@@ -648,9 +657,9 @@ diff -pruN bash-completion-2.12.0.old/completions/dnssec-keygen bash-completion-
      _comp_compgen -a -- -W '$args'
  }
  
-diff -pruN bash-completion-2.12.0.old/completions/dot bash-completion-2.12.0/completions/dot
---- bash-completion-2.12.0.old/completions/dot	2024-02-21 07:55:15.193887436 +0100
-+++ bash-completion-2.12.0/completions/dot	2024-03-04 12:47:38.377625590 +0100
+diff -pruN bash-completion-2.14.0.old/completions/dot bash-completion-2.14.0/completions/dot
+--- bash-completion-2.14.0.old/completions/dot	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/dot	2024-06-16 21:23:04.780787242 +0200
 @@ -14,14 +14,14 @@ _comp_cmd_dot()
          -T*)
              # generate langs
@@ -668,9 +677,9 @@ diff -pruN bash-completion-2.12.0.old/completions/dot bash-completion-2.12.0/com
              )"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/ebtables bash-completion-2.12.0/completions/ebtables
---- bash-completion-2.12.0.old/completions/ebtables	2024-02-21 07:55:15.197887457 +0100
-+++ bash-completion-2.12.0/completions/ebtables	2024-03-04 12:47:38.336714898 +0100
+diff -pruN bash-completion-2.14.0.old/completions/ebtables bash-completion-2.14.0/completions/ebtables
+--- bash-completion-2.14.0.old/completions/ebtables	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ebtables	2024-06-16 21:23:04.416658628 +0200
 @@ -18,7 +18,7 @@ _comp_cmd_ebtables()
          -${noargopts}[AIDPFXLZ])
              _comp_compgen_split -- "$(
@@ -701,9 +710,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ebtables bash-completion-2.12.
              fi
              ;;
          *)
-diff -pruN bash-completion-2.12.0.old/completions/fbgs bash-completion-2.12.0/completions/fbgs
---- bash-completion-2.12.0.old/completions/fbgs	2024-02-21 07:55:15.197887457 +0100
-+++ bash-completion-2.12.0/completions/fbgs	2024-03-04 12:47:38.193196109 +0100
+diff -pruN bash-completion-2.14.0.old/completions/fbgs bash-completion-2.14.0/completions/fbgs
+--- bash-completion-2.14.0.old/completions/fbgs	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/fbgs	2024-06-16 21:23:04.349430122 +0200
 @@ -11,7 +11,7 @@ _comp_cmd_fbgs()
              return
              ;;
@@ -713,9 +722,9 @@ diff -pruN bash-completion-2.12.0.old/completions/fbgs bash-completion-2.12.0/co
                  -n '/^mode/{s/^mode \{1,\}"\([^"]\{1,\}\)"/\1/g;p}' \
                  /etc/fb.modes 2>/dev/null)"
              return
-diff -pruN bash-completion-2.12.0.old/completions/fbi bash-completion-2.12.0/completions/fbi
---- bash-completion-2.12.0.old/completions/fbi	2024-02-21 07:55:15.197887457 +0100
-+++ bash-completion-2.12.0/completions/fbi	2024-03-04 12:47:38.013741794 +0100
+diff -pruN bash-completion-2.14.0.old/completions/fbi bash-completion-2.14.0/completions/fbi
+--- bash-completion-2.14.0.old/completions/fbi	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/fbi	2024-06-16 21:23:04.579477886 +0200
 @@ -19,7 +19,7 @@ _comp_cmd_fbi()
              return
              ;;
@@ -725,21 +734,21 @@ diff -pruN bash-completion-2.12.0.old/completions/fbi bash-completion-2.12.0/com
                  -n '/^mode/{s/^mode \{1,\}"\([^"]\{1,\}\)"/\1/g;p}' \
                  /etc/fb.modes 2>/dev/null)"
              return
-diff -pruN bash-completion-2.12.0.old/completions/fio bash-completion-2.12.0/completions/fio
---- bash-completion-2.12.0.old/completions/fio	2024-02-21 07:55:15.197887457 +0100
-+++ bash-completion-2.12.0/completions/fio	2024-03-04 12:47:38.210049908 +0100
+diff -pruN bash-completion-2.14.0.old/completions/fio bash-completion-2.14.0/completions/fio
+--- bash-completion-2.14.0.old/completions/fio	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/fio	2024-06-16 21:23:04.384705863 +0200
 @@ -2,7 +2,7 @@
  
  _comp_cmd_fio__compgen_engines()
  {
--    _comp_compgen_split -l -- "$("$1" --enghelp 2>/dev/null | command sed -ne '/^[[:space:]]/p'))"
-+    _comp_compgen_split -l -- "$("$1" --enghelp 2>/dev/null | command gsed -ne '/^[[:space:]]/p'))"
+-    _comp_compgen_split -F $'\t\n' -- "$("$1" --enghelp 2>/dev/null | command sed -ne '/^[[:space:]]/p')"
++    _comp_compgen_split -F $'\t\n' -- "$("$1" --enghelp 2>/dev/null | command gsed -ne '/^[[:space:]]/p')"
  }
  
  _comp_cmd_fio()
-diff -pruN bash-completion-2.12.0.old/completions/function bash-completion-2.12.0/completions/function
---- bash-completion-2.12.0.old/completions/function	2024-02-21 07:55:15.197887457 +0100
-+++ bash-completion-2.12.0/completions/function	2024-03-04 12:47:38.025317247 +0100
+diff -pruN bash-completion-2.14.0.old/completions/function bash-completion-2.14.0/completions/function
+--- bash-completion-2.14.0.old/completions/function	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/function	2024-06-16 21:23:04.716027422 +0200
 @@ -8,7 +8,7 @@ _comp_cmd_function()
      if ((cword == 1)); then
          _comp_compgen -- -A function
@@ -749,9 +758,9 @@ diff -pruN bash-completion-2.12.0.old/completions/function bash-completion-2.12.
          COMPREPLY=("()${funcdef:+ $funcdef}")
      fi
  } &&
-diff -pruN bash-completion-2.12.0.old/completions/gcc bash-completion-2.12.0/completions/gcc
---- bash-completion-2.12.0.old/completions/gcc	2024-02-21 07:55:15.201887480 +0100
-+++ bash-completion-2.12.0/completions/gcc	2024-03-04 12:47:38.196395564 +0100
+diff -pruN bash-completion-2.14.0.old/completions/gcc bash-completion-2.14.0/completions/gcc
+--- bash-completion-2.14.0.old/completions/gcc	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/gcc	2024-06-16 21:23:04.398527191 +0200
 @@ -12,7 +12,7 @@ _comp_cmd_gcc()
              local cc=$("$1" -print-prog-name=cc1 2>/dev/null)
              [[ $cc ]] || return
@@ -770,9 +779,9 @@ diff -pruN bash-completion-2.12.0.old/completions/gcc bash-completion-2.12.0/com
              complete -F _comp_cmd_gcc "$1"
          else
              complete -F _comp_complete_minimal "$1"
-diff -pruN bash-completion-2.12.0.old/completions/gdb bash-completion-2.12.0/completions/gdb
---- bash-completion-2.12.0.old/completions/gdb	2024-02-21 07:55:15.201887480 +0100
-+++ bash-completion-2.12.0/completions/gdb	2024-03-04 12:47:38.480328997 +0100
+diff -pruN bash-completion-2.14.0.old/completions/gdb bash-completion-2.14.0/completions/gdb
+--- bash-completion-2.14.0.old/completions/gdb	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/gdb	2024-06-16 21:23:04.670221297 +0200
 @@ -31,7 +31,7 @@ _comp_cmd_gdb()
                  IFS=$' \t\n'
                  find ${path_array[@]+"${path_array[@]}"} . -name . -o \
@@ -782,9 +791,9 @@ diff -pruN bash-completion-2.12.0.old/completions/gdb bash-completion-2.12.0/com
              )"
          fi
      elif ((cword == 2)); then
-diff -pruN bash-completion-2.12.0.old/completions/gnokii bash-completion-2.12.0/completions/gnokii
---- bash-completion-2.12.0.old/completions/gnokii	2024-02-21 07:55:15.201887480 +0100
-+++ bash-completion-2.12.0/completions/gnokii	2024-03-04 12:47:38.278878516 +0100
+diff -pruN bash-completion-2.14.0.old/completions/gnokii bash-completion-2.14.0/completions/gnokii
+--- bash-completion-2.14.0.old/completions/gnokii	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/gnokii	2024-06-16 21:23:04.767079208 +0200
 @@ -24,7 +24,7 @@ _comp_cmd_gnokii()
                  [[ -f $config_file ]] && break
              done
@@ -803,9 +812,9 @@ diff -pruN bash-completion-2.12.0.old/completions/gnokii bash-completion-2.12.0/
      # don't provide main command completions if one is
      # already on the command line
      local IFS='|'
-diff -pruN bash-completion-2.12.0.old/completions/gpg bash-completion-2.12.0/completions/gpg
---- bash-completion-2.12.0.old/completions/gpg	2024-02-21 07:55:15.201887480 +0100
-+++ bash-completion-2.12.0/completions/gpg	2024-03-04 12:47:38.394416571 +0100
+diff -pruN bash-completion-2.14.0.old/completions/gpg bash-completion-2.14.0/completions/gpg
+--- bash-completion-2.14.0.old/completions/gpg	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/gpg	2024-06-16 21:23:04.757474202 +0200
 @@ -20,7 +20,7 @@ _comp_cmd_gpg()
              --nrsign-key | --nrlsign-key | --try-secret-key | -${noargopts}k)
              # return list of public keys
@@ -833,9 +842,9 @@ diff -pruN bash-completion-2.12.0.old/completions/gpg bash-completion-2.12.0/com
                      's@^[ \t]*group[ \t][ \t]*\([^=]*\).*$@\1@p' \
                      ~/.gnupg/gpg.conf)"
              fi
-diff -pruN bash-completion-2.12.0.old/completions/gpg2 bash-completion-2.12.0/completions/gpg2
---- bash-completion-2.12.0.old/completions/gpg2	2024-02-21 07:55:15.201887480 +0100
-+++ bash-completion-2.12.0/completions/gpg2	2024-03-04 12:47:37.980227476 +0100
+diff -pruN bash-completion-2.14.0.old/completions/gpg2 bash-completion-2.14.0/completions/gpg2
+--- bash-completion-2.14.0.old/completions/gpg2	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/gpg2	2024-06-16 21:23:04.557298550 +0200
 @@ -21,16 +21,16 @@ _comp_cmd_gpg2()
              --locate-keys | --refresh-keys)
              # return list of public keys
@@ -856,9 +865,9 @@ diff -pruN bash-completion-2.12.0.old/completions/gpg2 bash-completion-2.12.0/co
                      's@^[ \t]*group[ \t][ \t]*\([^=]*\).*$@\1@p' \
                      ~/.gnupg/gpg.conf)"
              fi
-diff -pruN bash-completion-2.12.0.old/completions/gssdp-discover bash-completion-2.12.0/completions/gssdp-discover
---- bash-completion-2.12.0.old/completions/gssdp-discover	2024-02-21 07:55:15.201887480 +0100
-+++ bash-completion-2.12.0/completions/gssdp-discover	2024-03-04 12:47:38.392303049 +0100
+diff -pruN bash-completion-2.14.0.old/completions/gssdp-discover bash-completion-2.14.0/completions/gssdp-discover
+--- bash-completion-2.14.0.old/completions/gssdp-discover	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/gssdp-discover	2024-06-16 21:23:04.498500339 +0200
 @@ -16,7 +16,7 @@ _comp_cmd_gssdp_discover()
          --message-type | -m)
              [[ $1 == *gssdp-discover ]] || return
@@ -868,9 +877,9 @@ diff -pruN bash-completion-2.12.0.old/completions/gssdp-discover bash-completion
              _comp_compgen -F $' \t\n,' -- -W "$types"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/iconv bash-completion-2.12.0/completions/iconv
---- bash-completion-2.12.0.old/completions/iconv	2024-02-21 07:55:15.205887503 +0100
-+++ bash-completion-2.12.0/completions/iconv	2024-03-04 12:47:38.105424065 +0100
+diff -pruN bash-completion-2.14.0.old/completions/iconv bash-completion-2.14.0/completions/iconv
+--- bash-completion-2.14.0.old/completions/iconv	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/iconv	2024-06-16 21:23:04.849898062 +0200
 @@ -15,7 +15,7 @@ _iconv_charsets()
  _comp_cmd_iconv__compgen_charsets()
  {
@@ -880,9 +889,9 @@ diff -pruN bash-completion-2.12.0.old/completions/iconv bash-completion-2.12.0/c
  }
  
  _comp_cmd_iconv()
-diff -pruN bash-completion-2.12.0.old/completions/ifstat bash-completion-2.12.0/completions/ifstat
---- bash-completion-2.12.0.old/completions/ifstat	2024-02-21 07:55:15.205887503 +0100
-+++ bash-completion-2.12.0/completions/ifstat	2024-03-04 12:47:38.337792894 +0100
+diff -pruN bash-completion-2.14.0.old/completions/ifstat bash-completion-2.14.0/completions/ifstat
+--- bash-completion-2.14.0.old/completions/ifstat	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ifstat	2024-06-16 21:23:04.854243122 +0200
 @@ -22,8 +22,8 @@ _comp_cmd_ifstat()
              if ! {
                  "$1" --help 2>&1 || :
@@ -912,9 +921,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ifstat bash-completion-2.12.0/
              ;;
          --extended | -${noargopts}x)
              # iproute2: parse xstat types
-diff -pruN bash-completion-2.12.0.old/completions/inotifywait bash-completion-2.12.0/completions/inotifywait
---- bash-completion-2.12.0.old/completions/inotifywait	2024-02-21 07:55:15.205887503 +0100
-+++ bash-completion-2.12.0/completions/inotifywait	2024-03-04 12:47:38.212132637 +0100
+diff -pruN bash-completion-2.14.0.old/completions/inotifywait bash-completion-2.14.0/completions/inotifywait
+--- bash-completion-2.14.0.old/completions/inotifywait	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/inotifywait	2024-06-16 21:23:04.884938527 +0200
 @@ -6,7 +6,7 @@ _comp_cmd_inotifywait__events()
      # tab. Word following the tab is event name, others are line
      # wrapped explanations.
@@ -924,9 +933,9 @@ diff -pruN bash-completion-2.12.0.old/completions/inotifywait bash-completion-2.
              -ne 's/^'$'\t''\([^ '$'\t'']\{1,\}\)[ '$'\t''].*/\1/p')"
  }
  
-diff -pruN bash-completion-2.12.0.old/completions/invoke-rc.d bash-completion-2.12.0/completions/invoke-rc.d
---- bash-completion-2.12.0.old/completions/invoke-rc.d	2024-02-21 07:55:15.205887503 +0100
-+++ bash-completion-2.12.0/completions/invoke-rc.d	2024-03-04 12:47:38.378683029 +0100
+diff -pruN bash-completion-2.14.0.old/completions/invoke-rc.d bash-completion-2.14.0/completions/invoke-rc.d
+--- bash-completion-2.14.0.old/completions/invoke-rc.d	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/invoke-rc.d	2024-06-16 21:23:04.421948792 +0200
 @@ -19,13 +19,13 @@ _comp_cmd_invoke_rc_d()
          # generate valid_options
          _comp_compgen_split -- "$(
@@ -943,10 +952,37 @@ diff -pruN bash-completion-2.12.0.old/completions/invoke-rc.d bash-completion-2.
              -ne 's/^.*Usage:[ ]*[^ ]*[ ]*{*\([^}"]*\).*$/\1/p' \
              "$sysvdir/$prev")"
      else
-diff -pruN bash-completion-2.12.0.old/completions/ip bash-completion-2.12.0/completions/ip
---- bash-completion-2.12.0.old/completions/ip	2024-02-21 07:55:15.205887503 +0100
-+++ bash-completion-2.12.0/completions/ip	2024-03-04 12:47:38.446490439 +0100
-@@ -58,7 +58,7 @@ _comp_cmd_ip()
+diff -pruN bash-completion-2.14.0.old/completions/ip bash-completion-2.14.0/completions/ip
+--- bash-completion-2.14.0.old/completions/ip	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ip	2024-06-16 21:23:04.372879277 +0200
+@@ -12,7 +12,7 @@ _comp_cmd_ip__netns()
+     _comp_split -l unquoted "$(
+         {
+             ${1-ip} -c=never netns list 2>/dev/null || ${1-ip} netns list
+-        } | command sed -e 's/ (.*//'
++        } | command gsed -e 's/ (.*//'
+     )"
+     # namespace names can have spaces, so we quote all of them if needed
+     local ns quoted=()
+@@ -29,7 +29,7 @@ _comp_cmd_ip__link_types()
+     _comp_compgen_split -- "$(
+         {
+             ${1-ip} -c=never link help || ${1-ip} link help
+-        } 2>&1 | command sed -e \
++        } 2>&1 | command gsed -e \
+             '/TYPE := /,/}/!d' -e \
+             's/.*{//' -e \
+             's/}.*//' -e \
+@@ -42,7 +42,7 @@ _comp_cmd_ip__neigh_states()
+     _comp_compgen_split -- "$(
+         {
+             ${1-ip} -c=never neigh help || ${1-ip} neigh help
+-        } 2>&1 | command sed -e \
++        } 2>&1 | command gsed -e \
+             '/STATE := /,/}/!d' -e \
+             's/.*{//' -e \
+             's/}.*//' -e \
+@@ -93,7 +93,7 @@ _comp_cmd_ip()
                      ((cword == 1)) && printf '%s\n' -force
                      {
                          "$1" -c=never help || "$1" help
@@ -955,25 +991,34 @@ diff -pruN bash-completion-2.12.0.old/completions/ip bash-completion-2.12.0/comp
                          's/[{|}=]/\n/g' -e \
                          's/\[\([^]]\{1,\}\)\]/\1/g'
                  )"
-@@ -67,7 +67,7 @@ _comp_cmd_ip()
+@@ -102,7 +102,7 @@ _comp_cmd_ip()
                  _comp_compgen_split -- "help $(
                      {
-                         $1 -c=never help || $1 help
+                         "$1" -c=never help || "$1" help
 -                    } 2>&1 | command sed -e \
 +                    } 2>&1 | command gsed -e \
                          '/OBJECT := /,/}/!d' -e \
                          's/.*{//' -e \
                          's/}.*//' -e \
-@@ -212,7 +212,7 @@ _comp_cmd_ip()
+@@ -304,7 +304,7 @@ _comp_cmd_ip()
                          _comp_compgen_split -- "$(
                              {
-                                 $1 -c=never r 2>/dev/null || $1 r
+                                 "$1" -c=never r 2>/dev/null || "$1" r
 -                            } | command sed -ne \
 +                            } | command gsed -ne \
                                  's/.*via \([0-9.]*\).*/\1/p'
                          )"
                      elif [[ $prev == "$subcmd" ]]; then
-@@ -360,7 +360,7 @@ _comp_cmd_ip()
+@@ -375,7 +375,7 @@ _comp_cmd_ip()
+                         _comp_compgen -- -W "$(
+                             # stats command was added after color, should always have it
+                             "$1" -c=never stats help 2>&1 |
+-                                command sed -e \
++                                command gsed -e \
+                                     '/^GROUP := /,/}/!d' -e \
+                                     's/^GROUP := //g' -e \
+                                     '/:=/d' -e \
+@@ -519,7 +519,7 @@ _comp_cmd_ip()
                          _comp_compgen_split -- "help all $(
                              {
                                  "$1" -c=never monitor help || "$1" monitor help
@@ -982,9 +1027,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ip bash-completion-2.12.0/comp
                                  '/OBJECTS := /,/[^|]$/!d' -e \
                                  's/OBJECTS := *//' -e \
                                  's/|//g'
-diff -pruN bash-completion-2.12.0.old/completions/iperf bash-completion-2.12.0/completions/iperf
---- bash-completion-2.12.0.old/completions/iperf	2024-02-21 07:55:15.205887503 +0100
-+++ bash-completion-2.12.0/completions/iperf	2024-03-04 12:47:38.368203332 +0100
+diff -pruN bash-completion-2.14.0.old/completions/iperf bash-completion-2.14.0/completions/iperf
+--- bash-completion-2.14.0.old/completions/iperf	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/iperf	2024-06-16 21:23:04.413479902 +0200
 @@ -20,8 +20,8 @@ _comp_cmd_iperf()
          --format | -${noargopts}f)
              local formats=$(
@@ -996,7 +1041,7 @@ diff -pruN bash-completion-2.12.0.old/completions/iperf bash-completion-2.12.0/c
              )
              _comp_compgen -- -W '$formats'
              return
-@@ -73,10 +73,10 @@ _comp_cmd_iperf()
+@@ -77,10 +77,10 @@ _comp_cmd_iperf()
      for i in "${words[@]}"; do
          case $i in
              -s | --server)
@@ -1009,9 +1054,9 @@ diff -pruN bash-completion-2.12.0.old/completions/iperf bash-completion-2.12.0/c
                  ;;
          esac
      done
-diff -pruN bash-completion-2.12.0.old/completions/ipmitool bash-completion-2.12.0/completions/ipmitool
---- bash-completion-2.12.0.old/completions/ipmitool	2024-02-21 07:55:15.209887524 +0100
-+++ bash-completion-2.12.0/completions/ipmitool	2024-03-04 12:47:38.345130067 +0100
+diff -pruN bash-completion-2.14.0.old/completions/ipmitool bash-completion-2.14.0/completions/ipmitool
+--- bash-completion-2.14.0.old/completions/ipmitool	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ipmitool	2024-06-16 21:23:04.380489269 +0200
 @@ -3,7 +3,7 @@
  _comp_cmd_ipmitool__singleline_help()
  {
@@ -1030,9 +1075,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ipmitool bash-completion-2.12.
                      -ne 's/^[[:space:]]\{1,\}\([^[:space:]]\{1,\}\).*/\1/p')"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/iptables bash-completion-2.12.0/completions/iptables
---- bash-completion-2.12.0.old/completions/iptables	2024-02-21 07:55:15.209887524 +0100
-+++ bash-completion-2.12.0/completions/iptables	2024-03-04 12:47:38.353524417 +0100
+diff -pruN bash-completion-2.14.0.old/completions/iptables bash-completion-2.14.0/completions/iptables
+--- bash-completion-2.14.0.old/completions/iptables	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/iptables	2024-06-16 21:23:04.385770302 +0200
 @@ -16,7 +16,7 @@ _comp_cmd_iptables()
          -*[AIDRPFXLZ])
              _comp_compgen_split -- "$(
@@ -1071,9 +1116,9 @@ diff -pruN bash-completion-2.12.0.old/completions/iptables bash-completion-2.12.
                  [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
              fi
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/ipv6calc bash-completion-2.12.0/completions/ipv6calc
---- bash-completion-2.12.0.old/completions/ipv6calc	2024-02-21 07:55:15.209887524 +0100
-+++ bash-completion-2.12.0/completions/ipv6calc	2024-03-04 12:47:38.126702827 +0100
+diff -pruN bash-completion-2.14.0.old/completions/ipv6calc bash-completion-2.14.0/completions/ipv6calc
+--- bash-completion-2.14.0.old/completions/ipv6calc	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ipv6calc	2024-06-16 21:23:04.863831342 +0200
 @@ -12,9 +12,9 @@ _comp_cmd_ipv6calc()
              return
              ;;
@@ -1095,9 +1140,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ipv6calc bash-completion-2.12.
      fi
  
  } &&
-diff -pruN bash-completion-2.12.0.old/completions/isql bash-completion-2.12.0/completions/isql
---- bash-completion-2.12.0.old/completions/isql	2024-02-21 07:55:15.209887524 +0100
-+++ bash-completion-2.12.0/completions/isql	2024-03-04 12:47:38.415418916 +0100
+diff -pruN bash-completion-2.14.0.old/completions/isql bash-completion-2.14.0/completions/isql
+--- bash-completion-2.14.0.old/completions/isql	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/isql	2024-06-16 21:23:04.706445601 +0200
 @@ -8,7 +8,7 @@ _comp_cmd_isql()
  
      [[ -f ${ODBCINI-} ]] &&
@@ -1107,9 +1152,9 @@ diff -pruN bash-completion-2.12.0.old/completions/isql bash-completion-2.12.0/co
          )"
  } &&
      complete -F _comp_cmd_isql isql
-diff -pruN bash-completion-2.12.0.old/completions/java bash-completion-2.12.0/completions/java
---- bash-completion-2.12.0.old/completions/java	2024-02-21 07:55:15.209887524 +0100
-+++ bash-completion-2.12.0/completions/java	2024-03-04 12:47:38.109737052 +0100
+diff -pruN bash-completion-2.14.0.old/completions/java bash-completion-2.14.0/completions/java
+--- bash-completion-2.14.0.old/completions/java	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/java	2024-06-16 21:23:04.434660326 +0200
 @@ -70,7 +70,7 @@ _comp_cmd_java__classes()
          if [[ $i == *.@(jar|zip) && -r $i ]]; then
              if type zipinfo &>/dev/null; then
@@ -1153,9 +1198,9 @@ diff -pruN bash-completion-2.12.0.old/completions/java bash-completion-2.12.0/co
              "s/^[[:space:]]*${cur%%:*}:{\([^}]\{1,\}\)}.*/\1/p")
          _comp_compgen -c "${cur#*:}" -- -W "${opts//,/ }"
          return
-diff -pruN bash-completion-2.12.0.old/completions/lilo bash-completion-2.12.0/completions/lilo
---- bash-completion-2.12.0.old/completions/lilo	2024-02-21 07:55:15.213887547 +0100
-+++ bash-completion-2.12.0/completions/lilo	2024-03-04 12:47:38.262019529 +0100
+diff -pruN bash-completion-2.14.0.old/completions/lilo bash-completion-2.14.0/completions/lilo
+--- bash-completion-2.14.0.old/completions/lilo	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/lilo	2024-06-16 21:23:04.825593835 +0200
 @@ -3,7 +3,7 @@
  _comp_cmd_lilo__labels()
  {
@@ -1165,9 +1210,9 @@ diff -pruN bash-completion-2.12.0.old/completions/lilo bash-completion-2.12.0/co
  }
  
  _comp_cmd_lilo()
-diff -pruN bash-completion-2.12.0.old/completions/links bash-completion-2.12.0/completions/links
---- bash-completion-2.12.0.old/completions/links	2024-02-21 07:55:15.213887547 +0100
-+++ bash-completion-2.12.0/completions/links	2024-03-04 12:47:38.123440334 +0100
+diff -pruN bash-completion-2.14.0.old/completions/links bash-completion-2.14.0/completions/links
+--- bash-completion-2.14.0.old/completions/links	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/links	2024-06-16 21:23:04.831927443 +0200
 @@ -28,7 +28,7 @@ _comp_cmd_links()
              ;;
          -driver)
@@ -1177,9 +1222,9 @@ diff -pruN bash-completion-2.12.0.old/completions/links bash-completion-2.12.0/c
              [[ $drivers ]] || drivers='x svgalib fb directfb pmshell atheos'
              _comp_compgen -- -W "$drivers"
              return
-diff -pruN bash-completion-2.12.0.old/completions/lintian bash-completion-2.12.0/completions/lintian
---- bash-completion-2.12.0.old/completions/lintian	2024-02-21 07:55:15.213887547 +0100
-+++ bash-completion-2.12.0/completions/lintian	2024-03-04 12:47:38.423864244 +0100
+diff -pruN bash-completion-2.14.0.old/completions/lintian bash-completion-2.14.0/completions/lintian
+--- bash-completion-2.14.0.old/completions/lintian	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/lintian	2024-06-16 21:23:04.375018612 +0200
 @@ -9,7 +9,7 @@ _comp_cmd_lintian__tags()
      if [[ $cur == *, ]]; then
          search=${cur//,/ }
@@ -1212,9 +1257,9 @@ diff -pruN bash-completion-2.12.0.old/completions/lintian bash-completion-2.12.0
          done
          _comp_compgen -aR -- -W "$infos"
      elif [[ $cur == *,* ]]; then
-diff -pruN bash-completion-2.12.0.old/completions/lvm bash-completion-2.12.0/completions/lvm
---- bash-completion-2.12.0.old/completions/lvm	2024-02-21 07:55:15.213887547 +0100
-+++ bash-completion-2.12.0/completions/lvm	2024-03-04 12:47:38.249231398 +0100
+diff -pruN bash-completion-2.14.0.old/completions/lvm bash-completion-2.14.0/completions/lvm
+--- bash-completion-2.14.0.old/completions/lvm	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/lvm	2024-06-16 21:23:04.897680395 +0200
 @@ -8,25 +8,25 @@ _comp_cmd_lvm__filedir()
  _comp_cmd_lvm__volumegroups()
  {
@@ -1245,9 +1290,9 @@ diff -pruN bash-completion-2.12.0.old/completions/lvm bash-completion-2.12.0/com
      if [[ $cur == /dev/mapper/* ]]; then
          _comp_compgen -a filedir
          local i
-diff -pruN bash-completion-2.12.0.old/completions/Makefile.in bash-completion-2.12.0/completions/Makefile.in
---- bash-completion-2.12.0.old/completions/Makefile.in	2024-02-21 07:55:38.618018464 +0100
-+++ bash-completion-2.12.0/completions/Makefile.in	2024-03-04 12:47:38.431609115 +0100
+diff -pruN bash-completion-2.14.0.old/completions/Makefile.in bash-completion-2.14.0/completions/Makefile.in
+--- bash-completion-2.14.0.old/completions/Makefile.in	2024-05-09 10:41:08.000000000 +0200
++++ bash-completion-2.14.0/completions/Makefile.in	2024-06-16 21:23:04.505167846 +0200
 @@ -42,13 +42,13 @@ am__make_running_with_option = \
        *\\[\ \	]*) \
          bs=\\; \
@@ -1300,7 +1345,7 @@ diff -pruN bash-completion-2.12.0.old/completions/Makefile.in bash-completion-2.
  am__uninstall_files_from_dir = { \
    test -z "$$files" \
      || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-@@ -1191,7 +1191,7 @@ install-bashcompDATA: $(bashcomp_DATA)
+@@ -1199,7 +1199,7 @@ install-bashcompDATA: $(bashcomp_DATA)
  uninstall-bashcompDATA:
  	@$(NORMAL_UNINSTALL)
  	@list='$(bashcomp_DATA)'; test -n "$(bashcompdir)" || list=; \
@@ -1309,7 +1354,7 @@ diff -pruN bash-completion-2.12.0.old/completions/Makefile.in bash-completion-2.
  	dir='$(DESTDIR)$(bashcompdir)'; $(am__uninstall_files_from_dir)
  tags TAGS:
  
-@@ -1203,21 +1203,21 @@ distdir: $(BUILT_SOURCES)
+@@ -1211,21 +1211,21 @@ distdir: $(BUILT_SOURCES)
  	$(MAKE) $(AM_MAKEFLAGS) distdir-am
  
  distdir-am: $(DISTFILES)
@@ -1336,9 +1381,9 @@ diff -pruN bash-completion-2.12.0.old/completions/Makefile.in bash-completion-2.
  	    if test -d "$(distdir)/$$file"; then \
  	      find "$(distdir)/$$file" -type d ! -perm -700 -exec chmod u+rwx {} \;; \
  	    fi; \
-diff -pruN bash-completion-2.12.0.old/completions/makepkg bash-completion-2.12.0/completions/makepkg
---- bash-completion-2.12.0.old/completions/makepkg	2024-02-21 07:55:15.217887570 +0100
-+++ bash-completion-2.12.0/completions/makepkg	2024-03-04 12:47:38.128816678 +0100
+diff -pruN bash-completion-2.14.0.old/completions/makepkg bash-completion-2.14.0/completions/makepkg
+--- bash-completion-2.14.0.old/completions/makepkg	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/makepkg	2024-06-16 21:23:04.671300774 +0200
 @@ -14,7 +14,7 @@ _comp_cmd_makepkg__slackware()
      esac
  
@@ -1348,9 +1393,9 @@ diff -pruN bash-completion-2.12.0.old/completions/makepkg bash-completion-2.12.0
          return
      fi
  
-diff -pruN bash-completion-2.12.0.old/completions/mcrypt bash-completion-2.12.0/completions/mcrypt
---- bash-completion-2.12.0.old/completions/mcrypt	2024-02-21 07:55:15.217887570 +0100
-+++ bash-completion-2.12.0/completions/mcrypt	2024-03-04 12:47:38.409030972 +0100
+diff -pruN bash-completion-2.14.0.old/completions/mcrypt bash-completion-2.14.0/completions/mcrypt
+--- bash-completion-2.14.0.old/completions/mcrypt	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/mcrypt	2024-06-16 21:23:04.622803980 +0200
 @@ -26,7 +26,7 @@ _comp_cmd_mcrypt()
              ;;
          -h | --hash)
@@ -1360,9 +1405,9 @@ diff -pruN bash-completion-2.12.0.old/completions/mcrypt bash-completion-2.12.0/
              return
              ;;
          -k | -s | --key | --keysize)
-diff -pruN bash-completion-2.12.0.old/completions/medusa bash-completion-2.12.0/completions/medusa
---- bash-completion-2.12.0.old/completions/medusa	2024-02-21 07:55:15.217887570 +0100
-+++ bash-completion-2.12.0/completions/medusa	2024-03-04 12:47:38.124477465 +0100
+diff -pruN bash-completion-2.14.0.old/completions/medusa bash-completion-2.14.0/completions/medusa
+--- bash-completion-2.14.0.old/completions/medusa	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/medusa	2024-06-16 21:23:04.341956137 +0200
 @@ -16,7 +16,7 @@ _comp_cmd_medusa()
              ;;
          -*M)
@@ -1372,9 +1417,9 @@ diff -pruN bash-completion-2.12.0.old/completions/medusa bash-completion-2.12.0/
              return
              ;;
      esac
-diff -pruN bash-completion-2.12.0.old/completions/modprobe bash-completion-2.12.0/completions/modprobe
---- bash-completion-2.12.0.old/completions/modprobe	2024-02-21 07:55:15.217887570 +0100
-+++ bash-completion-2.12.0/completions/modprobe	2024-03-04 12:47:38.230162034 +0100
+diff -pruN bash-completion-2.14.0.old/completions/modprobe bash-completion-2.14.0/completions/modprobe
+--- bash-completion-2.14.0.old/completions/modprobe	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/modprobe	2024-06-16 21:23:04.788222093 +0200
 @@ -90,7 +90,7 @@ _comp_cmd_modprobe()
                      prev=${cur%%=*}
                      cur=${cur#*=}
@@ -1384,9 +1429,9 @@ diff -pruN bash-completion-2.12.0.old/completions/modprobe bash-completion-2.12.
                          local choices="on off"
                          [[ $cur ]] && choices="1 0 y Y n N on off"
                          _comp_compgen -- -W "$choices"
-diff -pruN bash-completion-2.12.0.old/completions/mplayer bash-completion-2.12.0/completions/mplayer
---- bash-completion-2.12.0.old/completions/mplayer	2024-02-21 07:55:15.217887570 +0100
-+++ bash-completion-2.12.0/completions/mplayer	2024-03-04 12:47:38.296684368 +0100
+diff -pruN bash-completion-2.14.0.old/completions/mplayer bash-completion-2.14.0/completions/mplayer
+--- bash-completion-2.14.0.old/completions/mplayer	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/mplayer	2024-06-16 21:23:04.513854634 +0200
 @@ -4,8 +4,8 @@ _comp_cmd_mplayer__options()
  {
      cur=${cur%\\}
@@ -1416,9 +1461,9 @@ diff -pruN bash-completion-2.12.0.old/completions/mplayer bash-completion-2.12.0
                      -e "s/^[[:space:]]*/-/" -e "s/[[:space:]:].*//" \
                      -e "/^-\(Total\|.*\*\)\{0,1\}$/!p")"
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/msynctool bash-completion-2.12.0/completions/msynctool
---- bash-completion-2.12.0.old/completions/msynctool	2024-02-21 07:55:15.217887570 +0100
-+++ bash-completion-2.12.0/completions/msynctool	2024-03-04 12:47:38.040119522 +0100
+diff -pruN bash-completion-2.14.0.old/completions/msynctool bash-completion-2.14.0/completions/msynctool
+--- bash-completion-2.14.0.old/completions/msynctool	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/msynctool	2024-06-16 21:23:04.542382234 +0200
 @@ -8,22 +8,22 @@ _comp_cmd_msynctool()
      case $words in
          --configure)
@@ -1446,9 +1491,9 @@ diff -pruN bash-completion-2.12.0.old/completions/msynctool bash-completion-2.12
              return
              ;;
      esac
-diff -pruN bash-completion-2.12.0.old/completions/mutt bash-completion-2.12.0/completions/mutt
---- bash-completion-2.12.0.old/completions/mutt	2024-02-21 07:55:15.221887592 +0100
-+++ bash-completion-2.12.0/completions/mutt	2024-03-04 12:47:38.048714706 +0100
+diff -pruN bash-completion-2.14.0.old/completions/mutt bash-completion-2.14.0/completions/mutt
+--- bash-completion-2.14.0.old/completions/mutt	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/mutt	2024-06-16 21:23:04.496402641 +0200
 @@ -67,7 +67,7 @@ _comp_cmd_mutt__get_conffiles__visit()
      conffiles+=("$1")
  
@@ -1503,9 +1548,9 @@ diff -pruN bash-completion-2.12.0.old/completions/mutt bash-completion-2.12.0/co
          if [[ $spoolfile ]]; then
              _comp_dequote "\"$spoolfile\"" && spoolfile=$REPLY
              cur=$spoolfile${cur:1}
-diff -pruN bash-completion-2.12.0.old/completions/mysql bash-completion-2.12.0/completions/mysql
---- bash-completion-2.12.0.old/completions/mysql	2024-02-21 07:55:15.221887592 +0100
-+++ bash-completion-2.12.0/completions/mysql	2024-03-04 12:47:38.001410204 +0100
+diff -pruN bash-completion-2.14.0.old/completions/mysql bash-completion-2.14.0/completions/mysql
+--- bash-completion-2.14.0.old/completions/mysql	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/mysql	2024-06-16 21:23:04.701131761 +0200
 @@ -35,7 +35,7 @@ _comp_cmd_mysql()
              ;;
          --database | -${noargopts}D)
@@ -1524,9 +1569,9 @@ diff -pruN bash-completion-2.12.0.old/completions/mysql bash-completion-2.12.0/c
  } &&
      complete -F _comp_cmd_mysql mysql
  
-diff -pruN bash-completion-2.12.0.old/completions/ncftp bash-completion-2.12.0/completions/ncftp
---- bash-completion-2.12.0.old/completions/ncftp	2024-02-21 07:55:15.221887592 +0100
-+++ bash-completion-2.12.0/completions/ncftp	2024-03-04 12:47:37.985468273 +0100
+diff -pruN bash-completion-2.14.0.old/completions/ncftp bash-completion-2.14.0/completions/ncftp
+--- bash-completion-2.14.0.old/completions/ncftp	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ncftp	2024-06-16 21:23:04.707492999 +0200
 @@ -17,7 +17,7 @@ _comp_cmd_ncftp()
      fi
  
@@ -1536,9 +1581,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ncftp bash-completion-2.12.0/c
              's/^\([^,]\{1,\}\),.*$/\1/p' ~/.ncftp/bookmarks)"
      fi
  
-diff -pruN bash-completion-2.12.0.old/completions/nmap bash-completion-2.12.0/completions/nmap
---- bash-completion-2.12.0.old/completions/nmap	2024-02-21 07:55:15.221887592 +0100
-+++ bash-completion-2.12.0/completions/nmap	2024-03-04 12:47:38.224820983 +0100
+diff -pruN bash-completion-2.14.0.old/completions/nmap bash-completion-2.14.0/completions/nmap
+--- bash-completion-2.14.0.old/completions/nmap	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/nmap	2024-06-16 21:23:04.391030674 +0200
 @@ -36,7 +36,7 @@ _comp_cmd_nmap()
          # strip everything following a non-option name or = char
          # TODO: should expand -T<0-5> to -T0 ... -T5
@@ -1548,9 +1593,9 @@ diff -pruN bash-completion-2.12.0.old/completions/nmap bash-completion-2.12.0/co
                  -e "s/:.*$//" \
                  -e "s/=.*$/=/" \
                  -e "s/;[[:space:]]*-/ -/g" \
-diff -pruN bash-completion-2.12.0.old/completions/openssl bash-completion-2.12.0/completions/openssl
---- bash-completion-2.12.0.old/completions/openssl	2024-02-21 07:55:15.221887592 +0100
-+++ bash-completion-2.12.0/completions/openssl	2024-03-04 12:47:38.093904551 +0100
+diff -pruN bash-completion-2.14.0.old/completions/openssl bash-completion-2.14.0/completions/openssl
+--- bash-completion-2.14.0.old/completions/openssl	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/openssl	2024-06-16 21:23:04.835164080 +0200
 @@ -33,8 +33,8 @@ _comp_cmd_openssl__compgen_digests()
              _comp_awk '/^-.*[ \t]to use the .* message digest algorithm/ { print $1 }'
      )"
@@ -1562,9 +1607,9 @@ diff -pruN bash-completion-2.12.0.old/completions/openssl bash-completion-2.12.0
  }
  
  _comp_cmd_openssl()
-diff -pruN bash-completion-2.12.0.old/completions/pdftotext bash-completion-2.12.0/completions/pdftotext
---- bash-completion-2.12.0.old/completions/pdftotext	2024-02-21 07:55:15.225887615 +0100
-+++ bash-completion-2.12.0/completions/pdftotext	2024-03-04 12:47:38.067556661 +0100
+diff -pruN bash-completion-2.14.0.old/completions/pdftotext bash-completion-2.14.0/completions/pdftotext
+--- bash-completion-2.14.0.old/completions/pdftotext	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/pdftotext	2024-06-16 21:23:04.523344534 +0200
 @@ -12,7 +12,7 @@ _comp_cmd_pdftotext()
              ;;
          -enc)
@@ -1574,9 +1619,9 @@ diff -pruN bash-completion-2.12.0.old/completions/pdftotext bash-completion-2.12
              return
              ;;
          -eol)
-diff -pruN bash-completion-2.12.0.old/completions/perl bash-completion-2.12.0/completions/perl
---- bash-completion-2.12.0.old/completions/perl	2024-02-21 07:55:15.225887615 +0100
-+++ bash-completion-2.12.0/completions/perl	2024-03-04 12:47:38.448623204 +0100
+diff -pruN bash-completion-2.14.0.old/completions/perl bash-completion-2.14.0/completions/perl
+--- bash-completion-2.14.0.old/completions/perl	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/perl	2024-06-16 21:23:04.753241115 +0200
 @@ -131,7 +131,7 @@ _comp_cmd_perldoc()
              _comp_cmd_perl__helper "" perldocs
              if [[ $cur == p* ]]; then
@@ -1586,9 +1631,9 @@ diff -pruN bash-completion-2.12.0.old/completions/perl bash-completion-2.12.0/co
                      _comp_awk 'NF >= 2 && $1 ~ /^perl/ { print $1 }')"
              fi
          fi
-diff -pruN bash-completion-2.12.0.old/completions/pgrep bash-completion-2.12.0/completions/pgrep
---- bash-completion-2.12.0.old/completions/pgrep	2024-02-21 07:55:15.225887615 +0100
-+++ bash-completion-2.12.0/completions/pgrep	2024-03-04 12:47:38.287214975 +0100
+diff -pruN bash-completion-2.14.0.old/completions/pgrep bash-completion-2.14.0/completions/pgrep
+--- bash-completion-2.14.0.old/completions/pgrep	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/pgrep	2024-06-16 21:23:04.423022859 +0200
 @@ -38,7 +38,7 @@ _comp_cmd_pgrep()
          --nslist)
              _comp_compgen -c "${cur##*,}" split -F $' \t\n,' -- "$(
@@ -1607,9 +1652,9 @@ diff -pruN bash-completion-2.12.0.old/completions/pgrep bash-completion-2.12.0/c
          [[ $cword -eq 1 && $1 == *pkill ]] && _comp_compgen -a signals -
          return
      fi
-diff -pruN bash-completion-2.12.0.old/completions/pkgadd bash-completion-2.12.0/completions/pkgadd
---- bash-completion-2.12.0.old/completions/pkgadd	2024-02-21 07:55:15.225887615 +0100
-+++ bash-completion-2.12.0/completions/pkgadd	2024-03-04 12:47:38.292425516 +0100
+diff -pruN bash-completion-2.14.0.old/completions/pkgadd bash-completion-2.14.0/completions/pkgadd
+--- bash-completion-2.14.0.old/completions/pkgadd	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/pkgadd	2024-06-16 21:23:04.808583996 +0200
 @@ -48,7 +48,7 @@ _comp_cmd_pkgadd()
                      local REPLY
                      _comp_dequote "$device"
@@ -1619,9 +1664,9 @@ diff -pruN bash-completion-2.12.0.old/completions/pkgadd bash-completion-2.12.0/
                  fi
                  ((${#pkginst_list[@]})) &&
                      _comp_compgen -- -W '"${pkginst_list[@]}"'
-diff -pruN bash-completion-2.12.0.old/completions/pngfix bash-completion-2.12.0/completions/pngfix
---- bash-completion-2.12.0.old/completions/pngfix	2024-02-21 07:55:15.225887615 +0100
-+++ bash-completion-2.12.0/completions/pngfix	2024-03-04 12:47:38.474642839 +0100
+diff -pruN bash-completion-2.14.0.old/completions/pngfix bash-completion-2.14.0/completions/pngfix
+--- bash-completion-2.14.0.old/completions/pngfix	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/pngfix	2024-06-16 21:23:04.717113663 +0200
 @@ -15,7 +15,7 @@ _comp_cmd_pngfix()
              ;;
          --strip)
@@ -1631,9 +1676,9 @@ diff -pruN bash-completion-2.12.0.old/completions/pngfix bash-completion-2.12.0/
              return
              ;;
      esac
-diff -pruN bash-completion-2.12.0.old/completions/postcat bash-completion-2.12.0/completions/postcat
---- bash-completion-2.12.0.old/completions/postcat	2024-02-21 07:55:15.229887636 +0100
-+++ bash-completion-2.12.0/completions/postcat	2024-03-04 12:47:38.391241779 +0100
+diff -pruN bash-completion-2.14.0.old/completions/postcat bash-completion-2.14.0/completions/postcat
+--- bash-completion-2.14.0.old/completions/postcat	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/postcat	2024-06-16 21:23:04.553020724 +0200
 @@ -23,7 +23,7 @@ _comp_cmd_postcat()
      done
      if [[ $qfile ]]; then
@@ -1643,9 +1688,9 @@ diff -pruN bash-completion-2.12.0.old/completions/postcat bash-completion-2.12.0
          return
      fi
  
-diff -pruN bash-completion-2.12.0.old/completions/postsuper bash-completion-2.12.0/completions/postsuper
---- bash-completion-2.12.0.old/completions/postsuper	2024-02-21 07:55:15.229887636 +0100
-+++ bash-completion-2.12.0/completions/postsuper	2024-03-04 12:47:38.115983801 +0100
+diff -pruN bash-completion-2.14.0.old/completions/postsuper bash-completion-2.14.0/completions/postsuper
+--- bash-completion-2.14.0.old/completions/postsuper	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/postsuper	2024-06-16 21:23:04.471895316 +0200
 @@ -12,17 +12,17 @@ _comp_cmd_postsuper()
              ;;
          -[dr])
@@ -1667,9 +1712,9 @@ diff -pruN bash-completion-2.12.0.old/completions/postsuper bash-completion-2.12
                  -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; /^[0-9A-Z]*[* ]/d; s/!.*$//')"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/povray bash-completion-2.12.0/completions/povray
---- bash-completion-2.12.0.old/completions/povray	2024-02-21 07:55:15.229887636 +0100
-+++ bash-completion-2.12.0/completions/povray	2024-03-04 12:47:38.177320879 +0100
+diff -pruN bash-completion-2.14.0.old/completions/povray bash-completion-2.14.0/completions/povray
+--- bash-completion-2.14.0.old/completions/povray	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/povray	2024-06-16 21:23:04.435735501 +0200
 @@ -23,7 +23,7 @@ _comp_cmd_povray()
              # guess what output file type user may want
              case $(
@@ -1688,9 +1733,9 @@ diff -pruN bash-completion-2.12.0.old/completions/povray bash-completion-2.12.0/
                  's/^[[:space:]]*\[\([^]]*\]\).*$/\1/p' -- "$pfx")" &&
                  # to prevent [bar] expand to nothing.  can be done more easily?
                  _comp_compgen -Rv COMPREPLY -- -P "${pfx}[" -W '"${COMPREPLY[@]}"'
-diff -pruN bash-completion-2.12.0.old/completions/ps bash-completion-2.12.0/completions/ps
---- bash-completion-2.12.0.old/completions/ps	2024-02-21 07:55:15.229887636 +0100
-+++ bash-completion-2.12.0/completions/ps	2024-03-04 12:47:38.511583976 +0100
+diff -pruN bash-completion-2.14.0.old/completions/ps bash-completion-2.14.0/completions/ps
+--- bash-completion-2.14.0.old/completions/ps	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ps	2024-06-16 21:23:04.446547391 +0200
 @@ -61,7 +61,7 @@ _comp_cmd_ps()
              "$1" --help
              "$1" --help all
@@ -1700,9 +1745,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ps bash-completion-2.12.0/comp
              _comp_compgen_usage
      fi
  } &&
-diff -pruN bash-completion-2.12.0.old/completions/puppet bash-completion-2.12.0/completions/puppet
---- bash-completion-2.12.0.old/completions/puppet	2024-02-21 07:55:15.229887636 +0100
-+++ bash-completion-2.12.0/completions/puppet	2024-03-04 12:47:38.488517848 +0100
+diff -pruN bash-completion-2.14.0.old/completions/puppet bash-completion-2.14.0/completions/puppet
+--- bash-completion-2.14.0.old/completions/puppet	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/puppet	2024-06-16 21:23:04.700047475 +0200
 @@ -24,7 +24,7 @@ _comp_cmd_puppet__certs()
      if [[ $1 == --all ]]; then
          cert_list=$(
@@ -1730,9 +1775,9 @@ diff -pruN bash-completion-2.12.0.old/completions/puppet bash-completion-2.12.0/
      )
      _comp_compgen -a -- -W "$puppet_doc_list"
  }
-diff -pruN bash-completion-2.12.0.old/completions/pydoc bash-completion-2.12.0/completions/pydoc
---- bash-completion-2.12.0.old/completions/pydoc	2024-02-21 07:55:15.229887636 +0100
-+++ bash-completion-2.12.0/completions/pydoc	2024-03-04 12:47:38.374518785 +0100
+diff -pruN bash-completion-2.14.0.old/completions/pydoc bash-completion-2.14.0/completions/pydoc
+--- bash-completion-2.14.0.old/completions/pydoc	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/pydoc	2024-06-16 21:23:04.397456624 +0200
 @@ -16,7 +16,7 @@ _comp_cmd_pydoc()
      esac
  
@@ -1751,9 +1796,9 @@ diff -pruN bash-completion-2.12.0.old/completions/pydoc bash-completion-2.12.0/c
  
      _comp_compgen -a filedir py
  } &&
-diff -pruN bash-completion-2.12.0.old/completions/pylint bash-completion-2.12.0/completions/pylint
---- bash-completion-2.12.0.old/completions/pylint	2024-02-21 07:55:15.229887636 +0100
-+++ bash-completion-2.12.0/completions/pylint	2024-03-04 12:47:38.467722919 +0100
+diff -pruN bash-completion-2.14.0.old/completions/pylint bash-completion-2.14.0/completions/pylint
+--- bash-completion-2.14.0.old/completions/pylint	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/pylint	2024-06-16 21:23:04.711775523 +0200
 @@ -11,10 +11,10 @@ _comp_cmd_pylint__message_ids()
      local msgs="$(
          set -o pipefail
@@ -1768,9 +1813,9 @@ diff -pruN bash-completion-2.12.0.old/completions/pylint bash-completion-2.12.0/
      )"
      _comp_delimited , -W "$msgs"
  }
-diff -pruN bash-completion-2.12.0.old/completions/pytest bash-completion-2.12.0/completions/pytest
---- bash-completion-2.12.0.old/completions/pytest	2024-02-21 07:55:15.229887636 +0100
-+++ bash-completion-2.12.0/completions/pytest	2024-03-04 12:47:38.226962544 +0100
+diff -pruN bash-completion-2.14.0.old/completions/pytest bash-completion-2.14.0/completions/pytest
+--- bash-completion-2.14.0.old/completions/pytest	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/pytest	2024-06-16 21:23:04.477153621 +0200
 @@ -3,7 +3,7 @@
  _comp_cmd_pytest__option_choice_args()
  {
@@ -1780,9 +1825,9 @@ diff -pruN bash-completion-2.12.0.old/completions/pytest bash-completion-2.12.0/
              -ne 's/.*choose from //p')
      _comp_compgen -a -- -W '$modes'
  }
-diff -pruN bash-completion-2.12.0.old/completions/qdbus bash-completion-2.12.0/completions/qdbus
---- bash-completion-2.12.0.old/completions/qdbus	2024-02-21 07:55:15.229887636 +0100
-+++ bash-completion-2.12.0/completions/qdbus	2024-03-04 12:47:38.121322151 +0100
+diff -pruN bash-completion-2.14.0.old/completions/qdbus bash-completion-2.14.0/completions/qdbus
+--- bash-completion-2.14.0.old/completions/qdbus	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/qdbus	2024-06-16 21:23:04.845585099 +0200
 @@ -6,7 +6,7 @@ _comp_cmd_qdbus()
      _comp_initialize -- "$@" || return
  
@@ -1792,9 +1837,9 @@ diff -pruN bash-completion-2.12.0.old/completions/qdbus bash-completion-2.12.0/c
      )"
  } &&
      complete -F _comp_cmd_qdbus qdbus dcop
-diff -pruN bash-completion-2.12.0.old/completions/reportbug bash-completion-2.12.0/completions/reportbug
---- bash-completion-2.12.0.old/completions/reportbug	2024-02-21 07:55:15.233887659 +0100
-+++ bash-completion-2.12.0/completions/reportbug	2024-03-04 12:47:38.505899773 +0100
+diff -pruN bash-completion-2.14.0.old/completions/reportbug bash-completion-2.14.0/completions/reportbug
+--- bash-completion-2.14.0.old/completions/reportbug	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/reportbug	2024-06-16 21:23:04.631127752 +0200
 @@ -33,7 +33,7 @@ _comp_cmd_reportbug()
              ;;
          --tag | --ui | --interface | --type | --bts | --severity | --mode | -${noargopts}[TutBS])
@@ -1804,9 +1849,9 @@ diff -pruN bash-completion-2.12.0.old/completions/reportbug bash-completion-2.12
              return
              ;;
          --editor | --mua | --mbox-reader-cmd | -${noargopts}e)
-diff -pruN bash-completion-2.12.0.old/completions/rpcdebug bash-completion-2.12.0/completions/rpcdebug
---- bash-completion-2.12.0.old/completions/rpcdebug	2024-02-21 07:55:15.233887659 +0100
-+++ bash-completion-2.12.0/completions/rpcdebug	2024-03-04 12:47:38.329367522 +0100
+diff -pruN bash-completion-2.14.0.old/completions/rpcdebug bash-completion-2.14.0/completions/rpcdebug
+--- bash-completion-2.14.0.old/completions/rpcdebug	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/rpcdebug	2024-06-16 21:23:04.403871033 +0200
 @@ -13,7 +13,7 @@ _comp_cmd_rpcdebug__flags()
  
      if [[ $module ]]; then
@@ -1816,9 +1861,9 @@ diff -pruN bash-completion-2.12.0.old/completions/rpcdebug bash-completion-2.12.
      fi
  }
  
-diff -pruN bash-completion-2.12.0.old/completions/rpm bash-completion-2.12.0/completions/rpm
---- bash-completion-2.12.0.old/completions/rpm	2024-02-21 07:55:15.233887659 +0100
-+++ bash-completion-2.12.0/completions/rpm	2024-03-04 12:47:38.435897305 +0100
+diff -pruN bash-completion-2.14.0.old/completions/rpm bash-completion-2.14.0/completions/rpm
+--- bash-completion-2.14.0.old/completions/rpm	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/rpm	2024-06-16 21:23:04.710695019 +0200
 @@ -13,7 +13,7 @@ _comp_cmd_rpm__compgen_installed_package
      if [[ -r /var/log/rpmpkgs &&
          /var/log/rpmpkgs -nt /var/lib/rpm/Packages ]]; then
@@ -1864,9 +1909,9 @@ diff -pruN bash-completion-2.12.0.old/completions/rpm bash-completion-2.12.0/com
              fi
              ;;
          --define | --with | --without | -${noargopts}D)
-diff -pruN bash-completion-2.12.0.old/completions/rsync bash-completion-2.12.0/completions/rsync
---- bash-completion-2.12.0.old/completions/rsync	2024-02-21 07:55:15.233887659 +0100
-+++ bash-completion-2.12.0/completions/rsync	2024-03-04 12:47:38.494330472 +0100
+diff -pruN bash-completion-2.14.0.old/completions/rsync bash-completion-2.14.0/completions/rsync
+--- bash-completion-2.14.0.old/completions/rsync	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/rsync	2024-06-16 21:23:04.543475059 +0200
 @@ -65,7 +65,7 @@ _comp_cmd_rsync()
              # meaning before v3.2.0) contain the following unusual line in
              # --help:
@@ -1876,9 +1921,9 @@ diff -pruN bash-completion-2.12.0.old/completions/rsync bash-completion-2.12.0/c
  
              _comp_compgen -- -W '"${tmp[@]}"
                  --daemon --old-d{,irs}
-diff -pruN bash-completion-2.12.0.old/completions/sbopkg bash-completion-2.12.0/completions/sbopkg
---- bash-completion-2.12.0.old/completions/sbopkg	2024-02-21 07:55:15.233887659 +0100
-+++ bash-completion-2.12.0/completions/sbopkg	2024-03-04 12:47:38.157338832 +0100
+diff -pruN bash-completion-2.14.0.old/completions/sbopkg bash-completion-2.14.0/completions/sbopkg
+--- bash-completion-2.14.0.old/completions/sbopkg	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/sbopkg	2024-06-16 21:23:04.412412334 +0200
 @@ -61,7 +61,7 @@ _comp_cmd_sbopkg()
      local file=${REPO_ROOT-}/${REPO_NAME-}/${REPO_BRANCH-}/SLACKBUILDS.TXT
      [[ -f $file && -r $file ]] || return
@@ -1888,9 +1933,9 @@ diff -pruN bash-completion-2.12.0.old/completions/sbopkg bash-completion-2.12.0/
          "$file")"
      _comp_compgen -aC "$QUEUEDIR" -- -f -X "!*.sqf"
  } &&
-diff -pruN bash-completion-2.12.0.old/completions/screen bash-completion-2.12.0/completions/screen
---- bash-completion-2.12.0.old/completions/screen	2024-02-21 07:55:15.233887659 +0100
-+++ bash-completion-2.12.0/completions/screen	2024-03-04 12:47:38.481501029 +0100
+diff -pruN bash-completion-2.14.0.old/completions/screen bash-completion-2.14.0/completions/screen
+--- bash-completion-2.14.0.old/completions/screen	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/screen	2024-06-16 21:23:04.691445336 +0200
 @@ -3,7 +3,7 @@
  _comp_cmd_screen__sessions()
  {
@@ -1900,9 +1945,9 @@ diff -pruN bash-completion-2.12.0.old/completions/screen bash-completion-2.12.0/
          's|^\t\{1,\}\([0-9]\{1,\}\.[^\t]\{1,\}\).*'"$1"'.*$|\1|p')" || return
      if [[ $cur == +([0-9])?(.*) ]]; then
          # Complete sessions including pid prefixes
-diff -pruN bash-completion-2.12.0.old/completions/shellcheck bash-completion-2.12.0/completions/shellcheck
---- bash-completion-2.12.0.old/completions/shellcheck	2024-02-21 07:55:15.233887659 +0100
-+++ bash-completion-2.12.0/completions/shellcheck	2024-03-04 12:47:38.293478990 +0100
+diff -pruN bash-completion-2.14.0.old/completions/shellcheck bash-completion-2.14.0/completions/shellcheck
+--- bash-completion-2.14.0.old/completions/shellcheck	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/shellcheck	2024-06-16 21:23:04.726673200 +0200
 @@ -3,7 +3,7 @@
  _comp_cmd_shellcheck__optarg()
  {
@@ -1923,9 +1968,9 @@ diff -pruN bash-completion-2.12.0.old/completions/shellcheck bash-completion-2.1
              _comp_compgen -- -W '$args'
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/sitecopy bash-completion-2.12.0/completions/sitecopy
---- bash-completion-2.12.0.old/completions/sitecopy	2024-02-21 07:55:15.233887659 +0100
-+++ bash-completion-2.12.0/completions/sitecopy	2024-03-04 12:47:38.280957293 +0100
+diff -pruN bash-completion-2.14.0.old/completions/sitecopy bash-completion-2.14.0/completions/sitecopy
+--- bash-completion-2.14.0.old/completions/sitecopy	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/sitecopy	2024-06-16 21:23:04.460275543 +0200
 @@ -44,7 +44,7 @@ _comp_cmd_sitecopy()
  
      if [[ -r ~/.sitecopyrc ]]; then
@@ -1935,9 +1980,9 @@ diff -pruN bash-completion-2.12.0.old/completions/sitecopy bash-completion-2.12.
      fi
  } &&
      complete -F _comp_cmd_sitecopy -o default sitecopy
-diff -pruN bash-completion-2.12.0.old/completions/slapt-get bash-completion-2.12.0/completions/slapt-get
---- bash-completion-2.12.0.old/completions/slapt-get	2024-02-21 07:55:15.237887682 +0100
-+++ bash-completion-2.12.0/completions/slapt-get	2024-03-04 12:47:38.098088229 +0100
+diff -pruN bash-completion-2.14.0.old/completions/slapt-get bash-completion-2.14.0/completions/slapt-get
+--- bash-completion-2.14.0.old/completions/slapt-get	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/slapt-get	2024-06-16 21:23:04.494226712 +0200
 @@ -62,14 +62,14 @@ _comp_cmd_slapt_get()
              local name=${cur%%-*}
              _comp_compgen_split -l -- "$(
@@ -1955,9 +2000,9 @@ diff -pruN bash-completion-2.12.0.old/completions/slapt-get bash-completion-2.12
              )"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/slapt-src bash-completion-2.12.0/completions/slapt-src
---- bash-completion-2.12.0.old/completions/slapt-src	2024-02-21 07:55:15.237887682 +0100
-+++ bash-completion-2.12.0/completions/slapt-src	2024-03-04 12:47:38.129870759 +0100
+diff -pruN bash-completion-2.14.0.old/completions/slapt-src bash-completion-2.14.0/completions/slapt-src
+--- bash-completion-2.14.0.old/completions/slapt-src	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/slapt-src	2024-06-16 21:23:04.464532319 +0200
 @@ -59,13 +59,13 @@ _comp_cmd_slapt_src()
          _comp_compgen_split -l -- "$(
              LC_ALL=C
@@ -1974,9 +2019,9 @@ diff -pruN bash-completion-2.12.0.old/completions/slapt-src bash-completion-2.12
          )"
      fi
  } &&
-diff -pruN bash-completion-2.12.0.old/completions/smbclient bash-completion-2.12.0/completions/smbclient
---- bash-completion-2.12.0.old/completions/smbclient	2024-02-21 07:55:15.237887682 +0100
-+++ bash-completion-2.12.0/completions/smbclient	2024-03-04 12:47:38.411169612 +0100
+diff -pruN bash-completion-2.14.0.old/completions/smbclient bash-completion-2.14.0/completions/smbclient
+--- bash-completion-2.14.0.old/completions/smbclient	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/smbclient	2024-06-16 21:23:04.721335224 +0200
 @@ -16,7 +16,7 @@ _comp_cmd_smbclient__hosts()
  {
      if [[ ${BASH_COMPLETION_CMD_SMBTREE_SCAN-${COMP_SAMBA_SCAN-}} ]]; then
@@ -1986,9 +2031,9 @@ diff -pruN bash-completion-2.12.0.old/completions/smbclient bash-completion-2.12
      fi
  }
  
-diff -pruN bash-completion-2.12.0.old/completions/ss bash-completion-2.12.0/completions/ss
---- bash-completion-2.12.0.old/completions/ss	2024-02-21 07:55:15.237887682 +0100
-+++ bash-completion-2.12.0/completions/ss	2024-03-04 12:47:37.984425687 +0100
+diff -pruN bash-completion-2.14.0.old/completions/ss bash-completion-2.14.0/completions/ss
+--- bash-completion-2.14.0.old/completions/ss	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ss	2024-06-16 21:23:04.793594425 +0200
 @@ -17,7 +17,7 @@ _comp_cmd_ss()
              ;;
          --query | -${noargopts}A)
@@ -1998,9 +2043,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ss bash-completion-2.12.0/comp
              _comp_delimited , -W '$queries'
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/ssh bash-completion-2.12.0/completions/ssh
---- bash-completion-2.12.0.old/completions/ssh	2024-02-21 07:55:15.237887682 +0100
-+++ bash-completion-2.12.0/completions/ssh	2024-03-04 12:47:38.459628787 +0100
+diff -pruN bash-completion-2.14.0.old/completions/ssh bash-completion-2.14.0/completions/ssh
+--- bash-completion-2.14.0.old/completions/ssh	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/ssh	2024-06-16 21:23:04.692630330 +0200
 @@ -476,7 +476,7 @@ _comp_xfunc_scp_compgen_remote_files()
  
      # unescape (3 backslashes to 1 for chars we escaped)
@@ -2026,7 +2071,7 @@ diff -pruN bash-completion-2.12.0.old/completions/ssh bash-completion-2.12.0/com
 +            command gsed -e 's/'"$_comp_cmd_scp__path_esc"'/\\\\\\&/g' -e 's/[*@|=]$//g' \
                  -e 's/[^\/]$/& /g')
      fi
-     _comp_compgen_split -l -- "$_files"
+     _comp_compgen -R split -l -- "$_files"
 @@ -526,13 +526,13 @@ _comp_xfunc_scp_compgen_local_files()
      if [[ $_dirsonly ]]; then
          _comp_compgen -U files split -l -- "$(
@@ -2043,9 +2088,9 @@ diff -pruN bash-completion-2.12.0.old/completions/ssh bash-completion-2.12.0/com
                      -e 's/[*@|=]$//g' -e 's/[^\/]$/& /g' -e "s/^/${1-}/"
          )"
      fi
-diff -pruN bash-completion-2.12.0.old/completions/strings bash-completion-2.12.0/completions/strings
---- bash-completion-2.12.0.old/completions/strings	2024-02-21 07:55:15.237887682 +0100
-+++ bash-completion-2.12.0/completions/strings	2024-03-04 12:47:38.205807049 +0100
+diff -pruN bash-completion-2.14.0.old/completions/strings bash-completion-2.14.0/completions/strings
+--- bash-completion-2.14.0.old/completions/strings	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/strings	2024-06-16 21:23:04.737208817 +0200
 @@ -18,12 +18,12 @@ _comp_cmd_strings()
              ;;
          --target | -${noargopts}T)
@@ -2070,9 +2115,9 @@ diff -pruN bash-completion-2.12.0.old/completions/strings bash-completion-2.12.0
          [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
          return
      elif [[ $cur == @* ]]; then
-diff -pruN bash-completion-2.12.0.old/completions/svcadm bash-completion-2.12.0/completions/svcadm
---- bash-completion-2.12.0.old/completions/svcadm	2020-01-11 19:58:32.000000000 +0100
-+++ bash-completion-2.12.0/completions/svcadm	2024-03-04 12:47:38.117089084 +0100
+diff -pruN bash-completion-2.14.0.old/completions/svcadm bash-completion-2.14.0/completions/svcadm
+--- bash-completion-2.14.0.old/completions/svcadm	2020-01-11 19:58:32.000000000 +0100
++++ bash-completion-2.14.0/completions/svcadm	2024-06-16 21:23:04.371675096 +0200
 @@ -25,7 +25,7 @@
  _gen_zoneadm_list()
  {
@@ -2091,9 +2136,9 @@ diff -pruN bash-completion-2.12.0.old/completions/svcadm bash-completion-2.12.0/
              fi
              COMPREPLY=( $(compgen -W "${command_list}" -- ${cur}) )
          fi
-diff -pruN bash-completion-2.12.0.old/completions/svk bash-completion-2.12.0/completions/svk
---- bash-completion-2.12.0.old/completions/svk	2024-02-21 07:55:15.237887682 +0100
-+++ bash-completion-2.12.0/completions/svk	2024-03-04 12:47:38.011552189 +0100
+diff -pruN bash-completion-2.14.0.old/completions/svk bash-completion-2.14.0/completions/svk
+--- bash-completion-2.14.0.old/completions/svk	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/svk	2024-06-16 21:23:04.589075117 +0200
 @@ -198,7 +198,7 @@ _comp_cmd_svk()
                          path=//
                      fi
@@ -2103,9 +2148,9 @@ diff -pruN bash-completion-2.12.0.old/completions/svk bash-completion-2.12.0/com
                      ;;
                  *)
                      _comp_compgen_filedir
-diff -pruN bash-completion-2.12.0.old/completions/sysbench bash-completion-2.12.0/completions/sysbench
---- bash-completion-2.12.0.old/completions/sysbench	2024-02-21 07:55:15.237887682 +0100
-+++ bash-completion-2.12.0/completions/sysbench	2024-03-04 12:47:38.396548011 +0100
+diff -pruN bash-completion-2.14.0.old/completions/sysbench bash-completion-2.14.0/completions/sysbench
+--- bash-completion-2.14.0.old/completions/sysbench	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/sysbench	2024-06-16 21:23:04.603849368 +0200
 @@ -75,7 +75,7 @@ _comp_cmd_sysbench()
              ;;
          --db-driver)
@@ -2115,9 +2160,9 @@ diff -pruN bash-completion-2.12.0.old/completions/sysbench bash-completion-2.12.
                      -ne 's/^  *\([^ ]*\) .*/\1/p')"
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/tox bash-completion-2.12.0/completions/tox
---- bash-completion-2.12.0.old/completions/tox	2024-02-21 07:55:15.241887704 +0100
-+++ bash-completion-2.12.0/completions/tox	2024-03-04 12:47:38.489673036 +0100
+diff -pruN bash-completion-2.14.0.old/completions/tox bash-completion-2.14.0/completions/tox
+--- bash-completion-2.14.0.old/completions/tox	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/tox	2024-06-16 21:23:04.659627049 +0200
 @@ -33,7 +33,7 @@ _comp_cmd_tox()
                  } 2>/dev/null
              )
@@ -2127,9 +2172,9 @@ diff -pruN bash-completion-2.12.0.old/completions/tox bash-completion-2.12.0/com
                      tox.ini 2>/dev/null
              )
              _comp_delimited , -X '*[{}]*' -W "$envs ALL"
-diff -pruN bash-completion-2.12.0.old/completions/tshark bash-completion-2.12.0/completions/tshark
---- bash-completion-2.12.0.old/completions/tshark	2024-02-21 07:55:15.241887704 +0100
-+++ bash-completion-2.12.0/completions/tshark	2024-03-04 12:47:38.114928300 +0100
+diff -pruN bash-completion-2.14.0.old/completions/tshark bash-completion-2.14.0/completions/tshark
+--- bash-completion-2.14.0.old/completions/tshark	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/tshark	2024-06-16 21:23:04.366312942 +0200
 @@ -23,7 +23,7 @@ _comp_cmd_tshark()
                  _comp_compgen -c "${cur#*:}" filedir
              else
@@ -2139,9 +2184,9 @@ diff -pruN bash-completion-2.12.0.old/completions/tshark bash-completion-2.12.0/
                          tr '\n' ' ')"
                  : ${prefix:=}
                  _comp_compgen -c "${cur:${#prefix}}" -- -P "$prefix" \
-diff -pruN bash-completion-2.12.0.old/completions/valgrind bash-completion-2.12.0/completions/valgrind
---- bash-completion-2.12.0.old/completions/valgrind	2024-02-21 07:55:15.241887704 +0100
-+++ bash-completion-2.12.0/completions/valgrind	2024-03-04 12:47:38.290347427 +0100
+diff -pruN bash-completion-2.14.0.old/completions/valgrind bash-completion-2.14.0/completions/valgrind
+--- bash-completion-2.14.0.old/completions/valgrind	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/valgrind	2024-06-16 21:23:04.437868195 +0200
 @@ -72,7 +72,7 @@ _comp_cmd_valgrind()
          --+([-A-Za-z0-9_]))
              # shellcheck disable=SC2086
@@ -2151,9 +2196,9 @@ diff -pruN bash-completion-2.12.0.old/completions/valgrind bash-completion-2.12.
                      -ne "s|^[[:blank:]]*$prev=\([^[:blank:]]\{1,\}\).*|\1|p")
              case $value in
                  \<file*\>)
-diff -pruN bash-completion-2.12.0.old/completions/wget bash-completion-2.12.0/completions/wget
---- bash-completion-2.12.0.old/completions/wget	2024-02-21 07:55:15.245887726 +0100
-+++ bash-completion-2.12.0/completions/wget	2024-03-04 12:47:38.181605150 +0100
+diff -pruN bash-completion-2.14.0.old/completions/wget bash-completion-2.14.0/completions/wget
+--- bash-completion-2.14.0.old/completions/wget	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/wget	2024-06-16 21:23:04.351616152 +0200
 @@ -123,7 +123,7 @@ _comp_cmd_wget()
              return
              ;;
@@ -2163,9 +2208,9 @@ diff -pruN bash-completion-2.12.0.old/completions/wget bash-completion-2.12.0/co
                  '/^login/s/^[[:blank:]]*login[[:blank:]]//p' ~/.netrc \
                  2>/dev/null)"
              return
-diff -pruN bash-completion-2.12.0.old/completions/wol bash-completion-2.12.0/completions/wol
---- bash-completion-2.12.0.old/completions/wol	2024-02-21 07:55:15.245887726 +0100
-+++ bash-completion-2.12.0/completions/wol	2024-03-04 12:47:38.348283646 +0100
+diff -pruN bash-completion-2.14.0.old/completions/wol bash-completion-2.14.0/completions/wol
+--- bash-completion-2.14.0.old/completions/wol	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/wol	2024-06-16 21:23:04.807512412 +0200
 @@ -17,7 +17,7 @@ _comp_cmd_wol()
              _comp_compgen_split -- "$({
                  ip -c=never addr show || ip addr show || ifconfig -a
@@ -2175,9 +2220,9 @@ diff -pruN bash-completion-2.12.0.old/completions/wol bash-completion-2.12.0/com
                      -ne 's/.*[[:space:]]Bcast:\([^[:space:]]*\).*/\1/p' \
                      -ne 's/.*inet.*[[:space:]]brd[[:space:]]\([^[:space:]]*\).*/\1/p' \
                      -ne 's/.*[[:space:]]broadcast[[:space:]]\{1,\}\([^[:space:]]*\).*/\1/p')"
-diff -pruN bash-completion-2.12.0.old/completions/wvdial bash-completion-2.12.0/completions/wvdial
---- bash-completion-2.12.0.old/completions/wvdial	2024-02-21 07:55:15.245887726 +0100
-+++ bash-completion-2.12.0/completions/wvdial	2024-03-04 12:47:38.136126173 +0100
+diff -pruN bash-completion-2.14.0.old/completions/wvdial bash-completion-2.14.0/completions/wvdial
+--- bash-completion-2.14.0.old/completions/wvdial	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/wvdial	2024-06-16 21:23:04.352628893 +0200
 @@ -33,7 +33,7 @@ _comp_cmd_wvdial()
              done
              # parse config files for sections and
@@ -2187,9 +2232,9 @@ diff -pruN bash-completion-2.12.0.old/completions/wvdial bash-completion-2.12.0/
                  's/^\[Dialer \(.*\)\]$/\1/p' "$config" 2>/dev/null)"
              # escape spaces
              COMPREPLY=("${COMPREPLY[@]// /\\ }")
-diff -pruN bash-completion-2.12.0.old/completions/xgamma bash-completion-2.12.0/completions/xgamma
---- bash-completion-2.12.0.old/completions/xgamma	2024-02-21 07:55:15.245887726 +0100
-+++ bash-completion-2.12.0/completions/xgamma	2024-03-04 12:47:38.168890786 +0100
+diff -pruN bash-completion-2.14.0.old/completions/xgamma bash-completion-2.14.0/completions/xgamma
+--- bash-completion-2.14.0.old/completions/xgamma	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/xgamma	2024-06-16 21:23:04.386778448 +0200
 @@ -7,7 +7,7 @@ _comp_cmd_xgamma()
  
      case "$prev" in
@@ -2208,9 +2253,9 @@ diff -pruN bash-completion-2.12.0.old/completions/xgamma bash-completion-2.12.0/
                      '/^Screen /s|^Screen \{1,\}\(.*\):.*$|\1|p' 2>/dev/null)
                  t="${cur#:}"
                  _comp_compgen -c "${cur##*.}" -- -P "${t%.*}." -W '$screens'
-diff -pruN bash-completion-2.12.0.old/completions/xrandr bash-completion-2.12.0/completions/xrandr
---- bash-completion-2.12.0.old/completions/xrandr	2024-02-21 07:55:15.245887726 +0100
-+++ bash-completion-2.12.0/completions/xrandr	2024-03-04 12:47:38.238588846 +0100
+diff -pruN bash-completion-2.14.0.old/completions/xrandr bash-completion-2.14.0/completions/xrandr
+--- bash-completion-2.14.0.old/completions/xrandr	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/xrandr	2024-06-16 21:23:04.484575567 +0200
 @@ -9,20 +9,20 @@ _comp_cmd_xrandr__compgen_monitors()
  {
      _comp_compgen_split -- "$(
@@ -2260,9 +2305,9 @@ diff -pruN bash-completion-2.12.0.old/completions/xrandr bash-completion-2.12.0/
          )"
      fi
  
-diff -pruN bash-completion-2.12.0.old/completions/xsltproc bash-completion-2.12.0/completions/xsltproc
---- bash-completion-2.12.0.old/completions/xsltproc	2024-02-21 07:55:15.245887726 +0100
-+++ bash-completion-2.12.0/completions/xsltproc	2024-03-04 12:47:38.175189792 +0100
+diff -pruN bash-completion-2.14.0.old/completions/xsltproc bash-completion-2.14.0/completions/xsltproc
+--- bash-completion-2.14.0.old/completions/xsltproc	2024-05-09 10:40:56.000000000 +0200
++++ bash-completion-2.14.0/completions/xsltproc	2024-06-16 21:23:04.839327065 +0200
 @@ -16,7 +16,7 @@ _comp_cmd_xsltproc()
              ;;
          --encoding)
@@ -2272,9 +2317,9 @@ diff -pruN bash-completion-2.12.0.old/completions/xsltproc bash-completion-2.12.
              _comp_compgen -- -X '@(UTF[1378]|8859|ISO[0-9_])*' -W '$encodings'
              return
              ;;
-diff -pruN bash-completion-2.12.0.old/completions/zfs bash-completion-2.12.0/completions/zfs
---- bash-completion-2.12.0.old/completions/zfs	2020-01-11 19:58:32.000000000 +0100
-+++ bash-completion-2.12.0/completions/zfs	2024-03-04 12:47:38.502414739 +0100
+diff -pruN bash-completion-2.14.0.old/completions/zfs bash-completion-2.14.0/completions/zfs
+--- bash-completion-2.14.0.old/completions/zfs	2020-01-11 19:58:32.000000000 +0100
++++ bash-completion-2.14.0/completions/zfs	2024-06-16 21:23:04.646790091 +0200
 @@ -141,7 +141,7 @@ __zfs_match_multiple_snapshots()
                  return 1
              fi
@@ -2284,9 +2329,9 @@ diff -pruN bash-completion-2.12.0.old/completions/zfs bash-completion-2.12.0/com
          fi
      else
          __zfs_match_snapshot_or_bookmark
-diff -pruN bash-completion-2.12.0.old/completions/zones bash-completion-2.12.0/completions/zones
---- bash-completion-2.12.0.old/completions/zones	2020-01-11 19:58:32.000000000 +0100
-+++ bash-completion-2.12.0/completions/zones	2024-03-04 12:47:38.274656627 +0100
+diff -pruN bash-completion-2.14.0.old/completions/zones bash-completion-2.14.0/completions/zones
+--- bash-completion-2.14.0.old/completions/zones	2020-01-11 19:58:32.000000000 +0100
++++ bash-completion-2.14.0/completions/zones	2024-06-16 21:23:04.433538613 +0200
 @@ -31,7 +31,7 @@ _zlogin()
          esac
      else
