@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		email_validator
-HUMAN_VERSION =			2.1.1
-COMPONENT_SUMMARY =		email_validator - A robust email address syntax and deliverability validation library.
+HUMAN_VERSION =			2.1.2
+COMPONENT_SUMMARY =		A robust email address syntax and deliverability validation library.
 COMPONENT_PROJECT_URL =		https://github.com/JoshData/python-email-validator
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:200a70680ba08904be6d1eef729205cc0d687634399a5924d842533efb824b84
+	sha256:14c0f3d343c4beda37400421b39fa411bbe33a75df20825df73ad53e06a9f04c
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
 
