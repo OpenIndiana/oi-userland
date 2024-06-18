@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Text::Soundex
 HUMAN_VERSION =			3.05
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Text::Soundex - Implementation of the soundex algorithm.
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
