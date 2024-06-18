@@ -15,12 +15,12 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		YAML::LibYAML
 HUMAN_VERSION =			0.89
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		YAML::LibYAML - Perl YAML Serialization using XS and libyaml
 COMPONENT_CPAN_AUTHOR =		TINITA
 COMPONENT_ARCHIVE_HASH =	\
