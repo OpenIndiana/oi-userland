@@ -19,18 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Math::BigInt::GMP
-HUMAN_VERSION =			1.6011
+HUMAN_VERSION =			1.7001
 COMPONENT_SUMMARY =		Math::BigInt::GMP - backend library for Math::BigInt etc. based on GMP
 COMPONENT_CPAN_AUTHOR =		PJACKLAM
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e7ebec6dd43a76179afa8acd235478acb6ae3a085253933ef848af007ea6081f
+	sha256:417581fdce63892e24f08279cdd6b065cb60c41d5acfa22dd2ad93b6d3e87071
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
-# Math::BigInt::GMP >= 1.6011 requires Math::BigInt >= 1.999831
-# Perl 5.34 comes with Math::BigInt 1.999818
+# Math::BigInt::GMP >= 1.6012 requires Math::BigInt >= 1.999838
 # Perl 5.36 comes with Math::BigInt 1.999830
 # Perl 5.38 comes with Math::BigInt 1.999837
-PERL_VERSIONS := $(filter-out 5.34 5.36, $(PERL_VERSIONS))
+# Perl 5.40 comes with Math::BigInt 2.003002
+PERL_VERSIONS := $(filter-out 5.36 5.38, $(PERL_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
