@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Data::Buffer
 HUMAN_VERSION =			0.04
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Data::Buffer - Read/write buffer class
 COMPONENT_CPAN_AUTHOR =		BTROTT
 COMPONENT_ARCHIVE_HASH =	\
