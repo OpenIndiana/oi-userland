@@ -36,6 +36,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	thunderbird
 COMPONENT_VERSION =	127.0
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -129,7 +130,9 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-optimize" >> $(MOZCONFIG_NON_DEBUG) ; \
 	echo "ac_add_options --enable-pulseaudio" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-release" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-update-channel=release" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
@@ -223,7 +226,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/psutil
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += developer/clang-18
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
