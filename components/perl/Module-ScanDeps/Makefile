@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::ScanDeps
 HUMAN_VERSION =			1.35
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module::ScanDeps - Recursively scan Perl code for dependencies
 COMPONENT_CPAN_AUTHOR =		RSCHUPP
 COMPONENT_ARCHIVE_HASH =	\
