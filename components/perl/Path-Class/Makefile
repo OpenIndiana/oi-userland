@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Path::Class
 HUMAN_VERSION =			0.37
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Path::Class - Cross-platform path specification manipulation
 COMPONENT_CPAN_AUTHOR =		KWILLIAMS
 COMPONENT_ARCHIVE_HASH =	\
