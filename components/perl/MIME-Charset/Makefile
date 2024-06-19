@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		MIME::Charset
 HUMAN_VERSION =			1.013.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		MIME::Charset - Charset Information for MIME
 COMPONENT_CPAN_AUTHOR =		NEZUMI
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,9 @@ COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
