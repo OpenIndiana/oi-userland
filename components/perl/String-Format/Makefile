@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		String::Format
 HUMAN_VERSION =			1.18
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		String::Format - sprintf-like string formatting capabilities with arbitrary format definitions
 COMPONENT_CPAN_AUTHOR =		SREZIC
 COMPONENT_ARCHIVE_HASH =	\
