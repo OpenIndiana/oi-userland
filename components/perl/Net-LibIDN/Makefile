@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::LibIDN
 HUMAN_VERSION =			0.12
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::LibIDN - Perl bindings for GNU Libidn
 COMPONENT_CPAN_AUTHOR =		THOR
 COMPONENT_ARCHIVE_HASH =	\
