@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Devel::Caller
 HUMAN_VERSION =			2.07
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Devel::Caller - meatier versions of caller
 COMPONENT_CPAN_AUTHOR =		RCLAMP
 COMPONENT_ARCHIVE_HASH =	\
