@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Random
-HUMAN_VERSION =			0.16
+HUMAN_VERSION =			0.17
 COMPONENT_SUMMARY =		Crypt::OpenSSL::Random - OpenSSL/LibreSSL pseudo-random number generator access
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fcf58cb2af4c3eda2fe1405527d9373efe9576268fce8adb34df9ce9b6b44d1e
+	sha256:a571b24181baaa76c96704e92acffc6934ff593e380dade274db4e43c140ad51
 COMPONENT_LICENSE =		Artistic-1.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
