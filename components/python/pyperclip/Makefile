@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyperclip
-HUMAN_VERSION =			1.8.2
-COMPONENT_SUMMARY =		pyperclip - A cross-platform clipboard module for Python. (Only handles plain text for now.)
+HUMAN_VERSION =			1.9.0
+COMPONENT_SUMMARY =		A cross-platform clipboard module for Python. (Only handles plain text for now.)
 COMPONENT_PROJECT_URL =		https://github.com/asweigart/pyperclip
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a7/2c/4c64579f847bd5d539803c8b909e54ba087a79d01bb3aba433a95879a6c5/pyperclip-1.8.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:105254a8b04934f0bc84e9c24eb360a591aaf6535c9def5f29d92af107a9bf57
+	sha256:b7de0142ddc81bfc5c7507eea19da920b92252b548b96186caf94a5e2527d310
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

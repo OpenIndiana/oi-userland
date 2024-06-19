@@ -1,0 +1,30 @@
+https://github.com/asweigart/pyperclip/issues/263
+
+--- pyperclip-1.9.0/tests/test_pyperclip.py.orig
++++ pyperclip-1.9.0/tests/test_pyperclip.py
+@@ -8,7 +8,7 @@
+ #import sys
+ #sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+ 
+-from pyperclip import _executable_exists, HAS_DISPLAY
++from pyperclip import _executable_exists
+ from pyperclip import (init_osx_pbcopy_clipboard, init_osx_pyobjc_clipboard,
+                                   init_dev_clipboard_clipboard,
+                                   init_qt_clipboard,
+@@ -134,16 +134,6 @@
+             clipboard = init_osx_pyobjc_clipboard()
+ 
+ 
+-class TestQt(_TestClipboard):
+-    if HAS_DISPLAY:
+-        try:
+-            import PyQt5.QtWidgets
+-        except ImportError:
+-            pass
+-        else:
+-            clipboard = init_qt_clipboard()
+-
+-
+ class TestXClip(_TestClipboard):
+     if _executable_exists("xclip"):
+         clipboard = init_xclip_clipboard()
