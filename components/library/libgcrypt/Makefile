@@ -22,17 +22,16 @@
 # Copyright 2011 Audioboo Ltd. All rights reserved.
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
-COMPONENT_VERSION=	1.10.3
+COMPONENT_VERSION=	1.11.0
 COMPONENT_SUMMARY=	GnuPG libgcrypt library
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libgcrypt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:8b0870897ac5ac67ded568dcfadf45969cfa8a6beb0fd60af2a9eadc2a3272aa
+COMPONENT_ARCHIVE_HASH= sha256:09120c9867ce7f2081d6aaa1775386b98c2f2f246135761aae47d81f58685b9c
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/library/security/libgcrypt
 COMPONENT_CLASSIFICATION= System/Security
@@ -40,7 +39,7 @@ COMPONENT_LICENSE=	LGPL, BSD, BSD-like
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
