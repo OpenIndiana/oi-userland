@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::Domain::TLD
 HUMAN_VERSION =			1.75
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Net::Domain::TLD - Work with TLD names
 COMPONENT_CPAN_AUTHOR =		ALEXP
 COMPONENT_ARCHIVE_HASH =	\
