@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::LibIDN2
 HUMAN_VERSION =			1.02
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Net::LibIDN2 - Perl bindings for GNU Libidn2
 COMPONENT_CPAN_AUTHOR =		THOR
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,6 +34,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_CONFIGURE_ARGS = --extra_compiler_flags=-I/usr/include/idn2 --installdirs=vendor
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += system/library
