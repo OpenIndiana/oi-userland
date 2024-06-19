@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Font::TTF
 HUMAN_VERSION =			1.06
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Font::TTF - Perl module for TrueType Font hacking
 COMPONENT_CPAN_AUTHOR =		BHALLISSY
 COMPONENT_ARCHIVE_HASH =	\
