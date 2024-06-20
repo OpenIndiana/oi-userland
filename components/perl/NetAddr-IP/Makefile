@@ -20,12 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		NetAddr::IP
 HUMAN_VERSION =			4.079
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		NetAddr::IP - Manages IPv4 and IPv6 addresses and subnets
 COMPONENT_CPAN_AUTHOR =		MIKER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ec5a82dfb7028bcd28bb3d569f95d87dd4166cc19867f2184ed3a59f6d6ca0e7
-COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-or-later
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only
 
 include $(WS_MAKE_RULES)/common.mk
 
