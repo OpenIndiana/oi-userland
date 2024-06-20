@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Warnings
 HUMAN_VERSION =			0.033
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Warnings - Test for warnings and the lack of them
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
