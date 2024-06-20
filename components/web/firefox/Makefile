@@ -30,13 +30,13 @@ ESR =
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=2
+CANDIDATE_BUILD=1
 # CANDIDATE_BETA=9
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	127.0
+COMPONENT_VERSION =	127.0.1
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -74,7 +74,7 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:ea6b089ff046ca503978fdaf11ea123c64f66bbcdc4a968bed8f7c93e9994321
+COMPONENT_ARCHIVE_HASH= sha256:f8e13f346fe6965dfda7da62b669f0e1f915324dfe792661a1fc9bebc7f4eaa3
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
@@ -266,15 +266,16 @@ clean::
 	$(RM) $(COMPONENT_LICENSE_FILE)
 
 # Build dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 PYTHON_REQUIRED_PACKAGES += library/python/psutil
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += library/audio/pulseaudio
-REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += developer/lang/rustc
 REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
+REQUIRED_PACKAGES += runtime/nodejs-22
+REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += web/browser/lynx
 
 # Auto-generated dependencies
