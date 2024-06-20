@@ -1,0 +1,55 @@
+We have no pytest-services packaged yet.
+
+--- cherrypy-18.10.0/setup.py.orig
++++ cherrypy-18.10.0/setup.py
+@@ -93,7 +93,6 @@
+             'pytest-forked',
+             'path.py',
+             'requests_toolbelt',
+-            'pytest-services>=2',
+             'setuptools',
+         ],
+         # Enables memcached session support via `cherrypy[memcached_session]`:
+--- cherrypy-18.10.0/cherrypy/test/test_session.py.orig
++++ cherrypy-18.10.0/cherrypy/test/test_session.py
+@@ -464,6 +464,7 @@
+ class MemcachedSessionTest(helper.CPWebCase):
+     setup_server = staticmethod(setup_server)
+ 
++    @pytest.mark.skip(reason="no pytest-services")
+     def test_0_Session(self):
+         self.getPage(
+             '/set_session_cls/cherrypy.lib.sessions.MemcachedSession'
+@@ -494,6 +495,7 @@
+         self.getPage('/delete', self.cookies)
+         assert self.body == b'done'
+ 
++    @pytest.mark.skip(reason="no pytest-services")
+     def test_1_Concurrency(self):
+         client_thread_count = 5
+         request_count = 30
+@@ -530,12 +532,14 @@
+         expected = 1 + (client_thread_count * request_count)
+         assert hitcount == expected
+ 
++    @pytest.mark.skip(reason="no pytest-services")
+     def test_3_Redirect(self):
+         # Start a new session
+         self.getPage('/testStr')
+         self.getPage('/iredir', self.cookies)
+         assert self.body == b'MemcachedSession'
+ 
++    @pytest.mark.skip(reason="no pytest-services")
+     def test_5_Error_paths(self):
+         self.getPage('/unknown/page')
+         self.assertErrorPage(
+--- cherrypy-18.10.0/cherrypy/test/helper.py.orig
++++ cherrypy-18.10.0/cherrypy/test/helper.py
+@@ -280,6 +280,7 @@
+ 
+     do_gc_test = False
+ 
++    @pytest.mark.skip(reason="no pytest-services")
+     def test_gc(self):
+         if not self.do_gc_test:
+             return
