@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Try::Tiny
 HUMAN_VERSION =			0.31
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		Try::Tiny - Minimal try/catch with proper preservation of \$$@
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
