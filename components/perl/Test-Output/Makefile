@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Output
 HUMAN_VERSION =			1.034
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Output - Utilities to test STDOUT and STDERR messages.
 COMPONENT_CPAN_AUTHOR =		BDFOY
 COMPONENT_ARCHIVE_HASH =	\
