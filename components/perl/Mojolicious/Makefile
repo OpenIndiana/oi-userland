@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mojolicious
 HUMAN_VERSION =			9.37
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mojolicious - Real-time web framework
 COMPONENT_CPAN_AUTHOR =		SRI
 COMPONENT_ARCHIVE_HASH =	\
