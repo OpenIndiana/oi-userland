@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Class::Data::Inheritable
 HUMAN_VERSION =			0.09
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Class::Data::Inheritable - Inheritable, overridable class data
 COMPONENT_CPAN_AUTHOR =		RSHERER
 COMPONENT_ARCHIVE_HASH =	\
