@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Unicode::LineBreak
 HUMAN_VERSION =			2019.001
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Unicode::LineBreak - UAX #14 Unicode Line Breaking Algorithm
 COMPONENT_CPAN_AUTHOR =		NEZUMI
 COMPONENT_ARCHIVE_HASH =	\
