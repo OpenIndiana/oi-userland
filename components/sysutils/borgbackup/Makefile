@@ -19,14 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		borgbackup
-HUMAN_VERSION =			1.2.7
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.2.8
 COMPONENT_SUMMARY =		borgbackup - Deduplicated, encrypted, authenticated and compressed backups
 COMPONENT_PROJECT_URL =		https://borgbackup.readthedocs.io/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a6/19/f94be9fda92ea73cbf22b643a03a0b64559027ef5467765142d8242e712a/borgbackup-1.2.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f63f28a3383c041971cec87b061ca39a815b5fd445db24aa8172cac417d9411a
+	sha256:d39d22b0d2cb745584d68608a179b6c75f7b40e496e96feb789e41d34991f4aa
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -52,6 +49,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += library/libxxhash
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library

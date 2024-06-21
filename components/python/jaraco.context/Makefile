@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.context
-HUMAN_VERSION =			4.3.0
-COMPONENT_SUMMARY =		jaraco.context - Context managers by jaraco
+HUMAN_VERSION =			5.3.0
+COMPONENT_SUMMARY =		jaraco.context - Useful decorators and context managers
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.context
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7c/b4/fa71f82b83ebeed95fe45ce587d6cba85b7c09ef3d9f61602f92f45e90db/jaraco.context-4.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4dad2404540b936a20acedec53355bdaea223acb88fd329fa6de9261c941566e
+	sha256:c2f67165ce1f9be20f32f650f25d8edfc1646a8aeee48ae06fb35f90763576d2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,19 +40,15 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/tholo/pytest-flake8/issues/92
-PYTEST_ADDOPTS += -p no:flake8
-
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/backports-tarfile
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/portend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy

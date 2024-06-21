@@ -1,13 +1,19 @@
---- ansible-core-2.15.9/test/lib/ansible_test/_internal/commands/units/__init__.py.orig
-+++ ansible-core-2.15.9/test/lib/ansible_test/_internal/commands/units/__init__.py
-@@ -258,6 +258,10 @@
+--- ansible_core-2.15.12/test/lib/ansible_test/_internal/commands/units/__init__.py.orig
++++ ansible_core-2.15.12/test/lib/ansible_test/_internal/commands/units/__init__.py
+@@ -258,6 +258,16 @@
              '-n', str(args.num_workers) if args.num_workers else 'auto',
              '--color', 'yes' if args.color else 'no',
              '-p', 'no:cacheprovider',
-+            '-p', 'no:black',
-+            '-p', 'no:cov',
-+            '-p', 'no:mypy',
++            '-p', 'no:enabler',
 +            '-p', 'no:relaxed',
++            '-p', 'no:salt-factories',
++            '-p', 'no:salt-factories-event-listener',
++            '-p', 'no:salt-factories-factories',
++            '-p', 'no:salt-factories-loader-mock',
++            '-p', 'no:salt-factories-log-server',
++            '-p', 'no:salt-factories-markers',
++            '-p', 'no:salt-factories-sysinfo',
++            '-p', 'no:system-statistics',
              '-c', os.path.join(ANSIBLE_TEST_DATA_ROOT, 'pytest', 'config', config_name),
              '--junit-xml', os.path.join(ResultType.JUNIT.path, 'python%s-%s-units.xml' % (python.version, test_context)),
              '--strict-markers',  # added in pytest 4.5.0

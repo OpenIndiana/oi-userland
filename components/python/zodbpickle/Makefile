@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zodbpickle
-HUMAN_VERSION =			3.2
-COMPONENT_SUMMARY =		zodbpickle - Fork of Python 3 pickle module.
+HUMAN_VERSION =			4.0
+COMPONENT_SUMMARY =		Fork of Python 3 pickle module.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zodbpickle
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eb9c0ee389b3266aa8f41945b62a99815d261f69d1f42977150912aa6796ab0c
+	sha256:e85bad9560d6092a635bebee78a43b0f1c926a66912be390e88cab66f4dec180
 COMPONENT_LICENSE =		PSF-2.0 OR ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -36,4 +36,5 @@ TOX_POSARGS += -vv
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner

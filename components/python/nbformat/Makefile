@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nbformat
-HUMAN_VERSION =			5.10.3
+HUMAN_VERSION =			5.10.4
 COMPONENT_SUMMARY =		nbformat - The Jupyter Notebook format
 COMPONENT_PROJECT_URL =		https://jupyter.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:60ed5e910ef7c6264b87d644f276b1b49e24011930deef54605188ddeb211685
+	sha256:322168b14f937a5d11362988ecac2a4952d3d8e3a2cbeb2319584631226d5b3a
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 

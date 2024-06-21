@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		TimeDate
 HUMAN_VERSION =			2.33
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		TimeDate - Parse date strings into time values
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\

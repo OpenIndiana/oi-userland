@@ -12,6 +12,7 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2023 Niklas Poslovski
+# Copyright 2024 Geoff Weiss
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,7 +23,7 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+license thunderbird.license license="MPL v2.0"
 
 <transform file path=usr/bin/+ -> default mode 0555>
 <transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
@@ -62,8 +63,8 @@ file path=usr/lib/$(MACH64)/thunderbird/isp/DSPAM.sfd
 file path=usr/lib/$(MACH64)/thunderbird/isp/POPFile.sfd
 file path=usr/lib/$(MACH64)/thunderbird/isp/SpamAssassin.sfd
 file path=usr/lib/$(MACH64)/thunderbird/isp/SpamPal.sfd
-#file path=usr/lib/$(MACH64)/thunderbird/libfreebl3.chk
 file path=usr/lib/$(MACH64)/thunderbird/libfreebl3.so
+file path=usr/lib/$(MACH64)/thunderbird/libgkcodecs.so
 file path=usr/lib/$(MACH64)/thunderbird/liblgpllibs.so
 file path=usr/lib/$(MACH64)/thunderbird/libmozavcodec.so
 file path=usr/lib/$(MACH64)/thunderbird/libmozavutil.so
@@ -77,14 +78,12 @@ file path=usr/lib/$(MACH64)/thunderbird/libplc4.so
 file path=usr/lib/$(MACH64)/thunderbird/libplds4.so
 file path=usr/lib/$(MACH64)/thunderbird/librnp.so
 file path=usr/lib/$(MACH64)/thunderbird/libsmime3.so
-#file path=usr/lib/$(MACH64)/thunderbird/libsoftokn3.chk
 file path=usr/lib/$(MACH64)/thunderbird/libsoftokn3.so
 file path=usr/lib/$(MACH64)/thunderbird/libssl3.so
 file path=usr/lib/$(MACH64)/thunderbird/libxul.so
 file path=usr/lib/$(MACH64)/thunderbird/omni.ja
 file path=usr/lib/$(MACH64)/thunderbird/pingsender mode=0555
 file path=usr/lib/$(MACH64)/thunderbird/platform.ini
-file path=usr/lib/$(MACH64)/thunderbird/plugin-container mode=0555
 file path=usr/lib/$(MACH64)/thunderbird/removed-files
 file path=usr/lib/$(MACH64)/thunderbird/thunderbird mode=0555
 file path=usr/lib/$(MACH64)/thunderbird/thunderbird-bin mode=0555

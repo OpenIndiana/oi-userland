@@ -12,12 +12,11 @@
 # Copyright 2022 Friedrich Kink
 #
 
-USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         opendkim
 COMPONENT_VERSION=      2.10.3
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	2
 COMPONENT_SUMMARY=      OpenDKIM is an open source implementation of the DKIM (Domain Keys Identified Mail) sender authentication system
 COMPONENT_DESCRIPTION=	OpenDKIM is an open source implementation of the DKIM \
 			(Domain Keys Identified Mail) sender authentication system proposed \
@@ -84,6 +83,8 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^=======/p'"
 REQUIRED_PACKAGES += runtime/erlang
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += image/rrdtool
@@ -92,11 +93,9 @@ REQUIRED_PACKAGES += library/libmemcached
 REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/opendbx
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/tre
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

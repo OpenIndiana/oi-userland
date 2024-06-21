@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Task::Weaken
 HUMAN_VERSION =			1.06
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Task::Weaken - Ensure that a platform has weaken support
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\

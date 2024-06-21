@@ -1,10 +1,10 @@
---- Mail-SpamAssassin-4.0.0/t/dnsbl_subtests.t.orig
-+++ Mail-SpamAssassin-4.0.0/t/dnsbl_subtests.t
-@@ -15,6 +15,7 @@
- use Errno qw(EADDRINUSE EACCES);
- 
- use constant HAS_NET_DNS_NAMESERVER => eval { require Net::DNS::Nameserver; };
+--- Mail-SpamAssassin-4.0.1/t/dnsbl_subtests.t.orig
++++ Mail-SpamAssassin-4.0.1/t/dnsbl_subtests.t
+@@ -20,6 +20,7 @@
+ use constant HAS_NET_DNS_START_SERVER => eval { Net::DNS::Nameserver->can('start_server'); };
+ use constant HAS_NET_DNS_STOP_SERVER => eval { Net::DNS::Nameserver->can('stop_server'); };
+ use constant HAS_BAD_WINDOWS_NET_DNS => $RUNNING_ON_WINDOWS && HAS_NET_DNS_START_SERVER;
 +plan skip_all => "Net tests disabled" unless conf_bool('run_net_tests');
  plan skip_all => "Net::DNS::Nameserver in unavailable on this system" unless (HAS_NET_DNS_NAMESERVER);
+ plan skip_all => "Tests don't work on Windows with recent versions of Net::DNS" if (HAS_BAD_WINDOWS_NET_DNS);
  plan  tests => 46;
- 

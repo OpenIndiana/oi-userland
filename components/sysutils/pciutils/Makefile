@@ -16,22 +16,22 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pciutils
-COMPONENT_VERSION=	3.10.0
+COMPONENT_VERSION=	3.12.0
 COMPONENT_SUMMARY=	The PCI Utilities are a collection of programs for inspecting and manipulating configuration of PCI devices
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH =	sha256:7deabe38ae5fa88a96a8c4947975cf31c591506db546e9665a10dddbf350ead0
-COMPONENT_ARCHIVE_URL =		https://mj.ucw.cz/download/linux/pci/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL =		https://mj.ucw.cz/sw/pciutils/
+COMPONENT_ARCHIVE_HASH=	sha256:827a641d2016a15f0b959804daa5a05f055d0f91d58a70d32ac41ce7ef94164e
+COMPONENT_ARCHIVE_URL=	https://mj.ucw.cz/download/linux/pci/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://mj.ucw.cz/sw/pciutils/
 COMPONENT_FMRI=		system/pciutils
-COMPONENT_CLASSIFICATION =	System/Hardware
+COMPONENT_CLASSIFICATION=	System/Hardware
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_BUILD_ARGS += CC=$(CC)
 COMPONENT_BUILD_ARGS += OPT="-DBYTE_ORDER=1234 -DLITTLE_ENDIAN=1234"

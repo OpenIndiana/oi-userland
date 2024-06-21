@@ -13,16 +13,14 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgpool-II
-COMPONENT_VERSION= 	4.5.1
+COMPONENT_VERSION= 	4.5.2
 COMPONENT_SUMMARY= 	A connection pooling/replication server for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:8e14b0558a15dae8767c8e1acee3f2f6c7c08ebfffda66a359367eaaa56c3936
+COMPONENT_ARCHIVE_HASH= sha256:480ac23f01cd7d6c856b29386bf17a848712fb4b4057d4c8abd5c8bf819bdf06
 COMPONENT_PROJECT_URL=	https://www.pgpool.net
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download.php?f=$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)
@@ -31,7 +29,7 @@ COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
 
 # Don't depend on host default pg_config
-PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
+PATH=$(PG_BINDIR.$(BITS)):$(PATH.illumos)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,7 +47,7 @@ CONFIGURE_SBINDIR = $(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc/pgpool-II
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/pgpool-II
 CONFIGURE_OPTIONS += --with-ldap
 CONFIGURE_OPTIONS += --with-pam
 CONFIGURE_OPTIONS += --with-openssl
@@ -69,9 +67,9 @@ REQUIRED_PACKAGES += data/docbook/dtds
 REQUIRED_PACKAGES += developer/documentation-tool/openjade
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

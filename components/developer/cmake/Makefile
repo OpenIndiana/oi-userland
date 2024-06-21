@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
 COMPONENT_MAJOR_VERSION= 3.29
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).0
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).5
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
@@ -42,7 +42,7 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_PROJECT_URL=  https://www.cmake.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a0669630aae7baa4a8228048bf30b622f9e9fd8ee8cedb941754e9e38686c778
+COMPONENT_ARCHIVE_HASH=	sha256:dd63da7d763c0db455ca232f2c443f5234fe0b11f8bd6958a81d29cc987dfd6e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools

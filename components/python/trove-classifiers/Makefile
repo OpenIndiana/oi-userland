@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project trove-classifiers
+#   $WS_TOOLS/python-integrate-project -d python/trove-classifiers trove_classifiers
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		trove-classifiers
-HUMAN_VERSION =			2024.3.25
-COMPONENT_SUMMARY =		trove-classifiers - Canonical source for classifiers on PyPI (pypi.org).
+COMPONENT_NAME =		trove_classifiers
+HUMAN_VERSION =			2024.5.22
+COMPONENT_SUMMARY =		Canonical source for classifiers on PyPI (pypi.org).
 COMPONENT_PROJECT_URL =		https://github.com/pypa/trove-classifiers
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6de68d06edd6fec5032162b6af22e818a4bb6f4ae2258e74699f8a41064b7cad
+	sha256:8a6242bbb5c9ae88d34cf665e816b287d2212973c8777dfaef5ec18d72ac1d03
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 

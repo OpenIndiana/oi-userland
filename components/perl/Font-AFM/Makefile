@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Font::AFM
 HUMAN_VERSION =			1.20
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Font::AFM - Interface to Adobe Font Metrics files
 COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\

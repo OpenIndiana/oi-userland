@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		packaging
-HUMAN_VERSION =			24.0
-COMPONENT_SUMMARY =		packaging - Core utilities for Python packages
+HUMAN_VERSION =			24.1
+COMPONENT_SUMMARY =		Core utilities for Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eb82c5e3e56209074766e6885bb04b8c38a0c015d0a30036ebe7ece34c9989e9
+	sha256:026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 
 TEST_STYLE = pytest
@@ -39,6 +39,9 @@ TEST_STYLE = pytest
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core

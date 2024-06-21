@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zipp
-HUMAN_VERSION =			3.18.1
-COMPONENT_SUMMARY =		zipp - Backport of pathlib-compatible object wrapper for zip files
+HUMAN_VERSION =			3.19.2
+COMPONENT_SUMMARY =		Backport of pathlib-compatible object wrapper for zip files
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/zipp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2884ed22e7d8961de1c9a05142eb69a247f120291bc0206a00a7642f09b5b715
+	sha256:bf1dcf6450f873a13e952a29504887c89e6de7506209e5b1bcc3460135d4de19
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,11 +34,6 @@ PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/jaraco/zipp/issues/112
-# https://github.com/pydantic/pydantic/issues/7689
-PYTEST_ADDOPTS += --ignore tests/test_path.py
-PYTEST_ADDOPTS += --ignore tests/write-alpharep.py
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
@@ -46,6 +41,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-functools
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-itertools
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
 TEST_REQUIRED_PACKAGES.python += library/python/more-itertools
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs

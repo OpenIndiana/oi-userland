@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-X workers [1346 items]
+X workers [1348 items]
 
 scheduling tests via LoadScheduling
 
@@ -241,7 +241,6 @@ setuptools/config/expand.py::mypy PASSED
 setuptools/config/expand.py::setuptools.config.expand.LazyMappingProxy PASSED
 setuptools/config/pyprojecttoml.py::mypy PASSED
 setuptools/config/setupcfg.py::mypy PASSED
-setuptools/dep_util.py::mypy PASSED
 setuptools/depends.py::mypy PASSED
 setuptools/discovery.py::mypy PASSED
 setuptools/discovery.py::setuptools.discovery.find_package_path PASSED
@@ -260,6 +259,8 @@ setuptools/msvc.py::mypy PASSED
 setuptools/namespaces.py::mypy PASSED
 setuptools/namespaces.py::setuptools.namespaces.Installer._pkg_names PASSED
 setuptools/package_index.py::mypy PASSED
+setuptools/package_index.py::setuptools.package_index.PackageIndex._resolve_vcs PASSED
+setuptools/package_index.py::setuptools.package_index.PackageIndex._vcs_split_rev_from_url PASSED
 setuptools/package_index.py::setuptools.package_index._encode_auth PASSED
 setuptools/package_index.py::setuptools.package_index.htmldecode PASSED
 setuptools/sandbox.py::mypy PASSED
@@ -356,6 +357,7 @@ setuptools/tests/config/test_pyprojecttoml.py::test_include_package_data_by_defa
 setuptools/tests/config/test_pyprojecttoml.py::test_include_package_data_in_setuppy PASSED
 setuptools/tests/config/test_pyprojecttoml.py::test_invalid_example[\n            [project]\n            name = "myproj"\n            version = "1.2"\n            requires = ['pywin32; platform_system=="Windows"' ]\n            -configuration error: .project. must not contain ..requires.. properties] PASSED
 setuptools/tests/config/test_pyprojecttoml.py::test_read_configuration PASSED
+setuptools/tests/config/test_pyprojecttoml.py::test_warn_tools_typo PASSED
 setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::mypy PASSED
 setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::test_dynamic_dependencies PASSED
 setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::test_dynamic_optional_dependencies PASSED
@@ -388,7 +390,7 @@ setuptools/tests/config/test_setupcfg.py::TestMetadata::test_version_with_packag
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_warn_dash_deprecation PASSED
 setuptools/tests/config/test_setupcfg.py::TestOptions::test_basic PASSED
 setuptools/tests/config/test_setupcfg.py::TestOptions::test_case_sensitive_entry_points PASSED
-setuptools/tests/config/test_setupcfg.py::TestOptions::test_cmdclass PASSED
+setuptools/tests/config/test_setupcfg.py::TestOptions::test_cmdclass SKIPPED
 setuptools/tests/config/test_setupcfg.py::TestOptions::test_dash_preserved_extras_require PASSED
 setuptools/tests/config/test_setupcfg.py::TestOptions::test_data_files PASSED
 setuptools/tests/config/test_setupcfg.py::TestOptions::test_data_files_globby PASSED
@@ -455,15 +457,14 @@ setuptools/tests/test_bdist_egg.py::Test::test_exclude_source_files PASSED
 setuptools/tests/test_bdist_egg.py::mypy PASSED
 setuptools/tests/test_build.py::mypy PASSED
 setuptools/tests/test_build.py::test_distribution_gives_setuptools_build_obj PASSED
-setuptools/tests/test_build.py::test_subcommand_in_distutils PASSED
-setuptools/tests/test_build_clib.py::TestBuildCLib::test_build_libraries PASSED
-setuptools/tests/test_build_clib.py::TestBuildCLib::test_build_libraries_reproducible PASSED
+setuptools/tests/test_build_clib.py::TestBuildCLib::test_build_libraries SKIPPED
+setuptools/tests/test_build_clib.py::TestBuildCLib::test_build_libraries_reproducible SKIPPED
 setuptools/tests/test_build_clib.py::mypy PASSED
 setuptools/tests/test_build_ext.py::TestBuildExt::test_abi3_filename PASSED
 setuptools/tests/test_build_ext.py::TestBuildExt::test_ext_suffix_override PASSED
 setuptools/tests/test_build_ext.py::TestBuildExt::test_get_ext_filename PASSED
-setuptools/tests/test_build_ext.py::TestBuildExt::test_get_output_mapping_with_stub PASSED
-setuptools/tests/test_build_ext.py::TestBuildExt::test_get_outputs PASSED
+setuptools/tests/test_build_ext.py::TestBuildExt::test_get_output_mapping_with_stub SKIPPED
+setuptools/tests/test_build_ext.py::TestBuildExt::test_get_outputs SKIPPED
 setuptools/tests/test_build_ext.py::TestBuildExtInplace::test_non_optional PASSED
 setuptools/tests/test_build_ext.py::TestBuildExtInplace::test_optional PASSED
 setuptools/tests/test_build_ext.py::mypy PASSED
@@ -675,11 +676,11 @@ setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_can_be_exc
 setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_can_be_excluded[nested_inside_namespace-exclude_type_info] PASSED
 setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_can_be_excluded[simple_namespace-exclude_type_info] PASSED
 setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_included_by_default[namespace_nested_inside_regular-default_pyproject] PASSED
-setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_included_by_default[namespace_nested_inside_regular-dont_include_package_data] PASSED
+setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_included_by_default[namespace_nested_inside_regular-dont_include_package_data] XFAIL
 setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_included_by_default[nested_inside_namespace-default_pyproject] PASSED
-setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_included_by_default[nested_inside_namespace-dont_include_package_data] PASSED
+setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_included_by_default[nested_inside_namespace-dont_include_package_data] XFAIL
 setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_included_by_default[simple_namespace-default_pyproject] PASSED
-setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_included_by_default[simple_namespace-dont_include_package_data] PASSED
+setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_type_files_included_by_default[simple_namespace-dont_include_package_data] XFAIL
 setuptools/tests/test_build_py.py::mypy PASSED
 setuptools/tests/test_build_py.py::test_directories_in_package_data_glob PASSED
 setuptools/tests/test_build_py.py::test_excluded_subpackages SKIPPED
@@ -948,6 +949,7 @@ setuptools/tests/test_editable_install.py::TestCustomBuildPy::test_safeguarded_f
 setuptools/tests/test_editable_install.py::TestCustomBuildWheel::test_access_plat_name PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_case_sensitivity PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_combine_namespaces PASSED
+setuptools/tests/test_editable_install.py::TestFinderTemplate::test_combine_namespaces_nested PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_dynamic_path_computation PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_intermediate_packages PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_namespace PASSED
@@ -1003,7 +1005,7 @@ setuptools/tests/test_egg_info.py::TestEggInfo::test_install_requires_unordered_
 setuptools/tests/test_egg_info.py::TestEggInfo::test_license PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_license_escape PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_license_file_attr_pkg_info PASSED
-setuptools/tests/test_egg_info.py::TestEggInfo::test_license_is_a_string PASSED
+setuptools/tests/test_egg_info.py::TestEggInfo::test_license_is_a_string SKIPPED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_long_description PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_long_description_content_type PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_manifest_maker_warning_suppression PASSED
@@ -1217,7 +1219,7 @@ setuptools/tests/test_packageindex.py::TestPackageIndex::test_parse_bdist_winins
 setuptools/tests/test_packageindex.py::TestPackageIndex::test_regex PASSED
 setuptools/tests/test_packageindex.py::TestPackageIndex::test_url_ok PASSED
 setuptools/tests/test_packageindex.py::TestPyPIConfig::test_percent_in_password PASSED
-setuptools/tests/test_packageindex.py::mypy $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:115: CoverageWarning: Couldn't parse '/tmp/easy_install-79rdb6ta/setup.py': No source for code: '/tmp/easy_install-79rdb6ta/setup.py'. (couldnt-parse) PASSED
+setuptools/tests/test_packageindex.py::mypy PASSED
 setuptools/tests/test_packageindex.py::test_REL_DoS PASSED
 setuptools/tests/test_register.py::TestRegister::test_register_exception PASSED
 setuptools/tests/test_register.py::mypy PASSED
@@ -1235,7 +1237,7 @@ setuptools/tests/test_sandbox.py::mypy PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_external_path_in_extension_depends[$tmp_path$/external/dir/file.h] PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_external_path_in_extension_depends[../external/dir/file.h] PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_symlink_in_extension_depends[myheaders/dir/../dir/file.h] PASSED
-setuptools/tests/test_sdist.py::TestRegressions::test_symlink_in_extension_depends[myheaders/dir/file.h] PASSED
+setuptools/tests/test_sdist.py::TestRegressions::test_symlink_in_extension_depends[myheaders/dir/file.h] $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:115: CoverageWarning: Couldn't parse '/tmp/easy_install-d0o4v9ny/setup.py': No source for code: '/tmp/easy_install-d0o4v9ny/setup.py'. (couldnt-parse) PASSED
 setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[pyproject.toml - directive with str instead of list] PASSED
 setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[pyproject.toml - static readme/license files and dynamic version] PASSED
 setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[setup.cfg - long_description and version] PASSED
@@ -1287,7 +1289,6 @@ setuptools/tests/test_setuptools.py::TestDistro::testExcludePackages PASSED
 setuptools/tests/test_setuptools.py::TestDistro::testIncludeExclude PASSED
 setuptools/tests/test_setuptools.py::TestDistro::testInvalidIncludeExclude PASSED
 setuptools/tests/test_setuptools.py::mypy PASSED
-setuptools/tests/test_setuptools.py::test_convert_path_deprecated PASSED
 setuptools/tests/test_setuptools.py::test_findall PASSED
 setuptools/tests/test_setuptools.py::test_findall_curdir PASSED
 setuptools/tests/test_setuptools.py::test_findall_missing_symlink PASSED
@@ -1355,13 +1356,18 @@ tools/finalize.py::mypy PASSED
 tools/generate_validation_code.py::mypy PASSED
 tools/ppc64le-patch.py::mypy PASSED
 tools/vendored.py::mypy PASSED
+tools/vendored.py::tools.vendored.yield_top_level PASSED
 
 
+================================== XFAILURES ===================================
+$(@D)/setuptools/tests/test_build_py.py:433: AssertionError
+$(@D)/setuptools/tests/test_build_py.py:433: AssertionError
+$(@D)/setuptools/tests/test_build_py.py:433: AssertionError
 =================================== XPASSES ====================================
 
 ===================================== mypy =====================================
-Success: no issues found in 143 source files
+Success: no issues found in 142 source files
 =========================== short test summary info ============================
-======== 1234 passed, 111 skipped, 1 xpassed ========
+======== 1227 passed, 117 skipped, 3 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)

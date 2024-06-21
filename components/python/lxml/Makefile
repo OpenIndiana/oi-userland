@@ -19,19 +19,28 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml
-HUMAN_VERSION =			5.1.0
-COMPONENT_SUMMARY =		lxml - Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.
+HUMAN_VERSION =			5.2.2
+COMPONENT_SUMMARY =		Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.
 COMPONENT_PROJECT_URL =		https://lxml.de/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2b/b4/bbccb250adbee490553b6a52712c46c20ea1ba533a643f1424b27ffc6845/lxml-5.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3eea6ed6e6c918e468e693c41ef07f3c3acc310b70ddd9cc72d9ef84bc9564ca
+	sha256:bb2dc4898180bea79863d5487e5f9c7c34297414bad54bcd0f0852aee9cfdb87
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 # This project uses custom test style.
 # See project's Makefile.
 TEST_STYLE = custom
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# lxml --> lxml_html_clean ==> lxml
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -56,6 +65,10 @@ COMPONENT_TEST_TRANSFORMS += \
 		$(CAT) \
 	)"
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += html-clean
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cython
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
@@ -64,3 +77,4 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/lxml-html-clean

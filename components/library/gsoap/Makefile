@@ -13,17 +13,18 @@
 #
 
 OPENSSL_VERSION= 3.1
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gsoap
 COMPONENT_MAJOR_VERSION= 2.8
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).132
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).133
 COMPONENT_SUMMARY=      Toolkit for SOAP/REST-based C/C++ server and client web service applications
 COMPONENT_PROJECT_URL=  https://www.genivia.com/products.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)_$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/gsoap2/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:d6eb5d0d2c31532746f4dc9fa1ce95d4553414e918059eac23cf081d88c2aeee
+COMPONENT_ARCHIVE_HASH= sha256:93e124302c5775e115e661af2bf4e1f07fa05aef14f58ce65b5c27c833afe279
 COMPONENT_FMRI=         library/gsoap
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      GPLv2+ with exceptions
@@ -69,6 +70,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --enable-ipv6
 # Build and runs tests
 CONFIGURE_OPTIONS += --enable-samples

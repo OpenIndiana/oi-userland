@@ -19,20 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		schema
-HUMAN_VERSION =			0.7.5
-COMPONENT_SUMMARY =		schema - Simple data validation library
+HUMAN_VERSION =			0.7.7
+COMPONENT_SUMMARY =		Simple data validation library
 COMPONENT_PROJECT_URL =		https://github.com/keleshev/schema
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4e/e8/01e1b46d9e04cdaee91c9c736d9117304df53361a191144c8eccda7f0ee9/schema-0.7.5.tar.gz
+	https://github.com/keleshev/schema/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f06717112c61895cabc4707752b88716e8420a8819d71404501e114f91043197
+	sha256:5c2fbedb393646aaaaee5dd3098810418a2ed0d7a70294102196a4f6b8e07801
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE-MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/contextlib2
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python

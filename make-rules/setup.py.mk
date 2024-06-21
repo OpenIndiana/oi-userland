@@ -466,12 +466,10 @@ $(eval $(call disable-pytest-plugin,socket,pytest-socket))
 $(eval $(call disable-pytest-plugin,subprocess,pytest-subprocess))
 $(eval $(call disable-pytest-plugin,subtests,pytest-subtests))
 $(eval $(call disable-pytest-plugin,system-statistics,pytest-system-statistics))
-$(eval $(call disable-pytest-plugin,tempdir,pytest-tempdir))		# adds line to test report header
 $(eval $(call disable-pytest-plugin,time_machine,time-machine))
 $(eval $(call disable-pytest-plugin,timeout,pytest-timeout))
 $(eval $(call disable-pytest-plugin,travis-fold,pytest-travis-fold))
 $(eval $(call disable-pytest-plugin,typeguard,typeguard))
-$(eval $(call disable-pytest-plugin,unittest_mock,backports-unittest-mock))
 $(eval $(call disable-pytest-plugin,xdist,pytest-xdist))
 $(eval $(call disable-pytest-plugin,xdist.looponfail,pytest-xdist))
 $(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminder line to test output
@@ -495,17 +493,9 @@ PYTEST_ADDOPTS += $(PYTEST_TRACEBACK)
 # unconditionally.
 COMPONENT_TEST_TRANSFORMS += \
 	"-e 's/^\(platform sunos5 -- Python \)$(shell echo $(PYTHON_VERSION) | $(GSED) -e 's/\./\\./g')\.[0-9]\{1,\}.*\( -- .*\)/\1\$$(PYTHON_VERSION).X\2/'"
-COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
 COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins could vary
 COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} coverage: /,/^$$/d'"		# remove coverage report
-# sort list of pytest unit tests and drop percentage
-COMPONENT_TEST_TRANSFORMS += \
-	"| ( \
-		$(GSED) -u -e '/^=\{1,\} test session starts /q' ; \
-		$(GSED) -u -e '/^$$/q' ; \
-		$(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | $(SORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
-		$(CAT) \
-	) | $(COMPONENT_TEST_TRANSFORMER)"
+COMPONENT_TEST_TRANSFORMS += "-e 's/ \{1,\}\[...%\]\$$//'"			# drop percentage
 COMPONENT_TEST_TRANSFORMS += \
 	"-e 's/^=\{1,\} \(.*\) in [0-9]\{1,\}\.[0-9]\{1,\}s \(([^)]*) \)\?=\{1,\}$$/======== \1 ========/'"	# remove timing
 # Remove slowest durations report for projects that run pytest with --durations option
@@ -517,6 +507,18 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} short test summary info =\{1,\}$$/,/
 COMPONENT_TEST_TRANSFORMS += \
 	$(if $(filter library/python/pytest-benchmark-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES)),"| ( \
 		$(GSED) -e '/^-\{1,\} benchmark/,/^=/{/^=/!d}' \
+	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
+
+# Normalize test results produced by pytest-randomly
+USE_PYTEST_RANDOMLY = $(filter library/python/pytest-randomly-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES))
+PYTEST_SORT_TESTS = $(USE_PYTEST_RANDOMLY)
+COMPONENT_TEST_TRANSFORMS += $(if $(strip $(USE_PYTEST_RANDOMLY)),"-e '/^Using --randomly-seed=[0-9]\{1$(comma)\}\$$/d'")
+COMPONENT_TEST_TRANSFORMS += \
+	$(if $(strip $(PYTEST_SORT_TESTS)),"| ( \
+		$(GSED) -u -e '/^=\{1$(comma)\} test session starts /q' ; \
+		$(GSED) -u -e '/^\$$/q' ; \
+		$(GSED) -u -e '/^\$$/Q' | $(SORT) | $(GSED) -e '\$$a\'\$$'\\\n\\\n' ; \
+		$(CAT) \
 	) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
 
 # Normalize test results produced by pytest-xdist

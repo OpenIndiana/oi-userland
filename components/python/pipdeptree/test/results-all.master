@@ -3,7 +3,7 @@ py$(PYV): commands[0]> python -m pytest --cov pipdeptree --cov $(@D)/tests --cov
 Error processing line 1 of $(PYTHON_DIR)/vendor-packages/coverage_enable_subprocess.pth:
 
   Traceback (most recent call last):
-    File "$(PYTHON_DIR)/site.py", line 169, in addpackage
+    File "$(PYTHON_DIR)/site.py", line 177, in addpackage
       exec(line)
     File "<string>", line 1, in <module>
     File "<string>", line 7, in <module>
@@ -21,152 +21,141 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 88 items
+collecting ... collected 119 items
 
-tests/_models/test_dag.py::test_package_dag_filter_fnmatch_exclude_a PASSED
-tests/_models/test_dag.py::test_package_dag_filter_fnmatch_exclude_c PASSED
+tests/_models/test_dag.py::test_package_dag_get_node_as_parent PASSED
 tests/_models/test_dag.py::test_package_dag_filter_fnmatch_include_a PASSED
 tests/_models/test_dag.py::test_package_dag_filter_fnmatch_include_b PASSED
+tests/_models/test_dag.py::test_package_dag_filter_fnmatch_exclude_c PASSED
+tests/_models/test_dag.py::test_package_dag_filter_fnmatch_exclude_a PASSED
 tests/_models/test_dag.py::test_package_dag_filter_include_exclude_both_used PASSED
 tests/_models/test_dag.py::test_package_dag_filter_nonexistent_packages PASSED
+tests/_models/test_dag.py::test_package_dag_filter_packages_uses_pep503normalize PASSED
+tests/_models/test_dag.py::test_package_dag_reverse PASSED
 tests/_models/test_dag.py::test_package_dag_from_pkgs PASSED
 tests/_models/test_dag.py::test_package_dag_from_pkgs_uses_pep503normalize PASSED
-tests/_models/test_dag.py::test_package_dag_get_node_as_parent PASSED
-tests/_models/test_dag.py::test_package_dag_reverse PASSED
-tests/_models/test_package.py::test_dist_package_as_dict PASSED
+tests/_models/test_dag.py::test_package_from_pkgs_given_invalid_requirements PASSED
+tests/_models/test_package.py::test_guess_version_setuptools PASSED
+tests/_models/test_package.py::test_package_as_frozen_repr PASSED
+tests/_models/test_package.py::test_dist_package_requires PASSED
+tests/_models/test_package.py::test_dist_package_requires_with_environment_markers_that_eval_to_false PASSED
+tests/_models/test_package.py::test_dist_package_render_as_root PASSED
+tests/_models/test_package.py::test_dist_package_render_as_branch PASSED
+tests/_models/test_package.py::test_dist_package_render_as_root_with_frozen PASSED
 tests/_models/test_package.py::test_dist_package_as_parent_of PASSED
-tests/_models/test_package.py::test_dist_package_key_pep503_normalized PASSED
-tests/_models/test_package.py::test_dist_package_licenses[more-than-one-license] PASSED
+tests/_models/test_package.py::test_dist_package_as_dict PASSED
 tests/_models/test_package.py::test_dist_package_licenses[no-license] PASSED
 tests/_models/test_package.py::test_dist_package_licenses[one-license-with-one-non-license] PASSED
+tests/_models/test_package.py::test_dist_package_licenses[more-than-one-license] PASSED
 tests/_models/test_package.py::test_dist_package_licenses_importlib_cant_find_package PASSED
-tests/_models/test_package.py::test_dist_package_project_name_recovered PASSED
-tests/_models/test_package.py::test_dist_package_render_as_branch PASSED
-tests/_models/test_package.py::test_dist_package_render_as_root PASSED
-tests/_models/test_package.py::test_guess_version_setuptools PASSED
+tests/_models/test_package.py::test_dist_package_key_pep503_normalized PASSED
+tests/_models/test_package.py::test_req_package_key_pep503_normalized PASSED
+tests/_models/test_package.py::test_req_package_render_as_root PASSED
+tests/_models/test_package.py::test_req_package_render_as_root_with_frozen PASSED
+tests/_models/test_package.py::test_req_package_render_as_branch PASSED
 tests/_models/test_package.py::test_req_package_as_dict PASSED
 tests/_models/test_package.py::test_req_package_as_dict_with_no_version_spec PASSED
-tests/_models/test_package.py::test_req_package_key_pep503_normalized PASSED
-tests/_models/test_package.py::test_req_package_render_as_branch PASSED
-tests/_models/test_package.py::test_req_package_render_as_root PASSED
 tests/render/test_graphviz.py::test_render_dot PASSED
 tests/render/test_graphviz.py::test_render_pdf PASSED
 tests/render/test_graphviz.py::test_render_svg PASSED
 tests/render/test_json_tree.py::test_json_tree_given_req_package_with_version_spec[version_spec_tuple0-Any] PASSED
 tests/render/test_json_tree.py::test_json_tree_given_req_package_with_version_spec[version_spec_tuple1->=2.0.0] PASSED
-tests/render/test_mermaid.py::test_mermaid_reserved_ids PASSED
 tests/render/test_mermaid.py::test_render_mermaid PASSED
-tests/render/test_render.py::test_grahpviz_routing PASSED
+tests/render/test_mermaid.py::test_mermaid_reserved_ids PASSED
 tests/render/test_render.py::test_json_routing PASSED
 tests/render/test_render.py::test_json_tree_routing PASSED
 tests/render/test_render.py::test_mermaid_routing PASSED
+tests/render/test_render.py::test_grahpviz_routing PASSED
 tests/render/test_render.py::test_text_routing PASSED
-tests/render/test_text.py::test_render_text[False-False-False-expected_output6] PASSED
+tests/render/test_text.py::test_render_text[True-False-True-expected_output0] PASSED
+tests/render/test_text.py::test_render_text[True-True-True-expected_output1] PASSED
 tests/render/test_text.py::test_render_text[False-False-True-expected_output2] PASSED
-tests/render/test_text.py::test_render_text[False-True-False-expected_output7] PASSED
 tests/render/test_text.py::test_render_text[False-True-True-expected_output3] PASSED
 tests/render/test_text.py::test_render_text[True-False-False-expected_output4] PASSED
-tests/render/test_text.py::test_render_text[True-False-True-expected_output0] PASSED
 tests/render/test_text.py::test_render_text[True-True-False-expected_output5] PASSED
-tests/render/test_text.py::test_render_text[True-True-True-expected_output1] PASSED
-tests/render/test_text.py::test_render_text_encoding[0-utf-8-expected_output0] PASSED
-tests/render/test_text.py::test_render_text_encoding[2-ascii-expected_output2] PASSED
-tests/render/test_text.py::test_render_text_encoding[2-utf-8-expected_output1] PASSED
-tests/render/test_text.py::test_render_text_given_depth[False-0-expected_output1] PASSED
-tests/render/test_text.py::test_render_text_given_depth[False-2-expected_output3] PASSED
+tests/render/test_text.py::test_render_text[False-False-False-expected_output6] PASSED
+tests/render/test_text.py::test_render_text[False-True-False-expected_output7] PASSED
 tests/render/test_text.py::test_render_text_given_depth[True-0-expected_output0] PASSED
+tests/render/test_text.py::test_render_text_given_depth[False-0-expected_output1] PASSED
 tests/render/test_text.py::test_render_text_given_depth[True-2-expected_output2] PASSED
+tests/render/test_text.py::test_render_text_given_depth[False-2-expected_output3] PASSED
+tests/render/test_text.py::test_render_text_encoding[0-utf-8-expected_output0] PASSED
+tests/render/test_text.py::test_render_text_encoding[2-utf-8-expected_output1] PASSED
+tests/render/test_text.py::test_render_text_encoding[2-ascii-expected_output2] PASSED
 tests/render/test_text.py::test_render_text_list_all_and_packages_options_used PASSED
-tests/render/test_text.py::test_render_text_with_license_info[ascii-expected_output1] PASSED
 tests/render/test_text.py::test_render_text_with_license_info[utf-8-expected_output0] PASSED
-tests/render/test_text.py::test_render_text_with_license_info_and_reversed_tree[ascii-expected_output1] PASSED
+tests/render/test_text.py::test_render_text_with_license_info[ascii-expected_output1] PASSED
 tests/render/test_text.py::test_render_text_with_license_info_and_reversed_tree[utf-8-expected_output0] PASSED
+tests/render/test_text.py::test_render_text_with_license_info_and_reversed_tree[ascii-expected_output1] PASSED
 tests/test_cli.py::test_parser_default PASSED
-tests/test_cli.py::test_parser_depth[False-depth_arg2-0] PASSED
-tests/test_cli.py::test_parser_depth[False-depth_arg3-8] PASSED
-tests/test_cli.py::test_parser_depth[False-depth_arg4-inf] PASSED
-tests/test_cli.py::test_parser_depth[True-depth_arg0-None] PASSED
-tests/test_cli.py::test_parser_depth[True-depth_arg1-None] PASSED
-tests/test_cli.py::test_parser_get_options_exclude_combine_not_supported[exclude-all] PASSED
-tests/test_cli.py::test_parser_get_options_exclude_combine_not_supported[exclude-packages-all] PASSED
-tests/test_cli.py::test_parser_get_options_exclude_combine_not_supported[exclude-packages] PASSED
-tests/test_cli.py::test_parser_get_options_exclude_only PASSED
-tests/test_cli.py::test_parser_get_options_license_and_freeze_together_not_supported PASSED
 tests/test_cli.py::test_parser_j PASSED
 tests/test_cli.py::test_parser_json PASSED
 tests/test_cli.py::test_parser_json_tree PASSED
 tests/test_cli.py::test_parser_mermaid PASSED
 tests/test_cli.py::test_parser_pdf PASSED
 tests/test_cli.py::test_parser_svg PASSED
-tests/test_non_host.py::test_custom_interpreter[False] PASSED
+tests/test_cli.py::test_parser_depth[True-depth_arg0-None] PASSED
+tests/test_cli.py::test_parser_depth[True-depth_arg1-None] PASSED
+tests/test_cli.py::test_parser_depth[False-depth_arg2-0] PASSED
+tests/test_cli.py::test_parser_depth[False-depth_arg3-8] PASSED
+tests/test_cli.py::test_parser_depth[False-depth_arg4-inf] PASSED
+tests/test_cli.py::test_parser_get_options_exclude_combine_not_supported[exclude-all] PASSED
+tests/test_cli.py::test_parser_get_options_exclude_combine_not_supported[exclude-packages] PASSED
+tests/test_cli.py::test_parser_get_options_exclude_combine_not_supported[exclude-packages-all] PASSED
+tests/test_cli.py::test_parser_get_options_exclude_only PASSED
+tests/test_cli.py::test_parser_get_options_license_and_freeze_together_not_supported PASSED
+tests/test_cli.py::test_enum_action_type_argument[None] PASSED
+tests/test_cli.py::test_enum_action_type_argument[str] PASSED
+tests/test_cli.py::test_enum_action_default_argument_not_str PASSED
+tests/test_cli.py::test_enum_action_default_argument_not_a_valid_choice PASSED
+tests/test_cli.py::test_enum_action_call_with_value PASSED
+tests/test_cli.py::test_enum_action_call_without_value PASSED
+tests/test_detect_env.py::test_detect_active_interpreter_using_env_vars[VIRTUAL_ENV] PASSED
+tests/test_detect_env.py::test_detect_active_interpreter_using_env_vars[CONDA_PREFIX] PASSED
+tests/test_detect_env.py::test_detect_active_interpreter_poetry PASSED
+tests/test_detect_env.py::test_detect_active_interpreter_non_supported_python_implementation PASSED
+tests/test_detect_env.py::test_detect_active_interpreter_non_existent_path PASSED
+tests/test_discovery.py::test_local_only PASSED
+tests/test_discovery.py::test_user_only PASSED
+tests/test_discovery.py::test_user_only_when_in_virtual_env PASSED
+tests/test_discovery.py::test_user_only_when_in_virtual_env_and_system_site_pkgs_enabled PASSED
+tests/test_discovery.py::test_duplicate_metadata PASSED
+tests/test_discovery.py::test_invalid_metadata PASSED
 tests/test_non_host.py::test_custom_interpreter[True] PASSED
-tests/test_pipdeptree.py::test_console SKIPPED (always fails: https:...)
+tests/test_non_host.py::test_custom_interpreter[False] PASSED
+tests/test_non_host.py::test_custom_interpreter_with_local_only PASSED
+tests/test_non_host.py::test_custom_interpreter_with_user_only PASSED
+tests/test_non_host.py::test_custom_interpreter_with_user_only_and_system_site_pkgs_enabled PASSED
+tests/test_non_host.py::test_custom_interpreter_ensure_pythonpath_envar_is_honored PASSED
 tests/test_pipdeptree.py::test_main PASSED
+tests/test_pipdeptree.py::test_console[inprocess] PASSED
+tests/test_pipdeptree.py::test_main_log_resolved PASSED
+tests/test_validate.py::test_cyclic_deps[depth-of-2] PASSED
+tests/test_validate.py::test_cyclic_deps[depth-greater-than-2] PASSED
+tests/test_validate.py::test_cyclic_deps[no-cycle] PASSED
+tests/test_validate.py::test_cyclic_deps[dependency-not-installed] PASSED
+tests/test_validate.py::test_cyclic_deps[no-dependencies] PASSED
 tests/test_validate.py::test_conflicting_deps[mpkgs0-expected_keys0-expected_output0] PASSED
 tests/test_validate.py::test_conflicting_deps[mpkgs1-expected_keys1-expected_output1] PASSED
 tests/test_validate.py::test_conflicting_deps[mpkgs2-expected_keys2-expected_output2] PASSED
 tests/test_validate.py::test_conflicting_deps[mpkgs3-expected_keys3-expected_output3] PASSED
-tests/test_validate.py::test_cyclic_deps[dependency-not-installed] PASSED
-tests/test_validate.py::test_cyclic_deps[depth-greater-than-2] PASSED
-tests/test_validate.py::test_cyclic_deps[depth-of-2] PASSED
-tests/test_validate.py::test_cyclic_deps[no-cycle] PASSED
-tests/test_validate.py::test_cyclic_deps[no-dependencies] PASSED
+tests/test_validate.py::test_validate[mpkgs0-expected_output0] PASSED
+tests/test_validate.py::test_validate[mpkgs1-expected_output1] PASSED
+tests/test_warning.py::test_warning_printer_print_single_line PASSED
 
 =============================== warnings summary ===============================
-../prototype/i386$(PYTHON_DIR)/vendor-packages/pipdeptree/_models/package.py:10
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/pipdeptree/_models/package.py:10: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
-    from pip._vendor.pkg_resources import Requirement  # noqa: PLC2701
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871
-  $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871
-  $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871
-  $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871
-  $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2350
-  $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(parent)
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871
-  $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871
-  $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: 15 warnings
-  $(PYTHON_DIR)/vendor-packages/pip/_vendor/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
+tests/test_discovery.py::test_invalid_metadata
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/pipdeptree/_discovery.py:96: DeprecationWarning: Implicit None on return values is deprecated and will raise KeyErrors.
+    return dist.metadata["Name"] is not None
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-16 files skipped due to complete coverage.
+24 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 88.0% reached. Total coverage: 93.20%
-======== 87 passed, 1 skipped, 25 warnings ========
+Required test coverage of 88.0% reached. Total coverage: 96.66%
+======== 119 passed, 1 warning ========
   py$(PYV): OK
   congratulations :)

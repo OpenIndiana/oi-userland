@@ -1,18 +1,12 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python --version
-Python 3.9.18
-py$(PYV): commands[1]> .evergreen/check-c-extensions.sh
-running build_ext
-copying build/lib.solaris-2.11-i86pc.64bit-cpython-39/bson/_cbson.cpython-39.so -> bson
-copying build/lib.solaris-2.11-i86pc.64bit-cpython-39/pymongo/_cmessage.cpython-39.so -> pymongo
-py$(PYV): commands[2]> python -m pytest -v --durations=5 --maxfail=10
+py$(PYV): commands[0]> python -m pytest -v --durations=5 --maxfail=10
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: pytest.ini
+configfile: pyproject.toml
 testpaths: test
-collecting ... collected 4402 items
+collecting ... collected 4519 items
 
 Checking Only)
 SASL_HOST, SASL_USER, and SASL_PASS to test SASL)
@@ -90,22 +84,26 @@ test/test_auth_spec.py::TestAuthSpec::test_connection-string_authsource_without_
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_database_in_uri_path_doesn't_create_credentials PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_must_raise_an_error_when_the_authsource_is_empty PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_must_raise_an_error_when_the_authsource_is_empty_without_credentials PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_a_url-encoded_token_resource_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_a_username_and_throw_an_error_for_a_password_with_azure_provider_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_a_username_with_azure_provider_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_an_un-encoded_token_resource_(mongodb-oidc) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_generic_mechanism_property_(gssapi) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_the_password_(gssapi) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_valid_authsource_(gssapi) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_valid_authsource_(mongodb-x509) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_valid_authsource_(scram-sha-1) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_accept_valid_authsource_(scram-sha-256) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_handle_a_complicated_url-encoded_token_resource_(mongodb-oidc) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_ignore_the_database_(gssapi) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_ignore_the_database_(mongodb-x509) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_(gssapi) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_(mongodb-aws) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_and_request_callback_(mongodb-oidc) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_and_username_with_request_callback_(mongodb-oidc) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_when_auth_source_is_explicitly_specified_(mongodb-aws) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_when_auth_source_is_explicitly_specified_and_with_aws_device_(mongodb-oidc) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_when_auth_source_is_explicitly_specified_and_with_request_callback_(mongodb-oidc) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_with_aws_device_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_when_auth_source_is_explicitly_specified_and_with_environment_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_with_azure_provider_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_with_gcp_provider_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognise_the_mechanism_with_test_environment_(mongodb-oidc) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognize_the_mechanism_(mongodb-cr) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognize_the_mechanism_(mongodb-x509) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognize_the_mechanism_(plain) PASSED
@@ -113,9 +111,12 @@ test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognize_th
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognize_the_mechanism_(scram-sha-256) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognize_the_mechanism_with_no_username_(mongodb-x509) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_recognize_the_mechanism_with_no_username_when_auth_source_is_explicitly_specified_(mongodb-x509) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_error_for_a_username_and_password_with_gcp_provider_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_error_if_not_token_resource_with_gcp_provider_(mongodb-oidc) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_authsource_is_invalid_(gssapi) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_authsource_is_invalid_(mongodb-x509) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_neither_devicename_nor_callback_specified_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_neither_provider_nor_callbacks_specified_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_no_token_audience_is_given_for_azure_provider_(mongodb-oidc) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_no_username/password_provided_(userinfo_implies_default_mechanism) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_no_username_(gssapi) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_no_username_(plain) PASSED
@@ -123,12 +124,12 @@ test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exc
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_no_username_(scram-sha-256) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_no_username_is_supplied_(mongodb-cr) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_no_username_provided_(userinfo_implies_default_mechanism) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_specified_devicename_is_not_supported_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_specified_environment_is_not_supported_(mongodb-oidc) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_supplied_a_password_(mongodb-x509) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_username_and_devicename_are_specified_(mongodb-oidc) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_username_and_no_password_(mongodb-aws) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_username_and_password_are_specified_(mongodb-oidc) PASSED
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_when_unsupported_auth_property_is_specified_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_username_and_password_is_specified_for_test_environment_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_if_username_is_specified_for_test_environment_(mongodb-oidc) PASSED
+test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_url-encode_a_token_resource_(mongodb-oidc) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_use_the_authsource_when_specified PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_use_the_authsource_when_specified_(mongodb-cr) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_use_the_authsource_when_specified_(plain) PASSED
@@ -141,10 +142,12 @@ test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_use_the_defa
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_use_username,_password_and_session_token_if_specified_(mongodb-aws) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_use_username_and_password_if_specified_(mongodb-aws) PASSED
 test/test_auth_spec.py::TestAuthSpec::test_connection-string_uri_with_no_auth-related_info_doesn't_create_credential PASSED
-test/test_auth_spec.py::TestUnifiedReauthenticateWithRetry::test_Read_command_should_reauthenticate_when_receive_ReauthenticationRequired_error_code_and_retryReads=true <- test/unified_format.py SKIPPED
-test/test_auth_spec.py::TestUnifiedReauthenticateWithRetry::test_Write_command_should_reauthenticate_when_receive_ReauthenticationRequired_error_code_and_retryWrites=true <- test/unified_format.py SKIPPED
-test/test_auth_spec.py::TestUnifiedReauthenticateWithoutRetry::test_Read_command_should_reauthenticate_when_receive_ReauthenticationRequired_error_code_and_retryReads=false <- test/unified_format.py SKIPPED
-test/test_auth_spec.py::TestUnifiedReauthenticateWithoutRetry::test_Write_command_should_reauthenticate_when_receive_ReauthenticationRequired_error_code_and_retryWrites=false <- test/unified_format.py SKIPPED
+test/test_auth_spec.py::TestUnifiedMongodbOidcNoRetry::test_A_read_operation_should_succeed <- test/unified_format.py SKIPPED
+test/test_auth_spec.py::TestUnifiedMongodbOidcNoRetry::test_A_write_operation_should_succeed <- test/unified_format.py SKIPPED
+test/test_auth_spec.py::TestUnifiedMongodbOidcNoRetry::test_Handshake_with_cached_token_should_use_speculative_authentication <- test/unified_format.py SKIPPED
+test/test_auth_spec.py::TestUnifiedMongodbOidcNoRetry::test_Handshake_without_cached_token_should_not_use_speculative_authentication <- test/unified_format.py SKIPPED
+test/test_auth_spec.py::TestUnifiedMongodbOidcNoRetry::test_Read_commands_should_reauthenticate_and_retry_when_a_ReauthenticationRequired_error_happens <- test/unified_format.py SKIPPED
+test/test_auth_spec.py::TestUnifiedMongodbOidcNoRetry::test_Write_commands_should_reauthenticate_and_retry_when_a_ReauthenticationRequired_error_happens <- test/unified_format.py SKIPPED
 test/test_binary.py::TestBinary::test_binary PASSED
 test/test_binary.py::TestBinary::test_buffer_protocol PASSED
 test/test_binary.py::TestBinary::test_equality PASSED
@@ -201,6 +204,7 @@ test/test_bson.py::TestBSON::test_encode_then_decode PASSED
 test/test_bson.py::TestBSON::test_encode_then_decode_any_mapping PASSED
 test/test_bson.py::TestBSON::test_encode_then_decode_any_mapping_legacy PASSED
 test/test_bson.py::TestBSON::test_encode_then_decode_legacy PASSED
+test/test_bson.py::TestBSON::test_encode_type_marker PASSED
 test/test_bson.py::TestBSON::test_encoding_defaultdict PASSED
 test/test_bson.py::TestBSON::test_exception_wrapping PASSED
 test/test_bson.py::TestBSON::test_invalid_decodes PASSED
@@ -483,6 +487,9 @@ test/test_change_stream.py::TestUnifiedChangeStreamsShowExpandedEvents::test_whe
 test/test_client.py::ClientUnitTest::test_client_options PASSED
 test/test_client.py::ClientUnitTest::test_connect_timeout PASSED
 test/test_client.py::ClientUnitTest::test_connection_timeout_ms_propagates_to_DNS_resolver PASSED
+test/test_client.py::ClientUnitTest::test_container_metadata PASSED
+test/test_client.py::ClientUnitTest::test_detected_environment_logging PASSED
+test/test_client.py::ClientUnitTest::test_detected_environment_warning PASSED
 test/test_client.py::ClientUnitTest::test_event_listeners PASSED
 test/test_client.py::ClientUnitTest::test_get_database PASSED
 test/test_client.py::ClientUnitTest::test_get_database_default PASSED
@@ -505,6 +512,7 @@ test/test_client.py::ClientUnitTest::test_uri_codec_options PASSED
 test/test_client.py::ClientUnitTest::test_uri_detection PASSED
 test/test_client.py::ClientUnitTest::test_uri_option_precedence PASSED
 test/test_client.py::ClientUnitTest::test_uri_security_options PASSED
+test/test_client.py::ClientUnitTest::test_validate_suggestion PASSED
 test/test_client.py::TestClient::test_auth_from_uri SKIPPED
 test/test_client.py::TestClient::test_auth_network_error SKIPPED
 test/test_client.py::TestClient::test_background_connections_do_not_hold_locks PASSED
@@ -567,7 +575,6 @@ test/test_client.py::TestClient::test_socketKeepAlive PASSED
 test/test_client.py::TestClient::test_socket_timeout PASSED
 test/test_client.py::TestClient::test_socket_timeout_ms_validation PASSED
 test/test_client.py::TestClient::test_srv_max_hosts_kwarg PASSED
-test/test_client.py::TestClient::test_srv_no_dnspython_error SKIPPED
 test/test_client.py::TestClient::test_stale_getmore SKIPPED (Not
 test/test_client.py::TestClient::test_timeouts PASSED
 test/test_client.py::TestClient::test_tz_aware PASSED
@@ -599,44 +606,6 @@ test/test_client_context.py::TestClientContext::test_enableTestCommands_is_disab
 test/test_client_context.py::TestClientContext::test_must_connect SKIPPED
 test/test_client_context.py::TestClientContext::test_serverless SKIPPED
 test/test_client_context.py::TestClientContext::test_setdefaultencoding_worked SKIPPED
-test/test_cmap.py::TestCMAP::test_1_client_connection_pool_options PASSED
-test/test_cmap.py::TestCMAP::test_2_all_client_pools_have_same_options PASSED
-test/test_cmap.py::TestCMAP::test_3_uri_connection_pool_options PASSED
-test/test_cmap.py::TestCMAP::test_4_subscribe_to_events PASSED
-test/test_cmap.py::TestCMAP::test_5_check_out_fails_auth_error PASSED
-test/test_cmap.py::TestCMAP::test_5_check_out_fails_connection_error PASSED
-test/test_cmap.py::TestCMAP::test_close_leaves_pool_unpaused PASSED
-test/test_cmap.py::TestCMAP::test_cmap_connection_must_have_id_must_have_an_ID_number_associated_with_it PASSED
-test/test_cmap.py::TestCMAP::test_cmap_connection_must_order_ids_must_have_IDs_assigned_in_order_of_creation PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkin_destroy_closed_must_destroy_checked_in_connection_if_pool_has_been_closed PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkin_destroy_stale_must_destroy_checked_in_connection_if_it_is_stale PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkin_make_available_must_make_valid_checked_in_connection_available PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkin_must_have_a_method_of_allowing_the_driver_to_check_in_a_connection PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_connection_must_be_able_to_check_out_a_connection PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_custom_maxConnecting_is_enforced_custom_maxConnecting_is_enforced SKIPPED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_error_closed_must_throw_error_if_checkOut_is_called_on_a_closed_pool PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_maxConnecting_is_enforced_maxConnecting_is_enforced SKIPPED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_maxConnecting_timeout_waiting_on_maxConnecting_is_limited_by_WaitQueueTimeoutMS SKIPPED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_minPoolSize_connection_maxConnecting_threads_blocked_by_maxConnecting_check_out_minPoolSize_connections SKIPPED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_multiple_must_be_able_to_check_out_multiple_connections_at_the_same_time PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_no_idle_must_destroy_and_must_not_check_out_an_idle_connection_if_found_while_iterating_available_connections PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_no_stale_must_destroy_and_must_not_check_out_a_stale_connection_if_found_while_iterating_available_connections PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_checkout_returned_connection_maxConnecting_threads_blocked_by_maxConnecting_check_out_returned_connections SKIPPED
-test/test_cmap.py::TestCMAP::test_cmap_pool_clear_clears_waitqueue_clearing_pool_clears_the_WaitQueue PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_clear_min_size_pool_clear_halts_background_minPoolSize_establishments PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_clear_paused_clearing_a_paused_pool_emits_no_events PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_clear_ready_after_clear,_cannot_check_out_connections_until_pool_ready PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_close_destroy_conns_When_a_pool_is_closed,_it_MUST_first_destroy_all_available_connections_in_that_pool PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_close_must_be_able_to_manually_close_a_pool PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_create_max_size_must_never_exceed_maxPoolSize_total_connections PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_create_min_size_error_error_during_minPoolSize_population_clears_pool SKIPPED
-test/test_cmap.py::TestCMAP::test_cmap_pool_create_min_size_must_be_able_to_start_a_pool_with_minPoolSize_connections PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_create_must_be_able_to_create_a_pool PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_create_with_options_must_be_able_to_start_a_pool_with_various_options_set PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_ready_pool_starts_as_cleared_and_becomes_ready PASSED
-test/test_cmap.py::TestCMAP::test_cmap_pool_ready_ready_readying_a_ready_pool_emits_no_events PASSED
-test/test_cmap.py::TestCMAP::test_cmap_wait_queue_timeout_must_aggressively_timeout_threads_enqueued_longer_than_waitQueueTimeoutMS PASSED
-test/test_cmap.py::TestCMAP::test_events_repr PASSED
 test/test_code.py::TestCode::test_code PASSED
 test/test_code.py::TestCode::test_equality PASSED
 test/test_code.py::TestCode::test_hash PASSED
@@ -759,6 +728,41 @@ test/test_collection_management.py::TestCollectionManagementModifyCollectionPreA
 test/test_collection_management.py::TestCollectionManagementTimeseriesCollection::test_createCollection_with_all_options <- test/unified_format.py SKIPPED
 test/test_collection_management.py::TestCollectionManagementTimeseriesCollection::test_createCollection_with_bucketing_options <- test/unified_format.py SKIPPED
 test/test_collection_management.py::TestCollectionManagementTimeseriesCollection::test_insertMany_with_duplicate_ids <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingCommand::test_A_failed_command <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingCommand::test_A_successful_command <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingDriverConnectionId::test_A_failed_command <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingDriverConnectionId::test_A_successful_command <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingNoHandshakeMessages::test_Handshake_commands_should_not_generate_log_messages <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingNoHeartbeatMessages::test_Heartbeat_commands_should_not_generate_log_messages <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingOperationId::test_Failed_bulk_write_command_log_message_includes_operationId <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingOperationId::test_Successful_bulk_write_command_log_messages_include_operationIds <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingPre_42ServerConnectionId::test_command_log_messages_do_not_include_server_connection_id <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_authenticate_command_and_resulting_server-generated_error_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_copydb_command_and_resulting_server-generated_error_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_copydbgetnonce_command_and_resulting_server-generated_error_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_copydbsaslstart_command_and_resulting_server-generated_error_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_createUser_command_and_resulting_server-generated_error_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_getnonce_command_and_server_reply_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_hello_with_speculative_authenticate_command_and_server_reply_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_hello_without_speculative_authenticate_command_and_server_reply_are_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_legacy_hello_with_speculative_authenticate_command_and_server_reply_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_legacy_hello_without_speculative_authenticate_command_and_server_reply_are_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_network_error_in_response_to_authenticate_is_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_network_error_in_response_to_copydb_is_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_network_error_in_response_to_copydbgetnonce_is_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_network_error_in_response_to_copydbsaslstart_is_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_network_error_in_response_to_createUser_is_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_network_error_in_response_to_getnonce_is_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_network_error_in_response_to_saslContinue_is_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_network_error_in_response_to_saslStart_is_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_network_error_in_response_to_updateUser_is_not_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_saslContinue_command_and_resulting_server-generated_error_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_saslStart_command_and_resulting_server-generated_error_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingRedactedCommands::test_updateUser_command_and_resulting_server-generated_error_are_redacted <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingServerConnectionId::test_command_log_messages_include_server_connection_id <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingServiceId::test_command_log_messages_include_serviceId_when_in_LB_mode <- test/unified_format.py SKIPPED
+test/test_command_logging.py::TestCommandLoggingServiceId::test_command_log_messages_omit_serviceId_when_not_in_LB_mode <- test/unified_format.py PASSED
+test/test_command_logging.py::TestCommandLoggingUnacknowledgedWrite::test_An_unacknowledged_write_generates_a_succeeded_log_message_with_ok:_1_reply <- test/unified_format.py PASSED
 test/test_command_monitoring.py::TestCommandMonitoringBulkWrite::test_A_successful_mixed_bulk_write <- test/unified_format.py PASSED
 test/test_command_monitoring.py::TestCommandMonitoringCommand::test_A_successful_command <- test/unified_format.py PASSED
 test/test_command_monitoring.py::TestCommandMonitoringDeleteMany::test_A_successful_deleteMany <- test/unified_format.py PASSED
@@ -775,6 +779,7 @@ test/test_command_monitoring.py::TestCommandMonitoringInsertMany::test_A_success
 test/test_command_monitoring.py::TestCommandMonitoringInsertMany::test_A_successful_insertMany_with_write_errors <- test/unified_format.py PASSED
 test/test_command_monitoring.py::TestCommandMonitoringInsertOne::test_A_successful_insertOne <- test/unified_format.py PASSED
 test/test_command_monitoring.py::TestCommandMonitoringInsertOne::test_A_successful_insertOne_with_write_errors <- test/unified_format.py PASSED
+test/test_command_monitoring.py::TestCommandMonitoringPre_42ServerConnectionId::test_command_events_do_not_include_server_connection_id <- test/unified_format.py SKIPPED
 test/test_command_monitoring.py::TestCommandMonitoringRedactedCommands::test_authenticate <- test/unified_format.py SKIPPED
 test/test_command_monitoring.py::TestCommandMonitoringRedactedCommands::test_copydb <- test/unified_format.py SKIPPED
 test/test_command_monitoring.py::TestCommandMonitoringRedactedCommands::test_copydbgetnonce <- test/unified_format.py SKIPPED
@@ -788,6 +793,7 @@ test/test_command_monitoring.py::TestCommandMonitoringRedactedCommands::test_leg
 test/test_command_monitoring.py::TestCommandMonitoringRedactedCommands::test_saslContinue <- test/unified_format.py SKIPPED
 test/test_command_monitoring.py::TestCommandMonitoringRedactedCommands::test_saslStart <- test/unified_format.py SKIPPED
 test/test_command_monitoring.py::TestCommandMonitoringRedactedCommands::test_updateUser <- test/unified_format.py SKIPPED
+test/test_command_monitoring.py::TestCommandMonitoringServerConnectionId::test_command_events_include_server_connection_id <- test/unified_format.py PASSED
 test/test_command_monitoring.py::TestCommandMonitoringUnacknowledgedBulkWrite::test_A_successful_unordered_bulk_write_with_an_unacknowledged_write_concern <- test/unified_format.py PASSED
 test/test_command_monitoring.py::TestCommandMonitoringUpdateMany::test_A_successful_updateMany <- test/unified_format.py PASSED
 test/test_command_monitoring.py::TestCommandMonitoringUpdateMany::test_A_successful_updateMany_with_write_errors <- test/unified_format.py PASSED
@@ -802,6 +808,53 @@ test/test_common.py::TestCommon::test_mongo_client PASSED
 test/test_common.py::TestCommon::test_uuid_representation PASSED
 test/test_common.py::TestCommon::test_validate_boolean PASSED
 test/test_common.py::TestCommon::test_write_concern PASSED
+test/test_connection_logging.py::TestConnectionLoggingConnectionLogging::test_Connection_checkout_fails_due_to_error_establishing_connection <- test/unified_format.py SKIPPED
+test/test_connection_logging.py::TestConnectionLoggingConnectionLogging::test_Create_a_client,_run_a_command,_and_close_the_client <- test/unified_format.py PASSED
+test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_Options_should_be_included_in_connection_pool_created_message_when_specified <- test/unified_format.py PASSED
+test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_maxConnecting_should_be_included_in_connection_pool_created_message_when_specified <- test/unified_format.py PASSED
+test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_waitQueueMultiple_should_be_included_in_connection_pool_created_message_when_specified <- test/unified_format.py SKIPPED
+test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_waitQueueSize_should_be_included_in_connection_pool_created_message_when_specified <- test/unified_format.py SKIPPED
+test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_waitQueueTimeoutMS_should_be_included_in_connection_pool_created_message_when_specified <- test/unified_format.py PASSED
+test/test_connection_monitoring.py::TestCMAP::test_1_client_connection_pool_options PASSED
+test/test_connection_monitoring.py::TestCMAP::test_2_all_client_pools_have_same_options PASSED
+test/test_connection_monitoring.py::TestCMAP::test_3_uri_connection_pool_options PASSED
+test/test_connection_monitoring.py::TestCMAP::test_4_subscribe_to_events PASSED
+test/test_connection_monitoring.py::TestCMAP::test_5_check_out_fails_auth_error PASSED
+test/test_connection_monitoring.py::TestCMAP::test_5_check_out_fails_connection_error PASSED
+test/test_connection_monitoring.py::TestCMAP::test_close_leaves_pool_unpaused PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_connection_must_have_id_must_have_an_ID_number_associated_with_it PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_connection_must_order_ids_must_have_IDs_assigned_in_order_of_creation PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkin_destroy_closed_must_destroy_checked_in_connection_if_pool_has_been_closed PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkin_destroy_stale_must_destroy_checked_in_connection_if_it_is_stale PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkin_make_available_must_make_valid_checked_in_connection_available PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkin_must_have_a_method_of_allowing_the_driver_to_check_in_a_connection PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_connection_must_be_able_to_check_out_a_connection PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_custom_maxConnecting_is_enforced_custom_maxConnecting_is_enforced SKIPPED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_error_closed_must_throw_error_if_checkOut_is_called_on_a_closed_pool PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_maxConnecting_is_enforced_maxConnecting_is_enforced SKIPPED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_maxConnecting_timeout_waiting_on_maxConnecting_is_limited_by_WaitQueueTimeoutMS SKIPPED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_minPoolSize_connection_maxConnecting_threads_blocked_by_maxConnecting_check_out_minPoolSize_connections SKIPPED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_multiple_must_be_able_to_check_out_multiple_connections_at_the_same_time PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_no_idle_must_destroy_and_must_not_check_out_an_idle_connection_if_found_while_iterating_available_connections PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_no_stale_must_destroy_and_must_not_check_out_a_stale_connection_if_found_while_iterating_available_connections PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_checkout_returned_connection_maxConnecting_threads_blocked_by_maxConnecting_check_out_returned_connections SKIPPED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_clear_clears_waitqueue_clearing_pool_clears_the_WaitQueue PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_clear_interrupting_pending_connections_clear_with_interruptInUseConnections_=_true_closes_pending_connections SKIPPED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_clear_min_size_pool_clear_halts_background_minPoolSize_establishments PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_clear_paused_clearing_a_paused_pool_emits_no_events PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_clear_ready_after_clear,_cannot_check_out_connections_until_pool_ready PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_clear_schedule_run_interruptInUseConnections_false_Pool_clear_SHOULD_schedule_the_next_background_thread_run_immediately_(interruptInUseConnections_=_false) PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_close_destroy_conns_When_a_pool_is_closed,_it_MUST_first_destroy_all_available_connections_in_that_pool PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_close_must_be_able_to_manually_close_a_pool PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_create_max_size_must_never_exceed_maxPoolSize_total_connections PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_create_min_size_error_error_during_minPoolSize_population_clears_pool SKIPPED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_create_min_size_must_be_able_to_start_a_pool_with_minPoolSize_connections PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_create_must_be_able_to_create_a_pool PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_create_with_options_must_be_able_to_start_a_pool_with_various_options_set PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_ready_pool_starts_as_cleared_and_becomes_ready PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_pool_ready_ready_readying_a_ready_pool_emits_no_events PASSED
+test/test_connection_monitoring.py::TestCMAP::test_connection_monitoring_wait_queue_timeout_must_aggressively_timeout_threads_enqueued_longer_than_waitQueueTimeoutMS PASSED
+test/test_connection_monitoring.py::TestCMAP::test_events_repr PASSED
 test/test_connections_survive_primary_stepdown_spec.py::TestConnectionsSurvivePrimaryStepDown::test_get_more_iteration SKIPPED
 test/test_connections_survive_primary_stepdown_spec.py::TestConnectionsSurvivePrimaryStepDown::test_interrupted_at_shutdown SKIPPED
 test/test_connections_survive_primary_stepdown_spec.py::TestConnectionsSurvivePrimaryStepDown::test_not_primary_keep_connection_pool SKIPPED
@@ -1803,7 +1856,7 @@ test/test_database.py::TestDatabase::test_mongos_response PASSED
 test/test_database.py::TestDatabase::test_password_digest PASSED
 test/test_database.py::TestDatabase::test_repr PASSED
 test/test_database.py::TestDatabase::test_validate_collection PASSED
-test/test_database.py::TestDatabase::test_validate_collection_background PASSED
+test/test_database.py::TestDatabase::test_validate_collection_background SKIPPED
 test/test_database.py::TestDatabase::test_with_options PASSED
 test/test_database.py::TestDatabaseAggregation::test_bool PASSED
 test/test_database.py::TestDatabaseAggregation::test_database_aggregation PASSED
@@ -2013,6 +2066,7 @@ test/test_discovery_and_monitoring.py::TestAllScenarios::test_single_too_new PAS
 test/test_discovery_and_monitoring.py::TestAllScenarios::test_single_too_old PASSED
 test/test_discovery_and_monitoring.py::TestAllScenarios::test_single_too_old_then_upgraded PASSED
 test/test_discovery_and_monitoring.py::TestClusterTimeComparison::test_cluster_time_comparison PASSED
+test/test_discovery_and_monitoring.py::TestHeartbeatStartOrdering::test_heartbeat_start_ordering PASSED
 test/test_discovery_and_monitoring.py::TestIgnoreStaleErrors::test_ignore_stale_connection_errors PASSED
 test/test_discovery_and_monitoring.py::TestPoolManagement::test_pool_unpause SKIPPED
 test/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_disabled_auto PASSED
@@ -2037,6 +2091,9 @@ test/test_discovery_and_monitoring.py::TestUnifiedHelloTimeout::test_Network_tim
 test/test_discovery_and_monitoring.py::TestUnifiedHelloTimeout::test_Network_timeout_on_Monitor_handshake <- test/unified_format.py SKIPPED
 test/test_discovery_and_monitoring.py::TestUnifiedInsertNetworkError::test_Reset_server_and_pool_after_network_error_on_insert <- test/unified_format.py SKIPPED
 test/test_discovery_and_monitoring.py::TestUnifiedInsertShutdownError::test_Concurrent_shutdown_error_on_insert <- test/unified_format.py SKIPPED
+test/test_discovery_and_monitoring.py::TestUnifiedInterruptInUsePoolClear::test_Connection_pool_clear_uses_interruptInUseConnections=true_after_monitor_timeout <- test/unified_format.py SKIPPED
+test/test_discovery_and_monitoring.py::TestUnifiedInterruptInUsePoolClear::test_Error_returned_from_connection_pool_clear_with_interruptInUseConnections=true_is_retryable <- test/unified_format.py SKIPPED
+test/test_discovery_and_monitoring.py::TestUnifiedInterruptInUsePoolClear::test_Error_returned_from_connection_pool_clear_with_interruptInUseConnections=true_is_retryable_for_write <- test/unified_format.py SKIPPED
 test/test_discovery_and_monitoring.py::TestUnifiedMinPoolSizeError::test_Network_error_on_minPoolSize_background_creation <- test/unified_format.py SKIPPED
 test/test_discovery_and_monitoring.py::TestUnifiedPoolClearedError::test_PoolClearedError_does_not_mark_server_unknown <- test/unified_format.py SKIPPED
 test/test_discovery_and_monitoring.py::TestUnifiedRediscoverQuicklyAfterStepDown::test_Rediscover_quickly_after_replSetStepDown <- test/unified_format.py SKIPPED
@@ -2094,6 +2151,7 @@ test/test_dns.py::TestDNSRepl::test_uri-with-admin-database SKIPPED (Not
 test/test_dns.py::TestDNSRepl::test_uri-with-auth SKIPPED (Not connected
 test/test_dns.py::TestDNSRepl::test_uri-with-port SKIPPED (Not connected
 test/test_dns.py::TestDNSRepl::test_uri-with-two-hosts SKIPPED (Not
+test/test_dns.py::TestDNSRepl::test_uri-with-uppercase-hostname SKIPPED
 test/test_dns.py::TestDNSSharded::test_srvMaxHosts-equal_to_srv_records SKIPPED
 test/test_dns.py::TestDNSSharded::test_srvMaxHosts-greater_than_srv_records SKIPPED
 test/test_dns.py::TestDNSSharded::test_srvMaxHosts-less_than_srv_records SKIPPED
@@ -2186,8 +2244,14 @@ test/test_encryption.py::TestKmsTLSOptions::test_02_azure SKIPPED
 test/test_encryption.py::TestKmsTLSOptions::test_03_gcp SKIPPED
 test/test_encryption.py::TestKmsTLSOptions::test_04_kmip SKIPPED
 test/test_encryption.py::TestKmsTLSOptions::test_05_tlsDisableOCSPEndpointCheck_is_permitted SKIPPED
+test/test_encryption.py::TestKmsTLSOptions::test_06_named_kms_providers_apply_tls_options_aws SKIPPED
+test/test_encryption.py::TestKmsTLSOptions::test_06_named_kms_providers_apply_tls_options_azure SKIPPED
+test/test_encryption.py::TestKmsTLSOptions::test_06_named_kms_providers_apply_tls_options_gcp SKIPPED
+test/test_encryption.py::TestKmsTLSOptions::test_06_named_kms_providers_apply_tls_options_kmip SKIPPED
 test/test_encryption.py::TestKmsTLSProse::test_invalid_hostname_in_kms_certificate SKIPPED
 test/test_encryption.py::TestKmsTLSProse::test_invalid_kms_certificate_expired SKIPPED
+test/test_encryption.py::TestNoSessionsSupport::test_explicit_session_errors_when_unsupported SKIPPED
+test/test_encryption.py::TestNoSessionsSupport::test_implicit_session_ignored_when_unsupported SKIPPED
 test/test_encryption.py::TestOnDemandAWSCredentials::test_01_failure SKIPPED
 test/test_encryption.py::TestOnDemandAWSCredentials::test_02_success SKIPPED
 test/test_encryption.py::TestQueryableEncryptionDocsExample::test_queryable_encryption SKIPPED
@@ -2501,6 +2565,7 @@ test/test_encryption.py::TestSpec::test_legacy_malformedCiphertext_Malformed_dat
 test/test_encryption.py::TestSpec::test_legacy_malformedCiphertext_Wrong_subtype SKIPPED
 test/test_encryption.py::TestSpec::test_legacy_maxWireVersion_operation_fails_with_maxWireVersion_<_8 SKIPPED
 test/test_encryption.py::TestSpec::test_legacy_missingKey_Insert_with_encryption_on_a_missing_key SKIPPED
+test/test_encryption.py::TestSpec::test_legacy_namedKMS_Automatically_encrypt_and_decrypt_with_a_named_KMS_provider SKIPPED
 test/test_encryption.py::TestSpec::test_legacy_noSchema_Insert_on_an_unencrypted_collection SKIPPED
 test/test_encryption.py::TestSpec::test_legacy_replaceOne_replaceOne_with_encryption SKIPPED
 test/test_encryption.py::TestSpec::test_legacy_timeoutMS_remaining_timeoutMS_applied_to_find_to_get_keyvault_data SKIPPED
@@ -2656,6 +2721,8 @@ test/test_gridfs_bucket.py::TestGridfs::test_rename PASSED
 test/test_gridfs_bucket.py::TestGridfs::test_threaded_reads PASSED
 test/test_gridfs_bucket.py::TestGridfs::test_threaded_writes PASSED
 test/test_gridfs_bucket.py::TestGridfs::test_unacknowledged PASSED
+test/test_gridfs_bucket.py::TestGridfs::test_upload_batching PASSED
+test/test_gridfs_bucket.py::TestGridfs::test_upload_bulk_write_error SKIPPED
 test/test_gridfs_bucket.py::TestGridfs::test_upload_ensures_index PASSED
 test/test_gridfs_bucket.py::TestGridfs::test_upload_from_stream PASSED
 test/test_gridfs_bucket.py::TestGridfs::test_upload_from_stream_with_id PASSED
@@ -2699,18 +2766,37 @@ test/test_gridfs_spec.py::TestGridfsUploadDisableMD5::test_upload_when_length_is
 test/test_heartbeat_monitoring.py::TestHeartbeatMonitoring::test_standalone PASSED
 test/test_heartbeat_monitoring.py::TestHeartbeatMonitoring::test_standalone_error PASSED
 test/test_index_management.py::TestCreateSearchIndex::test_inputs SKIPPED
-test/test_index_management.py::TestIndexManagementUnifiedTests::test_placeholder SKIPPED
+test/test_index_management.py::TestIndexManagementCreateSearchIndex::test_name_provided_for_an_index_definition <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementCreateSearchIndex::test_no_name_provided_for_an_index_definition <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementCreateSearchIndexes::test_empty_index_definition_array <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementCreateSearchIndexes::test_name_provided_for_an_index_definition <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementCreateSearchIndexes::test_no_name_provided_for_an_index_definition <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementDropSearchIndex::test_sends_the_correct_command <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementListSearchIndexes::test_aggregation_cursor_options_are_supported <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementListSearchIndexes::test_when_a_name_is_provided,_it_is_present_in_the_filter <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementListSearchIndexes::test_when_no_name_is_provided,_it_does_not_populate_the_filter <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementSearchIndexIgnoresReadWriteConcern::test_createSearchIndex_ignores_read_and_write_concern <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementSearchIndexIgnoresReadWriteConcern::test_createSearchIndexes_ignores_read_and_write_concern <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementSearchIndexIgnoresReadWriteConcern::test_dropSearchIndex_ignores_read_and_write_concern <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementSearchIndexIgnoresReadWriteConcern::test_listSearchIndexes_ignores_read_and_write_concern <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementSearchIndexIgnoresReadWriteConcern::test_updateSearchIndex_ignores_the_read_and_write_concern <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestIndexManagementUpdateSearchIndex::test_sends_the_correct_command <- test/unified_format.py SKIPPED
+test/test_index_management.py::TestSearchIndexIntegration::test_comment_field SKIPPED
 test/test_index_management.py::TestSearchIndexProse::test_case_1 SKIPPED
 test/test_index_management.py::TestSearchIndexProse::test_case_2 SKIPPED
 test/test_index_management.py::TestSearchIndexProse::test_case_3 SKIPPED
 test/test_index_management.py::TestSearchIndexProse::test_case_4 SKIPPED
 test/test_index_management.py::TestSearchIndexProse::test_case_5 SKIPPED
+test/test_index_management.py::TestSearchIndexProse::test_case_6 SKIPPED
+test/test_index_management.py::TestSearchIndexProse::test_case_7 SKIPPED
 test/test_json_util.py::TestJsonUtil::test_basic PASSED
 test/test_json_util.py::TestJsonUtil::test_binary PASSED
 test/test_json_util.py::TestJsonUtil::test_code PASSED
 test/test_json_util.py::TestJsonUtil::test_datetime PASSED
 test/test_json_util.py::TestJsonUtil::test_datetime_ms PASSED
 test/test_json_util.py::TestJsonUtil::test_dbref PASSED
+test/test_json_util.py::TestJsonUtil::test_encode_subclass PASSED
+test/test_json_util.py::TestJsonUtil::test_encode_type_marker PASSED
 test/test_json_util.py::TestJsonUtil::test_json_options_with_options PASSED
 test/test_json_util.py::TestJsonUtil::test_loads_bytes PASSED
 test/test_json_util.py::TestJsonUtil::test_loads_document_class PASSED
@@ -2771,6 +2857,9 @@ test/test_load_balancer.py::TestLoadBalancerTransactions::test_sessions_are_reus
 test/test_load_balancer.py::TestLoadBalancerTransactions::test_transaction_can_be_committed_multiple_times <- test/unified_format.py SKIPPED
 test/test_load_balancer.py::TestLoadBalancerWaitQueueTimeouts::test_wait_queue_timeout_errors_include_cursor_statistics <- test/unified_format.py SKIPPED
 test/test_load_balancer.py::TestLoadBalancerWaitQueueTimeouts::test_wait_queue_timeout_errors_include_transaction_statistics <- test/unified_format.py SKIPPED
+test/test_logger.py::TestLogger::test_configured_truncation_limit PASSED
+test/test_logger.py::TestLogger::test_default_truncation_limit PASSED
+test/test_logger.py::TestLogger::test_truncation_multi_byte_codepoints PASSED
 test/test_max_staleness.py::TestAllScenarios::test_max_staleness_ReplicaSetNoPrimary_DefaultNoMaxStaleness <- test/utils_selection_tests.py PASSED
 test/test_max_staleness.py::TestAllScenarios::test_max_staleness_ReplicaSetNoPrimary_LastUpdateTime <- test/utils_selection_tests.py PASSED
 test/test_max_staleness.py::TestAllScenarios::test_max_staleness_ReplicaSetNoPrimary_MaxStalenessTooSmall <- test/utils_selection_tests.py PASSED
@@ -2885,6 +2974,8 @@ test/test_pooling.py::TestPooling::test_socket_closed PASSED
 test/test_pooling.py::TestPooling::test_socket_timeout_message SKIPPED
 test/test_pooling.py::TestPooling::test_wait_queue_timeout PASSED
 test/test_pymongo.py::TestPyMongo::test_mongo_client_alias PASSED
+test/test_raw_bson.py::TestRawBSONDocument::test_contains_code_with_scope PASSED
+test/test_raw_bson.py::TestRawBSONDocument::test_contains_dbref PASSED
 test/test_raw_bson.py::TestRawBSONDocument::test_decode PASSED
 test/test_raw_bson.py::TestRawBSONDocument::test_empty_doc PASSED
 test/test_raw_bson.py::TestRawBSONDocument::test_invalid_bson_eoo PASSED
@@ -3001,6 +3092,7 @@ test/test_retryable_reads.py::TestClientOptions::test_default PASSED
 test/test_retryable_reads.py::TestClientOptions::test_kwargs PASSED
 test/test_retryable_reads.py::TestClientOptions::test_uri PASSED
 test/test_retryable_reads.py::TestPoolPausedError::test_pool_paused_error_is_retryable SKIPPED
+test/test_retryable_reads.py::TestRetryableReads::test_retryable_reads_in_sharded_cluster_multiple_available SKIPPED
 test/test_retryable_reads.py::TestSpec::test_legacy_aggregate_Aggregate_fails_on_first_attempt SKIPPED
 test/test_retryable_reads.py::TestSpec::test_legacy_aggregate_Aggregate_fails_on_second_attempt SKIPPED
 test/test_retryable_reads.py::TestSpec::test_legacy_aggregate_Aggregate_succeeds_on_first_attempt SKIPPED
@@ -3347,6 +3439,7 @@ test/test_retryable_reads.py::TestSpec::test_legacy_listIndexes_serverErrors_Lis
 test/test_retryable_reads.py::TestSpec::test_legacy_mapReduce_MapReduce_fails_with_retry_off SKIPPED
 test/test_retryable_reads.py::TestSpec::test_legacy_mapReduce_MapReduce_fails_with_retry_on SKIPPED
 test/test_retryable_reads.py::TestSpec::test_legacy_mapReduce_MapReduce_succeeds_with_retry_on SKIPPED
+test/test_retryable_reads_unified.py::TestUnifiedExceededTimeLimit::test_Find_succeeds_on_second_attempt_after_ExceededTimeLimit <- test/unified_format.py SKIPPED
 test/test_retryable_reads_unified.py::TestUnifiedHandshakeError::test_client_createChangeStream_succeeds_after_retryable_handshake_network_error <- test/unified_format.py SKIPPED
 test/test_retryable_reads_unified.py::TestUnifiedHandshakeError::test_client_createChangeStream_succeeds_after_retryable_handshake_server_error_(ShutdownInProgress) <- test/unified_format.py SKIPPED
 test/test_retryable_reads_unified.py::TestUnifiedHandshakeError::test_client_listDatabaseNames_succeeds_after_retryable_handshake_network_error <- test/unified_format.py SKIPPED
@@ -3379,6 +3472,7 @@ test/test_retryable_reads_unified.py::TestUnifiedHandshakeError::test_database_l
 test/test_retryable_reads_unified.py::TestUnifiedHandshakeError::test_database_listCollectionNames_succeeds_after_retryable_handshake_server_error_(ShutdownInProgress) <- test/unified_format.py SKIPPED
 test/test_retryable_reads_unified.py::TestUnifiedHandshakeError::test_database_listCollections_succeeds_after_retryable_handshake_network_error <- test/unified_format.py SKIPPED
 test/test_retryable_reads_unified.py::TestUnifiedHandshakeError::test_database_listCollections_succeeds_after_retryable_handshake_server_error_(ShutdownInProgress) <- test/unified_format.py SKIPPED
+test/test_retryable_reads_unified.py::TestUnifiedReadConcernMajorityNotAvailableYet::test_Find_succeeds_on_second_attempt_after_ReadConcernMajorityNotAvailableYet <- test/unified_format.py SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_All_commands_are_retried SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_Both_commands_are_retried_after_their_first_statement_fails SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_BulkWrite_with_unordered_execution SKIPPED
@@ -3390,87 +3484,87 @@ test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_Single-do
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_Single-document_write_following_updateMany_is_retried SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_Third_updateOne_is_never_committed SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_errorLabels_BulkWrite_fails_if_server_does_not_return_RetryableWriteError SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_errorLabels_BulkWrite_succeeds_after_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_errorLabels_BulkWrite_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_errorLabels_BulkWrite_succeeds_with_RetryableWriteError_from_server SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_serverErrors_BulkWrite_fails_with_a_RetryableWriteError_label_after_two_connection_failures SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_serverErrors_BulkWrite_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_bulkWrite_serverErrors_BulkWrite_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteMany_DeleteMany_ignores_retryWrites SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_DeleteOne_is_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_DeleteOne_is_never_committed SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_DeleteOne_is_not_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_errorLabels_DeleteOne_fails_if_server_does_not_return_RetryableWriteError SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_errorLabels_DeleteOne_succeeds_after_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_errorLabels_DeleteOne_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_errorLabels_DeleteOne_succeeds_with_RetryableWriteError_from_server SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_serverErrors_DeleteOne_fails_with_RetryableWriteError_label_after_two_connection_failures SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_serverErrors_DeleteOne_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_deleteOne_serverErrors_DeleteOne_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_FindOneAndDelete_is_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_FindOneAndDelete_is_never_committed SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_FindOneAndDelete_is_not_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_errorLabels_FindOneAndDelete_fails_if_server_does_not_return_RetryableWriteError SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_errorLabels_FindOneAndDelete_succeeds_after_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_errorLabels_FindOneAndDelete_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_errorLabels_FindOneAndDelete_succeeds_with_RetryableWriteError_from_server SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_serverErrors_FindOneAndDelete_fails_with_a_RetryableWriteError_label_after_two_connection_failures SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_serverErrors_FindOneAndDelete_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndDelete_serverErrors_FindOneAndDelete_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_FindOneAndReplace_is_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_FindOneAndReplace_is_never_committed SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_FindOneAndReplace_is_not_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_errorLabels_FindOneAndReplace_fails_if_server_does_not_return_RetryableWriteError SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_errorLabels_FindOneAndReplace_succeeds_after_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_errorLabels_FindOneAndReplace_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_errorLabels_FindOneAndReplace_succeeds_with_RetryableWriteError_from_server SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_serverErrors_FindOneAndReplace_fails_with_a_RetryableWriteError_label_after_two_connection_failures SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_serverErrors_FindOneAndReplace_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndReplace_serverErrors_FindOneAndReplace_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_FindOneAndUpdate_is_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_FindOneAndUpdate_is_never_committed SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_FindOneAndUpdate_is_not_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_errorLabels_FindOneAndUpdate_fails_if_server_does_not_return_RetryableWriteError SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_errorLabels_FindOneAndUpdate_succeeds_after_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_errorLabels_FindOneAndUpdate_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_errorLabels_FindOneAndUpdate_succeeds_with_RetryableWriteError_from_server SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_serverErrors_FindOneAndUpdate_fails_with_a_RetryableWriteError_label_after_two_connection_failures SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_serverErrors_FindOneAndUpdate_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_findOneAndUpdate_serverErrors_FindOneAndUpdate_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_InsertMany_fails_after_multiple_network_errors SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_InsertMany_succeeds_after_one_network_error SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_InsertMany_with_unordered_execution SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_errorLabels_InsertMany_fails_if_server_does_not_return_RetryableWriteError SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_errorLabels_InsertMany_succeeds_after_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_errorLabels_InsertMany_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_errorLabels_InsertMany_succeeds_with_RetryableWriteError_from_server SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_serverErrors_InsertMany_fails_with_a_RetryableWriteError_label_after_two_connection_failures SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_serverErrors_InsertMany_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertMany_serverErrors_InsertMany_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_InsertOne_is_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_InsertOne_is_never_committed SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_InsertOne_is_not_committed_on_first_attempt SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_fails_after_multiple_retryable_writeConcernErrors SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_fails_if_server_does_not_return_RetryableWriteError SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_ExceededTimeLimit SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_HostNotFound SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_HostUnreachable SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_InterruptedAtShutdown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_InterruptedDueToReplStateChange SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_NetworkTimeout SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_NotPrimaryNoSecondaryOk SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_NotPrimaryOrSecondary SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_NotWritablePrimary SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_ShutdownInProgress SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_SocketException SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_WriteConcernError_InterruptedAtShutdown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_WriteConcernError_InterruptedDueToReplStateChange SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_WriteConcernError_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_errorLabels_InsertOne_succeeds_with_RetryableWriteError_from_server SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_fails_after_Interrupted SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_fails_after_WriteConcernError_Interrupted SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_fails_after_WriteConcernError_WriteConcernFailed SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_fails_after_connection_failure_when_retryWrites_option_is_false SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_fails_after_multiple_retryable_writeConcernErrors SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_fails_with_a_RetryableWriteError_label_after_two_connection_failures SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_ExceededTimeLimit SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_HostNotFound SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_HostUnreachable SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_InterruptedAtShutdown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_InterruptedDueToReplStateChange SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_NetworkTimeout SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_NotPrimaryNoSecondaryOk SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_NotPrimaryOrSecondary SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_NotWritablePrimary SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_ShutdownInProgress SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_SocketException SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_WriteConcernError_InterruptedAtShutdown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_WriteConcernError_InterruptedDueToReplStateChange SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_WriteConcernError_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_insertOne_serverErrors_InsertOne_succeeds_after_connection_failure SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_ReplaceOne_is_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_ReplaceOne_is_never_committed SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_ReplaceOne_is_not_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_errorLabels_ReplaceOne_fails_if_server_does_not_return_RetryableWriteError SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_errorLabels_ReplaceOne_succeeds_after_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_errorLabels_ReplaceOne_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_errorLabels_ReplaceOne_succeeds_with_RetryableWriteError_from_server SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_serverErrors_ReplaceOne_fails_with_a_RetryableWriteError_label_after_two_connection_failures SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_serverErrors_ReplaceOne_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_replaceOne_serverErrors_ReplaceOne_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateMany_UpdateMany_ignores_retryWrites SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_UpdateOne_is_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_UpdateOne_is_never_committed SKIPPED
@@ -3479,15 +3573,16 @@ test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_UpdateOne
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_UpdateOne_with_upsert_is_never_committed SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_UpdateOne_with_upsert_is_not_committed_on_first_attempt SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_errorLabels_UpdateOne_fails_if_server_does_not_return_RetryableWriteError SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_errorLabels_UpdateOne_succeeds_after_PrimarySteppedDown SKIPPED
+test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_errorLabels_UpdateOne_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_errorLabels_UpdateOne_succeeds_with_RetryableWriteError_from_server SKIPPED
 test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_serverErrors_UpdateOne_fails_with_a_RetryableWriteError_label_after_two_connection_failures SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_serverErrors_UpdateOne_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_retryable_writes.py::TestAllScenarios::test_legacy_updateOne_serverErrors_UpdateOne_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
 test/test_retryable_writes.py::TestPoolPausedError::test_pool_paused_error_is_retryable SKIPPED
 test/test_retryable_writes.py::TestPoolPausedError::test_returns_original_error_code SKIPPED
 test/test_retryable_writes.py::TestRetryableWrites::test_batch_splitting SKIPPED
 test/test_retryable_writes.py::TestRetryableWrites::test_batch_splitting_retry_fails SKIPPED
 test/test_retryable_writes.py::TestRetryableWrites::test_retry_timeout_raises_original_error SKIPPED
+test/test_retryable_writes.py::TestRetryableWrites::test_retryable_writes_in_sharded_cluster_multiple_available SKIPPED
 test/test_retryable_writes.py::TestRetryableWrites::test_server_selection_timeout_not_retried PASSED
 test/test_retryable_writes.py::TestRetryableWrites::test_supported_single_statement_no_retry PASSED
 test/test_retryable_writes.py::TestRetryableWrites::test_supported_single_statement_supported_cluster SKIPPED
@@ -3518,6 +3613,9 @@ test/test_retryable_writes_unified.py::TestUnifiedHandshakeError::test_collectio
 test/test_retryable_writes_unified.py::TestUnifiedHandshakeError::test_collection_updateOne_succeeds_after_retryable_handshake_server_error_(ShutdownInProgress) <- test/unified_format.py SKIPPED
 test/test_retryable_writes_unified.py::TestUnifiedInsertOneNoWritesPerformedError::test_InsertOne_fails_after_NoWritesPerformed_error <- test/unified_format.py SKIPPED
 test/test_retryable_writes_unified.py::TestUnifiedInsertOneServerErrors::test_InsertOne_succeeds_after_retryable_writeConcernError <- test/unified_format.py SKIPPED
+test/test_retryable_writes_unified.py::TestUnifiedInsertOneServerErrors::test_RetryableWriteError_label_is_added_based_on_top-level_code_in_pre-4_4_server_response <- test/unified_format.py SKIPPED
+test/test_retryable_writes_unified.py::TestUnifiedInsertOneServerErrors::test_RetryableWriteError_label_is_added_based_on_writeConcernError_in_pre-4_4_mongod_response <- test/unified_format.py SKIPPED
+test/test_retryable_writes_unified.py::TestUnifiedInsertOneServerErrors::test_RetryableWriteError_label_is_not_added_based_on_writeConcernError_in_pre-4_4_mongos_response <- test/unified_format.py SKIPPED
 test/test_run_command.py::TestUnifiedRunCommand::test_always_attaches_$db_and_implicit_lsid_to_given_command_and_omits_default_readPreference <- test/unified_format.py PASSED
 test/test_run_command.py::TestUnifiedRunCommand::test_always_gossips_the_$clusterTime_on_the_sent_command <- test/unified_format.py SKIPPED
 test/test_run_command.py::TestUnifiedRunCommand::test_attaches_apiVersion_fields_to_given_command_when_stableApi_is_configured_on_the_client <- test/unified_format.py SKIPPED
@@ -3634,6 +3732,25 @@ test/test_server_selection_in_window.py::TestAllScenarios::test_in_window_three_
 test/test_server_selection_in_window.py::TestAllScenarios::test_in_window_two_choices_Better_of_two_choices_always_selected PASSED
 test/test_server_selection_in_window.py::TestAllScenarios::test_in_window_two_least_Two_tied_for_least_operations_share_all_selections PASSED
 test/test_server_selection_in_window.py::TestProse::test_load_balancing SKIPPED
+test/test_server_selection_logging.py::TestServerSelectionLoggingLoadBalanced::test_A_successful_operation_-_load_balanced_cluster <- test/unified_format.py SKIPPED
+test/test_server_selection_logging.py::TestServerSelectionLoggingOperationId::test_Failed_bulkWrite_operation:_log_messages_have_operationIds <- test/unified_format.py SKIPPED
+test/test_server_selection_logging.py::TestServerSelectionLoggingOperationId::test_Successful_bulkWrite_operation:_log_messages_have_operationIds <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingReplicaSet::test_A_successful_operation <- test/unified_format.py SKIPPED
+test/test_server_selection_logging.py::TestServerSelectionLoggingReplicaSet::test_Server_selection_fails_due_to_unsatisfiable_read_preference <- test/unified_format.py SKIPPED
+test/test_server_selection_logging.py::TestServerSelectionLoggingSharded::test_A_successful_operation <- test/unified_format.py SKIPPED
+test/test_server_selection_logging.py::TestServerSelectionLoggingSharded::test_Failure_due_to_unreachable_server <- test/unified_format.py SKIPPED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_A_successful_aggregate_operation <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_A_successful_count_operation <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_A_successful_delete_operation <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_A_successful_distinct_operation <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_A_successful_findAndModify_operation <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_A_successful_find_and_getMore_operation <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_A_successful_find_operation <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_A_successful_insert_operation <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_A_successful_update_operation <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_Failure_due_to_unreachable_server <- test/unified_format.py SKIPPED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_Successful_collection_management_operations <- test/unified_format.py PASSED
+test/test_server_selection_logging.py::TestServerSelectionLoggingStandalone::test_Successful_index_operations <- test/unified_format.py PASSED
 test/test_server_selection_rtt.py::TestAllScenarios::test_rtt_first_value PASSED
 test/test_server_selection_rtt.py::TestAllScenarios::test_rtt_first_value_zero PASSED
 test/test_server_selection_rtt.py::TestAllScenarios::test_rtt_value_test_1 PASSED
@@ -3731,6 +3848,7 @@ test/test_srv_polling.py::TestSrvPolling::test_addition PASSED
 test/test_srv_polling.py::TestSrvPolling::test_dns_failures PASSED
 test/test_srv_polling.py::TestSrvPolling::test_dns_record_lookup_empty PASSED
 test/test_srv_polling.py::TestSrvPolling::test_does_not_flipflop PASSED
+test/test_srv_polling.py::TestSrvPolling::test_import_dns_resolver PASSED
 test/test_srv_polling.py::TestSrvPolling::test_recover_from_initially_empty_seedlist PASSED
 test/test_srv_polling.py::TestSrvPolling::test_recover_from_initially_erroring_seedlist PASSED
 test/test_srv_polling.py::TestSrvPolling::test_removal PASSED
@@ -3738,6 +3856,7 @@ test/test_srv_polling.py::TestSrvPolling::test_replace_both_with_one PASSED
 test/test_srv_polling.py::TestSrvPolling::test_replace_both_with_two PASSED
 test/test_srv_polling.py::TestSrvPolling::test_replace_one PASSED
 test/test_srv_polling.py::TestSrvPolling::test_srv_service_name PASSED
+test/test_srv_polling.py::TestSrvPolling::test_srv_waits_to_poll PASSED
 test/test_ssl.py::TestClientSSL::test_config_ssl PASSED
 test/test_ssl.py::TestClientSSL::test_load_trusted_ca_certs PASSED
 test/test_ssl.py::TestClientSSL::test_no_ssl_module SKIPPED (The ssl
@@ -3772,6 +3891,7 @@ test/test_timestamp.py::TestTimestamp::test_timestamp PASSED
 test/test_topology.py::TestMultiServerTopology::test_close PASSED
 test/test_topology.py::TestMultiServerTopology::test_discover_set_name_from_primary PASSED
 test/test_topology.py::TestMultiServerTopology::test_discover_set_name_from_secondary PASSED
+test/test_topology.py::TestMultiServerTopology::test_filtered_server_selection PASSED
 test/test_topology.py::TestMultiServerTopology::test_handle_error PASSED
 test/test_topology.py::TestMultiServerTopology::test_handle_error_removed_server PASSED
 test/test_topology.py::TestMultiServerTopology::test_max_write_batch_size PASSED
@@ -3794,237 +3914,6 @@ test/test_topology.py::TestTopologyErrors::test_internal_monitor_error PASSED
 test/test_topology.py::TestTopologyErrors::test_pool_reset PASSED
 test/test_transactions.py::TestTransactions::test_create_collection SKIPPED
 test/test_transactions.py::TestTransactions::test_gridfs_does_not_support_transactions SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_abort_abort SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_abort_abort_directly_after_commit SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_abort_abort_directly_after_no-op_commit SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_abort_abort_does_not_apply_writeConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_abort_abort_ignores_TransactionAborted SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_abort_abort_without_start SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_abort_implicit_abort SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_abort_two_aborts SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_bulk_bulk SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_causal_consistency_causal_consistency SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_causal_consistency_causal_consistency_disabled SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_commit SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_commit_after_abort SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_commit_after_no-op_abort SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_commit_without_start SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_multiple_commits_after_empty_transaction SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_multiple_commits_in_a_row SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_rerun_commit_after_empty_transaction SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_reset_session_state_abort SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_reset_session_state_commit SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_commit_write_concern_error_on_commit SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_count_count SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_create_collection_explicitly_create_collection_using_create_command SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_create_collection_implicitly_create_collection_using_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_create_index_create_index_on_a_collection_created_within_the_same_transaction SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_create_index_create_index_on_a_non-existing_collection SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_delete_collection_writeConcern_ignored_for_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_delete_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_DuplicateKey_errors_do_not_contain_transient_label SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_NoSuchTransaction_errors_contain_transient_label SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_NoSuchTransaction_errors_on_commit_contain_transient_label SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_NotWritablePrimary_errors_contain_transient_label SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_WriteConflict_errors_contain_transient_label SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_add_RetryableWriteError_and_UnknownTransactionCommitResult_labels_to_connection_errors SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_add_RetryableWriteError_and_UnknownTransactionCommitResult_labels_to_retryable_commit_errors SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_add_RetryableWriteError_and_UnknownTransactionCommitResult_labels_to_writeConcernError_ShutdownInProgress SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_add_TransientTransactionError_label_to_connection_errors,_but_do_not_add_RetryableWriteError_label SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_add_UnknownTransactionCommitResult_label_to_MaxTimeMSExpired SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_add_UnknownTransactionCommitResult_label_to_writeConcernError_MaxTimeMSExpired SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_add_UnknownTransactionCommitResult_label_to_writeConcernError_WriteConcernFailed SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_add_UnknownTransactionCommitResult_label_to_writeConcernError_WriteConcernFailed_with_wtimeout SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_blockConnection_add_RetryableWriteError_and_UnknownTransactionCommitResult_labels_to_connection_errors SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_do_not_add_RetryableWriteError_label_to_writeConcernError_ShutdownInProgress_that_occurs_within_transaction SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_do_not_add_UnknownTransactionCommitResult_label_to_MaxTimeMSExpired_inside_transactions SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_omit_UnknownTransactionCommitResult_label_from_writeConcernError_UnknownReplWriteConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_error_labels_omit_UnknownTransactionCommitResult_label_from_writeConcernError_UnsatisfiableWriteConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_errors_commit_and_start_twice SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_errors_start_insert_start SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_errors_start_twice SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_errors_write_conflict_abort SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_errors_write_conflict_commit SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_findOneAndDelete_collection_writeConcern_ignored_for_findOneAndDelete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_findOneAndDelete_findOneAndDelete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_findOneAndReplace_collection_writeConcern_ignored_for_findOneAndReplace SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_findOneAndReplace_findOneAndReplace SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_findOneAndUpdate_collection_writeConcern_ignored_for_findOneAndUpdate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_findOneAndUpdate_findOneAndUpdate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_insert_collection_writeConcern_ignored_for_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_insert_collection_writeConcern_without_transaction SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_insert_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_insert_insert_with_session1 SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_isolation_one_transaction SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_isolation_two_transactions SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_aggregate_aggregate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_bulkWrite_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_bulkWrite_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_bulkWrite_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_countDocuments_aggregate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_deleteMany_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_deleteOne_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_distinct_distinct SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_findOneAndDelete_findAndModify SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_findOneAndReplace_findAndModify SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_findOneAndUpdate_findAndModify SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_find_find SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_insertMany_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_insertOne SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_insertOne_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_replaceOne_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_runCommand_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_updateMany_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_remain_pinned_after_non-transient_Interrupted_error_on_updateOne_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_aggregate_aggregate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_bulkWrite_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_bulkWrite_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_bulkWrite_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_countDocuments_aggregate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_deleteMany_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_deleteOne_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_distinct_distinct SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_findOneAndDelete_findAndModify SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_findOneAndReplace_findAndModify SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_findOneAndUpdate_findAndModify SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_find_find SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_insertMany_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_insertOne_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_replaceOne_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_runCommand_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_updateMany_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_ShutdownInProgress_error_on_updateOne_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_aggregate_aggregate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_bulkWrite_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_bulkWrite_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_bulkWrite_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_countDocuments_aggregate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_deleteMany_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_deleteOne_delete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_distinct_distinct SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_findOneAndDelete_findAndModify SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_findOneAndReplace_findAndModify SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_findOneAndUpdate_findAndModify SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_find_find SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_insertMany_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_insertOne_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_replaceOne_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_runCommand_insert SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_updateMany_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_connection_error_on_updateOne_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_pin_auto_unpin_after_transient_error_within_a_transaction SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_recovery_token_abortTransaction_sends_recoveryToken SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_recovery_token_commitTransaction_explicit_retries_include_recoveryToken SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_recovery_token_commitTransaction_retry_fails_on_new_mongos SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_mongos_recovery_token_commitTransaction_retry_succeeds_on_new_mongos SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_pin_mongos_countDocuments SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_pin_mongos_distinct SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_pin_mongos_find SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_pin_mongos_insertOne SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_pin_mongos_mixed_read_write_operations SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_pin_mongos_multiple_commits SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_pin_mongos_remain_pinned_after_non-transient_error_on_commit SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_pin_mongos_unpin_after_transient_error_within_a_transaction SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_pin_mongos_unpin_after_transient_error_within_a_transaction_and_commit SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_aggregate_ignores_collection_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_countDocuments_ignores_collection_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_distinct_ignores_collection_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_find_ignores_collection_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_only_first_aggregate_includes_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_only_first_countDocuments_includes_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_only_first_distinct_includes_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_only_first_find_includes_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_only_first_runCommand_includes_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_concern_runCommand_ignores_database_readConcern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_pref_default_readPreference SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_pref_nearest_readPreference SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_pref_primaryPreferred_readPreference SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_pref_primary_readPreference SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_pref_secondary_readPreference SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_read_pref_secondary_write_only SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_reads_aggregate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_reads_collection_readConcern_without_transaction SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_reads_distinct SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_reads_find SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_does_not_retry_after_Interrupted SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_does_not_retry_after_WriteConcernError_Interrupted SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_only_performs_a_single_retry SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_HostNotFound SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_HostUnreachable SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_InterruptedAtShutdown SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_InterruptedDueToReplStateChange SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_NetworkTimeout SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_NotPrimaryNoSecondaryOk SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_NotPrimaryOrSecondary SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_NotWritablePrimary SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_ShutdownInProgress SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_SocketException SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_WriteConcernError_InterruptedAtShutdown SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_WriteConcernError_InterruptedDueToReplStateChange SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_WriteConcernError_PrimarySteppedDown SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_abortTransaction_succeeds_after_connection_error SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_errorLabels_abortTransaction_does_not_retry_without_RetryableWriteError_label SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_abort_errorLabels_abortTransaction_only_retries_once_with_RetryableWriteError_from_server SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_applies_majority_write_concern_on_retries SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_fails_after_Interrupted SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_fails_after_two_errors SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_is_not_retried_after_UnsatisfiableWriteConcern_error SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_HostNotFound SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_HostUnreachable SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_InterruptedAtShutdown SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_InterruptedDueToReplStateChange SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_NetworkTimeout SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_NotPrimaryNoSecondaryOk SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_NotPrimaryOrSecondary SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_NotWritablePrimary SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_PrimarySteppedDown SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_ShutdownInProgress SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_SocketException SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_WriteConcernError_InterruptedAtShutdown SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_WriteConcernError_InterruptedDueToReplStateChange SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_WriteConcernError_PrimarySteppedDown SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_WriteConcernError_ShutdownInProgress SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_commitTransaction_succeeds_after_connection_error SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_errorLabels_commitTransaction_does_not_retry_error_without_RetryableWriteError_label SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_commit_errorLabels_commitTransaction_retries_once_with_RetryableWriteError_from_server SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_writes_increment_txnNumber SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_retryable_writes_writes_are_not_retried SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_run_command_run_command_fails_with_explicit_secondary_read_preference SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_run_command_run_command_fails_with_secondary_read_preference_from_transaction_options SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_run_command_run_command_with_default_read_preference SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_run_command_run_command_with_explicit_primary_read_preference SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_run_command_run_command_with_secondary_read_preference_in_client_option_and_primary_read_preference_in_transaction_options SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_client_writeConcern_ignored_for_bulk SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_defaultTransactionOptions_override_client_options SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_no_transaction_options_set SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_readConcern_local_in_defaultTransactionOptions SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_readPreference_inherited_from_client SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_readPreference_inherited_from_defaultTransactionOptions SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_repl_readConcern_snapshot_in_startTransaction_options SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_startTransaction_options_override_defaults SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_startTransaction_overrides_readPreference SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_transaction_options_inherited_from_client SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_transaction_options_transaction_options_inherited_from_defaultTransactionOptions SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_update_collections_writeConcern_ignored_for_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_update_update SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_abort_with_default SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_abort_with_majority SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_commit_with_default SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_commit_with_majority SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_start_with_implicit_unacknowledged_write_concern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_start_with_unacknowledged_write_concern SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_bulkWrite SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_deleteMany SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_deleteOne SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_findOneAndDelete SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_findOneAndReplace SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_findOneAndUpdate SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_insertMany SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_insertOne SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_updateMany SKIPPED
-test/test_transactions.py::TestTransactions::test_legacy_write_concern_unacknowledged_write_concern_coll_updateOne SKIPPED
 test/test_transactions.py::TestTransactions::test_transaction_direct_connection SKIPPED
 test/test_transactions.py::TestTransactions::test_transaction_options_validation SKIPPED
 test/test_transactions.py::TestTransactions::test_transaction_starts_with_batched_write SKIPPED
@@ -4037,36 +3926,145 @@ test/test_transactions.py::TestTransactionsConvenientAPI::test_callback_raises_c
 test/test_transactions.py::TestTransactionsConvenientAPI::test_callback_returns_value SKIPPED
 test/test_transactions.py::TestTransactionsConvenientAPI::test_commit_not_retried_after_timeout SKIPPED
 test/test_transactions.py::TestTransactionsConvenientAPI::test_in_transaction_property SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_callback_aborts_withTransaction_still_succeeds_if_callback_aborts_and_runs_extra_op SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_callback_aborts_withTransaction_succeeds_if_callback_aborts SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_callback_aborts_withTransaction_succeeds_if_callback_aborts_with_no_ops SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_callback_commits_withTransaction_still_succeeds_if_callback_commits_and_runs_extra_op SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_callback_commits_withTransaction_succeeds_if_callback_commits SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_callback_retry_callback_is_not_retried_after_non-transient_error_(DuplicateKeyError) SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_callback_retry_callback_succeeds_after_multiple_connection_errors SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_retry_commitTransaction_retry_only_overwrites_write_concern_w_option SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_retry_commitTransaction_succeeds_after_multiple_connection_errors SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_retry_commit_is_not_retried_after_MaxTimeMSExpired_error SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_retry_commit_is_retried_after_commitTransaction_UnknownTransactionCommitResult_(NotWritablePrimary) SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_transienttransactionerror_4_2_transaction_is_retried_after_commitTransaction_TransientTransactionError_(PreparedTransactionInProgress) SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_transienttransactionerror_transaction_is_retried_after_commitTransaction_TransientTransactionError_(LockTimeout) SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_transienttransactionerror_transaction_is_retried_after_commitTransaction_TransientTransactionError_(NoSuchTransaction) SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_transienttransactionerror_transaction_is_retried_after_commitTransaction_TransientTransactionError_(SnapshotUnavailable) SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_transienttransactionerror_transaction_is_retried_after_commitTransaction_TransientTransactionError_(WriteConflict) SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_withTransaction_commits_after_callback_returns SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_withTransaction_commits_after_callback_returns_(second_transaction) SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_writeconcernerror_commitTransaction_is_not_retried_after_MaxTimeMSExpired_error SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_writeconcernerror_commitTransaction_is_not_retried_after_UnknownReplWriteConcern_error SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_writeconcernerror_commitTransaction_is_not_retried_after_UnsatisfiableWriteConcern_error SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_writeconcernerror_commitTransaction_is_retried_after_WriteConcernFailed_non-timeout_error SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_commit_writeconcernerror_commitTransaction_is_retried_after_WriteConcernFailed_timeout_error SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_transaction_options_withTransaction_and_no_transaction_options_set SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_transaction_options_withTransaction_explicit_transaction_options SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_transaction_options_withTransaction_explicit_transaction_options_override_client_options SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_transaction_options_withTransaction_explicit_transaction_options_override_defaultTransactionOptions SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_transaction_options_withTransaction_inherits_transaction_options_from_client SKIPPED
-test/test_transactions.py::TestTransactionsConvenientAPI::test_transactions-convenient-api_transaction_options_withTransaction_inherits_transaction_options_from_defaultTransactionOptions SKIPPED
+test/test_transactions_unified.py::TestUnifiedAbort::test_abort <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedAbort::test_abort_directly_after_commit <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedAbort::test_abort_directly_after_no-op_commit <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedAbort::test_abort_does_not_apply_writeConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedAbort::test_abort_ignores_TransactionAborted <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedAbort::test_abort_without_start <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedAbort::test_implicit_abort <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedAbort::test_two_aborts <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedBulk::test_bulk <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCallbackAborts::test_withTransaction_still_succeeds_if_callback_aborts_and_runs_extra_op <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCallbackAborts::test_withTransaction_succeeds_if_callback_aborts <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCallbackAborts::test_withTransaction_succeeds_if_callback_aborts_with_no_ops <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCallbackCommits::test_withTransaction_still_succeeds_if_callback_commits_and_runs_extra_op <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCallbackCommits::test_withTransaction_succeeds_if_callback_commits <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCallbackRetry::test_callback_is_not_retried_after_non-transient_error_(DuplicateKeyError) <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCallbackRetry::test_callback_succeeds_after_multiple_connection_errors <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCausalConsistency::test_causal_consistency <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCausalConsistency::test_causal_consistency_disabled <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommit::test_withTransaction_commits_after_callback_returns <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommit::test_withTransaction_commits_after_callback_returns_(second_transaction) <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitRetry::test_commitTransaction_retry_only_overwrites_write_concern_w_option <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitRetry::test_commitTransaction_succeeds_after_multiple_connection_errors <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitRetry::test_commit_is_not_retried_after_MaxTimeMSExpired_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitRetryErrorLabels::test_commit_is_retried_after_commitTransaction_UnknownTransactionCommitResult_(NotWritablePrimary) <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitTransienttransactionerror::test_transaction_is_retried_after_commitTransaction_TransientTransactionError_(LockTimeout) <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitTransienttransactionerror::test_transaction_is_retried_after_commitTransaction_TransientTransactionError_(NoSuchTransaction) <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitTransienttransactionerror::test_transaction_is_retried_after_commitTransaction_TransientTransactionError_(SnapshotUnavailable) <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitTransienttransactionerror::test_transaction_is_retried_after_commitTransaction_TransientTransactionError_(WriteConflict) <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitTransienttransactionerror_4_2::test_transaction_is_retried_after_commitTransaction_TransientTransactionError_(PreparedTransactionInProgress) <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitWriteconcernerror::test_commitTransaction_is_not_retried_after_MaxTimeMSExpired_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitWriteconcernerror::test_commitTransaction_is_not_retried_after_UnknownReplWriteConcern_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitWriteconcernerror::test_commitTransaction_is_not_retried_after_UnsatisfiableWriteConcern_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitWriteconcernerror::test_commitTransaction_is_retried_after_WriteConcernFailed_non-timeout_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCommitWriteconcernerror::test_commitTransaction_is_retried_after_WriteConcernFailed_timeout_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCount::test_count <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCreateCollection::test_explicitly_create_collection_using_create_command <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCreateCollection::test_implicitly_create_collection_using_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCreateIndex::test_create_index_on_a_collection_created_within_the_same_transaction <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedCreateIndex::test_create_index_on_a_non-existing_collection <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedDelete::test_collection_writeConcern_ignored_for_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedDelete::test_delete <- test/unified_format.py SKIPPED
 test/test_transactions_unified.py::TestUnifiedDoNotRetryReadInTransaction::test_find_does_not_retry_in_a_transaction <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_DuplicateKey_errors_do_not_contain_transient_label <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_NoSuchTransaction_errors_contain_transient_label <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_NoSuchTransaction_errors_on_commit_contain_transient_label <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_NotWritablePrimary_errors_contain_transient_label <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_WriteConflict_errors_contain_transient_label <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_add_RetryableWriteError_and_UnknownTransactionCommitResult_labels_to_connection_errors <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_add_TransientTransactionError_label_to_connection_errors,_but_do_not_add_RetryableWriteError_label <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_add_UnknownTransactionCommitResult_label_to_MaxTimeMSExpired <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_add_UnknownTransactionCommitResult_label_to_writeConcernError_MaxTimeMSExpired <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_add_UnknownTransactionCommitResult_label_to_writeConcernError_WriteConcernFailed <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_add_UnknownTransactionCommitResult_label_to_writeConcernError_WriteConcernFailed_with_wtimeout <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_do_not_add_RetryableWriteError_label_to_writeConcernError_ShutdownInProgress_that_occurs_within_transaction <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_do_not_add_UnknownTransactionCommitResult_label_to_MaxTimeMSExpired_inside_transactions <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_omit_UnknownTransactionCommitResult_label_from_writeConcernError_UnknownReplWriteConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabels::test_omit_UnknownTransactionCommitResult_label_from_writeConcernError_UnsatisfiableWriteConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabelsBlockConnection::test_add_RetryableWriteError_and_UnknownTransactionCommitResult_labels_to_connection_errors <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabelsErrorLabels::test_add_RetryableWriteError_and_UnknownTransactionCommitResult_labels_to_retryable_commit_errors <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorLabelsErrorLabels::test_add_RetryableWriteError_and_UnknownTransactionCommitResult_labels_to_writeConcernError_ShutdownInProgress <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrors::test_commit_and_start_twice <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrors::test_start_insert_start <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrors::test_start_twice <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrors::test_write_conflict_abort <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrors::test_write_conflict_commit <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorsClient::test_Client_side_error_in_command_starting_transaction <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedErrorsClient::test_Client_side_error_when_transaction_is_in_progress <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedFindOneAndDelete::test_collection_writeConcern_ignored_for_findOneAndDelete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedFindOneAndDelete::test_findOneAndDelete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedFindOneAndReplace::test_collection_writeConcern_ignored_for_findOneAndReplace <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedFindOneAndReplace::test_findOneAndReplace <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedFindOneAndUpdate::test_collection_writeConcern_ignored_for_findOneAndUpdate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedFindOneAndUpdate::test_findOneAndUpdate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedInsert::test_collection_writeConcern_ignored_for_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedInsert::test_collection_writeConcern_without_transaction <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedInsert::test_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedInsert::test_insert_with_session1 <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedIsolation::test_one_transaction <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedIsolation::test_two_transactions <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_aggregate_aggregate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_bulkWrite_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_bulkWrite_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_bulkWrite_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_countDocuments_aggregate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_deleteMany_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_deleteOne_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_distinct_distinct <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_findOneAndDelete_findAndModify <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_findOneAndReplace_findAndModify <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_findOneAndUpdate_findAndModify <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_find_find <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_insertMany_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_insertOne <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_insertOne_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_replaceOne_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_runCommand_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_updateMany_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_updateOne_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_aggregate_aggregate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_bulkWrite_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_bulkWrite_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_bulkWrite_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_countDocuments_aggregate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_deleteMany_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_deleteOne_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_distinct_distinct <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_findOneAndDelete_findAndModify <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_findOneAndReplace_findAndModify <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_findOneAndUpdate_findAndModify <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_find_find <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_insertMany_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_insertOne_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_replaceOne_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_runCommand_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_updateMany_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_ShutdownInProgress_error_on_updateOne_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_aggregate_aggregate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_bulkWrite_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_bulkWrite_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_bulkWrite_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_countDocuments_aggregate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_deleteMany_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_deleteOne_delete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_distinct_distinct <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_findOneAndDelete_findAndModify <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_findOneAndReplace_findAndModify <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_findOneAndUpdate_findAndModify <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_find_find <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_insertMany_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_insertOne_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_replaceOne_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_runCommand_insert <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_updateMany_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_connection_error_on_updateOne_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosPinAuto::test_unpin_after_transient_error_within_a_transaction <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosRecoveryToken::test_abortTransaction_sends_recoveryToken <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosRecoveryToken::test_commitTransaction_explicit_retries_include_recoveryToken <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosRecoveryToken::test_commitTransaction_retry_fails_on_new_mongos <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedMongosRecoveryTokenErrorLabels::test_commitTransaction_retry_succeeds_on_new_mongos <- test/unified_format.py SKIPPED
 test/test_transactions_unified.py::TestUnifiedMongosUnpin::test_unpin_after_TransientTransactionError_error_on_abort <- test/unified_format.py SKIPPED
 test/test_transactions_unified.py::TestUnifiedMongosUnpin::test_unpin_after_TransientTransactionError_error_on_commit <- test/unified_format.py SKIPPED
 test/test_transactions_unified.py::TestUnifiedMongosUnpin::test_unpin_after_non-transient_error_on_abort <- test/unified_format.py SKIPPED
@@ -4074,8 +4072,112 @@ test/test_transactions_unified.py::TestUnifiedMongosUnpin::test_unpin_on_success
 test/test_transactions_unified.py::TestUnifiedMongosUnpin::test_unpin_when_a_new_transaction_is_started <- test/unified_format.py SKIPPED
 test/test_transactions_unified.py::TestUnifiedMongosUnpin::test_unpin_when_a_non-transaction_read_operation_uses_a_session <- test/unified_format.py SKIPPED
 test/test_transactions_unified.py::TestUnifiedMongosUnpin::test_unpin_when_a_non-transaction_write_operation_uses_a_session <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedPinMongos::test_countDocuments <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedPinMongos::test_distinct <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedPinMongos::test_find <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedPinMongos::test_insertOne <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedPinMongos::test_mixed_read_write_operations <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedPinMongos::test_multiple_commits <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedPinMongos::test_remain_pinned_after_non-transient_error_on_commit <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedPinMongos::test_unpin_after_transient_error_within_a_transaction <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedPinMongos::test_unpin_after_transient_error_within_a_transaction_and_commit <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_aggregate_ignores_collection_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_countDocuments_ignores_collection_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_distinct_ignores_collection_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_find_ignores_collection_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_only_first_aggregate_includes_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_only_first_countDocuments_includes_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_only_first_distinct_includes_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_only_first_find_includes_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_only_first_runCommand_includes_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadConcern::test_runCommand_ignores_database_readConcern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadPref::test_default_readPreference <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadPref::test_nearest_readPreference <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadPref::test_primaryPreferred_readPreference <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadPref::test_primary_readPreference <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadPref::test_secondary_readPreference <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReadPref::test_secondary_write_only <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReads::test_aggregate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReads::test_collection_readConcern_without_transaction <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReads::test_distinct <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedReads::test_find <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbort::test_abortTransaction_does_not_retry_after_Interrupted <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbort::test_abortTransaction_does_not_retry_after_WriteConcernError_Interrupted <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbort::test_abortTransaction_only_performs_a_single_retry <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbort::test_abortTransaction_succeeds_after_connection_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_does_not_retry_without_RetryableWriteError_label <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_only_retries_once_with_RetryableWriteError_from_server <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_HostNotFound <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_HostUnreachable <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_InterruptedAtShutdown <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_InterruptedDueToReplStateChange <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_NetworkTimeout <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_NotPrimaryNoSecondaryOk <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_NotPrimaryOrSecondary <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_NotWritablePrimary <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_PrimarySteppedDown <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_ShutdownInProgress <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_SocketException <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_WriteConcernError_InterruptedAtShutdown <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_WriteConcernError_InterruptedDueToReplStateChange <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_WriteConcernError_PrimarySteppedDown <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableAbortErrorLabels::test_abortTransaction_succeeds_after_WriteConcernError_ShutdownInProgress <- test/unified_format.py SKIPPED
 test/test_transactions_unified.py::TestUnifiedRetryableAbortHandshake::test_AbortTransaction_succeeds_after_handshake_network_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommit::test_commitTransaction_applies_majority_write_concern_on_retries <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommit::test_commitTransaction_fails_after_Interrupted <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommit::test_commitTransaction_fails_after_two_errors <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommit::test_commitTransaction_is_not_retried_after_UnsatisfiableWriteConcern_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommit::test_commitTransaction_succeeds_after_connection_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_does_not_retry_error_without_RetryableWriteError_label <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_retries_once_with_RetryableWriteError_from_server <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_HostNotFound <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_HostUnreachable <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_InterruptedAtShutdown <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_InterruptedDueToReplStateChange <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_NetworkTimeout <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_NotPrimaryNoSecondaryOk <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_NotPrimaryOrSecondary <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_NotWritablePrimary <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_PrimarySteppedDown <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_ShutdownInProgress <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_SocketException <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_WriteConcernError_InterruptedAtShutdown <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_WriteConcernError_InterruptedDueToReplStateChange <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_WriteConcernError_PrimarySteppedDown <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableCommitErrorLabels::test_commitTransaction_succeeds_after_WriteConcernError_ShutdownInProgress <- test/unified_format.py SKIPPED
 test/test_transactions_unified.py::TestUnifiedRetryableCommitHandshake::test_CommitTransaction_succeeds_after_handshake_network_error <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableWrites::test_increment_txnNumber <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRetryableWrites::test_writes_are_not_retried <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRunCommand::test_run_command_fails_with_explicit_secondary_read_preference <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRunCommand::test_run_command_fails_with_secondary_read_preference_from_transaction_options <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRunCommand::test_run_command_with_default_read_preference <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRunCommand::test_run_command_with_explicit_primary_read_preference <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedRunCommand::test_run_command_with_secondary_read_preference_in_client_option_and_primary_read_preference_in_transaction_options <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedTransactionOptions::test_withTransaction_and_no_transaction_options_set <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedTransactionOptions::test_withTransaction_explicit_transaction_options <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedTransactionOptions::test_withTransaction_explicit_transaction_options_override_client_options <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedTransactionOptions::test_withTransaction_explicit_transaction_options_override_defaultTransactionOptions <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedTransactionOptions::test_withTransaction_inherits_transaction_options_from_client <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedTransactionOptions::test_withTransaction_inherits_transaction_options_from_defaultTransactionOptions <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedTransactionOptionsRepl::test_readConcern_snapshot_in_startTransaction_options <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedUpdate::test_collections_writeConcern_ignored_for_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedUpdate::test_update <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_abort_with_default <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_abort_with_majority <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_commit_with_default <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_commit_with_majority <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_start_with_implicit_unacknowledged_write_concern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_start_with_unacknowledged_write_concern <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_bulkWrite <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_deleteMany <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_deleteOne <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_findOneAndDelete <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_findOneAndReplace <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_findOneAndUpdate <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_insertMany <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_insertOne <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_updateMany <- test/unified_format.py SKIPPED
+test/test_transactions_unified.py::TestUnifiedWriteConcern::test_unacknowledged_write_concern_coll_updateOne <- test/unified_format.py SKIPPED
 test/test_typing.py::TestCodecOptionsDocumentType::test_default PASSED
 test/test_typing.py::TestCodecOptionsDocumentType::test_explicit_document_type PASSED
 test/test_typing.py::TestCodecOptionsDocumentType::test_raw_bson_document_type PASSED
@@ -4153,13 +4255,19 @@ test/test_unified_format.py::TestUnifiedTestFormatValidPassCollectionDataCreateO
 test/test_unified_format.py::TestUnifiedTestFormatValidPassCreateEntitiesOperation::test_createEntities_operation <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassEntityClientCmapEvents::test_events_are_captured_during_an_operation <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassEntityClientStoreEventsAsEntities::test_storeEventsAsEntities_captures_events <- test/unified_format.py PASSED
+test/test_unified_format.py::TestUnifiedTestFormatValidPassEntityCommandCursor::test_createCommandCursor's_cursor_can_be_closed_and_will_perform_a_killCursors_operation <- test/unified_format.py PASSED
+test/test_unified_format.py::TestUnifiedTestFormatValidPassEntityCommandCursor::test_createCommandCursor_creates_a_cursor_and_stores_it_as_an_entity_that_can_be_iterated_one_document_at_a_time <- test/unified_format.py PASSED
+test/test_unified_format.py::TestUnifiedTestFormatValidPassEntityCommandCursor::test_runCursorCommand_creates_and_exhausts_cursor_by_running_getMores <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassEntityCursorIterateOnce::test_iterateOnce <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassEntityFindCursor::test_cursors_can_be_created,_iterated,_and_closed <- test/unified_format.py PASSED
+test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedErrorErrorResponse::test_Unsupported_command <- test/unified_format.py PASSED
+test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedErrorErrorResponse::test_Unsupported_query_operator <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientEventType::test_eventType_can_be_set_to_command_and_cmap <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientEventType::test_eventType_defaults_to_command_if_unset <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientIgnoreExtraEvents::test_ignoreExtraEvents_can_be_set_to_false <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientIgnoreExtraEvents::test_ignoreExtraEvents_can_be_set_to_true <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientIgnoreExtraEvents::test_ignoreExtraEvents_defaults_to_false_if_unset <- test/unified_format.py PASSED
+test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientTopologyDescriptionChangedEvent::test_can_assert_on_values_of_newDescription_and_previousDescription_fields <- test/unified_format.py SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassIgnoreResultAndError::test_operation_errors_are_ignored_if_ignoreResultAndError_is_true <- test/unified_format.py PASSED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersExplicitKmsCredentials::test_ <- test/unified_format.py SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersMixedKmsCredentialFields::test_ <- test/unified_format.py SKIPPED
@@ -4211,6 +4319,7 @@ test/test_unified_format.py::TestUnifiedTestFormatValidPassPocTransactionsConven
 test/test_unified_format.py::TestUnifiedTestFormatValidPassPocTransactionsConvenientApi::test_withTransaction_inherits_transaction_options_from_defaultTransactionOptions <- test/unified_format.py SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassPocTransactionsMongosPinAuto::test_remain_pinned_after_non-transient_Interrupted_error_on_insertOne <- test/unified_format.py SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassPocTransactionsMongosPinAuto::test_unpin_after_transient_error_within_a_transaction <- test/unified_format.py SKIPPED
+test/test_uri_parser.py::TestURI::test_handle_colon PASSED
 test/test_uri_parser.py::TestURI::test_normalize_options PASSED
 test/test_uri_parser.py::TestURI::test_parse_ssl_paths PASSED
 test/test_uri_parser.py::TestURI::test_parse_uri PASSED
@@ -4292,6 +4401,7 @@ test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-absolute_Unix_domain_socket_(absolute_path_with_spaces_in_path) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-absolute_Unix_domain_socket_(absolute_path_with_trailing_slash) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-absolute_Unix_domain_socket_(absolute_path_without_trailing_slash) PASSED
+test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-absolute_Unix_domain_socket_(mixed_case) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-absolute_Unix_domain_socket_with_auth_database_(absolute_path) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-absolute_Unix_domain_socket_with_path_resembling_socket_file_(absolute_path_with_trailing_slash) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-absolute_Unix_domain_socket_with_path_resembling_socket_file_(absolute_path_without_trailing_slash) PASSED
@@ -4303,6 +4413,7 @@ test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Multiple_Unix_domain_sockets_with_auth_and_query_string_(relative_path) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Multiple_hosts_(relative_path_and_hostname_resembling_relative_path) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Multiple_hosts_(relative_path_and_ipv4) PASSED
+test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Unix_domain_socket_(mixed_case) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Unix_domain_socket_(relative_path_with_spaces) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Unix_domain_socket_(relative_path_with_trailing_slash) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Unix_domain_socket_(relative_path_without_trailing_slash) PASSED
@@ -4486,442 +4597,140 @@ version must be at least 4.7.-1.0)
 version must be at least 4.7.-1.0)
 
 ================================== XFAILURES ===================================
-_ TestUnifiedTestFormatValidFailIgnoreResultAndError.test_operation_errors_are_not_ignored_if_ignoreResultAndError_is_false _
-
-self = <TestCaseFunction test_operation_errors_are_not_ignored_if_ignoreResultAndError_is_false>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailIgnoreResultAndError testMethod=test_operation_errors_are_not_ignored_if_ignoreResultAndError_is_false>
-rawexcinfo = (<class 'pymongo.errors.DuplicateKeyError'>, DuplicateKeyError("E11000 duplicate key error collection: database0Name.c...te key error collection: database0Name.coll0 index: _id_ dup key: { _id: 1 }'}"), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailEntityClientStoreEventsAsEntitiesConflictWithinSameArray.test_foo _
-
-self = <TestCaseFunction test_foo>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityClientStoreEventsAsEntitiesConflictWithinSameArray testMethod=test_foo>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Entity named events already in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-___ TestUnifiedTestFormatValidFailOperationFailure.test_Unsupported_command ____
-
-self = <TestCaseFunction test_Unsupported_command>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailOperationFailure testMethod=test_Unsupported_command>
-rawexcinfo = (<class 'pymongo.errors.OperationFailure'>, OperationFailure('no such command: \'unsupportedCommand\', full error: {\'...and: \'unsupportedCommand\'", \'code\': 59, \'codeName\': \'CommandNotFound\'}'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailOperationFailure.test_Unsupported_query_operator _
-
-self = <TestCaseFunction test_Unsupported_query_operator>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailOperationFailure testMethod=test_Unsupported_query_operator>
-rawexcinfo = (<class 'pymongo.errors.OperationFailure'>, OperationFailure("unknown top level operator: $unsupportedQueryOperator, f...level operator: $unsupportedQueryOperator', 'code': 2, 'codeName': 'BadValue'}"), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailEntityClientStoreEventsAsEntitiesConflictWithinDifferentArray.test_foo _
-
-self = <TestCaseFunction test_foo>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityClientStoreEventsAsEntitiesConflictWithinDifferentArray testMethod=test_foo>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Entity named events already in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailOperationUnsupported.test_Unsupported_operation _
-
-self = <TestCaseFunction test_Unsupported_operation>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailOperationUnsupported testMethod=test_Unsupported_operation>
-rawexcinfo = (<class 'TypeError'>, TypeError("'Database' object is not callable"), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailIgnoreResultAndErrorMalformed.test_malformed_operation_fails_if_ignoreResultAndError_is_true _
-
-self = <TestCaseFunction test_malformed_operation_fails_if_ignoreResultAndError_is_true>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailIgnoreResultAndErrorMalformed testMethod=test_malformed_operation_fails_if_ignoreResultAndError_is_true>
-rawexcinfo = (<class 'TypeError'>, TypeError("insert_one() got an unexpected keyword argument 'foo'"), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailReturnDocumentEnumInvalid.test_FindOneAndReplace_returnDocument_invalid_enum_value _
-
-self = <TestCaseFunction test_FindOneAndReplace_returnDocument_invalid_enum_value>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailReturnDocumentEnumInvalid testMethod=test_FindOneAndReplace_returnDocument_invalid_enum_value>
-rawexcinfo = (<class 'AttributeError'>, AttributeError("type object 'ReturnDocument' has no attribute 'INVALID'"), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailReturnDocumentEnumInvalid.test_FindOneAndUpdate_returnDocument_invalid_enum_value _
-
-self = <TestCaseFunction test_FindOneAndUpdate_returnDocument_invalid_enum_value>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailReturnDocumentEnumInvalid testMethod=test_FindOneAndUpdate_returnDocument_invalid_enum_value>
-rawexcinfo = (<class 'AttributeError'>, AttributeError("type object 'ReturnDocument' has no attribute 'INVALID'"), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailEntityFindCursorMalformed.test_createFindCursor_fails_if_filter_is_not_specified _
-
-self = <TestCaseFunction test_createFindCursor_fails_if_filter_is_not_specified>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityFindCursorMalformed testMethod=test_createFindCursor_fails_if_filter_is_not_specified>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('createFindCursor requires a "filter" argument'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailEntityClientStoreEventsAsEntitiesConflictWithClientId.test_foo _
-
-self = <TestCaseFunction test_foo>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityClientStoreEventsAsEntitiesConflictWithClientId testMethod=test_foo>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Entity named client0 already in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_____ TestUnifiedTestFormatValidFailEntityBucketDatabaseUndefined.test_foo _____
-
-self = <TestCaseFunction test_foo>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityBucketDatabaseUndefined testMethod=test_foo>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Could not find entity named foo in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-___ TestUnifiedTestFormatValidFailEntityCollectionDatabaseUndefined.test_foo ___
-
-self = <TestCaseFunction test_foo>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityCollectionDatabaseUndefined testMethod=test_foo>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Could not find entity named foo in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_____ TestUnifiedTestFormatValidFailEntityDatabaseClientUndefined.test_foo _____
-
-self = <TestCaseFunction test_foo>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityDatabaseClientUndefined testMethod=test_foo>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Could not find entity named foo in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailAssertNumberConnectionsCheckedOut.test_operation_fails_if_client_entity_does_not_exist _
-
-self = <TestCaseFunction test_operation_fails_if_client_entity_does_not_exist>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailAssertNumberConnectionsCheckedOut testMethod=test_operation_fails_if_client_entity_does_not_exist>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Could not find entity named client1 in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailAssertNumberConnectionsCheckedOut.test_operation_fails_if_client_field_is_not_specified _
-
-self = <TestCaseFunction test_operation_fails_if_client_field_is_not_specified>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailAssertNumberConnectionsCheckedOut testMethod=test_operation_fails_if_client_field_is_not_specified>
-rawexcinfo = (<class 'KeyError'>, KeyError('client'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailAssertNumberConnectionsCheckedOut.test_operation_fails_if_connections_field_is_not_specified _
-
-self = <TestCaseFunction test_operation_fails_if_connections_field_is_not_specified>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailAssertNumberConnectionsCheckedOut testMethod=test_operation_fails_if_connections_field_is_not_specified>
-rawexcinfo = (<class 'KeyError'>, KeyError('connections'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailAssertNumberConnectionsCheckedOut.test_operation_fails_if_number_of_connections_is_incorrect _
-
-self = <TestCaseFunction test_operation_fails_if_number_of_connections_is_incorrect>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailAssertNumberConnectionsCheckedOut testMethod=test_operation_fails_if_number_of_connections_is_incorrect>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('1 != 0'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-___ TestUnifiedTestFormatValidFailEntityClientApiVersionUnsupported.test_foo ___
-
-self = <TestCaseFunction test_foo>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityClientApiVersionUnsupported testMethod=test_foo>
-rawexcinfo = (<class 'ValueError'>, ValueError('Unknown ServerApi version: server_will_never_support_this_api_version'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailEntityFindCursor.test_close_fails_if_it_references_a_nonexistent_entity _
-
-self = <TestCaseFunction test_close_fails_if_it_references_a_nonexistent_entity>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityFindCursor testMethod=test_close_fails_if_it_references_a_nonexistent_entity>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Could not find entity named cursor0 in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_ TestUnifiedTestFormatValidFailEntityFindCursor.test_iterateUntilDocumentOrError_fails_if_it_references_a_nonexistent_entity _
-
-self = <TestCaseFunction test_iterateUntilDocumentOrError_fails_if_it_references_a_nonexistent_entity>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntityFindCursor testMethod=test_iterateUntilDocumentOrError_fails_if_it_references_a_nonexistent_entity>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Could not find entity named cursor0 in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
-_____ TestUnifiedTestFormatValidFailEntitySessionClientUndefined.test_foo ______
-
-self = <TestCaseFunction test_foo>
-testcase = <test.test_unified_format.TestUnifiedTestFormatValidFailEntitySessionClientUndefined testMethod=test_foo>
-rawexcinfo = (<class 'AssertionError'>, AssertionError('Could not find entity named foo in map'), <traceback object at $(POINTER)>)
-reason = ''
-
-    def addExpectedFailure(
-        self,
-        testcase: "unittest.TestCase",
-        rawexcinfo: "_SysExcInfoType",
-        reason: str = "",
-    ) -> None:
-        try:
->           xfail(str(reason))
-E           _pytest.outcomes.XFailed
-
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:282: XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
 =============================== warnings summary ===============================
-test/test_auth_spec.py::TestAuthSpec::test_connection-string_should_throw_an_exception_when_unsupported_auth_property_is_specified_(mongodb-oidc)
-  $(@D)/pymongo/uri_parser.py:321: UserWarning: UnsupportedProperty is not a supported auth mechanism property. Must be one of (LIST).
+test/test_client.py::TestClient::test_compression
+  $(@D)/pymongo/common.py:863: UserWarning: Unsupported compressor: foobar
+    validated = validator(opt, value)
+
+test/test_client.py::TestClient::test_compression
+  $(@D)/pymongo/uri_parser.py:313: UserWarning: zlibcompressionlevel must be between -1 and 9, not 10.
     return get_validated_options(opts, warn)
 
 test/test_client.py::TestClient::test_compression
-  $(@D)/pymongo/common.py:860: UserWarning: Unsupported compressor: foobar
-    value = validator(opt, value)  # noqa: PLW2901
-
-test/test_client.py::TestClient::test_compression
-  $(@D)/pymongo/uri_parser.py:321: UserWarning: zlibcompressionlevel must be between -1 and 9, not 10.
+  $(@D)/pymongo/uri_parser.py:313: UserWarning: zlibcompressionlevel must be between -1 and 9, not -2.
     return get_validated_options(opts, warn)
 
 test/test_client.py::TestClient::test_compression
-  $(@D)/pymongo/uri_parser.py:321: UserWarning: zlibcompressionlevel must be between -1 and 9, not -2.
-    return get_validated_options(opts, warn)
-
-test/test_client.py::TestClient::test_compression
-  $(@D)/pymongo/common.py:860: UserWarning: Wire protocol compression with snappy is not available. You must install the python-snappy module for snappy support.
-    value = validator(opt, value)  # noqa: PLW2901
+  $(@D)/pymongo/common.py:863: UserWarning: Wire protocol compression with snappy is not available. You must install the python-snappy module for snappy support.
+    validated = validator(opt, value)
 
 test/test_client.py::TestClient::test_server_selection_timeout
-  $(@D)/pymongo/uri_parser.py:321: UserWarning: serverselectiontimeoutms must be greater than 0 and less than one billion
+  $(@D)/pymongo/uri_parser.py:313: UserWarning: serverselectiontimeoutms must be greater than 0 and less than one billion
     return get_validated_options(opts, warn)
 
 test/test_client.py::TestClient::test_server_selection_timeout
-  $(@D)/pymongo/uri_parser.py:321: UserWarning: serverselectiontimeoutms must be an integer or float
+  $(@D)/pymongo/uri_parser.py:313: UserWarning: serverselectiontimeoutms must be an integer or float
     return get_validated_options(opts, warn)
 
 test/test_collection.py::TestCollection::test_cursor_timeout
 test/test_cursor.py::TestCursor::test_add_remove_option
 test/test_cursor.py::TestCursor::test_clone
 test/test_monitoring.py::TestCommandMonitoring::test_find_options
-  $(@D)/pymongo/collection.py:1697: UserWarning: use an explicit session with no_cursor_timeout=True otherwise the cursor may still timeout after 30 minutes, for more info see https://mongodb.com/docs/v4.4/reference/method/cursor.noCursorTimeout/#session-idle-timeout-overrides-nocursortimeout
+  $(@D)/pymongo/collection.py:1685: UserWarning: use an explicit session with no_cursor_timeout=True otherwise the cursor may still timeout after 30 minutes, for more info see https://mongodb.com/docs/v4.4/reference/method/cursor.noCursorTimeout/#session-idle-timeout-overrides-nocursortimeout
     return Cursor(self, *args, **kwargs)
+
+test/test_custom_types.py::TestGridFileCustomType::test_grid_out_custom_opts
+  $(@D)/test/test_custom_types.py:783: DeprecationWarning: GridOut property 'contentType' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual("text/html", two.content_type)
+
+test/test_custom_types.py::TestGridFileCustomType::test_grid_out_custom_opts
+  $(@D)/test/test_custom_types.py:786: DeprecationWarning: GridOut property 'aliases' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(["foo"], two.aliases)
+
+test/test_custom_types.py::TestGridFileCustomType::test_grid_out_custom_opts
+  $(@D)/test/test_custom_types.py:789: DeprecationWarning: GridOut property 'md5' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(None, two.md5)
+
+test/test_grid_file.py::TestGridFileNoConnect::test_grid_in_custom_opts
+  $(@D)/test/test_grid_file.py:75: DeprecationWarning: GridIn property 'contentType' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual("text/html", a.content_type)
+
+test/test_grid_file.py::TestGridFile::test_grid_in_default_opts
+  $(@D)/test/test_grid_file.py:152: DeprecationWarning: GridIn property 'contentType' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(None, a.content_type)
+
+test/test_grid_file.py::TestGridFile::test_grid_in_default_opts
+  $(@D)/gridfs/grid_file.py:292: DeprecationWarning: GridIn property 'contentType' is deprecated and will be removed in PyMongo 5.0
+    object.__setattr__(self, name, value)
+
+test/test_grid_file.py::TestGridFile::test_grid_in_default_opts
+  $(@D)/test/test_grid_file.py:201: DeprecationWarning: GridIn property 'md5' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(None, a.md5)
+
+test/test_grid_file.py::TestGridFile::test_grid_in_default_opts
+  $(@D)/test/test_grid_file.py:208: DeprecationWarning: GridOut property 'aliases' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(a.aliases, b.aliases)
+
+test/test_grid_file.py::TestGridFile::test_grid_out_custom_opts
+  $(@D)/test/test_grid_file.py:285: DeprecationWarning: GridOut property 'contentType' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual("text/html", two.content_type)
+
+test/test_grid_file.py::TestGridFile::test_grid_out_custom_opts
+  $(@D)/test/test_grid_file.py:288: DeprecationWarning: GridOut property 'aliases' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(["foo"], two.aliases)
+
+test/test_grid_file.py::TestGridFile::test_grid_out_custom_opts
+  $(@D)/test/test_grid_file.py:291: DeprecationWarning: GridOut property 'md5' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(None, two.md5)
+
+test/test_grid_file.py::TestGridFile::test_grid_out_default_opts
+  $(@D)/test/test_grid_file.py:225: DeprecationWarning: GridOut property 'contentType' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(None, b.content_type)
+
+test/test_grid_file.py::TestGridFile::test_grid_out_default_opts
+  $(@D)/test/test_grid_file.py:230: DeprecationWarning: GridOut property 'aliases' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(None, b.aliases)
+
+test/test_grid_file.py::TestGridFile::test_grid_out_default_opts
+  $(@D)/test/test_grid_file.py:232: DeprecationWarning: GridOut property 'md5' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(None, b.md5)
+
+test/test_grid_file.py::TestGridFile::test_md5
+  $(@D)/test/test_grid_file.py:122: DeprecationWarning: GridIn property 'md5' is deprecated and will be removed in PyMongo 5.0
+    self.assertEqual(None, f.md5)
+
+test/test_gridfs.py::TestGridfs::test_md5
+  $(@D)/test/test_gridfs.py:495: DeprecationWarning: GridIn property 'md5' is deprecated and will be removed in PyMongo 5.0
+    self.assertIsNone(gin.md5)
+
+test/test_gridfs.py::TestGridfs::test_md5
+  $(@D)/test/test_gridfs.py:498: DeprecationWarning: GridOut property 'md5' is deprecated and will be removed in PyMongo 5.0
+    self.assertIsNone(gout.md5)
+
+test/test_gridfs_bucket.py::TestGridfs::test_md5
+  $(@D)/test/test_gridfs_bucket.py:467: DeprecationWarning: GridIn property 'md5' is deprecated and will be removed in PyMongo 5.0
+    self.assertIsNone(gin.md5)
+
+test/test_gridfs_bucket.py::TestGridfs::test_md5
+  $(@D)/test/test_gridfs_bucket.py:470: DeprecationWarning: GridOut property 'md5' is deprecated and will be removed in PyMongo 5.0
+    self.assertIsNone(gout.md5)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/xunit-results/TEST-results.xml -
 ============================= slowest 5 durations ==============================
 =========================== short test summary info ============================
-======== 1940 passed, 2440 skipped, 22 xfailed, 11 warnings ========
+======== 2000 passed, 2497 skipped, 22 xfailed, 29 warnings ========
   py$(PYV): OK
   congratulations :)

@@ -3,9 +3,10 @@ py$(PYV): commands[0]> python -m pytest --benchmark-disable $(@D)/tests/
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
+benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 2149 items
+collecting ... collected 2161 items
 
 tests/benchmark/test_baseline_benchmarks.py::TestEstablishBaselineBenchmarks::test_baseline_benchmark_check_parallel_j2 PASSED
 tests/benchmark/test_baseline_benchmarks.py::TestEstablishBaselineBenchmarks::test_baseline_benchmark_j1 PASSED
@@ -32,6 +33,7 @@ tests/checkers/unittest_base_checker.py::test_base_checker_doc PASSED
 tests/checkers/unittest_base_checker.py::test_base_checker_invalid_message PASSED
 tests/checkers/unittest_base_checker.py::test_base_checker_ordering PASSED
 tests/checkers/unittest_deprecated.py::TestDeprecatedChecker::test_class_deprecated_arguments PASSED
+tests/checkers/unittest_deprecated.py::TestDeprecatedChecker::test_deprecated_attribute PASSED
 tests/checkers/unittest_deprecated.py::TestDeprecatedChecker::test_deprecated_class_call PASSED
 tests/checkers/unittest_deprecated.py::TestDeprecatedChecker::test_deprecated_class_import PASSED
 tests/checkers/unittest_deprecated.py::TestDeprecatedChecker::test_deprecated_class_import_from PASSED
@@ -333,8 +335,8 @@ tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_nam
 tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_name[utf 8-utf-8] PASSED
 tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_name[utf-16-utf-16] PASSED
 tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_name[utf-32-utf-32] PASSED
-tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_name[utf-8-utf-80] PASSED
-tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_name[utf-8-utf-81] PASSED
+tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_name[utf-8-utf-8_0] PASSED
+tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_name[utf-8-utf-8_1] PASSED
 tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_name[utf-8sig-utf-8] PASSED
 tests/checkers/unittest_unicode/unittest_functions.py::test__normalize_codec_name[utf8-utf-8] PASSED
 tests/checkers/unittest_unicode/unittest_functions.py::test_line_length[linux] PASSED
@@ -490,6 +492,7 @@ tests/config/test_find_default_config_files.py::test_permission_error PASSED
 tests/config/test_find_default_config_files.py::test_pylintrc PASSED
 tests/config/test_find_default_config_files.py::test_pylintrc_parentdir PASSED
 tests/config/test_find_default_config_files.py::test_pylintrc_parentdir_no_package PASSED
+tests/config/test_find_default_config_files.py::test_pylintrc_toml_parentdir PASSED
 tests/config/test_find_default_config_files.py::test_pyproject_toml_parentdir PASSED
 tests/config/test_find_default_config_files.py::test_toml_has_config[(not toml valid)-False] PASSED
 tests/config/test_find_default_config_files.py::test_toml_has_config[-False] PASSED
@@ -562,6 +565,8 @@ tests/lint/test_caching.py::test_save_and_load_result[.tests/] PASSED
 tests/lint/test_caching.py::test_save_and_load_result[.tests/a/path/] PASSED
 tests/lint/test_pylinter.py::test_crash_during_linting PASSED
 tests/lint/test_pylinter.py::test_crash_in_file PASSED
+tests/lint/test_pylinter.py::test_open_pylinter_denied_modules PASSED
+tests/lint/test_pylinter.py::test_open_pylinter_prefer_stubs PASSED
 tests/lint/test_run_pylint.py::test_run_pylint_with_invalid_argument PASSED
 tests/lint/test_run_pylint.py::test_run_pylint_with_invalid_argument_in_config PASSED
 tests/lint/test_utils.py::test_get_fatal_error_message PASSED
@@ -591,6 +596,7 @@ tests/lint/unittest_lint.py::test_enable_message_category PASSED
 tests/lint/unittest_lint.py::test_enable_report PASSED
 tests/lint/unittest_lint.py::test_errors_only PASSED
 tests/lint/unittest_lint.py::test_filename_with__init__ PASSED
+tests/lint/unittest_lint.py::test_finds_pyi_file PASSED
 tests/lint/unittest_lint.py::test_full_documentation PASSED
 tests/lint/unittest_lint.py::test_globbing PASSED
 tests/lint/unittest_lint.py::test_import_sibling_module_from_namespace PASSED
@@ -613,6 +619,7 @@ tests/lint/unittest_lint.py::test_more_args[case2] PASSED
 tests/lint/unittest_lint.py::test_multiprocessing[1] PASSED
 tests/lint/unittest_lint.py::test_multiprocessing[2] PASSED
 tests/lint/unittest_lint.py::test_no_args PASSED
+tests/lint/unittest_lint.py::test_no_false_positive_from_pyi_stub PASSED
 tests/lint/unittest_lint.py::test_one_arg[case0] PASSED
 tests/lint/unittest_lint.py::test_one_arg[case1] PASSED
 tests/lint/unittest_lint.py::test_one_arg[case2] PASSED
@@ -621,6 +628,7 @@ tests/lint/unittest_lint.py::test_one_arg[case4] PASSED
 tests/lint/unittest_lint.py::test_pylint_home PASSED
 tests/lint/unittest_lint.py::test_pylint_home_from_environ PASSED
 tests/lint/unittest_lint.py::test_pylint_visit_method_taken_in_account PASSED
+tests/lint/unittest_lint.py::test_recursive_finds_pyi_file PASSED
 tests/lint/unittest_lint.py::test_recursive_ignore[--ignore-failing.py] PASSED
 tests/lint/unittest_lint.py::test_recursive_ignore[--ignore-ignored_subdirectory] PASSED
 tests/lint/unittest_lint.py::test_recursive_ignore[--ignore-paths-.*directory/ignored.*] PASSED
@@ -1115,7 +1123,9 @@ tests/test_functional.py::test_functional[bare_except] PASSED
 tests/test_functional.py::test_functional[base_init_vars] PASSED
 tests/test_functional.py::test_functional[boolean_datetime] PASSED
 tests/test_functional.py::test_functional[broad_exception_caught] PASSED
+tests/test_functional.py::test_functional[broad_exception_caught_trystar] SKIPPED
 tests/test_functional.py::test_functional[broad_exception_raised] PASSED
+tests/test_functional.py::test_functional[broad_exception_raised_trystar] SKIPPED
 tests/test_functional.py::test_functional[broad_try_clause_extension] PASSED
 tests/test_functional.py::test_functional[bugfix_local_scope_metaclass_1177] PASSED
 tests/test_functional.py::test_functional[builtin_module_test] PASSED
@@ -1140,6 +1150,7 @@ tests/test_functional.py::test_functional[confusing_elif] PASSED
 tests/test_functional.py::test_functional[confusing_with_statement] PASSED
 tests/test_functional.py::test_functional[consider_iterating_dictionary] PASSED
 tests/test_functional.py::test_functional[consider_join] PASSED
+tests/test_functional.py::test_functional[consider_join_for_non_empty_separator] PASSED
 tests/test_functional.py::test_functional[consider_merging_isinstance] PASSED
 tests/test_functional.py::test_functional[consider_refactoring_into_while_condition] PASSED
 tests/test_functional.py::test_functional[consider_refactoring_into_while_condition_py38] PASSED
@@ -1159,6 +1170,7 @@ tests/test_functional.py::test_functional[consider_using_sys_exit_exempted] PASS
 tests/test_functional.py::test_functional[consider_using_sys_exit_local_scope] PASSED
 tests/test_functional.py::test_functional[consider_using_with] PASSED
 tests/test_functional.py::test_functional[consider_using_with_open] PASSED
+tests/test_functional.py::test_functional[contextmanager_generator_missing_cleanup] PASSED
 tests/test_functional.py::test_functional[continue_in_finally] PASSED
 tests/test_functional.py::test_functional[control_pragmas] PASSED
 tests/test_functional.py::test_functional[crash_missing_module_type] PASSED
@@ -1179,6 +1191,7 @@ tests/test_functional.py::test_functional[dataclass_with_field] PASSED
 tests/test_functional.py::test_functional[decorator_scope] PASSED
 tests/test_functional.py::test_functional[decorator_unused] PASSED
 tests/test_functional.py::test_functional[defined_and_used_on_same_line] PASSED
+tests/test_functional.py::test_functional[deprecated_attribute_py312] SKIPPED
 tests/test_functional.py::test_functional[deprecated_class_py33] PASSED
 tests/test_functional.py::test_functional[deprecated_decorators] PASSED
 tests/test_functional.py::test_functional[deprecated_method_suppression] PASSED
@@ -1256,6 +1269,8 @@ tests/test_functional.py::test_functional[generic_alias_related] PASSED
 tests/test_functional.py::test_functional[generic_alias_related_py$(PYV)] PASSED
 tests/test_functional.py::test_functional[generic_alias_side_effects] PASSED
 tests/test_functional.py::test_functional[generic_alias_typing] PASSED
+tests/test_functional.py::test_functional[generic_class_syntax] PASSED
+tests/test_functional.py::test_functional[generic_class_syntax_py312] SKIPPED
 tests/test_functional.py::test_functional[genexp_in_class_scope] PASSED
 tests/test_functional.py::test_functional[genexpr_variable_scope] PASSED
 tests/test_functional.py::test_functional[globals] PASSED
@@ -1275,7 +1290,6 @@ tests/test_functional.py::test_functional[inconsistent_quotes] PASSED
 tests/test_functional.py::test_functional[inconsistent_quotes_fstring] PASSED
 tests/test_functional.py::test_functional[inconsistent_quotes_fstring_py312] SKIPPED
 tests/test_functional.py::test_functional[inconsistent_quotes_fstring_py312_311] SKIPPED
-tests/test_functional.py::test_functional[inconsistent_returns] PASSED
 tests/test_functional.py::test_functional[inconsistent_returns_noreturn] PASSED
 tests/test_functional.py::test_functional[inference_crash_4692] PASSED
 tests/test_functional.py::test_functional[inherit_non_class] PASSED
@@ -1289,8 +1303,6 @@ tests/test_functional.py::test_functional[invalid_all_format_valid_1] PASSED
 tests/test_functional.py::test_functional[invalid_all_format_valid_2] PASSED
 tests/test_functional.py::test_functional[invalid_all_format_valid_3] PASSED
 tests/test_functional.py::test_functional[invalid_all_format_valid_4] PASSED
-tests/test_functional.py::test_functional[invalid_all_format_valid_5] PASSED
-tests/test_functional.py::test_functional[invalid_all_format_valid_6] PASSED
 tests/test_functional.py::test_functional[invalid_all_object] PASSED
 tests/test_functional.py::test_functional[invalid_bool_returned] PASSED
 tests/test_functional.py::test_functional[invalid_bytes_returned] PASSED
@@ -1460,13 +1472,13 @@ tests/test_functional.py::test_functional[no_member_assign_same_line] PASSED
 tests/test_functional.py::test_functional[no_member_augassign] PASSED
 tests/test_functional.py::test_functional[no_member_binary_operations] PASSED
 tests/test_functional.py::test_functional[no_member_dataclasses] PASSED
+tests/test_functional.py::test_functional[no_member_decorator] PASSED
 tests/test_functional.py::test_functional[no_member_if_statements] PASSED
 tests/test_functional.py::test_functional[no_member_imports] PASSED
 tests/test_functional.py::test_functional[no_member_nested_namedtuple] PASSED
 tests/test_functional.py::test_functional[no_member_subclassed_dataclasses] PASSED
 tests/test_functional.py::test_functional[no_member_typevar] PASSED
 tests/test_functional.py::test_functional[no_method_argument_py38] PASSED
-tests/test_functional.py::test_functional[no_name_in_module] PASSED
 tests/test_functional.py::test_functional[no_self_argument] PASSED
 tests/test_functional.py::test_functional[no_self_use] PASSED
 tests/test_functional.py::test_functional[no_staticmethod_decorator] PASSED
@@ -1550,7 +1562,6 @@ tests/test_functional.py::test_functional[recursion_error_2861] PASSED
 tests/test_functional.py::test_functional[recursion_error_2899] PASSED
 tests/test_functional.py::test_functional[recursion_error_2906] PASSED
 tests/test_functional.py::test_functional[recursion_error_3152] PASSED
-tests/test_functional.py::test_functional[recursion_error_3159] PASSED
 tests/test_functional.py::test_functional[recursion_error_940] PASSED
 tests/test_functional.py::test_functional[recursion_error_crash] PASSED
 tests/test_functional.py::test_functional[recursion_error_crash_2683] PASSED
@@ -1592,7 +1603,6 @@ tests/test_functional.py::test_functional[regression_4358_unsubscriptable_enum] 
 tests/test_functional.py::test_functional[regression_4439] PASSED
 tests/test_functional.py::test_functional[regression_4612_crash_pytest_fixture] PASSED
 tests/test_functional.py::test_functional[regression_4660] PASSED
-tests/test_functional.py::test_functional[regression_4680] PASSED
 tests/test_functional.py::test_functional[regression_4688_duplicated_bases_member_hints] PASSED
 tests/test_functional.py::test_functional[regression_4723] PASSED
 tests/test_functional.py::test_functional[regression_4891] PASSED
@@ -1650,9 +1660,8 @@ tests/test_functional.py::test_functional[simplifiable_if_expression] PASSED
 tests/test_functional.py::test_functional[simplifiable_if_statement] PASSED
 tests/test_functional.py::test_functional[simplify_chained_comparison] PASSED
 tests/test_functional.py::test_functional[singledispatch_functions] PASSED
-tests/test_functional.py::test_functional[singledispatch_method_py37] PASSED
-tests/test_functional.py::test_functional[singledispatch_method_py38] PASSED
-tests/test_functional.py::test_functional[singledispatchmethod_function_py38] PASSED
+tests/test_functional.py::test_functional[singledispatch_method] PASSED
+tests/test_functional.py::test_functional[singledispatchmethod_function] PASSED
 tests/test_functional.py::test_functional[singleton_comparison] PASSED
 tests/test_functional.py::test_functional[slots_checks] PASSED
 tests/test_functional.py::test_functional[socketerror_import] PASSED
@@ -1714,17 +1723,20 @@ tests/test_functional.py::test_functional[too_many_return_statements] PASSED
 tests/test_functional.py::test_functional[too_many_star_expressions] PASSED
 tests/test_functional.py::test_functional[too_many_statements] PASSED
 tests/test_functional.py::test_functional[trailing_comma_tuple] PASSED
+tests/test_functional.py::test_functional[trailing_comma_tuple_9608] PASSED
 tests/test_functional.py::test_functional[trailing_newlines] PASSED
 tests/test_functional.py::test_functional[trailing_whitespaces] PASSED
 tests/test_functional.py::test_functional[try_except_raise] PASSED
 tests/test_functional.py::test_functional[try_except_raise_crash] PASSED
 tests/test_functional.py::test_functional[typealias_naming_style_default] SKIPPED
+tests/test_functional.py::test_functional[typealias_naming_style_py312] SKIPPED
 tests/test_functional.py::test_functional[typealias_naming_style_rgx] SKIPPED
 tests/test_functional.py::test_functional[typedDict] PASSED
 tests/test_functional.py::test_functional[typevar_double_variance] PASSED
 tests/test_functional.py::test_functional[typevar_name_incorrect_variance] PASSED
 tests/test_functional.py::test_functional[typevar_name_mismatch] PASSED
 tests/test_functional.py::test_functional[typevar_naming_style_default] PASSED
+tests/test_functional.py::test_functional[typevar_naming_style_py312] SKIPPED
 tests/test_functional.py::test_functional[typevar_naming_style_rgx] PASSED
 tests/test_functional.py::test_functional[typing_broken_callable] PASSED
 tests/test_functional.py::test_functional[typing_broken_callable_deprecated_alias] PASSED
@@ -1754,7 +1766,6 @@ tests/test_functional.py::test_functional[undefined_variable_decorators] PASSED
 tests/test_functional.py::test_functional[undefined_variable_py30] PASSED
 tests/test_functional.py::test_functional[undefined_variable_py312] SKIPPED
 tests/test_functional.py::test_functional[undefined_variable_py38] PASSED
-tests/test_functional.py::test_functional[undefined_variable_typing] PASSED
 tests/test_functional.py::test_functional[unexpected_keyword_arg] PASSED
 tests/test_functional.py::test_functional[unexpected_special_method_signature] PASSED
 tests/test_functional.py::test_functional[ungrouped_imports] PASSED
@@ -1787,7 +1798,6 @@ tests/test_functional.py::test_functional[unpacking_generalizations] PASSED
 tests/test_functional.py::test_functional[unpacking_non_sequence] PASSED
 tests/test_functional.py::test_functional[unpacking_non_sequence_py310] SKIPPED
 tests/test_functional.py::test_functional[unpacking_non_sequence_py37] PASSED
-tests/test_functional.py::test_functional[unreachable] PASSED
 tests/test_functional.py::test_functional[unrecognized_inline_option] PASSED
 tests/test_functional.py::test_functional[unspecified_encoding_py38] PASSED
 tests/test_functional.py::test_functional[unsubscriptable_object] PASSED
@@ -1805,7 +1815,6 @@ tests/test_functional.py::test_functional[unused_global_variable2] PASSED
 tests/test_functional.py::test_functional[unused_global_variable3] PASSED
 tests/test_functional.py::test_functional[unused_global_variable4] PASSED
 tests/test_functional.py::test_functional[unused_import] PASSED
-tests/test_functional.py::test_functional[unused_import_assigned_to] PASSED
 tests/test_functional.py::test_functional[unused_import_class_def_keyword] PASSED
 tests/test_functional.py::test_functional[unused_import_everything_disabled] PASSED
 tests/test_functional.py::test_functional[unused_import_positional_only_py38] PASSED
@@ -1834,12 +1843,11 @@ tests/test_functional.py::test_functional[use_maxsplit_arg] PASSED
 tests/test_functional.py::test_functional[use_sequence_for_iteration] PASSED
 tests/test_functional.py::test_functional[use_set_membership] PASSED
 tests/test_functional.py::test_functional[use_symbolic_message_instead] PASSED
-tests/test_functional.py::test_functional[used_before_assignment] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_488] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_class_nested_under_function] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_comprehension_homonyms] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_conditional] PASSED
-tests/test_functional.py::test_functional[used_before_assignment_else_return] PASSED
+tests/test_functional.py::test_functional[used_before_assignment_else_continue] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_except_handler_for_try_with_return] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_except_handler_for_try_with_return_py38] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_issue1081] PASSED
@@ -1851,6 +1859,7 @@ tests/test_functional.py::test_functional[used_before_assignment_issue85] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_nonlocal] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_postponed_evaluation] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_py310] SKIPPED
+tests/test_functional.py::test_functional[used_before_assignment_py311] SKIPPED
 tests/test_functional.py::test_functional[used_before_assignment_py312] SKIPPED
 tests/test_functional.py::test_functional[used_before_assignment_py37] PASSED
 tests/test_functional.py::test_functional[used_before_assignment_scoping] PASSED
@@ -1954,7 +1963,6 @@ tests/test_regr.py::test_package[file_names4-<lambda>] PASSED
 tests/test_regr.py::test_package[file_names5-<lambda>] PASSED
 tests/test_regr.py::test_package[file_names6-<lambda>] PASSED
 tests/test_regr.py::test_package[file_names7-<lambda>] PASSED
-tests/test_regr.py::test_package[file_names8-<lambda>] PASSED
 tests/test_self.py::TestCallbackOptions::test_enable_all_extensions PASSED
 tests/test_self.py::TestCallbackOptions::test_errors_only PASSED
 tests/test_self.py::TestCallbackOptions::test_errors_only_functions_as_disable PASSED
@@ -2042,6 +2050,9 @@ tests/test_self.py::TestRunTC::test_ignore_path_recursive_current_dir PASSED
 tests/test_self.py::TestRunTC::test_ignore_pattern_from_stdin PASSED
 tests/test_self.py::TestRunTC::test_ignore_pattern_recursive[failing.*] PASSED
 tests/test_self.py::TestRunTC::test_ignore_pattern_recursive[ignored_.*] PASSED
+tests/test_self.py::TestRunTC::test_ignore_pattern_recursive_rel_path[^\\..*] PASSED
+tests/test_self.py::TestRunTC::test_ignore_pattern_recursive_rel_path[^\\..+] PASSED
+tests/test_self.py::TestRunTC::test_ignore_pattern_recursive_rel_path[^\\.] PASSED
 tests/test_self.py::TestRunTC::test_ignore_recursive[failing.py] PASSED
 tests/test_self.py::TestRunTC::test_ignore_recursive[ignored_subdirectory] PASSED
 tests/test_self.py::TestRunTC::test_import_itself_not_accounted_for_relative_imports PASSED
@@ -2072,6 +2083,7 @@ tests/test_self.py::TestRunTC::test_output_file_invalid_path_exits_with_code_32 
 tests/test_self.py::TestRunTC::test_output_file_specified_in_rcfile PASSED
 tests/test_self.py::TestRunTC::test_output_file_valid_path PASSED
 tests/test_self.py::TestRunTC::test_output_no_header PASSED
+tests/test_self.py::TestRunTC::test_output_with_verbose PASSED
 tests/test_self.py::TestRunTC::test_parallel_execution PASSED
 tests/test_self.py::TestRunTC::test_parallel_execution_missing_arguments PASSED
 tests/test_self.py::TestRunTC::test_parseable_file_path PASSED
@@ -2095,6 +2107,7 @@ tests/test_self.py::TestRunTC::test_syntax_error_invalid_encoding PASSED
 tests/test_self.py::TestRunTC::test_type_annotation_names PASSED
 tests/test_self.py::TestRunTC::test_version PASSED
 tests/test_self.py::TestRunTC::test_w0704_ignored PASSED
+tests/test_self.py::TestRunTC::test_warnings_by_module PASSED
 tests/test_self.py::TestRunTC::test_wrong_import_position_when_others_disabled PASSED
 tests/test_similar.py::TestSimilarCodeChecker::test_conditional_imports PASSED
 tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_parallel PASSED
@@ -2157,6 +2170,6 @@ tests/utils/unittest_ast_walker.py::TestASTWalker::test_only_required_for_messag
 tests/utils/unittest_utils.py::test_decoding_stream_known_encoding PASSED
 tests/utils/unittest_utils.py::test_decoding_stream_unknown_encoding PASSED
 
-======== 1844 passed, 300 skipped, 5 xfailed ========
+======== 1849 passed, 307 skipped, 5 xfailed ========
   py$(PYV): OK
   congratulations :)

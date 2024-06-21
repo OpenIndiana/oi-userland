@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project elastic-transport
+#   $WS_TOOLS/python-integrate-project -d python/elastic-transport elastic_transport
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		elastic-transport
-HUMAN_VERSION =			8.12.0
-COMPONENT_SUMMARY =		elastic-transport - Transport classes and utilities shared among Python Elastic client libraries
+COMPONENT_NAME =		elastic_transport
+HUMAN_VERSION =			8.13.1
+COMPONENT_SUMMARY =		Transport classes and utilities shared among Python Elastic client libraries
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elastic-transport-python
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f1/5e/9d697ca2511c2ecb3a239be91d5186a14fdbc97e15369c4ca6524c2929e8/elastic-transport-8.12.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:48839b942fcce199eece1558ecea6272e116c58da87ca8d495ef12eb61effaf7
+	sha256:16339d392b4bbe86ad00b4bdeecff10edf516d32bc6c16053846625f2c6ea250
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,11 +35,19 @@ include $(WS_MAKE_RULES)/common.mk
 # manually.
 TEST_REQUIREMENTS_EXTRAS += develop
 
+# We do not have respx
+PYTEST_ADDOPTS += --ignore tests/node/test_http_httpx.py
+# We do not have opentelemetry
+PYTEST_ADDOPTS += --ignore tests/test_otel.py
+# We do not have orjson
+PYTEST_ADDOPTS += --ignore tests/test_serializer.py
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/certifi
 PYTHON_REQUIRED_PACKAGES += library/python/urllib3
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/aiohttp
+TEST_REQUIRED_PACKAGES.python += library/python/httpx
 TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio

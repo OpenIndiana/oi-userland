@@ -16,12 +16,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nghttp3
-COMPONENT_VERSION=	1.2.0
+COMPONENT_VERSION=	1.3.0
 COMPONENT_SUMMARY=	This library implements RFC 9114 HTTP/3. It does not support server push.
 COMPONENT_PROJECT_URL=	https://nghttp2.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:d2e216bae7bd7362f850922e4237a5caa204853b3594b22adccab4c1e1c1d1aa
+COMPONENT_ARCHIVE_HASH= sha256:450525981d302f23832b18edd1a62cf58019392ca6402408d0eb1a7f3fd92ecf
 COMPONENT_ARCHIVE_URL=	https://github.com/ngtcp2/nghttp3/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/nghttp3
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -30,7 +30,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --disable-static
 
 # Manually added dependencies
 TEST_REQUIRED_PACKAGES += developer/cunit

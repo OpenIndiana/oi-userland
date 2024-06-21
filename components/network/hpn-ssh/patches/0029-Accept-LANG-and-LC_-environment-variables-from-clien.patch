@@ -1,8 +1,8 @@
 This preserves most of the old SunSSH locale negotiation
 behaviour (at least the parts that are most commonly used).
 
---- hpn-ssh-hpn-18.3.1/servconf.c.orig
-+++ hpn-ssh-hpn-18.3.1/servconf.c
+--- hpn-ssh-hpn-18.4.1/servconf.c.orig
++++ hpn-ssh-hpn-18.4.1/servconf.c
 @@ -174,7 +174,7 @@
  	options->client_alive_interval = -1;
  	options->client_alive_count_max = -1;
@@ -12,7 +12,7 @@ behaviour (at least the parts that are most commonly used).
  	options->num_setenv = 0;
  	options->permit_tun = -1;
  	options->permitted_opens = NULL;
-@@ -494,6 +494,33 @@
+@@ -493,6 +493,33 @@
  		options->max_sessions = DEFAULT_SESSIONS_MAX;
  	if (options->use_dns == -1)
  		options->use_dns = 0;
@@ -46,10 +46,10 @@ behaviour (at least the parts that are most commonly used).
  	if (options->client_alive_interval == -1)
  		options->client_alive_interval = 0;
  	if (options->client_alive_count_max == -1)
-@@ -2233,8 +2260,12 @@
- 			if (*arg == '\0' || strchr(arg, '=') != NULL)
+@@ -2252,8 +2279,12 @@
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
+ 			found = 1;
 +			if (options->num_accept_env == -1)
 +				options->num_accept_env = 0;
  			if (!*activep)
@@ -59,7 +59,7 @@ behaviour (at least the parts that are most commonly used).
  			opt_array_append(filename, linenum, keyword,
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
-@@ -2971,7 +3002,7 @@
+@@ -3016,7 +3047,7 @@
  } while(0)
  #define M_CP_STRARRAYOPT(s, num_s) do {\
  	u_int i; \
@@ -68,8 +68,8 @@ behaviour (at least the parts that are most commonly used).
  		for (i = 0; i < dst->num_s; i++) \
  			free(dst->s[i]); \
  		free(dst->s); \
---- hpn-ssh-hpn-18.3.1/session.c.orig
-+++ hpn-ssh-hpn-18.3.1/session.c
+--- hpn-ssh-hpn-18.4.1/session.c.orig
++++ hpn-ssh-hpn-18.4.1/session.c
 @@ -848,6 +848,18 @@
  }
  
@@ -116,8 +116,8 @@ behaviour (at least the parts that are most commonly used).
  	if (s->term)
  		child_set_env(&env, &envsize, "TERM", s->term);
  	if (s->display)
---- hpn-ssh-hpn-18.3.1/sshd_config.orig
-+++ hpn-ssh-hpn-18.3.1/sshd_config
+--- hpn-ssh-hpn-18.4.1/sshd_config.orig
++++ hpn-ssh-hpn-18.4.1/sshd_config
 @@ -26,6 +26,10 @@
  #SyslogFacility AUTH
  #LogLevel INFO
@@ -129,8 +129,8 @@ behaviour (at least the parts that are most commonly used).
  # Authentication:
  
  #LoginGraceTime 2m
---- hpn-ssh-hpn-18.3.1/hpnsshd_config.5.orig
-+++ hpn-ssh-hpn-18.3.1/hpnsshd_config.5
+--- hpn-ssh-hpn-18.4.1/hpnsshd_config.5.orig
++++ hpn-ssh-hpn-18.4.1/hpnsshd_config.5
 @@ -96,7 +96,20 @@
  Be warned that some environment variables could be used to bypass restricted
  user environments.

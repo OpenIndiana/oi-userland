@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [1706 items]
+X workers [1720 items]
 
 scheduling tests via LoadScheduling
 
@@ -776,6 +776,8 @@ tests/config/loader/test_loader.py::test_override_append[-x] PASSED
 tests/config/loader/test_loader.py::test_override_equals PASSED
 tests/config/loader/test_loader.py::test_override_incorrect[--override] PASSED
 tests/config/loader/test_loader.py::test_override_incorrect[-x] PASSED
+tests/config/loader/test_loader.py::test_override_multiple[--override] PASSED
+tests/config/loader/test_loader.py::test_override_multiple[-x] PASSED
 tests/config/loader/test_loader.py::test_override_not_equals PASSED
 tests/config/loader/test_loader.py::test_override_not_equals_different_type PASSED
 tests/config/loader/test_loader.py::test_override_repr PASSED
@@ -984,6 +986,8 @@ tests/config/loader/test_str_convert.py::test_str_convert_ok[a=1\n\nc=2-value20-
 tests/config/loader/test_str_convert.py::test_str_convert_ok[false-False-bool] PASSED
 tests/config/loader/test_str_convert.py::test_str_convert_ok[magic-magic-str] PASSED
 tests/config/loader/test_str_convert.py::test_str_convert_ok[true-True-bool] PASSED
+tests/config/loader/test_str_convert.py::test_str_convert_ok_py$(PYV)[-None-of_type0] PASSED
+tests/config/loader/test_str_convert.py::test_str_convert_ok_py$(PYV)[1,2-value1-of_type1] PASSED
 tests/config/source/test_discover.py::test_bad_src_content PASSED
 tests/config/source/test_discover.py::test_no_src_cwd PASSED
 tests/config/source/test_discover.py::test_no_src_has_py_project_toml_above PASSED
@@ -998,11 +1002,17 @@ tests/config/source/test_source_ini.py::test_source_ini_with_interpolated PASSED
 tests/config/test_main.py::test_args_are_paths_when_disabled PASSED
 tests/config/test_main.py::test_args_are_paths_when_from_child_dir PASSED
 tests/config/test_main.py::test_args_are_paths_when_with_change_dir PASSED
+tests/config/test_main.py::test_config_multiple_overrides PASSED
 tests/config/test_main.py::test_config_override_appends_to_empty_list PASSED
+tests/config/test_main.py::test_config_override_appends_to_empty_pythondeps PASSED
 tests/config/test_main.py::test_config_override_appends_to_empty_setenv PASSED
 tests/config/test_main.py::test_config_override_appends_to_list PASSED
+tests/config/test_main.py::test_config_override_appends_to_pythondeps PASSED
 tests/config/test_main.py::test_config_override_appends_to_setenv PASSED
+tests/config/test_main.py::test_config_override_appends_to_setenv_multiple PASSED
 tests/config/test_main.py::test_config_override_cannot_append PASSED
+tests/config/test_main.py::test_config_override_sequence PASSED
+tests/config/test_main.py::test_config_override_sequential_processing PASSED
 tests/config/test_main.py::test_config_override_wins_memory_loader PASSED
 tests/config/test_main.py::test_config_overrides PASSED
 tests/config/test_main.py::test_config_some_envs PASSED
@@ -1052,6 +1062,7 @@ tests/config/test_types.py::tests_command_eq PASSED
 tests/config/test_types.py::tests_command_ne PASSED
 tests/config/test_types.py::tests_command_repr PASSED
 tests/config/test_types.py::tests_command_repr_ignore PASSED
+tests/config/test_types.py::tests_command_repr_invert PASSED
 tests/config/test_types.py::tests_env_list_eq PASSED
 tests/config/test_types.py::tests_env_list_ne PASSED
 tests/config/test_types.py::tests_env_list_repr PASSED
@@ -1135,8 +1146,9 @@ tests/session/cmd/run/test_common.py::test_skip_missing_interpreter_action_ok[No
 tests/session/cmd/run/test_common.py::test_skip_missing_interpreter_action_ok[config] PASSED
 tests/session/cmd/run/test_common.py::test_skip_missing_interpreter_action_ok[false] PASSED
 tests/session/cmd/run/test_common.py::test_skip_missing_interpreter_action_ok[true] PASSED
-tests/session/cmd/test_depends.py::test_depends PASSED
 tests/session/cmd/test_depends.py::test_depends_help PASSED
+tests/session/cmd/test_depends.py::test_depends_sdist PASSED
+tests/session/cmd/test_depends.py::test_depends_wheel PASSED
 tests/session/cmd/test_devenv.py::test_devenv_fail_multiple_target PASSED
 tests/session/cmd/test_devenv.py::test_devenv_help PASSED
 tests/session/cmd/test_devenv.py::test_devenv_ok PASSED
@@ -1500,6 +1512,7 @@ tests/tox_env/python/pip/test_req_file.py::test_deps_with_requirements_with_hash
 tests/tox_env/python/pip/test_req_file.py::test_legacy_requirement_file[-c] PASSED
 tests/tox_env/python/pip/test_req_file.py::test_legacy_requirement_file[-r] PASSED
 tests/tox_env/python/pip/test_req_file.py::test_opt_only_req_file PASSED
+tests/tox_env/python/pip/test_req_file.py::test_req_iadd PASSED
 tests/tox_env/python/pip/test_req_file.py::test_req_with_no_deps PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3-py2-py3-py2-False] PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3-py2-py3-py2-True] PASSED
@@ -1650,6 +1663,7 @@ tests/tox_env/python/virtual_env/test_virtualenv_api.py::test_virtualenv_env_use
 tests/tox_env/python/virtual_env/test_virtualenv_api.py::test_virtualenv_flipped_settings PASSED
 tests/tox_env/test_api.py::test_dont_cleanup_temp_dir PASSED
 tests/tox_env/test_api.py::test_ensure_temp_dir_exists PASSED
+tests/tox_env/test_api.py::test_setenv_section_substitution PASSED
 tests/tox_env/test_info.py::test_info_repr PASSED
 tests/tox_env/test_register.py::test_register_set_new_default_no_register PASSED
 tests/tox_env/test_register.py::test_register_set_new_default_with_register PASSED
@@ -1716,28 +1730,15 @@ tests/util/test_spinner.py::test_td_human_readable[42.12345-42.12 seconds] PASSE
 tests/util/test_spinner.py::test_td_human_readable[60-1 minute] PASSED
 tests/util/test_spinner.py::test_td_human_readable[61-1 minute 1 second] PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-  $(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252: DeprecationWarning: The --rsyncdir command line argument and rsyncdirs config variable are deprecated.
-  The rsync feature will be removed in pytest-xdist 4.0.
-    config.issue_config_time_warning(warning, 2)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-174 files skipped due to complete coverage.
+171 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 88.0% reached. Total coverage: 98.76%
+Required test coverage of 88.0% reached. Total coverage: 98.63%
 ============================= slowest 5 durations ==============================
 =========================== short test summary info ============================
-======== 1705 passed, 1 skipped, 7 warnings ========
+======== 1719 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)

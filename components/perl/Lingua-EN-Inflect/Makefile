@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Lingua::EN::Inflect
 HUMAN_VERSION =			1.905
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Lingua::EN::Inflect - Convert singular to plural. Select \\\\\\\"a\\\\\\\" or \\\\\\\"an\\\\\\\".
 COMPONENT_CPAN_AUTHOR =		DCONWAY
 COMPONENT_ARCHIVE_HASH =	\

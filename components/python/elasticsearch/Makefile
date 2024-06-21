@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elasticsearch
-HUMAN_VERSION =			8.12.1
-COMPONENT_SUMMARY =		elasticsearch - Python client for Elasticsearch
+HUMAN_VERSION =			8.14.0
+COMPONENT_SUMMARY =		Python client for Elasticsearch
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elasticsearch-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/elastic/elasticsearch-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:05c9969be37fb03aa14d166e06b51ee4255080d751ce109beb188507ddc0833d
+	sha256:1f9e8c96a281e8e4330e0ae4b8bd60715bde408631292a0cf0bf18688d10d8fd
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,6 +39,9 @@ include $(WS_MAKE_RULES)/common.mk
 # manually.
 TEST_REQUIREMENTS += dev-requirements.txt
 
+# We do not have orjson
+PYTEST_ADDOPTS += --ignore test_elasticsearch/test_serializer.py
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/elastic-transport
 PYTHON_REQUIRED_PACKAGES += runtime/python
@@ -50,6 +53,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/elastic-transport
 TEST_REQUIRED_PACKAGES.python += library/python/isort
 TEST_REQUIRED_PACKAGES.python += library/python/jinja2
 TEST_REQUIRED_PACKAGES.python += library/python/nox
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
@@ -57,5 +61,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
 TEST_REQUIRED_PACKAGES.python += library/python/requests
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx-autodoc-typehints
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/twine

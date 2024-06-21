@@ -11,31 +11,29 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project PyQt-builder
+#   $WS_TOOLS/python-integrate-project -d python/PyQt-builder pyqt_builder
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		PyQt-builder
-HUMAN_VERSION =			1.15.4
-COMPONENT_SUMMARY =		PyQt-builder - The PEP 517 compliant PyQt build system
-COMPONENT_PROJECT_URL =		https://www.riverbankcomputing.com/software/pyqt-builder/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c0/75/a3384eea8770c17e77821368618a5140c4ae0c37f9c05a84ef55f4807172/PyQt-builder-1.15.4.tar.gz
+COMPONENT_NAME =		pyqt_builder
+HUMAN_VERSION =			1.16.2
+COMPONENT_SUMMARY =		pyqt_builder - The PyQt build system
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:39f8c75db17d9ce17cb6bbf3df1650b5cebc1ea4e5bd73843d21cc96612b2ae1
-COMPONENT_LICENSE =		GPL-3.0-only
-COMPONENT_LICENSE_FILE =	LICENSE-GPL3
+	sha256:bf723cdb7cd23d2512e2acda7bc6b81f00fb05ccc5e9a8846bd34d47514cddb9
+COMPONENT_LICENSE =		BSD-2-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/sip
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python

@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Digest::BubbleBabble
 HUMAN_VERSION =			0.02
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Digest::BubbleBabble - Create bubble-babble fingerprints
 COMPONENT_CPAN_AUTHOR =		BTROTT
 COMPONENT_ARCHIVE_HASH =	\

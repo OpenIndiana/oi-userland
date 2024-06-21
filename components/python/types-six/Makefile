@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-six
-HUMAN_VERSION =			1.16.21.20240311
-COMPONENT_SUMMARY =		types-six - Typing stubs for six
+HUMAN_VERSION =			1.16.21.20240513
+COMPONENT_SUMMARY =		Typing stubs for six
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b5a117193ba0dc7a66507925e95e140b2af52731402cdd71ef9f2a4348e01f60
+	sha256:cdf445b5161bf17753500713a475ab79a45bd0d87728b8bfcecd86e2fbf66402
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
 TEST_STYLE = setup.py

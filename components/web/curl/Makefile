@@ -29,13 +29,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      8.6.0
+COMPONENT_VERSION=      8.8.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:3ccd55d91af9516539df80625f818c734dc6f2ecf9bada33c76765e99121db15
+COMPONENT_ARCHIVE_HASH= sha256:0f58bb95fc330c8a46eeb3df5701b0d90c9d9bfcc42bd1cd08791d12551d4400
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
@@ -118,6 +118,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/TESTDONE:/p" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libcares
@@ -127,7 +128,6 @@ REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

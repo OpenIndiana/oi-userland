@@ -18,14 +18,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.2
-COMPONENT_MNR_VERSION=	17
+COMPONENT_MNR_VERSION=	20
 COMPONENT_SUMMARY=      PHP 8.2
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:191316c203267d96160b47d22f955d4dc11793de8a5f327e0c2a76275a6894ea
+COMPONENT_ARCHIVE_HASH= sha256:5dec6fa61c7b9c47aa1d76666be651f2642ed2bcf6cd8638c57e3571ce2aac61
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-82
@@ -133,7 +133,8 @@ CONFIGURE_OPTIONS += --enable-soap=shared
 CONFIGURE_OPTIONS += --enable-sockets=shared
 CONFIGURE_OPTIONS += --enable-mysqlnd=shared
 CONFIGURE_OPTIONS += --with-snmp=shared
-CONFIGURE_OPTIONS += --with-mysqli=shared,mysqlnd
+# tests are looking very ugly with mysqli enabled
+#CONFIGURE_OPTIONS += --with-mysqli=shared,mysqlnd
 CONFIGURE_OPTIONS += --with-pdo-mysql=shared,mysqlnd
 
 # Extensions, dependent on other packages
@@ -200,6 +201,7 @@ COMPONENT_PRE_INSTALL_ACTION += \
 CONFIGURE_ENV += EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV += ICU_CONFIG=/usr/bin/icu-config
 CONFIGURE_ENV += PG_CONFIG=$(PG_BINDIR)/pg_config
+CONFIGURE_ENV += MYSQL_CONFIG=$(MYSQL_CONFIG)
 CONFIGURE_ENV += PKG_CONFIG_PATH=$(OPENSSL_PREFIX)/lib/$(MACH64)/pkgconfig
 
 COMPONENT_TEST_TARGETS = test
@@ -224,7 +226,9 @@ REQUIRED_PACKAGES += web/server/apache-24
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
@@ -236,9 +240,7 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/libzip
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/uw-imap

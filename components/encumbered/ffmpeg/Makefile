@@ -18,17 +18,22 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=      6.1.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	7.0.1
 COMPONENT_SUMMARY=      A very fast video and audio converter
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8684f4b00f94b85461884c3719382f1261f0d9eb3d59640a1f4ac0873616f968
-COMPONENT_ARCHIVE_URL= https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  https://www.ffmpeg.org/
+COMPONENT_ARCHIVE_HASH=	sha256:bce9eeb0f17ef8982390b1f37711a61b4290dc8c2a0c1a37b5857e85bfb0e4ff
+COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
+
+COMPONENT_FMRI.library =	library/ffmpeg-7
+COMPONENT_SUMMARY.library =	$(COMPONENT_SUMMARY) (runtime libraries)
+
+COMPONENT_FMRI.developer =	developer/ffmpeg-7
+COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
@@ -43,7 +48,7 @@ CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --cc=$(CC)
-CONFIGURE_OPTIONS += --enable-runtime-cpudetect 
+CONFIGURE_OPTIONS += --enable-runtime-cpudetect
 CONFIGURE_OPTIONS += --enable-mmx --enable-sse --enable-ssse3
 # force additional new CPU instruction enablement
 CONFIGURE_OPTIONS += --enable-avx
@@ -59,7 +64,7 @@ CONFIGURE_OPTIONS += --enable-libx264
 CONFIGURE_OPTIONS += --enable-libx265
 CONFIGURE_OPTIONS += --enable-libdav1d
 CONFIGURE_OPTIONS += --enable-libwebp
-# Don't enable it, resulting binary is not 
+# Don't enable it, resulting binary is not
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
 CONFIGURE_OPTIONS += --enable-libtheora
@@ -106,6 +111,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
 test:	install $(TEST_64)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += codec/dav1d
 REQUIRED_PACKAGES += codec/libtheora
@@ -119,7 +125,6 @@ REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/sdl2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
@@ -129,6 +134,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += video/rtmpdump
+REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext

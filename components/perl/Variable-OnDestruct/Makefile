@@ -19,11 +19,11 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Variable::OnDestruct
-HUMAN_VERSION =			0.08
+HUMAN_VERSION =			0.09
 COMPONENT_SUMMARY =		Variable::OnDestruct - Call a subroutine on destruction of a variable.
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b3c7cd4ce9bd157c0024b16b6aa3b2b5c5926160eb6f7f15d046b3c0394c5756
+	sha256:7add0e8d81c2ff0f4e6b30ec98cb06c1e0058e89ceafccffea3695ce4674d0dc
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 

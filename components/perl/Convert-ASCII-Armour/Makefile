@@ -20,11 +20,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Convert::ASCII::Armour
 HUMAN_VERSION =			1.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Convert::ASCII::Armour - Convert binary octets into ASCII armoured messages.
 COMPONENT_CPAN_AUTHOR =		VIPUL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:97e8acb6eb2a2a91af7d6cf0d2dff6fa42aaf939fc7d6d1c6057a4f0df52c904
-COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+COMPONENT_LICENSE =		Artistic-1.0
+COMPONENT_LICENSE_FILE =	ARTISTIC
 
 include $(WS_MAKE_RULES)/common.mk
 

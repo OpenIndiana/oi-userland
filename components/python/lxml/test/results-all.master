@@ -1,3 +1,7 @@
+  self.assertEqual(summarize_list(etree.ElementTree(elem).findall("/tag")),
+  self.assertEqual(summarize_list(etree.ElementTree(elem).findall("/tag")),
+  summarize_list(ElementTree.ElementTree(elem).findall("/tag"))
+  summarize_list(ElementTree.ElementTree(elem).findall("/tag"))
 $(@D)/doc/FAQ.txt
 $(@D)/doc/api.txt
 $(@D)/doc/element_classes.txt
@@ -58,28 +62,27 @@ $(@D)/src/lxml/html/tests/hackers-org-data/style-js-tag.data ... ok
 $(@D)/src/lxml/html/tests/hackers-org-data/style-url-js.data ... ok
 $(@D)/src/lxml/html/tests/hackers-org-data/xml-data-island.data ... ok
 $(@D)/src/lxml/html/tests/hackers-org-data/xml-embedded-js.data ... ok
-$(@D)/src/lxml/html/tests/test_autolink.txt
 $(@D)/src/lxml/html/tests/test_basic.txt
-$(@D)/src/lxml/html/tests/test_clean.txt
-$(@D)/src/lxml/html/tests/test_clean_embed.txt
 $(@D)/src/lxml/html/tests/test_diff.txt
 $(@D)/src/lxml/html/tests/test_formfill.txt
 $(@D)/src/lxml/html/tests/test_forms.txt
 $(@D)/src/lxml/html/tests/test_rewritelinks.txt
 $(@D)/src/lxml/html/tests/test_xhtml.txt
 CDATA (lxml.etree)
+CSSSelector (lxml.cssselect)
 Classes (lxml.html)
 Doctest: FAQ.txt ... ok
 Doctest: api.txt ... ok
 Doctest: element_classes.txt ... ok
 Doctest: extensions.txt ... ok
+Doctest: lxml.cssselect.CSSSelector ... ok
 Doctest: lxml.etree.CDATA ... ok
 Doctest: lxml.etree.ElementNamespaceClassLookup ... ok
 Doctest: lxml.etree.FunctionNamespace ... ok
 Doctest: lxml.etree.Schematron ... ok
 Doctest: lxml.etree.XML ... ok
 Doctest: lxml.etree.__test__.FunctionNamespace (line 207) ... ok
-Doctest: lxml.etree.__test__.XML (line 3218) ... ok
+Doctest: lxml.etree.__test__.XML (line 3261) ... ok
 Doctest: lxml.html.Classes ... ok
 Doctest: lxml.html.HtmlMixin.drop_tag ... ok
 Doctest: lxml.html.XHTMLParser ... ok
@@ -93,7 +96,7 @@ Doctest: lxml.tests.selftest.bad_find ... ok
 Doctest: lxml.tests.selftest.bug_xmltoolkit25 ... ok
 Doctest: lxml.tests.selftest.bug_xmltoolkit28 ... ok
 Doctest: lxml.tests.selftest.encoding ... ok
-Doctest: lxml.tests.selftest.find ... ok
+Doctest: lxml.tests.selftest.find ... <doctest lxml.tests.selftest.find[35]>:1: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
 Doctest: lxml.tests.selftest.interface ... ok
 Doctest: lxml.tests.selftest.iterators ... ok
 Doctest: lxml.tests.selftest.iterparse ... ok
@@ -112,7 +115,7 @@ Doctest: lxml.tests.selftest2.cdata ... ok
 Doctest: lxml.tests.selftest2.copy ... ok
 Doctest: lxml.tests.selftest2.element ... ok
 Doctest: lxml.tests.selftest2.encoding ... ok
-Doctest: lxml.tests.selftest2.find ... ok
+Doctest: lxml.tests.selftest2.find ... <doctest lxml.tests.selftest2.find[25]>:1: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
 Doctest: lxml.tests.selftest2.makeelement ... ok
 Doctest: lxml.tests.selftest2.parsefile ... ok
 Doctest: lxml.tests.selftest2.qname ... ok
@@ -122,10 +125,7 @@ Doctest: objectify.txt ... ok
 Doctest: parsing.txt ... ok
 Doctest: resolvers.txt ... ok
 Doctest: sax.txt ... ok
-Doctest: test_autolink.txt ... ok
 Doctest: test_basic.txt ... ok
-Doctest: test_clean.txt ... ok
-Doctest: test_clean_embed.txt ... ok
 Doctest: test_diff.txt ... ok
 Doctest: test_formfill.txt ... ok
 Doctest: test_forms.txt ... ok
@@ -147,10 +147,11 @@ ObjectifiedElement (lxml.objectify)
 Regression test to fix memory allocation issues (use 3+ inclusive NS spaces) ... ok
 Schematron (lxml.etree)
 Schematron (lxml.isoschematron)
-Test find methods (including xpath syntax). ... ok
+Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elementpath.py:271: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
+Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elementpath.py:271: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
 We don't have a guarantee that there will always be a path ... ok
 XHTMLParser (lxml.html)
-XML (line 3218) (lxml.etree.__test__)
+XML (line 3261) (lxml.etree.__test__)
 XML (lxml.etree)
 attrib (lxml.tests.selftest2)
 bad_find (lxml.tests.selftest)
@@ -171,6 +172,10 @@ iterparse (lxml.tests.selftest)
 locate_unbalanced_start (lxml.html.diff)
 makeelement (lxml.tests.selftest2)
 namespace (lxml.tests.selftest)
+ok
+ok
+ok
+ok
 parsefile (lxml.tests.selftest)
 parsefile (lxml.tests.selftest2)
 parseliteral (lxml.tests.selftest)
@@ -292,8 +297,6 @@ test_addprevious_root_comment (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addprevious_root_pi (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addprevious_tails (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_addprevious_with_tail (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
-test_allow_and_remove (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_allow_tags (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_anonymous_namespace (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
 test_anonymous_namespace (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
 test_anonymous_namespace (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
@@ -405,9 +408,9 @@ test_attribute_xmlns_move (lxml.tests.test_elementtree.ElementTreeTestCase) ... 
 test_attributes_get (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_attributes_get (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_bad_element (lxml.tests.test_errors.ErrorTestCase) ... ok
-test_basic (lxml.html.tests.test_html5parser.Test_document_fromstring) ... ok
-test_basic (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... ok
-test_basic (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... ok
+test_basic (lxml.html.tests.test_html5parser.Test_document_fromstring) ... skipped 'html5lib is not installed'
+test_basic (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... skipped 'html5lib is not installed'
+test_basic (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... skipped 'html5lib is not installed'
 test_body (lxml.html.tests.test_elementsoup.SoupParserTestCase) ... ok
 test_boolean_attribute (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_boolean_attribute_round_trip (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
@@ -449,6 +452,7 @@ test_c14n_tostring_inclusive_ns_prefixes (lxml.tests.test_etree.ETreeC14NTestCas
 test_c14n_tostring_with_comments (lxml.tests.test_etree.ETreeC14NTestCase) ... ok
 test_c14n_with_comments (lxml.tests.test_etree.ETreeC14NTestCase) ... ok
 test_c_api (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_cache (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... skipped 'lxml-only'
 test_cache (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
 test_cdata (lxml.tests.test_builder.BuilderTestCase) ... ok
 test_cdata (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -483,8 +487,6 @@ test_class_parse_fileobject (lxml.tests.test_io.ElementTreeIOTestCase) ... ok
 test_class_parse_unamed_fileobject (lxml.tests.test_io.ETreeIOTestCase) ... ok
 test_class_parse_unamed_fileobject (lxml.tests.test_io.ElementTreeIOTestCase) ... ok
 test_clean_doctype (lxml.tests.test_dtd.ETreeDtdTestCase) ... ok
-test_clean_invalid_root_tag (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_clean_with_comments (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_clear (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_clear (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_clear_keep_tail (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -531,8 +533,9 @@ test_crash (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_create_element (lxml.tests.test_nsclasses.ETreeNamespaceClassesTestCase) ... ok
 test_create_element_default (lxml.tests.test_nsclasses.ETreeNamespaceClassesTestCase) ... ok
 test_create_from_partial_doc (lxml.tests.test_xmlschema.ETreeXMLSchemaTestCase) ... ok
-test_create_parent (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... ok
-test_create_parent_default_type_no_ns (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... ok
+test_create_parent (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... skipped 'html5lib is not installed'
+test_create_parent_default_type_no_ns (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... skipped 'html5lib is not installed'
+test_cssselect (lxml.tests.test_css.CSSTestCase) ... ok
 test_custom_lookup (lxml.tests.test_classlookup.ClassLookupTestCase) ... ok
 test_custom_lookup_ns_fallback (lxml.tests.test_classlookup.ClassLookupTestCase) ... ok
 test_data_element_NoneType (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
@@ -926,7 +929,10 @@ test_feed_while_iterating (lxml.tests.test_elementtree.ElementTreePullTestCase) 
 test_filelike_close (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
 test_filelike_close (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
 test_filelike_not_closing (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
+test_find (lxml.tests.test_elementpath.ElementTreeElementPathTestCase)
 test_find (lxml.tests.test_elementpath.EtreeElementPathTestCase)
+test_find_warning (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... ok
+test_find_warning (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
 test_findall (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_findall (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_findall (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
@@ -944,7 +950,6 @@ test_flush (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
 test_flush (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
 test_flush (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... skipped 'temp file behaviour is too platform specific here'
 test_flush (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
-test_formaction_attribute_in_button_input (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_fromstring (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_fromstring (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_fromstringlist (lxml.tests.test_elementtree.ETreeTestCase) ... ok
@@ -997,15 +1002,11 @@ test_getslice_steps (lxml.tests.test_elementtree.ETreeElementSlicingTest) ... ok
 test_getslice_steps (lxml.tests.test_elementtree.ElementTreeElementSlicingTest) ... ok
 test_getslice_text (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_getslice_text (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
-test_guess_charset_arg_gets_passed_to_parser (lxml.html.tests.test_html5parser.Test_document_fromstring) ... ok
-test_guess_charset_arg_gets_passed_to_parser (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... ok
-test_guess_charset_not_used_for_unicode (lxml.html.tests.test_html5parser.Test_document_fromstring) ... ok
-test_guess_charset_not_used_for_unicode (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... ok
+test_guess_charset_arg_gets_passed_to_parser (lxml.html.tests.test_html5parser.Test_document_fromstring) ... skipped 'html5lib is not installed'
+test_guess_charset_arg_gets_passed_to_parser (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... skipped 'html5lib is not installed'
+test_guess_charset_not_used_for_unicode (lxml.html.tests.test_html5parser.Test_document_fromstring) ... skipped 'html5lib is not installed'
+test_guess_charset_not_used_for_unicode (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... skipped 'html5lib is not installed'
 test_head_body (lxml.html.tests.test_elementsoup.SoupParserTestCase) ... ok
-test_host_whitelist_invalid (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_host_whitelist_slash_type_confusion (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_host_whitelist_sneaky_userinfo (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_host_whitelist_valid (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_html5_doctype (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_base (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_html_base_tag (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -1036,6 +1037,7 @@ test_html_parser_target_doctype_html_full (lxml.tests.test_htmlparser.HtmlParser
 test_html_parser_target_exceptions (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_parser_target_tag (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_prefix_nsmap (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_html_pull_parser_chunky (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_subelement_name_colon (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_subelement_name_empty (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_html_subelement_name_quote (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
@@ -1047,8 +1049,6 @@ test_ietf_decl (lxml.tests.test_dtd.ETreeDtdTestCase) ... ok
 test_ietf_decl (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_illegal_utf8 (lxml.tests.test_unicode.EncodingsTestCase) ... ok
 test_illegal_utf8_recover (lxml.tests.test_unicode.EncodingsTestCase) ... ok
-test_image_data_links (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_image_data_links_in_style (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_include_paths (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_indent (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_indent_level (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -1300,8 +1300,8 @@ test_nested_default_namespace_and_other (lxml.tests.test_incremental_xmlfile.Sim
 test_nested_default_namespace_and_other (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ok
 test_nested_default_namespace_and_other (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
 test_network_dtd (lxml.tests.test_http_io.HttpIOTestCase) ... ok
-test_no_leading_text_raises_error_if_leading_text (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... ok
-test_no_leading_text_strips_empty_leading_text (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... ok
+test_no_leading_text_raises_error_if_leading_text (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... skipped 'html5lib is not installed'
+test_no_leading_text_strips_empty_leading_text (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... skipped 'html5lib is not installed'
 test_non_io_exception_continues_closing (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
 test_non_io_exception_continues_closing (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
 test_non_io_exception_continues_closing (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
@@ -1520,14 +1520,14 @@ test_qname_space (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_qname_tag (lxml.tests.test_builder.BuilderTestCase) ... ok
 test_qname_tag_default_namespace (lxml.tests.test_builder.BuilderTestCase) ... ok
 test_qname_text_resolve (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
-test_raises_error_if_multiple_elements_found (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... ok
-test_raises_error_if_no_elements_found (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... ok
-test_raises_error_if_tail (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... ok
-test_raises_error_on_leading_text (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... ok
-test_raises_type_error_on_nonstring_input (lxml.html.tests.test_html5parser.Test_document_fromstring) ... ok
-test_raises_type_error_on_nonstring_input (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... ok
-test_raises_type_error_on_nonstring_input (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... ok
-test_raises_type_error_on_nonstring_input (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
+test_raises_error_if_multiple_elements_found (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... skipped 'html5lib is not installed'
+test_raises_error_if_no_elements_found (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... skipped 'html5lib is not installed'
+test_raises_error_if_tail (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... skipped 'html5lib is not installed'
+test_raises_error_on_leading_text (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... skipped 'html5lib is not installed'
+test_raises_type_error_on_nonstring_input (lxml.html.tests.test_html5parser.Test_document_fromstring) ... skipped 'html5lib is not installed'
+test_raises_type_error_on_nonstring_input (lxml.html.tests.test_html5parser.Test_fragment_fromstring) ... skipped 'html5lib is not installed'
+test_raises_type_error_on_nonstring_input (lxml.html.tests.test_html5parser.Test_fragments_fromstring) ... skipped 'html5lib is not installed'
+test_raises_type_error_on_nonstring_input (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
 test_register_namespace (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_register_namespace (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_register_namespace_xml (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -1555,7 +1555,6 @@ test_remove_ns (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_remove_ns (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_remove_tail (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_remove_tail (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
-test_remove_unknown_tags (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_remove_while_iterating (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_remove_while_iterating (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_replace (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -1571,17 +1570,15 @@ test_resolve_filelike_dtd (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_resolve_filename_dtd (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_resolve_filename_dtd_relative (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_resolve_string_dtd (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
-test_returns_body_if_has_text (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
-test_returns_body_if_single_element_has_tail (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
-test_returns_unwraps_body_if_single_element (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
-test_returns_whole_doc_if_head_not_empty (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
-test_returns_whole_doc_if_head_not_empty_no_ns (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
-test_returns_whole_doc_if_input_contains_doctype (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
-test_returns_whole_doc_if_input_contains_html_tag (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
-test_returns_whole_doc_if_input_is_encoded (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
+test_returns_body_if_has_text (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
+test_returns_body_if_single_element_has_tail (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
+test_returns_unwraps_body_if_single_element (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
+test_returns_whole_doc_if_head_not_empty (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
+test_returns_whole_doc_if_head_not_empty_no_ns (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
+test_returns_whole_doc_if_input_contains_doctype (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
+test_returns_whole_doc_if_input_contains_html_tag (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
+test_returns_whole_doc_if_input_is_encoded (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
 test_root (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
-test_safe_attrs_excluded (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_safe_attrs_included (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_sax_to_pulldom (lxml.tests.test_sax.ETreeSaxTestCase) ... ok
 test_sax_to_pulldom_multiple_namespaces (lxml.tests.test_sax.ETreeSaxTestCase) ... ok
 test_schema_types (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
@@ -1705,16 +1702,17 @@ test_simple_roundtrip (lxml.tests.test_elementtree.ETreeC14NTest) ... ok
 test_simple_roundtrip (lxml.tests.test_elementtree.ElementTreeC14NTest) ... ok
 test_simple_xml (lxml.tests.test_elementtree.ETreePullTestCase) ... ok
 test_simple_xml (lxml.tests.test_elementtree.ElementTreePullTestCase) ... ok
+test_simple_xml_chunk_1 (lxml.tests.test_elementtree.ETreePullTestCase) ... ok
+test_simple_xml_chunk_1 (lxml.tests.test_elementtree.ElementTreePullTestCase) ... skipped 'Feeding the parser by too small chunks defers parsing'
+test_simple_xml_chunk_22 (lxml.tests.test_elementtree.ETreePullTestCase) ... ok
+test_simple_xml_chunk_22 (lxml.tests.test_elementtree.ElementTreePullTestCase) ... ok
+test_simple_xml_chunk_5 (lxml.tests.test_elementtree.ETreePullTestCase) ... ok
+test_simple_xml_chunk_5 (lxml.tests.test_elementtree.ElementTreePullTestCase) ... skipped 'Feeding the parser by too small chunks defers parsing'
 test_simple_xml_with_ns (lxml.tests.test_elementtree.ETreePullTestCase) ... ok
 test_simple_xml_with_ns (lxml.tests.test_elementtree.ElementTreePullTestCase) ... ok
 test_single_select_value_multiple_selected_options (lxml.html.tests.test_select.SelectTest) ... ok
 test_single_select_value_no_options (lxml.html.tests.test_select.SelectTest) ... ok
 test_single_select_value_no_selected_option (lxml.html.tests.test_select.SelectTest) ... ok
-test_sneaky_import_in_style (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_sneaky_js_in_math_style (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_sneaky_noscript_in_style (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_sneaky_schemes_in_style (lxml.html.tests.test_clean.CleanerTest) ... ok
-test_sneaky_urls_in_style (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_sourceline_XML (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_sourceline_element (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_sourceline_iterparse_end (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -1757,7 +1755,6 @@ test_subelement_with_attributes (lxml.tests.test_elementtree.ElementTreeTestCase
 test_subelement_with_attributes_ns (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_subelement_with_attributes_ns (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_subtree_copy_thread (lxml.tests.test_threading.ThreadingTestCase) ... ok
-test_svg_data_links (lxml.html.tests.test_clean.CleanerTest) ... ok
 test_tag_reset_ns (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_tag_reset_ns (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_tag_reset_root_ns (lxml.tests.test_elementtree.ETreeTestCase) ... ok
@@ -1806,7 +1803,9 @@ test_thread_xslt (lxml.tests.test_threading.ThreadingTestCase) ... ok
 test_thread_xslt_apply_error_log (lxml.tests.test_threading.ThreadingTestCase) ... ok
 test_thread_xslt_attr_replace (lxml.tests.test_threading.ThreadingTestCase) ... ok
 test_thread_xslt_parsing_error_log (lxml.tests.test_threading.ThreadingTestCase) ... ok
+test_tokenizer (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... skipped 'lxml-only'
 test_tokenizer (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
+test_tokenizer_predicates (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... ok
 test_tokenizer_predicates (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
 test_tostring (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_tostring (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
@@ -1915,18 +1914,19 @@ test_variable_result_tree_fragment (lxml.tests.test_xslt.ETreeXSLTExtFuncTestCas
 test_various_mixins (lxml.html.tests.test_basic.TestBasicFeatures) ... ok
 test_vars (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_version (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_very_large_sourceline_iterparse (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_void_elements (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
 test_walk_after_parse_failure (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_weird_dict_interaction (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_weird_dict_interaction (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_wide_unicode_html (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_wide_unicode_xml (lxml.tests.test_unicode.UnicodeTestCase) ... ok
-test_with_file_name (lxml.html.tests.test_html5parser.Test_parse) ... ok
-test_with_file_object (lxml.html.tests.test_html5parser.Test_parse) ... ok
-test_with_url (lxml.html.tests.test_html5parser.Test_parse) ... ok
+test_with_file_name (lxml.html.tests.test_html5parser.Test_parse) ... skipped 'html5lib is not installed'
+test_with_file_object (lxml.html.tests.test_html5parser.Test_parse) ... skipped 'html5lib is not installed'
+test_with_url (lxml.html.tests.test_html5parser.Test_parse) ... skipped 'html5lib is not installed'
 test_wrap_html (lxml.html.tests.test_elementsoup.SoupParserTestCase) ... ok
-test_wraps_multiple_fragments_in_div_no_ns (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
-test_wraps_multiple_fragments_in_span_no_ns (lxml.html.tests.test_html5parser.Test_fromstring) ... ok
+test_wraps_multiple_fragments_in_div_no_ns (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
+test_wraps_multiple_fragments_in_span_no_ns (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
 test_write (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_write (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_write (lxml.tests.test_etree.ETreeWriteTestCase) ... ok
@@ -2065,6 +2065,7 @@ test_xpath_on_foreign_context_node (lxml.tests.test_xslt.ETreeXSLTExtFuncTestCas
 test_xpath_prefix_error (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... ok
 test_xpath_string (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... ok
 test_xpath_text_from_other_document (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... ok
+test_xpath_tokenizer (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... ok
 test_xpath_tokenizer (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
 test_xpath_variables (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... ok
 test_xpath_variables_nodeset (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... ok
@@ -2145,19 +2146,19 @@ xpath (lxml.tests.test_xpathevaluator)
 xpath_tokenizer (lxml.tests.selftest)
 
 ----------------------------------------------------------------------
-Ran 1996 tests
+Ran 1990 tests
 
 OK
-Skipping tests in lxml.cssselect - external cssselect package is not installed
 Comparing with ElementTree 1.3.0
 
-TESTED VERSION: 5.1.0
-    Python:           sys.version_info(major=3, minor=9, micro=16, releaselevel='final', serial=0)
-    lxml.etree:       (5, 1, 0, 0)
-    libxml used:      (2, 12, 3)
-    libxml compiled:  (2, 12, 3)
+TESTED VERSION: 5.2.2
+    Python:           (3, 9, 19, 'final', 0)
+    lxml.etree:       (5, 2, 2, 0)
+    libxml used:      (2, 12, 6)
+    libxml compiled:  (2, 12, 6)
     libxslt used:     (1, 1, 39)
     libxslt compiled: (1, 1, 39)
+    iconv compiled:   (0, 0)
     FS encoding:      utf-8
     Default encoding: utf-8
     Max Unicode:      1114111

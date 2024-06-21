@@ -20,3 +20,24 @@
  	}
  
   done:
+--- samba-4.20.1/source3/modules/vfs_zfsacl.c	2024-01-29 15:41:26.313078200 +0100
++++ samba-4.20.1/source3/modules/vfs_zfsacl.c.new	2024-05-19 18:45:05.340824249 +0200
+@@ -28,7 +28,7 @@
+ #include "nfs4_acls.h"
+ 
+ #ifdef HAVE_FREEBSD_SUNACL_H
+-#include "sunacl.h"
++#include "sys/acl.h"
+ #endif
+ 
+ #undef DBGC_CLASS
+--- samba-4.20.1/source3/modules/vfs_posixacl.c	2024-01-29 15:41:26.309078000 +0100
++++ samba-4.20.1/source3/modules/vfs_posixacl.c.new	2024-05-20 19:01:42.541478333 +0200
+@@ -17,6 +17,7 @@
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
++#include "sys/acl.h"
+ #include "includes.h"
+ #include "system/filesys.h"
+ #include "smbd/smbd.h"

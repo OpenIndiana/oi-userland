@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.6.2
-COMPONENT_SUMMARY =		pymongo - Python driver for MongoDB <http://www.mongodb.org>
-COMPONENT_PROJECT_URL =		http://github.com/mongodb/mongo-python-driver
+HUMAN_VERSION =			4.7.3
+COMPONENT_SUMMARY =		Python driver for MongoDB <http://www.mongodb.org>
+COMPONENT_PROJECT_URL =		https://www.mongodb.org
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/mongodb/mongo-python-driver/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8d520a89dba340c167614ad1f37a902a4904a7194f35a989694d63cac13eae47
+	sha256:79c674a06ec5d7da014189400b95baec0ce9aca9fc6e9937386b62fb6367bd07
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,6 +33,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 COMPONENT_SRC =		mongo-python-driver-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Normalize pointer
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(traceback object at \)0x[a-f0-9]\{12\}>/\1\$$(POINTER)>/g'"

@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project ansible-core
+#   $WS_TOOLS/python-integrate-project -d python/ansible-core ansible_core
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		ansible-core
-HUMAN_VERSION =			2.15.9
-COMPONENT_SUMMARY =		ansible-core - Radically simple IT automation
+COMPONENT_NAME =		ansible_core
+HUMAN_VERSION =			2.15.12
+COMPONENT_SUMMARY =		Radically simple IT automation
 COMPONENT_PROJECT_URL =		https://ansible.com/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/47/0b/5e46aeee6c72adc3507d9909e57fa1e9a66b3f4929c463bdbe102441a062/ansible-core-2.15.9.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:25f9b1b5a5af3c0986bd3928ed086eaddb867527fb5c83afef1a03cfad34f345
+	sha256:5fde82cd3928d9857ad880782c644f27d3168b0f25321d5a8d6befa524aa1818
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -53,6 +51,10 @@ COMPONENT_TEST_ARGS += --color no
 COMPONENT_TEST_ARGS += --verbose
 COMPONENT_TEST_TARGETS =
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += test/lib/ansible_test/_data/requirements/units.txt
+
 # testing fails without HOME environment variable
 COMPONENT_TEST_ENV += HOME=/tmp
 
@@ -79,3 +81,9 @@ PYTHON_REQUIRED_PACKAGES += library/python/resolvelib
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-forked
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/pyyaml

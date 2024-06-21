@@ -19,14 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycparser
-HUMAN_VERSION =			2.21
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.22
 COMPONENT_SUMMARY =		pycparser - C parser in Python
 COMPONENT_PROJECT_URL =		https://github.com/eliben/pycparser
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5e/0b/95d387f5f4433cb0f53ff7ad859bd2c6051051cebbb564f139a999ab46de/pycparser-2.21.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e644fdec12f7872f86c58ff790da456218b10f863970249516d60a5eaca77206
+	sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 

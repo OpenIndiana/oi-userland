@@ -26,10 +26,10 @@
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
-COMPONENT_TEST_DIR = $(@D)/tests
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.18.25
+COMPONENT_VERSION=	9.18.27
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -37,7 +37,7 @@ COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain N
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:5a4a70432a33d009f0e6e9dbb328aae7a5e27507e98e28bf3c0c6b250ccb2ab3
+COMPONENT_ARCHIVE_HASH=	sha256:ea3f3d8cfa2f6ae78c8722751d008f54bc17a3aed2be3f7399eb7bf5f4cda8f1
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -53,7 +53,7 @@ COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fi )
 # Missing files in build dir without this (mainly man pages).
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CFLAGS += $(CPP_XPG6MODE)
+CFLAGS += $(XPG6MODE)
 
 # Build.
 #
@@ -70,9 +70,9 @@ CONFIGURE_LIBDIR.64= $(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --with-openssl=/usr
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --with-openssl=$(USRDIR)
 CONFIGURE_OPTIONS += --enable-warn-error
 CONFIGURE_OPTIONS += --enable-fixed-rrset
 CONFIGURE_OPTIONS += --enable-full-report
@@ -100,19 +100,20 @@ CONFIGURE_OPTIONS += READLINE_LIBS="-lreadline -ltermcap"
 # prototype directory, they are simply referenced in relevant manifest
 # (p5m) file.
 
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+#unexport SHELLOPTS
+
+COMPONENT_TEST_DIR = $(@D)/tests
 COMPONENT_TEST_ENV_CMD =
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 # The user running the test needs an profiles=Network Management entry in /etc/user_attr in order to successfully run the following ifconfig.sh up script:
 COMPONENT_PRE_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh up )
 COMPONENT_POST_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh down )
-
-# If SHELLOPTS is exported (as it is by the userland makefiles),
-# then all shell options get exported to child invocations of bash,
-# which results in test failures due to nounset and xtrace being
-# set unexpectedly, and errors such as "$1: unbound variable" and
-# diffs failing due to script tracing in output files.
-unexport SHELLOPTS
 
 # Fix the hard link direction
 PKG_HARDLINKS += usr/bin/named-checkzone
@@ -121,6 +122,8 @@ PKG_HARDLINKS += usr/bin/named-checkzone
 REQUIRED_PACKAGES += library/cmocka
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/json-c
@@ -128,8 +131,6 @@ REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libuv
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nghttp2
-REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93

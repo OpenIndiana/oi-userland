@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		parso
-HUMAN_VERSION =			0.8.3
+HUMAN_VERSION =			0.8.4
 COMPONENT_SUMMARY =		parso - A Python Parser
 COMPONENT_PROJECT_URL =		https://github.com/davidhalter/parso
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a2/0e/41f0cca4b85a6ea74d66d2226a7cda8e41206a624f5b330b958ef48e2e52/parso-0.8.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8c07be290bb59f03588915921e29e8a50002acaf2cdc5fa0e0114f91709fafa0
+	sha256:eb3a7b58240fb99099a345571deecc0f9540ea5f4dd2fe14c2a99d6b281ab92d
 COMPONENT_LICENSE =		MIT OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

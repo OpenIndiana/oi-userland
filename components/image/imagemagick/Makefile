@@ -31,14 +31,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
 COMPONENT_VERSION=		7.1.1
-COMPONENT_SUBVERSION=		29
+COMPONENT_SUBVERSION=		33
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
 COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
 COMPONENT_PROJECT_URL=	https://imagemagick.org
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:27bd25f945efdd7e38f6f9845a7c0a391fdb732f652dda140b743769c5f106e8
+COMPONENT_ARCHIVE_HASH=	sha256:3fe527ce04ee5485dc6f7726eccd05c962add5c5d91843c5abf6c608e4f55330
 COMPONENT_ARCHIVE_URL=	https://github.com/ImageMagick/ImageMagick/archive/$(HUMAN_VERSION).tar.gz
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
@@ -83,6 +83,7 @@ CONFIGURE_OPTIONS += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --with-perl=$(PERL)
 CONFIGURE_OPTIONS += --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --mandir=$(USRSHAREMANDIR)
 
 # As of version 7.1.0-34, a "Linux-compatible sendfile()" is detected;
 # override thiis.
@@ -105,6 +106,7 @@ REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/djvulibre
 REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/libtiff

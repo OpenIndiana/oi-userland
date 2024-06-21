@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cryptography
-HUMAN_VERSION =			42.0.5
-COMPONENT_SUMMARY =		cryptography - cryptography is a package which provides cryptographic recipes and primitives to Python developers.
+HUMAN_VERSION =			42.0.8
+COMPONENT_SUMMARY =		cryptography is a package which provides cryptographic recipes and primitives to Python developers.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6fe07eec95dfd477eb9530aef5bead34fec819b3aaf6c5bd6d20565da607bfe1
+	sha256:8d09d05439ce7baa8e9e95b07ec5b6c886f548deb7e0f69ef25f64b3bce842f2
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
 TEST_STYLE = pytest
@@ -48,7 +48,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-rust
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/certifi
 TEST_REQUIRED_PACKAGES.python += library/python/pretend

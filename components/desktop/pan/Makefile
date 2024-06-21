@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pan
-COMPONENT_VERSION=      0.155
+COMPONENT_VERSION=      0.158
 COMPONENT_PROJECT_URL=  https://pan.rebelbase.com
 COMPONENT_SUMMARY=      A powerful Newsgroup Article reader
 COMPONENT_FMRI=         desktop/nntp/pan
 COMPONENT_SRC=          $(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:3624ac3171fa8089825ce55b62b053db4f86d592f717c4d874c48ce0e885dff2
+COMPONENT_ARCHIVE_HASH= sha256:fb3673ef34fb3fb1008af7ed22fe6c82cfb603b16df9d1edba4259595cb9d303
 COMPONENT_ARCHIVE_URL=	https://gitlab.gnome.org/GNOME/pan/-/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      GPLv2

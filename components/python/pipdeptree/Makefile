@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipdeptree
-HUMAN_VERSION =			2.16.2
-COMPONENT_SUMMARY =		pipdeptree - Command line utility to show dependency tree of packages.
+HUMAN_VERSION =			2.23.0
+COMPONENT_SUMMARY =		Command line utility to show dependency tree of packages.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/pipdeptree
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:96ecde8e6f40c95998491a385e4af56d387f94ff7d3b8f209aa34982a721bc43
+	sha256:09597cbee3f42857c8de78e51b7646d389a294b2faf4cd833a206e69a615ebcd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,11 +32,13 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pip
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/graphviz
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-console-scripts
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv

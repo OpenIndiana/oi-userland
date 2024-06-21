@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nox
-HUMAN_VERSION =			2024.3.2
+HUMAN_VERSION =			2024.4.15
 COMPONENT_SUMMARY =		nox - Flexible test automation.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f521ae08a15adbf5e11f16cb34e8d0e6ea521e0b92868f684e91677deb974553
+	sha256:ecf6700199cdfa9e5ea0a41ff5e6ef4641d09508eda6edb89d9987864115817f
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,6 +42,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/argcomplete
 PYTHON_REQUIRED_PACKAGES += library/python/colorlog
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage

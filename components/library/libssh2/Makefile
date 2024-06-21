@@ -24,19 +24,17 @@
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2022, Niklas Poslovski
 #
-BUILD_BITS= 32_and_64
-OPENSSL_VERSION= 3.1
+
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libssh2
-COMPONENT_VERSION=	1.10.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.11.0
 COMPONENT_SUMMARY=	libssh2 - client-side C library implementing the SSH2 protocol
 COMPONENT_PROJECT_URL=	https://www.libssh2.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2d64e90f3ded394b91d3a2e774ca203a4179f69aebee03003e5a6fa621e41d51
+COMPONENT_ARCHIVE_HASH=	sha256:3736161e41e2693324deb38c26cfdc3efe6209d634ba4258db1cecff6a5ad461
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Security
 COMPONENT_FMRI=	library/libssh2
@@ -45,15 +43,13 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Note that static libs are needed to successfully build the tests.
+# Many tests fail because docker is needed to run them.
 CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --with-libssl-prefix=/usr/openssl/1.1
-
-# Test suite needs this
-unexport SHELLOPTS
+# Only openssl 1.0 can be found but has 2 more failing tests. Thus, we are using libgcrypt instead.
+CONFIGURE_OPTIONS += --with-crypto=libgcrypt
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt

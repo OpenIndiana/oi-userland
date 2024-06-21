@@ -2,8 +2,8 @@ This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 
---- hpn-ssh-hpn-18.3.1/auth2-pubkey.c.orig
-+++ hpn-ssh-hpn-18.3.1/auth2-pubkey.c
+--- hpn-ssh-hpn-18.4.1/auth2-pubkey.c.orig
++++ hpn-ssh-hpn-18.4.1/auth2-pubkey.c
 @@ -23,6 +23,11 @@
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -182,9 +182,9 @@ into to check public keys for authentication.
  	if ((success = user_key_command_allowed2(pw, key, remote_ip,
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
---- hpn-ssh-hpn-18.3.1/servconf.c.orig
-+++ hpn-ssh-hpn-18.3.1/servconf.c
-@@ -215,6 +215,7 @@
+--- hpn-ssh-hpn-18.4.1/servconf.c.orig
++++ hpn-ssh-hpn-18.4.1/servconf.c
+@@ -214,6 +214,7 @@
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -192,7 +192,7 @@ into to check public keys for authentication.
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -577,6 +578,7 @@
+@@ -573,6 +574,7 @@
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
  	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
@@ -200,7 +200,7 @@ into to check public keys for authentication.
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -748,6 +750,7 @@
+@@ -743,6 +745,7 @@
  	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
  	{ "rdomain", sRDomain, SSHCFG_ALL },
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
@@ -208,7 +208,7 @@ into to check public keys for authentication.
  	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
  	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
  	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
-@@ -2661,6 +2664,18 @@
+@@ -2705,6 +2708,18 @@
  		}
  		break;
  
@@ -227,9 +227,9 @@ into to check public keys for authentication.
  	case sDeprecated:
  	case sIgnore:
  	case sUnsupported:
---- hpn-ssh-hpn-18.3.1/servconf.h.orig
-+++ hpn-ssh-hpn-18.3.1/servconf.h
-@@ -240,6 +240,7 @@
+--- hpn-ssh-hpn-18.4.1/servconf.h.orig
++++ hpn-ssh-hpn-18.4.1/servconf.h
+@@ -239,6 +239,7 @@
  
  	int	fingerprint_hash;
  	int	expose_userauth_info;

@@ -19,15 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.functools
-HUMAN_VERSION =			4.0.0
+HUMAN_VERSION =			4.0.1
 COMPONENT_SUMMARY =		jaraco.functools - Functools like those found in stdlib
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.functools
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/57/7c/fe770e264913f9a49ddb9387cca2757b8d7d26f06735c1bfbb018912afce/jaraco.functools-4.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c279cb24c93d694ef7270f970d499cab4d3813f4e08273f95398651a634f0925
+	sha256:d33fa765374c0611b52f8b3a795f8900869aa88c84769d4d1746cd68fb28c3e8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =			jaraco_functools-$(HUMAN_VERSION)
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
@@ -50,7 +50,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-classes
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler

@@ -26,12 +26,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
-COMPONENT_VERSION=	5.6.1
+COMPONENT_VERSION=	5.6.2
 COMPONENT_SUMMARY=	XZ Utils - loss-less file compression application and library
 COMPONENT_PROJECT_URL=	https://tukaani.org/xz/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:f334777310ca3ae9ba07206d78ed286a655aa3f44eec27854f740c26b2cd2ed0
+COMPONENT_ARCHIVE_HASH= sha256:a9db3bb3d64e248a0fae963f8fb6ba851a26ba1822e504dc0efd18a80c626caf
 COMPONENT_ARCHIVE_URL=	https://github.com/tukaani-project/xz/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=		compress/xz
@@ -39,6 +39,8 @@ COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	0BSD, GPLv2+,GPLv3+, LGPLv2.1, CC BY-SA 4.0
 
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PRE_CONFIGURE_ACTION= ( cd $(SOURCE_DIR) && rm m4/build-to-host.m4 && autoreconf -fi )
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-rpath

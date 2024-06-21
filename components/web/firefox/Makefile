@@ -28,13 +28,15 @@ ESR =
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # CANDIDATE_BETA is the beta version found in the candidates directory.
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
+# USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=1
+# CANDIDATE_BUILD=2
 # CANDIDATE_BETA=9
 # CANDIDATE_NIGHTLY=1
+# USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	124.0
+COMPONENT_VERSION =	127.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,20 +59,26 @@ MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPON
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     9dc5b89f7de66165e234e8d244c2796b2dfe9235
+COMPONENT_GIT_HASH=     92e0074c4451a24732ff562c6588c18436d22438f6a81391a67461ed0729b2a7
 COMPONENT_SRC=          gecko-dev-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla/gecko-dev/archive/$(COMPONENT_ARCHIVE)
+  ifdef USE_HG_REPO
+  COMPONENT_HG_HASH=	ff0882e981495f07c521e0b00e1e83b050dfcdc2
+  COMPONENT_SRC=	mozilla-central-$(COMPONENT_HG_HASH)
+  COMPONENT_ARCHIVE=	$(COMPONENT_HG_HASH).zip
+  COMPONENT_ARCHIVE_URL= https://hg.mozilla.org/mozilla-central/archive/$(COMPONENT_ARCHIVE)
+  endif
 else
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:345a1235123ad808cecdb4a9af09ea48bf52ad09d3d380fc704406e3dd13c9d8
+COMPONENT_ARCHIVE_HASH= sha256:ea6b089ff046ca503978fdaf11ea123c64f66bbcdc4a968bed8f7c93e9994321
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.76.0
+RUST_VERSION = 1.77.2
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes

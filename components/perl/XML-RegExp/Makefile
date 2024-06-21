@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		XML::RegExp
 HUMAN_VERSION =			0.04
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		XML::RegExp - Regular expressions for XML tokens
 COMPONENT_CPAN_AUTHOR =		TJMATHER
 COMPONENT_ARCHIVE_HASH =	\

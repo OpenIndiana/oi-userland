@@ -28,7 +28,7 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
-COMPONENT_VERSION=		10.0.1
+COMPONENT_VERSION=		11.0.0
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
@@ -39,7 +39,7 @@ COMPONENT_SUMMARY=		Graph visualization software
 COMPONENT_PROJECT_URL=	https://www.graphviz.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:7bd8064a94bc178862aa0fbb0ed2236f49c188b2fd656487247c58db3019fe21
+COMPONENT_ARCHIVE_HASH= sha256:ae9a344748876f5c16577061e9c2a652151c90eb7572ee17c92b148c65577222
 COMPONENT_ARCHIVE_URL=	https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			image/graphviz
 COMPONENT_CLASSIFICATION=	Applications/System Utilities

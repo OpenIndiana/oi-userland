@@ -18,7 +18,7 @@ BUILD_STYLE = pkg
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		install-types
-COMPONENT_VERSION =	5
+COMPONENT_VERSION =	8
 
 include $(WS_MAKE_RULES)/common.mk
 

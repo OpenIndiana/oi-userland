@@ -27,11 +27,10 @@
 BUILD_BITS= 64_and_32
 OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
-USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.7.2
+COMPONENT_VERSION=	3.7.4
 COMPONENT_SUMMARY=	multi-format archive and compression library
 COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  interface for reading and writing archives in various formats such as\
@@ -43,7 +42,7 @@ COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
 COMPONENT_SRC=			libarchive-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.libarchive.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:df404eb7222cf30b4f8f93828677890a2986b66ff8bf39dac32a804e96ddf104
+COMPONENT_ARCHIVE_HASH=	sha256:7875d49596286055b52439ed42f044bd8ad426aa4cc5aabd96bfe7abb971d5e8
 COMPONENT_ARCHIVE_URL=	https://www.libarchive.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/libarchive
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -91,14 +90,6 @@ COMPONENT_PREP_ACTION = \
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# Needed for "gmake test" to work successfully.
-# If SHELLOPTS is exported (as it is by the userland makefiles),
-# then all shell options get exported to child invocations of bash,
-# which results in test failures due to nounset and xtrace being
-# set unexpectedly, and errors such as "$1: unbound variable" and
-# diffs failing due to script tracing in output files.
-unexport SHELLOPTS
 
 # Tests may fail for other locales.
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8

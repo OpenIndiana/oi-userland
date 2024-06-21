@@ -19,24 +19,14 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.interface
-HUMAN_VERSION =			6.2
-COMPONENT_SUMMARY =		zope.interface - Interfaces for Python
+HUMAN_VERSION =			6.4.post2
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Interfaces for Python
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.interface
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3b6c62813c63c543a06394a636978b22dffa8c5410affc9331ce6cdb5bfa8565
+	sha256:1c207e6f6dfd5749a26f5a5fd966602d6b824ec00d2df84a7e9a924e8933654e
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
-
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# zope.interface --> repoze.sphinx.autointerface ==> zope.interface
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 

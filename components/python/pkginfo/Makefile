@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pkginfo
-HUMAN_VERSION =			1.10.0
-COMPONENT_SUMMARY =		pkginfo - Query metadata from sdists / bdists / installed packages.
+HUMAN_VERSION =			1.11.1
+COMPONENT_SUMMARY =		Query metadata from sdists / bdists / installed packages.
 COMPONENT_PROJECT_URL =		https://code.launchpad.net/~tseaver/pkginfo/trunk
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5df73835398d10db79f8eecd5cd86b1f6d29317589ea70796994d49399af6297
+	sha256:2e0dca1cf4c8e39644eed32408ea9966ee15e0d324c62ba899a393b3c6b467aa
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

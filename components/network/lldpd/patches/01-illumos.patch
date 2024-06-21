@@ -1,0 +1,33 @@
+--- lldpd-1.0.18/src/compat/compat.h.orig
++++ lldpd-1.0.18/src/compat/compat.h
+@@ -90,4 +90,8 @@
+ void *realloc(void *ptr, size_t size);
+ #endif
+ 
++/* illumos does not provide these macros */
++#define	ETHER_ADDR_LEN	6
++#define	ETHER_MAX_LEN	1518
++
+ #endif
+--- lldpd-1.0.18/src/daemon/lldpd.h.orig
++++ lldpd-1.0.18/src/daemon/lldpd.h
+@@ -36,6 +36,8 @@
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include <net/if_arp.h>
++/* To get struct ifnet needed in netinet/if_ether.h */
++#include <net/if.h>
+ #include <netinet/if_ether.h>
+ #include <sys/un.h>
+ 
+--- lldpd-1.0.18/tests/check-compat.h.orig
++++ lldpd-1.0.18/tests/check-compat.h
+@@ -13,4 +13,8 @@
+     } while (0)
+ #endif
+ 
++/* illumos does not provide these macros */
++#define	ETHER_ADDR_LEN	6
++#define	ETHER_TYPE_LEN	2
++
+ #endif

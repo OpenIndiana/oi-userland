@@ -19,28 +19,26 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		inflect
-HUMAN_VERSION =			7.0.0
-COMPONENT_SUMMARY =		inflect - Correctly generate plurals, singular nouns, ordinals, indefinite articles; convert numbers to words
+HUMAN_VERSION =			7.2.1
+COMPONENT_SUMMARY =		inflect - Correctly generate plurals, singular nouns, ordinals, indefinite articles
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/inflect
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9f/90/1d0a889847fdce963ebe9684de24a749e4fad627bf595e9f0d32730f85a8/inflect-7.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:63da9325ad29da81ec23e055b41225795ab793b4ecb483be5dc1fa363fd4717e
+	sha256:a7ce5e23d6798734f256c1ad9ed52186b8ec276f10b18ce3d3ecb19c21eb6cb6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pydantic
+PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/typeguard
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler

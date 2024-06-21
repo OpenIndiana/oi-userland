@@ -19,41 +19,27 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		keyrings.alt
-HUMAN_VERSION =			5.0.0
+HUMAN_VERSION =			5.0.1
 COMPONENT_SUMMARY =		keyrings.alt - Alternate keyring implementations
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/keyrings.alt
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a6/97/c7344bed881cc6f78b6231262436eb0c72615011fab4786d23d676ab77b0/keyrings.alt-5.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9d446cb47bbcea90ffa2ecc3e8003acf41573fc201bf44b4bf13bd0e11484828
+	sha256:cd372a1ec446a1bc5a90624a52c88e83b9330218e39047a6c9a48ae37d116745
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# keyrings.alt --> keyring --> keyrings.alt
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-classes
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/backports-unittest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/keyring
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodome
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodomex
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler

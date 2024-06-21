@@ -26,13 +26,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxcb
-COMPONENT_VERSION=		1.16.1
+COMPONENT_VERSION=		1.17.0
 COMPONENT_FMRI=			x11/library/libxcb
 COMPONENT_SUMMARY=		The X protocol C-language Binding (XCB): Libraries
 COMPONENT_PROJECT_URL=	https://xcb.freedesktop.org
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL=	https://xorg.freedesktop.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:f24d187154c8e027b358fc7cb6588e35e33e6a92f11c668fe77396a7ae66e311
+COMPONENT_ARCHIVE_HASH=	sha256:599ebf9996710fea71622e6e184f3a8ad5b43d0e5fa8c4e407123c88a59a6d55
 COMPONENT_LICENSE_FILE=	COPYING
 
 

@@ -25,21 +25,21 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
-BUILD_BITS=		64
-
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         findutils
-COMPONENT_VERSION=      4.9.0
+COMPONENT_VERSION=      4.10.0
 COMPONENT_SUMMARY=      GNU findutils
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/findutils/
 COMPONENT_FMRI=         file/gnu-findutils
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a2bfb8c09d436770edc59f50fa483e785b161a3b7b9d547573cb08065fd462fe
+COMPONENT_ARCHIVE_HASH= sha256:1387e0b67ff247d2abde998f90dfbf70c1491391a59ddfecb8ae698789f0a4f5
 COMPONENT_ARCHIVE_URL= 	https://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE=      GPLv3
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,27 +47,16 @@ CONFIGURE_PREFIX = $(GNUDIR)
 
 # Disable the leaf optimisation feature, because the st_nlinks directory
 # field is incorrect on ZFS file systems.
-CONFIGURE_OPTIONS +=	--disable-leaf-optimisation
+CONFIGURE_OPTIONS += --disable-leaf-optimisation
 
 # Run all the tests even if there is a failure
 COMPONENT_TEST_ARGS += -k
-COMPONENT_TEST_ENV +=	PATH="$(PATH.gnu)"
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/^PASS:/p" ' \
-	'-e "/^FAIL:/p" ' \
-	'-e "/^SKIP:/p" ' \
-	'-e "/^\# /p" '
-
-# Needed for "gmake test" to work successfully.
-# Otherwise we see errors such as:
-# FAIL: exec-nogaps.old-O3, sh: SHELLOPTS: readonly variable
-unexport SHELLOPTS
+COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
 
 # Test dependencies:
-REQUIRED_PACKAGES += developer/versioning/cvs
-REQUIRED_PACKAGES += developer/versioning/git
-REQUIRED_PACKAGES += locale/zh_cn-extra
+TEST_REQUIRED_PACKAGES += developer/versioning/cvs
+TEST_REQUIRED_PACKAGES += developer/versioning/git
+TEST_REQUIRED_PACKAGES += locale/zh_cn-extra
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

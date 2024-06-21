@@ -14,17 +14,16 @@
 #   $WS_TOOLS/python-integrate-project pytest-cov
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-cov
-HUMAN_VERSION =			4.1.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			5.0.0
 COMPONENT_SUMMARY =		pytest-cov - Pytest plugin for measuring coverage.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-cov
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3904b13dfbfec47f003b8e77fd5b589cd11904a21ddf1ab38a64f204d6a10ef6
+	sha256:5837b58e9f6ebd335b0f8060eecce69b662415b16dc503883a02f45dfeb14857
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,12 +39,13 @@ TEST_CONFLICTING_PACKAGES.python += library/python/teamcity-messages
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/coverage
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/fields
 TEST_REQUIRED_PACKAGES.python += library/python/process-tests
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
-TEST_REQUIRED_PACKAGES.python += library/python/six
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv

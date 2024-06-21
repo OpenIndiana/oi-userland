@@ -23,22 +23,9 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-#license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# This license action only needed for the old readline 5.2 libraries.
-license readline-5.license license=GPLv2 \
-    com.oracle.info.description="GNU readline version 5 libraries" \
-    com.oracle.info.name=readline com.oracle.info.tpno=$(TPNO_V5) \
-    com.oracle.info.version=$(COMPONENT_VERSION)
-license readline.license license="GPLv3, FDLv1.3" \
-    com.oracle.info.description="GNU readline" com.oracle.info.name=readline \
-    com.oracle.info.tpno=$(TPNO_V6) \
-    com.oracle.info.version=$(COMPONENT_VERSION)
-
-<transform file path=.+/share/info/dir -> drop>
-
-file examples/Inputrc path=usr/demo/readline/Inputrc
-
+file path=usr/demo/readline/Inputrc
 file path=usr/include/readline/chardefs.h
 file path=usr/include/readline/history.h
 file path=usr/include/readline/keymaps.h
@@ -47,22 +34,15 @@ file path=usr/include/readline/rlconf.h
 file path=usr/include/readline/rlstdc.h
 file path=usr/include/readline/rltypedefs.h
 file path=usr/include/readline/tilde.h
-link path=usr/lib/$(MACH64)/libhistory.so target=libhistory.so.6
-file path=usr/lib/$(MACH64)/libhistory.so.5
-file path=usr/lib/$(MACH64)/libhistory.so.6
-link path=usr/lib/$(MACH64)/libreadline.so target=libreadline.so.6
-file path=usr/lib/$(MACH64)/libreadline.so.5
-file path=usr/lib/$(MACH64)/libreadline.so.6
-link path=usr/lib/libhistory.so target=libhistory.so.6
-file path=usr/lib/libhistory.so.5
-file path=usr/lib/libhistory.so.6
-link path=usr/lib/libreadline.so target=libreadline.so.6
-file path=usr/lib/libreadline.so.5
-file path=usr/lib/libreadline.so.6
+link path=usr/lib/$(MACH64)/libhistory.so target=libhistory.so.8
+file path=usr/lib/$(MACH64)/libhistory.so.8
+link path=usr/lib/$(MACH64)/libreadline.so target=libreadline.so.8
+file path=usr/lib/$(MACH64)/libreadline.so.8
+file path=usr/lib/$(MACH64)/pkgconfig/history.pc
+file path=usr/lib/$(MACH64)/pkgconfig/readline.pc
 file path=usr/share/doc/readline/CHANGES
 file path=usr/share/doc/readline/INSTALL
 file path=usr/share/doc/readline/README
-file path=usr/share/info/dir
 file path=usr/share/info/history.info
 file path=usr/share/info/readline.info
 file path=usr/share/info/rluserman.info

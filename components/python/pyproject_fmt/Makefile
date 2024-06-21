@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt
-HUMAN_VERSION =			1.7.0
-COMPONENT_SUMMARY =		pyproject_fmt - Format your pyproject.toml file
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/31/0a/4acc5aa04f5de56d165b03ec340f6956dd8ae1ebcf497c83cf1b3206786f/pyproject_fmt-1.7.0.tar.gz
+HUMAN_VERSION =			2.1.3
+COMPONENT_SUMMARY =		Format your pyproject.toml file
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:db404b2e5d186a6cdfe2b90d7cf1d548cc8e46f87acd278cb7748ef3f05368c2
+	sha256:4fe12151c48504202fd8b1eae27e0d584c31e69f6e58c97dca6df504bdeb191a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -33,9 +31,8 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/natsort
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
+PYTHON_REQUIRED_PACKAGES += library/python/pyproject-fmt-rust
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

@@ -12,13 +12,11 @@
 # Copyright 2022, Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS= 64
-OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yara
-COMPONENT_VERSION=	4.5.0
+COMPONENT_VERSION=	4.5.1
 COMPONENT_SUMMARY=	YARA is a tool aimed at (but not limited to) helping malware \
 	researchers to identify and classify malware samples.
 COMPONENT_DESCRIPTION=	With YARA you can create descriptions of malware families \
@@ -27,7 +25,7 @@ COMPONENT_DESCRIPTION=	With YARA you can create descriptions of malware families
 	which determine its logic.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f6db34bd102703bf56cc2878ddfb249c3fb2e09c9194d3adb78c3ab79282c827
+COMPONENT_ARCHIVE_HASH=	sha256:011b95f903d8fc22de50aa1e3c1bf4ed598dbde6f9ea45176945cec5520452dc
 COMPONENT_PROJECT_URL=	https://virustotal.github.io/yara/
 COMPONENT_ARCHIVE_URL=	https://github.com/VirusTotal/yara/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
@@ -53,6 +51,6 @@ CONFIGURE_OPTION += --enable-dex
 CONFIGURE_OPTION += --enable-pb-tests
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -1,0 +1,35 @@
+We have no pypytools packaged yet.
+
+--- cheroot-10.0.1/requirements/tests.in.orig
++++ cheroot-10.0.1/requirements/tests.in
+@@ -27,11 +27,6 @@
+ pyopenssl >= 22.0.0; implementation_name == "pypy" and python_version >= "3.8"
+ pyopenssl < 22.0.0; implementation_name == "pypy" and python_version < "3.8"
+ 
+-# The pypytools library provides a cross-implementation context
+-# manager for disabling garbage collection in specific blocks
+-# of the control flow:
+-pypytools
+-
+ pytest-clarity
+ pytest-cov==2.12.0
+ pytest-forked>=1.2.0; sys_platform != "win32"
+--- cheroot-10.0.1/cheroot/test/test_server.py.orig
++++ cheroot-10.0.1/cheroot/test/test_server.py
+@@ -12,8 +12,6 @@
+ import pytest
+ import requests
+ 
+-from pypytools.gc.custom import DefaultGc
+-
+ from .._compat import bton, ntob
+ from .._compat import IS_LINUX, IS_MACOS, IS_WINDOWS, SYS_PLATFORM
+ from ..server import IS_UID_GID_RESOLVABLE, Gateway, HTTPServer
+@@ -342,6 +340,7 @@
+     indirect=('resource_limit',),
+ )
+ @pytest.mark.usefixtures('many_open_sockets')
++@pytest.mark.skip(reason="missing pypytools")
+ def test_high_number_of_file_descriptors(native_server_client, resource_limit):
+     """Test the server does not crash with a high file-descriptor value.
+ 

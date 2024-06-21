@@ -99,6 +99,8 @@ for l in "$WS_TOOLS"/licenses/$LICENSE ; do
 				| sed -e '/^\*\*\$/d' -e 's/^\*\*\([^*]\)/\1/' -e 's/\([^*]\)\*\*\$/\1/' -e 's/\([^*]\)\*\*\([^*]\)/\1\2/g' \\
 		EOF
 	fi
+	# Punctuation - Quotes
+	printf '\t| sed -e %cs/“/"/g%c -e %cs/”/"/g%c \\\n' "'" "'" "'" "'" >> "$TMPFILE"
 	# Apply filter if any
 	[[ -x "$l.filter" ]] && printf '\t| LC_ALL=C %s \\\n' "$l.filter" >> "$TMPFILE"
 	cat <<#EOF >> "$TMPFILE"

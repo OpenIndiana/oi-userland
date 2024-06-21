@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	libcupsfilters
 COMPONENT_VERSION= 2.0.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= libcupsfilters contains all the code of the filters of the former cups-filters package as library functions
 COMPONENT_DESCRIPTION= The filter functions are principally intended to be used for the data format conversion tasks needed in \
 					   Printer Applications. They are already in use (together with libppd and pappl-retrofit) by the CUPS-driver \
@@ -76,6 +76,7 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libexif
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/lcms2

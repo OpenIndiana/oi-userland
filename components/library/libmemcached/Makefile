@@ -21,73 +21,72 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
+# Copyright (c) 2024  Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
-USE_DEFAULT_TEST_TRANSFORMS= yes
+BUILD_STYLE=	cmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libmemcached
-COMPONENT_MAJOR_VERSION=	1.0
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).18
-COMPONENT_REVISION=		1
+COMPONENT_MAJOR_VERSION=	1.1
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).4
+COMPONENT_SUMMARY=	libmemcached-awesome is an open source C/C++ client library and tools for the memcached server
+COMPONENT_FMRI=		library/$(COMPONENT_NAME)
+COMPONENT_DESCRIPTION=	It has been designed to be light on memory usage, thread safe, and provide full access to server side methods.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e22c0bb032fde08f53de9ffbc5a128233041d9f33b5de022c0978a2149885f82
-COMPONENT_ARCHIVE_URL=  https://launchpad.net/libmemcached/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_VERSION)/+download/${COMPONENT_ARCHIVE}
-COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
+COMPONENT_ARCHIVE_HASH= sha256:c477e1f6510e1dc698e84f3717ce690a8f65b94c616ecaa62306cce0f5e3116a
+COMPONENT_ARCHIVE_URL=	https://github.com/awesomized/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz 
+COMPONENT_PROJECT_URL=  https://awesomized.github.io/libmemcached
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE=	BSD-3-Clause
+COMPONENT_LICENSE_FILE= LICENSE.HEADER
 
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS   += $(CPP_XPG6MODE)
-CXXFLAGS += $(CPP_XPG6MODE)
-LDFLAGS  += $(CPP_XPG6MODE) -lsocket -lnsl
+LDFLAGS  += -lsocket -lnsl
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -vif )
-
-CONFIGURE_ENV += MAKE=$(GMAKE)
-
-CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)
-CONFIGURE_OPTIONS += --disable-static
+CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
+CMAKE_OPTIONS += -DBUILD_DOCS_MAN=ON
+CMAKE_OPTIONS += -DBUILD_TESTING=ON
+CMAKE_OPTIONS += -DENABLE_MEMASLAP=ON
+CMAKE_OPTIONS += -DENABLE_HASH_HSIEH=ON
+CMAKE_OPTIONS += -DENABLE_HASH_FNV64=ON
+CMAKE_OPTIONS += -DENABLE_HASH_MURMUR=ON
+CMAKE_OPTIONS += -DENABLE_SASL=OFF
+CMAKE_OPTIONS += -DENABLE_DTRACE=OFF
+CMAKE_OPTIONS += -DENABLE_OPENSSL_CRYPTO=OFF
 
 # need some files in $(SOURCE_DIR)/docs during build
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# need /usr/perl5/bin on path to access pod2man perl script, used by 
-# the build to create docs
-#COMPONENT_BUILD_ENV += PATH=/usr/perl5/bin:$(PATH)
-COMPONENT_BUILD_ENV += MAKE="$(GMAKE)"	
-
-# Libmemcached's configure script sets an incorrect CFLAGS in the Makefiles
-# it generates.  Make sure we use the correct one by passing CFLAGS in 
-# as a build argument (CFLAGS in the environment won't take precedence
-# over the Makefile one).
-COMPONENT_BUILD_ARGS +=	CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ARGS +=	CXXFLAGS="$(CXXFLAGS)"
-COMPONENT_BUILD_ARGS +=	LDFLAGS="$(LDFLAGS)"
-
-# Similarly, set pkglibdir in the arguments to gmake; otherwise
-# the Makefile sets runpath to a non-existent /usr/lib/libmemcached directory.
-COMPONENT_BUILD_ARGS +=	pkglibdir=/usr/lib
-
 ASLR_MODE = $(ASLR_ENABLE)
 
-CONFIGURE_OPTIONS += ax_cv_check_cflags__Werror__fPIE=no
-CONFIGURE_OPTIONS += ax_cv_check_cflags__Werror__pie=no
-CONFIGURE_OPTIONS += ax_cv_check_cxxflags__Werror__fPIE=no
-CONFIGURE_OPTIONS += ax_cv_check_cxxflags__Werror__pie=no
+COMPONENT_TEST_TRANSFORMS = \
+        '-n ' \
+        '-e "s/Passed.*$$/Passed/p" ' \
+        '-e "s/Failed .*$$/Failed/p" '
 
-COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
-
-# Some tests fail because memcached is not running.
-unexport SHELLOPTS
-
-COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_ARGS += -k -i
+
+COMPONENT_POST_INSTALL_ACTION  = \
+    for file in `find $(PROTO_DIR)$(USRLIBDIR64) -name "*.so.*"`; do \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR)"' $$file ; \
+    done ; \
+    for file in `find $(PROTO_DIR)$(USRBINDIR) -name "mem*"`; do \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR)"' $$file ; \
+    done ;
+
+# Manually added dependencies
+REQUIRED_PACKAGES += service/memcached
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

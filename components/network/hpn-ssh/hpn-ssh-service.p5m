@@ -22,8 +22,6 @@
 
 <transform file path=usr/sbin/hpnsshd$ -> default restart_fmri svc:/network/hpnssh:default>
 <transform file path=usr/libexec/hpnssh-keysign$ -> default mode 4555>
-<transform file path=etc/hpnssh/sshd_config$ -> default mode 0644>
-<transform file path=etc/hpnssh/sshd_config$ -> default preserve true>
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
@@ -47,6 +45,7 @@ depend type=require fmri=network/hpn-ssh
 
 file path=etc/hpnssh/moduli
 file path=etc/hpnssh/sshd_config
+file path=etc/hpnssh/sshd_config.d/10-openindiana.conf
 file path=lib/svc/manifest/network/hpnssh.xml
 file path=lib/svc/method/hpnsshd
 file path=usr/lib/dtrace/hpnsftp.d

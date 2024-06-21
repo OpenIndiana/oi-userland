@@ -11,27 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-checkdocs
+#   $WS_TOOLS/python-integrate-project -d python/pytest-checkdocs pytest_checkdocs
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-checkdocs
-HUMAN_VERSION =			2.11.0
-COMPONENT_SUMMARY =		pytest-checkdocs - check the README when running tests
+COMPONENT_NAME =		pytest_checkdocs
+HUMAN_VERSION =			2.13.0
+COMPONENT_SUMMARY =		pytest_checkdocs - check the README when running tests
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-checkdocs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3270668c5d0758f6084c8dc1890d4e95321f0b1c46bda7aa18d8b6cc314e4b5c
+	sha256:b0e67169c543986142e15afbc17c772da87fcdb0922c7b1e4f6c60f8769f11f9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/build
 PYTHON_REQUIRED_PACKAGES += library/python/docutils
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel

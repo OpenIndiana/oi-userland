@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hypothesis
-HUMAN_VERSION =			6.99.12
-COMPONENT_SUMMARY =		hypothesis - A library for property-based testing
+HUMAN_VERSION =			6.103.1
+COMPONENT_SUMMARY =		A library for property-based testing
 COMPONENT_PROJECT_URL =		https://hypothesis.works
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ecde51aa8d35bc840b3b49d7d96acf08232e3a3b6aae941e7a311ced077a0b64
+	sha256:d93704fe6ab1cde97421c3d98edaf9379370ecfe0ae522cfe483e717d7acbb11
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -38,6 +38,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Random temporary directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(/tmp\).\{8\}/|\1XXXXXXXX/|g'"
+# Contains the date of the test run
+COMPONENT_TEST_TRANSFORMS += "-e '/to add failing examples to your code/d'"
+
+# Testing fails with the following two (abandoned) plugins installed
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-black
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-flake8
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs

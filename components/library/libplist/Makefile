@@ -17,12 +17,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libplist
-COMPONENT_VERSION= 2.4.0
+COMPONENT_VERSION= 2.6.0
 COMPONENT_SUMMARY= A library to handle Apple Property List format in binary or XML
 COMPONENT_PROJECT_URL = https://github.com/libimobiledevice/libplist
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:154815a2daca115f83a00a645073755196fd3adfbf0244d159c0eaced2a45bcd
+COMPONENT_ARCHIVE_HASH= sha256:2c8aa303dac2d73fcf28ba90122e68480ca8cf7b00c5d44926ea4c1e8cf94368
 COMPONENT_ARCHIVE_URL=	https://cgit.libimobiledevice.org/libplist.git/snapshot/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/libplist
 COMPONENT_CLASSIFICATION= System/Libraries

@@ -27,14 +27,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			doxygen
-COMPONENT_VERSION=		1.10.0
+COMPONENT_VERSION=		1.11.0
 COMPONENT_VERSION_=		$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=		Doxygen - Source Code Documentation Tool 
 COMPONENT_PROJECT_URL=	https://www.doxygen.nl
 COMPONENT_FILE=			Release_$(COMPONENT_VERSION_)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_FILE)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:795692a53136ca9bb9a6cd72656968af7858a78be7d6d011e12ab1dce6b9533c
+COMPONENT_ARCHIVE_HASH=	sha256:1fea49c69e51fec3dd2599947f6d48d9b1268bd5115b1bb08dffefc1fd5d19ee
 COMPONENT_ARCHIVE_URL=	https://github.com/doxygen/doxygen/archive/$(COMPONENT_FILE).tar.gz
 COMPONENT_FMRI=			developer/documentation-tool/doxygen		
 COMPONENT_CLASSIFICATION= Development/Distribution Tools
@@ -43,7 +43,7 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1=	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
-COMPONENT_ARCHIVE_HASH_1=	sha256:3c8ec42b37e5ff8b723fef4e9b1946721f5d71a3aa39f55369ba28f88ab75e63
+COMPONENT_ARCHIVE_HASH_1=	sha256:21f4ee85937b95bca63ffdfa241f0f3a7e82d998bd4669d0b251f8405b784fc0
 COMPONENT_ARCHIVE_URL_1=	https://doxygen.nl/files/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk

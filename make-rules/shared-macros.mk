@@ -97,6 +97,13 @@ PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 # $(subst $(space),:,$(strip $(SPATHS)))
 empty :=
 space := $(empty) $(empty)
+# Define $(comma) as single comma so we can use it in text transforming functions
+comma = ,
+# Define $(newline) as single newline so we can embed newline into make variables
+define newline
+
+
+endef
 
 ROOT =			/
 
@@ -107,19 +114,29 @@ ROOT =			/
 # to determine the distribution version
 # (it should look like OpenIndiana Hipster YYYY.MM).
 DISTRIBUTION_NAME = OpenIndiana Hipster
-DISTRIBUTION_VERSION = 2023.10
+DISTRIBUTION_VERSION = 2024.04
 # Native OS version
 OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 # Target OS version
 PKG_SOLARIS_VERSION ?= 5.11
 PKG_OS_VERSION ?= 0.$(PKG_SOLARIS_VERSION)
-# auto-conf-y platform
-i386_PLAT = pc
-sparc_PLAT = sun
-PLAT=$($(MACH)_PLAT)
-# For pre-gcc-9 the triplet matches the legacy definition
-GNU_TRIPLET=$(MACH)-$(PLAT)-solaris$(SOLARIS_VERSION)
+
+# GNU target triplet
+GNU_TRIPLET=$(GNU_CPU)-$(GNU_VENDOR)-$(GNU_OS)
+# The cpu part of the triplet is basically the same as $(MACH):
+# i386 - for x86 and GCC version older than 9
+# x86_64 - for x86 and GCC version 9 and newer
+# sparc - for SPARC
+GNU_CPU = $(if $(filter $(GCC_VERSION),3 4 7),$(MACH),$(MACH:i386=x86_64))
+# The vendor part of the triplet is:
+# pc - for x86
+# sun - for SPARC
+GNU_VENDOR.i386 = pc
+GNU_VENDOR.sparc = sun
+GNU_VENDOR = $(GNU_VENDOR.$(MACH))
+# The os part of the triplet is solaris2.11
+GNU_OS = solaris$(SOLARIS_VERSION)
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
@@ -435,16 +452,6 @@ CONFIGURE_NO_ARCH =	$(BUILD_DIR_NO_ARCH)/.configured
 CONFIGURE_32 =		$(BUILD_DIR_32)/.configured
 CONFIGURE_64 =		$(BUILD_DIR_64)/.configured
 
-# In ideal world all components should support parallel build but it is often
-# not the case.  So by default we do not run parallel build and allow
-# components to opt-in for parallel build by setting USE_PARALLEL_BUILD = yes
-# before the shared-macros.mk file is included.
-PARALLEL_JOBS ?= 8
-ifeq ($(strip $(USE_PARALLEL_BUILD)),yes)
-COMPONENT_BUILD_GMAKE_ARGS += -j$(PARALLEL_JOBS)
-COMPONENT_BUILD_SETUP_PY_ARGS += -j$(PARALLEL_JOBS)
-endif
-
 BUILD_DIR_NO_ARCH =	$(BUILD_DIR)/$(MACH)
 BUILD_DIR_32 =		$(BUILD_DIR)/$(MACH32)
 BUILD_DIR_64 =		$(BUILD_DIR)/$(MACH64)
@@ -635,11 +642,11 @@ GCC_VERSION ?=	$(GCC_DEFAULT)
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
 # Define runtime package names to be used in dependencies
-GCC_VERSION_MAJOR    = $(shell echo $(GCC_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
-GCC_RUNTIME_PKG      = system/library/gcc-$(GCC_VERSION_MAJOR)-runtime
-GXX_RUNTIME_PKG      = system/library/g++-$(GCC_VERSION_MAJOR)-runtime
-GFORTRAN_RUNTIME_PKG = system/library/gfortran-$(GCC_VERSION_MAJOR)-runtime
-GOBJC_RUNTIME_PKG    = system/library/gobjc-$(GCC_VERSION_MAJOR)-runtime
+GCC_RUNTIME_PKG =	system/library/gcc-$(GCC_VERSION)-runtime
+GXX_RUNTIME_PKG =	system/library/g++-$(GCC_VERSION)-runtime
+GCCGO_RUNTIME_PKG =	system/library/gccgo-$(GCC_VERSION)-runtime
+GFORTRAN_RUNTIME_PKG =	system/library/gfortran-$(GCC_VERSION)-runtime
+GOBJC_RUNTIME_PKG =	system/library/gobjc-$(GCC_VERSION)-runtime
 
 CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
@@ -653,8 +660,7 @@ FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
 # GCC directory macros
 GCC_FULL_VERSION = $(shell $(GCC_ROOT)/bin/gcc -dumpversion)
-# Since gcc-9 the GNU triplet is x86_64-pc-solaris2.11 instead of i386-pc-solaris2.11
-GCC_GNU_TRIPLET  = $(shell $(GCC_ROOT)/bin/gcc -dumpmachine)
+GCC_GNU_TRIPLET  = $(GNU_TRIPLET)
 GCC_BINDIR =	$(GCC_ROOT)/bin
 GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
 GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
@@ -689,9 +695,9 @@ endif
 LD =		/usr/bin/ld
 
 # Clang definitions (we only have 64 bit clang)
-CLANG_DEFAULT =		17
+CLANG_DEFAULT =		18
 CLANG_VERSION =		$(CLANG_DEFAULT)
-CLANG_FULL_VERSION =	$(CLANG_VERSION).0
+CLANG_FULL_VERSION =	$(CLANG_VERSION).1
 CLANG_PREFIX             = /usr/clang/$(CLANG_FULL_VERSION)
 CLANG_BINDIR =		$(CLANG_PREFIX)/bin
 CLANG_LIBDIR             = $(CLANG_PREFIX)/lib
@@ -843,9 +849,9 @@ QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 # +--------------+----------------+
 # | Perl version | Obsolete after |
 # +--------------+----------------+
-# |     5.34     |   2024-05-20   |
 # |     5.36     |   2025-05-28   |
 # |     5.38     |   2026-07-02   |
+# |     5.40     |   2027-06-09   |
 # +--------------+----------------+
 #
 # See https://www.cpan.org/src/README.html
@@ -856,7 +862,7 @@ PERL_VERSION =  5.38
 
 # The PERL_VERSIONS list should always be in ascending order (newest version
 # last)
-PERL_VERSIONS = 5.34 5.36 5.38
+PERL_VERSIONS = 5.36 5.38 5.40
 # Perl up to 5.22 was built 32-bit only.  Starting with 5.24 the perl package
 # is built 64-bit only.  So now all PERL_VERSIONS are 64-bit only.
 PERL_64_ONLY_VERSIONS = $(PERL_VERSIONS)
@@ -869,7 +875,7 @@ PERL_64_ONLY_VERSIONS = $(PERL_VERSIONS)
 #
 # This list should be usually empty.  Intersection of PERL_VERSIONS_OBSOLETING
 # and PERL_VERSIONS lists MUST be always empty.
-PERL_VERSIONS_OBSOLETING =
+PERL_VERSIONS_OBSOLETING = 5.34
 
 define perl-path-rule
 PERL.$(1) =		/usr/perl5/$(1)/bin/perl
@@ -1049,9 +1055,14 @@ TCLSH.8.6.sparc.64 =	/usr/bin/sparcv9/tclsh8.6
 TCLSH =		$(TCLSH.$(TCL_VERSION).$(MACH).$(BITS))
 
 # ICU library
-ICU_VERSION =			74
+ICU_VERSION =			75
 ICU_LIBRARY_PKG =		library/icu-$(ICU_VERSION)
 REQUIRED_PACKAGES_SUBST +=	ICU_LIBRARY_PKG
+
+# GNU readline
+READLINE_VERSION =		8
+READLINE_PKG =			library/readline-$(READLINE_VERSION)
+REQUIRED_PACKAGES_SUBST +=	READLINE_PKG
 
 
 CCSMAKE =	/usr/ccs/bin/make
@@ -1104,6 +1115,7 @@ DOS2UNIX =	/usr/bin/dos2unix
 TAC =		/usr/bin/tac
 QUILT =		/usr/bin/quilt
 CTFCONVERT =	/opt/onbld/bin/$(MACH)/ctfconvert
+ELFEDIT =	/usr/bin/elfedit
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
@@ -1131,6 +1143,10 @@ OPENSSL_PKG_CONFIG_PATH.32= $(OPENSSL_PREFIX)/lib/pkgconfig
 OPENSSL_PKG_CONFIG_PATH.64= $(OPENSSL_PREFIX)/lib/64/pkgconfig
 OPENSSL_PKG_CONFIG_PATH= $(OPENSSL_PKG_CONFIG_PATH.$(BITS))
 OPENSSL_INCDIR=$(OPENSSL_PREFIX)/include
+
+# The OpenSSL 1.0 package is without the version suffix so it needs special handling
+OPENSSL_PKG =			library/security/openssl$(subst -10,,-$(subst .,,$(OPENSSL_VERSION)))
+REQUIRED_PACKAGES_SUBST +=	OPENSSL_PKG
 
 # Pkg-config paths
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
@@ -1193,6 +1209,9 @@ gcc_C99_ENABLE =	-std=c99
 gcc_XREGS.sparc =	-mno-app-regs
 gcc_XREGS.i386 =
 gcc_XREGS =		$(gcc_XREGS.$(MACH))
+
+# See CPP_XPG7MODE comment above.
+XPG7MODE =		$(CPP_XPG7MODE)
 
 # See CPP_XPG6MODE comment above.
 XPG6MODE =		$(CPP_XPG6MODE)
@@ -1468,6 +1487,7 @@ USERLAND_REQUIRED_PACKAGES += metapackages/build-essential
 # Runtime package names are changed at compiler version major bumps.
 REQUIRED_PACKAGES_SUBST+= GCC_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GXX_RUNTIME_PKG
+REQUIRED_PACKAGES_SUBST+= GCCGO_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GFORTRAN_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 

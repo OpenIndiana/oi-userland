@@ -27,13 +27,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hpn-ssh
-COMPONENT_VERSION=	18.3.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	18.4.1
 COMPONENT_SUMMARY=	High performance SSH/SCP
 COMPONENT_SRC=		$(COMPONENT_NAME)-hpn-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.psc.edu/hpn-ssh-home/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7165ecef8ae008aff8e317a5f0d2f546e56d5173ae82a51fa75525dcba67d48f
+COMPONENT_ARCHIVE_HASH=	sha256:e53a9b8984beeb9f20caa630f6635e8e920f63fd79dea3c4e325a2df1ed91e64
 COMPONENT_ARCHIVE_URL=	https://github.com/rapier1/hpn-ssh/archive/refs/tags/hpn-$(HUMAN_VERSION).tar.gz
 COMPONENT_FMRI=		network/hpn-ssh
 COMPONENT_LICENSE=	BSD, BSD-like
@@ -94,6 +93,12 @@ COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/hpnssh-
 # Install the service related files
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm0444 $(COMPONENT_DIR)/files/hpnssh.xml $(PROTO_DIR)/lib/svc/manifest/network/hpnssh.xml ;
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm0555 $(COMPONENT_DIR)/files/hpnsshd $(PROTO_DIR)/lib/svc/method/hpnsshd ;
+
+# Install configuration snippets
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTO_DIR)/etc/hpnssh/ssh_config.d ;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) $(COMPONENT_DIR)/files/ssh_config.d/* $(PROTO_DIR)/etc/hpnssh/ssh_config.d ;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTO_DIR)/etc/hpnssh/sshd_config.d ;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) $(COMPONENT_DIR)/files/sshd_config.d/* $(PROTO_DIR)/etc/hpnssh/sshd_config.d ;
 
 COMPONENT_TEST_TARGETS = tests
 

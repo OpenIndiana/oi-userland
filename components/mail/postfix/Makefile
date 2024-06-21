@@ -16,10 +16,12 @@
 #
 
 BUILD_STYLE= justmake
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
 COMPONENT_VERSION=	3.9.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	https://www.postfix.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -70,13 +72,13 @@ PKG_HARDLINKS += usr/lib/postfix/lmtp
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl

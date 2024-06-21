@@ -24,24 +24,25 @@
 # Copyright (c) 2021, Andreas Wacknitz.
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c-ares
-COMPONENT_VERSION=	1.27.0
+COMPONENT_VERSION=	1.30.0
 COMPONENT_SUMMARY=	c-ares - C library for asynchronous DNS requests
 COMPONENT_DESCRIPTION=	c-ares is a C library for asynchronous DNS requests including name resolves
 COMPONENT_PROJECT_URL=	https://c-ares.haxx.se/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0a72be66959955c43e2af2fbd03418e82a2bd5464604ec9a62147e37aceb420b
-COMPONENT_ARCHIVE_URL=	https://c-ares.haxx.se/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:4fea312112021bcef081203b1ea020109842feb58cd8a36a3d3f7e0d8bc1138c
+COMPONENT_ARCHIVE_URL=	https://github.com/c-ares/c-ares/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libcares
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=		MIT
 COMPONENT_LICENSE_FILE=	LICENSE.md
 
+# We don't have Googletest.
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(XPG6MODE)

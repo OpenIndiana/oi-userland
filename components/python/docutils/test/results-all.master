@@ -1,4 +1,3 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0] $(@D)/test> find . -type f -name '*.pyc' -delete
 py$(PYV): commands[1] $(@D)/test> python alltests.py
@@ -55,6 +54,7 @@ Use self-declared encoding. ... ok
 test_fallback_no_utf8 (test_io.FileInputTests) ... skipped 'locale encoding not set or UTF-8'
 test_fallback_utf8 (test_io.FileInputTests)
 Try 'utf-8', if encoding is not specified in the source. ... ok
+test_readlines (test_io.FileInputTests) ... ok
 test_check_encoding_false (test_io.HelperTests)
 Return `False` if lookup returns different codecs ... ok
 test_check_encoding_none (test_io.HelperTests)
@@ -62,12 +62,9 @@ Cases where the comparison fails. ... ok
 test_check_encoding_true (test_io.HelperTests)
 Return `True` if lookup returns the same codec ... ok
 test_error_string (test_io.HelperTests) ... ok
-test_bom (test_io.InputTests) ... ok
-test_bom_detection (test_io.InputTests) ... ok
-test_coding_slug (test_io.InputTests) ... ok
+test_bom_handling (test_io.InputTests) ... ok
 test_decode_unicode (test_io.InputTests) ... ok
-test_heuristics_no_utf8 (test_io.InputTests) ... ok
-test_readlines (test_io.InputTests) ... ok
+test_encoding_declaration (test_io.InputTests) ... ok
 test_FileOutput_hande_io_errors_deprection_warning (test_io.OutputTests) ... ok
 test_encoding_clash_nonresolvable (test_io.OutputTests) ... ok
 test_encoding_clash_resolved (test_io.OutputTests) ... ok
@@ -120,7 +117,6 @@ test_bogus_parser (test_parsers.test_get_parser_class.GetParserClassTestCase) ..
 test_local_parser (test_parsers.test_get_parser_class.GetParserClassTestCase) ... ok
 test_registered_parser (test_parsers.test_get_parser_class.GetParserClassTestCase) ... ok
 test_missing_parser_message (test_parsers.test_get_parser_class.RecommonmarkMissingTests) ... ok
-test_inputrestrictions (test_parsers.test_parser.RstParserTests) ... ok
 test_parsers.test_recommonmark (unittest.loader.ModuleSkipped) ... skipped 'Parsing "recommonmark" Markdown flavour requires the\n  package https://pypi.org/project/recommonmark.'
 test_parse (test_parsers.test_rst.test_SimpleTableParser.SimpleTableParserTestCase) ... ok
 test_parse (test_parsers.test_rst.test_TableParser.GridTableParserTestCase) ... ok
@@ -184,9 +180,11 @@ test_parser (test_parsers.test_rst.test_line_blocks.ParserTestCase) ... ok
 test_parser (test_parsers.test_rst.test_line_length_limit.ParserTestCase) ... ok
 test_parser (test_parsers.test_rst.test_line_length_limit_default.ParserTestCase) ... ok
 test_parser (test_parsers.test_rst.test_literal_blocks.ParserTestCase) ... ok
+test_inputrestrictions (test_parsers.test_rst.test_misc.RstParserTests) ... ok
 test_parser (test_parsers.test_rst.test_option_lists.ParserTestCase) ... ok
 test_parser (test_parsers.test_rst.test_outdenting.ParserTestCase) ... ok
 test_parser (test_parsers.test_rst.test_paragraphs.ParserTestCase) ... ok
+test_parser (test_parsers.test_rst.test_root_prefix.ParserTestCase) ... ok
 test_parser (test_parsers.test_rst.test_section_headers.ParserTestCase) ... ok
 test_transforms (test_parsers.test_rst.test_source_line.TransformTestCase) ... ok
 test_parser (test_parsers.test_rst.test_substitutions.ParserTestCase) ... ok
@@ -239,8 +237,11 @@ test_set_conditions_deprecation_warning (test_settings.HelperFunctionsTests) ...
 test_validate_boolean (test_settings.HelperFunctionsTests) ... ok
 test_validate_colon_separated_string_list (test_settings.HelperFunctionsTests) ... ok
 test_validate_comma_separated_list (test_settings.HelperFunctionsTests) ... ok
+test_validate_math_output (test_settings.HelperFunctionsTests) ... ok
+test_validate_math_output_errors (test_settings.HelperFunctionsTests) ... ok
 test_validate_smartquotes_locales (test_settings.HelperFunctionsTests) ... ok
 test_validate_ternary (test_settings.HelperFunctionsTests) ... ok
+test_validate_threshold (test_settings.HelperFunctionsTests) ... ok
 test_validate_url_trailing_slash (test_settings.HelperFunctionsTests) ... ok
 test_add_state (test_statemachine.EmptySMTests) ... ok
 test_add_states (test_statemachine.EmptySMTests) ... ok
@@ -259,7 +260,7 @@ test_get_indented (test_statemachine.SMWSTests) ... ok
 test_get_text_block (test_statemachine.SMWSTests) ... ok
 test_get_text_block_flush_left (test_statemachine.SMWSTests) ... ok
 test_run (test_statemachine.SMWSTests) ... ok
-test_kwargs (test_transforms.test___init__.KwargsTestCase) ... ok
+test_kwargs (test_transforms.test__init__.KwargsTestCase) ... ok
 test_transforms (test_transforms.test_class.TransformTestCase) ... ok
 test_transforms (test_transforms.test_contents.TransformTestCase) ... ok
 test_transforms (test_transforms.test_docinfo.TransformTestCase) ... ok
@@ -284,35 +285,69 @@ test_transforms (test_transforms.test_target_notes.TransformTestCase) ... ok
 test_transforms (test_transforms.test_transitions.TransformTestCase) ... ok
 test_transforms (test_transforms.test_writer_aux.TransformTestCase) ... ok
 test_stop_traversal (test_traversals.StopTraversalTests) ... ok
-test_assemble_option_dict (test_utils.ExtensionOptionTests) ... ok
-test_extract_extension_options (test_utils.ExtensionOptionTests) ... ok
-test_column_width (test_utils.HelperFunctionTests) ... ok
-test_decode_path (test_utils.HelperFunctionTests) ... ok
-test_escape2null (test_utils.HelperFunctionTests) ... ok
-test_find_file_in_dirs (test_utils.HelperFunctionTests) ... ok
-test_implicit_version_identifier (test_utils.HelperFunctionTests) ... ok
-test_normalize_language_tag (test_utils.HelperFunctionTests) ... ok
-test_relative_path (test_utils.HelperFunctionTests) ... ok
-test_unescape (test_utils.HelperFunctionTests) ... ok
-test_version_identifier (test_utils.HelperFunctionTests) ... ok
-test_xml_declaration (test_utils.HelperFunctionTests) ... ok
-test_extract_name_value (test_utils.NameValueTests) ... ok
-test_debug (test_utils.QuietReporterTests) ... ok
-test_error (test_utils.QuietReporterTests) ... ok
-test_info (test_utils.QuietReporterTests) ... ok
-test_severe (test_utils.QuietReporterTests) ... ok
-test_warning (test_utils.QuietReporterTests) ... ok
-test_level0 (test_utils.ReporterTests) ... ok
-test_level1 (test_utils.ReporterTests) ... ok
-test_level2 (test_utils.ReporterTests) ... ok
-test_level3 (test_utils.ReporterTests) ... ok
-test_level4 (test_utils.ReporterTests) ... ok
-test_unicode_message (test_utils.ReporterTests) ... ok
-test_unicode_message_from_exception (test_utils.ReporterTests)
+test_assemble_option_dict (test_utils.test__init__.ExtensionOptionTests) ... ok
+test_extract_extension_options (test_utils.test__init__.ExtensionOptionTests) ... ok
+test_column_width (test_utils.test__init__.HelperFunctionTests) ... ok
+test_decode_path (test_utils.test__init__.HelperFunctionTests) ... ok
+test_escape2null (test_utils.test__init__.HelperFunctionTests) ... ok
+test_find_file_in_dirs (test_utils.test__init__.HelperFunctionTests) ... ok
+test_implicit_version_identifier (test_utils.test__init__.HelperFunctionTests) ... ok
+test_normalize_language_tag (test_utils.test__init__.HelperFunctionTests) ... ok
+test_relative_path (test_utils.test__init__.HelperFunctionTests) ... ok
+test_unescape (test_utils.test__init__.HelperFunctionTests) ... ok
+test_version_identifier (test_utils.test__init__.HelperFunctionTests) ... ok
+test_xml_declaration (test_utils.test__init__.HelperFunctionTests) ... ok
+test_extract_name_value (test_utils.test__init__.NameValueTests) ... ok
+test_debug (test_utils.test__init__.QuietReporterTests) ... ok
+test_error (test_utils.test__init__.QuietReporterTests) ... ok
+test_info (test_utils.test__init__.QuietReporterTests) ... ok
+test_severe (test_utils.test__init__.QuietReporterTests) ... ok
+test_warning (test_utils.test__init__.QuietReporterTests) ... ok
+test_level0 (test_utils.test__init__.ReporterTests) ... ok
+test_level1 (test_utils.test__init__.ReporterTests) ... ok
+test_level2 (test_utils.test__init__.ReporterTests) ... ok
+test_level3 (test_utils.test__init__.ReporterTests) ... ok
+test_level4 (test_utils.test__init__.ReporterTests) ... ok
+test_unicode_message (test_utils.test__init__.ReporterTests) ... ok
+test_unicode_message_from_exception (test_utils.test__init__.ReporterTests)
 Workaround for Python < 2.6 bug: ... ok
-test_get_stylesheet_list_conflict (test_utils.StylesheetFunctionTests) ... ok
-test_get_stylesheet_list_stylesheet (test_utils.StylesheetFunctionTests) ... ok
-test_get_stylesheet_list_stylesheet_path (test_utils.StylesheetFunctionTests) ... ok
+test_get_stylesheet_list_conflict (test_utils.test__init__.StylesheetFunctionTests) ... ok
+test_get_stylesheet_list_stylesheet (test_utils.test__init__.StylesheetFunctionTests) ... ok
+test_get_stylesheet_list_stylesheet_path (test_utils.test__init__.StylesheetFunctionTests) ... ok
+test_pick_math_environment (test_utils.test_math.test__init__.MathTests) ... ok
+test_wrap_math_code (test_utils.test_math.test__init__.MathTests) ... ok
+test__init__ (test_utils.test_math.test_mathml_elements.MathElementTests)
+Instantiate a MathElement object and test its properties. ... ok
+test__repr__ (test_utils.test_math.test_mathml_elements.MathElementTests)
+The representation should match the code to instantiate. ... ok
+test__setitem__ (test_utils.test_math.test_mathml_elements.MathElementTests)
+Setting an item also sets the `parent` attribute on the child. ... ok
+test__str__ (test_utils.test_math.test_mathml_elements.MathElementTests)
+Informal string representation for debugging and error reports. ... ok
+test_a_str (test_utils.test_math.test_mathml_elements.MathElementTests) ... ok
+test_append (test_utils.test_math.test_mathml_elements.MathElementTests)
+Test special features of the "append()" method. ... ok
+test_children (test_utils.test_math.test_mathml_elements.MathElementTests) ... ok
+test_close (test_utils.test_math.test_mathml_elements.MathElementTests)
+Closing an element returns first non-closed anchestor or None. ... ok
+test_extend (test_utils.test_math.test_mathml_elements.MathElementTests) ... ok
+test_in_block (test_utils.test_math.test_mathml_elements.MathElementTests) ... ok
+test_indent_xml (test_utils.test_math.test_mathml_elements.MathElementTests)
+Modify `text` and `tail` to get indented XML output. ... ok
+test_is_full (test_utils.test_math.test_mathml_elements.MathElementTests) ... ok
+test_pop (test_utils.test_math.test_mathml_elements.MathElementTests) ... ok
+test_toxml (test_utils.test_math.test_mathml_elements.MathElementTests)
+XML representation of the element/subtree as `str`. ... ok
+test_unindent_xml (test_utils.test_math.test_mathml_elements.MathElementTests) ... ok
+test_mathml_elements (test_utils.test_math.test_mathml_elements.MathMLElementTests) ... ok
+test__init__ (test_utils.test_math.test_mathml_elements.MathSchemaTests) ... ok
+test__init__full (test_utils.test_math.test_mathml_elements.MathSchemaTests) ... ok
+test_append (test_utils.test_math.test_mathml_elements.MathSchemaTests) ... ok
+test__init__ (test_utils.test_math.test_mathml_elements.MathTokenTests) ... ok
+test_append (test_utils.test_math.test_mathml_elements.MathTokenTests) ... ok
+test_close_only_child (test_utils.test_math.test_mathml_elements.mrowTests) ... ok
+test_transfer_attributes (test_utils.test_math.test_mathml_elements.mrowTests) ... ok
+test_utils.test_math.test_tex2mathml_extern (unittest.loader.ModuleSkipped) ... skipped 'run stand-alone to test external math converters'
 test_get_indented (test_viewlist.StringList) ... ok
 test_trim_left (test_viewlist.StringList) ... ok
 test_append (test_viewlist.ViewListTests) ... ok
@@ -397,6 +432,7 @@ test_odt_contents (test_writers.test_odt.DocutilsOdtTestCase) ... ok
 test_odt_custom_headfoot (test_writers.test_odt.DocutilsOdtTestCase) ... ok
 test_odt_footnotes (test_writers.test_odt.DocutilsOdtTestCase) ... ok
 test_odt_header_footer (test_writers.test_odt.DocutilsOdtTestCase) ... ok
+test_odt_image (test_writers.test_odt.DocutilsOdtTestCase) ... ok
 test_odt_literal_block (test_writers.test_odt.DocutilsOdtTestCase) ... ok
 test_odt_nested_class (test_writers.test_odt.DocutilsOdtTestCase) ... ok
 test_odt_raw (test_writers.test_odt.DocutilsOdtTestCase) ... ok
@@ -405,8 +441,8 @@ test_publish (test_writers.test_pseudoxml.WriterPublishTestCase) ... ok
 test_publish (test_writers.test_s5.WriterPublishTestCase) ... ok
 
 ----------------------------------------------------------------------
-Ran 1636 tests
+Ran 1689 tests
 
-OK (skipped=2)
+OK (skipped=3)
   py$(PYV): OK
   congratulations :)

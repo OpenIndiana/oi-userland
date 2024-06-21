@@ -137,6 +137,8 @@ endif
 endef
 $(foreach isa,$(MACH_LIST),$(eval $(call mach-list-generate-macros,$(isa))))
 
+PKG_MACROS +=		GCCVER=$(GCC_VERSION)
+
 define python-generate-macros
 PKG_MACROS +=           PYTHON_$(1)_ONLY=\#
 PKG_MACROS +=           PYTHON_$(1)_EXCL=
@@ -326,7 +328,7 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
 		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' \
 			-e '/\.la$$/d' \
-			-e 's/$(subst .,\.,$(GCC_GNU_TRIPLET))/$$(GCC_GNU_TRIPLET)/g' | \
+			-e 's/$(subst .,\.,$(GNU_TRIPLET))/$$(GNU_TRIPLET)/g' | \
 		$(PKGFMT) -u | \
 		uniq | \
 		$(PKGFMT) | \

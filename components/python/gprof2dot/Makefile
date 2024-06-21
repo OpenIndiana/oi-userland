@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gprof2dot
-HUMAN_VERSION =			2022.7.29
-COMPONENT_SUMMARY =		gprof2dot - Generate a dot graph from the output of several profilers.
+HUMAN_VERSION =			2024.6.6
+COMPONENT_SUMMARY =		Generate a dot graph from the output of several profilers.
 COMPONENT_PROJECT_URL =		https://github.com/jrfonseca/gprof2dot
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ab/0b/fc056b26a90c1836aa6c6e1332372dc13050d384f017e388131854ead8cf/gprof2dot-2022.7.29.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:45b4d298bd36608fccf9511c3fd88a773f7a1abc04d6cd39445b11ba43133ec5
+	sha256:fa1420c60025a9eb7734f65225b4da02a10fc6dd741b37fa129bc6b41951e5ab
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,4 +33,5 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python

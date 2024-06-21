@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project requests-file
+#   $WS_TOOLS/python-integrate-project -d python/requests-file requests_file
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		requests-file
-HUMAN_VERSION =			2.0.0
-COMPONENT_SUMMARY =		requests-file - File transport adapter for Requests
+COMPONENT_NAME =		requests_file
+HUMAN_VERSION =			2.1.0
+COMPONENT_SUMMARY =		File transport adapter for Requests
 COMPONENT_PROJECT_URL =		https://github.com/dashea/requests-file
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:20c5931629c558fda566cacc10cfe2cd502433e628f568c34c80d96a0cc95972
+	sha256:0f549a3f3b0699415ac04d167e9cb39bccfb730cb832b4d20be3d9867356e658
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 

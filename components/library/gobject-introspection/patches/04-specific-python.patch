@@ -1,0 +1,17 @@
+When python3 links to a different runtime version than the one specified in the
+Makefile, the build fails because versions are mixed up. This patch forces the
+same version we set in our Makefile.
+
+This is a Solaris specific change.
+
+--- gobject-introspection-1.70.0/tools/meson.build
++++ gobject-introspection-1.70.0/tools/meson.build
+@@ -12,7 +12,7 @@ endif
+ if cc.get_id() == 'msvc'
+   python_cmd = '/usr/bin/env ' + python.path()
+ else
+-  python_cmd = '/usr/bin/env python@0@'.format(python.language_version().split('.')[0])
++  python_cmd = python.path()
+ endif
+ 
+ tool_output = []

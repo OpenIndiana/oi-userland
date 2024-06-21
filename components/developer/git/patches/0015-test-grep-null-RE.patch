@@ -1,0 +1,32 @@
+https://www.illumos.org/issues/16561
+https://lore.kernel.org/git/ZkeJx97qdLoaC2H-@telcontar/
+
+--- git-2.45.1/t/t4150-am.sh.orig
++++ git-2.45.1/t/t4150-am.sh
+@@ -1218,7 +1218,7 @@
+ 	test_path_is_missing .git/rebase-apply &&
+ 	git show empty-commit --format="%B" >expected &&
+ 	git show HEAD --format="%B" >actual &&
+-	grep -f actual expected &&
++	ggrep -f actual expected &&
+ 	grep "Creating an empty commit: empty commit" output
+ '
+ 
+@@ -1244,7 +1244,7 @@
+ 	test_path_is_missing .git/rebase-apply &&
+ 	git show empty-commit --format="%B" >expected &&
+ 	git show HEAD --format="%B" >actual &&
+-	grep -f actual expected
++	ggrep -f actual expected
+ '
+ 
+ test_expect_success 'create an non-empty commit when the index IS changed though "--allow-empty" is given' '
+@@ -1255,7 +1255,7 @@
+ 	git am --allow-empty &&
+ 	git show empty-commit --format="%B" >expected &&
+ 	git show HEAD --format="%B" >actual &&
+-	grep -f actual expected &&
++	ggrep -f actual expected &&
+ 	git diff HEAD^..HEAD --name-only
+ '
+ 

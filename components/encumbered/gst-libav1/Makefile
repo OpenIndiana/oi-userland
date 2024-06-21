@@ -17,22 +17,25 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-libav
-COMPONENT_VERSION=      1.22.10
+COMPONENT_VERSION=      1.22.12
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:d6dda7aa38a44173278de675ccd92acff0abf473f7bc02e7d1cdd4ce0f3b7642
+COMPONENT_ARCHIVE_HASH= sha256:3b60d4cac2fbcd085a93e9389ca23e0443bee1ca75574d31d4f12bb1bbecab48
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/libav
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
+
+# We need to force compilation with ffmpeg 6
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3378
+FFMPEG_VERSION = 6
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
@@ -51,8 +54,9 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/^Ok:/,/^Timeout:/p" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += developer/ffmpeg-6
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/ffmpeg-6
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += video/ffmpeg
