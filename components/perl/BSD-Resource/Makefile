@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		BSD::Resource
 HUMAN_VERSION =			1.2911
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		BSD::Resource - BSD process resource limit and priority functions
 COMPONENT_CPAN_AUTHOR =		JHI
 COMPONENT_ARCHIVE_HASH =	\
