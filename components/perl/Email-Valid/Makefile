@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Valid
 HUMAN_VERSION =			1.204
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Valid - Check validity of Internet email addresses
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
