@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Devel::LexAlias
 HUMAN_VERSION =			0.05
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Devel::LexAlias - alias lexical variables
 COMPONENT_CPAN_AUTHOR =		RCLAMP
 COMPONENT_ARCHIVE_HASH =	\
