@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::SubCalls
 HUMAN_VERSION =			1.10
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::SubCalls - Track the number of times subs are called
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
