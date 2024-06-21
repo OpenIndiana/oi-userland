@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		MIME::Types
 HUMAN_VERSION =			2.26
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		MIME::Types - Definition of MIME types
 COMPONENT_CPAN_AUTHOR =		MARKOV
 COMPONENT_ARCHIVE_HASH =	\
