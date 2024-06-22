@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::Random
 HUMAN_VERSION =			1.54
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::Random - Cryptographically Secure, True Random Number Generator.
 COMPONENT_CPAN_AUTHOR =		VIPUL
 COMPONENT_ARCHIVE_HASH =	\
