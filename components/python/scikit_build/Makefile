@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scikit_build
-HUMAN_VERSION =			0.17.6
-COMPONENT_SUMMARY =		scikit_build - Improved build system generator for Python C/C++/Fortran/Cython extensions
+HUMAN_VERSION =			0.18.0
+COMPONENT_SUMMARY =		Improved build system generator for Python C/C++/Fortran/Cython extensions
 COMPONENT_PROJECT_URL =		https://github.com/scikit-build/scikit-build
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/85/05/dc8f28b19f3f06b8a157a47f01f395444f0bae234c4d44674453fa7eeae3/scikit_build-0.17.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b51a51a36b37c42650994b5047912f59b22e3210b23e321f287611f9ef6e5c9d
+	sha256:71a13af467d1a38510c3494786e2edb73ead53ea922bde6e519dc5372aa65096
 COMPONENT_LICENSE =		BSD-2-Clause OR MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,17 +39,18 @@ PYTEST_ADDOPTS += -m 'not nosetuptoolsscm'
 # pep518 tests are trying to install numpy using pip, but that fails during
 # numpy compilation.
 PYTEST_ADDOPTS += -k 'not pep518'
-# Testing fails to start with black plugin
-PYTEST_ADDOPTS += -p no:black
-# Testing fails with cov plugin
-PYTEST_ADDOPTS += -p no:cov
-# https://github.com/scikit-build/scikit-build/issues/1006
-PYTEST_ADDOPTS += -p no:mypy
+# These tests are trying to install numpy using pip, but that fails because of
+# https://github.com/numpy/numpy/issues/25366
+PYTEST_ADDOPTS += --ignore tests/test_distribution.py
 
 # Testing needs to compile some C++ sources
 COMPONENT_TEST_ENV += CXX="$(CXX)"
 # and it also needs fortran
 COMPONENT_TEST_ENV += FC="$(FC)"
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += test
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/distro
@@ -63,3 +62,10 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/cython
+TEST_REQUIRED_PACKAGES.python += library/python/pip
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/requests
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
