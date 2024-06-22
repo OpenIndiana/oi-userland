@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mixin::Linewise
 HUMAN_VERSION =			0.111
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mixin::Linewise - write your linewise code for handles; this does the rest
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
