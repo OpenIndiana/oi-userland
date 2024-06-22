@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyqt_builder
-HUMAN_VERSION =			1.16.2
-COMPONENT_SUMMARY =		pyqt_builder - The PyQt build system
+HUMAN_VERSION =			1.16.3
+COMPONENT_SUMMARY =		The PyQt build system
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bf723cdb7cd23d2512e2acda7bc6b81f00fb05ccc5e9a8846bd34d47514cddb9
+	sha256:3ce5c03dc3fc856b782da3f53b4f3f3b6556aad7bd8416d7bbfc274d03bcf032
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
