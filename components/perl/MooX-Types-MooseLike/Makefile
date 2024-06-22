@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		MooX::Types::MooseLike
 HUMAN_VERSION =			0.29
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		MooX::Types::MooseLike - some Moosish types and a type builder
 COMPONENT_CPAN_AUTHOR =		MATEU
 COMPONENT_ARCHIVE_HASH =	\
