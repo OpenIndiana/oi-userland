@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Differences
 HUMAN_VERSION =			0.71
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Differences - Test strings and data structures and show differences if not ok
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
