@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Pluggable
 HUMAN_VERSION =			5.2
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Module::Pluggable - automatically give your module the ability to have plugins
 COMPONENT_CPAN_AUTHOR =		SIMONW
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,4 +30,5 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += runtime/perl
