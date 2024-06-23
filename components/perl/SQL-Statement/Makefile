@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		SQL::Statement
 HUMAN_VERSION =			1.414
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		SQL::Statement - SQL parsing and processing engine
 COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
