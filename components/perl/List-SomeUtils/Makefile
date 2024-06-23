@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		List::SomeUtils
 HUMAN_VERSION =			0.59
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		List::SomeUtils - Provide the stuff missing in List::Util
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
