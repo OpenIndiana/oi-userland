@@ -20,13 +20,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Term::Table
 HUMAN_VERSION =			0.018
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Term::Table - Format a header and rows into a table
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9159b9131ee6b3f3956b74f45422985553574babbfaeba60be5c17bc114ac011
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Term::Table has been added to Perl 5.40 core
+PERL_VERSIONS := $(filter 5.36 5.38, $(PERL_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
