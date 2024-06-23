@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PDF::API2
 HUMAN_VERSION =			2.047
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PDF::API2 - Create, modify, and examine PDF files
 COMPONENT_CPAN_AUTHOR =		SSIMMS
 COMPONENT_ARCHIVE_HASH =	\
