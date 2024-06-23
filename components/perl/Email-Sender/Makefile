@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Sender
 HUMAN_VERSION =			2.601
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Sender - a library for sending email
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
