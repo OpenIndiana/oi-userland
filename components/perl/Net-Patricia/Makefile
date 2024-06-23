@@ -20,13 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::Patricia
 HUMAN_VERSION =			1.22
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Net::Patricia - Patricia Trie perl module for fast IP address lookups
 COMPONENT_CPAN_AUTHOR =		GRUBER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:70835a926e1c5a8d0324c72fffee82eeb7ec6c141dee04fd446820b64f71c552
 COMPONENT_LICENSE =		GPL-2.0-only
-COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
