@@ -28,12 +28,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
-COMPONENT_VERSION=      29.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      29.4
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c34c05d3ace666ed9c7f7a0faf070fea3217ff1910d004499bd5453233d742a0
+COMPONENT_ARCHIVE_HASH= sha256:ba897946f94c36600a7e7bb3501d27aa4112d791bfe1445c61ed28550daca235
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			editor/gnu-emacs
 COMPONENT_CLASSIFICATION=	Development/Editors
@@ -78,6 +77,10 @@ LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 # The configure script runs the pkg-config command. Since we're building
 # 64-bit executables, we need pkg-config to use the 64-bit metadata files
 CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
+
+PKG_HARDLINKS += usr/bin/emacs-nox
+PKG_HARDLINKS += usr/bin/emacs-x
+PKG_HARDLINKS += usr/bin/emacs-gtk
 
 # configure options common to all variants of emacs that we want to build.
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
@@ -235,7 +238,6 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmp
