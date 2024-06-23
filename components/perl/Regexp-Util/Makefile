@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Regexp::Util
 HUMAN_VERSION =			0.005
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Regexp::Util - A selection of general-utility regexp subroutines
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
