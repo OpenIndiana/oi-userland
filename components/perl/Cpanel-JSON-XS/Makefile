@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Cpanel::JSON::XS
 HUMAN_VERSION =			4.38
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Cpanel::JSON::XS - cPanel fork of JSON::XS, fast and correct serializing
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
