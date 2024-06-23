@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinx_autodoc_typehints
-HUMAN_VERSION =			2.2.1
+HUMAN_VERSION =			2.2.2
 COMPONENT_SUMMARY =		Type hints (PEP 484) support for the Sphinx autodoc extension
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/sphinx-autodoc-typehints
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:26a81e6444c9b82a952519a3b7c52e45f14a0f81c91cfc7063cfcf2ca109d161
+	sha256:128e600eeef63b722f3d8dac6403594592c8cade3ba66fd11dcb997465ee259d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
