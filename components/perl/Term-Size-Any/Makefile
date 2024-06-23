@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Term::Size::Any
 HUMAN_VERSION =			0.002
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Term::Size::Any - Retrieve terminal size
 COMPONENT_CPAN_AUTHOR =		FERREIRA
 COMPONENT_ARCHIVE_HASH =	\
