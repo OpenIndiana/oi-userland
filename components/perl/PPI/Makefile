@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PPI
 HUMAN_VERSION =			1.278
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PPI - Parse, Analyze and Manipulate Perl (without perl)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
