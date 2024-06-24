@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Stuffer
 HUMAN_VERSION =			0.020
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Email::Stuffer - A more casual approach to creating and sending Email:: emails
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
