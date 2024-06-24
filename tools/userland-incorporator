@@ -111,7 +111,10 @@ def get_incorporations(repository, publisher, inc_version='5.11'):
     for package in packages:
         pkg_name = package['name']
         pkg_version = package['version']
-        consolidations = package['org.opensolaris.consolidation'][0]['value']
+        try:
+            consolidations = package['org.opensolaris.consolidation'][0]['value']
+        except:
+            consolidations = []
 
         # skip older packages and those that explicitly don't want to be incorporated
         # also skip the incorporation itself
