@@ -20,8 +20,10 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBD::CSV
 HUMAN_VERSION =			0.60
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DBD::CSV - DBI driver for CSV files
-COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBD-CSV-0.60.tgz
+COMPONENT_ARCHIVE_URL =		\
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBD-CSV-0.60.tgz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:018b83a30f799979bc8c3c3044c8b1c8001cdf60bdc3e746848818195254b4e7
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
