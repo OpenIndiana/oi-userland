@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PPIx::Regexp
 HUMAN_VERSION =			0.088
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PPIx::Regexp - Represent a regular expression of some sort
 COMPONENT_CPAN_AUTHOR =		WYANT
 COMPONENT_ARCHIVE_HASH =	\
