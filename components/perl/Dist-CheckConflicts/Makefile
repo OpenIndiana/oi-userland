@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Dist::CheckConflicts
 HUMAN_VERSION =			0.11
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Dist::CheckConflicts - declare version conflicts for your dist
 COMPONENT_CPAN_AUTHOR =		DOY
 COMPONENT_ARCHIVE_HASH =	\

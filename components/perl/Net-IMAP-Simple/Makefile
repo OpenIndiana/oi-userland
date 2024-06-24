@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::IMAP::Simple
 HUMAN_VERSION =			1.2212
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::IMAP::Simple - unknown
 COMPONENT_CPAN_AUTHOR =		JETTERO
 COMPONENT_ARCHIVE_HASH =	\

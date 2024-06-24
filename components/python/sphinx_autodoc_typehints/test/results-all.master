@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 306 items
+collecting ... collected 310 items
 
 tests/test_integration.py::test_integration[default_conf-get_local_function] PASSED
 tests/test_integration.py::test_integration[default_conf-Class] PASSED
@@ -159,6 +159,10 @@ tests/test_integration.py::test_integration[bothlog_conf-has_newtype] PASSED
 tests/test_integration.py::test_integration[bothlog_conf-typehints_use_signature] PASSED
 tests/test_integration.py::test_integration[bothlog_conf-docstring_with_multiline_note_after_params_prolog_replace] PASSED
 tests/test_integration.py::test_integration[bothlog_conf-docstring_with_multiline_note_after_params_epilog_replace] PASSED
+tests/test_integration_autodoc_type_aliases.py::test_integration[default_conf-f] PASSED
+tests/test_integration_autodoc_type_aliases.py::test_integration[default_conf-g] PASSED
+tests/test_integration_autodoc_type_aliases.py::test_integration[default_conf-function] PASSED
+tests/test_integration_issue_384.py::test_integration[default_conf-function] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_parse_annotation[str] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_parse_annotation[None] PASSED
 tests/test_sphinx_autodoc_typehints.py::test_parse_annotation[ModuleType] PASSED
@@ -325,11 +329,13 @@ tests/conftest.py:53
     def pytest_ignore_collect(path: Any, config: Config) -> bool | None:  # noqa: ARG001
 
 tests/test_integration.py: 112 warnings
+tests/test_integration_autodoc_type_aliases.py: 2 warnings
 tests/test_sphinx_autodoc_typehints.py: 82 warnings
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/sphinx_autodoc_typehints/__init__.py:806: DeprecationWarning: The frontend.OptionParser class will be replaced by a subclass of argparse.ArgumentParser in Docutils 0.21 or later.
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/sphinx_autodoc_typehints/__init__.py:832: DeprecationWarning: The frontend.OptionParser class will be replaced by a subclass of argparse.ArgumentParser in Docutils 0.21 or later.
     settings = OptionParser(components=(RSTParser,)).get_default_values()
 
 tests/test_integration.py: 7840 warnings
+tests/test_integration_autodoc_type_aliases.py: 140 warnings
 tests/test_sphinx_autodoc_typehints.py: 5740 warnings
   $(PYTHON_DIR)/optparse.py:1000: DeprecationWarning: The frontend.Option class will be removed in Docutils 0.21 or later.
     option = self.option_class(*args, **kwargs)
@@ -341,7 +347,7 @@ tests/test_sphinx_autodoc_typehints.py: 5740 warnings
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 85.0% reached. Total coverage: 89.06%
-======== 298 passed, 8 skipped, 13776 warnings ========
+Required test coverage of 85.0% reached. Total coverage: 88.55%
+======== 302 passed, 8 skipped, 13918 warnings ========
   py$(PYV): OK
   congratulations :)

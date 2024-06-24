@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::Listing
 HUMAN_VERSION =			6.16
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		File::Listing - Parse directory listing
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\

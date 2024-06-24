@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Parse::RecDescent
 HUMAN_VERSION =			1.967015
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Parse::RecDescent - Generate Recursive-Descent Parsers
 COMPONENT_CPAN_AUTHOR =		JTBRAUN
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +28,9 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warn
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl

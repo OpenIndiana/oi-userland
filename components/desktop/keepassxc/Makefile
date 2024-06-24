@@ -19,12 +19,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keepassxc
-COMPONENT_VERSION=	2.7.8
+COMPONENT_VERSION=	2.7.9
 COMPONENT_SUMMARY=	Cross-platform community-driven port of Keepass password manager
 COMPONENT_PROJECT_URL=	https://keepassxc.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:87d3101712b3c8656a24b908ad5b7e2529bc01717cb4156f53ba195fb81783a3
+COMPONENT_ARCHIVE_HASH= sha256:3c44e45f22c00ddac63d8bc11054b4b0ada0222ffac08d3ed70f196cb9ed46fd
 COMPONENT_ARCHIVE_URL=  https://github.com/keepassxreboot/keepassxc/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/System Utilities

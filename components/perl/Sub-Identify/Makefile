@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sub::Identify
 HUMAN_VERSION =			0.14
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Sub::Identify - Retrieve names of code references
 COMPONENT_CPAN_AUTHOR =		RGARCIA
 COMPONENT_ARCHIVE_HASH =	\

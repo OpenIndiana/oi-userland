@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Pod::Eventual
 HUMAN_VERSION =			0.094003
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pod::Eventual - read a POD document as a series of trivial events
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\

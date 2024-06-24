@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBD::MariaDB
 HUMAN_VERSION =			1.23
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DBD::MariaDB - MariaDB and MySQL driver for the Perl5 Database Interface (DBI)
 COMPONENT_CPAN_AUTHOR =		PALI
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,9 +35,6 @@ LD_OPTIONS += -R$(MYSQL_LIBDIR)
 
 # Configure needs to find mysqlclient library
 COMPONENT_CONFIGURE_ENV += LD_LIBRARY_PATH=$(MYSQL_LIBDIR)
-
-# https://www.illumos.org/issues/15423
-CONFIGURE_OPTIONS += --testsocket=/tmp/mariadb106.sock
 
 # need mysql_config at build time
 REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)

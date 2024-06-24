@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 275 items
+collecting ... collected 303 items
 
 tests/test_deliverability.py::test_deliverability_found[gmail.com-expected_response0] PASSED
 tests/test_deliverability.py::test_deliverability_found[pages.github.com-expected_response1] PASSED
@@ -30,6 +30,9 @@ tests/test_syntax.py::test_email_valid[!#$%&'*+-/=?^_`.{|}~@example.tld-output3]
 tests/test_syntax.py::test_email_valid[jeff@\u81fa\u7db2\u4e2d\u5fc3.tw-output4] PASSED
 tests/test_syntax.py::test_email_valid["quoted local part"@example.org-output5] PASSED
 tests/test_syntax.py::test_email_valid["de-quoted.local.part"@example.org-output6] PASSED
+tests/test_syntax.py::test_email_valid[MyName <me@example.org>-output7] PASSED
+tests/test_syntax.py::test_email_valid[My Name <me@example.org>-output8] PASSED
+tests/test_syntax.py::test_email_valid["My.\\"Na\\\\me\\".Is" <"me \\" \\\\ me"@example.org>-output9] PASSED
 tests/test_syntax.py::test_email_valid_intl_local_part[\u4f0a\u662d\u5091@\u90f5\u4ef6.\u5546\u52d9-output0] PASSED
 tests/test_syntax.py::test_email_valid_intl_local_part[\u0930\u093e\u092e@\u092e\u094b\u0939\u0928.\u0908\u0928\u094d\u092b\u094b-output1] PASSED
 tests/test_syntax.py::test_email_valid_intl_local_part[\u044e\u0437\u0435\u0440@\u0435\u043a\u0437\u0430\u043c\u043f\u043b.\u043a\u043e\u043c-output2] PASSED
@@ -43,6 +46,7 @@ tests/test_syntax.py::test_email_valid_intl_local_part[\u7532\u6590\u9ed2\u5ddd\
 tests/test_syntax.py::test_email_valid_intl_local_part[\u0447\u0435\u0431\u0443\u0440\u0430\u0448\u043a\u0430\u044f\u0449\u0438\u043a-\u0441-\u0430\u043f\u0435\u043b\u044c\u0441\u0438\u043d\u0430\u043c\u0438.\u0440\u0444@example.tld-output10] PASSED
 tests/test_syntax.py::test_email_valid_intl_local_part[\u0909\u0926\u093e\u0939\u0930\u0923.\u092a\u0930\u0940\u0915\u094d\u0937@domain.with.idn.tld-output11] PASSED
 tests/test_syntax.py::test_email_valid_intl_local_part[\u03b9\u03c9\u03ac\u03bd\u03bd\u03b7\u03c2@\u03b5\u03b5\u03c4\u03c4.gr-output12] PASSED
+tests/test_syntax.py::test_email_valid_intl_local_part[s\u0323\u0307@nfc.tld-output13] PASSED
 tests/test_syntax.py::test_email_valid_only_if_quoted_local_part["unnecessarily.quoted.local.part"@example.com-unnecessarily.quoted.local.part] PASSED
 tests/test_syntax.py::test_email_valid_only_if_quoted_local_part["quoted..local.part"@example.com-"quoted..local.part"] PASSED
 tests/test_syntax.py::test_email_valid_only_if_quoted_local_part["quoted.with.at@"@example.com-"quoted.with.at@"] PASSED
@@ -52,6 +56,7 @@ tests/test_syntax.py::test_email_valid_only_if_quoted_local_part["unnecessarily.
 tests/test_syntax.py::test_email_valid_only_if_quoted_local_part["quoted.with..unicode.\u03bb"@example.com-"quoted.with..unicode.\u03bb"] PASSED
 tests/test_syntax.py::test_email_valid_only_if_quoted_local_part["quoted.with.extraneous.\\escape"@example.com-quoted.with.extraneous.escape] PASSED
 tests/test_syntax.py::test_domain_literal PASSED
+tests/test_syntax.py::test_email_invalid_syntax[hello.world-An email address must have an @-sign.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[my@localhost-The part after the @-sign is not valid. It should have a period.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[my@.leadingdot.com-An email address cannot have a period immediately after the @-sign.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[my@\uff0eleadingfwdot.com-An email address cannot have a period immediately after the @-sign.] PASSED
@@ -77,25 +82,38 @@ tests/test_syntax.py::test_email_invalid_syntax[.leadingdot@domain.com-An email 
 tests/test_syntax.py::test_email_invalid_syntax[twodots..here@domain.com-An email address cannot have two periods in a row.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[trailingdot.@domain.email-An email address cannot have a period immediately before the @-sign.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[me@\u2488wouldbeinvalid.com-The part after the @-sign contains invalid characters (Codepoint U+2488 not allowed at position 1 in '\u2488wouldbeinvalid.com').] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[me@\u037e.com-The part after the @-sign contains invalid characters after Unicode normalization: ';'.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[me@\u1fef.com-The part after the @-sign contains invalid characters after Unicode normalization: '`'.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[@example.com-There must be something before the @-sign.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[white space@test-The email address contains invalid characters before the @-sign: SPACE.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[test@white space-The part after the @-sign contains invalid characters: SPACE.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[\nmy@example.com-The email address contains invalid characters before the @-sign: U+000A.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[m\ny@example.com-The email address contains invalid characters before the @-sign: U+000A.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[my\n@example.com-The email address contains invalid characters before the @-sign: U+000A.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[me.\u037e@example.com-After Unicode normalization: The email address contains invalid characters before the @-sign: ';'.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[test@\n-The part after the @-sign contains invalid characters: U+000A.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[bad"quotes"@example.com-The email address contains invalid characters before the @-sign: '"'.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[obsolete."quoted".atom@example.com-The email address contains invalid characters before the @-sign: '"'.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[11111111112222222222333333333344444444445555555555666666666677777@example.com-The email address is too long before the @-sign (1 character too many).] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[111111111122222222223333333333444444444455555555556666666666777777@example.com-The email address is too long before the @-sign (2 characters too many).] PASSED
-tests/test_syntax.py::test_email_invalid_syntax[meme@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.com-The email address is too long (4 characters too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[\ufb2c111111122222222223333333333444444444455555555556666666666777777@example.com-After Unicode normalization: The email address is too long before the @-sign (2 characters too many).] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[me@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.11111111112222222222333333333344444444445555555555.com-The email address is too long after the @-sign (1 character too many).] PASSED
-tests/test_syntax.py::test_email_invalid_syntax[me@\u4e2d1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444.com-The email address is too long after the @-sign.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[me@\u4e2d1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444.com-The email address is too long after the @-sign (1 byte too many after IDNA encoding).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[me@\ufb2c1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444.com-The email address is too long after the @-sign (5 bytes too many after IDNA encoding).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[me@1111111111222222222233333333334444444444555555555666666666677777.com-After the @-sign, periods cannot be separated by so many characters (1 character too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[me@11111111112222222222333333333344444444445555555556666666666777777.com-After the @-sign, periods cannot be separated by so many characters (2 characters too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[me@\u4e2d111111111222222222233333333334444444444555555555666666.com-The part after the @-sign is invalid (Label too long).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[meme@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.com-The email address is too long (4 characters too many).] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[my.long.address@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.11111111112222222222333333333344444.info-The email address is too long (2 characters too many).] PASSED
-tests/test_syntax.py::test_email_invalid_syntax[my.long.address@\u03bb111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.11111111112222222222333333.info-The email address is too long (when converted to IDNA ASCII).] PASSED
-tests/test_syntax.py::test_email_invalid_syntax[my.long.address@\u03bb111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444.info-The email address is too long (at least 1 character too many).] PASSED
-tests/test_syntax.py::test_email_invalid_syntax[my.\u03bbong.address@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.111111111122222222223333333333444.info-The email address is too long (when encoded in bytes).] PASSED
-tests/test_syntax.py::test_email_invalid_syntax[my.\u03bbong.address@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444.info-The email address is too long (at least 1 character too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[my.long.address@\u03bb111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444.info-The email address is too long (1-2 characters too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[my.long.address@\ufb2c111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444.info-The email address is too long (1-3 characters too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[my.\u03bbong.address@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.111111111122222222223333333333444.info-The email address is too long (1 character too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[my.\u03bbong.address@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444.info-The email address is too long (1-2 characters too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[my.s\u0323\u0307.address@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444.info-The email address is too long (1-2 characters too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[my.\ufb2c.address@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.11111111112222222222333333333344444.info-The email address is too long (1 character too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[my.\ufb2c.address@1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.11111111112222222222333333333344.info-The email address is too long after normalization (1 byte too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[my.long.address@\u03bb111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.11111111112222222222333333.info-The email address is too long when the part after the @-sign is converted to IDNA ASCII (1 byte too many).] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[my.\u03bbong.address@\u03bb111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.1111111111222222222233333333334444444444555555555.6666666666777777777788888888889999999999000000000.11111111112222222222333333.info-The email address is too long when the part after the @-sign is converted to IDNA ASCII (2 bytes too many).] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[me@bad-tld-1-The part after the @-sign is not valid. It should have a period.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[me@bad.tld-2-The part after the @-sign is not valid. It is not within a valid top-level domain.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[me@xn--0.tld-The part after the @-sign is not valid IDNA (Invalid A-label).] PASSED
@@ -108,6 +126,16 @@ tests/test_syntax.py::test_email_invalid_syntax[me@[IPv6:::G]-The IPv6 address i
 tests/test_syntax.py::test_email_invalid_syntax[me@[tag:text]-The part after the @-sign contains an invalid address literal tag in brackets.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[me@[untaggedtext]-The part after the @-sign in brackets is not an IPv4 address and has no address literal tag.] PASSED
 tests/test_syntax.py::test_email_invalid_syntax[me@[tag:invalid space]-The part after the @-sign contains invalid characters in brackets: SPACE.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[<me@example.com>-A display name and angle brackets around the email address are not permitted here.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[<me@example.com-An open angle bracket at the start of the email address has to be followed by a close angle bracket at the end.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[<me@example.com> !-There can't be anything after the email address.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[<\u0338me@example.com-The email address contains invalid characters before the @-sign: '<'.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[DisplayName <me@-example.com>-An email address cannot have a hyphen immediately after the @-sign.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[DisplayName <me@example.com>-A display name and angle brackets around the email address are not permitted here.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[Display Name <me@example.com>-A display name and angle brackets around the email address are not permitted here.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax["Display Name" <me@example.com>-A display name and angle brackets around the email address are not permitted here.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax[Display.Name <me@example.com>-The display name contains invalid characters when not quoted: '.'.] PASSED
+tests/test_syntax.py::test_email_invalid_syntax["Display.Name" <me@example.com>-A display name and angle brackets around the email address are not permitted here.] PASSED
 tests/test_syntax.py::test_email_invalid_reserved_domain[me@anything.arpa] PASSED
 tests/test_syntax.py::test_email_invalid_reserved_domain[me@valid.invalid] PASSED
 tests/test_syntax.py::test_email_invalid_reserved_domain[me@link.local] PASSED
@@ -281,4 +309,4 @@ tests/test_syntax.py::test_pyisemail_tests["test\\\xa9"@iana.org-ISEMAIL_ERR_EXP
 tests/test_syntax.py::test_pyisemail_tests[test@iana/icann.org-ISEMAIL_RFC5322_DOMAIN] PASSED
 tests/test_syntax.py::test_pyisemail_tests[test.(comment)test@iana.org-ISEMAIL_DEPREC_COMMENT] PASSED
 
-======== 275 passed ========
+======== 303 passed ========

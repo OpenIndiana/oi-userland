@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test2::Plugin::NoWarnings
 HUMAN_VERSION =			0.10
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test2::Plugin::NoWarnings - Fail if tests warn
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\

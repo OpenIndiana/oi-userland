@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		List::SomeUtils::XS
 HUMAN_VERSION =			0.58
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		List::SomeUtils::XS - XS implementation for List::SomeUtils
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\

@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ansi2html
-HUMAN_VERSION =			1.9.1
-COMPONENT_SUMMARY =		ansi2html - Convert text with ANSI color codes to HTML or to LaTeX
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ca/f1/a82ae514fe3d2d66b20a24dd53d45f588a6c0a1d9b5f493eddff679bd99a/ansi2html-1.9.1.tar.gz
+HUMAN_VERSION =			1.9.2
+COMPONENT_SUMMARY =		Convert text with ANSI color codes to HTML or to LaTeX
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5c6837a13ecc1903aab7a545353312049dfedfe5105362ad3a8d9d207871ec71
+	sha256:3453bf87535d37b827b05245faaa756dbab4ec3d69925e352b6319c3c955c0a5
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 

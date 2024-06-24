@@ -1,0 +1,27 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pyproject.toml
+collecting ... collected 14 items
+
+test/test_unit.py::test_run_string PASSED
+test/test_unit.py::test_run_list PASSED
+test/test_unit.py::test_run_echo PASSED
+test/test_unit.py::test_run_with_env[auto] PASSED
+test/test_unit.py::test_run_with_env[sh] PASSED
+test/test_unit.py::test_run_with_env[bash] PASSED
+test/test_unit.py::test_run_with_env[zsh] PASSED
+test/test_unit.py::test_run_shell PASSED
+test/test_unit.py::test_run_shell_undefined PASSED
+test/test_unit.py::test_run_cwd PASSED
+test/test_unit.py::test_run_with_check_raise SKIPPED (always fails: ...)
+test/test_unit.py::test_run_with_check_pass PASSED
+test/test_unit.py::test_run_compat PASSED
+test/test_unit.py::test_run_waits_for_completion PASSED
+
+======== 13 passed, 1 skipped ========
+  py$(PYV): OK
+  congratulations :)

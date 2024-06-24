@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IP::Country
 HUMAN_VERSION =			2.28
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IP::Country - fast lookup of country codes from IP addresses
 COMPONENT_CPAN_AUTHOR =		NWETTERS
 COMPONENT_ARCHIVE_HASH =	\

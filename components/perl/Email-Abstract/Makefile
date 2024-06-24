@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Abstract
 HUMAN_VERSION =			3.010
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Abstract - unified interface to mail representations
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\

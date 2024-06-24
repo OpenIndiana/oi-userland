@@ -15,12 +15,12 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		JSON::MaybeXS
 HUMAN_VERSION =			1.004005
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		JSON::MaybeXS - Use Cpanel::JSON::XS with a fallback to JSON::XS and JSON::PP
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\

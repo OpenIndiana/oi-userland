@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTML::Tagset
 HUMAN_VERSION =			3.24
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTML::Tagset - data tables useful in parsing HTML
 COMPONENT_CPAN_AUTHOR =		PETDANCE
 COMPONENT_ARCHIVE_HASH =	\

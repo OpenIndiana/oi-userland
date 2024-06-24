@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IPC::System::Simple
 HUMAN_VERSION =			1.30
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		IPC::System::Simple - Run commands simply, with detailed diagnostics
 COMPONENT_CPAN_AUTHOR =		JKEENAN
 COMPONENT_ARCHIVE_HASH =	\

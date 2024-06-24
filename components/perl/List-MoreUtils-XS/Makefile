@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		List::MoreUtils::XS
 HUMAN_VERSION =			0.430
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		List::MoreUtils::XS - Provide compiled List::MoreUtils functions
 COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\

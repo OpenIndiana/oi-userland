@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		autopep8
-HUMAN_VERSION =			2.2.0
+HUMAN_VERSION =			2.3.1
 COMPONENT_SUMMARY =		A tool that automatically formats Python code to conform to the PEP 8 style guide
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d306a0581163ac29908280ad557773a95a9bede072c0fafed6f141f5311f43c1
+	sha256:8d6c87eba648fdcfc83e29b788910b8643171c395d9c4bcf115ece035b9c9dda
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

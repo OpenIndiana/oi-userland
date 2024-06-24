@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PerlIO::utf8_strict
 HUMAN_VERSION =			0.010
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PerlIO::utf8_strict - Fast and correct UTF-8 IO
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\

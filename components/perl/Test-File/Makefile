@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::File
 HUMAN_VERSION =			1.993
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Test::File - test file attributes
 COMPONENT_CPAN_AUTHOR =		BDFOY
 COMPONENT_ARCHIVE_HASH =	\

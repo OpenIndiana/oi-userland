@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		JSON
 HUMAN_VERSION =			4.10
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		JSON - JSON (JavaScript Object Notation) encoder/decoder
 COMPONENT_CPAN_AUTHOR =		ISHIGAKI
 COMPONENT_ARCHIVE_HASH =	\

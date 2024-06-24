@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::AuthenticationResults
 HUMAN_VERSION =			2.20231031
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mail::AuthenticationResults - Object Oriented Authentication-Results Headers
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\

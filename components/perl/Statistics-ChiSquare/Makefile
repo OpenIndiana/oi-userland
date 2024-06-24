@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Statistics::ChiSquare
 HUMAN_VERSION =			1.0000
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Statistics::ChiSquare - How well-distributed is your data?
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
@@ -27,6 +28,10 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl

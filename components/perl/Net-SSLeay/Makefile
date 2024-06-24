@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::SSLeay
 HUMAN_VERSION =			1.94
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::SSLeay - Perl bindings for OpenSSL and LibreSSL
 COMPONENT_CPAN_AUTHOR =		CHRISN
 COMPONENT_ARCHIVE_HASH =	\

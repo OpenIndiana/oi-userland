@@ -19,17 +19,24 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Build::Tiny
-HUMAN_VERSION =			0.047
+HUMAN_VERSION =			0.048
 COMPONENT_SUMMARY =		Module::Build::Tiny - A tiny replacement for Module::Build
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:71260e9421b93c33dd1b3e7d0cf15f759c0ca7c753fa840279ec3be70f8f8c9d
+	sha256:79a73e506fb7badabdf79137a45c6c5027daaf6f9ac3dcfb9d4ffcce92eb36bd
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Module::Build::Tiny >= 0.048 needs CPAN::Requirements::Dynamic which in
+# turn requires CPAN::Meta::Requirements >= 2.143.
+# The CPAN::Meta::Requirements module is in Perl core, but Perl <= 5.38
+# contains version 2.140 only.
+PERL_VERSIONS := $(filter-out 5.36 5.38, $(PERL_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/cpan-requirements-dynamic
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-config
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-helpers
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-installpaths

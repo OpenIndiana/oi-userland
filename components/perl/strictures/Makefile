@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		strictures
 HUMAN_VERSION =			2.000006
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		strictures - Turn on strict and make most warnings fatal
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,4 +31,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/bareword-filehandles
+PERL_REQUIRED_PACKAGES += library/perl-5/indirect
+PERL_REQUIRED_PACKAGES += library/perl-5/multidimensional
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/bareword-filehandles
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/indirect
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/multidimensional

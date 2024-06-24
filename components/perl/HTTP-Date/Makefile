@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTTP::Date
 HUMAN_VERSION =			6.06
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTTP::Date - HTTP::Date - date conversion routines
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\

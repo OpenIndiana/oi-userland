@@ -20,11 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::HomeDir
 HUMAN_VERSION =			1.006
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		File::HomeDir - Find your home and other directories on any platform
 COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:593737c62df0f6dab5d4122e0b4476417945bb6262c33eedc009665ef1548852
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk

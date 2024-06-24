@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8
-HUMAN_VERSION =			7.0.0
-COMPONENT_SUMMARY =		flake8 - the modular source code checker: pep8 pyflakes and co
+HUMAN_VERSION =			7.1.0
+COMPONENT_SUMMARY =		the modular source code checker: pep8 pyflakes and co
 COMPONENT_PROJECT_URL =		https://github.com/pycqa/flake8
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/PyCQA/flake8/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9b649d29d4bc2562e2d814ffdc63b90828e3f43b50bc146021901b4446bae7fb
+	sha256:af2223f8d6476097ac0bf58a08910fa19b4c045d37f6c8e26532d3f4076b78ba
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

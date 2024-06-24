@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Unicode::UTF8
 HUMAN_VERSION =			0.62
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Unicode::UTF8 - Encoding and decoding of UTF-8 encoding form
 COMPONENT_CPAN_AUTHOR =		CHANSEN
 COMPONENT_ARCHIVE_HASH =	\
