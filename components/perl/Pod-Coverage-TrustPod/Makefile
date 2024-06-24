@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Pod::Coverage::TrustPod
 HUMAN_VERSION =			0.100006
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pod::Coverage::TrustPod - allow a module's pod to contain Pod::Coverage hints
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
