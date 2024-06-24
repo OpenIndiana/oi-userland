@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Pod::Spell
 HUMAN_VERSION =			1.26
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pod::Spell - a formatter for spellchecking Pod
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
