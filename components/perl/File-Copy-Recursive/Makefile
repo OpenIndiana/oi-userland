@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::Copy::Recursive
 HUMAN_VERSION =			0.45
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		File::Copy::Recursive - Perl extension for recursively copying files and directories
 COMPONENT_CPAN_AUTHOR =		DMUEY
 COMPONENT_ARCHIVE_HASH =	\
