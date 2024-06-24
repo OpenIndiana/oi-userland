@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mozilla::PublicSuffix
 HUMAN_VERSION =			1.0.6
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mozilla::PublicSuffix - Get a domain name's public suffix via the Mozilla Public Suffix List
 COMPONENT_CPAN_AUTHOR =		TOMHUKINS
 COMPONENT_ARCHIVE_HASH =	\
