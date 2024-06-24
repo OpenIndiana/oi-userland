@@ -111,11 +111,16 @@ def get_incorporations(repository, publisher, inc_version='5.11'):
     for package in packages:
         pkg_name = package['name']
         pkg_version = package['version']
+        consolidations = package['org.opensolaris.consolidation'][0]['value']
 
         # skip older packages and those that explicitly don't want to be incorporated
         # also skip the incorporation itself
         if 'pkg.tmp.noincorporate' in package or pkg_version != versions[pkg_name] or pkg_name == inc_name:
            continue
+
+        # If this package is intended to be in any other incorporation than userland skip it.
+        if "userland" not in consolidations:
+            continue
 
         # We don't want to support multiple incorporations for now
         # a dict inside a list inside a dict
