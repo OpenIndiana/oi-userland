@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		B::Hooks::EndOfScope
 HUMAN_VERSION =			0.28
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		B::Hooks::EndOfScope - Execute code after a scope finished compilation
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
