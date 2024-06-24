@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBI
 HUMAN_VERSION =			1.643
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		DBI - Database independent interface for Perl
 COMPONENT_CPAN_AUTHOR =		TIMB
 COMPONENT_ARCHIVE_HASH =	\
