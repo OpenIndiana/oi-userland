@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		YAML::Tiny
 HUMAN_VERSION =			1.74
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		YAML::Tiny - Read/Write YAML files with as little code as possible
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,3 +32,4 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/json-maybexs
