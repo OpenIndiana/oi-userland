@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::Copy::Recursive::Reduced
 HUMAN_VERSION =			0.008
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		File::Copy::Recursive::Reduced - Recursive copying of files and directories within Perl 5 toolchain
 COMPONENT_CPAN_AUTHOR =		JKEENAN
 COMPONENT_ARCHIVE_HASH =	\
