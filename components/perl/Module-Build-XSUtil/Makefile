@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Build::XSUtil
 HUMAN_VERSION =			0.19
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Module::Build::XSUtil - A Module::Build class for building XS modules
 COMPONENT_CPAN_AUTHOR =		HIDEAKIO
 COMPONENT_ARCHIVE_HASH =	\
