@@ -14,18 +14,17 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-USE_OPENSSL11 = yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= w3m
-COMPONENT_VERSION=  0.5.3.20230121
-HUMAN_VERSION= 0.5.3+git20230121
-#COMPONENT_REVISION= 6
+COMPONENT_VERSION=  0.5.3.20210102
+HUMAN_VERSION= 0.5.3+git20210102+deb11u1
 COMPONENT_SUMMARY= A text-based web browser
-COMPONENT_SRC= $(COMPONENT_NAME)-0.5.3-git20230121
+COMPONENT_SRC= $(COMPONENT_NAME)-0.5.3-git20210102-deb11u1
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fdc7d55d3c0104db26aa9759db34f37e5eee03f44c868796e3bbfb8935c96e39
+  sha256:1f8addc1ff2160d4d7f93278472c3144179776f80f4af51817c7cc19e7d8b385
 COMPONENT_ARCHIVE_URL= \
   https://github.com/tats/w3m/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_PROJECT_URL= https://w3m.sourceforge.net/
@@ -44,10 +43,10 @@ CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --with-browser=/usr/bin/firefox
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
