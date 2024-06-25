@@ -9,7 +9,7 @@ testpaths: tests
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 4428 items
+collecting ... collected 4453 items
 
 tests/benchmarks/test_complete_benchmark.py::test_complete_valid PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_invalid PASSED
@@ -2390,6 +2390,8 @@ tests/validators/test_frozenset.py::test_generator_error PASSED
 tests/validators/test_frozenset.py::test_frozenset_from_dict_items[Tuple[Any, Any]] PASSED
 tests/validators/test_frozenset.py::test_frozenset_from_dict_items[Tuple[int, int]] PASSED
 tests/validators/test_frozenset.py::test_frozenset_from_dict_items[Any] PASSED
+tests/validators/test_frozenset.py::test_frozenset_fail_fast[fail_fast] PASSED
+tests/validators/test_frozenset.py::test_frozenset_fail_fast[not_fail_fast] PASSED
 tests/validators/test_function.py::test_function_before PASSED
 tests/validators/test_function.py::test_function_before_no_info PASSED
 tests/validators/test_function.py::test_function_before_raise PASSED
@@ -2847,6 +2849,8 @@ tests/validators/test_list.py::test_bad_iter[int] PASSED
 tests/validators/test_list.py::test_bad_iter[any] PASSED
 tests/validators/test_list.py::test_max_length_fail_fast[True] PASSED
 tests/validators/test_list.py::test_max_length_fail_fast[False] PASSED
+tests/validators/test_list.py::test_list_fail_fast[fail_fast] PASSED
+tests/validators/test_list.py::test_list_fail_fast[not_fail_fast] PASSED
 tests/validators/test_list.py::test_list_allowed_inputs_python[ListInputTestCase(input=[1, 2, 3], output=[1, 2, 3], strict=True)] PASSED
 tests/validators/test_list.py::test_list_allowed_inputs_python[ListInputTestCase(input=[1, 2, 3], output=[1, 2, 3], strict=False)] PASSED
 tests/validators/test_list.py::test_list_allowed_inputs_python[ListInputTestCase(input=[1, 2, 3], output=[1, 2, 3], strict=None)] PASSED
@@ -3276,6 +3280,8 @@ tests/validators/test_set.py::test_set_any[input_value1-expected1] PASSED
 tests/validators/test_set.py::test_set_any[input_value2-expected2] PASSED
 tests/validators/test_set.py::test_set_any[input_value3-expected3] PASSED
 tests/validators/test_set.py::test_set_any[input_value4-expected4] PASSED
+tests/validators/test_set.py::test_set_fail_fast[fail_fast] PASSED
+tests/validators/test_set.py::test_set_fail_fast[not_fail_fast] PASSED
 tests/validators/test_string.py::test_str[python-foobar-foobar] PASSED
 tests/validators/test_string.py::test_str[python-123-expected1] PASSED
 tests/validators/test_string.py::test_str[python-123.456-expected2] PASSED
@@ -3603,7 +3609,8 @@ tests/validators/test_tuple.py::test_any_no_copy PASSED
 tests/validators/test_tuple.py::test_tuple_strict_passes_with_tuple[0-items0-input_value0-expected0] PASSED
 tests/validators/test_tuple.py::test_tuple_strict_passes_with_tuple[0-items1-input_value1-expected1] PASSED
 tests/validators/test_tuple.py::test_tuple_strict_passes_with_tuple[None-items2-input_value2-expected2] PASSED
-tests/validators/test_tuple.py::test_empty_positional_tuple PASSED
+tests/validators/test_tuple.py::test_empty_positional_tuple[True] PASSED
+tests/validators/test_tuple.py::test_empty_positional_tuple[False] PASSED
 tests/validators/test_tuple.py::test_tuple_strict_fails_without_tuple[list-0-items0] PASSED
 tests/validators/test_tuple.py::test_tuple_strict_fails_without_tuple[list-None-items1] PASSED
 tests/validators/test_tuple.py::test_tuple_strict_fails_without_tuple[set-0-items0] PASSED
@@ -3677,6 +3684,8 @@ tests/validators/test_tuple.py::test_frozenset_from_dict_items[Any] PASSED
 tests/validators/test_tuple.py::test_length_constraints_omit[input_value0-expected0] PASSED
 tests/validators/test_tuple.py::test_length_constraints_omit[input_value1-expected1] PASSED
 tests/validators/test_tuple.py::test_length_constraints_omit[input_value2-expected2] PASSED
+tests/validators/test_tuple.py::test_tuple_fail_fast[fail_fast] PASSED
+tests/validators/test_tuple.py::test_tuple_fail_fast[not_fail_fast] PASSED
 tests/validators/test_typed_dict.py::test_simple PASSED
 tests/validators/test_typed_dict.py::test_strict PASSED
 tests/validators/test_typed_dict.py::test_with_default PASSED
@@ -3856,7 +3865,7 @@ tests/validators/test_union.py::TestModelClass::test_model_b PASSED
 tests/validators/test_union.py::TestModelClass::test_exact_check PASSED
 tests/validators/test_union.py::TestModelClass::test_error PASSED
 tests/validators/test_union.py::TestModelClassSimilar::test_model_a PASSED
-tests/validators/test_union.py::TestModelClassSimilar::test_model_b_ignored PASSED
+tests/validators/test_union.py::TestModelClassSimilar::test_model_b_preferred PASSED
 tests/validators/test_union.py::TestModelClassSimilar::test_model_b_not_ignored PASSED
 tests/validators/test_union.py::test_nullable_via_union PASSED
 tests/validators/test_union.py::test_union_list_bool_int PASSED
@@ -3897,6 +3906,22 @@ tests/validators/test_union.py::test_smart_union_validator_function PASSED
 tests/validators/test_union.py::test_smart_union_validator_function_one_arm PASSED
 tests/validators/test_union.py::test_int_not_coerced_to_enum PASSED
 tests/validators/test_union.py::test_model_and_literal_union PASSED
+tests/validators/test_union.py::TestSmartUnionWithSubclass::test_more_specific_data_matches_subclass[choices0] PASSED
+tests/validators/test_union.py::TestSmartUnionWithSubclass::test_more_specific_data_matches_subclass[choices1] PASSED
+tests/validators/test_union.py::TestSmartUnionWithDefaults::test_fields_set_ensures_best_match[choices0] PASSED
+tests/validators/test_union.py::TestSmartUnionWithDefaults::test_fields_set_ensures_best_match[choices1] PASSED
+tests/validators/test_union.py::TestSmartUnionWithDefaults::test_optional_union_with_members_having_defaults[choices0] PASSED
+tests/validators/test_union.py::TestSmartUnionWithDefaults::test_optional_union_with_members_having_defaults[choices1] PASSED
+tests/validators/test_union.py::test_dc_smart_union_by_fields_set PASSED
+tests/validators/test_union.py::test_dc_smart_union_with_defaults PASSED
+tests/validators/test_union.py::test_td_smart_union_by_fields_set PASSED
+tests/validators/test_union.py::test_smart_union_does_nested_model_field_counting PASSED
+tests/validators/test_union.py::test_smart_union_does_nested_dataclass_field_counting PASSED
+tests/validators/test_union.py::test_smart_union_does_nested_typed_dict_field_counting PASSED
+tests/validators/test_union.py::test_nested_unions_bubble_up_field_count PASSED
+tests/validators/test_union.py::test_smart_union_extra_behavior[forbid] PASSED
+tests/validators/test_union.py::test_smart_union_extra_behavior[ignore] PASSED
+tests/validators/test_union.py::test_smart_union_extra_behavior[allow] PASSED
 tests/validators/test_url.py::test_url_ok[python] PASSED
 tests/validators/test_url.py::test_url_ok[json] PASSED
 tests/validators/test_url.py::test_url_from_constructor_ok PASSED
@@ -4440,4 +4465,4 @@ tests/validators/test_with_default.py::test_validate_default_raises_dataclass[in
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value9-expected9] PASSED
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value10-expected10] PASSED
 
-======== 4335 passed, 91 skipped, 2 xfailed ========
+======== 4360 passed, 91 skipped, 2 xfailed ========
