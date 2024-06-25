@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Alien::cmake3
 HUMAN_VERSION =			0.08
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Alien::cmake3 - Find or download or build cmake 3 or better
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
