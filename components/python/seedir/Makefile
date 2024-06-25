@@ -19,16 +19,15 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		seedir
-HUMAN_VERSION =			0.4.2
-COMPONENT_SUMMARY =		seedir - Package for creating, editing, and reading folder tree diagrams.
+HUMAN_VERSION =			0.5.0
+COMPONENT_SUMMARY =		Package for creating, editing, and reading folder tree diagrams.
 COMPONENT_PROJECT_URL =		https://github.com/earnestt1234/seedir
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a549896f37fb31243cf9c8f44405821d9176b2b0c91804f87b7018ea0a738d2b
+	sha256:e6f80f9535b57413100f04933fd269f856aca1d067bccadf3ea3ca98a2fc6fc5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# see https://github.com/earnestt1234/seedir/issues/26
-TEST_STYLE = unittest
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
