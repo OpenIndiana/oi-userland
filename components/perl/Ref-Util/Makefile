@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Ref::Util
 HUMAN_VERSION =			0.204
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Ref::Util - Utility functions for checking references
 COMPONENT_CPAN_AUTHOR =		ARC
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,9 @@ COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/readonly
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/ref-util-xs
