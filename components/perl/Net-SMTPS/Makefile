@@ -20,8 +20,10 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::SMTPS
 HUMAN_VERSION =			0.10
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::SMTPS - SSL/STARTTLS support for Net::SMTP
-COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/T/TO/TOMO/src/Net-SMTPS-0.10.tar.gz
+COMPONENT_ARCHIVE_URL =		\
+	https://cpan.metacpan.org/authors/id/T/TO/TOMO/src/Net-SMTPS-0.10.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a9fffa8e4fde1d643ab67c08da5529167b716907ebf56ca2ef4899b9a43fd0f0
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
