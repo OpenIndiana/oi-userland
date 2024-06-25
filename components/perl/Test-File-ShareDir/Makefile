@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::File::ShareDir
 HUMAN_VERSION =			1.001002
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Test::File::ShareDir - Create a Fake ShareDir for your modules for testing.
 COMPONENT_CPAN_AUTHOR =		KENTNL
 COMPONENT_ARCHIVE_HASH =	\

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Readonly
 HUMAN_VERSION =			2.05
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Readonly - Facility for creating read-only scalars, arrays, hashes
 COMPONENT_CPAN_AUTHOR =		SANKO
 COMPONENT_ARCHIVE_HASH =	\

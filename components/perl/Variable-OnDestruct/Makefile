@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Variable::OnDestruct
 HUMAN_VERSION =			0.09
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Variable::OnDestruct - Call a subroutine on destruction of a variable.
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
