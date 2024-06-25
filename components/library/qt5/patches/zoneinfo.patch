@@ -1,0 +1,125 @@
+--- qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/third_party/icu/source/common/putil.cpp	2023-02-27 19:57:08.000000000 +0100
++++ qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/third_party/icu/source/common/putil.cpp.new	2024-06-25 20:47:48.971415360 +0200
+@@ -686,8 +686,8 @@
+ #if !UCONFIG_NO_FILE_IO && ((U_PLATFORM_IS_DARWIN_BASED && (U_PLATFORM != U_PF_IPHONE || defined(U_TIMEZONE))) || U_PLATFORM_IS_LINUX_BASED || U_PLATFORM == U_PF_BSD || U_PLATFORM == U_PF_SOLARIS)
+ /* These platforms are likely to use Olson timezone IDs. */
+ /* common targets of the symbolic link at TZDEFAULT are:
+- * "/usr/share/zoneinfo/<olsonID>" default, older Linux distros, macOS to 10.12
+- * "../usr/share/zoneinfo/<olsonID>" newer Linux distros: Red Hat Enterprise Linux 7, Ubuntu 16, SuSe Linux 12
++ * "/usr/share/lib/zoneinfo/<olsonID>" default, Illumos / Solaris settings
++ * "../usr/share/lib/zoneinfo/<olsonID>" newer Linux distros: Red Hat Enterprise Linux 7, Ubuntu 16, SuSe Linux 12
+  * "/usr/share/lib/zoneinfo/<olsonID>" Solaris
+  * "../usr/share/lib/zoneinfo/<olsonID>" Solaris
+  * "/var/db/timezone/zoneinfo/<olsonID>" macOS 10.13
+@@ -705,12 +705,12 @@
+ #define TZ_ENV_CHECK    "localtime"
+ #else
+ #define TZDEFAULT       "/etc/localtime"
+-#define TZZONEINFO      "/usr/share/zoneinfo/"
++#define TZZONEINFO      "/usr/share/lib/zoneinfo/"
+ #endif
+ #define TZZONEINFOTAIL  "/zoneinfo/"
+ #if U_HAVE_DIRENT_H
+ #define TZFILE_SKIP     "posixrules" /* tz file to skip when searching. */
+-/* Some Linux distributions have 'localtime' in /usr/share/zoneinfo
++/* Some Linux distributions have 'localtime' in /usr/share/lib/zoneinfo
+    symlinked to /etc/localtime, which makes searchForTZFile return
+    'localtime' when it's the first match. */
+ #define TZFILE_SKIP2    "localtime"
+@@ -744,7 +744,7 @@
+ }
+ 
+ /* On some Unix-like OS, 'posix' subdirectory in
+-   /usr/share/zoneinfo replicates the top-level contents. 'right'
++   /usr/share/lib/zoneinfo replicates the top-level contents. 'right'
+    subdirectory has the same set of files, but individual files
+    are different from those in the top-level directory or 'posix'
+    because 'right' has files for TAI (Int'l Atomic Time) while 'posix'
+--- qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/third_party/abseil-cpp/absl/time/internal/cctz/src/tzfile.h	2023-02-27 19:57:08.000000000 +0100
++++ qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/third_party/abseil-cpp/absl/time/internal/cctz/src/tzfile.h.new	2024-06-25 20:47:49.528772758 +0200
+@@ -22,7 +22,7 @@
+ */
+ 
+ #ifndef TZDIR
+-#define TZDIR "/usr/share/zoneinfo" /* Time zone object file directory */
++#define TZDIR "/usr/share/lib/zoneinfo" /* Time zone object file directory */
+ #endif                              /* !defined TZDIR */
+ 
+ #ifndef TZDEFAULT
+--- qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/sandbox/policy/mac/common.sb	2023-02-27 19:57:08.000000000 +0100
++++ qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/sandbox/policy/mac/common.sb.new	2024-06-25 20:47:50.586407884 +0200
+@@ -149,10 +149,10 @@
+ 
+ (if (>= os-version 1013)
+   (begin (allow file-read* (subpath "/private/var/db/timezone"))
+-         (allow file-read-data (subpath "/usr/share/zoneinfo.default"))))
++         (allow file-read-data (subpath "/usr/share/lib/zoneinfo.default"))))
+ 
+ (if (< os-version 1013)
+-  (allow file-read-data (subpath "/usr/share/zoneinfo")))
++  (allow file-read-data (subpath "/usr/share/lib/zoneinfo")))
+ 
+ ; Reads from /Library.
+ (allow file-read-data
+--- qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/services/device/time_zone_monitor/time_zone_monitor_linux.cc	2023-02-27 19:57:08.000000000 +0100
++++ qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/services/device/time_zone_monitor/time_zone_monitor_linux.cc.new	2024-06-25 20:47:51.028025871 +0200
+@@ -121,7 +121,7 @@
+ 
+     // There is no true standard for where time zone information is actually
+     // stored. glibc uses /etc/localtime, uClibc uses /etc/TZ, and some older
+-    // systems store the name of the time zone file within /usr/share/zoneinfo
++    // systems store the name of the time zone file within /usr/share/lib/zoneinfo
+     // in /etc/timezone. Different libraries and custom builds may mean that
+     // still more paths are used. Just watch all three of these paths, because
+     // false positives are harmless, assuming the false positive rate is
+--- qt-everywhere-src-5.15.13/qtbase/src/corelib/time/qtimezoneprivate_tz.cpp	2024-01-04 20:21:43.000000000 +0100
++++ qt-everywhere-src-5.15.13/qtbase/src/corelib/time/qtimezoneprivate_tz.cpp.new	2024-06-25 20:47:52.827653239 +0200
+@@ -84,7 +84,7 @@
+ // Parse zone.tab table, assume lists all installed zones, if not will need to read directories
+ static QTzTimeZoneHash loadTzTimeZones()
+ {
+-    QString path = QStringLiteral("/usr/share/zoneinfo/zone.tab");
++    QString path = QStringLiteral("/usr/share/lib/zoneinfo/zone.tab");
+     if (!QFile::exists(path))
+         path = QStringLiteral("/usr/lib/zoneinfo/zone.tab");
+ 
+@@ -697,7 +697,7 @@
+             return ret;
+     } else {
+         // Open named tz, try modern path first, if fails try legacy path
+-        tzif.setFileName(QLatin1String("/usr/share/zoneinfo/") + QString::fromLocal8Bit(ianaId));
++        tzif.setFileName(QLatin1String("/usr/share/lib/zoneinfo/") + QString::fromLocal8Bit(ianaId));
+         if (!tzif.open(QIODevice::ReadOnly)) {
+             tzif.setFileName(QLatin1String("/usr/lib/zoneinfo/") + QString::fromLocal8Bit(ianaId));
+             if (!tzif.open(QIODevice::ReadOnly)) {
+--- qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc	2023-02-27 19:57:08.000000000 +0100
++++ qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc.new	2024-06-25 20:47:49.519881503 +0200
+@@ -627,7 +627,7 @@
+   // Map the time-zone name to a path name.
+   std::string path;
+   if (pos == name.size() || name[pos] != '/') {
+-    const char* tzdir = "/usr/share/zoneinfo";
++    const char* tzdir = "/usr/share/lib/zoneinfo";
+     char* tzdir_env = nullptr;
+ #if defined(_MSC_VER)
+     _dupenv_s(&tzdir_env, nullptr, "TZDIR");
+@@ -675,7 +675,7 @@
+ 
+   // See Android's libc/tzcode/bionic.cpp for additional information.
+   for (const char* tzdata : {"/data/misc/zoneinfo/current/tzdata",
+-                             "/system/usr/share/zoneinfo/tzdata"}) {
++                             "/system/usr/share/lib/zoneinfo/tzdata"}) {
+     std::unique_ptr<FILE, int (*)(FILE*)> fp(FOpen(tzdata, "rb"), fclose);
+     if (fp.get() == nullptr) continue;
+ 
+--- qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_lookup_test.cc	2023-02-27 19:57:08.000000000 +0100
++++ qt-everywhere-src-5.15.13/qtwebengine/src/3rdparty/chromium/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_lookup_test.cc.new	2024-06-25 20:47:49.524887591 +0200
+@@ -1328,7 +1328,7 @@
+     // We avoid the expectations on the -18430 offset below unless we are
+     // certain we have commit 907241e (Fix off-by-1 error for Jamaica and
+     // T&C before 1913) from 2018d.  TODO: Remove the "version() not empty"
+-    // part when 2018d is generally available from /usr/share/zoneinfo.
++    // part when 2018d is generally available from /usr/share/lib/zoneinfo.
+     auto tp = convert(civil_second(1889, 12, 31, 0, 0, 0), tz);
+     ExpectTime(tp, tz, 1889, 12, 31, 0, 0, 0, -18430, false,
+                tz.lookup(tp).abbr);
