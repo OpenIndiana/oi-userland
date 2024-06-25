@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PPIx::QuoteLike
 HUMAN_VERSION =			0.023
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PPIx::QuoteLike - Parse Perl string literals and string-literal-like things.
 COMPONENT_CPAN_AUTHOR =		WYANT
 COMPONENT_ARCHIVE_HASH =	\
