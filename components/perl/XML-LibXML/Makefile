@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		XML::LibXML
 HUMAN_VERSION =			2.0210
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		XML::LibXML - Interface to Gnome libxml2 xml parsing and DOM library
 COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
