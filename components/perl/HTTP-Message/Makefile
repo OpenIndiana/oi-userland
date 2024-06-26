@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTTP::Message
 HUMAN_VERSION =			6.46
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTTP::Message - HTTP style message (base class)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
