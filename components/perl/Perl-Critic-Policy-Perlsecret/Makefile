@@ -20,11 +20,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Perl::Critic::Policy::Perlsecret
 HUMAN_VERSION =			0.0.11
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Perl::Critic::Policy::Perlsecret - Prevent perlsecrets entering your codebase
 COMPONENT_CPAN_AUTHOR =		LANCEW
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8866914ff153c9b32c176cff4daf0bc24868111784159566be7d1b8ce97baa3e
 COMPONENT_LICENSE =		GPL-3.0-only
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
