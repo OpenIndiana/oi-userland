@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		diff_cover
-HUMAN_VERSION =			9.0.0
-COMPONENT_SUMMARY =		diff_cover - Run coverage and linting reports on diffs
+HUMAN_VERSION =			9.1.0
+COMPONENT_SUMMARY =		Run coverage and linting reports on diffs
 COMPONENT_PROJECT_URL =		https://github.com/Bachmann1234/diff-cover
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1dc851d3f3f320c048d03618e4c0d9861fa4a1506b425d2d09a564b20c95674a
+	sha256:c6c9f7f1eacd9019d118cafb75908445caa41a79f65f36f9f506c9626dbcbc70
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,10 +31,8 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# This project does not support tox so we need to provide test requirements
-# manually.
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-datadir
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+# This project uses poetry to manage test dependencies.
+TEST_REQUIREMENTS_POETRY += dev
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/chardet
@@ -43,3 +41,13 @@ PYTHON_REQUIRED_PACKAGES += library/python/pluggy
 PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
 PYTHON_REQUIRED_PACKAGES += library/python/pygments
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/isort
+TEST_REQUIRED_PACKAGES.python += library/python/pycodestyle
+TEST_REQUIRED_PACKAGES.python += library/python/pydocstyle
+TEST_REQUIRED_PACKAGES.python += library/python/pyflakes
+TEST_REQUIRED_PACKAGES.python += library/python/pylint
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-datadir
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
