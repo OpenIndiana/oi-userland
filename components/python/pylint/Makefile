@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pylint
-HUMAN_VERSION =			3.2.3
+HUMAN_VERSION =			3.2.4
 COMPONENT_SUMMARY =		python code static checker
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:02f6c562b215582386068d52a30f520d84fdbcf2a95fc7e855b816060d048b60
+	sha256:5753d27e49a658b12a48c2883452751a2ecfc7f38594e0980beb03a6e77e6f86
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -65,7 +65,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/astroid
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
