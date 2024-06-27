@@ -19,7 +19,7 @@ BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		znapzend
-COMPONENT_VERSION =		0.23.1
+COMPONENT_VERSION =		0.23.2
 COMPONENT_SUMMARY =		zfs backup with remote capabilities and mbuffer integration
 COMPONENT_DESCRIPTION =		ZnapZend is a ZFS centric backup tool. It relies on snapshot,\
  send and receive to do its work. It has the built-in ability to manage both local\
@@ -29,7 +29,7 @@ COMPONENT_DESCRIPTION =		ZnapZend is a ZFS centric backup tool. It relies on sna
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9576460eb25b57bc7e5ecae9d0d425cbf5a27eb945cea9b6469d33bcbb331803
+	sha256:69928caacde7468e5154d81197e257cd0c85ee3eedb3192be67fdfe486defefe
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/oetiker/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =		https://github.com/oetiker/$(COMPONENT_NAME)
