@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTTP::Cookies
 HUMAN_VERSION =			6.11
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTTP::Cookies - HTTP cookie jars
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
