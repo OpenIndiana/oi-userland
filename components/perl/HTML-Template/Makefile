@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTML::Template
 HUMAN_VERSION =			2.97
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		HTML::Template - Perl module to use HTML-like templating language
 COMPONENT_CPAN_AUTHOR =		SAMTREGAR
 COMPONENT_ARCHIVE_HASH =	\
