@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1902 items
+collecting ... collected 1904 items
 
 tests/providers/__init__.py::TestBaseProvider::test_locale PASSED
 tests/providers/__init__.py::TestBaseProvider::test_language_code PASSED
@@ -1055,13 +1055,12 @@ tests/providers/test_lorem.py::TestLoremProvider::test_text_with_valid_character
 tests/providers/test_lorem.py::TestLoremProvider::test_text_with_valid_character_count[max_nb_chars >> 100] PASSED
 tests/providers/test_lorem.py::TestLoremProvider::test_text_with_custom_word_list PASSED
 tests/providers/test_lorem.py::TestLoremProvider::test_texts PASSED
-tests/providers/test_lorem.py::TestLoremProvider::test_words_part_of_speech[verb] PASSED
-tests/providers/test_lorem.py::TestLoremProvider::test_words_part_of_speech[adverb] PASSED
-tests/providers/test_lorem.py::TestLoremProvider::test_words_part_of_speech[noun] PASSED
-tests/providers/test_lorem.py::TestLoremProvider::test_words_invalid_part_of_speech[invalid part of speech] PASSED
-tests/providers/test_lorem.py::TestLoremProvider::test_words_part_of_speech_ignored[ignore adverb] PASSED
-tests/providers/test_lorem.py::TestLoremProvider::test_words_part_of_speech_ignored[ignore verb] PASSED
-tests/providers/test_lorem.py::TestLoremProvider::test_words_part_of_speech_ignored[ignore invalid part of speech] PASSED
+tests/providers/test_lorem.py::TestLoremProvider::test_get_default_words_list PASSED
+tests/providers/test_lorem.py::TestLoremProvider::test_get_words_list_part_of_speech[verb] PASSED
+tests/providers/test_lorem.py::TestLoremProvider::test_get_words_list_part_of_speech[adverb] PASSED
+tests/providers/test_lorem.py::TestLoremProvider::test_get_words_list_part_of_speech[noun] PASSED
+tests/providers/test_lorem.py::TestLoremProvider::test_get_words_list_invalid_part_of_speech PASSED
+tests/providers/test_lorem.py::TestLoremProvider::test_get_words_list_part_of_speech_ignored PASSED
 tests/providers/test_lorem.py::TestCsCz::test_paragraph PASSED
 tests/providers/test_lorem.py::TestCsCz::test_paragraphs PASSED
 tests/providers/test_lorem.py::TestCsCz::test_sentence PASSED
@@ -1385,6 +1384,9 @@ tests/providers/test_python.py::TestPyfloat::test_positive_and_min_value_incompa
 tests/providers/test_python.py::TestPyfloat::test_positive_doesnt_return_zero PASSED
 tests/providers/test_python.py::TestPyfloat::test_pyfloat PASSED
 tests/providers/test_python.py::TestPyfloat::test_right_digits PASSED
+tests/providers/test_python.py::TestPyDict::test_pydict_with_default_nb_elements PASSED
+tests/providers/test_python.py::TestPyDict::test_pydict_with_invalid_number_of_nb_elements PASSED
+tests/providers/test_python.py::TestPyDict::test_pydict_with_valid_number_of_nb_elements PASSED
 tests/providers/test_python.py::TestPydecimal::test_left_digits PASSED
 tests/providers/test_python.py::TestPydecimal::test_left_digits_can_be_zero PASSED
 tests/providers/test_python.py::TestPydecimal::test_max_and_min_value_negative PASSED
@@ -1941,7 +1943,7 @@ tests/test_providers_formats.py::test_no_invalid_formats[fr_QC]
     warnings.warn("fr_QC locale is deprecated. Please use fr_CA.")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1871 passed, 31 skipped, 3 warnings ========
+======== 1873 passed, 31 skipped, 3 warnings ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -2019,8 +2021,8 @@ faker/providers/address/en_BD/__init__.py            37     37     0%
 faker/providers/address/en_BD/__init__.py            37     37     0%
 faker/providers/address/en_CA/__init__.py            47     47     0%
 faker/providers/address/en_CA/__init__.py            47     47     0%
-faker/providers/address/en_GB/__init__.py            31      8    74%
-faker/providers/address/en_GB/__init__.py            31      8    74%
+faker/providers/address/en_GB/__init__.py            31     31     0%
+faker/providers/address/en_GB/__init__.py            31     31     0%
 faker/providers/address/en_IE/__init__.py            14     14     0%
 faker/providers/address/en_IE/__init__.py            14     14     0%
 faker/providers/address/en_IN/__init__.py            15     15     0%
@@ -2029,8 +2031,8 @@ faker/providers/address/en_NZ/__init__.py            28     28     0%
 faker/providers/address/en_NZ/__init__.py            28     28     0%
 faker/providers/address/en_PH/__init__.py           110    110     0%
 faker/providers/address/en_PH/__init__.py           110    110     0%
-faker/providers/address/en_US/__init__.py            72     72     0%
-faker/providers/address/en_US/__init__.py            72     72     0%
+faker/providers/address/en_US/__init__.py            72     31    57%
+faker/providers/address/en_US/__init__.py            72     31    57%
 faker/providers/address/es/__init__.py                3      3     0%
 faker/providers/address/es/__init__.py                3      3     0%
 faker/providers/address/es_AR/__init__.py            52     52     0%
@@ -2137,14 +2139,14 @@ faker/providers/automotive/el_GR/__init__.py          8      8     0%
 faker/providers/automotive/el_GR/__init__.py          8      8     0%
 faker/providers/automotive/en_CA/__init__.py          3      3     0%
 faker/providers/automotive/en_CA/__init__.py          3      3     0%
-faker/providers/automotive/en_GB/__init__.py          3      0   100%
-faker/providers/automotive/en_GB/__init__.py          3      0   100%
+faker/providers/automotive/en_GB/__init__.py          3      3     0%
+faker/providers/automotive/en_GB/__init__.py          3      3     0%
 faker/providers/automotive/en_NZ/__init__.py          3      3     0%
 faker/providers/automotive/en_NZ/__init__.py          3      3     0%
 faker/providers/automotive/en_PH/__init__.py         18     18     0%
 faker/providers/automotive/en_PH/__init__.py         18     18     0%
-faker/providers/automotive/en_US/__init__.py          3      3     0%
-faker/providers/automotive/en_US/__init__.py          3      3     0%
+faker/providers/automotive/en_US/__init__.py          3      0   100%
+faker/providers/automotive/en_US/__init__.py          3      0   100%
 faker/providers/automotive/es_AR/__init__.py         20     20     0%
 faker/providers/automotive/es_AR/__init__.py         20     20     0%
 faker/providers/automotive/es_CL/__init__.py         27     27     0%
@@ -2627,14 +2629,14 @@ faker/providers/internet/el_GR/__init__.py           40     40     0%
 faker/providers/internet/el_GR/__init__.py           40     40     0%
 faker/providers/internet/en_AU/__init__.py            4      4     0%
 faker/providers/internet/en_AU/__init__.py            4      4     0%
-faker/providers/internet/en_GB/__init__.py            4      0   100%
-faker/providers/internet/en_GB/__init__.py            4      0   100%
+faker/providers/internet/en_GB/__init__.py            4      4     0%
+faker/providers/internet/en_GB/__init__.py            4      4     0%
 faker/providers/internet/en_NZ/__init__.py            4      4     0%
 faker/providers/internet/en_NZ/__init__.py            4      4     0%
 faker/providers/internet/en_PH/__init__.py           29     29     0%
 faker/providers/internet/en_PH/__init__.py           29     29     0%
-faker/providers/internet/en_US/__init__.py            3      3     0%
-faker/providers/internet/en_US/__init__.py            3      3     0%
+faker/providers/internet/en_US/__init__.py            3      0   100%
+faker/providers/internet/en_US/__init__.py            3      0   100%
 faker/providers/internet/es_AR/__init__.py            5      5     0%
 faker/providers/internet/es_AR/__init__.py            5      5     0%
 faker/providers/internet/es_CL/__init__.py           14     14     0%
@@ -2773,8 +2775,8 @@ faker/providers/job/zh_CN/__init__.py                 3      3     0%
 faker/providers/job/zh_CN/__init__.py                 3      3     0%
 faker/providers/job/zh_TW/__init__.py                 3      3     0%
 faker/providers/job/zh_TW/__init__.py                 3      3     0%
-faker/providers/lorem/__init__.py                    74     59    20%
-faker/providers/lorem/__init__.py                    74     59    20%
+faker/providers/lorem/__init__.py                    81     65    20%
+faker/providers/lorem/__init__.py                    81     65    20%
 faker/providers/lorem/ar_AA/__init__.py               5      5     0%
 faker/providers/lorem/ar_AA/__init__.py               5      5     0%
 faker/providers/lorem/az_AZ/__init__.py               5      5     0%
@@ -2791,10 +2793,10 @@ faker/providers/lorem/de_DE/__init__.py               5      5     0%
 faker/providers/lorem/de_DE/__init__.py               5      5     0%
 faker/providers/lorem/el_GR/__init__.py               6      6     0%
 faker/providers/lorem/el_GR/__init__.py               6      6     0%
-faker/providers/lorem/en_PH/__init__.py              21     21     0%
-faker/providers/lorem/en_PH/__init__.py              21     21     0%
-faker/providers/lorem/en_US/__init__.py               5      5     0%
-faker/providers/lorem/en_US/__init__.py               5      5     0%
+faker/providers/lorem/en_PH/__init__.py              22     22     0%
+faker/providers/lorem/en_PH/__init__.py              22     22     0%
+faker/providers/lorem/en_US/__init__.py               5      0   100%
+faker/providers/lorem/en_US/__init__.py               5      0   100%
 faker/providers/lorem/fa_IR/__init__.py               5      5     0%
 faker/providers/lorem/fa_IR/__init__.py               5      5     0%
 faker/providers/lorem/fil_PH/__init__.py              5      5     0%
@@ -2869,8 +2871,8 @@ faker/providers/person/el_GR/__init__.py             11     11     0%
 faker/providers/person/el_GR/__init__.py             11     11     0%
 faker/providers/person/en/__init__.py                13     13     0%
 faker/providers/person/en/__init__.py                13     13     0%
-faker/providers/person/en_GB/__init__.py             12      0   100%
-faker/providers/person/en_GB/__init__.py             12      0   100%
+faker/providers/person/en_GB/__init__.py             12     12     0%
+faker/providers/person/en_GB/__init__.py             12     12     0%
 faker/providers/person/en_IE/__init__.py              9      9     0%
 faker/providers/person/en_IE/__init__.py              9      9     0%
 faker/providers/person/en_IN/__init__.py              5      5     0%
@@ -2879,8 +2881,8 @@ faker/providers/person/en_NZ/__init__.py             10     10     0%
 faker/providers/person/en_NZ/__init__.py             10     10     0%
 faker/providers/person/en_TH/__init__.py              8      8     0%
 faker/providers/person/en_TH/__init__.py              8      8     0%
-faker/providers/person/en_US/__init__.py             21     21     0%
-faker/providers/person/en_US/__init__.py             21     21     0%
+faker/providers/person/en_US/__init__.py             21      0   100%
+faker/providers/person/en_US/__init__.py             21      0   100%
 faker/providers/person/es/__init__.py                 3      3     0%
 faker/providers/person/es/__init__.py                 3      3     0%
 faker/providers/person/es_AR/__init__.py             11     11     0%
@@ -3009,16 +3011,16 @@ faker/providers/phone_number/en_AU/__init__.py        8      8     0%
 faker/providers/phone_number/en_AU/__init__.py        8      8     0%
 faker/providers/phone_number/en_CA/__init__.py        3      3     0%
 faker/providers/phone_number/en_CA/__init__.py        3      3     0%
-faker/providers/phone_number/en_GB/__init__.py        7      2    71%
-faker/providers/phone_number/en_GB/__init__.py        7      2    71%
+faker/providers/phone_number/en_GB/__init__.py        7      7     0%
+faker/providers/phone_number/en_GB/__init__.py        7      7     0%
 faker/providers/phone_number/en_IN/__init__.py        3      3     0%
 faker/providers/phone_number/en_IN/__init__.py        3      3     0%
 faker/providers/phone_number/en_NZ/__init__.py        9      9     0%
 faker/providers/phone_number/en_NZ/__init__.py        9      9     0%
 faker/providers/phone_number/en_PH/__init__.py       57     57     0%
 faker/providers/phone_number/en_PH/__init__.py       57     57     0%
-faker/providers/phone_number/en_US/__init__.py        7      7     0%
-faker/providers/phone_number/en_US/__init__.py        7      7     0%
+faker/providers/phone_number/en_US/__init__.py        7      2    71%
+faker/providers/phone_number/en_US/__init__.py        7      2    71%
 faker/providers/phone_number/es_AR/__init__.py        6      6     0%
 faker/providers/phone_number/es_AR/__init__.py        6      6     0%
 faker/providers/phone_number/es_CL/__init__.py       14     14     0%
@@ -3105,8 +3107,8 @@ faker/providers/profile/__init__.py                  22     13    41%
 faker/providers/profile/__init__.py                  22     13    41%
 faker/providers/profile/en_US/__init__.py             0      0   100%
 faker/providers/profile/en_US/__init__.py             0      0   100%
-faker/providers/python/__init__.py                  252    214    15%
-faker/providers/python/__init__.py                  252    214    15%
+faker/providers/python/__init__.py                  256    218    15%
+faker/providers/python/__init__.py                  256    218    15%
 faker/providers/python/en_US/__init__.py              0      0   100%
 faker/providers/python/en_US/__init__.py              0      0   100%
 faker/providers/sbn/__init__.py                      25     15    40%
@@ -3141,16 +3143,16 @@ faker/providers/ssn/el_GR/__init__.py                22     22     0%
 faker/providers/ssn/el_GR/__init__.py                22     22     0%
 faker/providers/ssn/en_CA/__init__.py                29     29     0%
 faker/providers/ssn/en_CA/__init__.py                29     29     0%
-faker/providers/ssn/en_GB/__init__.py                10      3    70%
-faker/providers/ssn/en_GB/__init__.py                10      3    70%
+faker/providers/ssn/en_GB/__init__.py                10     10     0%
+faker/providers/ssn/en_GB/__init__.py                10     10     0%
 faker/providers/ssn/en_IE/__init__.py                 5      5     0%
 faker/providers/ssn/en_IE/__init__.py                 5      5     0%
 faker/providers/ssn/en_IN/__init__.py                 9      9     0%
 faker/providers/ssn/en_IN/__init__.py                 9      9     0%
 faker/providers/ssn/en_PH/__init__.py                19     19     0%
 faker/providers/ssn/en_PH/__init__.py                19     19     0%
-faker/providers/ssn/en_US/__init__.py                52     52     0%
-faker/providers/ssn/en_US/__init__.py                52     52     0%
+faker/providers/ssn/en_US/__init__.py                52     41    21%
+faker/providers/ssn/en_US/__init__.py                52     41    21%
 faker/providers/ssn/es_CA/__init__.py                 3      3     0%
 faker/providers/ssn/es_CA/__init__.py                 3      3     0%
 faker/providers/ssn/es_CL/__init__.py                29     29     0%
@@ -3246,6 +3248,6 @@ faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      9    44%
 faker/utils/text.py                                  16      9    44%
 ---------------------------------------------------------------------
-TOTAL                                             19984  17554    12%
+TOTAL                                             20008  17506    13%
   py$(PYV): OK
   congratulations :)

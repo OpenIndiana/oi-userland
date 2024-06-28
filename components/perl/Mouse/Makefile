@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mouse
 HUMAN_VERSION =			2.5.10
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Mouse - Moose minus the antlers
 COMPONENT_CPAN_AUTHOR =		SKAJI
 COMPONENT_ARCHIVE_HASH =	\

@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hypothesis
-HUMAN_VERSION =			6.103.2
+HUMAN_VERSION =			6.104.1
 COMPONENT_SUMMARY =		A library for property-based testing
 COMPONENT_PROJECT_URL =		https://hypothesis.works
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0460d7330ea855520540e07d8bd3c7981f768398d8d06afbd37239e5ae278d61
+	sha256:005d6618bcb4abf25feda28b389b4f09659d0dbe82a0d6337e0b3a12f2b77b9f
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -44,6 +44,9 @@ COMPONENT_TEST_TRANSFORMS += "-e '/to add failing examples to your code/d'"
 # Testing fails with the following two (abandoned) plugins installed
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-black
 TEST_CONFLICTING_PACKAGES.python += library/python/pytest-flake8
+# https://github.com/pytest-dev/pytest/issues/12186
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-mypy
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-salt-factories
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs

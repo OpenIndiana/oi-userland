@@ -72,7 +72,6 @@ tests/test_package.py::test_fips_hash_manager_md5 PASSED
 tests/test_package.py::test_fips_hash_manager_blake2[TypeError] PASSED
 tests/test_package.py::test_fips_hash_manager_blake2[ValueError] PASSED
 tests/test_package.py::test_fips_metadata_excludes_md5_and_blake2 PASSED
-tests/test_package.py::test_pkginfo_returns_no_metadata[unsupported Metadata-Version] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[missing Name and Version0] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[missing Name and Version1] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[missing Name0] PASSED
@@ -171,7 +170,8 @@ tests/test_utils.py::test_get_config_override_pypi_url PASSED
 tests/test_utils.py::test_get_config_missing PASSED
 tests/test_utils.py::test_empty_userpass PASSED
 tests/test_utils.py::test_get_repository_config_missing PASSED
-tests/test_utils.py::test_get_repository_config_url_with_auth PASSED
+tests/test_utils.py::test_get_repository_config_url_with_auth[https://user:pass@notexisting.python.org/pypi-expected_config0] PASSED
+tests/test_utils.py::test_get_repository_config_url_with_auth[https://auser:pass@pypi.proxy.local.repo.net:8443-expected_config1] PASSED
 tests/test_utils.py::test_sanitize_url[https://upload.pypi.org/legacy/-https://upload.pypi.org/legacy/] PASSED
 tests/test_utils.py::test_sanitize_url[https://user:pass@upload.pypi.org/legacy/-https://********@upload.pypi.org/legacy/] PASSED
 tests/test_utils.py::test_get_repository_config_with_invalid_url[ftp://test.pypi.org-scheme was required to be one of \\['http', 'https'\\]] PASSED
@@ -210,20 +210,12 @@ tests/test_wheel.py::test_read_invalid_wheel_extension PASSED
 tests/test_wheel.py::test_read_wheel_empty_metadata PASSED
 
 =============================== warnings summary ===============================
-twine/__init__.py:40
-  $(@D)/twine/__init__.py:40: DeprecationWarning: Implicit None on return values is deprecated and will raise KeyErrors.
-    __uri__ = metadata["home-page"]
-
-twine/__init__.py:42
-  $(@D)/twine/__init__.py:42: DeprecationWarning: Implicit None on return values is deprecated and will raise KeyErrors.
-    __author__ = metadata["author"]
-
 tests/test_auth.py::test_no_password_defers_to_prompt
   $(PYTHON_DIR)/vendor-packages/keyrings/alt/Gnome.py:27: DeprecationWarning: GnomeKeyring.get_default_keyring_sync is deprecated
     result = GnomeKeyring.get_default_keyring_sync()[0]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 201 passed, 3 warnings ========
+======== 201 passed, 1 warning ========
 py$(PYV): commands[1]> python -m coverage html
 Wrote HTML report to htmlcov/index.html
 py$(PYV): commands[2]> python -m coverage report --skip-covered --show-missing --fail-under 97
@@ -232,16 +224,17 @@ Name                       Stmts   Miss Branch BrPart  Cover   Missing
 tests/test_auth.py           127      1      8      1    99%   79
 tests/test_repository.py     109      0     32      1    99%   95->94
 tests/test_upload.py         204      2     30      0    98%   351-352
-tests/test_utils.py           88      1      4      0    99%   308
+tests/test_utils.py           87      1      4      0    99%   331
+twine/__init__.py             11      0      2      1    92%   42->exit
 twine/commands/upload.py      95      1     47      1    99%   103
 twine/package.py             156      4     45      5    96%   106, 134, 222, 301->exit, 307
 twine/repository.py          118      3     38      4    96%   90, 104->exit, 108->exit, 164->exit, 198, 250
 twine/settings.py             82      4      4      0    95%   333-341
-twine/utils.py               138      1     45      0    99%   328
+twine/utils.py               138      1     45      0    99%   330
 twine/wininst.py              38     26     19      0    21%   15-17, 21-25, 28-57
 ----------------------------------------------------------------------
-TOTAL                       2024     43    389     12    97%
+TOTAL                       2023     43    391     13    97%
 
-20 files skipped due to complete coverage.
+19 files skipped due to complete coverage.
   py$(PYV): OK
   congratulations :)

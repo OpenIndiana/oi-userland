@@ -14,13 +14,13 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-USE_OPENSSL11 = yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= w3m
 COMPONENT_VERSION=  0.5.3.20230121
 HUMAN_VERSION= 0.5.3+git20230121
-#COMPONENT_REVISION= 6
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A text-based web browser
 COMPONENT_SRC= $(COMPONENT_NAME)-0.5.3-git20230121
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -44,10 +44,10 @@ CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --with-browser=/usr/bin/firefox
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93

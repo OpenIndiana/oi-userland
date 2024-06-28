@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Perl::Critic
 HUMAN_VERSION =			1.152
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Perl::Critic - Critique Perl source code for best-practices.
 COMPONENT_CPAN_AUTHOR =		PETDANCE
 COMPONENT_ARCHIVE_HASH =	\

@@ -1,0 +1,13 @@
+We dot no use thirdparty modules for testing so we do not need to install them.
+
+--- znapzend-0.23.2/Makefile.in.orig
++++ znapzend-0.23.2/Makefile.in
+@@ -960,7 +960,7 @@
+ test-deps:
+ 	+cd thirdparty && $(MAKE) $(AM_MAKEFLAGS) test-deps
+ 
+-@DEB_BUILD_FALSE@check: test-deps
++@DEB_BUILD_FALSE@check:
+ @DEB_BUILD_FALSE@	@echo "NOTE: You may want to also/instead run test.sh" >&2
+ @DEB_BUILD_FALSE@	$(PERL) -Ithirdparty/lib/perl5 "-MExtUtils::Command::MM" "-e" "test_harness(1, 'lib','thirdparty/lib/perl5')" $(srcdir)/t/*.t
+ 

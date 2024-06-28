@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-X workers [1348 items]
+X workers [1382 items]
 
 scheduling tests via LoadScheduling
 
@@ -27,6 +27,8 @@ pkg_resources/tests/test_find_distributions.py::TestFindDistributions::test_stan
 pkg_resources/tests/test_find_distributions.py::TestFindDistributions::test_zipped_egg PASSED
 pkg_resources/tests/test_find_distributions.py::TestFindDistributions::test_zipped_sdist_one_level_removed PASSED
 pkg_resources/tests/test_find_distributions.py::mypy PASSED
+pkg_resources/tests/test_integration_zope_interface.py::mypy PASSED
+pkg_resources/tests/test_integration_zope_interface.py::test_interop_pkg_resources_iter_entry_points SKIPPED
 pkg_resources/tests/test_markers.py::mypy PASSED
 pkg_resources/tests/test_markers.py::test_ordering PASSED
 pkg_resources/tests/test_pkg_resources.py::TestDeepVersionLookupDistutils::test_normalize_path_backslash_sep[backward\\slash\\-backward\\slash] SKIPPED
@@ -203,6 +205,7 @@ setuptools/command/_requirestxt.py::mypy PASSED
 setuptools/command/alias.py::mypy PASSED
 setuptools/command/bdist_egg.py::mypy PASSED
 setuptools/command/bdist_rpm.py::mypy PASSED
+setuptools/command/bdist_wheel.py::mypy PASSED
 setuptools/command/build.py::mypy PASSED
 setuptools/command/build_clib.py::mypy PASSED
 setuptools/command/build_ext.py::mypy PASSED
@@ -239,6 +242,7 @@ setuptools/config/_apply_pyprojecttoml.py::setuptools.config._apply_pyprojecttom
 setuptools/config/_apply_pyprojecttoml.py::setuptools.config._apply_pyprojecttoml._some_attrgetter PASSED
 setuptools/config/expand.py::mypy PASSED
 setuptools/config/expand.py::setuptools.config.expand.LazyMappingProxy PASSED
+setuptools/config/expand.py::setuptools.config.expand._find_module PASSED
 setuptools/config/pyprojecttoml.py::mypy PASSED
 setuptools/config/setupcfg.py::mypy PASSED
 setuptools/depends.py::mypy PASSED
@@ -266,6 +270,8 @@ setuptools/package_index.py::setuptools.package_index.htmldecode PASSED
 setuptools/sandbox.py::mypy PASSED
 setuptools/sandbox.py::setuptools.sandbox._needs_hiding PASSED
 setuptools/tests/__init__.py::mypy PASSED
+setuptools/tests/compat/__init__.py::mypy PASSED
+setuptools/tests/compat/py$(PYV).py::mypy PASSED
 setuptools/tests/config/__init__.py::mypy PASSED
 setuptools/tests/config/downloads/__init__.py::mypy PASSED
 setuptools/tests/config/downloads/preload.py::mypy PASSED
@@ -455,6 +461,34 @@ setuptools/tests/test_bdist_deprecations.py::test_bdist_rpm_warning SKIPPED
 setuptools/tests/test_bdist_egg.py::Test::test_bdist_egg PASSED
 setuptools/tests/test_bdist_egg.py::Test::test_exclude_source_files PASSED
 setuptools/tests/test_bdist_egg.py::mypy PASSED
+setuptools/tests/test_bdist_wheel.py::mypy PASSED
+setuptools/tests/test_bdist_wheel.py::test_build_from_readonly_tree PASSED
+setuptools/tests/test_bdist_wheel.py::test_build_number PASSED
+setuptools/tests/test_bdist_wheel.py::test_compression[deflated] PASSED
+setuptools/tests/test_bdist_wheel.py::test_compression[stored] PASSED
+setuptools/tests/test_bdist_wheel.py::test_data_dir_with_tag_build PASSED
+setuptools/tests/test_bdist_wheel.py::test_get_abi_tag_fallback PASSED
+setuptools/tests/test_bdist_wheel.py::test_get_abi_tag_graalpy PASSED
+setuptools/tests/test_bdist_wheel.py::test_get_abi_tag_pypy_new PASSED
+setuptools/tests/test_bdist_wheel.py::test_get_abi_tag_pypy_old PASSED
+setuptools/tests/test_bdist_wheel.py::test_get_abi_tag_windows PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_default PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_deprecated PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_disabled PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_override[setup.cfg-[metadata]\nlicense_files=licenses/*, LICENSE] PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_override[setup.cfg-[metadata]\nlicense_files=licenses/*\n  LICENSE] PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_override[setup.py-from setuptools import setup\n\nsetup(\n    name='dummy_dist',\n    version='1.0',\n  license_files=['licenses/DUMMYFILE', 'LICENSE'])\n] PASSED
+setuptools/tests/test_bdist_wheel.py::test_limited_abi PASSED
+setuptools/tests/test_bdist_wheel.py::test_no_ctypes PASSED
+setuptools/tests/test_bdist_wheel.py::test_no_scripts PASSED
+setuptools/tests/test_bdist_wheel.py::test_platform_linux32[linux-aarch64-linux_armv7l] SKIPPED
+setuptools/tests/test_bdist_wheel.py::test_platform_linux32[linux-x86_64-linux_i686] SKIPPED
+setuptools/tests/test_bdist_wheel.py::test_platform_with_space PASSED
+setuptools/tests/test_bdist_wheel.py::test_preserve_unicode_metadata PASSED
+setuptools/tests/test_bdist_wheel.py::test_rmtree_readonly PASSED
+setuptools/tests/test_bdist_wheel.py::test_unicode_record PASSED
+setuptools/tests/test_bdist_wheel.py::test_unix_epoch_timestamps PASSED
+setuptools/tests/test_bdist_wheel.py::test_wheelfile_line_endings PASSED
 setuptools/tests/test_build.py::mypy PASSED
 setuptools/tests/test_build.py::test_distribution_gives_setuptools_build_obj PASSED
 setuptools/tests/test_build_clib.py::TestBuildCLib::test_build_libraries SKIPPED
@@ -1237,7 +1271,7 @@ setuptools/tests/test_sandbox.py::mypy PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_external_path_in_extension_depends[$tmp_path$/external/dir/file.h] PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_external_path_in_extension_depends[../external/dir/file.h] PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_symlink_in_extension_depends[myheaders/dir/../dir/file.h] PASSED
-setuptools/tests/test_sdist.py::TestRegressions::test_symlink_in_extension_depends[myheaders/dir/file.h] $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:115: CoverageWarning: Couldn't parse '/tmp/easy_install-d0o4v9ny/setup.py': No source for code: '/tmp/easy_install-d0o4v9ny/setup.py'. (couldnt-parse) PASSED
+setuptools/tests/test_sdist.py::TestRegressions::test_symlink_in_extension_depends[myheaders/dir/file.h] PASSED
 setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[pyproject.toml - directive with str instead of list] PASSED
 setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[pyproject.toml - static readme/license files and dynamic version] PASSED
 setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[setup.cfg - long_description and version] PASSED
@@ -1341,7 +1375,7 @@ setuptools/tests/test_wheel.py::test_wheel_mode PASSED
 setuptools/tests/test_wheel.py::test_wheel_no_dist_dir PASSED
 setuptools/tests/test_windows_wrappers.py::TestCLI::test_basic SKIPPED
 setuptools/tests/test_windows_wrappers.py::TestCLI::test_symlink SKIPPED
-setuptools/tests/test_windows_wrappers.py::TestCLI::test_with_options SKIPPED
+setuptools/tests/test_windows_wrappers.py::TestCLI::test_with_options $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:115: CoverageWarning: Couldn't parse '/tmp/easy_install-2azwwpwp/setup.py': No source for code: '/tmp/easy_install-2azwwpwp/setup.py'. (couldnt-parse) SKIPPED
 setuptools/tests/test_windows_wrappers.py::TestGUI::test_basic SKIPPED
 setuptools/tests/test_windows_wrappers.py::mypy PASSED
 setuptools/tests/text.py::mypy PASSED
@@ -1366,8 +1400,8 @@ $(@D)/setuptools/tests/test_build_py.py:433: AssertionError
 =================================== XPASSES ====================================
 
 ===================================== mypy =====================================
-Success: no issues found in 142 source files
+Success: no issues found in 147 source files
 =========================== short test summary info ============================
-======== 1227 passed, 117 skipped, 3 xfailed, 1 xpassed ========
+======== 1258 passed, 120 skipped, 3 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)

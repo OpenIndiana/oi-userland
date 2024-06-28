@@ -19,7 +19,7 @@ BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		znapzend
-COMPONENT_VERSION =		0.22.0
+COMPONENT_VERSION =		0.23.2
 COMPONENT_SUMMARY =		zfs backup with remote capabilities and mbuffer integration
 COMPONENT_DESCRIPTION =		ZnapZend is a ZFS centric backup tool. It relies on snapshot,\
  send and receive to do its work. It has the built-in ability to manage both local\
@@ -29,7 +29,7 @@ COMPONENT_DESCRIPTION =		ZnapZend is a ZFS centric backup tool. It relies on sna
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:95bf10167237522857c0fcdc5e3dfa096c4b5767bdd3c5fc8b1a1a36131dd43e
+	sha256:69928caacde7468e5154d81197e257cd0c85ee3eedb3192be67fdfe486defefe
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/oetiker/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =		https://github.com/oetiker/$(COMPONENT_NAME)
@@ -55,9 +55,14 @@ COMPONENT_TEST_TRANSFORMS += -n
 COMPONENT_TEST_TRANSFORMS += "-e '/\<ok\>/p'"
 
 # We are not able to detect these test dependencies automatically.
-# The list is based on $(SOURCE_DIR)/cpanfile.
+# The list is based on cpanfile.common and cpanfile.test.
+# Please note that Devel::Cover and Devel::Cover::Report::Coveralls listed in
+# cpanfile.test are not needed to run tests.
 TEST_REQUIRED_PACKAGES += library/perl-5/mojolicious
 TEST_REQUIRED_PACKAGES += library/perl-5/mojo-log-clearable
+TEST_REQUIRED_PACKAGES += library/perl-5/pod-coverage
+TEST_REQUIRED_PACKAGES += library/perl-5/test-exception
+TEST_REQUIRED_PACKAGES += library/perl-5/test-sharedfork
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
