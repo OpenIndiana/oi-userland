@@ -1,20 +1,14 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
+
 #
 # CDDL HEADER END
 #
@@ -24,12 +18,13 @@
 #
 BUILD_BITS=			64
 BUILD_STYLE=		justmake
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		httping
 COMPONENT_VERSION=	2.5
 COMPONENT_FMRI=		diagnostic/httping
-COMPONENT_SUMMARY=	Ping for HTTP requests
+COMPONENT_SUMMARY=	Ping using HTTP requests
 COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_DESCRIPTION=	Give httping an url, and it'll show you how long it takes to connect, send a request and retrieve the reply (only the headers).
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,6 +43,10 @@ CC +=		$(CC_BITS)
 EXTRA_LIBRARIES =	-lsocket -lnsl
 EXTRA_LIBRARIES +=	-lncurses -lfftw3 -lssl -lcrypto -lresolv -lm
 
+# Provide location for openssl 3.1 headers/libraries
+CFLAGS += -I$(OPENSSL_INCDIR)
+LDFLAGS  += -L$(OPENSSL_LIBDIR)
+
 # The usual Solaris curses.h vs ncurses/curses.h mess.
 CFLAGS += -I$(USRINCDIR)/ncurses
 
@@ -62,8 +61,8 @@ COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS) $(EXTRA_LIBRARIES)"
 ASLR_MODE = $(ASLR_ENABLE)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
