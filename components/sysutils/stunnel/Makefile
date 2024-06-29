@@ -1,22 +1,12 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
@@ -24,19 +14,18 @@
 # copyright (c) 2021, Tim Mooney.  All rights reserved.
 #
 
-USE_OPENSSL11=          yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         stunnel
-COMPONENT_VERSION=      5.60
-COMPONENT_REVISION =	1
+COMPONENT_VERSION=      5.61
 COMPONENT_SUMMARY=	A TLS-encrypting socket wrapper
 COMPONENT_PROJECT_URL=  https://www.stunnel.org/
 COMPONENT_FMRI=		service/security/stunnel
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:c45d765b1521861fea9b03b425b9dd7d48b3055128c0aec673bba5ef9b8f787d
+	sha256:91ea0ca6482d8f7e7d971ee64ab4f86a2817d038a372f0893e28315ef2015d7a
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/downloads/archive/5.x/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 
@@ -76,14 +65,16 @@ ASLR_MODE = $(ASLR_ENABLE)
 unexport SHELLOPTS
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
-	'-e "/^test /p" ' \
-	'-e "/^summary: /p" '
+	'-e "/^[0-9]/p" ' \
+	'-e "/^\.\./p" ' \
+	'-e "/^ /p" ' \
+	'-e "/^Summary:/p" '
 
 # ncat needed for test suite
 REQUIRED_PACKAGES += diagnostic/nmap
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl-11
-REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
