@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		domdf_python_tools
-HUMAN_VERSION =			3.8.1
+HUMAN_VERSION =			3.9.0
 COMPONENT_SUMMARY =		Helpful functions for Python
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/domdf_python_tools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f45e34cf4d3363af59c32da28a9de9480ed916eff06bd0cf9a1644b6b460fb88
+	sha256:1f8a96971178333a55e083e35610d7688cd7620ad2b99790164e1fc1a3614c18
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
