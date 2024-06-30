@@ -25,6 +25,7 @@
 # Copyright (c) 2020, 2022, Andreas Wacknitz
 #
 
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
@@ -46,6 +47,8 @@ CONFIGURE_OPTIONS  +=	--with-included-popt
 CONFIGURE_OPTIONS  +=	--enable-xattr-support
 # disable xxHash until we provide a package for it (https://github.com/Cyan4973/xxHash)
 CONFIGURE_OPTIONS  +=	--disable-xxhash
+CONFIGURE_OPTIONS  +=	CPPFLAGS=-I$(OPENSSL_INCDIR)
+CONFIGURE_OPTIONS  +=	LDFLAGS=-L$(OPENSSL_LIBDIR)
 
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^PASS|^SKIP|^FAIL|^XFAIL/'"
@@ -54,8 +57,8 @@ COMPONENT_TEST_TRANSFORMS = "'/^PASS|^SKIP|^FAIL|^XFAIL/'"
 TEST_REQUIRED_PACKAGES += developer/fakeroot
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
