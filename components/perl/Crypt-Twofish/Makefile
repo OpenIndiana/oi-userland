@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::Twofish
 HUMAN_VERSION =			2.18
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::Twofish - The Twofish Encryption Algorithm
 COMPONENT_CPAN_AUTHOR =		AMS
 COMPONENT_ARCHIVE_HASH =	\
