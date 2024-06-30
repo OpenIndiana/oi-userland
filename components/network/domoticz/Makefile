@@ -13,11 +13,11 @@
 #
 
 BUILD_STYLE=cmake
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		domoticz
-COMPONENT_VERSION=	2022.1
+COMPONENT_VERSION=	2024.4
 COMPONENT_SUMMARY=	Open source Home Automation System
 COMPONENT_PROJECT_URL=	http://www.domoticz.com/
 COMPONENT_FMRI=		network/${COMPONENT_NAME}
@@ -25,7 +25,7 @@ COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/domoticz/domoticz/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8282cb71c924b6ef92503976d50f966f2c785eab8f8cffa1136ac133f0241157
+COMPONENT_ARCHIVE_HASH=	sha256:d87113d7cacd0b52b9126fcc1ef24e140a4f7042d5bc6262e86e4b4752f5cf38
 COMPONENT_LICENSE=	GPL-3.0 license
 COMPONENT_LICENSE_FILE=	License.txt
 
@@ -48,10 +48,10 @@ CMAKE_OPTIONS+= -DUSE_BUILTIN_SQLITE=OFF
 REQUIRED_PACKAGES+= library/cereal
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/jsoncpp
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += network/mosquitto
 REQUIRED_PACKAGES += runtime/lua-53
