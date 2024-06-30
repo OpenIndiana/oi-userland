@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Type::Tiny::XS
 HUMAN_VERSION =			0.025
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Type::Tiny::XS - provides an XS boost for some of Type::Tiny's built-in type constraints
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,17 @@ COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# Type-Tiny-XS --> Type-Tiny --> Type-Tiny-XS
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PERL_TEST_BOOTSTRAP = yes
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
