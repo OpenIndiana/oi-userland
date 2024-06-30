@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Log::Dispatch
 HUMAN_VERSION =			2.71
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Log::Dispatch - Dispatches messages to one or more outputs
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
