@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Type::Tiny
 HUMAN_VERSION =			2.004000
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Type::Tiny - tiny, yet Moo(se)-compatible type constraint
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,6 +32,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-hide
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-clean
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/specio
 
