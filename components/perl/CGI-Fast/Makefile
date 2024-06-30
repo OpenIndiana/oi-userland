@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		CGI::Fast
 HUMAN_VERSION =			2.17
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		CGI::Fast - CGI Interface for Fast CGI
 COMPONENT_CPAN_AUTHOR =		LEEJO
 COMPONENT_ARCHIVE_HASH =	\
