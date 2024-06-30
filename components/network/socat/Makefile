@@ -13,21 +13,23 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-PREFERRED_BITS=		64
+OPENSSL_VERSION= 3.1
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		socat
-COMPONENT_VERSION=	1.7.3.2
+COMPONENT_VERSION=	1.8.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:360c9d08b47b446cd88ee2f3465a19177c4d2099fc92d20e1c10b5cd51a27ebf
+COMPONENT_ARCHIVE_HASH= sha256:e1de683dd22ee0e3a6c6bbff269abe18ab0c9d7eb650204f125155b9005faca7
 COMPONENT_PROJECT_URL=	http://www.dest-unreach.org/socat/
 COMPONENT_ARCHIVE_URL=	http://www.dest-unreach.org/socat/download/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
+
+LDFLAGS+= -L$(OPENSSL_LIBDIR)
+
+CONFIGURE_OPTIONS+= --enable-openssl_base=$(OPENSSL_PREFIX)
 
 # For the test target
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -46,12 +48,8 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-ne "/^summary/p"' \
 	'-ne "/^FAILED/p"'
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
