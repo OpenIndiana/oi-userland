@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
-collecting ... collected 4519 items
+collecting ... collected 4524 items
 
 Checking Only)
 SASL_HOST, SASL_USER, and SASL_PASS to test SASL)
@@ -182,6 +182,7 @@ test/test_binary.py::TestUuidSpecImplicitCoding::test_encoding_3 PASSED
 test/test_binary.py::TestUuidSpecImplicitCoding::test_encoding_4 PASSED
 test/test_binary.py::TestUuidSpecImplicitCoding::test_encoding_5 PASSED
 test/test_bson.py::TestBSON::test_aware_datetime PASSED
+test/test_bson.py::TestBSON::test_bad_code PASSED
 test/test_bson.py::TestBSON::test_bad_dbref PASSED
 test/test_bson.py::TestBSON::test_bad_encode SKIPPED (Disabled due to
 test/test_bson.py::TestBSON::test_bad_id_keys PASSED
@@ -2859,6 +2860,7 @@ test/test_load_balancer.py::TestLoadBalancerWaitQueueTimeouts::test_wait_queue_t
 test/test_load_balancer.py::TestLoadBalancerWaitQueueTimeouts::test_wait_queue_timeout_errors_include_transaction_statistics <- test/unified_format.py SKIPPED
 test/test_logger.py::TestLogger::test_configured_truncation_limit PASSED
 test/test_logger.py::TestLogger::test_default_truncation_limit PASSED
+test/test_logger.py::TestLogger::test_logging_without_listeners PASSED
 test/test_logger.py::TestLogger::test_truncation_multi_byte_codepoints PASSED
 test/test_max_staleness.py::TestAllScenarios::test_max_staleness_ReplicaSetNoPrimary_DefaultNoMaxStaleness <- test/utils_selection_tests.py PASSED
 test/test_max_staleness.py::TestAllScenarios::test_max_staleness_ReplicaSetNoPrimary_LastUpdateTime <- test/utils_selection_tests.py PASSED
@@ -2973,6 +2975,7 @@ test/test_pooling.py::TestPooling::test_socket_checker PASSED
 test/test_pooling.py::TestPooling::test_socket_closed PASSED
 test/test_pooling.py::TestPooling::test_socket_timeout_message SKIPPED
 test/test_pooling.py::TestPooling::test_wait_queue_timeout PASSED
+test/test_pymongo.py::TestPyMongo::test_get_version_tuple PASSED
 test/test_pymongo.py::TestPyMongo::test_mongo_client_alias PASSED
 test/test_raw_bson.py::TestRawBSONDocument::test_contains_code_with_scope PASSED
 test/test_raw_bson.py::TestRawBSONDocument::test_contains_dbref PASSED
@@ -4328,7 +4331,7 @@ test/test_uri_parser.py::TestURI::test_special_chars PASSED
 test/test_uri_parser.py::TestURI::test_split_hosts PASSED
 test/test_uri_parser.py::TestURI::test_split_options PASSED
 test/test_uri_parser.py::TestURI::test_tlsinsecure_simple PASSED
-test/test_uri_parser.py::TestURI::test_unquote_after_parsing PASSED
+test/test_uri_parser.py::TestURI::test_unquote_during_parsing PASSED
 test/test_uri_parser.py::TestURI::test_validate_userinfo PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_invalid-uris_Double_colon_in_host_identifier PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_invalid-uris_Double_colon_in_host_identifier_and_second_host PASSED
@@ -4390,6 +4393,7 @@ test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-host_
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-host_identifiers_Single_hostname_with_port PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-host_identifiers_Single_hostname_without_port PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-host_identifiers_UTF-8_hosts PASSED
+test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-options_Colon_in_a_key_value_pair PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-options_Missing_delimiting_slash_between_hosts_and_options PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-options_Option_names_are_normalized_to_lowercase PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-absolute_Multiple_Unix_domain_sockets_(absolute_paths) PASSED
@@ -4421,6 +4425,7 @@ test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Unix_domain_socket_with_path_resembling_socket_file_(relative_path_with_trailing_slash) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Unix_domain_socket_with_path_resembling_socket_file_(relative_path_without_trailing_slash) PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-unix_socket-relative_Unix_domain_socket_with_path_resembling_socket_file_and_auth_(relative_path) PASSED
+test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-warnings_Comma_in_a_key_value_pair_causes_a_warning PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-warnings_Deprecated_(or_unknown)_options_are_ignored_if_replacement_exists PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-warnings_Empty_boolean_option_value_are_ignored PASSED
 test/test_uri_spec.py::TestAllScenarios::test_connection_string_test_valid-warnings_Empty_integer_option_values_are_ignored PASSED
@@ -4597,31 +4602,31 @@ version must be at least 4.7.-1.0)
 version must be at least 4.7.-1.0)
 
 ================================== XFAILURES ===================================
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
-$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:287: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
+$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py:288: _pytest.outcomes.XFailed
 =============================== warnings summary ===============================
 test/test_client.py::TestClient::test_compression
-  $(@D)/pymongo/common.py:863: UserWarning: Unsupported compressor: foobar
+  $(@D)/pymongo/common.py:866: UserWarning: Unsupported compressor: foobar
     validated = validator(opt, value)
 
 test/test_client.py::TestClient::test_compression
@@ -4633,7 +4638,7 @@ test/test_client.py::TestClient::test_compression
     return get_validated_options(opts, warn)
 
 test/test_client.py::TestClient::test_compression
-  $(@D)/pymongo/common.py:863: UserWarning: Wire protocol compression with snappy is not available. You must install the python-snappy module for snappy support.
+  $(@D)/pymongo/common.py:866: UserWarning: Wire protocol compression with snappy is not available. You must install the python-snappy module for snappy support.
     validated = validator(opt, value)
 
 test/test_client.py::TestClient::test_server_selection_timeout
@@ -4731,6 +4736,6 @@ test/test_gridfs_bucket.py::TestGridfs::test_md5
 - generated xml file: $(@D)/xunit-results/TEST-results.xml -
 ============================= slowest 5 durations ==============================
 =========================== short test summary info ============================
-======== 2000 passed, 2497 skipped, 22 xfailed, 29 warnings ========
+======== 2005 passed, 2497 skipped, 22 xfailed, 29 warnings ========
   py$(PYV): OK
   congratulations :)
