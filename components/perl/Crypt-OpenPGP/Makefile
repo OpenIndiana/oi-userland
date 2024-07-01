@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenPGP
 HUMAN_VERSION =			1.12
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::OpenPGP - Pure-Perl OpenPGP implementation
 COMPONENT_CPAN_AUTHOR =		SROMANOV
 COMPONENT_ARCHIVE_HASH =	\
