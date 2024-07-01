@@ -20,17 +20,21 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::DSA
 HUMAN_VERSION =			1.17
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::DSA - DSA Signatures and Key Generation
 COMPONENT_CPAN_AUTHOR =		ADAMK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d1b8585f6bf746f76e5dc5da3641d325ed656bc2e5f344b54514b55c31009a03
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
+COMPONENT_LICENSE =		Artistic-1.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Makefile.PL needs to find bundled inc::Module::Install
 COMPONENT_CONFIGURE_ENV += PERL5LIB=$(@D)
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-des_ede3
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/data-buffer
