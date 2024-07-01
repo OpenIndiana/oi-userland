@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Tie::EncryptedHash
 HUMAN_VERSION =			1.24
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Tie::EncryptedHash - Hashes (and objects based on hashes) with encrypting fields.
 COMPONENT_CPAN_AUTHOR =		VIPUL
 COMPONENT_ARCHIVE_HASH =	\
