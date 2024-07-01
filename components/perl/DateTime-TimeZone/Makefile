@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DateTime::TimeZone
 HUMAN_VERSION =			2.62
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DateTime::TimeZone - Time zone object base class and factory
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,17 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# DateTime-TimeZone --> DateTime ==> DateTime-TimeZone
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PERL_TEST_BOOTSTRAP = yes
 
 # Optional test dependencies missing from metadata
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/datetime
