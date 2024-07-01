@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DateTime
 HUMAN_VERSION =			1.65
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DateTime - A date and time object for Perl
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
