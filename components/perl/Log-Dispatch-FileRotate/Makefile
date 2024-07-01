@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Log::Dispatch::FileRotate
 HUMAN_VERSION =			1.38
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Log::Dispatch::FileRotate - Log to Files that Archive/Rotate Themselves
 COMPONENT_CPAN_AUTHOR =		MSCHOUT
 COMPONENT_ARCHIVE_HASH =	\
