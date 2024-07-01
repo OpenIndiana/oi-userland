@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		LWP::Protocol::https
 HUMAN_VERSION =			6.14
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		LWP::Protocol::https - Provide https support for LWP::UserAgent
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
