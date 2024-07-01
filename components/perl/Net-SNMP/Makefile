@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::SNMP
 HUMAN_VERSION =			6.0.1
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Net::SNMP - Object oriented interface to SNMP
 COMPONENT_CPAN_AUTHOR =		DTOWN
 COMPONENT_ARCHIVE_HASH =	\
