@@ -1,9 +1,9 @@
---- gftp/src/gtk/misc-gtk.c.orig	2008-12-09 16:47:32.828689000 +0900
-+++ gftp/src/gtk/misc-gtk.c	2008-12-09 16:50:13.096878000 +0900
-@@ -864,6 +864,15 @@ dialog_response (GtkWidget * widget, gin
- static gint
+--- gftp-2.9.1b/src/gtk/misc-gtk.c.old	2024-07-01 22:19:57.182100428 -0400
++++ gftp-2.9.1b/src/gtk/misc-gtk.c	2024-07-01 22:20:45.592240469 -0400
+@@ -632,6 +632,15 @@
  dialog_keypress (GtkWidget * widget, GdkEventKey * event, gpointer data)
  {
+   DEBUG_PRINT_FUNC
 +  if (GTK_ENTRY (widget)->editable)
 +    {
 +      if (gtk_im_context_filter_keypress (GTK_ENTRY (widget)->im_context, event))
@@ -13,6 +13,6 @@
 +        }
 +    }
 +
-   if (event->type != GDK_KEY_PRESS)
-     return (FALSE);
- 
+   if (event->keyval == GDK_KP_Enter || event->keyval == GDK_Return)
+     {
+       dialog_response (NULL, GTK_RESPONSE_YES, data);
