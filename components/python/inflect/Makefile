@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		inflect
-HUMAN_VERSION =			7.3.0
+HUMAN_VERSION =			7.3.1
 COMPONENT_SUMMARY =		Correctly generate plurals, singular nouns, ordinals, indefinite articles
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/inflect
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:27264bb8992cab2be3c50772ecf7a79492c6f95e16e15002e6023001d2d639c2
+	sha256:edd785148a673b0c6dfef1a7d80cc1bcb2dd6d041cdb313b60032e464fd4e808
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,7 +33,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/typeguard
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
