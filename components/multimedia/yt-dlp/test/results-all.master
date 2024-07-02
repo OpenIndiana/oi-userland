@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6748 items / 5785 deselected / 963 selected
+collecting ... collected 6796 items / 5833 deselected / 963 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
@@ -403,27 +403,6 @@ test/test_networking.py::TestRequestHandlerValidation::test_invalid_proxy_url[We
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-http-False-handler_kwargs0] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-https-False-handler_kwargs1] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-data-False-handler_kwargs2] PASSED
-----------------------------------------
-Exception occurred during processing of request from ('127.0.0.1', 64730)
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
-    self.finish_request(request, client_address)
-  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
-    self.RequestHandlerClass(request, client_address, self)
-  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
-    self.handle()
-  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
-    self.handle_one_request()
-  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
-    method()
-  File "$(@D)/test/test_networking.py", line 259, in do_GET
-    self._headers()
-  File "$(@D)/test/test_networking.py", line 84, in _headers
-    self.wfile.write(payload)
-  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
-    self._sock.sendall(b)
-BrokenPipeError: [Errno 32] Broken pipe
-----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-ftp-False-handler_kwargs3] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-file-UnsupportedRequest-handler_kwargs4] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-file-False-handler_kwargs5] PASSED
@@ -539,7 +518,8 @@ test/test_networking.py::TestYoutubeDLNetworking::test_client_certificate[ydl_pa
 test/test_networking.py::TestYoutubeDLNetworking::test_client_certificate[ydl_params1] PASSED
 test/test_networking.py::TestYoutubeDLNetworking::test_client_certificate[ydl_params2] PASSED
 test/test_networking.py::TestYoutubeDLNetworking::test_client_certificate[ydl_params3] PASSED
-test/test_networking.py::TestYoutubeDLNetworking::test_urllib_file_urls PASSED
+test/test_networking.py::TestYoutubeDLNetworking::test_urllib_file_urls ----------------------------------------
+PASSED
 test/test_networking.py::TestYoutubeDLNetworking::test_compat_opt_prefer_urllib PASSED
 test/test_networking.py::TestRequest::test_query PASSED
 test/test_networking.py::TestRequest::test_method PASSED
@@ -997,6 +977,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 818 passed, 145 skipped, 5785 deselected ========
+======== 818 passed, 145 skipped, 5833 deselected ========
   py$(PYV): OK
   congratulations :)
