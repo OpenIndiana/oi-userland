@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		XML::DOM
 HUMAN_VERSION =			1.46
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		XML::DOM - A perl module for building DOM Level 1 compliant document structures
 COMPONENT_CPAN_AUTHOR =		TJMATHER
 COMPONENT_ARCHIVE_HASH =	\
