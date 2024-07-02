@@ -27,12 +27,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hpn-ssh
-COMPONENT_VERSION=	18.4.1
+COMPONENT_VERSION=	18.4.2
 COMPONENT_SUMMARY=	High performance SSH/SCP
 COMPONENT_SRC=		$(COMPONENT_NAME)-hpn-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.psc.edu/hpn-ssh-home/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e53a9b8984beeb9f20caa630f6635e8e920f63fd79dea3c4e325a2df1ed91e64
+COMPONENT_ARCHIVE_HASH=	sha256:ff5653d26cd3846f5d366e6826589c66dca7607b3ce7ab6af83258510da521f8
 COMPONENT_ARCHIVE_URL=	https://github.com/rapier1/hpn-ssh/archive/refs/tags/hpn-$(HUMAN_VERSION).tar.gz
 COMPONENT_FMRI=		network/hpn-ssh
 COMPONENT_LICENSE=	BSD, BSD-like
@@ -103,9 +103,9 @@ COMPONENT_POST_INSTALL_ACTION += $(INSTALL) $(COMPONENT_DIR)/files/sshd_config.d
 COMPONENT_TEST_TARGETS = tests
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
