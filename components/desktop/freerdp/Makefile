@@ -16,17 +16,16 @@
 
 BUILD_BITS= 64
 BUILD_STYLE= cmake
-USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freerdp
-COMPONENT_VERSION=	2.10.0
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	2.11.7
 COMPONENT_SUMMARY=	Remote Desktop Viewer Client
 COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a673d3fc21911dd9f196834f2f3a23c3ebc7e5e4deab2f7686fcec879279e2c1
+COMPONENT_ARCHIVE_HASH= sha256:5a2d54e1ca0f1facd1632bcc94c73b9f071a80c5fdbbb3f26e79f02aaa586ca3
 COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/FreeRDP/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/remote-desktop/freerdp
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -38,6 +37,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # https://github.com/FreeRDP/FreeRDP/issues/5504
 CFLAGS += $(XPG6MODE)
+
+CFLAGS += -I$(OPENSSL_INCDIR)
+LDFLAGS  += -L$(OPENSSL_LIBDIR)
 
 ifeq ($(strip $(MACH)),i386)
 CMAKE_OPTIONS += -DWITH_SSE2=ON
@@ -101,13 +103,13 @@ COMPONENT_POST_INSTALL_ACTION  = \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
