@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Log::Log4perl
 HUMAN_VERSION =			1.57
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Log::Log4perl - Log4j implementation for Perl
 COMPONENT_CPAN_AUTHOR =		ETJ
 COMPONENT_ARCHIVE_HASH =	\
