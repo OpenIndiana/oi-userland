@@ -1,0 +1,39 @@
+--- illumos-gate/usr/src/uts/common/inet/tcp_impl.h.orig	2024-07-02 19:25:33.346845738 +0200
++++ illumos-gate/usr/src/uts/common/inet/tcp_impl.h	2024-07-02 20:00:05.207140717 +0200
+@@ -62,9 +62,9 @@
+  * by setting it to 0.
+  */
+ #define	TCP_XMIT_LOWATER	4096
+-#define	TCP_XMIT_HIWATER	49152
++#define	TCP_XMIT_HIWATER	(1024 * 1024)
+ #define	TCP_RECV_LOWATER	2048
+-#define	TCP_RECV_HIWATER	128000
++#define	TCP_RECV_HIWATER	(1024 * 1024)
+ 
+ /*
+  * Bind hash list size and has function.  It has to be a power of 2 for
+--- illumos-gate/usr/src/uts/common/inet/udp_impl.h.orig	2024-07-02 19:25:33.347703763 +0200
++++ illumos-gate/usr/src/uts/common/inet/udp_impl.h	2024-07-02 20:01:52.508755181 +0200
+@@ -119,9 +119,9 @@
+ #define	UDP_NUM_EPRIV_PORTS	64
+ 
+ /* Default buffer size and flow control wake up threshold. */
+-#define	UDP_RECV_HIWATER	(56 * 1024)
++#define	UDP_RECV_HIWATER	(1024 * 1024)
+ #define	UDP_RECV_LOWATER	128
+-#define	UDP_XMIT_HIWATER	(56 * 1024)
++#define	UDP_XMIT_HIWATER	(1024 * 1024)
+ #define	UDP_XMIT_LOWATER	1024
+ 
+ /*
+--- illumos-gate/usr/src/uts/common/inet/tcp/tcp_tunables.c.orig	2024-07-02 20:08:02.605808960 +0200
++++ illumos-gate/usr/src/uts/common/inet/tcp/tcp_tunables.c	2024-07-03 20:19:19.173630983 +0200
+@@ -461,7 +461,7 @@
+ 
+ 	{ "max_buf", MOD_PROTO_TCP,
+ 	    mod_set_uint32, mod_get_uint32,
+-	    {8192, ULP_MAX_BUF, 1024*1024}, {1024*1024} },
++	    {8192, ULP_MAX_BUF, 2048*1024}, {2048*1024} },
+ 
+ 	{ "_strong_iss", MOD_PROTO_TCP,
+ 	    mod_set_uint32, mod_get_uint32,
