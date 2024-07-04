@@ -1,0 +1,14 @@
+Alas illumos doesn't define s6_addr8, s6_addr16, and s6_addr32 outside the kernel.
+But netinet/in.h gives an idea how to provide the definitions.
+
+--- swipl-9.2.4/packages/clib/nonblockio.c.orig	2024-03-23 21:33:40.000000000 +0100
++++ swipl-9.2.4/packages/clib/nonblockio.c	2024-05-09 21:02:38.711713290 +0200
+@@ -182,6 +182,8 @@
+ #define s6_addr16 s6_words
+ #elif defined(__APPLE__) || defined(__FreeBSD__)
+ #define s6_addr16 __u6_addr.__u6_addr16
++#elif defined(__illumos__)
++#define s6_addr16   _S6_un._S6_u16
+ #endif
+ #endif
+ 
