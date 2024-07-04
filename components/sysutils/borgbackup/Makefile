@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		borgbackup
-HUMAN_VERSION =			1.2.8
-COMPONENT_SUMMARY =		borgbackup - Deduplicated, encrypted, authenticated and compressed backups
-COMPONENT_PROJECT_URL =		https://borgbackup.readthedocs.io/
+HUMAN_VERSION =			1.4.0
+COMPONENT_SUMMARY =		Deduplicated, encrypted, authenticated and compressed backups
+COMPONENT_PROJECT_URL =		https://borgbackup.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d39d22b0d2cb745584d68608a179b6c75f7b40e496e96feb789e41d34991f4aa
+	sha256:c54c45155643fa66fed7f9ff2d134ea0a58d0ac197c18781ddc2fb236bf6ed29
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -48,20 +48,19 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/libxxhash
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/cython
 TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pkgconfig
-TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
-TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools-scm
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
