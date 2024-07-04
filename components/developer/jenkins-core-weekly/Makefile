@@ -28,8 +28,8 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=				jenkins
 JENKINS_RELEASE=			weekly
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	463
-COMPONENT_ARCHIVE_HASH=		sha256:c98b547394334a191a59cd527b884036bc6aee888eb7dec66856a19ecac8f7c9
+COMPONENT_MINOR_VERSION=	466
+COMPONENT_ARCHIVE_HASH=		sha256:6334c70dcfb4ef0815387bffb83db4a322c29baee51cd2e90863b061c5b884fc
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
