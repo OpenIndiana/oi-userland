@@ -30,8 +30,8 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION= 3.29
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).6
+COMPONENT_MAJOR_VERSION= 3.30
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).0
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
@@ -42,13 +42,16 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_PROJECT_URL=  https://www.cmake.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1391313003b83d48e2ab115a8b525a557f78d8c1544618b48d1d90184a10f0af
+COMPONENT_ARCHIVE_HASH=	sha256:157e5be6055c154c34f580795fe5832f260246506d32954a971300ed7899f579
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_LICENSE=      BSD 3 Clause, MIT, GPLv2, LGPLv2.1, LGPLv3, Curl, PD
 
 include $(WS_MAKE_RULES)/common.mk
+
+CMAKE_VERSION= $(COMPONENT_MAJOR_VERSION)
+PKG_MACROS += CMAKE_VERSION=$(CMAKE_VERSION)
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
@@ -67,13 +70,6 @@ COMPONENT_PREP_ACTION += \
 # Remove files polluting the generated manifest
 COMPONENT_PRE_INSTALL_ACTION = \
 	$(FIND) $(SOURCE_DIR) -name '*.~1~' -exec $(RM) {} \;
-
-# The default -O3 is *MUCH* too aggressive and will break things,
-# not just in CMake but everywhere.
-# CMake sets its own Language Standard flags in the Makefile it
-# generates for itself. The Userland default Language Standard flags
-# contradict cmake.
-gcc_OPT = -O2
 
 CONFIGURE_OPTIONS  = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --datadir=/share/cmake-$(COMPONENT_MAJOR_VERSION)
