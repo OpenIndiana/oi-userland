@@ -26,15 +26,14 @@
 BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
-
 COMPONENT_NAME=		pinentry
-COMPONENT_VERSION=	1.3.0
+COMPONENT_VERSION=	1.3.1
 COMPONENT_SUMMARY=	A small utility for entering passwords.
 COMPONENT_DESCRIPTION=	A small collection of dialog programs that allow GnuPG to read passphrases and PIN numbers in a secure manner.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/pinentry/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:9b3cd5226e7597f2fded399a3bc659923351536559e9db0826981bca316494de
+COMPONENT_ARCHIVE_HASH=	sha256:bc72ee27c7239007ab1896c3c2fae53b076e2c9bd2483dc2769a16902bce8c04
 COMPONENT_ARCHIVE_URL=	https://www.gnupg.org/ftp/gcrypt/pinentry/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		security/pinentry
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
