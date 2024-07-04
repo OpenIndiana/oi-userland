@@ -4,11 +4,9 @@ py$(PYV): commands[0]> python -m py.test -v -n auto -rs --cov=borg --cov-config=
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
-Tests enabled: root, symlinks, hardlinks, atime/mtime, modes
-Tests disabled: BSD flags, fuse2, fuse3
 rootdir: $(@D)
-configfile: setup.cfg
-X workers [1565 items]
+configfile: pyproject.toml
+X workers [1600 items]
 
 scheduling tests via LoadScheduling
 
@@ -99,6 +97,7 @@ archiver.py::ArchiverTestCase::test_corrupted_repository <- ../prototype/i386$(P
 archiver.py::ArchiverTestCase::test_create_content_from_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_create_content_from_command_missing_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_create_content_from_command_with_failed_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::ArchiverTestCase::test_create_dotslash_hack <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_create_dry_run <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_create_duplicate_root <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_create_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -295,6 +294,7 @@ archiver.py::ArchiverTestCaseBinary::test_corrupted_repository <- ../prototype/i
 archiver.py::ArchiverTestCaseBinary::test_create_content_from_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_create_content_from_command_missing_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_create_content_from_command_with_failed_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCaseBinary::test_create_dotslash_hack <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_create_dry_run <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_create_duplicate_root <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_create_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
@@ -498,6 +498,7 @@ archiver.py::RemoteArchiverTestCase::test_corrupted_repository <- ../prototype/i
 archiver.py::RemoteArchiverTestCase::test_create_content_from_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_create_content_from_command_missing_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_create_content_from_command_with_failed_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::RemoteArchiverTestCase::test_create_dotslash_hack <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_create_dry_run <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_create_duplicate_root <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_create_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -723,7 +724,8 @@ archiver.py::test_help_formatting[rename-parser39] <- ../prototype/i386$(PYTHON_
 archiver.py::test_help_formatting[serve-parser40] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::test_help_formatting[umount-parser41] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::test_help_formatting[upgrade-parser42] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::test_help_formatting[with-lock-parser43] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::test_help_formatting[version-parser43] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::test_help_formatting[with-lock-parser44] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::test_help_formatting_helptexts[compression] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::test_help_formatting_helptexts[patterns] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::test_help_formatting_helptexts[placeholders] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -1022,8 +1024,15 @@ helpers.py::test_bin_to_hex <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/bo
 helpers.py::test_chunk_file_wrapper <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_chunkerparams <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_chunkit <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_classify_ec[ec_range0-success] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_classify_ec[ec_range1-warning] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_classify_ec[ec_range2-error] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_classify_ec[ec_range3-error] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_classify_ec[ec_range4-warning] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_classify_ec[ec_range5-signal] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_clean_lines <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_dash_open <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_ec_invalid <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_eval_escapes <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_file_size <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_file_size_iec <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
@@ -1038,6 +1047,28 @@ helpers.py::test_get_keys_dir <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/
 helpers.py::test_get_security_dir <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_is_slow_msgpack <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_iter_separated <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[0-0-0] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[0-1-1] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[0-100-100] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[0-128-128] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[0-2-2] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[0-3-3] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[1-0-1] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[1-1-1] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[1-128-128] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[1-2-2] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[100-0-100] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[100-128-128] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[100-3-3] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[101-102-101] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[2-0-2] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[2-1-2] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[2-128-128] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[2-2-2] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[3-0-3] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[3-100-3] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[3-128-128] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+helpers.py::test_max_ec[4-5-4] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_override_placeholders <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_parse_file_size[-1T--1000000000000.0] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_parse_file_size[1-1] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
@@ -1342,7 +1373,9 @@ patterns.py::test_patterns_shell[/srv2/**-expected20] <- ../prototype/i386$(PYTH
 patterns.py::test_patterns_shell[/srv2/**/-expected21] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/patterns.py PASSED
 patterns.py::test_regex_pattern <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/patterns.py PASSED
 patterns.py::test_switch_patterns_style <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/patterns.py PASSED
-platform.py::PlatformDarwinTestCase::test_access_acl <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/platform.py SKIPPED
+platform.py::PlatformDarwinTestCase::test_extended_acl <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/platform.py SKIPPED
+platform.py::PlatformFreeBSDTestCase::test_access_acl <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/platform.py SKIPPED
+platform.py::PlatformFreeBSDTestCase::test_default_acl <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/platform.py SKIPPED
 platform.py::PlatformLinuxTestCase::test_access_acl <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/platform.py SKIPPED
 platform.py::PlatformLinuxTestCase::test_default_acl <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/platform.py SKIPPED
 platform.py::PlatformLinuxTestCase::test_non_ascii_acl <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/platform.py SKIPPED
@@ -1578,21 +1611,8 @@ xattr.py::test_split_lstring[\x00-splitted1] <- ../prototype/i386$(PYTHON_DIR)/v
 xattr.py::test_split_lstring[\x01a-splitted2] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/xattr.py PASSED
 xattr.py::test_split_lstring[\x01a\x02cd-splitted3] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/xattr.py PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252
-  $(PYTHON_DIR)/vendor-packages/xdist/plugin.py:252: DeprecationWarning: The --rsyncdir command line argument and rsyncdirs config variable are deprecated.
-  The rsync feature will be removed in pytest-xdist 4.0.
-    config.issue_config_time_warning(warning, 2)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
 =========================== short test summary info ============================
-======== 1240 passed, 325 skipped, 7 warnings ========
+======== 1272 passed, 328 skipped ========
   py$(PYV): OK
   congratulations :)
