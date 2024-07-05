@@ -21,20 +21,20 @@
 
 #
 # Copyright (c) 2020, Oracle and/or its affiliates.
-# Copyright (c) 2021, Andreas Wacknitz.
+# Copyright (c) 2024, Andreas Wacknitz.
 #
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c-ares
-COMPONENT_VERSION=	1.31.0
+COMPONENT_VERSION=	1.32.0
 COMPONENT_SUMMARY=	c-ares - C library for asynchronous DNS requests
 COMPONENT_DESCRIPTION=	c-ares is a C library for asynchronous DNS requests including name resolves
 COMPONENT_PROJECT_URL=	https://c-ares.haxx.se/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0167a33dba96ca8de29f3f598b1e6cabe531799269fd63d0153aa0e6f5efeabd
+COMPONENT_ARCHIVE_HASH= sha256:5ab3fad06edb98fe8081febe1e41a027cfa3199fc525a59c851376414fe24c5b
 COMPONENT_ARCHIVE_URL=	https://github.com/c-ares/c-ares/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libcares
 COMPONENT_CLASSIFICATION=	System/Libraries
