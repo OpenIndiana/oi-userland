@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
 COMPONENT_VERSION=      2.4.5
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -98,13 +99,13 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsecret
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/npth
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libksba
