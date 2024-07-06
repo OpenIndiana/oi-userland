@@ -23,11 +23,11 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pinentry
 COMPONENT_VERSION=	1.3.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A small utility for entering passwords.
 COMPONENT_DESCRIPTION=	A small collection of dialog programs that allow GnuPG to read passphrases and PIN numbers in a secure manner.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
