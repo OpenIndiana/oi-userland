@@ -25,9 +25,8 @@ diff -Naur libreoffice-7.6.4.1/external/libcmis.old/libxml2.12.patch.1 libreoffi
 + #include <libxml/tree.h>
 + #include <libxml/xpathInternals.h>
 + #include <libxml/xmlwriter.h>
-diff -Naur libreoffice-7.6.4.1/external/libcmis.old/UnpackedTarball_libcmis.mk libreoffice-7.6.4.1/external/libcmis/UnpackedTarball_libcmis.mk
---- libreoffice-7.6.4.1/external/libcmis.old/UnpackedTarball_libcmis.mk	2023-11-30 08:04:41.000000000 -0500
-+++ libreoffice-7.6.4.1/external/libcmis/UnpackedTarball_libcmis.mk	2023-12-08 01:07:50.368597480 -0500
+--- core-2ccb78ad6bdfe3f3356a7a7f294ec388775c5816/external/libcmis/UnpackedTarball_libcmis.mk.~1~	2024-06-30 13:50:13.000000000 -0400
++++ core-2ccb78ad6bdfe3f3356a7a7f294ec388775c5816/external/libcmis/UnpackedTarball_libcmis.mk	2024-06-30 21:46:33.592426841 -0400
 @@ -7,6 +7,8 @@
  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
  #
@@ -37,11 +36,12 @@ diff -Naur libreoffice-7.6.4.1/external/libcmis.old/UnpackedTarball_libcmis.mk l
  $(eval $(call gb_UnpackedTarball_UnpackedTarball,libcmis))
  
  $(eval $(call gb_UnpackedTarball_set_tarball,libcmis,$(LIBCMIS_TARBALL)))
-@@ -14,6 +16,7 @@
+@@ -14,7 +16,7 @@
  $(eval $(call gb_UnpackedTarball_set_patchlevel,libcmis,1))
  
  $(eval $(call gb_UnpackedTarball_add_patches,libcmis,\
-+        $(foreach patch,$(libcmis_patches),external/libcmis/$(patch)) \
+-	external/libcmis/http-session-cleanup.patch.1 \
++	$(foreach patch,$(libcmis_patches),external/libcmis/$(patch)) \
  ))
  
  # vim: set noet sw=4 ts=4:
