@@ -34,8 +34,8 @@ ENV = /usr/bin/env
 # BUILD_GITHUB=1
 
 COMPONENT_NAME=         libreoffice
-COMPONENT_VERSION=      24.2.4
-COMPONENT_RC_VERSION=	2
+COMPONENT_VERSION=      24.2.5
+COMPONENT_RC_VERSION=	1
 ifdef BUILD_ALPHA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).alpha$(BUILD_ALPHA)
 else ifdef BUILD_BETA
@@ -51,11 +51,11 @@ HUMAN_VERSION=          $(COMPONENT_FULL_VERSION)
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
 ifdef BUILD_GITHUB
-COMPONENT_SHA=		fc604d5980a783e74808a001f1918a603d920494
+COMPONENT_SHA=		2ccb78ad6bdfe3f3356a7a7f294ec388775c5816
 COMPONENT_SRC=          core-$(COMPONENT_SHA)
 COMPONENT_ARCHIVE=      $(COMPONENT_SHA).zip
 COMPONENT_ARCHIVE_URL=  https://github.com/LibreOffice/core/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:065722e22c0e9656253325fe8a32a123a6402a9e370b0be86c0012f20f84f843
+COMPONENT_ARCHIVE_HASH= sha256:5770a2a8aab35a2166ce8a27784de5f1a64630d2fc8ddc3d394c892ffb391833
 else
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -153,9 +153,9 @@ endif
 
 # libreoffice-dictionaries
 ifdef BUILD_GITHUB
-COMPONENT_ARCHIVE_20_GIT_HASH = 2587b91f90c7d2f8d4e1e3a676fd47e479669f4a
+COMPONENT_ARCHIVE_20_GIT_HASH = 3bad127a382570a219b6822bd864dc23a7a297ce
 COMPONENT_ARCHIVE_20 = $(COMPONENT_ARCHIVE_20_GIT_HASH).tar.gz
-COMPONENT_ARCHIVE_HASH_20 = sha256:962622df7556ee0c0fc7c9dedf087c15e0bc86a08ef756d619a0f58ee1e9a4bc
+COMPONENT_ARCHIVE_HASH_20 = sha256:cfc82a1af31bd29466fc911bc649a0634e616a9c836e5ae967995ceb5eb66dd3
 COMPONENT_ARCHIVE_URL_20 = https://github.com/LibreOffice/dictionaries/archive/$(COMPONENT_ARCHIVE_20)
 else
 COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
@@ -294,9 +294,9 @@ COMPONENT_ARCHIVE_URL_52 = https://dev-www.libreoffice.org/extern/$(COMPONENT_AR
 
 # libreoffice-help
 ifdef BUILD_GITHUB
-COMPONENT_ARCHIVE_53_GIT_HASH = 8822513a45aaea593f434768b16970f6e33fa14e
+COMPONENT_ARCHIVE_53_GIT_HASH = dc298afd7720175e35b030a03d6e9806b95b70bb
 COMPONENT_ARCHIVE_53 = $(COMPONENT_ARCHIVE_53_GIT_HASH).tar.gz
-COMPONENT_ARCHIVE_HASH_53 = sha256:20e2dd68e9ac4061b4e4a6f39c676800e3823a658f3abfb68f990334c0df1c38
+COMPONENT_ARCHIVE_HASH_53 = sha256:0ff9814ebeb116a84a533caac4f380005e092bdf9a6f9e9398fbcc2b0842cc41
 COMPONENT_ARCHIVE_URL_53 = https://github.com/LibreOffice/help/archive/$(COMPONENT_ARCHIVE_53)
 else
 COMPONENT_ARCHIVE_53 = libreoffice-help-$(COMPONENT_FULL_VERSION).tar.xz
@@ -371,9 +371,9 @@ COMPONENT_PREP_ACTION = ( mkdir -p $(@D)/external/tarballs && \
 # Note: need this adds the closing parenthesis for COMPONENT_PREP_ACTION
 ifdef BUILD_GITHUB
 COMPONENT_PREP_ACTION += && \
-        ln -s $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_20) $(@D)/external/tarballs/libreoffice-dictionaries-$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).tar.gz && \
-        ln -s $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_19) $(@D)/external/tarballs/libreoffice-translations-$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).tar.gz && \
-        ln -s $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_53) $(@D)/external/tarballs/libreoffice-help-$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).tar.gz && \
+        ln -s $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_20) $(@D)/external/tarballs/libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.gz && \
+        ln -s $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_19) $(@D)/external/tarballs/libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.gz && \
+        ln -s $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_53) $(@D)/external/tarballs/libreoffice-help-$(COMPONENT_FULL_VERSION).tar.gz && \
 	touch $(SOURCE_DIR)/dictionaries/Repository.mk && \
 	touch $(SOURCE_DIR)/translations/Repository.mk && \
 	touch $(SOURCE_DIR)/helpcontent2/Repository.mk && \
@@ -381,7 +381,7 @@ COMPONENT_PREP_ACTION += && \
 	touch $(SOURCE_DIR)/translations/sources.ver && \
 	touch $(SOURCE_DIR)/helpcontent2/sources.ver && \
 	ln -s $(SOURCE_DIR)/helpcontent2 $(SOURCE_DIR)/help && \
-	echo "lo_sources_ver=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)" > $(SOURCE_DIR)/sources.ver )
+	echo "lo_sources_ver=$(COMPONENT_FULL_VERSION)" > $(SOURCE_DIR)/sources.ver )
 else
 COMPONENT_PREP_ACTION += )
 endif
