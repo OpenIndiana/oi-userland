@@ -13,6 +13,7 @@
 # Copyright 2023 Marcel Telka
 #
 
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nagios-plugins
@@ -35,6 +36,10 @@ include $(WS_MAKE_RULES)/common.mk
 # force needed rpath
 LD_OPTIONS += -R$(PG_LIBDIR)
 LD_OPTIONS += -R$(MYSQL_LIBDIR)
+
+# specify where to find openssl
+CFLAGS  += -I$(OPENSSL_INCDIR)
+LDFLAGS += -L$(OPENSSL_LIBDIR)
 
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec/nagios-plugins
 CONFIGURE_OPTIONS +=	--enable-libtap
@@ -63,8 +68,8 @@ TEST_REQUIRED_PACKAGES += library/perl-5/timedate
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
