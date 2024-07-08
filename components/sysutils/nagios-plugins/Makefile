@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nagios-plugins
 COMPONENT_VERSION =		2.4.10
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY =		Nagios Plugins
 COMPONENT_PROJECT_URL =		https://github.com/nagios-plugins/nagios-plugins
 COMPONENT_FMRI =		system/management/nagios/plugins
@@ -32,6 +33,9 @@ COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This is needed to be able to run the tests
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # force needed rpath
 LD_OPTIONS += -R$(PG_LIBDIR)
@@ -54,8 +58,12 @@ CONFIGURE_OPTIONS +=	--without-smtpctl-command
 # pst3 needs to be manually installed
 COMPONENT_POST_INSTALL_ACTION += $(CP) $(@D)/plugins-root/pst3 $(PROTOUSRDIR)/libexec/nagios-plugins ;
 
+COMPONENT_PRE_TEST_ACTION += ( $(CHMOD) 755 $(@D)/test.pl )
+
 # Testing needs internet access and site specific setup
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_CMD = ./test.pl
+COMPONENT_TEST_DIR = $(@D)
 
 # Manually added dependencies
 REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
