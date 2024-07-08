@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		identify
-HUMAN_VERSION =			2.5.36
-COMPONENT_SUMMARY =		identify - File identification library for Python
+HUMAN_VERSION =			2.6.0
+COMPONENT_SUMMARY =		File identification library for Python
 COMPONENT_PROJECT_URL =		https://github.com/pre-commit/identify
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pre-commit/identify/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:429f6289a5d53d0e9728e348dc3b92087590e6480ca6b0197adda471a7117a51
+	sha256:58ef033466136f11f54199775ec4b967b5869a5dc408d42b9b5ef64e4280a155
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
