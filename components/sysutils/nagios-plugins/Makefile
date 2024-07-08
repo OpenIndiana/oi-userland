@@ -13,11 +13,11 @@
 # Copyright 2023 Marcel Telka
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nagios-plugins
 COMPONENT_VERSION =		2.4.10
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Nagios Plugins
 COMPONENT_PROJECT_URL =		https://github.com/nagios-plugins/nagios-plugins
 COMPONENT_FMRI =		system/management/nagios/plugins
