@@ -23,16 +23,16 @@
 # Copyright (c) 2022 Friedrch Kink
 #
 
-USE_OPENSSL11=	yes
+OPENSSL_VERSION= 3.1
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsyslog
-COMPONENT_VERSION=	8.2302.0
+COMPONENT_VERSION=	8.2406.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.rsyslog.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:25415f85b662615ce3c83077d53758029e8743cb5929044bfd3564e3d626a3b9
+COMPONENT_ARCHIVE_HASH=	sha256:1343e0269dd32166ffde04d7ceebfa0e7146cf1dbc6962c56bf428c61f01a7df
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	reliable and extended syslogd
 COMPONENT_FMRI=		system/rsyslog
@@ -42,7 +42,10 @@ COMPONENT_CLASSIFICATION= System/Administration and Configuration
 include $(WS_TOP)/make-rules/common.mk
 
 # to make REQUIRED_PACKAGES happy when evaluating ompgsql.so
-LDFLAGS += -Wl,-R'/usr/postgres/14/lib/amd64'
+LDFLAGS += -Wl,-R'$(PG_LIBDIR)'
+
+# to make REQUIRED_PACKAGES happy when evaluating ommysql.so
+LDFLAGS += -Wl,-R'$(MYSQL_LIBDIR)'
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && autoreconf -f -i )
 
@@ -85,8 +88,13 @@ PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 # manually added
 REQUIRED_PACKAGES += library/libevent2
 
+# Build dependencies
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/zstd
@@ -94,7 +102,6 @@ REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libestr
 REQUIRED_PACKAGES += library/libfastjson
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
