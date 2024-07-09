@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonschema
-HUMAN_VERSION =			4.22.0
-COMPONENT_SUMMARY =		jsonschema - An implementation of JSON Schema validation for Python
+HUMAN_VERSION =			4.23.0
+COMPONENT_SUMMARY =		An implementation of JSON Schema validation for Python
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5b22d434a45935119af990552c862e5d6d564e8f6601206b305a61fdf661a2b7
+	sha256:d71497fef26351a33265337fa77ffeb82423f3ea21283cd9467bb03999266bc4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
