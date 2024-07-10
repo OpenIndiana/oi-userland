@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic
-HUMAN_VERSION =			2.7.4
+HUMAN_VERSION =			2.8.2
 COMPONENT_SUMMARY =		Data validation using Python type hints
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0c84efd9548d545f63ac0060c1e4d39bb9b14db8b3c0652338aecc07b5adec52
+	sha256:6f62c13d067b0755ad1c21a34bdd06c0c12625a22b0fc09c6b149816604f7c2a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,13 +31,10 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# This project does not support tox so we need to provide test requirements
-# manually.
+# This project uses pdm to manage test dependencies.
+TEST_REQUIREMENTS_PDM += testing
+# Additional extras are needed for tests too
 TEST_REQUIREMENTS_EXTRAS += email
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
-# https://github.com/pydantic/pydantic/issues/7873
-TEST_REQUIRED_PACKAGES.python += library/python/eval-type-backport
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
@@ -52,4 +49,13 @@ PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/pydantic-core
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/cloudpickle
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/dirty-equals
 TEST_REQUIRED_PACKAGES.python += library/python/email-validator
+TEST_REQUIRED_PACKAGES.python += library/python/eval-type-backport
+TEST_REQUIRED_PACKAGES.python += library/python/faker
+TEST_REQUIRED_PACKAGES.python += library/python/packaging
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
