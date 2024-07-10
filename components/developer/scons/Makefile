@@ -19,11 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		SCons
-HUMAN_VERSION =			4.7.0
-COMPONENT_SUMMARY =		SCons - Open Source next-generation build tool.
+HUMAN_VERSION =			4.8.0
+COMPONENT_SUMMARY =		Open Source next-generation build tool.
 COMPONENT_PROJECT_URL =		https://www.scons.org/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/ec/5c/cc835a17633de8b260ec1a6e527b5c57f4975cee5949f49e57ad4d5fab4b/scons-4.8.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d8b617f6610a73e46509de70dcf82f76861b79762ff602d546f4e80918ec81f3
+	sha256:2c7377ff6a22ca136c795ae3dc3d0824696e5478d1e4940f2af75659b0d45454
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,14 +40,8 @@ SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/SCons/scons/issues/2285
-COMPONENT_POST_INSTALL_ACTION += \
-	$(INSTALL) -d $(PROTOUSRSHAREMAN1DIR) ; \
-	$(MV) $(PROTOUSRDIR)/*.1 $(PROTOUSRSHAREMAN1DIR) ;
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/bash
