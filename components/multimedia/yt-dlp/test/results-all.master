@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6826 items / 5861 deselected / 965 selected
+collecting ... collected 6827 items / 5861 deselected / 966 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
@@ -23,7 +23,8 @@ test/test_InfoExtractor.py::TestInfoExtractor::test_response_with_expected_statu
 test/test_InfoExtractor.py::TestInfoExtractor::test_search_json_ld_realworld PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_search_nextjs_data PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_audio_only_extractor_format_selection PASSED
-test/test_YoutubeDL.py::TestFormatSelection::test_default_format_spec PASSED
+test/test_YoutubeDL.py::TestFormatSelection::test_default_format_spec_with_ffmpeg PASSED
+test/test_YoutubeDL.py::TestFormatSelection::test_default_format_spec_without_ffmpeg PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_filtering PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_not_available PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_selection PASSED
@@ -336,25 +337,6 @@ test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Web
 test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Websockets-websockets.server] PASSED
 test/test_networking.py::TestUrllibRequestHandler::test_file_urls[Urllib] PASSED
 test/test_networking.py::TestUrllibRequestHandler::test_http_error_returns_content[Urllib] PASSED
-----------------------------------------
-Exception occurred during processing of request from ('127.0.0.1', 44785)
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
-    self.finish_request(request, client_address)
-  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
-    self.RequestHandlerClass(request, client_address, self)
-  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
-    self.handle()
-  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
-    self.handle_one_request()
-  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
-    method()
-  File "$(@D)/test/test_networking.py", line 259, in do_GET
-    self._headers()
-  File "$(@D)/test/test_networking.py", line 84, in _headers
-    self.wfile.write(payload)
-  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
-    self._sock.sendall(b)
 test/test_networking.py::TestUrllibRequestHandler::test_verify_cert_error_text[Urllib] PASSED
 test/test_networking.py::TestUrllibRequestHandler::test_httplib_validation_errors[req0-method can't contain control characters-<lambda>-Urllib] PASSED
 test/test_networking.py::TestUrllibRequestHandler::test_httplib_validation_errors[req1-URL can't contain control characters-<lambda>-Urllib] PASSED
@@ -429,6 +411,27 @@ test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-fi
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-file-False-handler_kwargs5] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Requests-http-False-handler_kwargs6] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Requests-https-False-handler_kwargs7] PASSED
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 47777)
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
+    self.handle()
+  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
+    method()
+  File "$(@D)/test/test_networking.py", line 259, in do_GET
+    self._headers()
+  File "$(@D)/test/test_networking.py", line 84, in _headers
+    self.wfile.write(payload)
+  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Websockets-ws-False-handler_kwargs8] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Websockets-wss-False-handler_kwargs9] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[CurlCFFI-http-False-handler_kwargs10] SKIPPED
@@ -997,6 +1000,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 820 passed, 145 skipped, 5861 deselected ========
+======== 821 passed, 145 skipped, 5861 deselected ========
   py$(PYV): OK
   congratulations :)
