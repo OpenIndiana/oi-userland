@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		deprecation
 HUMAN_VERSION =			2.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A library to handle automated deprecations
 COMPONENT_PROJECT_URL =		http://deprecation.readthedocs.io/
 COMPONENT_ARCHIVE_URL =		\
