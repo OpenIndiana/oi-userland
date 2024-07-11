@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject-parser
 HUMAN_VERSION =			0.11.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Parser for 'pyproject.toml'
 COMPONENT_PROJECT_URL =		https://github.com/repo-helper/pyproject-parser
 COMPONENT_ARCHIVE_URL =		\
@@ -41,6 +42,14 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# pytest-datadir is needed by pytest-regressions and pytest-regressions is
+# needed by coincidence so both pytest-regressions and pytest-datadir will be
+# always installed.
+#
+# We need to list them explicitly here to make sure they are enabled.
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-regressions
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-datadir
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/apeye-core
