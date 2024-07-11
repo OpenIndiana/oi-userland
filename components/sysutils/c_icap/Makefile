@@ -11,6 +11,7 @@
 # Copyright 2022,2023 Friedrich Kink. All rights reserved.
 #
 
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c_icap
@@ -37,6 +38,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS += -std=c++11
 
+# Provide location for openssl 3.1 headers/libraries
+CFLAGS += -I$(OPENSSL_INCDIR)
+LDFLAGS  += -L$(OPENSSL_LIBDIR)
+
 COMPONENT_PREP_ACTION= ( cd $(@D) && PATH="$(PATH)" autoreconf -f -i -v -W all )
 
 CONFIGURE_OPTIONS += CPPFLAGS=-I/usr/include/openldap
@@ -45,13 +50,13 @@ CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libmemcached
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
