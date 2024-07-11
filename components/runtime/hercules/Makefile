@@ -17,15 +17,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hercules
-COMPONENT_VERSION=	4.6
+COMPONENT_VERSION=	4.7
 COMPONENT_PROJECT_URL=	https://sdl-hercules-390.github.io/html/
 COMPONENT_FMRI=		emulator/hercules
 COMPONENT_SRC=		hyperion-Release_$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:e3116fb1833ca093292bb6d150e5f2316b14e6eb3a4bbdb7e6a26b30e08bca5a
-COMPONENT_ARCHIVE_URL=	\
-	https://github.com/SDL-Hercules-390/hyperion/archive/refs/tags/Release_$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:74c747773e0b5639164f6f69ce9220e1bd1d4853c5c4f18329da21c03aebe388
+COMPONENT_ARCHIVE_URL=	https://github.com/SDL-Hercules-390/hyperion/archive/refs/tags/Release_$(HUMAN_VERSION).tar.gz
 COMPONENT_LICENSE=	QPL-1.0
 COMPONENT_LICENSE_FILE=	COPYRIGHT
 COMPONENT_SUMMARY=	The Hercules S/370, ESA/390, and z/Architecture Emulator
@@ -34,7 +32,7 @@ COMPONENT_CLASSIFICATION=System/Virtualization
 include $(WS_MAKE_RULES)/common.mk
 
 # configure expects GNU make
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --disable-ipv6
 
