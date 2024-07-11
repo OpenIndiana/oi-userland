@@ -25,15 +25,16 @@
 #
 
 BUILD_BITS= 32_and_64
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre2
-COMPONENT_VERSION=	10.43
+COMPONENT_VERSION=	10.44
 COMPONENT_SUMMARY=	Version 2 of Perl-Compatible Regular Expressions
 COMPONENT_PROJECT_URL=  https://pcre.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:e2a53984ff0b07dfdb5ae4486bbb9b21cca8e7df2434096cc9bf1b728c350bcb
+COMPONENT_ARCHIVE_HASH= sha256:d34f02e113cf7193a1ebf2770d3ac527088d485d4e047ed10e5d217c6ef5de96
 COMPONENT_ARCHIVE_URL=  https://github.com/PhilipHazel/pcre2/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_FMRI=		library/pcre2
@@ -48,18 +49,12 @@ TEST_TARGET= install $(TEST_32_and_64)
 # pick up -std=c99 in CFLAGS
 CFLAGS += -std=c99
 
+CXXFLAGS +=	$(CC_PIC)
+
 # turn on largefile support
 CFLAGS += $(CPP_LARGEFILES)
 
-# Although -norunpath is set for CXXFLAGS, we need to put -norunpath
-# here, otherwise -norunpath doesn't get set when creating the shared
-# libraries (CC -G).
-CXX += $(studio_NORUNPATH)
-
-CXXFLAGS +=	$(CC_PIC)
-
-# turn on support for large files
-CXXFLAGS +=	$(CPP_LARGEFILES)
+CFLAGS += $(XPG6MODE)
 
 CONFIGURE_ENV += "CPP=$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV += "CXXCPP=$(CXX) $(CPPFLAGS) $(CXXFLAGS) -E"
