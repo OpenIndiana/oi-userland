@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c_icap
 COMPONENT_VERSION=	0.6.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The c-icap project
 COMPONENT_DESCRIPTION=	c-icap is an implementation of an ICAP server. It can be \
 			used with HTTP proxies that support the ICAP protocol to \
