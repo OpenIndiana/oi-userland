@@ -11,14 +11,14 @@
 #
 # Copyright 2016 Adam Stevko
 #
+
 BUILD_BITS= 32_and_64
-# Softhsm needs some RSA and DSA functions that are not available in openssl-1.1:
-#USE_OPENSSL11= yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	 	softhsm
 COMPONENT_VERSION=  2.6.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=  https://www.opendnssec.org/softhsm/
 COMPONENT_SUMMARY= 	SoftHSM is an implementation of a cryptographic store accessible through a PKCS11 interface.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,6 +33,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
+# Provide paths for OpenSSL 3.1
+CFLAGS  += -I$(OPENSSL_INCDIR)
+LDFLAGS += -L$(OPENSSL_LIBDIR)
+
 # This lets the 32-bit binaries being replaced with its 64-bit counterparts:
 CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
@@ -41,7 +45,7 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --localstatedir=/var
 CONFIGURE_OPTIONS+= --with-crypto-backend=openssl
-#CONFIGURE_OPTIONS+= --with-openssl=/usr/openssl/1.1
+CONFIGURE_OPTIONS+= --with-openssl=/usr/openssl/3.1
 CONFIGURE_OPTIONS+= --with-migrate
 CONFIGURE_OPTIONS+= --with-sqlite3=/usr
 
