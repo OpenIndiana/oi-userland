@@ -258,6 +258,25 @@ print-package-names:
 	grep -v -x -F -f packages.ignore.in pkg5.complete.fmris > pkg5.fmris
 	cat pkg5.fmris
 
-# build-essential always brings superset of packages needed to build
-# illumos-gate
+#
+# The build-essential package almost always brings superset of packages needed
+# to build illumos-gate.  The only known exception is described below.
+#
 REQUIRED_PACKAGES += metapackages/build-essential
+
+#
+# When we are in the process of changing the default Perl version we need to
+# make sure the new Perl is installed during the illumos-gate build.  We need
+# to specify it explicitly here because the unversioned runtime/perl required
+# by build-essential still points to the old Perl runtime version.
+#
+# We need to build the new Perl support from illumos-gate first, and then
+# switch the unversioned runtime/perl to the new Perl version.  If we would do
+# that the other way we will end up with missing Perl modules that comes from
+# the illumos-gate and some parts of the system won't work as expected.
+#
+# We cannot switch both illumos-gate and the unversioned runtime/perl in one
+# step because the illumos-gate component is always built separately from the
+# rest of oi-userland.
+#
+REQUIRED_PACKAGES += runtime/perl-$(subst .,,$(PERL_VERSION))
