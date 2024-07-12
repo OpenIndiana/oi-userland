@@ -1,0 +1,14 @@
+This allows to add extra manifest for the pkgdepend resolve step to get native
+dependency on unversioned runtime/perl.
+
+--- illumos-gate/usr/src/pkg/Makefile.orig
++++ illumos-gate/usr/src/pkg/Makefile
+@@ -411,7 +411,7 @@
+ 	else \
+ 		print "Resolving dependencies"; \
+ 		pkgdepend -R $(PKGDEP_RESOLVE_IMAGE) resolve \
+-		    -m $(DEP_SYNTH_PKGS) $(DEP_PKGS); \
++		    -m $(DEP_SYNTH_PKGS) $(DEP_PKGS) $(DEP_RUNTIME_PERL); \
+ 		for p in $(DEP_SYNTH_PKGS:%.dep=%) $(DEP_PKGS:%.dep=%); do \
+ 			if [ "$$(print $$p.metadata.*)" = \
+ 			     "$$(print $$p.metadata.noincorp.*)" ]; \
