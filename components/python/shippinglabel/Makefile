@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		shippinglabel
-HUMAN_VERSION =			1.7.2
+HUMAN_VERSION =			2.0.0
 COMPONENT_SUMMARY =		Utilities for handling packages.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/shippinglabel
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/domdfcoding/shippinglabel/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0101eeef2755fa58aa788e099348cfca23f88b578911a33e89431988dd457a5c
+	sha256:1b9ec921b2d0c556354745d0c97311ee10ea5a6fe47483d91b3af5ce812053ee
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,19 +42,28 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
+# pytest-datadir is needed by pytest-regressions and pytest-regressions is
+# needed by coincidence so both pytest-regressions and pytest-datadir will be
+# always installed.
+#
+# We need to list them explicitly here to make sure they are enabled.
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-regressions
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-datadir
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/apeye
-PYTHON_REQUIRED_PACKAGES += library/python/deprecation-alias
 PYTHON_REQUIRED_PACKAGES += library/python/dist-meta
 PYTHON_REQUIRED_PACKAGES += library/python/dom-toml
 PYTHON_REQUIRED_PACKAGES += library/python/domdf-python-tools
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/apeye
+TEST_REQUIRED_PACKAGES.python += library/python/betamax
 TEST_REQUIRED_PACKAGES.python += library/python/cachecontrol
 TEST_REQUIRED_PACKAGES.python += library/python/coincidence
 TEST_REQUIRED_PACKAGES.python += library/python/consolekit
