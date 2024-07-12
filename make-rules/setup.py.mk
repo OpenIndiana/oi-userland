@@ -437,6 +437,7 @@ $(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to t
 $(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
 $(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
 $(eval $(call disable-pytest-plugin,pytest home,pytest-home))
+$(eval $(call disable-pytest-plugin,pytest-betamax,betamax))
 $(eval $(call disable-pytest-plugin,pytest-datadir,pytest-datadir))
 $(eval $(call disable-pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))	# could cause tests to fail
 $(eval $(call disable-pytest-plugin,pytest-teamcity,teamcity-messages))
