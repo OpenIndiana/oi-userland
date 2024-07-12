@@ -555,6 +555,10 @@ COMPONENT_TEST_TRANSFORMS += \
 			$(CAT) \
 		) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
 
+# Remove timestamp produced by coincidence
+USE_COINCIDENCE = $(filter library/python/coincidence-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES))
+COMPONENT_TEST_TRANSFORMS += $(if $(strip $(USE_COINCIDENCE)),"-e '/^Test session started at/d'")
+
 # Normalize setup.py test results.  The setup.py testing could be used either
 # directly or via tox so add these transforms for all test styles
 # unconditionally.
