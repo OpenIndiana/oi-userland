@@ -32,27 +32,26 @@ include ../../../make-rules/shared-macros.mk
 
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
-# CANDIDATE_BUILD= 1
+# CANDIDATE_BUILD= 3
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	127.0
-COMPONENT_REVISION =	1
+COMPONENT_VERSION =	128.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
+COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)esr.source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:3b55b7c9de645c731aed1efdb0f8a4188d4436eb15e38792d82095cb8e262452
+	 sha256:7fa285f2556b74515165046c4387a1f480de3ef32f1bff727f6753efa8bf0a27
 ifndef CANDIDATE_BUILD
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
+MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)esr
 else
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)
+MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)esr-candidates/build$(CANDIDATE_BUILD)
 endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = mail/thunderbird
 COMPONENT_CLASSIFICATION = Applications/Internet
 
-RUST_VERSION = 1.77.2
+RUST_VERSION = 1.78.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -73,10 +72,10 @@ LANG_LIST = af ar ast be bg br ca cak cs cy \
 
     ifdef CANDIDATE_BUILD
 LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)esr-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
     else
 LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)/linux-x86_64/xpi
+        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)esr/linux-x86_64/xpi
 endif
 
 CLEAN_PATHS += $(COMPONENT_DIR)/xpi
