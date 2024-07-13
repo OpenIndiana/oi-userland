@@ -49,7 +49,8 @@ COMPONENT_NAME_1= otp_doc_man
 COMPONENT_SRC_1= $(COMPONENT_NAME_1)_$(COMPONENT_VERSION_SHORT)
 COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= sha256:95a2ea0e22ea4b7d58e74df145b52e2c85b642434391c814300824204a107c38
-COMPONENT_ARCHIVE_URL_1= https://github.com/erlang/otp/releases/download/OTP-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
+# The actual release doesn't ship updated man page sources. Thus, we use the source from the main version.
+COMPONENT_ARCHIVE_URL_1= https://github.com/erlang/otp/releases/download/OTP-$(COMPONENT_VERSION_SHORT)/$(COMPONENT_ARCHIVE_1)
 UNPACK_ARGS_1= -r $(COMPONENT_SRC_1)
 
 include $(WS_MAKE_RULES)/common.mk
