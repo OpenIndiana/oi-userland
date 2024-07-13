@@ -117,6 +117,7 @@ test_add_object_to_child (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnit
 test_add_object_to_regular_file_error_posix (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_add_object_to_regular_file_error_windows (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_add_object_to_root (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
+test_create_dir_umask (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_create_directory (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_create_directory_already_exists_error (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_create_directory_in_root_directory (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
@@ -191,6 +192,8 @@ test_getsize_file_empty (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest)
 test_getsize_file_non_zero_size (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_getsize_path_nonexistent (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_is_link_case_sensitive (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
+test_is_reserved_posix (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... skipped 'Introduced in Python 3.13'
+test_is_reserved_windows (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... skipped 'Introduced in Python 3.13'
 test_isabs_with_drive_component (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_isdir (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_isdir_with_cwd_change (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
@@ -2432,7 +2435,9 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_walk (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... skipped 'Only tests fake FS'
-test_open_pathlib_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipOpenTest) ... ok
+test_open_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
+test_read_bytes_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
+test_read_text_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
 test_pathlib2_warning (pyfakefs.tests.fake_legacy_modules_test.DeprecationWarningTest) ... ok
 test_scandir_warning (pyfakefs.tests.fake_legacy_modules_test.DeprecationWarningTest) ... skipped 'The scandir package is not installed'
 test_chmod (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... ok
@@ -2791,9 +2796,9 @@ test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest)
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2562 tests
+Ran 2567 tests
 
-OK (skipped=1060, expected failures=2)
+OK (skipped=1062, expected failures=2)
 py$(PYV): commands[1]> python -m pyfakefs.tests.all_tests_without_extra_packages
 test_alt_sep (pyfakefs.tests.fake_filesystem_test.AlternativePathSeparatorTest) ... ok
 test_collapse_path_with_mixed_separators (pyfakefs.tests.fake_filesystem_test.AlternativePathSeparatorTest) ... ok
@@ -2912,6 +2917,7 @@ test_add_object_to_child (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnit
 test_add_object_to_regular_file_error_posix (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_add_object_to_regular_file_error_windows (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_add_object_to_root (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
+test_create_dir_umask (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_create_directory (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_create_directory_already_exists_error (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
 test_create_directory_in_root_directory (pyfakefs.tests.fake_filesystem_test.FakeFilesystemUnitTest) ... ok
@@ -2986,6 +2992,8 @@ test_getsize_file_empty (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest)
 test_getsize_file_non_zero_size (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_getsize_path_nonexistent (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_is_link_case_sensitive (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
+test_is_reserved_posix (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... skipped 'Introduced in Python 3.13'
+test_is_reserved_windows (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... skipped 'Introduced in Python 3.13'
 test_isabs_with_drive_component (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_isdir (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_isdir_with_cwd_change (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
@@ -5227,7 +5235,9 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_walk (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... skipped 'Only tests fake FS'
-test_open_pathlib_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipOpenTest) ... ok
+test_open_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
+test_read_bytes_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
+test_read_text_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
 test_pathlib2_warning (pyfakefs.tests.fake_legacy_modules_test.DeprecationWarningTest) ... skipped 'The pathlib2 package is not installed'
 test_scandir_warning (pyfakefs.tests.fake_legacy_modules_test.DeprecationWarningTest) ... skipped 'The scandir package is not installed'
 test_chmod (pyfakefs.tests.fake_legacy_modules_test.FakePathlib2FileObjectPropertyTest) ... skipped 'The pathlib2 package is not installed'
@@ -5586,9 +5596,9 @@ test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest)
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2562 tests
+Ran 2567 tests
 
-OK (skipped=1150, expected failures=2)
+OK (skipped=1152, expected failures=2)
 py$(PYV): commands[2]> python -m pytest pyfakefs/pytest_tests/pytest_plugin_test.py
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
