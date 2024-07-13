@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		apeye
 HUMAN_VERSION =			1.4.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Handy tools for working with URLs and APIs.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/apeye
 COMPONENT_ARCHIVE_URL =		\
@@ -41,6 +42,24 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/domdfcoding/apeye/issues/91
+PYTEST_ADDOPTS += --deselect tests/test_rate_limiter.py::test_rate_limit
+
+# Contains timestamp and random port number
+COMPONENT_TEST_TRANSFORMS += "-e 's/ \{1,\}\[.*\] ENGINE.*//'"
+
+# pytest-datadir is needed by pytest-regressions and pytest-regressions is
+# needed by coincidence so both pytest-regressions and pytest-datadir will be
+# always installed.
+#
+# We need to list them explicitly here to make sure they are enabled.
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-regressions
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-datadir
+
+# see 04-test-yaml.patch
+TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
+TEST_REQUIRED_PACKAGES.python += library/python/ruamel-yaml
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/apeye-core
