@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		exceptiongroup
-HUMAN_VERSION =			1.2.1
-COMPONENT_SUMMARY =		exceptiongroup - Backport of PEP 654 (exception groups)
+HUMAN_VERSION =			1.2.2
+COMPONENT_SUMMARY =		Backport of PEP 654 (exception groups)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a4785e48b045528f5bfe627b6ad554ff32def154f42372786903b7abcfe1aa16
+	sha256:47c2edf7c6738fafb49fd34290706d1a1a2f4d1c6df275526b62cbb4aa5393cc
 COMPONENT_LICENSE =		MIT AND PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
