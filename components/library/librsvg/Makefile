@@ -15,22 +15,22 @@
 # Copyright 2023,2024 Friedrich Kink
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
-COMPONENT_VERSION=	2.58.1
+COMPONENT_VERSION=	2.58.2
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/LibRsvg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:3728596290a8576d305d06ec8afdf473516feee9dff22e03235eac433d56824e
+COMPONENT_ARCHIVE_HASH= sha256:18e9d70c08cf25f50d610d6d5af571561d67cf4179f962e04266475df6e2e224
 COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/library/librsvg
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_LICENSE= LGPLv2
+COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING.LIB
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -55,9 +55,9 @@ CONFIGURE_OPTIONS += --enable-vala
 COMPONENT_BUILD_ENV += CARGO_HOME=$(CARGO_HOME)
 
 COMPONENT_TEST_TRANSFORMS = \
-        '-n ' \
+	'-n ' \
 	'-e "s/finished in.*s$$//"' \
-        '-e "/^test result:/p" '
+    '-e "/^test result:/p" '
 
 # Manually added dependencies
 REQUIRED_PACKAGES += developer/vala
