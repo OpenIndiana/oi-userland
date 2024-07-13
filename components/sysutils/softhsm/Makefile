@@ -14,6 +14,7 @@
 
 BUILD_BITS= 32_and_64
 OPENSSL_VERSION= 3.1
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	 	softhsm
@@ -40,31 +41,22 @@ LDFLAGS += -L$(OPENSSL_LIBDIR)
 # This lets the 32-bit binaries being replaced with its 64-bit counterparts:
 CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var
-CONFIGURE_OPTIONS+= --with-crypto-backend=openssl
-CONFIGURE_OPTIONS+= --with-openssl=/usr/openssl/3.1
-CONFIGURE_OPTIONS+= --with-migrate
-CONFIGURE_OPTIONS+= --with-sqlite3=/usr
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --with-crypto-backend=openssl
+CONFIGURE_OPTIONS += --with-openssl=$(OPENSSL_PREFIX)
+CONFIGURE_OPTIONS += --with-migrate
+CONFIGURE_OPTIONS += --with-sqlite3=$(USRDIR)
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/=========/p" ' \
-        '-e "/Testsuite summary for/p" ' \
-        '-e "/TOTAL/p" ' \
-        '-e "/PASS/p" ' \
-        '-e "/SKIP/p" ' \
-        '-e "/XFAIL/p" ' \
-        '-e "/FAIL/p" ' \
-        '-e "/XPASS/p" ' \
-        '-e "/ERROR/p" '
+    '-e "/=========/p" ' \
+	'-e "/Testsuite summary for/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
