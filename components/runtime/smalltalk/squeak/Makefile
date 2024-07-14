@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024 David Stes
 #
 
 
@@ -58,10 +58,11 @@ USE_COMMON_TEST_MASTER=no
 # this can be set before including shared-macros.mk
 USE_OPENSSL10=yes
 
-# the goal is to use libjpeg8-turbo but that links, but does not display
-# working jpeg images; needs to be fixed upstream by the Squeak team
-# currently use libjpeg6-ijg which is better than using the copy of
-# those libjpeg files in the squeak source tree
+# the goal is to use libjpeg8-turbo (or any other libjpeg implementation)
+# special care for included header files as the struct sizes vary
+# we 'fix' the Squeak source code that has an old libjpeg included in source
+# this should be fixed upstream in the Squeak sources
+# the default OpenIndiana JPEG_IMPLEM at time of writing is libjpeg8-turbo
 JPEG_IMPLEM=libjpeg8-turbo
 
 include ../../../../make-rules/shared-macros.mk
@@ -70,15 +71,15 @@ include ../../../../make-rules/shared-macros.mk
 # it cannot be changed here randomly, it must match the VMMaker version
 
 COMPONENT_NAME=		squeak
-COMPONENT_VERSION=	4.20.7
+COMPONENT_VERSION=	4.20.10
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/smalltalk/squeak
 COMPONENT_CLASSIFICATION=	Development/Smalltalk
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=                3829
-SVN_HASH=  sha256:a50c19767806f5b318259a27e004c4b9c7441381132aa9d1af1abd106cc1f703
+SVN_REV=                3833
+SVN_HASH=  sha256:84f04d012bc7adcb9e617630c47b59ca1f8b8916e3220bca3d1aabef466b489a
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -86,10 +87,14 @@ SVN_HASH=  sha256:a50c19767806f5b318259a27e004c4b9c7441381132aa9d1af1abd106cc1f7
 COMPONENT_LICENSE=      Squeak4
 COMPONENT_LICENSE_FILE= squeak4.license
 
+# Squeak has an extensive test framework called SUnit
+# it requires a X11 connection (graphical user interface)
+# if connection to $DISPLAY fails from "gmake test" the tests will fail
 # the tests are ran only on 32bit image for Squeak classical VM
 # because inisqueak downloads a 32 bit image (provided by squeak.org)
 # for OpenSmalltalk (see cog-spur and stack-spur) 32bit + 64bit
 # since version 2023 4.20.6 we use a 64bit executable to run the 32image
+# because OpenIndiana stopped shipping 32bit libraries for 32bit executables
 COMPONENT_TEST_CMD=	$(COMPONENT_TEST_RESULTS_DIR)/testrunner.sh $(BITS) $(COMPONENT_DIR) $(BUILD_DIR_64)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -183,7 +188,8 @@ REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
