@@ -11,19 +11,18 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pip-run
+#   $WS_TOOLS/python-integrate-project -d python/pip-run pip_run
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pip-run
-HUMAN_VERSION =			12.6.1
-COMPONENT_SUMMARY =		pip-run - install packages and run Python with them
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/pip-run
+COMPONENT_NAME =		pip_run
+HUMAN_VERSION =			12.7.0
+COMPONENT_SUMMARY =		install packages and run Python with them
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:227914cba705e9d90ce823e7163111a8a5b614c2e37fea003d506291763dafb1
+	sha256:3b0237e30399bea3472c709b81fa396b941feaa80f360c68dc375e6eb6926864
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -46,7 +45,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flit-core
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
