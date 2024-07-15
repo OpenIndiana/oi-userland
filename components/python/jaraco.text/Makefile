@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.text
-HUMAN_VERSION =			3.12.1
+HUMAN_VERSION =			3.14.0
 COMPONENT_SUMMARY =		Module for text manipulation
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.text
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b699491f9d074b4feafdfda0407fa5bbc5d83f485607a012e93472ba161f6843
+	sha256:ed14e4df7753e40fdef3ca0eb53f6be9f5ef97481806e96de26c3a72e9c293f6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,7 +38,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pathlib2
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
