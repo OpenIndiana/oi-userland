@@ -19,15 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mistletoe
-HUMAN_VERSION =			1.3.0
+HUMAN_VERSION =			1.4.0
 COMPONENT_SUMMARY =		A fast, extensible Markdown parser in pure Python.
 COMPONENT_PROJECT_URL =		https://github.com/miyuchina/mistletoe
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bd0e788add9b4478d19ec792f6d5fb908a20e70abfe61193f29178c55d3adbe9
+	sha256:1630f906e5e4bbe66fdeb4d29d277e2ea515d642bb18a9b49b136361a9818c9d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
