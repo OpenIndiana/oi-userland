@@ -1,8 +1,10 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 265 items
+collecting ... collected 334 items
 
 test/test_ast_renderer.py::TestAstRenderer::test PASSED
 test/test_ast_renderer.py::TestAstRenderer::test_footnotes PASSED
@@ -70,6 +72,7 @@ test/test_block_token.py::TestDocument::test_auto_splitlines PASSED
 test/test_block_token.py::TestDocument::test_store_footnote PASSED
 test/test_block_token.py::TestThematicBreak::test_match PASSED
 test/test_block_token.py::TestContains::test_contains PASSED
+test/test_block_token.py::TestParent::test_parent PASSED
 test/test_block_token.py::TestHtmlBlock::test_textarea_block_may_contain_blank_lines PASSED
 test/test_block_token.py::TestLeafBlockTokenContentProperty::test_block_code PASSED
 test/test_block_token.py::TestLeafBlockTokenContentProperty::test_code_fence PASSED
@@ -91,6 +94,72 @@ test/test_cli.py::TestCli::test_main_to_interactive PASSED
 test/test_cli.py::TestCli::test_parse_filenames PASSED
 test/test_cli.py::TestCli::test_parse_renderer PASSED
 test/test_cli.py::TestCli::test_print_heading PASSED
+test/test_contrib/test_github_wiki.py::TestGithubWiki::test_parse PASSED
+test/test_contrib/test_github_wiki.py::TestGithubWiki::test_render PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_escape_in_inline_code PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_escape_link PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_escape_none_when_whitespaces PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_escape_simple PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_escape_single_chars PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render__basic_blocks PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render__lists PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render__quotes PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_auto_link PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_block_code PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_document PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_emphasis PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_escape_sequence PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_footnote_image PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_footnote_link PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_heading PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_html_block PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_html_span PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_image PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_inline_code PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_inner PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_link PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_link_with_title PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_list PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_list_item PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_paragraph PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_quote PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_strikethrough PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_strong PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_table PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_table_cell PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_table_row PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_render_thematic_break PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_table_empty_cell PASSED
+test/test_contrib/test_jira_renderer.py::TestJiraRenderer::test_table_header PASSED
+test/test_contrib/test_mathjax.py::TestMathJaxRenderer::test_render_html PASSED
+test/test_contrib/test_mathjax.py::TestMathJaxRenderer::test_render_math PASSED
+test/test_contrib/test_pygments_renderer.py::TestPygmentsRenderer::test_render_fail_on_unsupported_language PASSED
+test/test_contrib/test_pygments_renderer.py::TestPygmentsRenderer::test_render_known_language PASSED
+test/test_contrib/test_pygments_renderer.py::TestPygmentsRenderer::test_render_no_language_0 PASSED
+test/test_contrib/test_pygments_renderer.py::TestPygmentsRenderer::test_render_no_language_1 PASSED
+test/test_contrib/test_pygments_renderer.py::TestPygmentsRenderer::test_render_unknown_language PASSED
+test/test_contrib/test_scheme.py::TestScheme::test_render PASSED
+test/test_contrib/test_toc_renderer.py::TestTocRenderer::test_depth PASSED
+test/test_contrib/test_toc_renderer.py::TestTocRenderer::test_filter_conditions PASSED
+test/test_contrib/test_toc_renderer.py::TestTocRenderer::test_get_toc PASSED
+test/test_contrib/test_toc_renderer.py::TestTocRenderer::test_omit_title PASSED
+test/test_contrib/test_toc_renderer.py::TestTocRenderer::test_parse_rendered_heading PASSED
+test/test_contrib/test_toc_renderer.py::TestTocRenderer::test_render_heading PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_escaping PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render__basic_blocks PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render__lists PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render__quotes PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_auto_link PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_emphasis PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_html_block PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_html_span PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_image PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_inline_code PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_link PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_strikethrough PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_strong PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_xwiki_macros_in_list PASSED
+test/test_contrib/test_xwiki20_renderer.py::TestXWiki20Renderer::test_render_xwiki_macros_simple PASSED
 test/test_core_tokens.py::TestCoreTokens::test_deactivate_delimiters PASSED
 test/test_core_tokens.py::TestCoreTokens::test_delimiter PASSED
 test/test_core_tokens.py::TestCoreTokens::test_delimiter_remove_empty PASSED
@@ -187,7 +256,8 @@ test/test_markdown_renderer.py::TestMarkdownRenderer::test_line_breaks PASSED
 test/test_markdown_renderer.py::TestMarkdownRenderer::test_link_reference_definition PASSED
 test/test_markdown_renderer.py::TestMarkdownRenderer::test_list_item_indentation_after_leader_normalized PASSED
 test/test_markdown_renderer.py::TestMarkdownRenderer::test_list_item_indentation_after_leader_preserved PASSED
-test/test_markdown_renderer.py::TestMarkdownRenderer::test_list_item_margin_indentation_not_preserved PASSED
+test/test_markdown_renderer.py::TestMarkdownRenderer::test_list_item_margin_indentation_normalized PASSED
+test/test_markdown_renderer.py::TestMarkdownRenderer::test_list_item_margin_indentation_preserved PASSED
 test/test_markdown_renderer.py::TestMarkdownRenderer::test_multiline_fragment PASSED
 test/test_markdown_renderer.py::TestMarkdownRenderer::test_numbered_list PASSED
 test/test_markdown_renderer.py::TestMarkdownRenderer::test_paragraphs_and_blank_lines PASSED
@@ -262,6 +332,7 @@ test/test_span_token.py::TestLineBreak::test_parse_hard_break_with_backslash PAS
 test/test_span_token.py::TestLineBreak::test_parse_hard_break_with_double_blanks PASSED
 test/test_span_token.py::TestLineBreak::test_parse_soft_break PASSED
 test/test_span_token.py::TestContains::test_contains PASSED
+test/test_span_token.py::TestParent::test_parent PASSED
 test/test_span_token.py::TestHtmlSpan::test_parse PASSED
 test/test_span_token.py::TestHtmlSpan::test_parse_with_illegal_whitespace PASSED
 test/test_traverse.py::TestTraverse::test PASSED
@@ -270,4 +341,6 @@ test/test_traverse.py::TestTraverse::test_with_depth_limit PASSED
 test/test_traverse.py::TestTraverse::test_with_included_source PASSED
 test/test_traverse.py::TestTraverse::test_with_included_source_and_class_filter PASSED
 
-======== 264 passed, 1 skipped ========
+======== 333 passed, 1 skipped ========
+  py$(PYV): OK
+  congratulations :)
