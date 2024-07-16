@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinx
-HUMAN_VERSION =			7.3.7
-COMPONENT_SUMMARY =		sphinx - Python documentation generator
+HUMAN_VERSION =			7.4.4
+COMPONENT_SUMMARY =		Python documentation generator
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a4a7db75ed37531c05002d56ed6948d4c42f473a36f46e1382b0bd76ca9627bc
+	sha256:43c911f997a4530b6cffd4ff8d5516591f6c60d178591f4406f0dd02282e3f64
 COMPONENT_LICENSE =		BSD-2-Clause AND BSD-3-Clause AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
@@ -56,3 +56,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/cython
 TEST_REQUIRED_PACKAGES.python += library/python/defusedxml
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions

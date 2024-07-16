@@ -3,11 +3,11 @@ py$(PYV): commands[0]> python -X dev -X warn_default_encoding -m pytest --durati
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-libraries: Sphinx-7.3.7, docutils-0.20.1
+libraries: Sphinx-7.4.4, docutils-0.21.2
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 2144 items
+collecting ... collected 2186 items
 
 tests/test_addnodes.py::test_desc_sig_element_nodes PASSED
 tests/test_application.py::test_instantiation PASSED
@@ -55,6 +55,7 @@ tests/test_builders/test_build_gettext.py::test_gettext_template_msgid_order_in_
 tests/test_builders/test_build_gettext.py::test_build_single_pot PASSED
 tests/test_builders/test_build_gettext.py::test_gettext_prolog_epilog_substitution PASSED
 tests/test_builders/test_build_gettext.py::test_gettext_prolog_epilog_substitution_excluded PASSED
+tests/test_builders/test_build_gettext.py::test_gettext_literalblock_additional PASSED
 tests/test_builders/test_build_html.py::test_html4_error PASSED
 tests/test_builders/test_build_html.py::test_docutils_output[index.html-.//div[@class='citation']/span-Ref1] PASSED
 tests/test_builders/test_build_html.py::test_docutils_output[index.html-.//div[@class='citation']/span-Ref_1] PASSED
@@ -115,11 +116,14 @@ tests/test_builders/test_build_html.py::test_html_permalink_disable PASSED
 tests/test_builders/test_build_html.py::test_html_permalink_icon PASSED
 tests/test_builders/test_build_html.py::test_html_signaturereturn_icon PASSED
 tests/test_builders/test_build_html.py::test_html_remove_sources_before_write_gh_issue_10786 PASSED
+tests/test_builders/test_build_html.py::test_html_pep_695_one_type_per_line PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[images.html-.//img[@src='_images/img.png']-] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[images.html-.//img[@src='_images/img1.png']-] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[images.html-.//img[@src='_images/simg.png']-] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[images.html-.//img[@src='_images/svgimg.svg']-] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[images.html-.//a[@href='_sources/images.txt']-] PASSED
+tests/test_builders/test_build_html_5_output.py::test_html5_output[images.html-.//img[@src='_images/svgimg.svg'][@style='width: 2cm;']-] PASSED
+tests/test_builders/test_build_html_5_output.py::test_html5_output[images.html-.//img[@src='_images/svgimg.svg'][@style='height: 2cm;']-] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[subdir/images.html-.//img[@src='../_images/img1.png']-] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[subdir/images.html-.//img[@src='../_images/rimg.png']-] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[subdir/includes.html-.//a[@class='reference download internal']-] PASSED
@@ -269,6 +273,8 @@ tests/test_builders/test_build_html_5_output.py::test_html5_output[bom.html-.//t
 tests/test_builders/test_build_html_5_output.py::test_html5_output[extensions.html-.//a[@href='https://python.org/dev/']-https://python.org/dev/] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[extensions.html-.//a[@href='https://bugs.python.org/issue1000']-issue 1000] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[extensions.html-.//a[@href='https://bugs.python.org/issue1042']-explicit caption] PASSED
+tests/test_builders/test_build_html_5_output.py::test_html5_output[extensions.html-.//a[@class='extlink-pyurl reference external']-https://python.org/dev/] PASSED
+tests/test_builders/test_build_html_5_output.py::test_html5_output[extensions.html-.//a[@class='extlink-issue reference external']-issue 1000] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[genindex.html-.//a/strong-Main] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[genindex.html-.//a/strong-[1]] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[genindex.html-.//a/strong-Other] PASSED
@@ -277,6 +283,7 @@ tests/test_builders/test_build_html_5_output.py::test_html5_output[genindex.html
 tests/test_builders/test_build_html_5_output.py::test_html5_output[otherext.html-.//h1-Generated section] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[otherext.html-.//a[@href='_sources/otherext.foo.txt']-] PASSED
 tests/test_builders/test_build_html_5_output.py::test_html5_output[search.html-.//meta[@name='robots'][@content='noindex']-] PASSED
+tests/test_builders/test_build_html_5_output.py::test_html5_rubric PASSED
 tests/test_builders/test_build_html_assets.py::test_html_assets PASSED
 tests/test_builders/test_build_html_assets.py::test_assets_order PASSED
 tests/test_builders/test_build_html_assets.py::test_file_checksum PASSED
@@ -676,6 +683,7 @@ tests/test_builders/test_build_latex.py::test_latex_code_role PASSED
 tests/test_builders/test_build_latex.py::test_copy_images PASSED
 tests/test_builders/test_build_latex.py::test_duplicated_labels_before_module PASSED
 tests/test_builders/test_build_latex.py::test_one_parameter_per_line PASSED
+tests/test_builders/test_build_latex.py::test_latex_rubric PASSED
 tests/test_builders/test_build_linkcheck.py::test_defaults PASSED
 tests/test_builders/test_build_linkcheck.py::test_check_link_response_only PASSED
 tests/test_builders/test_build_linkcheck.py::test_too_many_retries PASSED
@@ -683,6 +691,8 @@ tests/test_builders/test_build_linkcheck.py::test_raw_node PASSED
 tests/test_builders/test_build_linkcheck.py::test_anchors_ignored PASSED
 tests/test_builders/test_build_linkcheck.py::test_anchors_ignored_for_url PASSED
 tests/test_builders/test_build_linkcheck.py::test_raises_for_invalid_status PASSED
+tests/test_builders/test_build_linkcheck.py::test_incomplete_html_anchor PASSED
+tests/test_builders/test_build_linkcheck.py::test_decoding_error_anchor_ignored PASSED
 tests/test_builders/test_build_linkcheck.py::test_auth_header_uses_first_match PASSED
 tests/test_builders/test_build_linkcheck.py::test_unauthorized_broken PASSED
 tests/test_builders/test_build_linkcheck.py::test_auth_header_no_match PASSED
@@ -816,6 +826,7 @@ tests/test_config/test_config.py::test_correct_copyright_year[1293839999-1970-19
 tests/test_config/test_config.py::test_gettext_compact_command_line_true PASSED
 tests/test_config/test_config.py::test_gettext_compact_command_line_false PASSED
 tests/test_config/test_config.py::test_gettext_compact_command_line_str PASSED
+tests/test_config/test_config.py::test_root_doc_and_master_doc_are_synchronized PASSED
 tests/test_config/test_correct_year.py::test_correct_year[expect_date0] PASSED
 tests/test_config/test_correct_year.py::test_correct_year[expect_date1] PASSED
 tests/test_config/test_correct_year.py::test_correct_year[expect_date2] PASSED
@@ -872,6 +883,7 @@ tests/test_directives/test_directive_other.py::test_toctree_urls_and_titles PASS
 tests/test_directives/test_directive_other.py::test_toctree_glob PASSED
 tests/test_directives/test_directive_other.py::test_toctree_glob_and_url PASSED
 tests/test_directives/test_directive_other.py::test_reversed_toctree PASSED
+tests/test_directives/test_directive_other.py::test_toctree_class PASSED
 tests/test_directives/test_directive_other.py::test_toctree_twice PASSED
 tests/test_directives/test_directive_other.py::test_include_include_read_event PASSED
 tests/test_directives/test_directive_other.py::test_include_include_read_event_nested_includes PASSED
@@ -1184,6 +1196,8 @@ tests/test_domains/test_domain_py_pyobject.py::test_pyclassmethod PASSED
 tests/test_domains/test_domain_py_pyobject.py::test_pystaticmethod PASSED
 tests/test_domains/test_domain_py_pyobject.py::test_pyattribute PASSED
 tests/test_domains/test_domain_py_pyobject.py::test_pyproperty PASSED
+tests/test_domains/test_domain_py_pyobject.py::test_py_type_alias PASSED
+tests/test_domains/test_domain_py_pyobject.py::test_domain_py_type_alias PASSED
 tests/test_domains/test_domain_py_pyobject.py::test_pydecorator_signature PASSED
 tests/test_domains/test_domain_py_pyobject.py::test_pydecoratormethod_signature PASSED
 tests/test_domains/test_domain_py_pyobject.py::test_pycurrentmodule PASSED
@@ -1233,6 +1247,7 @@ tests/test_environment/test_environment_record_dependencies.py::test_record_depe
 tests/test_environment/test_environment_toctree.py::test_process_doc PASSED
 tests/test_environment/test_environment_toctree.py::test_glob PASSED
 tests/test_environment/test_environment_toctree.py::test_domain_objects PASSED
+tests/test_environment/test_environment_toctree.py::test_domain_objects_document_scoping PASSED
 tests/test_environment/test_environment_toctree.py::test_document_toc PASSED
 tests/test_environment/test_environment_toctree.py::test_document_toc_only PASSED
 tests/test_environment/test_environment_toctree.py::test_document_toc_tocdepth PASSED
@@ -1271,6 +1286,7 @@ tests/test_extensions/test_ext_apidoc.py::test_package_file_module_first PASSED
 tests/test_extensions/test_ext_apidoc.py::test_package_file_without_submodules PASSED
 tests/test_extensions/test_ext_apidoc.py::test_namespace_package_file PASSED
 tests/test_extensions/test_ext_apidoc.py::test_no_duplicates PASSED
+tests/test_extensions/test_ext_apidoc.py::test_remove_old_files PASSED
 tests/test_extensions/test_ext_autodoc.py::test_parse_name PASSED
 tests/test_extensions/test_ext_autodoc.py::test_format_signature PASSED
 tests/test_extensions/test_ext_autodoc.py::test_autodoc_process_signature_typing_generic PASSED
@@ -1503,6 +1519,8 @@ tests/test_extensions/test_ext_autosummary.py::test_autosummary_template PASSED
 tests/test_extensions/test_ext_autosummary.py::test_empty_autosummary_generate PASSED
 tests/test_extensions/test_ext_autosummary.py::test_invalid_autosummary_generate PASSED
 tests/test_extensions/test_ext_autosummary.py::test_autogen PASSED
+tests/test_extensions/test_ext_autosummary.py::test_autogen_remove_old PASSED
+tests/test_extensions/test_ext_autosummary_imports.py::test_autosummary_import_cycle PASSED
 tests/test_extensions/test_ext_coverage.py::test_build PASSED
 tests/test_extensions/test_ext_coverage.py::test_coverage_ignore_pyobjects PASSED
 tests/test_extensions/test_ext_coverage.py::test_show_missing_items PASSED
@@ -1539,6 +1557,7 @@ tests/test_extensions/test_ext_intersphinx.py::test_fetch_inventory_redirection 
 tests/test_extensions/test_ext_intersphinx.py::test_missing_reference PASSED
 tests/test_extensions/test_ext_intersphinx.py::test_missing_reference_pydomain PASSED
 tests/test_extensions/test_ext_intersphinx.py::test_missing_reference_stddomain PASSED
+tests/test_extensions/test_ext_intersphinx.py::test_ambiguous_reference_warning PASSED
 tests/test_extensions/test_ext_intersphinx.py::test_missing_reference_cppdomain PASSED
 tests/test_extensions/test_ext_intersphinx.py::test_missing_reference_jsdomain PASSED
 tests/test_extensions/test_ext_intersphinx.py::test_missing_reference_disabled_domain PASSED
@@ -1565,6 +1584,7 @@ tests/test_extensions/test_ext_math.py::test_math_number_all_latex PASSED
 tests/test_extensions/test_ext_math.py::test_math_eqref_format_html PASSED
 tests/test_extensions/test_ext_math.py::test_math_eqref_format_latex PASSED
 tests/test_extensions/test_ext_math.py::test_mathjax_numfig_html PASSED
+tests/test_extensions/test_ext_math.py::test_mathjax_numsep_html PASSED
 tests/test_extensions/test_ext_math.py::test_imgmath_numfig_html PASSED
 tests/test_extensions/test_ext_math.py::test_math_compat PASSED
 tests/test_extensions/test_ext_math.py::test_mathjax3_config PASSED
@@ -1715,6 +1735,7 @@ tests/test_intl/test_intl.py::test_xml_keep_external_links PASSED
 tests/test_intl/test_intl.py::test_xml_role_xref PASSED
 tests/test_intl/test_intl.py::test_xml_warnings PASSED
 tests/test_intl/test_intl.py::test_xml_label_targets PASSED
+tests/test_intl/test_intl.py::test_xml_strange_markup PASSED
 tests/test_intl/test_intl.py::test_additional_targets_should_not_be_translated PASSED
 tests/test_intl/test_intl.py::test_additional_targets_should_be_translated PASSED
 tests/test_intl/test_intl.py::test_additional_targets_should_be_translated_substitution_definitions PASSED
@@ -1891,6 +1912,10 @@ tests/test_search.py::test_search_index_gen_zh PASSED
 tests/test_search.py::test_nosearch PASSED
 tests/test_search.py::test_parallel PASSED
 tests/test_search.py::test_search_index_is_deterministic PASSED
+tests/test_search.py::test_check_js_search_indexes[directory0] PASSED
+tests/test_search.py::test_check_js_search_indexes[directory1] PASSED
+tests/test_search.py::test_check_js_search_indexes[directory2] PASSED
+tests/test_search.py::test_check_js_search_indexes[directory3] PASSED
 tests/test_theming/test_html_theme.py::test_theme_options PASSED
 tests/test_theming/test_html_theme.py::test_theme_options_with_override PASSED
 tests/test_theming/test_html_theme.py::test_theme_having_multiple_stylesheets PASSED
@@ -1946,6 +1971,7 @@ tests/test_transforms/test_transforms_post_transforms.py::TestSigElementFallback
 tests/test_transforms/test_transforms_post_transforms_code.py::test_trim_doctest_flags_html PASSED
 tests/test_transforms/test_transforms_post_transforms_code.py::test_trim_doctest_flags_disabled PASSED
 tests/test_transforms/test_transforms_post_transforms_code.py::test_trim_doctest_flags_latex PASSED
+tests/test_transforms/test_transforms_post_transforms_images.py::test_guess_mimetype_webp PASSED
 tests/test_transforms/test_transforms_reorder_nodes.py::test_transforms_reorder_consecutive_target_and_index_nodes_preserve_order PASSED
 tests/test_transforms/test_transforms_reorder_nodes.py::test_transforms_reorder_consecutive_target_and_index_nodes_no_merge_across_other_nodes PASSED
 tests/test_transforms/test_transforms_reorder_nodes.py::test_transforms_reorder_consecutive_target_and_index_nodes_merge_with_labels PASSED
@@ -1967,8 +1993,18 @@ tests/test_util/test_util_docstrings.py::test_prepare_commentdoc PASSED
 tests/test_util/test_util_docutils.py::test_register_node PASSED
 tests/test_util/test_util_docutils.py::test_SphinxFileOutput PASSED
 tests/test_util/test_util_docutils.py::test_SphinxTranslator PASSED
+tests/test_util/test_util_docutils_sphinx_directive.py::test_sphinx_directive_env PASSED
+tests/test_util/test_util_docutils_sphinx_directive.py::test_sphinx_directive_config PASSED
+tests/test_util/test_util_docutils_sphinx_directive.py::test_sphinx_directive_get_source_info PASSED
+tests/test_util/test_util_docutils_sphinx_directive.py::test_sphinx_directive_set_source_info PASSED
+tests/test_util/test_util_docutils_sphinx_directive.py::test_sphinx_directive_get_location PASSED
+tests/test_util/test_util_docutils_sphinx_directive.py::test_sphinx_directive_parse_content_to_nodes PASSED
+tests/test_util/test_util_docutils_sphinx_directive.py::test_sphinx_directive_parse_text_to_nodes PASSED
+tests/test_util/test_util_docutils_sphinx_directive.py::test_sphinx_directive_parse_inline PASSED
 tests/test_util/test_util_fileutil.py::test_copy_asset_file PASSED
 tests/test_util/test_util_fileutil.py::test_copy_asset PASSED
+tests/test_util/test_util_fileutil.py::test_template_basename PASSED
+tests/test_util/test_util_fileutil.py::test_legacy_template_basename PASSED
 tests/test_util/test_util_i18n.py::test_catalog_info_for_file_and_path PASSED
 tests/test_util/test_util_i18n.py::test_catalog_info_for_sub_domain_file_and_path PASSED
 tests/test_util/test_util_i18n.py::test_catalog_outdated PASSED
@@ -2030,6 +2066,7 @@ tests/test_util/test_util_inspect.py::test_is_builtin_class_method PASSED
 tests/test_util/test_util_inventory.py::test_read_inventory_v1 PASSED
 tests/test_util/test_util_inventory.py::test_read_inventory_v2 PASSED
 tests/test_util/test_util_inventory.py::test_read_inventory_v2_not_having_version PASSED
+tests/test_util/test_util_inventory.py::test_ambiguous_definition_warning PASSED
 tests/test_util/test_util_inventory.py::test_inventory_localization PASSED
 tests/test_util/test_util_logging.py::test_info_and_warning PASSED
 tests/test_util/test_util_logging.py::test_Exception PASSED
@@ -2103,6 +2140,7 @@ tests/test_util/test_util_template.py::test_ReSTRenderer_heading PASSED
 tests/test_util/test_util_typing.py::test_restify PASSED
 tests/test_util/test_util_typing.py::test_is_invalid_builtin_class PASSED
 tests/test_util/test_util_typing.py::test_restify_type_hints_containers PASSED
+tests/test_util/test_util_typing.py::test_restify_Annotated PASSED
 tests/test_util/test_util_typing.py::test_restify_type_hints_Callable PASSED
 tests/test_util/test_util_typing.py::test_restify_type_hints_Union PASSED
 tests/test_util/test_util_typing.py::test_restify_type_hints_typevars PASSED
@@ -2111,13 +2149,16 @@ tests/test_util/test_util_typing.py::test_restify_type_hints_alias PASSED
 tests/test_util/test_util_typing.py::test_restify_type_ForwardRef PASSED
 tests/test_util/test_util_typing.py::test_restify_type_Literal PASSED
 tests/test_util/test_util_typing.py::test_restify_pep_585 PASSED
+tests/test_util/test_util_typing.py::test_restify_Unpack PASSED
 tests/test_util/test_util_typing.py::test_restify_type_union_operator SKIPPED
 tests/test_util/test_util_typing.py::test_restify_broken_type_hints PASSED
 tests/test_util/test_util_typing.py::test_restify_mock PASSED
+tests/test_util/test_util_typing.py::test_restify_type_hints_paramspec XFAIL
 tests/test_util/test_util_typing.py::test_stringify_annotation PASSED
 tests/test_util/test_util_typing.py::test_stringify_type_hints_containers PASSED
 tests/test_util/test_util_typing.py::test_stringify_type_hints_pep_585 PASSED
-tests/test_util/test_util_typing.py::test_stringify_Annotated PASSED
+tests/test_util/test_util_typing.py::test_stringify_Annotated XFAIL
+tests/test_util/test_util_typing.py::test_stringify_Unpack PASSED
 tests/test_util/test_util_typing.py::test_stringify_type_hints_string PASSED
 tests/test_util/test_util_typing.py::test_stringify_type_hints_Callable PASSED
 tests/test_util/test_util_typing.py::test_stringify_type_hints_Union PASSED
@@ -2129,6 +2170,7 @@ tests/test_util/test_util_typing.py::test_stringify_type_union_operator SKIPPED
 tests/test_util/test_util_typing.py::test_stringify_broken_type_hints PASSED
 tests/test_util/test_util_typing.py::test_stringify_mock PASSED
 tests/test_util/test_util_typing.py::test_stringify_type_ForwardRef PASSED
+tests/test_util/test_util_typing.py::test_stringify_type_hints_paramspec XFAIL
 tests/test_versioning.py::test_get_ratio PASSED
 tests/test_versioning.py::test_add_uids PASSED
 tests/test_versioning.py::test_picklablility PASSED
@@ -2154,15 +2196,19 @@ tests/test_writers/test_docutilsconf.py::test_html_with_default_docutilsconf PAS
 tests/test_writers/test_docutilsconf.py::test_html_with_docutilsconf PASSED
 tests/test_writers/test_writer_latex.py::test_rstdim_to_latexdim PASSED
 
+================================== XFAILURES ===================================
+$(@D)/tests/test_util/test_util_typing.py:390: ImportError: cannot import name 'ParamSpec' from 'typing' ($(PYTHON_DIR)/typing.py)
+$(@D)/tests/test_util/test_util_typing.py:527: assert "Annotated[str, 'foo', 'bar']" == "~typing.Anno...'foo', 'bar']"
+$(@D)/tests/test_util/test_util_typing.py:744: ImportError: cannot import name 'ParamSpec' from 'typing' ($(PYTHON_DIR)/typing.py)
 =============================== warnings summary ===============================
 tests/test_builders/test_build.py: 1 warning
-tests/test_builders/test_build_linkcheck.py: 31 warnings
+tests/test_builders/test_build_linkcheck.py: 33 warnings
   $(@D)/sphinx/builders/linkcheck.py:86: RemovedInSphinx80Warning: The default value for 'linkcheck_report_timeouts_as_broken' will change to False in Sphinx 8, meaning that request timeouts will be reported with a new 'timeout' status, instead of as 'broken'. This is intended to provide more detail as to the failure mode. See https://github.com/sphinx-doc/sphinx/issues/11868 for details.
     warnings.warn(deprecation_msg, RemovedInSphinx80Warning, stacklevel=1)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ============================= slowest 25 durations =============================
 =========================== short test summary info ============================
-======== 2123 passed, 21 skipped, 32 warnings ========
+======== 2162 passed, 21 skipped, 3 xfailed, 34 warnings ========
   py$(PYV): OK
   congratulations :)
