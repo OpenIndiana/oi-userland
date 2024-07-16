@@ -410,70 +410,74 @@ PYTEST_ADDOPTS += --verbose
 # Force pytest to not use colored output so the results normalization is unaffected
 PYTEST_ADDOPTS += --color=no
 
-# Avoid loading of unexpected pytest plugins.
-define disable-pytest-plugin
-PYTEST_ADDOPTS += $$(if $$(filter library/python/$(2)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES) $$(COMPONENT_FMRI)-$$(subst .,,$$(PYTHON_VERSION))),,-p 'no:$(1)')
+# Create list of required pytest plugins.
+define pytest-plugin
+PYTEST_PLUGINS += $$(if $$(filter library/python/$(1)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES) $$(COMPONENT_FMRI)-$$(subst .,,$$(PYTHON_VERSION))),$(2))
 endef
-$(eval $(call disable-pytest-plugin,anyio,anyio))
-$(eval $(call disable-pytest-plugin,asyncio,pytest-asyncio))		# adds line to test report header
-$(eval $(call disable-pytest-plugin,benchmark,pytest-benchmark))	# adds line to test report header; adds benchmark report
-$(eval $(call disable-pytest-plugin,black,pytest-black))		# runs extra test(s)
-$(eval $(call disable-pytest-plugin,check,pytest-check))
-$(eval $(call disable-pytest-plugin,checkdocs,pytest-checkdocs))	# runs extra test(s)
-$(eval $(call disable-pytest-plugin,console-scripts,pytest-console-scripts))
-$(eval $(call disable-pytest-plugin,cov,pytest-cov))
-$(eval $(call disable-pytest-plugin,custom_exit_code,pytest-custom-exit-code))
-$(eval $(call disable-pytest-plugin,enabler,pytest-enabler))
-$(eval $(call disable-pytest-plugin,env,pytest-env))
-$(eval $(call disable-pytest-plugin,faker,faker))
-$(eval $(call disable-pytest-plugin,flake8,pytest-flake8))
-$(eval $(call disable-pytest-plugin,flaky,flaky))
-$(eval $(call disable-pytest-plugin,freezer,pytest-freezer))
-$(eval $(call disable-pytest-plugin,helpers_namespace,pytest-helpers-namespace))
-$(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to test report header
-$(eval $(call disable-pytest-plugin,jaraco.test.http,jaraco-test))
-$(eval $(call disable-pytest-plugin,kgb,kgb))
-$(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
-$(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
-$(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
-$(eval $(call disable-pytest-plugin,pytest home,pytest-home))
-$(eval $(call disable-pytest-plugin,pytest-betamax,betamax))
-$(eval $(call disable-pytest-plugin,pytest-datadir,pytest-datadir))
-$(eval $(call disable-pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))	# could cause tests to fail
-$(eval $(call disable-pytest-plugin,pytest-teamcity,teamcity-messages))
-$(eval $(call disable-pytest-plugin,pytest_expect,pytest-expect))
-$(eval $(call disable-pytest-plugin,pytest_fakefs,pyfakefs))
-$(eval $(call disable-pytest-plugin,pytest_forked,pytest-forked))
-$(eval $(call disable-pytest-plugin,pytest_httpserver,pytest-httpserver))
-$(eval $(call disable-pytest-plugin,pytest_ignore_flaky,pytest-ignore-flaky))
-$(eval $(call disable-pytest-plugin,pytest_lazyfixture,pytest-lazy-fixtures))
-$(eval $(call disable-pytest-plugin,pytest_mock,pytest-mock))
-$(eval $(call disable-pytest-plugin,randomly,pytest-randomly))		# reorders tests
-$(eval $(call disable-pytest-plugin,regressions,pytest-regressions))
-$(eval $(call disable-pytest-plugin,relaxed,pytest-relaxed))		# runs extra test(s); produces different test report
-$(eval $(call disable-pytest-plugin,reporter,pytest-reporter))		# https://github.com/christiansandberg/pytest-reporter/issues/8
-$(eval $(call disable-pytest-plugin,rerunfailures,pytest-rerunfailures))
-$(eval $(call disable-pytest-plugin,salt-factories,pytest-salt-factories))			# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-event-listener,pytest-salt-factories))	# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-factories,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-loader-mock,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-log-server,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-markers,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-sysinfo,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-sysstats,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,shell-utilities,pytest-shell-utilities))
-$(eval $(call disable-pytest-plugin,skip-markers,pytest-skip-markers))
-$(eval $(call disable-pytest-plugin,socket,pytest-socket))
-$(eval $(call disable-pytest-plugin,subprocess,pytest-subprocess))
-$(eval $(call disable-pytest-plugin,subtests,pytest-subtests))
-$(eval $(call disable-pytest-plugin,system-statistics,pytest-system-statistics))
-$(eval $(call disable-pytest-plugin,time_machine,time-machine))
-$(eval $(call disable-pytest-plugin,timeout,pytest-timeout))
-$(eval $(call disable-pytest-plugin,travis-fold,pytest-travis-fold))
-$(eval $(call disable-pytest-plugin,typeguard,typeguard))
-$(eval $(call disable-pytest-plugin,xdist,pytest-xdist))
-$(eval $(call disable-pytest-plugin,xdist.looponfail,pytest-xdist))
-$(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminder line to test output
+$(eval $(call pytest-plugin,anyio,anyio))
+$(eval $(call pytest-plugin,betamax,pytest-betamax))
+$(eval $(call pytest-plugin,faker,faker))
+$(eval $(call pytest-plugin,flaky,flaky))
+$(eval $(call pytest-plugin,hypothesis,hypothesispytest))
+$(eval $(call pytest-plugin,jaraco-test,jaraco.test.http))
+$(eval $(call pytest-plugin,kgb,kgb))
+$(eval $(call pytest-plugin,pyfakefs,pytest_fakefs))
+$(eval $(call pytest-plugin,pytest-asyncio,asyncio))
+$(eval $(call pytest-plugin,pytest-benchmark,benchmark))
+$(eval $(call pytest-plugin,pytest-black,black))
+$(eval $(call pytest-plugin,pytest-check,check))
+$(eval $(call pytest-plugin,pytest-checkdocs,checkdocs))
+$(eval $(call pytest-plugin,pytest-console-scripts,console-scripts))
+$(eval $(call pytest-plugin,pytest-cov,pytest_cov))
+$(eval $(call pytest-plugin,pytest-custom-exit-code,custom_exit_code))
+$(eval $(call pytest-plugin,pytest-datadir,pytest-datadir))
+$(eval $(call pytest-plugin,pytest-enabler,enabler))
+$(eval $(call pytest-plugin,pytest-env,env))
+$(eval $(call pytest-plugin,pytest-expect,pytest_expect))
+$(eval $(call pytest-plugin,pytest-flake8,flake8))
+$(eval $(call pytest-plugin,pytest-forked,pytest_forked))
+$(eval $(call pytest-plugin,pytest-freezer,freezer))
+$(eval $(call pytest-plugin,pytest-helpers-namespace,helpers_namespace))
+$(eval $(call pytest-plugin,pytest-home,pytest home))
+$(eval $(call pytest-plugin,pytest-httpserver,pytest_httpserver))
+$(eval $(call pytest-plugin,pytest-ignore-flaky,pytest_ignore_flaky))
+$(eval $(call pytest-plugin,pytest-lazy-fixtures,pytest_lazyfixture))
+$(eval $(call pytest-plugin,pytest-metadata,metadata))
+$(eval $(call pytest-plugin,pytest-mock,pytest_mock))
+$(eval $(call pytest-plugin,pytest-mypy,mypy))
+$(eval $(call pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))
+$(eval $(call pytest-plugin,pytest-perf,perf))
+$(eval $(call pytest-plugin,pytest-randomly,randomly))
+$(eval $(call pytest-plugin,pytest-regressions,regressions))
+$(eval $(call pytest-plugin,pytest-relaxed,relaxed))
+$(eval $(call pytest-plugin,pytest-reporter,reporter))
+$(eval $(call pytest-plugin,pytest-rerunfailures,rerunfailures))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-event-listener))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-factories))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-loader-mock))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-log-server))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-markers))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-sysinfo))
+$(eval $(call pytest-plugin,pytest-shell-utilities,shell-utilities))
+$(eval $(call pytest-plugin,pytest-skip-markers,skip-markers))
+$(eval $(call pytest-plugin,pytest-socket,socket))
+$(eval $(call pytest-plugin,pytest-subprocess,subprocess))
+$(eval $(call pytest-plugin,pytest-subtests,subtests))
+$(eval $(call pytest-plugin,pytest-system-statistics,system-statistics))
+$(eval $(call pytest-plugin,pytest-timeout,timeout))
+$(eval $(call pytest-plugin,pytest-travis-fold,travis-fold))
+$(eval $(call pytest-plugin,pytest-xdist,xdist))
+$(eval $(call pytest-plugin,pytest-xdist,xdist.looponfail))
+$(eval $(call pytest-plugin,pytest-xprocess,xprocess))
+$(eval $(call pytest-plugin,teamcity-messages,pytest-teamcity))
+$(eval $(call pytest-plugin,time-machine,time_machine))
+$(eval $(call pytest-plugin,typeguard,typeguard))
+
+# By default disable all pytest plugins ...
+COMPONENT_TEST_ENV += PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
+# ... and load those in the PYTEST_PLUGINS list only.
+COMPONENT_TEST_ENV += PYTEST_PLUGINS="$(subst $(space),$(comma),$(strip $(PYTEST_PLUGINS)))"
 
 # By default we are not interested in full list of test failures so exit on
 # first failure to save time.  This could be easily overridden from environment
