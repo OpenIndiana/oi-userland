@@ -1,0 +1,13 @@
+upstream expects GNU egrep
+diff -r 6b341f8b68ff nss/tests/common/init.sh
+--- nss-3.93/nss/tests/common/init.sh
++++ nss-3.93/nss/tests/common/init.sh
+@@ -407,7 +407,7 @@ if [ -z "${INIT_SOURCED}" -o "${INIT_SOU
+             # android doesn't have perl, skip the uniq step
+             PATH=.:${DIST}/${OBJDIR}/bin:${DIST}/${OBJDIR}/lib:$PATH
+         else
+-            PATH=.:${DIST}/${OBJDIR}/bin:${DIST}/${OBJDIR}/lib:/bin:/usr/bin:$PATH
++            PATH=.:${DIST}/${OBJDIR}/bin:${DIST}/${OBJDIR}/lib:/usr/gnu/bin:/bin:/usr/bin:$PATH
+             # added /bin and /usr/bin in the beginning so a local perl will
+             # be used
+             PATH=`perl ../path_uniq -d ':' "$PATH"`
