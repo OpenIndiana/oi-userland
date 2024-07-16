@@ -34,5 +34,9 @@ link path=usr/perl5/pod target=$(PERLVER)/lib/pod
 
 # Temporary fake dir and vendor mediated symlink used during transition between
 # Perl versions.
-$(VENDOR_MEDIATOR)dir path=usr/perl5/$(PERLVER)
-$(VENDOR_MEDIATOR)link path=usr/perl5/transition-perl target=$(PERLVER) mediator=perl mediator-version=$(PERLVER) mediator-priority=vendor
+$(VERSION_SWITCH)dir path=usr/perl5/$(PERLVER)
+$(VERSION_SWITCH)link path=usr/perl5/transition-perl target=$(PERLVER) mediator=perl mediator-version=$(PERLVER) mediator-priority=vendor
+
+# During the transition between Perl versions we need to make sure the Perl
+# support from illumos-gate is installed at the expected version.
+$(VERSION_SWITCH)depend fmri=runtime/perl-$(PLV)/module/sun-solaris type=require

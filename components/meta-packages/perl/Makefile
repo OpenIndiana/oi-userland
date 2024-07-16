@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
 COMPONENT_VERSION =		$(PERL_VERSION)
-COMPONENT_REVISION =		8
+COMPONENT_REVISION =		9
 COMPONENT_SUMMARY =		Perl - Highly capable, feature-rich programming language
 COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_FMRI =		runtime/perl
@@ -27,9 +27,9 @@ COMPONENT_CLASSIFICATION =	Development/Perl
 # This needs to be done before the common.mk include because here we still do
 # have the full list of Perl versions in PERL_VERSIONS.
 ifeq ($(PERL_VERSION),$(lastword $(PERL_VERSIONS)))
-PKG_MACROS += VENDOR_MEDIATOR=\#
+PKG_MACROS += VERSION_SWITCH=\#
 else
-PKG_MACROS += VENDOR_MEDIATOR=
+PKG_MACROS += VERSION_SWITCH=
 endif
 
 include $(WS_MAKE_RULES)/common.mk
