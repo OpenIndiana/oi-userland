@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
 HUMAN_VERSION =			8.2.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
@@ -53,7 +54,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/pluggy
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/argcomplete
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
