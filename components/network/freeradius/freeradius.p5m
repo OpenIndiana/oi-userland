@@ -23,10 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-group groupname=freerad gid=45
-user username=freerad gcos-field="FreeRADIUS multi-protocol policy server" group=freerad home-dir=/etc/freeradius login-shell=/bin/false uid=45
+group groupname=radius gid=45
+user username=raddmin gcos-field="FreeRADIUS multi-protocol policy server" group=radius home-dir=/etc/raddb login-shell=/bin/false uid=45
 
-file files/freeradius.xml path=lib/svc/manifest/network/freeradius.xml restart_fmri=svc:/system/manifest-import:default
+file files/radius.auth_attr path=etc/security/auth_attr.d/radius
+file files/radius.xml path=lib/svc/manifest/network/radius.xml restart_fmri=svc:/system/manifest-import:default
 
 file path=etc/raddb/README.rst
 file path=etc/raddb/certs/01.pem
@@ -334,6 +335,7 @@ file path=usr/lib/$(MACH64)/rlm_eap_mschapv2.so
 file path=usr/lib/$(MACH64)/rlm_eap_peap.so
 file path=usr/lib/$(MACH64)/rlm_eap_pwd.so
 file path=usr/lib/$(MACH64)/rlm_eap_sim.so
+file path=usr/lib/$(MACH64)/rlm_eap_teap.so
 file path=usr/lib/$(MACH64)/rlm_eap_tls.so
 file path=usr/lib/$(MACH64)/rlm_eap_ttls.so
 file path=usr/lib/$(MACH64)/rlm_exec.so
