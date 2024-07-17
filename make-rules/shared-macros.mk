@@ -858,7 +858,7 @@ QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 #
 
 # This is the default version of Perl
-PERL_VERSION =  5.38
+PERL_VERSION =  5.40
 
 # The PERL_VERSIONS list should always be in ascending order (newest version
 # last)
