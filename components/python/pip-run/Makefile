@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip_run
-HUMAN_VERSION =			12.7.0
+HUMAN_VERSION =			13.0.0
 COMPONENT_SUMMARY =		install packages and run Python with them
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3b0237e30399bea3472c709b81fa396b941feaa80f360c68dc375e6eb6926864
+	sha256:67cf7f0e8eb1fab96e1743128d759f4d9d4a9dff17b7bc20f86f03a3ed73e841
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
