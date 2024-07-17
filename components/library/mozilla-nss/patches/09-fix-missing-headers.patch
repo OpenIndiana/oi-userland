@@ -1,0 +1,17 @@
+#
+# Patch fixes missing headers.
+# Since nss is built with -Werror=implicit-function-declaration,
+# missing headers lead to build failure.
+#
+# Consider these changes for sending to upstream.
+#
+--- old/nss/lib/freebl/verified/internal/Hacl_Bignum_Base.h	2024-02-28 10:54:35.558759786 +0100
++++ new/nss/lib/freebl/verified/internal/Hacl_Bignum_Base.h	2024-02-28 10:54:19.590808084 +0100
+@@ -29,6 +29,7 @@
+ extern "C" {
+ #endif
+ 
++#include <alloca.h>
+ #include <string.h>
+ #include "krml/internal/types.h"
+ #include "krml/internal/builtin.h"

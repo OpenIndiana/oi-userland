@@ -11,42 +11,41 @@
 #
 # Copyright 2011, Andrzej Szeszo
 # Copyright 2013, Jon Tibble
-# Copyright 2014, Alexander Pyhalov 
+# Copyright 2014, Alexander Pyhalov
 # Copyright 2019, Michal Nowak
+# Copyright 2024, Goetz Fischer
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
-COMPONENT_VERSION=	3.51.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.98
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:085c5eaceef040eddea639e2e068e70f0e368f840327a678ef74ae3d6c15ca78
-COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_51_1_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:f549cc33d35c0601674bfacf7c6ad683c187595eb4125b423238d3e9aa4209ce
+COMPONENT_ARCHIVE_URL= https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_98_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	MPLv2
+COMPONENT_LICENSER_FILE=	nss/COPYING
 
-# Enable compiler optimizations and disable debugging code
-COMPONENT_BUILD_ENV += BUILD_OPT=1
-
-# Generate symbolic info for debuggers and use c99 by default
-COMPONENT_BUILD_ENV += XCFLAGS="-g -std=c99 -D__EXTENSIONS__"
-
-COMPONENT_BUILD_ENV += PATH=$(GCC_ROOT)/bin:$(PATH)
-COMPONENT_BUILD_ENV += PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
-COMPONENT_BUILD_ENV += PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
-COMPONENT_BUILD_ENV += NSS_USE_SYSTEM_SQLITE=1
-COMPONENT_BUILD_ENV += NS_USE_GCC=1
-
+### ENV
 MPS.32=/usr/lib/mps
 MPS.64=/usr/lib/mps/$(MACH64)
+
+COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
+COMPONENT_BUILD_ENV += BUILD_OPT=1
+COMPONENT_BUILD_ENV += NO_MDUPDATE=1
+COMPONENT_BUILD_ENV += NS_USE_GCC=1
 COMPONENT_BUILD_ENV += NSPR_INCLUDE_DIR=/usr/include/mps
 COMPONENT_BUILD_ENV += NSPR_LIB_DIR=$(MPS.$(BITS))
+COMPONENT_BUILD_ENV += NSS_ENABLE_WERROR=0
 COMPONENT_BUILD_ENV += NSS_INCLUDE_DIR=/usr/include/mps
 COMPONENT_BUILD_ENV += NSS_LIB_DIR=$(MPS.$(BITS))
-
+COMPONENT_BUILD_ENV += NSS_USE_SYSTEM_SQLITE=1
+COMPONENT_BUILD_ENV += PATH=$(GCC_ROOT)/bin:$(PATH)
+COMPONENT_BUILD_ENV += PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
+COMPONENT_BUILD_ENV += PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
 COMPONENT_BUILD_ENV.64 += USE_64=1
-COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
 
 COMPONENT_TEST_ENV += $(COMPONENT_BUILD_ENV)
 COMPONENT_TEST_ENV += HOST=127.0.0.1
@@ -56,18 +55,18 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+### BUILD
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) -C nss/coreconf)
-	(cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) -C nss/lib)
-	(cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) -C nss/cmd)
+	(cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) -C nss)
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
 build: $(BUILD_32_and_64)
 
+### INSTALL
 install: build
 	$(MKDIR) -p $(PROTO_DIR)/usr/sfw/bin
 	$(MKDIR) -p $(PROTO_DIR)/usr/sfw/bin/$(MACH64)
@@ -87,7 +86,7 @@ install: build
 		cp $(BUILD_DIR_64)/dist/SunOS5.11_*_OPT.OBJ/bin/$$i $(PROTO_DIR)/usr/sfw/bin/$(MACH64); \
 		done
 	cat $(COMPONENT_DIR)/files/nss.pc | sed s/^Version:/Version:\ $(COMPONENT_VERSION)/ \
-		> $(PROTO_DIR)/usr/lib/pkgconfig/nss.pc 
+		> $(PROTO_DIR)/usr/lib/pkgconfig/nss.pc
 	cat $(COMPONENT_DIR)/files/nss.pc | sed -e "s/^Version:/Version:\ $(COMPONENT_VERSION)/" \
 			-e "s:/usr/lib/mps:/usr/lib/mps/$(MACH64):g" > $(PROTO_DIR)/usr/lib/$(MACH64)/pkgconfig/nss.pc
 	for i in $(PROTO_DIR)/usr/lib/mps/*.so; do \
@@ -128,6 +127,7 @@ install: build
 	$(MV) nss-config.1 $(PROTO_DIR)/$(USRSHAREMAN1DIR) ;\
 	$(TOUCH) $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed ;
 
+### TESTS
 test:	$(TEST_32_and_64)
 
 $(TEST_32):  $(BUILD_32)
@@ -135,15 +135,16 @@ $(TEST_32):  $(BUILD_32)
 	$(ENV) $(COMPONENT_TEST_ENV) $(CONFIG_SHELL) all.sh &&\
 	$(TOUCH) $(BUILD_DIR_$(BITS))/.tested
 
-$(TEST_64):  $(BUILD_64) 
+$(TEST_64):  $(BUILD_64)
 	cd $(COMPONENT_TEST_DIR) && \
 	$(ENV) $(COMPONENT_TEST_ENV) $(CONFIG_SHELL) all.sh &&\
 	$(TOUCH) $(BUILD_DIR_$(BITS))/.tested
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
