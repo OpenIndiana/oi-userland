@@ -5,39 +5,40 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 31 items
+collecting ... collected 32 items
 
-tests/test_subtests.py::TestCapture::test_capture_with_fixture[capfd] PASSED
-tests/test_subtests.py::TestCapture::test_capture_with_fixture[capsys] PASSED
-tests/test_subtests.py::TestCapture::test_capturing PASSED
-tests/test_subtests.py::TestCapture::test_no_capture PASSED
-tests/test_subtests.py::TestDebugging::test_pdb_fixture PASSED
-tests/test_subtests.py::TestDebugging::test_pdb_unittest PASSED
 tests/test_subtests.py::TestFixture::test_simple_terminal_normal[normal] PASSED
 tests/test_subtests.py::TestFixture::test_simple_terminal_normal[xdist] PASSED
 tests/test_subtests.py::TestFixture::test_simple_terminal_verbose[normal] PASSED
 tests/test_subtests.py::TestFixture::test_simple_terminal_verbose[xdist] PASSED
 tests/test_subtests.py::TestFixture::test_skip[normal] PASSED
 tests/test_subtests.py::TestFixture::test_skip[xdist] PASSED
-tests/test_subtests.py::TestFixture::test_typing_exported[normal] PASSED
-tests/test_subtests.py::TestFixture::test_typing_exported[xdist] PASSED
 tests/test_subtests.py::TestFixture::test_xfail[normal] PASSED
 tests/test_subtests.py::TestFixture::test_xfail[xdist] PASSED
-tests/test_subtests.py::TestLogging::test_caplog PASSED
-tests/test_subtests.py::TestLogging::test_capturing PASSED
-tests/test_subtests.py::TestLogging::test_no_logging PASSED
+tests/test_subtests.py::TestFixture::test_typing_exported[normal] PASSED
+tests/test_subtests.py::TestFixture::test_typing_exported[xdist] PASSED
+tests/test_subtests.py::TestSubTest::test_simple_terminal_normal[unittest] PASSED
 tests/test_subtests.py::TestSubTest::test_simple_terminal_normal[pytest-normal] PASSED
 tests/test_subtests.py::TestSubTest::test_simple_terminal_normal[pytest-xdist] PASSED
-tests/test_subtests.py::TestSubTest::test_simple_terminal_normal[unittest] PASSED
+tests/test_subtests.py::TestSubTest::test_simple_terminal_verbose[unittest] PASSED
 tests/test_subtests.py::TestSubTest::test_simple_terminal_verbose[pytest-normal] PASSED
 tests/test_subtests.py::TestSubTest::test_simple_terminal_verbose[pytest-xdist] PASSED
-tests/test_subtests.py::TestSubTest::test_simple_terminal_verbose[unittest] PASSED
+tests/test_subtests.py::TestSubTest::test_skip[unittest] PASSED
 tests/test_subtests.py::TestSubTest::test_skip[pytest-normal] XFAIL
 tests/test_subtests.py::TestSubTest::test_skip[pytest-xdist] XFAIL (...)
-tests/test_subtests.py::TestSubTest::test_skip[unittest] PASSED
+tests/test_subtests.py::TestSubTest::test_xfail[unittest] XFAIL (Not...)
 tests/test_subtests.py::TestSubTest::test_xfail[pytest-normal] XFAIL
 tests/test_subtests.py::TestSubTest::test_xfail[pytest-xdist] XFAIL
-tests/test_subtests.py::TestSubTest::test_xfail[unittest] XFAIL (Not...)
+tests/test_subtests.py::TestCapture::test_capturing PASSED
+tests/test_subtests.py::TestCapture::test_no_capture PASSED
+tests/test_subtests.py::TestCapture::test_capture_with_fixture[capsys] PASSED
+tests/test_subtests.py::TestCapture::test_capture_with_fixture[capfd] PASSED
+tests/test_subtests.py::TestLogging::test_capturing PASSED
+tests/test_subtests.py::TestLogging::test_caplog PASSED
+tests/test_subtests.py::TestLogging::test_no_logging PASSED
+tests/test_subtests.py::TestDebugging::test_pdb_fixture PASSED
+tests/test_subtests.py::TestDebugging::test_pdb_unittest PASSED
+tests/test_subtests.py::test_exitfirst PASSED
 
 ================================== XFAILURES ===================================
 $(@D)/tests/test_subtests.py:304: _pytest.outcomes.XFailed: Not producing the expected results (#5)
@@ -45,19 +46,7 @@ $(@D)/tests/test_subtests.py:304: _pytest.outcomes.XFailed: Not producing the ex
 $(@D)/tests/test_subtests.py:336: Failed: nomatch: 'Ran 1 test in *'
 $(@D)/tests/test_subtests.py:339: Failed: nomatch: 'collected 1 item'
 $(@D)/tests/test_subtests.py:339: Failed: nomatch: 'collected 1 item'
-=============================== warnings summary ===============================
-tests/test_subtests.py::TestFixture::test_simple_terminal_normal[xdist]
-tests/test_subtests.py::TestFixture::test_simple_terminal_verbose[xdist]
-tests/test_subtests.py::TestFixture::test_skip[xdist]
-tests/test_subtests.py::TestFixture::test_xfail[xdist]
-tests/test_subtests.py::TestFixture::test_typing_exported[xdist]
-tests/test_subtests.py::TestSubTest::test_simple_terminal_normal[pytest-xdist]
-tests/test_subtests.py::TestSubTest::test_simple_terminal_verbose[pytest-xdist]
-  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:46: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
-    warner(PytestBenchmarkWarning(text))
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 26 passed, 5 xfailed, 7 warnings ========
+======== 27 passed, 5 xfailed ========
   py$(PYV): OK
   congratulations :)
