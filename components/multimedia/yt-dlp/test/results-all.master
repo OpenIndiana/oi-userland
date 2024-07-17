@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6827 items / 5861 deselected / 966 selected
+collecting ... collected 6857 items / 5864 deselected / 993 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
@@ -212,6 +212,12 @@ test/test_networking.py::TestHTTPRequestHandler::test_verify_cert[CurlCFFI] SKIP
 test/test_networking.py::TestHTTPRequestHandler::test_ssl_error[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_ssl_error[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_ssl_error[CurlCFFI] SKIPPED
+test/test_networking.py::TestHTTPRequestHandler::test_legacy_ssl_extension[Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_legacy_ssl_extension[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_legacy_ssl_extension[CurlCFFI] SKIPPED
+test/test_networking.py::TestHTTPRequestHandler::test_legacy_ssl_support[Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_legacy_ssl_support[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_legacy_ssl_support[CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPRequestHandler::test_percent_encode[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_percent_encode[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_percent_encode[CurlCFFI] SKIPPED
@@ -275,6 +281,12 @@ test/test_networking.py::TestHTTPRequestHandler::test_incompleteread[CurlCFFI] S
 test/test_networking.py::TestHTTPRequestHandler::test_cookies[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_cookies[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_cookies[CurlCFFI] SKIPPED
+test/test_networking.py::TestHTTPRequestHandler::test_cookie_sync_only_cookiejar[Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_cookie_sync_only_cookiejar[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_cookie_sync_only_cookiejar[CurlCFFI] SKIPPED
+test/test_networking.py::TestHTTPRequestHandler::test_cookie_sync_delete_cookie[Urllib] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_cookie_sync_delete_cookie[Requests] PASSED
+test/test_networking.py::TestHTTPRequestHandler::test_cookie_sync_delete_cookie[CurlCFFI] SKIPPED
 test/test_networking.py::TestHTTPRequestHandler::test_headers[Urllib] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_headers[Requests] PASSED
 test/test_networking.py::TestHTTPRequestHandler::test_headers[CurlCFFI] SKIPPED
@@ -363,7 +375,6 @@ test/test_networking.py::TestRequestsRequestHandler::test_response_error_mapping
 test/test_networking.py::TestRequestsRequestHandler::test_close[Requests] PASSED
 test/test_networking.py::TestCurlCFFIRequestHandler::test_impersonate[params0-extensions0-CurlCFFI] SKIPPED
 test/test_networking.py::TestCurlCFFIRequestHandler::test_impersonate[params1-extensions1-CurlCFFI] SKIPPED
-test/test_networking.py::TestCurlCFFIRequestHandler::test_impersonate[params2-extensions2-CurlCFFI] SKIPPED
 test/test_networking.py::TestCurlCFFIRequestHandler::test_headers[CurlCFFI] SKIPPED
 test/test_networking.py::TestCurlCFFIRequestHandler::test_response_error_mapping[<lambda>-IncompleteRead-None-CurlCFFI] SKIPPED
 test/test_networking.py::TestCurlCFFIRequestHandler::test_response_error_mapping[<lambda>-TransportError-None0-CurlCFFI] SKIPPED
@@ -411,27 +422,6 @@ test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-fi
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Urllib-file-False-handler_kwargs5] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Requests-http-False-handler_kwargs6] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Requests-https-False-handler_kwargs7] PASSED
-----------------------------------------
-Exception occurred during processing of request from ('127.0.0.1', 47777)
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
-    self.finish_request(request, client_address)
-  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
-    self.RequestHandlerClass(request, client_address, self)
-  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
-    self.handle()
-  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
-    self.handle_one_request()
-  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
-    method()
-  File "$(@D)/test/test_networking.py", line 259, in do_GET
-    self._headers()
-  File "$(@D)/test/test_networking.py", line 84, in _headers
-    self.wfile.write(payload)
-  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
-    self._sock.sendall(b)
-BrokenPipeError: [Errno 32] Broken pipe
-----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Websockets-ws-False-handler_kwargs8] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[Websockets-wss-False-handler_kwargs9] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_url_scheme[CurlCFFI-http-False-handler_kwargs10] SKIPPED
@@ -451,6 +441,27 @@ test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[HTTPSuppor
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[HTTPSupportedRH-http-no-http-UnsupportedRequest] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-http-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-https-UnsupportedRequest] PASSED
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 34542)
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
+    self.handle()
+  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
+    method()
+  File "$(@D)/test/test_networking.py", line 259, in do_GET
+    self._headers()
+  File "$(@D)/test/test_networking.py", line 84, in _headers
+    self.wfile.write(payload)
+  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-socks4-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-socks4a-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-socks5-False] PASSED
@@ -484,26 +495,38 @@ test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-htt
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions3-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions4-AssertionError] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions5-UnsupportedRequest] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions6-AssertionError] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions7-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions8-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions6-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions7-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions8-AssertionError] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions9-AssertionError] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions10-UnsupportedRequest] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions11-AssertionError] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions12-False] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions13-False] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions14-AssertionError] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions15-UnsupportedRequest] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions16-UnsupportedRequest] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions10-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions11-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions12-AssertionError] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions13-UnsupportedRequest] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions14-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions15-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Requests-http-extensions16-AssertionError] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions17-AssertionError] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions18-False] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions19-False] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions20-False] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions21-AssertionError] SKIPPED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[NoCheckRH-http-extensions22-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[NoCheckRH-http-extensions23-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[Websockets-ws-extensions24-False] PASSED
-test/test_networking.py::TestRequestHandlerValidation::test_extension[Websockets-ws-extensions25-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions20-AssertionError] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions21-UnsupportedRequest] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions22-UnsupportedRequest] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions23-AssertionError] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions24-False] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions25-False] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions26-False] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions27-AssertionError] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions28-False] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions29-False] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions30-AssertionError] SKIPPED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[NoCheckRH-http-extensions31-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[NoCheckRH-http-extensions32-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Websockets-ws-extensions33-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Websockets-ws-extensions34-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Websockets-ws-extensions35-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Websockets-ws-extensions36-False] PASSED
+test/test_networking.py::TestRequestHandlerValidation::test_extension[Websockets-ws-extensions37-AssertionError] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_invalid_request_type PASSED
 test/test_networking.py::TestRequestDirector::test_handler_operations PASSED
 test/test_networking.py::TestRequestDirector::test_send PASSED
@@ -951,6 +974,8 @@ test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_send_type
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_send_types[bytes-2-Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_verify_cert[Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_ssl_error[Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_legacy_ssl_extension[Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_legacy_ssl_support[Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_percent_encode[/\u4e2d\u6587-/%E4%B8%AD%E6%96%87-Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_percent_encode[/%c7%9f-/%c7%9f-Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_remove_dot_segments[Websockets] PASSED
@@ -966,6 +991,8 @@ test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_read_time
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_read_timeout[params1-extensions1-Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_connect_timeout[Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_cookies[Websockets] PASSED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_cookie_sync_only_cookiejar[Websockets] SKIPPED
+test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_cookie_sync_delete_cookie[Websockets] SKIPPED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_source_address[Websockets] SKIPPED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_response_url[Websockets] PASSED
 test/test_websockets.py::TestWebsSocketRequestHandlerConformance::test_request_headers[Websockets] PASSED
@@ -1000,6 +1027,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 821 passed, 145 skipped, 5861 deselected ========
+======== 840 passed, 153 skipped, 5864 deselected ========
   py$(PYV): OK
   congratulations :)
