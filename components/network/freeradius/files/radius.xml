@@ -31,10 +31,10 @@
 	file.
 -->
 
-<service_bundle type='manifest' name='freeradius:freeradius'>
+<service_bundle type='manifest' name='radius'>
 
 <service
-	name='network/freeradius'
+	name='network/radius'
 	type='service'
 	version='1'>
 
@@ -119,6 +119,12 @@
 		type='method'
 		name='stop'
 		exec=':kill'
+		timeout_seconds='60' />
+
+	<exec_method
+		type='method'
+		name='refresh'
+		exec=':kill -HUP'
 		timeout_seconds='60' />
 
 	<property_group name='startd'

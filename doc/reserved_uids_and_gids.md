@@ -32,7 +32,7 @@ UID   | User name
 37    | listen
 39    | lldp
 40    | puppet
-45    | freerad
+45    | radmin
 50    | gdm
 51    | zfssnap
 52    | upnp
@@ -108,7 +108,7 @@ GID   | Group name
 32    | spfmilter
 39    | lldp
 40    | puppet
-45    | freerad
+45    | radius
 50    | gdm
 52    | upnp
 53    | named

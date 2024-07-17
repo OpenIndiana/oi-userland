@@ -27,6 +27,7 @@ OPENSSL_VERSION= 3.1
 
 COMPONENT_NAME=		freeradius
 COMPONENT_VERSION=	3.2.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
 		configurable multi-protocol policy server, supporting RADIUS, DHCPv4 DHCPv6, DNS, \
@@ -51,11 +52,13 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         $(CLONEY) $(SOURCE_DIR) $(@D); \
         );
 
-CONFIGURE_OPTIONS += CFLAGS="-D_XPG4_2 -I$(OPENSSL_INCDIR) -I/usr/include/openldap -I/usr/include/odbc -I/usr/postgres/$(PG_VERSION)/include"
-CONFIGURE_OPTIONS += LDFLAGS="-lldap_r -L$(OPENSSL_LIBDIR)"
+CONFIGURE_OPTIONS += CFLAGS="-D_XPG4_2 -I/usr/include/openldap -I/usr/include/odbc -I/usr/postgres/$(PG_VERSION)/include"
+CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
 CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR)/$(MACH64)
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --with-openssl-lib-dir=$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += --with-openssl-include-dir=$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS += --without-static-modules
 
 COMPONENT_INSTALL_ARGS +=       R=$(PROTO_DIR)
