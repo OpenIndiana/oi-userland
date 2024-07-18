@@ -82,7 +82,11 @@ $(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
 
 prep::	$(SOURCE_DIR)/.patched
 
-$(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
+$(BUILD_DIR)/runtime-perl.p5m: $(WS_TOOLS)/runtime-perl.p5m
+	$(MKDIR) $(@D)
+	$(CP) $< $@
+
+$(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched $(BUILD_DIR)/runtime-perl.p5m
 	$(MKDIR) $(@D)
 	cd $(SOURCE_DIR) && \
 	  cat usr/src/tools/env/illumos.sh | \
@@ -97,7 +101,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export PERL_VERSION=\"$(PERL_VERSION)\"; \
 	  echo export PERL_VARIANT=\"-thread-multi\" ; \
 	  echo export PERL_PKGVERS=\"-$(subst .,,$(PERL_VERSION))\"; \
-	  echo export DEP_RUNTIME_PERL="$(WS_TOOLS)/runtime-perl.p5m"; \
+	  echo export DEP_RUNTIME_PERL="$(BUILD_DIR)/runtime-perl.p5m"; \
 	  echo export BUILDPERL32=\"#\"; \
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM); \
 	  echo export BOOTBANNER1=\"$(DISTRIBUTION_NAME) $(DISTRIBUTION_VERSION) Version ^v ^w-bit\") > \
