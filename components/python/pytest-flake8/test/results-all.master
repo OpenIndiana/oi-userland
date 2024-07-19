@@ -1,0 +1,35 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pytest.ini
+collecting ... collected 14 items
+
+.::project PASSED
+.::project PASSED
+tests/test_flake8.py::TestIgnores::test_ignores PASSED
+tests/test_flake8.py::TestIgnores::test_default_flake8_ignores XFAIL
+tests/test_flake8.py::TestIgnores::test_ignores_all PASSED
+tests/test_flake8.py::TestIgnores::test_w293w292 PASSED
+tests/test_flake8.py::TestIgnores::test_mtime_caching PASSED
+tests/test_flake8.py::test_extensions PASSED
+tests/test_flake8.py::test_ok_verbose PASSED
+tests/test_flake8.py::test_keyword_match PASSED
+tests/test_flake8.py::test_run_on_init_file PASSED
+tests/test_flake8.py::test_unicode_error PASSED
+tests/test_flake8.py::test_strict XFAIL (flake8 is not properly regi...)
+tests/test_flake8.py::test_junit_classname PASSED
+
+=============================== warnings summary ===============================
+tests/test_flake8.py: 12 warnings
+  $(@D)/pytest_flake8.py:62: PytestRemovedIn9Warning: The (path: py.path.local) argument is deprecated, please use (file_path: pathlib.Path)
+  see https://docs.pytest.org/en/latest/deprecations.html#py-path-local-arguments-for-hooks-replaced-with-pathlib-path
+    def pytest_collect_file(file_path, path, parent):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+======== 12 passed, 2 xfailed, 12 warnings ========
+  py$(PYV): OK
+  congratulations :)

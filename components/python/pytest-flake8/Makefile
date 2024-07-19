@@ -11,29 +11,34 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-flake8
+#   $WS_TOOLS/python-integrate-project -d python/pytest-flake8 pytest_flake8
 #
 
-BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-flake8
-HUMAN_VERSION =			1.1.1
-COMPONENT_SUMMARY =		pytest-flake8 - pytest plugin to check FLAKE8 requirements
-COMPONENT_PROJECT_URL =		https://github.com/tholo/pytest-flake8
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e0/5f/73ea3b05a5abae642442b1e2c70203a7f3afbb7f5749e90956b36958c078/pytest-flake8-1.1.1.tar.gz
+COMPONENT_NAME =		pytest_flake8
+HUMAN_VERSION =			1.3.0
+COMPONENT_SUMMARY =		pytest plugin to check FLAKE8 requirements
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ba4f243de3cb4c2486ed9e70752c80dd4b636f7ccb27d4eba763c35ed0cd316e
-COMPONENT_LICENSE =		BSD-2-Clause
+	sha256:88fb35562ce32d915c6ba41ef0d5e1cfcdd8ff884a32b7d46aa99fc77a3d1fe6
+COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Testing fails with the flake8-docstring installed
+TEST_CONFLICTING_PACKAGES.python += library/python/flake8-docstring
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flake8
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
