@@ -27,7 +27,7 @@ OPENSSL_VERSION= 3.1
 
 COMPONENT_NAME=		freeradius
 COMPONENT_VERSION=	3.2.5
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
 		configurable multi-protocol policy server, supporting RADIUS, DHCPv4 DHCPv6, DNS, \
@@ -57,12 +57,16 @@ CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
 CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR)/$(MACH64)
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --with-pcap-lib-dir=$(USRLIBDIR)
+CONFIGURE_OPTIONS += --with-pcap-include-dir=/usr/include/pcap
 CONFIGURE_OPTIONS += --with-openssl-lib-dir=$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += --with-openssl-include-dir=$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS += --without-static-modules
 
 COMPONENT_INSTALL_ARGS +=       R=$(PROTO_DIR)
 COMPONENT_POST_INSTALL_ACTION =  \
+	$(CP) $(SOURCE_DIR)/raddb/mods-config/attr_filter/* $(PROTOETCDIR)/raddb/mods-config/attr_filter ; \
+	$(CP) $(SOURCE_DIR)/raddb/policy.d/* $(PROTOETCDIR)/raddb/policy.d ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(MYSQL_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_mysql.so ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(MYSQL_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_mysql.so ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_unixodbc.so ; \
