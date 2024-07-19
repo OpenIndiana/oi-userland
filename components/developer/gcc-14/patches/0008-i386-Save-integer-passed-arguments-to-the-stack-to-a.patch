@@ -1,0 +1,478 @@
+From 7d8f7ba23dc3647ce6bcdc5b2601ca4f217e5c2c Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sat, 23 Jan 2016 22:14:56 -0500
+Subject: i386: Save integer-passed arguments to the stack, to
+ aid debuggers.
+
+Originally implemented in:
+    commit 023cc9a4c9c698bed1f51d38eac850d327fc1146
+    Author: jsm28 <jsm28@138bc75d-0d04-0410-961f-82ee72b054a4>
+    Date:   Wed Jun 29 23:51:34 2005 +0000
+
+        	* gcc/dwarf2.h (DW_AT_SUN_amd64_parmdump): New.
+        	* gcc/dwarf2out.c (gen_subprogram_die): Add this attribute.
+        	* gcc/doc/invoke.texi (-msave-args): New x86-64 option.
+        	* gcc/config/i386/i386.h (MASK_SAVE_ARGS, TARGET_SAVE_ARGS): New.
+        	(TARGET_SWITCHES): Add -msave-args.
+        	* gcc/config/i386/i386.c (struct ix86_frame): Add nmsave_args and
+        	padding0.
+        	(pro_epilogue_adjust_stack): Declare.
+        	(ix86_nsaved_args): New.
+        	(override_options, ix86_can_use_return_insn_p,
+        	ix86_frame_pointer_required, ix86_compute_frame_layout,
+        	ix86_emit_save_regs, ix86_emit_save_regs_using_mov,
+        	ix86_expand_prologue, ix86_expand_epilogue): Handle -msave-args.
+
+        git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/branches/csl-sol210-3_4-branch@101443 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/config/i386/i386-options.cc               |   3 +
+ gcc/config/i386/i386.cc                       | 130 +++++++++++++++++-
+ gcc/config/i386/i386.h                        |   7 +
+ gcc/config/i386/i386.opt                      |  10 ++
+ gcc/doc/invoke.texi                           |   4 +
+ gcc/dwarf2out.cc                              |   5 +
+ .../gcc.target/i386/msave-args-mov.c          |  26 ++++
+ .../gcc.target/i386/msave-args-push.c         |  26 ++++
+ include/dwarf2.def                            |   2 +
+ 9 files changed, 206 insertions(+), 7 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-mov.c
+ create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-push.c
+
+diff --git a/gcc/config/i386/i386-options.cc b/gcc/config/i386/i386-options.cc
+index ac48b5c61c4d..aa3a45dc9602 100644
+--- a/gcc/config/i386/i386-options.cc
++++ b/gcc/config/i386/i386-options.cc
+@@ -2766,6 +2766,9 @@ ix86_option_override_internal (bool main_args_p,
+ 	&= ~(OPTION_MASK_ISA2_AVX5124FMAPS | OPTION_MASK_ISA2_AVX5124VNNIW);
+     }
+ 
++  if (!TARGET_64BIT_P (opts->x_ix86_isa_flags) && TARGET_SAVE_ARGS)
++    error ("-msave-args makes no sense in the 32-bit mode");
++
+   /* Validate -mpreferred-stack-boundary= value or default it to
+      PREFERRED_STACK_BOUNDARY_DEFAULT.  */
+   ix86_preferred_stack_boundary = PREFERRED_STACK_BOUNDARY_DEFAULT;
+diff --git a/gcc/config/i386/i386.cc b/gcc/config/i386/i386.cc
+index e0dc5da88b0b..f6f07630a407 100644
+--- a/gcc/config/i386/i386.cc
++++ b/gcc/config/i386/i386.cc
+@@ -433,6 +433,9 @@ static bool i386_asm_output_addr_const_extra (FILE *, rtx);
+ static bool ix86_can_inline_p (tree, tree);
+ static unsigned int ix86_minimum_incoming_stack_boundary (bool);
+ 
++static int ix86_nsaved_args (void);
++static rtx_def* pro_epilogue_adjust_stack (rtx, rtx, rtx, int, bool);
++
+ 
+ /* Whether -mtune= or -march= were specified */
+ int ix86_tune_defaulted;
+@@ -5908,7 +5911,7 @@ ix86_can_use_return_insn_p (void)
+ 
+   struct ix86_frame &frame = cfun->machine->frame;
+   return (frame.stack_pointer_offset == UNITS_PER_WORD
+-	  && (frame.nregs + frame.nsseregs) == 0);
++	  && (frame.nmsave_args + frame.nregs + frame.nsseregs) == 0);
+ }
+ 
+ /* Return stack frame size.  get_frame_size () returns used stack slots
+@@ -5945,6 +5948,9 @@ ix86_frame_pointer_required (void)
+   if (TARGET_32BIT_MS_ABI && cfun->calls_setjmp)
+     return true;
+ 
++  if (TARGET_SAVE_ARGS)
++    return true;
++
+   /* Win64 SEH, very large frames need a frame-pointer as maximum stack
+      allocation is 4GB.  */
+   if (TARGET_64BIT_MS_ABI && ix86_get_frame_size () > SEH_MAX_FRAME_SIZE)
+@@ -6888,6 +6894,7 @@ ix86_compute_frame_layout (void)
+ 
+   frame->nregs = ix86_nsaved_regs ();
+   frame->nsseregs = ix86_nsaved_sseregs ();
++  frame->nmsave_args = ix86_nsaved_args ();
+ 
+   /* 64-bit MS ABI seem to require stack alignment to be always 16,
+      except for function prologues, leaf functions and when the defult
+@@ -6973,7 +6980,8 @@ ix86_compute_frame_layout (void)
+     }
+ 
+   frame->save_regs_using_mov
+-    = TARGET_PROLOGUE_USING_MOVE && m->use_fast_prologue_epilogue;
++    = TARGET_FORCE_SAVE_REGS_USING_MOV ||
++      (TARGET_PROLOGUE_USING_MOVE && m->use_fast_prologue_epilogue);
+ 
+   /* Skip return address and error code in exception handler.  */
+   offset = INCOMING_FRAME_SP_OFFSET;
+@@ -6990,6 +6998,13 @@ ix86_compute_frame_layout (void)
+   /* The traditional frame pointer location is at the top of the frame.  */
+   frame->hard_frame_pointer_offset = offset;
+ 
++  if (TARGET_SAVE_ARGS)
++    {
++      offset += frame->nmsave_args * UNITS_PER_WORD;
++      offset += (frame->nmsave_args % 2) * UNITS_PER_WORD;
++    }
++  frame->arg_save_offset = offset;
++
+   /* Register save area */
+   offset += frame->nregs * UNITS_PER_WORD;
+   frame->reg_save_offset = offset;
+@@ -7123,7 +7138,7 @@ ix86_compute_frame_layout (void)
+   /* Size prologue needs to allocate.  */
+   to_allocate = offset - frame->sse_reg_save_offset;
+ 
+-  if ((!to_allocate && frame->nregs <= 1)
++  if ((!TARGET_SAVE_ARGS && !to_allocate && frame->nregs <= 1)
+       || (TARGET_64BIT && to_allocate >= HOST_WIDE_INT_C (0x80000000))
+        /* If static stack checking is enabled and done with probes,
+ 	  the registers need to be saved before allocating the frame.  */
+@@ -7147,7 +7162,11 @@ ix86_compute_frame_layout (void)
+     {
+       frame->red_zone_size = to_allocate;
+       if (frame->save_regs_using_mov)
++      {
+ 	frame->red_zone_size += frame->nregs * UNITS_PER_WORD;
++	frame->red_zone_size += frame->nmsave_args * UNITS_PER_WORD;
++	frame->red_zone_size += (frame->nmsave_args % 2) * UNITS_PER_WORD;
++      }
+       if (frame->red_zone_size > RED_ZONE_SIZE - RED_ZONE_RESERVE)
+ 	frame->red_zone_size = RED_ZONE_SIZE - RED_ZONE_RESERVE;
+     }
+@@ -7205,6 +7224,22 @@ ix86_compute_frame_layout (void)
+       else
+ 	frame->hard_frame_pointer_offset = frame->hfp_save_offset;
+     }
++
++  if (getenv("DEBUG_FRAME_STUFF") != NULL)
++    {
++      printf("nmsave_args: %d\n", frame->nmsave_args);
++      printf("nsseregs: %d\n", frame->nsseregs);
++      printf("nregs: %d\n", frame->nregs);
++
++      printf("frame_pointer_offset: %llx\n", frame->frame_pointer_offset);
++      printf("hard_frame_pointer_offset: %llx\n", frame->hard_frame_pointer_offset);
++      printf("stack_pointer_offset: %llx\n", frame->stack_pointer_offset);
++      printf("hfp_save_offset: %llx\n", frame->hfp_save_offset);
++      printf("arg_save_offset: %llx\n", frame->arg_save_offset);
++      printf("reg_save_offset: %llx\n", frame->reg_save_offset);
++      printf("sse_reg_save_offset: %llx\n", frame->sse_reg_save_offset);
++
++    }
+ }
+ 
+ /* This is semi-inlined memory_address_length, but simplified
+@@ -7420,6 +7455,23 @@ ix86_emit_save_regs (void)
+   int regno;
+   rtx_insn *insn;
+ 
++  if (TARGET_SAVE_ARGS)
++    {
++      int i;
++      int nsaved = ix86_nsaved_args ();
++      int start = cfun->returns_struct;
++
++      for (i = start; i < start + nsaved; i++)
++	{
++	  regno = x86_64_int_parameter_registers[i];
++	  insn = emit_insn (gen_push (gen_rtx_REG (word_mode, regno)));
++	  RTX_FRAME_RELATED_P (insn) = 1;
++	}
++      if (nsaved % 2 != 0)
++	pro_epilogue_adjust_stack (stack_pointer_rtx, stack_pointer_rtx,
++				   GEN_INT (-UNITS_PER_WORD), -1, false);
++    }
++
+   if (!TARGET_APX_PUSH2POP2
+       || !ix86_can_use_push2pop2 ()
+       || cfun->machine->func_type != TYPE_NORMAL)
+@@ -7585,9 +7637,30 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+ /* Emit code to save registers using MOV insns.
+    First register is stored at CFA - CFA_OFFSET.  */
+ static void
+-ix86_emit_save_regs_using_mov (HOST_WIDE_INT cfa_offset)
++ix86_emit_save_regs_using_mov (const struct ix86_frame *frame)
+ {
+   unsigned int regno;
++  HOST_WIDE_INT cfa_offset = frame->arg_save_offset;
++
++  if (TARGET_SAVE_ARGS)
++    {
++      int i;
++      int nsaved = ix86_nsaved_args ();
++      int start = cfun->returns_struct;
++
++      /* We deal with this twice? */
++      if (nsaved % 2 != 0)
++	cfa_offset -= UNITS_PER_WORD;
++
++      for (i = start + nsaved - 1; i >= start; i--)
++	{
++	  regno = x86_64_int_parameter_registers[i];
++	  ix86_emit_save_reg_using_mov(word_mode, regno, cfa_offset);
++	  cfa_offset -= UNITS_PER_WORD;
++	}
++    }
++
++  cfa_offset = frame->reg_save_offset;
+ 
+   for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
+     if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
+@@ -8945,7 +9018,7 @@ ix86_expand_prologue (void)
+ 	}
+     }
+ 
+-  int_registers_saved = (frame.nregs == 0);
++  int_registers_saved = (frame.nregs == 0 && frame.nmsave_args == 0);
+   sse_registers_saved = (frame.nsseregs == 0);
+   save_stub_call_needed = (m->call_ms2sysv);
+   gcc_assert (sse_registers_saved || !save_stub_call_needed);
+@@ -8987,7 +9060,7 @@ ix86_expand_prologue (void)
+ 	       && (! TARGET_STACK_PROBE
+ 		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
+ 	{
+-	  ix86_emit_save_regs_using_mov (frame.reg_save_offset);
++	  ix86_emit_save_regs_using_mov (&frame);
+ 	  cfun->machine->red_zone_used = true;
+ 	  int_registers_saved = true;
+ 	}
+@@ -9287,7 +9360,7 @@ ix86_expand_prologue (void)
+     }
+ 
+   if (!int_registers_saved)
+-    ix86_emit_save_regs_using_mov (frame.reg_save_offset);
++    ix86_emit_save_regs_using_mov (&frame);
+   if (!sse_registers_saved)
+     ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
+   else if (save_stub_call_needed)
+@@ -9322,6 +9395,7 @@ ix86_expand_prologue (void)
+      relative to the value of the stack pointer at the end of the function
+      prologue, and moving instructions that access redzone area via frame
+      pointer inside push sequence violates this assumption.  */
++  /* XXX: We may wish to do this when SAVE_ARGS in general */
+   if (frame_pointer_needed && frame.red_zone_size)
+     emit_insn (gen_memory_blockage ());
+ 
+@@ -9824,6 +9898,7 @@ ix86_expand_epilogue (int style)
+ 
+   /* See the comment about red zone and frame
+      pointer usage in ix86_expand_prologue.  */
++  /* XXX: We may wish to do this when SAVE_ARGS in general */
+   if (frame_pointer_needed && frame.red_zone_size)
+     emit_insn (gen_memory_blockage ());
+ 
+@@ -10068,6 +10143,35 @@ ix86_expand_epilogue (int style)
+ 	ix86_emit_restore_regs_using_pop (TARGET_APX_PPX);
+     }
+ 
++  if (TARGET_SAVE_ARGS) {
++    /*
++     * For each saved argument, emit a restore note, to make sure it happens
++     * correctly within the shrink wrapping (I think).
++     *
++     * Note that 'restore' in this case merely means the rule is the same as
++     * it was on function entry, not that we have actually done a register
++     * restore (which of course, we haven't).
++     *
++     * If we do not do this, the DWARF code will emit sufficient restores to
++     * provide balance on its own initiative, which in the presence of
++     * -fshrink-wrap may actually _introduce_ unbalance (whereby we only
++     * .cfi_offset a register sometimes, but will always .cfi_restore it.
++     * This will trip an assert.)
++     */
++    int start = cfun->returns_struct;
++    int nsaved = ix86_nsaved_args();
++    int i;
++
++    for (i = start + nsaved - 1; i >= start; i--)
++      queued_cfa_restores
++	= alloc_reg_note (REG_CFA_RESTORE,
++			  gen_rtx_REG(Pmode,
++				      x86_64_int_parameter_registers[i]),
++			  queued_cfa_restores);
++
++    gcc_assert(m->fs.fp_valid);
++  }
++
+   /* If we used a stack pointer and haven't already got rid of it,
+      then do so now.  */
+   if (m->fs.fp_valid)
+@@ -11232,6 +11336,18 @@ ix86_cannot_force_const_mem (machine_mode mode, rtx x)
+   return !ix86_legitimate_constant_p (mode, x);
+ }
+ 
++/* Return number of arguments to be saved on the stack with
++   -msave-args.  */
++
++static int
++ix86_nsaved_args (void)
++{
++  if (TARGET_SAVE_ARGS)
++    return crtl->args.info.regno - cfun->returns_struct;
++  else
++    return 0;
++}
++
+ /*  Nonzero if the symbol is marked as dllimport, or as stub-variable,
+     otherwise zero.  */
+ 
+diff --git a/gcc/config/i386/i386.h b/gcc/config/i386/i386.h
+index 529edff93a41..6a4d538938e4 100644
+--- a/gcc/config/i386/i386.h
++++ b/gcc/config/i386/i386.h
+@@ -2595,6 +2595,11 @@ enum avx_u128_state
+ 
+    saved frame pointer			if frame_pointer_needed
+ 					<- HARD_FRAME_POINTER
++
++   [-msave-args]			<- arg_save_offset
++
++   [saveargs padding]
++
+    [saved regs]
+ 					<- reg_save_offset
+    [padding0]
+@@ -2628,6 +2633,7 @@ enum avx_u128_state
+   */
+ struct GTY(()) ix86_frame
+ {
++  int nmsave_args;
+   int nsseregs;
+   int nregs;
+   int va_arg_size;
+@@ -2639,6 +2645,7 @@ struct GTY(()) ix86_frame
+   HOST_WIDE_INT hard_frame_pointer_offset;
+   HOST_WIDE_INT stack_pointer_offset;
+   HOST_WIDE_INT hfp_save_offset;
++  HOST_WIDE_INT arg_save_offset;
+   HOST_WIDE_INT reg_save_offset;
+   HOST_WIDE_INT stack_realign_allocate;
+   HOST_WIDE_INT stack_realign_offset;
+diff --git a/gcc/config/i386/i386.opt b/gcc/config/i386/i386.opt
+index d5f793a9e8b0..c0305bd79703 100644
+--- a/gcc/config/i386/i386.opt
++++ b/gcc/config/i386/i386.opt
+@@ -537,6 +537,16 @@ mtls-direct-seg-refs
+ Target Mask(TLS_DIRECT_SEG_REFS)
+ Use direct references against %gs when accessing tls data.
+ 
++msave-args
++Target Mask(SAVE_ARGS) Var(ix86_target_flags)
++Save integer arguments on the stack at function entry.
++
++mforce-save-regs-using-mov
++Target Mask(FORCE_SAVE_REGS_USING_MOV) Var(ix86_target_flags)
++Save registers using push in function prologues.  This is intentionally
++undocumented and used for msave-args testing.
++
++
+ mtune=
+ Target RejectNegative Negative(mtune=) Joined Var(ix86_tune_string)
+ Schedule code for given CPU.
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index cb53a55501c3..29af3cda5f51 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -21168,6 +21168,10 @@ The default setting is @samp{tpidr_el0}.  It is recommended to compile all
+ code intended to interoperate with the same value of this option to avoid
+ accessing a different thread pointer from the wrong exception level.
+ 
++@opindex msave-args
++@item -msave-args
++Save integer-sized arguments on the stack on function entry.
++
+ @opindex mstrict-align
+ @opindex mno-strict-align
+ @item -mstrict-align
+diff --git a/gcc/dwarf2out.cc b/gcc/dwarf2out.cc
+index 1b0e8b5a5b29..b1c19db5ce48 100644
+--- a/gcc/dwarf2out.cc
++++ b/gcc/dwarf2out.cc
+@@ -24152,6 +24152,11 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
+     /* Add the calling convention attribute if requested.  */
+     add_calling_convention_attribute (subr_die, decl);
+ 
++#ifdef TARGET_SAVE_ARGS
++  if (declaration && TARGET_SAVE_ARGS)
++    add_AT_flag (subr_die, DW_AT_SUN_amd64_parmdump, 1);
++#endif
++
+   /* Output Dwarf info for all of the stuff within the body of the function
+      (if it has one - it may be just a declaration).
+ 
+diff --git a/gcc/testsuite/gcc.target/i386/msave-args-mov.c b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
+new file mode 100644
+index 000000000000..a2ca76752a96
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
+@@ -0,0 +1,26 @@
++/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
++/* { dg-options "-msave-args -mforce-save-regs-using-mov -save-temps" } */
++
++#include <stdio.h>
++
++void t(int, int, int, int, int) __attribute__ ((noinline));
++
++int
++main(int argc, char **argv)
++{
++	t(1, 2, 3, 4, 5);
++	return (0);
++}
++
++void
++t(int a, int b, int c, int d, int e)
++{
++	printf("%d %d %d %d %d", a, b, c, d, e);
++}
++
++/* { dg-final { scan-assembler "movq\t%rdi, -8\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%rsi, -16\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%rdx, -24\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%rcx, -32\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%r8, -40\\(%rbp\\)" } } */
++/* { dg-final { cleanup-saved-temps } } */
+diff --git a/gcc/testsuite/gcc.target/i386/msave-args-push.c b/gcc/testsuite/gcc.target/i386/msave-args-push.c
+new file mode 100644
+index 000000000000..fbe053dadc8b
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/i386/msave-args-push.c
+@@ -0,0 +1,26 @@
++/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
++/* { dg-options "-msave-args -save-temps " } */
++
++#include <stdio.h>
++
++void t(int, int, int, int, int) __attribute__ ((noinline));
++
++int
++main(int argc, char **argv)
++{
++	t(1, 2, 3, 4, 5);
++	return (0);
++}
++
++void
++t(int a, int b, int c, int d, int e)
++{
++	printf("%d %d %d %d %d", a, b, c, d, e);
++}
++
++/* { dg-final { scan-assembler "pushq\t%rdi" } } */
++/* { dg-final { scan-assembler "pushq\t%rsi" } } */
++/* { dg-final { scan-assembler "pushq\t%rdx" } } */
++/* { dg-final { scan-assembler "pushq\t%rcx" } } */
++/* { dg-final { scan-assembler "pushq\t%r8" } } */
++/* { dg-final { cleanup-saved-temps } } */
+diff --git a/include/dwarf2.def b/include/dwarf2.def
+index 66c7fa1220f8..9284f3d59c54 100644
+--- a/include/dwarf2.def
++++ b/include/dwarf2.def
+@@ -467,6 +467,8 @@ DW_TAG (DW_AT_GNU_denominator, 0x2304)
+ /* Biased integer extension.
+    See https://gcc.gnu.org/wiki/DW_AT_GNU_bias .  */
+ DW_TAG (DW_AT_GNU_bias, 0x2305)
++/* Sun extension. */
++DW_AT (DW_AT_SUN_amd64_parmdump, 0x2224)
+ /* UPC extension.  */
+ DW_AT (DW_AT_upc_threads_scaled, 0x3210)
+ /* PGI (STMicroelectronics) extensions.  */
