@@ -24,131 +24,147 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 group groupname=radius gid=45
-user username=raddmin gcos-field="FreeRADIUS multi-protocol policy server" group=radius home-dir=/etc/raddb login-shell=/bin/false uid=45
+user username=radmin gcos-field="FreeRADIUS multi-protocol policy server" group=radius home-dir=/etc/raddb login-shell=/bin/false uid=45
 
 file files/radius.auth_attr path=etc/security/auth_attr.d/radius
 file files/radius.xml path=lib/svc/manifest/network/radius.xml restart_fmri=svc:/system/manifest-import:default
 
-file path=etc/raddb/README.rst
-file path=etc/raddb/certs/01.pem
-file path=etc/raddb/certs/02.pem
-file path=etc/raddb/certs/Makefile
-file path=etc/raddb/certs/README.md
-file path=etc/raddb/certs/bootstrap
-file path=etc/raddb/certs/ca.cnf
-file path=etc/raddb/certs/ca.crl
-file path=etc/raddb/certs/ca.der
-file path=etc/raddb/certs/ca.key
-file path=etc/raddb/certs/ca.pem
-file path=etc/raddb/certs/client.cnf
-file path=etc/raddb/certs/client.crt
-file path=etc/raddb/certs/client.csr
-file path=etc/raddb/certs/client.key
-file path=etc/raddb/certs/client.p12
-file path=etc/raddb/certs/client.pem
-file path=etc/raddb/certs/index.txt
-file path=etc/raddb/certs/index.txt.attr
-file path=etc/raddb/certs/index.txt.attr.old
-file path=etc/raddb/certs/index.txt.old
-file path=etc/raddb/certs/inner-server.cnf
-file path=etc/raddb/certs/passwords.mk
-file path=etc/raddb/certs/realms/README.md
-file path=etc/raddb/certs/serial
-file path=etc/raddb/certs/serial.old
-file path=etc/raddb/certs/server.cnf
-file path=etc/raddb/certs/server.crt
-file path=etc/raddb/certs/server.csr
-file path=etc/raddb/certs/server.key
-file path=etc/raddb/certs/server.p12
-file path=etc/raddb/certs/server.pem
-file path=etc/raddb/certs/user@example.org.p12
-file path=etc/raddb/certs/user@example.org.pem
-file path=etc/raddb/certs/xpextensions
-file path=etc/raddb/clients.conf
-file path=etc/raddb/dictionary
-file path=etc/raddb/experimental.conf
+dir path=etc/raddb owner=radmin group=radius mode=0755
+dir path=etc/raddb/certs owner=radmin group=radius mode=0755
+dir path=etc/raddb/mods-config owner=radmin group=radius mode=0755
+dir path=etc/raddb/mods-config/attr_filter owner=radmin group=radius mode=0755
+dir path=etc/raddb/mods-available owner=radmin group=radius mode=0755
+dir path=etc/raddb/mods-enabled owner=radmin group=radius mode=0755
+dir path=etc/raddb/policy.d owner=radmin group=radius mode=0755
+dir path=etc/raddb/sites-available owner=radmin group=radius mode=0755
+dir path=etc/raddb/sites-enabled owner=radmin group=radius mode=0755
+
+file path=etc/raddb/README.rst owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/01.pem owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/02.pem owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/Makefile owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/README.md owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/bootstrap owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/ca.cnf owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/ca.crl owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/ca.der owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/ca.key owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/ca.pem owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/client.cnf owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/client.crt owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/client.csr owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/client.key owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/client.p12 owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/client.pem owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/index.txt owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/index.txt.attr owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/index.txt.attr.old owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/index.txt.old owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/inner-server.cnf owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/passwords.mk owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/realms/README.md owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/serial owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/serial.old owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/server.cnf owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/server.crt owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/server.csr owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/server.key owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/server.p12 owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/server.pem owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/user@example.org.p12 owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/user@example.org.pem owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/certs/xpextensions owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/clients.conf owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/dictionary owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/experimental.conf owner=radmin group=radius mode=0644 preserve=renamenew
 link path=etc/raddb/hints target=./mods-config/preprocess/hints
 link path=etc/raddb/huntgroups target=./mods-config/preprocess/huntgroups
-file path=etc/raddb/mods-available/README.rst
-file path=etc/raddb/mods-available/abfab_psk_sql
-file path=etc/raddb/mods-available/always
-file path=etc/raddb/mods-available/attr_filter
-file path=etc/raddb/mods-available/cache
-file path=etc/raddb/mods-available/cache_auth
-file path=etc/raddb/mods-available/chap
-file path=etc/raddb/mods-available/couchbase
-file path=etc/raddb/mods-available/counter
-file path=etc/raddb/mods-available/cui
-file path=etc/raddb/mods-available/date
-file path=etc/raddb/mods-available/detail
-file path=etc/raddb/mods-available/detail.example.com
-file path=etc/raddb/mods-available/detail.log
-file path=etc/raddb/mods-available/dhcp
-file path=etc/raddb/mods-available/dhcp_files
-file path=etc/raddb/mods-available/dhcp_passwd
-file path=etc/raddb/mods-available/dhcp_sql
-file path=etc/raddb/mods-available/dhcp_sqlippool
-file path=etc/raddb/mods-available/digest
-file path=etc/raddb/mods-available/dpsk
-file path=etc/raddb/mods-available/dynamic_clients
-file path=etc/raddb/mods-available/eap
-file path=etc/raddb/mods-available/echo
-file path=etc/raddb/mods-available/etc_group
-file path=etc/raddb/mods-available/exec
-file path=etc/raddb/mods-available/expiration
-file path=etc/raddb/mods-available/expr
-file path=etc/raddb/mods-available/files
-file path=etc/raddb/mods-available/idn
-file path=etc/raddb/mods-available/inner-eap
-file path=etc/raddb/mods-available/ippool
-file path=etc/raddb/mods-available/json
-file path=etc/raddb/mods-available/krb5
-file path=etc/raddb/mods-available/ldap
-file path=etc/raddb/mods-available/ldap_google
-file path=etc/raddb/mods-available/linelog
-file path=etc/raddb/mods-available/logintime
-file path=etc/raddb/mods-available/mac2ip
-file path=etc/raddb/mods-available/mac2vlan
-file path=etc/raddb/mods-available/moonshot-targeted-ids
-file path=etc/raddb/mods-available/mschap
-file path=etc/raddb/mods-available/ntlm_auth
-file path=etc/raddb/mods-available/opendirectory
-file path=etc/raddb/mods-available/pam
-file path=etc/raddb/mods-available/pap
-file path=etc/raddb/mods-available/passwd
-file path=etc/raddb/mods-available/perl
-file path=etc/raddb/mods-available/preprocess
-file path=etc/raddb/mods-available/python
-file path=etc/raddb/mods-available/python3
-file path=etc/raddb/mods-available/radutmp
-file path=etc/raddb/mods-available/realm
-file path=etc/raddb/mods-available/redis
-file path=etc/raddb/mods-available/rediswho
-file path=etc/raddb/mods-available/replicate
-file path=etc/raddb/mods-available/rest
-file path=etc/raddb/mods-available/smbpasswd
-file path=etc/raddb/mods-available/smsotp
-file path=etc/raddb/mods-available/soh
-file path=etc/raddb/mods-available/sometimes
-file path=etc/raddb/mods-available/sql
-file path=etc/raddb/mods-available/sql_map
-file path=etc/raddb/mods-available/sqlcounter
-file path=etc/raddb/mods-available/sqlippool
-file path=etc/raddb/mods-available/sradutmp
-file path=etc/raddb/mods-available/totp
-file path=etc/raddb/mods-available/unbound
-file path=etc/raddb/mods-available/unix
-file path=etc/raddb/mods-available/unpack
-file path=etc/raddb/mods-available/utf8
-file path=etc/raddb/mods-available/wimax
-file path=etc/raddb/mods-available/yubikey
-file path=etc/raddb/mods-config/files/authorize
-file path=etc/raddb/mods-config/preprocess/hints
-file path=etc/raddb/mods-config/preprocess/huntgroups
-file path=etc/raddb/mods-config/python/example.py
-file path=etc/raddb/mods-config/python/radiusd.py
-file path=etc/raddb/mods-config/python3/example.py
-file path=etc/raddb/mods-config/python3/radiusd.py
+file path=etc/raddb/mods-available/README.rst owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/abfab_psk_sql owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/always owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/attr_filter owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/cache owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/cache_auth owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/chap owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/couchbase owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/counter owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/cui owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/date owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/detail owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/detail.example.com owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/detail.log owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/dhcp owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/dhcp_files owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/dhcp_passwd owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/dhcp_sql owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/dhcp_sqlippool owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/digest owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/dpsk owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/dynamic_clients owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/eap owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/echo owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/etc_group owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/exec owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/expiration owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/expr owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/files owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/idn owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/inner-eap owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/ippool owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/json owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/krb5 owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/ldap owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/ldap_google owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/linelog owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/logintime owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/mac2ip owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/mac2vlan owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/moonshot-targeted-ids owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/mschap owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/ntlm_auth owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/opendirectory owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/pam owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/pap owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/passwd owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/perl owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/preprocess owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/python owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/python3 owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/radutmp owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/realm owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/redis owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/rediswho owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/replicate owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/rest owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/smbpasswd owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/smsotp owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/soh owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/sometimes owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/sql owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/sql_map owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/sqlcounter owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/sqlippool owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/sradutmp owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/totp owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/unbound owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/unix owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/unpack owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/utf8 owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/wimax owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-available/yubikey owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/attr_filter/access_challenge owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/attr_filter/access_reject owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/attr_filter/accounting_response owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/attr_filter/coa owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/attr_filter/post-proxy owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/attr_filter/pre-proxy owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/files/authorize owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/preprocess/hints owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/preprocess/huntgroups owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/python/example.py owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/python/radiusd.py owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/python3/example.py owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/mods-config/python3/radiusd.py owner=radmin group=radius mode=0644 preserve=renamenew
 link path=etc/raddb/mods-enabled/always target=../mods-available/always
 link path=etc/raddb/mods-enabled/attr_filter \
     target=../mods-available/attr_filter
@@ -181,45 +197,57 @@ link path=etc/raddb/mods-enabled/totp target=../mods-available/totp
 link path=etc/raddb/mods-enabled/unix target=../mods-available/unix
 link path=etc/raddb/mods-enabled/unpack target=../mods-available/unpack
 link path=etc/raddb/mods-enabled/utf8 target=../mods-available/utf8
-file path=etc/raddb/panic.gdb
-file path=etc/raddb/proxy.conf
-file path=etc/raddb/radiusd.conf
-file path=etc/raddb/sites-available/README
-file path=etc/raddb/sites-available/abfab-tls
-file path=etc/raddb/sites-available/abfab-tr-idp
-file path=etc/raddb/sites-available/aws-nlb
-file path=etc/raddb/sites-available/buffered-sql
-file path=etc/raddb/sites-available/challenge
-file path=etc/raddb/sites-available/channel_bindings
-file path=etc/raddb/sites-available/check-eap-tls
-file path=etc/raddb/sites-available/coa
-file path=etc/raddb/sites-available/coa-relay
-file path=etc/raddb/sites-available/control-socket
-file path=etc/raddb/sites-available/copy-acct-to-home-server
-file path=etc/raddb/sites-available/decoupled-accounting
-file path=etc/raddb/sites-available/default
-file path=etc/raddb/sites-available/dhcp
-file path=etc/raddb/sites-available/dhcp.relay
-file path=etc/raddb/sites-available/dynamic-clients
-file path=etc/raddb/sites-available/example
-file path=etc/raddb/sites-available/google-ldap-auth
-file path=etc/raddb/sites-available/inner-tunnel
-file path=etc/raddb/sites-available/originate-coa
-file path=etc/raddb/sites-available/proxy-inner-tunnel
-file path=etc/raddb/sites-available/resource-check
-file path=etc/raddb/sites-available/robust-proxy-accounting
-file path=etc/raddb/sites-available/soh
-file path=etc/raddb/sites-available/status
-file path=etc/raddb/sites-available/tls
-file path=etc/raddb/sites-available/tls-cache
-file path=etc/raddb/sites-available/totp
-file path=etc/raddb/sites-available/virtual.example.com
-file path=etc/raddb/sites-available/vmps
+file path=etc/raddb/panic.gdb owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/abfab-tr owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/accounting owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/canonicalization owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/control owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/cui owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/debug owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/dhcp owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/eap owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/filter owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/moonshot-targeted-ids owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/operator-name owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/policy.d/rfc7542 owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/proxy.conf owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/radiusd.conf owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/README owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/abfab-tls owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/abfab-tr-idp owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/aws-nlb owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/buffered-sql owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/challenge owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/channel_bindings owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/check-eap-tls owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/coa owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/coa-relay owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/control-socket owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/copy-acct-to-home-server owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/decoupled-accounting owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/default owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/dhcp owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/dhcp.relay owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/dynamic-clients owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/example owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/google-ldap-auth owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/inner-tunnel owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/originate-coa owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/proxy-inner-tunnel owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/resource-check owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/robust-proxy-accounting owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/soh owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/status owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/tls owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/tls-cache owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/totp owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/virtual.example.com owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/sites-available/vmps owner=radmin group=radius mode=0644 preserve=renamenew
 link path=etc/raddb/sites-enabled/default target=../sites-available/default
 link path=etc/raddb/sites-enabled/inner-tunnel \
     target=../sites-available/inner-tunnel
-file path=etc/raddb/templates.conf
-file path=etc/raddb/trigger.conf
+file path=etc/raddb/templates.conf owner=radmin group=radius mode=0644 preserve=renamenew
+file path=etc/raddb/trigger.conf owner=radmin group=radius mode=0644 preserve=renamenew
 link path=etc/raddb/users target=./mods-config/files/authorize
 file path=usr/bin/dhcpclient
 file path=usr/bin/map_unit
