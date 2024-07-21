@@ -27,7 +27,7 @@ OPENSSL_VERSION= 3.1
 
 COMPONENT_NAME=		freeradius
 COMPONENT_VERSION=	3.2.5
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
 		configurable multi-protocol policy server, supporting RADIUS, DHCPv4 DHCPv6, DNS, \
@@ -50,15 +50,18 @@ TEST_TARGET= $(NO_TESTS)
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
         $(CLONEY) $(SOURCE_DIR) $(@D); \
+	$(GSED) -i -e 's/-D_LIBRADIUS/-D_LIBRADIUS -D_XPG4_2/' $(@D)/src/lib/all.mk; \
         );
 
-CONFIGURE_OPTIONS += CFLAGS="-D_XPG4_2 -I/usr/include/openldap -I/usr/include/odbc -I/usr/postgres/$(PG_VERSION)/include"
+CONFIGURE_OPTIONS += CFLAGS="-I/usr/include/odbc"
 CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
 CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR)/$(MACH64)
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --with-pcap-lib-dir=$(USRLIBDIR)
 CONFIGURE_OPTIONS += --with-pcap-include-dir=/usr/include/pcap
+CONFIGURE_OPTIONS += --with-rlm-ldap-include-dir=/usr/include/openldap
+CONFIGURE_OPTIONS += --with-rlm-sql_postgresql-include-dir=/usr/postgres/$(PG_VERSION)/include
 CONFIGURE_OPTIONS += --with-openssl-lib-dir=$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += --with-openssl-include-dir=$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS += --without-static-modules
@@ -66,6 +69,7 @@ CONFIGURE_OPTIONS += --without-static-modules
 COMPONENT_INSTALL_ARGS +=       R=$(PROTO_DIR)
 COMPONENT_POST_INSTALL_ACTION =  \
 	$(CP) $(SOURCE_DIR)/raddb/mods-config/attr_filter/* $(PROTOETCDIR)/raddb/mods-config/attr_filter ; \
+	$(CP) $(SOURCE_DIR)/raddb/mods-config/files/* $(PROTOETCDIR)/raddb/mods-config/files ; \
 	$(CP) $(SOURCE_DIR)/raddb/policy.d/* $(PROTOETCDIR)/raddb/policy.d ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(MYSQL_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_mysql.so ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(MYSQL_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_mysql.so ; \
@@ -78,7 +82,11 @@ COMPONENT_POST_INSTALL_ACTION =  \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(USRLIBDIR)/python$(PYTHON_VERSION)/config-$(PYTHON_VERSION)"' $(PROTOUSRLIBDIR64)/rlm_python.so ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(USRLIBDIR)/python$(PYTHON_VERSION)/config-$(PYTHON_VERSION)"' $(PROTOUSRLIBDIR64)/rlm_python.so ;
 
+# manually added dependency r compilation only)
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
