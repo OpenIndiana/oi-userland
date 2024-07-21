@@ -1,55 +1,28 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2016 Adam Stevko <adam.stevko@gmail.com>
+# Copyright 2024 Andreas Wacknitz
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-
-set name=pkg.fmri value=pkg:/library/dns/ldns@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="ldns is a library to simplify DNS programming"
-set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license ldns.license license='BSD'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/drill
-file path=usr/bin/$(MACH64)/ldns-chaos
-file path=usr/bin/$(MACH64)/ldns-compare-zones
-file path=usr/bin/$(MACH64)/ldns-config
-file path=usr/bin/$(MACH64)/ldns-dane
-file path=usr/bin/$(MACH64)/ldns-dpa
-file path=usr/bin/$(MACH64)/ldns-gen-zone
-file path=usr/bin/$(MACH64)/ldns-key2ds
-file path=usr/bin/$(MACH64)/ldns-keyfetcher
-file path=usr/bin/$(MACH64)/ldns-keygen
-file path=usr/bin/$(MACH64)/ldns-mx
-file path=usr/bin/$(MACH64)/ldns-notify
-file path=usr/bin/$(MACH64)/ldns-nsec3-hash
-file path=usr/bin/$(MACH64)/ldns-read-zone
-file path=usr/bin/$(MACH64)/ldns-resolver
-file path=usr/bin/$(MACH64)/ldns-revoke
-file path=usr/bin/$(MACH64)/ldns-rrsig
-file path=usr/bin/$(MACH64)/ldns-signzone
-file path=usr/bin/$(MACH64)/ldns-test-edns
-file path=usr/bin/$(MACH64)/ldns-testns
-file path=usr/bin/$(MACH64)/ldns-update
-file path=usr/bin/$(MACH64)/ldns-verify-zone
-file path=usr/bin/$(MACH64)/ldns-version
-file path=usr/bin/$(MACH64)/ldns-walk
-file path=usr/bin/$(MACH64)/ldns-zcat
-file path=usr/bin/$(MACH64)/ldns-zsplit
-file path=usr/bin/$(MACH64)/ldnsd
 file path=usr/bin/drill
 file path=usr/bin/ldns-chaos
 file path=usr/bin/ldns-compare-zones
@@ -110,14 +83,10 @@ file path=usr/include/ldns/update.h
 file path=usr/include/ldns/util.h
 file path=usr/include/ldns/wire2host.h
 file path=usr/include/ldns/zone.h
-link path=usr/lib/$(MACH64)/libldns.so target=libldns.so.3.5.0
-link path=usr/lib/$(MACH64)/libldns.so.3 target=libldns.so.3.5.0
-file path=usr/lib/$(MACH64)/libldns.so.3.5.0
+link path=usr/lib/$(MACH64)/libldns.so target=libldns.so.3.6.0
+link path=usr/lib/$(MACH64)/libldns.so.3 target=libldns.so.3.6.0
+file path=usr/lib/$(MACH64)/libldns.so.3.6.0
 file path=usr/lib/$(MACH64)/pkgconfig/ldns.pc
-link path=usr/lib/libldns.so target=libldns.so.3.5.0
-link path=usr/lib/libldns.so.3 target=libldns.so.3.5.0
-file path=usr/lib/libldns.so.3.5.0
-file path=usr/lib/pkgconfig/ldns.pc
 file path=usr/share/man/man1/drill.1
 file path=usr/share/man/man1/ldns-chaos.1
 file path=usr/share/man/man1/ldns-compare-zones.1
