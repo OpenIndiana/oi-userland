@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib_qthelp
-HUMAN_VERSION =			1.0.7
-COMPONENT_SUMMARY =		sphinxcontrib_qthelp - sphinxcontrib-qthelp is a sphinx extension which outputs QtHelp documents
+HUMAN_VERSION =			1.0.8
+COMPONENT_SUMMARY =		sphinxcontrib-qthelp is a sphinx extension which outputs QtHelp documents
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ac/29/705cd4e93e98a8473d62b5c32288e6de3f0c9660d3c97d4e80d3dbbad82b/sphinxcontrib_qthelp-1.0.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:053dedc38823a80a7209a80860b16b722e9e0209e32fea98c90e4e6624588ed6
+	sha256:db3f8fa10789c7a8e76d173c23364bdf0ebcd9449969a9e6a3dd31b8b7469f03
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,5 +43,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/defusedxml
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
