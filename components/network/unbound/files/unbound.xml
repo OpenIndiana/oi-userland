@@ -1,0 +1,74 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+This file and its contents are supplied under the terms of the
+Common Development and Distribution License ("CDDL"), version 1.0.
+You may only use this file in accordance with the terms of version
+1.0 of the CDDL.
+
+A full copy of the text of the CDDL should have accompanied this
+source. A copy of the CDDL is also available via the Internet at
+http://www.illumos.org/license/CDDL.
+
+Copyright 2024 Andreas Wacknitz
+-->
+
+<service_bundle type='manifest' name='unbound:default'>
+
+  <service name='network/dns/server' type='service' version='1'>
+
+      <instance name='unbound' enabled='false'>
+        <!--
+            Wait for network interfaces to be initialized.
+        -->
+        <dependency name='network'
+                    grouping='require_all'
+                    restart_on='error'
+                    type='service'>
+                    <service_fmri value='svc:/milestone/network:default'/>
+        </dependency>
+
+        <!--
+            Wait for all local filesystems to be mounted.
+        -->
+        <dependency name='filesystem-local'
+                    grouping='require_all'
+                    restart_on='none'
+                    type='service'>
+                    <service_fmri value='svc:/system/filesystem/local:default'/>
+        </dependency>
+
+        <exec_method type='method' name='start'
+                     exec='/usr/sbin/unbound'
+                     timeout_seconds='60' >
+                     <method_context>
+                         <method_credential user='unbound' group='unbound'
+                             privileges='basic,net_privaddr,proc_chroot,proc_setid' />
+                     </method_context>
+        </exec_method>
+
+        <exec_method type='method' name='stop' exec=':kill' timeout_seconds='60' />
+
+      <!-- to start/stop/refresh the service -->
+      <property_group name='general' type='framework' />
+
+      <template>
+        <common_name>
+          <loctext xml:lang='C'>unbound server</loctext>
+        </common_name>
+        <description>
+        <loctext xml:lang='C'>
+            unbound(8) is a validating, recursive, caching DNS resolver.
+            It is designed to be fast and lean and incorporates modern
+            features based on open standards.
+          </loctext>
+        </description>
+        <documentation>
+          <manpage title='unbound' section='8' manpath='/usr/share/man'/>
+        </documentation>
+      </template>
+
+    </instance>
+
+  </service>
+</service_bundle>
