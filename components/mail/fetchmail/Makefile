@@ -25,19 +25,18 @@
 # Copyright 2021, Nona Hansel
 #
 
-OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
-COMPONENT_VERSION=	6.4.38
+COMPONENT_VERSION=	6.4.39
 COMPONENT_SUMMARY=	fetch mail from a POP, IMAP, ETRN, or ODMR-capable server
 COMPONENT_DESCRIPTION=	Fetchmail is a full-featured, robust, well-documented remote-mail retrieval and forwarding utility intended \
 to be used over on-demand TCP/IP links (such as SLIP or PPP connections). It supports every remote-mail protocol now in use on \
 	the Internet: POP2, POP3, RPOP, APOP, KPOP, all flavors of IMAP, ETRN, and ODMR. It can even support IPv6 and IPsec.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:a6cb4ea863ac61d242ffb2db564a39123761578d3e40d71ce7b6f2905be609d9
+COMPONENT_ARCHIVE_HASH=	sha256:75109a1f307b538155fa05f5ef298e8298cb4deae95aed24c16b38d36ff0a186
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/branch_6.4/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz/download 
 COMPONENT_PROJECT_URL=	https://www.fetchmail.info/
 COMPONENT_FMRI=		mail/fetchmail
@@ -68,6 +67,6 @@ CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --enable-NTLM
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/library
