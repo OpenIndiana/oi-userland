@@ -1,0 +1,32 @@
+--- unbound-1.19.3/configure.ac.orig	2024-03-14 09:14:30.000000000 +0100
++++ unbound-1.19.3/configure.ac	2024-03-25 22:27:13.619762139 +0100
+@@ -1336,17 +1336,17 @@
+ esac
+ 
+ # check for libevent
+-AC_ARG_WITH(libevent, AS_HELP_STRING([--with-libevent=pathname],[use libevent (will check /usr/local /opt/local /usr/lib /usr/pkg /usr/sfw /usr  or you can specify an explicit path). Slower, but allows use of large outgoing port ranges.]),
++AC_ARG_WITH(libevent, AS_HELP_STRING([--with-libevent=pathname],[use libevent (will check /usr/lib /usr/lib/amd64 /usr/sfw /usr  or you can specify an explicit path). Slower, but allows use of large outgoing port ranges.]),
+     [ ],[ with_libevent="no" ])
+ if test "x_$with_libevent" != x_no; then
+         AC_DEFINE([USE_LIBEVENT], [1], [Define if you enable libevent])
+         AC_MSG_CHECKING(for libevent)
+         if test "x_$with_libevent" = x_ -o "x_$with_libevent" = x_yes; then
+-            with_libevent="/usr/local /opt/local /usr/lib /usr/pkg /usr/sfw /usr"
++            with_libevent="/usr/lib /usr/lib/amd64 /usr/sfw /usr"
+         fi
+         for dir in $with_libevent; do
+             thedir="$dir"
+-            if test -f "$dir/include/event.h" -o -f "$dir/include/event2/event.h"; then
++            if test -f "$dir/include/event.h" -o -f "$dir/include/libevent2/event2/event.h"; then
+                 found_libevent="yes"
+ 				dnl assume /usr is in default path.
+ 				if test "$thedir" != "/usr"; then
+@@ -1356,7 +1356,7 @@
+ 		    fi
+         done
+         if test x_$found_libevent != x_yes; then
+-		if test -f "$dir/event.h" -a \( -f "$dir/libevent.la" -o -f "$dir/libev.la" \) ; then
++		if test -f "$dir/include/libevent2/event2/event.h" -a \( -f "$dir/libevent.la" -o -f "$dir/libev.la" \) ; then
+ 			# libevent source directory
+ 			AC_MSG_RESULT(found in $thedir)
+ 			CPPFLAGS="$CPPFLAGS -I$thedir -I$thedir/include"
