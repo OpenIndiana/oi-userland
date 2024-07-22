@@ -15,23 +15,23 @@
 # Copyright 2021 Andreas Wacknitz. All rights reserved.
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_VERSION= 11.4.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 11.5.0
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:aab0f644ae9dc169c80fb2fe0f63baf4d9b147a1db4bdbcba3ec530afcb6a601
+COMPONENT_ARCHIVE_HASH=	sha256:ab1a9172b03f552f2a6277d1316ad91b0b025e72ef1837859b0121d85a89d51a
 
-MPFR_VERSION=4.2.0
-MPFR_ARCHIVE_HASH=	sha256:691db39178e36fc460c046591e4b0f2a52c8f2b3ee6d750cc2eab25f1eaa999d
+MPFR_VERSION=4.2.1
+MPFR_ARCHIVE_HASH=	sha256:b9df93635b20e4089c29623b19420c4ac848a1b29df1cfd59f26cab0d2666aa0
 
 MPC_VERSION=1.3.1
 MPC_ARCHIVE_HASH=	sha256:ab642492f5cf882b74aa0cb730cd410a81edcdbec895183ce930e706c1c759b8
 
-GMP_VERSION=6.2.1
-GMP_ARCHIVE_HASH=	sha256:eae9326beb4158c386e39a356818031bd28f3124cf915f8c5b1dc4c7a36b4d7c
+GMP_VERSION=6.3.0
+GMP_ARCHIVE_HASH=	sha256:ac28211a7cfb609bae2e2c8d6058d66c8fe96434f740cf6fe2e47b000d1c20cb
 
 include $(WS_MAKE_RULES)/gcc-component.mk
 
@@ -50,16 +50,17 @@ PKG_MACROS += GNU_TRIPLET="$(GNU_TRIPLET)"
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
 
-CONFIGURE_OPTIONS+= --with-diagnostics-urls=auto-if-env
-CONFIGURE_OPTIONS+= --enable-plugins
-CONFIGURE_OPTIONS+= --enable-objc-gc
-CONFIGURE_OPTIONS.i386+= --disable-libitm
-CONFIGURE_OPTIONS.sparc+= --with-mulhigh-size=2048
-CONFIGURE_OPTIONS.sparc+= --with-cpu=ultrasparc
-CONFIGURE_OPTIONS.sparc+= --enable-link-mutex
-CONFIGURE_OPTIONS+= --enable-initfini-array
-CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,go,lto,objc
-CONFIGURE_OPTIONS+= enable_frame_pointer=yes
+CONFIGURE_OPTIONS += --with-diagnostics-urls=auto-if-env
+CONFIGURE_OPTIONS += --enable-plugins
+CONFIGURE_OPTIONS += --enable-objc-gc
+CONFIGURE_OPTIONS += --disable-libitm
+CONFIGURE_OPTIONS.sparc += --with-mulhigh-size=2048
+CONFIGURE_OPTIONS.sparc += --with-cpu=ultrasparc
+CONFIGURE_OPTIONS.sparc += --enable-link-mutex
+CONFIGURE_OPTIONS += --enable-initfini-array
+CONFIGURE_OPTIONS += --enable-__cxa_atexit
+CONFIGURE_OPTIONS += --enable-languages=c,c++,fortran,go,lto,objc
+CONFIGURE_OPTIONS += enable_frame_pointer=yes
 
 # Master test results are different between amd64 and SPARCV9.
 COMPONENT_TEST_MASTER = \
