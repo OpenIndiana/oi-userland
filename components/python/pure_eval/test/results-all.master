@@ -1,32 +1,29 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
-collecting ... collected 50 items
+configfile: pyproject.toml
+collecting ... collected 47 items
 
-::project PASSED
-tests/test_core.py::test_boolop PASSED
-tests/test_core.py::test_calls PASSED
-tests/test_core.py::test_cannot_subscript[[1][9]] PASSED
-tests/test_core.py::test_cannot_subscript[[1][:,:]] PASSED
-tests/test_core.py::test_eval_attrs PASSED
-tests/test_core.py::test_eval_binary_op PASSED
-tests/test_core.py::test_eval_dict PASSED
-tests/test_core.py::test_eval_literals PASSED
 tests/test_core.py::test_eval_names PASSED
-tests/test_core.py::test_eval_sequence_subscript PASSED
+tests/test_core.py::test_eval_literals PASSED
+tests/test_core.py::test_eval_attrs PASSED
+tests/test_core.py::test_eval_dict PASSED
 tests/test_core.py::test_eval_set PASSED
+tests/test_core.py::test_eval_sequence_subscript PASSED
 tests/test_core.py::test_eval_unary_op PASSED
-tests/test_core.py::test_evaluator_wrong_getitem PASSED
-tests/test_core.py::test_group_expressions PASSED
-tests/test_core.py::test_is PASSED
+tests/test_core.py::test_eval_binary_op PASSED
 tests/test_core.py::test_is_expression_interesting PASSED
+tests/test_core.py::test_boolop PASSED
+tests/test_core.py::test_is PASSED
+tests/test_core.py::test_calls PASSED
 tests/test_core.py::test_unsupported PASSED
+tests/test_core.py::test_group_expressions PASSED
+tests/test_core.py::test_evaluator_wrong_getitem PASSED
+tests/test_core.py::test_cannot_subscript[lst[:,:]] PASSED
+tests/test_core.py::test_cannot_subscript[lst[9]] PASSED
 tests/test_getattr_static.py::TestGetattrStatic::test_basic PASSED
 tests/test_getattr_static.py::TestGetattrStatic::test_classAttribute PASSED
 tests/test_getattr_static.py::TestGetattrStatic::test_classVirtualAttribute PASSED
@@ -50,14 +47,14 @@ tests/test_getattr_static.py::TestGetattrStatic::test_no_dict_no_slots_instance_
 tests/test_getattr_static.py::TestGetattrStatic::test_property PASSED
 tests/test_getattr_static.py::TestGetattrStatic::test_slots PASSED
 tests/test_getattr_static.py::test_safe_descriptors_immutable PASSED
-tests/test_utils.py::test_ensure_dict PASSED
-tests/test_utils.py::test_is_standard_types PASSED
-tests/test_utils.py::test_repr_cannot_eval PASSED
-tests/test_utils.py::test_safe_name_direct PASSED
-tests/test_utils.py::test_safe_name_samples PASSED
-tests/test_utils.py::test_safe_name_types PASSED
 tests/test_utils.py::test_sys_modules PASSED
+tests/test_utils.py::test_repr_cannot_eval PASSED
+tests/test_utils.py::test_safe_name_types PASSED
+tests/test_utils.py::test_safe_name_samples PASSED
+tests/test_utils.py::test_safe_name_direct PASSED
+tests/test_utils.py::test_is_standard_types PASSED
+tests/test_utils.py::test_ensure_dict PASSED
 
-======== 48 passed ========
+======== 47 passed ========
   py$(PYV): OK
   congratulations :)
