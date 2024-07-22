@@ -1,8 +1,8 @@
 https://github.com/pytest-dev/pytest/pull/12616
 
---- pytest-8.2.2/src/_pytest/config/__init__.py.orig
-+++ pytest-8.2.2/src/_pytest/config/__init__.py
-@@ -835,7 +835,7 @@
+--- pytest-8.3.1/src/_pytest/config/__init__.py.orig
++++ pytest-8.3.1/src/_pytest/config/__init__.py
+@@ -828,7 +828,7 @@
      ) -> None:
          plugins = _get_plugin_specs_as_list(spec)
          for import_spec in plugins:
@@ -11,3 +11,66 @@ https://github.com/pytest-dev/pytest/pull/12616
  
      def import_plugin(self, modname: str, consider_entry_points: bool = False) -> None:
          """Import a plugin with ``modname``.
+--- pytest-8.3.1/testing/test_assertion.py.orig
++++ pytest-8.3.1/testing/test_assertion.py
+@@ -222,6 +222,7 @@
+         self, pytester: Pytester, mode, monkeypatch
+     ) -> None:
+         monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
++        monkeypatch.delenv("PYTEST_PLUGINS", raising=False)
+         # Make sure the hook is installed early enough so that plugins
+         # installed via distribution package are rewritten.
+         pytester.mkdir("hampkg")
+--- pytest-8.3.1/testing/test_config.py.orig
++++ pytest-8.3.1/testing/test_config.py
+@@ -503,6 +503,7 @@
+ 
+         monkeypatch.setattr(importlib.metadata, "distributions", my_dists)
+         monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
++        monkeypatch.delenv("PYTEST_PLUGINS", raising=False)
+ 
+         pytester.makeini(ini_file_text)
+ 
+@@ -1143,6 +1144,7 @@
+ ) -> None:
+     """Integration test for broken distributions with 'files' metadata being None (#5389)"""
+     monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
++    monkeypatch.delenv("PYTEST_PLUGINS", raising=False)
+ 
+     class DummyEntryPoint:
+         name = "mytestplugin"
+@@ -1169,6 +1171,7 @@
+     pytester: Pytester, monkeypatch: MonkeyPatch, block_it: bool
+ ) -> None:
+     monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
++    monkeypatch.delenv("PYTEST_PLUGINS", raising=False)
+ 
+     plugin_module_placeholder = object()
+ 
+@@ -1237,6 +1240,7 @@
+         return (Distribution(),)
+ 
+     monkeypatch.setenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
++    monkeypatch.delenv("PYTEST_PLUGINS", raising=False)
+     monkeypatch.setattr(importlib.metadata, "distributions", distributions)
+     monkeypatch.setitem(sys.modules, "mytestplugin", PseudoPlugin())
+     config = pytester.parseconfig(*parse_args)
+--- pytest-8.3.1/testing/test_helpconfig.py.orig
++++ pytest-8.3.1/testing/test_helpconfig.py
+@@ -64,7 +64,7 @@
+     )
+ 
+ 
+-def test_empty_help_param(pytester: Pytester) -> None:
++def test_empty_help_param(pytester: Pytester, monkeypatch) -> None:
+     """Test that an empty help param is displayed correctly."""
+     pytester.makeconftest(
+         """
+@@ -72,6 +72,7 @@
+             parser.addini("test_ini", "", default=True, type="bool")
+     """
+     )
++    monkeypatch.delenv("PYTEST_PLUGINS", raising=False)
+     result = pytester.runpytest("--help")
+     assert result.ret == 0
+     lines = [
