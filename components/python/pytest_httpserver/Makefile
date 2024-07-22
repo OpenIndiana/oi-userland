@@ -19,21 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_httpserver
-HUMAN_VERSION =			1.0.11
+HUMAN_VERSION =			1.0.12
 COMPONENT_SUMMARY =		pytest-httpserver is a httpserver for pytest
 COMPONENT_PROJECT_URL =		https://github.com/csernazs/pytest-httpserver
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:834531f278e99a22cf3920bc30fe06784518b742a189628b3b34953604ad83f6
+	sha256:c14600b8efb9ea8d7e63251a242ab987f13028b36d3d397ffaca3c929f67eb16
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/csernazs/pytest-httpserver/issues/345
-PYTEST_ADDOPTS += --deselect tests/test_log_querying.py::test_verify_assert_msg
-PYTEST_ADDOPTS += --deselect tests/test_log_querying.py::test_verify_assert_msg_no_similar_requests
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
