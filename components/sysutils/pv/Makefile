@@ -27,12 +27,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pv
-COMPONENT_VERSION=	1.8.10
+COMPONENT_VERSION=	1.8.12
 COMPONENT_SUMMARY=	pv is a terminal-based tool for monitoring the progress of data through a pipeline
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.ivarch.com/programs/pv.shtml
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d4c90c17cfcd44aa96b98237731e4f811e071d4c2052a689d2d81e6671f571b1
+COMPONENT_ARCHIVE_HASH= sha256:9687f9deedb09d0dc00d80c30691f0c91282c0d5d8fa7d6a2a085c8742c2cd7c
 COMPONENT_ARCHIVE_URL=	https://www.ivarch.com/programs/sources/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/pipe-viewer
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -41,9 +41,11 @@ COMPONENT_LICENSE_FILE=	docs/COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE= $(ASLR_ENABLE)
+
+CFLAGS += $(XPG6MODE)
 
 # Note that we have 3 failing tests regarding memory safety. These tests are using valgrind which might probably lead to errors.
 COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
