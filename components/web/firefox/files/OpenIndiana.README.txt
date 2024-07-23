@@ -1,5 +1,14 @@
 Special Notes for OpenIndiana
 
+Starting with Firefox 60, Web Assembly (WASM) support got added to Firefox on
+OpenIndiana.  Web Assembly wants to overcommit memory allocations in the
+gigabytes range.  Illumos only supports this with MAP_NORESERVE.  Even though
+8GB of RAM does not get physically allocated during a single firefox process,
+Illumos still wants that memory to be available if needed.  This means there
+needs to be enough free swap space to allocate with MAP_NORESERVE.  It is
+recommended to have at least 32GB of swap when running firefox to allow for
+multiple processes to use Web Assembly.
+
 Starting with Firefox 123, the User Agent string had the OS changed from SunOS
 to Linux.  See https://bugzilla.mozilla.org/show_bug.cgi?id=1861847
 For those who want the previous behavior, consider installing the extension
