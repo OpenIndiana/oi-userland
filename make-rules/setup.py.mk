@@ -475,11 +475,21 @@ $(eval $(call pytest-plugin,pytest-xprocess,xprocess))
 $(eval $(call pytest-plugin,teamcity-messages,pytest-teamcity))
 $(eval $(call pytest-plugin,time-machine,time_machine))
 $(eval $(call pytest-plugin,typeguard,typeguard))
+#
+# Transitional (indirect) runtime dependencies of pytest plugins.
+#
+# Note: The list is not exhaustive and contians only entries that proved to be
+# needed or useful.
+#
+# pytest-datadir is required by pytest-regressions and pytest-regressions is required by coincidence
+$(eval $(call pytest-plugin,coincidence,regressions))
+$(eval $(call pytest-plugin,coincidence,pytest-datadir))
 
 # By default disable all pytest plugins ...
 COMPONENT_TEST_ENV += PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
 # ... and load those in the PYTEST_PLUGINS list only.
-COMPONENT_TEST_ENV += PYTEST_PLUGINS="$(subst $(space),$(comma),$(strip $(PYTEST_PLUGINS)))"
+# $(sort) is used to avoid duplicates and to strip spaces.
+COMPONENT_TEST_ENV += PYTEST_PLUGINS="$(subst $(space),$(comma),$(sort $(PYTEST_PLUGINS)))"
 
 # By default we are not interested in full list of test failures so exit on
 # first failure to save time.  This could be easily overridden from environment
