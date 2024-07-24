@@ -1,6 +1,5 @@
-diff -ur gst-plugins-base-1.18.5.orig/gst-libs/gst/rtsp/meson.build gst-plugins-base-1.18.5/gst-libs/gst/rtsp/meson.build
---- gst-plugins-base-1.18.5.orig/gst-libs/gst/rtsp/meson.build	2021-09-08 14:02:22.163758000 +0000
-+++ gst-plugins-base-1.18.5/gst-libs/gst/rtsp/meson.build	2021-10-26 00:31:25.944186016 +0000
+--- gst-plugins-base-1.24.5/gst-libs/gst/rtsp/meson.build.orig
++++ gst-plugins-base-1.24.5/gst-libs/gst/rtsp/meson.build
 @@ -48,7 +48,7 @@
    soversion : soversion,
    darwin_versions : osxversion,
@@ -9,13 +8,12 @@ diff -ur gst-plugins-base-1.18.5.orig/gst-libs/gst/rtsp/meson.build gst-plugins-
 +  dependencies : gstrtsp_deps + network_deps,
  )
  
- rtsp_gen_sources = [gstrtsp_h]
-diff -ur gst-plugins-base-1.18.5.orig/meson.build gst-plugins-base-1.18.5/meson.build
---- gst-plugins-base-1.18.5.orig/meson.build	2021-09-08 14:02:22.199757800 +0000
-+++ gst-plugins-base-1.18.5/meson.build	2021-10-26 00:31:59.408719122 +0000
-@@ -278,6 +278,21 @@
-   gst_plugins_base_args += ['-DGST_STATIC_COMPILATION']
- endif
+ library_def = {'lib': gst_rtsp}
+--- gst-plugins-base-1.24.5/meson.build.orig
++++ gst-plugins-base-1.24.5/meson.build
+@@ -310,6 +310,21 @@
+ 
+ core_conf.set('HAVE_LIBDRM', libdrm_dep.found())
  
 +#
 +# Solaris and Illumos distros split a lot of networking-related code
@@ -34,4 +32,38 @@ diff -ur gst-plugins-base-1.18.5.orig/meson.build gst-plugins-base-1.18.5/meson.
 +
  # X11 checks are for sys/ and tests/
  x11_dep = dependency('x11', required : get_option('x11'))
- # GLib checks are for the entire project
+ # GIO is used by the GIO plugin, and by the TCP, SDP, and RTSP plugins
+--- gst-plugins-base-1.24.5/gst/tcp/meson.build.orig
++++ gst-plugins-base-1.24.5/gst/tcp/meson.build
+@@ -19,7 +19,7 @@
+   tcp_sources,
+   c_args : gst_plugins_base_args,
+   include_directories: [configinc, libsinc],
+-  dependencies : [gst_base_dep, gst_net_dep, gio_dep],
++  dependencies : [gst_base_dep, gst_net_dep, gio_dep, network_deps],
+   install : true,
+   install_dir : plugins_install_dir,
+ )
+--- gst-plugins-base-1.24.5/tests/check/meson.build.orig
++++ gst-plugins-base-1.24.5/tests/check/meson.build
+@@ -69,9 +69,9 @@
+     [ 'libs/rtspconnection.c' ],
+     [ 'elements/libvisual.c', not is_variable('libvisual_dep') or not libvisual_dep.found() ],
+     [ 'elements/encodebin.c', not theoraenc_dep.found() or not vorbisenc_dep.found() ],
+-    [ 'elements/multifdsink.c', not core_conf.has('HAVE_SYS_SOCKET_H') or not core_conf.has('HAVE_UNISTD_H') ],
++    [ 'elements/multifdsink.c', not core_conf.has('HAVE_SYS_SOCKET_H') or not core_conf.has('HAVE_UNISTD_H'), [ network_deps ] ],
+     # FIXME: multisocketsink test on windows/msvc
+-    [ 'elements/multisocketsink.c', not core_conf.has('HAVE_SYS_SOCKET_H') or not core_conf.has('HAVE_UNISTD_H') ],
++    [ 'elements/multisocketsink.c', not core_conf.has('HAVE_SYS_SOCKET_H') or not core_conf.has('HAVE_UNISTD_H'), [ network_deps ] ],
+     [ 'elements/playbin-complex.c', not ogg_dep.found() ],
+     [ 'elements/textoverlay.c', not pango_dep.found() ],
+     [ 'elements/theoradec.c', not ogg_dep.found() or not theoradec_dep.found() ],
+@@ -79,7 +79,7 @@
+     [ 'elements/vorbistag.c', not vorbisenc_dep.found(), [ vorbis_dep, vorbisenc_dep ] ],
+     [ 'pipelines/oggmux.c', not ogg_dep.found(), [ ogg_dep, ] ],
+     # FIXME: tcp test on windows/msvc
+-    [ 'pipelines/tcp.c', not core_conf.has('HAVE_SYS_SOCKET_H') or not core_conf.has('HAVE_UNISTD_H'), [giounix_dep] ],
++    [ 'pipelines/tcp.c', not core_conf.has('HAVE_SYS_SOCKET_H') or not core_conf.has('HAVE_UNISTD_H'), [ giounix_dep, network_deps ] ],
+     [ 'pipelines/theoraenc.c', not theoraenc_dep.found(), [ theoraenc_dep ] ],
+     [ 'pipelines/vorbisenc.c', not vorbisenc_dep.found() ],
+     [ 'pipelines/vorbisdec.c', not vorbisenc_dep.found() ],
