@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		whey
 HUMAN_VERSION =			0.1.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A simple Python wheel builder for simple projects.
 COMPONENT_PROJECT_URL =		https://github.com/repo-helper/whey
 COMPONENT_ARCHIVE_URL =		\
@@ -74,5 +75,3 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/re-assert
 TEST_REQUIRED_PACKAGES.python += library/python/readme-renderer
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
-TEST_REQUIRED_PACKAGES.python += library/python/whey-conda
-TEST_REQUIRED_PACKAGES.python += library/python/whey-pth
