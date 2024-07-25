@@ -1,0 +1,27 @@
+https://github.com/pytest-dev/pytest-xprocess/issues/154
+
+--- pytest-xprocess-1.0.2/tests/test_process_initialization.py.orig
++++ pytest-xprocess-1.0.2/tests/test_process_initialization.py
+@@ -1,5 +1,6 @@
+ import socket
+ import sys
++import time
+ from pathlib import Path
+ 
+ import pytest
+@@ -126,6 +127,7 @@
+         args = [sys.executable, server_path, tcp_port, "--no-children"]
+ 
+         def startup_check(self):
++            time.sleep(1)
+             return request_response_cycle(tcp_port, data)
+ 
+     xprocess.ensure(proc_name, Starter)
+@@ -153,6 +155,7 @@
+         args = [sys.executable, server_path, tcp_port, "--no-children"]
+ 
+         def startup_check(self):
++            time.sleep(1)
+             return request_response_cycle(tcp_port, data)
+ 
+     if proc_name == "s1":
