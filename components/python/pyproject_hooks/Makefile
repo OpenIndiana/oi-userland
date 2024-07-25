@@ -11,28 +11,41 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pyproject_hooks
+#   $WS_TOOLS/python-integrate-project -d python/pyproject_hooks pyproject-hooks
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pyproject_hooks
-HUMAN_VERSION =			1.0.0
-COMPONENT_SUMMARY =		pyproject_hooks - Wrappers to call pyproject.toml-based build backend hooks.
+COMPONENT_NAME =		pyproject-hooks
+HUMAN_VERSION =			1.1.0
+COMPONENT_SUMMARY =		Wrappers to call pyproject.toml-based build backend hooks.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/25/c1/374304b8407d3818f7025457b7366c8e07768377ce12edfe2aa58aa0f64c/pyproject_hooks-1.0.0.tar.gz
+	https://github.com/pypa/pyproject-hooks/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f271b298b97f5955d53fb12b72c1fb1948c22c1a6b70b315c54cedaca0264ef5
+	sha256:1cbbabcd93ea1ac50cca7f23e5b640904684ae6c85003c6f7cf02b598c33f28f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+TEST_STYLE = pytest
+
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - build
+PYTHON_BOOTSTRAP = yes
+
 include $(WS_MAKE_RULES)/common.mk
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += dev-requirements.txt
+
+# https://github.com/pypa/pyproject-hooks/issues/203
+PYTEST_ADDOPTS += --deselect tests/test_call_hooks.py::test_setup_py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
