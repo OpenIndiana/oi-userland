@@ -1,51 +1,57 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0] $(@D)/tests> python -m pytest -v
+py$(PYV): commands[0] $(@D)/tests> python -m coverage run -m pytest -v
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
-collecting ... collected 45 items
+collecting ... collected 51 items
 
-test_callback.py::test_callback_fail[s1] PASSED
-test_callback.py::test_callback_fail[s2] PASSED
-test_callback.py::test_callback_fail[s3] PASSED
 test_callback.py::test_callback_success[s1] PASSED
 test_callback.py::test_callback_success[s2] PASSED
 test_callback.py::test_callback_success[s3] PASSED
+test_callback.py::test_callback_fail[s1] PASSED
+test_callback.py::test_callback_fail[s2] PASSED
+test_callback.py::test_callback_fail[s3] PASSED
 test_functional_workflow.py::test_functional_work_flow PASSED
 test_interruption_clean_up.py::test_interruption_cleanup PASSED
 test_interruption_clean_up.py::test_interruption_does_not_cleanup PASSED
-test_process_initialization.py::test_ensure_not_restart[s1] PASSED
-test_process_initialization.py::test_ensure_not_restart[s2] PASSED
-test_process_initialization.py::test_ensure_not_restart[s3] PASSED
-test_process_initialization.py::test_popen_kwargs[s1] PASSED
-test_process_initialization.py::test_popen_kwargs[s2] PASSED
-test_process_initialization.py::test_popen_kwargs[s3] PASSED
-test_process_initialization.py::test_runtime_error_on_start_fail[s1] PASSED
-test_process_initialization.py::test_runtime_error_on_start_fail[s2] PASSED
-test_process_initialization.py::test_runtime_error_on_start_fail[s3] PASSED
 test_process_initialization.py::test_servers_start[s1] PASSED
 test_process_initialization.py::test_servers_start[s2] PASSED
 test_process_initialization.py::test_servers_start[s3] PASSED
+test_process_initialization.py::test_ensure_not_restart[s1] PASSED
+test_process_initialization.py::test_ensure_not_restart[s2] PASSED
+test_process_initialization.py::test_ensure_not_restart[s3] PASSED
 test_process_initialization.py::test_startup_detection_max_read_lines[s1-started-21] PASSED
 test_process_initialization.py::test_startup_detection_max_read_lines[s2-spam, bacon, eggs-30] PASSED
 test_process_initialization.py::test_startup_detection_max_read_lines[s3-finally started-130] PASSED
+test_process_initialization.py::test_runtime_error_on_start_fail[s1] PASSED
+test_process_initialization.py::test_runtime_error_on_start_fail[s2] PASSED
+test_process_initialization.py::test_runtime_error_on_start_fail[s3] PASSED
+test_process_initialization.py::test_popen_kwargs[s1] PASSED
+test_process_initialization.py::test_popen_kwargs[s2] PASSED
+test_process_initialization.py::test_popen_kwargs[s3] PASSED
+test_process_initialization.py::test_startup_without_pattern[s1] PASSED
+test_process_initialization.py::test_startup_without_pattern[s2] PASSED
+test_process_initialization.py::test_startup_without_pattern[s3] PASSED
+test_process_initialization.py::test_startup_with_pattern_and_callback[s1-will not match-21] PASSED
+test_process_initialization.py::test_startup_with_pattern_and_callback[s2-spam, bacon, eggs-30] PASSED
+test_process_initialization.py::test_startup_with_pattern_and_callback[s3-finally started-130] PASSED
 test_process_termination.py::test_clean_shutdown[s1] PASSED
 test_process_termination.py::test_clean_shutdown[s2] PASSED
 test_process_termination.py::test_clean_shutdown[s3] PASSED
-test_process_termination.py::test_return_value_on_failure[s1] PASSED
-test_process_termination.py::test_return_value_on_failure[s2] PASSED
-test_process_termination.py::test_return_value_on_failure[s3] PASSED
-test_process_termination.py::test_sigkill_after_failed_sigterm[s1] PASSED
-test_process_termination.py::test_sigkill_after_failed_sigterm[s2] PASSED
-test_process_termination.py::test_sigkill_after_failed_sigterm[s3] PASSED
 test_process_termination.py::test_terminate_no_pid[s1] PASSED
 test_process_termination.py::test_terminate_no_pid[s2] PASSED
 test_process_termination.py::test_terminate_no_pid[s3] PASSED
 test_process_termination.py::test_terminate_only_parent[s1] PASSED
 test_process_termination.py::test_terminate_only_parent[s2] PASSED
 test_process_termination.py::test_terminate_only_parent[s3] PASSED
+test_process_termination.py::test_sigkill_after_failed_sigterm[s1] PASSED
+test_process_termination.py::test_sigkill_after_failed_sigterm[s2] PASSED
+test_process_termination.py::test_sigkill_after_failed_sigterm[s3] PASSED
+test_process_termination.py::test_return_value_on_failure[s1] PASSED
+test_process_termination.py::test_return_value_on_failure[s2] PASSED
+test_process_termination.py::test_return_value_on_failure[s3] PASSED
 test_resource_cleanup.py::test_0 PASSED
 test_resource_cleanup.py::test_1 PASSED
 test_resource_cleanup.py::test_2 PASSED
@@ -53,7 +59,23 @@ test_startup_timeout.py::test_timeout_raise_exception[s1] PASSED
 test_startup_timeout.py::test_timeout_raise_exception[s2] PASSED
 test_startup_timeout.py::test_timeout_raise_exception[s3] PASSED
 
-======== 45 passed ========
+======== 51 passed ========
 pytest-xprocess reminder::Be sure to terminate the started process by running 'pytest --xkill' if you have not explicitly done so in your fixture with 'xprocess.getinfo(<process_name>).terminate()'.
+py$(PYV): commands[1] $(@D)/tests> python -m coverage report '--omit=*/.tox/*,*/test_functional_work_flow.py' --fail-under=90
+Name                                                                                                                                                Stmts   Miss  Cover
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/xprocess/__init__.py              5      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/xprocess/pytest_xprocess.py      67     12    82%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/xprocess/xprocess.py            226     19    92%
+conftest.py                                                                                                                                            19      0   100%
+test_callback.py                                                                                                                                       36      0   100%
+test_functional_workflow.py                                                                                                                            10      0   100%
+test_interruption_clean_up.py                                                                                                                          17      0   100%
+test_process_initialization.py                                                                                                                        103      0   100%
+test_process_termination.py                                                                                                                            65      2    97%
+test_resource_cleanup.py                                                                                                                                6      0   100%
+test_startup_timeout.py                                                                                                                                28      0   100%
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                                 582     33    94%
   py$(PYV): OK
   congratulations :)
