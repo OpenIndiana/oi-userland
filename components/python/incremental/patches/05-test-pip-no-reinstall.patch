@@ -1,0 +1,13 @@
+Do not try to reinstall system packages.
+
+--- incremental-24.7.1/tests/test_examples.py.orig
++++ incremental-24.7.1/tests/test_examples.py
+@@ -24,7 +24,7 @@
+     pkgfile = builder.build("wheel", output_directory=os.environ["PIP_FIND_LINKS"])
+ 
+     # Force reinstall in case tox reused the venv.
+-    run(["pip", "install", "--force-reinstall", pkgfile], check=True)
++    run(["pip", "install", pkgfile], check=True)
+ 
+ 
+ class ExampleTests(TestCase):
