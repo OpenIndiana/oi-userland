@@ -13,12 +13,12 @@
 # Copyright (c) 2022 Friedrich Kink
 #
 
-USE_OPENSSL11=		yes
+OPENSSL_VERSION= 3.1
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.1-ext-mongodb
 COMPONENT_VERSION=	1.12.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	MongoDB driver for PHP
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/mongodb
 COMPONENT_SRC=		mongodb-$(COMPONENT_VERSION)
@@ -63,6 +63,10 @@ CFLAGS             +=	-I$(PHP_PREFIX)/include -I/usr/include/pcre
 CPPFLAG            +=	$(CFLAGS)
 LDFLAGS            +=	-L$(PHP_PREFIX)/lib -R$(PHP_PREFIX)/lib
 
+# Provide paths for OpenSSL 3.1
+CFLAGS  += -I$(OPENSSL_INCDIR)
+LDFLAGS += -L$(OPENSSL_LIBDIR)
+
 CONFIGURE_SCRIPT   =	$(@D)/configure
 
 COMPONENT_PRE_CONFIGURE_ACTION	 =	cp -R $(SOURCE_DIR)/* $(@D) ; cd $(@D) ; $(PHP_PREFIX)/bin/phpize
@@ -73,8 +77,8 @@ REQUIRED_PACKAGES += web/php-81/php-common
 REQUIRED_PACKAGES += library/pcre2
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += library/icu
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
