@@ -1,0 +1,16 @@
+https://bz.mercurial-scm.org/show_bug.cgi?id=6912
+
+--- mercurial-6.8.1/tests/run-tests.py.orig
++++ mercurial-6.8.1/tests/run-tests.py
+@@ -310,9 +310,9 @@
+             start = time.time()
+             while time.time() - start < timeout and p.returncode is None:
+                 time.sleep(0.1)
+-            p.timeout = True
+-            vlog('# Timout reached for process %d' % p.pid)
+             if p.returncode is None:
++                p.timeout = True
++                vlog('# Timeout reached for process %d' % p.pid)
+                 terminate(p)
+ 
+         threading.Thread(target=t).start()
