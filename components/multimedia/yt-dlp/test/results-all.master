@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6857 items / 5864 deselected / 993 selected
+collecting ... collected 6859 items / 5866 deselected / 993 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
@@ -441,27 +441,6 @@ test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[HTTPSuppor
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_key[HTTPSupportedRH-http-no-http-UnsupportedRequest] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-http-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-https-UnsupportedRequest] PASSED
-----------------------------------------
-Exception occurred during processing of request from ('127.0.0.1', 34542)
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
-    self.finish_request(request, client_address)
-  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
-    self.RequestHandlerClass(request, client_address, self)
-  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
-    self.handle()
-  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
-    self.handle_one_request()
-  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
-    method()
-  File "$(@D)/test/test_networking.py", line 259, in do_GET
-    self._headers()
-  File "$(@D)/test/test_networking.py", line 84, in _headers
-    self.wfile.write(payload)
-  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
-    self._sock.sendall(b)
-BrokenPipeError: [Errno 32] Broken pipe
-----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-socks4-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-socks4a-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-socks5-False] PASSED
@@ -495,6 +474,27 @@ test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-htt
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions3-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions4-AssertionError] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions5-UnsupportedRequest] PASSED
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 36525)
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
+    self.handle()
+  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
+    method()
+  File "$(@D)/test/test_networking.py", line 259, in do_GET
+    self._headers()
+  File "$(@D)/test/test_networking.py", line 84, in _headers
+    self.wfile.write(payload)
+  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions6-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions7-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions8-AssertionError] PASSED
@@ -1027,6 +1027,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 840 passed, 153 skipped, 5864 deselected ========
+======== 840 passed, 153 skipped, 5866 deselected ========
   py$(PYV): OK
   congratulations :)
