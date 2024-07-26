@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatch-requirements-txt
 HUMAN_VERSION =			0.4.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Hatchling plugin to read project dependencies from requirements.txt
 COMPONENT_PROJECT_URL =		https://github.com/repo-helper/hatch-requirements-txt
 COMPONENT_ARCHIVE_URL =		\
@@ -41,6 +42,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/repo-helper/hatch-requirements-txt/issues/62
+PYTEST_ADDOPTS += --deselect tests/test_errors.py::test_not_dynamic_but_filename_defined
+PYTEST_ADDOPTS += --deselect tests/test_errors.py::test_not_dynamic_but_files_defined
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
