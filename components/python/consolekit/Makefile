@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		consolekit
-HUMAN_VERSION =			1.7.0
+HUMAN_VERSION =			1.7.1
 COMPONENT_SUMMARY =		Additional utilities for click.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/consolekit
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/domdfcoding/consolekit/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:95b3a902b124fe1c3e7f4ea7f521ca7754ff1d74e3328c93bfc246285f02408f
+	sha256:56486c3e7b002f1fe25448df9b5026ca22062ba2ad9e7975acdce889a66c09f8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
