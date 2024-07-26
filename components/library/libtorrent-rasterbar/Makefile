@@ -25,10 +25,12 @@
 #
 
 BUILD_STYLE=	cmake
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent-rasterbar
 COMPONENT_VERSION=	2.0.10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	An open source C++ library implementing the BitTorrent protocol
 COMPONENT_GIT_URL= https://github.com/arvidn
 COMPONENT_PROJECT_URL=	$(COMPONENT_GIT_URL)/libtorrent
@@ -68,7 +70,10 @@ COMPONENT_POST_UNPACK_ACTION_3= \
 
 include $(WS_MAKE_RULES)/common.mk
 
-OPENSSL_VERSION=1.1
+# Provide paths for OpenSSL 3.1
+CFLAGS  += -I$(OPENSSL_INCDIR)
+LDFLAGS += -L$(OPENSSL_LIBDIR)
+
 CMAKE_OPTION+=-DCMAKE_INSTALL_PREFIX:PATH='/usr'
 
 # Auto-generated dependencies
