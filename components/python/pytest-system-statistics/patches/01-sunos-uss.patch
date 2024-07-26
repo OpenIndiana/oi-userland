@@ -1,0 +1,24 @@
+https://github.com/saltstack/pytest-system-statistics/pull/6
+
+--- pytest-system-statistics-1.0.2/src/pytestsysstats/plugin.py.orig
++++ pytest-system-statistics-1.0.2/src/pytestsysstats/plugin.py
+@@ -93,6 +93,9 @@
+             if platform.is_freebsd():
+                 # FreeBSD doesn't apparently support uss
+                 self.sys_stats_mem_type = "rss"
++            if platform.is_sunos():
++                # Solaris and illumos doesn't apparently support uss
++                self.sys_stats_mem_type = "rss"
+         else:
+             self.sys_stats_mem_type = "rss"
+ 
+--- pytest-system-statistics-1.0.2/tests/functional/test_syststats.py.orig
++++ pytest-system-statistics-1.0.2/tests/functional/test_syststats.py
+@@ -96,6 +96,7 @@
+ 
+ 
+ @pytest.mark.skip_on_freebsd
++@pytest.mark.skip_on_sunos
+ def test_basic_sys_stats_uss(pytester):
+     pytester.makepyfile(
+         """
