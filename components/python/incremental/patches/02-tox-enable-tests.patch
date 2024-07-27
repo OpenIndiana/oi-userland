@@ -1,0 +1,55 @@
+--- incremental-24.7.1/tox.ini.orig
++++ incremental-24.7.1/tox.ini
+@@ -15,22 +15,22 @@
+ skip_install =
+     pindeps: true
+ deps =
+-    tests: -rrequirements_tests.txt
++    -rrequirements_tests.txt
+     mypy: -rrequirements_mypy.txt
+     apidocs: pydoctor
+     lint: pre-commit
+     pindeps: pip-tools
+ extras =
+     mypy: scripts
+-    tests: scripts
++    scripts
+ 
+ setenv =
+     ; Suppress pointless chatter in the output.
+     PIP_DISABLE_PIP_VERSION_CHECK=yes
+ 
+-    tests: TOX_INI_DIR={toxinidir}
+-    tests: COVERAGE_PROCESS_START={toxinidir}/.coveragerc
+-    tests: PIP_FIND_LINKS={env:PIP_FIND_LINKS:{distdir}}
++    TOX_INI_DIR={toxinidir}
++    COVERAGE_PROCESS_START={toxinidir}/.coveragerc
++    PIP_FIND_LINKS={env:PIP_FIND_LINKS:{distdir}}
+ 
+ commands =
+     python -V
+@@ -39,15 +39,15 @@
+ 
+     apidocs: pydoctor -q --project-name incremental src/incremental
+ 
+-    tests: coverage --version
+-    tests: {envbindir}/trial --version
+-    tests: coverage erase
+-    tests: coverage run {envbindir}/trial incremental
+-    tests: coverage run {envbindir}/trial tests/test_examples.py
+-    tests: coverage combine
+-    tests: coverage report
+-    tests: coverage html
+-    tests: coverage xml
++    coverage --version
++    {envbindir}/trial --version
++    coverage erase
++    coverage run {envbindir}/trial incremental
++    coverage run {envbindir}/trial tests/test_examples.py
++    coverage combine
++    coverage report
++    coverage html
++    coverage xml
+ 
+     mypy: mypy src
+ 

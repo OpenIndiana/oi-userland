@@ -19,23 +19,33 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		incremental
-COMPONENT_VERSION =		22.10.0
-COMPONENT_SUMMARY =		incremental - \\\\\\\"A small library that versions your Python projects.\\\\\\\"
+HUMAN_VERSION =			24.7.1
+COMPONENT_SUMMARY =		A small library that versions your Python projects.
 COMPONENT_PROJECT_URL =		https://github.com/twisted/incremental
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/86/42/9e87f04fa2cd40e3016f27a4b4572290e95899c6dce317e2cdb580f3ff09/incremental-22.10.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:912feeb5e0f7e0188e6f42241d2f450002e11bbc0937c65865045854c24c0bd0
+	sha256:a3717c20534499835555ba727b32ee087945ba9daaf23851471dfe3d1e3d1698
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Testing is currently not possible
-# https://github.com/twisted/incremental/issues/80
-TEST_STYLE = none
-
 include $(WS_MAKE_RULES)/common.mk
+
+# Remove directories created by previous test run to make test results reproducible
+COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/tests/example_noop/build ;
+COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/tests/example_noop/example_noop.egg-info ;
+COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/tests/example_setuppy/build ;
+COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/tests/example_setuppy/src/example_setuppy.egg-info ;
+COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/tests/example_setuptools/build ;
+COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/tests/example_setuptools/src/example_setuptools.egg-info ;
+
+# Random temporary directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|\(/\.tmp-\).\{8\}/|\1XXXXXXXX/|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/click
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/twisted
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
