@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.text
-HUMAN_VERSION =			3.14.0
+HUMAN_VERSION =			4.0.0
 COMPONENT_SUMMARY =		Module for text manipulation
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ed14e4df7753e40fdef3ca0eb53f6be9f5ef97481806e96de26c3a72e9c293f6
+	sha256:5b71fecea69ab6f939d4c906c04fee1eda76500d1641117df6ec45b865f10db0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,13 +32,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/autocommand
-PYTHON_REQUIRED_PACKAGES += library/python/inflect
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/inflect
 TEST_REQUIRED_PACKAGES.python += library/python/pathlib2
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
