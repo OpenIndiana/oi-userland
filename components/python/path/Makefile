@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		path
-HUMAN_VERSION =			16.14.0
-COMPONENT_SUMMARY =		path - A module wrapper for os.path
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/path
+HUMAN_VERSION =			16.15.0
+COMPONENT_SUMMARY =		A module wrapper for os.path
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dbaaa7efd4602fd6ba8d82890dc7823d69e5de740a6e842d9919b0faaf2b6a8e
+	sha256:2a7c822b96c9cf7db4610531419e03677ed71f359ef7297a2746c2c0b523a389
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,7 +34,6 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/py\$$(PYV)compat/py$(shell echo $(PYTHON_VER
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/appdirs
 TEST_REQUIRED_PACKAGES.python += library/python/more-itertools
