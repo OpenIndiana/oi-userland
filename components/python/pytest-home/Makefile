@@ -11,19 +11,18 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-home
+#   $WS_TOOLS/python-integrate-project -d python/pytest-home pytest_home
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-home
-HUMAN_VERSION =			0.5.1
-COMPONENT_SUMMARY =		pytest-home - Home directory fixtures
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-home
+COMPONENT_NAME =		pytest_home
+HUMAN_VERSION =			0.6.0
+COMPONENT_SUMMARY =		Home directory fixtures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8e940e31e5f7682c31543df06b3b0044ccc5dbf82de6141c2147da3857c72719
+	sha256:602151ce28186322507c7bbf1688acd567ecc00ccde37ead8946ed4ff70fd55b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,10 +32,8 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
