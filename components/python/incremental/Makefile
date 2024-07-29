@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		incremental
-HUMAN_VERSION =			24.7.1
+HUMAN_VERSION =			24.7.2
 COMPONENT_SUMMARY =		A small library that versions your Python projects.
 COMPONENT_PROJECT_URL =		https://github.com/twisted/incremental
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a3717c20534499835555ba727b32ee087945ba9daaf23851471dfe3d1e3d1698
+	sha256:fb4f1d47ee60efe87d4f6f0ebb5f70b9760db2b2574c59c8e8912be4ebd464c9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
