@@ -10,11 +10,12 @@ py$(PYV): commands[3]> coverage erase
 py$(PYV): commands[4]> coverage run /usr/bin/trial incremental
 incremental.tests.test_pyproject
   VerifyPyprojectDotTomlTests
-    test_configMissing ...                                                 [OK]
+    test_brokenToml ...                                                    [OK]
     test_fileNotFound ...                                                  [OK]
-    test_nameInvalid ...                                                   [OK]
+    test_nameInvalidOptIn ...                                              [OK]
     test_nameMissing ...                                                   [OK]
     test_noToolIncrementalSection ...                                      [OK]
+    test_packagePathRequired ...                                           [OK]
     test_setuptoolsOptIn ...                                               [OK]
     test_toolIncrementalInvalid ...                                        [OK]
     test_toolIncrementalUnexpecteKeys ...                                  [OK]
@@ -80,6 +81,7 @@ incremental.tests.test_version
     test_getVersionStringWithPrerelease ...                                [OK]
     test_getVersionStringWithReleaseCandidate ...                          [OK]
     test_infComparison ...                                                 [OK]
+    test_infComparisonSelf ...                                             [OK]
     test_localIsShort ...                                                  [OK]
     test_notImplementedComparisons ...                                     [OK]
     test_prereleaseAttributeDeprecated ...                                 [OK]
@@ -103,169 +105,27 @@ incremental.tests.test_version
     test_versionComparisonNonVersion ...                                   [OK]
 
 -------------------------------------------------------------------------------
-Ran 83 tests
+Ran 85 tests
 
-PASSED (successes=83)
-py$(PYV): commands[5]> coverage run /usr/bin/trial tests/test_examples.py
-test_examples
-  ExampleTests
-    test_hatchling_get_version ... Defaulting to user installation because normal site-packages is not writeable
-Looking in links: {distdir}
-Processing ./{distdir}/example_hatchling-24.7.0-py2.py3-none-any.whl
-Requirement already satisfied: incremental in $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages (from example-hatchling==24.7.0) (24.7.1)
-Requirement already satisfied: setuptools>=61.0 in $(PYTHON_DIR)/vendor-packages (from incremental->example-hatchling==24.7.0) (71.1.0)
-Requirement already satisfied: tomli in $(PYTHON_DIR)/vendor-packages (from incremental->example-hatchling==24.7.0) (2.0.1)
-example-hatchling is already installed with the same version as the provided wheel. Use --force-reinstall to force an installation of the wheel.
-                                        [OK]
-    test_noop ... running bdist_wheel
-running build
-running build_py
-creating build
-creating build/lib
-creating build/lib/example_noop
-copying example_noop/__init__.py -> build/lib/example_noop
-installing to build/bdist.solaris-2.11-i86pc.64bit/wheel
-running install
-running install_lib
-creating build/bdist.solaris-2.11-i86pc.64bit
-creating build/bdist.solaris-2.11-i86pc.64bit/wheel
-creating build/bdist.solaris-2.11-i86pc.64bit/wheel/example_noop
-copying build/lib/example_noop/__init__.py -> build/bdist.solaris-2.11-i86pc.64bit/wheel/example_noop
-running install_egg_info
-running egg_info
-creating example_noop.egg-info
-writing example_noop.egg-info/PKG-INFO
-writing dependency_links to example_noop.egg-info/dependency_links.txt
-writing top-level names to example_noop.egg-info/top_level.txt
-writing manifest file 'example_noop.egg-info/SOURCES.txt'
-reading manifest file 'example_noop.egg-info/SOURCES.txt'
-writing manifest file 'example_noop.egg-info/SOURCES.txt'
-Copying example_noop.egg-info to build/bdist.solaris-2.11-i86pc.64bit/wheel/example_noop-100-py3.9.egg-info
-running install_scripts
-creating build/bdist.solaris-2.11-i86pc.64bit/wheel/example_noop-100.dist-info/WHEEL
-creating '$(@D)/_trial_temp/{distdir}/.tmp-XXXXXXXX/example_noop-100-py3-none-any.whl' and adding 'build/bdist.solaris-2.11-i86pc.64bit/wheel' to it
-adding 'example_noop/__init__.py'
-adding 'example_noop-100.dist-info/METADATA'
-adding 'example_noop-100.dist-info/WHEEL'
-adding 'example_noop-100.dist-info/top_level.txt'
-adding 'example_noop-100.dist-info/RECORD'
-removing build/bdist.solaris-2.11-i86pc.64bit/wheel
-Defaulting to user installation because normal site-packages is not writeable
-Looking in links: {distdir}
-Processing ./{distdir}/example_noop-100-py3-none-any.whl
-example-noop is already installed with the same version as the provided wheel. Use --force-reinstall to force an installation of the wheel.
-                                                         [OK]
-    test_setuppy_version ... running bdist_wheel
-running build
-running build_py
-creating build
-creating build/lib
-creating build/lib/example_setuppy
-copying src/example_setuppy/__init__.py -> build/lib/example_setuppy
-copying src/example_setuppy/_version.py -> build/lib/example_setuppy
-installing to build/bdist.solaris-2.11-i86pc.64bit/wheel
-running install
-running install_lib
-creating build/bdist.solaris-2.11-i86pc.64bit
-creating build/bdist.solaris-2.11-i86pc.64bit/wheel
-creating build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuppy
-copying build/lib/example_setuppy/__init__.py -> build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuppy
-copying build/lib/example_setuppy/_version.py -> build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuppy
-running install_egg_info
-running egg_info
-creating src/example_setuppy.egg-info
-writing src/example_setuppy.egg-info/PKG-INFO
-writing dependency_links to src/example_setuppy.egg-info/dependency_links.txt
-writing top-level names to src/example_setuppy.egg-info/top_level.txt
-writing manifest file 'src/example_setuppy.egg-info/SOURCES.txt'
-reading manifest file 'src/example_setuppy.egg-info/SOURCES.txt'
-writing manifest file 'src/example_setuppy.egg-info/SOURCES.txt'
-Copying src/example_setuppy.egg-info to build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuppy-1.2.3-py3.9.egg-info
-running install_scripts
-creating build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuppy-1.2.3.dist-info/WHEEL
-creating '$(@D)/_trial_temp/{distdir}/.tmp-XXXXXXXX/example_setuppy-1.2.3-py3-none-any.whl' and adding 'build/bdist.solaris-2.11-i86pc.64bit/wheel' to it
-adding 'example_setuppy/__init__.py'
-adding 'example_setuppy/_version.py'
-adding 'example_setuppy-1.2.3.dist-info/METADATA'
-adding 'example_setuppy-1.2.3.dist-info/WHEEL'
-adding 'example_setuppy-1.2.3.dist-info/top_level.txt'
-adding 'example_setuppy-1.2.3.dist-info/RECORD'
-removing build/bdist.solaris-2.11-i86pc.64bit/wheel
-Defaulting to user installation because normal site-packages is not writeable
-Looking in links: {distdir}
-Processing ./{distdir}/example_setuppy-1.2.3-py3-none-any.whl
-example-setuppy is already installed with the same version as the provided wheel. Use --force-reinstall to force an installation of the wheel.
-Unreleased!
-                                              [OK]
-    test_setuptools_version ... running bdist_wheel
-running build
-running build_py
-creating build
-creating build/lib
-creating build/lib/example_setuptools
-copying src/example_setuptools/_version.py -> build/lib/example_setuptools
-copying src/example_setuptools/__init__.py -> build/lib/example_setuptools
-running egg_info
-creating src/example_setuptools.egg-info
-writing src/example_setuptools.egg-info/PKG-INFO
-writing dependency_links to src/example_setuptools.egg-info/dependency_links.txt
-writing requirements to src/example_setuptools.egg-info/requires.txt
-writing top-level names to src/example_setuptools.egg-info/top_level.txt
-writing manifest file 'src/example_setuptools.egg-info/SOURCES.txt'
-reading manifest file 'src/example_setuptools.egg-info/SOURCES.txt'
-writing manifest file 'src/example_setuptools.egg-info/SOURCES.txt'
-installing to build/bdist.solaris-2.11-i86pc.64bit/wheel
-running install
-running install_lib
-creating build/bdist.solaris-2.11-i86pc.64bit
-creating build/bdist.solaris-2.11-i86pc.64bit/wheel
-creating build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuptools
-copying build/lib/example_setuptools/_version.py -> build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuptools
-copying build/lib/example_setuptools/__init__.py -> build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuptools
-running install_egg_info
-Copying src/example_setuptools.egg-info to build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuptools-2.3.4-py3.9.egg-info
-running install_scripts
-creating build/bdist.solaris-2.11-i86pc.64bit/wheel/example_setuptools-2.3.4.dist-info/WHEEL
-creating '$(@D)/_trial_temp/{distdir}/.tmp-XXXXXXXX/example_setuptools-2.3.4-py3-none-any.whl' and adding 'build/bdist.solaris-2.11-i86pc.64bit/wheel' to it
-adding 'example_setuptools/__init__.py'
-adding 'example_setuptools/_version.py'
-adding 'example_setuptools-2.3.4.dist-info/METADATA'
-adding 'example_setuptools-2.3.4.dist-info/WHEEL'
-adding 'example_setuptools-2.3.4.dist-info/top_level.txt'
-adding 'example_setuptools-2.3.4.dist-info/RECORD'
-removing build/bdist.solaris-2.11-i86pc.64bit/wheel
-Defaulting to user installation because normal site-packages is not writeable
-Looking in links: {distdir}
-Processing ./{distdir}/example_setuptools-2.3.4-py3-none-any.whl
-Requirement already satisfied: incremental in $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages (from example-setuptools==2.3.4) (24.7.1)
-Requirement already satisfied: setuptools>=61.0 in $(PYTHON_DIR)/vendor-packages (from incremental->example-setuptools==2.3.4) (71.1.0)
-Requirement already satisfied: tomli in $(PYTHON_DIR)/vendor-packages (from incremental->example-setuptools==2.3.4) (2.0.1)
-example-setuptools is already installed with the same version as the provided wheel. Use --force-reinstall to force an installation of the wheel.
-Unreleased!
-                                           [OK]
-
--------------------------------------------------------------------------------
-Ran 4 tests
-
-PASSED (successes=4)
-py$(PYV): commands[6]> coverage combine
-py$(PYV): commands[7]> coverage report
-Name                                                                                                                                                    Stmts   Miss Branch BrPart  Cover
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/__init__.py                 219      2     92      2    99%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/_hatch.py                    20      1      0      0    95%
+PASSED (successes=85)
+py$(PYV): commands[5]> coverage combine
+py$(PYV): commands[6]> coverage report
+Name                                                                                                                                                Stmts   Miss Branch BrPart  Cover
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/__init__.py                 222     22     90      1    91%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/_hatch.py                    19     19      0      0     0%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/_version.py                   3      0      0      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/__init__.py             0      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_pyproject.py      48      0     14      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_pyproject.py      54      0     12      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_update.py        243      0     10      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_version.py       236      0      0      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_version.py       242      0      0      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/update.py                    99      0     44      0   100%
-tests/test_examples.py                                                                                                                                     33      0      0      0   100%
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                     901      3    160      2    99%
-py$(PYV): commands[8]> coverage html
+tests/test_examples.py                                                                                                                                 76     76      0      0     0%
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                                 958    117    156      1    89%
+py$(PYV): commands[7]> coverage html
 Wrote HTML report to htmlcov/index.html
-py$(PYV): commands[9]> coverage xml
+py$(PYV): commands[8]> coverage xml
 Wrote XML report to coverage.xml
   py$(PYV): OK
   congratulations :)
