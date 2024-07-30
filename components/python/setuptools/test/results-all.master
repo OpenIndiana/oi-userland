@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-X workers [1383 items]
+X workers [1374 items]
 
 scheduling tests via LoadScheduling
 
@@ -192,6 +192,7 @@ setuptools/_normalization.py::setuptools._normalization.safe_identifier PASSED
 setuptools/_normalization.py::setuptools._normalization.safe_name PASSED
 setuptools/_normalization.py::setuptools._normalization.safe_version PASSED
 setuptools/_path.py::mypy PASSED
+setuptools/_path.py::setuptools._path.paths_on_pythonpath PASSED
 setuptools/_path.py::setuptools._path.same_path PASSED
 setuptools/_reqs.py::mypy PASSED
 setuptools/archive_util.py::mypy PASSED
@@ -312,7 +313,6 @@ setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equiva
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equivalent_to_setupcfg[https://github.com/python/importlib_metadata/raw/2f05392ca980952a6960d82b2f2d2ea10aa53239/setup.cfg] SKIPPED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equivalent_to_setupcfg[https://github.com/sqlalchemy/sqlalchemy/raw/533f5718904b620be8d63f2474229945d6f8ba5d/setup.cfg] SKIPPED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equivalent_to_setupcfg[https://github.com/tkem/cachetools/raw/2fd87a94b8d3861d80e9e4236cd480bfdd21c90d/setup.cfg] SKIPPED
-setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equivalent_to_setupcfg[https://github.com/tqdm/tqdm/raw/fc69d5dcf578f7c7986fa76841a6b793f813df35/setup.cfg] SKIPPED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_no_explicit_content_type_for_missing_extension PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_pep621_example PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_readme_content_type[Readme.txt-text/plain] PASSED
@@ -444,6 +444,7 @@ setuptools/tests/integration/helpers.py::mypy PASSED
 setuptools/tests/integration/test_pip_install_sdist.py::mypy PASSED
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[botocore-v.LATEST] SKIPPED
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[brotli-v.LATEST] SKIPPED
+setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[celery-v.LATEST] SKIPPED
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[charset-normalizer-v.LATEST] SKIPPED
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[kiwisolver-v.LATEST] SKIPPED
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[mypy-v.LATEST] SKIPPED
@@ -451,6 +452,7 @@ setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[pip-v
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[protobuf-v.LATEST] SKIPPED
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[pytest-v.LATEST] SKIPPED
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[pyyaml-v.LATEST] SKIPPED
+setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[requests-v.LATEST] SKIPPED
 setuptools/tests/namespaces.py::mypy PASSED
 setuptools/tests/script-with-bom.py::mypy PASSED
 setuptools/tests/server.py::mypy PASSED
@@ -1071,8 +1073,6 @@ setuptools/tests/test_egg_info.py::TestEggInfo::test_requires[install_requires_w
 setuptools/tests/test_egg_info.py::TestEggInfo::test_requires[install_requires_with_marker_in_setup_cfg] SKIPPED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_requires[setup_requires_with_markers] SKIPPED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_requires[setup_requires_with_markers_in_setup_cfg] SKIPPED
-setuptools/tests/test_egg_info.py::TestEggInfo::test_requires[tests_require_with_markers] SKIPPED
-setuptools/tests/test_egg_info.py::TestEggInfo::test_requires[tests_require_with_markers_in_setup_cfg] SKIPPED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_file[files0-True] PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_file[files1-False] PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_file[files2-True] PASSED
@@ -1103,7 +1103,7 @@ setuptools/tests/test_egg_info.py::TestWriteEntries::test_invalid_entry_point PA
 setuptools/tests/test_egg_info.py::TestWriteEntries::test_valid_entry_point PASSED
 setuptools/tests/test_egg_info.py::mypy PASSED
 setuptools/tests/test_extern.py::mypy PASSED
-setuptools/tests/test_extern.py::test_distribution_picklable SKIPPED
+setuptools/tests/test_extern.py::test_distribution_picklable $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:115: CoverageWarning: Couldn't parse '/tmp/easy_install-2tnf53wg/setup.py': No source for code: '/tmp/easy_install-2tnf53wg/setup.py'. (couldnt-parse) SKIPPED
 setuptools/tests/test_extern.py::test_orderedset_pickle_roundtrip PASSED
 setuptools/tests/test_extern.py::test_reimport_extern PASSED
 setuptools/tests/test_find_packages.py::TestFindPackages::test_dir_with_dot_is_skipped PASSED
@@ -1304,12 +1304,6 @@ setuptools/tests/test_sdist.py::test_default_revctrl PASSED
 setuptools/tests/test_setopt.py::TestEdit::test_case_retained PASSED
 setuptools/tests/test_setopt.py::TestEdit::test_utf8_encoding_retained PASSED
 setuptools/tests/test_setopt.py::mypy PASSED
-setuptools/tests/test_setuptools.py::TestCommandTests::testConflictingOptions PASSED
-setuptools/tests/test_setuptools.py::TestCommandTests::testDefaultSuite PASSED
-setuptools/tests/test_setuptools.py::TestCommandTests::testDefaultWModuleOnCmdLine PASSED
-setuptools/tests/test_setuptools.py::TestCommandTests::testLongOptSuiteWNoDefault PASSED
-setuptools/tests/test_setuptools.py::TestCommandTests::testNoSuite PASSED
-setuptools/tests/test_setuptools.py::TestCommandTests::testTestIsCommand PASSED
 setuptools/tests/test_setuptools.py::TestDepends::testExtractConst PASSED
 setuptools/tests/test_setuptools.py::TestDepends::testFindModule PASSED
 setuptools/tests/test_setuptools.py::TestDepends::testModuleExtract PASSED
@@ -1329,8 +1323,6 @@ setuptools/tests/test_setuptools.py::test_findall_missing_symlink PASSED
 setuptools/tests/test_setuptools.py::test_its_own_wheel_does_not_contain_tests XFAIL
 setuptools/tests/test_setuptools.py::test_wheel_includes_cli_scripts PASSED
 setuptools/tests/test_setuptools.py::test_wheel_includes_vendored_metadata PASSED
-setuptools/tests/test_test.py::mypy PASSED
-setuptools/tests/test_test.py::test_tests_are_run_once PASSED
 setuptools/tests/test_unicode_utils.py::mypy PASSED
 setuptools/tests/test_unicode_utils.py::test_filesys_decode_fs_encoding_is_None PASSED
 setuptools/tests/test_upload.py::TestUpload::test_upload_exception PASSED
@@ -1344,7 +1336,6 @@ setuptools/tests/test_virtualenv.py::test_pip_upgrade_from_source[pip<20.1] SKIP
 setuptools/tests/test_virtualenv.py::test_pip_upgrade_from_source[pip<21] SKIPPED
 setuptools/tests/test_virtualenv.py::test_pip_upgrade_from_source[pip<22] SKIPPED
 setuptools/tests/test_virtualenv.py::test_pip_upgrade_from_source[pip<23] SKIPPED
-setuptools/tests/test_virtualenv.py::test_test_command_install_requirements PASSED
 setuptools/tests/test_warnings.py::mypy PASSED
 setuptools/tests/test_warnings.py::test_due_date_enforcement PASSED
 setuptools/tests/test_warnings.py::test_formatting[default] PASSED
@@ -1373,7 +1364,7 @@ setuptools/tests/test_wheel.py::test_wheel_install[script] PASSED
 setuptools/tests/test_wheel.py::test_wheel_install[utf-8] PASSED
 setuptools/tests/test_wheel.py::test_wheel_install_pep_503 PASSED
 setuptools/tests/test_wheel.py::test_wheel_is_compatible PASSED
-setuptools/tests/test_wheel.py::test_wheel_mode $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:115: CoverageWarning: Couldn't parse '/tmp/easy_install-474tmo7z/setup.py': No source for code: '/tmp/easy_install-474tmo7z/setup.py'. (couldnt-parse) PASSED
+setuptools/tests/test_wheel.py::test_wheel_mode PASSED
 setuptools/tests/test_wheel.py::test_wheel_no_dist_dir PASSED
 setuptools/tests/test_windows_wrappers.py::TestCLI::test_basic SKIPPED
 setuptools/tests/test_windows_wrappers.py::TestCLI::test_symlink SKIPPED
@@ -1396,7 +1387,7 @@ tools/vendored.py::mypy PASSED
 
 ===================================== mypy =====================================
 
-Success: no issues found in 147 source files
-======== 1258 passed, 120 skipped, 4 xfailed, 1 xpassed ========
+Success: no issues found in 146 source files
+======== 1250 passed, 119 skipped, 4 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)
