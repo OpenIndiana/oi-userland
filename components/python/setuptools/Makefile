@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			71.1.0
+HUMAN_VERSION =			72.1.0
 COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:032d42ee9fb536e33087fb66cac5f840eb9391ed05637b3f2a76a7c8fb477936
+	sha256:8d243eff56d095e5817f796ede6ae32941278f542e0f941867cc05ae52b162ec
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,9 +42,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Testing expects there is no Cython installed
-TEST_CONFLICTING_PACKAGES.python += library/python/cython
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
