@@ -1,0 +1,55 @@
+--- incremental-24.7.2/tox.ini.orig
++++ incremental-24.7.2/tox.ini
+@@ -15,23 +15,23 @@
+ skip_install =
+     pindeps: true
+ deps =
+-    tests: -rrequirements_tests.txt
++    -rrequirements_tests.txt
+     mypy: -rrequirements_mypy.txt
+     apidocs: pydoctor
+     lint: pre-commit
+     pindeps: pip-tools
+ extras =
+     mypy: scripts
+-    tests: scripts
++    scripts
+ 
+ setenv =
+     ; Suppress pointless chatter in the output.
+     PIP_DISABLE_PIP_VERSION_CHECK=yes
+ 
+-    tests: COVERAGE_PROCESS_START={toxinidir}/.coveragerc
++    COVERAGE_PROCESS_START={toxinidir}/.coveragerc
+     ; This must be an absolute path because the example tests
+     ; run Python processes with alternative working directories.
+-    tests: COVERAGE_FILE={toxinidir}/.coverage
++    COVERAGE_FILE={toxinidir}/.coverage
+ 
+ commands =
+     python -V
+@@ -40,15 +40,15 @@
+ 
+     apidocs: pydoctor -q --project-name incremental src/incremental
+ 
+-    tests: coverage --version
+-    tests: {envbindir}/trial --version
+-    tests: coverage erase
+-    tests: coverage run {envbindir}/trial incremental
+-    tests: coverage run {envbindir}/trial tests/test_examples.py
+-    tests: coverage combine
+-    tests: coverage report
+-    tests: coverage html
+-    tests: coverage xml
++    coverage --version
++    {envbindir}/trial --version
++    coverage erase
++    coverage run {envbindir}/trial incremental
++    coverage run {envbindir}/trial tests/test_examples.py
++    coverage combine
++    coverage report
++    coverage html
++    coverage xml
+ 
+     mypy: mypy src
+ 

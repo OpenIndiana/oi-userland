@@ -19,7 +19,7 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         orc
-COMPONENT_VERSION=	0.4.38
+COMPONENT_VERSION=	0.4.39
 COMPONENT_FMRI=		library/orc
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/projects/orc.html
 COMPONENT_SUMMARY=	The Optimized Inner Loop Runtime Compiler for SIMD array operations
@@ -27,7 +27,7 @@ COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:a55a98d4772567aa3faed8fb84d540c3db77eaba16d3e2e10b044fbc9228668d
+	sha256:33ed2387f49b825fa1b9c3b0072e05f259141b895474ad085ae51143d3040cc0
 COMPONENT_ARCHIVE_URL=  \
 	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-2-Clause AND BSD-3-Clause

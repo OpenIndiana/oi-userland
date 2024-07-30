@@ -1,0 +1,41 @@
+https://github.com/briancurtin/deprecation/pull/57
+
+--- deprecation-2.1.0/docs-requirements.txt.orig
++++ deprecation-2.1.0/docs-requirements.txt
+@@ -1 +1 @@
+-unittest2
++unittest2;python_version<'3.5'
+--- deprecation-2.1.0/test-requirements.txt.orig
++++ deprecation-2.1.0/test-requirements.txt
+@@ -2,4 +2,4 @@
+ coverage>=4.3
+ flake8>=3.2
+ packaging>=16.8
+-unittest2>=1.1
++unittest2>=1.1;python_version<'3.5'
+--- deprecation-2.1.0/tests/test_deprecation.py.orig
++++ deprecation-2.1.0/tests/test_deprecation.py
+@@ -12,7 +12,12 @@
+ 
+ # As we unfortunately support Python 2.7, it lacks TestCase.subTest which
+ # is in 3.4+ or in unittest2
+-import unittest2
++try:
++    import unittest2
++except ImportError:
++    import unittest
++    unittest2 = unittest
++
+ import warnings
+ 
+ import deprecation
+--- deprecation-2.1.0/tox.ini.orig
++++ deprecation-2.1.0/tox.ini
+@@ -20,6 +20,6 @@
+ 
+ [testenv:docs]
+ deps = Sphinx
+-       unittest2
++       unittest2;python_version<'3.5'
+ changedir = docs
+ commands = sphinx-build -W -b html -d {envtmpdir}/doctrees . _build/html

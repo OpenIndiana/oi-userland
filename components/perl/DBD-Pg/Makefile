@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBD::Pg
 HUMAN_VERSION =			3.18.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DBD::Pg - PostgreSQL database driver for the DBI module
 COMPONENT_CPAN_AUTHOR =		TURNSTEP
 COMPONENT_ARCHIVE_HASH =	\

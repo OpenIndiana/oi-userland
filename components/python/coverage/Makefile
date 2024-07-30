@@ -19,48 +19,37 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		coverage
-HUMAN_VERSION =			7.4.0
-COMPONENT_SUMMARY =		coverage - Code coverage measurement for Python
+HUMAN_VERSION =			7.6.0
+COMPONENT_SUMMARY =		Code coverage measurement for Python
 COMPONENT_PROJECT_URL =		https://github.com/nedbat/coveragepy
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/67/8a/a8aebe8c70fadb1ad8bdadfc8fb97ce9a518ca406cb6eece0ed17122bfa4/coverage-7.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:707c0f58cb1712b8809ece32b68996ee1e609f71bd14615bd8f87a1293cb610e
+	sha256:289cc803fa1dc901f84701ac10c9ee873619320f2f9aff38794db4a4a0268d51
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Testing needs a writable directory with existing pth file
+COMPONENT_PRE_TEST_ACTION += touch $(PROTO_DIR)/$(PYTHON_LIB)/foo.pth
+COMPONENT_POST_TEST_ACTION += $(RM) $(PROTO_DIR)/$(PYTHON_LIB)/foo.pth
+
+# Force verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -v
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
-TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/cffi
 TEST_REQUIRED_PACKAGES.python += library/python/colorama
-TEST_REQUIRED_PACKAGES.python += library/python/distlib
-TEST_REQUIRED_PACKAGES.python += library/python/dnspython
-TEST_REQUIRED_PACKAGES.python += library/python/eventlet
-TEST_REQUIRED_PACKAGES.python += library/python/exceptiongroup
-TEST_REQUIRED_PACKAGES.python += library/python/execnet
-TEST_REQUIRED_PACKAGES.python += library/python/filelock
 TEST_REQUIRED_PACKAGES.python += library/python/flaky
 TEST_REQUIRED_PACKAGES.python += library/python/gevent
 TEST_REQUIRED_PACKAGES.python += library/python/greenlet
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
-TEST_REQUIRED_PACKAGES.python += library/python/iniconfig
-TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pip
-TEST_REQUIRED_PACKAGES.python += library/python/platformdirs
-TEST_REQUIRED_PACKAGES.python += library/python/pluggy
-TEST_REQUIRED_PACKAGES.python += library/python/pycparser
+TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/six
-TEST_REQUIRED_PACKAGES.python += library/python/sortedcontainers
 TEST_REQUIRED_PACKAGES.python += library/python/tomli
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
-TEST_REQUIRED_PACKAGES.python += library/python/zope-event
-TEST_REQUIRED_PACKAGES.python += library/python/zope-interface

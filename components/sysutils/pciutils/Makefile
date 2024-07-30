@@ -16,11 +16,11 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pciutils
-COMPONENT_VERSION=	3.12.0
+COMPONENT_VERSION=	3.13.0
 COMPONENT_SUMMARY=	The PCI Utilities are a collection of programs for inspecting and manipulating configuration of PCI devices
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:827a641d2016a15f0b959804daa5a05f055d0f91d58a70d32ac41ce7ef94164e
+COMPONENT_ARCHIVE_HASH=	sha256:a03c88a0aab709b1697ca1753766f443e78297f84c7bcd80a82c1422edd7cb42
 COMPONENT_ARCHIVE_URL=	https://mj.ucw.cz/download/linux/pci/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://mj.ucw.cz/sw/pciutils/
 COMPONENT_FMRI=		system/pciutils

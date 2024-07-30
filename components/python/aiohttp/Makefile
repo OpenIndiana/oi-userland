@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.9.3
-COMPONENT_SUMMARY =		aiohttp - Async http client/server framework (asyncio)
+HUMAN_VERSION =			3.9.5
+COMPONENT_SUMMARY =		Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/18/93/1f005bbe044471a0444a82cdd7356f5120b9cf94fe2c50c0cdbf28f1258b/aiohttp-3.9.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:90842933e5d1ff760fae6caca4b2b3edba53ba8f4b71e95dacf2818a2aca06f7
+	sha256:edea7d15772ceeb29db4aff55e482d4bcfb6ae160ce144f2682de02f6d693551
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -64,6 +62,9 @@ PYTEST_ADDOPTS += --ignore tests/test_proxy_functional.py
 # We have no python-on-whales packaged yet.
 PYTEST_ADDOPTS += --ignore tests/autobahn/test_autobahn.py
 
+# https://github.com/aio-libs/aiohttp/issues/8234
+PYTEST_ADDOPTS += --deselect tests/test_pytest_plugin.py::test_aiohttp_plugin
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/aiosignal
 PYTHON_REQUIRED_PACKAGES += library/python/async-timeout
@@ -71,7 +72,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/attrs
 PYTHON_REQUIRED_PACKAGES += library/python/frozenlist
 PYTHON_REQUIRED_PACKAGES += library/python/multidict
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += library/python/yarl
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library

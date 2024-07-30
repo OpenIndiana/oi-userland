@@ -26,25 +26,29 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hal-cups-utils
 COMPONENT_VERSION=	0.6.19
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+COMPONENT_SUMMARY=	the HAL automatic queue creation plugin module for CUPS
+COMPONENT_DESCRIPTION=	hal-cups-utils is a Hardware Abstraction Layer (HAL) plugin module that automatically creates print queues under the Common UNIX Printing System (CUPS) for printers detected by HAL.
 COMPONENT_PROJECT_URL=	http://fedorahosted.org/hal-cups-utils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f40a7ebd1453d471a8a6bfd8c635708dd739a6160bb661813f936d936ba85618
+COMPONENT_ARCHIVE_HASH=	sha256:f40a7ebd1453d471a8a6bfd8c635708dd739a6160bb661813f936d936ba85618
 COMPONENT_ARCHIVE_URL=	ftp://ftp.slackware.org.uk/gsb/gsb-2.28_slackware-13.1/source/l/hal-cups-utils/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		print/cups/hal-cups-utils
+COMPONENT_CLASSIFICATION=	System/Printing
+COMPONENT_LICENSE=	CUPS License
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATCH_LEVEL = 0
-USED_PYTHON=$(PYTHON)
+PATCH_LEVEL= 0
+USED_PYTHON= $(PYTHON)
+ACLOCAL=	/usr/bin/aclocal-1.11
+AUTOMAKE=	/usr/bin/automake-1.11
 
 CONFIGURE_ENV += PYTHON=$(USED_PYTHON)
 
 CONFIGURE_OPTIONS += --datarootdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)/hal
 
 # Since we patch Makefile.am, we have to rebuild the autoconf generated files
 # Just running automake does not work, since our automake is different from the one
@@ -56,14 +60,13 @@ COMPONENT_PREP_ACTION = ( \
 	$(PERL) -pi -e 's,^\#!.*?python,\#!$(USED_PYTHON), if $$.==1' systemv/hal_lpadmin ; \
 ) 
 
-build:		$(BUILD_32)
 
-install:	$(INSTALL_32)
+# Manually added build dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += developer/build/automake-111
 
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += service/hal
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus

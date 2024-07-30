@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nh3
-HUMAN_VERSION =			0.2.17
-COMPONENT_SUMMARY =		nh3 - Python bindings to the ammonia HTML sanitization library.
+HUMAN_VERSION =			0.2.18
+COMPONENT_SUMMARY =		Python bindings to the ammonia HTML sanitization library.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:40d0741a19c3d645e54efba71cb0d8c475b59135c1e3c580f879ad5514cbf028
+	sha256:94a166927e53972a9698af9542ace4e38b9de50c34352b962f4d9a7d4c927af4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

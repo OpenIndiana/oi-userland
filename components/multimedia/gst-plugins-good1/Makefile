@@ -16,17 +16,16 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-good1
-COMPONENT_VERSION=      1.22.10
+COMPONENT_VERSION=      1.24.5
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=		gst-plugins-good
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:f748feae922cad62f20102a84ade8f42b78e1e44a34866aa3ea766f9172e1c7f
+COMPONENT_ARCHIVE_HASH= sha256:badcfc5292b035bde99a77327d468b2f0b116b40420bc9f25fb8e3970824ba75
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
@@ -34,17 +33,11 @@ COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
 
 # almost everything is "auto" with meson
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
@@ -57,6 +50,9 @@ CONFIGURE_OPTIONS += -Dqt6=disabled
 CONFIGURE_OPTIONS += -Dtwolame=enabled
 CONFIGURE_OPTIONS += -Dsoup=enabled
 CONFIGURE_OPTIONS += -Dtests=enabled
+# diable amrnb and amrwbdec because they are in opencore-amr which is in encumbered.
+CONFIGURE_OPTIONS += -Damrnb=disabled
+CONFIGURE_OPTIONS += -Damrwbdec=disabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
@@ -84,6 +80,7 @@ REQUIRED_PACKAGES += audio/wavpack
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/aalib
 REQUIRED_PACKAGES += library/audio/gstreamer1
@@ -94,14 +91,16 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libsoup3
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nettle
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxtst

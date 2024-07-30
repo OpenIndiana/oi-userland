@@ -1,0 +1,26 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python --version
+Python 3.9.19
+py$(PYV): commands[1]> python -m pytest --cov=deprecation_alias -r aR tests/
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: tox.ini
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collecting ... collected 5 items
+
+tests/test_deprecation.py::test_bad_args PASSED
+tests/test_deprecation.py::test_deprecation PASSED
+tests/test_deprecation.py::test_deprecation_as_function PASSED
+tests/test_deprecation.py::test_deprecation_dates PASSED
+tests/test_deprecation.py::test_unsupported PASSED
+
+Required test coverage of 85.0% reached. Total coverage: 96.92%
+
+============================= slowest 25 durations =============================
+======== 5 passed ========
+  py$(PYV): OK
+  congratulations :)

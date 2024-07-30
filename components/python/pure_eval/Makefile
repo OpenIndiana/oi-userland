@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pure_eval
-HUMAN_VERSION =			0.2.2
-COMPONENT_SUMMARY =		pure_eval - Safely evaluate AST nodes without side effects
+HUMAN_VERSION =			0.2.3
+COMPONENT_SUMMARY =		Safely evaluate AST nodes without side effects
 COMPONENT_PROJECT_URL =		http://github.com/alexmojaki/pure_eval
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/97/5a/0bc937c25d3ce4e0a74335222aee05455d6afa2888032185f8ab50cdf6fd/pure_eval-0.2.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2b45320af6dfaa1750f543d714b6d1c520a1688dec6fd24d339063ce0aaa9ac3
+	sha256:5f4e983f40564c576c7c8635ae88db5956bb2229d7e9237d03b3c0b0190eaf42
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

@@ -14,6 +14,7 @@
 # Copyright 2023, Niklas Poslovski
 #
 
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tor
@@ -33,7 +34,8 @@ COMPONENT_LICENSE=	BSD, OPEN DATA LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-CPPFLAGS += -I/usr/include/libevent2
+CPPFLAGS += -I/usr/include/libevent2 -I$(OPENSSL_INCDIR)
+LDFLAGS  += -L$(OPENSSL_LIBDIR)
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f)
 
@@ -42,6 +44,7 @@ CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--disable-dependency-tracking
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 
 COMPONENT_TEST_ENV+=	PATH=$(PATH.gnu)
 
@@ -61,11 +64,11 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

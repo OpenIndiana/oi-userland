@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scikit_build_core
-HUMAN_VERSION =			0.9.8
+HUMAN_VERSION =			0.9.9
 COMPONENT_SUMMARY =		Build backend for CMake based projects
 COMPONENT_PROJECT_URL =		https://github.com/scikit-build/scikit-build-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c8ff2582f94d2d9e650a9869015704e77c35baf691b6228ce87fd062a21063b1
+	sha256:64880e00c03e196ed2feb66676175dbbafe5fad1081edd9583c30bf6170d2fc9
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 

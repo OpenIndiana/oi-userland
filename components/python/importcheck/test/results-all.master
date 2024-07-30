@@ -1,0 +1,86 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python --version
+Python 3.9.19
+py$(PYV): commands[1]> python -m pytest --cov=importcheck -r aR tests/
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: tox.ini
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collecting ... collected 64 items
+
+tests/test_cli.py::test_cli[Darwin] SKIPPED (Output differs on macOS)
+tests/test_cli.py::test_cli[Linux] PASSED
+tests/test_cli.py::test_cli[Windows] SKIPPED (Output differs on Windows)
+tests/test_cli.py::test_cli_bad_config PASSED
+tests/test_cli.py::test_cli_count_modules_as_args[args0] PASSED
+tests/test_cli.py::test_cli_count_modules_as_args[args1] PASSED
+tests/test_cli.py::test_cli_errors_count PASSED
+tests/test_cli.py::test_cli_errors_show[3.10] SKIPPED (Output differ...)
+tests/test_cli.py::test_cli_errors_show[3.11] SKIPPED (Output differ...)
+tests/test_cli.py::test_cli_errors_show[3.6-pypy] SKIPPED (Output di...)
+tests/test_cli.py::test_cli_errors_show[3.6] SKIPPED (Output differs...)
+tests/test_cli.py::test_cli_errors_show[3.7-pypy] SKIPPED (Output di...)
+tests/test_cli.py::test_cli_errors_show[3.7] SKIPPED (Output differs...)
+tests/test_cli.py::test_cli_errors_show[3.8-pypy] SKIPPED (Output di...)
+tests/test_cli.py::test_cli_errors_show[3.8] SKIPPED (Output differs...)
+tests/test_cli.py::test_cli_errors_show[3.9-pypy] SKIPPED (Output di...)
+tests/test_cli.py::test_cli_errors_show[3.9] PASSED
+tests/test_cli.py::test_cli_help SKIPPED (Output differs on Click 8)
+tests/test_cli.py::test_cli_help_click8 PASSED
+tests/test_cli.py::test_cli_no_op[0] PASSED
+tests/test_cli.py::test_cli_no_op[1] PASSED
+tests/test_cli.py::test_cli_no_op[2] PASSED
+tests/test_cli.py::test_cli_stdin PASSED
+tests/test_cli.py::test_cli_verbose[Darwin] SKIPPED (Output differs ...)
+tests/test_cli.py::test_cli_verbose[Linux] PASSED
+tests/test_cli.py::test_cli_verbose[Windows] SKIPPED (Output differs...)
+tests/test_cli.py::test_cli_verbose_errors PASSED
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.10] SKIPPED (Ou...)
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.11] SKIPPED (Ou...)
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.6-pypy] SKIPPED
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.6] SKIPPED (Out...)
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.7-pypy] SKIPPED
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.7] SKIPPED (Out...)
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.8-pypy] SKIPPED
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.8] SKIPPED (Out...)
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.9-pypy] SKIPPED
+tests/test_cli.py::test_cli_verbose_verbose_errors[3.9] PASSED
+tests/test_cli.py::test_cli_version PASSED
+tests/test_importcheck.py::test_importchecker[False-collections] PASSED
+tests/test_importcheck.py::test_importchecker[False-collections_importlib] PASSED
+tests/test_importcheck.py::test_importchecker[False-empty] PASSED
+tests/test_importcheck.py::test_importchecker[False-importlib] PASSED
+tests/test_importcheck.py::test_importchecker[True-collections] PASSED
+tests/test_importcheck.py::test_importchecker[True-collections_importlib] PASSED
+tests/test_importcheck.py::test_importchecker[True-empty] PASSED
+tests/test_importcheck.py::test_importchecker[True-importlib] PASSED
+tests/test_importcheck.py::test_importchecker_errors_show[False-3.10] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[False-3.11] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[False-3.6] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[False-3.7] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[False-3.8] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[False-3.9] PASSED
+tests/test_importcheck.py::test_importchecker_errors_show[True-3.10] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[True-3.11] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[True-3.6] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[True-3.7] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[True-3.8] SKIPPED
+tests/test_importcheck.py::test_importchecker_errors_show[True-3.9] PASSED
+tests/test_utils.py::test_load_toml[importcheck.toml] PASSED
+tests/test_utils.py::test_load_toml[pyproject.toml] PASSED
+tests/test_utils.py::test_load_toml_errors PASSED
+tests/test_utils.py::test_paths_to_modules PASSED
+tests/test_utils.py::test_redirect_output PASSED
+tests/test_utils.py::test_redirect_output_combine PASSED
+
+Required test coverage of 98.0% reached. Total coverage: 98.98%
+
+============================= slowest 25 durations =============================
+=========================== short test summary info ============================
+======== 31 passed, 33 skipped ========
+  py$(PYV): OK
+  congratulations :)

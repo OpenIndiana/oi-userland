@@ -13,6 +13,7 @@
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 set name=pkg.fmri value=pkg:/network/socat@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="socat is a larger and more flexible variant of netcat." 
 set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -21,12 +22,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license socat.license license='GPLv2'
 
-dir  path=usr
-dir  path=usr/bin
 file path=usr/bin/filan
 file path=usr/bin/procan
-file path=usr/bin/socat
-dir  path=usr/share
-dir  path=usr/share/man
-dir  path=usr/share/man/man1
-file path=usr/share/man/man1/socat.1
+link path=usr/bin/socat target=socat1
+file path=usr/bin/socat-broker.sh
+file path=usr/bin/socat-chain.sh
+file path=usr/bin/socat-mux.sh
+file path=usr/bin/socat1
+link path=usr/share/man/man1/socat.1 target=socat1.1
+file path=usr/share/man/man1/socat1.1

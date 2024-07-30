@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_installer
-HUMAN_VERSION =			0.5.3
-COMPONENT_SUMMARY =		pyproject_installer - Pyproject installer
+HUMAN_VERSION =			0.5.4
+COMPONENT_SUMMARY =		Pyproject installer
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dafd2f9a3aa37c24a5feffabfd56e77f1da801726de4ab1c9cd08da8185b22f3
+	sha256:0e6d2c1ed2d141ee69447c7c0474498b113f83b96076ff8fe899aa19108c481e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

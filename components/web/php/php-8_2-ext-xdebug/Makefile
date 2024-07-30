@@ -16,31 +16,29 @@
 # Copyright (c) 2023 Friedrich Kink
 #
 
-OPENSSL=	3.1
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdebug
-COMPONENT_VERSION=	3.3.1
+COMPONENT_VERSION=	3.3.2
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	Xdebug is a debugging and productivity extension for PHP
 COMPONENT_FMRI=		web/php-82/extension/php-xdebug
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:4eb4ee270bbcc5f14195c38f6ee58580e007cf4886ce32e11430318ab5bc2315
+COMPONENT_ARCHIVE_HASH=	sha256:15545b8311bedb5e7df08fd90d6653d9bf33629791e8119e70350475df932c55
 COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_SRC).tgz
 COMPONENT_LICENSE=	BSD style
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_CLASSIFICATION=	Development/PHP
 
-TEST_TARGET = $(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CLEAN_PATHS +=  package.xml
 
-PHP_PREFIX=/usr/php/8.2
-PHP_SYSCONFDIR=/etc/php/8.2
-PHP_DATADIR=/var/php/8.2
+PHP_PREFIX= /usr/php/8.2
+PHP_SYSCONFDIR= /etc/php/8.2
+PHP_DATADIR= /var/php/8.2
 
 # Configure Options
 CONFIGURE_OPTIONS  =    --prefix=$(PHP_PREFIX)

@@ -1,0 +1,15 @@
+We have pytest and pluggy in vendor-packages.
+
+--- coverage-7.6.0/tests/test_cmdline.py.orig
++++ coverage-7.6.0/tests/test_cmdline.py
+@@ -347,8 +347,8 @@
+         s = re.escape(os.sep)
+         assert lines[0].startswith("-- premain ----")
+         assert len(lines) > 25
+-        assert re.search(fr"{s}site-packages{s}_pytest{s}", out)
+-        assert re.search(fr"{s}site-packages{s}pluggy{s}", out)
++        assert re.search(fr"{s}vendor-packages{s}_pytest{s}", out)
++        assert re.search(fr"{s}vendor-packages{s}pluggy{s}", out)
+         assert re.search(fr"(?m)^\s+test_debug_premain : .*{s}tests{s}test_cmdline.py:\d+$", out)
+         assert re.search(fr"(?m)^\s+command_line : .*{s}coverage{s}cmdline.py:\d+$", out)
+         assert re.search(fr"(?m)^\s+do_debug : .*{s}coverage{s}cmdline.py:\d+$", out)

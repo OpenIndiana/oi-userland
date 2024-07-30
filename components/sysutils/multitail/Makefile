@@ -23,27 +23,26 @@
 # Copyright (c) 2023, Franklin Ronald <franklin@wiselabs.com.br>
 #
 
-BUILD_STYLE=cmake
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		multitail
-COMPONENT_VERSION=	7.1.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	7.1.3
 COMPONENT_SUMMARY=	Tail multiple files on console with ncurses
 COMPONENT_PROJECT_URL=	https://www.vanheusden.com/multitail/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/folkertvanheusden/multitail/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c8552e10093f0690b8baef84945753c878e234d7b3d0e3ff27e509ed5515998c
+COMPONENT_ARCHIVE_HASH=	sha256:f55732781f7319e137a3ff642a347af1aaf3ed5265ed12526bdd0666d708d805
 COMPONENT_FMRI=				file/multitail
 COMPONENT_CLASSIFICATION= 	Applications/System Utilities
 COMPONENT_LICENSE=			Apache 2.0
 COMPONENT_LICENSE_FILE=		LICENSE
 
-TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CMAKE_OPTIONS+= -DUTF8_SUPPORT=Yes -DCURSES_INCLUDE_PATH=/usr/include
+CMAKE_OPTIONS += -DUTF8_SUPPORT=Yes -DCURSES_INCLUDE_PATH=/usr/include
 
 COMPONENT_POST_INSTALL_ACTION  = \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/gnu/lib/$(MACH64)"' "$(PROTO_DIR)/usr/bin/multitail"; \

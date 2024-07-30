@@ -30,8 +30,9 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION= 3.29
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).6
+COMPONENT_MAJOR_VERSION= 3.30
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
@@ -42,13 +43,19 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_PROJECT_URL=  https://www.cmake.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1391313003b83d48e2ab115a8b525a557f78d8c1544618b48d1d90184a10f0af
+COMPONENT_ARCHIVE_HASH=	sha256:df9b3c53e3ce84c3c1b7c253e5ceff7d8d1f084ff0673d048f260e04ccb346e1
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_LICENSE=      BSD 3 Clause, MIT, GPLv2, LGPLv2.1, LGPLv3, Curl, PD
 
 include $(WS_MAKE_RULES)/common.mk
+
+CMAKE_VERSION= $(COMPONENT_MAJOR_VERSION)
+PKG_MACROS += CMAKE_VERSION=$(CMAKE_VERSION)
+
+GENERATE_EXTRA_CMD += | \
+	$(GSED) -e 's/$(subst .,\.,$(CMAKE_VERSION))/$$(CMAKE_VERSION)/g'
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
@@ -67,13 +74,6 @@ COMPONENT_PREP_ACTION += \
 # Remove files polluting the generated manifest
 COMPONENT_PRE_INSTALL_ACTION = \
 	$(FIND) $(SOURCE_DIR) -name '*.~1~' -exec $(RM) {} \;
-
-# The default -O3 is *MUCH* too aggressive and will break things,
-# not just in CMake but everywhere.
-# CMake sets its own Language Standard flags in the Makefile it
-# generates for itself. The Userland default Language Standard flags
-# contradict cmake.
-gcc_OPT = -O2
 
 CONFIGURE_OPTIONS  = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --datadir=/share/cmake-$(COMPONENT_MAJOR_VERSION)
@@ -123,15 +123,16 @@ COMPONENT_TEST_ENV += CLICOLOR=0
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 COMPONENT_TEST_TARGETS = test
 
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec//"' \
-	'-e "s/\][0-9][0-9]*\.[0-9][0-9]* sec/\]/"' \
-	'-e "/bin/ctest/d"' \
-	'-e "/Test project/d"' \
-	'-e "/^[mM]ake/d"' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "/^XXX_REMOVE_XXX$$/d" '
+# Normalize test results
+COMPONENT_TEST_TRANSFORMS += "-e 's/ *[0-9]\{1,\}\.[0-9]\{1,\} sec//'"				# remove timing
+COMPONENT_TEST_TRANSFORMS += "-e '/^ *Start/d'"							# drop Start lines
+COMPONENT_TEST_TRANSFORMS += "-e 's/^ *[0-9]\{1,\}\/[0-9]\{1,\} Test *\#[0-9]\{1,\}:/Test/'"	# drop test numbers
+COMPONENT_TEST_TRANSFORMS += "-e '/^make:/d'"							# drop make logs
+
+# To get consistent test results we need following packages
+TEST_REQUIRED_PACKAGES += developer/versioning/cvs
+TEST_REQUIRED_PACKAGES += developer/versioning/mercurial
+TEST_REQUIRED_PACKAGES += developer/versioning/subversion
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

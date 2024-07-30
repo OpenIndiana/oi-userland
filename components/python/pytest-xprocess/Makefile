@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-xprocess
-HUMAN_VERSION =			0.23.0
-COMPONENT_SUMMARY =		pytest-xprocess - A pytest plugin for managing processes across test runs.
+HUMAN_VERSION =			1.0.2
+COMPONENT_SUMMARY =		A pytest plugin for managing processes across test runs.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-xprocess/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b7/68/90298f409cf7f939d183233421114ea3535be3fd5be3a8e4070863175374/pytest-xprocess-0.23.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f8d4041a20a1c1ef1943054e4a3df7ac7b43e7f291f640f43c34e9dcc4b34dfa
+	sha256:15e270637586eabc56755ee5fcc81c48bdb46ba7ef7c0d5b1b64302d080cc60f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,6 +34,5 @@ PYTHON_REQUIRED_PACKAGES += library/python/psutil
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage

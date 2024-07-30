@@ -17,18 +17,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tklib
-COMPONENT_VERSION=	0.7
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	https://core.tcl.tk/tklib/home
+COMPONENT_VERSION=	0.8
 COMPONENT_SUMMARY=	Collection of widgets and other packages for Tk
+COMPONENT_PROJECT_URL=	https://core.tcl.tk/tklib/home
 COMPONENT_FMRI=         tcl/tklib
 COMPONENT_CLASSIFICATION=       Development/Other Languages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:93890db81a5b0cdb62c386265ec4fcdaab60824e8e6e882c7fecc69ff49afc66
+COMPONENT_ARCHIVE_HASH= sha256:8192087094fdb6c0fbea4c8f995d26631e8c0a230697179863ba817781c31da9
 COMPONENT_ARCHIVE_URL=	https://github.com/tcltk/tklib/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	TCL
-COMPONENT_LICENSE_FILE=	tklib.license
+COMPONENT_LICENSE_FILE=	license.terms
 
 include $(WS_MAKE_RULES)/common.mk
 

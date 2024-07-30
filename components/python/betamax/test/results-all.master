@@ -1,0 +1,169 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m py.test --verbose
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: tox.ini
+collecting ... collected 147 items
+
+tests/integration/test_allow_playback_repeats.py::TestPlaybackRepeatInteractions::test_will_replay_the_same_interaction PASSED
+tests/integration/test_backwards_compat.py::TestBackwardsCompatibleSerialization::test_can_deserialize_an_old_cassette PASSED
+tests/integration/test_backwards_compat.py::TestBackwardsCompatibleSerialization::test_matches_old_request_data PASSED
+tests/integration/test_backwards_compat.py::TestBackwardsCompatibleSerialization::tests_deserializes_old_cassette_headers PASSED
+tests/integration/test_backwards_compat.py::TestBackwardsCompatibleSerialization::tests_populates_correct_fields_with_missing_data PASSED
+tests/integration/test_fixtures.py::TestPyTestFixtures::test_pytest_fixture PASSED
+tests/integration/test_fixtures.py::TestPyTestParametrizedFixtures::test_pytest_fixture[https://httpbin.org/get] PASSED
+tests/integration/test_fixtures.py::test_pytest_parametrize_with_filesystem_problematic_chars[aaa\\bbb] PASSED
+tests/integration/test_fixtures.py::test_pytest_parametrize_with_filesystem_problematic_chars[ccc:ddd] PASSED
+tests/integration/test_fixtures.py::test_pytest_parametrize_with_filesystem_problematic_chars[eee*fff] PASSED
+tests/integration/test_hooks.py::TestHooks::test_post_start_hook PASSED
+tests/integration/test_hooks.py::TestHooks::test_pre_stop_hook PASSED
+tests/integration/test_hooks.py::TestHooks::test_preplayback_hook PASSED
+tests/integration/test_hooks.py::TestHooks::test_prerecord_hook PASSED
+tests/integration/test_hooks.py::TestHooks::test_prerecord_ignoring_hook PASSED
+tests/integration/test_multiple_cookies.py::TestMultipleCookies::test_multiple_cookies PASSED
+tests/integration/test_placeholders.py::TestPlaceholders::test_placeholders_work PASSED
+tests/integration/test_preserve_exact_body_bytes.py::TestPreserveExactBodyBytes::test_preserve_exact_body_bytes_does_not_munge_response_content PASSED
+tests/integration/test_preserve_exact_body_bytes.py::TestPreserveExactBodyBytesForAllCassettes::test_preserve_exact_body_bytes PASSED
+tests/integration/test_record_modes.py::TestRecordOnce::test_records_new_interaction SKIPPED
+tests/integration/test_record_modes.py::TestRecordOnce::test_replays_response_from_cassette PASSED
+tests/integration/test_record_modes.py::TestRecordNone::test_raises_exception_when_no_interactions_present PASSED
+tests/integration/test_record_modes.py::TestRecordNone::test_record_none_does_not_create_cassettes PASSED
+tests/integration/test_record_modes.py::TestRecordNewEpisodes::test_records_new_events_with_existing_cassette PASSED
+tests/integration/test_record_modes.py::TestRecordNewEpisodesCreatesCassettes::test_creates_new_cassettes PASSED
+tests/integration/test_record_modes.py::TestRecordAll::test_records_new_interactions PASSED
+tests/integration/test_record_modes.py::TestRecordAll::test_replaces_old_interactions PASSED
+tests/integration/test_unicode.py::TestUnicode::test_unicode_is_saved_properly PASSED
+tests/regression/test_can_replay_interactions_multiple_times.py::TestReplayInteractionMultipleTimes::test_replay_interaction_more_than_once PASSED
+tests/regression/test_cassettes_retain_global_configuration.py::TestCassetteRecordMode::test_class_variables_retain_their_value PASSED
+tests/regression/test_cassettes_retain_global_configuration.py::TestCassetteRecordMode::test_record_mode_is_none PASSED
+tests/regression/test_gzip_compression.py::TestGZIPRegression::test_saves_content_as_gzip PASSED
+tests/regression/test_once_prevents_new_interactions.py::TestOncePreventsNewInteractions::test_once_prevents_new_requests PASSED
+tests/regression/test_requests_2_11_body_matcher.py::TestRequests211BodyMatcher::test_requests_with_json_body PASSED
+tests/regression/test_works_with_digest_auth.py::TestDigestAuth::test_saves_content_as_gzip PASSED
+tests/unit/test_adapter.py::TestBetamaxAdapter::test_empty_initial_state PASSED
+tests/unit/test_adapter.py::TestBetamaxAdapter::test_has_http_adatper PASSED
+tests/unit/test_adapter.py::TestBetamaxAdapter::test_load_cassette PASSED
+tests/unit/test_betamax.py::TestBetamax::test_current_cassette PASSED
+tests/unit/test_betamax.py::TestBetamax::test_entering_context_alters_adapters PASSED
+tests/unit/test_betamax.py::TestBetamax::test_exiting_resets_the_adapters PASSED
+tests/unit/test_betamax.py::TestBetamax::test_initialization_does_alter_the_session PASSED
+tests/unit/test_betamax.py::TestBetamax::test_register_request_matcher PASSED
+tests/unit/test_betamax.py::TestBetamax::test_replaces_all_adapters PASSED
+tests/unit/test_betamax.py::TestBetamax::test_stores_the_session_instance PASSED
+tests/unit/test_betamax.py::TestBetamax::test_use_cassette_returns_cassette_object PASSED
+tests/unit/test_cassette.py::TestSerialization::test_add_urllib3_response PASSED
+tests/unit/test_cassette.py::TestSerialization::test_deserialize_prepared_request PASSED
+tests/unit/test_cassette.py::TestSerialization::test_deserialize_response_new PASSED
+tests/unit/test_cassette.py::TestSerialization::test_deserialize_response_old PASSED
+tests/unit/test_cassette.py::TestSerialization::test_from_list_handles_non_lists PASSED
+tests/unit/test_cassette.py::TestSerialization::test_from_list_returns_an_element PASSED
+tests/unit/test_cassette.py::TestSerialization::test_serialize_prepared_request PASSED
+tests/unit/test_cassette.py::TestSerialization::test_serialize_response PASSED
+tests/unit/test_cassette.py::test_cassette_initialization PASSED
+tests/unit/test_cassette.py::TestCassette::test_earliest_recorded_date PASSED
+tests/unit/test_cassette.py::TestCassette::test_eject PASSED
+tests/unit/test_cassette.py::TestCassette::test_find_match PASSED
+tests/unit/test_cassette.py::TestCassette::test_find_match__missing_matcher PASSED
+tests/unit/test_cassette.py::TestCassette::test_find_match_new_episodes_with_existing_unused_interactions PASSED
+tests/unit/test_cassette.py::TestCassette::test_find_match_new_episodes_with_no_unused_interactions PASSED
+tests/unit/test_cassette.py::TestCassette::test_holds_interactions PASSED
+tests/unit/test_cassette.py::TestCassette::test_serialize_interaction PASSED
+tests/unit/test_cassette.py::TestInteraction::test_as_response PASSED
+tests/unit/test_cassette.py::TestInteraction::test_as_response_returns_new_instance PASSED
+tests/unit/test_cassette.py::TestInteraction::test_deserialized_response PASSED
+tests/unit/test_cassette.py::TestInteraction::test_match PASSED
+tests/unit/test_cassette.py::TestInteraction::test_replace PASSED
+tests/unit/test_cassette.py::TestInteraction::test_replace_in_body PASSED
+tests/unit/test_cassette.py::TestInteraction::test_replace_in_headers PASSED
+tests/unit/test_cassette.py::TestInteraction::test_replace_in_uri PASSED
+tests/unit/test_cassette.py::TestMockHTTPResponse::test_close PASSED
+tests/unit/test_cassette.py::TestMockHTTPResponse::test_is_Message PASSED
+tests/unit/test_cassette.py::TestMockHTTPResponse::test_isclosed PASSED
+tests/unit/test_configure.py::TestConfiguration::test_acts_as_pass_through PASSED
+tests/unit/test_configure.py::TestConfiguration::test_allows_registration_of_placeholders PASSED
+tests/unit/test_configure.py::TestConfiguration::test_is_a_context_manager PASSED
+tests/unit/test_configure.py::TestConfiguration::test_registers_post_start_hooks PASSED
+tests/unit/test_configure.py::TestConfiguration::test_registers_pre_playback_hooks PASSED
+tests/unit/test_configure.py::TestConfiguration::test_registers_pre_record_hooks PASSED
+tests/unit/test_configure.py::TestConfiguration::test_registers_pre_stop_hooks PASSED
+tests/unit/test_configure.py::TestConfiguration::test_sets_cassette_library PASSED
+tests/unit/test_decorator.py::test_wraps_session PASSED
+tests/unit/test_decorator.py::test_creates_a_new_session PASSED
+tests/unit/test_exceptions.py::TestExceptions::test_all_exceptions_are_betamax_errors PASSED
+tests/unit/test_exceptions.py::TestExceptions::test_all_validation_errors_are_in_validation_error_map PASSED
+tests/unit/test_exceptions.py::TestExceptions::test_all_validation_errors_are_validation_errors PASSED
+tests/unit/test_exceptions.py::TestExceptions::test_betamaxerror_repr PASSED
+tests/unit/test_exceptions.py::TestExceptions::test_invalid_option_is_validation_error PASSED
+tests/unit/test_fixtures.py::TestPyTestFixture::test_adds_stop_as_a_finalizer PASSED
+tests/unit/test_fixtures.py::TestPyTestFixture::test_auto_starts_the_recorder PASSED
+tests/unit/test_fixtures.py::FakeBetamaxTestCase::test_fake PASSED
+tests/unit/test_fixtures.py::TestUnittestFixture::test_setUp PASSED
+tests/unit/test_fixtures.py::TestUnittestFixture::test_setUp_accepts_session_subclasses PASSED
+tests/unit/test_fixtures.py::TestUnittestFixture::test_setUp_rejects_arbitrary_session_classes PASSED
+tests/unit/test_fixtures.py::TestUnittestFixture::test_tearDown_calls_stop PASSED
+tests/unit/test_matchers.py::TestMatchers::test_body_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_body_matcher_without_body PASSED
+tests/unit/test_matchers.py::TestMatchers::test_digest_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_headers_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_host_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_matcher_registry_has_body_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_matcher_registry_has_digest_auth_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_matcher_registry_has_headers_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_matcher_registry_has_host_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_matcher_registry_has_method_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_matcher_registry_has_path_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_matcher_registry_has_query_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_matcher_registry_has_uri_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_method_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_path_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_query_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_uri_matcher PASSED
+tests/unit/test_matchers.py::TestMatchers::test_uri_matcher_handles_query_strings PASSED
+tests/unit/test_matchers.py::TestBaseMatcher::test_requires_name PASSED
+tests/unit/test_matchers.py::TestBaseMatcher::test_requires_you_overload_match PASSED
+tests/unit/test_options.py::TestValidators::test_validate_matchers PASSED
+tests/unit/test_options.py::TestValidators::test_validate_record PASSED
+tests/unit/test_options.py::TestOptions::test_data_is_valid PASSED
+tests/unit/test_options.py::TestOptions::test_raise_on_invalid_body_bytes PASSED
+tests/unit/test_options.py::TestOptions::test_raise_on_invalid_matchers PASSED
+tests/unit/test_options.py::TestOptions::test_raise_on_invalid_placeholders PASSED
+tests/unit/test_options.py::TestOptions::test_raise_on_invalid_playback_repeats PASSED
+tests/unit/test_options.py::TestOptions::test_raise_on_invalid_record PASSED
+tests/unit/test_options.py::TestOptions::test_raise_on_invalid_record_interval PASSED
+tests/unit/test_options.py::TestOptions::test_raise_on_invalid_serializer PASSED
+tests/unit/test_options.py::TestOptions::test_raise_on_unknown_option PASSED
+tests/unit/test_recorder.py::TestBetamax::test_current_cassette PASSED
+tests/unit/test_recorder.py::TestBetamax::test_entering_context_alters_adapters PASSED
+tests/unit/test_recorder.py::TestBetamax::test_exiting_resets_the_adapters PASSED
+tests/unit/test_recorder.py::TestBetamax::test_initialization_converts_placeholders PASSED
+tests/unit/test_recorder.py::TestBetamax::test_initialization_does_not_alter_the_session PASSED
+tests/unit/test_recorder.py::TestBetamax::test_register_request_matcher PASSED
+tests/unit/test_recorder.py::TestBetamax::test_register_serializer PASSED
+tests/unit/test_recorder.py::TestBetamax::test_stores_the_session_instance PASSED
+tests/unit/test_recorder.py::TestBetamax::test_use_cassette_passes_along_placeholders PASSED
+tests/unit/test_recorder.py::TestBetamax::test_use_cassette_returns_cassette_object PASSED
+tests/unit/test_replays.py::TestReplays::test_replays_response_on_right_order PASSED
+tests/unit/test_serializers.py::TestJSONSerializer::test_generate_cassette_name PASSED
+tests/unit/test_serializers.py::TestJSONSerializer::test_generate_cassette_name_with_instance PASSED
+tests/unit/test_serializers.py::TestBaseSerializer::test_deserialize_is_an_interface PASSED
+tests/unit/test_serializers.py::TestBaseSerializer::test_requires_a_name PASSED
+tests/unit/test_serializers.py::TestBaseSerializer::test_serialize_is_an_interface PASSED
+tests/unit/test_serializers.py::TestBinarySerializers::test_deserialize PASSED
+tests/unit/test_serializers.py::TestBinarySerializers::test_serialize PASSED
+tests/unit/test_serializers.py::TestTextSerializer::test_deserialize PASSED
+tests/unit/test_serializers.py::TestTextSerializer::test_serialize PASSED
+
+=============================== warnings summary ===============================
+tests/integration/test_fixtures.py::TestPyTestParametrizedFixtures::test_pytest_fixture[https://httpbin.org/get]
+tests/integration/test_fixtures.py::test_pytest_parametrize_with_filesystem_problematic_chars[aaa\\bbb]
+tests/integration/test_fixtures.py::test_pytest_parametrize_with_filesystem_problematic_chars[ccc:ddd]
+tests/integration/test_fixtures.py::test_pytest_parametrize_with_filesystem_problematic_chars[eee*fff]
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/betamax/fixtures/pytest.py:128: DeprecationWarning: betamax_parametrized_recorder and betamax_parametrized_session will be removed in betamax 1.0. Their behavior will be the default.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 146 passed, 1 skipped, 4 warnings ========
+  py$(PYV): OK
+  congratulations :)

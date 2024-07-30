@@ -15,18 +15,14 @@
 #
 
 BUILD_STYLE = pyproject
-PYTHON3_SOABI = abi3
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyQt5
-HUMAN_VERSION =			5.15.10
-COMPONENT_SUMMARY =		PyQt5 - Python bindings for the Qt cross platform application toolkit
-COMPONENT_PROJECT_URL =		https://www.riverbankcomputing.com/software/pyqt/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4d/5d/b8b6e26956ec113ad3f566e02abd12ac3a56b103fcc7e0735e27ee4a1df3/PyQt5-5.15.10.tar.gz
+HUMAN_VERSION =			5.15.11
+COMPONENT_SUMMARY =		Python bindings for the Qt cross platform application toolkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d46b7804b1b10a4ff91753f8113e5b5580d2b4462f3226288e2d84497334898a
+	sha256:fda45743ebb4a27b4b1a51c6d8ef455c4c1b5d610c90d2934c7802b5c1557c52
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 

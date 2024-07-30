@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		readme_renderer
-HUMAN_VERSION =			43.0
-COMPONENT_SUMMARY =		readme_renderer - readme_renderer is a library for rendering readme descriptions for Warehouse
+HUMAN_VERSION =			44.0
+COMPONENT_SUMMARY =		readme_renderer is a library for rendering readme descriptions for Warehouse
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1818dd28140813509eeed8d62687f7cd4f7bad90d4db586001c5dc09d4fde311
+	sha256:8712034eabbfa6805cacf1402b4eeb2a73028f72d1166d6f5cb7f9c047c5d1e1
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,7 +33,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/docutils
 PYTHON_REQUIRED_PACKAGES += library/python/nh3
 PYTHON_REQUIRED_PACKAGES += library/python/pygments
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cmarkgfm
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

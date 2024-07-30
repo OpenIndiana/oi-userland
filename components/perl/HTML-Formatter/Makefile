@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTML::Formatter
 HUMAN_VERSION =			2.16
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTML::Formatter - Base class for HTML formatters
 COMPONENT_CPAN_AUTHOR =		NIGELM
 COMPONENT_ARCHIVE_HASH =	\

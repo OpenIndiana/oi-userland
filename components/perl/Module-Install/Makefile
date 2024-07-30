@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Install
 HUMAN_VERSION =			1.21
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module::Install - Standalone, extensible Perl module installer
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\

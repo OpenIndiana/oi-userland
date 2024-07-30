@@ -1,0 +1,131 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -V
+Python 3.9.19
+py$(PYV): commands[1]> coverage --version
+Coverage.py, version 7.6.0 with C extension
+Full documentation is at https://coverage.readthedocs.io/en/7.6.0
+py$(PYV): commands[2]> /usr/bin/trial --version
+Twisted version: 24.3.0
+py$(PYV): commands[3]> coverage erase
+py$(PYV): commands[4]> coverage run /usr/bin/trial incremental
+incremental.tests.test_pyproject
+  VerifyPyprojectDotTomlTests
+    test_brokenToml ...                                                    [OK]
+    test_fileNotFound ...                                                  [OK]
+    test_nameInvalidOptIn ...                                              [OK]
+    test_nameMissing ...                                                   [OK]
+    test_noToolIncrementalSection ...                                      [OK]
+    test_packagePathRequired ...                                           [OK]
+    test_setuptoolsOptIn ...                                               [OK]
+    test_toolIncrementalInvalid ...                                        [OK]
+    test_toolIncrementalUnexpecteKeys ...                                  [OK]
+incremental.tests.test_update
+  CreatedUpdateInSrcTests
+    test_path ...                                                          [OK]
+  CreatedUpdateTests
+    test_dev ...                                                           [OK]
+    test_full_with_rc ...                                                  [OK]
+    test_full_without_rc ...                                               [OK]
+    test_newversion ...                                                    [OK]
+    test_newversion_bare ...                                               [OK]
+    test_newversion_bare_major_minor ...                                   [OK]
+    test_no_mix_create ...                                                 [OK]
+    test_no_mix_dev ...                                                    [OK]
+    test_no_mix_newversion ...                                             [OK]
+    test_patch ...                                                         [OK]
+    test_patch_with_prerelease_and_dev ...                                 [OK]
+    test_path ...                                                          [OK]
+    test_post ...                                                          [OK]
+    test_post_with_existing_post ...                                       [OK]
+    test_post_with_prerelease_and_dev ...                                  [OK]
+    test_rc_patch ...                                                      [OK]
+    test_rc_with_existing_rc ...                                           [OK]
+    test_rc_with_no_rc ...                                                 [OK]
+  MissingTests
+    test_path ...                                                          [OK]
+  NonCreatedUpdateTests
+    test_create ...                                                        [OK]
+  ScriptTests
+    test_insufficient_args ...                                             [OK]
+    test_run ...                                                           [OK]
+incremental.tests.test_version
+  VersionsTests
+    testShort ...                                                          [OK]
+    test_NEXTMustBeAlone ...                                               [OK]
+    test_base ...                                                          [OK]
+    test_baseWithDev ...                                                   [OK]
+    test_baseWithDevAndPost ...                                            [OK]
+    test_baseWithDevAndRC ...                                              [OK]
+    test_baseWithNEXT ...                                                  [OK]
+    test_baseWithPost ...                                                  [OK]
+    test_baseWithPrerelease ...                                            [OK]
+    test_baseWithReleaseCandidate ...                                      [OK]
+    test_comparingDev ...                                                  [OK]
+    test_comparingDevAndRC ...                                             [OK]
+    test_comparingDevAndRCDifferent ...                                    [OK]
+    test_comparingDevReleasesWithPreviousPostReleases ...                  [OK]
+    test_comparingDevReleasesWithReleases ...                              [OK]
+    test_comparingNEXTReleases ...                                         [OK]
+    test_comparingNEXTReleasesEqual ...                                    [OK]
+    test_comparingPost ...                                                 [OK]
+    test_comparingPostReleasesWithReleases ...                             [OK]
+    test_comparingPrereleasesWithReleases ...                              [OK]
+    test_comparingReleaseCandidates ...                                    [OK]
+    test_comparingReleaseCandidatesWithReleases ...                        [OK]
+    test_disallowBuggyComparisons ...                                      [OK]
+    test_getVersionString ...                                              [OK]
+    test_getVersionStringWithDev ...                                       [OK]
+    test_getVersionStringWithDevAndPost ...                                [OK]
+    test_getVersionStringWithDevAndRC ...                                  [OK]
+    test_getVersionStringWithPost ...                                      [OK]
+    test_getVersionStringWithPrerelease ...                                [OK]
+    test_getVersionStringWithReleaseCandidate ...                          [OK]
+    test_infComparison ...                                                 [OK]
+    test_infComparisonSelf ...                                             [OK]
+    test_localIsShort ...                                                  [OK]
+    test_notImplementedComparisons ...                                     [OK]
+    test_prereleaseAttributeDeprecated ...                                 [OK]
+    test_prereleaseDeprecated ...                                          [OK]
+    test_rcEqualspre ...                                                   [OK]
+    test_rcOrpreButNotBoth ...                                             [OK]
+    test_repr ...                                                          [OK]
+    test_reprWithDev ...                                                   [OK]
+    test_reprWithPost ...                                                  [OK]
+    test_reprWithPrerelease ...                                            [OK]
+    test_reprWithReleaseCandidate ...                                      [OK]
+    test_str ...                                                           [OK]
+    test_strWithDev ...                                                    [OK]
+    test_strWithDevAndPost ...                                             [OK]
+    test_strWithDevAndReleaseCandidate ...                                 [OK]
+    test_strWithPost ...                                                   [OK]
+    test_strWithPrerelease ...                                             [OK]
+    test_strWithReleaseCandidate ...                                       [OK]
+    test_versionComparison ...                                             [OK]
+    test_versionComparisonCaseInsensitive ...                              [OK]
+    test_versionComparisonNonVersion ...                                   [OK]
+
+-------------------------------------------------------------------------------
+Ran 85 tests
+
+PASSED (successes=85)
+py$(PYV): commands[5]> coverage combine
+py$(PYV): commands[6]> coverage report
+Name                                                                                                                                                Stmts   Miss Branch BrPart  Cover
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/__init__.py                 222     22     90      1    91%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/_hatch.py                    19     19      0      0     0%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/_version.py                   3      0      0      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/__init__.py             0      0      0      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_pyproject.py      54      0     12      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_update.py        243      0     10      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_version.py       242      0      0      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/update.py                    99      0     44      0   100%
+tests/test_examples.py                                                                                                                                 76     76      0      0     0%
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                                 958    117    156      1    89%
+py$(PYV): commands[7]> coverage html
+Wrote HTML report to htmlcov/index.html
+py$(PYV): commands[8]> coverage xml
+Wrote XML report to coverage.xml
+  py$(PYV): OK
+  congratulations :)

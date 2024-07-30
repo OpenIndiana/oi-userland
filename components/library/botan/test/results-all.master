@@ -1,7 +1,7 @@
-Testing Botan 3.4.0 (release, dated 20240408, revision git:afd43c536ff96e85d45837caa6f99125483c160a, distribution unspecified)
+Testing Botan 3.5.0 (release, dated 20240708, revision git:2e5c7d3eb0dcb63d087fc3e7c92010aa82509bbf, distribution unspecified)
 Properties:
-  CPU flags: rdtsc sse2 ssse3 avx2 bmi2 adx aes_ni clmul rdrand rdseed
-  drbg_seed: 17C4B5A6F67F18BE
+  CPU flags: rdtsc sse2 ssse3 avx2 bmi2 aes_ni clmul rdrand
+  drbg_seed: 17E18CBE0D7EDD1F
 aead:
 AES-128/CCM(10,2) ran 86 tests all ok
 AES-128/CCM(12,2) ran 43 tests all ok
@@ -64,14 +64,14 @@ Cascade(Serpent,Twofish) ran 57 tests all ok
 DES ran 6099 tests all ok
 GOST-28147-89(R3411_94_TestParam) ran 342 tests all ok
 GOST-28147-89(R3411_CryptoPro) ran 190 tests all ok
-IDEA ran 10298 tests all ok
+IDEA ran 10317 tests all ok
 Kuznyechik ran 1235 tests all ok
 Lion(SHA-1,RC4,64) ran 19 tests all ok
 Noekeon ran 19570 tests all ok
 SEED ran 76 tests all ok
 SHACAL2 ran 19399 tests all ok
 SM4 ran 57 tests all ok
-Serpent ran 19893 tests all ok
+Serpent ran 19912 tests all ok
 Threefish-512 ran 95 tests all ok
 TripleDES ran 1064 tests all ok
 Twofish ran 20957 tests all ok
@@ -166,15 +166,18 @@ SP800-108-Pipeline(HMAC(SHA-256)) ran 120 tests all ok
 SP800-108-Pipeline(HMAC(SHA-384)) ran 120 tests all ok
 SP800-108-Pipeline(HMAC(SHA-512)) ran 120 tests all ok
 SP800-56A(HMAC(SHA-1)) ran 200 tests all ok
-SP800-56A(HMAC(SHA-224)) ran 196 tests all ok
+SP800-56A(HMAC(SHA-224)) ran 228 tests all ok
 SP800-56A(HMAC(SHA-256)) ran 196 tests all ok
+SP800-56A(HMAC(SHA-3(512))) ran 32 tests all ok
 SP800-56A(HMAC(SHA-384)) ran 196 tests all ok
-SP800-56A(HMAC(SHA-512)) ran 192 tests all ok
+SP800-56A(HMAC(SHA-512)) ran 220 tests all ok
+SP800-56A(KMAC-128) ran 36 tests all ok
 SP800-56A(SHA-1) ran 188 tests all ok
-SP800-56A(SHA-224) ran 188 tests all ok
+SP800-56A(SHA-224) ran 200 tests all ok
 SP800-56A(SHA-256) ran 188 tests all ok
+SP800-56A(SHA-3(512)) ran 8 tests all ok
 SP800-56A(SHA-384) ran 188 tests all ok
-SP800-56A(SHA-512) ran 188 tests all ok
+SP800-56A(SHA-512) ran 204 tests all ok
 SP800-56C(HMAC(SHA-1)) ran 40 tests all ok
 SP800-56C(HMAC(SHA-256)) ran 40 tests all ok
 SP800-56C(HMAC(SHA-384)) ran 40 tests all ok
@@ -283,7 +286,7 @@ CTR-BE(Serpent) ran 3325 tests all ok
 CTR-BE(TripleDES) ran 4047 tests all ok
 ChaCha(12) ran 38 tests all ok
 ChaCha(20) ran 1634 tests all ok
-ChaCha(8) ran 415 tests all ok
+ChaCha(8) ran 379 tests all ok
 MARK-4 ran 95 tests all ok
 OFB(AES-128) ran 209 tests all ok
 OFB(AES-192) ran 19 tests all ok
@@ -296,10 +299,13 @@ SHAKE-256 ran 21755 tests all ok
 Salsa20 ran 227 tests all ok
 util:
 Util load/store ran 313 tests all ok
+Util load/store ambiguity ran 6 tests all ok
 Util load/store constexpr ran 47 tests all ok
 Util load/store fallback ran 12 tests all ok
-Util round_down ran 6 tests all ok
-Util round_up ran 11 tests all ok
+Util round_up ran 1297 tests all ok
+checked_add ran 160 tests all ok
+checked_cast ran 5 tests all ok
+checked_mul ran 100 tests all ok
 copy_out_be with 16bit input (partial words) ran 1 tests all ok
 copy_out_be with 16bit input (word aligned) ran 1 tests all ok
 copy_out_be with 64bit input (partial words) ran 1 tests all ok
@@ -425,6 +431,11 @@ Handle unaligned data in Alignment Buffer (no block-defer) ran 13 tests all ok
 Handle unaligned data in Alignment Buffer (with block-defer) ran 19 tests all ok
 Read from BufferSlicer ran 27 tests all ok
 Strong type support ran 1 tests all ok
+auto-detected output type ran 6 tests all ok
+concatenate ran 7 tests all ok
+concatenate strong types ran 2 tests all ok
+dynamic length-check ran 2 tests all ok
+empty concat ran 4 tests all ok
 certstor:
 Certificate Store - Find by subject hash ran 6 tests all ok
 Certificate Store - Load every cert of every files ran 2 tests all ok
@@ -483,16 +494,12 @@ lzma create compression ran 2 tests all ok
 zlib create compression ran 2 tests all ok
 cryptobox:
 Cryptobox ran 54 tests all ok
-ct_utils:
-CT utils ran 708 tests all ok
-curve25519_agreement:
-X25519/Raw key agreement ran 216 tests all ok
-curve25519_keygen:
-Curve25519 keygen ran 33 tests all ok
-curve25519_rt:
-Curve25519 roundtrip ran 10 tests all ok
-curve25519_scalar:
-Curve25519 scalarmult ran 18 tests all ok
+ct_choice:
+CT::Choice ran 126 tests all ok
+CT::Choice ran 126 tests all ok
+ct_mask:
+CT::Mask ran 708 tests all ok
+CT::Mask ran 708 tests all ok
 dh_invalid:
 DH invalid keys ran 7 tests all ok
 dh_kat:
@@ -500,7 +507,7 @@ DH negative tests ran 2 tests all ok
 Diffie-Hellman/KDF2(SHA-1) Valid key agreement ran 8 tests all ok
 Diffie-Hellman/Raw Valid key agreement ran 108 tests all ok
 dh_keygen:
-DH modp/ietf/1024 keygen ran 33 tests all ok
+DH modp/ietf/1024 keygen ran 41 tests all ok
 dilithium_kat_4x4_AES_Deterministic:
 Dilithium_4x4_AES ran 601 tests all ok
 dilithium_kat_4x4_AES_Randomized:
@@ -526,12 +533,12 @@ Dilithium_8x7 ran 601 tests all ok
 dilithium_kat_8x7_Randomized:
 Dilithium_8x7 ran 601 tests all ok
 dilithium_keygen:
-Dilithium Dilithium-4x4-AES-r3 keygen ran 33 tests all ok
-Dilithium Dilithium-4x4-r3 keygen ran 33 tests all ok
-Dilithium Dilithium-6x5-AES-r3 keygen ran 33 tests all ok
-Dilithium Dilithium-6x5-r3 keygen ran 33 tests all ok
-Dilithium Dilithium-8x7-AES-r3 keygen ran 33 tests all ok
-Dilithium Dilithium-8x7-r3 keygen ran 33 tests all ok
+Dilithium Dilithium-4x4-AES-r3 keygen ran 39 tests all ok
+Dilithium Dilithium-4x4-r3 keygen ran 39 tests all ok
+Dilithium Dilithium-6x5-AES-r3 keygen ran 39 tests all ok
+Dilithium Dilithium-6x5-r3 keygen ran 39 tests all ok
+Dilithium Dilithium-8x7-AES-r3 keygen ran 39 tests all ok
+Dilithium Dilithium-8x7-r3 keygen ran 39 tests all ok
 dilithium_roundtrips:
 Dilithium_4x4_AES ran 17 tests all ok
 Dilithium_4x4_AES_Randomized ran 17 tests all ok
@@ -571,57 +578,61 @@ DSA/SHA-256 signature verification ran 480 tests all ok
 DSA/SHA-384 signature verification ran 480 tests all ok
 DSA/SHA-512 signature verification ran 480 tests all ok
 dsa_keygen:
-DSA dsa/jce/1024 keygen ran 33 tests all ok
+DSA dsa/jce/1024 keygen ran 39 tests all ok
 dsa_misc_verify:
 DSA/Raw signature verification ran 16 tests all ok
 dsa_param:
 DSA Parameter Generation ran 40 tests all ok
 ec_group:
-EC_Group brainpool160r1 ran 47 tests all ok
-EC_Group brainpool192r1 ran 47 tests all ok
-EC_Group brainpool224r1 ran 47 tests all ok
-EC_Group brainpool256r1 ran 47 tests all ok
-EC_Group brainpool320r1 ran 47 tests all ok
-EC_Group brainpool384r1 ran 47 tests all ok
-EC_Group brainpool512r1 ran 47 tests all ok
-EC_Group frp256v1 ran 47 tests all ok
-EC_Group gost_256A ran 47 tests all ok
-EC_Group gost_512A ran 47 tests all ok
+EC_Group brainpool160r1 ran 48 tests all ok
+EC_Group brainpool192r1 ran 48 tests all ok
+EC_Group brainpool224r1 ran 48 tests all ok
+EC_Group brainpool256r1 ran 48 tests all ok
+EC_Group brainpool320r1 ran 48 tests all ok
+EC_Group brainpool384r1 ran 48 tests all ok
+EC_Group brainpool512r1 ran 48 tests all ok
+EC_Group frp256v1 ran 48 tests all ok
+EC_Group gost_256A ran 48 tests all ok
+EC_Group gost_512A ran 48 tests all ok
 EC_Group secp160k1 ran 47 tests all ok
 EC_Group secp160r1 ran 47 tests all ok
 EC_Group secp160r2 ran 47 tests all ok
-EC_Group secp192k1 ran 47 tests all ok
-EC_Group secp192r1 ran 47 tests all ok
+EC_Group secp192k1 ran 48 tests all ok
+EC_Group secp192r1 ran 48 tests all ok
 EC_Group secp224k1 ran 47 tests all ok
 EC_Group secp224r1 ran 47 tests all ok
-EC_Group secp256k1 ran 47 tests all ok
-EC_Group secp256r1 ran 47 tests all ok
-EC_Group secp384r1 ran 47 tests all ok
-EC_Group secp521r1 ran 47 tests all ok
-EC_Group sm2p256v1 ran 47 tests all ok
-EC_Group x962_p192v2 ran 47 tests all ok
-EC_Group x962_p192v3 ran 47 tests all ok
+EC_Group secp256k1 ran 48 tests all ok
+EC_Group secp256r1 ran 48 tests all ok
+EC_Group secp384r1 ran 48 tests all ok
+EC_Group secp521r1 ran 48 tests all ok
+EC_Group sm2p256v1 ran 48 tests all ok
+EC_Group x962_p192v2 ran 48 tests all ok
+EC_Group x962_p192v3 ran 48 tests all ok
 EC_Group x962_p239v1 ran 47 tests all ok
 EC_Group x962_p239v2 ran 47 tests all ok
 EC_Group x962_p239v3 ran 47 tests all ok
 ec_h2c_kat:
-ECC hash to curve SSWU-NU secp256r1 ran 15 tests all ok
-ECC hash to curve SSWU-NU secp384r1 ran 15 tests all ok
-ECC hash to curve SSWU-NU secp521r1 ran 15 tests all ok
+ECC hash to curve SSWU-NU secp256r1 ran 18 tests all ok
+ECC hash to curve SSWU-NU secp384r1 ran 33 tests all ok
+ECC hash to curve SSWU-NU secp521r1 ran 18 tests all ok
 ECC hash to curve SSWU-RO secp256r1 ran 15 tests all ok
-ECC hash to curve SSWU-RO secp384r1 ran 15 tests all ok
+ECC hash to curve SSWU-RO secp384r1 ran 30 tests all ok
 ECC hash to curve SSWU-RO secp521r1 ran 15 tests all ok
 ec_h2c_xmd:
 ECC hash to curve XMD SHA-256 ran 10 tests all ok
 ECC hash to curve XMD SHA-512 ran 10 tests all ok
 ecc_basemul:
-ECC base point multiply frp256v1 ran 312 tests all ok
-ECC base point multiply secp192r1 ran 312 tests all ok
-ECC base point multiply secp224r1 ran 312 tests all ok
-ECC base point multiply secp256k1 ran 300 tests all ok
-ECC base point multiply secp256r1 ran 312 tests all ok
-ECC base point multiply secp384r1 ran 312 tests all ok
-ECC base point multiply secp521r1 ran 312 tests all ok
+ECC base point multiply brainpool224r1 ran 6 tests all ok
+ECC base point multiply brainpool256r1 ran 6 tests all ok
+ECC base point multiply brainpool384r1 ran 6 tests all ok
+ECC base point multiply brainpool512r1 ran 6 tests all ok
+ECC base point multiply frp256v1 ran 156 tests all ok
+ECC base point multiply secp192r1 ran 156 tests all ok
+ECC base point multiply secp224r1 ran 156 tests all ok
+ECC base point multiply secp256k1 ran 150 tests all ok
+ECC base point multiply secp256r1 ran 156 tests all ok
+ECC base point multiply secp384r1 ran 156 tests all ok
+ECC base point multiply secp521r1 ran 156 tests all ok
 ecc_invalid:
 ECC invalid keys ran 5 tests all ok
 ecc_randomized:
@@ -675,13 +686,13 @@ ECDH/Raw secp256r1 key agreement ran 75 tests all ok
 ECDH/Raw secp384r1 key agreement ran 75 tests all ok
 ECDH/Raw secp521r1 key agreement ran 75 tests all ok
 ecdh_keygen:
-ECDH brainpool256r1 keygen ran 33 tests all ok
-ECDH brainpool384r1 keygen ran 33 tests all ok
-ECDH brainpool512r1 keygen ran 33 tests all ok
-ECDH frp256v1 keygen ran 33 tests all ok
-ECDH secp256r1 keygen ran 33 tests all ok
-ECDH secp384r1 keygen ran 33 tests all ok
-ECDH secp521r1 keygen ran 33 tests all ok
+ECDH brainpool256r1 keygen ran 41 tests all ok
+ECDH brainpool384r1 keygen ran 41 tests all ok
+ECDH brainpool512r1 keygen ran 41 tests all ok
+ECDH frp256v1 keygen ran 41 tests all ok
+ECDH secp256r1 keygen ran 41 tests all ok
+ECDH secp384r1 keygen ran 41 tests all ok
+ECDH secp521r1 keygen ran 41 tests all ok
 ecdh_unit:
 ECDH key exchange ran 4 tests all ok
 ecdsa_invalid:
@@ -689,10 +700,10 @@ ECDSA invalid keys ran 78 tests all ok
 ecdsa_key_recovery:
 ECDSA key recovery ran 8 tests all ok
 ecdsa_keygen:
-ECDSA frp256v1 keygen ran 33 tests all ok
-ECDSA secp256r1 keygen ran 33 tests all ok
-ECDSA secp384r1 keygen ran 33 tests all ok
-ECDSA secp521r1 keygen ran 33 tests all ok
+ECDSA frp256v1 keygen ran 39 tests all ok
+ECDSA secp256r1 keygen ran 39 tests all ok
+ECDSA secp384r1 keygen ran 39 tests all ok
+ECDSA secp521r1 keygen ran 39 tests all ok
 ecdsa_keygen_stability:
 ECDSA secp256k1 keygen stability ran 1 tests all ok
 ECDSA secp521r1 keygen stability ran 1 tests all ok
@@ -757,29 +768,34 @@ ECDSA-secp521r1/SHA-512 signature generation ran 24 tests all ok
 ecdsa_sign_verify_der:
 ECDSA/SHA-512 signature sign/verify using DER format ran 7 tests all ok
 ecdsa_unit:
-ECDSA Unit ran 61 tests all ok
+ECDSA Unit ran 59 tests all ok
 ecdsa_verify:
 ECDSA-secp256k1/Raw signature verification ran 30 tests all ok
 ECDSA-secp256r1/Raw signature verification ran 64 tests all ok
 ECDSA-x962_p239v1/Raw signature verification ran 16 tests all ok
 ecdsa_verify_kat:
+ECDSA-brainpool256r1/Raw signature verification ran 80 tests all ok
+ECDSA-brainpool384r1/Raw signature verification ran 80 tests all ok
+ECDSA-brainpool512r1/Raw signature verification ran 64 tests all ok
+ECDSA-frp256v1/Raw signature verification ran 40 tests all ok
 ECDSA-secp224r1/SHA-224 signature verification ran 120 tests all ok
 ECDSA-secp224r1/SHA-256 signature verification ran 120 tests all ok
 ECDSA-secp224r1/SHA-384 signature verification ran 120 tests all ok
 ECDSA-secp224r1/SHA-512 signature verification ran 120 tests all ok
-ECDSA-secp256r1/Raw signature verification ran 8 tests all ok
+ECDSA-secp256r1/Raw signature verification ran 88 tests all ok
 ECDSA-secp256r1/Raw(SHA-256) signature verification ran 8 tests all ok
 ECDSA-secp256r1/SHA-224 signature verification ran 120 tests all ok
 ECDSA-secp256r1/SHA-256 signature verification ran 120 tests all ok
 ECDSA-secp256r1/SHA-384 signature verification ran 120 tests all ok
 ECDSA-secp256r1/SHA-512 signature verification ran 120 tests all ok
-ECDSA-secp384r1/Raw signature verification ran 8 tests all ok
+ECDSA-secp384r1/Raw signature verification ran 88 tests all ok
 ECDSA-secp384r1/Raw(SHA-384) signature verification ran 8 tests all ok
 ECDSA-secp384r1/SHA-1 signature verification ran 8 tests all ok
 ECDSA-secp384r1/SHA-224 signature verification ran 120 tests all ok
 ECDSA-secp384r1/SHA-256 signature verification ran 120 tests all ok
 ECDSA-secp384r1/SHA-384 signature verification ran 120 tests all ok
 ECDSA-secp384r1/SHA-512 signature verification ran 120 tests all ok
+ECDSA-secp521r1/Raw signature verification ran 88 tests all ok
 ECDSA-secp521r1/Raw(SHA-512) signature verification ran 8 tests all ok
 ECDSA-secp521r1/SHA-224 signature verification ran 8 tests all ok
 ecdsa_verify_wycheproof:
@@ -814,9 +830,9 @@ ECDSA-secp521r1/SHA-256 signature verification ran 2 tests all ok
 ECDSA-secp521r1/SHA-512 signature verification ran 1080 tests all ok
 ECDSA-secp521r1/SHA3-512 signature verification ran 449 tests all ok
 ecgdsa_keygen:
-ECGDSA secp256r1 keygen ran 33 tests all ok
-ECGDSA secp384r1 keygen ran 33 tests all ok
-ECGDSA secp521r1 keygen ran 33 tests all ok
+ECGDSA secp256r1 keygen ran 39 tests all ok
+ECGDSA secp384r1 keygen ran 39 tests all ok
+ECGDSA secp521r1 keygen ran 39 tests all ok
 ecgdsa_sign:
 ECGDSA-brainpool192r1/RIPEMD-160 signature generation ran 12 tests all ok
 ECGDSA-brainpool192r1/SHA-1 signature generation ran 12 tests all ok
@@ -842,9 +858,9 @@ ECIES mac not found ran 1 tests all ok
 ECIES other key not set ran 1 tests all ok
 ECIES short system params ctor ran 3 tests all ok
 eckcdsa_keygen:
-ECKCDSA secp256r1 keygen ran 33 tests all ok
-ECKCDSA secp384r1 keygen ran 33 tests all ok
-ECKCDSA secp521r1 keygen ran 33 tests all ok
+ECKCDSA secp256r1 keygen ran 39 tests all ok
+ECKCDSA secp384r1 keygen ran 39 tests all ok
+ECKCDSA secp521r1 keygen ran 39 tests all ok
 eckcdsa_sign:
 ECKCDSA-brainpool256r1/SHA-256 signature generation ran 12 tests all ok
 ECKCDSA-brainpool384r1/SHA-384 signature generation ran 12 tests all ok
@@ -862,7 +878,7 @@ Ed25519 CURDLE format ran 3 tests all ok
 ed25519_key_valid:
 Ed25519 key validity ran 9 tests all ok
 ed25519_keygen:
-Ed25519 keygen ran 33 tests all ok
+Ed25519 keygen ran 39 tests all ok
 ed25519_sign:
 Ed25519/Ed25519ph signature generation ran 12 tests all ok
 Ed25519/Pure signature generation ran 8508 tests all ok
@@ -872,9 +888,9 @@ Ed25519/Pure signature verification ran 120 tests all ok
 ed448_general:
 Ed448 general tests ran 38 tests all ok
 ed448_keygen:
-Ed448 Ed448ph keygen ran 33 tests all ok
-Ed448 SHAKE-256(72) keygen ran 33 tests all ok
-Ed448 keygen ran 33 tests all ok
+Ed448 Ed448ph keygen ran 39 tests all ok
+Ed448 SHAKE-256(72) keygen ran 39 tests all ok
+Ed448 keygen ran 39 tests all ok
 ed448_sign:
 Ed448/Ed448ph signature generation ran 12 tests all ok
 Ed448/Pure signature generation ran 204 tests all ok
@@ -891,13 +907,13 @@ ElGamal/Raw decryption ran 96 tests all ok
 elgamal_encrypt:
 ElGamal/Raw encryption ran 66 tests all ok
 elgamal_keygen:
-ElGamal modp/ietf/1024 keygen ran 33 tests all ok
+ElGamal modp/ietf/1024 keygen ran 39 tests all ok
 eme_pkcs1v15:
 PKCSv15 Decoding ran 65 tests all ok
 entropy:
 Entropy source getentropy ran 9 tests all ok
 Entropy source rdrand ran 9 tests all ok
-Entropy source rdseed ran 9 tests all ok
+Entropy source rdseed ran 1 tests all ok
 Entropy source system_rng ran 9 tests all ok
 extendable_output_functions:
 AES-256/CTR XOF failure modes ran 3 tests all ok
@@ -908,17 +924,17 @@ cSHAKE without a name ran 6 tests all ok
 cSHAKE-128 ran 81 tests all ok
 cSHAKE-256 ran 81 tests all ok
 ffi_aead:
-FFI AEAD ran 345 tests all ok
+FFI AEAD ran 370 tests all ok
 ffi_base64:
 FFI base64 ran 7 tests all ok
 ffi_blockcipher:
 FFI block ciphers ran 29 tests all ok
 ffi_cbc_cipher:
-FFI CBC cipher ran 41 tests all ok
+FFI CBC cipher ran 61 tests all ok
 ffi_cert_validation:
 FFI Cert Validation ran 39 tests all ok
 ffi_chacha:
-FFI ChaCha20Poly1305 ran 55 tests all ok
+FFI ChaCha20Poly1305 ran 64 tests all ok
 ffi_crl:
 FFI CRL ran 11 tests all ok
 ffi_dh:
@@ -926,7 +942,7 @@ FFI DH ran 45 tests all ok
 ffi_dsa:
 FFI DSA ran 134 tests all ok
 ffi_eax:
-FFI EAX ran 48 tests all ok
+FFI EAX ran 57 tests all ok
 ffi_ecdh:
 FFI ECDH ran 82 tests all ok
 ffi_ecdsa:
@@ -944,7 +960,7 @@ FFI error handling ran 173 tests all ok
 ffi_fpe:
 FFI FPE ran 12 tests all ok
 ffi_gcm:
-FFI GCM ran 59 tests all ok
+FFI GCM ran 68 tests all ok
 ffi_hashfunction:
 FFI hash ran 34 tests all ok
 ffi_hex:
@@ -982,7 +998,7 @@ FFI SM2 Enc ran 50 tests all ok
 ffi_sm2_sig:
 FFI SM2 Sig ran 62 tests all ok
 ffi_streamcipher:
-FFI stream ciphers ran 12 tests all ok
+FFI stream ciphers ran 15 tests all ok
 ffi_totp:
 FFI TOTP ran 9 tests all ok
 ffi_utils:
@@ -1013,27 +1029,27 @@ Format utility ran 6 tests all ok
 fpe_fe1:
 FPE_FE1 ran 10 tests all ok
 frodo_kat_tests:
-PQC KAT for FrodoKEM with parameters FrodoKEM-1344-AES ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters FrodoKEM-1344-SHAKE ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters FrodoKEM-640-AES ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters FrodoKEM-640-SHAKE ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters FrodoKEM-976-AES ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters FrodoKEM-976-SHAKE ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters eFrodoKEM-1344-AES ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters eFrodoKEM-1344-SHAKE ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters eFrodoKEM-640-AES ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters eFrodoKEM-640-SHAKE ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters eFrodoKEM-976-AES ran 275 tests all ok
-PQC KAT for FrodoKEM with parameters eFrodoKEM-976-SHAKE ran 275 tests all ok
+PQC KAT for FrodoKEM with parameters FrodoKEM-1344-AES ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters FrodoKEM-1344-SHAKE ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters FrodoKEM-640-AES ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters FrodoKEM-640-SHAKE ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters FrodoKEM-976-AES ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters FrodoKEM-976-SHAKE ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters eFrodoKEM-1344-AES ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters eFrodoKEM-1344-SHAKE ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters eFrodoKEM-640-AES ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters eFrodoKEM-640-SHAKE ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters eFrodoKEM-976-AES ran 325 tests all ok
+PQC KAT for FrodoKEM with parameters eFrodoKEM-976-SHAKE ran 325 tests all ok
 frodo_keygen:
-FrodoKEM FrodoKEM-640-AES keygen ran 33 tests all ok
-FrodoKEM FrodoKEM-640-SHAKE keygen ran 33 tests all ok
-FrodoKEM FrodoKEM-976-AES keygen ran 33 tests all ok
-FrodoKEM FrodoKEM-976-SHAKE keygen ran 33 tests all ok
-FrodoKEM eFrodoKEM-640-AES keygen ran 33 tests all ok
-FrodoKEM eFrodoKEM-640-SHAKE keygen ran 33 tests all ok
-FrodoKEM eFrodoKEM-976-AES keygen ran 33 tests all ok
-FrodoKEM eFrodoKEM-976-SHAKE keygen ran 33 tests all ok
+FrodoKEM FrodoKEM-640-AES keygen ran 37 tests all ok
+FrodoKEM FrodoKEM-640-SHAKE keygen ran 37 tests all ok
+FrodoKEM FrodoKEM-976-AES keygen ran 37 tests all ok
+FrodoKEM FrodoKEM-976-SHAKE keygen ran 37 tests all ok
+FrodoKEM eFrodoKEM-640-AES keygen ran 37 tests all ok
+FrodoKEM eFrodoKEM-640-SHAKE keygen ran 37 tests all ok
+FrodoKEM eFrodoKEM-976-AES keygen ran 37 tests all ok
+FrodoKEM eFrodoKEM-976-SHAKE keygen ran 37 tests all ok
 frodo_roundtrips:
 FrodoKEM roundtrip: FrodoKEM-1344-AES ran 7 tests all ok
 FrodoKEM roundtrip: FrodoKEM-1344-AES ran 7 tests all ok
@@ -1062,8 +1078,8 @@ FrodoKEM roundtrip: eFrodoKEM-976-SHAKE ran 7 tests all ok
 gf2m:
 GF2m ran 131064 tests all ok
 gost_3410_keygen:
-GOST-34.10 gost_256A keygen ran 33 tests all ok
-GOST-34.10 secp256r1 keygen ran 33 tests all ok
+GOST-34.10 gost_256A keygen ran 39 tests all ok
+GOST-34.10 secp256r1 keygen ran 39 tests all ok
 gost_3410_sign:
 GOST 34.10-2001/Raw signature generation ran 12 tests all ok
 gost_3410_verify:
@@ -1106,8 +1122,27 @@ HMAC_DRBG randomize ran 4096 tests all ok
 HMAC_DRBG reseed_interval limits ran 2 tests all ok
 hostname:
 Hostname Matching ran 44 tests all ok
+hss_lms_api:
+HSS-LMS ran 5 tests all ok
+hss_lms_keygen:
+HSS-LMS SHA-256,HW(10,4),HW(5,8) keygen ran 35 tests all ok
+hss_lms_negative:
+HSS-LMS ran 1683 tests all ok
+HSS-LMS - flipped signature bits ran 1569 tests all ok
+hss_lms_params_parsing:
+HSS Parameter Parsing ran 7 tests all ok
+hss_lms_sign:
+HSS-LMS/ signature generation ran 24 tests all ok
+hss_lms_state:
+HSS-LMS ran 10 tests all ok
+hss_lms_verify:
+HSS-LMS signature verification ran 40 tests all ok
+hss_lms_verify_invalid:
+HSS_LMS/ verify invalid signature ran 4 tests all ok
 invalid_name_hash:
 Invalid HashFunction names ran 6 tests all ok
+ipv4_parse:
+IPv4 parsing ran 60 tests all ok
 iv_carryover:
 CBC IV carry ran 4 tests all ok
 CFB IV carry ran 6 tests all ok
@@ -1125,19 +1160,19 @@ keccak_int_right_encode() ran 20 tests all ok
 kyber_encodings:
 kyber_encodings ran 17 tests all ok
 kyber_kat:
-PQC KAT for Kyber with parameters Kyber-1024-90s-r3 ran 275 tests all ok
-PQC KAT for Kyber with parameters Kyber-1024-r3 ran 275 tests all ok
-PQC KAT for Kyber with parameters Kyber-512-90s-r3 ran 275 tests all ok
-PQC KAT for Kyber with parameters Kyber-512-r3 ran 275 tests all ok
-PQC KAT for Kyber with parameters Kyber-768-90s-r3 ran 275 tests all ok
-PQC KAT for Kyber with parameters Kyber-768-r3 ran 275 tests all ok
+PQC KAT for Kyber with parameters Kyber-1024-90s-r3 ran 325 tests all ok
+PQC KAT for Kyber with parameters Kyber-1024-r3 ran 325 tests all ok
+PQC KAT for Kyber with parameters Kyber-512-90s-r3 ran 325 tests all ok
+PQC KAT for Kyber with parameters Kyber-512-r3 ran 325 tests all ok
+PQC KAT for Kyber with parameters Kyber-768-90s-r3 ran 325 tests all ok
+PQC KAT for Kyber with parameters Kyber-768-r3 ran 325 tests all ok
 kyber_keygen:
-Kyber Kyber-1024-90s-r3 keygen ran 33 tests all ok
-Kyber Kyber-1024-r3 keygen ran 33 tests all ok
-Kyber Kyber-512-90s-r3 keygen ran 33 tests all ok
-Kyber Kyber-512-r3 keygen ran 33 tests all ok
-Kyber Kyber-768-90s-r3 keygen ran 33 tests all ok
-Kyber Kyber-768-r3 keygen ran 33 tests all ok
+Kyber Kyber-1024-90s-r3 keygen ran 37 tests all ok
+Kyber Kyber-1024-r3 keygen ran 37 tests all ok
+Kyber Kyber-512-90s-r3 keygen ran 37 tests all ok
+Kyber Kyber-512-r3 keygen ran 37 tests all ok
+Kyber Kyber-768-90s-r3 keygen ran 37 tests all ok
+Kyber Kyber-768-r3 keygen ran 37 tests all ok
 kyber_pairwise:
 Kyber1024 API ran 6 tests all ok
 Kyber1024_90s API ran 6 tests all ok
@@ -1145,6 +1180,10 @@ Kyber512 API ran 6 tests all ok
 Kyber512_90s API ran 6 tests all ok
 Kyber768 API ran 6 tests all ok
 Kyber768_90s API ran 6 tests all ok
+lmots:
+LMOTS ran 12 tests all ok
+lms:
+LMS ran 9 tests all ok
 mce_keygen:
 McEliece keygen ran 15 tests all ok
 mceliece:
@@ -1191,6 +1230,10 @@ OID add ran 3 tests all ok
 OID add with redundant entries ran 7 tests all ok
 OID::to_string ran 1 tests all ok
 OID::to_string ran 1 tests all ok
+oid_dec_invalid:
+OID DER decode invalid ran 14 tests all ok
+oid_enc:
+OID DER encode/decode ran 38 tests all ok
 os_utils:
 OS::get_cpu_available ran 1 tests all ok
 OS::get_cpu_available ran 1 tests all ok
@@ -1212,6 +1255,41 @@ otp_totp:
 TOTP SHA-1 ran 24 tests all ok
 passhash9:
 passhash9 ran 17 tests all ok
+pcurves_basemul:
+Pcurves base point multiply brainpool256r1 ran 4 tests all ok
+Pcurves base point multiply brainpool384r1 ran 4 tests all ok
+Pcurves base point multiply brainpool512r1 ran 4 tests all ok
+Pcurves base point multiply frp256v1 ran 104 tests all ok
+Pcurves base point multiply secp256k1 ran 100 tests all ok
+Pcurves base point multiply secp256r1 ran 104 tests all ok
+Pcurves base point multiply secp384r1 ran 104 tests all ok
+Pcurves base point multiply secp521r1 ran 104 tests all ok
+pcurves_ecdh:
+Pcurves ECDH brainpool256r1 ran 2 tests all ok
+Pcurves ECDH brainpool384r1 ran 2 tests all ok
+Pcurves ECDH brainpool512r1 ran 2 tests all ok
+Pcurves ECDH frp256v1 ran 25 tests all ok
+Pcurves ECDH secp256r1 ran 25 tests all ok
+Pcurves ECDH secp384r1 ran 25 tests all ok
+Pcurves ECDH secp521r1 ran 25 tests all ok
+pcurves_ecdsa_sign:
+Pcurves ECDSA sign brainpool256r1 ran 20 tests all ok
+Pcurves ECDSA sign brainpool384r1 ran 20 tests all ok
+Pcurves ECDSA sign brainpool512r1 ran 16 tests all ok
+Pcurves ECDSA sign frp256v1 ran 10 tests all ok
+Pcurves ECDSA sign secp256r1 ran 144 tests all ok
+Pcurves ECDSA sign secp384r1 ran 146 tests all ok
+Pcurves ECDSA sign secp521r1 ran 26 tests all ok
+pcurves_points:
+Pcurves point operations brainpool256r1 ran 109 tests all ok
+Pcurves point operations brainpool384r1 ran 109 tests all ok
+Pcurves point operations brainpool512r1 ran 109 tests all ok
+Pcurves point operations frp256v1 ran 109 tests all ok
+Pcurves point operations secp256k1 ran 109 tests all ok
+Pcurves point operations secp256r1 ran 109 tests all ok
+Pcurves point operations secp384r1 ran 109 tests all ok
+Pcurves point operations secp521r1 ran 109 tests all ok
+Pcurves point operations sm2p256v1 ran 109 tests all ok
 pem:
 PEM encoding ran 5 tests all ok
 pgp_s2k_iter:
@@ -1225,6 +1303,7 @@ Sign/verify API tests ECKCDSA(secp256r1)/SHA-256 ran 12 tests all ok
 Sign/verify API tests Ed25519/Ed25519ph ran 12 tests all ok
 Sign/verify API tests Ed25519/Pure ran 12 tests all ok
 Sign/verify API tests GOST-34.10(gost_256A)/Raw ran 12 tests all ok
+Sign/verify API tests HSS-LMS(SHA-256,HW(5,8)) ran 12 tests all ok
 Sign/verify API tests RSA(2048)/PSSR(SHA-256) ran 12 tests all ok
 Sign/verify API tests SM2(secp256r1)/ALICE123@YAHOO.COM,Raw ran 12 tests all ok
 Sign/verify API tests SM2(secp256r1)/ALICE123@YAHOO.COM,SM3 ran 12 tests all ok
@@ -1289,7 +1368,7 @@ RSA/OAEP(SHA-512,MGF1(SHA-512),TCPA) decryption ran 1 tests all ok
 rsa_encrypt:
 RSA/EME-PKCS1-v1_5 encryption ran 60 tests all ok
 RSA/OAEP(SHA-1) encryption ran 228 tests all ok
-RSA/Raw encryption ran 825 tests all ok
+RSA/Raw encryption ran 824 tests all ok
 rsa_kem:
 RSA/KDF1-18033(SHA-1) KEM ran 16 tests all ok
 RSA/KDF1-18033(SHA-256) KEM ran 16 tests all ok
@@ -1298,8 +1377,8 @@ RSA/KDF2(SHA-1) KEM ran 16 tests all ok
 RSA/KDF2(SHA-256) KEM ran 16 tests all ok
 RSA/KDF2(SHA-512) KEM ran 8 tests all ok
 rsa_keygen:
-RSA 1024 keygen ran 33 tests all ok
-RSA 1280 keygen ran 33 tests all ok
+RSA 1024 keygen ran 36 tests all ok
+RSA 1280 keygen ran 36 tests all ok
 rsa_keygen_badrng:
 RSA keygen with bad RNG ran 2 tests all ok
 rsa_keygen_stability:
@@ -1383,8 +1462,8 @@ sm2_enc:
 SM2/SHA-256 encryption ran 6 tests all ok
 SM2/SM3 encryption ran 24 tests all ok
 sm2_keygen:
-SM2 secp256r1 keygen ran 33 tests all ok
-SM2 sm2p256v1 keygen ran 33 tests all ok
+SM2 secp256r1 keygen ran 39 tests all ok
+SM2 sm2p256v1 keygen ran 39 tests all ok
 sm2_sig:
 SM2/ALICE123@YAHOO.COM,Raw signature generation ran 12 tests all ok
 SM2/ALICE123@YAHOO.COM,SHA-256 signature generation ran 12 tests all ok
@@ -1425,18 +1504,18 @@ set up another address ran 1 tests all ok
 sphincsplus_fors:
 SPHINCS+'s FORS ran 36 tests all ok
 sphincsplus_keygen:
-SPHINCS+ SphincsPlus-sha2-128f-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-sha2-128s-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-sha2-192f-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-sha2-192s-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-sha2-256f-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-sha2-256s-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-shake-128f-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-shake-128s-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-shake-192f-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-shake-192s-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-shake-256f-r3.1 keygen ran 33 tests all ok
-SPHINCS+ SphincsPlus-shake-256s-r3.1 keygen ran 33 tests all ok
+SPHINCS+ SphincsPlus-sha2-128f-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-sha2-128s-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-sha2-192f-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-sha2-192s-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-sha2-256f-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-sha2-256s-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-shake-128f-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-shake-128s-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-shake-192f-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-shake-192s-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-shake-256f-r3.1 keygen ran 37 tests all ok
+SPHINCS+ SphincsPlus-shake-256s-r3.1 keygen ran 37 tests all ok
 sphincsplus_wots:
 SPHINCS+'s WOTS+ ran 36 tests all ok
 srp6_kat:
@@ -1498,20 +1577,24 @@ PSK (client) ran 1 tests all ok
 PSK (server) ran 1 tests all ok
 application traffic after PSK (client) ran 10 tests all ok
 application traffic after PSK (server) ran 10 tests all ok
-calculate the early traffic secrets (client) ran 5 tests all ok
-calculate the early traffic secrets (server) ran 5 tests all ok
+calculate the early traffic secrets (client) ran 8 tests all ok
+calculate the early traffic secrets (server) ran 8 tests all ok
 calculating PSK binder (client) ran 1 tests all ok
 calculating PSK binder (server) ran 1 tests all ok
 ciphersuite compatibility (client) ran 6 tests all ok
 ciphersuite compatibility (server) ran 6 tests all ok
 cleanup (client) ran 4 tests all ok
 cleanup (server) ran 4 tests all ok
-handshake traffic after PSK (client) ran 13 tests all ok
-handshake traffic after PSK (server) ran 13 tests all ok
-handshake traffic without PSK (client) ran 26 tests all ok
-handshake traffic without PSK (server) ran 26 tests all ok
-key update (client) ran 1 tests all ok
-key update (server) ran 1 tests all ok
+handshake traffic after PSK (client) ran 25 tests all ok
+handshake traffic after PSK (server) ran 25 tests all ok
+handshake traffic without PSK (client) ran 32 tests all ok
+handshake traffic without PSK (server) ran 32 tests all ok
+key update (client) ran 7 tests all ok
+key update (server) ran 7 tests all ok
+no secrets logged for PSK initialization (client) ran 1 tests all ok
+no secrets logged for PSK initialization (server) ran 1 tests all ok
+secret logging during initialization (client) ran 5 tests all ok
+secret logging during initialization (server) ran 5 tests all ok
 ticket nonce counter counts (client) ran 4 tests all ok
 ticket nonce counter counts (server) ran 4 tests all ok
 ticket nonce counter is not yet available (client) ran 1 tests all ok
@@ -1656,11 +1739,11 @@ RawPublicKey with Client Authentication (Client side) ran 62 tests all ok
 Resumption with 0-RTT data (Client side) ran 12 tests all ok
 Simple 1-RTT (Client side) ran 80 tests all ok
 tls_rfc8448_server:
-Client Authentication (Server side) ran 77 tests all ok
+Client Authentication (Server side) ran 79 tests all ok
 Externally Provided PSK with ephemeral key (Server side) ran 58 tests all ok
 Handshake involving Hello Retry Request (Server side) ran 77 tests all ok
 Middlebox Compatibility Mode (Server side) ran 62 tests all ok
-RawPublicKey with Client Authentication (Server side) ran 77 tests all ok
+RawPublicKey with Client Authentication (Server side) ran 79 tests all ok
 Resumption with 0-RTT data (Server side) ran 29 tests all ok
 Simple 1-RTT (Server side) ran 82 tests all ok
 tls_session:
@@ -1766,25 +1849,25 @@ Client aborts in tls_session_established with internal_error: TLS v1.2 ran 12 te
 Client aborts in tls_session_established with internal_error: TLS v1.2 ran 12 tests all ok
 DTLS v1.2 3DES ECDH ran 112 tests all ok
 DTLS v1.2 3DES RSA ran 112 tests all ok
-DTLS v1.2 AES-128 DH ran 55 tests all ok
+DTLS v1.2 AES-128 DH ran 56 tests all ok
 DTLS v1.2 AES-128 ECDH ran 112 tests all ok
 DTLS v1.2 AES-128 RSA ran 112 tests all ok
-DTLS v1.2 AES-128/CCM PSK ran 56 tests all ok
-DTLS v1.2 AES-128/CCM-8 PSK ran 56 tests all ok
+DTLS v1.2 AES-128/CCM PSK ran 55 tests all ok
+DTLS v1.2 AES-128/CCM-8 PSK ran 55 tests all ok
 DTLS v1.2 AES-128/GCM ECDH ran 54 tests all ok
-DTLS v1.2 AES-128/GCM ECDH RSA ran 56 tests all ok
-DTLS v1.2 AES-128/GCM ECDH no OCSP ran 56 tests all ok
+DTLS v1.2 AES-128/GCM ECDH RSA ran 54 tests all ok
+DTLS v1.2 AES-128/GCM ECDH no OCSP ran 54 tests all ok
 DTLS v1.2 AES-128/GCM ECDHE_PSK ran 56 tests all ok
-DTLS v1.2 AES-128/GCM FFDHE-2048 ran 56 tests all ok
+DTLS v1.2 AES-128/GCM FFDHE-2048 ran 55 tests all ok
 DTLS v1.2 AES-128/GCM PSK ran 56 tests all ok
-DTLS v1.2 AES-128/GCM RSA ran 56 tests all ok
+DTLS v1.2 AES-128/GCM RSA ran 55 tests all ok
 DTLS v1.2 AES-128/GCM bp256r1 ran 56 tests all ok
 DTLS v1.2 AES-128/GCM point compression ran 56 tests all ok
 DTLS v1.2 AES-128/GCM x25519 ran 56 tests all ok
 DTLS v1.2 AES-256/GCM client certs ran 62 tests all ok
+DTLS v1.2 AES-256/GCM numsp256d1 ran 16 tests all ok
 DTLS v1.2 AES-256/GCM p521 ran 56 tests all ok
-DTLS v1.2 AES-256/GCM secp112r1 ran 16 tests all ok
-DTLS v1.2 AES-256/OCB ECDH ran 56 tests all ok
+DTLS v1.2 AES-256/OCB ECDH ran 55 tests all ok
 DTLS v1.2 ARIA/GCM ECDH ran 56 tests all ok
 DTLS v1.2 Camellia-128/GCM ECDH ran 56 tests all ok
 DTLS v1.2 ChaCha20Poly1305 ECDH ran 56 tests all ok
@@ -1809,7 +1892,7 @@ TLS v1.2 AES-128/CCM PSK ran 52 tests all ok
 TLS v1.2 AES-128/CCM-8 PSK ran 52 tests all ok
 TLS v1.2 AES-128/GCM ECDH ran 52 tests all ok
 TLS v1.2 AES-128/GCM ECDH RSA ran 52 tests all ok
-TLS v1.2 AES-128/GCM ECDH no OCSP ran 50 tests all ok
+TLS v1.2 AES-128/GCM ECDH no OCSP ran 52 tests all ok
 TLS v1.2 AES-128/GCM ECDHE_PSK ran 52 tests all ok
 TLS v1.2 AES-128/GCM FFDHE-2048 ran 51 tests all ok
 TLS v1.2 AES-128/GCM PSK ran 52 tests all ok
@@ -1818,11 +1901,11 @@ TLS v1.2 AES-128/GCM bp256r1 ran 52 tests all ok
 TLS v1.2 AES-128/GCM point compression ran 52 tests all ok
 TLS v1.2 AES-128/GCM x25519 ran 52 tests all ok
 TLS v1.2 AES-256/GCM client certs ran 57 tests all ok
+TLS v1.2 AES-256/GCM numsp256d1 ran 12 tests all ok
 TLS v1.2 AES-256/GCM p521 ran 52 tests all ok
-TLS v1.2 AES-256/GCM secp112r1 ran 12 tests all ok
 TLS v1.2 AES-256/OCB ECDH ran 51 tests all ok
 TLS v1.2 ARIA/GCM ECDH ran 52 tests all ok
-TLS v1.2 Camellia-128/GCM ECDH ran 51 tests all ok
+TLS v1.2 Camellia-128/GCM ECDH ran 52 tests all ok
 TLS v1.2 ChaCha20Poly1305 ECDH ran 52 tests all ok
 TLS v1.2 Strict policy ran 52 tests all ok
 TLS v1.2 Suite B ran 52 tests all ok
@@ -1840,10 +1923,18 @@ uuid:
 UUID ran 12 tests all ok
 versioning:
 Versions ran 6 tests all ok
+x25519_agreement:
+X25519/Raw key agreement ran 270 tests all ok
+x25519_keygen:
+X25519 keygen ran 41 tests all ok
+x25519_rt:
+X25519 roundtrip ran 10 tests all ok
 x448_agree:
 X448/Raw key agreement ran 1494 tests all ok
 x448_keygen:
-X448 keygen ran 33 tests all ok
+X448 keygen ran 41 tests all ok
+x509_alt_name:
+X509 AlternativeName tests ran 13 tests all ok
 x509_cve_2020_0601:
 CVE-2020-0601 ran 5 tests all ok
 x509_dn_cmp:
@@ -1896,19 +1987,20 @@ x509_unit:
 CRL DN name ran 2 tests all ok
 Certificate_Status_Code to_string ran 89 tests all ok
 DN with multiple elements in RDN ran 2 tests all ok
-PKCS10 extensions ran 40 tests all ok
+PKCS10 extensions ran 77 tests all ok
 RSA OAEP decoding ran 2 tests all ok
-X509 Custom DN ran 100 tests all ok
-X509 Extensions ran 170 tests all ok
+X509 Custom DN ran 110 tests all ok
+X509 Extensions ran 187 tests all ok
 X509 Extensions API ran 16 tests all ok
 X509 GOST-2012 certificates ran 1 tests all ok
-X509 Hashes ran 180 tests all ok
+X509 Hashes ran 200 tests all ok
 X509 Padding Config ran 10 tests all ok
 X509 RSA-PSS certificate ran 1 tests all ok
-X509 Self Issued ran 10 tests all ok
+X509 Self Issued ran 11 tests all ok
+X509 TNAuthList decode ran 14 tests all ok
 X509 Time ran 75 tests all ok
-X509 Unit ran 290 tests all ok
-X509 Usage ran 92 tests all ok
+X509 Unit ran 319 tests all ok
+X509 Usage ran 102 tests all ok
 X509 Valid Constraints DH ran 12 tests all ok
 X509 Valid Constraints DSA ran 12 tests all ok
 X509 Valid Constraints Dilithium ran 12 tests all ok
@@ -1921,6 +2013,7 @@ X509 Valid Constraints Ed448 ran 1 tests all ok
 X509 Valid Constraints ElGamal ran 10 tests all ok
 X509 Valid Constraints FrodoKEM ran 10 tests all ok
 X509 Valid Constraints GOST-34.10 ran 12 tests all ok
+X509 Valid Constraints HSS-LMS ran 12 tests all ok
 X509 Valid Constraints Kyber ran 10 tests all ok
 X509 Valid Constraints RSA ran 12 tests all ok
 X509 object uninitialized access ran 2 tests all ok
@@ -1935,8 +2028,8 @@ Verifying using v1 certificate ran 2 tests all ok
 x509_v2uid_in_v1:
 Verifying v1 certificate using v2 uid fields ran 2 tests all ok
 xmss_keygen:
-XMSS XMSS-SHA2_10_192 keygen ran 33 tests all ok
-XMSS XMSS-SHA2_10_256 keygen ran 33 tests all ok
+XMSS XMSS-SHA2_10_192 keygen ran 39 tests all ok
+XMSS XMSS-SHA2_10_256 keygen ran 39 tests all ok
 xmss_keygen_reference:
 XMSS-SHA2_10_256 ran 2 tests all ok
 xmss_sign:
@@ -1985,4 +2078,4 @@ XMSS/SHAKE_20_256 verify invalid signature ran 28 tests all ok
 XMSS/SHAKE_20_512 verify invalid signature ran 28 tests all ok
 zfec:
 ZFEC encoding/decoding ran 3483 tests all ok
-Tests complete ran 2747410 tests all tests ok
+Tests complete ran 2755887 tests all tests ok

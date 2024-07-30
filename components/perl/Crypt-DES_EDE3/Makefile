@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::DES_EDE3
 HUMAN_VERSION =			0.01
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::DES_EDE3 - Triple-DES EDE encryption/decryption
 COMPONENT_CPAN_AUTHOR =		BTROTT
 COMPONENT_ARCHIVE_HASH =	\

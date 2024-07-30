@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Alt::Crypt::RSA::BigInt
 HUMAN_VERSION =			0.06
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Alt::Crypt::RSA::BigInt - RSA public-key cryptosystem, using Math::BigInt
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\

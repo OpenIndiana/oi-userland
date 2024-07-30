@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.vcs
-HUMAN_VERSION =			2.2.0
-COMPONENT_SUMMARY =		jaraco.vcs - Facilities for working with VCS repositories
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.vcs
+HUMAN_VERSION =			2.3.0
+COMPONENT_SUMMARY =		Facilities for working with VCS repositories
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a245794d41e98680ed91d93a2af1d90e81e08a4e0856eb20f4c449c270e2a63a
+	sha256:c6601375b34a15ddfae383d2016a9a35d8cee58657e705b1bd5b68d8fe19d9f6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,7 +38,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += library/python/tempora
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
@@ -47,5 +46,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-home
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
 TEST_REQUIRED_PACKAGES.python += library/python/types-python-dateutil

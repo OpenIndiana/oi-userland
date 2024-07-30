@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Signature
 HUMAN_VERSION =			0.88
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module::Signature - Module signature file manipulation
 COMPONENT_CPAN_AUTHOR =		AUDREYT
 COMPONENT_ARCHIVE_HASH =	\
@@ -27,6 +28,9 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		CC0-1.0 AND (Artistic-1.0-Perl OR GPL-1.0-or-later)
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Build dependencies missing from metadata
+PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openpgp
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/ipc-run

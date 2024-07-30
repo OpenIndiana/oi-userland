@@ -22,31 +22,33 @@
 # Copyright 2023 Klaus Ziegler
 #
 
-PREFERRED_BITS= 64
-BUILD_BITS= 32_and_64
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdbm
-COMPONENT_VERSION=	1.23
+COMPONENT_VERSION=	1.24
+COMPONENT_SUMMARY=	gdbm is a set of database routines that use extensible hashing. It works similar to the standard UNIX dbm routines
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gdbm/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:74b1081d21fff13ae4bd7c16e5d6e504a4c26f7cde1dca0d963a484174bbcacd
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libgdbm
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:695e9827fdf763513f133910bc7e6cfdb9187943a4fec943e57449723d2b8dbf
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
+COMPONENT_FMRI=		library/database/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Development/Databases
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
 
-COMPONENT_INSTALL_ENV +=	INSTALL_ROOT="$(PROTO_DIR)"
+COMPONENT_INSTALL_ENV += INSTALL_ROOT="$(PROTO_DIR)"
 
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/ ok| skipped| successful/'"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += system/library

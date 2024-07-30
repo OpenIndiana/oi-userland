@@ -20,10 +20,13 @@
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
+
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		imap
 COMPONENT_VERSION=	2007f
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	0.2007.6
 COMPONENT_PROJECT_URL=	http://www.washington.edu/imap/
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -45,6 +48,11 @@ PATH=$(PATH.gnu)
 INSTALL_COMMON=$(BUILD_DIR)/.installed
 
 CFLAGS += -D__EXTENSIONS__
+
+# Provide location for openssl 3.1 headers/libraries
+# (Also hardcoded in patch file: z_01ec_makefile.patch )
+CFLAGS += -I$(OPENSSL_INCDIR)
+LDFLAGS += -L$(OPENSSL_LIBDIR)
 
 # Parallel build fails
 COMPONENT_BUILD_ARGS=
@@ -77,5 +85,6 @@ install:	$(INSTALL_COMMON)
 
 test:	$(NO_TESTS)
 
-REQUIRED_PACKAGES += library/security/openssl
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library

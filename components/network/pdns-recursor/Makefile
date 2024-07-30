@@ -14,16 +14,16 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-OPENSSL_VERSION= 1.1
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
-COMPONENT_VERSION=	4.9.1
+COMPONENT_VERSION=	4.9.6
 COMPONENT_SUMMARY=	Non-authoritative/recursing DNS server
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:0a1edc13e8f2bd661f39e316387d941e22de6a03b8a7a2fc662fdf8b942ea2be
+COMPONENT_ARCHIVE_HASH= sha256:27f7c5c9ee3d371dcde2ec8c4a3979d191fc842e9843ff49a82a3f29187bc385
 COMPONENT_ARCHIVE_URL=	https://downloads.powerdns.com/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		service/network/dns/powerdns-recursor
 COMPONENT_CLASSIFICATION=	System/Services
@@ -52,9 +52,9 @@ COMPONENT_TEST_TRANSFORMS = $(CONFIGURE_TEST_TRANSFORMS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

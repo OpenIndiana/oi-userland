@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::CAST5_PP
 HUMAN_VERSION =			1.04
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::CAST5_PP - CAST5 block cipher in pure Perl
 COMPONENT_CPAN_AUTHOR =		BOBMATH
 COMPONENT_ARCHIVE_HASH =	\

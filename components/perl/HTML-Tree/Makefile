@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTML::Tree
 HUMAN_VERSION =			5.07
-COMPONENT_REVISION =		3
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		HTML::Tree - build and scan parse-trees of HTML
 COMPONENT_CPAN_AUTHOR =		KENTNL
 COMPONENT_ARCHIVE_HASH =	\

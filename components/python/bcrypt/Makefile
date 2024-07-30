@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bcrypt
-HUMAN_VERSION =			4.1.3
+HUMAN_VERSION =			4.2.0
 COMPONENT_SUMMARY =		Modern password hashing for your software and your servers
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2ee15dd749f5952fe3f0430d0ff6b74082e159c50332a1413d51b5689cf06623
+	sha256:cf69eaf5185fd58f268f805b505ce31f9b9fc2d64b376642164e9244540c1221
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 

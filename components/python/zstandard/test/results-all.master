@@ -2,6 +2,7 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
+configfile: pyproject.toml
 collecting ... collected 290 items
 
 tests/test_buffer_util.py::TestBufferWithSegments::test_arguments PASSED
@@ -61,13 +62,6 @@ tests/test_compressor_copy_stream.py::TestCompressor_copy_stream::test_read_writ
 tests/test_compressor_copy_stream.py::TestCompressor_copy_stream::test_write_checksum PASSED
 tests/test_compressor_copy_stream.py::TestCompressor_copy_stream::test_write_content_size PASSED
 tests/test_compressor_copy_stream.py::TestCompressor_copy_stream::test_write_exception PASSED
-tests/test_compressor_fuzzing.py::TestCompressor_chunker_fuzzing::test_flush_block SKIPPED
-tests/test_compressor_fuzzing.py::TestCompressor_chunker_fuzzing::test_random_input_sizes SKIPPED
-tests/test_compressor_fuzzing.py::TestCompressor_compressobj_fuzzing::test_flush_block SKIPPED
-tests/test_compressor_fuzzing.py::TestCompressor_compressobj_fuzzing::test_random_input_sizes SKIPPED
-tests/test_compressor_fuzzing.py::TestCompressor_copy_stream_fuzzing::test_read_write_size_variance SKIPPED
-tests/test_compressor_fuzzing.py::TestCompressor_multi_compress_to_buffer_fuzzing::test_data_equivalence SKIPPED
-tests/test_compressor_fuzzing.py::TestCompressor_read_to_iter_fuzzing::test_read_write_size_variance SKIPPED
 tests/test_compressor_fuzzing.py::TestCompressor_stream_reader_fuzzing::test_buffer_source_read SKIPPED
 tests/test_compressor_fuzzing.py::TestCompressor_stream_reader_fuzzing::test_buffer_source_read1 SKIPPED
 tests/test_compressor_fuzzing.py::TestCompressor_stream_reader_fuzzing::test_buffer_source_read1_variance SKIPPED
@@ -85,6 +79,13 @@ tests/test_compressor_fuzzing.py::TestCompressor_stream_reader_fuzzing::test_str
 tests/test_compressor_fuzzing.py::TestCompressor_stream_reader_fuzzing::test_stream_source_readinto1_variance SKIPPED
 tests/test_compressor_fuzzing.py::TestCompressor_stream_reader_fuzzing::test_stream_source_readinto_variance SKIPPED
 tests/test_compressor_fuzzing.py::TestCompressor_stream_writer_fuzzing::test_write_size_variance SKIPPED
+tests/test_compressor_fuzzing.py::TestCompressor_copy_stream_fuzzing::test_read_write_size_variance SKIPPED
+tests/test_compressor_fuzzing.py::TestCompressor_compressobj_fuzzing::test_flush_block SKIPPED
+tests/test_compressor_fuzzing.py::TestCompressor_compressobj_fuzzing::test_random_input_sizes SKIPPED
+tests/test_compressor_fuzzing.py::TestCompressor_read_to_iter_fuzzing::test_read_write_size_variance SKIPPED
+tests/test_compressor_fuzzing.py::TestCompressor_multi_compress_to_buffer_fuzzing::test_data_equivalence SKIPPED
+tests/test_compressor_fuzzing.py::TestCompressor_chunker_fuzzing::test_flush_block SKIPPED
+tests/test_compressor_fuzzing.py::TestCompressor_chunker_fuzzing::test_random_input_sizes SKIPPED
 tests/test_compressor_multi_compress_to_buffer.py::TestCompressor_multi_compress_to_buffer::test_buffer_with_segments_collection_input PASSED
 tests/test_compressor_multi_compress_to_buffer.py::TestCompressor_multi_compress_to_buffer::test_buffer_with_segments_input PASSED
 tests/test_compressor_multi_compress_to_buffer.py::TestCompressor_multi_compress_to_buffer::test_empty_input PASSED
@@ -153,16 +154,16 @@ tests/test_data_structures.py::TestFrameParameters::test_invalid_input_sizes PAS
 tests/test_data_structures.py::TestFrameParameters::test_invalid_type PASSED
 tests/test_data_structures_fuzzing.py::TestCompressionParametersHypothesis::test_estimated_compression_context_size SKIPPED
 tests/test_data_structures_fuzzing.py::TestCompressionParametersHypothesis::test_valid_init SKIPPED
-tests/test_decompressor.py::TestDecompressor::test_memory_size PASSED
+tests/test_decompressor.py::TestFrameHeaderSize::test_basic PASSED
+tests/test_decompressor.py::TestFrameHeaderSize::test_empty PASSED
+tests/test_decompressor.py::TestFrameHeaderSize::test_too_small PASSED
 tests/test_decompressor.py::TestFrameContentSize::test_bad_frame PASSED
 tests/test_decompressor.py::TestFrameContentSize::test_basic PASSED
 tests/test_decompressor.py::TestFrameContentSize::test_empty PASSED
 tests/test_decompressor.py::TestFrameContentSize::test_empty_input PASSED
 tests/test_decompressor.py::TestFrameContentSize::test_too_small PASSED
 tests/test_decompressor.py::TestFrameContentSize::test_unknown PASSED
-tests/test_decompressor.py::TestFrameHeaderSize::test_basic PASSED
-tests/test_decompressor.py::TestFrameHeaderSize::test_empty PASSED
-tests/test_decompressor.py::TestFrameHeaderSize::test_too_small PASSED
+tests/test_decompressor.py::TestDecompressor::test_memory_size PASSED
 tests/test_decompressor_content_dict_chain.py::TestDecompressor_content_dict_chain::test_bad_inputs_simple PASSED
 tests/test_decompressor_content_dict_chain.py::TestDecompressor_content_dict_chain::test_bad_subsequent_input PASSED
 tests/test_decompressor_content_dict_chain.py::TestDecompressor_content_dict_chain::test_simple PASSED
@@ -197,13 +198,6 @@ tests/test_decompressor_decompressobj.py::TestDecompressor_decompressobj::test_r
 tests/test_decompressor_decompressobj.py::TestDecompressor_decompressobj::test_simple PASSED
 tests/test_decompressor_decompressobj.py::TestDecompressor_decompressobj::test_unused_data PASSED
 tests/test_decompressor_decompressobj.py::TestDecompressor_decompressobj::test_write_size PASSED
-tests/test_decompressor_fuzzing.py::TestDecompressor_copy_stream_fuzzing::test_read_write_size_variance SKIPPED
-tests/test_decompressor_fuzzing.py::TestDecompressor_decompressobj_fuzzing::test_random_input_sizes SKIPPED
-tests/test_decompressor_fuzzing.py::TestDecompressor_decompressobj_fuzzing::test_random_output_sizes SKIPPED
-tests/test_decompressor_fuzzing.py::TestDecompressor_decompressobj_fuzzing::test_read_across_frames_false SKIPPED
-tests/test_decompressor_fuzzing.py::TestDecompressor_decompressobj_fuzzing::test_read_across_frames_true SKIPPED
-tests/test_decompressor_fuzzing.py::TestDecompressor_multi_decompress_to_buffer_fuzzing::test_data_equivalence SKIPPED
-tests/test_decompressor_fuzzing.py::TestDecompressor_read_to_iter_fuzzing::test_read_write_size_variance SKIPPED
 tests/test_decompressor_fuzzing.py::TestDecompressor_stream_reader_fuzzing::test_buffer_source_constant_read_size SKIPPED
 tests/test_decompressor_fuzzing.py::TestDecompressor_stream_reader_fuzzing::test_buffer_source_read_variance SKIPPED
 tests/test_decompressor_fuzzing.py::TestDecompressor_stream_reader_fuzzing::test_multiple_frames SKIPPED
@@ -214,6 +208,13 @@ tests/test_decompressor_fuzzing.py::TestDecompressor_stream_reader_fuzzing::test
 tests/test_decompressor_fuzzing.py::TestDecompressor_stream_reader_fuzzing::test_stream_source_readall SKIPPED
 tests/test_decompressor_fuzzing.py::TestDecompressor_stream_reader_fuzzing::test_stream_source_readinto1_variance SKIPPED
 tests/test_decompressor_fuzzing.py::TestDecompressor_stream_writer_fuzzing::test_write_size_variance SKIPPED
+tests/test_decompressor_fuzzing.py::TestDecompressor_copy_stream_fuzzing::test_read_write_size_variance SKIPPED
+tests/test_decompressor_fuzzing.py::TestDecompressor_decompressobj_fuzzing::test_random_input_sizes SKIPPED
+tests/test_decompressor_fuzzing.py::TestDecompressor_decompressobj_fuzzing::test_random_output_sizes SKIPPED
+tests/test_decompressor_fuzzing.py::TestDecompressor_decompressobj_fuzzing::test_read_across_frames_false SKIPPED
+tests/test_decompressor_fuzzing.py::TestDecompressor_decompressobj_fuzzing::test_read_across_frames_true SKIPPED
+tests/test_decompressor_fuzzing.py::TestDecompressor_read_to_iter_fuzzing::test_read_write_size_variance SKIPPED
+tests/test_decompressor_fuzzing.py::TestDecompressor_multi_decompress_to_buffer_fuzzing::test_data_equivalence SKIPPED
 tests/test_decompressor_multi_decompress_to_buffer.py::TestDecompressor_multi_decompress_to_buffer::test_buffer_with_segments_collection_input PASSED
 tests/test_decompressor_multi_decompress_to_buffer.py::TestDecompressor_multi_decompress_to_buffer::test_buffer_with_segments_input PASSED
 tests/test_decompressor_multi_decompress_to_buffer.py::TestDecompressor_multi_decompress_to_buffer::test_buffer_with_segments_sizes PASSED
@@ -283,15 +284,15 @@ tests/test_open.py::TestOpen::test_write_binary_filename PASSED
 tests/test_open.py::TestOpen::test_write_binary_fileobj PASSED
 tests/test_open.py::TestOpen::test_write_text_filename PASSED
 tests/test_open.py::TestOpen::test_write_text_fileobj PASSED
-tests/test_train_dictionary.py::TestCompressionDict::test_bad_mode PASSED
-tests/test_train_dictionary.py::TestCompressionDict::test_bad_precompute_compress PASSED
-tests/test_train_dictionary.py::TestCompressionDict::test_precompute_compress_rawcontent PASSED
 tests/test_train_dictionary.py::TestTrainDictionary::test_bad_args PASSED
 tests/test_train_dictionary.py::TestTrainDictionary::test_basic PASSED
 tests/test_train_dictionary.py::TestTrainDictionary::test_no_args PASSED
 tests/test_train_dictionary.py::TestTrainDictionary::test_no_params PASSED
 tests/test_train_dictionary.py::TestTrainDictionary::test_optimize PASSED
 tests/test_train_dictionary.py::TestTrainDictionary::test_set_dict_id PASSED
+tests/test_train_dictionary.py::TestCompressionDict::test_bad_mode PASSED
+tests/test_train_dictionary.py::TestCompressionDict::test_bad_precompute_compress PASSED
+tests/test_train_dictionary.py::TestCompressionDict::test_precompute_compress_rawcontent PASSED
 tests/test_utility.py::TestCompress::test_simple PASSED
 tests/test_utility.py::TestDecompress::test_simple PASSED
 

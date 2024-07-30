@@ -1,12 +1,8 @@
 READLINE test tends to hang the suite.
 
-So does (as the comment in the script rightfully says) OPENSSL_METHOD_DTLS1 test,
-hence disabling it as well.
-
-OPENSSL_METHOD_* tests require GNU sort.
---- socat-1.7.3.2/test.sh.~1~	2017-01-22 19:07:10.000000000 +0000
-+++ socat-1.7.3.2/test.sh	2018-12-01 22:57:10.378181390 +0000
-@@ -4964,100 +4964,6 @@ fi ;; # NUMCOND, feats
+--- socat-1.8.0.0/test.sh.old	2024-06-29 13:34:24.036413568 -0400
++++ socat-1.8.0.0/test.sh	2024-06-29 13:35:17.700877780 -0400
+@@ -4692,104 +4692,6 @@
  esac
  N=$((N+1))
  
@@ -14,14 +10,15 @@ OPENSSL_METHOD_* tests require GNU sort.
 -NAME=READLINE
 -#set -vx
 -case "$TESTS" in
--*%$N%*|*%functions%*|*%pty%*|*%readline%*|*%$NAME%*)
+-*%$N%*|*%functions%*|*%pty%*|*%readline%*|*%sigint%*|*%$NAME%*)
 -TEST="$NAME: readline with password and sigint"
 -if ! eval $NUMCOND; then :;
--elif ! feat=$(testaddrs readline pty); then
+-elif ! feat=$(testfeats readline pty); then
 -    $PRINTF "test $F_n $TEST... ${YELLOW}$(echo "$feat"| tr 'a-z' 'A-Z') not available${NORMAL}\n" $N
 -    numCANT=$((numCANT+1))
+-    listCANT="$listCANT $N"
 -else
--SAVETERM="$TERM"; TERM=	# 'cause konsole might print controls even in raw
+-SAVETERM="$TERM"; TERM=	# 'cause console might print controls even in raw
 -SAVEMICS=$MICROS
 -#MICROS=2000000
 -ts="$td/test$N.sh"
@@ -33,7 +30,7 @@ OPENSSL_METHOD_* tests require GNU sort.
 -tdiff="$td/test$N.diff"
 -da="test$N $(date) $RANDOM"; da="$da$($ECHO '\r')"
 -# the feature that we really want to test is in the readline.sh script:
--CMD="$TRACE $SOCAT $opts -t1 open:$tpi,nonblock!!open:$tpo exec:\"./readline.sh -nh ./readline-test.sh\",pty,ctty,setsid,raw,echo=0,isig"
+-CMD="$TRACE $SOCAT -lpwrapper $opts -t1 open:$tpi,nonblock!!open:$tpo exec:\"./readline.sh -nh ./readline-test.sh\",pty,ctty,setsid,raw,echo=0,isig"
 -#echo "$CMD" >"$ts"
 -#chmod a+x "$ts"
 -printf "test $F_n $TEST... " $N
@@ -42,9 +39,11 @@ OPENSSL_METHOD_* tests require GNU sort.
 -touch "$tpo"
 -#
 -# during development of this test, the following command line succeeded:
--# (sleep 1; $ECHO "user\n\c"; sleep 1; $ECHO "password\c"; sleep 1; $ECHO "\n\c"; sleep 1; $ECHO "test 1\n\c"; sleep 1; $ECHO "\003\c"; sleep 1; $ECHO "test 2\n\c"; sleep 1; $ECHO "exit\n\c"; sleep 1) |$TRACE $SOCAT -d -d -d -d -lf/tmp/gerhard/debug1 -v -x - exec:'./readline.sh ./readline-test.sh',pty,ctty,setsid,raw,echo=0,isig
+-# ECHO="echo -e" SOCAT=./socat
+-# (sleep 1; $ECHO "user\n\c"; sleep 1; $ECHO "password\c"; sleep 1; $ECHO "\n\c"; sleep 1; $ECHO "test 1\n\c"; sleep 1; $ECHO "\003\c"; sleep 1; $ECHO "test 2\n\c"; sleep 1; $ECHO "exit\n\c"; sleep 1) |$TRACE $SOCAT -d -d -d -d -lf/tmp/$USER/debug1 -v -x - exec:'./readline.sh ./readline-test.sh',pty,ctty,setsid,raw,echo=0,isig
 -#
--PATH=${SOCAT%socat}:$PATH eval "$CMD 2>$te &"
+-# the following cat, in case of socat failure, reads the pipe to prevent below writer from hanging
+-PATH=${SOCAT%socat}:$PATH eval "$CMD 2>$te || cat $tpi >/dev/null &"
 -pid=$!	# background process id
 -usleep $MICROS
 -
@@ -84,14 +83,16 @@ OPENSSL_METHOD_* tests require GNU sort.
 -wait
 -if ! tr "$($ECHO '\r \c')" "% " <$tpo |sed 's/%$//g' |sed 's/.*%//g' |diff "$tr" - >"$tdiff" 2>&1; then
 -    $PRINTF "$FAILED: $TRACE $SOCAT:\n"
--    echo "$CMD"
--    cat "$te"
--    cat "$tdiff"
+-    echo "$CMD" 2>&1
+-    cat "$te" 2>&1
+-    echo diff:  2>&1
+-    cat "$tdiff" 2>&1
 -    numFAIL=$((numFAIL+1))
 -    listFAIL="$listFAIL $N"
 -else
 -   $PRINTF "$OK\n"
--   if [ -n "$debug" ]; then cat $te; fi
+-    if [ "$VERBOSE" ]; then echo "$CMD0 &"; fi
+-    if [ "$DEBUG" ];   then cat "${te}0" >&2; fi
 -   numOK=$((numOK+1))
 -fi
 -kill $pid 2>/dev/null	# necc on OpenBSD
@@ -100,28 +101,9 @@ OPENSSL_METHOD_* tests require GNU sort.
 -TERM="$SAVETERM"
 -fi ;; # NUMCOND, feats
 -esac
--PORT=$((PORT+1))
 -N=$((N+1))
 -
 -
  NAME=GENDERCHANGER
  case "$TESTS" in
- *%$N%*|*%functions%*|*%$NAME%*)
-@@ -12282,7 +12188,7 @@ OPENSSL_VERSION_GOOD=1.0.2 	# this is ju
- 				# known good: 1.0.2j
- 
- # test if the various SSL methods can be used with OpenSSL
--for method in SSL3 SSL23 TLS1 TLS1.1 TLS1.2 DTLS1; do
-+for method in SSL3 SSL23 TLS1 TLS1.1 TLS1.2; do
- 
- NAME=OPENSSL_METHOD_$method
- case "$TESTS" in
-@@ -12305,7 +12211,7 @@ da="test$N $(date) $RANDOM"
- CMD0="$SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,method=$method,cipher=aNULL,verify=0 PIPE"
- CMD1="$SOCAT $opts - OPENSSL-CONNECT:$LOCALHOST:$PORT,method=$method,cipher=aNULL,verify=0"
- printf "test $F_n $TEST... " $N
--if [ "$method" = DTLS1 -a "$(echo -e "$OPENSSL_VERSION\n1.0.2" |sort -V |tail -n 1)" = "$OPENSSL_VERSION_GOOD" ]; then
-+if [ "$method" = DTLS1 -a "$(echo -e "$OPENSSL_VERSION\n1.0.2" |gsort -V |tail -n 1)" = "$OPENSSL_VERSION_GOOD" ]; then
-     $PRINTF "${YELLOW}might hang, skipping${NORMAL}\n"
-     numCANT=$((numCANT+1))
- else
+ *%$N%*|*%functions%*|*%listen%*|*%$NAME%*)

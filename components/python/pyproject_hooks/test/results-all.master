@@ -1,50 +1,45 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
-cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 43 items
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
+rootdir: $(@D)
+configfile: pytest.ini
+collecting ... collected 37 items / 1 deselected / 36 selected
 
-::project PASSED
+tests/test_call_hooks.py::test_missing_backend_gives_exception PASSED
+tests/test_call_hooks.py::test_get_requires_for_build_wheel PASSED
+tests/test_call_hooks.py::test_get_requires_for_build_editable PASSED
+tests/test_call_hooks.py::test_get_requires_for_build_sdist PASSED
+tests/test_call_hooks.py::test_prepare_metadata_for_build_wheel PASSED
+tests/test_call_hooks.py::test_prepare_metadata_for_build_editable PASSED
+tests/test_call_hooks.py::test_build_wheel PASSED
+tests/test_call_hooks.py::test_build_editable PASSED
+tests/test_call_hooks.py::test_build_wheel_relpath PASSED
+tests/test_call_hooks.py::test_build_sdist PASSED
+tests/test_call_hooks.py::test_build_sdist_unsupported PASSED
+tests/test_call_hooks.py::test_runner_replaced_on_exception PASSED
+tests/test_call_hooks.py::test_custom_python_executable PASSED
+tests/test_call_hooks.py::test_path_pollution PASSED
 tests/test_call_hooks.py::test__supported_features[pkg1-expected0] PASSED
 tests/test_call_hooks.py::test__supported_features[pkg2-expected1] PASSED
 tests/test_call_hooks.py::test__supported_features[pkg3-expected2] PASSED
-tests/test_call_hooks.py::test_build_editable PASSED
-tests/test_call_hooks.py::test_build_sdist PASSED
-tests/test_call_hooks.py::test_build_sdist_unsupported PASSED
-tests/test_call_hooks.py::test_build_wheel PASSED
-tests/test_call_hooks.py::test_build_wheel_relpath PASSED
-tests/test_call_hooks.py::test_custom_python_executable PASSED
-tests/test_call_hooks.py::test_get_requires_for_build_editable PASSED
-tests/test_call_hooks.py::test_get_requires_for_build_sdist PASSED
-tests/test_call_hooks.py::test_get_requires_for_build_wheel PASSED
-tests/test_call_hooks.py::test_issue_104 PASSED
-tests/test_call_hooks.py::test_missing_backend_gives_exception PASSED
-tests/test_call_hooks.py::test_prepare_metadata_for_build_editable PASSED
-tests/test_call_hooks.py::test_prepare_metadata_for_build_wheel PASSED
-tests/test_call_hooks.py::test_runner_replaced_on_exception PASSED
-tests/test_call_hooks.py::test_setup_py PASSED
+tests/test_hook_fallbacks.py::test_get_requires_for_build_wheel PASSED
 tests/test_hook_fallbacks.py::test_get_requires_for_build_editable PASSED
 tests/test_hook_fallbacks.py::test_get_requires_for_build_sdist PASSED
-tests/test_hook_fallbacks.py::test_get_requires_for_build_wheel PASSED
+tests/test_hook_fallbacks.py::test_prepare_metadata_for_build_wheel PASSED
 tests/test_hook_fallbacks.py::test_prepare_metadata_for_build_editable PASSED
 tests/test_hook_fallbacks.py::test_prepare_metadata_for_build_editable_missing_build_editable PASSED
-tests/test_hook_fallbacks.py::test_prepare_metadata_for_build_editable_no_fallback PASSED
-tests/test_hook_fallbacks.py::test_prepare_metadata_for_build_wheel PASSED
 tests/test_hook_fallbacks.py::test_prepare_metadata_for_build_wheel_no_fallback PASSED
+tests/test_hook_fallbacks.py::test_prepare_metadata_for_build_editable_no_fallback PASSED
+tests/test_inplace_hooks.py::test_backend_path_within_tree[backend_path0] PASSED
+tests/test_inplace_hooks.py::test_backend_path_within_tree[backend_path1] PASSED
 tests/test_inplace_hooks.py::test_backend_out_of_tree[backend_path0] PASSED
 tests/test_inplace_hooks.py::test_backend_out_of_tree[backend_path1] PASSED
 tests/test_inplace_hooks.py::test_backend_out_of_tree[backend_path2] PASSED
 tests/test_inplace_hooks.py::test_backend_out_of_tree[backend_path3] PASSED
-tests/test_inplace_hooks.py::test_backend_path_within_tree[backend_path0] PASSED
-tests/test_inplace_hooks.py::test_backend_path_within_tree[backend_path1] PASSED
-tests/test_inplace_hooks.py::test_intree_backend PASSED
-tests/test_inplace_hooks.py::test_intree_backend_not_in_path PASSED
+tests/test_inplace_hooks.py::test_intree_backend[pkg_intree] PASSED
+tests/test_inplace_hooks.py::test_intree_backend[pkg_nested_intree] PASSED
+tests/test_inplace_hooks.py::test_intree_backend_not_in_path[buildsys] PASSED
+tests/test_inplace_hooks.py::test_intree_backend_not_in_path[nested.buildsys] PASSED
+tests/test_inplace_hooks.py::test_intree_backend_loaded_from_correct_backend_path PASSED
 
-======== 35 passed ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
-  congratulations :)
+======== 36 passed, 1 deselected ========

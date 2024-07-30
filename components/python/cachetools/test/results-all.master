@@ -4,6 +4,7 @@ py$(PYV): commands[0]> python -m py.test --basetemp=$(@D)/.tox/py$(PYV)/tmp --co
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
+configfile: pyproject.toml
 collecting ... collected 214 items
 
 tests/test_cache.py::CacheTest::test_defaults PASSED
@@ -55,8 +56,8 @@ tests/test_cachedmethod.py::CachedMethodTest::test_locked_nospace PASSED
 tests/test_cachedmethod.py::CachedMethodTest::test_lru PASSED
 tests/test_cachedmethod.py::CachedMethodTest::test_nocache PASSED
 tests/test_cachedmethod.py::CachedMethodTest::test_nospace PASSED
-tests/test_cachedmethod.py::CachedMethodTest::test_typed_dict PASSED
-tests/test_cachedmethod.py::CachedMethodTest::test_typed_lru PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_typedmethod_dict PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_typedmethod_lru PASSED
 tests/test_cachedmethod.py::CachedMethodTest::test_unhashable PASSED
 tests/test_cachedmethod.py::CachedMethodTest::test_weakref PASSED
 tests/test_cachedmethod.py::CachedMethodTest::test_wrapped PASSED
@@ -221,7 +222,63 @@ tests/test_ttl.py::TTLCacheTest::test_ttl_lru PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_tuple_key PASSED
 tests/test_ttl.py::TTLCacheTest::test_update PASSED
 
+=============================== warnings summary ===============================
+tests/test_mru.py::MRUCacheTest::test_defaults
+  $(@D)/tests/__init__.py:9: DeprecationWarning: MRUCache is deprecated
+    cache = self.Cache(maxsize=1)
 
-======== 214 passed ========
+tests/test_mru.py::MRUCacheTest::test_delete
+  $(@D)/tests/__init__.py:55: DeprecationWarning: MRUCache is deprecated
+    cache = self.Cache(maxsize=2)
+
+tests/test_mru.py::MRUCacheTest::test_getsizeof_param
+  $(@D)/tests/__init__.py:258: DeprecationWarning: MRUCache is deprecated
+    self._test_getsizeof(self.Cache(maxsize=3, getsizeof=lambda x: x))
+
+tests/test_mru.py::MRUCacheTest::test_getsizeof_subclass
+  $(@D)/tests/__init__.py:265: DeprecationWarning: MRUCache is deprecated
+    self._test_getsizeof(Cache(maxsize=3))
+
+tests/test_mru.py::MRUCacheTest::test_insert
+  $(@D)/tests/__init__.py:19: DeprecationWarning: MRUCache is deprecated
+    cache = self.Cache(maxsize=2)
+
+tests/test_mru.py::MRUCacheTest::test_missing
+  $(@D)/tests/__init__.py:127: DeprecationWarning: MRUCache is deprecated
+    cache = DefaultCache(maxsize=2)
+
+tests/test_mru.py::MRUCacheTest::test_missing_getsizeof
+  $(@D)/tests/__init__.py:189: DeprecationWarning: MRUCache is deprecated
+    cache = DefaultCache(maxsize=2, getsizeof=lambda x: x)
+
+tests/test_mru.py::MRUCacheTest::test_pickle
+  $(@D)/tests/__init__.py:270: DeprecationWarning: MRUCache is deprecated
+    source = self.Cache(maxsize=2)
+
+tests/test_mru.py::MRUCacheTest::test_pickle_maxsize
+tests/test_mru.py::MRUCacheTest::test_pickle_maxsize
+tests/test_mru.py::MRUCacheTest::test_pickle_maxsize
+  $(@D)/tests/__init__.py:298: DeprecationWarning: MRUCache is deprecated
+    source = self.Cache(maxsize=n)
+
+tests/test_mru.py::MRUCacheTest::test_pop
+  $(@D)/tests/__init__.py:79: DeprecationWarning: MRUCache is deprecated
+    cache = self.Cache(maxsize=2)
+
+tests/test_mru.py::MRUCacheTest::test_popitem
+  $(@D)/tests/__init__.py:99: DeprecationWarning: MRUCache is deprecated
+    cache = self.Cache(maxsize=2)
+
+tests/test_mru.py::MRUCacheTest::test_popitem_exception_context
+  $(@D)/tests/__init__.py:115: DeprecationWarning: MRUCache is deprecated
+    self.Cache(maxsize=2).popitem()
+
+tests/test_mru.py::MRUCacheTest::test_update
+  $(@D)/tests/__init__.py:37: DeprecationWarning: MRUCache is deprecated
+    cache = self.Cache(maxsize=2)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+======== 214 passed, 15 warnings ========
   py$(PYV): OK
   congratulations :)

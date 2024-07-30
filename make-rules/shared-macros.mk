@@ -858,7 +858,7 @@ QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 #
 
 # This is the default version of Perl
-PERL_VERSION =  5.38
+PERL_VERSION =  5.40
 
 # The PERL_VERSIONS list should always be in ascending order (newest version
 # last)
@@ -875,7 +875,7 @@ PERL_64_ONLY_VERSIONS = $(PERL_VERSIONS)
 #
 # This list should be usually empty.  Intersection of PERL_VERSIONS_OBSOLETING
 # and PERL_VERSIONS lists MUST be always empty.
-PERL_VERSIONS_OBSOLETING = 5.34
+PERL_VERSIONS_OBSOLETING =
 
 define perl-path-rule
 PERL.$(1) =		/usr/perl5/$(1)/bin/perl
@@ -1184,6 +1184,9 @@ CPP_LARGEFILES =		$(CPP_LARGEFILES.$(BITS))
 # we currently do not support.
 CPP_POSIX =	-D_POSIX_C_SOURCE=200112L -D_POSIX_PTHREAD_SEMANTICS
 
+# XPG8 mode.  This option enables XPG8 conformance, plus extensions.
+CPP_XPG8MODE=	-D_XOPEN_SOURCE=800 -D__EXTENSIONS__=1 -D_XPG8
+
 # XPG7 mode.  This option enables XPG7 conformance, plus extensions.
 CPP_XPG7MODE=	-D_XOPEN_SOURCE=700 -D__EXTENSIONS__=1 -D_XPG7
 
@@ -1209,6 +1212,9 @@ gcc_C99_ENABLE =	-std=c99
 gcc_XREGS.sparc =	-mno-app-regs
 gcc_XREGS.i386 =
 gcc_XREGS =		$(gcc_XREGS.$(MACH))
+
+# See CPP_XPG8MODE comment above.
+XPG8MODE =		$(CPP_XPG8MODE)
 
 # See CPP_XPG7MODE comment above.
 XPG7MODE =		$(CPP_XPG7MODE)

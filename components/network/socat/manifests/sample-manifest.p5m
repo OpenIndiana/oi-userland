@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,5 +25,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/filan
 file path=usr/bin/procan
-file path=usr/bin/socat
-file path=usr/share/man/man1/socat.1
+link path=usr/bin/socat target=socat1
+file path=usr/bin/socat-broker.sh
+file path=usr/bin/socat-chain.sh
+file path=usr/bin/socat-mux.sh
+file path=usr/bin/socat1
+link path=usr/share/man/man1/socat.1 target=socat1.1
+file path=usr/share/man/man1/socat1.1

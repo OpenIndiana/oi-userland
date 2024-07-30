@@ -20,7 +20,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-system-statistics
 HUMAN_VERSION =			1.0.2
-COMPONENT_SUMMARY =		pytest-system-statistics - Pytest plugin to track and report system usage statistics
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Pytest plugin to track and report system usage statistics
 COMPONENT_PROJECT_URL =		https://github.com/saltstack/pytest-system-statistics
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:059b739e3f4e288cd1e4dbe5785e077ee89df26f64e6c5164e9bb5d6657a4a71
@@ -30,6 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/saltstack/pytest-system-statistics/issues/5
+PYTEST_FASTFAIL=
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs

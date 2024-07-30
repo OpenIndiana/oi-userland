@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_PERL_MODULE =		XML::Parser::PerlSAX
 COMPONENT_PERL_DISTRIBUTION =	libxml-perl
 HUMAN_VERSION =			0.08
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		libxml-perl - Collection of Perl modules for working with XML
 COMPONENT_CPAN_AUTHOR =		KMACLEOD
 COMPONENT_ARCHIVE_HASH =	\

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::SpamAssassin
 HUMAN_VERSION =			4.0.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mail::SpamAssassin - Spam detector and markup engine
 COMPONENT_CPAN_AUTHOR =		SIDNEY
 COMPONENT_ARCHIVE_HASH =	\
@@ -57,7 +58,6 @@ PERL_REQUIRED_PACKAGES += library/perl-5/email-address-xs
 PERL_REQUIRED_PACKAGES += library/perl-5/encode-detect
 PERL_REQUIRED_PACKAGES += library/perl-5/geo-ip
 PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
-PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-inet6
 PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl
 PERL_REQUIRED_PACKAGES += library/perl-5/io-string
 PERL_REQUIRED_PACKAGES += library/perl-5/ip-country
@@ -74,8 +74,8 @@ PERL_REQUIRED_PACKAGES += library/perl-5/net-patricia
 PERL_REQUIRED_PACKAGES += library/perl-5/netaddr-ip
 PERL_REQUIRED_PACKAGES += library/perl-5/razor2-client-agent
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

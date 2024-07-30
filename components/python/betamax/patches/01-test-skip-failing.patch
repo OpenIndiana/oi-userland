@@ -1,0 +1,16 @@
+https://github.com/betamaxpy/betamax/issues/212
+
+--- betamax-0.9.0/tests/integration/test_record_modes.py.orig
++++ betamax-0.9.0/tests/integration/test_record_modes.py
+@@ -4,8 +4,11 @@
+ 
+ from tests.integration.helper import IntegrationHelper
+ 
++import pytest
++
+ 
+ class TestRecordOnce(IntegrationHelper):
++    @pytest.mark.skip(reason="always fails: https://github.com/betamaxpy/betamax/issues/212")
+     def test_records_new_interaction(self):
+         s = self.session
+         with Betamax(s).use_cassette('test_record_once') as betamax:

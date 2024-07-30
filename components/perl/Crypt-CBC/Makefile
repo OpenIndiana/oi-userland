@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::CBC
 HUMAN_VERSION =			3.04
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Crypt::CBC - Encrypt Data with Cipher Block Chaining Mode
 COMPONENT_CPAN_AUTHOR =		LDS
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,8 +29,22 @@ COMPONENT_LICENSE =		Artistic-2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# Crypt-CBC --> Crypt-Blowfish --> Crypt-CBC
+# Crypt-CBC --> Crypt-DES --> Crypt-CBC
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PERL_TEST_BOOTSTRAP = yes
+
 # Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-blowfish
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-des
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-idea
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-pbkdf2

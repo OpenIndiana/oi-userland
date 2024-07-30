@@ -13,11 +13,12 @@
 #
 
 BUILD_BITS=		64
-USE_OPENSSL11=	yes
+OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			isync
 COMPONENT_VERSION=		1.4.4
+COMPONENT_REVISION=		1
 COMPONENT_FMRI=			mail/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).sourceforge.net
@@ -35,8 +36,8 @@ include $(WS_MAKE_RULES)/common.mk
 CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += database/berkeleydb-5
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

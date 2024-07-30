@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.7.3
+HUMAN_VERSION =			4.8.0
 COMPONENT_SUMMARY =		Python driver for MongoDB <http://www.mongodb.org>
 COMPONENT_PROJECT_URL =		https://www.mongodb.org
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/mongodb/mongo-python-driver/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:79c674a06ec5d7da014189400b95baec0ce9aca9fc6e9937386b62fb6367bd07
+	sha256:3639d459b06257b529c5675bb68e0f89d4a4d77fe5f76c01107202c3ba52d4cb
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -50,8 +50,9 @@ TEST_REQUIRED_PACKAGES += service/database/mongodb-44
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/dnspython
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

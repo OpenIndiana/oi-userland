@@ -1,11 +1,12 @@
---- gftp-2.0.19/lib/sshv2.c.orig	2008-01-25 08:28:32.000000000 +0900
-+++ gftp-2.0.19/lib/sshv2.c	2008-12-09 14:32:52.172140155 +0900
-@@ -379,6 +379,7 @@ sshv2_start_login_sequence (gftp_request
-                            N_("Enter passphrase for key '"),
-                            N_("Password"),
-                            N_("password"),
-+                           N_("Password: "),
-                            NULL};
+--- gftp-2.9.1b/lib/sshv2.c.old	2024-07-01 22:23:14.745126840 -0400
++++ gftp-2.9.1b/lib/sshv2.c	2024-07-01 22:23:49.182914494 -0400
+@@ -390,7 +390,7 @@
+   static char *pwstrs[] = { "Enter passphrase for RSA key",
+                             "Enter passphrase for key '",
+                             "Password",
+-                            "password",
++                            "Password:",
+                             NULL };
    char *tempstr, *temp1str, *pwstr, *yesstr = "yes\n", *securid_pass;
    int wrotepw, ok, maxfd, ret, clear_tempstr, pwidx;
 @@ -463,15 +464,26 @@ sshv2_start_login_sequence (gftp_request

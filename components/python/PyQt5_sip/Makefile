@@ -19,15 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyQt5_sip
-HUMAN_VERSION =			12.13.0
-COMPONENT_SUMMARY =		PyQt5_sip - The sip module support for PyQt5
-COMPONENT_PROJECT_URL =		https://www.riverbankcomputing.com/software/sip/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ee/81/fce2a475aa56c1f49707d9306b930695b6ff078c2242c9f2fd72a3214e1f/PyQt5_sip-12.13.0.tar.gz
+HUMAN_VERSION =			12.15.0
+COMPONENT_SUMMARY =		The sip module support for PyQt5
+COMPONENT_PROJECT_URL =		https://github.com/Python-SIP/sip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7f321daf84b9c9dbca61b80e1ef37bdaffc0e93312edae2cd7da25b953971d91
-COMPONENT_LICENSE =		GPL-3.0-only
-COMPONENT_LICENSE_FILE =	LICENSE-GPL3
+	sha256:d23fdfcf363b5cedd9d39f8a9c5710e7d52804f5b08a58e91c638b36eafcb702
+COMPONENT_LICENSE =		BSD-2-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = setup.py
 
