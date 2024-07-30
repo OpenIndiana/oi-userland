@@ -19,15 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib_devhelp
-HUMAN_VERSION =			1.0.6
-COMPONENT_SUMMARY =		sphinxcontrib_devhelp - sphinxcontrib-devhelp is a sphinx extension which outputs Devhelp documents
+HUMAN_VERSION =			2.0.0
+COMPONENT_SUMMARY =		sphinxcontrib-devhelp is a sphinx extension which outputs Devhelp documents
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c7/a1/80b7e9f677abc673cb9320bf255ad4e08931ccbc2e66bde4b59bad3809ad/sphinxcontrib_devhelp-1.0.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9893fd3f90506bc4b97bdb977ceb8fbd823989f4316b28c3841ec128544372d3
+	sha256:411f5d96d445d1d73bb5d52133377b4248ec79db5c793ce7dbe59e074b4dd1ad
 COMPONENT_LICENSE =		BSD-2-Clause
-COMPONENT_LICENSE_FILE =	LICENSE
+COMPONENT_LICENSE_FILE =	LICENCE.rst
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
