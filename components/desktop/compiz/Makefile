@@ -13,12 +13,11 @@
 # Copyright (c) 2018 Michal Nowak
 #
 
-BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz
 COMPONENT_VERSION=	0.8.18
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	OpenGL compositing window manager
 COMPONENT_PROJECT_URL=	https//www.northfield.ws/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
