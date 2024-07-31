@@ -19,12 +19,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-base1
-COMPONENT_VERSION=	1.24.5
+COMPONENT_VERSION=	1.24.6
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME= 	gst-plugins-base
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:0e33ec9b59eef5ef3a6a53bbd55c44340e681d0000910caca12541a73db38a7d
+COMPONENT_ARCHIVE_HASH=	sha256:cf52b535a0ce7ec974756891818f34f06317c2e136abb24149e18c23ecc229b5
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/base
@@ -76,6 +76,17 @@ PKG_MACROS += SOVER=$(SOVER)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/mesa
+
+# gst-devtools is optional testing dependency.  However, if it is available it
+# must be at the same major version as the main gstreamer package to run tests
+# successfully.
+GST_DEVTOOLS_VERSION = \
+	$(shell $(GMAKE) -f $(WS_COMPONENTS)/encumbered/gst-devtools1/Makefile print-value-COMPONENT_VERSION)
+ifeq ($(basename $(GST_DEVTOOLS_VERSION)),$(basename $(COMPONENT_VERSION)))
+TEST_REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
+else
+TEST_CONFLICTING_PACKAGES += library/audio/gstreamer1/devtools
+endif
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
