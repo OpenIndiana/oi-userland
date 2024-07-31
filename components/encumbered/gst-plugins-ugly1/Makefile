@@ -16,34 +16,27 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly1
-COMPONENT_VERSION=      1.22.10
+COMPONENT_VERSION=	1.24.6
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=	gst-plugins-ugly
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:cc80a81a22c0b3b31ab7f1b8bf18dda23c72d2791b86cc6264923a68336329ea
+COMPONENT_ARCHIVE_HASH=	sha256:5dfdbb2978ab282e637255cd875cf5b7b93fc83db62f8a0b1af02c85c84a75c4
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL= 	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
-
-CFLAGS += -I/usr/X11/include/mesa
-CFLAGS += -I/usr/X11/include
-
 # no introspection or examples here
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dorc=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 CONFIGURE_OPTIONS += -Dgpl=enabled
@@ -64,14 +57,13 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Ok:/,/^Timeout:/p" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += codec/opencore-amr
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/liba52
 REQUIRED_PACKAGES += library/audio/libcdio
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/libmpeg2
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/orc
