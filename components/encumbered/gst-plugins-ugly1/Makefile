@@ -16,62 +16,40 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         gst-plugins-ugly1
-COMPONENT_VERSION=      1.22.10
+COMPONENT_NAME=		gst-plugins-ugly
+COMPONENT_VERSION=	1.24.9
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
-COMPONENT_SRC_NAME=	gst-plugins-ugly
-COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:cc80a81a22c0b3b31ab7f1b8bf18dda23c72d2791b86cc6264923a68336329ea
+COMPONENT_ARCHIVE_HASH=	sha256:4b6b30110f38cd05eb67422297142b75a55fe00003105f48b13603e6761cc3b6
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
-COMPONENT_ARCHIVE_URL= 	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
-
-CFLAGS += -I/usr/X11/include/mesa
-CFLAGS += -I/usr/X11/include
-
 # no introspection or examples here
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dorc=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 CONFIGURE_OPTIONS += -Dgpl=enabled
 
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
-COMPONENT_INSTALL_ENV += CC="$(CC)"
-COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += CXXFLAGS="$(CXXFLAGS)"
-
-COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-# As test results keep only everything between the lines containing Ok: and Timeout:
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/^Ok:/,/^Timeout:/p" '
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += codec/opencore-amr
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/liba52
 REQUIRED_PACKAGES += library/audio/libcdio
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/libmpeg2
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/orc
