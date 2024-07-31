@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.9.5
+HUMAN_VERSION =			3.10.1
 COMPONENT_SUMMARY =		Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:edea7d15772ceeb29db4aff55e482d4bcfb6ae160ce144f2682de02f6d693551
+	sha256:8b0d058e4e425d3b45e8ec70d49b402f4d6b21041e674798b1f91ba027c73f28
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -66,6 +66,7 @@ PYTEST_ADDOPTS += --ignore tests/autobahn/test_autobahn.py
 PYTEST_ADDOPTS += --deselect tests/test_pytest_plugin.py::test_aiohttp_plugin
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/aiohappyeyeballs
 PYTHON_REQUIRED_PACKAGES += library/python/aiosignal
 PYTHON_REQUIRED_PACKAGES += library/python/async-timeout
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
@@ -75,6 +76,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/yarl
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/aiohappyeyeballs
 TEST_REQUIRED_PACKAGES.python += library/python/aiosignal
 TEST_REQUIRED_PACKAGES.python += library/python/async-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
@@ -90,5 +92,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/re-assert
 TEST_REQUIRED_PACKAGES.python += library/python/trustme
-TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/yarl

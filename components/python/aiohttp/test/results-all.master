@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-collecting ... collected 3102 items / 9 deselected / 3093 selected
+collecting ... collected 3194 items / 9 deselected / 3185 selected
 
 tests/test_base_protocol.py::test_loop PASSED
 tests/test_base_protocol.py::test_pause_writing PASSED
@@ -113,8 +113,12 @@ tests/test_client_exceptions.py::TestServerFingerprintMismatch::test_pickle PASS
 tests/test_client_exceptions.py::TestServerFingerprintMismatch::test_repr PASSED
 tests/test_client_exceptions.py::TestInvalidURL::test_ctor PASSED
 tests/test_client_exceptions.py::TestInvalidURL::test_pickle PASSED
-tests/test_client_exceptions.py::TestInvalidURL::test_repr PASSED
-tests/test_client_exceptions.py::TestInvalidURL::test_str PASSED
+tests/test_client_exceptions.py::TestInvalidURL::test_repr_no_description PASSED
+tests/test_client_exceptions.py::TestInvalidURL::test_repr_yarl_URL PASSED
+tests/test_client_exceptions.py::TestInvalidURL::test_repr_with_description PASSED
+tests/test_client_exceptions.py::TestInvalidURL::test_str_no_description PASSED
+tests/test_client_exceptions.py::TestInvalidURL::test_none_description PASSED
+tests/test_client_exceptions.py::TestInvalidURL::test_str_with_description PASSED
 tests/test_client_fingerprint.py::test_fingerprint_sha256 PASSED
 tests/test_client_fingerprint.py::test_fingerprint_sha1 PASSED
 tests/test_client_fingerprint.py::test_fingerprint_md5 PASSED
@@ -138,6 +142,8 @@ tests/test_client_functional.py::test_keepalive_after_empty_body_status_stream_r
 tests/test_client_functional.py::test_keepalive_response_released[pyloop] PASSED
 tests/test_client_functional.py::test_upgrade_connection_not_released_after_read[pyloop] PASSED
 tests/test_client_functional.py::test_keepalive_server_force_close_connection[pyloop] PASSED
+tests/test_client_functional.py::test_keepalive_timeout_async_sleep PASSED
+tests/test_client_functional.py::test_keepalive_timeout_sync_sleep PASSED
 tests/test_client_functional.py::test_release_early[pyloop] PASSED
 tests/test_client_functional.py::test_HTTP_304[pyloop] PASSED
 tests/test_client_functional.py::test_stream_request_on_server_eof[pyloop] PASSED
@@ -246,6 +252,39 @@ tests/test_client_functional.py::test_custom_headers[pyloop] PASSED
 tests/test_client_functional.py::test_redirect_to_absolute_url[pyloop] PASSED
 tests/test_client_functional.py::test_redirect_without_location_header[pyloop] PASSED
 tests/test_client_functional.py::test_chunked_deprecated[pyloop] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[http://:/-http://:/-InvalidUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[http://example.org:non_int_port/-http://example.org:non_int_port/-InvalidUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[http:/-http:///-InvalidUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[http:/example.com-http:///example.com-InvalidUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[http:///example.com-http:///example.com-InvalidUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[call:+380123456789-call:\\+380123456789-NonHttpUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[skype:handle-skype:handle-NonHttpUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[slack://instance/room-slack://instance/room-NonHttpUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[steam:code-steam:code-NonHttpUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[twitter://handle-twitter://handle-NonHttpUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_and_non_http_url[bluesky://profile/d:i:d-bluesky://profile/d:i:d-NonHttpUrlClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-http:/-http:///-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-http:/example.com-http:///example.com-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-http:///example.com-http:///example.com-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-http://:/-http://:/-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-http://example.org:non_int_port/-http://example.org:non_int_port/-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-call:+380123456789-call:\\+380123456789-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-skype:handle-skype:handle-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-slack://instance/room-slack://instance/room-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-steam:code-steam:code-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-twitter://handle-twitter://handle-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url[pyloop-bluesky://profile/d:i:d-bluesky://profile/d:i:d-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-http:/-http:///-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-http:/example.com-http:///example.com-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-http:///example.com-http:///example.com-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-http://:/-http://:/-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-http://example.org:non_int_port/-http://example.org:non_int_port/-InvalidUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-call:+380123456789-call:\\+380123456789-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-skype:handle-skype:handle-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-slack://instance/room-slack://instance/room-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-steam:code-steam:code-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-twitter://handle-twitter://handle-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-bluesky://profile/d:i:d-bluesky://profile/d:i:d-NonHttpUrlRedirectClientError] PASSED
 tests/test_client_functional.py::test_ok_from_status[pyloop-200-True] PASSED
 tests/test_client_functional.py::test_ok_from_status[pyloop-201-True] PASSED
 tests/test_client_functional.py::test_ok_from_status[pyloop-301-True] PASSED
@@ -293,6 +332,7 @@ tests/test_client_functional.py::test_read_from_closed_response[pyloop] PASSED
 tests/test_client_functional.py::test_read_from_closed_response2[pyloop] PASSED
 tests/test_client_functional.py::test_read_from_closed_content[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout[pyloop] PASSED
+tests/test_client_functional.py::test_socket_timeout[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout_closes_connection[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout_on_prepared_response[pyloop] PASSED
 tests/test_client_functional.py::test_timeout_with_full_buffer[pyloop] PASSED
@@ -308,6 +348,9 @@ tests/test_client_functional.py::test_max_line_size_session_default_fail[pyloop]
 tests/test_client_functional.py::test_max_line_size_session_explicit[pyloop] PASSED
 tests/test_client_functional.py::test_max_line_size_request_explicit[pyloop] PASSED
 tests/test_client_functional.py::test_rejected_upload[pyloop] XFAIL
+tests/test_client_functional.py::test_request_with_wrong_proxy[pyloop-42-TypeError] PASSED
+tests/test_client_functional.py::test_request_with_wrong_proxy[pyloop-InvalidUrl-InvalidURL] PASSED
+tests/test_client_functional.py::test_raise_for_status_is_none[pyloop] PASSED
 tests/test_client_proto.py::test_oserror[pyloop] PASSED
 tests/test_client_proto.py::test_pause_resume_on_error[pyloop] PASSED
 tests/test_client_proto.py::test_client_proto_bad_message[pyloop] PASSED
@@ -545,6 +588,10 @@ tests/test_client_session.py::test_session_context_manager[pyloop] PASSED
 tests/test_client_session.py::test_borrow_connector_loop[pyloop] PASSED
 tests/test_client_session.py::test_reraise_os_error[pyloop] PASSED
 tests/test_client_session.py::test_close_conn_on_error[pyloop] PASSED
+tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-http] PASSED
+tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-https] PASSED
+tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-ws] PASSED
+tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-wss] PASSED
 tests/test_client_session.py::test_cookie_jar_usage[pyloop] PASSED
 tests/test_client_session.py::test_session_default_version[pyloop] PASSED
 tests/test_client_session.py::test_session_loop[pyloop] PASSED
@@ -567,7 +614,17 @@ tests/test_client_session.py::test_build_url_returns_expected_url[pyloop-base_ur
 tests/test_client_session.py::test_build_url_returns_expected_url[pyloop-base_url='http://example.com' url='/test'] PASSED
 tests/test_client_session.py::test_build_url_returns_expected_url[pyloop-base_url=URL('http://example.com') url='/test'] PASSED
 tests/test_client_session.py::test_instantiation_with_invalid_timeout_value[pyloop] PASSED
+tests/test_client_session.py::test_properties[pyloop-skip_auto_headers-_skip_auto_headers] PASSED
+tests/test_client_session.py::test_properties[pyloop-auth-_default_auth] PASSED
+tests/test_client_session.py::test_properties[pyloop-json_serialize-_json_serialize] PASSED
+tests/test_client_session.py::test_properties[pyloop-connector_owner-_connector_owner] PASSED
+tests/test_client_session.py::test_properties[pyloop-raise_for_status-_raise_for_status] PASSED
+tests/test_client_session.py::test_properties[pyloop-trust_env-_trust_env] PASSED
+tests/test_client_session.py::test_properties[pyloop-trace_configs-_trace_configs] PASSED
 tests/test_client_ws.py::test_ws_connect[pyloop] PASSED
+tests/test_client_ws.py::test_ws_connect_read_timeout_is_reset_to_inf[pyloop] PASSED
+tests/test_client_ws.py::test_ws_connect_read_timeout_stays_inf[pyloop] PASSED
+tests/test_client_ws.py::test_ws_connect_read_timeout_reset_to_max[pyloop] PASSED
 tests/test_client_ws.py::test_ws_connect_with_origin[pyloop] PASSED
 tests/test_client_ws.py::test_ws_connect_with_params[pyloop] PASSED
 tests/test_client_ws.py::test_ws_connect_custom_response[pyloop] PASSED
@@ -603,6 +660,7 @@ tests/test_client_ws_functional.py::test_ping_pong[pyloop] PASSED
 tests/test_client_ws_functional.py::test_ping_pong_manual[pyloop] PASSED
 tests/test_client_ws_functional.py::test_close[pyloop] PASSED
 tests/test_client_ws_functional.py::test_concurrent_close[pyloop] PASSED
+tests/test_client_ws_functional.py::test_concurrent_close_multiple_tasks[pyloop] PASSED
 tests/test_client_ws_functional.py::test_concurrent_task_close[pyloop] PASSED
 tests/test_client_ws_functional.py::test_close_from_server[pyloop] PASSED
 tests/test_client_ws_functional.py::test_close_manual[pyloop] PASSED
@@ -616,6 +674,7 @@ tests/test_client_ws_functional.py::test_receive_timeout[pyloop] PASSED
 tests/test_client_ws_functional.py::test_custom_receive_timeout[pyloop] PASSED
 tests/test_client_ws_functional.py::test_heartbeat[pyloop] PASSED
 tests/test_client_ws_functional.py::test_heartbeat_no_pong[pyloop] PASSED
+tests/test_client_ws_functional.py::test_heartbeat_no_pong_concurrent_receive[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_compress[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_compress_wbits[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_compress_wbit_error[pyloop] PASSED
@@ -626,6 +685,7 @@ tests/test_client_ws_functional.py::test_ws_async_with_shortcut[pyloop] PASSED
 tests/test_client_ws_functional.py::test_closed_async_for[pyloop] PASSED
 tests/test_client_ws_functional.py::test_peer_connection_lost[pyloop] PASSED
 tests/test_client_ws_functional.py::test_peer_connection_lost_iter[pyloop] PASSED
+tests/test_client_ws_functional.py::test_ws_connect_with_wrong_ssl_type[pyloop] PASSED
 tests/test_connector.py::test_connection_del[pyloop] PASSED
 tests/test_connector.py::test_connection_del_loop_debug[pyloop] PASSED
 tests/test_connector.py::test_connection_del_loop_closed[pyloop] PASSED
@@ -661,6 +721,11 @@ tests/test_connector.py::test_tcp_connector_certificate_error[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_server_hostname_default[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_server_hostname_override[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_multiple_hosts_errors[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_happy_eyeballs[pyloop-0.1] PASSED
+tests/test_connector.py::test_tcp_connector_happy_eyeballs[pyloop-0.25] PASSED
+tests/test_connector.py::test_tcp_connector_happy_eyeballs[pyloop-None] PASSED
+tests/test_connector.py::test_tcp_connector_interleave[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_family_is_respected[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_resolve_host[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_dns_cache_not_expired[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_dns_cache_forever[pyloop] PASSED
@@ -762,13 +827,17 @@ tests/test_connector.py::test_connector_throttle_trace_race[pyloop] PASSED
 tests/test_connector.py::test_connector_does_not_remove_needed_waiters[pyloop] PASSED
 tests/test_cookiejar.py::test_date_parsing PASSED
 tests/test_cookiejar.py::test_domain_matching PASSED
-tests/test_cookiejar.py::test_path_matching PASSED
 tests/test_cookiejar.py::test_constructor[pyloop] PASSED
 tests/test_cookiejar.py::test_constructor_with_expired[pyloop] PASSED
 tests/test_cookiejar.py::test_save_load[pyloop] PASSED
 tests/test_cookiejar.py::test_update_cookie_with_unicode_domain[pyloop] PASSED
 tests/test_cookiejar.py::test_filter_cookie_with_unicode_domain[pyloop] PASSED
-tests/test_cookiejar.py::test_domain_filter_ip_cookie_send[pyloop] PASSED
+tests/test_cookiejar.py::test_filter_cookies_with_domain_path_lookup_multilevelpath[pyloop-http://pathtest.com/one/two/-expected_cookies0] PASSED
+tests/test_cookiejar.py::test_filter_cookies_with_domain_path_lookup_multilevelpath[pyloop-http://pathtest.com/one/two-expected_cookies1] PASSED
+tests/test_cookiejar.py::test_filter_cookies_with_domain_path_lookup_multilevelpath[pyloop-http://pathtest.com/one/two/three/-expected_cookies2] PASSED
+tests/test_cookiejar.py::test_filter_cookies_with_domain_path_lookup_multilevelpath[pyloop-http://test1.example.com/-expected_cookies3] PASSED
+tests/test_cookiejar.py::test_filter_cookies_with_domain_path_lookup_multilevelpath[pyloop-http://pathtest.com/-expected_cookies4] PASSED
+tests/test_cookiejar.py::test_domain_filter_ip_cookie_send PASSED
 tests/test_cookiejar.py::test_domain_filter_ip_cookie_receive PASSED
 tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-IP domain preserved] PASSED
 tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-no shared cookie] PASSED
@@ -799,6 +868,7 @@ tests/test_cookiejar.py::test_dummy_cookie_jar PASSED
 tests/test_cookiejar.py::test_loose_cookies_types PASSED
 tests/test_cookiejar.py::test_cookie_jar_clear_all PASSED
 tests/test_cookiejar.py::test_cookie_jar_clear_expired PASSED
+tests/test_cookiejar.py::test_cookie_jar_filter_cookies_expires PASSED
 tests/test_cookiejar.py::test_cookie_jar_clear_domain PASSED
 tests/test_cookiejar.py::test_pickle_format PASSED
 tests/test_cookiejar.py::test_treat_as_secure_origin_init[http://127.0.0.1/index.html] PASSED
@@ -905,8 +975,6 @@ tests/test_helpers.py::test_proxies_from_env[wss] PASSED
 tests/test_helpers.py::test_proxies_from_env_skipped[https] PASSED
 tests/test_helpers.py::test_proxies_from_env_skipped[wss] PASSED
 tests/test_helpers.py::test_proxies_from_env_http_with_auth[http] PASSED
-tests/test_helpers.py::test_get_running_loop_not_running[pyloop] PASSED
-tests/test_helpers.py::test_get_running_loop_ok[pyloop] PASSED
 tests/test_helpers.py::test_get_env_proxy_for_url_negative[url_matches_the_no_proxy_list] PASSED
 tests/test_helpers.py::test_get_env_proxy_for_url_negative[url_matches_the_no_proxy_list_multiple] PASSED
 tests/test_helpers.py::test_get_env_proxy_for_url_negative[url_scheme_does_not_match_http_proxy_list] PASSED
@@ -1035,7 +1103,7 @@ tests/test_http_parser.py::test_whitespace_before_header[py-parser-pyloop] PASSE
 tests/test_http_parser.py::test_whitespace_before_header[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse_headers_longline[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse_headers_longline[c-parser-pyloop] PASSED
-tests/test_http_parser.py::test_parse_unusual_request_line[py-parser-pyloop] XFAIL
+tests/test_http_parser.py::test_parse_unusual_request_line[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse_unusual_request_line[c-parser-pyloop] XFAIL
 tests/test_http_parser.py::test_parse[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse[c-parser-pyloop] PASSED
@@ -1099,7 +1167,7 @@ tests/test_http_parser.py::test_headers_content_length_err_1[py-parser-pyloop] P
 tests/test_http_parser.py::test_headers_content_length_err_1[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_headers_content_length_err_2[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_headers_content_length_err_2[c-parser-pyloop] PASSED
-tests/test_http_parser.py::test_invalid_header_spacing[py-parser-pyloop-pre-empty-post-empty-name-empty] XFAIL
+tests/test_http_parser.py::test_invalid_header_spacing[py-parser-pyloop-pre-empty-post-empty-name-empty] PASSED
 tests/test_http_parser.py::test_invalid_header_spacing[py-parser-pyloop-pre-empty-post-empty-with-name] PASSED
 tests/test_http_parser.py::test_invalid_header_spacing[py-parser-pyloop-pre-empty-post-NUL-name-empty] PASSED
 tests/test_http_parser.py::test_invalid_header_spacing[py-parser-pyloop-pre-empty-post-NUL-with-name] PASSED
@@ -1197,7 +1265,7 @@ tests/test_http_parser.py::test_invalid_header_spacing[py-parser-pyloop-pre-TABS
 tests/test_http_parser.py::test_invalid_header_spacing[py-parser-pyloop-pre-TABSP-post-NBSP-with-name] PASSED
 tests/test_http_parser.py::test_invalid_header_spacing[py-parser-pyloop-pre-TABSP-post-TABSP-name-empty] PASSED
 tests/test_http_parser.py::test_invalid_header_spacing[py-parser-pyloop-pre-TABSP-post-TABSP-with-name] PASSED
-tests/test_http_parser.py::test_invalid_header_spacing[c-parser-pyloop-pre-empty-post-empty-name-empty] XFAIL
+tests/test_http_parser.py::test_invalid_header_spacing[c-parser-pyloop-pre-empty-post-empty-name-empty] PASSED
 tests/test_http_parser.py::test_invalid_header_spacing[c-parser-pyloop-pre-empty-post-empty-with-name] PASSED
 tests/test_http_parser.py::test_invalid_header_spacing[c-parser-pyloop-pre-empty-post-NUL-name-empty] PASSED
 tests/test_http_parser.py::test_invalid_header_spacing[c-parser-pyloop-pre-empty-post-NUL-with-name] PASSED
@@ -1335,7 +1403,7 @@ tests/test_http_parser.py::test_http_request_bad_status_line_whitespace[py-parse
 tests/test_http_parser.py::test_http_request_bad_status_line_whitespace[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_upgrade[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_upgrade[c-parser-pyloop] PASSED
-tests/test_http_parser.py::test_http_request_parser_utf8_request_line[py-parser-pyloop] XFAIL
+tests/test_http_parser.py::test_http_request_parser_utf8_request_line[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_parser_utf8_request_line[c-parser-pyloop] XFAIL
 tests/test_http_parser.py::test_http_request_parser_utf8[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_parser_utf8[c-parser-pyloop] PASSED
@@ -1437,6 +1505,8 @@ tests/test_http_parser.py::test_http_request_chunked_payload_chunks[py-parser-py
 tests/test_http_parser.py::test_http_request_chunked_payload_chunks[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse_chunked_payload_chunk_extension[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse_chunked_payload_chunk_extension[c-parser-pyloop] PASSED
+tests/test_http_parser.py::test_parse_no_length_or_te_on_post[py-parser-pyloop] PASSED
+tests/test_http_parser.py::test_parse_no_length_or_te_on_post[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse_payload_response_without_body[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse_payload_response_without_body[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse_length_payload[py-parser-pyloop] PASSED
@@ -1475,7 +1545,6 @@ tests/test_http_parser.py::test_parse_uri_utf8_percent_encoded[py-parser-pyloop]
 tests/test_http_parser.py::test_parse_uri_utf8_percent_encoded[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_parse_bad_method_for_c_parser_raises[pyloop] PASSED
 tests/test_http_parser.py::TestParsePayload::test_parse_eof_payload PASSED
-tests/test_http_parser.py::TestParsePayload::test_parse_no_body PASSED
 tests/test_http_parser.py::TestParsePayload::test_parse_length_payload_eof PASSED
 tests/test_http_parser.py::TestParsePayload::test_parse_chunked_payload_size_error PASSED
 tests/test_http_parser.py::TestParsePayload::test_parse_chunked_payload_split_end PASSED
@@ -1776,26 +1845,27 @@ tests/test_proxy.py::TestProxy::test_proxy_server_hostname_default PASSED
 tests/test_proxy.py::TestProxy::test_proxy_server_hostname_override PASSED
 tests/test_proxy.py::TestProxy::test_request_port PASSED
 tests/test_pytest_plugin.py::test_warning_checks PASSED
-tests/test_resolver.py::test_async_resolver_positive_lookup[pyloop] SKIPPED
-tests/test_resolver.py::test_async_resolver_query_positive_lookup[pyloop] SKIPPED
+tests/test_resolver.py::test_async_resolver_positive_ipv4_lookup[pyloop] SKIPPED
+tests/test_resolver.py::test_async_resolver_positive_link_local_ipv6_lookup[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_multiple_replies[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_query_multiple_replies[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_negative_lookup[pyloop] SKIPPED
-tests/test_resolver.py::test_async_resolver_query_negative_lookup[pyloop] SKIPPED
-tests/test_resolver.py::test_async_resolver_no_hosts_in_query[pyloop] SKIPPED
-tests/test_resolver.py::test_async_resolver_no_hosts_in_gethostbyname[pyloop] SKIPPED
+tests/test_resolver.py::test_async_resolver_no_hosts_in_getaddrinfo[pyloop] SKIPPED
 tests/test_resolver.py::test_threaded_resolver_positive_lookup PASSED
+tests/test_resolver.py::test_threaded_resolver_positive_ipv6_link_local_lookup PASSED
 tests/test_resolver.py::test_threaded_resolver_multiple_replies PASSED
 tests/test_resolver.py::test_threaded_negative_lookup PASSED
+tests/test_resolver.py::test_threaded_negative_ipv6_lookup PASSED
 tests/test_resolver.py::test_threaded_negative_lookup_with_unknown_result PASSED
 tests/test_resolver.py::test_close_for_threaded_resolver[pyloop] PASSED
 tests/test_resolver.py::test_close_for_async_resolver[pyloop] SKIPPED
 tests/test_resolver.py::test_default_loop_for_threaded_resolver[pyloop] PASSED
-tests/test_resolver.py::test_default_loop_for_async_resolver[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_ipv6_positive_lookup[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_query_ipv6_positive_lookup[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_aiodns_not_present[pyloop] PASSED
-tests/test_resolver.py::test_default_resolver PASSED
+tests/test_resolver.py::test_aio_dns_is_default SKIPPED (aiodns >=3.2.0
+required)
+tests/test_resolver.py::test_threaded_resolver_is_default PASSED
 tests/test_route_def.py::test_get PASSED
 tests/test_route_def.py::test_head PASSED
 tests/test_route_def.py::test_options PASSED
@@ -1865,14 +1935,14 @@ tests/test_run_app.py::test_run_app_cancels_done_tasks[pyloop] PASSED
 tests/test_run_app.py::test_run_app_cancels_failed_tasks[pyloop] PASSED
 tests/test_run_app.py::test_run_app_keepalive_timeout[pyloop] PASSED
 tests/test_run_app.py::test_run_app_context_vars[pyloop] PASSED
-tests/test_run_app.py::TestShutdown::test_shutdown_wait_for_task PASSED
-tests/test_run_app.py::TestShutdown::test_shutdown_timeout_task PASSED
-tests/test_run_app.py::TestShutdown::test_shutdown_wait_for_spawned_task PASSED
+tests/test_run_app.py::TestShutdown::test_shutdown_wait_for_handler PASSED
+tests/test_run_app.py::TestShutdown::test_shutdown_timeout_handler PASSED
 tests/test_run_app.py::TestShutdown::test_shutdown_timeout_not_reached PASSED
 tests/test_run_app.py::TestShutdown::test_shutdown_new_conn_rejected PASSED
 tests/test_run_app.py::TestShutdown::test_shutdown_pending_handler_responds PASSED
 tests/test_run_app.py::TestShutdown::test_shutdown_close_idle_keepalive PASSED
 tests/test_run_app.py::TestShutdown::test_shutdown_close_websockets PASSED
+tests/test_run_app.py::TestShutdown::test_shutdown_handler_cancellation_suppressed PASSED
 tests/test_streams.py::TestStreamReader::test_create_waiter PASSED
 tests/test_streams.py::TestStreamReader::test_ctor_global_loop PASSED
 tests/test_streams.py::TestStreamReader::test_at_eof PASSED
@@ -2085,6 +2155,8 @@ tests/test_urldispatch.py::test_double_add_url_with_the_same_name PASSED
 tests/test_urldispatch.py::test_route_plain PASSED
 tests/test_urldispatch.py::test_route_unknown_route_name PASSED
 tests/test_urldispatch.py::test_route_dynamic PASSED
+tests/test_urldispatch.py::test_add_static_path_checks PASSED
+tests/test_urldispatch.py::test_add_static_path_resolution PASSED
 tests/test_urldispatch.py::test_add_static PASSED
 tests/test_urldispatch.py::test_add_static_append_version PASSED
 tests/test_urldispatch.py::test_add_static_append_version_set_from_constructor PASSED
@@ -2806,14 +2878,26 @@ tests/test_web_sendfile_functional.py::test_static_file_with_content_type[sendfi
 tests/test_web_sendfile_functional.py::test_static_file_with_content_type[no_sendfile-pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_custom_content_type[sendfile-pyloop-gzip] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_custom_content_type[no_sendfile-pyloop-gzip] PASSED
-tests/test_web_sendfile_functional.py::test_static_file_custom_content_type_compress[sendfile-pyloop] PASSED
-tests/test_web_sendfile_functional.py::test_static_file_custom_content_type_compress[no_sendfile-pyloop] PASSED
-tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[sendfile-pyloop-None] PASSED
-tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[sendfile-pyloop-ContentCoding.gzip] PASSED
-tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[no_sendfile-pyloop-None] PASSED
-tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[no_sendfile-pyloop-ContentCoding.gzip] PASSED
-tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[sendfile-pyloop-gzip-gzip] PASSED
-tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[no_sendfile-pyloop-gzip-gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_custom_content_type[sendfile-pyloop-br] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_custom_content_type[no_sendfile-pyloop-br] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_custom_content_type_compress[sendfile-pyloop-gzip, deflate-gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_custom_content_type_compress[sendfile-pyloop-gzip, deflate, br-br] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_custom_content_type_compress[no_sendfile-pyloop-gzip, deflate-gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_custom_content_type_compress[no_sendfile-pyloop-gzip, deflate, br-br] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[sendfile-pyloop-None-gzip, deflate-gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[sendfile-pyloop-None-gzip, deflate, br-br] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[sendfile-pyloop-ContentCoding.gzip-gzip, deflate-gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[sendfile-pyloop-ContentCoding.gzip-gzip, deflate, br-br] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[no_sendfile-pyloop-None-gzip, deflate-gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[no_sendfile-pyloop-None-gzip, deflate, br-br] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[no_sendfile-pyloop-ContentCoding.gzip-gzip, deflate-gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[no_sendfile-pyloop-ContentCoding.gzip-gzip, deflate, br-br] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[sendfile-pyloop-gzip-application/gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[sendfile-pyloop-br-application/x-brotli] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[sendfile-pyloop-bzip2-application/x-bzip2] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[no_sendfile-pyloop-gzip-application/gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[no_sendfile-pyloop-br-application/x-brotli] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[no_sendfile-pyloop-bzip2-application/x-bzip2] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_if_modified_since[sendfile-pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_if_modified_since[no_sendfile-pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_if_modified_since_past_date[sendfile-pyloop] PASSED
@@ -2846,7 +2930,6 @@ tests/test_web_sendfile_functional.py::test_static_file_if_none_match_star[sendf
 tests/test_web_sendfile_functional.py::test_static_file_if_none_match_star[no_sendfile-pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_ssl[pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_directory_traversal_attack[pyloop] PASSED
-tests/test_web_sendfile_functional.py::test_static_route_path_existence_check PASSED
 tests/test_web_sendfile_functional.py::test_static_file_huge[pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_range[sendfile-pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_range[no_sendfile-pyloop] PASSED
@@ -2913,9 +2996,15 @@ tests/test_web_urldispatcher.py::test_url_escaping[pyloop-/a:b-/a:b] PASSED
 tests/test_web_urldispatcher.py::test_url_escaping[pyloop-/a@b-/a@b] PASSED
 tests/test_web_urldispatcher.py::test_url_escaping[pyloop-/a:b-/a%3Ab] PASSED
 tests/test_web_urldispatcher.py::test_handler_metadata_persistence PASSED
-tests/test_web_urldispatcher.py::test_unauthorized_folder_access[pyloop] PASSED
+tests/test_web_urldispatcher.py::test_static_directory_without_read_permission[pyloop-] PASSED
+tests/test_web_urldispatcher.py::test_static_directory_without_read_permission[pyloop-my_file.txt] PASSED
+tests/test_web_urldispatcher.py::test_static_directory_with_mock_permission_error[pyloop-] PASSED
+tests/test_web_urldispatcher.py::test_static_directory_with_mock_permission_error[pyloop-my_file.txt] PASSED
+tests/test_web_urldispatcher.py::test_static_file_without_read_permission[pyloop] PASSED
+tests/test_web_urldispatcher.py::test_static_file_with_mock_permission_error[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_access_symlink_loop[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_access_special_resource[pyloop] PASSED
+tests/test_web_urldispatcher.py::test_access_mock_special_resource[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_partially_applied_handler[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_static_head[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_system_route PASSED
@@ -2932,6 +3021,9 @@ tests/test_web_urldispatcher.py::test_for_issue_5250[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-urldecoded_route] XFAIL
 tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-urldecoded_route_with_regex] XFAIL
 tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-urlencoded_route] XFAIL
+tests/test_web_urldispatcher.py::test_order_is_preserved[pyloop] PASSED
+tests/test_web_urldispatcher.py::test_url_with_many_slashes[pyloop] PASSED
+tests/test_web_urldispatcher.py::test_route_with_regex[pyloop] PASSED
 tests/test_web_websocket.py::test_nonstarted_ping PASSED
 tests/test_web_websocket.py::test_nonstarted_pong PASSED
 tests/test_web_websocket.py::test_nonstarted_send_str PASSED
@@ -2994,6 +3086,7 @@ tests/test_web_websocket_functional.py::test_send_recv_bytes[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_send_recv_json[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_close_timeout[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_concurrent_close[pyloop] PASSED
+tests/test_web_websocket_functional.py::test_concurrent_close_multiple_tasks[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_close_op_code_from_client[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_auto_pong_with_closing_by_peer[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_ping[pyloop] PASSED
@@ -3109,4 +3202,4 @@ tests/test_worker.py::test__create_ssl_context_with_ca_certs[AsyncioWorker-pyloo
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3046 passed, 32 skipped, 9 deselected, 15 xfailed ========
+======== 3144 passed, 30 skipped, 9 deselected, 11 xfailed ========
