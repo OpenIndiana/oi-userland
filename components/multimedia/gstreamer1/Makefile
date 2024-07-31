@@ -20,13 +20,13 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gstreamer1
-COMPONENT_VERSION=	1.24.5
+COMPONENT_VERSION=	1.24.6
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC_NAME=		gstreamer
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:2bdef209252bf146351843134b797db6b6e7adb4c00d82e83bd5abe608253a7b
+COMPONENT_ARCHIVE_HASH=	sha256:64342060d7c6f9e36a35e3be38a4f5ac3b41ed93b0853619be45141ef3cc1b9d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -49,6 +49,13 @@ COMPONENT_INSTALL_ENV += CC="$(CC)"
 COMPONENT_POST_INSTALL_ACTION += \
 	$(INSTALL) -D files/prof_attr $(PROTOETCSECDIR)/prof_attr.d/library-audio-gstreamer1
 
+# Dynamic library version number
+SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION)))).0
+SOVER_RE = $(subst .,\.,$(SOVER))
+
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+
 # Testing fails without TZ set
 COMPONENT_TEST_ENV += TZ=UTC
 
@@ -56,6 +63,9 @@ COMPONENT_TEST_ENV += TZ=UTC
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/^Ok:/,/^Timeout:/p" '
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # not picked up by REQUIRED_PACKAGES but still needed
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
