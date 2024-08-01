@@ -1,0 +1,19 @@
+diff --git a/src/libs/zbxnix/sighandler.c b/src/libs/zbxnix/sighandler.c
+index e316b24..fbfa65a 100644
+--- a/src/libs/zbxnix/sighandler.c
++++ b/src/libs/zbxnix/sighandler.c
+@@ -269,11 +269,14 @@ void	zbx_set_common_signal_handlers(zbx_on_exit_t zbx_on_exit_cb_arg)
+ 	sigaction(SIGTERM, &phan, NULL);
+ 	sigaction(SIGUSR2, &phan, NULL);
+ 
++/* We'd quite like fatal errors to create core files that allow analysis. */
++#if !defined(__illumos__)
+ 	phan.sa_sigaction = fatal_signal_handler;
+ 	sigaction(SIGILL, &phan, NULL);
+ 	sigaction(SIGFPE, &phan, NULL);
+ 	sigaction(SIGSEGV, &phan, NULL);
+ 	sigaction(SIGBUS, &phan, NULL);
++#endif
+ 
+ 	phan.sa_sigaction = alarm_signal_handler;
+ 	sigaction(SIGALRM, &phan, NULL);
