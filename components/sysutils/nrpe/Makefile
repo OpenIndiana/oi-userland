@@ -16,8 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nrpe
-COMPONENT_VERSION =		4.1.0
-COMPONENT_REVISION =		2
+COMPONENT_VERSION =		4.1.1
 COMPONENT_SUMMARY =		Nagios Remote Plugin Executor
 COMPONENT_PROJECT_URL =		https://github.com/NagiosEnterprises/nrpe
 COMPONENT_FMRI =		system/management/nagios/nrpe
@@ -27,7 +26,7 @@ COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/NagiosEnterprises/nrpe/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a1f14aa8aaf935b576cc55ab5d77b7cb9c920d7702aff44c9d18c4c841ef8ecc
+	sha256:0e716a7d904e0a441be52a0ef82c1138b949bad81c1da93056a81405aabcc0d7
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -54,6 +53,6 @@ COMPONENT_INSTALL_TARGETS += install-config
 COMPONENT_INSTALL_TARGETS += install-init
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
