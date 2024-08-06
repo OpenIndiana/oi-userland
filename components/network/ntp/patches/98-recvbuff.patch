@@ -1,8 +1,8 @@
 There is code in recvbuff.c which adds a mutex around these structures but only on Windows.
 Given that the OpenIndiana build of ntpd is sporadically multithreaded we also seem to need
 a pthreads mutex to protect the critical section.
---- libntp/recvbuff.c.~1~	Wed May 31 03:31:39 2023
-+++ libntp/recvbuff.c	Fri Oct 13 10:28:49 2023
+--- libntp/recvbuff.c.orig
++++ libntp/recvbuff.c
 @@ -50,11 +50,23 @@
  # define LOCK_F()	EnterCriticalSection(&FreeLock)
  # define UNLOCK_F()	LeaveCriticalSection(&FreeLock)
