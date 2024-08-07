@@ -19,13 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		attrs
-HUMAN_VERSION =			23.2.0
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		attrs - Classes Without Boilerplate
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e3/fc/f800d51204003fa8ae392c4e8278f256206e7a919b708eef054f5f4b650d/attrs-23.2.0.tar.gz
+HUMAN_VERSION =			24.2.0
+COMPONENT_SUMMARY =		Classes Without Boilerplate
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:935dc3b529c262f6cf76e50877d35a4bd3c1de194fd41f47a2b7ae8f19971f30
+	sha256:5cfb1b9148b5b086569baec03f20d7b6bf3bcacc9a42bebf87ffaaca362f6346
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -49,4 +46,3 @@ TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy-plugins
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
-TEST_REQUIRED_PACKAGES.python += library/python/zope-interface
