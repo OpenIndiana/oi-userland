@@ -1,17 +1,17 @@
 g++: error: -pie is not supported in this configuration
 make[4]: *** [/ws/grzemba/oi-userland/components/web/firefox/firefox-68.12.0/config/rules.mk:540: ../../../dist/bin/js] Error 1
 make[4]: Leaving directory '/ws/grzemba/oi-userland/components/web/firefox/build/amd64/js/src/shell'
---- gecko-dev-master/build/autoconf/compiler-opts.m4.old	2023-06-10 13:54:09.501319246 -0400
-+++ gecko-dev-master/build/autoconf/compiler-opts.m4	2023-06-10 13:57:28.109237589 -0400
-@@ -147,9 +147,10 @@
+--- gecko-dev-16a5f0e868a01d3f3a4a7364206bef2a64e80735/build/moz.configure/flags.configure.old	2024-06-30 12:42:44.175625854 -0400
++++ gecko-dev-16a5f0e868a01d3f3a4a7364206bef2a64e80735/build/moz.configure/flags.configure	2024-06-30 12:43:46.927628117 -0400
+@@ -509,9 +509,10 @@
  
- if test "$GNU_CC$CLANG_CC"; then
-     case "${OS_TARGET}" in
--    Darwin|WASI)
-+    Darwin|WASI|SunOS)
-         # It's the default on those targets, and clang complains about -pie
-         # being unused if passed.
-+        # On Illumos, there was an error using -pie with g++ for Firefox 68
-         ;;
-     *)
-         MOZ_PROGRAM_LDFLAGS="$MOZ_PROGRAM_LDFLAGS -pie"
+ # MOZ_PROGRAM_LDFLAGS
+ # ---------------------------------
++# On Illumos, there was an error using -pie with g++ for Firefox 68
+ @depends(building_with_gnu_compatible_cc, target)
+ def moz_program_ldflags(building_with_gnu_compatible_cc, target):
+-    if building_with_gnu_compatible_cc and target.kernel not in ("Darwin", "WASI"):
++    if building_with_gnu_compatible_cc and target.kernel not in ("Darwin", "WASI", "SunOS"):
+         return ["-pie"]
+ 
+ 

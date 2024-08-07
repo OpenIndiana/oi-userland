@@ -30,13 +30,13 @@ ESR =
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=1
-# CANDIDATE_BETA=9
+# CANDIDATE_BUILD=2
+# CANDIDATE_BETA=8
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	128.0.3
+COMPONENT_VERSION =	129.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -73,11 +73,11 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:326454cd5c93ce974d5d27d414e9d59206bc248cca303a2069ae0f713faededc
+COMPONENT_ARCHIVE_HASH= sha256:4b9ff955de7099f09aa1f00985e34695fa1a911e56c2d46cb4d60c3bff3d9174
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.78.0
+RUST_VERSION = 1.79.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
