@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project setuptools-rust
+#   $WS_TOOLS/python-integrate-project -d python/setuptools-rust setuptools_rust
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		setuptools-rust
-HUMAN_VERSION =			1.9.0
-COMPONENT_SUMMARY =		setuptools-rust - Setuptools Rust extension plugin
+COMPONENT_NAME =		setuptools_rust
+HUMAN_VERSION =			1.10.1
+COMPONENT_SUMMARY =		Setuptools Rust extension plugin
 COMPONENT_PROJECT_URL =		https://github.com/PyO3/setuptools-rust
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:704df0948f2e4cc60c2596ad6e840ea679f4f43e58ed4ad0c1857807240eab96
+	sha256:d79035fc54cdf9342e9edf4b009491ecab06c3a652b37c3c137c7ba85547d3e6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,6 +42,4 @@ COMPONENT_TEST_TARGETS += tests
 PYTHON_REQUIRED_PACKAGES += library/python/semantic-version
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
