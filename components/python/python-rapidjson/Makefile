@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project python-rapidjson
+#   $WS_TOOLS/python-integrate-project -d python/python-rapidjson python_rapidjson
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		python-rapidjson
-HUMAN_VERSION =			1.19
+COMPONENT_NAME =		python_rapidjson
+HUMAN_VERSION =			1.20
 COMPONENT_SUMMARY =		Python wrapper around rapidjson
 COMPONENT_PROJECT_URL =		https://github.com/python-rapidjson/python-rapidjson
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:81e7260f6297cad564389b700783c0a33de71310b9eb01fd013faec5e7ed4eff
+	sha256:115f08c86d2df7543c02605e77c84727cdabc4b08310d2f097e953efeaaa73eb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
