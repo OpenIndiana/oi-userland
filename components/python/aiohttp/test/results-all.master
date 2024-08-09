@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-collecting ... collected 3194 items / 9 deselected / 3185 selected
+collecting ... collected 3211 items / 9 deselected / 3202 selected
 
 tests/test_base_protocol.py::test_loop PASSED
 tests/test_base_protocol.py::test_pause_writing PASSED
@@ -592,6 +592,11 @@ tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-http] PAS
 tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-https] PASSED
 tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-ws] PASSED
 tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-wss] PASSED
+tests/test_client_session.py::test_ws_connect_unix_socket_allowed_protocols[pyloop-http] PASSED
+tests/test_client_session.py::test_ws_connect_unix_socket_allowed_protocols[pyloop-https] PASSED
+tests/test_client_session.py::test_ws_connect_unix_socket_allowed_protocols[pyloop-ws] PASSED
+tests/test_client_session.py::test_ws_connect_unix_socket_allowed_protocols[pyloop-wss] PASSED
+tests/test_client_session.py::test_ws_connect_unix_socket_allowed_protocols[pyloop-unix] PASSED
 tests/test_client_session.py::test_cookie_jar_usage[pyloop] PASSED
 tests/test_client_session.py::test_session_default_version[pyloop] PASSED
 tests/test_client_session.py::test_session_loop[pyloop] PASSED
@@ -635,6 +640,7 @@ tests/test_client_ws.py::test_ws_connect_err_challenge[pyloop] PASSED
 tests/test_client_ws.py::test_ws_connect_common_headers[pyloop] PASSED
 tests/test_client_ws.py::test_close[pyloop] PASSED
 tests/test_client_ws.py::test_close_eofstream[pyloop] PASSED
+tests/test_client_ws.py::test_close_connection_lost[pyloop] PASSED
 tests/test_client_ws.py::test_close_exc[pyloop] PASSED
 tests/test_client_ws.py::test_close_exc2[pyloop] PASSED
 tests/test_client_ws.py::test_send_data_after_close[pyloop] PASSED
@@ -674,7 +680,10 @@ tests/test_client_ws_functional.py::test_receive_timeout[pyloop] PASSED
 tests/test_client_ws_functional.py::test_custom_receive_timeout[pyloop] PASSED
 tests/test_client_ws_functional.py::test_heartbeat[pyloop] PASSED
 tests/test_client_ws_functional.py::test_heartbeat_no_pong[pyloop] PASSED
+tests/test_client_ws_functional.py::test_heartbeat_no_pong_after_receive_many_messages[pyloop] PASSED
+tests/test_client_ws_functional.py::test_heartbeat_no_pong_after_send_many_messages[pyloop] PASSED
 tests/test_client_ws_functional.py::test_heartbeat_no_pong_concurrent_receive[pyloop] PASSED
+tests/test_client_ws_functional.py::test_close_websocket_while_ping_inflight[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_compress[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_compress_wbits[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_compress_wbit_error[pyloop] PASSED
@@ -754,6 +763,8 @@ tests/test_connector.py::test_cleanup3 PASSED
 tests/test_connector.py::test_cleanup_closed[pyloop] PASSED
 tests/test_connector.py::test_cleanup_closed_disabled[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_ctor PASSED
+tests/test_connector.py::test_tcp_connector_allowed_protocols[pyloop] PASSED
+tests/test_connector.py::test_invalid_ssl_param PASSED
 tests/test_connector.py::test_tcp_connector_ctor_fingerprint_valid[pyloop] PASSED
 tests/test_connector.py::test_insecure_fingerprint_md5[pyloop] PASSED
 tests/test_connector.py::test_insecure_fingerprint_sha1[pyloop] PASSED
@@ -772,6 +783,7 @@ tests/test_connector.py::test_close_cancels_cleanup_handle[pyloop] PASSED
 tests/test_connector.py::test_close_abort_closed_transports[pyloop] PASSED
 tests/test_connector.py::test_close_cancels_cleanup_closed_handle[pyloop] PASSED
 tests/test_connector.py::test_ctor_with_default_loop[pyloop] PASSED
+tests/test_connector.py::test_base_connector_allows_high_level_protocols[pyloop] PASSED
 tests/test_connector.py::test_connect_with_limit[pyloop] PASSED
 tests/test_connector.py::test_connect_queued_operation_tracing[pyloop] PASSED
 tests/test_connector.py::test_connect_reuseconn_tracing[pyloop] PASSED
@@ -1403,6 +1415,8 @@ tests/test_http_parser.py::test_http_request_bad_status_line_whitespace[py-parse
 tests/test_http_parser.py::test_http_request_bad_status_line_whitespace[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_upgrade[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_upgrade[c-parser-pyloop] PASSED
+tests/test_http_parser.py::test_http_request_upgrade_unknown[py-parser-pyloop] PASSED
+tests/test_http_parser.py::test_http_request_upgrade_unknown[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_parser_utf8_request_line[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_parser_utf8_request_line[c-parser-pyloop] XFAIL
 tests/test_http_parser.py::test_http_request_parser_utf8[py-parser-pyloop] PASSED
@@ -2966,9 +2980,7 @@ tests/test_web_sendfile_functional.py::test_static_file_compression[no_sendfile-
 tests/test_web_sendfile_functional.py::test_static_file_huge_cancel[pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_huge_error[pyloop] PASSED
 tests/test_web_server.py::test_simple_server[pyloop] PASSED
-tests/test_web_server.py::test_unsupported_upgrade[pyloop] XFAIL (The
-behavior of C-extensions differs from pure-Python:
-https://github.com/aio-libs/aiohttp/issues/6446)
+tests/test_web_server.py::test_unsupported_upgrade[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_not_http_exception[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_handler_timeout[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_do_not_swallow_exceptions[pyloop] PASSED
@@ -3003,6 +3015,7 @@ tests/test_web_urldispatcher.py::test_static_directory_with_mock_permission_erro
 tests/test_web_urldispatcher.py::test_static_file_without_read_permission[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_static_file_with_mock_permission_error[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_access_symlink_loop[pyloop] PASSED
+tests/test_web_urldispatcher.py::test_access_compressed_file_as_symlink[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_access_special_resource[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_access_mock_special_resource[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_partially_applied_handler[pyloop] PASSED
@@ -3099,6 +3112,8 @@ tests/test_web_websocket_functional.py::test_receive_timeout[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_custom_receive_timeout[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_heartbeat[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_heartbeat_no_pong[pyloop] PASSED
+tests/test_web_websocket_functional.py::test_heartbeat_no_pong_send_many_messages[pyloop] PASSED
+tests/test_web_websocket_functional.py::test_heartbeat_no_pong_receive_many_messages[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_server_ws_async_for[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_closed_async_for[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_websocket_disable_keepalive[pyloop] PASSED
@@ -3202,4 +3217,4 @@ tests/test_worker.py::test__create_ssl_context_with_ca_certs[AsyncioWorker-pyloo
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3144 passed, 30 skipped, 9 deselected, 11 xfailed ========
+======== 3162 passed, 30 skipped, 9 deselected, 10 xfailed ========
