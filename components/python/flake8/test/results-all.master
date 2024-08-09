@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 463 items
+collecting ... collected 464 items
 
 tests/integration/test_aggregator.py::test_aggregate_options_with_config PASSED
 tests/integration/test_aggregator.py::test_aggregate_options_when_isolated PASSED
@@ -62,6 +62,7 @@ tests/integration/test_plugins.py::test_plugin_off_by_default PASSED
 tests/integration/test_plugins.py::test_physical_line_plugin_multiline_string PASSED
 tests/integration/test_plugins.py::test_physical_line_plugin_multiline_fstring PASSED
 tests/integration/test_plugins.py::test_logical_line_plugin PASSED
+tests/integration/test_plugins.py::test_escaping_of_fstrings_in_string_redacter PASSED
 tests/unit/plugins/finder_test.py::test_loaded_plugin_entry_name_vs_display_name PASSED
 tests/unit/plugins/finder_test.py::test_plugins_all_plugins PASSED
 tests/unit/plugins/finder_test.py::test_plugins_versions_str PASSED
@@ -471,10 +472,19 @@ tests/unit/test_violation.py::test_is_inline_ignored[E111-a = 1  # noqa: ABC123-
 tests/unit/test_violation.py::test_is_inline_ignored[ABC123-a = 1  # noqa: ABC124-False] PASSED
 tests/unit/test_violation.py::test_disable_is_inline_ignored PASSED
 
-======== 463 passed ========
+======== 464 passed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
 py$(PYV): commands[1]> python -m coverage report
-Name                                                                                                                                     Stmts   Miss Branch BrPart  Cover   Missing
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Name                                                                                                                                         Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/__init__.py                 24      2      6      1    90%   58-59
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/api/legacy.py               71      2      8      0    97%   211-212
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/checker.py                 294     22     88      7    92%   70-77, 81, 211-212, 240-241, 338-339, 365-374, 376->413, 400->411, 441, 517-518, 549
@@ -484,16 +494,16 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/options/aggregator.py       22 
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/options/manager.py         120      1     40      1    99%   198
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/plugins/pycodestyle.py      75      2     10      2    95%   100, 106
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/plugins/pyflakes.py         27      1      4      1    94%   97
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/processor.py               222      0     66      2    99%   213->219, 262->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/processor.py               222      0     66      2    99%   219->225, 268->exit
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/style_guide.py             143      0     40      2    99%   172->exit, 173->exit
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                     3718     40    577     19    99%
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                         3731     40    577     19    99%
 
 59 files skipped due to complete coverage.
 py$(PYV): commands[2]> python -m coverage report --fail-under 100 --include 'tests/*'
 Name    Stmts   Miss Branch BrPart  Cover   Missing
 ---------------------------------------------------
-TOTAL    1857      0     60      0   100%
+TOTAL    1870      0     60      0   100%
 
 38 files skipped due to complete coverage.
   py$(PYV): OK
