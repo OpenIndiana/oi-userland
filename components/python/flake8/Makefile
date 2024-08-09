@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8
-HUMAN_VERSION =			7.1.0
+HUMAN_VERSION =			7.1.1
 COMPONENT_SUMMARY =		the modular source code checker: pep8 pyflakes and co
 COMPONENT_PROJECT_URL =		https://github.com/pycqa/flake8
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/PyCQA/flake8/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:af2223f8d6476097ac0bf58a08910fa19b4c045d37f6c8e26532d3f4076b78ba
+	sha256:e389d1806e1f911b092fd41b7989c751f05eda510bab4ac255b144da96477e2b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,6 +39,9 @@ TEST_CONFLICTING_PACKAGES.python += library/python/flake8-docstrings
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-noqa
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-typing-imports
 TEST_CONFLICTING_PACKAGES.python += library/python/teamcity-messages
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/mccabe
