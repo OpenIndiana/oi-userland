@@ -1,13 +1,36 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-installed packages of interest: build==1.2.1 cattrs==23.2.3 exceptiongroup==1.2.2 fastjsonschema==2.19.1 hatch-fancy-pypi-readme==24.1.0 hatchling==1.25.0 importlib-metadata==8.1.0 importlib-resources==6.4.0 packaging==24.1 pathspec==0.12.1 pip==24.1.2 pybind11==2.13.1 pytest==8.3.2 pytest-cov==5.0.0 pytest-subprocess==1.5.2 rich==13.7.1 scikit_build_core==0.9.9 setuptools==71.1.0 setuptools-scm==8.1.0 sphinx==7.4.7 sphinx-autodoc-typehints==2.2.3 tomli==2.0.1 typing-extensions==4.12.2 validate-pyproject==0.16 virtualenv==20.26.3 wheel==0.43.0
+installed packages of interest: build==1.2.1 cattrs==23.2.3 exceptiongroup==1.2.2 fastjsonschema==2.19.1 hatch-fancy-pypi-readme==24.1.0 hatchling==1.25.0 importlib-metadata==8.1.0 importlib-resources==6.4.0 packaging==24.1 pathspec==0.12.1 pip==24.1.2 pybind11==2.13.1 pytest==8.3.2 pytest-cov==5.0.0 pytest-subprocess==1.5.2 rich==13.7.1 scikit_build_core==0.10.1 setuptools==72.1.0 setuptools-scm==8.1.0 sphinx==7.4.7 sphinx-autodoc-typehints==2.2.3 tomli==2.0.1 typing-extensions==4.12.2 validate-pyproject==0.16 virtualenv==20.26.3 wheel==0.43.0
 sysconfig platform: solaris-2.11-i86pc.64bit
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 301 items / 1 skipped
+collecting ... collected 400 items / 1 skipped
 
+tests/test_auto.py::test_auto_requires_pkg_no_spec PASSED
+tests/test_auto.py::test_auto_requires_pkg_version[==1.0-version0] PASSED
+tests/test_auto.py::test_auto_requires_pkg_version[>=1.0-version1] PASSED
+tests/test_auto.py::test_auto_requires_pkg_version[>1.0-version2] PASSED
+tests/test_auto.py::test_auto_requires_pkg_version[~=1.0-version3] PASSED
+tests/test_auto.py::test_auto_requires_pkg_version[>=0.3,<0.4-version4] PASSED
+tests/test_auto.py::test_auto_requires_pkg_version[-None] PASSED
+tests/test_auto.py::test_auto_requires_with_marker PASSED
+tests/test_auto.py::test_auto_cmake_version[3.15-3.15] PASSED
+tests/test_auto.py::test_auto_cmake_version[3.16-3.16] PASSED
+tests/test_auto.py::test_auto_cmake_version[3.17.2-3.17.2] PASSED
+tests/test_auto.py::test_auto_cmake_version[3.18...3.29-3.18] PASSED
+tests/test_auto.py::test_auto_cmake_version[3.19.2...3.29-3.19.2] PASSED
+tests/test_auto.py::test_auto_cmake_version_block[if] PASSED
+tests/test_auto.py::test_auto_cmake_version_block[foreach] PASSED
+tests/test_auto.py::test_auto_cmake_version_block[while] PASSED
+tests/test_auto.py::test_auto_cmake_version_block[macro] PASSED
+tests/test_auto.py::test_auto_cmake_version_block[function] PASSED
+tests/test_auto.py::test_auto_cmake_version_block[block] PASSED
+tests/test_broken_fallback.py::test_broken_code[BROKEN_CMAKE] PASSED
+tests/test_broken_fallback.py::test_broken_code[BROKEN_CODE] PASSED
+tests/test_broken_fallback.py::test_fail_setting PASSED
+tests/test_broken_fallback.py::test_fail_setting_msg PASSED
 tests/test_builder.py::test_macos_version[only_plat_round] PASSED
 tests/test_builder.py::test_macos_version[only_plat_classic] PASSED
 tests/test_builder.py::test_macos_version[env_var_lower] PASSED
@@ -34,10 +57,49 @@ tests/test_builder.py::test_wheel_build_tag[x86_64arm64universal2] PASSED
 tests/test_builder.py::test_wheel_tag_expand PASSED
 tests/test_builder.py::test_wheel_tag_expand_11 PASSED
 tests/test_builder.py::test_wheel_tag_with_abi_darwin PASSED
-tests/test_cmake_config.py::test_init_cache PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/dynamic_metadata] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/mixed_setuptools] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/simple_pyproject_script_with_flags] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/hatchling/cpp] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/abi3_pyproject_ext] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/cython_pxd_editable/pkg1] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/cython_pxd_editable/pkg2] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/fortran_example] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/broken_fallback] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/simple_pyproject_ext] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/simple_pyproject_source_dir/src] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/simple_setuptools_ext] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/simplest_c] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/navigate_editable] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/simple_pure] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/custom_cmake] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/sdist_config] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/abi3_setuptools_ext] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/filepath_pure] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/downstream/pybind11_example] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/downstream/nanobind_example] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/getting_started/fortran] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/getting_started/c] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/getting_started/abi3] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/getting_started/swig] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/getting_started/cython] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/getting_started/pybind11] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/getting_started/nanobind] PASSED
+tests/test_cmake_ast.py::test_cmake_ast_parse PASSED
+tests/test_cmake_ast.py::test_cmake_ast_parse_long PASSED
+tests/test_cmake_config.py::test_init_cache[default] PASSED
+tests/test_cmake_config.py::test_init_cache[ninja] PASSED
+tests/test_cmake_config.py::test_init_cache[makefiles] PASSED
+tests/test_cmake_config.py::test_init_cache[others] PASSED
 tests/test_cmake_config.py::test_too_old PASSED
-tests/test_cmake_config.py::test_cmake_args PASSED
-tests/test_cmake_config.py::test_cmake_paths PASSED
+tests/test_cmake_config.py::test_cmake_args[default] PASSED
+tests/test_cmake_config.py::test_cmake_args[ninja] PASSED
+tests/test_cmake_config.py::test_cmake_args[makefiles] PASSED
+tests/test_cmake_config.py::test_cmake_args[others] PASSED
+tests/test_cmake_config.py::test_cmake_paths[default] PASSED
+tests/test_cmake_config.py::test_cmake_paths[ninja] PASSED
+tests/test_cmake_config.py::test_cmake_paths[makefiles] PASSED
+tests/test_cmake_config.py::test_cmake_paths[others] PASSED
 tests/test_cmake_config.py::test_get_cmake_via_envvar PASSED
 tests/test_custom_modules.py::test_ep PASSED
 tests/test_dynamic_metadata.py::test_dynamic_metadata PASSED
@@ -50,6 +112,9 @@ tests/test_dynamic_metadata.py::test_dual_metadata PASSED
 tests/test_dynamic_metadata.py::test_pep517_wheel PASSED
 tests/test_dynamic_metadata.py::test_regex PASSED
 tests/test_dynamic_metadata.py::test_regex_errors PASSED
+tests/test_dynamic_metadata.py::test_multipart_regex PASSED
+tests/test_dynamic_metadata.py::test_regex_remove[0] PASSED
+tests/test_dynamic_metadata.py::test_regex_remove[1] PASSED
 tests/test_editable.py::test_navigate_editable[package-isolated] XFAIL
 tests/test_editable.py::test_navigate_editable[package-notisolated] XFAIL
 tests/test_editable.py::test_navigate_editable[datafolder-isolated] XFAIL
@@ -61,6 +126,7 @@ tests/test_editable_redirect.py::test_editable_redirect PASSED
 tests/test_editable_unit.py::test_navigate_editable_pkg[abs] XFAIL (...)
 tests/test_editable_unit.py::test_navigate_editable_pkg[rel] XFAIL (...)
 tests/test_file_processor.py::test_on_each_with_symlink PASSED
+tests/test_file_processor.py::test_dot_git_is_a_file PASSED
 tests/test_fileapi.py::test_cattrs_comparison PASSED
 tests/test_fileapi.py::test_no_index PASSED
 tests/test_fileapi.py::test_simple_pure PASSED
@@ -93,7 +159,11 @@ tests/test_json_schema.py::test_convert_invalid PASSED
 tests/test_logging.py::test_rich_print_nocolor PASSED
 tests/test_logging.py::test_rich_print_nocolor_forcecolor PASSED
 tests/test_logging.py::test_rich_print_forcecolor PASSED
+tests/test_logging.py::test_rich_print_fgbg PASSED
 tests/test_logging.py::test_rich_notrichbrackets PASSED
+tests/test_logging.py::test_rich_print_subs PASSED
+tests/test_logging.py::test_rich_print_each_color PASSED
+tests/test_logging.py::test_rich_print_internal_color PASSED
 tests/test_module_dir.py::test_all_modules_filter_all PASSED
 tests/test_module_dir.py::test_all_modules_has_all PASSED
 tests/test_name_main.py::test_cattrs_converter PASSED
@@ -170,6 +240,7 @@ tests/test_schema.py::test_valid_schemas_files[filepath24] PASSED
 tests/test_schema.py::test_valid_schemas_files[filepath25] PASSED
 tests/test_schema.py::test_valid_schemas_files[filepath26] PASSED
 tests/test_schema.py::test_valid_schemas_files[filepath27] PASSED
+tests/test_schema.py::test_valid_schemas_files[filepath28] PASSED
 tests/test_schema.py::test_invalid_schemas[addition0] PASSED
 tests/test_schema.py::test_invalid_schemas[addition1] PASSED
 tests/test_schema.py::test_invalid_schemas[addition2] PASSED
@@ -194,8 +265,10 @@ tests/test_schema.py::test_valid_schemas[addition6] PASSED
 tests/test_schema.py::test_valid_schemas[addition7] PASSED
 tests/test_settings.py::test_empty PASSED
 tests/test_settings.py::test_env PASSED
+tests/test_settings.py::test_env_union PASSED
 tests/test_settings.py::test_conf PASSED
 tests/test_settings.py::test_toml PASSED
+tests/test_settings.py::test_toml_union PASSED
 tests/test_settings.py::test_all_names PASSED
 tests/test_settings.py::test_env_nested PASSED
 tests/test_settings.py::test_conf_nested PASSED
@@ -227,6 +300,8 @@ tests/test_settings.py::test_env_array_error PASSED
 tests/test_settings.py::test_config_array_error PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_pyver[3.9] PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_pyver[3.10] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_implver[7.3.14] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_implver[7.3.15] PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_dual[darwin-cpython] PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_dual[darwin-pypy] PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_dual[linux-cpython] PASSED
@@ -279,6 +354,22 @@ tests/test_settings_overrides.py::test_skbuild_overrides_state[sdist] PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_inherit[none] PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_inherit[append] PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_inherit[prepend] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_from_sdist[True] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_from_sdist[False] PASSED
+tests/test_settings_overrides.py::test_failed_retry PASSED
+tests/test_settings_overrides.py::test_wheel_platform[win32] PASSED
+tests/test_settings_overrides.py::test_wheel_platform[linux] PASSED
+tests/test_settings_overrides.py::test_system_cmake[3.21] PASSED
+tests/test_settings_overrides.py::test_system_cmake[3.27] PASSED
+tests/test_settings_overrides.py::test_free_threaded_override PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_version[0.9] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_version[0.10] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_unmatched_version PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_matched_version_if PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_matched_version_extra PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_matched_version_if_any PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_matched_version_if_any_dual PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_matched_version_if_any_match PASSED
 tests/test_setuptools_abi3.py::test_abi3_wheel PASSED
 tests/test_setuptools_pep517.py::test_pep517_sdist PASSED
 tests/test_setuptools_pep517.py::test_pep517_wheel PASSED
@@ -307,8 +398,25 @@ tests/test_skbuild_settings.py::test_skbuild_settings_min_version_defaults_strip
 tests/test_skbuild_settings.py::test_skbuild_settings_min_version_versions PASSED
 tests/test_skbuild_settings.py::test_skbuild_settings_version_too_old PASSED
 tests/test_skbuild_settings.py::test_skbuild_settings_pyproject_toml_envvar_defines PASSED
+tests/test_skbuild_settings.py::test_backcompat_cmake_build PASSED
+tests/test_skbuild_settings.py::test_backcompat_cmake_build_env PASSED
+tests/test_skbuild_settings.py::test_backcompat_cmake_build_both_specified PASSED
+tests/test_skbuild_settings.py::test_auto_minimum_version PASSED
+tests/test_skbuild_settings.py::test_auto_cmake_version PASSED
+tests/test_skbuild_settings.py::test_default_auto_cmake_version[0.9] PASSED
+tests/test_skbuild_settings.py::test_default_auto_cmake_version[0.10] PASSED
+tests/test_skbuild_settings.py::test_skbuild_settings_auto_cmake_warning PASSED
 tests/test_wheelfile_utils.py::test_wheel_metadata PASSED
 tests/test_wheelfile_utils.py::test_wheel_writer_simple PASSED
 
 =========================== short test summary info ============================
-======== 290 passed, 5 skipped, 7 xfailed ========
+======== 389 passed, 5 skipped, 7 xfailed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
