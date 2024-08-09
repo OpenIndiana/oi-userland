@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		babel
-HUMAN_VERSION =			2.15.0
+HUMAN_VERSION =			2.16.0
 COMPONENT_SUMMARY =		Internationalization utilities
 COMPONENT_PROJECT_URL =		https://babel.pocoo.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8daf0e265d05768bc6c7a314cf1321e9a123afc328cc635c18622a2f30a04413
+	sha256:d1f3554ca26605fe173f3de0c65f750f5a42f924499bf134de6423582298e316
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
