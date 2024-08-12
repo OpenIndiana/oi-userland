@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [1720 items]
+X workers [1731 items]
 
 scheduling tests via LoadScheduling
 
@@ -1235,6 +1235,7 @@ tests/session/cmd/test_sequential.py::test_sequential_run_all PASSED
 tests/session/cmd/test_sequential.py::test_skip_develop_mode PASSED
 tests/session/cmd/test_sequential.py::test_skip_pkg_install PASSED
 tests/session/cmd/test_sequential.py::test_virtualenv_cache PASSED
+tests/session/cmd/test_show_config.py::test_core_on_platform PASSED
 tests/session/cmd/test_show_config.py::test_package_env_inherits_from_pkgenv PASSED
 tests/session/cmd/test_show_config.py::test_pass_env_config_default[False] PASSED
 tests/session/cmd/test_show_config.py::test_pass_env_config_default[True] PASSED
@@ -1514,6 +1515,11 @@ tests/tox_env/python/pip/test_req_file.py::test_legacy_requirement_file[-r] PASS
 tests/tox_env/python/pip/test_req_file.py::test_opt_only_req_file PASSED
 tests/tox_env/python/pip/test_req_file.py::test_req_iadd PASSED
 tests/tox_env/python/pip/test_req_file.py::test_req_with_no_deps PASSED
+tests/tox_env/python/test_python_api.py::test_base_python_absolute[py310-//a/python310/bin/python-None] PASSED
+tests/tox_env/python/test_python_api.py::test_base_python_absolute[py310-win-\\\\?\\UNC\\a\\python310\\python.exe-nt] SKIPPED
+tests/tox_env/python/test_python_api.py::test_base_python_absolute[py311-win-\\\\a\\python311\\python.exe-nt] SKIPPED
+tests/tox_env/python/test_python_api.py::test_base_python_absolute[py312-unix-/opt/python312/bin/python-posix] PASSED
+tests/tox_env/python/test_python_api.py::test_base_python_absolute[py312-win-C:\\Program Files\\Python312\\python.exe-nt] SKIPPED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3-py2-py3-py2-False] PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3-py2-py3-py2-True] PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3.11-py310-py3.11-py310-False] PASSED
@@ -1543,7 +1549,10 @@ tests/tox_env/python/test_python_api.py::test_build_wheel_in_non_base_pkg_env PA
 tests/tox_env/python/test_python_api.py::test_conflicting_base_python_factor PASSED
 tests/tox_env/python/test_python_api.py::test_diff_msg_added_removed_changed PASSED
 tests/tox_env/python/test_python_api.py::test_diff_msg_no_diff PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[2.7-2.7] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[2000-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[3.10-3.10] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[3.9-3.9] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[310-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[4.foo-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[4000-None] PASSED
@@ -1553,7 +1562,9 @@ tests/tox_env/python/test_python_api.py::test_extract_base_python[cpython3.8-cpy
 tests/tox_env/python/test_python_api.py::test_extract_base_python[django-32-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[eslint-8.3-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[functional-py310-py310] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[graalpy-graalpy] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[ironpython2.7-ironpython2.7] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[jython-jython] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py-310-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py3-py3] PASSED
@@ -1739,6 +1750,6 @@ Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 Required test coverage of 88.0% reached. Total coverage: 98.63%
 ============================= slowest 5 durations ==============================
 =========================== short test summary info ============================
-======== 1719 passed, 1 skipped ========
+======== 1727 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
