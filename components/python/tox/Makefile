@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-HUMAN_VERSION =			4.16.0
+HUMAN_VERSION =			4.17.1
 COMPONENT_SUMMARY =		tox is a generic virtualenv management and test command line tool
 COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:43499656f9949edb681c0f907f86fbfee98677af9919d8b11ae5ad77cb800748
+	sha256:2c41565a571e34480bd401d668a4899806169a4633e972ac296c54406d2ded8a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
