@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 1688 items / 1 deselected / 1 skipped / 1687 selected
+collecting ... collected 1691 items / 3 deselected / 1 skipped / 1688 selected
 
 tests/brain/numpy/test_core_einsumfunc.py::test_numpy_function_calls_inferred_as_ndarray PASSED
 tests/brain/numpy/test_core_einsumfunc.py::test_function_parameters PASSED
@@ -55,7 +55,6 @@ tests/brain/test_attr.py::AttrsTest::test_attrs_with_annotation PASSED
 tests/brain/test_attr.py::AttrsTest::test_dont_consider_assignments_but_without_attrs PASSED
 tests/brain/test_attr.py::AttrsTest::test_special_attributes PASSED
 tests/brain/test_brain.py::CollectionsDequeTests::test_deque PASSED
-tests/brain/test_brain.py::CollectionsDequeTests::test_deque_not_py$(PYV)methods SKIPPED
 tests/brain/test_brain.py::CollectionsDequeTests::test_deque_py35methods PASSED
 tests/brain/test_brain.py::CollectionsDequeTests::test_deque_py$(PYV)methods PASSED
 tests/brain/test_brain.py::OrderedDictTest::test_ordered_dict_py34method PASSED
@@ -114,7 +113,6 @@ tests/brain/test_brain.py::TypingBrain::test_typing_types PASSED
 tests/brain/test_brain.py::ReBrainTest::test_re_pattern_subscriptable PASSED
 tests/brain/test_brain.py::ReBrainTest::test_re_pattern_unsubscriptable SKIPPED
 tests/brain/test_brain.py::ReBrainTest::test_regex_flags PASSED
-tests/brain/test_brain.py::BrainFStrings::test_no_crash_on_const_reconstruction PASSED
 tests/brain/test_brain.py::BrainNamedtupleAnnAssignTest::test_no_crash_on_ann_assign_in_namedtuple PASSED
 tests/brain/test_brain.py::BrainUUIDTest::test_uuid_has_int_member PASSED
 tests/brain/test_brain.py::RandomSampleTest::test_arguments_inferred_successfully PASSED
@@ -403,6 +401,7 @@ tests/brain/test_six.py::SixBrainTest::test_six_with_metaclass_enum_ancestor PAS
 tests/brain/test_six.py::SixBrainTest::test_six_with_metaclass_with_additional_transform PASSED
 tests/brain/test_six.py::SixBrainTest::test_with_metaclass_subclasses_inheritance PASSED
 tests/brain/test_ssl.py::test_ssl_brain PASSED
+tests/brain/test_ssl.py::test_ssl_brain_py312 SKIPPED (Uses new 3.12...)
 tests/brain/test_threading.py::ThreadingBrainTest::test_boundedsemaphore PASSED
 tests/brain/test_threading.py::ThreadingBrainTest::test_lock PASSED
 tests/brain/test_threading.py::ThreadingBrainTest::test_rlock PASSED
@@ -634,6 +633,7 @@ tests/test_inference.py::InferenceTest::test_factory_methods_object_new_call PAS
 tests/test_inference.py::InferenceTest::test_float_complex_ambiguity PASSED
 tests/test_inference.py::InferenceTest::test_for_dict PASSED
 tests/test_inference.py::InferenceTest::test_frozenset_builtin_inference PASSED
+tests/test_inference.py::InferenceTest::test_fstring_inference PASSED
 tests/test_inference.py::InferenceTest::test_function_inference PASSED
 tests/test_inference.py::InferenceTest::test_function_metaclasses XFAIL
 tests/test_inference.py::InferenceTest::test_genexpr_bool_value PASSED
@@ -819,6 +819,9 @@ tests/test_inference.py::CallSiteTest::test_call_site_uninferable PASSED
 tests/test_inference.py::CallSiteTest::test_call_site_valid_arguments PASSED
 tests/test_inference.py::CallSiteTest::test_duplicated_keyword_arguments PASSED
 tests/test_inference.py::ObjectDunderNewTest::test_object_dunder_new_is_inferred_if_decorator PASSED
+tests/test_inference.py::test_formatted_fstring_inference[width = 10\nprecision = 4\nvalue = 12.34567\nresult = f"result: {value:{width}.{precision}}!"\n-result:      12.35!] PASSED
+tests/test_inference.py::test_formatted_fstring_inference[width = None\nprecision = 4\nvalue = 12.34567\nresult = f"result: {value:{width}.{precision}}!"\n-None] PASSED
+tests/test_inference.py::test_formatted_fstring_inference[width = 10\nprecision = 4\nvalue = None\nresult = f"result: {value:{width}.{precision}}!"\n-None] PASSED
 tests/test_inference.py::test_augassign_recursion PASSED
 tests/test_inference.py::test_infer_custom_inherit_from_property PASSED
 tests/test_inference.py::test_cannot_infer_call_result_for_builtin_methods PASSED
@@ -911,7 +914,6 @@ tests/test_inference.py::test_custom_decorators_for_classmethod_and_staticmethod
 tests/test_inference.py::test_custom_decorators_for_classmethod_and_staticmethods[\n            def staticmethod1(method):\n                @staticmethod\n                def inner(cls):\n                    return method(cls)\n                return inner\n\n            class X(object):\n                @staticmethod1\n                def x(cls):\n                    return 'X'\n            X.x\n            -FunctionDef-staticmethod] PASSED
 tests/test_inference.py::test_custom_decorators_for_classmethod_and_staticmethods[\n            def klassmethod1(method):\n                def inner(cls):\n                    return method(cls)\n                return classmethod(inner)\n\n            class X(object):\n                @klassmethod1\n                def x(cls):\n                    return 'X'\n            X.x\n            -BoundMethod-classmethod] PASSED
 tests/test_inference.py::test_custom_decorators_for_classmethod_and_staticmethods[\n            def staticmethod1(method):\n                def inner(cls):\n                    return method(cls)\n                return staticmethod(inner)\n\n            class X(object):\n                @staticmethod1\n                def x(cls):\n                    return 'X'\n            X.x\n            -FunctionDef-staticmethod] PASSED
-tests/test_inference.py::test_dataclasses_subscript_inference_recursion_error SKIPPED
 tests/test_inference.py::test_dataclasses_subscript_inference_recursion_error_39 PASSED
 tests/test_inference.py::test_self_reference_infer_does_not_trigger_recursion_error PASSED
 tests/test_inference.py::test_inferring_properties_multiple_time_does_not_mutate_locals PASSED
@@ -1090,7 +1092,6 @@ tests/test_modutils.py::LoadModuleFromNameTest::test_raise_load_module_from_name
 tests/test_modutils.py::test_import_dotted_library PASSED
 tests/test_modutils.py::GetModulePartTest::test_get_module_part_exception PASSED
 tests/test_modutils.py::GetModulePartTest::test_get_module_part_only_dot PASSED
-tests/test_modutils.py::GetModulePartTest::test_known_values_get_builtin_module_part SKIPPED
 tests/test_modutils.py::GetModulePartTest::test_known_values_get_compiled_module_part PASSED
 tests/test_modutils.py::GetModulePartTest::test_known_values_get_module_part_1 PASSED
 tests/test_modutils.py::GetModulePartTest::test_known_values_get_module_part_2 PASSED
@@ -1337,7 +1338,6 @@ tests/test_nodes.py::test_str_repr_no_warnings[Yield] PASSED
 tests/test_nodes.py::test_str_repr_no_warnings[YieldFrom] PASSED
 tests/test_nodes.py::test_arguments_contains_all PASSED
 tests/test_nodes.py::test_arguments_default_value PASSED
-tests/test_nodes_lineno.py::TestEndLinenoNotSet::test_end_lineno_not_set SKIPPED
 tests/test_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_container PASSED
 tests/test_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_name PASSED
 tests/test_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_attribute PASSED
@@ -1400,6 +1400,8 @@ tests/test_object_model.py::DictObjectModelTest::test_wrapper_objects_for_dict_m
 tests/test_object_model.py::TestExceptionInstanceModel::test_str_argument_not_required PASSED
 tests/test_object_model.py::test_lru_cache[True] PASSED
 tests/test_object_model.py::test_lru_cache[False] PASSED
+tests/test_object_model.py::test_class_annotations PASSED
+tests/test_object_model.py::test_class_annotations_typed_dict PASSED
 tests/test_objects.py::ObjectsTest::test_frozenset PASSED
 tests/test_objects.py::ObjectsTest::test_lookup_regression_slots PASSED
 tests/test_objects.py::SuperTests::test_inferring_invalid_supers PASSED
@@ -1496,7 +1498,6 @@ tests/test_regrtest.py::NonRegressionTests::test_manager_instance_attributes_ref
 tests/test_regrtest.py::NonRegressionTests::test_module_path PASSED
 tests/test_regrtest.py::NonRegressionTests::test_nameconstant PASSED
 tests/test_regrtest.py::NonRegressionTests::test_numpy_crash PASSED
-tests/test_regrtest.py::NonRegressionTests::test_numpy_distutils SKIPPED
 tests/test_regrtest.py::NonRegressionTests::test_package_sidepackage PASSED
 tests/test_regrtest.py::NonRegressionTests::test_recursion_regression_issue25 PASSED
 tests/test_regrtest.py::NonRegressionTests::test_recursive_property_method PASSED
@@ -1694,11 +1695,11 @@ tests/test_utils.py::InferenceUtil::test_not_exclusive_walrus_operator PASSED
 tests/test_utils.py::InferenceUtil::test_not_exclusive_walrus_operator_nested PASSED
 tests/test_utils.py::InferenceUtil::test_try_except PASSED
 tests/test_utils.py::InferenceUtil::test_unpack_infer_empty_tuple PASSED
-tests/test_utils.py::InferenceUtil::test_unpack_infer_uninferable_nodes PASSED [100%]$(PYTHON_DIR)/vendor-packages/coverage/report_core.py:115: CoverageWarning: Couldn't parse '/tmp/tmpy9uam0_q/tmphexko3fd.py': No source for code: '/tmp/tmpy9uam0_q/tmphexko3fd.py'. (couldnt-parse)
+tests/test_utils.py::InferenceUtil::test_unpack_infer_uninferable_nodes PASSED [100%]$(PYTHON_DIR)/vendor-packages/coverage/report_core.py:115: CoverageWarning: Couldn't parse '/tmp/tmpXXXXXXXX/tmpXXXXXXXX.py': No source for code: '/tmp/tmpXXXXXXXX/tmpXXXXXXXX.py'. (couldnt-parse)
   coverage._warn(msg, slug="couldnt-parse")
 
 
 
-======== 1632 passed, 39 skipped, 1 deselected, 16 xfailed, 1 xpassed ========
+======== 1637 passed, 35 skipped, 3 deselected, 16 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)
