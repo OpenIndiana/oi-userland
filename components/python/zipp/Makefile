@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zipp
-HUMAN_VERSION =			3.19.2
+HUMAN_VERSION =			3.20.0
 COMPONENT_SUMMARY =		Backport of pathlib-compatible object wrapper for zip files
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/zipp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bf1dcf6450f873a13e952a29504887c89e6de7506209e5b1bcc3460135d4de19
+	sha256:0145e43d89664cfe1a2e533adc75adafed82fe2da404b4bbb6b026c0157bdb31
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,7 +36,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-functools
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-itertools
