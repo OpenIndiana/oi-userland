@@ -1,0 +1,20 @@
+--- multitail-7.1.4/mt.h.orig	2024-08-11 08:58:01.000000000 +0200
++++ multitail-7.1.4/mt.h	2024-08-13 12:00:44.063500735 +0200
+@@ -59,7 +59,7 @@
+ #define __USE_BSD	/* manpage says _BSD_SOURCE, stdlib.h says __USE_BSD */
+ #endif
+ 
+-#if defined(UTF8_SUPPORT) && !defined(__APPLE__)
++#if defined(UTF8_SUPPORT) && !defined(__APPLE__) && !defined(__illumos__)
+         #if defined(__FreeBSD__) || defined (__linux__)
+                 #include <panel.h>
+                 #include <curses.h>
+@@ -71,7 +71,7 @@
+ 	#if defined(__APPLE__)
+         #include <ncurses.h>
+         #include <panel.h>
+-    #elif defined(sun) || defined(__sun) || defined(scoos) || defined(_HPUX_SOURCE) || defined(AIX) || defined(__CYGWIN__)
++    #elif defined(sun) || defined(__sun) || defined(scoos) || defined(_HPUX_SOURCE) || defined(AIX) || defined(__CYGWIN__) || defined(__illumos__)
+ 		#include <ncurses/panel.h>
+ 		#include <ncurses/ncurses.h>
+ 	#else
