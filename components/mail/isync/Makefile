@@ -9,31 +9,29 @@
 #
 
 #
-# Copyright 2020, 2021, Andreas Wacknitz <a.wacknitz@gmx.de>
+# Copyright 2020, 2024, Andreas Wacknitz <a.wacknitz@gmx.de>
 #
 
-BUILD_BITS=		64
 OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			isync
-COMPONENT_VERSION=		1.4.4
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=		1.5.0
 COMPONENT_FMRI=			mail/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).sourceforge.net
 COMPONENT_SUMMARY=		isync is a command line application which synchronizes mailboxes
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7c3273894f22e98330a330051e9d942fd9ffbc02b91952c2f1896a5c37e700ff
+COMPONENT_ARCHIVE_HASH=	sha256:a0c81e109387bf279da161453103399e77946afecf5c51f9413c5e773557f78d
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=		GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS+= -std=c99 $(CPP_XPG6MODE)
+CFLAGS += -std=c99 $(XPG6MODE)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
