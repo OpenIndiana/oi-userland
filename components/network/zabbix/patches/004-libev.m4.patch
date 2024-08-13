@@ -1,0 +1,44 @@
+diff --git a/m4/libevent.m4 b/m4/libevent.m4
+index 6815f03..ab5fa0c 100644
+--- a/m4/libevent.m4
++++ b/m4/libevent.m4
+@@ -65,6 +65,8 @@ AS_HELP_STRING([--with-libevent@<:@=DIR@:>@], [use libevent from given base inst
+ 
+ 	if test "x$ARCH" = "xopenbsd"; then
+ 		LIBEVENT_LIBS="-levent_core -levent_pthreads"
++	elif test "x$ARCH" = "xsolaris"; then
++		LIBEVENT_LIBS="-levent_core-2.1 -levent_pthreads-2.1 -levent_extra-2.1"
+ 	else
+ 		LIBEVENT_LIBS="-levent -levent_pthreads"
+ 	fi
+diff --git a/src/libs/zbxipcservice/ipcservice.c b/src/libs/zbxipcservice/ipcservice.c
+index b1e40ea..8166dce 100644
+--- a/src/libs/zbxipcservice/ipcservice.c
++++ b/src/libs/zbxipcservice/ipcservice.c
+@@ -1025,7 +1025,7 @@ static void ipc_service_event_log_cb(int severity, const char *msg)
+  ******************************************************************************/
+ static void	ipc_service_init_libevent(void)
+ {
+-	event_set_log_callback(ipc_service_event_log_cb);
++	/* event_set_log_callback(ipc_service_event_log_cb); */
+ }
+ 
+ /******************************************************************************
+diff --git a/m4/libevent.m4 b/m4/libevent.m4
+index d87aca4..67aeccd 100644
+--- a/m4/libevent.m4
++++ b/m4/libevent.m4
+@@ -35,8 +35,11 @@ AS_HELP_STRING([--with-libevent@<:@=DIR@:>@], [use libevent from given base inst
+ 				if test -f /usr/local/include/event.h; then withval=/usr/local; else withval=/usr; fi
+ 			fi
+ 
+-			LIBEVENT_CFLAGS="-I$withval/include"
+-			LIBEVENT_LDFLAGS="-L$withval/lib"
++			# dont assign default paths
++			if test "x$withval" != "x/usr"; then
++				LIBEVENT_CFLAGS="-I$withval/include"
++				LIBEVENT_LDFLAGS="-L$withval/lib"
++			fi
+ 			_libevent_dir_set="yes"
+ 		]
+ 	)
