@@ -1,0 +1,15 @@
+Make sure the order of tests does not change between test runs.
+
+--- scikit_build_core-0.10.3/tests/test_cmake_ast.py.orig
++++ scikit_build_core-0.10.3/tests/test_cmake_ast.py
+@@ -9,8 +9,8 @@
+ DIR = Path(__file__).parent.absolute()
+ 
+ FILENAMES = [
+-    *DIR.joinpath("packages").rglob("**/CMakeLists.txt"),
+-    *DIR.parent.joinpath("docs/examples").rglob("**/CMakeLists.txt"),
++    *sorted(DIR.joinpath("packages").rglob("**/CMakeLists.txt")),
++    *sorted(DIR.parent.joinpath("docs/examples").rglob("**/CMakeLists.txt")),
+ ]
+ IDS = [str(p.relative_to(DIR.parent).parent) for p in FILENAMES]
+ 
