@@ -1,6 +1,6 @@
---- hpn-ssh-hpn-18.4.1/auth-pam.c.orig
-+++ hpn-ssh-hpn-18.4.1/auth-pam.c
-@@ -1213,6 +1213,20 @@
+--- hpn-ssh-hpn-18.4.2/auth-pam.c.orig
++++ hpn-ssh-hpn-18.4.2/auth-pam.c
+@@ -1215,6 +1215,20 @@
  	return (sshpam_account_status);
  }
  
@@ -21,8 +21,8 @@
  void
  do_pam_setcred(int init)
  {
---- hpn-ssh-hpn-18.4.1/auth-pam.h.orig
-+++ hpn-ssh-hpn-18.4.1/auth-pam.h
+--- hpn-ssh-hpn-18.4.2/auth-pam.h.orig
++++ hpn-ssh-hpn-18.4.2/auth-pam.h
 @@ -44,4 +44,9 @@
  void sshpam_set_maxtries_reached(int);
  int is_pam_session_open(void);
@@ -33,8 +33,8 @@
 +void do_pam_set_tty(const char *);
 +
  #endif /* USE_PAM */
---- hpn-ssh-hpn-18.4.1/auth.h.orig
-+++ hpn-ssh-hpn-18.4.1/auth.h
+--- hpn-ssh-hpn-18.4.2/auth.h.orig
++++ hpn-ssh-hpn-18.4.2/auth.h
 @@ -98,6 +98,9 @@
  #ifdef PAM_ENHANCEMENT
  	char		*authmethod_name;
@@ -45,8 +45,8 @@
  };
  
  /*
---- hpn-ssh-hpn-18.4.1/auth2-hostbased.c.orig
-+++ hpn-ssh-hpn-18.4.1/auth2-hostbased.c
+--- hpn-ssh-hpn-18.4.2/auth2-hostbased.c.orig
++++ hpn-ssh-hpn-18.4.2/auth2-hostbased.c
 @@ -80,6 +80,9 @@
  	debug("signature:");
  	sshbuf_dump_data(sig, slen, stderr);
@@ -71,8 +71,8 @@
  	auth2_record_key(authctxt, authenticated, key);
  	sshbuf_free(b);
  done:
---- hpn-ssh-hpn-18.4.1/auth2.c.orig
-+++ hpn-ssh-hpn-18.4.1/auth2.c
+--- hpn-ssh-hpn-18.4.2/auth2.c.orig
++++ hpn-ssh-hpn-18.4.2/auth2.c
 @@ -427,6 +427,14 @@
  #endif
  	}
@@ -88,8 +88,8 @@
  	if (authenticated && options.num_auth_methods != 0) {
  
  #if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
---- hpn-ssh-hpn-18.4.1/monitor.c.orig
-+++ hpn-ssh-hpn-18.4.1/monitor.c
+--- hpn-ssh-hpn-18.4.2/monitor.c.orig
++++ hpn-ssh-hpn-18.4.2/monitor.c
 @@ -391,6 +391,12 @@
  		}
  	}

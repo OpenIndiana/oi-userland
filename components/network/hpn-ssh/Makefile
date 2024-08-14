@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hpn-ssh
 COMPONENT_VERSION=	18.4.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	High performance SSH/SCP
 COMPONENT_SRC=		$(COMPONENT_NAME)-hpn-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.psc.edu/hpn-ssh-home/
@@ -84,7 +84,6 @@ CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth
 CONFIGURE_OPTIONS += --enable-strip=no
 CONFIGURE_OPTIONS += --without-rpath
-CONFIGURE_OPTIONS += --disable-lastlog
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
 # Install hpnssh-copy-id and its man page
