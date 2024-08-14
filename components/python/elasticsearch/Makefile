@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project elasticsearch
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elasticsearch
-HUMAN_VERSION =			8.14.0
+HUMAN_VERSION =			8.15.0
 COMPONENT_SUMMARY =		Python client for Elasticsearch
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elasticsearch-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/elastic/elasticsearch-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1f9e8c96a281e8e4330e0ae4b8bd60715bde408631292a0cf0bf18688d10d8fd
+	sha256:67652a077e899ba0860ebd3fd5b46f9e33482f67caaba237e9d740d91f496c0f
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,19 +37,19 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS += dev-requirements.txt
+TEST_REQUIREMENTS_EXTRAS += dev
 
 # We do not have orjson
 PYTEST_ADDOPTS += --ignore test_elasticsearch/test_serializer.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/elastic-transport
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/aiohttp
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/elastic-transport
 TEST_REQUIRED_PACKAGES.python += library/python/isort
 TEST_REQUIRED_PACKAGES.python += library/python/jinja2
 TEST_REQUIRED_PACKAGES.python += library/python/nox
@@ -60,7 +60,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
 TEST_REQUIRED_PACKAGES.python += library/python/requests
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx-autodoc-typehints
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/twine
