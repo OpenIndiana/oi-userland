@@ -11,23 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project WebOb
+#   $WS_TOOLS/python-integrate-project -d python/WebOb webob
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		WebOb
-HUMAN_VERSION =			1.8.7
-COMPONENT_SUMMARY =		WebOb - WSGI request and response object
+COMPONENT_NAME =		webob
+HUMAN_VERSION =			1.8.8
+COMPONENT_SUMMARY =		WSGI request and response object
 COMPONENT_PROJECT_URL =		http://webob.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c7/45/ee5f034fb4ebe3236fa49e5a4fcbc54444dd22ecf33079cf56f9606d479d/WebOb-1.8.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b64ef5141be559cfade448f044fa45c2260351edcb6a8ef6b7e00c7dcef0c323
+	sha256:2abc1555e118fc251e705fc6dc66c7f5353bb9fbfab6d20e22f1c02b4b71bcee
 COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	docs/license.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,3 +35,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
