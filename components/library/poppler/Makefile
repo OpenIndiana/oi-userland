@@ -21,31 +21,30 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		poppler
-COMPONENT_VERSION=	24.3.0
-HUMAN_VERSION=	24.03.0
+COMPONENT_VERSION=	24.11.0
+#HUMAN_VERSION=	24.09.0
 COMPONENT_SUMMARY=	Poppler is a PDF rendering library based on the xpdf-3.0 code base
 COMPONENT_PROJECT_URL=	https://poppler.freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:bafbf0db5713dec25b5d16eb2cd87e4a62351cdc40f050c3937cd8dd6882d446
+COMPONENT_ARCHIVE_HASH=	sha256:7723d880565211740c13649d24a300257b86ddd7fa2d208187ff7e5cc8dfbd58
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libpoppler
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
+COMPONENT_NAME_1=   testfiles
+GIT_REPO_1=			https://gitlab.freedesktop.org/poppler/test.git
+GIT_COMMIT_ID_1=    ff3133cd
+
+
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(QT5_BINDIR):$(PATH.gnu)
-PKG_CONFIG_PATH= $(PKG_CONFIG_PATH.$(BITS)):$(QT5_PKG_CONFIG_PATH)
+PKG_CONFIG_PATH += $(QT5_PKG_CONFIG_PATH)
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
-# Find issues with undefined symbols in build time
-LD_OPTIONS += $(LD_Z_DEFS)
+CFLAGS += $(XPG6MODE)
 
 # Add qt library run path
 LDFLAGS += -Wl,-rpath,$(QT5_LIBDIR)
@@ -62,18 +61,20 @@ CMAKE_OPTIONS += -DENABLE_BOOST=OFF
 # We don't have gpgmepp.
 CMAKE_OPTIONS += -DENABLE_GPGME=OFF
 # jpeg-turbo is not detected without this.
-CMAKE_OPTIONS += -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
 CMAKE_OPTIONS += -DENABLE_QT6=OFF
 CMAKE_OPTIONS += -DQt5Core_DIR=$(QT5_LIBDIR)/cmake/Qt5Core
 CMAKE_OPTIONS += -DQt5Gui_DIR=$(QT5_LIBDIR)/cmake/Qt5Gui
 CMAKE_OPTIONS += -DQt5Xml_DIR=$(QT5_LIBDIR)/cmake/Qt5Xml
 CMAKE_OPTIONS += -DQt5Widgets_DIR=$(QT5_LIBDIR)/cmake/Qt5Widgets
 CMAKE_OPTIONS += -DQt5Test_DIR=$(QT5_LIBDIR)/cmake/Qt5Test
+CMAKE_OPTIONS += -DTESTDATADIR=$(COMPONENT_DIR)/$(COMPONENT_NAME_1)-$(GIT_COMMIT_ID_1)
+
+COMPONENT_TEST_ENV += LC_ALL=en_US.UTF-8
+COMPOMENT_TEST_ENV += PATH="$(PATH)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += image/library/openjpeg
