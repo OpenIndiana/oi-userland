@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.10.2
+HUMAN_VERSION =			3.10.3
 COMPONENT_SUMMARY =		Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4d1f694b5d6e459352e5e925a42e05bac66655bfde44d81c59992463d2897014
+	sha256:21650e7032cc2d31fc23d353d7123e771354f2a3d5b05a5647fc30fea214e696
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
