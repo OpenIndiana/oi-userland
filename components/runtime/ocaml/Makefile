@@ -28,8 +28,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ocaml
-COMPONENT_VERSION_MAJOR=	5.1
-COMPONENT_VERSION=		$(COMPONENT_VERSION_MAJOR).1
+COMPONENT_VERSION_MAJOR=	5.2
+COMPONENT_VERSION=		$(COMPONENT_VERSION_MAJOR).0
 COMPONENT_SUMMARY=		Objective Caml compiler and programming environment
 COMPONENT_DESCRIPTION=	Objective Caml is a high-level, strongly-typed, functional and object-oriented programming language \
 from the ML family of languages. This package comprises two batch compilers \
@@ -38,28 +38,26 @@ parsing tools (Lex,Yacc,Camlp4), a replay debugger,  documentation generator, an
 COMPONENT_PROJECT_URL=		https://ocaml.org
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_SRC=		$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=		sha256:57f7b382b3d71198413ede405d95ef3506f1cdc480cda1dca1e26b37cb090e17
-COMPONENT_ARCHIVE_URL=		https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE_SRC)
+COMPONENT_ARCHIVE_SRC=	$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:48554abfd530fcdaa08f23f801b699e4f74c320ddf7d0bd56b0e8c24e55fc911
+COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE_SRC)
 COMPONENT_FMRI=			runtime/ocaml
 COMPONENT_CLASSIFICATION=	Development/System
 COMPONENT_LICENSE=		QPLv1, GPLv2
 COMPONENT_LICENSE_FILE=	LICENSE
 
 # Documentation sources
-#
 COMPONENT_ARCHIVE_1=		ocaml-$(COMPONENT_VERSION_MAJOR)-refman-html.tar.gz
-COMPONENT_ARCHIVE_HASH_1=	sha256:ef07f27e1556ab783972fb3e06afce64a270bf24f620a258c7651febc20f5ec3
+COMPONENT_ARCHIVE_HASH_1=	sha256:361b7096d0092b11b96f0beee217af2b8c6fe3981145a2c4b4d43d656e4dcaf5
 COMPONENT_ARCHIVE_URL_1=	https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_ARCHIVE_2=		ocaml-$(COMPONENT_VERSION_MAJOR)-refman.pdf
-COMPONENT_ARCHIVE_HASH_2=	sha256:d8b1501b356242ef83240144f940887fb17154e94c20acbaad1b2e28897dbd76
+COMPONENT_ARCHIVE_HASH_2=	sha256:898c1d57eff48fb4756e87a96af5a144686e8fd5413f44ca3f8b47831917d621
 COMPONENT_ARCHIVE_URL_2=	https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_2)
 
 COMPONENT_ARCHIVE_3=		ocaml-$(COMPONENT_VERSION_MAJOR)-refman.info.tar.gz
-COMPONENT_ARCHIVE_HASH_3=	sha256:d7faad8769682b2f361c79c6a3fb727b4e2016026ce718704c969ccc15b96575
+COMPONENT_ARCHIVE_HASH_3=	sha256:947d1f44d27a096b421e791dd2b46776e5bc87cee1f451bf701687d87d09553e
 COMPONENT_ARCHIVE_URL_3=	https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_3)
-
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -80,44 +78,43 @@ CONFIGURE_OPTIONS += --enable-flambda
 # otherwise no tests possible
 CONFIGURE_OPTIONS += --enable-ocamltest
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-  ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # otherwise test run would not succeed
-COMPONENT_POST_CONFIGURE_ACTION = $(GSED) -i -e 's:$(SOURCE_DIR):$(@D):' $(@D)/ocamltest/ocamltest_config.ml
+COMPONENT_POST_CONFIGURE_ACTION= $(GSED) -i -e 's:$(SOURCE_DIR):$(@D):' $(@D)/ocamltest/ocamltest_config.ml
 
-COMPONENT_BUILD_TARGETS = world opt opt.opt
+COMPONENT_BUILD_TARGETS= world opt opt.opt
 
-COMPONENT_POST_BUILD_ACTION = (cd $(@D); \
-   $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
-   $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_3); )
+COMPONENT_POST_BUILD_ACTION= ( \
+	cd $(@D); \
+	$(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
+	$(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_3); )
 
 # This action moves additional files we want to install into the proto area.
 # I prefer using "cp -R" for copying the documentation tarball and example
 # contents since it will make it easier to see new files need to be packaged
 # when Ocaml is updated.
 #
-COMPONENT_POST_INSTALL_ACTION = ( \
-                cd $(@D) &&\
-                $(MKDIR) $(PROTOUSRSHAREDIR)/info &&\
-		$(MKDIR) $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME) &&\
-                $(CP) $(@D)/infoman/ocaml*.gz $(PROTOUSRSHAREDIR)/info &&\
-                $(CP) $(UL_OCAML_PDFDOC) $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME)/refman.pdf &&\
-                $(CP) -R $(@D)/htmlman $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME)) 
+COMPONENT_POST_INSTALL_ACTION= ( \
+	cd $(@D) && \
+	$(MKDIR) $(PROTOUSRSHAREDIR)/info && \
+	$(MKDIR) $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME) && \
+	$(CP) $(@D)/infoman/ocaml*.gz $(PROTOUSRSHAREDIR)/info && \
+	$(CP) $(UL_OCAML_PDFDOC) $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME)/refman.pdf && \
+	$(CP) -R $(@D)/htmlman $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME))
 
 # target all uses the new ocamltests, legacy uses the Makefile based tests.
 # All tests succeed but the parsing of the ocamltest results is wrong and 
 # leads to erroneously failing tests.
 # Only native tests are concerned.
-COMPONENT_TEST_TARGETS = all
+COMPONENT_TEST_TARGETS= all
 #COMPONENT_TEST_TARGETS = legacy
 COMPONENT_TEST_ARGS += SHELL=$(SHELL) 
-COMPONENT_TEST_DIR =  $(@D)/testsuite
-COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS  = "'/tests passed|tests skipped|tests failed|unexpected errors|tests considered/'"
+COMPONENT_TEST_DIR=  $(@D)/testsuite
+COMPONENT_TEST_TRANSFORMER= $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/tests passed|tests skipped|tests failed|unexpected errors|tests considered/'"
 
-# ASLR should be enabled when 64-bit support is enabled
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE= $(ASLR_ENABLE)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
