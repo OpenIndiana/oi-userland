@@ -1,0 +1,70 @@
+The session management in sshd aims to display the (previous) last login
+information and to record the current login info of an user into the lastlog
+database for future use.  This is achieved primarily using the direct access to
+the /var/adm/lastlog file.
+
+There is an option to disable the lastlog handling in sshd and leave the
+session management (including the last login info storage and display) to some
+other facility.  Typically the PAM session management is used for that on some
+operating systems.  The lastlog handling could be disabled during the configure
+phase using the --disable-lastlog configure option.
+
+The PAM session management is invoked before the direct lastlog handling is
+called in sshd.  So it is expected than when both PAM support and lastlog
+support are enabled in sshd then PAM does not do the last login handling at
+all.  Otherwise we would get the last login information displayed twice on
+login.
+
+On illumos there is only pam_unix_session(7) PAM session management module
+configured by default - see /etc/pam.conf.  This module updates the
+/var/adm/lastlog file on open and does basically nothing on close - see the
+pam_unix_session(7) man page.  There was an attempt in the past to change that,
+but it failed - see https://www.illumos.org/issues/6057 for details.
+
+Given all of the above we are in unfortunate situation:
+
+A) With PAM enabled and the lastlog feature disabled we would get the
+/var/adm/lastlog file updated, but the information about the last login
+wouldn't be displayed.
+
+B) With both PAM and the lastlog feature enabled we would get the
+/var/adm/lastlog file updated right before the last login information is
+displayed (directly by sshd).  This would lead to seeing the current login info
+as the last login info.
+
+C) With both PAM and the lastlog feature disabled we would get neither the last
+login information recorded nor displayed.
+
+D) With PAM disabled and the lastlog feature enabled we would get what we want
+(regarding the last login information handling).  However the PAM disable is
+not an option because PAM constitutes substantial piece in our operating system
+security architecture.
+
+To solve the issue we opted for enabling both PAM and lastlog with patched out
+PAM session management calls.  The USE_LASTLOG guards are used to make it safe
+to disable the native lastlog handling in sshd without removing this patch.
+
+--- openssh-9.7p1/auth-pam.c.orig
++++ openssh-9.7p1/auth-pam.c
+@@ -674,7 +674,9 @@
+ 	pam_set_item(sshpam_handle, PAM_CONV, (const void *)&null_conv);
+ 	if (sshpam_session_open) {
+ 		debug("PAM: closing session");
++#ifndef USE_LASTLOG
+ 		pam_close_session(sshpam_handle, PAM_SILENT);
++#endif /* USE_LASTLOG */
+ 		sshpam_session_open = 0;
+ 	}
+ 	if (sshpam_cred_established) {
+@@ -1216,7 +1218,11 @@
+ 	if (sshpam_err != PAM_SUCCESS)
+ 		fatal("PAM: failed to set PAM_CONV: %s",
+ 		    pam_strerror(sshpam_handle, sshpam_err));
++#ifdef USE_LASTLOG
++	sshpam_err = PAM_SUCCESS;
++#else /* USE_LASTLOG */
+ 	sshpam_err = pam_open_session(sshpam_handle, 0);
++#endif /* USE_LASTLOG */
+ 	if (sshpam_err == PAM_SUCCESS)
+ 		sshpam_session_open = 1;
+ 	else {

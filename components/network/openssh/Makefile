@@ -24,8 +24,6 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS= 64
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
@@ -33,7 +31,7 @@ COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
 COMPONENT_VERSION=	9.7.0.1
 HUMAN_VERSION=		9.7p1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openssh.org
@@ -86,7 +84,6 @@ CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth
 CONFIGURE_OPTIONS += --enable-strip=no
 CONFIGURE_OPTIONS += --without-rpath
-CONFIGURE_OPTIONS += --disable-lastlog
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
@@ -98,9 +95,9 @@ COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/ssh-cop
 COMPONENT_TEST_TARGETS = tests
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += network/ssh-askpass
 REQUIRED_PACKAGES += service/security/kerberos-5
