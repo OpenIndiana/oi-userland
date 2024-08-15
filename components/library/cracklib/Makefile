@@ -13,35 +13,29 @@
 #
 
 BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cracklib
-COMPONENT_VERSION=	2.9.11
+COMPONENT_VERSION=	2.10.2
 COMPONENT_SUMMARY=	CrackLib Library and Dictionaries
 COMPONENT_PROJECT_URL=	https://github.com/cracklib/cracklib
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:ca8b049a3c2d3b2225a1e8d15d613798ebc748e3950388eda2694de507ba6020
+COMPONENT_ARCHIVE_HASH= sha256:e157c78e6f26a97d05e04b6fe9ced468e91fa015cc2b2b7584889d667a958887
 COMPONENT_ARCHIVE_URL=	https://github.com/cracklib/cracklib/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/security/cracklib
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING.LIB
 
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+CFLAGS += $(XPG6MODE)
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --without-python
-
-$(BUILD_DIR)/.dicts:	$(INSTALL_32) $(INSTALL_64)
-	$(ENV) PATH=$(PROTO_DIR)/usr/sbin:$(PATH) $(MAKE) -C $(BUILD_DIR_32) dict-local DESTDIR=$(PROTO_DIR)
-	$(TOUCH) $@
-
-# common targets
-install:	$(INSTALL_32_and_64)	$(BUILD_DIR)/.dicts
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
