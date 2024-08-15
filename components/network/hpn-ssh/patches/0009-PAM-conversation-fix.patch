@@ -1,6 +1,6 @@
---- hpn-ssh-hpn-18.4.1/auth-pam.c.orig
-+++ hpn-ssh-hpn-18.4.1/auth-pam.c
-@@ -1281,11 +1281,13 @@
+--- hpn-ssh-hpn-18.4.2/auth-pam.c.orig
++++ hpn-ssh-hpn-18.4.2/auth-pam.c
+@@ -1287,11 +1287,13 @@
  	free(env);
  }
  
@@ -14,7 +14,7 @@
  static int
  sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
      struct pam_response **resp, void *data)
-@@ -1307,12 +1309,24 @@
+@@ -1313,12 +1315,24 @@
  	for (i = 0; i < n; ++i) {
  		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
  		case PAM_PROMPT_ECHO_OFF:
@@ -39,7 +39,7 @@
  		case PAM_ERROR_MSG:
  		case PAM_TEXT_INFO:
  			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
-@@ -1349,6 +1363,9 @@
+@@ -1355,6 +1369,9 @@
  int
  sshpam_auth_passwd(Authctxt *authctxt, const char *password)
  {
@@ -49,7 +49,7 @@
  	int flags = (options.permit_empty_passwd == 0 ?
  	    PAM_DISALLOW_NULL_AUTHTOK : 0);
  	char *fake = NULL;
-@@ -1369,6 +1386,15 @@
+@@ -1375,6 +1392,15 @@
  	    options.permit_root_login != PERMIT_YES))
  		sshpam_password = fake = fake_password(password);
  
@@ -65,7 +65,7 @@
  	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
  	    (const void *)&passwd_conv);
  	if (sshpam_err != PAM_SUCCESS)
-@@ -1380,6 +1406,16 @@
+@@ -1386,6 +1412,16 @@
  	free(fake);
  	if (sshpam_err == PAM_MAXTRIES)
  		sshpam_set_maxtries_reached(1);
