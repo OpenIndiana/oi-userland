@@ -15,12 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccl
-COMPONENT_VERSION=	1.12.2
+COMPONENT_VERSION=	1.13
 COMPONENT_SUMMARY=	ccl - Clozure Common Lisp
 COMPONENT_PROJECT_URL=	https://ccl.clozure.com/
 COMPONENT_SRC=		ccl
-COMPONENT_ARCHIVE=	ccl-$(COMPONENT_VERSION)-solarisx86.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f058137c92349ccce86a2725c68f4129ed660d07d834b0794de441339366dc8d
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)-solarisx86.tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:be96b859681e5032d0e484b9fb8e0fa63ab36311e5d903eee98bd5a19b508b7a
 COMPONENT_ARCHIVE_URL=  https://github.com/Clozure/ccl/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	runtime/ccl
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -44,15 +44,14 @@ MY_INSTALL = $(BUILD_DIR_64)/.my_installed
 
 CCL_DIRECTORY = /usr/lib/ccl
 
-INST_FILES = bin compiler doc examples level-0  level-1
-INST_FILES += lib  library  objc-bridge  solarisx64-headers 
-INST_FILES += sx86-boot64 sx86cl64 sx86cl64.image  tools  xdump
+INST_FILES = bin compiler doc examples level-0 level-1
+INST_FILES += lib library objc-bridge solarisx64-headers
+INST_FILES += sx86-boot64 sx86cl64 sx86cl64.image tools xdump
 
 COMPONENT_BUILD_ARGS += -C $(BUILD_DIR_$(BITS))/lisp-kernel/solarisx64
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
 
 $(BUILD_CCL_64):	$(BUILD_64)
 	cd $(BUILD_DIR_64) ; $(ENV) $(COMPONENT_BUILD_ENV) \
