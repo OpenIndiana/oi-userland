@@ -22,32 +22,37 @@
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2023, Niklas Poslovski
 #
-BUILD_STYLE=meson
+
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		elinks
-COMPONENT_VERSION=	0.16.1.1
+COMPONENT_VERSION=	0.17.0
+COMPONENT_SUMMARY=	advanced text-mode WWW browser
 COMPONENT_PROJECT_URL=	https://github.com/rkd77/elinks
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:303c6f830b98658dcb813b68432ecde27d3857ccf1e765109fb6b0edb89f5095
+COMPONENT_ARCHIVE_HASH=	sha256:58c73a6694dbb7ccf4e22cee362cf14f1a20c09aaa4273343e8b7df9378b330e
 COMPONENT_ARCHIVE_URL=	https://github.com/rkd77/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/browser/elinks
-COMPONENT_SUMMARY=	advanced text-mode WWW browser
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += $(XPG6MODE)
 
 CONFIGURE_OPTIONS += -Dgpm=false
 CONFIGURE_OPTIONS += -Didn=false
+# We don't have libcss
+CONFIGURE_OPTIONS += -Dlibcss=false
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/tre
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/curl
