@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libFS
-COMPONENT_VERSION= 1.0.9
+COMPONENT_VERSION= 1.0.10
 COMPONENT_FMRI=    x11/library/libfs
 COMPONENT_SUMMARY= libFS - X Font Servers library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:597379438b3242ccc7d7b0fc432dc6c844eca0d4a82a7b82518bfeb203fc208a
+COMPONENT_ARCHIVE_HASH= sha256:9babbd3c86069c98563da044045fdc0ece4ec0c93dcdd2c68aa74eb34b4f3b77
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,4 +37,6 @@ LD_OPTIONS_SO = -M $(PWD)/mapfile-vers
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/xtrans
 
+REQUIRED_PACKAGES += system/library
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
