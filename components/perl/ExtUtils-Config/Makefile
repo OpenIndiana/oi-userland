@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		ExtUtils::Config
-HUMAN_VERSION =			0.009
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.010
 COMPONENT_SUMMARY =		ExtUtils::Config - A wrapper for perl's configuration
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4ef84e73aad50a3be332885d2a3b12f3cab1b1e0bad24e88297a123b4f39f3ce
+	sha256:82e7e4e90cbe380e152f5de6e3e403746982d502dd30197a123652e46610c66d
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
