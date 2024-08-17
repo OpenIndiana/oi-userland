@@ -9,7 +9,7 @@ testpaths: tests
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 4465 items
+collecting ... collected 4532 items
 
 tests/benchmarks/test_complete_benchmark.py::test_complete_valid PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_invalid PASSED
@@ -254,6 +254,8 @@ tests/serializers/test_any.py::test_slots_mixed SKIPPED (slots are o...)
 tests/serializers/test_any.py::test_numpy_float PASSED
 tests/serializers/test_any.py::test_ser_json_inf_nan_with_any PASSED
 tests/serializers/test_any.py::test_ser_json_inf_nan_with_list_of_any PASSED
+tests/serializers/test_any.py::test_simple_any_ser_schema_repr PASSED
+tests/serializers/test_any.py::test_simple_any_ser_schema PASSED
 tests/serializers/test_bytes.py::test_bytes PASSED
 tests/serializers/test_bytes.py::test_bytes_invalid_all PASSED
 tests/serializers/test_bytes.py::test_bytes_invalid_cpython PASSED
@@ -270,6 +272,15 @@ tests/serializers/test_bytes.py::test_bytes_hex PASSED
 tests/serializers/test_bytes.py::test_bytes_base64_dict_key PASSED
 tests/serializers/test_bytes.py::test_any_bytes_base64 PASSED
 tests/serializers/test_bytes.py::test_bytes_mode_set_via_model_config_not_serializer_config PASSED
+tests/serializers/test_complex.py::test_complex_json[(-0.000123+567.89j)--0.000123+567.89j] PASSED
+tests/serializers/test_complex.py::test_complex_json[-1.23j--1.23j] PASSED
+tests/serializers/test_complex.py::test_complex_json[(1.5+0j)-1.5+0j] PASSED
+tests/serializers/test_complex.py::test_complex_json[(1+2j)-1+2j] PASSED
+tests/serializers/test_complex.py::test_complex_json[1j-1j] PASSED
+tests/serializers/test_complex.py::test_complex_json[0j-0j] PASSED
+tests/serializers/test_complex.py::test_complex_json[(-inf+2j)--inf+2j] PASSED
+tests/serializers/test_complex.py::test_complex_json[(inf+2j)-inf+2j] PASSED
+tests/serializers/test_complex.py::test_complex_json[(nan+2j)-NaN+2j] PASSED
 tests/serializers/test_dataclasses.py::test_dataclass PASSED
 tests/serializers/test_dataclasses.py::test_serialization_exclude PASSED
 tests/serializers/test_dataclasses.py::test_serialization_alias PASSED
@@ -543,6 +554,7 @@ tests/serializers/test_model.py::test_extra PASSED
 tests/serializers/test_model.py::test_extra_config PASSED
 tests/serializers/test_model.py::test_extra_config_nested_model PASSED
 tests/serializers/test_model.py::test_extra_custom_serializer PASSED
+tests/serializers/test_model.py::test_no_warn_on_exclude PASSED
 tests/serializers/test_model_root.py::test_model_root PASSED
 tests/serializers/test_model_root.py::test_function_plain_field_serializer_to_python PASSED
 tests/serializers/test_model_root.py::test_function_wrap_field_serializer_to_python PASSED
@@ -598,11 +610,11 @@ tests/serializers/test_serialize_as_any.py::test_serialize_as_any_with_typeddict
 tests/serializers/test_serialize_as_any.py::test_serialize_as_any_with_unrelated_models PASSED
 tests/serializers/test_set_frozenset.py::test_set_any PASSED
 tests/serializers/test_set_frozenset.py::test_frozenset_any PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[apple-apple-`set\\[int\\]` but got `str`] PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[input_value1-json_output1-`set\\[int\\]` but got `list`] PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[input_value2-json_output2-`set\\[int\\]` but got `tuple`] PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[input_value3-json_output3-`set\\[int\\]` but got `frozenset`] PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[input_value4-json_output4-`int` but got `str`] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[apple-apple-`set\\[int\\]` but got `str` with value `'apple'`] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[input_value1-json_output1-`set\\[int\\]` but got `list` with value `\\[1, 2, 3\\]`] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[input_value2-json_output2-`set\\[int\\]` but got `tuple` with value `\\(1, 2, 3\\)`] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[input_value3-json_output3-`set\\[int\\]` but got `frozenset` with value `frozenset\\({1, 2, 3}\\)`] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[input_value4-json_output4-`int` but got `str` with value `'a'`] PASSED
 tests/serializers/test_simple.py::test_simple_serializers[int-1-1-1-None] PASSED
 tests/serializers/test_simple.py::test_simple_serializers[int-1-1-1-any] PASSED
 tests/serializers/test_simple.py::test_simple_serializers[int-10000000000000000000000000000000000000000-10000000000000000000000000000000000000000-10000000000000000000000000000000000000000-None] PASSED
@@ -643,6 +655,7 @@ tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[inf-"Infini
 tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[-inf-"-Infinity"-config10] PASSED
 tests/serializers/test_simple.py::test_float_inf_and_nan_serializers[nan-"NaN"-config11] PASSED
 tests/serializers/test_string.py::test_str PASSED
+tests/serializers/test_string.py::test_huge_str PASSED
 tests/serializers/test_string.py::test_str_fallback PASSED
 tests/serializers/test_string.py::test_str_no_warnings PASSED
 tests/serializers/test_string.py::test_str_errors PASSED
@@ -764,6 +777,9 @@ tests/serializers/test_union.py::test_union_serializer_picks_exact_type_over_sub
 tests/serializers/test_union.py::test_union_serializer_picks_exact_type_over_subclass_json[core_schema_left8-core_schema_right8-input_value8-1-True] PASSED
 tests/serializers/test_union.py::test_union_serializer_picks_exact_type_over_subclass_json[core_schema_left9-core_schema_right9-_1-_1-False] PASSED
 tests/serializers/test_union.py::test_union_serializer_picks_exact_type_over_subclass_json[core_schema_left9-core_schema_right9-_1-_1-True] PASSED
+tests/serializers/test_union.py::test_tagged_union PASSED
+tests/serializers/test_union.py::test_union_float_int PASSED
+tests/serializers/test_union.py::test_custom_serializer PASSED
 tests/serializers/test_url.py::test_url PASSED
 tests/serializers/test_url.py::test_multi_host_url PASSED
 tests/serializers/test_url.py::test_url_dict_keys PASSED
@@ -953,6 +969,8 @@ tests/test_errors.py::test_error_type[decimal_max_places-Decimal input should ha
 tests/test_errors.py::test_error_type[decimal_max_places-Decimal input should have no more than 1 decimal place-context110] PASSED
 tests/test_errors.py::test_error_type[decimal_whole_digits-Decimal input should have no more than 42 digits before the decimal point-context111] PASSED
 tests/test_errors.py::test_error_type[decimal_whole_digits-Decimal input should have no more than 1 digit before the decimal point-context112] PASSED
+tests/test_errors.py::test_error_type[complex_type-Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex-None] PASSED
+tests/test_errors.py::test_error_type[complex_str_parsing-Input should be a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex-None] PASSED
 tests/test_errors.py::test_all_errors_covered PASSED
 tests/test_errors.py::test_error_decimal PASSED
 tests/test_errors.py::test_custom_error_decimal PASSED
@@ -1155,6 +1173,7 @@ tests/test_schema_functions.py::test_schema_functions[dataclass_schema-(<class '
 tests/test_schema_functions.py::test_schema_functions[uuid_schema-()-{'type': 'uuid'}] PASSED
 tests/test_schema_functions.py::test_schema_functions[decimal_schema-()-{'type': 'decimal'}] PASSED
 tests/test_schema_functions.py::test_schema_functions[decimal_schema-(multiple_of=5, gt=1.2)-{'type': 'decimal', 'multiple_of': 5, 'gt': 1.2}] PASSED
+tests/test_schema_functions.py::test_schema_functions[complex_schema-()-{'type': 'complex'}] PASSED
 tests/test_schema_functions.py::test_all_schema_functions_used PASSED
 tests/test_schema_functions.py::test_invalid_custom_error PASSED
 tests/test_schema_functions.py::test_invalid_custom_error_type PASSED
@@ -1525,6 +1544,49 @@ tests/validators/test_chain.py::test_json[json-1.44-expected2] PASSED
 tests/validators/test_chain.py::test_flatten PASSED
 tests/validators/test_chain.py::test_chain_empty PASSED
 tests/validators/test_chain.py::test_chain_one PASSED
+tests/validators/test_complex.py::test_complex_cases[(2+4j)-(2+4j)] PASSED
+tests/validators/test_complex.py::test_complex_cases['2'-(2+0j)] PASSED
+tests/validators/test_complex.py::test_complex_cases['2j'-2j] PASSED
+tests/validators/test_complex.py::test_complex_cases['+1.23e-4-5.67e+8J'-(0.000123-567000000j)] PASSED
+tests/validators/test_complex.py::test_complex_cases['1.5-j'-(1.5-1j)] PASSED
+tests/validators/test_complex.py::test_complex_cases['-j'--1j] PASSED
+tests/validators/test_complex.py::test_complex_cases['j'-1j] PASSED
+tests/validators/test_complex.py::test_complex_cases[3-(3+0j)] PASSED
+tests/validators/test_complex.py::test_complex_cases[2.0-(2+0j)] PASSED
+tests/validators/test_complex.py::test_complex_cases['1e-700j'-0j] PASSED
+tests/validators/test_complex.py::test_complex_cases[''-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases['\\t( -1.23+4.5J   \\n'-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases[{'real': 2, 'imag': 4}-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases[{'real': 'test', 'imag': 1}-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases[{'real': True, 'imag': 1}-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases['foobar'-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases[[]-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases[[('x', 'y')]-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases[()-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases[(('x', 'y'),)-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_cases[<tests.validators.test_complex.Foobar object at $(POINTER)>-Err('Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict[(2+4j)-(2+4j)] PASSED
+tests/validators/test_complex.py::test_complex_strict['2'-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict['2j'-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict['+1.23e-4-5.67e+8J'-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict['1.5-j'-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict['-j'-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict['j'-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict[3-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict[2.0-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict['1e-700j'-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict[''-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict['\\t( -1.23+4.5J   \\n'-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict[{'real': 2, 'imag': 4}-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict[{'real': 'test', 'imag': 1}-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict[{'real': True, 'imag': 1}-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_complex_strict['foobar'-Err('Input should be an instance of complex')] PASSED
+tests/validators/test_complex.py::test_valid_complex_string_with_space PASSED
+tests/validators/test_complex.py::test_nan_inf_complex PASSED
+tests/validators/test_complex.py::test_overflow_complex PASSED
+tests/validators/test_complex.py::test_json_complex PASSED
+tests/validators/test_complex.py::test_json_complex_strict PASSED
+tests/validators/test_complex.py::test_string_complex PASSED
 tests/validators/test_custom_error.py::test_custom_error[python] PASSED
 tests/validators/test_custom_error.py::test_custom_error[json] PASSED
 tests/validators/test_custom_error.py::test_custom_error_type[python] PASSED
@@ -2063,6 +2125,9 @@ tests/validators/test_decimal.py::test_validate_scientific_notation_from_json[1E
 tests/validators/test_decimal.py::test_validate_scientific_notation_from_json[12E1-expected17] PASSED
 tests/validators/test_decimal.py::test_validate_max_digits_and_decimal_places PASSED
 tests/validators/test_decimal.py::test_validate_max_digits_and_decimal_places_edge_case PASSED
+tests/validators/test_decimal.py::test_str_validation_w_strict PASSED
+tests/validators/test_decimal.py::test_str_validation_w_lax PASSED
+tests/validators/test_decimal.py::test_union_with_str_prefers_str PASSED
 tests/validators/test_definitions.py::test_list_with_def PASSED
 tests/validators/test_definitions.py::test_ignored_def PASSED
 tests/validators/test_definitions.py::test_extract_used_refs_ignores_metadata PASSED
@@ -2140,6 +2205,8 @@ tests/validators/test_dict.py::test_dict_length_constraints[kwargs2-input_value2
 tests/validators/test_dict.py::test_dict_length_constraints[kwargs3-input_value3-expected3] PASSED
 tests/validators/test_dict.py::test_dict_length_constraints[kwargs4-input_value4-expected4] PASSED
 tests/validators/test_dict.py::test_json_dict PASSED
+tests/validators/test_dict.py::test_dict_complex_key PASSED
+tests/validators/test_dict.py::test_json_dict_complex_key PASSED
 tests/validators/test_enums.py::test_plain_enum PASSED
 tests/validators/test_enums.py::test_int_enum PASSED
 tests/validators/test_enums.py::test_str_enum PASSED
@@ -4477,4 +4544,4 @@ tests/validators/test_with_default.py::test_validate_default_raises_dataclass[in
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value9-expected9] PASSED
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value10-expected10] PASSED
 
-======== 4372 passed, 91 skipped, 2 xfailed ========
+======== 4439 passed, 91 skipped, 2 xfailed ========
