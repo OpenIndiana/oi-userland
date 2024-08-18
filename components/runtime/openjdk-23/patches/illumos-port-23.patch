@@ -1,0 +1,38 @@
+--- a/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java	Wed Mar 29 20:12:02 2023
++++ b/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java	Thu Mar 30 13:44:42 2023
+@@ -81,6 +81,10 @@
+      * The AIX Operating system.
+      */
+     AIX,
++    /**
++     * Operating systems based on Solaris or illumos.
++     */
++    SOLARIS,
+     ;
+ 
+     // The current OperatingSystem
+@@ -118,6 +122,14 @@
+         return PlatformProps.TARGET_OS_IS_AIX;
+     }
+ 
++    /**
++     * {@return {@code true} if built for Solaris or illumos operating systems}
++     */
++    @ForceInline
++    public static boolean isSolaris() {
++        return PlatformProps.TARGET_OS_IS_SOLARIS;
++    }
++
+     /**
+      * {@return the current operating system}
+      */
+--- a/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template	Wed Mar 29 20:12:02 2023
++++ b/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template	Thu Mar 30 13:43:29 2023
+@@ -39,6 +39,7 @@
+     static final boolean TARGET_OS_IS_MACOS   = "@@OPENJDK_TARGET_OS@@" == "macos";
+     static final boolean TARGET_OS_IS_WINDOWS = "@@OPENJDK_TARGET_OS@@" == "windows";
+     static final boolean TARGET_OS_IS_AIX     = "@@OPENJDK_TARGET_OS@@" == "aix";
++    static final boolean TARGET_OS_IS_SOLARIS = "@@OPENJDK_TARGET_OS@@" == "solaris";
+ 
+     // The Architecture value for the current architecture
+     static final String CURRENT_ARCH_STRING = "@@OPENJDK_TARGET_CPU@@";
