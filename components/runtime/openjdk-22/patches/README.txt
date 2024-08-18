@@ -5,10 +5,40 @@ See also README-zero.txt for note on a project zero variant.
 
 JDK 22 now switched to the jdk22 stabilisation repo
 
-Issues known that indicate serious bugs, likely due to not integrating
-loom correctly as they date back to that change.
-* jshell doesn't work
-* illuminate doesn't work
+22.0.2
+
+Removed last remnants of extended_FILE_stdio, it's unused as 32-bit
+only, and the code to enable it had already been removed.
+
+Remove local copies of os::dont_yield() os::naked_yield()
+
+Centralization of breakpoint()
+
+Cleanup: switch to SolarisEventPortPoller
+
+22.0.1 respin 1
+
+Fixed the patch for src/java.base/unix/classes/java/lang/ProcessImpl.java
+which fixes the startup hang in jshell and illuminate (and hopefully
+the minecraft reports)
+
+22.0.1
+
+New undefined symbol os::pd_dll_unload; copy the implementation from
+os_linux.cpp
+
+Cleanup: missed the dropping of TIERED in 17+8, it's now
+COMPILER1_AND_COMPILER2
+
+22+34, 22+35, 22+36
+
+No changes.
+
+22+33
+
+No changes.
+
+Tidied up the fatal(dlerror()) warning.
 
 22+28, 22+29, 22+30, 22+31, 22+32
 
