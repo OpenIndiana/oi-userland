@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typer
 HUMAN_VERSION =			0.12.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Typer, build great CLIs. Easy to code. Based on Python type hints.
 COMPONENT_PROJECT_URL =		https://github.com/fastapi/typer
 COMPONENT_ARCHIVE_HASH =	\
