@@ -20,12 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Clone
-HUMAN_VERSION =			0.46
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.47
 COMPONENT_SUMMARY =		Clone - recursively copy Perl datatypes
-COMPONENT_CPAN_AUTHOR =		GARU
+COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:aadeed5e4c8bd6bbdf68c0dd0066cb513e16ab9e5b4382dc4a0aafd55890697b
+	sha256:4c2c0cb9a483efbf970cb1a75b2ca75b0e18cb84bcb5c09624f86e26b09c211d
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
