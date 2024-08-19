@@ -11,31 +11,30 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Automat
+#   $WS_TOOLS/python-integrate-project -d python/Automat automat
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Automat
-COMPONENT_VERSION =		22.10.0
-COMPONENT_SUMMARY =		Automat - Self-service finite-state machines for the programmer on the go.
-COMPONENT_PROJECT_URL =		https://github.com/glyph/Automat
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7a/7b/9c3d26d8a0416eefbc0428f168241b32657ca260fb7ef507596ff5c2f6c4/Automat-22.10.0.tar.gz
+COMPONENT_NAME =		automat
+HUMAN_VERSION =			24.8.0
+COMPONENT_SUMMARY =		Self-service finite-state machines for the programmer on the go.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e56beb84edad19dcc11d30e8d9b895f75deeb5ef5e96b84a467066b3b84bb04e
+	sha256:f55735fdae5f461176ba2c8be7438ee06e47c4028ad80d1b4d5abef96d9d5863
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/six
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/graphviz
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/twisted
