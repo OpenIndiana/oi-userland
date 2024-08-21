@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.develop
-HUMAN_VERSION =			8.15.1
+HUMAN_VERSION =			8.16.0
 COMPONENT_SUMMARY =		Development utilities by jaraco
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f2fcd37cc5fd1c064d9acf7fc142620bbdb736be07b655d72e4dfb8be0ff0fd5
+	sha256:12cf4f221e8529ba690442001adc710ef6dd31b22f06547b3edf2f61f15eb154
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,7 +31,6 @@ COMPONENT_SRC =			jaraco_develop-$(HUMAN_VERSION)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/autocommand
 PYTHON_REQUIRED_PACKAGES += library/python/build
 PYTHON_REQUIRED_PACKAGES += library/python/configupdater
 PYTHON_REQUIRED_PACKAGES += library/python/ini2toml
@@ -50,6 +49,8 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/subprocess-tee
 PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
+PYTHON_REQUIRED_PACKAGES += library/python/typer
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
