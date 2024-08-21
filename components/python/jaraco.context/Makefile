@@ -19,13 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.context
-HUMAN_VERSION =			5.3.0
-COMPONENT_SUMMARY =		jaraco.context - Useful decorators and context managers
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.context
+HUMAN_VERSION =			6.0.1
+COMPONENT_SUMMARY =		Useful decorators and context managers
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c2f67165ce1f9be20f32f650f25d8edfc1646a8aeee48ae06fb35f90763576d2
+	sha256:9bae4ea555cf0b14938dc0aee7c9f32ed303aa20a3b73e7dc80111628792d1b3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =			jaraco_context-$(HUMAN_VERSION)
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
@@ -44,7 +45,6 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/backports-tarfile
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/portend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
