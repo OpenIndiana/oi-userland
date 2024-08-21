@@ -1,5 +1,706 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -W error::DeprecationWarning -W error::PendingDeprecationWarning -m unittest -v
+test_additional_headers (tests.asyncio.test_client.ClientTests)
+Client can set additional headers with additional_headers. ... ok
+test_compression_is_enabled (tests.asyncio.test_client.ClientTests)
+Client enables compression by default. ... ok
+test_connection (tests.asyncio.test_client.ClientTests)
+Client connects to server and the handshake succeeds. ... ok
+test_connection_closed_during_handshake (tests.asyncio.test_client.ClientTests)
+Client reads EOF before receiving handshake response from server. ... ok
+test_custom_connection_factory (tests.asyncio.test_client.ClientTests)
+Client runs ClientConnection factory provided in create_connection. ... ok
+test_disable_compression (tests.asyncio.test_client.ClientTests)
+Client disables compression. ... ok
+test_disable_keepalive (tests.asyncio.test_client.ClientTests)
+Client disables keepalive. ... ok
+test_existing_socket (tests.asyncio.test_client.ClientTests)
+Client connects using a pre-existing socket. ... ok
+test_handshake_fails (tests.asyncio.test_client.ClientTests)
+Client connects to server but the handshake fails. ... ok
+test_invalid_uri (tests.asyncio.test_client.ClientTests)
+Client receives an invalid URI. ... ok
+test_keepalive_is_enabled (tests.asyncio.test_client.ClientTests)
+Client enables keepalive and measures latency by default. ... ok
+test_override_user_agent (tests.asyncio.test_client.ClientTests)
+Client can override User-Agent header with user_agent_header. ... ok
+test_remove_user_agent (tests.asyncio.test_client.ClientTests)
+Client can remove User-Agent header with user_agent_header. ... ok
+test_tcp_connection_fails (tests.asyncio.test_client.ClientTests)
+Client fails to connect to server. ... ok
+test_timeout_during_handshake (tests.asyncio.test_client.ClientTests)
+Client times out before receiving handshake response from server. ... ok
+test_invalid_subprotocol (tests.asyncio.test_client.ClientUsageErrorsTests)
+Client rejects single value of subprotocols. ... ok
+test_secure_uri_without_ssl (tests.asyncio.test_client.ClientUsageErrorsTests)
+Client rejects no ssl when URI is secure. ... ok
+test_ssl_without_secure_uri (tests.asyncio.test_client.ClientUsageErrorsTests)
+Client rejects ssl when URI isn't secure. ... ok
+test_unix_with_path_and_sock (tests.asyncio.test_client.ClientUsageErrorsTests)
+Unix client rejects path when sock is provided. ... ok
+test_unix_without_path_or_sock (tests.asyncio.test_client.ClientUsageErrorsTests)
+Unix client requires path when sock isn't provided. ... ok
+test_unsupported_compression (tests.asyncio.test_client.ClientUsageErrorsTests)
+Client rejects incorrect value of compression. ... ok
+test_connection (tests.asyncio.test_client.SecureClientTests)
+Client connects to server securely. ... ok
+test_reject_invalid_server_certificate (tests.asyncio.test_client.SecureClientTests)
+Client rejects certificate where server certificate isn't trusted. ... ok
+test_reject_invalid_server_hostname (tests.asyncio.test_client.SecureClientTests)
+Client rejects certificate where server hostname doesn't match. ... ok
+test_set_server_hostname_explicitly (tests.asyncio.test_client.SecureClientTests)
+Client sets server_hostname to the value provided in argument. ... ok
+test_set_server_hostname_implicitly (tests.asyncio.test_client.SecureClientTests)
+Client sets server_hostname to the host in the WebSocket URI. ... ok
+test_connection (tests.asyncio.test_client.SecureUnixClientTests)
+Client connects to server securely over a Unix socket. ... ok
+test_set_server_hostname (tests.asyncio.test_client.SecureUnixClientTests)
+Client sets server_hostname to the host in the WebSocket URI. ... ok
+test_connection (tests.asyncio.test_client.UnixClientTests)
+Client connects to server over a Unix socket. ... ok
+test_set_host_header (tests.asyncio.test_client.UnixClientTests)
+Client sets the Host header to the host in the WebSocket URI. ... ok
+test_acknowledge_ping (tests.asyncio.test_connection.ClientConnectionTests)
+ping is acknowledged by a pong with the same payload. ... ok
+test_acknowledge_ping_non_matching_pong (tests.asyncio.test_connection.ClientConnectionTests)
+ping isn't acknowledged by a pong with a different payload. ... ok
+test_acknowledge_previous_ping (tests.asyncio.test_connection.ClientConnectionTests)
+ping is acknowledged by a pong with the same payload as a later ping. ... ok
+test_aenter (tests.asyncio.test_connection.ClientConnectionTests)
+__aenter__ returns the connection itself. ... ok
+test_aexit (tests.asyncio.test_connection.ClientConnectionTests)
+__aexit__ closes the connection with code 1000. ... ok
+test_aiter_binary (tests.asyncio.test_connection.ClientConnectionTests)
+__aiter__ yields binary messages. ... ok
+test_aiter_connection_closed_error (tests.asyncio.test_connection.ClientConnectionTests)
+__aiter__ raises ConnectionClosedError after an error. ... ok
+test_aiter_connection_closed_ok (tests.asyncio.test_connection.ClientConnectionTests)
+__aiter__ terminates after a normal closure. ... ok
+test_aiter_mixed (tests.asyncio.test_connection.ClientConnectionTests)
+__aiter__ yields a mix of text and binary messages. ... ok
+test_aiter_text (tests.asyncio.test_connection.ClientConnectionTests)
+__aiter__ yields text messages. ... ok
+test_broadcast_binary (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast broadcasts a binary message. ... ok
+test_broadcast_binary_reports_no_errors (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast broadcasts a binary message without raising exceptions. ... skipped 'raise_exceptions requires Python 3.11+'
+test_broadcast_no_clients (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast does nothing when called with an empty list of clients. ... ok
+test_broadcast_reports_connection_failing_to_send (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast raises exceptions for connections failing to send. ... skipped 'raise_exceptions requires Python 3.11+'
+test_broadcast_reports_connection_with_send_blocked (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast raises exceptions for connections blocked in send. ... skipped 'raise_exceptions requires Python 3.11+'
+test_broadcast_skips_closed_connection (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast ignores closed connections. ... ok
+test_broadcast_skips_closing_connection (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast ignores closing connections. ... ok
+test_broadcast_skips_connection_failing_to_send (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast logs a warning when a connection fails to send. ... ok
+test_broadcast_skips_connection_with_send_blocked (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast logs a warning when a connection is blocked in send. ... ok
+test_broadcast_text (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast broadcasts a text message. ... ok
+test_broadcast_text_reports_no_errors (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast broadcasts a text message without raising exceptions. ... skipped 'raise_exceptions requires Python 3.11+'
+test_broadcast_two_clients (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast broadcasts a message to several clients. ... ok
+test_broadcast_type_error (tests.asyncio.test_connection.ClientConnectionTests)
+broadcast raises TypeError when called with an unsupported type. ... ok
+test_close (tests.asyncio.test_connection.ClientConnectionTests)
+close sends a close frame. ... ok
+test_close_does_not_wait_for_recv (tests.asyncio.test_connection.ClientConnectionTests) ... ok
+test_close_during_recv (tests.asyncio.test_connection.ClientConnectionTests)
+close aborts recv when called concurrently with recv. ... ok
+test_close_during_send (tests.asyncio.test_connection.ClientConnectionTests)
+close fails the connection when called concurrently with send. ... ok
+test_close_explicit_code_reason (tests.asyncio.test_connection.ClientConnectionTests)
+close sends a close frame with a given code and reason. ... ok
+test_close_idempotency (tests.asyncio.test_connection.ClientConnectionTests)
+close does nothing if the connection is already closed. ... ok
+test_close_no_timeout_waits_for_close_frame (tests.asyncio.test_connection.ClientConnectionTests)
+close without timeout waits for a close frame (then EOF) before returning. ... ok
+test_close_no_timeout_waits_for_connection_closed (tests.asyncio.test_connection.ClientConnectionTests)
+close without timeout waits for EOF before returning. ... ok
+test_close_timeout (tests.asyncio.test_connection.ClientConnectionTests)
+close_timeout parameter configures close timeout. ... ok
+test_close_timeout_waiting_for_close_frame (tests.asyncio.test_connection.ClientConnectionTests)
+close times out if no close frame is received. ... ok
+test_close_timeout_waiting_for_connection_closed (tests.asyncio.test_connection.ClientConnectionTests)
+close times out if EOF isn't received. ... ok
+test_close_waits_for_close_frame (tests.asyncio.test_connection.ClientConnectionTests)
+close waits for a close frame (then EOF) before returning. ... ok
+test_close_waits_for_connection_closed (tests.asyncio.test_connection.ClientConnectionTests)
+close waits for EOF before returning. ... ok
+test_disable_keepalive (tests.asyncio.test_connection.ClientConnectionTests)
+keepalive is disabled when ping_interval is None. ... ok
+test_exit_with_exception (tests.asyncio.test_connection.ClientConnectionTests)
+__exit__ with an exception closes the connection with code 1011. ... ok
+test_id (tests.asyncio.test_connection.ClientConnectionTests)
+Connection has an id attribute. ... ok
+test_keepalive (tests.asyncio.test_connection.ClientConnectionTests)
+keepalive sends pings at ping_interval and measures latency. ... ok
+test_keepalive_ignores_timeout (tests.asyncio.test_connection.ClientConnectionTests)
+keepalive ignores timeouts if ping_timeout isn't set. ... ok
+test_keepalive_reports_errors (tests.asyncio.test_connection.ClientConnectionTests)
+keepalive reports unexpected errors in logs. ... ok
+test_keepalive_terminates_while_sleeping (tests.asyncio.test_connection.ClientConnectionTests)
+keepalive task terminates while waiting to send a ping. ... ok
+test_keepalive_terminates_while_waiting_for_pong (tests.asyncio.test_connection.ClientConnectionTests)
+keepalive task terminates while waiting to receive a pong. ... ok
+test_keepalive_times_out (tests.asyncio.test_connection.ClientConnectionTests)
+keepalive closes the connection if ping_timeout elapses. ... ok
+test_local_address (tests.asyncio.test_connection.ClientConnectionTests)
+Connection provides a local_address attribute. ... ok
+test_logger (tests.asyncio.test_connection.ClientConnectionTests)
+Connection has a logger attribute. ... ok
+test_max_queue (tests.asyncio.test_connection.ClientConnectionTests)
+max_queue parameter configures high-water mark of frames buffer. ... ok
+test_max_queue_tuple (tests.asyncio.test_connection.ClientConnectionTests)
+max_queue parameter configures high-water mark of frames buffer. ... ok
+test_ping (tests.asyncio.test_connection.ClientConnectionTests)
+ping sends a ping frame with a random payload. ... ok
+test_ping_duplicate_payload (tests.asyncio.test_connection.ClientConnectionTests)
+ping rejects the same payload until receiving the pong. ... ok
+test_ping_explicit_binary (tests.asyncio.test_connection.ClientConnectionTests)
+ping sends a ping frame with a payload provided as binary. ... ok
+test_ping_explicit_text (tests.asyncio.test_connection.ClientConnectionTests)
+ping sends a ping frame with a payload provided as text. ... ok
+test_pong (tests.asyncio.test_connection.ClientConnectionTests)
+pong sends a pong frame. ... ok
+test_pong_explicit_binary (tests.asyncio.test_connection.ClientConnectionTests)
+pong sends a pong frame with a payload provided as binary. ... ok
+test_pong_explicit_text (tests.asyncio.test_connection.ClientConnectionTests)
+pong sends a pong frame with a payload provided as text. ... ok
+test_recv_binary (tests.asyncio.test_connection.ClientConnectionTests)
+recv receives a binary message. ... ok
+test_recv_cancellation_before_receiving (tests.asyncio.test_connection.ClientConnectionTests)
+recv can be cancelled before receiving a frame. ... ok
+test_recv_cancellation_while_receiving (tests.asyncio.test_connection.ClientConnectionTests)
+recv cannot be cancelled after receiving a frame. ... ok
+test_recv_connection_closed_error (tests.asyncio.test_connection.ClientConnectionTests)
+recv raises ConnectionClosedError after an error. ... ok
+test_recv_connection_closed_ok (tests.asyncio.test_connection.ClientConnectionTests)
+recv raises ConnectionClosedOK after a normal closure. ... ok
+test_recv_decoded_binary (tests.asyncio.test_connection.ClientConnectionTests)
+recv receives an UTF-8 decoded binary message. ... ok
+test_recv_during_recv (tests.asyncio.test_connection.ClientConnectionTests)
+recv raises RuntimeError when called concurrently with itself. ... ok
+test_recv_during_recv_streaming (tests.asyncio.test_connection.ClientConnectionTests)
+recv raises RuntimeError when called concurrently with recv_streaming. ... ok
+test_recv_encoded_text (tests.asyncio.test_connection.ClientConnectionTests)
+recv receives an UTF-8 encoded text message. ... ok
+test_recv_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
+recv receives a fragmented binary message. ... ok
+test_recv_fragmented_text (tests.asyncio.test_connection.ClientConnectionTests)
+recv receives a fragmented text message. ... ok
+test_recv_streaming_binary (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming receives a binary message. ... ok
+test_recv_streaming_cancellation_before_receiving (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming can be cancelled before receiving a frame. ... ok
+test_recv_streaming_cancellation_while_receiving (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming cannot be cancelled after receiving a frame. ... ok
+test_recv_streaming_connection_closed_error (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming raises ConnectionClosedError after an error. ... ok
+test_recv_streaming_connection_closed_ok (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming raises ConnectionClosedOK after a normal closure. ... ok
+test_recv_streaming_decoded_binary (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming receives a UTF-8 decoded binary message. ... ok
+test_recv_streaming_during_recv (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming raises RuntimeError when called concurrently with recv. ... ok
+test_recv_streaming_during_recv_streaming (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming raises RuntimeError when called concurrently with itself. ... ok
+test_recv_streaming_encoded_text (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming receives an UTF-8 encoded text message. ... ok
+test_recv_streaming_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming receives a fragmented binary message. ... ok
+test_recv_streaming_fragmented_text (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming receives a fragmented text message. ... ok
+test_recv_streaming_text (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming receives a text message. ... ok
+test_recv_text (tests.asyncio.test_connection.ClientConnectionTests)
+recv receives a text message. ... ok
+test_remote_address (tests.asyncio.test_connection.ClientConnectionTests)
+Connection provides a remote_address attribute. ... ok
+test_request (tests.asyncio.test_connection.ClientConnectionTests)
+Connection has a request attribute. ... ok
+test_response (tests.asyncio.test_connection.ClientConnectionTests)
+Connection has a response attribute. ... ok
+test_send_async_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a fragmented binary message asynchronously. ... ok
+test_send_async_fragmented_text (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a fragmented text message asynchronously. ... ok
+test_send_binary (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a binary message. ... ok
+test_send_connection_closed_error (tests.asyncio.test_connection.ClientConnectionTests)
+send raises ConnectionClosedError after an error. ... ok
+test_send_connection_closed_ok (tests.asyncio.test_connection.ClientConnectionTests)
+send raises ConnectionClosedOK after a normal closure. ... ok
+test_send_dict (tests.asyncio.test_connection.ClientConnectionTests)
+send raises TypeError when called with a dict. ... ok
+test_send_during_send_async (tests.asyncio.test_connection.ClientConnectionTests)
+send waits for a previous call to send to complete. ... ok
+test_send_empty_async_iterable (tests.asyncio.test_connection.ClientConnectionTests)
+send does nothing when called with an empty async iterable. ... ok
+test_send_empty_iterable (tests.asyncio.test_connection.ClientConnectionTests)
+send does nothing when called with an empty iterable. ... ok
+test_send_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a fragmented binary message. ... ok
+test_send_fragmented_text (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a fragmented text message. ... ok
+test_send_mixed_async_iterable (tests.asyncio.test_connection.ClientConnectionTests)
+send raises TypeError when called with an iterable of inconsistent types. ... ok
+test_send_mixed_iterable (tests.asyncio.test_connection.ClientConnectionTests)
+send raises TypeError when called with an iterable of inconsistent types. ... ok
+test_send_text (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a text message. ... ok
+test_send_unsupported_async_iterable (tests.asyncio.test_connection.ClientConnectionTests)
+send raises TypeError when called with an iterable of unsupported type. ... ok
+test_send_unsupported_iterable (tests.asyncio.test_connection.ClientConnectionTests)
+send raises TypeError when called with an iterable of unsupported type. ... ok
+test_send_unsupported_type (tests.asyncio.test_connection.ClientConnectionTests)
+send raises TypeError when called with an unsupported type. ... ok
+test_send_while_send_async_blocked (tests.asyncio.test_connection.ClientConnectionTests)
+send waits for a previous call to send to complete. ... ok
+test_send_while_send_blocked (tests.asyncio.test_connection.ClientConnectionTests)
+send waits for a previous call to send to complete. ... ok
+test_state (tests.asyncio.test_connection.ClientConnectionTests)
+Connection has a state attribute. ... ok
+test_subprotocol (tests.asyncio.test_connection.ClientConnectionTests)
+Connection has a subprotocol attribute. ... ok
+test_unexpected_failure_in_data_received (tests.asyncio.test_connection.ClientConnectionTests)
+Unexpected internal error in data_received() is correctly reported. ... ok
+test_unexpected_failure_in_send_context (tests.asyncio.test_connection.ClientConnectionTests)
+Unexpected internal error in send_context() is correctly reported. ... ok
+test_wait_closed (tests.asyncio.test_connection.ClientConnectionTests)
+wait_closed waits for the connection to close. ... ok
+test_write_limit (tests.asyncio.test_connection.ClientConnectionTests)
+write_limit parameter configures high-water mark of write buffer. ... ok
+test_write_limits (tests.asyncio.test_connection.ClientConnectionTests)
+write_limit parameter configures high and low-water marks of write buffer. ... ok
+test_writing_in_data_received_fails (tests.asyncio.test_connection.ClientConnectionTests)
+Error when responding to incoming frames is correctly reported. ... ok
+test_writing_in_send_context_fails (tests.asyncio.test_connection.ClientConnectionTests)
+Error when sending outgoing frame is correctly reported. ... ok
+test_acknowledge_ping (tests.asyncio.test_connection.ServerConnectionTests)
+ping is acknowledged by a pong with the same payload. ... ok
+test_acknowledge_ping_non_matching_pong (tests.asyncio.test_connection.ServerConnectionTests)
+ping isn't acknowledged by a pong with a different payload. ... ok
+test_acknowledge_previous_ping (tests.asyncio.test_connection.ServerConnectionTests)
+ping is acknowledged by a pong with the same payload as a later ping. ... ok
+test_aenter (tests.asyncio.test_connection.ServerConnectionTests)
+__aenter__ returns the connection itself. ... ok
+test_aexit (tests.asyncio.test_connection.ServerConnectionTests)
+__aexit__ closes the connection with code 1000. ... ok
+test_aiter_binary (tests.asyncio.test_connection.ServerConnectionTests)
+__aiter__ yields binary messages. ... ok
+test_aiter_connection_closed_error (tests.asyncio.test_connection.ServerConnectionTests)
+__aiter__ raises ConnectionClosedError after an error. ... ok
+test_aiter_connection_closed_ok (tests.asyncio.test_connection.ServerConnectionTests)
+__aiter__ terminates after a normal closure. ... ok
+test_aiter_mixed (tests.asyncio.test_connection.ServerConnectionTests)
+__aiter__ yields a mix of text and binary messages. ... ok
+test_aiter_text (tests.asyncio.test_connection.ServerConnectionTests)
+__aiter__ yields text messages. ... ok
+test_broadcast_binary (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast broadcasts a binary message. ... ok
+test_broadcast_binary_reports_no_errors (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast broadcasts a binary message without raising exceptions. ... skipped 'raise_exceptions requires Python 3.11+'
+test_broadcast_no_clients (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast does nothing when called with an empty list of clients. ... ok
+test_broadcast_reports_connection_failing_to_send (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast raises exceptions for connections failing to send. ... skipped 'raise_exceptions requires Python 3.11+'
+test_broadcast_reports_connection_with_send_blocked (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast raises exceptions for connections blocked in send. ... skipped 'raise_exceptions requires Python 3.11+'
+test_broadcast_skips_closed_connection (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast ignores closed connections. ... ok
+test_broadcast_skips_closing_connection (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast ignores closing connections. ... ok
+test_broadcast_skips_connection_failing_to_send (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast logs a warning when a connection fails to send. ... ok
+test_broadcast_skips_connection_with_send_blocked (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast logs a warning when a connection is blocked in send. ... ok
+test_broadcast_text (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast broadcasts a text message. ... ok
+test_broadcast_text_reports_no_errors (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast broadcasts a text message without raising exceptions. ... skipped 'raise_exceptions requires Python 3.11+'
+test_broadcast_two_clients (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast broadcasts a message to several clients. ... ok
+test_broadcast_type_error (tests.asyncio.test_connection.ServerConnectionTests)
+broadcast raises TypeError when called with an unsupported type. ... ok
+test_close (tests.asyncio.test_connection.ServerConnectionTests)
+close sends a close frame. ... ok
+test_close_does_not_wait_for_recv (tests.asyncio.test_connection.ServerConnectionTests) ... ok
+test_close_during_recv (tests.asyncio.test_connection.ServerConnectionTests)
+close aborts recv when called concurrently with recv. ... ok
+test_close_during_send (tests.asyncio.test_connection.ServerConnectionTests)
+close fails the connection when called concurrently with send. ... ok
+test_close_explicit_code_reason (tests.asyncio.test_connection.ServerConnectionTests)
+close sends a close frame with a given code and reason. ... ok
+test_close_idempotency (tests.asyncio.test_connection.ServerConnectionTests)
+close does nothing if the connection is already closed. ... ok
+test_close_no_timeout_waits_for_close_frame (tests.asyncio.test_connection.ServerConnectionTests)
+close without timeout waits for a close frame (then EOF) before returning. ... ok
+test_close_no_timeout_waits_for_connection_closed (tests.asyncio.test_connection.ServerConnectionTests)
+close without timeout waits for EOF before returning. ... skipped 'only relevant on the client-side'
+test_close_timeout (tests.asyncio.test_connection.ServerConnectionTests)
+close_timeout parameter configures close timeout. ... ok
+test_close_timeout_waiting_for_close_frame (tests.asyncio.test_connection.ServerConnectionTests)
+close times out if no close frame is received. ... ok
+test_close_timeout_waiting_for_connection_closed (tests.asyncio.test_connection.ServerConnectionTests)
+close times out if EOF isn't received. ... skipped 'only relevant on the client-side'
+test_close_waits_for_close_frame (tests.asyncio.test_connection.ServerConnectionTests)
+close waits for a close frame (then EOF) before returning. ... ok
+test_close_waits_for_connection_closed (tests.asyncio.test_connection.ServerConnectionTests)
+close waits for EOF before returning. ... skipped 'only relevant on the client-side'
+test_disable_keepalive (tests.asyncio.test_connection.ServerConnectionTests)
+keepalive is disabled when ping_interval is None. ... ok
+test_exit_with_exception (tests.asyncio.test_connection.ServerConnectionTests)
+__exit__ with an exception closes the connection with code 1011. ... ok
+test_id (tests.asyncio.test_connection.ServerConnectionTests)
+Connection has an id attribute. ... ok
+test_keepalive (tests.asyncio.test_connection.ServerConnectionTests)
+keepalive sends pings at ping_interval and measures latency. ... ok
+test_keepalive_ignores_timeout (tests.asyncio.test_connection.ServerConnectionTests)
+keepalive ignores timeouts if ping_timeout isn't set. ... ok
+test_keepalive_reports_errors (tests.asyncio.test_connection.ServerConnectionTests)
+keepalive reports unexpected errors in logs. ... ok
+test_keepalive_terminates_while_sleeping (tests.asyncio.test_connection.ServerConnectionTests)
+keepalive task terminates while waiting to send a ping. ... ok
+test_keepalive_terminates_while_waiting_for_pong (tests.asyncio.test_connection.ServerConnectionTests)
+keepalive task terminates while waiting to receive a pong. ... ok
+test_keepalive_times_out (tests.asyncio.test_connection.ServerConnectionTests)
+keepalive closes the connection if ping_timeout elapses. ... ok
+test_local_address (tests.asyncio.test_connection.ServerConnectionTests)
+Connection provides a local_address attribute. ... ok
+test_logger (tests.asyncio.test_connection.ServerConnectionTests)
+Connection has a logger attribute. ... ok
+test_max_queue (tests.asyncio.test_connection.ServerConnectionTests)
+max_queue parameter configures high-water mark of frames buffer. ... ok
+test_max_queue_tuple (tests.asyncio.test_connection.ServerConnectionTests)
+max_queue parameter configures high-water mark of frames buffer. ... ok
+test_ping (tests.asyncio.test_connection.ServerConnectionTests)
+ping sends a ping frame with a random payload. ... ok
+test_ping_duplicate_payload (tests.asyncio.test_connection.ServerConnectionTests)
+ping rejects the same payload until receiving the pong. ... ok
+test_ping_explicit_binary (tests.asyncio.test_connection.ServerConnectionTests)
+ping sends a ping frame with a payload provided as binary. ... ok
+test_ping_explicit_text (tests.asyncio.test_connection.ServerConnectionTests)
+ping sends a ping frame with a payload provided as text. ... ok
+test_pong (tests.asyncio.test_connection.ServerConnectionTests)
+pong sends a pong frame. ... ok
+test_pong_explicit_binary (tests.asyncio.test_connection.ServerConnectionTests)
+pong sends a pong frame with a payload provided as binary. ... ok
+test_pong_explicit_text (tests.asyncio.test_connection.ServerConnectionTests)
+pong sends a pong frame with a payload provided as text. ... ok
+test_recv_binary (tests.asyncio.test_connection.ServerConnectionTests)
+recv receives a binary message. ... ok
+test_recv_cancellation_before_receiving (tests.asyncio.test_connection.ServerConnectionTests)
+recv can be cancelled before receiving a frame. ... ok
+test_recv_cancellation_while_receiving (tests.asyncio.test_connection.ServerConnectionTests)
+recv cannot be cancelled after receiving a frame. ... ok
+test_recv_connection_closed_error (tests.asyncio.test_connection.ServerConnectionTests)
+recv raises ConnectionClosedError after an error. ... ok
+test_recv_connection_closed_ok (tests.asyncio.test_connection.ServerConnectionTests)
+recv raises ConnectionClosedOK after a normal closure. ... ok
+test_recv_decoded_binary (tests.asyncio.test_connection.ServerConnectionTests)
+recv receives an UTF-8 decoded binary message. ... ok
+test_recv_during_recv (tests.asyncio.test_connection.ServerConnectionTests)
+recv raises RuntimeError when called concurrently with itself. ... ok
+test_recv_during_recv_streaming (tests.asyncio.test_connection.ServerConnectionTests)
+recv raises RuntimeError when called concurrently with recv_streaming. ... ok
+test_recv_encoded_text (tests.asyncio.test_connection.ServerConnectionTests)
+recv receives an UTF-8 encoded text message. ... ok
+test_recv_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
+recv receives a fragmented binary message. ... ok
+test_recv_fragmented_text (tests.asyncio.test_connection.ServerConnectionTests)
+recv receives a fragmented text message. ... ok
+test_recv_streaming_binary (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming receives a binary message. ... ok
+test_recv_streaming_cancellation_before_receiving (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming can be cancelled before receiving a frame. ... ok
+test_recv_streaming_cancellation_while_receiving (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming cannot be cancelled after receiving a frame. ... ok
+test_recv_streaming_connection_closed_error (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming raises ConnectionClosedError after an error. ... ok
+test_recv_streaming_connection_closed_ok (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming raises ConnectionClosedOK after a normal closure. ... ok
+test_recv_streaming_decoded_binary (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming receives a UTF-8 decoded binary message. ... ok
+test_recv_streaming_during_recv (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming raises RuntimeError when called concurrently with recv. ... ok
+test_recv_streaming_during_recv_streaming (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming raises RuntimeError when called concurrently with itself. ... ok
+test_recv_streaming_encoded_text (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming receives an UTF-8 encoded text message. ... ok
+test_recv_streaming_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming receives a fragmented binary message. ... ok
+test_recv_streaming_fragmented_text (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming receives a fragmented text message. ... ok
+test_recv_streaming_text (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming receives a text message. ... ok
+test_recv_text (tests.asyncio.test_connection.ServerConnectionTests)
+recv receives a text message. ... ok
+test_remote_address (tests.asyncio.test_connection.ServerConnectionTests)
+Connection provides a remote_address attribute. ... ok
+test_request (tests.asyncio.test_connection.ServerConnectionTests)
+Connection has a request attribute. ... ok
+test_response (tests.asyncio.test_connection.ServerConnectionTests)
+Connection has a response attribute. ... ok
+test_send_async_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a fragmented binary message asynchronously. ... ok
+test_send_async_fragmented_text (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a fragmented text message asynchronously. ... ok
+test_send_binary (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a binary message. ... ok
+test_send_connection_closed_error (tests.asyncio.test_connection.ServerConnectionTests)
+send raises ConnectionClosedError after an error. ... ok
+test_send_connection_closed_ok (tests.asyncio.test_connection.ServerConnectionTests)
+send raises ConnectionClosedOK after a normal closure. ... ok
+test_send_dict (tests.asyncio.test_connection.ServerConnectionTests)
+send raises TypeError when called with a dict. ... ok
+test_send_during_send_async (tests.asyncio.test_connection.ServerConnectionTests)
+send waits for a previous call to send to complete. ... ok
+test_send_empty_async_iterable (tests.asyncio.test_connection.ServerConnectionTests)
+send does nothing when called with an empty async iterable. ... ok
+test_send_empty_iterable (tests.asyncio.test_connection.ServerConnectionTests)
+send does nothing when called with an empty iterable. ... ok
+test_send_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a fragmented binary message. ... ok
+test_send_fragmented_text (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a fragmented text message. ... ok
+test_send_mixed_async_iterable (tests.asyncio.test_connection.ServerConnectionTests)
+send raises TypeError when called with an iterable of inconsistent types. ... ok
+test_send_mixed_iterable (tests.asyncio.test_connection.ServerConnectionTests)
+send raises TypeError when called with an iterable of inconsistent types. ... ok
+test_send_text (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a text message. ... ok
+test_send_unsupported_async_iterable (tests.asyncio.test_connection.ServerConnectionTests)
+send raises TypeError when called with an iterable of unsupported type. ... ok
+test_send_unsupported_iterable (tests.asyncio.test_connection.ServerConnectionTests)
+send raises TypeError when called with an iterable of unsupported type. ... ok
+test_send_unsupported_type (tests.asyncio.test_connection.ServerConnectionTests)
+send raises TypeError when called with an unsupported type. ... ok
+test_send_while_send_async_blocked (tests.asyncio.test_connection.ServerConnectionTests)
+send waits for a previous call to send to complete. ... ok
+test_send_while_send_blocked (tests.asyncio.test_connection.ServerConnectionTests)
+send waits for a previous call to send to complete. ... ok
+test_state (tests.asyncio.test_connection.ServerConnectionTests)
+Connection has a state attribute. ... ok
+test_subprotocol (tests.asyncio.test_connection.ServerConnectionTests)
+Connection has a subprotocol attribute. ... ok
+test_unexpected_failure_in_data_received (tests.asyncio.test_connection.ServerConnectionTests)
+Unexpected internal error in data_received() is correctly reported. ... ok
+test_unexpected_failure_in_send_context (tests.asyncio.test_connection.ServerConnectionTests)
+Unexpected internal error in send_context() is correctly reported. ... ok
+test_wait_closed (tests.asyncio.test_connection.ServerConnectionTests)
+wait_closed waits for the connection to close. ... ok
+test_write_limit (tests.asyncio.test_connection.ServerConnectionTests)
+write_limit parameter configures high-water mark of write buffer. ... ok
+test_write_limits (tests.asyncio.test_connection.ServerConnectionTests)
+write_limit parameter configures high and low-water marks of write buffer. ... ok
+test_writing_in_data_received_fails (tests.asyncio.test_connection.ServerConnectionTests)
+Error when responding to incoming frames is correctly reported. ... ok
+test_writing_in_send_context_fails (tests.asyncio.test_connection.ServerConnectionTests)
+Error when sending outgoing frame is correctly reported. ... ok
+test_cancel_get_after_first_frame (tests.asyncio.test_messages.AssemblerTests)
+get can be canceled safely after reading the first frame. ... ok
+test_cancel_get_before_first_frame (tests.asyncio.test_messages.AssemblerTests)
+get can be canceled safely before reading the first frame. ... ok
+test_cancel_get_iter_after_first_frame (tests.asyncio.test_messages.AssemblerTests)
+get cannot be canceled after reading the first frame. ... ok
+test_cancel_get_iter_before_first_frame (tests.asyncio.test_messages.AssemblerTests)
+get_iter can be canceled safely before reading the first frame. ... ok
+test_close_is_idempotent (tests.asyncio.test_messages.AssemblerTests)
+close can be called multiple times safely. ... ok
+test_get_binary_message_already_received (tests.asyncio.test_messages.AssemblerTests)
+get returns a binary message that is already received. ... ok
+test_get_binary_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
+get returns a binary message when it is received. ... ok
+test_get_decoded_binary_message (tests.asyncio.test_messages.AssemblerTests)
+get returns a binary message with UTF-8 decoding. ... ok
+test_get_encoded_text_message (tests.asyncio.test_messages.AssemblerTests)
+get returns a text message without UTF-8 decoding. ... ok
+test_get_fails_after_close (tests.asyncio.test_messages.AssemblerTests)
+get raises EOFError after close is called. ... ok
+test_get_fails_when_get_is_running (tests.asyncio.test_messages.AssemblerTests)
+get cannot be called concurrently with itself. ... ok
+test_get_fails_when_get_iter_is_running (tests.asyncio.test_messages.AssemblerTests)
+get cannot be called concurrently with get_iter. ... ok
+test_get_fails_when_interrupted_by_close (tests.asyncio.test_messages.AssemblerTests)
+get raises EOFError when close is called. ... ok
+test_get_fragmented_binary_message_already_received (tests.asyncio.test_messages.AssemblerTests)
+get reassembles a fragmented binary message that is already received. ... ok
+test_get_fragmented_binary_message_being_received (tests.asyncio.test_messages.AssemblerTests)
+get reassembles a fragmented binary message that is partially received. ... ok
+test_get_fragmented_binary_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
+get reassembles a fragmented binary message when it is received. ... ok
+test_get_fragmented_text_message_already_received (tests.asyncio.test_messages.AssemblerTests)
+get reassembles a fragmented a text message that is already received. ... ok
+test_get_fragmented_text_message_being_received (tests.asyncio.test_messages.AssemblerTests)
+get reassembles a fragmented text message that is partially received. ... ok
+test_get_fragmented_text_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
+get reassembles a fragmented text message when it is received. ... ok
+test_get_iter_binary_message_already_received (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a binary message that is already received. ... ok
+test_get_iter_binary_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a binary message when it is received. ... ok
+test_get_iter_decoded_binary_message (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a binary message with UTF-8 decoding. ... ok
+test_get_iter_encoded_text_message (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a text message without UTF-8 decoding. ... ok
+test_get_iter_fails_after_close (tests.asyncio.test_messages.AssemblerTests)
+get_iter raises EOFError after close is called. ... ok
+test_get_iter_fails_when_get_is_running (tests.asyncio.test_messages.AssemblerTests)
+get_iter cannot be called concurrently with get. ... ok
+test_get_iter_fails_when_get_iter_is_running (tests.asyncio.test_messages.AssemblerTests)
+get_iter cannot be called concurrently with itself. ... ok
+test_get_iter_fails_when_interrupted_by_close (tests.asyncio.test_messages.AssemblerTests)
+get_iter raises EOFError when close is called. ... ok
+test_get_iter_fragmented_binary_message_already_received (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a fragmented binary message that is already received. ... ok
+test_get_iter_fragmented_binary_message_being_received (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a fragmented binary message that is partially received. ... ok
+test_get_iter_fragmented_binary_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a fragmented binary message when it is received. ... ok
+test_get_iter_fragmented_text_message_already_received (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a fragmented text message that is already received. ... ok
+test_get_iter_fragmented_text_message_being_received (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a fragmented text message that is partially received. ... ok
+test_get_iter_fragmented_text_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a fragmented text message when it is received. ... ok
+test_get_iter_resumes_reading (tests.asyncio.test_messages.AssemblerTests)
+get_iter resumes reading when queue goes below the high-water mark. ... ok
+test_get_iter_text_message_already_received (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a text message that is already received. ... ok
+test_get_iter_text_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a text message when it is received. ... ok
+test_get_resumes_reading (tests.asyncio.test_messages.AssemblerTests)
+get resumes reading when queue goes below the high-water mark. ... ok
+test_get_text_message_already_received (tests.asyncio.test_messages.AssemblerTests)
+get returns a text message that is already received. ... ok
+test_get_text_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
+get returns a text message when it is received. ... ok
+test_put_fails_after_close (tests.asyncio.test_messages.AssemblerTests)
+put raises EOFError after close is called. ... ok
+test_put_pauses_reading (tests.asyncio.test_messages.AssemblerTests)
+put pauses reading when queue goes above the high-water mark. ... ok
+test_set_high_and_low_water_mark (tests.asyncio.test_messages.AssemblerTests)
+high sets the high-water mark. ... ok
+test_set_high_water_mark (tests.asyncio.test_messages.AssemblerTests)
+high sets the high-water mark. ... ok
+test_set_invalid_high_water_mark (tests.asyncio.test_messages.AssemblerTests)
+high must be a non-negative integer. ... ok
+test_set_invalid_low_water_mark (tests.asyncio.test_messages.AssemblerTests)
+low must be higher than high. ... ok
+test_abort (tests.asyncio.test_messages.SimpleQueueTests)
+abort throws an exception in get. ... ok
+test_abort_clears_queue (tests.asyncio.test_messages.SimpleQueueTests)
+abort clears buffered data from the queue. ... ok
+test_get_concurrently (tests.asyncio.test_messages.SimpleQueueTests)
+get cannot be called concurrently with itself. ... ok
+test_get_then_put (tests.asyncio.test_messages.SimpleQueueTests)
+get returns an item when it is put. ... ok
+test_len (tests.asyncio.test_messages.SimpleQueueTests)
+__len__ returns queue length. ... ok
+test_put_then_get (tests.asyncio.test_messages.SimpleQueueTests)
+get returns an item that is already put. ... ok
+test_reset (tests.asyncio.test_messages.SimpleQueueTests)
+reset sets the content of the queue. ... ok
+test_connection (tests.asyncio.test_server.SecureServerTests)
+Server receives secure connection from client. ... ok
+test_connection_closed_during_tls_handshake (tests.asyncio.test_server.SecureServerTests)
+Server reads EOF before receiving TLS handshake request from client. ... ok
+test_timeout_during_tls_handshake (tests.asyncio.test_server.SecureServerTests)
+Server times out before receiving TLS handshake request from client. ... ok
+test_connection (tests.asyncio.test_server.SecureUnixServerTests)
+Server receives secure connection from client over a Unix socket. ... ok
+test_async_process_request_raises_exception (tests.asyncio.test_server.ServerTests)
+Server returns an error if async process_request raises an exception. ... ok
+test_async_process_request_returns_none (tests.asyncio.test_server.ServerTests)
+Server runs async process_request and continues the handshake. ... ok
+test_async_process_request_returns_response (tests.asyncio.test_server.ServerTests)
+Server aborts handshake if async process_request returns a response. ... ok
+test_async_process_response_modifies_response (tests.asyncio.test_server.ServerTests)
+Server runs async process_response and modifies the handshake response. ... ok
+test_async_process_response_raises_exception (tests.asyncio.test_server.ServerTests)
+Server returns an error if async process_response raises an exception. ... ok
+test_async_process_response_replaces_response (tests.asyncio.test_server.ServerTests)
+Server runs async process_response and replaces the handshake response. ... ok
+test_async_process_response_returns_none (tests.asyncio.test_server.ServerTests)
+Server runs async process_response but keeps the handshake response. ... ok
+test_close_server_closes_open_connections (tests.asyncio.test_server.ServerTests)
+Server closes open connections with close code 1001 when closing. ... ok
+test_close_server_keeps_connections_open (tests.asyncio.test_server.ServerTests)
+Server waits for client to close open connections when closing. ... ok
+test_close_server_keeps_handlers_running (tests.asyncio.test_server.ServerTests)
+Server waits for connection handlers to terminate. ... ok
+test_close_server_rejects_connecting_connections (tests.asyncio.test_server.ServerTests)
+Server rejects connecting connections with HTTP 503 when closing. ... ok
+test_compression_is_enabled (tests.asyncio.test_server.ServerTests)
+Server enables compression by default. ... ok
+test_connection (tests.asyncio.test_server.ServerTests)
+Server receives connection from client and the handshake succeeds. ... ok
+test_connection_closed_during_handshake (tests.asyncio.test_server.ServerTests)
+Server reads EOF before receiving handshake request from client. ... ok
+test_connection_handler_raises_exception (tests.asyncio.test_server.ServerTests)
+Connection handler raises an exception. ... ok
+test_connection_handler_returns (tests.asyncio.test_server.ServerTests)
+Connection handler returns. ... ok
+test_custom_connection_factory (tests.asyncio.test_server.ServerTests)
+Server runs ServerConnection factory provided in create_connection. ... ok
+test_disable_compression (tests.asyncio.test_server.ServerTests)
+Server disables compression. ... ok
+test_disable_keepalive (tests.asyncio.test_server.ServerTests)
+Client disables keepalive. ... ok
+test_existing_socket (tests.asyncio.test_server.ServerTests)
+Server receives connection using a pre-existing socket. ... ok
+test_handshake_fails (tests.asyncio.test_server.ServerTests)
+Server receives connection from client but the handshake fails. ... ok
+test_keepalive_is_enabled (tests.asyncio.test_server.ServerTests)
+Server enables keepalive and measures latency. ... ok
+test_override_server (tests.asyncio.test_server.ServerTests)
+Server can override Server header with server_header. ... ok
+test_process_request_raises_exception (tests.asyncio.test_server.ServerTests)
+Server returns an error if process_request raises an exception. ... ok
+test_process_request_returns_none (tests.asyncio.test_server.ServerTests)
+Server runs process_request and continues the handshake. ... ok
+test_process_request_returns_response (tests.asyncio.test_server.ServerTests)
+Server aborts handshake if process_request returns a response. ... ok
+test_process_response_modifies_response (tests.asyncio.test_server.ServerTests)
+Server runs process_response and modifies the handshake response. ... ok
+test_process_response_raises_exception (tests.asyncio.test_server.ServerTests)
+Server returns an error if process_response raises an exception. ... ok
+test_process_response_replaces_response (tests.asyncio.test_server.ServerTests)
+Server runs process_response and replaces the handshake response. ... ok
+test_process_response_returns_none (tests.asyncio.test_server.ServerTests)
+Server runs process_response but keeps the handshake response. ... ok
+test_remove_server (tests.asyncio.test_server.ServerTests)
+Server can remove Server header with server_header. ... ok
+test_select_subprotocol (tests.asyncio.test_server.ServerTests)
+Server selects a subprotocol with the select_subprotocol callable. ... ok
+test_select_subprotocol_raises_exception (tests.asyncio.test_server.ServerTests)
+Server returns an error if select_subprotocol raises an exception. ... ok
+test_select_subprotocol_rejects_handshake (tests.asyncio.test_server.ServerTests)
+Server rejects handshake if select_subprotocol raises NegotiationError. ... ok
+test_timeout_during_handshake (tests.asyncio.test_server.ServerTests)
+Server times out before receiving handshake request from client. ... ok
+test_invalid_subprotocol (tests.asyncio.test_server.ServerUsageErrorsTests)
+Server rejects single value of subprotocols. ... ok
+test_unix_with_path_and_sock (tests.asyncio.test_server.ServerUsageErrorsTests)
+Unix server rejects path when sock is provided. ... ok
+test_unix_without_path_or_sock (tests.asyncio.test_server.ServerUsageErrorsTests)
+Unix server requires path when sock isn't provided. ... ok
+test_unsupported_compression (tests.asyncio.test_server.ServerUsageErrorsTests)
+Server rejects incorrect value of compression. ... ok
+test_connection (tests.asyncio.test_server.UnixServerTests)
+Server receives connection from client over a Unix socket. ... ok
+test_logger (tests.asyncio.test_server.WebSocketServerTests)
+Server accepts a logger argument. ... ok
+test_get_request_params (tests.extensions.test_base.ClientExtensionFactoryTests) ... ok
+test_process_response_params (tests.extensions.test_base.ClientExtensionFactoryTests) ... ok
+test_decode (tests.extensions.test_base.ExtensionTests) ... ok
+test_encode (tests.extensions.test_base.ExtensionTests) ... ok
+test_process_request_params (tests.extensions.test_base.ServerExtensionFactoryTests) ... ok
 test_enable_client_permessage_deflate (tests.extensions.test_permessage_deflate.ClientPerMessageDeflateFactoryTests) ... ok
 test_get_request_params (tests.extensions.test_permessage_deflate.ClientPerMessageDeflateFactoryTests) ... ok
 test_init (tests.extensions.test_permessage_deflate.ClientPerMessageDeflateFactoryTests) ... ok
@@ -119,6 +820,7 @@ test_protocol_path (tests.legacy.test_client_server.ClientServerTests) ... ok
 test_redirect (tests.legacy.test_client_server.ClientServerTests) ... ok
 test_redirect_missing_location (tests.legacy.test_client_server.ClientServerTests) ... ok
 test_redirect_relative_location (tests.legacy.test_client_server.ClientServerTests) ... ok
+test_redirect_secure (tests.legacy.test_client_server.ClientServerTests) ... ok
 test_select_subprotocol_argument (tests.legacy.test_client_server.ClientServerTests) ... ok
 test_select_subprotocol_override (tests.legacy.test_client_server.ClientServerTests) ... ok
 test_server_close_crashes (tests.legacy.test_client_server.ClientServerTests) ... ok
@@ -323,6 +1025,7 @@ test_answer_ping (tests.legacy.test_protocol.ClientTests) ... ok
 test_answer_ping_does_not_crash_if_connection_closed (tests.legacy.test_protocol.ClientTests) ... ok
 test_answer_ping_does_not_crash_if_connection_closing (tests.legacy.test_protocol.ClientTests) ... ok
 test_broadcast_binary (tests.legacy.test_protocol.ClientTests) ... ok
+test_broadcast_binary_reports_no_errors (tests.legacy.test_protocol.ClientTests) ... skipped 'raise_exceptions requires Python 3.11+'
 test_broadcast_no_clients (tests.legacy.test_protocol.ClientTests) ... ok
 test_broadcast_reports_connection_failing_to_send (tests.legacy.test_protocol.ClientTests) ... skipped 'raise_exceptions requires Python 3.11+'
 test_broadcast_reports_connection_sending_fragmented_text (tests.legacy.test_protocol.ClientTests) ... skipped 'raise_exceptions requires Python 3.11+'
@@ -331,6 +1034,7 @@ test_broadcast_skips_closing_connection (tests.legacy.test_protocol.ClientTests)
 test_broadcast_skips_connection_failing_to_send (tests.legacy.test_protocol.ClientTests) ... ok
 test_broadcast_skips_connection_sending_fragmented_text (tests.legacy.test_protocol.ClientTests) ... ok
 test_broadcast_text (tests.legacy.test_protocol.ClientTests) ... ok
+test_broadcast_text_reports_no_errors (tests.legacy.test_protocol.ClientTests) ... skipped 'raise_exceptions requires Python 3.11+'
 test_broadcast_two_clients (tests.legacy.test_protocol.ClientTests) ... ok
 test_broadcast_type_error (tests.legacy.test_protocol.ClientTests) ... ok
 test_canceled_ping (tests.legacy.test_protocol.ClientTests) ... ok
@@ -458,6 +1162,7 @@ test_answer_ping (tests.legacy.test_protocol.ServerTests) ... ok
 test_answer_ping_does_not_crash_if_connection_closed (tests.legacy.test_protocol.ServerTests) ... ok
 test_answer_ping_does_not_crash_if_connection_closing (tests.legacy.test_protocol.ServerTests) ... ok
 test_broadcast_binary (tests.legacy.test_protocol.ServerTests) ... ok
+test_broadcast_binary_reports_no_errors (tests.legacy.test_protocol.ServerTests) ... skipped 'raise_exceptions requires Python 3.11+'
 test_broadcast_no_clients (tests.legacy.test_protocol.ServerTests) ... ok
 test_broadcast_reports_connection_failing_to_send (tests.legacy.test_protocol.ServerTests) ... skipped 'raise_exceptions requires Python 3.11+'
 test_broadcast_reports_connection_sending_fragmented_text (tests.legacy.test_protocol.ServerTests) ... skipped 'raise_exceptions requires Python 3.11+'
@@ -466,6 +1171,7 @@ test_broadcast_skips_closing_connection (tests.legacy.test_protocol.ServerTests)
 test_broadcast_skips_connection_failing_to_send (tests.legacy.test_protocol.ServerTests) ... ok
 test_broadcast_skips_connection_sending_fragmented_text (tests.legacy.test_protocol.ServerTests) ... ok
 test_broadcast_text (tests.legacy.test_protocol.ServerTests) ... ok
+test_broadcast_text_reports_no_errors (tests.legacy.test_protocol.ServerTests) ... skipped 'raise_exceptions requires Python 3.11+'
 test_broadcast_two_clients (tests.legacy.test_protocol.ServerTests) ... ok
 test_broadcast_type_error (tests.legacy.test_protocol.ServerTests) ... ok
 test_canceled_ping (tests.legacy.test_protocol.ServerTests) ... ok
@@ -584,6 +1290,8 @@ test_simultaneous_close (tests.legacy.test_protocol.ServerTests) ... ok
 test_timeout_backwards_compatibility (tests.legacy.test_protocol.ServerTests) ... ok
 test_unterminated_fragmented_text (tests.legacy.test_protocol.ServerTests) ... ok
 test_wait_closed (tests.legacy.test_protocol.ServerTests) ... ok
+test_ssl_context_argument (tests.sync.test_client.BackwardsCompatibilityTests)
+Client supports the deprecated ssl_context argument. ... ok
 test_additional_headers (tests.sync.test_client.ClientTests)
 Client can set additional headers with additional_headers. ... ok
 test_compression_is_enabled (tests.sync.test_client.ClientTests)
@@ -592,14 +1300,16 @@ test_connection (tests.sync.test_client.ClientTests)
 Client connects to server and the handshake succeeds. ... ok
 test_connection_closed_during_handshake (tests.sync.test_client.ClientTests)
 Client reads EOF before receiving handshake response from server. ... ok
-test_connection_fails (tests.sync.test_client.ClientTests)
-Client connects to server but the handshake fails. ... ok
 test_custom_connection_factory (tests.sync.test_client.ClientTests)
 Client runs ClientConnection factory provided in create_connection. ... ok
 test_disable_compression (tests.sync.test_client.ClientTests)
 Client disables compression. ... ok
 test_existing_socket (tests.sync.test_client.ClientTests)
 Client connects using a pre-existing socket. ... ok
+test_handshake_fails (tests.sync.test_client.ClientTests)
+Client connects to server but the handshake fails. ... ok
+test_invalid_uri (tests.sync.test_client.ClientTests)
+Client receives an invalid URI. ... ok
 test_override_user_agent (tests.sync.test_client.ClientTests)
 Client can override User-Agent header with user_agent_header. ... ok
 test_remove_user_agent (tests.sync.test_client.ClientTests)
@@ -610,8 +1320,8 @@ test_timeout_during_handshake (tests.sync.test_client.ClientTests)
 Client times out before receiving handshake response from server. ... ok
 test_invalid_subprotocol (tests.sync.test_client.ClientUsageErrorsTests)
 Client rejects single value of subprotocols. ... ok
-test_ssl_context_without_secure_uri (tests.sync.test_client.ClientUsageErrorsTests)
-Client rejects ssl_context when URI isn't secure. ... ok
+test_ssl_without_secure_uri (tests.sync.test_client.ClientUsageErrorsTests)
+Client rejects ssl when URI isn't secure. ... ok
 test_unix_with_path_and_sock (tests.sync.test_client.ClientUsageErrorsTests)
 Unix client rejects path when sock is provided. ... ok
 test_unix_without_path_or_sock (tests.sync.test_client.ClientUsageErrorsTests)
@@ -644,6 +1354,8 @@ test_acknowledge_previous_ping (tests.sync.test_connection.ClientConnectionTests
 ping is acknowledged by a pong with the same payload as a later ping. ... ok
 test_close (tests.sync.test_connection.ClientConnectionTests)
 close sends a close frame. ... ok
+test_close_during_recv (tests.sync.test_connection.ClientConnectionTests)
+close aborts recv when called concurrently with recv. ... ok
 test_close_during_send (tests.sync.test_connection.ClientConnectionTests)
 close fails the connection when called concurrently with send. ... ok
 test_close_explicit_code_reason (tests.sync.test_connection.ClientConnectionTests)
@@ -673,7 +1385,7 @@ Connection has an id attribute. ... ok
 test_iter_binary (tests.sync.test_connection.ClientConnectionTests)
 __iter__ yields binary messages. ... ok
 test_iter_connection_closed_error (tests.sync.test_connection.ClientConnectionTests)
-__iter__ raises ConnnectionClosedError after an error. ... ok
+__iter__ raises ConnectionClosedError after an error. ... ok
 test_iter_connection_closed_ok (tests.sync.test_connection.ClientConnectionTests)
 __iter__ terminates after a normal closure. ... ok
 test_iter_mixed (tests.sync.test_connection.ClientConnectionTests)
@@ -681,7 +1393,7 @@ __iter__ yields a mix of text and binary messages. ... ok
 test_iter_text (tests.sync.test_connection.ClientConnectionTests)
 __iter__ yields text messages. ... ok
 test_local_address (tests.sync.test_connection.ClientConnectionTests)
-Connection has a local_address attribute. ... ok
+Connection provides a local_address attribute. ... ok
 test_logger (tests.sync.test_connection.ClientConnectionTests)
 Connection has a logger attribute. ... ok
 test_ping (tests.sync.test_connection.ClientConnectionTests)
@@ -733,7 +1445,7 @@ recv_streaming receives a text message. ... ok
 test_recv_text (tests.sync.test_connection.ClientConnectionTests)
 recv receives a text message. ... ok
 test_remote_address (tests.sync.test_connection.ClientConnectionTests)
-Connection has a remote_address attribute. ... skipped 'always fails: https://github.com/python-websockets/websockets/issues/1427'
+Connection provides a remote_address attribute. ... ok
 test_request (tests.sync.test_connection.ClientConnectionTests)
 Connection has a request attribute. ... ok
 test_response (tests.sync.test_connection.ClientConnectionTests)
@@ -780,6 +1492,8 @@ test_acknowledge_previous_ping (tests.sync.test_connection.ServerConnectionTests
 ping is acknowledged by a pong with the same payload as a later ping. ... ok
 test_close (tests.sync.test_connection.ServerConnectionTests)
 close sends a close frame. ... ok
+test_close_during_recv (tests.sync.test_connection.ServerConnectionTests)
+close aborts recv when called concurrently with recv. ... ok
 test_close_during_send (tests.sync.test_connection.ServerConnectionTests)
 close fails the connection when called concurrently with send. ... ok
 test_close_explicit_code_reason (tests.sync.test_connection.ServerConnectionTests)
@@ -809,7 +1523,7 @@ Connection has an id attribute. ... ok
 test_iter_binary (tests.sync.test_connection.ServerConnectionTests)
 __iter__ yields binary messages. ... ok
 test_iter_connection_closed_error (tests.sync.test_connection.ServerConnectionTests)
-__iter__ raises ConnnectionClosedError after an error. ... ok
+__iter__ raises ConnectionClosedError after an error. ... ok
 test_iter_connection_closed_ok (tests.sync.test_connection.ServerConnectionTests)
 __iter__ terminates after a normal closure. ... ok
 test_iter_mixed (tests.sync.test_connection.ServerConnectionTests)
@@ -817,7 +1531,7 @@ __iter__ yields a mix of text and binary messages. ... ok
 test_iter_text (tests.sync.test_connection.ServerConnectionTests)
 __iter__ yields text messages. ... ok
 test_local_address (tests.sync.test_connection.ServerConnectionTests)
-Connection has a local_address attribute. ... ok
+Connection provides a local_address attribute. ... ok
 test_logger (tests.sync.test_connection.ServerConnectionTests)
 Connection has a logger attribute. ... ok
 test_ping (tests.sync.test_connection.ServerConnectionTests)
@@ -869,7 +1583,7 @@ recv_streaming receives a text message. ... ok
 test_recv_text (tests.sync.test_connection.ServerConnectionTests)
 recv receives a text message. ... ok
 test_remote_address (tests.sync.test_connection.ServerConnectionTests)
-Connection has a remote_address attribute. ... skipped 'always fails: https://github.com/python-websockets/websockets/issues/1427'
+Connection provides a remote_address attribute. ... ok
 test_request (tests.sync.test_connection.ServerConnectionTests)
 Connection has a request attribute. ... ok
 test_response (tests.sync.test_connection.ServerConnectionTests)
@@ -910,10 +1624,6 @@ test_writing_in_send_context_fails (tests.sync.test_connection.ServerConnectionT
 Error when sending outgoing frame is correctly reported. ... ok
 test_close_is_idempotent (tests.sync.test_messages.AssemblerTests)
 close can be called multiple times safely. ... ok
-test_control_frame_before_message_is_ignored (tests.sync.test_messages.AssemblerTests)
-get ignores control frames between messages. ... ok
-test_control_frame_in_fragmented_message_is_ignored (tests.sync.test_messages.AssemblerTests)
-get ignores control frames within fragmented messages. ... ok
 test_get_binary_message_already_received (tests.sync.test_messages.AssemblerTests)
 get returns a binary message that is already received. ... ok
 test_get_binary_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
@@ -980,6 +1690,9 @@ test_put_fails_when_interrupted_by_close (tests.sync.test_messages.AssemblerTest
 put raises EOFError when close is called. ... ok
 test_put_fails_when_put_is_running (tests.sync.test_messages.AssemblerTests)
 put cannot be called concurrently with itself. ... ok
+test_ssl_context_argument (tests.sync.test_server.BackwardsCompatibilityTests)
+Client supports the deprecated ssl_context argument. ... ok
+test_web_socket_server_class (tests.sync.test_server.BackwardsCompatibilityTests) ... ok
 test_connection (tests.sync.test_server.SecureServerTests)
 Server receives secure connection from client. ... ok
 test_connection_closed_during_tls_handshake (tests.sync.test_server.SecureServerTests)
@@ -994,8 +1707,6 @@ test_connection (tests.sync.test_server.ServerTests)
 Server receives connection from client and the handshake succeeds. ... ok
 test_connection_closed_during_handshake (tests.sync.test_server.ServerTests)
 Server reads EOF before receiving handshake request from client. ... ok
-test_connection_fails (tests.sync.test_server.ServerTests)
-Server receives connection from client but the handshake fails. ... ok
 test_connection_handler_raises_exception (tests.sync.test_server.ServerTests)
 Connection handler raises an exception. ... ok
 test_connection_handler_returns (tests.sync.test_server.ServerTests)
@@ -1006,20 +1717,24 @@ test_disable_compression (tests.sync.test_server.ServerTests)
 Server disables compression. ... ok
 test_existing_socket (tests.sync.test_server.ServerTests)
 Server receives connection using a pre-existing socket. ... ok
+test_handshake_fails (tests.sync.test_server.ServerTests)
+Server receives connection from client but the handshake fails. ... ok
 test_override_server (tests.sync.test_server.ServerTests)
 Server can override Server header with server_header. ... ok
-test_process_request (tests.sync.test_server.ServerTests)
-Server runs process_request before processing the handshake. ... ok
-test_process_request_abort_handshake (tests.sync.test_server.ServerTests)
-Server aborts handshake if process_request returns a response. ... ok
 test_process_request_raises_exception (tests.sync.test_server.ServerTests)
 Server returns an error if process_request raises an exception. ... ok
-test_process_response (tests.sync.test_server.ServerTests)
-Server runs process_response after processing the handshake. ... ok
-test_process_response_override_response (tests.sync.test_server.ServerTests)
-Server runs process_response after processing the handshake. ... ok
+test_process_request_returns_none (tests.sync.test_server.ServerTests)
+Server runs process_request and continues the handshake. ... ok
+test_process_request_returns_response (tests.sync.test_server.ServerTests)
+Server aborts handshake if process_request returns a response. ... ok
+test_process_response_modifies_response (tests.sync.test_server.ServerTests)
+Server runs process_response and modifies the handshake response. ... ok
 test_process_response_raises_exception (tests.sync.test_server.ServerTests)
 Server returns an error if process_response raises an exception. ... ok
+test_process_response_replaces_response (tests.sync.test_server.ServerTests)
+Server runs process_response and replaces the handshake response. ... ok
+test_process_response_returns_none (tests.sync.test_server.ServerTests)
+Server runs process_response but keeps the handshake response. ... ok
 test_remove_server (tests.sync.test_server.ServerTests)
 Server can remove Server header with server_header. ... ok
 test_select_subprotocol (tests.sync.test_server.ServerTests)
@@ -1041,62 +1756,11 @@ Server rejects incorrect value of compression. ... ok
 test_connection (tests.sync.test_server.UnixServerTests)
 Server receives connection from client over a Unix socket. ... ok
 test_fileno (tests.sync.test_server.WebSocketServerTests)
-WebSocketServer provides a fileno attribute. ... Exception in thread Thread-494:
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/threading.py", line 980, in _bootstrap_inner
-    self.run()
-  File "$(PYTHON_DIR)/threading.py", line 917, in run
-    self._target(*self._args, **self._kwargs)
-  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/websockets/sync/server.py", line 222, in serve_forever
-    poller.register(self.socket, selectors.EVENT_READ)
-  File "$(PYTHON_DIR)/selectors.py", line 353, in register
-    key = super().register(fileobj, events, data)
-  File "$(PYTHON_DIR)/selectors.py", line 239, in register
-    key = SelectorKey(fileobj, self._fileobj_lookup(fileobj), events, data)
-  File "$(PYTHON_DIR)/selectors.py", line 226, in _fileobj_lookup
-    return _fileobj_to_fd(fileobj)
-  File "$(PYTHON_DIR)/selectors.py", line 42, in _fileobj_to_fd
-    raise ValueError("Invalid file descriptor: {}".format(fd))
-ValueError: Invalid file descriptor: -1
-ok
+Server provides a fileno attribute. ... ok
 test_logger (tests.sync.test_server.WebSocketServerTests)
-WebSocketServer accepts a logger argument. ... Exception in thread Thread-495:
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/threading.py", line 980, in _bootstrap_inner
-    self.run()
-  File "$(PYTHON_DIR)/threading.py", line 917, in run
-    self._target(*self._args, **self._kwargs)
-  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/websockets/sync/server.py", line 222, in serve_forever
-    poller.register(self.socket, selectors.EVENT_READ)
-  File "$(PYTHON_DIR)/selectors.py", line 353, in register
-    key = super().register(fileobj, events, data)
-  File "$(PYTHON_DIR)/selectors.py", line 239, in register
-    key = SelectorKey(fileobj, self._fileobj_lookup(fileobj), events, data)
-  File "$(PYTHON_DIR)/selectors.py", line 226, in _fileobj_lookup
-    return _fileobj_to_fd(fileobj)
-  File "$(PYTHON_DIR)/selectors.py", line 42, in _fileobj_to_fd
-    raise ValueError("Invalid file descriptor: {}".format(fd))
-ValueError: Invalid file descriptor: -1
-ok
+Server accepts a logger argument. ... ok
 test_shutdown (tests.sync.test_server.WebSocketServerTests)
-WebSocketServer provides a shutdown method. ... Exception in thread Thread-496:
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/threading.py", line 980, in _bootstrap_inner
-    self.run()
-  File "$(PYTHON_DIR)/threading.py", line 917, in run
-    self._target(*self._args, **self._kwargs)
-  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/websockets/sync/server.py", line 222, in serve_forever
-    poller.register(self.socket, selectors.EVENT_READ)
-  File "$(PYTHON_DIR)/selectors.py", line 353, in register
-    key = super().register(fileobj, events, data)
-  File "$(PYTHON_DIR)/selectors.py", line 239, in register
-    key = SelectorKey(fileobj, self._fileobj_lookup(fileobj), events, data)
-  File "$(PYTHON_DIR)/selectors.py", line 226, in _fileobj_lookup
-    return _fileobj_to_fd(fileobj)
-  File "$(PYTHON_DIR)/selectors.py", line 42, in _fileobj_to_fd
-    raise ValueError("Invalid file descriptor: {}".format(fd))
-ValueError: Invalid file descriptor: -1
-ok
+Server provides a shutdown method. ... ok
 test_no_timeout (tests.sync.test_utils.DeadlineTests)
 timeout returns None when no deadline is set. ... ok
 test_timeout_elapsed_exception (tests.sync.test_utils.DeadlineTests)
@@ -1286,6 +1950,7 @@ test_parse_upgrade (tests.test_headers.HeadersTests) ... ok
 test_parse_upgrade_invalid_header_format (tests.test_headers.HeadersTests) ... ok
 test_validate_subprotocols (tests.test_headers.HeadersTests) ... ok
 test_validate_subprotocols_invalid (tests.test_headers.HeadersTests) ... ok
+test_headers_class (tests.test_http.BackwardsCompatibilityTests) ... ok
 test_parse_invalid_line_ending (tests.test_http11.HeadersTests) ... ok
 test_parse_invalid_name (tests.test_http11.HeadersTests) ... ok
 test_parse_invalid_value (tests.test_http11.HeadersTests) ... ok
@@ -1348,7 +2013,9 @@ test_client_receives_close_with_code_and_reason (tests.test_protocol.CloseTests)
 test_client_receives_close_with_non_utf8_reason (tests.test_protocol.CloseTests) ... ok
 test_client_receives_close_with_truncated_code (tests.test_protocol.CloseTests) ... ok
 test_client_sends_close (tests.test_protocol.CloseTests) ... ok
+test_client_sends_close_after_connection_is_closed (tests.test_protocol.CloseTests) ... ok
 test_client_sends_close_then_receives_close (tests.test_protocol.CloseTests) ... ok
+test_client_sends_close_twice (tests.test_protocol.CloseTests) ... ok
 test_client_sends_close_with_code (tests.test_protocol.CloseTests) ... ok
 test_client_sends_close_with_code_and_reason (tests.test_protocol.CloseTests) ... ok
 test_client_sends_close_with_reason_only (tests.test_protocol.CloseTests) ... ok
@@ -1367,7 +2034,9 @@ test_server_receives_close_with_code_and_reason (tests.test_protocol.CloseTests)
 test_server_receives_close_with_non_utf8_reason (tests.test_protocol.CloseTests) ... ok
 test_server_receives_close_with_truncated_code (tests.test_protocol.CloseTests) ... ok
 test_server_sends_close (tests.test_protocol.CloseTests) ... ok
+test_server_sends_close_after_connection_is_closed (tests.test_protocol.CloseTests) ... ok
 test_server_sends_close_then_receives_close (tests.test_protocol.CloseTests) ... ok
+test_server_sends_close_twice (tests.test_protocol.CloseTests) ... ok
 test_server_sends_close_with_code (tests.test_protocol.CloseTests) ... ok
 test_server_sends_close_with_code_and_reason (tests.test_protocol.CloseTests) ... ok
 test_server_sends_close_with_reason_only (tests.test_protocol.CloseTests) ... ok
@@ -1435,6 +2104,7 @@ test_client_receives_ping_after_receiving_close (tests.test_protocol.PingTests) 
 test_client_receives_ping_with_data (tests.test_protocol.PingTests) ... ok
 test_client_sends_fragmented_ping_frame (tests.test_protocol.PingTests) ... ok
 test_client_sends_ping (tests.test_protocol.PingTests) ... ok
+test_client_sends_ping_after_connection_is_closed (tests.test_protocol.PingTests) ... ok
 test_client_sends_ping_after_sending_close (tests.test_protocol.PingTests) ... ok
 test_client_sends_ping_with_data (tests.test_protocol.PingTests) ... ok
 test_server_receives_fragmented_ping_frame (tests.test_protocol.PingTests) ... ok
@@ -1443,6 +2113,7 @@ test_server_receives_ping_after_receiving_close (tests.test_protocol.PingTests) 
 test_server_receives_ping_with_data (tests.test_protocol.PingTests) ... ok
 test_server_sends_fragmented_ping_frame (tests.test_protocol.PingTests) ... ok
 test_server_sends_ping (tests.test_protocol.PingTests) ... ok
+test_server_sends_ping_after_connection_is_closed (tests.test_protocol.PingTests) ... ok
 test_server_sends_ping_after_sending_close (tests.test_protocol.PingTests) ... ok
 test_server_sends_ping_with_data (tests.test_protocol.PingTests) ... ok
 test_client_receives_fragmented_pong_frame (tests.test_protocol.PongTests) ... ok
@@ -1451,6 +2122,7 @@ test_client_receives_pong_after_receiving_close (tests.test_protocol.PongTests) 
 test_client_receives_pong_with_data (tests.test_protocol.PongTests) ... ok
 test_client_sends_fragmented_pong_frame (tests.test_protocol.PongTests) ... ok
 test_client_sends_pong (tests.test_protocol.PongTests) ... ok
+test_client_sends_pong_after_connection_is_closed (tests.test_protocol.PongTests) ... ok
 test_client_sends_pong_after_sending_close (tests.test_protocol.PongTests) ... ok
 test_client_sends_pong_with_data (tests.test_protocol.PongTests) ... ok
 test_server_receives_fragmented_pong_frame (tests.test_protocol.PongTests) ... ok
@@ -1459,6 +2131,7 @@ test_server_receives_pong_after_receiving_close (tests.test_protocol.PongTests) 
 test_server_receives_pong_with_data (tests.test_protocol.PongTests) ... ok
 test_server_sends_fragmented_pong_frame (tests.test_protocol.PongTests) ... ok
 test_server_sends_pong (tests.test_protocol.PongTests) ... ok
+test_server_sends_pong_after_connection_is_closed (tests.test_protocol.PongTests) ... ok
 test_server_sends_pong_after_sending_close (tests.test_protocol.PongTests) ... ok
 test_server_sends_pong_with_data (tests.test_protocol.PongTests) ... ok
 test_client_default (tests.test_protocol.TCPCloseTests) ... ok
@@ -1583,8 +2256,8 @@ test_accept_key (tests.test_utils.UtilsTests) ... ok
 test_generate_key (tests.test_utils.UtilsTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 1297 tests
+Ran 1670 tests
 
-OK (skipped=10)
+OK (skipped=23)
   py$(PYV): OK
   congratulations :)
