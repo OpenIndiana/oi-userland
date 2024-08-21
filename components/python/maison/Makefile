@@ -19,23 +19,27 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		maison
-HUMAN_VERSION =			1.4.3
-COMPONENT_SUMMARY =		maison - Read settings from config files
+HUMAN_VERSION =			2.0.0
+COMPONENT_SUMMARY =		Read settings from config files
 COMPONENT_PROJECT_URL =		https://github.com/dbatten5/maison
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ce/51/004aa562534a0faad195e6166c4c3b4a5d9b79a3858a3020760d55dfc8ac/maison-1.4.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:766222ce82ae27138256c4af9d0bc6b3226288349601e095dcc567884cf0ce36
+	sha256:f5dafbbf4ce57bdb7cae128e075f457434b2cc9573b4f4bb4535f16d2ebd1cc5
 COMPONENT_LICENSE =		MIT
-COMPONENT_LICENSE_FILE =	LICENSE.rst
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project uses poetry to manage test dependencies.
+TEST_REQUIREMENTS_POETRY += test
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/click
 PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += library/python/pydantic
 PYTHON_REQUIRED_PACKAGES += library/python/toml
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/pydantic
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/six
