@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.packaging
-HUMAN_VERSION =			10.2.2
+HUMAN_VERSION =			10.2.3
 COMPONENT_SUMMARY =		tools to supplement packaging Python releases
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.packaging
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:05302a4f8457b74971e7cc220df30fdf79b4fac31601e1b0dc439fff985a3040
+	sha256:d726cc42faa62b2f70585cbe1176b4b469fe6d75f21b19034b688b4340917933
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,7 +38,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/sphinx
 PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
