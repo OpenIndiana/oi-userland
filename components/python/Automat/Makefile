@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		automat
-HUMAN_VERSION =			24.8.0
+HUMAN_VERSION =			24.8.1
 COMPONENT_SUMMARY =		Self-service finite-state machines for the programmer on the go.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f55735fdae5f461176ba2c8be7438ee06e47c4028ad80d1b4d5abef96d9d5863
+	sha256:b34227cf63f6325b8ad2399ede780675083e439b20c323d376373d8ee6306d88
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
