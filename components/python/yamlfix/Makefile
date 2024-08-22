@@ -19,29 +19,32 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yamlfix
-HUMAN_VERSION =			1.16.0
-COMPONENT_SUMMARY =		yamlfix - A simple opionated yaml formatter that keeps your comments!
+HUMAN_VERSION =			1.17.0
+COMPONENT_SUMMARY =		A simple opionated yaml formatter that keeps your comments!
 COMPONENT_PROJECT_URL =		https://github.com/lyz-code/yamlfix
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2f/07/b0c1c5de14cd93428059c2f968c8639bf721d2201a074bbf52a8fe8e1d9d/yamlfix-1.16.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:72f7990e5b2b4459ef3249df4724dacbd85ce7b87f4ea3503d8a72c48574cc32
+	sha256:81d7220b62798d1dda580e1574b3d3d6926701ae8cd79588c4e0b33f2e345d85
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 # This is a standalone application.  Since no other Python project depends on
 # it we just provide single unversioned package.
 SINGLE_PYTHON_VERSION = yes
 
-# Testing fails because of the this issue related to pydantic and/or maison:
-# https://github.com/pydantic/pydantic/issues/7689
-TEST_STYLE = none
-
 include $(WS_MAKE_RULES)/common.mk
+
+# This project uses pdm to manage test dependencies.
+TEST_REQUIREMENTS_PDM += test
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/click
 PYTHON_REQUIRED_PACKAGES += library/python/maison
 PYTHON_REQUIRED_PACKAGES += library/python/pdm-backend
+PYTHON_REQUIRED_PACKAGES += library/python/pydantic
 PYTHON_REQUIRED_PACKAGES += library/python/ruyaml
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
