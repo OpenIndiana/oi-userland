@@ -25,23 +25,21 @@ diff -Naur libreoffice-7.6.4.1/external/libcmis.old/libxml2.12.patch.1 libreoffi
 + #include <libxml/tree.h>
 + #include <libxml/xpathInternals.h>
 + #include <libxml/xmlwriter.h>
---- core-2ccb78ad6bdfe3f3356a7a7f294ec388775c5816/external/libcmis/UnpackedTarball_libcmis.mk.~1~	2024-06-30 13:50:13.000000000 -0400
-+++ core-2ccb78ad6bdfe3f3356a7a7f294ec388775c5816/external/libcmis/UnpackedTarball_libcmis.mk	2024-06-30 21:46:33.592426841 -0400
-@@ -7,6 +7,8 @@
- # file, You can obtain one at http://mozilla.org/MPL/2.0/.
- #
- 
-+libcmis_patches := libxml2.12.patch.1
-+
- $(eval $(call gb_UnpackedTarball_UnpackedTarball,libcmis))
- 
- $(eval $(call gb_UnpackedTarball_set_tarball,libcmis,$(LIBCMIS_TARBALL)))
-@@ -14,7 +16,7 @@
- $(eval $(call gb_UnpackedTarball_set_patchlevel,libcmis,1))
+--- libreoffice-24.8.0.1/external/libcmis/UnpackedTarball_libcmis.mk.old	2024-07-15 00:44:18.353935622 -0400
++++ libreoffice-24.8.0.1/external/libcmis/UnpackedTarball_libcmis.mk	2024-07-15 00:45:14.277575463 -0400
+@@ -19,7 +19,6 @@
+ # 0001-cid-1545775-COPY_INSTEAD_OF_MOVE.patch is upstreamed
  
  $(eval $(call gb_UnpackedTarball_add_patches,libcmis,\
--	external/libcmis/http-session-cleanup.patch.1 \
-+	$(foreach patch,$(libcmis_patches),external/libcmis/$(patch)) \
+-	external/libcmis/0001-cid-1545775-COPY_INSTEAD_OF_MOVE.patch \
+ 	external/libcmis/0001-Fix-warning-C4589-when-building-with-MSVC.patch \
+ 	external/libcmis/http-session-cleanup.patch.1 \
+ 	external/libcmis/factory-no-retry-ssl.patch.1 \
+@@ -28,6 +27,7 @@
+ 	external/libcmis/0001-cppcheck-operatorEqVarError-in-src-libcmis-http-sess.patch \
+ 	external/libcmis/0001-Take-into-account-m_CurlInitProtocolsFunction-in-cop.patch \
+ 	external/libcmis/initprotocols.patch.1 \
++        $(foreach patch,$(libcmis_patches),external/libcmis/$(patch)) \
  ))
  
  # vim: set noet sw=4 ts=4:
