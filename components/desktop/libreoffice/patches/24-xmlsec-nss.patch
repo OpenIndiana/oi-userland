@@ -1,0 +1,28 @@
+diff -Naur core-87facad88d565e8e9fe21d04897058cca0ea55cd/external/xmlsec.old/xmlsec-nss-missing-header.patch.1 core-87facad88d565e8e9fe21d04897058cca0ea55cd/external/xmlsec/xmlsec-nss-missing-header.patch.1
+--- core-589fb36b663cbd68afc26419629a4a95bd593a89/external/xmlsec/UnpackedTarball_xmlsec.mk.old	2024-04-17 20:28:35.576261222 -0400
++++ core-589fb36b663cbd68afc26419629a4a95bd593a89/external/xmlsec/UnpackedTarball_xmlsec.mk	2024-04-17 20:29:34.651864517 -0400
+@@ -12,6 +12,8 @@
+ xmlsec_patches += old-nss.patch.1
+ # Remove this when Windows 7 is no longer supported
+ xmlsec_patches += BCryptKeyDerivation.patch.1
++# needed when nss < 3.59
++xmlsec_patches += xmlsec-nss-missing-header.patch.1
+ 
+ $(eval $(call gb_UnpackedTarball_UnpackedTarball,xmlsec))
+ 
+--- core-87facad88d565e8e9fe21d04897058cca0ea55cd/external/xmlsec.old/xmlsec-nss-missing-header.patch.1	1969-12-31 19:00:00.000000000 -0500
++++ core-87facad88d565e8e9fe21d04897058cca0ea55cd/external/xmlsec/xmlsec-nss-missing-header.patch.1	2024-01-27 23:21:12.570654096 -0500
+@@ -0,0 +1,13 @@
++--- a/src/nss/crypto.c	2024-01-27 23:02:51.951973350 -0500
+++++ b/src/nss/crypto.c	2024-01-27 23:06:44.375594392 -0500
++@@ -43,6 +43,10 @@
++ 
++ #include "../cast_helpers.h"
++ 
+++#ifndef NSS_USE_ALG_IN_ANY_SIGNATURE
+++#define NSS_USE_ALG_IN_ANY_SIGNATURE 0x00000020  /* used in any signature */
+++#endif
+++
++ static xmlSecCryptoDLFunctionsPtr  gXmlSecNssFunctions = NULL;
++ 
++ 
