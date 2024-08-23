@@ -4,7 +4,7 @@ py$(PYV): commands[0]> python -m py.test tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 1274 items
+collecting ... collected 1357 items
 
 tests/storage/test_file_stats.py::TestFileStats::test_file_exists_false PASSED
 tests/storage/test_local_file_manager.py::TestLocalFileManager::test_file_exists_false PASSED
@@ -52,7 +52,8 @@ tests/test_backup.py::TestBackup::test_backup_maximum_age PASSED
 tests/test_backup.py::TestBackup::test_keyboard_interrupt PASSED
 tests/test_backup.py::TestBackup::test_dateutil_parser PASSED
 tests/test_backup.py::TestBackup::test_delete_backup PASSED
-tests/test_backup.py::TestBackup::test_cannot_delete_keep_backup PASSED
+tests/test_backup.py::TestBackup::test_set_backup_sizes[True] PASSED
+tests/test_backup.py::TestBackup::test_set_backup_sizes[False] PASSED
 tests/test_backup.py::TestBackup::test_available_backups PASSED
 tests/test_backup.py::TestBackup::test_load_backup_cache PASSED
 tests/test_backup.py::TestBackup::test_backup_cache_add PASSED
@@ -67,6 +68,17 @@ tests/test_backup.py::TestBackup::test_backup_with_name[True] PASSED
 tests/test_backup.py::TestBackup::test_backup_with_name[False] PASSED
 tests/test_backup.py::TestBackup::test_backup_without_name[True] PASSED
 tests/test_backup.py::TestBackup::test_backup_without_name[False] PASSED
+tests/test_backup.py::TestBackup::test_backup_without_parent_backup_id PASSED
+tests/test_backup.py::TestBackup::test_backup_with_parent_backup_id PASSED
+tests/test_backup.py::TestBackup::test_validate_backup_args PASSED
+tests/test_backup.py::TestBackup::test_validate_incremental_backup_configs_pg_version PASSED
+tests/test_backup.py::TestBackup::test_validate_incremental_backup_configs_summarize_wal PASSED
+tests/test_backup.py::TestBackup::test_validate_incremental_backup_configs_backup_compression[gzip-gzip] PASSED
+tests/test_backup.py::TestBackup::test_validate_incremental_backup_configs_backup_compression[gzip-None] PASSED
+tests/test_backup.py::TestBackup::test_validate_incremental_backup_configs_backup_compression[None-gzip] PASSED
+tests/test_backup.py::TestBackup::test_validate_incremental_backup_configs_backup_compression[None-None] PASSED
+tests/test_backup.py::TestBackup::test_get_last_full_backup_id PASSED
+tests/test_backup.py::TestBackup::test_backup_fsync_and_set_sizes PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_no_wal_cleanup_if_not_oldest_backup PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_wal_cleanup PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_wal_cleanup_last_backup PASSED
@@ -316,12 +328,24 @@ tests/test_cli.py::TestCli::test_recover_get_wal[-True-False-True] PASSED
 tests/test_cli.py::TestCli::test_recover_get_wal[get-wal-False-False-True] PASSED
 tests/test_cli.py::TestCli::test_recover_get_wal[get-wal-False-True-False] PASSED
 tests/test_cli.py::TestCli::test_recover_get_wal[get-wal-True-False-True] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[False-None-None-None-False] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-None-None-None-True] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-/from/arg-None-/from/arg-False] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-from/arg-None-None-True] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-None-/from/conf-/from/conf-False] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-/from/arg-/from/conf-/from/arg-False] PASSED
+tests/test_cli.py::TestCli::test_recover_recovery_staging_path[False-None-None-None-False-None] PASSED
+tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-None-None-None-True-backup is compressed with gzip compression but no recovery staging path is provided.] PASSED
+tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-/from/arg-None-/from/arg-False-None] PASSED
+tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-from/arg-None-None-True-Cannot parse recovery staging path: Invalid value : 'from/arg' (must be an absolute path)] PASSED
+tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-None-/from/conf-/from/conf-False-None] PASSED
+tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-/from/arg-/from/conf-/from/arg-False-None] PASSED
+tests/test_cli.py::TestCli::test_recover_local_staging_path[False-None-None-None-False-None] PASSED
+tests/test_cli.py::TestCli::test_recover_local_staging_path[True-None-None-None-True-backup will be combined with pg_combinebackup in the barman host but no local staging path is provided.] PASSED
+tests/test_cli.py::TestCli::test_recover_local_staging_path[True-/from/arg-None-/from/arg-False-None] PASSED
+tests/test_cli.py::TestCli::test_recover_local_staging_path[True-from/arg-None-None-True-Cannot parse local staging path: Invalid value : 'from/arg' (must be an absolute path)] PASSED
+tests/test_cli.py::TestCli::test_recover_local_staging_path[True-None-/from/conf-/from/conf-False-None] PASSED
+tests/test_cli.py::TestCli::test_recover_local_staging_path[True-/from/arg-/from/conf-/from/arg-False-None] PASSED
+tests/test_cli.py::TestCli::test_recover_backup_status[DONE-False] PASSED
+tests/test_cli.py::TestCli::test_recover_backup_status[WAITING_FOR_WALS-False] PASSED
+tests/test_cli.py::TestCli::test_recover_backup_status[FAILED-True] PASSED
+tests/test_cli.py::TestCli::test_recover_backup_status[EMPTY-True] PASSED
+tests/test_cli.py::TestCli::test_recover_backup_status[SYNCING-True] PASSED
+tests/test_cli.py::TestCli::test_recover_backup_status[STARTED-True] PASSED
 tests/test_cli.py::TestCli::test_recover_snapshots[None-snapshot_recovery_args0-extra_recovery_args0-Backup backup_id is not a snapshot backup but the following snapshot arguments have been used: --snapshot-recovery-instance] PASSED
 tests/test_cli.py::TestCli::test_recover_snapshots[snapshots_info1-snapshot_recovery_args1-extra_recovery_args1-Backup backup_id is a snapshot backup and the following required arguments have not been provided: --snapshot-recovery-instance] PASSED
 tests/test_cli.py::TestCli::test_recover_snapshots[snapshots_info2-snapshot_recovery_args2-extra_recovery_args2-Backup backup_id is a snapshot backup therefore tablespace relocation rules cannot be used] PASSED
@@ -369,6 +393,8 @@ tests/test_cli.py::TestKeepCli::test_barman_keep_backup_not_done PASSED
 tests/test_cli.py::TestKeepCli::test_barman_keep_release PASSED
 tests/test_cli.py::TestKeepCli::test_barman_keep_status PASSED
 tests/test_cli.py::TestKeepCli::test_barman_keep_status_nokeep PASSED
+tests/test_cli.py::TestKeepCli::test_barman_keep_incremental_backup PASSED
+tests/test_cli.py::TestKeepCli::test_barman_keep_full_backup PASSED
 tests/test_cli.py::TestCliHelp::test_help_output PASSED
 tests/test_cli.py::TestCheckWalArchiveCli::test_barman_check_wal_archive_no_args PASSED
 tests/test_cli.py::TestCheckWalArchiveCli::test_barman_check_wal_archive_args PASSED
@@ -419,6 +445,8 @@ tests/test_command_wrappers.py::TestPgBaseBackup::test_init_simple PASSED
 tests/test_command_wrappers.py::TestPgBaseBackup::test_init_args PASSED
 tests/test_command_wrappers.py::TestPgBaseBackup::test_pg_basebackup10_no_wals PASSED
 tests/test_command_wrappers.py::TestPgBaseBackup::test_simple_invocation PASSED
+tests/test_command_wrappers.py::TestPgBaseBackup::test_incremental_backup_arg[/path/to/backup_manifest/file---incremental=/path/to/backup_manifest/file-None] PASSED
+tests/test_command_wrappers.py::TestPgBaseBackup::test_incremental_backup_arg[None-None---incremental] PASSED
 tests/test_command_wrappers.py::TestPgBaseBackup::test_compression_pre_15[None-expected_args0-unexpected_args0] PASSED
 tests/test_command_wrappers.py::TestPgBaseBackup::test_compression_pre_15[compression_config1-expected_args1-unexpected_args1] PASSED
 tests/test_command_wrappers.py::TestPgBaseBackup::test_compression_pre_15[compression_config2-expected_args2-unexpected_args2] PASSED
@@ -444,6 +472,11 @@ tests/test_command_wrappers.py::TestReceiveXlog::test_simple_invocation PASSED
 tests/test_command_wrappers.py::TestReceiveXlog::test_find_command PASSED
 tests/test_command_wrappers.py::TestReceiveXlog::test_get_version_info PASSED
 tests/test_command_wrappers.py::TestPgVerifyBackup::test_init_simple PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_init_simple PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_init_args PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_simple_invocation PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_tablespace_mapping[tbs_mapping0-expected_args0] PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_tablespace_mapping[tbs_mapping1-expected_args1] PASSED
 tests/test_command_wrappers.py::TestBarmanSubProcess::test_init_minimal_cmd PASSED
 tests/test_command_wrappers.py::TestBarmanSubProcess::test_init_args PASSED
 tests/test_command_wrappers.py::TestBarmanSubProcess::test_simple_invocation PASSED
@@ -575,7 +608,7 @@ tests/test_config.py::TestConfig::test_parse_si_suffix PASSED
 tests/test_config.py::TestConfig::test_server_conflict_paths PASSED
 tests/test_config.py::TestConfig::test_populate_servers_and_models PASSED
 tests/test_config.py::TestConfig::test_populate_servers_and_models_following_symlink PASSED
-tests/test_config.py::TestConfig::test_parse_recovery_staging_path PASSED
+tests/test_config.py::TestConfig::test_parse_staging_path PASSED
 tests/test_config.py::TestConfig::test_parse_slot_name PASSED
 tests/test_config.py::TestConfig::test_parse_snapshot_disks[disk0-True] PASSED
 tests/test_config.py::TestConfig::test_parse_snapshot_disks[disk0,disk1-True] PASSED
@@ -730,6 +763,8 @@ tests/test_executor.py::TestStrategy::test_stop_backup_for_old_pg PASSED
 tests/test_executor.py::TestStrategy::test_concurrent_stop_backup PASSED
 tests/test_executor.py::TestStrategy::test_exclusive_check[140000-] PASSED
 tests/test_executor.py::TestStrategy::test_exclusive_check[150000-exclusive backups not supported on PostgreSQL 15] PASSED
+tests/test_executor.py::TestStrategy::test__pg_get_metadata[160000-None] PASSED
+tests/test_executor.py::TestStrategy::test__pg_get_metadata[170000-on] PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_postgres_backup_executor_init PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_backup PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_check PASSED
@@ -789,6 +824,8 @@ tests/test_fs.py::TestUnixLocalCommand::test_findmnt[-expected_return_value1] PA
 tests/test_fs.py::TestUnixLocalCommand::test_findmnt_unexpected_output[some unexpected output] PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_findmnt_unexpected_output[unexpected] PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_findmnt_unexpected_output[ ] PASSED
+tests/test_fs.py::TestUnixLocalCommand::test_get_system_info PASSED
+tests/test_fs.py::TestUnixLocalCommand::test_get_system_info_release_cases PASSED
 tests/test_fs.py::TestFileMatchingRules::test_match_dirs_not_anchored PASSED
 tests/test_fs.py::TestFileMatchingRules::test_match_dirs_anchored PASSED
 tests/test_fs.py::TestFileMatchingRules::test_match_files_not_anchored PASSED
@@ -898,6 +935,11 @@ tests/test_postgres.py::TestPostgres::test_has_monitoring_privileges[True-query_
 tests/test_postgres.py::TestPostgres::test_has_monitoring_privileges[False-query_response2-False] PASSED
 tests/test_postgres.py::TestPostgres::test_has_monitoring_privileges[False-query_response3-True] PASSED
 tests/test_postgres.py::TestPostgres::test_has_monitoring_privileges_exception PASSED
+tests/test_postgres.py::TestPostgres::test_current_size[False-None-False] PASSED
+tests/test_postgres.py::TestPostgres::test_current_size[True-2048-True] PASSED
+tests/test_postgres.py::TestPostgres::test_current_size_error[Error] PASSED
+tests/test_postgres.py::TestPostgres::test_current_size_error[PostgresConnectionError] PASSED
+tests/test_postgres.py::TestPostgres::test_send_heartbeat_query PASSED
 tests/test_postgres.py::TestStreamingConnection::test_connection_error PASSED
 tests/test_postgres.py::TestStreamingConnection::test_fetch_remote_status_for_unsupported_pg_version[90100] PASSED
 tests/test_postgres.py::TestStreamingConnection::test_fetch_remote_status_for_unsupported_pg_version[90200] PASSED
@@ -915,6 +957,11 @@ tests/test_postgres.py::TestStandbyPostgreSQLConnection::test_switch_wal_in_back
 tests/test_postgres.py::TestStandbyPostgreSQLConnection::test_switch_wal_in_background_calls_checkpoint PASSED
 tests/test_postgres.py::TestStandbyPostgreSQLConnection::test_stop_backup[stop_concurrent_backup] PASSED
 tests/test_postgres.py::TestStandbyPostgreSQLConnection::test_stop_backup[stop_exclusive_backup] PASSED
+tests/test_postgres.py::TestPostgresKeepAlive::test_keepalive_runs_successfully PASSED
+tests/test_postgres.py::TestPostgresKeepAlive::test_do_nothing_if_interval_less_or_equal_zero PASSED
+tests/test_postgres.py::TestPostgresKeepAlive::test_wait_connection_open_to_send_queries PASSED
+tests/test_postgres.py::TestPostgresKeepAlive::test_raise_exception_when_needed PASSED
+tests/test_postgres.py::TestPostgresKeepAlive::test_thread_is_always_terminated PASSED
 tests/test_postgres_plumbing.py::TestFunctionNameMap::test_null_server_version PASSED
 tests/test_postgres_plumbing.py::TestFunctionNameMap::test_postgresql_10 PASSED
 tests/test_postgres_plumbing.py::TestFunctionNameMap::test_postgresql_9 PASSED
@@ -975,15 +1022,44 @@ tests/test_recovery_executor.py::TestSnapshotRecoveryExecutor::test_check_mount_
 tests/test_recovery_executor.py::TestSnapshotRecoveryExecutor::test_check_mount_points[resolved_mount_info2-Error checking mount points: Could not find disk disk0 at any mount point, Could not find disk disk1 at any mount point] PASSED
 tests/test_recovery_executor.py::TestSnapshotRecoveryExecutor::test_check_mount_points[resolved_mount_info3-Error checking mount points: Disk disk0 cloned from snapshot snapshot0 is mounted at /opt/disk2 but /opt/disk0 was expected., Disk disk1 cloned from snapshot snapshot1 is mounted at /opt/disk3 but /opt/disk1 was expected.] PASSED
 tests/test_recovery_executor.py::TestSnapshotRecoveryExecutor::test_check_mount_points[resolved_mount_info4-Error checking mount options: Disk disk0 cloned from snapshot snapshot0 is mounted with rw but rw,noatime was expected., Disk disk1 cloned from snapshot snapshot1 is mounted with rw,noatime but rw was expected.] PASSED
-tests/test_recovery_executor.py::TestRecoveryExecutorFactory::test_recovery_executor_factory[None-RecoveryExecutor-None-False] PASSED
-tests/test_recovery_executor.py::TestRecoveryExecutorFactory::test_recovery_executor_factory[gzip-TarballRecoveryExecutor-None-False] PASSED
-tests/test_recovery_executor.py::TestRecoveryExecutorFactory::test_recovery_executor_factory[snappy-None-None-True] PASSED
-tests/test_recovery_executor.py::TestRecoveryExecutorFactory::test_recovery_executor_factory[None-SnapshotRecoveryExecutor-snapshots_info3-False] PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutorFactory::test_recovery_executor_factory[None-False-RecoveryExecutor-None-False] PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutorFactory::test_recovery_executor_factory[gzip-False-TarballRecoveryExecutor-None-False] PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutorFactory::test_recovery_executor_factory[snappy-False-None-None-True] PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutorFactory::test_recovery_executor_factory[None-False-SnapshotRecoveryExecutor-snapshots_info3-False] PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutorFactory::test_recovery_executor_factory[None-True-IncrementalRecoveryExecutor-None-False] PASSED
 tests/test_recovery_executor.py::TestConfigurationFileMangeler::test_simple_file_mangeling PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test_recover PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__combine_backups PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__backup_copy_no_tablespaces PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__backup_copy_with_tablespaces PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__backup_copy_remote PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__get_backup_chain_paths PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__fetch_remote_status PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__prepare_destination PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__move_to_destination PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__move_to_destination_exclude_path PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__move_to_destination_error PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__retry_handler PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__start_message PASSED
+tests/test_recovery_executor.py::TestIncrementalRecoveryExecutor::test__end_message PASSED
 tests/test_retention_policies.py::TestRetentionPolicies::test_redundancy_report PASSED
 tests/test_retention_policies.py::TestRetentionPolicies::test_recovery_window_report PASSED
 tests/test_retention_policies.py::TestRetentionPolicies::test_backup_status PASSED
 tests/test_retention_policies.py::TestRetentionPolicies::test_first_backup PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-OBSOLETE] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-VALID] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-OBSOLETE*] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-KEEP:FULL] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-KEEP:STANDALONE] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS--] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-OBSOLETE] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-VALID] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-OBSOLETE*] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-KEEP:FULL] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-KEEP:STANDALONE] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2--] PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test_redundancy_report_with_incrementals PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test_recovery_window_report_with_incrementals PASSED
 tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_standalone_within_policy PASSED
 tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_full_within_policy PASSED
 tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_standalone_out_of_policy PASSED
@@ -1005,10 +1081,13 @@ tests/test_server.py::TestServer::test_check_config_missing PASSED
 tests/test_server.py::TestServer::test_xlogdb_with_exception PASSED
 tests/test_server.py::TestServer::test_xlogdb PASSED
 tests/test_server.py::TestServer::test_get_wal_full_path PASSED
-tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files0-target_tlis0-None-expected_indices0] PASSED
-tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files1-target_tlis1-None-expected_indices1] PASSED
-tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files2-target_tlis2-44-expected_indices2] PASSED
-tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files3-target_tlis3-None-expected_indices3] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files0-target_tlis0-None-None-None-False-expected_indices0] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files1-target_tlis1-None-None-None-False-expected_indices1] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files2-target_tlis2-44-None-None-False-expected_indices2] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files3-target_tlis3-None-None-None-False-expected_indices3] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files4-target_tlis4-None-100-None-False-expected_indices4] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files5-target_tlis5-None-None-0/07000000-False-expected_indices5] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files6-target_tlis6-None-None-None-True-expected_indices6] PASSED
 tests/test_server.py::TestServer::test_get_wal_until_next_backup[wal_info_files0-expected_indices0] PASSED
 tests/test_server.py::TestServer::test_get_wal_until_next_backup[wal_info_files1-expected_indices1] PASSED
 tests/test_server.py::TestServer::test_pg_stat_archiver_show PASSED
@@ -1033,7 +1112,10 @@ tests/test_server.py::TestServer::test_check_standby[db=primary-False-True-fake_
 tests/test_server.py::TestServer::test_check_replication_slot PASSED
 tests/test_server.py::TestServer::test_get_wal_info PASSED
 tests/test_server.py::TestServer::test_backup PASSED
+tests/test_server.py::TestServer::test_cannot_delete_keep_backup PASSED
+tests/test_server.py::TestServer::test_cannot_delete_backup_due_to_minimum_redundancy PASSED
 tests/test_server.py::TestServer::test_delete_running_backup PASSED
+tests/test_server.py::TestServer::test_delete_backup_with_children PASSED
 tests/test_server.py::TestServer::test_archive_wal_lock_acquisition PASSED
 tests/test_server.py::TestServer::test_cron_lock_acquisition PASSED
 tests/test_server.py::TestServer::test_kill PASSED
@@ -1080,6 +1162,7 @@ tests/test_server.py::TestServer::test_check_backup_validity_within_minimum_age 
 tests/test_server.py::TestServer::test_check_backup_validity_exceeds_minimum_age PASSED
 tests/test_server.py::TestServer::test_check_backup_validity_exceeds_minimum_size PASSED
 tests/test_server.py::TestServer::test_check_backup_validity_under_minimum_size PASSED
+tests/test_server.py::TestServer::test_get_backup_ext_info PASSED
 tests/test_server.py::TestCheckStrategy::test_check_output_strategy PASSED
 tests/test_server.py::TestCheckStrategy::test_check_output_strategy_log PASSED
 tests/test_server.py::TestCheckStrategy::test_check_strategy PASSED
@@ -1286,33 +1369,50 @@ tests/test_lockfile.py:240
   $(@D)/tests/test_lockfile.py:240: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
     @pytest.mark.timeout(1)
 
-tests/test_command_wrappers.py: 28 warnings
+tests/test_backup.py::TestBackup::test_keyboard_interrupt
+  $(PYTHON_DIR)/vendor-packages/_pytest/threadexception.py:82: PytestUnhandledThreadExceptionWarning: Exception in thread barman_keepalive_thread
+  
+  Traceback (most recent call last):
+    File "$(PYTHON_DIR)/threading.py", line 980, in _bootstrap_inner
+      self.run()
+    File "$(PYTHON_DIR)/threading.py", line 917, in run
+      self._target(*self._args, **self._kwargs)
+    File "$(@D)/barman/postgres.py", line 1929, in _run_keep_alive
+      success, ex = self.postgres.send_heartbeat_query()
+  ValueError: not enough values to unpack (expected 2, got 0)
+  
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+tests/test_command_wrappers.py: 36 warnings
   $(@D)/barman/command_wrappers.py:767: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("9.3"):
 
-tests/test_command_wrappers.py: 73 warnings
+tests/test_command_wrappers.py: 83 warnings
 tests/test_compressor.py: 39 warnings
 tests/test_executor.py: 15 warnings
+tests/test_recovery_executor.py: 2 warnings
 tests/test_wal_archiver.py: 14 warnings
   $(PYTHON_DIR)/vendor-packages/setuptools/_distutils/version.py:337: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     other = LooseVersion(other)
 
-tests/test_command_wrappers.py: 24 warnings
-  $(@D)/barman/command_wrappers.py:955: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+tests/test_command_wrappers.py: 26 warnings
+  $(@D)/barman/command_wrappers.py:959: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("10"):
 
 tests/test_command_wrappers.py: 17 warnings
-  $(@D)/barman/command_wrappers.py:1006: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:1014: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("15"):
 
 tests/test_command_wrappers.py: 2 warnings
 tests/test_executor.py: 3 warnings
+tests/test_recovery_executor.py: 2 warnings
 tests/test_wal_archiver.py: 6 warnings
   $(@D)/barman/command_wrappers.py:894: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     version_info["full_version"] = Version(full_version)
 
 tests/test_command_wrappers.py: 2 warnings
 tests/test_executor.py: 3 warnings
+tests/test_recovery_executor.py: 2 warnings
 tests/test_wal_archiver.py: 6 warnings
   $(@D)/barman/command_wrappers.py:895: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     version_info["major_version"] = Version(
@@ -1357,16 +1457,16 @@ tests/test_executor.py::TestPostgresBackupExecutor::test_check
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
-  $(@D)/barman/backup_executor.py:451: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/backup_executor.py:453: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     pg_version = Version(postgres.server_txt_version)
 
 tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status
 tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status
-  $(@D)/barman/backup_executor.py:547: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/backup_executor.py:549: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     pg_version = Version(pg_version)
 
 tests/test_executor.py::TestSnapshotBackupExecutor::test_find_missing_and_unmounted_disks_resolve_exception
-  $(@D)/barman/backup_executor.py:1594: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
+  $(@D)/barman/backup_executor.py:1640: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
     logging.warn("Error resolving mount point: {}".format(exc))
 
 tests/test_utils.py::TestBarmanEncoder::test_version_objects
@@ -1386,6 +1486,6 @@ tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_
     pg_version = Version(pg_version)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1251 passed, 23 skipped, 286 warnings ========
+======== 1334 passed, 23 skipped, 313 warnings ========
   py$(PYV): OK
   congratulations :)
