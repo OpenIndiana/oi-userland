@@ -12,17 +12,16 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlcipher
-COMPONENT_VERSION=      4.6.0
+COMPONENT_VERSION=      4.6.1
 COMPONENT_SUMMARY=      SQLite extension that provides transparent 256-bit AES encryption of database
 COMPONENT_PROJECT_URL=  https://www.zetetic.net/sqlcipher/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:879fb030c36bc5138029af6aa3ae3f36c28c58e920af05ac7ca78a5915b2fa3c
+COMPONENT_ARCHIVE_HASH= sha256:d8f9afcbc2f4b55e316ca4ada4425daf3d0b4aab25f45e11a802ae422b9f53a3
 COMPONENT_FMRI=         database/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=       Development/Databases
 COMPONENT_LICENSE=      BSD
