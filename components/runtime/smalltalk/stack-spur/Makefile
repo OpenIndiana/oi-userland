@@ -33,6 +33,15 @@ USE_COMMON_TEST_MASTER= no
 # the SSL module is supporting 1.1 and 3.x but SUnit testframework is not
 USE_OPENSSL10=yes
 
+# currently the JPEGReadWriter2Plugin is disabled in plugins.int
+#
+# the goal is to use libjpeg8-turbo (or any other libjpeg implementation)
+# special care for included header files as the struct sizes vary
+# we 'fix' the Squeak source code that has an old libjpeg included in source
+# this should be fixed upstream in the Squeak sources
+# the default OpenIndiana JPEG_IMPLEM at time of writing is libjpeg8-turbo
+JPEG_IMPLEM=libjpeg8-turbo
+
 include ../../../../make-rules/shared-macros.mk
 
 # there is no official triplet version for opensmalltalk-vm
@@ -41,6 +50,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stack-spur
 COMPONENT_VERSION=	5.0.3423
+COMPONENT_REVISION=	1
 GIT_TAG=		sun-v5.0.65
 PLUGIN_REV=		5.0-202408021838
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
@@ -76,12 +86,23 @@ PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
 
 PATH=$(PATH.gnu)
 
+# cleanup the plugin directory
+SOURCE_JPEG = $(SOURCE_DIR)/platforms/Cross/plugins/JPEGReadWriter2Plugin
+
 # opensmalltalk configure script checks for plugins files in builddir
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	$(MKDIR) $(BUILD_DIR_32); \
 	cp plugins.ext plugins.int $(BUILD_DIR_32); \
 	$(MKDIR) $(BUILD_DIR_64); \
-	cp plugins.ext plugins.int $(BUILD_DIR_64) \
+	cp plugins.ext plugins.int $(BUILD_DIR_64); \
+        find $(SOURCE_JPEG) \
+     \! -name JPEGReadWriter2Plugin.h \
+     \! -name sqJPEGReadWriter2Plugin.c \
+     \! -name Error.c \
+     \! -name jinclude.h \
+     \! -name jmemdatasrc.c \
+     \! -name jmemdatadst.c \
+  -exec rm {} \; \
 	)
 
 # the Squeak configure script detects the lfcompile flags
