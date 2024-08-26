@@ -19,13 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.collections
-HUMAN_VERSION =			5.0.1
-COMPONENT_SUMMARY =		jaraco.collections - Collection objects similar to those in stdlib by jaraco
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.collections
+HUMAN_VERSION =			5.1.0
+COMPONENT_SUMMARY =		Collection objects similar to those in stdlib by jaraco
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:808631b174b84a4e2a592490d62f62dfc15d8047a0f715726098dc43b81a6cfa
+	sha256:0e4829409d39ad18a40aa6754fee2767f4d9730c4ba66dc9df89f1d2756994c2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =			jaraco_collections-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -33,7 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-text
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
