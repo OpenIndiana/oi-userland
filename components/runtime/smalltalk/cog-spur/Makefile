@@ -27,6 +27,15 @@ USE_COMMON_TEST_MASTER= no
 # the SSL module is supporting 1.1 and 3.x but SUnit testframework is not
 USE_OPENSSL10=yes
 
+# currently the JPEGReadWriter2Plugin is disabled in plugins.int
+#
+# the goal is to use libjpeg8-turbo (or any other libjpeg implementation)
+# special care for included header files as the struct sizes vary
+# we 'fix' the Squeak source code that has an old libjpeg included in source
+# this should be fixed upstream in the Squeak sources
+# the default OpenIndiana JPEG_IMPLEM at time of writing is libjpeg8-turbo
+JPEG_IMPLEM=libjpeg8-turbo
+
 include ../../../../make-rules/shared-macros.mk
 
 # there is no official triplet version for opensmalltalk-vm
@@ -34,9 +43,10 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		cog-spur
-COMPONENT_VERSION=	5.0.3362
-GIT_TAG=		sun-v5.0.64
-PLUGIN_REV=		5.0-202404200713-cog
+COMPONENT_VERSION=	5.0.3424
+COMPONENT_REVISION=	1
+GIT_TAG=		sun-v5.0.65
+PLUGIN_REV=		5.0-202408021838-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/cog-spur
@@ -50,7 +60,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:866756107db1d48c6b3ebf83beabc0c4b1820c98722a6b7ce5fb8b3ab6416317
+COMPONENT_ARCHIVE_HASH=	sha256:06e8a63fa574caac310d9bef6934f64aa277b62695290de3d168bb5422134f09
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
@@ -70,12 +80,24 @@ PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
 
 PATH=$(PATH.gnu)
 
+# cleanup the plugin directory
+SOURCE_JPEG = $(SOURCE_DIR)/platforms/Cross/plugins/JPEGReadWriter2Plugin
+
+# remove old libjpeg6 b2 sources from tree
 # opensmalltalk configure script checks for plugins files in builddir
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	$(MKDIR) $(BUILD_DIR_32); \
 	cp plugins.ext plugins.int $(BUILD_DIR_32); \
 	$(MKDIR) $(BUILD_DIR_64); \
-	cp plugins.ext plugins.int $(BUILD_DIR_64) \
+	cp plugins.ext plugins.int $(BUILD_DIR_64); \
+        find $(SOURCE_JPEG) \
+     \! -name JPEGReadWriter2Plugin.h \
+     \! -name sqJPEGReadWriter2Plugin.c \
+     \! -name Error.c \
+     \! -name jinclude.h \
+     \! -name jmemdatasrc.c \
+     \! -name jmemdatadst.c \
+  -exec rm {} \; \
 	)
 
 # the Squeak configure script detects the lfcompile flags
@@ -142,11 +164,12 @@ REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library/freetype-2
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

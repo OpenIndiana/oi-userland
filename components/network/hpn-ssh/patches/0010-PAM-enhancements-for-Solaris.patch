@@ -1,6 +1,6 @@
---- hpn-ssh-hpn-18.4.1/auth-pam.c.orig
-+++ hpn-ssh-hpn-18.4.1/auth-pam.c
-@@ -687,6 +687,66 @@
+--- hpn-ssh-hpn-18.4.2/auth-pam.c.orig
++++ hpn-ssh-hpn-18.4.2/auth-pam.c
+@@ -689,6 +689,66 @@
  	sshpam_handle = NULL;
  }
  
@@ -67,7 +67,7 @@
  static int
  sshpam_init(struct ssh *ssh, Authctxt *authctxt)
  {
-@@ -700,23 +760,76 @@
+@@ -702,23 +762,76 @@
  		fatal("Username too long from %s port %d",
  		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
  #endif
@@ -144,8 +144,8 @@
  	sshpam_authctxt = authctxt;
  
  	if (sshpam_err != PAM_SUCCESS) {
---- hpn-ssh-hpn-18.4.1/auth.h.orig
-+++ hpn-ssh-hpn-18.4.1/auth.h
+--- hpn-ssh-hpn-18.4.2/auth.h.orig
++++ hpn-ssh-hpn-18.4.2/auth.h
 @@ -95,6 +95,9 @@
  
  	/* Information exposed to session */
@@ -156,8 +156,8 @@
  };
  
  /*
---- hpn-ssh-hpn-18.4.1/auth2.c.orig
-+++ hpn-ssh-hpn-18.4.1/auth2.c
+--- hpn-ssh-hpn-18.4.2/auth2.c.orig
++++ hpn-ssh-hpn-18.4.2/auth2.c
 @@ -317,9 +317,17 @@
  #endif
  		}
@@ -253,8 +253,8 @@
  		int r, success = PRIVSEP(do_pam_account());
  
  		/* If PAM returned a message, send it to the user. */
---- hpn-ssh-hpn-18.4.1/monitor.c.orig
-+++ hpn-ssh-hpn-18.4.1/monitor.c
+--- hpn-ssh-hpn-18.4.2/monitor.c.orig
++++ hpn-ssh-hpn-18.4.2/monitor.c
 @@ -117,6 +117,9 @@
  int mm_answer_pwnamallow(struct ssh *, int, struct sshbuf *);
  int mm_answer_auth2_read_banner(struct ssh *, int, struct sshbuf *);
@@ -371,8 +371,8 @@
  int
  mm_answer_authserv(struct ssh *ssh, int sock, struct sshbuf *m)
  {
---- hpn-ssh-hpn-18.4.1/monitor.h.orig
-+++ hpn-ssh-hpn-18.4.1/monitor.h
+--- hpn-ssh-hpn-18.4.2/monitor.h.orig
++++ hpn-ssh-hpn-18.4.2/monitor.h
 @@ -63,6 +63,9 @@
  	MONITOR_REQ_PAM_FREE_CTX = 110, MONITOR_ANS_PAM_FREE_CTX = 111,
  	MONITOR_REQ_AUDIT_EVENT = 112, MONITOR_REQ_AUDIT_COMMAND = 113,
@@ -383,8 +383,8 @@
  };
  
  struct ssh;
---- hpn-ssh-hpn-18.4.1/monitor_wrap.c.orig
-+++ hpn-ssh-hpn-18.4.1/monitor_wrap.c
+--- hpn-ssh-hpn-18.4.2/monitor_wrap.c.orig
++++ hpn-ssh-hpn-18.4.2/monitor_wrap.c
 @@ -396,6 +396,24 @@
  	sshbuf_free(m);
  }
@@ -410,8 +410,8 @@
  /* Do the password authentication */
  int
  mm_auth_password(struct ssh *ssh, char *password)
---- hpn-ssh-hpn-18.4.1/servconf.c.orig
-+++ hpn-ssh-hpn-18.4.1/servconf.c
+--- hpn-ssh-hpn-18.4.2/servconf.c.orig
++++ hpn-ssh-hpn-18.4.2/servconf.c
 @@ -202,6 +202,18 @@
  	options->channel_timeouts = NULL;
  	options->num_channel_timeouts = 0;
@@ -503,8 +503,8 @@
  	case sDeprecated:
  	case sIgnore:
  	case sUnsupported:
---- hpn-ssh-hpn-18.4.1/servconf.h.orig
-+++ hpn-ssh-hpn-18.4.1/servconf.h
+--- hpn-ssh-hpn-18.4.2/servconf.h.orig
++++ hpn-ssh-hpn-18.4.2/servconf.h
 @@ -71,6 +71,10 @@
  	struct addrinfo *addrs;
  };
@@ -529,8 +529,8 @@
  	int	fingerprint_hash;
  	int	expose_userauth_info;
  	u_int64_t timing_secret;
---- hpn-ssh-hpn-18.4.1/hpnsshd.8.orig
-+++ hpn-ssh-hpn-18.4.1/hpnsshd.8
+--- hpn-ssh-hpn-18.4.2/hpnsshd.8.orig
++++ hpn-ssh-hpn-18.4.2/hpnsshd.8
 @@ -1017,6 +1017,33 @@
  started last).
  The content of this file is not sensitive; it can be world-readable.
@@ -565,8 +565,8 @@
  .Sh SEE ALSO
  .Xr hpnscp 1 ,
  .Xr hpnsftp 1 ,
---- hpn-ssh-hpn-18.4.1/hpnsshd_config.5.orig
-+++ hpn-ssh-hpn-18.4.1/hpnsshd_config.5
+--- hpn-ssh-hpn-18.4.2/hpnsshd_config.5.orig
++++ hpn-ssh-hpn-18.4.2/hpnsshd_config.5
 @@ -1400,6 +1400,35 @@
  protection against man-in-the-middle attacks. As with NoneEnabled all authentication
  remains encrypted and integrity is ensured. Default is 

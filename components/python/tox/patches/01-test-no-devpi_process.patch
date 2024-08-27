@@ -1,17 +1,17 @@
 We do not have devpi_process available (yet)
 
---- tox-4.16.0/pyproject.toml.orig
-+++ tox-4.16.0/pyproject.toml
+--- tox-4.17.1/pyproject.toml.orig
++++ tox-4.17.1/pyproject.toml
 @@ -75,7 +75,6 @@
    "build[virtualenv]>=1.2.1",
    "covdefaults>=2.3",
    "detect-test-pollution>=1.2",
 -  "devpi-process>=1",
-   "diff-cover>=9.1",
+   "diff-cover>=9.1.1",
    "distlib>=0.3.8",
    "flaky>=3.8.1",
---- tox-4.16.0/src/tox/pytest.py.orig
-+++ tox-4.16.0/src/tox/pytest.py
+--- tox-4.17.1/src/tox/pytest.py.orig
++++ tox-4.17.1/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
@@ -36,8 +36,8 @@ We do not have devpi_process available (yet)
  def _invalid_index_fake_port() -> int:  # noqa: PT005
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.16.0/tests/test_provision.py.orig
-+++ tox-4.16.0/tests/test_provision.py
+--- tox-4.17.1/tests/test_provision.py.orig
++++ tox-4.17.1/tests/test_provision.py
 @@ -16,8 +16,6 @@
  from packaging.requirements import Requirement
  
@@ -60,7 +60,7 @@ We do not have devpi_process available (yet)
 -    return self_index
 -
 -
--@pytest.fixture()
+-@pytest.fixture
 -def _pypi_index_self(pypi_index_self: Index, monkeypatch: MonkeyPatch) -> None:
 -    pypi_index_self.use()
 -    monkeypatch.setenv("PIP_INDEX_URL", pypi_index_self.url)
@@ -74,7 +74,7 @@ We do not have devpi_process available (yet)
 @@ -128,96 +109,6 @@
  
  
- @pytest.mark.integration()
+ @pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -def test_provision_requires_ok(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
 -    proj = tox_project({"tox.ini": "[tox]\nrequires=demo-pkg-inline\n[testenv]\npackage=skip"})
@@ -107,7 +107,7 @@ We do not have devpi_process available (yet)
 -    assert f"ROOT: remove tox env folder {provision_env}" in result_recreate.out, result_recreate.out
 -
 -
--@pytest.mark.integration()
+-@pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -def test_provision_platform_check(tox_project: ToxProjectCreator) -> None:
 -    ini = "[tox]\nrequires=demo-pkg-inline\n[testenv]\npackage=skip\n[testenv:.tox]\nplatform=wrong_platform"
@@ -141,7 +141,7 @@ We do not have devpi_process available (yet)
 -    assert requires == {"minversion": None, "requires": ["p", "tox"]}
 -
 -
--@pytest.mark.integration()
+-@pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -@pytest.mark.parametrize("plugin_testenv", ["testenv", "testenv:a"])
 -def test_provision_plugin_runner(tox_project: ToxProjectCreator, tmp_path: Path, plugin_testenv: str) -> None:
@@ -164,7 +164,7 @@ We do not have devpi_process available (yet)
 -    assert prov_msg in result_label.out
 -
 -
--@pytest.mark.integration()
+-@pytest.mark.integration
  def test_provision_plugin_runner_in_provision(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
      """Ensure that provision environment can be explicitly configured."""
      log = tmp_path / "out.log"
@@ -172,7 +172,7 @@ We do not have devpi_process available (yet)
          proj.run("r", "-e", "py", "--result-json", str(log))
  
  
--@pytest.mark.integration()
+-@pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -@pytest.mark.parametrize("relative_path", [True, False], ids=["relative", "absolute"])
 -def test_provision_conf_file(tox_project: ToxProjectCreator, tmp_path: Path, relative_path: bool) -> None:
@@ -186,13 +186,13 @@ We do not have devpi_process available (yet)
  @pytest.mark.parametrize("subcommand", ["r", "p", "de", "l", "d", "c", "q", "e", "le"])
  def test_provision_default_arguments_exists(tox_project: ToxProjectCreator, subcommand: str) -> None:
      ini = r"""
---- tox-4.16.0/PKG-INFO.orig
-+++ tox-4.16.0/PKG-INFO
+--- tox-4.17.1/PKG-INFO.orig
++++ tox-4.17.1/PKG-INFO
 @@ -53,7 +53,6 @@
  Requires-Dist: build[virtualenv]>=1.2.1; extra == 'testing'
  Requires-Dist: covdefaults>=2.3; extra == 'testing'
  Requires-Dist: detect-test-pollution>=1.2; extra == 'testing'
 -Requires-Dist: devpi-process>=1; extra == 'testing'
- Requires-Dist: diff-cover>=9.1; extra == 'testing'
+ Requires-Dist: diff-cover>=9.1.1; extra == 'testing'
  Requires-Dist: distlib>=0.3.8; extra == 'testing'
  Requires-Dist: flaky>=3.8.1; extra == 'testing'

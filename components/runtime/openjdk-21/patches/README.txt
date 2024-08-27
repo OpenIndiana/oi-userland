@@ -5,12 +5,40 @@ See also README-zero.txt for note on a project zero variant.
 
 JDK 21 now we're in rampdown.
 
-Issues known that indicate serious bugs, likely due to not integrating
-loom correctly as they date back to that change. Specifically, I
-suspect we need to provide a working DefaultPoller implementation
-rather than the current stub.
-* jshell doesn't work
-* illuminate doesn't work
+21.0.4
+
+Removed last remnants of extended_FILE_stdio, it's unused as 32-bit
+only, and the code to enable it had already been removed.
+
+Remove local copies of os::dont_yield() os::naked_yield()
+
+Centralization of breakpoint()
+
+21.0.3 respin 2
+
+Provide a working DefaultPoller implementation rather than the current
+stub in order to get loom fully working. (Courtesy of Jasper Siepkes.)
+
+21.0.3 respin 1
+
+Fixed the patch for src/java.base/unix/classes/java/lang/ProcessImpl.java
+which fixes the startup hang in jshell and illuminate (and hopefully
+the minecraft reports)
+
+Cleanup: missed the dropping of TIERED in 17+8, it's now
+COMPILER1_AND_COMPILER2
+
+21.0.3
+
+The smartcardio patch failed to apply. It's been reworked, but I can't
+see any evidence of this change in mainline so it's not a
+backport. Fixed up, mostly it's indented one stop deeper.
+
+New undefined symbol os::pd_dll_unload; copy the implementation from
+os_linux.cpp (backported from jdk23).
+
+os::prepare_native_symbols() has been added, provide a no-op implementation
+(backported from jdk22)
 
 21.0.2
 

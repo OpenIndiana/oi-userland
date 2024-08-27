@@ -265,6 +265,7 @@ hash method sha384 (test vectors) .................................... : ok
 hash method sha512 (test vectors) .................................... : ok
 hash method sha3-256 (test vectors) .................................. : ok
 hash method sha3-512 (test vectors) .................................. : ok
+hash method (large inputs) ........................................... : ok
 hmac sha256 rfc4231 vectors .......................................... : ok
 hmac sha384 rfc4231 vectors .......................................... : ok
 hmac sha512 rfc4231 vectors .......................................... : ok
@@ -514,7 +515,8 @@ lib-signals delayed in nested ioloop ................................. : ok
 lib-signals delayed with NO_IOLOOP_AUTOMOVE - unmoved ................ : ok
 lib-signals delayed with NO_IOLOOP_AUTOMOVE - moved .................. : ok
 dllist ............................................................... : ok
-dllist ............................................................... : ok
+dllist2 .............................................................. : ok
+dllist2 join ......................................................... : ok
 log throttle ......................................................... : ok
 container_of() ....................................................... : ok
 POINTER_CAST ......................................................... : ok
@@ -690,7 +692,7 @@ fatal_printf_format_fix .............................................. : ok
 random fatals ........................................................ : ok
 seq_range_array fatals ............................................... : ok
 fatal p_strndup() .................................................... : ok
-5 / 41561 tests failed
+5 / 41563 tests failed
 settings_get_time() .................................................. : ok
 settings_get_size() .................................................. : ok
 settings_parser_get .................................................. : ok
@@ -1757,12 +1759,13 @@ mbox_from_create() ................................................... : ok
 message address parsing .............................................. : ok
 message address parsing with empty group ............................. : ok
 message address parsing empty string ................................. : ok
+message address list ................................................. : ok
 message address parsing with NULs .................................... : ok
 message address parsing with NULs in display-name .................... : ok
 message address parsing with non-strict dots ......................... : ok
 message address path parsing ......................................... : ok
 message address path invalid ......................................... : ok
-0 / 8 tests failed
+0 / 9 tests failed
 message_date_parse(0) ................................................ : ok
 message_date_parse(1) ................................................ : ok
 message_date_parse(2) ................................................ : ok
@@ -1805,7 +1808,9 @@ message header parser extra CR in EOH ................................ : ok
 message header parser no EOH ......................................... : ok
 message header parser NUL ............................................ : ok
 message header parser CRLF in header name ............................ : ok
-0 / 7 tests failed
+message header parser truncate + NO flags ............................ : ok
+message header parser truncate + CLEAN_ONELINE flag .................. : ok
+0 / 9 tests failed
 message id parser .................................................... : ok
 0 / 1 tests failed
 message parser in small blocks ....................................... : ok
@@ -1828,7 +1833,9 @@ message parser mime part limit ....................................... : ok
 message parser mime part limit rfc822 ................................ : ok
 message parser mime version .......................................... : ok
 message parser mime version missing .................................. : ok
-0 / 20 tests failed
+message parser too many header bytes default ......................... : ok
+message parser too many header bytes 100 ............................. : ok
+0 / 22 tests failed
 message part indexes ................................................. : ok
 0 / 1 tests failed
 message part serialize deserialize ................................... : ok

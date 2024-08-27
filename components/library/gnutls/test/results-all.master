@@ -67,7 +67,11 @@ PASS: test-inttostr
 PASS: test-inttypes
 PASS: test-ioctl
 PASS: test-isblank
+PASS: test-isnand-nolibm
+PASS: test-isnanf-nolibm
+PASS: test-isnanl-nolibm
 PASS: test-langinfo
+PASS: test-largefile
 PASS: test-limits-h
 PASS: test-linked_list
 PASS: test-linkedhash_list
@@ -82,12 +86,14 @@ PASS: test-lseek.sh
 PASS: test-lstat
 PASS: test-malloc-gnu
 PASS: test-malloca
+PASS: test-math
 PASS: test-memchr
 PASS: test-memset_explicit
 PASS: test-nanosleep
 PASS: test-netdb
 PASS: test-netinet_in
-PASS: test-nstrftime
+PASS: test-nstrftime-1.sh
+PASS: test-nstrftime-2.sh
 PASS: test-open
 PASS: test-parse-datetime
 PASS: test-pathmax
@@ -95,11 +101,20 @@ PASS: test-perror.sh
 PASS: test-perror2
 PASS: test-pipe
 PASS: test-pselect
+PASS: test-pthread-cond
 PASS: test-pthread
+PASS: test-pthread-mutex
+PASS: test-pthread-once1
+PASS: test-pthread-once2
+PASS: test-pthread-rwlock
 PASS: test-pthread-thread
 PASS: test-pthread_sigmask1
 PASS: test-pthread_sigmask2
+PASS: test-putenv
 PASS: test-raise
+PASS: test-random
+PASS: test-random-mt
+PASS: test-random_r
 PASS: test-rawmemchr
 PASS: test-read-file
 PASS: test-readlink
@@ -117,11 +132,13 @@ PASS: test-setenv
 PASS: test-setlocale_null
 PASS: test-setlocale_null-mt-one
 PASS: test-setlocale_null-mt-all
+PASS: test-setlocale_null-unlocked
 PASS: test-setlocale1.sh
 PASS: test-setlocale2.sh
 PASS: test-setsockopt
 PASS: test-shutdown
 PASS: test-signal-h
+PASS: test-signbit
 PASS: test-sigprocmask
 PASS: test-sleep
 PASS: test-snprintf
@@ -152,7 +169,12 @@ PASS: test-sys_uio
 PASS: test-init.sh
 PASS: test-thread_self
 PASS: test-thread_create
+PASS: test-time-h
 PASS: test-time
+PASS: test-gmtime_r
+PASS: test-gmtime_r-mt
+PASS: test-localtime_r
+PASS: test-localtime_r-mt
 PASS: test-timespec
 PASS: test-tls
 PASS: test-unistd
@@ -165,8 +187,8 @@ PASS: test-verify.sh
 PASS: test-vsnprintf
 PASS: test-wchar
 PASS: test-xalloc-die.sh
-# TOTAL: 167
-# PASS:  167
+# TOTAL: 189
+# PASS:  189
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -597,6 +619,8 @@ SKIP: pkcs11-token-raw
 SKIP: pkcs11-obj-raw
 PASS: pkcs11-import-url-privkey-caps
 PASS: ocsp
+PASS: dane
+PASS: dane-strcodes
 PASS: x509self
 PASS: x509dn
 PASS: anonself
@@ -633,8 +657,8 @@ FAIL: starttls-pop3.sh
 FAIL: starttls-xmpp.sh
 FAIL: starttls-nntp.sh
 FAIL: starttls-sieve.sh
-SKIP: ocsp-tests/ocsp-tls-connection.sh
-SKIP: ocsp-tests/ocsp-must-staple-connection.sh
+PASS: ocsp-tests/ocsp-tls-connection.sh
+FAIL: ocsp-tests/ocsp-must-staple-connection.sh
 PASS: ocsp-tests/ocsp-test.sh
 PASS: cipher-listings.sh
 PASS: sni-hostname.sh
@@ -645,7 +669,7 @@ PASS: gnutls-cli-save-data.sh
 PASS: gnutls-cli-debug.sh
 PASS: sni-resume.sh
 PASS: ocsp-tests/ocsptool.sh
-SKIP: cert-reencoding.sh
+PASS: cert-reencoding.sh
 PASS: pkcs7-cat.sh
 PASS: long-crl.sh
 PASS: serv-udp.sh
@@ -682,11 +706,12 @@ SKIP: p11-kit-trust.sh
 FAIL: testpkcs11.sh
 FAIL: certtool-pkcs11.sh
 SKIP: pkcs11-tool.sh
+PASS: danetool.sh
 SKIP: tpmtool_test.sh
-# TOTAL: 511
-# PASS:  447
-# SKIP:  36
+# TOTAL: 514
+# PASS:  452
+# SKIP:  33
 # XFAIL: 0
-# FAIL:  28
+# FAIL:  29
 # XPASS: 0
 # ERROR: 0

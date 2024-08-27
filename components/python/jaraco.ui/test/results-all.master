@@ -1,18 +1,30 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
-py$(PYV): remove tox env folder .tox/py$(PYV)
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 2 items
+collecting ... collected 14 items
 
-jaraco/ui/cmdline.py::ui.cmdline.Extend PASSED
+docs/conf.py::mypy PASSED
+docs/conf.py::mypy-status PASSED
+jaraco/ui/__init__.py::mypy PASSED
+jaraco/ui/cmdline.py::mypy PASSED
+jaraco/ui/cmdline.py::jaraco.ui.cmdline.Extend PASSED
+jaraco/ui/editor.py::mypy PASSED
+jaraco/ui/input.py::mypy PASSED
+jaraco/ui/main.py::mypy PASSED
+jaraco/ui/menu.py::mypy PASSED
+jaraco/ui/progress.py::mypy PASSED
+.::project PASSED
+.::project PASSED
+tests/test_progress.py::mypy PASSED
 tests/test_progress.py::TestSimpleProgress::test_simple_progress_one PASSED
 
-======== 2 passed ========
+===================================== mypy =====================================
+
+Success: no issues found in 9 source files
+======== 14 passed ========
   py$(PYV): OK
   congratulations :)

@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          libcompizconfig
 COMPONENT_VERSION=       0.8.18
-COMPONENT_REVISION=      2
+COMPONENT_REVISION=      3
 COMPONENT_SUMMARY=       compizconfig libraries - is an alternative configuration system for compiz
 COMPONENT_PROJECT_URL=   https://compiz-fusion.org/
 COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_VERSION)

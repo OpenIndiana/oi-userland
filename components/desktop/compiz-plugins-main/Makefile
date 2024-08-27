@@ -13,46 +13,39 @@
 # Copyright (c) 2018 Michal Nowak
 #
 
-BUILD_BITS=	64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-main
 COMPONENT_VERSION=	0.8.18
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	main effects plugins for compiz
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:c7a427b8733e75f8f1319aca5c81f2726e2d1c4f37f368b4bf20b053bd52e5b3
+COMPONENT_ARCHIVE_HASH=	sha256:c7a427b8733e75f8f1319aca5c81f2726e2d1c4f37f368b4bf20b053bd52e5b3
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && \
-  aclocal -I. && \
-  autoheader && \
-  libtoolize --automake --copy --force && \
-  automake -a -f -c &&\
-  autoconf &&\
-  find $(@D) -name '*_options.c' -o -name '*_options.h' -exec rm -f {} \; )
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D) && \
+	aclocal -I. && \
+	autoheader && \
+	libtoolize --automake --copy --force && \
+	automake -a -f -c && \
+	autoconf && \
+	find $(@D) -name '*_options.c' -o -name '*_options.h' -exec rm -f {} \; )
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS           +=    $(JPEG_LDFLAGS)
+CONFIGURE_ENV += INTLTOOL_PERL=$(PERL)
 
-CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --disable-static
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-static
-
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += desktop/compiz
 REQUIRED_PACKAGES += desktop/compiz/bcop
 
@@ -61,6 +54,7 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2

@@ -17,13 +17,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmark
-COMPONENT_VERSION=      0.31.0
+COMPONENT_VERSION=      0.31.1
 COMPONENT_SUMMARY=      CommonMark parsing and rendering library and program in C
 COMPONENT_PROJECT_URL=  https://github.com/commonmark/cmark
 COMPONENT_FMRI=         library/cmark
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:bbcb8f8c03b5af33fcfcf11a74e9499f20a9043200b8552f78a6e8ba76e04d11
+COMPONENT_ARCHIVE_HASH= sha256:3da93db5469c30588cfeb283d9d62edfc6ded9eb0edc10a4f5bbfb7d722ea802
 COMPONENT_ARCHIVE_URL=	https://github.com/commonmark/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      Custom

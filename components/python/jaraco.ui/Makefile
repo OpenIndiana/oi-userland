@@ -19,29 +19,27 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.ui
-HUMAN_VERSION =			2.3.0
-COMPONENT_SUMMARY =		jaraco.ui - User-Interface tools (mainly command-line)
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.ui
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2c/ce/af9fdee82c5f6dc0916f7468d6ca3df84a4f87376c0718ce3eec4a6ef5cb/jaraco.ui-2.3.0.tar.gz
+HUMAN_VERSION =			2.4.0
+COMPONENT_SUMMARY =		User-Interface tools (mainly command-line)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:afaced6efda5c9715c17be9750687c283ff9ace5fb42d9a1997bedb46f6a8a1a
+	sha256:aa4a85d76c894cad6a0d74cd59aeab80223a3b83254e68d33aed4387160d3957
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =			jaraco_ui-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-classes
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-text
+PYTHON_REQUIRED_PACKAGES += library/python/named
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += library/python/typer
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy

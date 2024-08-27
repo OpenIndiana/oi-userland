@@ -13,43 +13,47 @@
 # Copyright (c) 2018 Michal Nowak
 #
 
-BUILD_BITS=	64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-extra
 COMPONENT_VERSION=	0.8.18
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	extra effects plugins for compiz
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:27cde7b069373b8cd230042f3b7c3a2238ac00277cf1b79a4453cb247aecd3ab
+COMPONENT_ARCHIVE_HASH=	sha256:27cde7b069373b8cd230042f3b7c3a2238ac00277cf1b79a4453cb247aecd3ab
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
+COMPONENT_FMRI=			desktop/compiz/plugin/compiz-fusion-extra
+COMPONENT_CLASSIFICATION=	Applications/Plug-ins and Run-times
+COMPONENT_LICENSE=		GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && \
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D) && \
 	aclocal -I. && \
 	autoheader && \
 	libtoolize --automake --copy --force && \
-	automake -a -f -c &&\
-	autoconf &&\
+	automake -a -f -c && \
+	autoconf && \
 	find $(@D) -name '*_options.c' -o -name '*_options.h' -exec rm -f {} \; )
 
-CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
+CONFIGURE_ENV += INTLTOOL_PERL=$(PERL)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --disable-static
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += desktop/compiz
 REQUIRED_PACKAGES += desktop/compiz/bcop
 REQUIRED_PACKAGES += desktop/compiz/plugin/compiz-fusion-main
+REQUIRED_PACKAGES += gnome/theme/background/os-backgrounds
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo

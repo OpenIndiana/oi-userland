@@ -35,13 +35,13 @@ include ../../../make-rules/shared-macros.mk
 # CANDIDATE_BUILD= 2
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	128.0.1
+COMPONENT_VERSION =	128.1.1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)esr.source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:19d49f320c18450d80136b79bdd40d7ab6d3df1757404fbfd1052164a787db99
+	 sha256:178eb13d4841e842a542870589e7c13c388431892c110374aa41176079884632
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)esr
 else
@@ -191,8 +191,7 @@ COMPONENT_POST_INSTALL_ACTION  += \
           do \
         /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $$file ; \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $$file ; \
-    done ; \
-    /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/plugin-container ; \
+    done ;
 
 # generate license file for package by using the contents from license.html   
 COMPONENT_POST_INSTALL_ACTION  += \

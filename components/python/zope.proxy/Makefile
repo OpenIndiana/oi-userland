@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.proxy
-HUMAN_VERSION =			5.2
-COMPONENT_SUMMARY =		zope.proxy - Generic Transparent Proxies
+HUMAN_VERSION =			5.3
+COMPONENT_SUMMARY =		Generic Transparent Proxies
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.proxy
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f777d56c2ab2fcf40d026ada1e67f1e39cf6318e3deeb9a1cd5087fccb1f286e
+	sha256:ad24d28ebc6ade9fbebe0cc4bdc4ec50d1dee41a453e331afd2a1260be967608
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -49,6 +49,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-security

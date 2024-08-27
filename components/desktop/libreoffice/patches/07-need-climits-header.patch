@@ -11,3 +11,29 @@
  #if defined(DBG_UTIL)
  #if __has_include(<version>)
  #include <version>
+--- core-589fb36b663cbd68afc26419629a4a95bd593a89/sc/source/core/data/dptabsrc.cxx.old	2024-04-18 08:59:18.767792648 -0400
++++ core-589fb36b663cbd68afc26419629a4a95bd593a89/sc/source/core/data/dptabsrc.cxx	2024-04-18 09:00:31.796234893 -0400
+@@ -22,6 +22,10 @@
+ #include <algorithm>
+ #include <vector>
+ 
++#if defined(__sun)
++#include <climits>
++#endif
++
+ #include <comphelper/sequence.hxx>
+ #include <o3tl/any.hxx>
+ #include <o3tl/safeint.hxx>
+--- libreoffice-24.8.0.0.beta1/sax/source/tools/converter.cxx.old	2024-06-13 16:39:44.900262037 -0400
++++ libreoffice-24.8.0.0.beta1/sax/source/tools/converter.cxx	2024-06-13 16:43:53.897697586 -0400
+@@ -39,6 +39,10 @@
+ #include <algorithm>
+ #include <string_view>
+ 
++#ifdef __sun
++#include <climits>
++#endif
++
+ using namespace com::sun::star;
+ using namespace com::sun::star::uno;
+ using namespace com::sun::star::util;

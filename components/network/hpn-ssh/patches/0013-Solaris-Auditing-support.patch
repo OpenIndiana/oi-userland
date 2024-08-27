@@ -1,5 +1,5 @@
---- hpn-ssh-hpn-18.4.1/INSTALL.orig
-+++ hpn-ssh-hpn-18.4.1/INSTALL
+--- hpn-ssh-hpn-18.4.2/INSTALL.orig
++++ hpn-ssh-hpn-18.4.2/INSTALL
 @@ -103,9 +103,13 @@
  
  Basic Security Module (BSM):
@@ -29,8 +29,8 @@
  
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
---- hpn-ssh-hpn-18.4.1/Makefile.in.orig
-+++ hpn-ssh-hpn-18.4.1/Makefile.in
+--- hpn-ssh-hpn-18.4.2/Makefile.in.orig
++++ hpn-ssh-hpn-18.4.2/Makefile.in
 @@ -122,7 +122,7 @@
  	sshconnect.o sshconnect2.o mux.o cipher-switch.o $(SKOBJS)
  
@@ -40,8 +40,8 @@
  	sshpty.o sshlogin.o servconf.o serverloop.o \
  	auth.o auth2.o auth-options.o session.o \
  	auth2-chall.o groupaccess.o \
---- hpn-ssh-hpn-18.4.1/README.platform.orig
-+++ hpn-ssh-hpn-18.4.1/README.platform
+--- hpn-ssh-hpn-18.4.2/README.platform.orig
++++ hpn-ssh-hpn-18.4.2/README.platform
 @@ -72,10 +72,10 @@
  libssl-dev, libz-dev and libpam-dev.
  
@@ -67,8 +67,8 @@
  
  Platforms using PAM
  -------------------
---- hpn-ssh-hpn-18.4.1/audit-bsm.c.orig
-+++ hpn-ssh-hpn-18.4.1/audit-bsm.c
+--- hpn-ssh-hpn-18.4.2/audit-bsm.c.orig
++++ hpn-ssh-hpn-18.4.2/audit-bsm.c
 @@ -348,7 +348,7 @@
  /* Below is the sshd audit API code */
  
@@ -78,8 +78,8 @@
  {
  	AuditInfoTermID *tid = &ssh_bsm_tid;
  	char buf[1024];
---- hpn-ssh-hpn-18.4.1/audit-linux.c.orig
-+++ hpn-ssh-hpn-18.4.1/audit-linux.c
+--- hpn-ssh-hpn-18.4.2/audit-linux.c.orig
++++ hpn-ssh-hpn-18.4.2/audit-linux.c
 @@ -71,7 +71,7 @@
  /* Below is the sshd audit API code */
  
@@ -90,7 +90,7 @@
  	/* not implemented */
  }
 --- /dev/null
-+++ hpn-ssh-hpn-18.4.1/audit-solaris.c
++++ hpn-ssh-hpn-18.4.2/audit-solaris.c
 @@ -0,0 +1,574 @@
 +/*
 + * CDDL HEADER START
@@ -666,8 +666,8 @@
 +	(void) adt_end_session(ah);
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
---- hpn-ssh-hpn-18.4.1/audit.c.orig
-+++ hpn-ssh-hpn-18.4.1/audit.c
+--- hpn-ssh-hpn-18.4.2/audit.c.orig
++++ hpn-ssh-hpn-18.4.2/audit.c
 @@ -120,7 +120,7 @@
   * has been attempted.
   */
@@ -677,8 +677,8 @@
  {
  	debug("audit connection from %s port %d euid %d", host, port,
  	    (int)geteuid());
---- hpn-ssh-hpn-18.4.1/audit.h.orig
-+++ hpn-ssh-hpn-18.4.1/audit.h
+--- hpn-ssh-hpn-18.4.2/audit.h.orig
++++ hpn-ssh-hpn-18.4.2/audit.h
 @@ -47,7 +47,7 @@
  };
  typedef enum ssh_audit_event_type ssh_audit_event_t;
@@ -688,8 +688,8 @@
  void	audit_event(struct ssh *, ssh_audit_event_t);
  void	audit_session_open(struct logininfo *);
  void	audit_session_close(struct logininfo *);
---- hpn-ssh-hpn-18.4.1/configure.ac.orig
-+++ hpn-ssh-hpn-18.4.1/configure.ac
+--- hpn-ssh-hpn-18.4.2/configure.ac.orig
++++ hpn-ssh-hpn-18.4.2/configure.ac
 @@ -1769,7 +1769,7 @@
  
  AUDIT_MODULE=none
@@ -713,8 +713,8 @@
  	  debug)
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
---- hpn-ssh-hpn-18.4.1/defines.h.orig
-+++ hpn-ssh-hpn-18.4.1/defines.h
+--- hpn-ssh-hpn-18.4.2/defines.h.orig
++++ hpn-ssh-hpn-18.4.2/defines.h
 @@ -715,6 +715,11 @@
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
@@ -727,8 +727,8 @@
  #if !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
---- hpn-ssh-hpn-18.4.1/sshd.c.orig
-+++ hpn-ssh-hpn-18.4.1/sshd.c
+--- hpn-ssh-hpn-18.4.2/sshd.c.orig
++++ hpn-ssh-hpn-18.4.2/sshd.c
 @@ -2216,7 +2216,7 @@
  	remote_ip = ssh_remote_ipaddr(ssh);
  

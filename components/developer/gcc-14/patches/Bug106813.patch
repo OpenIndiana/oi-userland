@@ -1,0 +1,18 @@
+
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106813
+
+diff --git a/libgo/runtime/go-signal.c b/libgo/runtime/go-signal.c
+index 528d9b6..865d652 100644
+--- a/libgo/runtime/go-signal.c
++++ b/libgo/runtime/go-signal.c
+@@ -244,6 +244,10 @@ getSiginfo(siginfo_t *info, void *context __attribute__((unused)))
+ 	ret.sigpc = ((ucontext_t*)(context))->uc_mcontext.pc;
+ #elif defined(__NetBSD__)
+ 	ret.sigpc = _UC_MACHINE_PC(((ucontext_t*)(context)));
++#elif defined(__x86_64__) && defined(__sun__)
++	ret.sigpc = ((ucontext_t*)(context))->uc_mcontext.gregs[REG_RIP];
++#elif defined(__i386__) && defined(__sun__)
++	ret.sigpc = ((ucontext_t*)(context))->uc_mcontext.gregs[REG_RIP];
+ #endif
+ 
+ 	if (ret.sigpc == 0) {

@@ -1,77 +1,95 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m coverage run --parallel --source automat -m py.test automat/_test
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m coverage run --parallel --source src -m pytest -s -rfEsx src/automat/_test
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 63 items
+configfile: pyproject.toml
+collecting ... collected 82 items
 
-automat/_test/test_core.py::CoreTests::test_NoTransition PASSED
-automat/_test/test_core.py::CoreTests::test_initialState PASSED
-automat/_test/test_core.py::CoreTests::test_noOutputForInput PASSED
-automat/_test/test_core.py::CoreTests::test_oneTransition PASSED
-automat/_test/test_core.py::CoreTests::test_oneTransition_nonIterableOutputs PASSED
-automat/_test/test_discover.py::FindMachinesIntegrationTests::test_discoverAll PASSED
-automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_descendsIntoPackages PASSED
-automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_ignoresImportedClass PASSED
-automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_infiniteLoop PASSED
-automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachine PASSED
-automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInClass PASSED
-automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInClassInModule PASSED
-automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInModule PASSED
-automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInNestedClass PASSED
-automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInNestedClassInModule PASSED
-automat/_test/test_discover.py::OriginalLocationTests::test_failsWithDifferentModule PASSED
-automat/_test/test_discover.py::OriginalLocationTests::test_failsWithNoModule PASSED
-automat/_test/test_discover.py::OriginalLocationTests::test_succeedsWithSameModule PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_failsWithBadDotting PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_failsWithEmptyFQPN PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_failsWithMissingSingleModuleOrPackage PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_failsWithMultiplePackagesMissingModuleOrPackage PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_multiplePackages PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_multiplePackagesFinalModule PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_multiplePackagesObject PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_singleModule PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_singleModuleObject PASSED
-automat/_test/test_discover.py::WrapFQPNTests::test_singlePackage PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_badTransitionForCurrentState PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_collectOutputs PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_defaultOutputs PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_filterArgs PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_getArgNames PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_inputFunctionsMustBeEmpty PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_inputOutputMismatch PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_inputWithArguments PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_machineItselfIsPrivate PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_methodName PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_multipleInitialStatesFailure PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_multipleMachines PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_multipleTransitionsFailure PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_oneTransition PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_outputWithSubsetOfArguments PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_outputsArePrivate PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_restoreState PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_saveState PASSED
-automat/_test/test_methodical.py::MethodicalTests::test_stateLoop PASSED
-automat/_test/test_trace.py::TraceTests::test_inputs_and_outputs PASSED
-automat/_test/test_trace.py::TraceTests::test_only_inputs PASSED
-automat/_test/test_visualize.py::ElementMakerTests::test_noAttrs PASSED
-automat/_test/test_visualize.py::ElementMakerTests::test_quotesAttrs PASSED
-automat/_test/test_visualize.py::ElementMakerTests::test_sortsAttrs PASSED
-automat/_test/test_visualize.py::IntegrationTests::test_validGraphviz PASSED
-automat/_test/test_visualize.py::SpotChecks::test_containsMachineFeatures PASSED
-automat/_test/test_visualize.py::TableMakerTests::test_inputLabelRow PASSED
-automat/_test/test_visualize.py::TableMakerTests::test_noOutputLabels PASSED
-automat/_test/test_visualize.py::TableMakerTests::test_withOutputLabels PASSED
-automat/_test/test_visualize.py::VisualizeToolTests::test_checksCurrentDirectory PASSED
-automat/_test/test_visualize.py::VisualizeToolTests::test_onlySaveDot PASSED
-automat/_test/test_visualize.py::VisualizeToolTests::test_quietHidesOutput PASSED
-automat/_test/test_visualize.py::VisualizeToolTests::test_saveDotAndImagesInDifferentDirectories PASSED
-automat/_test/test_visualize.py::VisualizeToolTests::test_saveDotAndImagesInSameDirectory PASSED
-automat/_test/test_visualize.py::VisualizeToolTests::test_saveOnlyImage PASSED
+src/automat/_test/test_core.py::CoreTests::test_NoTransition PASSED
+src/automat/_test/test_core.py::CoreTests::test_initialState PASSED
+src/automat/_test/test_core.py::CoreTests::test_noOutputForInput PASSED
+src/automat/_test/test_core.py::CoreTests::test_oneTransition PASSED
+src/automat/_test/test_core.py::CoreTests::test_oneTransition_nonIterableOutputs PASSED
+src/automat/_test/test_core.py::CoreTests::test_unhandledTransition PASSED
+src/automat/_test/test_discover.py::OriginalLocationTests::test_failsWithDifferentModule PASSED
+src/automat/_test/test_discover.py::OriginalLocationTests::test_failsWithNoModule PASSED
+src/automat/_test/test_discover.py::OriginalLocationTests::test_succeedsWithSameModule PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_descendsIntoPackages PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_ignoresImportedClass PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_infiniteLoop PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachine PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInClass PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInClassInModule PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInModule PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInNestedClass PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsMachineInNestedClassInModule PASSED
+src/automat/_test/test_discover.py::FindMachinesViaWrapperTests::test_yieldsTypeMachine PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_failsWithBadDotting PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_failsWithEmptyFQPN PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_failsWithMissingSingleModuleOrPackage PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_failsWithMultiplePackagesMissingModuleOrPackage PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_multiplePackages PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_multiplePackagesFinalModule PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_multiplePackagesObject PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_singleModule PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_singleModuleObject PASSED
+src/automat/_test/test_discover.py::WrapFQPNTests::test_singlePackage PASSED
+src/automat/_test/test_discover.py::FindMachinesIntegrationTests::test_discoverAll PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_badTransitionForCurrentState PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_collectOutputs PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_defaultOutputs PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_filterArgs PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_getArgNames PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_inputFunctionsMustBeEmpty PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_inputOutputMismatch PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_inputWithArguments PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_machineItselfIsPrivate PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_methodName PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_multipleInitialStatesFailure PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_multipleMachines PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_multipleTransitionsFailure PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_oneTransition PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_outputWithSubsetOfArguments PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_outputsArePrivate PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_restoreState PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_saveState PASSED
+src/automat/_test/test_methodical.py::MethodicalTests::test_stateLoop PASSED
+src/automat/_test/test_trace.py::TraceTests::test_inputs_and_outputs PASSED
+src/automat/_test/test_trace.py::TraceTests::test_only_inputs PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_buildLock PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_dataFactoryArgs PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_dataFactoryNoArgs PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_dataToData PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_genericData PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_incompleteTransitionDefinition PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_interfaceData PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_invalidTransition PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_methodMembership PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_noMethodsInAltStateDataFactory PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_oneTransition PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_reentrancy PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_reentrancyNotNoneError PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_startInAlternateState PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_stateSpecificData PASSED
+src/automat/_test/test_type_based.py::TypeMachineTests::test_stateSpecificDataWithoutData PASSED
+src/automat/_test/test_visualize.py::ElementMakerTests::test_noAttrs PASSED
+src/automat/_test/test_visualize.py::ElementMakerTests::test_quotesAttrs PASSED
+src/automat/_test/test_visualize.py::ElementMakerTests::test_sortsAttrs PASSED
+src/automat/_test/test_visualize.py::TableMakerTests::test_inputLabelRow PASSED
+src/automat/_test/test_visualize.py::TableMakerTests::test_noOutputLabels PASSED
+src/automat/_test/test_visualize.py::TableMakerTests::test_withOutputLabels PASSED
+src/automat/_test/test_visualize.py::IntegrationTests::test_validGraphviz PASSED
+src/automat/_test/test_visualize.py::SpotChecks::test_containsMachineFeatures PASSED
+src/automat/_test/test_visualize.py::SpotChecks::test_containsTypeMachineFeatures PASSED
+src/automat/_test/test_visualize.py::VisualizeToolTests::test_checksCurrentDirectory PASSED
+src/automat/_test/test_visualize.py::VisualizeToolTests::test_onlySaveDot PASSED
+src/automat/_test/test_visualize.py::VisualizeToolTests::test_quietHidesOutput PASSED
+src/automat/_test/test_visualize.py::VisualizeToolTests::test_saveDotAndImagesInDifferentDirectories PASSED
+src/automat/_test/test_visualize.py::VisualizeToolTests::test_saveDotAndImagesInSameDirectory PASSED
+src/automat/_test/test_visualize.py::VisualizeToolTests::test_saveOnlyImage PASSED
 
-======== 63 passed ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 82 passed ========
+  py$(PYV): OK
   congratulations :)

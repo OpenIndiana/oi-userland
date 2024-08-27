@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tqdm
-HUMAN_VERSION =			4.66.4
-COMPONENT_SUMMARY =		tqdm - Fast, Extensible Progress Meter
+HUMAN_VERSION =			4.66.5
+COMPONENT_SUMMARY =		Fast, Extensible Progress Meter
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e4d936c9de8727928f3be6079590e97d9abfe8d39a590be678eb5919ffc186bb
+	sha256:e1020aef2e5096702d8a025ac7d16b1577279c9d63f8375b63083e9a5f0fcbad
 COMPONENT_LICENSE =		MIT AND MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENCE
 

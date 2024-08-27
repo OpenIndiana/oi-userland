@@ -20,13 +20,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		WebTest
 HUMAN_VERSION =			3.0.0
-COMPONENT_SUMMARY =		WebTest - Helper to test WSGI applications
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Helper to test WSGI applications
 COMPONENT_PROJECT_URL =		https://docs.pylonsproject.org/projects/webtest/en/latest/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/26/c8/8ffba1782700eb06e9b9169156698c6ba95c05b66cda3fc9e025b6b3b649/WebTest-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:54bd969725838d9861a9fa27f8d971f79d275d94ae255f5c501f53bb6d9929eb
 COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	license.rst
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,7 +37,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/webob
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pastedeploy
-TEST_REQUIRED_PACKAGES.python += library/python/pyquery
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/wsgiproxy2

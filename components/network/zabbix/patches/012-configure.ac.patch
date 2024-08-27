@@ -1,0 +1,56 @@
+We have to provide the library path for openssl first! Otherwise other components provide the standard path where the old openssl libs can be found
+
+diff --git a/configure.ac b/configure.ac
+index 2ecbb9c..37d8e8c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1635,25 +1635,25 @@ AC_SUBST(TLS_CFLAGS)
+ AM_CONDITIONAL(HAVE_OPENSSL, [test "x$have_tls" = "xOpenSSL" || test "x$have_tls" = "xOpenSSL (PSK not supported)"])
+ AM_CONDITIONAL(HAVE_GNUTLS, [test "x$have_tls" = "xGnuTLS"])
+ 
+-SERVER_LDFLAGS="$SERVER_LDFLAGS $TLS_LDFLAGS"
++SERVER_LDFLAGS="$TLS_LDFLAGS $SERVER_LDFLAGS"
+ SERVER_LIBS="$SERVER_LIBS $TLS_LIBS"
+ 
+-PROXY_LDFLAGS="$PROXY_LDFLAGS $TLS_LDFLAGS"
++PROXY_LDFLAGS="$TLS_LDFLAGS $PROXY_LDFLAGS"
+ PROXY_LIBS="$PROXY_LIBS $TLS_LIBS"
+ 
+-AGENT_LDFLAGS="$AGENT_LDFLAGS $TLS_LDFLAGS"
++AGENT_LDFLAGS="$TLS_LDFLAGS $AGENT_LDFLAGS"
+ AGENT_LIBS="$AGENT_LIBS $TLS_LIBS"
+ 
+-AGENT2_LDFLAGS="$AGENT2_LDFLAGS $TLS_LDFLAGS"
++AGENT2_LDFLAGS="$TLS_LDFLAGS $AGENT2_LDFLAGS"
+ AGENT2_LIBS="$AGENT2_LIBS $TLS_LIBS"
+ 
+-ZBXGET_LDFLAGS="$ZBXGET_LDFLAGS $TLS_LDFLAGS"
++ZBXGET_LDFLAGS="$TLS_LDFLAGS $ZBXGET_LDFLAGS"
+ ZBXGET_LIBS="$ZBXGET_LIBS $TLS_LIBS"
+ 
+-SENDER_LDFLAGS="$SENDER_LDFLAGS $TLS_LDFLAGS"
++SENDER_LDFLAGS="$TLS_LDFLAGS $SENDER_LDFLAGS"
+ SENDER_LIBS="$SENDER_LIBS $TLS_LIBS"
+ 
+-ZBXJS_LDFLAGS="$ZLIB_LDFLAGS $TLS_LDFLAGS"
++ZBXJS_LDFLAGS="$TLS_LDFLAGS $ZLIB_LDFLAGS"
+ ZBXJS_LIBS="$ZBXJS_LIBS $TLS_LIBS"
+ 
+ dnl Check for libmodbus [by default - skip]
+diff --git a/configure.ac b/configure.ac
+index 37d8e8c..e5856b6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1434,10 +1434,10 @@ if test "x$server" = "xyes" || test "x$proxy" = "xyes"; then
+ 			have_snmp="yes"
+ 		fi
+ 	fi
+-	SERVER_LDFLAGS="$SNMP_LDFLAGS $SERVER_LDFLAGS"
++	SERVER_LDFLAGS="$SERVER_LDFLAGS $SNMP_LDFLAGS"
+ 	SERVER_LIBS="$SERVER_LIBS $SNMP_LIBS"
+ 
+-	PROXY_LDFLAGS="$SNMP_LDFLAGS $PROXY_LDFLAGS"
++	PROXY_LDFLAGS="$PROXY_LDFLAGS $SNMP_LDFLAGS"
+ 	PROXY_LIBS="$PROXY_LIBS $SNMP_LIBS"
+ 
+ 

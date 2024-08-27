@@ -19,25 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.path
-HUMAN_VERSION =			3.7.0
-COMPONENT_SUMMARY =		jaraco.path - miscellaneous path functions
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.path
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/aa/b4/b86cfcf87d841271a56903a75001e58f1e6b5fdb3a211c1ec5ad6e7de03a/jaraco.path-3.7.0.tar.gz
+HUMAN_VERSION =			3.7.1
+COMPONENT_SUMMARY =		miscellaneous path functions
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bd55b67bbf53557d1fe1059d27fc4c2652ba1e94451a14f6678235d7703cf650
+	sha256:e17c0c0b686022a9b10dc7230b21ce353f5626cf079db3780c405f58501ed78e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =			jaraco_path-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler

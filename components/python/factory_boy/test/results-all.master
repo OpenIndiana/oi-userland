@@ -1,16 +1,14 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> make test
+mypy --ignore-missing-imports tests/test_typing.py
+Success: no issues found in 1 source file
 python \
 	-b \
 	-X dev \
 	-Werror \
-	-Wdefault:"the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses":DeprecationWarning:distutils: \
-	-Wdefault:"Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated, and in 3.8 it will stop working":DeprecationWarning:: \
-	-Wdefault:"Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.9 it will stop working":DeprecationWarning:: \
-	-Wdefault:"set_output_charset() is deprecated":DeprecationWarning:: \
-	-Wdefault:"parameter codeset is deprecated":DeprecationWarning:: \
-	-Wdefault:"'cgi' is deprecated and slated for removal in Python 3.13":DeprecationWarning:: \
+	-Wignore:::mongomock: \
+	-Wignore:::mongomock.__version__: \
+	-Wignore:::pkg_resources: \
 	-m unittest -v
 tests.test_alchemy (unittest.loader.ModuleSkipped) ... skipped 'sqlalchemy tests disabled.'
 test_abstract_factory_cannot_be_called (tests.test_base.AbstractFactoryTestCase) ... ok
@@ -187,6 +185,8 @@ test_alternate_logger (tests.test_helpers.DebugTest) ... ok
 test_default_logger (tests.test_helpers.DebugTest) ... ok
 test_restores_logging_on_error (tests.test_helpers.DebugTest) ... ok
 tests.test_mongoengine (unittest.loader.ModuleSkipped) ... skipped 'mongodb tests disabled.'
+test_evaluated_without_locale (tests.test_regression.FakerRegressionTests)
+Regression test for `KeyError: 'locale'` raised in `evaluate`. ... ok
 test_locale_issue (tests.test_regression.FakerRegressionTests)
 Regression test for `KeyError: 'locale'` ... ok
 test_default_transform (tests.test_transformer.RelatedTest) ... ok
@@ -211,6 +211,7 @@ A trait-provided transformer should apply to existing values ... ok
 test_trait_transform_applies_supplied (tests.test_transformer.TransformerTraitTest)
 A trait-provided transformer should be overridden by caller-provided values ... ok
 test_traits_off (tests.test_transformer.TransformerTraitTest) ... ok
+test_simple_factory (tests.test_typing.TypingTests) ... ok
 test_example (tests.test_using.CircularTestCase) ... ok
 test_dict_extra_key (tests.test_using.DictTestCase) ... ok
 test_dict_merged_fields (tests.test_using.DictTestCase) ... ok
@@ -399,7 +400,7 @@ test_reset_twice (tests.test_utils.ResetableIteratorTestCase) ... ok
 test_version (tests.test_version.VersionTestCase) ... ok
 
 ----------------------------------------------------------------------
-Ran 330 tests
+Ran 332 tests
 
 OK (skipped=18)
   py$(PYV): OK

@@ -82,7 +82,7 @@ Doctest: lxml.etree.FunctionNamespace ... ok
 Doctest: lxml.etree.Schematron ... ok
 Doctest: lxml.etree.XML ... ok
 Doctest: lxml.etree.__test__.FunctionNamespace (line 207) ... ok
-Doctest: lxml.etree.__test__.XML (line 3261) ... ok
+Doctest: lxml.etree.__test__.XML (line 3260) ... ok
 Doctest: lxml.html.Classes ... ok
 Doctest: lxml.html.HtmlMixin.drop_tag ... ok
 Doctest: lxml.html.XHTMLParser ... ok
@@ -151,7 +151,7 @@ Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elemen
 Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elementpath.py:271: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
 We don't have a guarantee that there will always be a path ... ok
 XHTMLParser (lxml.html)
-XML (line 3261) (lxml.etree.__test__)
+XML (line 3260) (lxml.etree.__test__)
 XML (lxml.etree)
 attrib (lxml.tests.selftest2)
 bad_find (lxml.tests.selftest)
@@ -390,6 +390,11 @@ test_attribute_set_invalid (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_attribute_set_nonstring (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_attribute_str (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_attribute_str (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
+test_attribute_unicode (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
+test_attribute_unicode (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
+test_attribute_unicode (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
+test_attribute_unicode (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ok
+test_attribute_unicode (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
 test_attribute_update_attrib (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_attribute_update_attrib (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_attribute_update_dict (lxml.tests.test_elementtree.ETreeTestCase) ... ok
@@ -459,6 +464,7 @@ test_cdata (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_cdata_errors (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_cdata_parser (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_cdata_solo (lxml.tests.test_builder.BuilderTestCase) ... ok
+test_cdata_split_cdend (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_cdata_tail (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_cdata_type (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_cdata_xpath (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -1231,8 +1237,9 @@ test_missing_children (lxml.tests.test_doctestcompare.DoctestCompareTest) ... ok
 test_module_HTML (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_module_HTML_access (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_module_HTML_broken (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
-test_module_HTML_cdata (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
+test_module_HTML_cdata_ignored (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_module_HTML_pretty_print (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
+test_module_HTML_script (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_module_HTML_unicode (lxml.tests.test_htmlparser.HtmlParserTestCase) ... ok
 test_module_parse_fileobject_error (lxml.tests.test_io.ETreeIOTestCase) ... ok
 test_module_parse_fileobject_error (lxml.tests.test_io.ElementTreeIOTestCase) ... ok
@@ -1598,11 +1605,13 @@ test_schematron_from_element (lxml.tests.test_isoschematron.ETreeISOSchematronTe
 test_schematron_from_file (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
 test_schematron_from_tree (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
 test_schematron_invalid_args (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
+test_schematron_invalid_namespace_prefix (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
 test_schematron_invalid_schema (lxml.tests.test_schematron.ETreeSchematronTestCase) ... ok
 test_schematron_invalid_schema_empty (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
 test_schematron_invalid_schema_empty (lxml.tests.test_schematron.ETreeSchematronTestCase) ... ok
 test_schematron_invalid_schema_namespace (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
 test_schematron_invalid_schema_namespace (lxml.tests.test_schematron.ETreeSchematronTestCase) ... ok
+test_schematron_missing_namespace_prefix (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
 test_schematron_phases (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
 test_schematron_phases_kwarg (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
 test_schematron_relaxng_embedded (lxml.tests.test_isoschematron.ETreeISOSchematronTestCase) ... ok
@@ -2146,16 +2155,16 @@ xpath (lxml.tests.test_xpathevaluator)
 xpath_tokenizer (lxml.tests.selftest)
 
 ----------------------------------------------------------------------
-Ran 1990 tests
+Ran 1999 tests
 
 OK
 Comparing with ElementTree 1.3.0
 
-TESTED VERSION: 5.2.2
+TESTED VERSION: 5.3.0
     Python:           (3, 9, 19, 'final', 0)
-    lxml.etree:       (5, 2, 2, 0)
-    libxml used:      (2, 12, 6)
-    libxml compiled:  (2, 12, 6)
+    lxml.etree:       (5, 3, 0, 0)
+    libxml used:      (2, 12, 9)
+    libxml compiled:  (2, 12, 9)
     libxslt used:     (1, 1, 39)
     libxslt compiled: (1, 1, 39)
     iconv compiled:   (0, 0)

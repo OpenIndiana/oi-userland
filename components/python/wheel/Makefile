@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-HUMAN_VERSION =			0.43.0
-COMPONENT_SUMMARY =		wheel - A built-package format for Python
+HUMAN_VERSION =			0.44.0
+COMPONENT_SUMMARY =		A built-package format for Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:465ef92c69fa5c5da2d1cf8ac40559a8c940886afcef87dcf14b9470862f1d85
+	sha256:a29c3f2817e95ab89aa4660681ad547c0e9547f20e75b0562fe7723c9a2a9d49
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -34,7 +34,6 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 # - importlib_metadata
 # - pluggy (test bootstrap)
 # - pytest (test bootstrap)
-# - setuptools
 # - setuptools-scm
 # - tox-current-env (test bootstrap)
 # - trove-classifiers (test bootstrap)

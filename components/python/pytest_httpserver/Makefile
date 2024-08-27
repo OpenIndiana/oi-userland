@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_httpserver
-HUMAN_VERSION =			1.0.12
+HUMAN_VERSION =			1.1.0
 COMPONENT_SUMMARY =		pytest-httpserver is a httpserver for pytest
 COMPONENT_PROJECT_URL =		https://github.com/csernazs/pytest-httpserver
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c14600b8efb9ea8d7e63251a242ab987f13028b36d3d397ffaca3c929f67eb16
+	sha256:6b1cb0199e2ed551b1b94d43f096863bbf6ae5bcd7c75c2c06845e5ce2dc8701
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

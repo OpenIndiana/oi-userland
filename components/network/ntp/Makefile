@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2018, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2020, Oracle and/or its affiliates.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2021, Andreas Wacknitz
 # Copyright (c) 2023, Niklas Poslovski
@@ -29,16 +29,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
-HUMAN_VERSION=		4.2.8p17
-COMPONENT_REVISION=	3
+HUMAN_VERSION=		4.2.8p18
 COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
 COMPONENT_PROJECT_URL=	https://www.ntp.org/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:103dd272e6a66c5b8df07dce5e9a02555fcd6f1397bdfb782237328e89d3a866
-COMPONENT_ARCHIVE_URL=	https://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:cf84c5f3fb1a295284942624d823fffa634144e096cfc4f9969ac98ef5f468e5
+COMPONENT_ARCHIVE_URL=	\
+	https://downloads.nwtime.org/ntp/$(firstword $(subst p, ,$(HUMAN_VERSION)))/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	service/network/ntp
 COMPONENT_CLASSIFICATION=	System/Services
 COMPONENT_LICENSE=	ntp license
@@ -50,40 +50,30 @@ ASLR_MODE= $(ASLR_ENABLE)
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ARGS=
-
-COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf --force --install )
+# We modified configure.ac and m4 macros
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" ./bootstrap )
 
 CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
-CONFIGURE_BINDIR = $(USRSBINDIR)
-CONFIGURE_SBINDIR = $(USRSBINDIR)
+# This is needed to help debugging https://bugs.ntp.org/show_bug.cgi?id=3552
+# See also https://www.illumos.org/issues/15984#note-6
+CFLAGS += -g -O0
 
-CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
 CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/inet
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS +=	--enable-getifaddrs
 CONFIGURE_OPTIONS +=	--enable-all-clocks
 CONFIGURE_OPTIONS +=	--enable-solarisprivs
 CONFIGURE_OPTIONS +=	--enable-debugging
-CONFIGURE_OPTIONS +=	--enable-debugg-timing
-CONFIGURE_OPTIONS +=	--disable-optional-args
 CONFIGURE_OPTIONS +=	--enable-parse-clocks
 CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
-# To avoid arc4random_addrandom error
-#CONFIGURE_OPTIONS +=   --without-sntp
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
 CONFIGURE_OPTIONS +=	--with-crypto=openssl
 CONFIGURE_OPTIONS +=	--with-openssl-incdir=$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS +=	--with-openssl-libdir=$(OPENSSL_LIBDIR.64)
 CONFIGURE_OPTIONS +=	--disable-problem-tests
-# workaround for https://bugs.ntp.org/show_bug.cgi?id=3552
-CONFIGURE_OPTIONS +=	--disable-signalled-io
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-COMPONENT_INSTALL_ENV += PATH=$(PATH.gnu)
-
+# NTP tests log results in separate files. Instead of getting the output
 # of the build and test and deleting the extra lines, it is easier to just
 # cat together all of the logs. The test TEST_PROGNAME3 tests the system
 # log facility, so we have to get rid of the output because the pid is
@@ -134,11 +124,11 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 	fi
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

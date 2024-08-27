@@ -11,29 +11,23 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Faker
+#   $WS_TOOLS/python-integrate-project -d python/Faker faker
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Faker
-HUMAN_VERSION =			26.0.0
+COMPONENT_NAME =		faker
+HUMAN_VERSION =			28.0.0
 COMPONENT_SUMMARY =		Faker is a Python package that generates fake data for you.
 COMPONENT_PROJECT_URL =		https://github.com/joke2k/faker
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0f60978314973de02c00474c2ae899785a42b2cf4f41b7987e93c132a2b8a4a9
+	sha256:0d3c0399204aaf8205cc1750db443474ca0436f177126b2c27b798e8336cc74f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/pytest-dev/pytest/issues/12186
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-black
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-mypy
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-salt-factories
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-system-statistics
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata

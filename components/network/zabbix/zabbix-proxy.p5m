@@ -1,0 +1,36 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright (c) 2024, Carsten Grzemba
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI_PROXY)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=$(COMPONENT_FMRI_AGENT) type=require
+
+dir  path=var/log/zabbix owner=zabbix group=zabbix
+file files/zabbix-proxy.xml path=lib/svc/manifest/application/management/zabbix-proxy.xml restart_fmri=svc:/system/manifest-import:default
+
+file path=etc/zabbix/zabbix_proxy.conf preserve=true
+file path=usr/bin/zabbix_get
+file path=usr/bin/zabbix_js
+file path=usr/sbin/zabbix_proxy
+file path=usr/share/man/man1/zabbix_get.1
+file path=usr/share/man/man8/zabbix_proxy.8

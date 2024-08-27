@@ -1,24 +1,24 @@
 We have no html5lib packaged yet.
 
---- sphinxcontrib_htmlhelp-2.0.6/tests/test_htmlhelp.py.orig
-+++ sphinxcontrib_htmlhelp-2.0.6/tests/test_htmlhelp.py
-@@ -4,7 +4,6 @@
- from pathlib import Path
+--- sphinxcontrib_htmlhelp-2.1.0/tests/test_htmlhelp.py.orig
++++ sphinxcontrib_htmlhelp-2.1.0/tests/test_htmlhelp.py
+@@ -7,7 +7,6 @@
+ from typing import TYPE_CHECKING
  
  import pytest
 -from html5lib import HTMLParser
+ from sphinx.config import Config
  
  from sphinxcontrib.htmlhelp import chm_htmlescape, default_htmlhelp_basename
- from sphinx.config import Config
-@@ -62,52 +61,6 @@
+@@ -73,52 +72,6 @@
      assert m is None, 'Hex escaping exists in .hhk file: ' + str(m.group(0))
  
  
 -@pytest.mark.sphinx('htmlhelp', testroot='hhc')
--def test_htmlhelp_hhc(app):
+-def test_htmlhelp_hhc(app: Sphinx) -> None:
 -    app.build()
 -
--    def assert_sitemap(node, name, filename):
+-    def assert_sitemap(node: Element, name: str, filename: str) -> None:
 -        assert node.tag == 'object'
 -        assert len(node) == 2
 -        assert node[0].tag == 'param'
@@ -27,7 +27,7 @@ We have no html5lib packaged yet.
 -        assert node[1].attrib == {'name': 'Local', 'value': filename}
 -
 -    # .hhc file
--    hhc = (app.outdir / 'pythondoc.hhc').read_text()
+-    hhc = (app.outdir / 'pythondoc.hhc').read_text(encoding='utf-8')
 -    tree = HTMLParser(namespaceHTMLElements=False).parse(hhc)
 -    items = tree.find('.//body/ul')
 -    assert len(items) == 4
@@ -60,11 +60,11 @@ We have no html5lib packaged yet.
 -    assert "Sphinx&#39;s documentation" in hhc
 -
 -
- def test_chm_htmlescape():
+ def test_chm_htmlescape() -> None:
      assert chm_htmlescape('Hello world') == 'Hello world'
-     assert chm_htmlescape(u'Unicode 文字') == u'Unicode 文字'
---- sphinxcontrib_htmlhelp-2.0.6/pyproject.toml.orig
-+++ sphinxcontrib_htmlhelp-2.0.6/pyproject.toml
+     assert chm_htmlescape('Unicode 文字') == 'Unicode 文字'
+--- sphinxcontrib_htmlhelp-2.1.0/pyproject.toml.orig
++++ sphinxcontrib_htmlhelp-2.1.0/pyproject.toml
 @@ -45,7 +45,6 @@
  [project.optional-dependencies]
  test = [
@@ -72,4 +72,4 @@ We have no html5lib packaged yet.
 -    "html5lib",
  ]
  lint = [
-     "flake8",
+     "ruff==0.5.5",

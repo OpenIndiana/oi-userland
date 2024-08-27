@@ -1,0 +1,27 @@
+choose our openldap paths, do not clash with Mozilla ldap
+
+diff --git a/m4/ldap.m4 b/m4/ldap.m4
+index e7659bd..e586598 100644
+--- a/m4/ldap.m4
++++ b/m4/ldap.m4
+@@ -73,16 +73,16 @@ AS_HELP_STRING([--with-ldap@<:@=DIR@:>@],[Include LDAP support @<:@default=no@:>
+      ],[_libldap_with=ifelse([$1],,[no],[$1])])
+ 
+   if test "x$_libldap_with" != x"no"; then
+-        AC_MSG_CHECKING([for LDAP support of ldap.h])
++        AC_MSG_CHECKING([for OpenLDAP support of ldap.h])
+ 
+         if test "$_libldap_with" = "yes"; then
+                 if test -f /usr/local/openldap/include/ldap.h; then
+                         LDAP_INCDIR=/usr/local/openldap/include/
+                         LDAP_LIBDIR=/usr/local/openldap/lib/
+                         found_ldap="yes"
+-                elif test -f /usr/include/ldap.h; then
+-                        LDAP_INCDIR=/usr/include
+-                        LDAP_LIBDIR=/usr/lib
++                elif test -f /usr/include/openldap/ldap.h; then
++                        LDAP_INCDIR=/usr/include/openldap
++                        LDAP_LIBDIR=/usr/lib/amd64/openldap
+                         found_ldap="yes"
+                 elif test -f /usr/local/include/ldap.h; then
+                         LDAP_INCDIR=/usr/local/include

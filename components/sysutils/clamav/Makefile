@@ -13,9 +13,7 @@
 # Copyright 2023, Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
-OPENSSL_VERSION= 3.1
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
@@ -24,7 +22,7 @@ COMPONENT_NAME=	clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	1.3.1
+COMPONENT_VERSION=	1.4.0
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -39,7 +37,7 @@ COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, desi
 			anti-virus engine available in a form of shared library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:12a3035bf26f55f71e3106a51a5fa8d7b744572df98a63920a9cff876a7dcce4
+COMPONENT_ARCHIVE_HASH=	sha256:d67ab299e5ca05dad3da299a5ea73d60209372a5becd7f13b9a33c290338a4e6
 COMPONENT_PROJECT_URL=	https://www.clamav.net
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/downloads/production/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
@@ -47,6 +45,7 @@ COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2,LGPL,Apache
 COMPONENT_LICENSE_FILE=	COPYING.$(COMPONENT_NAME)
+
 # We need to use non-default User-Agent for the fetch, otherwise we are denied
 # to download the source file.
 COMPONENT_FETCH_USER_AGENT=	fetch
@@ -69,7 +68,7 @@ COMPONENT_BUILD_ENV=	$(ENV)
 #   to constraints in the scanning engine.
 # Still, this can help with not dying on e.g. huge log files :-)
 CFLAGS += $(CPP_LARGEFILES)
-CFLAGS += $(CPP_XPG5MODE)
+CFLAGS += $(XPG5MODE)
 
 CPPFLAGS += $(CPP_LARGEFILES) -I$(OPENSSL_INCDIR)
 
@@ -108,6 +107,7 @@ REQUIRED_PACKAGES += developer/lang/rustc
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/json-c
@@ -115,7 +115,6 @@ REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

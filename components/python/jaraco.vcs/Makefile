@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.vcs
-HUMAN_VERSION =			2.3.0
+HUMAN_VERSION =			2.4.0
 COMPONENT_SUMMARY =		Facilities for working with VCS repositories
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c6601375b34a15ddfae383d2016a9a35d8cee58657e705b1bd5b68d8fe19d9f6
+	sha256:e2b876bd6ff41787f7f42f949ea292d53ab93e53868df36da25f2872b4962910
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,6 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-classes
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-path
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-versioning
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
@@ -40,7 +41,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/tempora
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs

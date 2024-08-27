@@ -7,7 +7,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1324 items
+collecting ... collected 1321 items
 
 tests/test_fnmatch.py::TestFnMatch::test_cases[case0] PASSED
 tests/test_fnmatch.py::TestFnMatch::test_cases[case1] PASSED
@@ -532,9 +532,6 @@ tests/test_glob.py::TestGlobEscapes::test_escape PASSED
 tests/test_glob.py::TestGlobEscapes::test_escape_forced_unix PASSED
 tests/test_glob.py::TestGlobEscapes::test_escape_forced_windows PASSED
 tests/test_glob.py::TestGlobEscapes::test_escape_windows SKIPPED (Wi...)
-tests/test_glob.py::TestGlobEscapes::test_raw_escape PASSED
-tests/test_glob.py::TestGlobEscapes::test_raw_escape_deprecation PASSED
-tests/test_glob.py::TestGlobEscapes::test_raw_escape_no_raw_chars PASSED
 tests/test_glob.py::TestWindowsDriveCase::test_drive_insensitive SKIPPED
 tests/test_glob.py::TestWindowsDriveCase::test_drive_sensitive SKIPPED
 tests/test_glob.py::TestSymlinkLoopGlob::test_selflink PASSED
@@ -1334,22 +1331,8 @@ tests/test_wcparse.py::TestWcparse::test_translate_expansion_okay PASSED
 tests/test_wcparse.py::TestWcparse::test_translate_unique_optimization_okay PASSED
 tests/test_wcparse.py::TestWcparse::test_unc_pattern PASSED
 
-=============================== warnings summary ===============================
-tests/test_glob.py: 18 warnings
-  $(@D)/tests/test_glob.py:1386: DeprecationWarning: 'raw_escape' is deprecated. This function will be removed in 9.0.
-    self.assertEqual(glob.raw_escape(arg, unix=unix, raw_chars=raw_chars), expected)
 
-tests/test_glob.py: 18 warnings
-  $(@D)/tests/test_glob.py:1387: DeprecationWarning: 'raw_escape' is deprecated. This function will be removed in 9.0.
-    self.assertEqual(glob.raw_escape(os.fsencode(arg), unix=unix, raw_chars=raw_chars), os.fsencode(expected))
-
-tests/test_glob.py: 18 warnings
-  $(@D)/tests/test_glob.py:1392: DeprecationWarning: 'raw_escape' is deprecated. This function will be removed in 9.0.
-    glob.raw_escape(arg, unix=unix, raw_chars=raw_chars),
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 1173 passed, 151 skipped, 54 warnings ========
+======== 1170 passed, 151 skipped ========
 py$(PYV): commands[2]> $(PYTHON) -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/coverage
 Wrote HTML report to $(@D)/.tox/py$(PYV)/tmp/coverage/index.html
 py$(PYV): commands[3]> $(PYTHON) -m coverage xml
@@ -1358,16 +1341,16 @@ py$(PYV): commands[4]> $(PYTHON) -m coverage report --show-missing
 Name                  Stmts   Miss  Cover   Missing
 ---------------------------------------------------
 wcmatch/__init__.py       1      0   100%
-wcmatch/__meta__.py      70      0   100%
+wcmatch/__meta__.py      69      0   100%
 wcmatch/_wcmatch.py     143      1    99%   179
-wcmatch/_wcparse.py    1017      2    99%   368, 392
+wcmatch/_wcparse.py    1015      2    99%   365, 389
 wcmatch/fnmatch.py       40      0   100%
-wcmatch/glob.py         514     28    95%   113-115, 178-180, 225-227, 258-259, 309-321, 338-339, 816, 834-835
+wcmatch/glob.py         511     28    95%   113-115, 178-180, 225-227, 258-259, 309-321, 338-339, 814, 832-833
 wcmatch/pathlib.py       99      6    94%   86, 100, 171, 180-182
 wcmatch/posix.py          8      0   100%
-wcmatch/util.py          97      4    96%   62, 223-225
+wcmatch/util.py          95      4    96%   62, 221-223
 wcmatch/wcmatch.py      165      4    98%   103-106, 135
 ---------------------------------------------------
-TOTAL                  2154     45    98%
+TOTAL                  2146     45    98%
   py$(PYV): OK
   congratulations :)

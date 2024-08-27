@@ -1,41 +1,46 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> make test
 coverage run --parallel-mode --omit */_version.py -m pytest
+$(@D)/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
 configfile: setup.cfg
-testpaths: docs/source, tests
-asyncio: mode=auto
-collecting ... collected 174 items
+testpaths: docs, tests
+asyncio: mode=auto, default_loop_scope=None
+collecting ... collected 193 items
 
-docs/source/concepts_function_scope_example.py::test_runs_in_a_loop PASSED
-docs/source/concepts_module_scope_example.py::test_remember_loop PASSED
-docs/source/concepts_module_scope_example.py::test_runs_in_a_loop PASSED
-docs/source/how-to-guides/class_scoped_loop_example.py::TestInOneEventLoopPerClass::test_remember_loop PASSED
-docs/source/how-to-guides/class_scoped_loop_example.py::TestInOneEventLoopPerClass::test_assert_same_loop PASSED
-docs/source/how-to-guides/module_scoped_loop_example.py::test_remember_loop PASSED
-docs/source/how-to-guides/module_scoped_loop_example.py::test_assert_same_loop PASSED
-docs/source/how-to-guides/multiple_loops_example.py::test_uses_custom_event_loop_policy[event_loop_policy0] PASSED
-docs/source/how-to-guides/multiple_loops_example.py::test_uses_custom_event_loop_policy[event_loop_policy1] PASSED
-docs/source/how-to-guides/test_session_scoped_loop_example.py::test_session_scoped_loop_configuration_works_in_auto_mode PASSED
-docs/source/how-to-guides/test_session_scoped_loop_example.py::test_session_scoped_loop_configuration_works_in_strict_mode PASSED
-docs/source/reference/fixtures/event_loop_example.py::test_event_loop_fixture PASSED
-docs/source/reference/fixtures/event_loop_policy_example.py::test_uses_custom_event_loop_policy PASSED
-docs/source/reference/fixtures/event_loop_policy_parametrized_example.py::test_uses_custom_event_loop_policy[event_loop_policy0] PASSED
-docs/source/reference/fixtures/event_loop_policy_parametrized_example.py::test_uses_custom_event_loop_policy[event_loop_policy1] PASSED
-docs/source/reference/markers/class_scoped_loop_custom_policies_strict_mode_example.py::TestWithDifferentLoopPolicies::test_parametrized_loop[event_loop_policy0] PASSED
-docs/source/reference/markers/class_scoped_loop_custom_policies_strict_mode_example.py::TestWithDifferentLoopPolicies::test_parametrized_loop[event_loop_policy1] PASSED
-docs/source/reference/markers/class_scoped_loop_strict_mode_example.py::TestClassScopedLoop::test_remember_loop PASSED
-docs/source/reference/markers/class_scoped_loop_strict_mode_example.py::TestClassScopedLoop::test_this_runs_in_same_loop PASSED
-docs/source/reference/markers/class_scoped_loop_with_fixture_strict_mode_example.py::TestClassScopedLoop::test_runs_is_same_loop_as_fixture PASSED
-docs/source/reference/markers/function_scoped_loop_pytestmark_strict_mode_example.py::test_runs_in_asyncio_event_loop PASSED
-docs/source/reference/markers/function_scoped_loop_strict_mode_example.py::test_runs_in_asyncio_event_loop PASSED
-docs/source/reference/markers/module_scoped_loop_strict_mode_example.py::test_remember_loop PASSED
-docs/source/reference/markers/module_scoped_loop_strict_mode_example.py::test_this_runs_in_same_loop PASSED
-docs/source/reference/markers/module_scoped_loop_strict_mode_example.py::TestClassA::test_this_runs_in_same_loop PASSED
+docs/concepts_function_scope_example.py::test_runs_in_a_loop PASSED
+docs/concepts_module_scope_example.py::test_remember_loop PASSED
+docs/concepts_module_scope_example.py::test_runs_in_a_loop PASSED
+docs/how-to-guides/change_fixture_loop_example.py::test_runs_in_module_loop PASSED
+docs/how-to-guides/class_scoped_loop_example.py::TestInOneEventLoopPerClass::test_remember_loop PASSED
+docs/how-to-guides/class_scoped_loop_example.py::TestInOneEventLoopPerClass::test_assert_same_loop PASSED
+docs/how-to-guides/module_scoped_loop_example.py::test_remember_loop PASSED
+docs/how-to-guides/module_scoped_loop_example.py::test_assert_same_loop PASSED
+docs/how-to-guides/multiple_loops_example.py::test_uses_custom_event_loop_policy[event_loop_policy0] PASSED
+docs/how-to-guides/multiple_loops_example.py::test_uses_custom_event_loop_policy[event_loop_policy1] PASSED
+docs/how-to-guides/test_session_scoped_loop_example.py::test_session_scoped_loop_configuration_works_in_auto_mode PASSED
+docs/how-to-guides/test_session_scoped_loop_example.py::test_session_scoped_loop_configuration_works_in_strict_mode PASSED
+docs/reference/fixtures/event_loop_example.py::test_event_loop_fixture PASSED
+docs/reference/fixtures/event_loop_policy_example.py::test_uses_custom_event_loop_policy PASSED
+docs/reference/fixtures/event_loop_policy_parametrized_example.py::test_uses_custom_event_loop_policy[event_loop_policy0] PASSED
+docs/reference/fixtures/event_loop_policy_parametrized_example.py::test_uses_custom_event_loop_policy[event_loop_policy1] PASSED
+docs/reference/markers/class_scoped_loop_custom_policies_strict_mode_example.py::TestWithDifferentLoopPolicies::test_parametrized_loop[event_loop_policy0] PASSED
+docs/reference/markers/class_scoped_loop_custom_policies_strict_mode_example.py::TestWithDifferentLoopPolicies::test_parametrized_loop[event_loop_policy1] PASSED
+docs/reference/markers/class_scoped_loop_strict_mode_example.py::TestClassScopedLoop::test_remember_loop PASSED
+docs/reference/markers/class_scoped_loop_strict_mode_example.py::TestClassScopedLoop::test_this_runs_in_same_loop PASSED
+docs/reference/markers/class_scoped_loop_with_fixture_strict_mode_example.py::TestClassScopedLoop::test_runs_is_same_loop_as_fixture PASSED
+docs/reference/markers/function_scoped_loop_pytestmark_strict_mode_example.py::test_runs_in_asyncio_event_loop PASSED
+docs/reference/markers/function_scoped_loop_strict_mode_example.py::test_runs_in_asyncio_event_loop PASSED
+docs/reference/markers/module_scoped_loop_strict_mode_example.py::test_remember_loop PASSED
+docs/reference/markers/module_scoped_loop_strict_mode_example.py::test_this_runs_in_same_loop PASSED
+docs/reference/markers/module_scoped_loop_strict_mode_example.py::TestClassA::test_this_runs_in_same_loop PASSED
 tests/async_fixtures/test_async_fixtures.py::test_async_fixture PASSED
 tests/async_fixtures/test_async_fixtures.py::TestAsyncFixtureMethod::test_async_fixture_method PASSED
 tests/async_fixtures/test_async_fixtures_scope.py::test_async_fixture_scope PASSED
@@ -46,6 +51,7 @@ tests/async_fixtures/test_async_gen_fixtures.py::test_async_gen_fixture_finalize
 tests/async_fixtures/test_async_gen_fixtures.py::TestAsyncGenFixtureMethod::test_async_gen_fixture_method PASSED
 tests/async_fixtures/test_nested.py::test_async_fixture PASSED
 tests/async_fixtures/test_parametrized_loop.py::test_event_loop_parametrization PASSED
+tests/async_fixtures/test_shared_module_fixture.py::test_asyncio_mark_provides_package_scoped_loop_strict_mode PASSED
 tests/hypothesis/test_base.py::test_hypothesis_given_decorator_before_asyncio_mark PASSED
 tests/hypothesis/test_base.py::test_mark_outer PASSED
 tests/hypothesis/test_base.py::test_mark_and_parametrize[1] PASSED
@@ -67,6 +73,9 @@ tests/markers/test_class_scope.py::test_asyncio_mark_allows_combining_class_scop
 tests/markers/test_class_scope.py::test_asyncio_mark_handles_missing_event_loop_triggered_by_fixture PASSED
 tests/markers/test_class_scope.py::test_standalone_test_does_not_trigger_warning_about_no_current_event_loop_being_set PASSED
 tests/markers/test_function_scope.py::test_asyncio_mark_provides_function_scoped_loop_strict_mode PASSED
+tests/markers/test_function_scope.py::test_loop_scope_function_provides_function_scoped_event_loop PASSED
+tests/markers/test_function_scope.py::test_raises_when_scope_and_loop_scope_arguments_are_present PASSED
+tests/markers/test_function_scope.py::test_warns_when_scope_argument_is_present PASSED
 tests/markers/test_function_scope.py::test_function_scope_supports_explicit_event_loop_fixture_request PASSED
 tests/markers/test_function_scope.py::test_asyncio_mark_respects_the_loop_policy PASSED
 tests/markers/test_function_scope.py::test_asyncio_mark_respects_parametrized_loop_policies PASSED
@@ -74,6 +83,10 @@ tests/markers/test_function_scope.py::test_asyncio_mark_provides_function_scoped
 tests/markers/test_function_scope.py::test_asyncio_mark_handles_missing_event_loop_triggered_by_fixture PASSED
 tests/markers/test_function_scope.py::test_standalone_test_does_not_trigger_warning_about_no_current_event_loop_being_set PASSED
 tests/markers/test_function_scope.py::test_asyncio_mark_does_not_duplicate_other_marks_in_auto_mode PASSED
+tests/markers/test_invalid_arguments.py::test_no_error_when_scope_passed_as_sole_keyword_argument PASSED
+tests/markers/test_invalid_arguments.py::test_error_when_scope_passed_as_positional_argument PASSED
+tests/markers/test_invalid_arguments.py::test_error_when_wrong_keyword_argument_is_passed PASSED
+tests/markers/test_invalid_arguments.py::test_error_when_additional_keyword_arguments_are_passed PASSED
 tests/markers/test_module_scope.py::test_asyncio_mark_works_on_module_level PASSED
 tests/markers/test_module_scope.py::test_asyncio_mark_provides_module_scoped_loop_strict_mode PASSED
 tests/markers/test_module_scope.py::test_raise_when_event_loop_fixture_is_requested_in_addition_to_scoped_loop PASSED
@@ -153,6 +166,16 @@ tests/test_explicit_event_loop_fixture_request.py::test_emit_warning_when_event_
 tests/test_explicit_event_loop_fixture_request.py::test_emit_warning_when_event_loop_is_explicitly_requested_in_async_gen_fixture PASSED
 tests/test_explicit_event_loop_fixture_request.py::test_does_not_emit_warning_when_event_loop_is_explicitly_requested_in_sync_function PASSED
 tests/test_explicit_event_loop_fixture_request.py::test_does_not_emit_warning_when_event_loop_is_explicitly_requested_in_sync_fixture PASSED
+tests/test_fixture_loop_scopes.py::test_loop_scope_session_is_independent_of_fixture_scope[session] PASSED
+tests/test_fixture_loop_scopes.py::test_loop_scope_session_is_independent_of_fixture_scope[package] PASSED
+tests/test_fixture_loop_scopes.py::test_loop_scope_session_is_independent_of_fixture_scope[module] PASSED
+tests/test_fixture_loop_scopes.py::test_loop_scope_session_is_independent_of_fixture_scope[class] PASSED
+tests/test_fixture_loop_scopes.py::test_loop_scope_session_is_independent_of_fixture_scope[function] PASSED
+tests/test_fixture_loop_scopes.py::test_default_loop_scope_config_option_changes_fixture_loop_scope[function] PASSED
+tests/test_fixture_loop_scopes.py::test_default_loop_scope_config_option_changes_fixture_loop_scope[module] PASSED
+tests/test_fixture_loop_scopes.py::test_default_loop_scope_config_option_changes_fixture_loop_scope[session] PASSED
+tests/test_fixture_loop_scopes.py::test_default_class_loop_scope_config_option_changes_fixture_loop_scope PASSED
+tests/test_fixture_loop_scopes.py::test_default_package_loop_scope_config_option_changes_fixture_loop_scope PASSED
 tests/test_import.py::test_import_warning_does_not_cause_internal_error PASSED
 tests/test_import.py::test_import_warning_in_package_does_not_cause_internal_error PASSED
 tests/test_import.py::test_does_not_import_unrelated_packages PASSED
@@ -186,6 +209,30 @@ tests/test_skips.py::test_unittest_skiptest_compatibility PASSED
 tests/test_skips.py::test_skip_in_module_does_not_skip_package PASSED
 tests/test_subprocess.py::test_subprocess PASSED
 
-======== 174 passed ========
+=============================== warnings summary ===============================
+tests/async_fixtures/test_shared_module_fixture.py: 1 warning
+tests/hypothesis/test_base.py: 2 warnings
+tests/markers/test_class_scope.py: 7 warnings
+tests/markers/test_function_scope.py: 5 warnings
+tests/markers/test_module_scope.py: 7 warnings
+tests/markers/test_package_scope.py: 7 warnings
+tests/markers/test_session_scope.py: 9 warnings
+tests/modes/test_auto_mode.py: 6 warnings
+tests/modes/test_strict_mode.py: 3 warnings
+tests/test_asyncio_fixture.py: 2 warnings
+tests/test_doctest.py: 2 warnings
+tests/test_event_loop_fixture_finalizer.py: 3 warnings
+tests/test_explicit_event_loop_fixture_request.py: 2 warnings
+tests/test_import.py: 3 warnings
+tests/test_is_async_test.py: 4 warnings
+tests/test_simple.py: 3 warnings
+tests/test_skips.py: 7 warnings
+  $(@D)/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+  The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+  
+    warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 193 passed, 73 warnings ========
   py$(PYV): OK
   congratulations :)

@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		twisted
-HUMAN_VERSION =			24.3.0
-COMPONENT_SUMMARY =		twisted - An asynchronous networking framework written in Python
+HUMAN_VERSION =			24.7.0
+COMPONENT_SUMMARY =		An asynchronous networking framework written in Python
 COMPONENT_PROJECT_URL =		https://twistedmatrix.com/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6b38b6ece7296b5e122c9eb17da2eeab3d98a198f50ca9efd00fb03e5b4fd4ae
+	sha256:5a60147f044187a127ec7da96d170d49bcce50c6fd36f594e60f4587eff4d394
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		factory_boy
-HUMAN_VERSION =			3.3.0
-COMPONENT_SUMMARY =		factory_boy - A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby.
+HUMAN_VERSION =			3.3.1
+COMPONENT_SUMMARY =		A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby.
 COMPONENT_PROJECT_URL =		https://github.com/FactoryBoy/factory_boy
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ec/02/30796763f5661ef0028e12f09b66757b2c8dd1ab783d6b7e6d834a404884/factory_boy-3.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bc76d97d1a65bbd9842a6d722882098eb549ec8ee1081f9fb2e8ff29f0c300f1
+	sha256:8317aa5289cdfc45f9cae570feb07a6177316c82e34d14df3c2e1f22f26abef0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,3 +32,4 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/faker
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
