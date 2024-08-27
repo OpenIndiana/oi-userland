@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.develop
-HUMAN_VERSION =			8.17.1
+HUMAN_VERSION =			8.17.2
 COMPONENT_SUMMARY =		Development utilities by jaraco
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dd40c22dc17573a7d568e9a6919b912cdd24e78a6934421f0b9047795efb011c
+	sha256:b5c6b5af0928a086c5c49d6b968d62af6cbbe1e81ce404a8ad923652a151d1d3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
