@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cherrypy
 HUMAN_VERSION =			18.10.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Object-Oriented HTTP framework
 COMPONENT_PROJECT_URL =		https://www.cherrypy.dev
 COMPONENT_ARCHIVE_HASH =	\
@@ -42,11 +43,10 @@ PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/portend
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += library/python/zc-lockfile
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/objgraph
-TEST_REQUIRED_PACKAGES.python += library/python/path-py
+TEST_REQUIRED_PACKAGES.python += library/python/path
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-forked
