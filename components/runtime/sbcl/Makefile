@@ -17,12 +17,15 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	2.4.8
+COMPONENT_VERSION=	2.4.6
+COMPONENT_REVISION=	1
+# This is a fake version 2.4.8 because sbcl-2.4.7 introduced a bug that makes clouseau unusable
+IPS_COMPONENT_VERSION=	2.4.8
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 COMPONENT_PROJECT_URL=	https://sbcl.sourceforge.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:fc6ecdcc538e80a14a998d530ccc384a41790f4f4fc6cd7ffe8cb126a677694c
+COMPONENT_ARCHIVE_HASH=	sha256:a489907842dae09a1726d62985bf7a56670aaea2f3eca1fb7023bca67c3f3091
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_CLASSIFICATION=	Development/Other Languages
