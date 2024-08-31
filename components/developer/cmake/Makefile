@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
 COMPONENT_MAJOR_VERSION= 3.30
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).2
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).3
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
@@ -42,7 +42,7 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_PROJECT_URL=  https://www.cmake.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:46074c781eccebc433e98f0bbfa265ca3fd4381f245ca3b140e7711531d60db2
+COMPONENT_ARCHIVE_HASH=	sha256:6d5de15b6715091df7f5441007425264bdd477809f80333fdf95f846aaff88e4
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -129,6 +129,7 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/^ *[0-9]\{1,\}\/[0-9]\{1,\} Test *\#[0-9]\{1
 COMPONENT_TEST_TRANSFORMS += "-e '/^make:/d'"							# drop make logs
 
 # To get consistent test results we need following packages
+TEST_REQUIRED_PACKAGES += $(GFORTRAN_RUNTIME_PKG)
 TEST_REQUIRED_PACKAGES += developer/versioning/cvs
 TEST_REQUIRED_PACKAGES += developer/versioning/mercurial
 TEST_REQUIRED_PACKAGES += developer/versioning/subversion
