@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-X workers [1111 items]
+X workers [1144 items]
 
 scheduling tests via LoadScheduling
 
@@ -16,6 +16,16 @@ tests/test_cache.py::test_cache_info PASSED
 tests/test_cached_property.py::test_reify PASSED
 tests/test_cached_property.py::test_reify_assignment PASSED
 tests/test_cached_property.py::test_reify_class PASSED
+tests/test_helpers.py::TestCCachedProperty::test_cached_property PASSED
+tests/test_helpers.py::TestCCachedProperty::test_cached_property_assignment PASSED
+tests/test_helpers.py::TestCCachedProperty::test_cached_property_check_without_cache PASSED
+tests/test_helpers.py::TestCCachedProperty::test_cached_property_class PASSED
+tests/test_helpers.py::TestCCachedProperty::test_cached_property_without_cache PASSED
+tests/test_helpers.py::TestPyCachedProperty::test_cached_property PASSED
+tests/test_helpers.py::TestPyCachedProperty::test_cached_property_assignment PASSED
+tests/test_helpers.py::TestPyCachedProperty::test_cached_property_check_without_cache PASSED
+tests/test_helpers.py::TestPyCachedProperty::test_cached_property_class PASSED
+tests/test_helpers.py::TestPyCachedProperty::test_cached_property_without_cache PASSED
 tests/test_normalize_path.py::test__normalize_path[-] PASSED
 tests/test_normalize_path.py::test__normalize_path[../path/to-path/to] PASSED
 tests/test_normalize_path.py::test__normalize_path[././path/to-path/to] PASSED
@@ -628,6 +638,7 @@ tests/test_url.py::test_absolute_url_without_host PASSED
 tests/test_url.py::test_authority_full PASSED
 tests/test_url.py::test_authority_full_nonasci PASSED
 tests/test_url.py::test_authority_short PASSED
+tests/test_url.py::test_authority_unknown_scheme PASSED
 tests/test_url.py::test_bool PASSED
 tests/test_url.py::test_bytes PASSED
 tests/test_url.py::test_clear_fragment_on_getting_parent PASSED
@@ -702,6 +713,7 @@ tests/test_url.py::test_is_non_absolute_for_empty_url PASSED
 tests/test_url.py::test_is_non_absolute_for_empty_url2 PASSED
 tests/test_url.py::test_join PASSED
 tests/test_url.py::test_join_absolute PASSED
+tests/test_url.py::test_join_encoded_url PASSED
 tests/test_url.py::test_join_from_rfc_3986_abnormal[../../../../g-http://a/g] PASSED
 tests/test_url.py::test_join_from_rfc_3986_abnormal[../../../g-http://a/g] PASSED
 tests/test_url.py::test_join_from_rfc_3986_abnormal[..g-http://a/b/c/..g] PASSED
@@ -744,19 +756,35 @@ tests/test_url.py::test_join_from_rfc_3986_normal[g;x?y#s-http://a/b/c/g;x?y#s] 
 tests/test_url.py::test_join_from_rfc_3986_normal[g?y#s-http://a/b/c/g?y#s] PASSED
 tests/test_url.py::test_join_from_rfc_3986_normal[g?y-http://a/b/c/g?y] PASSED
 tests/test_url.py::test_join_non_url PASSED
+tests/test_url.py::test_join_query_string PASSED
+tests/test_url.py::test_join_query_string_with_special_chars PASSED
 tests/test_url.py::test_joinpath[base-slash-duplicate-slash] PASSED
 tests/test_url.py::test_joinpath[base-slash-empty-segments] PASSED
 tests/test_url.py::test_joinpath[base-slash-trailing-slash] PASSED
 tests/test_url.py::test_joinpath[cleanup-query-and-fragment] PASSED
 tests/test_url.py::test_joinpath[duplicate-slash] PASSED
 tests/test_url.py::test_joinpath[empty-segments] PASSED
+tests/test_url.py::test_joinpath[path-add-trailing-slash] PASSED
 tests/test_url.py::test_joinpath[path-with-slash] PASSED
 tests/test_url.py::test_joinpath[path] PASSED
 tests/test_url.py::test_joinpath[root-with-slash] PASSED
 tests/test_url.py::test_joinpath[root] PASSED
+tests/test_url.py::test_joinpath[trailing-slash-empty-string] PASSED
 tests/test_url.py::test_joinpath[trailing-slash] PASSED
 tests/test_url.py::test_joinpath_edgecases[with-colon-and-at] PASSED
 tests/test_url.py::test_joinpath_edgecases[with-dots] PASSED
+tests/test_url.py::test_joinpath_empty_segments[default_default] PASSED
+tests/test_url.py::test_joinpath_empty_segments[default_embedded-empty-segment] PASSED
+tests/test_url.py::test_joinpath_empty_segments[default_empty-segment] PASSED
+tests/test_url.py::test_joinpath_empty_segments[default_relative] PASSED
+tests/test_url.py::test_joinpath_empty_segments[default_trailing-empty-segment] PASSED
+tests/test_url.py::test_joinpath_empty_segments[default_trailing-empty-segments] PASSED
+tests/test_url.py::test_joinpath_empty_segments[empty-segment_default] PASSED
+tests/test_url.py::test_joinpath_empty_segments[empty-segment_empty_segment] PASSED
+tests/test_url.py::test_joinpath_empty_segments[empty-segment_relative] PASSED
+tests/test_url.py::test_joinpath_empty_segments[empty-segments_default] PASSED
+tests/test_url.py::test_joinpath_empty_segments[empty-segments_empty-segment] PASSED
+tests/test_url.py::test_joinpath_empty_segments[empty-segments_relative] PASSED
 tests/test_url.py::test_joinpath_encoding[encoded-percent-encoded] PASSED
 tests/test_url.py::test_joinpath_encoding[non-ascii] PASSED
 tests/test_url.py::test_joinpath_encoding[percent-encoded] PASSED
@@ -768,6 +796,7 @@ tests/test_url.py::test_joinpath_relative[empty-segments] PASSED
 tests/test_url.py::test_joinpath_relative[empty-url] PASSED
 tests/test_url.py::test_joinpath_relative[relative-path] PASSED
 tests/test_url.py::test_joinpath_relative[trailing-slash] PASSED
+tests/test_url.py::test_joinpath_single_empty_segments PASSED
 tests/test_url.py::test_localhost PASSED
 tests/test_url.py::test_lowercase PASSED
 tests/test_url.py::test_lowercase_nonascii PASSED
@@ -793,6 +822,7 @@ tests/test_url.py::test_password_non_ascii PASSED
 tests/test_url.py::test_password_without_user PASSED
 tests/test_url.py::test_path_non_ascii PASSED
 tests/test_url.py::test_path_qs PASSED
+tests/test_url.py::test_path_with_2F PASSED
 tests/test_url.py::test_path_with_spaces PASSED
 tests/test_url.py::test_percent_encoded_in_qs PASSED
 tests/test_url.py::test_plus_in_path PASSED
@@ -1084,6 +1114,9 @@ tests/test_url_query.py::test_query_separators_from_with_query[original_url4-1-1
 tests/test_url_query.py::test_query_separators_from_with_query[original_url5-1-10;b=20] PASSED
 tests/test_url_update_netloc.py::test_from_str_with_host_ipv4 PASSED
 tests/test_url_update_netloc.py::test_from_str_with_host_ipv6 PASSED
+tests/test_url_update_netloc.py::test_with_custom_port_normalization PASSED
+tests/test_url_update_netloc.py::test_with_default_port_normalization PASSED
+tests/test_url_update_netloc.py::test_with_explicit_port_normalization PASSED
 tests/test_url_update_netloc.py::test_with_host PASSED
 tests/test_url_update_netloc.py::test_with_host_empty PASSED
 tests/test_url_update_netloc.py::test_with_host_for_relative_url PASSED
@@ -1120,9 +1153,9 @@ tests/test_url_update_netloc.py::test_with_user_ipv6 PASSED
 tests/test_url_update_netloc.py::test_with_user_non_ascii PASSED
 tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
-11 files skipped due to complete coverage.
+12 files skipped due to complete coverage.
 
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 1106 passed, 5 xfailed ========
+======== 1139 passed, 5 xfailed ========
