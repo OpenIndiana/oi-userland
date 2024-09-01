@@ -50,7 +50,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stack-spur
 COMPONENT_VERSION=	5.0.3423
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 GIT_TAG=		sun-v5.0.65
 PLUGIN_REV=		5.0-202408021838
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
