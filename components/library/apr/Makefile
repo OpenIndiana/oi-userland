@@ -26,12 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         apr
-COMPONENT_VERSION=      1.7.4
+COMPONENT_VERSION=      1.7.5
 COMPONENT_SUMMARY=      Apache Portable Runtime (APR) Shared Libraries
 COMPONENT_PROJECT_URL=  https://apr.apache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a4137dd82a185076fa50ba54232d920a17c6469c30b0876569e1c2a05ff311d9
+COMPONENT_ARCHIVE_HASH= sha256:3375fa365d67bcf945e52b52cba07abea57ef530f40b281ffbe977a9251361db
 COMPONENT_ARCHIVE_URL=  https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/apr
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
