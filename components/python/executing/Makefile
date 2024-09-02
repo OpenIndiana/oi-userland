@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		executing
-HUMAN_VERSION =			2.0.1
-COMPONENT_SUMMARY =		executing - Get the currently executing AST node of a frame, and other information
+HUMAN_VERSION =			2.1.0
+COMPONENT_SUMMARY =		Get the currently executing AST node of a frame, and other information
 COMPONENT_PROJECT_URL =		https://github.com/alexmojaki/executing
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/08/41/85d2d28466fca93737592b7f3cc456d1cfd6bcd401beceeba17e8e792b50/executing-2.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:35afe2ce3affba8ee97f2d69927fa823b08b472b7b994e36a52a964b93d16147
+	sha256:8ea27ddd260da8150fa5a708269c4a10e76161e2496ec3e587da9e3c0fe4b9ab
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
