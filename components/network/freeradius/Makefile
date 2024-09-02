@@ -23,11 +23,9 @@
 
 include ../../../make-rules/shared-macros.mk
 
-OPENSSL_VERSION= 3.1
-
 COMPONENT_NAME=		freeradius
 COMPONENT_VERSION=	3.2.5
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
 		configurable multi-protocol policy server, supporting RADIUS, DHCPv4 DHCPv6, DNS, \
@@ -52,6 +50,8 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         $(CLONEY) $(SOURCE_DIR) $(@D); \
 	$(GSED) -i -e 's/-D_LIBRADIUS/-D_LIBRADIUS -D_XPG4_2/' $(@D)/src/lib/all.mk; \
         );
+
+CFLAGS += $(XPG6MODE)
 
 CONFIGURE_OPTIONS += CFLAGS="-I/usr/include/odbc"
 CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
@@ -82,7 +82,7 @@ COMPONENT_POST_INSTALL_ACTION =  \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(USRLIBDIR)/python$(PYTHON_VERSION)/config-$(PYTHON_VERSION)"' $(PROTOUSRLIBDIR64)/rlm_python.so ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(USRLIBDIR)/python$(PYTHON_VERSION)/config-$(PYTHON_VERSION)"' $(PROTOUSRLIBDIR64)/rlm_python.so ;
 
-# manually added dependency r compilation only)
+# Manually added build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
@@ -102,6 +102,7 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/talloc
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += service/network/unbound
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
