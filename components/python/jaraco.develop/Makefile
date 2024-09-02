@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.develop
-HUMAN_VERSION =			8.17.3
+HUMAN_VERSION =			8.17.4
 COMPONENT_SUMMARY =		Development utilities by jaraco
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f954a645dc00c52261a6b5a7de46d252d9cbbc71fe069fa81cb00c5e169bec82
+	sha256:fe2c22235c41c140eaf3e69c8efa99c3557c2ae036e1c6718353b43699a8d44a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -59,3 +59,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-home
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
 TEST_REQUIRED_PACKAGES.python += library/python/types-requests
+TEST_REQUIRED_PACKAGES.python += library/python/types-setuptools
