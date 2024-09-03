@@ -1,5 +1,5 @@
---- setuptools-73.0.1/setuptools/tests/config/test_setupcfg.py.orig
-+++ setuptools-73.0.1/setuptools/tests/config/test_setupcfg.py
+--- setuptools-74.1.1/setuptools/tests/config/test_setupcfg.py.orig
++++ setuptools-74.1.1/setuptools/tests/config/test_setupcfg.py
 @@ -77,6 +77,7 @@
  
  
@@ -24,8 +24,8 @@
      def test_cmdclass(self, tmpdir):
          module_path = Path(tmpdir, "src/custom_build.py")  # auto discovery for src
          module_path.parent.mkdir(parents=True, exist_ok=True)
---- setuptools-73.0.1/setuptools/tests/config/test_apply_pyprojecttoml.py.orig
-+++ setuptools-73.0.1/setuptools/tests/config/test_apply_pyprojecttoml.py
+--- setuptools-74.1.1/setuptools/tests/config/test_apply_pyprojecttoml.py.orig
++++ setuptools-74.1.1/setuptools/tests/config/test_apply_pyprojecttoml.py
 @@ -37,6 +37,7 @@
  @pytest.mark.parametrize("url", urls_from_file(HERE / EXAMPLES_FILE))
  @pytest.mark.filterwarnings("ignore")
@@ -42,7 +42,7 @@
  def test_utf8_maintainer_in_metadata(  # issue-3663
      expected_maintainers_meta_value,
      pyproject_text,
-@@ -362,6 +364,7 @@
+@@ -383,6 +385,7 @@
              ),
          ],
      )
@@ -50,7 +50,7 @@
      def test_not_listed_in_dynamic(self, tmp_path, attr, field, value):
          """Setuptools cannot set a field if not listed in ``dynamic``"""
          pyproject = self.pyproject(tmp_path, [])
-@@ -389,6 +392,7 @@
+@@ -410,6 +413,7 @@
          dist_value = _some_attrgetter(f"metadata.{attr}", attr)(dist)
          assert dist_value == value
  
@@ -58,8 +58,8 @@
      def test_warning_overwritten_dependencies(self, tmp_path):
          src = "[project]\nname='pkg'\nversion='0.1'\ndependencies=['click']\n"
          pyproject = tmp_path / "pyproject.toml"
---- setuptools-73.0.1/setuptools/tests/test_easy_install.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_easy_install.py
+--- setuptools-74.1.1/setuptools/tests/test_easy_install.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_easy_install.py
 @@ -820,6 +820,7 @@
                  run_setup(test_setup_py, ['--version'])
          assert len(mock_index.requests) == 0
@@ -68,8 +68,8 @@
      def test_setup_requires_with_allow_hosts(self, mock_index):
          """The `allow-hosts` option in not supported anymore."""
          files = {
---- setuptools-73.0.1/setuptools/tests/test_editable_install.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_editable_install.py
+--- setuptools-74.1.1/setuptools/tests/test_editable_install.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_editable_install.py
 @@ -608,6 +608,7 @@
              three = import_module("parent.child.three")
              assert three.x == 3
@@ -78,8 +78,8 @@
      def test_no_recursion(self, tmp_path):
          # See issue #3550
          files = {
---- setuptools-73.0.1/setuptools/tests/test_extern.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_extern.py
+--- setuptools-74.1.1/setuptools/tests/test_extern.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_extern.py
 @@ -5,11 +5,14 @@
  
  from setuptools import Distribution
@@ -95,8 +95,8 @@
 +@pytest.mark.skip(reason="fails with tox-current-env")
  def test_distribution_picklable():
      pickle.loads(pickle.dumps(Distribution()))
---- setuptools-73.0.1/setuptools/tests/test_build_py.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_build_py.py
+--- setuptools-74.1.1/setuptools/tests/test_build_py.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_build_py.py
 @@ -157,6 +157,7 @@
  }
  
@@ -105,8 +105,8 @@
  def test_excluded_subpackages(tmpdir_cwd):
      jaraco.path.build(EXAMPLE_WITH_MANIFEST)
      dist = Distribution({"script_name": "%PEP 517%"})
---- setuptools-73.0.1/setuptools/tests/test_develop.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_develop.py
+--- setuptools-74.1.1/setuptools/tests/test_develop.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_develop.py
 @@ -83,6 +83,7 @@
          # assert '0.0' not in foocmd_text
  
@@ -115,8 +115,8 @@
      def test_egg_link_filename(self):
          settings = dict(
              name='Foo $$$ Bar_baz-bing',
---- setuptools-73.0.1/setuptools/tests/test_core_metadata.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_core_metadata.py
+--- setuptools-74.1.1/setuptools/tests/test_core_metadata.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_core_metadata.py
 @@ -155,6 +155,7 @@
  
  
@@ -125,8 +125,8 @@
  def test_read_metadata(name, attrs):
      dist = Distribution(attrs)
      metadata_out = dist.metadata
---- setuptools-73.0.1/setuptools/_distutils/tests/test_dist.py.orig
-+++ setuptools-73.0.1/setuptools/_distutils/tests/test_dist.py
+--- setuptools-74.1.1/setuptools/_distutils/tests/test_dist.py.orig
++++ setuptools-74.1.1/setuptools/_distutils/tests/test_dist.py
 @@ -296,6 +296,7 @@
                  {"name": "package", "version": "1.0", "provides": ["my.pkg (splat)"]},
              )
@@ -135,8 +135,8 @@
      def test_requires(self):
          attrs = {
              "name": "package",
---- setuptools-73.0.1/setuptools/tests/test_egg_info.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_egg_info.py
+--- setuptools-74.1.1/setuptools/tests/test_egg_info.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_egg_info.py
 @@ -180,6 +180,7 @@
              with pytest.raises(distutils.errors.DistutilsFileError, match=msg):
                  ei.run()
@@ -153,8 +153,8 @@
      def test_requires(
          self,
          tmpdir_cwd,
---- setuptools-73.0.1/setuptools/tests/test_bdist_deprecations.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_bdist_deprecations.py
+--- setuptools-74.1.1/setuptools/tests/test_bdist_deprecations.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_bdist_deprecations.py
 @@ -12,6 +12,7 @@
  @pytest.mark.skipif(sys.platform == 'win32', reason='non-Windows only')
  @pytest.mark.xfail(reason="bdist_rpm is long deprecated, should we remove it? #1988")
@@ -163,8 +163,8 @@
  def test_bdist_rpm_warning(distutils_cmd, tmpdir_cwd):
      dist = Distribution(
          dict(
---- setuptools-73.0.1/setuptools/tests/test_virtualenv.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_virtualenv.py
+--- setuptools-74.1.1/setuptools/tests/test_virtualenv.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_virtualenv.py
 @@ -83,6 +83,7 @@
          ),
      ],
@@ -173,8 +173,8 @@
  def test_pip_upgrade_from_source(
      pip_version, venv_without_setuptools, setuptools_wheel, setuptools_sdist
  ):
---- setuptools-73.0.1/setuptools/tests/test_build_clib.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_build_clib.py
+--- setuptools-74.1.1/setuptools/tests/test_build_clib.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_build_clib.py
 @@ -11,6 +11,7 @@
  
  class TestBuildCLib:
@@ -191,8 +191,8 @@
      def test_build_libraries_reproducible(self, mock_newer):
          dist = Distribution()
          cmd = build_clib(dist)
---- setuptools-73.0.1/setuptools/tests/test_build_ext.py.orig
-+++ setuptools-73.0.1/setuptools/tests/test_build_ext.py
+--- setuptools-74.1.1/setuptools/tests/test_build_ext.py.orig
++++ setuptools-74.1.1/setuptools/tests/test_build_ext.py
 @@ -103,6 +103,7 @@
              "package_dir": {"": "src"},
          })
