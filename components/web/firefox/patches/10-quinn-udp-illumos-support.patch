@@ -1,0 +1,196 @@
+quinn-udp needs illumos/illumos support. Firefox uses this for the new
+http/2 code.
+--- gecko-dev-fa55b33a4b56f392bc5a0c7616e0dfe055112cb5/third_party/rust/quinn-udp/.cargo-checksum.json.old	2024-07-27 12:06:31.655202997 -0400
++++ gecko-dev-fa55b33a4b56f392bc5a0c7616e0dfe055112cb5/third_party/rust/quinn-udp/.cargo-checksum.json	2024-07-27 12:06:59.594477839 -0400
+@@ -1 +1 @@
+-{"files":{"Cargo.toml":"bf505df0c4f9254fa37950bad863cb838a8a7d2be4c8d3f28bdd679f945ef8cf","LICENSE-APACHE":"c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4","LICENSE-MIT":"4b2d0aca6789fa39e03d6738e869ea0988cceba210ca34ebb59c15c463e93a04","benches/throughput.rs":"8f00856e6c6f1dd8c7dd6c8a22b36c6f42dfa4d709edf3348de75d32e22c71fb","src/cmsg/mod.rs":"23d898d72c5aabda93d987526fdd78231bb5907bce2b6b2d292a56bdfd977f86","src/cmsg/unix.rs":"1a4089e5e61536a3c370c6b1bc891036ec2d0e2e78105fbb5b8227705e905d34","src/cmsg/windows.rs":"6fb936ec4a283efc5796872e777441e3039c40589073865644a8ef7936af4f4b","src/fallback.rs":"7fe9666b0bf508d1b5ec0b3690bb7add94c8f213cb51a263c9959e22a5094ad0","src/lib.rs":"72be7f797a3a11e452e7764fadadebc43ae7f9c14ba7fa80aedbbee71aa889c7","src/unix.rs":"fbc9a6ab281cc66500e6afa8b9ebdee73ca281ca14732e8076d9b1f10f431de7","src/windows.rs":"e741a7bdd86d7fcb856db855f9308af01e69387c00e6a726d322f1f4d3046b74","tests/tests.rs":"51bcf6d3f1a3fcf7d481ae966eb679f88341886ff4277f5747df3340ed709d09"},"package":"8bffec3605b73c6f1754535084a85229fa8a30f86014e6c81aeec4abb68b0285"}
+\ No newline at end of file
++{"files":{"Cargo.toml":"bf505df0c4f9254fa37950bad863cb838a8a7d2be4c8d3f28bdd679f945ef8cf","LICENSE-APACHE":"c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4","LICENSE-MIT":"4b2d0aca6789fa39e03d6738e869ea0988cceba210ca34ebb59c15c463e93a04","benches/throughput.rs":"8f00856e6c6f1dd8c7dd6c8a22b36c6f42dfa4d709edf3348de75d32e22c71fb","src/cmsg/mod.rs":"23d898d72c5aabda93d987526fdd78231bb5907bce2b6b2d292a56bdfd977f86","src/cmsg/unix.rs":"1a4089e5e61536a3c370c6b1bc891036ec2d0e2e78105fbb5b8227705e905d34","src/cmsg/windows.rs":"6fb936ec4a283efc5796872e777441e3039c40589073865644a8ef7936af4f4b","src/fallback.rs":"7fe9666b0bf508d1b5ec0b3690bb7add94c8f213cb51a263c9959e22a5094ad0","src/lib.rs":"72be7f797a3a11e452e7764fadadebc43ae7f9c14ba7fa80aedbbee71aa889c7","src/unix.rs":"9417f7d5c8b1019a21d4aabf9bbbcad343ab66c1de4d20f4379efe515a37d1ea","src/windows.rs":"e741a7bdd86d7fcb856db855f9308af01e69387c00e6a726d322f1f4d3046b74","tests/tests.rs":"51bcf6d3f1a3fcf7d481ae966eb679f88341886ff4277f5747df3340ed709d09"},"package":"8bffec3605b73c6f1754535084a85229fa8a30f86014e6c81aeec4abb68b0285"}
+
+--- gecko-dev-fa55b33a4b56f392bc5a0c7616e0dfe055112cb5/third_party/rust/quinn-udp/src/unix.rs.~1~	2024-07-26 11:08:57.000000000 -0400
++++ gecko-dev-fa55b33a4b56f392bc5a0c7616e0dfe055112cb5/third_party/rust/quinn-udp/src/unix.rs	2024-07-28 22:01:23.213328142 -0400
+@@ -1,4 +1,4 @@
+-#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "openbsd")))]
++#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "openbsd", target_os = "illumos")))]
+ use std::ptr;
+ use std::{
+     io::{self, IoSliceMut},
+@@ -25,11 +25,31 @@
+ // Defined in netinet6/in6.h on OpenBSD, this is not yet exported by the libc crate
+ // directly.  See https://github.com/rust-lang/libc/issues/3704 for when we might be able to
+ // rely on this from the libc crate.
+-#[cfg(any(target_os = "openbsd", target_os = "netbsd"))]
++#[cfg(any(target_os = "openbsd", target_os = "netbsd", target_os = "illumos"))]
+ const IPV6_DONTFRAG: libc::c_int = 62;
+-#[cfg(not(any(target_os = "openbsd", target_os = "netbsd")))]
++#[cfg(not(any(target_os = "openbsd", target_os = "netbsd", target_os = "illumos")))]
+ const IPV6_DONTFRAG: libc::c_int = libc::IPV6_DONTFRAG;
+ 
++// Add missing IP constants from /usr/include/netinet/in.h for illumos
++#[cfg(any(target_os = "illumos"))]
++const IPV6_RECVTCLASS: libc::c_int = 25;
++
++#[cfg(any(target_os = "illumos"))]
++const IP_TOS: libc::c_int = 3;
++
++#[cfg(any(target_os = "illumos"))]
++const IPV6_TCLASS: libc::c_int = 38;
++
++#[cfg(any(target_os = "illumos"))]
++#[derive(Copy, Clone)]
++struct in6_pktinfo {
++    ipi6_addr: libc::in6_addr,
++    ipi6_ifindex: libc::c_uint,
++}
++
++#[cfg(any(target_os = "illumos"))]
++const IPV6_PKTINFO: libc::c_int = 11;
++
+ #[cfg(target_os = "freebsd")]
+ type IpTosTy = libc::c_uchar;
+ #[cfg(not(any(target_os = "freebsd", target_os = "netbsd")))]
+@@ -67,7 +87,7 @@
+             || cfg!(target_os = "android")
+         {
+             cmsg_platform_space +=
+-                unsafe { libc::CMSG_SPACE(mem::size_of::<libc::in6_pktinfo>() as _) as usize };
++                0;
+         }
+ 
+         assert!(
+@@ -87,7 +107,7 @@
+ 
+         // mac and ios do not support IP_RECVTOS on dual-stack sockets :(
+         // older macos versions also don't have the flag and will error out if we don't ignore it
+-        #[cfg(not(any(target_os = "openbsd", target_os = "netbsd")))]
++        #[cfg(not(any(target_os = "openbsd", target_os = "netbsd", target_os = "illumos")))]
+         if is_ipv4 || !io.only_v6()? {
+             #[allow(unused_variables)]
+             if let Err(err) = set_socket_option(&*io, libc::IPPROTO_IP, libc::IP_RECVTOS, OPTION_ON)
+@@ -142,10 +162,11 @@
+             target_os = "openbsd",
+             target_os = "netbsd",
+             target_os = "macos",
+-            target_os = "ios"
++            target_os = "ios",
++            target_os = "illumos"
+         ))]
+         // IP_RECVDSTADDR == IP_SENDSRCADDR on FreeBSD
+-        // macOS uses only IP_RECVDSTADDR, no IP_SENDSRCADDR on macOS
++        // macOS uses only IP_RECVDSTADDR, no IP_SENDSRCADDR on macOS/Illumos
+         // macOS also supports IP_PKTINFO
+         {
+             if is_ipv4 {
+@@ -156,7 +177,7 @@
+         // Options standardized in RFC 3542
+         if !is_ipv4 {
+             set_socket_option(&*io, libc::IPPROTO_IPV6, libc::IPV6_RECVPKTINFO, OPTION_ON)?;
+-            set_socket_option(&*io, libc::IPPROTO_IPV6, libc::IPV6_RECVTCLASS, OPTION_ON)?;
++            set_socket_option(&*io, libc::IPPROTO_IPV6,IPV6_RECVTCLASS, OPTION_ON)?;
+             // Linux's IP_PMTUDISC_PROBE allows us to operate under interface MTU rather than the
+             // kernel's path MTU guess, but actually disabling fragmentation requires this too. See
+             // __ip6_append_data in ip6_output.c.
+@@ -372,7 +393,7 @@
+     Ok(())
+ }
+ 
+-#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "openbsd")))]
++#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "openbsd", target_os = "illumos")))]
+ fn recv(io: SockRef<'_>, bufs: &mut [IoSliceMut<'_>], meta: &mut [RecvMeta]) -> io::Result<usize> {
+     let mut names = [MaybeUninit::<libc::sockaddr_storage>::uninit(); BATCH_SIZE];
+     let mut ctrls = [cmsg::Aligned(MaybeUninit::<[u8; CMSG_LEN]>::uninit()); BATCH_SIZE];
+@@ -409,7 +430,7 @@
+     Ok(msg_count as usize)
+ }
+ 
+-#[cfg(any(target_os = "macos", target_os = "ios", target_os = "openbsd"))]
++#[cfg(any(target_os = "macos", target_os = "ios", target_os = "openbsd", target_os = "illumos"))]
+ fn recv(io: SockRef<'_>, bufs: &mut [IoSliceMut<'_>], meta: &mut [RecvMeta]) -> io::Result<usize> {
+     let mut name = MaybeUninit::<libc::sockaddr_storage>::uninit();
+     let mut ctrl = cmsg::Aligned(MaybeUninit::<[u8; CMSG_LEN]>::uninit());
+@@ -438,7 +459,7 @@
+ ///
+ /// It uses [`libc::syscall`] instead of [`libc::recvmmsg`]
+ /// to avoid linking error on systems where libc does not contain `recvmmsg`.
+-#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "openbsd")))]
++#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "openbsd", target_os = "illumos")))]
+ unsafe fn recvmmsg_with_fallback(
+     sockfd: libc::c_int,
+     msgvec: *mut libc::mmsghdr,
+@@ -481,7 +502,7 @@
+ /// Fallback implementation of `recvmmsg` using `recvmsg`
+ /// for systems which do not support `recvmmsg`
+ /// such as Linux <2.6.33.
+-#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "openbsd")))]
++#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "openbsd", target_os = "illumos")))]
+ unsafe fn recvmmsg_fallback(
+     sockfd: libc::c_int,
+     msgvec: *mut libc::mmsghdr,
+@@ -541,11 +562,11 @@
+         if !sendmsg_einval {
+             #[cfg(not(target_os = "netbsd"))]
+             {
+-                encoder.push(libc::IPPROTO_IP, libc::IP_TOS, ecn as IpTosTy);
++                encoder.push(libc::IPPROTO_IP, IP_TOS, ecn as IpTosTy);
+             }
+         }
+     } else {
+-        encoder.push(libc::IPPROTO_IPV6, libc::IPV6_TCLASS, ecn);
++        encoder.push(libc::IPPROTO_IPV6, IPV6_TCLASS, ecn);
+     }
+ 
+     if let Some(segment_size) = transmit.segment_size {
+@@ -572,6 +593,7 @@
+                     target_os = "netbsd",
+                     target_os = "macos",
+                     target_os = "ios",
++                    target_os = "illumos",
+                 ))]
+                 {
+                     if encode_src_ip {
+@@ -583,13 +605,13 @@
+                 }
+             }
+             IpAddr::V6(v6) => {
+-                let pktinfo = libc::in6_pktinfo {
++                let pktinfo = in6_pktinfo {
+                     ipi6_ifindex: 0,
+                     ipi6_addr: libc::in6_addr {
+                         s6_addr: v6.octets(),
+                     },
+                 };
+-                encoder.push(libc::IPPROTO_IPV6, libc::IPV6_PKTINFO, pktinfo);
++                encoder.push(libc::IPPROTO_IPV6, IPV6_PKTINFO, pktinfo);
+             }
+         }
+     }
+@@ -626,15 +648,15 @@
+     let cmsg_iter = unsafe { cmsg::Iter::new(hdr) };
+     for cmsg in cmsg_iter {
+         match (cmsg.cmsg_level, cmsg.cmsg_type) {
+-            (libc::IPPROTO_IP, libc::IP_TOS) => unsafe {
++            (libc::IPPROTO_IP, IP_TOS) => unsafe {
+                 ecn_bits = cmsg::decode::<u8, libc::cmsghdr>(cmsg);
+             },
+             // FreeBSD uses IP_RECVTOS here, and we can be liberal because cmsgs are opt-in.
+-            #[cfg(not(any(target_os = "openbsd", target_os = "netbsd")))]
++            #[cfg(not(any(target_os = "openbsd", target_os = "netbsd", target_os = "illumos")))]
+             (libc::IPPROTO_IP, libc::IP_RECVTOS) => unsafe {
+                 ecn_bits = cmsg::decode::<u8, libc::cmsghdr>(cmsg);
+             },
+-            (libc::IPPROTO_IPV6, libc::IPV6_TCLASS) => unsafe {
++            (libc::IPPROTO_IPV6, IPV6_TCLASS) => unsafe {
+                 // Temporary hack around broken macos ABI. Remove once upstream fixes it.
+                 // https://bugreport.apple.com/web/?problemID=48761855
+                 #[allow(clippy::unnecessary_cast)] // cmsg.cmsg_len defined as size_t
+@@ -664,8 +686,8 @@
+                 let in_addr = unsafe { cmsg::decode::<libc::in_addr, libc::cmsghdr>(cmsg) };
+                 dst_ip = Some(IpAddr::V4(Ipv4Addr::from(in_addr.s_addr.to_ne_bytes())));
+             }
+-            (libc::IPPROTO_IPV6, libc::IPV6_PKTINFO) => {
+-                let pktinfo = unsafe { cmsg::decode::<libc::in6_pktinfo, libc::cmsghdr>(cmsg) };
++            (libc::IPPROTO_IPV6, IPV6_PKTINFO) => {
++                let pktinfo = unsafe { cmsg::decode::<in6_pktinfo, libc::cmsghdr>(cmsg) };
+                 dst_ip = Some(IpAddr::V6(Ipv6Addr::from(pktinfo.ipi6_addr.s6_addr)));
+             }
+             #[cfg(target_os = "linux")]
