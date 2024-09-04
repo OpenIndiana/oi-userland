@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			73.0.1
+HUMAN_VERSION =			74.1.1
 COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d59a3e788ab7e012ab2c4baed1b376da6366883ee20d7a5fc426816e3d7b1193
+	sha256:2353af060c06388be1cecbf5953dcdb1f38362f87a2356c480b6b4d5fcfc8847
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,6 +42,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# nose causes the test_pyproject_sets_attribute test to fail
+TEST_CONFLICTING_PACKAGES.python += library/python/nose
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
