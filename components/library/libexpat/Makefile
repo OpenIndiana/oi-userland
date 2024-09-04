@@ -31,7 +31,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libexpat
-COMPONENT_VERSION=	2.6.2
+COMPONENT_VERSION=	2.6.3
 COMPONENT_VERSION_U=$(shell echo $(COMPONENT_VERSION) | tr . _)
 COMPONENT_SUMMARY=	libexpat - XML parser library
 COMPONENT_DESCRIPTION=	A fast, non-validating, stream-oriented XML parsing library	
@@ -39,7 +39,7 @@ COMPONENT_PROJECT_URL=	https://libexpat.github.io
 COMPONENT_SRC_NAME=	expat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH=	sha256:d276ffa9602e0c5f289f33fab7b3a9c86da446092642a09cd3c0c8e51f50d862
+COMPONENT_ARCHIVE_HASH=	sha256:b8713f2d3cb3a3eee9ab763f66aa68f93cf6820bccf1272a682cf79b99ae6fbc
 COMPONENT_ARCHIVE_URL=	https://github.com/libexpat/libexpat/releases/download/R_$(COMPONENT_VERSION_U)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/expat
 COMPONENT_CLASSIFICATION=	System/Libraries
