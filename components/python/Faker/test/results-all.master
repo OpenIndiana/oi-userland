@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1953 items
+collecting ... collected 1967 items
 
 tests/providers/__init__.py::TestBaseProvider::test_locale PASSED
 tests/providers/__init__.py::TestBaseProvider::test_language_code PASSED
@@ -1156,6 +1156,14 @@ tests/providers/test_lorem.py::TestViVn::test_text PASSED
 tests/providers/test_lorem.py::TestViVn::test_texts PASSED
 tests/providers/test_lorem.py::TestViVn::test_word PASSED
 tests/providers/test_lorem.py::TestViVn::test_words PASSED
+tests/providers/test_lorem.py::TestItIt::test_paragraph PASSED
+tests/providers/test_lorem.py::TestItIt::test_paragraphs PASSED
+tests/providers/test_lorem.py::TestItIt::test_sentence PASSED
+tests/providers/test_lorem.py::TestItIt::test_sentences PASSED
+tests/providers/test_lorem.py::TestItIt::test_text PASSED
+tests/providers/test_lorem.py::TestItIt::test_texts PASSED
+tests/providers/test_lorem.py::TestItIt::test_word PASSED
+tests/providers/test_lorem.py::TestItIt::test_words PASSED
 tests/providers/test_misc.py::TestMiscProvider::test_uuid4_str PASSED
 tests/providers/test_misc.py::TestMiscProvider::test_uuid4_int PASSED
 tests/providers/test_misc.py::TestMiscProvider::test_uuid4_uuid_object PASSED
@@ -1282,11 +1290,15 @@ tests/providers/test_person.py::TestTaIN::test_gender_first_names PASSED
 tests/providers/test_person.py::TestThTh::test_first_name PASSED
 tests/providers/test_person.py::TestThTh::test_last_name PASSED
 tests/providers/test_person.py::TestThTh::test_name PASSED
+tests/providers/test_person.py::TestUkUa::test_female_first_names PASSED
+tests/providers/test_person.py::TestUkUa::test_female_last_names PASSED
 tests/providers/test_person.py::TestUkUa::test_female_middle_names PASSED
 tests/providers/test_person.py::TestUkUa::test_full_name PASSED
 tests/providers/test_person.py::TestUkUa::test_full_name_female PASSED
 tests/providers/test_person.py::TestUkUa::test_full_name_male PASSED
 tests/providers/test_person.py::TestUkUa::test_language_name PASSED
+tests/providers/test_person.py::TestUkUa::test_male_first_names PASSED
+tests/providers/test_person.py::TestUkUa::test_male_last_names PASSED
 tests/providers/test_person.py::TestUkUa::test_male_middle_names PASSED
 tests/providers/test_person.py::TestUkUa::test_middle_names PASSED
 tests/providers/test_person.py::TestUkUa::test_short_full_name PASSED
@@ -1439,12 +1451,14 @@ tests/providers/test_python.py::TestPydecimal::test_max_and_min_value_negative P
 tests/providers/test_python.py::TestPydecimal::test_max_value PASSED
 tests/providers/test_python.py::TestPydecimal::test_max_value_always_returns_a_decimal PASSED
 tests/providers/test_python.py::TestPydecimal::test_max_value_and_positive PASSED
+tests/providers/test_python.py::TestPydecimal::test_max_value_float_returns_correct_digit_number PASSED
 tests/providers/test_python.py::TestPydecimal::test_max_value_should_be_greater_than_min_value PASSED
 tests/providers/test_python.py::TestPydecimal::test_max_value_zero_and_left_digits PASSED
 tests/providers/test_python.py::TestPydecimal::test_min_value PASSED
 tests/providers/test_python.py::TestPydecimal::test_min_value_10_pow_1000_return_greater_number PASSED
 tests/providers/test_python.py::TestPydecimal::test_min_value_always_returns_a_decimal PASSED
 tests/providers/test_python.py::TestPydecimal::test_min_value_and_left_digits PASSED
+tests/providers/test_python.py::TestPydecimal::test_min_value_float_returns_correct_digit_number PASSED
 tests/providers/test_python.py::TestPydecimal::test_min_value_minus_one_doesnt_return_positive PASSED
 tests/providers/test_python.py::TestPydecimal::test_min_value_minus_one_hundred_doesnt_return_positive PASSED
 tests/providers/test_python.py::TestPydecimal::test_min_value_one_hundred_doesnt_return_negative PASSED
@@ -1983,7 +1997,7 @@ tests/test_providers_formats.py::test_no_invalid_formats[fr_QC]
     warnings.warn("fr_QC locale is deprecated. Please use fr_CA.")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1922 passed, 31 skipped, 1 warning ========
+======== 1936 passed, 31 skipped, 1 warning ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -2041,7 +2055,7 @@ faker/providers/address/en_NZ/__init__.py            28      0   100%
 faker/providers/address/en_PH/__init__.py           110      4    96%
 faker/providers/address/en_US/__init__.py            72      0   100%
 faker/providers/address/es/__init__.py                3      0   100%
-faker/providers/address/es_AR/__init__.py            52     12    77%
+faker/providers/address/es_AR/__init__.py            52     11    79%
 faker/providers/address/es_CL/__init__.py            60     14    77%
 faker/providers/address/es_CO/__init__.py            47      0   100%
 faker/providers/address/es_ES/__init__.py            25      0   100%
@@ -2378,8 +2392,8 @@ faker/providers/internet/zh_CN/__init__.py           29      1    97%
 faker/providers/internet/zh_TW/__init__.py            8      0   100%
 faker/providers/isbn/__init__.py                     31      0   100%
 faker/providers/isbn/en_US/__init__.py                3      0   100%
+faker/providers/isbn/es_ES/__init__.py                3      0   100%
 faker/providers/isbn/isbn.py                         33      0   100%
-faker/providers/isbn/rules.py                         4      0   100%
 faker/providers/job/__init__.py                       6      0   100%
 faker/providers/job/ar_AA/__init__.py                 3      0   100%
 faker/providers/job/az_AZ/__init__.py                 3      0   100%
@@ -2433,6 +2447,7 @@ faker/providers/lorem/fil_PH/__init__.py              5      0   100%
 faker/providers/lorem/fr_FR/__init__.py               5      0   100%
 faker/providers/lorem/he_IL/__init__.py               5      0   100%
 faker/providers/lorem/hy_AM/__init__.py               5      0   100%
+faker/providers/lorem/it_IT/__init__.py               5      0   100%
 faker/providers/lorem/ja_JP/__init__.py               7      0   100%
 faker/providers/lorem/la/__init__.py                  5      0   100%
 faker/providers/lorem/nl_BE/__init__.py               5      0   100%
@@ -2451,7 +2466,7 @@ faker/providers/misc/en_US/__init__.py                3      0   100%
 faker/providers/misc/fil_PH/__init__.py               2      0   100%
 faker/providers/misc/tl_PH/__init__.py                2      0   100%
 faker/providers/passport/__init__.py                 22      0   100%
-faker/providers/passport/en_US/__init__.py           44      0   100%
+faker/providers/passport/en_US/__init__.py           44      1    98%
 faker/providers/person/__init__.py                  103     10    90%
 faker/providers/person/ar_AA/__init__.py             12      0   100%
 faker/providers/person/ar_PS/__init__.py              3      0   100%
@@ -2476,7 +2491,7 @@ faker/providers/person/en_US/__init__.py             21      0   100%
 faker/providers/person/es/__init__.py                 3      0   100%
 faker/providers/person/es_AR/__init__.py             11      0   100%
 faker/providers/person/es_CA/__init__.py              5      0   100%
-faker/providers/person/es_CL/__init__.py             41      5    88%
+faker/providers/person/es_CL/__init__.py             41      7    83%
 faker/providers/person/es_CO/__init__.py             13      0   100%
 faker/providers/person/es_ES/__init__.py             11      0   100%
 faker/providers/person/es_MX/__init__.py              6      0   100%
@@ -2519,7 +2534,7 @@ faker/providers/person/ta_IN/__init__.py              9      0   100%
 faker/providers/person/th_TH/__init__.py             18      0   100%
 faker/providers/person/tr_TR/__init__.py             12      0   100%
 faker/providers/person/tw_GH/__init__.py             11      0   100%
-faker/providers/person/uk_UA/__init__.py             46      1    98%
+faker/providers/person/uk_UA/__init__.py             51      1    98%
 faker/providers/person/vi_VN/__init__.py             16      0   100%
 faker/providers/person/yo_NG/__init__.py             11      0   100%
 faker/providers/person/zh_CN/__init__.py             18      0   100%
@@ -2588,7 +2603,7 @@ faker/providers/phone_number/zh_CN/__init__.py        6      1    83%
 faker/providers/phone_number/zh_TW/__init__.py        3      0   100%
 faker/providers/profile/__init__.py                  22      0   100%
 faker/providers/profile/en_US/__init__.py             0      0   100%
-faker/providers/python/__init__.py                  258     16    94%
+faker/providers/python/__init__.py                  258     15    94%
 faker/providers/python/en_US/__init__.py              0      0   100%
 faker/providers/sbn/__init__.py                      25      0   100%
 faker/providers/sbn/en_US/__init__.py                 3      0   100%
@@ -2659,6 +2674,6 @@ faker/utils/distribution.py                          56     13    77%
 faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      0   100%
 ---------------------------------------------------------------------
-TOTAL                                             10178    440    96%
+TOTAL                                             10187    441    96%
   py$(PYV): OK
   congratulations :)
