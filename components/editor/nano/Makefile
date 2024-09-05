@@ -18,12 +18,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
-COMPONENT_VERSION=	8.1
+COMPONENT_VERSION=	8.2
 COMPONENT_SUMMARY=	GNU implementation of nano, a text editor emulating pico
 COMPONENT_PROJECT_URL=	https://www.nano-editor.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:93b3e3e9155ae389fe9ccf9cb7ab380eac29602835ba3077b22f64d0f0cbe8cb
+COMPONENT_ARCHIVE_HASH= sha256:d5ad07dd862facae03051c54c6535e54c7ed7407318783fcad1ad2d7076fffeb
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/nano/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		editor/nano
 COMPONENT_CLASSIFICATION=System/Text Tools
