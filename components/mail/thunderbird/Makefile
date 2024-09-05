@@ -32,16 +32,16 @@ include ../../../make-rules/shared-macros.mk
 
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
-# CANDIDATE_BUILD= 2
+# CANDIDATE_BUILD= 1
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	128.1.1
+COMPONENT_VERSION =	128.2.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)esr.source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:178eb13d4841e842a542870589e7c13c388431892c110374aa41176079884632
+	 sha256:ca67c2b8648527548788848b94c80227be681f6262ca518114f787fb2180f6e1
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)esr
 else
