@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-X workers [1144 items]
+X workers [1172 items]
 
 scheduling tests via LoadScheduling
 
@@ -667,6 +667,7 @@ tests/test_url.py::test_div_with_dots PASSED
 tests/test_url.py::test_div_with_slash PASSED
 tests/test_url.py::test_double_parent_raw_path PASSED
 tests/test_url.py::test_drop_dots PASSED
+tests/test_url.py::test_empty_authority PASSED
 tests/test_url.py::test_empty_parent_raw_path PASSED
 tests/test_url.py::test_empty_parent_raw_path2 PASSED
 tests/test_url.py::test_empty_value_for_query PASSED
@@ -713,6 +714,30 @@ tests/test_url.py::test_is_non_absolute_for_empty_url PASSED
 tests/test_url.py::test_is_non_absolute_for_empty_url2 PASSED
 tests/test_url.py::test_join PASSED
 tests/test_url.py::test_join_absolute PASSED
+tests/test_url.py::test_join_cpython_urljoin[-http://a/./g-http://a/./g] PASSED
+tests/test_url.py::test_join_cpython_urljoin[-http://a/b/c/g?y/./x-http://a/b/c/g?y/./x] PASSED
+tests/test_url.py::test_join_cpython_urljoin[a-b-b] PASSED
+tests/test_url.py::test_join_cpython_urljoin[a/-b-a/b] PASSED
+tests/test_url.py::test_join_cpython_urljoin[a/b-c-a/c] PASSED
+tests/test_url.py::test_join_cpython_urljoin[a/b/-c-a/b/c] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http:///-..-http:///] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http://a/b/-../../f/g/-http://a/f/g/] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http://a/b/c/d/-foo-http://a/b/c/d/foo] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http://a/b/c/d/e-../../f/g/-http://a/b/f/g/] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http://a/b/c/d/e-/../../f/g/-http://a/f/g/] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http://a/b/c/d/e/-../../f/g-http://a/b/c/f/g] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http://a/b/c/d/e/-../../f/g/-http://a/b/c/f/g/] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http://a/b/c/d/e/-/../../f/g/-http://a/f/g/] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http://example.com-http://example.com-http://example.com] PASSED
+tests/test_url.py::test_join_cpython_urljoin[http://x.org-https://x.org#fragment-https://x.org#fragment] PASSED
+tests/test_url.py::test_join_cpython_urljoin[https://x.org/-/?text=Hello+G%C3%BCnter-https://x.org/?text=Hello+G%C3%BCnter] PASSED
+tests/test_url.py::test_join_cpython_urljoin[https://x.org/-?text=Hello+G%C3%BCnter-https://x.org/?text=Hello+G%C3%BCnter] PASSED
+tests/test_url.py::test_join_cpython_urljoin[svn+ssh://pathtorepo/dir1-dir2-svn+ssh://pathtorepo/dir2] PASSED
+tests/test_url.py::test_join_cpython_urljoin[svn://pathtorepo/dir1-dir2-svn://pathtorepo/dir2] PASSED
+tests/test_url.py::test_join_cpython_urljoin[ws://a/b-g-ws://a/g] PASSED
+tests/test_url.py::test_join_cpython_urljoin[wss://a/b-g-wss://a/g] PASSED
+tests/test_url.py::test_join_empty_segments[https://web.archive.org/web/-./https://github.com/aio-libs/yarl-https://web.archive.org/web/https://github.com/aio-libs/yarl] PASSED
+tests/test_url.py::test_join_empty_segments[https://web.archive.org/web/https://github.com/-aio-libs/yarl-https://web.archive.org/web/https://github.com/aio-libs/yarl] PASSED
 tests/test_url.py::test_join_encoded_url PASSED
 tests/test_url.py::test_join_from_rfc_3986_abnormal[../../../../g-http://a/g] PASSED
 tests/test_url.py::test_join_from_rfc_3986_abnormal[../../../g-http://a/g] PASSED
@@ -994,6 +1019,9 @@ tests/test_url_build.py::test_build_with_user_password PASSED
 tests/test_url_build.py::test_build_without_arguments PASSED
 tests/test_url_build.py::test_query_dict PASSED
 tests/test_url_build.py::test_query_str PASSED
+tests/test_url_build.py::test_url_build_ipv6 PASSED
+tests/test_url_build.py::test_url_build_ipv6_brackets PASSED
+tests/test_url_build.py::test_url_ipv4_in_ipv6 PASSED
 tests/test_url_cmp_and_hash.py::test_eq PASSED
 tests/test_url_cmp_and_hash.py::test_ge_eq PASSED
 tests/test_url_cmp_and_hash.py::test_ge_more PASSED
@@ -1153,9 +1181,6 @@ tests/test_url_update_netloc.py::test_with_user_ipv6 PASSED
 tests/test_url_update_netloc.py::test_with_user_non_ascii PASSED
 tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
-12 files skipped due to complete coverage.
-
-
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 1139 passed, 5 xfailed ========
+======== 1167 passed, 5 xfailed ========
