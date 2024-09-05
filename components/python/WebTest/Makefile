@@ -11,24 +11,26 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project WebTest
+#   $WS_TOOLS/python-integrate-project -d python/WebTest webtest
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		WebTest
-HUMAN_VERSION =			3.0.0
-COMPONENT_REVISION =		1
+COMPONENT_NAME =		webtest
+HUMAN_VERSION =			3.0.1
 COMPONENT_SUMMARY =		Helper to test WSGI applications
 COMPONENT_PROJECT_URL =		https://docs.pylonsproject.org/projects/webtest/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:54bd969725838d9861a9fa27f8d971f79d275d94ae255f5c501f53bb6d9929eb
+	sha256:493b5c802f8948a65b5e3a1ad5b2524ee5e1ab60cd713d9a3da3b8da082c06fe
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	license.rst
 
 include $(WS_MAKE_RULES)/common.mk
+
+# We do not have pyquery packaged yet
+PYTEST_ADDOPTS += --deselect tests/test_response.py::TestResponse::test_pyquery
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/beautifulsoup4
