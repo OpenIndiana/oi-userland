@@ -22,7 +22,7 @@ COMPONENT_NAME=	clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	1.4.0
+COMPONENT_VERSION=	1.4.1
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -37,7 +37,7 @@ COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, desi
 			anti-virus engine available in a form of shared library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d67ab299e5ca05dad3da299a5ea73d60209372a5becd7f13b9a33c290338a4e6
+COMPONENT_ARCHIVE_HASH=	sha256:a318e780ac39a6b3d6c46971382f96edde97ce48b8e361eb80e63415ed416ad8
 COMPONENT_PROJECT_URL=	https://www.clamav.net
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/downloads/production/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
