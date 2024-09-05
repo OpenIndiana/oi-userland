@@ -1,0 +1,30 @@
+https://github.com/ionelmc/pytest-benchmark/pull/234
+
+--- pytest-benchmark-4.0.0/tests/test_utils.py.orig
++++ pytest-benchmark-4.0.0/tests/test_utils.py
+@@ -1,6 +1,6 @@
+ import argparse
+-import distutils.spawn
+ import os
++import shutil
+ import subprocess
+ 
+ import pytest
+@@ -43,7 +43,7 @@
+ @pytest.fixture(params=('git', 'hg'))
+ def scm(request, testdir):
+     scm = request.param
+-    if not distutils.spawn.find_executable(scm):
++    if not shutil.which(scm):
+         pytest.skip("%r not available on $PATH" % (scm,))
+     subprocess.check_call([scm, 'init', '.'])
+     if scm == 'git':
+@@ -156,7 +156,7 @@
+     if scm is None:
+         assert get_project_name().startswith("test_get_project_name")
+         return
+-    if not distutils.spawn.find_executable(scm):
++    if not shutil.which(scm):
+         pytest.skip("%r not available on $PATH" % (scm,))
+     subprocess.check_call([scm, 'init', '.'])
+     if scm == 'git' and set_remote:
