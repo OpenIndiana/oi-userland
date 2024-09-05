@@ -1,6 +1,6 @@
---- cairo-1.18.0/test/pdf-structure.c	2023-09-23 16:18:32.000000000 +0200
-+++ cairo-1.18.0/test/pdf-structure.c.new	2023-10-22 18:38:14.407073994 +0200
-@@ -497,15 +497,20 @@
+--- cairo-1.18.2/test/pdf-structure.c.orig	2024-09-01 15:09:23.000000000 +0200
++++ cairo-1.18.2/test/pdf-structure.c	2024-09-04 21:53:07.995795921 +0200
+@@ -547,15 +547,20 @@
                 ctx->output, BASENAME, test->name);
  
      ret = system (command);
@@ -14,14 +14,14 @@
          if (WEXITSTATUS (ret) == 0)
              result = CAIRO_TEST_SUCCESS;
          else if (WEXITSTATUS (ret) == 4)
--            result = CAIRO_TEST_UNTESTED; /* pdfinfo not found, wrong version, missing ref */
-+            result = CAIRO_TEST_UNTESTED;  pdfinfo not found, wrong version, missing ref 
+-            result = CAIRO_TEST_UNTESTED; /* pdfinfo not found or wrong version */
++            result = CAIRO_TEST_UNTESTED; pdfinfo not found or wrong version
      }
 +*/
-+      if ( ret == 0)
-+          result = CAIRO_TEST_SUCCESS;
-+      else if ( ret > 0 )
-+          result = CAIRO_TEST_UNTESTED; /* pdfinfo not found, wrong version, missing ref */
++    if ( ret == 0)
++        result = CAIRO_TEST_SUCCESS;
++    else if ( ret > 0 )
++        result = CAIRO_TEST_UNTESTED; /* pdfinfo not found, wrong version, missing ref */
  
      free (command);
      return result;
