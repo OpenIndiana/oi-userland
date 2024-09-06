@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic_core
-HUMAN_VERSION =			2.23.1
+HUMAN_VERSION =			2.23.2
 COMPONENT_SUMMARY =		Core functionality for Pydantic validation and serialization
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:12543919dbf3021e17b9e2cd5cd1b570c6585794fa487339b5b95564b9689452
+	sha256:95d6bf449a1ac81de562d65d180af5d8c19672793c81877a2eda8fde5d08f2fd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
