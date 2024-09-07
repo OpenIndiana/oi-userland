@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-X workers [1172 items]
+X workers [1182 items]
 
 scheduling tests via LoadScheduling
 
@@ -670,6 +670,7 @@ tests/test_url.py::test_drop_dots PASSED
 tests/test_url.py::test_empty_authority PASSED
 tests/test_url.py::test_empty_parent_raw_path PASSED
 tests/test_url.py::test_empty_parent_raw_path2 PASSED
+tests/test_url.py::test_empty_password_without_user PASSED
 tests/test_url.py::test_empty_value_for_query PASSED
 tests/test_url.py::test_explicit_port_for_explicit_port PASSED
 tests/test_url.py::test_explicit_port_for_implicit_port PASSED
@@ -781,6 +782,7 @@ tests/test_url.py::test_join_from_rfc_3986_normal[g;x?y#s-http://a/b/c/g;x?y#s] 
 tests/test_url.py::test_join_from_rfc_3986_normal[g?y#s-http://a/b/c/g?y#s] PASSED
 tests/test_url.py::test_join_from_rfc_3986_normal[g?y-http://a/b/c/g?y] PASSED
 tests/test_url.py::test_join_non_url PASSED
+tests/test_url.py::test_join_preserves_leading_slash PASSED
 tests/test_url.py::test_join_query_string PASSED
 tests/test_url.py::test_join_query_string_with_special_chars PASSED
 tests/test_url.py::test_joinpath[base-slash-duplicate-slash] PASSED
@@ -841,6 +843,7 @@ tests/test_url.py::test_origin_not_absolute_url PASSED
 tests/test_url.py::test_parent_for_empty_url PASSED
 tests/test_url.py::test_parent_raw_parts PASSED
 tests/test_url.py::test_parent_raw_path PASSED
+tests/test_url.py::test_parsing_populates_cache PASSED
 tests/test_url.py::test_parts_for_empty_url PASSED
 tests/test_url.py::test_parts_non_ascii PASSED
 tests/test_url.py::test_password_non_ascii PASSED
@@ -1140,6 +1143,13 @@ tests/test_url_query.py::test_query_separators_from_with_query[original_url2-1-1
 tests/test_url_query.py::test_query_separators_from_with_query[original_url3-1-10;b=20] PASSED
 tests/test_url_query.py::test_query_separators_from_with_query[original_url4-1-10&b=20] PASSED
 tests/test_url_query.py::test_query_separators_from_with_query[original_url5-1-10;b=20] PASSED
+tests/test_url_query.py::test_skip_dropping_query_params[a=10&b=M%C3%B9a+xu%C3%A2n&c=30-keys_to_drop0] PASSED
+tests/test_url_query.py::test_skip_dropping_query_params[a=10&b=M%C3%B9a+xu%C3%A2n-keys_to_drop1] PASSED
+tests/test_url_query.py::test_without_query_params[a=10&b=M%C3%B9a+xu%C3%A2n&c=30-keys_to_drop2-a=10&c=30] PASSED
+tests/test_url_query.py::test_without_query_params[a=10&b=M%C3%B9a+xu%C3%A2n&u%E1%BB%91ng=cafe-keys_to_drop0-b=M\xf9a xu\xe2n&u\u1ed1ng=cafe] PASSED
+tests/test_url_query.py::test_without_query_params[a=10&b=M%C3%B9a+xu%C3%A2n&u%E1%BB%91ng=cafe-keys_to_drop3-a=10&b=M\xf9a xu\xe2n] PASSED
+tests/test_url_query.py::test_without_query_params[a=10&b=M%C3%B9a+xu%C3%A2n-keys_to_drop1-a=10] PASSED
+tests/test_url_query.py::test_without_query_params[a=10&b=M%C3%B9a+xu%C3%A2n-keys_to_drop4-] PASSED
 tests/test_url_update_netloc.py::test_from_str_with_host_ipv4 PASSED
 tests/test_url_update_netloc.py::test_from_str_with_host_ipv6 PASSED
 tests/test_url_update_netloc.py::test_with_custom_port_normalization PASSED
@@ -1183,4 +1193,4 @@ tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 1167 passed, 5 xfailed ========
+======== 1177 passed, 5 xfailed ========
