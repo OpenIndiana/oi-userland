@@ -19,18 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		URI
-HUMAN_VERSION =			5.28
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			5.29
 COMPONENT_SUMMARY =		URI - Uniform Resource Identifiers (absolute and relative)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e7985da359b15efd00917fa720292b711c396f2f9f9a7349e4e7dec74aa79765
+	sha256:a34b9f626c3ff1e20c0d4a23ec5c8b7ae1de1fb674ecefed7e46791388137372
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base32
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
