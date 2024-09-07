@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		build
-HUMAN_VERSION =			1.2.1
-COMPONENT_SUMMARY =		build - A simple, correct Python build frontend
+HUMAN_VERSION =			1.2.2
+COMPONENT_SUMMARY =		A simple, correct Python build frontend
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:526263f4870c26f26c433545579475377b2b7588b6f1eac76a001e873ae3e19d
+	sha256:119b2fb462adef986483438377a13b2f42064a2a3a4161f24a0cca698a07ac8c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -30,6 +30,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Avoid rewrite failure with xdist
+PYTEST_ADDOPTS += --assert=plain
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
