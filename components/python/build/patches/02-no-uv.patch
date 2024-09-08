@@ -1,7 +1,7 @@
 We do not have uv packaged yet.
 
---- build-1.2.1/pyproject.toml.orig
-+++ build-1.2.1/pyproject.toml
+--- build-1.2.2/pyproject.toml.orig
++++ build-1.2.2/pyproject.toml
 @@ -50,7 +50,7 @@
    "sphinx-issues >= 3.0.0",
  ]
@@ -11,37 +11,3 @@ We do not have uv packaged yet.
    "filelock >= 3",
    "pytest >= 6.2.4",
    "pytest-cov >= 2.12",
---- build-1.2.1/tests/test_env.py.orig
-+++ build-1.2.1/tests/test_env.py
-@@ -206,6 +206,7 @@
- 
- @pytest.mark.parametrize('verbosity', range(4))
- @pytest.mark.skipif(IS_PYPY, reason='uv cannot find PyPy executable')
-+@pytest.mark.skip(reason="we do not have uv packaged yet")
- def test_uv_impl_install_cmd_well_formed(
-     mocker: pytest_mock.MockerFixture,
-     verbosity: int,
-@@ -237,7 +238,6 @@
-         ('pip', 'venv+pip', False),
-         ('pip', 'virtualenv+pip', True),
-         ('pip', 'virtualenv+pip', None),  # Fall-through
--        ('uv', 'venv+uv', None),
-     ],
-     indirect=('has_virtualenv',),
- )
-@@ -255,7 +255,6 @@
-     'installer',
-     [
-         'pip',
--        pytest.param('uv', marks=pytest.mark.xfail(IS_PYPY and IS_WINDOWS, reason='uv cannot find PyPy executable')),
-     ],
- )
- def test_requirement_installation(
-@@ -266,6 +265,7 @@
-         env.install([f'test-flit @ {Path(package_test_flit).as_uri()}'])
- 
- 
-+@pytest.mark.skip(reason="we do not have uv packaged yet")
- def test_external_uv_detection_success(
-     caplog: pytest.LogCaptureFixture,
-     mocker: pytest_mock.MockerFixture,
