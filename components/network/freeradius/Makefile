@@ -24,32 +24,30 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freeradius
-COMPONENT_VERSION=	3.2.5
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	3.2.6
+COMPONENT_VERSION_=	$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
 		configurable multi-protocol policy server, supporting RADIUS, DHCPv4 DHCPv6, DNS, \
 		TACACS+ and VMPS. Using RADIUS allows authentication and authorization for a \
 		network to be centralized, and minimizes the number of changes that have to be \
 		done when adding or deleting new users to a network.
-COMPONENT_SRC=		$(COMPONENT_NAME)-server-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-server-release_$(COMPONENT_VERSION_)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://freeradius.org/
-COMPONENT_ARCHIVE_HASH=	sha256:1e75f5fc1961d9854d1cb3c6921612fbe2b9edb8ee508a5a7cbd69f1e7607115
-COMPONENT_ARCHIVE_URL=	https://github.com/FreeRADIUS/$(COMPONENT_NAME)-server/releases/download/release_3_2_5/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://github.com/FreeRADIUS/freeradius-server/archive/refs/tags/release_$(COMPONENT_VERSION_).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:65e099edf5d72ac2f9f7198c800cf0199544f974aae13c93908ab739815b9625
 COMPONENT_FMRI=		network/radius
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	LICENSE
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-TEST_TARGET= $(NO_TESTS)
-
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
-        $(CLONEY) $(SOURCE_DIR) $(@D); \
-	$(GSED) -i -e 's/-D_LIBRADIUS/-D_LIBRADIUS -D_XPG4_2/' $(@D)/src/lib/all.mk; \
-        );
+	$(CLONEY) $(SOURCE_DIR) $(@D); \
+	$(GSED) -i -e 's/-D_LIBRADIUS/-D_LIBRADIUS -D_XPG4_2/' $(@D)/src/lib/all.mk; );
 
 CFLAGS += $(XPG6MODE)
 
