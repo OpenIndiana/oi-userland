@@ -14,16 +14,15 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yaz
-COMPONENT_VERSION=	5.34.0
+COMPONENT_VERSION=	5.34.1
 COMPONENT_SUMMARY=	toolkit supporting the development of Z39.50/SRW/SRU clients and servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:bcbea894599a13342910003401c17576f0fb910092aecb51cb54065d0cd2d613
+COMPONENT_ARCHIVE_HASH= sha256:393ff4fbbf9194465996236f39efb2962848820247296aec2a6170b0d5d2a44c
 COMPONENT_ARCHIVE_URL=	http://ftp.indexdata.dk/pub/yaz/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.indexdata.com/resources/software/yaz/
 COMPONENT_FMRI=		database/yaz
@@ -43,11 +42,11 @@ ENV=/usr/bin/env -i
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libmemcached
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
