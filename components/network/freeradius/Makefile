@@ -24,8 +24,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freeradius
-COMPONENT_VERSION=	3.2.5
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	3.2.6
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
 		configurable multi-protocol policy server, supporting RADIUS, DHCPv4 DHCPv6, DNS, \
@@ -35,8 +34,8 @@ COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and h
 COMPONENT_SRC=		$(COMPONENT_NAME)-server-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://freeradius.org/
-COMPONENT_ARCHIVE_HASH=	sha256:1e75f5fc1961d9854d1cb3c6921612fbe2b9edb8ee508a5a7cbd69f1e7607115
-COMPONENT_ARCHIVE_URL=	https://github.com/FreeRADIUS/$(COMPONENT_NAME)-server/releases/download/release_3_2_5/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:dfed5a53596470e8c977fa2d4d154622ad673a0717d56dd085fb5000eda32f0d
+COMPONENT_ARCHIVE_URL=	https://github.com/FreeRADIUS/$(COMPONENT_NAME)-server/releases/download/release_3_2_6/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/radius
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
