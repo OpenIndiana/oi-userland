@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
 COMPONENT_VERSION=      2.4.5
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -84,6 +84,9 @@ MAN8LIST= addgnupghome applygnupgdefaults
 install:	$(INSTALL_64)
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
 	    $(CP) -R 'en@boldquot' en )
+
+# Testing fails without HOME set
+COMPONENT_TEST_ENV += HOME=/tmp
 
 # Alas we have some failing tests after changes in shared-macros.mk:
 # build, install and test in clean environment (c86a36b0fd6dda8c75b28642c319842ace789385)
