@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs
-HUMAN_VERSION =			1.6.0
-COMPONENT_SUMMARY =		mkdocs - Project documentation with Markdown.
+HUMAN_VERSION =			1.6.1
+COMPONENT_SUMMARY =		Project documentation with Markdown.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a73f735824ef83a4f3bcb7a231dcab23f5a838f88b7efc54a0eef5fbdbc3c512
+	sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
