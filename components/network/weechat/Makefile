@@ -18,7 +18,7 @@ SINGLE_PERL_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	4.2.2
+COMPONENT_VERSION=	4.4.3
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
 extensible chat client. Everything can be done with a keyboard. \
@@ -26,7 +26,7 @@ It is customizable and extensible with scripts.
 COMPONENT_PROJECT_URL=	https://weechat.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:20968b22c7f0f50df9cf6ff8598dd1bd017c5759b2c94593f5d9ed7b24ebb941
+COMPONENT_ARCHIVE_HASH=	sha256:295612f8dc24af28c918257d3014eb53342a5d077d5e3d9a3eadf303bd8febfa
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/src/$(COMPONENT_ARCHIVE)
 # The signature is invalid
 #COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
@@ -40,6 +40,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+CFLAGS += $(XPG6MODE)
+
 LD_OPTIONS += -lresolv -lsocket -lnsl
 
 # default value of option weechat.network.gnutls_ca_file (default is "/etc/ssl/certs/ca-certificates.crt")
@@ -47,6 +49,8 @@ LD_OPTIONS += -lresolv -lsocket -lnsl
 CMAKE_OPTIONS += -DCA_FILE="/etc/certs/ca-certificates.crt"
 # We don't have PHP libraries (PHP with --enable-embed)
 CMAKE_OPTIONS += -DENABLE_PHP=OFF
+# We don't have libcjson
+CMAKE_OPTIONS += -DENABLE_CJSON=OFF
 
 #COMPONENT_TEST_CMD=    ctest -V
 #COMPONENT_TEST_TARGETS=
@@ -59,7 +63,7 @@ REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/lua-54
+REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/ruby-32
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
