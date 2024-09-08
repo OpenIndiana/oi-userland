@@ -26,13 +26,13 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION_SHORT= 3.1
 COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
-COMPONENT_VERSION=	$(COMPONENT_VERSION_SHORT).6
+COMPONENT_VERSION=	$(COMPONENT_VERSION_SHORT).7
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
 COMPONENT_PROJECT_URL=	https://www.openssl.org/
 COMPONENT_SRC=		openssl-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5d2be4036b478ef3cb0a854ca9b353072c3a0e26d8a56f8f0ab9fb6ed32d38d7
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://github.com/openssl/openssl/archive/refs/tags/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:7f013434c535a0366a610995c4530db6cde0554a0fac331a71a8e98a32b2635f
 COMPONENT_FMRI=		library/security/openssl-31
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_LICENSE=	Apache 2.0
@@ -41,6 +41,9 @@ COMPONENT_LICENSE_FILE=	LICENSE.txt
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(GCC_ROOT)/bin:$(PATH.illumos)
+
+# Rename unpacked source folder
+COMPONENT_POST_UNPACK_ACTION= ( $(MV) openssl-$(COMPONENT_SRC) $(COMPONENT_SRC) )
 
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
