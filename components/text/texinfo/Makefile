@@ -29,12 +29,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texinfo
-COMPONENT_VERSION=	7.1
+COMPONENT_VERSION=	7.1.1
 COMPONENT_SUMMARY=	Documentation system for on-line information and printed output
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/texinfo/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:deeec9f19f159e046fdf8ad22231981806dac332cc372f1c763504ad82b30953
+COMPONENT_ARCHIVE_HASH= sha256:31ae37e46283529432b61bee1ce01ed0090d599e606fc6a29dca1f77c76a6c82
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/texinfo
 COMPONENT_CLASSIFICATION=	Development/GNU
@@ -68,7 +68,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^XXX_CC_XXX$$/d" '
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libunistring
