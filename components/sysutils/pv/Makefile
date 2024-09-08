@@ -27,12 +27,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pv
-COMPONENT_VERSION=	1.8.13
+COMPONENT_VERSION=	1.8.14
 COMPONENT_SUMMARY=	pv is a terminal-based tool for monitoring the progress of data through a pipeline
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.ivarch.com/programs/pv.shtml
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e2bde058d0d3bfe03e60a6eedef6a179991f5cc698d1bac01b64a86f5a8c17af
+COMPONENT_ARCHIVE_HASH= sha256:0cc18811a4809a587d4b11d47691bbc0ad83a5d95d2c2606af74ea7b4a674756
 COMPONENT_ARCHIVE_URL=	https://www.ivarch.com/programs/sources/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/pipe-viewer
 COMPONENT_CLASSIFICATION= Applications/System Utilities
