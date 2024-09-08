@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		opendbx
 COMPONENT_VERSION=	1.4.6
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	OpenDBX is an extremely lightweight but extensible database access library
 COMPONENT_DESCRIPTION=	OpenDBX is an extremely lightweight but extensible database access \
 			library written in C. It provides an abstraction layer to all supported \
@@ -59,7 +59,7 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += system/library
