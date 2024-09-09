@@ -35,8 +35,6 @@ file path=usr/include/libsmbclient/core/ntstatus.h
 file path=usr/include/libsmbclient/core/ntstatus_gen.h
 file path=usr/include/libsmbclient/core/werror.h
 file path=usr/include/libsmbclient/core/werror_gen.h
-file path=usr/include/libsmbclient/credentials.h
-file path=usr/include/libsmbclient/dcerpc.h
 file path=usr/include/libsmbclient/dcesrv_core.h
 file path=usr/include/libsmbclient/domain_credentials.h
 file path=usr/include/libsmbclient/gen_ndr/atsvc.h
@@ -57,7 +55,6 @@ file path=usr/include/libsmbclient/gen_ndr/ndr_krb5pac.h
 file path=usr/include/libsmbclient/gen_ndr/ndr_misc.h
 file path=usr/include/libsmbclient/gen_ndr/ndr_nbt.h
 file path=usr/include/libsmbclient/gen_ndr/ndr_samr.h
-file path=usr/include/libsmbclient/gen_ndr/ndr_samr_c.h
 file path=usr/include/libsmbclient/gen_ndr/ndr_svcctl.h
 file path=usr/include/libsmbclient/gen_ndr/ndr_svcctl_c.h
 file path=usr/include/libsmbclient/gen_ndr/netlogon.h
@@ -77,7 +74,6 @@ file path=usr/include/libsmbclient/ndr/ndr_krb5pac.h
 file path=usr/include/libsmbclient/ndr/ndr_nbt.h
 file path=usr/include/libsmbclient/ndr/ndr_svcctl.h
 file path=usr/include/libsmbclient/netapi.h
-file path=usr/include/libsmbclient/param.h
 file path=usr/include/libsmbclient/passdb.h
 file path=usr/include/libsmbclient/rpc_common.h
 file path=usr/include/libsmbclient/samba/session.h
@@ -102,9 +98,6 @@ file path=usr/include/libsmbclient/util/idtree.h
 file path=usr/include/libsmbclient/util/idtree_random.h
 file path=usr/include/libsmbclient/util/signal.h
 file path=usr/include/libsmbclient/util/substitute.h
-file path=usr/include/libsmbclient/util/tevent_ntstatus.h
-file path=usr/include/libsmbclient/util/tevent_unix.h
-file path=usr/include/libsmbclient/util/tevent_werror.h
 file path=usr/include/libsmbclient/util/tfork.h
 file path=usr/include/libsmbclient/util/time.h
 file path=usr/include/libsmbclient/util_ldb.h
@@ -120,6 +113,7 @@ file path=usr/lib/libsmbclient/krb5/async_dns_krb5_locator.so
 file path=usr/lib/libsmbclient/krb5/winbind_krb5_locator.so
 file path=usr/lib/libsmbclient/ldb/asq.so
 file path=usr/lib/libsmbclient/ldb/ildap.so
+file path=usr/lib/libsmbclient/ldb/ldap.so
 file path=usr/lib/libsmbclient/ldb/ldb.so
 file path=usr/lib/libsmbclient/ldb/ldbsamba_extensions.so
 file path=usr/lib/libsmbclient/ldb/paged_searches.so
@@ -133,18 +127,11 @@ link path=usr/lib/libsmbclient/libdcerpc-binding.so \
 link path=usr/lib/libsmbclient/libdcerpc-binding.so.0 \
     target=libdcerpc-binding.so.0.0.1
 file path=usr/lib/libsmbclient/libdcerpc-binding.so.0.0.1
-link path=usr/lib/libsmbclient/libdcerpc-samr.so target=libdcerpc-samr.so.0.0.1
-link path=usr/lib/libsmbclient/libdcerpc-samr.so.0 \
-    target=libdcerpc-samr.so.0.0.1
-file path=usr/lib/libsmbclient/libdcerpc-samr.so.0.0.1
 link path=usr/lib/libsmbclient/libdcerpc-server-core.so \
     target=libdcerpc-server-core.so.0.0.1
 link path=usr/lib/libsmbclient/libdcerpc-server-core.so.0 \
     target=libdcerpc-server-core.so.0.0.1
 file path=usr/lib/libsmbclient/libdcerpc-server-core.so.0.0.1
-link path=usr/lib/libsmbclient/libdcerpc.so target=libdcerpc.so.0.0.1
-link path=usr/lib/libsmbclient/libdcerpc.so.0 target=libdcerpc.so.0.0.1
-file path=usr/lib/libsmbclient/libdcerpc.so.0.0.1
 file path=usr/lib/libsmbclient/libexec/samba/rpcd_classic
 file path=usr/lib/libsmbclient/libexec/samba/rpcd_epmapper
 file path=usr/lib/libsmbclient/libexec/samba/rpcd_fsrvp
@@ -167,38 +154,25 @@ link path=usr/lib/libsmbclient/libndr-standard.so \
 link path=usr/lib/libsmbclient/libndr-standard.so.0 \
     target=libndr-standard.so.0.0.1
 file path=usr/lib/libsmbclient/libndr-standard.so.0.0.1
-link path=usr/lib/libsmbclient/libndr.so target=libndr.so.4.0.0
-link path=usr/lib/libsmbclient/libndr.so.4 target=libndr.so.4.0.0
-file path=usr/lib/libsmbclient/libndr.so.4.0.0
+link path=usr/lib/libsmbclient/libndr.so target=libndr.so.5.0.0
+link path=usr/lib/libsmbclient/libndr.so.5 target=libndr.so.5.0.0
+file path=usr/lib/libsmbclient/libndr.so.5.0.0
 link path=usr/lib/libsmbclient/libnetapi.so target=libnetapi.so.1.0.0
 link path=usr/lib/libsmbclient/libnetapi.so.1 target=libnetapi.so.1.0.0
 file path=usr/lib/libsmbclient/libnetapi.so.1.0.0
-link path=usr/lib/libsmbclient/libsamba-credentials.so \
-    target=libsamba-credentials.so.1.0.0
-link path=usr/lib/libsmbclient/libsamba-credentials.so.1 \
-    target=libsamba-credentials.so.1.0.0
-file path=usr/lib/libsmbclient/libsamba-credentials.so.1.0.0
 link path=usr/lib/libsmbclient/libsamba-errors.so \
     target=libsamba-errors.so.1.0.0
 link path=usr/lib/libsmbclient/libsamba-errors.so.1 \
     target=libsamba-errors.so.1.0.0
 file path=usr/lib/libsmbclient/libsamba-errors.so.1.0.0
-link path=usr/lib/libsmbclient/libsamba-hostconfig.so \
-    target=libsamba-hostconfig.so.0.0.1
-link path=usr/lib/libsmbclient/libsamba-hostconfig.so.0 \
-    target=libsamba-hostconfig.so.0.0.1
-file path=usr/lib/libsmbclient/libsamba-hostconfig.so.0.0.1
 link path=usr/lib/libsmbclient/libsamba-passdb.so \
-    target=libsamba-passdb.so.0.28.0
+    target=libsamba-passdb.so.0.29.0
 link path=usr/lib/libsmbclient/libsamba-passdb.so.0 \
-    target=libsamba-passdb.so.0.28.0
-file path=usr/lib/libsmbclient/libsamba-passdb.so.0.28.0
+    target=libsamba-passdb.so.0.29.0
+file path=usr/lib/libsmbclient/libsamba-passdb.so.0.29.0
 link path=usr/lib/libsmbclient/libsamba-util.so target=libsamba-util.so.0.0.1
 link path=usr/lib/libsmbclient/libsamba-util.so.0 target=libsamba-util.so.0.0.1
 file path=usr/lib/libsmbclient/libsamba-util.so.0.0.1
-link path=usr/lib/libsmbclient/libsamdb.so target=libsamdb.so.0.0.1
-link path=usr/lib/libsmbclient/libsamdb.so.0 target=libsamdb.so.0.0.1
-file path=usr/lib/libsmbclient/libsamdb.so.0.0.1
 link path=usr/lib/libsmbclient/libsmbclient.so target=libsmbclient.so.0.8.0
 link path=usr/lib/libsmbclient/libsmbclient.so.0 target=libsmbclient.so.0.8.0
 file path=usr/lib/libsmbclient/libsmbclient.so.0.8.0
@@ -208,10 +182,6 @@ file path=usr/lib/libsmbclient/libsmbconf.so.0.0.1
 link path=usr/lib/libsmbclient/libsmbldap.so target=libsmbldap.so.2.1.0
 link path=usr/lib/libsmbclient/libsmbldap.so.2 target=libsmbldap.so.2.1.0
 file path=usr/lib/libsmbclient/libsmbldap.so.2.1.0
-link path=usr/lib/libsmbclient/libtevent-util.so target=libtevent-util.so.0.0.1
-link path=usr/lib/libsmbclient/libtevent-util.so.0 \
-    target=libtevent-util.so.0.0.1
-file path=usr/lib/libsmbclient/libtevent-util.so.0.0.1
 link path=usr/lib/libsmbclient/libwbclient.so target=libwbclient.so.0.16
 link path=usr/lib/libsmbclient/libwbclient.so.0 target=libwbclient.so.0.16
 file path=usr/lib/libsmbclient/libwbclient.so.0.16
@@ -220,17 +190,12 @@ file path=usr/lib/libsmbclient/nss_info/rfc2307.so
 file path=usr/lib/libsmbclient/nss_info/sfu.so
 file path=usr/lib/libsmbclient/nss_info/sfu20.so
 file path=usr/lib/libsmbclient/nss_winbind.so.1
-file path=usr/lib/libsmbclient/pkgconfig/dcerpc.pc
-file path=usr/lib/libsmbclient/pkgconfig/dcerpc_samr.pc
 file path=usr/lib/libsmbclient/pkgconfig/ndr.pc
 file path=usr/lib/libsmbclient/pkgconfig/ndr_krb5pac.pc
 file path=usr/lib/libsmbclient/pkgconfig/ndr_nbt.pc
 file path=usr/lib/libsmbclient/pkgconfig/ndr_standard.pc
 file path=usr/lib/libsmbclient/pkgconfig/netapi.pc
-file path=usr/lib/libsmbclient/pkgconfig/samba-credentials.pc
-file path=usr/lib/libsmbclient/pkgconfig/samba-hostconfig.pc
 file path=usr/lib/libsmbclient/pkgconfig/samba-util.pc
-file path=usr/lib/libsmbclient/pkgconfig/samdb.pc
 file path=usr/lib/libsmbclient/pkgconfig/smbclient.pc
 file path=usr/lib/libsmbclient/pkgconfig/wbclient.pc
 file path=usr/lib/libsmbclient/private/libCHARSET3-private-samba.so
@@ -264,8 +229,10 @@ file path=usr/lib/libsmbclient/private/libcom-err-private-samba.so
 file path=usr/lib/libsmbclient/private/libcommon-auth-private-samba.so
 file path=usr/lib/libsmbclient/private/libdbwrap-private-samba.so
 file path=usr/lib/libsmbclient/private/libdcerpc-pkt-auth-private-samba.so
+file path=usr/lib/libsmbclient/private/libdcerpc-private-samba.so
 file path=usr/lib/libsmbclient/private/libdcerpc-samba-private-samba.so
 file path=usr/lib/libsmbclient/private/libdcerpc-samba4-private-samba.so
+file path=usr/lib/libsmbclient/private/libdcerpc-samr-private-samba.so
 file path=usr/lib/libsmbclient/private/libdnsserver-common-private-samba.so
 file path=usr/lib/libsmbclient/private/libdsdb-module-private-samba.so
 file path=usr/lib/libsmbclient/private/libevents-private-samba.so
@@ -316,12 +283,17 @@ file path=usr/lib/libsmbclient/private/libregistry-private-samba.so
 file path=usr/lib/libsmbclient/private/libreplace-private-samba.so
 file path=usr/lib/libsmbclient/private/libroken-private-samba.so
 file path=usr/lib/libsmbclient/private/libsamba-cluster-support-private-samba.so
+file path=usr/lib/libsmbclient/private/libsamba-credentials-private-samba.so
 file path=usr/lib/libsmbclient/private/libsamba-debug-private-samba.so
+file path=usr/lib/libsmbclient/private/libsamba-hostconfig-private-samba.so
 file path=usr/lib/libsmbclient/private/libsamba-modules-private-samba.so
+file path=usr/lib/libsmbclient/private/libsamba-net-private-samba.so
+file path=usr/lib/libsmbclient/private/libsamba-policy-private-samba.so
 file path=usr/lib/libsmbclient/private/libsamba-security-private-samba.so
 file path=usr/lib/libsmbclient/private/libsamba-sockets-private-samba.so
 file path=usr/lib/libsmbclient/private/libsamba3-util-private-samba.so
 file path=usr/lib/libsmbclient/private/libsamdb-common-private-samba.so
+file path=usr/lib/libsmbclient/private/libsamdb-private-samba.so
 file path=usr/lib/libsmbclient/private/libsecrets3-private-samba.so
 file path=usr/lib/libsmbclient/private/libserver-id-db-private-samba.so
 file path=usr/lib/libsmbclient/private/libserver-role-private-samba.so
@@ -341,9 +313,9 @@ file path=usr/lib/libsmbclient/private/libtalloc-report-private-samba.so
 file path=usr/lib/libsmbclient/private/libtdb-private-samba.so
 file path=usr/lib/libsmbclient/private/libtdb-wrap-private-samba.so
 file path=usr/lib/libsmbclient/private/libtevent-private-samba.so
+file path=usr/lib/libsmbclient/private/libtevent-util-private-samba.so
 file path=usr/lib/libsmbclient/private/libtime-basic-private-samba.so
 file path=usr/lib/libsmbclient/private/libtorture-private-samba.so
-file path=usr/lib/libsmbclient/private/libtrusts-util-private-samba.so
 file path=usr/lib/libsmbclient/private/libutil-reg-private-samba.so
 file path=usr/lib/libsmbclient/private/libutil-setid-private-samba.so
 file path=usr/lib/libsmbclient/private/libutil-tdb-private-samba.so
