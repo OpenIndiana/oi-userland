@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic
-HUMAN_VERSION =			2.9.0
+HUMAN_VERSION =			2.9.1
 COMPONENT_SUMMARY =		Data validation using Python type hints
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c7a8a9fdf7d100afa49647eae340e2d23efa382466a8d177efcd1381e9be5598
+	sha256:1363c7d975c7036df0db2b4a61f2e062fbc0aa5ab5f2772e0ffc7191a4f4bce2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -48,7 +48,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/pydantic-core
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/tzdata
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cloudpickle
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
