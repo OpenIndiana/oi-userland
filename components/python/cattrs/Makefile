@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cattrs
-HUMAN_VERSION =			23.2.3
-COMPONENT_SUMMARY =		cattrs - Composable complex class support for attrs and dataclasses.
+HUMAN_VERSION =			24.1.0
+COMPONENT_SUMMARY =		Composable complex class support for attrs and dataclasses.
 COMPONENT_PROJECT_URL =		https://catt.rs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a934090d95abaa9e911dac357e3a8699e0b4b14f8529bcc7d2b1ad9d51672b9f
+	sha256:8274f18b253bf7674a43da851e3096370d67088165d23138b04a1c04c8eaf48e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,6 +31,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project uses pdm to manage test dependencies.
 TEST_REQUIREMENTS_PDM += test
+
+# We have no msgspec packaged yet
+PYTEST_ADDOPTS += --ignore tests/preconf/test_msgspec_cpython.py
+PYTEST_ADDOPTS += --deselect tests/test_preconf.py::test_msgspec_json_converter
+PYTEST_ADDOPTS += --deselect tests/test_preconf.py::test_msgspec_json_unstruct_collection_overrides
+PYTEST_ADDOPTS += --deselect tests/test_preconf.py::test_msgspec_json_unions
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
@@ -44,4 +50,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/immutables
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions

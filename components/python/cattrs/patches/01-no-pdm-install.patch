@@ -1,10 +1,10 @@
---- cattrs-23.2.3/tox.ini.orig
-+++ cattrs-23.2.3/tox.ini
-@@ -27,7 +27,6 @@
-     PDM_IGNORE_SAVED_PYTHON="1"
+--- cattrs-24.1.0/tox.ini.orig
++++ cattrs-24.1.0/tox.ini
+@@ -28,7 +28,6 @@
+     COVERAGE_PROCESS_START={toxinidir}/pyproject.toml
  allowlist_externals = pdm
+ commands_pre =
+-    pdm sync -G :all,test
+     python -c 'import pathlib; pathlib.Path("{env_site_packages_dir}/cov.pth").write_text("import coverage; coverage.process_startup()")'
  commands =
--    pdm install -G :all,test
-     coverage run -m pytest tests {posargs}
- passenv = CI
- package = wheel
+     coverage run -m pytest tests {posargs:-n auto}
