@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-X workers [1194 items]
+X workers [1216 items]
 
 scheduling tests via LoadScheduling
 
@@ -34,8 +34,10 @@ tests/test_normalize_path.py::test__normalize_path[//-//] PASSED
 tests/test_normalize_path.py::test__normalize_path[///-///] PASSED
 tests/test_normalize_path.py::test__normalize_path[/foo/../../../..bar-/..bar] PASSED
 tests/test_normalize_path.py::test__normalize_path[/foo/../../../ton-/ton] PASSED
+tests/test_normalize_path.py::test__normalize_path[/path/to/.-/path/to/] PASSED
 tests/test_normalize_path.py::test__normalize_path[\u03bc\u03bf\u03bd\u03bf\u03c0\u03ac\u03c4\u03b9/../../\u03bd\u03b1/\U0001d566\U0001d55f\U0001d55a/\U0001d554\U0001d560\U0001d555\U0001d556/.-\u03bd\u03b1/\U0001d566\U0001d55f\U0001d55a/\U0001d554\U0001d560\U0001d555\U0001d556/] PASSED
 tests/test_normalize_path.py::test__normalize_path[\u03bc\u03bf\u03bd\u03bf\u03c0\u03ac\u03c4\u03b9/../../\u03bd\u03b1/\u1d1c\u0274\u026a/\u1d04\u1d0f\u1d05\u1d07-\u03bd\u03b1/\u1d1c\u0274\u026a/\u1d04\u1d0f\u1d05\u1d07] PASSED
+tests/test_normalize_path.py::test__normalize_path[path-path] PASSED
 tests/test_normalize_path.py::test__normalize_path[path/../../to-to] PASSED
 tests/test_normalize_path.py::test__normalize_path[path/../to-to] PASSED
 tests/test_normalize_path.py::test__normalize_path[path/././to-path/to] PASSED
@@ -576,6 +578,7 @@ tests/test_update_query.py::test_update_query_with_multiple_args PASSED
 tests/test_update_query.py::test_update_query_with_non_ascii PASSED
 tests/test_update_query.py::test_update_query_with_non_ascii_as_str PASSED
 tests/test_update_query.py::test_update_query_with_none_arg PASSED
+tests/test_update_query.py::test_with_class_that_implements__int__ PASSED
 tests/test_update_query.py::test_with_float_enum PASSED
 tests/test_update_query.py::test_with_int_enum PASSED
 tests/test_update_query.py::test_with_multidict_with_spaces_and_non_ascii PASSED
@@ -794,6 +797,19 @@ tests/test_url.py::test_join_from_rfc_3986_normal[g;x?y#s-http://a/b/c/g;x?y#s] 
 tests/test_url.py::test_join_from_rfc_3986_normal[g?y#s-http://a/b/c/g?y#s] PASSED
 tests/test_url.py::test_join_from_rfc_3986_normal[g?y-http://a/b/c/g?y] PASSED
 tests/test_url.py::test_join_non_url PASSED
+tests/test_url.py::test_join_path_normalized[-] PASSED
+tests/test_url.py::test_join_path_normalized[../path/to-path/to] PASSED
+tests/test_url.py::test_join_path_normalized[././path/to-path/to] PASSED
+tests/test_url.py::test_join_path_normalized[\u03bc\u03bf\u03bd\u03bf\u03c0\u03ac\u03c4\u03b9/../../\u03bd\u03b1/\U0001d566\U0001d55f\U0001d55a/\U0001d554\U0001d560\U0001d555\U0001d556/.-\u03bd\u03b1/\U0001d566\U0001d55f\U0001d55a/\U0001d554\U0001d560\U0001d555\U0001d556/] PASSED
+tests/test_url.py::test_join_path_normalized[\u03bc\u03bf\u03bd\u03bf\u03c0\u03ac\u03c4\u03b9/../../\u03bd\u03b1/\u1d1c\u0274\u026a/\u1d04\u1d0f\u1d05\u1d07-\u03bd\u03b1/\u1d1c\u0274\u026a/\u1d04\u1d0f\u1d05\u1d07] PASSED
+tests/test_url.py::test_join_path_normalized[path-path] PASSED
+tests/test_url.py::test_join_path_normalized[path/../../to-to] PASSED
+tests/test_url.py::test_join_path_normalized[path/../to-to] PASSED
+tests/test_url.py::test_join_path_normalized[path/././to-path/to] PASSED
+tests/test_url.py::test_join_path_normalized[path/./to-path/to] PASSED
+tests/test_url.py::test_join_path_normalized[path/to-path/to] PASSED
+tests/test_url.py::test_join_path_normalized[path/to/.-path/to/] PASSED
+tests/test_url.py::test_join_path_normalized[path/to/./.-path/to/] PASSED
 tests/test_url.py::test_join_preserves_leading_slash PASSED
 tests/test_url.py::test_join_query_string PASSED
 tests/test_url.py::test_join_query_string_with_special_chars PASSED
@@ -1074,7 +1090,7 @@ tests/test_url_parsing.py::TestPort::test_bad_port PASSED
 tests/test_url_parsing.py::TestPort::test_bad_port_again PASSED
 tests/test_url_parsing.py::TestPort::test_canonical PASSED
 tests/test_url_parsing.py::TestPort::test_double_port PASSED
-tests/test_url_parsing.py::TestPort::test_no_host XFAIL
+tests/test_url_parsing.py::TestPort::test_no_host PASSED
 tests/test_url_parsing.py::TestPort::test_no_path PASSED
 tests/test_url_parsing.py::TestQuery_String::test_abs_url_path_query PASSED
 tests/test_url_parsing.py::TestQuery_String::test_abs_url_query PASSED
@@ -1095,6 +1111,7 @@ tests/test_url_parsing.py::TestScheme::test_scheme_rel_path1 PASSED
 tests/test_url_parsing.py::TestScheme::test_scheme_rel_path2 PASSED
 tests/test_url_parsing.py::TestScheme::test_scheme_weird PASSED
 tests/test_url_parsing.py::TestStripEmptyParts::test_all_empty PASSED
+tests/test_url_parsing.py::TestStripEmptyParts::test_all_empty_http PASSED
 tests/test_url_parsing.py::TestStripEmptyParts::test_empty_path PASSED
 tests/test_url_parsing.py::TestStripEmptyParts::test_empty_path_only PASSED
 tests/test_url_parsing.py::TestStripEmptyParts::test_empty_port PASSED
@@ -1114,6 +1131,11 @@ tests/test_url_parsing.py::TestUserInfo::test_user_pass PASSED
 tests/test_url_parsing.py::TestUserInfo::test_weird_user PASSED
 tests/test_url_parsing.py::TestUserInfo::test_weird_user2 PASSED
 tests/test_url_parsing.py::TestUserInfo::test_weird_user3 PASSED
+tests/test_url_parsing.py::test_schemes_that_require_host[ftp] PASSED
+tests/test_url_parsing.py::test_schemes_that_require_host[http] PASSED
+tests/test_url_parsing.py::test_schemes_that_require_host[https] PASSED
+tests/test_url_parsing.py::test_schemes_that_require_host[ws] PASSED
+tests/test_url_parsing.py::test_schemes_that_require_host[wss] PASSED
 tests/test_url_query.py::test_query_basic_parsing[original_url0-expected_query0] PASSED
 tests/test_url_query.py::test_query_basic_parsing[original_url1-expected_query1] PASSED
 tests/test_url_query.py::test_query_basic_parsing[original_url2-expected_query2] PASSED
@@ -1205,4 +1227,4 @@ tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 1189 passed, 5 xfailed ========
+======== 1212 passed, 4 xfailed ========
