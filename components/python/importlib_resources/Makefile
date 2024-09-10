@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_resources
-HUMAN_VERSION =			6.4.4
+HUMAN_VERSION =			6.4.5
 COMPONENT_SUMMARY =		Read resources from Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:20600c8b7361938dc0bb2d5ec0297802e575df486f5a544fa414da65e13721f7
+	sha256:980862a1d16c9e147a59603677fa2aa5fd82b87f223b6cb870695bcfce830065
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
