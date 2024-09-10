@@ -105,7 +105,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched $(BUILD_DIR)/runtime-perl.p5
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM); \
 	  echo export BOOTBANNER1=\"$(DISTRIBUTION_NAME) $(DISTRIBUTION_VERSION) Version ^v ^w-bit\") > \
 	  illumos.sh && \
-	  time $(ENV) ./usr/src/tools/scripts/nightly -V $(shell git log -1 --format=illumos-%h) illumos.sh
+	  time $(ENV) ./usr/src/tools/scripts/nightly -V $(shell cd $(SOURCE_DIR) && git log -1 --format=illumos-%h) illumos.sh
 	$(TOUCH) $@
 
 build install: $(BUILD_DIR)/$(MACH)/.built
