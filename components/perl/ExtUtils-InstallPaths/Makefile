@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		ExtUtils::InstallPaths
-HUMAN_VERSION =			0.013
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.014
 COMPONENT_SUMMARY =		ExtUtils::InstallPaths - Build.PL install path logic made easy
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:65969d3ad8a3a2ea8ef5b4213ed5c2c83961bb5bd12f7ad35128f6bd5b684aa0
+	sha256:ae65d20cc3c7e14b3cd790915c84510f82dfb37a4c9b88aa74b2e843af417d01
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
