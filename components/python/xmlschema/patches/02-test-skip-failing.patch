@@ -1,0 +1,18 @@
+--- xmlschema-3.4.1/tests/test_locations.py.orig
++++ xmlschema-3.4.1/tests/test_locations.py
+@@ -269,6 +269,7 @@
+             self.assertNotEqual(path.as_uri(), url)
+             self.assertEqual(normalize_url(unc_path), url_host_in_path)
+ 
++    @unittest.skip("always fails: https://github.com/sissaschool/xmlschema/issues/416")
+     def test_normalize_url_with_base_unc_path(self,):
+         base_unc_path = '\\\\filer01\\MY_HOME\\'
+         base_url = PureWindowsPath(base_unc_path).as_uri()
+@@ -315,6 +316,7 @@
+             else:
+                 self.assertEqual(url, 'file://////filer01/MY_HOME/dev/XMLSCHEMA/test.xsd')
+ 
++    @unittest.skip("always fails: https://github.com/sissaschool/xmlschema/issues/416")
+     def test_normalize_url_slashes(self):
+         # Issue #116
+         url = '//anaconda/envs/testenv/lib/python3.6/site-packages/xmlschema/validators/schemas/'
