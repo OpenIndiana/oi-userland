@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_enabler
-HUMAN_VERSION =			3.2.0
+HUMAN_VERSION =			3.3.0
 COMPONENT_SUMMARY =		Enable installed pytest plugins
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bbb26fb4b53c1e7d651273b48dc378593d6e5a351e7ff1752ec410d51a40faa1
+	sha256:7780165bf20a1b67230c480e1ac0f3653c0d42947bd6d39505e5d9c883263bd1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
