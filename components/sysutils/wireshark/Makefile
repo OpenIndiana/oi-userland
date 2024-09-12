@@ -29,16 +29,15 @@ BUILD_STYLE=		cmake
 
 include ../../../make-rules/shared-macros.mk
 
-MAJOR_VERSION=3.6
-MICRO_VERSION=8
+MAJOR_VERSION=4.4
+MICRO_VERSION=0
 
 COMPONENT_NAME=		wireshark
 COMPONENT_VERSION=	$(MAJOR_VERSION).$(MICRO_VERSION)
-COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	https://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:67ab23ee09a646ab8cc0ddcc985209f24f253337461e3d9644c6cfe1c097260c
+COMPONENT_ARCHIVE_HASH=	sha256:ead5cdcc08529a2e7ce291e01defc3b0f8831ba24c938db0762b1ebc59c71269
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
@@ -47,11 +46,11 @@ TEST_TARGET:		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Set path to Qt5 libs
-QT5_LIBDIR = /usr/lib/qt/5.15/lib/amd64
+# Set path to Qt6 libs
+QT6_LIBDIR = /usr/lib/qt/6.6/lib/amd64
 
 # Set path to Qt5 cmake modules.
-CMAKE_OPTIONS += -DCMAKE_PREFIX_PATH=$(QT5_LIBDIR)/cmake
+CMAKE_OPTIONS += -DCMAKE_PREFIX_PATH=$(QT6_LIBDIR)/cmake
 # Add non-standard path to perl pod2man and pod2html commands.
 CMAKE_OPTIONS += -DCMAKE_PROGRAM_PATH=$(USRDIR)/perl5/bin/
 # Install all the wireshark executables to sbin directory.
@@ -62,6 +61,7 @@ CMAKE_OPTIONS += -DCMAKE_INSTALL_DATADIR=/usr/share/wireshark
 CMAKE_OPTIONS += -DBUILD_androiddump=OFF
 CMAKE_OPTIONS += -DBUILD_randpkt=OFF
 CMAKE_OPTIONS += -DBUILD_dftest=OFF
+CMAKE_OPTIONS += -DUSE_qt6=ON
 
 PKG_MACROS += MAJOR_VERSION=$(MAJOR_VERSION)
 PKG_MACROS += MICRO_VERSION=$(MICRO_VERSION)
@@ -72,8 +72,8 @@ LDFLAGS += -lsocket -lnsl
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in $(PROTO_DIR)/usr/sbin/wireshark; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(QT5_LIBDIR)"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(QT5_LIBDIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(QT6_LIBDIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(QT6_LIBDIR)"' $$file ; \
     done ;
 
 # Auto-generated dependencies
@@ -86,12 +86,15 @@ REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/lz4
+REQUIRED_PACKAGES += library/minizip-ng
 REQUIRED_PACKAGES += library/nghttp2
+REQUIRED_PACKAGES += library/nghttp3
 REQUIRED_PACKAGES += library/opus
-REQUIRED_PACKAGES += library/qt5
+REQUIRED_PACKAGES += library/pcre2
+REQUIRED_PACKAGES += library/qt6
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/lua-54
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
