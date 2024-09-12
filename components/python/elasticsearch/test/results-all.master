@@ -1,10 +1,14 @@
+$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
-collecting ... collected 363 items / 2 skipped
+asyncio: mode=strict, default_loop_scope=None
+collecting ... collected 367 items / 2 skipped
 
 test_elasticsearch/test_async/test_server/test_clients.py::test_indices_analyze_unicode[kwargs0] SKIPPED
 test_elasticsearch/test_async/test_server/test_clients.py::test_indices_analyze_unicode[kwargs1] SKIPPED
@@ -242,6 +246,7 @@ test_elasticsearch/test_helpers.py::TestExpandActions::test_string_actions_are_m
 test_elasticsearch/test_otel.py::test_enabled SKIPPED (TEST_WITH_OTE...)
 test_elasticsearch/test_otel.py::test_minimal_span SKIPPED (TEST_WIT...)
 test_elasticsearch/test_otel.py::test_detailed_span SKIPPED (TEST_WI...)
+test_elasticsearch/test_otel.py::test_forward_otel_context_to_subthreads SKIPPED
 test_elasticsearch/test_server/test_clients.py::test_indices_analyze_unicode[kwargs0] SKIPPED
 test_elasticsearch/test_server/test_clients.py::test_indices_analyze_unicode[kwargs1] SKIPPED
 test_elasticsearch/test_server/test_clients.py::test_bulk_works_with_string_body SKIPPED
@@ -293,6 +298,9 @@ test_elasticsearch/test_server/test_helpers.py::test_reindex_index_datastream_op
 test_elasticsearch/test_server/test_mapbox_vector_tile.py::test_mapbox_vector_tile_error SKIPPED
 test_elasticsearch/test_server/test_mapbox_vector_tile.py::test_mapbox_vector_tile_response SKIPPED
 test_elasticsearch/test_server/test_otel.py::test_otel_end_to_end SKIPPED
+test_elasticsearch/test_server/test_otel.py::test_otel_bulk[bulk] SKIPPED
+test_elasticsearch/test_server/test_otel.py::test_otel_bulk[streaming_bulk] SKIPPED
+test_elasticsearch/test_server/test_otel.py::test_otel_bulk[parallel_bulk] SKIPPED
 test_elasticsearch/test_server/test_responses.py::test_text_response SKIPPED
 test_elasticsearch/test_server/test_responses.py::test_object_response SKIPPED
 test_elasticsearch/test_server/test_responses.py::test_exists_response SKIPPED
@@ -464,4 +472,4 @@ test_elasticsearch/test_transport.py::TestTransport::test_sniffing_disabled_on_e
     Elasticsearch(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 223 passed, 142 skipped, 26 warnings ========
+======== 223 passed, 146 skipped, 26 warnings ========
