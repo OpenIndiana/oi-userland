@@ -1,27 +1,16 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2021 Gary Mills
-# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
+# This file was automatically generated using python-integrate-project
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -33,65 +22,9 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-license mercurial.copyright.zstd license="BSD 3-Clause (zstd)"
-license mercurial.copyright.statprof license="LGPL-2.1-only"
-
-<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
-
-# These are not installed, but can be found in the source contrib directory.
-<transform file path=usr/demo/mercurial/(.+)$ -> set action.hash %<1> >
-
-# We also ignore all dependencies implied by the demos.
-<transform file path=usr/demo/mercurial/.+ -> set pkg.depend.bypass-generate .*>
 
 file path=usr/bin/hg
-file path=usr/demo/mercurial/bash_completion
-file path=usr/demo/mercurial/bdiff-torture.py
-file path=usr/demo/mercurial/casesmash.py
-file path=usr/demo/mercurial/chg/Makefile
-file path=usr/demo/mercurial/chg/README
-file path=usr/demo/mercurial/chg/chg.1
-file path=usr/demo/mercurial/chg/chg.c
-file path=usr/demo/mercurial/chg/hgclient.c
-file path=usr/demo/mercurial/chg/hgclient.h
-file path=usr/demo/mercurial/chg/procutil.c
-file path=usr/demo/mercurial/chg/procutil.h
-file path=usr/demo/mercurial/chg/util.c
-file path=usr/demo/mercurial/chg/util.h
-file path=usr/demo/mercurial/debugcmdserver.py mode=555
-file path=usr/demo/mercurial/debugshell.py
-file path=usr/demo/mercurial/dirstatenonnormalcheck.py
-file path=usr/demo/mercurial/dumprevlog mode=555
-file path=usr/demo/mercurial/editmerge mode=555
-file path=usr/demo/mercurial/hg-ssh mode=555
-file path=usr/demo/mercurial/hgclient.py
-file path=usr/demo/mercurial/hgk mode=555
-file path=usr/demo/mercurial/hgsh/Makefile
-file path=usr/demo/mercurial/hgsh/hgsh.c
-file path=usr/demo/mercurial/hgweb.fcgi mode=555
-file path=usr/demo/mercurial/hgweb.wsgi
-file path=usr/demo/mercurial/logo-droplets.svg
-file path=usr/demo/mercurial/memory.py
-file path=usr/demo/mercurial/mercurial.el
-file path=usr/demo/mercurial/mq.el
-file path=usr/demo/mercurial/perf.py
-file path=usr/demo/mercurial/pylintrc
-file path=usr/demo/mercurial/python-hook-examples.py
-file path=usr/demo/mercurial/showstack.py
-file path=usr/demo/mercurial/simplemerge mode=555
-file path=usr/demo/mercurial/synthrepo.py
-file path=usr/demo/mercurial/tcsh_completion
-file path=usr/demo/mercurial/tcsh_completion_build.sh mode=555
-file path=usr/demo/mercurial/undumprevlog mode=555
-file path=usr/demo/mercurial/vim/HGAnnotate.vim
-file path=usr/demo/mercurial/vim/hg-menu.vim
-file path=usr/demo/mercurial/vim/hgcommand.vim
-file path=usr/demo/mercurial/vim/hgtest.vim
-file path=usr/demo/mercurial/vim/patchreview.txt
-file path=usr/demo/mercurial/vim/patchreview.vim
-file path=usr/demo/mercurial/xml.rnc
 file path=usr/lib/python$(PYVER)/vendor-packages/hgdemandimport/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgdemandimport/demandimportpy2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgdemandimport/demandimportpy3.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgdemandimport/tracing.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/__init__.py
@@ -140,7 +73,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fetch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fix.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/bser.so
+file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/bser.cpython-$(PYV).so
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/capabilities.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/encoding.py
@@ -167,13 +100,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/hgext/hooklib/changeset_publish
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/hooklib/enforce_draft_commits.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/hooklib/reject_merge_commits.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/hooklib/reject_new_heads.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgext/infinitepush/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgext/infinitepush/bundleparts.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgext/infinitepush/common.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgext/infinitepush/fileindexapi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgext/infinitepush/indexapi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgext/infinitepush/sqlindexapi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgext/infinitepush/store.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/journal.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/keyword.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/largefiles/__init__.py
@@ -245,13 +171,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/hgext/win32text.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/zeroconf/Zeroconf.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/zeroconf/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext3rd/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial-$(HUMAN_VERSION).dist-info/COPYING
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial-$(HUMAN_VERSION).dist-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/__modulepolicy__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/__version__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/admin/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/admin/chainsaw.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/admin/verify.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/admin_commands.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/ancestor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/archival.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bookmarks.py
@@ -261,11 +192,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bundlecaches.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bundlerepo.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cacheutil.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/base85.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/bdiff.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/mpatch.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/osutil.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/parsers.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/base85.cpython-$(PYV).so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/bdiff.cpython-$(PYV).so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/mpatch.cpython-$(PYV).so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/osutil.cpython-$(PYV).so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/parsers.cpython-$(PYV).so
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cffi/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cffi/bdiff.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cffi/bdiffbuild.py
@@ -283,6 +214,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/commandserver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/commit.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/configitems.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/configitems.toml
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/context.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/copies.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/crecord.py
@@ -295,17 +227,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/destutil.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/diffhelper.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/diffutil.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dirstate.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dirstateguard.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dirstatemap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dirstateutils/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dirstateutils/docket.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dirstateutils/timestamp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dirstateutils/v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/discovery.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dispatch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dummycert.pem
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/encoding.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/error.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/exchange.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/exchangev2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/extensions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/exthelper.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/fancyopts.py
@@ -346,6 +278,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/internals/cb
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/internals/censor.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/internals/changegroups.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/internals/config.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/internals/dirstate-v2.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/internals/extensions.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/internals/linelog.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/internals/mergestate.txt
@@ -359,6 +292,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/pager.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/patterns.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/phases.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/revisions.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/rust.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/scripting.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/subrepos.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/helptext/templates.txt
@@ -446,6 +380,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/revlog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/revlogutils/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/revlogutils/concurrency_checker.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/revlogutils/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/revlogutils/debug.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/revlogutils/deltas.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/revlogutils/docket.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/revlogutils/flagutil.py
@@ -469,6 +404,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/smartset.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/sparse.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/sshpeer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/sslutil.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/stabletailgraph/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/stabletailgraph/stabletailsort.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/stack.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/state.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/statichttprepo.py
@@ -663,21 +600,37 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/testing/revlog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/testing/storage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/__init__.pyi
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/_cmp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/_cmp.pyi
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/_compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/_config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/_funcs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/_make.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/_next_gen.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/_version_info.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/_version_info.pyi
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/converters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/converters.pyi
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/exceptions.pyi
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/filters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/filters.pyi
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/setters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/setters.pyi
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/validators.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/selectors2.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/sha1dc.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/validators.pyi
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/sha1dc.cpython-$(PYV).so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/tomli/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/tomli/_parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/tomli/_re.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/tomli/_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/_compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/_flatten.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/_zope_interface_coptimizations.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/_zope_interface_coptimizations.cpython-$(PYV).so
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/adapter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/advice.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/declarations.py
@@ -691,11 +644,13 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/inter
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/transaction.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/treediscovery.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/txnutil.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/typelib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/ui.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/unionrepo.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/upgrade.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/upgrade_utils/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/upgrade_utils/actions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/upgrade_utils/auto_upgrade.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/upgrade_utils/engine.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/url.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/urllibcompat.py
@@ -721,14 +676,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireprotoserver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireprototypes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireprotov1peer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireprotov1server.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireprotov2peer.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireprotov2server.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/worker.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/zstd.so
-file hg.1 path=usr/share/man/man1/hg.1
-file hgignore.5 path=usr/share/man/man5/hgignore.5
-file hgrc.5 path=usr/share/man/man5/hgrc.5
-file contrib/zsh_completion path=usr/share/zsh/vendor-functions/Completion/_hg
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/zstd.cpython-$(PYV).so
+file path=usr/share/bash-completion/completions/hg
+file path=usr/share/man/man1/hg.1
+file path=usr/share/man/man5/hgignore.5
+file path=usr/share/man/man5/hgrc.5
+file path=usr/share/man/man8/hg-ssh.8
+file path=usr/share/zsh/site-functions/_hg
 
 # python modules are unusable without python runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \

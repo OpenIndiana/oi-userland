@@ -1,0 +1,13 @@
+https://bz.mercurial-scm.org/show_bug.cgi?id=6913
+
+--- mercurial-6.8.1/tests/testlib/wait-on-file.orig
++++ mercurial-6.8.1/tests/testlib/wait-on-file
+@@ -29,7 +29,7 @@
+     touch "$create"
+     create=""
+ fi
+-while [ "$timer" -gt 0 ] && !([ -e "$wait_on" ] || [ -L "$wait_on" ]) ; do
++while [ "$timer" -gt 0 ] && ! ([ -e "$wait_on" ] || [ -L "$wait_on" ]) ; do
+     timer=$(( $timer - 1))
+     sleep 0.02
+ done
