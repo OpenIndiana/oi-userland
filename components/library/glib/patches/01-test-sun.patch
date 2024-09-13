@@ -1,0 +1,33 @@
+--- glib-2.82.0/glib/tests/date.c.orig
++++ glib-2.82.0/glib/tests/date.c
+@@ -725,7 +725,7 @@
+ #else
+     { "%B", "January" },
+     { "%b", "Jan" },
+-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
++#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__APPLE__) || defined(__sun)
+     { "%C", "00" },
+     { "%c", "Mon Jan  1 00:00:00 0001" },
+     { "%E", "E" },
+--- glib-2.82.0/glib/tests/string.c.orig
++++ glib-2.82.0/glib/tests/string.c
+@@ -320,7 +320,7 @@
+   string_append_vprintf_va (string, "some %s placeholders", "format");
+ 
+   /* vasprintf() placeholder checks on BSDs are less strict, so skip these checks if so */
+-#if !defined(__APPLE__) && !defined(__FreeBSD__)
++#if !defined(__APPLE__) && !defined(__FreeBSD__) && !defined(__sun)
+   if (g_test_undefined ())
+     {
+       g_test_expect_message (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL,
+--- glib-2.82.0/glib/tests/test-printf.c.orig
++++ glib-2.82.0/glib/tests/test-printf.c
+@@ -934,7 +934,7 @@
+ 
+   g_test_summary ("Test error handling for invalid format placeholder in g_vasprintf()");
+ 
+-#if !defined(__APPLE__) && !defined(__FreeBSD__)
++#if !defined(__APPLE__) && !defined(__FreeBSD__) && !defined(__sun)
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Wformat"
+ #pragma GCC diagnostic ignored "-Wformat-extra-args"
