@@ -18,13 +18,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xclipboard
-COMPONENT_VERSION=        1.1.4
+COMPONENT_VERSION=        1.1.5
 COMPONENT_FMRI=           x11/xclipboard
 COMPONENT_CLASSIFICATION= Applications/Accessories
 COMPONENT_SUMMARY=  xclipboard − X clipboard client
 COMPONENT_ARCHIVE_EXTENSION= .tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:c40cb97f6c8597ba74a3de5c188d4429f686e4d395b85dac0ec8c7311bdf3d10
+COMPONENT_ARCHIVE_HASH=	sha256:04c657d9077d86f3f08841febbb2861bb279028aa6adb2f6cf614e288034b912
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
