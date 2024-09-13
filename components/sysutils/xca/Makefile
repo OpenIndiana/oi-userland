@@ -17,7 +17,7 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xca
-COMPONENT_VERSION=	2.6.0
+COMPONENT_VERSION=	2.7.0
 COMPONENT_SUMMARY=	XCA - X Certificate and Key Management
 COMPONENT_DESCRIPTION=	This application is intended for creating and managing \
 			X.509 certificates, certificate requests, RSA, DSA and EC \
@@ -27,7 +27,7 @@ COMPONENT_DESCRIPTION=	This application is intended for creating and managing \
 			are shown clearly.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:55a39f22eabadcce4532ebfcf07f796372bdb0d323720db6b6e0deaf267b1709
+COMPONENT_ARCHIVE_HASH=	sha256:15ff6fbe4c004ac2ad18885ab35ae6940364a8246d5fe8562a41312fe45ec15e
 COMPONENT_PROJECT_URL=	http://xca.hohnstaedt.de
 COMPONENT_ARCHIVE_URL=	https://github.com/chris2511/$(COMPONENT_NAME)/releases/download/RELEASE.$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	sysutils/$(COMPONENT_NAME)
@@ -37,12 +37,7 @@ COMPONENT_LICENSE_FILE=	COPYRIGHT
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_ENV= DISPLAY=:1
-
-COMPONENT_PRE_TEST_ACTION = $(SHELL) $(COMPONENT_DIR)/start_Xvfb $(COMPONENT_DIR)
-COMPONENT_POST_TEST_ACTION = $(SHELL) $(COMPONENT_DIR)/stop_Xvfb $(COMPONENT_DIR)
-
-PATH=			$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 ENV += 	Qt5_DIR=$(QT5_BASEDIR)
 ENV += 	QT_DIR=$(QT5_BASEDIR)
@@ -52,15 +47,21 @@ CXXFLAGS += -std=c++17 -D__SOLARIS__
 CMAKE_OPTIONS += -DADDRESS_SANITIZER=OFF
 CMAKE_OPTIONS += -DAPPSTORE_COMPLIANT=ON
 
+COMPONENT_POST_INSTALL_ACTION = \
+	/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(GCC_LIBDIR):$(QT5_LIBDIR)"' $(PROTO_DIR)/usr/bin/xca; \
+	/usr/bin/elfedit -e 'dyn:value -s RPATH   "$(GCC_LIBDIR):$(QT5_LIBDIR)"' $(PROTO_DIR)/usr/bin/xca;
+
+COMPONENT_TEST_ENV= DISPLAY=:1
+
+COMPONENT_PRE_TEST_ACTION = $(SHELL) $(COMPONENT_DIR)/start_Xvfb $(COMPONENT_DIR)
+COMPONENT_POST_TEST_ACTION = $(SHELL) $(COMPONENT_DIR)/stop_Xvfb $(COMPONENT_DIR)
+
 COMPONENT_TEST_TRANSFORMS = \
         '-n ' \
         '-e "s/Passed.*$$/Passed/p" ' \
         '-e "s/Failed .*$$/Failed/p" '
 
-COMPONENT_POST_INSTALL_ACTION = \
-        /usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(GCC_LIBDIR):$(QT5_LIBDIR)"' $(PROTO_DIR)/usr/bin/xca; \
-        /usr/bin/elfedit -e 'dyn:value -s RPATH   "$(GCC_LIBDIR):$(QT5_LIBDIR)"' $(PROTO_DIR)/usr/bin/xca;
-
+# Manually added dependencies
 TEST_REQUIRED_PACKAGES += x11/server/xvfb
 
 # Auto-generated dependencies
