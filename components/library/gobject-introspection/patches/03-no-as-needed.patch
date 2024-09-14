@@ -1,11 +1,20 @@
---- gobject-introspection-1.71.0/giscanner/ccompiler.py.orig	2022-02-14 13:46:29.000000000 +0000
-+++ gobject-introspection-1.71.0/giscanner/ccompiler.py	2022-11-18 14:16:37.722084347 +0000
-@@ -197,7 +197,7 @@
+--- gobject-introspection-1.82.0/giscanner/ccompiler.py.orig
++++ gobject-introspection-1.82.0/giscanner/ccompiler.py
+@@ -242,7 +242,7 @@
  
-                 # Ensure libraries are always linked as we are going to use ldd to work
-                 # out their names later
--                if sys.platform != 'darwin':
-+                if sys.platform != 'darwin' and sys.platform != 'sunos5':
-                     args.append('-Wl,--no-as-needed')
+             # Ensure libraries are always linked as we are going to use ldd to work
+             # out their names later
+-            if sys.platform != 'darwin':
++            if sys.platform != 'darwin' and sys.platform != 'sunos5':
+                 args.append('-Wl,--no-as-needed')
  
          for library_path in libpaths:
+@@ -291,7 +291,7 @@
+ 
+         # Ensure libraries are always linked as we are going to use ldd to work
+         # out their names later
+-        if os.name != 'nt' and sys.platform != 'darwin':
++        if os.name != 'nt' and sys.platform != 'darwin' and sys.platform != 'sunos5':
+             args.append('-Wl,--no-as-needed')
+ 
+         for library in libraries:
