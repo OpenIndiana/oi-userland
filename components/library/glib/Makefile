@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
 HUMAN_VERSION=		2.82.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_ARCHIVE_HASH=	sha256:f4c82ada51366bddace49d7ba54b33b4e4d6067afa3008e4847f41cb9b5c38d3
 COMPONENT_FMRI=		library/glib2
@@ -64,7 +65,8 @@ CONFIGURE_OPTIONS += -Dfam=true
 CONFIGURE_OPTIONS += -Ddtrace=disabled
 CONFIGURE_OPTIONS += -Dsystemtap=disabled
 CONFIGURE_OPTIONS += -Dsysprof=disabled
-CONFIGURE_OPTIONS += -Dintrospection=disabled
+# see https://gitlab.gnome.org/GNOME/glib/-/issues/3421
+CONFIGURE_OPTIONS += -Dglib_debug=disabled
 
 COMPONENT_POST_CONFIGURE_ACTION= \
   ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
@@ -75,6 +77,10 @@ $(TEST_TARGET): $(INSTALL_TARGET)
 # Dtrace flags
 DFLAGS.64 = -64
 COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
+
+# Without this the gi-compile-repository loads system libraries which makes the
+# typelib compilation to fail
+COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=gio:glib:gobject
 
 # necessary otherwise make REQUIRED_PACKAGES will fail
 COMPONENT_POST_INSTALL_ACTION.32= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR32)/g*
