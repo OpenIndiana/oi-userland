@@ -1,0 +1,30 @@
+Two choices.  Either remove the section of code with O_PATH or just remove
+the O_PATH parameter.  Section of code removal is being chosen for this patch.
+
+--- wireshark-4.4.0/ui/qt/utils/qt_ui_utils.cpp.old	2024-09-11 14:34:05.837080552 -0400
++++ wireshark-4.4.0/ui/qt/utils/qt_ui_utils.cpp	2024-09-11 14:34:40.599772137 -0400
+@@ -243,24 +243,6 @@
+     message = QDBusConnection::sessionBus().call(message);
+     success = message.type() == QDBusMessage::ReplyMessage;
+ 
+-    // If that failed, perhaps we are sandboxed.  Try using Portal Services.
+-    // https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.OpenURI.html
+-    if (!success) {
+-        const int fd = ws_open(QFile::encodeName(file_path), O_CLOEXEC | O_PATH, 0000);
+-        if (fd != -1) {
+-            QDBusUnixFileDescriptor descriptor;
+-            descriptor.giveFileDescriptor(fd);
+-            QDBusMessage message = QDBusMessage::createMethodCall(QLatin1String("org.freedesktop.portal.Desktop"),
+-                                                                  QLatin1String("/org/freedesktop/portal/desktop"),
+-                                                                  QLatin1String("org.freedesktop.portal.OpenURI"),
+-                                                                  QLatin1String("OpenDirectory"));
+-            message << QString() << QVariant::fromValue(descriptor) << QVariantMap();
+-
+-            message = QDBusConnection::sessionBus().call(message);
+-            success = message.type() == QDBusMessage::ReplyMessage;
+-            ws_close(fd);
+-        }
+-    }
+ #else
+     // Any other possibilities to highlight the file before falling back to showing the folder?
+ #endif
