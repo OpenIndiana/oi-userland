@@ -1,0 +1,15 @@
+Temporary patch to make USE_PDF_PERMISSIONS section build.
+
+For upstream.
+
+--- a/pdf/ghostpdf.c	2024-08-08 08:57:38.839673047 +0200
++++ b/pdf/ghostpdf.c	2024-08-08 08:58:13.552200321 +0200
+@@ -1213,6 +1213,8 @@
+     if (ctx->Trailer) {
+         /* See comment in pdfi_read_Root() (pdf_doc.c) for details */
+         pdf_dict *d = ctx->Trailer;
++	double Permissions = 0;
++	uint32_t P = 0;
+ 
+         pdfi_countup(d);
+         code = pdfi_dict_get(ctx, d, "Encrypt", &o);
