@@ -17,12 +17,12 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libjpeg-turbo
-COMPONENT_VERSION= 3.0.3
+COMPONENT_VERSION= 3.0.4
 COMPONENT_SUMMARY= libjpeg -JPEG Turbo libraries
 COMPONENT_PROJECT_URL= https://www.libjpeg-turbo.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:343e789069fc7afbcdfe44dbba7dbbf45afa98a15150e079a38e60e44578865d
+COMPONENT_ARCHIVE_HASH=	sha256:99130559e7d62e8d695f2c0eaeef912c5828d5b84a0537dcb24c9678c9d5b76b
 COMPONENT_ARCHIVE_URL=	https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= image/library/libjpeg-turbo
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
