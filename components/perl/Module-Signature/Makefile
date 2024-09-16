@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Signature
-HUMAN_VERSION =			0.88
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.89
 COMPONENT_SUMMARY =		Module::Signature - Module signature file manipulation
-COMPONENT_CPAN_AUTHOR =		AUDREYT
+COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:777ca175a537d9e3e350668c0f729728b2dba567557dd9feaf1a6af2cff32692
+	sha256:cc9215bdba97268565fd2e99bf6398b9364b502652d67fad514708d0f3b61f71
 COMPONENT_LICENSE =		CC0-1.0 AND (Artistic-1.0-Perl OR GPL-1.0-or-later)
 
 include $(WS_MAKE_RULES)/common.mk
