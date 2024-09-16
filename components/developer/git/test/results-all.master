@@ -3884,8 +3884,14 @@ ok 13 - safe.directory with unmatching glob
 ok 14 - safe.directory in included file
 ok 15 - local clone of unowned repo refused in unsafe directory
 ok 16 - local clone of unowned repo accepted in safe directory
-# passed all 16 test(s)
-1..16
+ok 17 - checked paths are normalized
+ok 18 - checked leading paths are normalized
+ok 19 - configured paths are normalized
+ok 20 - configured leading paths are normalized
+ok 21 - safe.directory set to a dot
+ok 22 - safe.directory set to asterisk
+# passed all 22 test(s)
+1..22
 *** t0034-root-safe-directory.sh ***
 1..0 # SKIP You must set env var GIT_TEST_ALLOW_SUDO=YES in order to run this test
 *** t0035-safe-bare-repository.sh ***
@@ -7286,254 +7292,256 @@ ok 229 - --replace-all and value-pattern
 ok 230 - refuse --fixed-value for incompatible actions
 ok 231 - --fixed-value uses exact string matching
 ok 232 - --get and --get-all with --fixed-value
-ok 233 - includeIf.hasconfig:remote.*.url
-ok 234 - includeIf.hasconfig:remote.*.url respects last-config-wins
-ok 235 - includeIf.hasconfig:remote.*.url globs
-ok 236 - includeIf.hasconfig:remote.*.url forbids remote url in such included files
-ok 237 - negated mode causes failure
-ok 238 - specifying multiple modes causes failure
-ok 239 - writing to stdin is rejected
-ok 240 - setup whitespace config
-ok 241 - no internal whitespace
-ok 242 - internal whitespace
-ok 243 - internal and trailing whitespace
-ok 244 - internal and trailing whitespace, all quoted
-ok 245 - internal and more trailing whitespace
-ok 246 - internal and more trailing whitespace, all quoted
-ok 247 - internal and more trailing whitespace, not all quoted
-ok 248 - leading and trailing whitespace
-ok 249 - leading and trailing whitespace, all quoted
-ok 250 - leading and trailing whitespace, not all quoted
-ok 251 - inline comment
-ok 252 - inline comment, quoted
-ok 253 - clear default config
-ok 254 - initial
-ok 255 - mixed case
-ok 256 - similar section
-ok 257 - uppercase section
-ok 258 - replace with non-match
-ok 259 - replace with non-match (actually matching)
-ok 260 - append comments
-ok 261 - Prohibited LF in comment
-ok 262 - non-match result
-ok 263 - find mixed-case key by canonical name
-ok 264 - find mixed-case key by non-canonical name
-ok 265 - subsections are not canonicalized by git-config
-ok 266 - value for missing section and missing key is not printed
-ok 267 - value for missing section and existing key is not printed
-ok 268 - value for existing section and missing key is not printed
-ok 269 - value for missing subsection and missing key is not printed
-ok 270 - value for existing subsection and missing key is not printed
-ok 271 - value for missing subsection and existing key is not printed
-ok 272 - unset with cont. lines
-ok 273 - unset with cont. lines is correct
-ok 274 - multiple unset
-ok 275 - multiple unset is correct
-ok 276 - --replace-all missing value
-ok 277 - --replace-all
-ok 278 - all replaced
-ok 279 - really mean test
-ok 280 - really really mean test
-ok 281 - get value
-ok 282 - unset
-ok 283 - multivar
-ok 284 - non-match
-ok 285 - non-match value
-ok 286 - multi-valued get returns final one
-ok 287 - multi-valued get-all returns all
-ok 288 - multivar replace
-ok 289 - ambiguous unset
-ok 290 - invalid unset
-ok 291 - multivar unset
-ok 292 - invalid key
-ok 293 - correct key
-ok 294 - hierarchical section
-ok 295 - hierarchical section value
-ok 296 - working --list
-ok 297 - --list without repo produces empty output
-ok 298 - --name-only --list
-ok 299 - --get-regexp
-ok 300 - --name-only --get-regexp
-ok 301 - --add
-ok 302 - get variable with no value
-ok 303 - get variable with empty value
-ok 304 - get-regexp variable with no value
-ok 305 - get-regexp --bool variable with no value
-ok 306 - get-regexp variable with empty value
-ok 307 - get bool variable with no value
-ok 308 - get bool variable with empty value
-ok 309 - no arguments, but no crash
-ok 310 - new section is partial match of another
-ok 311 - new variable inserts into proper section
-ok 312 - alternative --file (non-existing file should fail)
-ok 313 - alternative GIT_CONFIG
-ok 314 - alternative GIT_CONFIG (--file)
-ok 315 - alternative GIT_CONFIG (--file=-)
-ok 316 - setting a value in stdin is an error
-ok 317 - editing stdin is an error
-ok 318 - refer config from subdirectory
-ok 319 - --set in alternative file
-ok 320 - rename section
-ok 321 - rename succeeded
-ok 322 - rename non-existing section
-ok 323 - rename succeeded
-ok 324 - rename another section
-ok 325 - rename succeeded
-ok 326 - rename a section with a var on the same line
-ok 327 - rename succeeded
-ok 328 - renaming empty section name is rejected
-ok 329 - renaming to bogus section is rejected
-ok 330 - renaming a section with a long line
-ok 331 - renaming an embedded section with a long line
-ok 332 - renaming a section with an overly-long line
-ok 333 - remove section
-ok 334 - section was removed properly
-ok 335 - section ending
-ok 336 - numbers
-ok 337 - --int is at least 64 bits
-ok 338 - invalid unit
-ok 339 - invalid unit boolean
-ok 340 - line number is reported correctly
-ok 341 - invalid stdin config
-ok 342 - bool
-ok 343 - invalid bool (--get)
-ok 344 - invalid bool (set)
-ok 345 - set --bool
-ok 346 - set --int
-ok 347 - get --bool-or-int
-ok 348 - set --bool-or-int
-ok 349 - set --path
-ok 350 - get --path
-ok 351 - get --path copes with unset $HOME
-ok 352 - get --path barfs on boolean variable
-ok 353 - get --expiry-date
-ok 354 - get --type=color
-ok 355 - set --type=color
-ok 356 - get --type=color barfs on non-color
-ok 357 - set --type=color barfs on non-color
-ok 358 - quoting
-ok 359 - key with newline
-ok 360 - value with newline
-ok 361 - value continued on next line
-ok 362 - --null --list
-ok 363 - --null --get-regexp
-ok 364 - inner whitespace kept verbatim, spaces only
-ok 365 - inner whitespace kept verbatim, horizontal tabs only
-ok 366 - inner whitespace kept verbatim, horizontal tabs and spaces
-ok 367 - symlinked configuration
-ok 368 - symlink to nonexistent configuration
-ok 369 - check split_cmdline return
-ok 370 - git -c "key=value" support
-ok 371 - git -c can represent empty string
-ok 372 - key sanity-checking
-ok 373 - git -c works with aliases of builtins
-ok 374 - aliases can be CamelCased
-ok 375 - git -c does not split values on equals
-ok 376 - git -c dies on bogus config
-ok 377 - git -c complains about empty key
-ok 378 - git -c complains about empty key and value
-ok 379 - multiple git -c appends config
-ok 380 - last one wins: two level vars
-ok 381 - last one wins: three level vars
-ok 382 - old-fashioned settings are case insensitive
-ok 383 - setting different case sensitive subsections 
-ok 384 - git -c a=VAL rejects invalid 'a'
-ok 385 - git -c .a=VAL rejects invalid '.a'
-ok 386 - git -c a.=VAL rejects invalid 'a.'
-ok 387 - git -c a.0b=VAL rejects invalid 'a.0b'
-ok 388 - git -c a.b c.=VAL rejects invalid 'a.b c.'
-ok 389 - git -c a.b c.0d=VAL rejects invalid 'a.b c.0d'
-ok 390 - git -c a.b=VAL works with valid 'a.b'
-ok 391 - git -c a.b c.d=VAL works with valid 'a.b c.d'
-ok 392 - git -c is not confused by empty environment
-ok 393 - GIT_CONFIG_PARAMETERS handles old-style entries
-ok 394 - GIT_CONFIG_PARAMETERS handles new-style entries
-ok 395 - old and new-style entries can mix
-ok 396 - old and new bools with ambiguous subsection
-ok 397 - detect bogus GIT_CONFIG_PARAMETERS
-ok 398 - git --config-env=key=envvar support
-ok 399 - git --config-env with missing value
-ok 400 - git --config-env fails with invalid parameters
-ok 401 - git -c and --config-env work together
-ok 402 - git -c and --config-env override each other
-ok 403 - --config-env handles keys with equals
-ok 404 - git config handles environment config pairs
-ok 405 - git config ignores pairs without count
-ok 406 - git config ignores pairs exceeding count
-ok 407 - git config ignores pairs with zero count
-ok 408 - git config ignores pairs with empty count
-ok 409 - git config fails with invalid count
-ok 410 - git config fails with missing config key
-ok 411 - git config fails with missing config value
-ok 412 - git config fails with invalid config pair key
-ok 413 - environment overrides config file
-ok 414 - GIT_CONFIG_PARAMETERS overrides environment config
-ok 415 - command line overrides environment config
-ok 416 - git config --edit works
-ok 417 - git config --edit respects core.editor
-ok 418 - barf on syntax error
-ok 419 - barf on incomplete section header
-ok 420 - barf on incomplete string
-ok 421 - urlmatch
-ok 422 - urlmatch with --show-scope
-ok 423 - urlmatch favors more specific URLs
-ok 424 - urlmatch with wildcard
-ok 425 - --unset last key removes section (except if commented)
-ok 426 - --unset-all removes section if empty & uncommented
-ok 427 - adding a key into an empty section reuses header
-ok 428 - preserves existing permissions
-ok 429 - set up --show-origin tests
-ok 430 - --show-origin with --list
-ok 431 - --show-origin with --list --null
-ok 432 - --show-origin with single file
-ok 433 - --show-origin with --get-regexp
-ok 434 - --show-origin getting a single key
-ok 435 - set up custom config file
-ok 436 - set up custom config file with special name characters
-ok 437 - --show-origin escape special file name characters
-ok 438 - --show-origin stdin
-ok 439 - --show-origin stdin with file include
-ok 440 - --show-origin blob
-ok 441 - --show-origin blob ref
-ok 442 - --show-origin with --default
-ok 443 - --show-scope with --list
-ok 444 - --show-scope with --blob
-ok 445 - --show-scope with --local
-ok 446 - --show-scope getting a single value
-ok 447 - --show-scope with --show-origin
-ok 448 - --show-scope with --default
-ok 449 - override global and system config
-ok 450 - override global and system config with missing file
-ok 451 - system override has no effect with GIT_CONFIG_NOSYSTEM
-ok 452 - write to overridden global and system config
-ok 453 - --local requires a repo
-ok 454 - --worktree requires a repo
-ok 455 - identical modern --type specifiers are allowed
-ok 456 - identical legacy --type specifiers are allowed
-ok 457 - identical mixed --type specifiers are allowed
-ok 458 - non-identical modern --type specifiers are not allowed
-ok 459 - non-identical legacy --type specifiers are not allowed
-ok 460 - non-identical mixed --type specifiers are not allowed
-ok 461 - --type allows valid type specifiers
-ok 462 - --no-type unsets type specifiers
-ok 463 - unset type specifiers may be reset to conflicting ones
-ok 464 - --type rejects unknown specifiers
-ok 465 - --type=int requires at least one digit
-ok 466 - --replace-all does not invent newlines
-ok 467 - set all config with value-pattern
-ok 468 - --replace-all and value-pattern
-ok 469 - refuse --fixed-value for incompatible actions
-ok 470 - --fixed-value uses exact string matching
-ok 471 - --get and --get-all with --fixed-value
-ok 472 - includeIf.hasconfig:remote.*.url
-ok 473 - includeIf.hasconfig:remote.*.url respects last-config-wins
-ok 474 - includeIf.hasconfig:remote.*.url globs
-ok 475 - includeIf.hasconfig:remote.*.url forbids remote url in such included files
-ok 476 - negated mode causes failure
-ok 477 - specifying multiple modes causes failure
-ok 478 - writing to stdin is rejected
-# passed all 478 test(s)
-1..478
+ok 233 - --fixed-value with value-less configuration
+ok 234 - includeIf.hasconfig:remote.*.url
+ok 235 - includeIf.hasconfig:remote.*.url respects last-config-wins
+ok 236 - includeIf.hasconfig:remote.*.url globs
+ok 237 - includeIf.hasconfig:remote.*.url forbids remote url in such included files
+ok 238 - negated mode causes failure
+ok 239 - specifying multiple modes causes failure
+ok 240 - writing to stdin is rejected
+ok 241 - setup whitespace config
+ok 242 - no internal whitespace
+ok 243 - internal whitespace
+ok 244 - internal and trailing whitespace
+ok 245 - internal and trailing whitespace, all quoted
+ok 246 - internal and more trailing whitespace
+ok 247 - internal and more trailing whitespace, all quoted
+ok 248 - internal and more trailing whitespace, not all quoted
+ok 249 - leading and trailing whitespace
+ok 250 - leading and trailing whitespace, all quoted
+ok 251 - leading and trailing whitespace, not all quoted
+ok 252 - inline comment
+ok 253 - inline comment, quoted
+ok 254 - clear default config
+ok 255 - initial
+ok 256 - mixed case
+ok 257 - similar section
+ok 258 - uppercase section
+ok 259 - replace with non-match
+ok 260 - replace with non-match (actually matching)
+ok 261 - append comments
+ok 262 - Prohibited LF in comment
+ok 263 - non-match result
+ok 264 - find mixed-case key by canonical name
+ok 265 - find mixed-case key by non-canonical name
+ok 266 - subsections are not canonicalized by git-config
+ok 267 - value for missing section and missing key is not printed
+ok 268 - value for missing section and existing key is not printed
+ok 269 - value for existing section and missing key is not printed
+ok 270 - value for missing subsection and missing key is not printed
+ok 271 - value for existing subsection and missing key is not printed
+ok 272 - value for missing subsection and existing key is not printed
+ok 273 - unset with cont. lines
+ok 274 - unset with cont. lines is correct
+ok 275 - multiple unset
+ok 276 - multiple unset is correct
+ok 277 - --replace-all missing value
+ok 278 - --replace-all
+ok 279 - all replaced
+ok 280 - really mean test
+ok 281 - really really mean test
+ok 282 - get value
+ok 283 - unset
+ok 284 - multivar
+ok 285 - non-match
+ok 286 - non-match value
+ok 287 - multi-valued get returns final one
+ok 288 - multi-valued get-all returns all
+ok 289 - multivar replace
+ok 290 - ambiguous unset
+ok 291 - invalid unset
+ok 292 - multivar unset
+ok 293 - invalid key
+ok 294 - correct key
+ok 295 - hierarchical section
+ok 296 - hierarchical section value
+ok 297 - working --list
+ok 298 - --list without repo produces empty output
+ok 299 - --name-only --list
+ok 300 - --get-regexp
+ok 301 - --name-only --get-regexp
+ok 302 - --add
+ok 303 - get variable with no value
+ok 304 - get variable with empty value
+ok 305 - get-regexp variable with no value
+ok 306 - get-regexp --bool variable with no value
+ok 307 - get-regexp variable with empty value
+ok 308 - get bool variable with no value
+ok 309 - get bool variable with empty value
+ok 310 - no arguments, but no crash
+ok 311 - new section is partial match of another
+ok 312 - new variable inserts into proper section
+ok 313 - alternative --file (non-existing file should fail)
+ok 314 - alternative GIT_CONFIG
+ok 315 - alternative GIT_CONFIG (--file)
+ok 316 - alternative GIT_CONFIG (--file=-)
+ok 317 - setting a value in stdin is an error
+ok 318 - editing stdin is an error
+ok 319 - refer config from subdirectory
+ok 320 - --set in alternative file
+ok 321 - rename section
+ok 322 - rename succeeded
+ok 323 - rename non-existing section
+ok 324 - rename succeeded
+ok 325 - rename another section
+ok 326 - rename succeeded
+ok 327 - rename a section with a var on the same line
+ok 328 - rename succeeded
+ok 329 - renaming empty section name is rejected
+ok 330 - renaming to bogus section is rejected
+ok 331 - renaming a section with a long line
+ok 332 - renaming an embedded section with a long line
+ok 333 - renaming a section with an overly-long line
+ok 334 - remove section
+ok 335 - section was removed properly
+ok 336 - section ending
+ok 337 - numbers
+ok 338 - --int is at least 64 bits
+ok 339 - invalid unit
+ok 340 - invalid unit boolean
+ok 341 - line number is reported correctly
+ok 342 - invalid stdin config
+ok 343 - bool
+ok 344 - invalid bool (--get)
+ok 345 - invalid bool (set)
+ok 346 - set --bool
+ok 347 - set --int
+ok 348 - get --bool-or-int
+ok 349 - set --bool-or-int
+ok 350 - set --path
+ok 351 - get --path
+ok 352 - get --path copes with unset $HOME
+ok 353 - get --path barfs on boolean variable
+ok 354 - get --expiry-date
+ok 355 - get --type=color
+ok 356 - set --type=color
+ok 357 - get --type=color barfs on non-color
+ok 358 - set --type=color barfs on non-color
+ok 359 - quoting
+ok 360 - key with newline
+ok 361 - value with newline
+ok 362 - value continued on next line
+ok 363 - --null --list
+ok 364 - --null --get-regexp
+ok 365 - inner whitespace kept verbatim, spaces only
+ok 366 - inner whitespace kept verbatim, horizontal tabs only
+ok 367 - inner whitespace kept verbatim, horizontal tabs and spaces
+ok 368 - symlinked configuration
+ok 369 - symlink to nonexistent configuration
+ok 370 - check split_cmdline return
+ok 371 - git -c "key=value" support
+ok 372 - git -c can represent empty string
+ok 373 - key sanity-checking
+ok 374 - git -c works with aliases of builtins
+ok 375 - aliases can be CamelCased
+ok 376 - git -c does not split values on equals
+ok 377 - git -c dies on bogus config
+ok 378 - git -c complains about empty key
+ok 379 - git -c complains about empty key and value
+ok 380 - multiple git -c appends config
+ok 381 - last one wins: two level vars
+ok 382 - last one wins: three level vars
+ok 383 - old-fashioned settings are case insensitive
+ok 384 - setting different case sensitive subsections 
+ok 385 - git -c a=VAL rejects invalid 'a'
+ok 386 - git -c .a=VAL rejects invalid '.a'
+ok 387 - git -c a.=VAL rejects invalid 'a.'
+ok 388 - git -c a.0b=VAL rejects invalid 'a.0b'
+ok 389 - git -c a.b c.=VAL rejects invalid 'a.b c.'
+ok 390 - git -c a.b c.0d=VAL rejects invalid 'a.b c.0d'
+ok 391 - git -c a.b=VAL works with valid 'a.b'
+ok 392 - git -c a.b c.d=VAL works with valid 'a.b c.d'
+ok 393 - git -c is not confused by empty environment
+ok 394 - GIT_CONFIG_PARAMETERS handles old-style entries
+ok 395 - GIT_CONFIG_PARAMETERS handles new-style entries
+ok 396 - old and new-style entries can mix
+ok 397 - old and new bools with ambiguous subsection
+ok 398 - detect bogus GIT_CONFIG_PARAMETERS
+ok 399 - git --config-env=key=envvar support
+ok 400 - git --config-env with missing value
+ok 401 - git --config-env fails with invalid parameters
+ok 402 - git -c and --config-env work together
+ok 403 - git -c and --config-env override each other
+ok 404 - --config-env handles keys with equals
+ok 405 - git config handles environment config pairs
+ok 406 - git config ignores pairs without count
+ok 407 - git config ignores pairs exceeding count
+ok 408 - git config ignores pairs with zero count
+ok 409 - git config ignores pairs with empty count
+ok 410 - git config fails with invalid count
+ok 411 - git config fails with missing config key
+ok 412 - git config fails with missing config value
+ok 413 - git config fails with invalid config pair key
+ok 414 - environment overrides config file
+ok 415 - GIT_CONFIG_PARAMETERS overrides environment config
+ok 416 - command line overrides environment config
+ok 417 - git config --edit works
+ok 418 - git config --edit respects core.editor
+ok 419 - barf on syntax error
+ok 420 - barf on incomplete section header
+ok 421 - barf on incomplete string
+ok 422 - urlmatch
+ok 423 - urlmatch with --show-scope
+ok 424 - urlmatch favors more specific URLs
+ok 425 - urlmatch with wildcard
+ok 426 - --unset last key removes section (except if commented)
+ok 427 - --unset-all removes section if empty & uncommented
+ok 428 - adding a key into an empty section reuses header
+ok 429 - preserves existing permissions
+ok 430 - set up --show-origin tests
+ok 431 - --show-origin with --list
+ok 432 - --show-origin with --list --null
+ok 433 - --show-origin with single file
+ok 434 - --show-origin with --get-regexp
+ok 435 - --show-origin getting a single key
+ok 436 - set up custom config file
+ok 437 - set up custom config file with special name characters
+ok 438 - --show-origin escape special file name characters
+ok 439 - --show-origin stdin
+ok 440 - --show-origin stdin with file include
+ok 441 - --show-origin blob
+ok 442 - --show-origin blob ref
+ok 443 - --show-origin with --default
+ok 444 - --show-scope with --list
+ok 445 - --show-scope with --blob
+ok 446 - --show-scope with --local
+ok 447 - --show-scope getting a single value
+ok 448 - --show-scope with --show-origin
+ok 449 - --show-scope with --default
+ok 450 - override global and system config
+ok 451 - override global and system config with missing file
+ok 452 - system override has no effect with GIT_CONFIG_NOSYSTEM
+ok 453 - write to overridden global and system config
+ok 454 - --local requires a repo
+ok 455 - --worktree requires a repo
+ok 456 - identical modern --type specifiers are allowed
+ok 457 - identical legacy --type specifiers are allowed
+ok 458 - identical mixed --type specifiers are allowed
+ok 459 - non-identical modern --type specifiers are not allowed
+ok 460 - non-identical legacy --type specifiers are not allowed
+ok 461 - non-identical mixed --type specifiers are not allowed
+ok 462 - --type allows valid type specifiers
+ok 463 - --no-type unsets type specifiers
+ok 464 - unset type specifiers may be reset to conflicting ones
+ok 465 - --type rejects unknown specifiers
+ok 466 - --type=int requires at least one digit
+ok 467 - --replace-all does not invent newlines
+ok 468 - set all config with value-pattern
+ok 469 - --replace-all and value-pattern
+ok 470 - refuse --fixed-value for incompatible actions
+ok 471 - --fixed-value uses exact string matching
+ok 472 - --get and --get-all with --fixed-value
+ok 473 - --fixed-value with value-less configuration
+ok 474 - includeIf.hasconfig:remote.*.url
+ok 475 - includeIf.hasconfig:remote.*.url respects last-config-wins
+ok 476 - includeIf.hasconfig:remote.*.url globs
+ok 477 - includeIf.hasconfig:remote.*.url forbids remote url in such included files
+ok 478 - negated mode causes failure
+ok 479 - specifying multiple modes causes failure
+ok 480 - writing to stdin is rejected
+# passed all 480 test(s)
+1..480
 *** t1301-shared-repo.sh ***
 ok 1 - shared = 0400 (faulty permission u-w)
 ok 2 - shared=1 does not clear bits preset by umask 002
@@ -8296,35 +8304,36 @@ ok 2 - correct usage on sub-command -h
 ok 3 - correct usage on "git reflog show -h"
 ok 4 - pass through -- to sub-command
 ok 5 - rewind
-ok 6 - corrupt and check
-ok 7 - reflog expire --dry-run should not touch reflog
-ok 8 - reflog expire
-ok 9 - --stale-fix handles missing objects generously
-ok 10 - prune and fsck
-ok 11 - recover and check
-ok 12 - delete
-ok 13 - rewind2
-ok 14 - --expire=never
-ok 15 - gc.reflogexpire=never
-ok 16 - gc.reflogexpire=false
-ok 17 - git reflog expire unknown reference
-ok 18 - checkout should not delete log for packed ref
-ok 19 - stale dirs do not cause d/f conflicts (reflogs on)
-ok 20 - stale dirs do not cause d/f conflicts (reflogs off)
-ok 21 - no segfaults for reflog containing non-commit sha1s
-not ok 22 - reflog with non-commit entries displays all entries # TODO known breakage
-ok 23 - continue walking past root commits
-ok 24 - expire with multiple worktrees
-ok 25 - expire one of multiple worktrees
-ok 26 - empty reflog
-ok 27 - list reflogs
-ok 28 - list reflogs with worktree
-ok 29 - reflog list returns error with additional args
-ok 30 - reflog for symref with unborn target can be listed
-ok 31 - reflog with invalid object ID can be listed
+ok 6 - reflog expire should not barf on an annotated tag
+ok 7 - corrupt and check
+ok 8 - reflog expire --dry-run should not touch reflog
+ok 9 - reflog expire
+ok 10 - --stale-fix handles missing objects generously
+ok 11 - prune and fsck
+ok 12 - recover and check
+ok 13 - delete
+ok 14 - rewind2
+ok 15 - --expire=never
+ok 16 - gc.reflogexpire=never
+ok 17 - gc.reflogexpire=false
+ok 18 - git reflog expire unknown reference
+ok 19 - checkout should not delete log for packed ref
+ok 20 - stale dirs do not cause d/f conflicts (reflogs on)
+ok 21 - stale dirs do not cause d/f conflicts (reflogs off)
+ok 22 - no segfaults for reflog containing non-commit sha1s
+not ok 23 - reflog with non-commit entries displays all entries # TODO known breakage
+ok 24 - continue walking past root commits
+ok 25 - expire with multiple worktrees
+ok 26 - expire one of multiple worktrees
+ok 27 - empty reflog
+ok 28 - list reflogs
+ok 29 - list reflogs with worktree
+ok 30 - reflog list returns error with additional args
+ok 31 - reflog for symref with unborn target can be listed
+ok 32 - reflog with invalid object ID can be listed
 # still have 1 known breakage(s)
-# passed all remaining 30 test(s)
-1..31
+# passed all remaining 31 test(s)
+1..32
 *** t1411-reflog-show.sh ***
 ok 1 - setup
 ok 2 - log -g shows reflog headers
@@ -13375,8 +13384,9 @@ ok 145 - 'git notes append -C "$empty_blob" --allow-empty' stores empty note
 ok 146 - 'git notes edit' removes empty note
 ok 147 - 'git notes edit --allow-empty' stores empty note
 ok 148 - empty notes are displayed by git log
-# passed all 148 test(s)
-1..148
+ok 149 - empty notes do not invoke the editor
+# passed all 149 test(s)
+1..149
 *** t3302-notes-index-expensive.sh ***
 ok 1 - setup 10
 ok 2 - notes work
@@ -15259,8 +15269,9 @@ ok 78 - add -N followed by add -p patch editing
 ok 79 - checkout -p patch editing of added file
 ok 80 - show help from add--helper
 ok 81 - reset -p with unmerged files
-# passed all 81 test(s)
-1..81
+ok 82 - hunk splitting works with diff.suppressBlankEmpty
+# passed all 82 test(s)
+1..82
 *** t3702-add-edit.sh ***
 ok 1 - setup
 ok 2 - add -e
@@ -15664,19 +15675,20 @@ ok 113 - stash -- <subdir> works with binary files
 ok 114 - stash with user.name and user.email set works
 ok 115 - stash works when user.name and user.email are not set
 ok 116 - stash --keep-index with file deleted in index does not resurrect it on disk
-ok 117 - stash apply should succeed with unmodified file
-ok 118 - stash handles skip-worktree entries nicely
-ok 119 - stash with core.fsyncmethod=batch
-ok 120 - git stash succeeds despite directory/file change
-ok 121 - git stash can pop file -> directory saved changes
-ok 122 - git stash can pop directory -> file saved changes
-ok 123 - restore untracked files even when we hit conflicts
-ok 124 - stash create reports a locked index
-ok 125 - stash push reports a locked index
-ok 126 - stash apply reports a locked index
+ok 117 - stash --keep-index --include-untracked with empty tree
+ok 118 - stash apply should succeed with unmodified file
+ok 119 - stash handles skip-worktree entries nicely
+ok 120 - stash with core.fsyncmethod=batch
+ok 121 - git stash succeeds despite directory/file change
+ok 122 - git stash can pop file -> directory saved changes
+ok 123 - git stash can pop directory -> file saved changes
+ok 124 - restore untracked files even when we hit conflicts
+ok 125 - stash create reports a locked index
+ok 126 - stash push reports a locked index
+ok 127 - stash apply reports a locked index
 # still have 2 known breakage(s)
-# passed all remaining 124 test(s)
-1..126
+# passed all remaining 125 test(s)
+1..127
 *** t3904-stash-patch.sh ***
 ok 1 - setup
 ok 2 - saying "n" does nothing
@@ -18062,16 +18074,17 @@ ok 3 - remerge-diff on a clean merge with a filter
 ok 4 - remerge-diff with both a resolved conflict and an unrelated change
 ok 5 - pickaxe still includes additional headers for relevant changes
 ok 6 - can filter out additional headers with pickaxe
-ok 7 - setup non-content conflicts
-ok 8 - remerge-diff with non-content conflicts
-ok 9 - remerge-diff w/ diff-filter=U: all conflict headers, no diff content
-ok 10 - submodule formatting ignores additional headers
-ok 11 - remerge-diff w/ diff-filter=R: relevant file + conflict header
-ok 12 - remerge-diff w/ pathspec: limits to relevant file including conflict header
-ok 13 - setup non-content conflicts
-ok 14 - remerge-diff turns off history simplification
-# passed all 14 test(s)
-1..14
+ok 7 - remerge-diff also works for git-diff-tree
+ok 8 - setup non-content conflicts
+ok 9 - remerge-diff with non-content conflicts
+ok 10 - remerge-diff w/ diff-filter=U: all conflict headers, no diff content
+ok 11 - submodule formatting ignores additional headers
+ok 12 - remerge-diff w/ diff-filter=R: relevant file + conflict header
+ok 13 - remerge-diff w/ pathspec: limits to relevant file including conflict header
+ok 14 - setup non-content conflicts
+ok 15 - remerge-diff turns off history simplification
+# passed all 15 test(s)
+1..15
 *** t4100-apply-stat.sh ***
 ok 1 - rename
 ok 2 - rename with recount
@@ -18482,8 +18495,11 @@ ok 8 - empty mode is rejected
 ok 9 - bogus mode is rejected
 ok 10 - do not use core.sharedRepository for working tree files
 ok 11 - git apply respects core.fileMode
-# passed all 11 test(s)
-1..11
+ok 12 - patch mode for new file is canonicalized
+ok 13 - patch mode for deleted file is canonicalized
+ok 14 - patch mode for mode change is canonicalized
+# passed all 14 test(s)
+1..14
 *** t4130-apply-criss-cross-rename.sh ***
 ok 1 - setup
 ok 2 - criss-cross rename
@@ -19071,28 +19087,32 @@ ok 4 - patch-id detects inequality
 ok 5 - patch-id detects equality binary
 ok 6 - patch-id detects inequality binary
 ok 7 - patch-id supports git-format-patch output
-ok 8 - whitespace is irrelevant in footer
-ok 9 - file order is irrelevant with --stable
-ok 10 - file order is relevant with --unstable
-ok 11 - whitespace is relevant with --verbatim
-ok 12 - whitespace is irrelevant without --verbatim
-ok 13 - default is unstable
-ok 14 - patchid.stable = true is stable
-ok 15 - patchid.stable = false is unstable
-ok 16 - patchid.verbatim = true is correct and stable
-ok 17 - patchid.verbatim = false is unstable
-ok 18 - --unstable overrides patchid.stable = true
-ok 19 - --stable overrides patchid.stable = false
-ok 20 - --verbatim overrides patchid.stable = false
-ok 21 - patch-id supports git-format-patch MIME output
-ok 22 - patch-id respects config from subdir
-ok 23 - patch-id handles no-nl-at-eof markers
-ok 24 - patch-id handles diffs with one line of before/after
-not ok 25 - patch-id computes same ID with different object hashes # TODO known breakage
-ok 26 - patch-id without repository
+ok 8 - patch-id computes the same for various formats
+ok 9 - patch-id with <07cc3954621a0b8e9da46b164f8d583956d8fe4b> in log message
+ok 10 - patch-id with <commit 07cc3954621a0b8e9da46b164f8d583956d8fe4b is bad> in log message
+ok 11 - patch-id with <From 07cc3954621a0b8e9da46b164f8d583956d8fe4b status> in log message
+ok 12 - whitespace is irrelevant in footer
+ok 13 - file order is irrelevant with --stable
+ok 14 - file order is relevant with --unstable
+ok 15 - whitespace is relevant with --verbatim
+ok 16 - whitespace is irrelevant without --verbatim
+ok 17 - default is unstable
+ok 18 - patchid.stable = true is stable
+ok 19 - patchid.stable = false is unstable
+ok 20 - patchid.verbatim = true is correct and stable
+ok 21 - patchid.verbatim = false is unstable
+ok 22 - --unstable overrides patchid.stable = true
+ok 23 - --stable overrides patchid.stable = false
+ok 24 - --verbatim overrides patchid.stable = false
+ok 25 - patch-id supports git-format-patch MIME output
+ok 26 - patch-id respects config from subdir
+ok 27 - patch-id handles no-nl-at-eof markers
+ok 28 - patch-id handles diffs with one line of before/after
+not ok 29 - patch-id computes same ID with different object hashes # TODO known breakage
+ok 30 - patch-id without repository
 # still have 1 known breakage(s)
-# passed all remaining 25 test(s)
-1..26
+# passed all remaining 29 test(s)
+1..30
 *** t4205-log-pretty-formats.sh ***
 ok 1 - set up basic repos
 ok 2 - alias builtin format
@@ -20163,8 +20183,12 @@ ok 49 - make sure index-pack detects the SHA1 collision
 ok 50 - make sure index-pack detects the SHA1 collision (large blobs)
 ok 51 - prefetch objects
 ok 52 - negative window clamps to 0
-# passed all 52 test(s)
-1..52
+ok 53 - verify-pack with sha1 packfile
+ok 54 - index-pack outside of a sha1 repository
+ok 55 - verify-pack with sha256 packfile
+ok 56 - index-pack outside of a sha256 repository
+# passed all 56 test(s)
+1..56
 *** t5301-sliding-window.sh ***
 ok 1 - setup
 ok 2 - verify-pack -v, defaults
@@ -22968,8 +22992,9 @@ ok 36 - ls-remote --sort fails gracefully outside repository
 ok 37 - ls-remote patterns work with all protocol versions
 ok 38 - ls-remote prefixes work with all protocol versions
 ok 39 - v0 clients can handle multiple symrefs
-# passed all 39 test(s)
-1..39
+ok 40 - helper with refspec capability fails gracefully
+# passed all 40 test(s)
+1..40
 *** t5513-fetch-track.sh ***
 ok 1 - setup
 ok 2 - fetch
@@ -24480,7 +24505,20 @@ ok 4 - pull with git:// using protocol v1
 ok 5 - push with git:// using protocol v1
 ok 6 - create repo to be served by file:// transport
 ok 7 - clone with file:// using protocol v1
-ok 8 - fetch with file:// using protocol v1
+not ok 8 - fetch with file:// using protocol v1
+#	
+#		test_commit -C file_parent two &&
+#	
+#		GIT_TRACE_PACKET=1 git -C file_child -c protocol.version=1 \
+#			fetch 2>log &&
+#	
+#		git -C file_child log -1 --format=%s origin/main >actual &&
+#		git -C file_parent log -1 --format=%s >expect &&
+#		test_cmp expect actual &&
+#	
+#		# Server responded using protocol v1
+#		grep "fetch< version 1" log
+#	
 ok 9 - pull with file:// using protocol v1
 ok 10 - push with file:// using protocol v1
 ok 11 - cloning branchless tagless but not refless remote
@@ -24491,8 +24529,7 @@ ok 15 - fetch with ssh:// using protocol v1
 ok 16 - pull with ssh:// using protocol v1
 ok 17 - push with ssh:// using protocol v1
 ok 18 - clone propagates object-format from empty repo
-# passed all 18 test(s)
-# SKIP no web server found at ''
+# failed 1 among 18 test(s)
 1..18
 *** t5701-git-serve.sh ***
 ok 1 - test capability advertisement
@@ -25503,8 +25540,12 @@ ok 23 - create --quiet disables all bundle progress
 ok 24 - bundle progress with --no-quiet
 ok 25 - read bundle over stdin
 ok 26 - send a bundle to standard output
-# passed all 26 test(s)
-1..26
+ok 27 - unbundle outside of a repository
+ok 28 - list-heads outside of a repository
+ok 29 - list-heads with bundle using sha1
+ok 30 - list-heads with bundle using sha256
+# passed all 30 test(s)
+1..30
 *** t6021-rev-list-exclude-hidden.sh ***
 ok 1 - setup
 ok 2 - invalid section
@@ -28727,24 +28768,25 @@ ok 26 - checkout with --track, but without -b, fails with too short tracked name
 ok 27 - checkout an unmerged path should fail
 ok 28 - checkout with an unmerged path can be ignored
 ok 29 - checkout unmerged stage
-ok 30 - checkout path with --merge from tree-ish is a no-no
-ok 31 - checkout with --merge
-ok 32 - checkout -m works after (mistaken) resolution
-ok 33 - checkout -m works after (mistaken) resolution to remove
-ok 34 - checkout with --merge, in diff3 -m style
-ok 35 - checkout --conflict=merge, overriding config
-ok 36 - checkout --conflict=diff3
-ok 37 - checkout --conflict=diff3 --no-conflict does not merge
-ok 38 - checkout --conflict=diff3 --no-merge does not merge
-ok 39 - checkout --no-merge --conflict=diff3 does merge
-ok 40 - checkout --merge --conflict=diff3 --no-conflict does merge
-ok 41 - checkout with invalid conflict style
-ok 42 - failing checkout -b should not break working tree
-ok 43 - switch out of non-branch
-ok 44 - custom merge driver with checkout -m
-ok 45 - tracking info copied with autoSetupMerge=inherit
-# passed all 45 test(s)
-1..45
+ok 30 - checkout --ours is incompatible with switching
+ok 31 - checkout path with --merge from tree-ish is a no-no
+ok 32 - checkout with --merge
+ok 33 - checkout -m works after (mistaken) resolution
+ok 34 - checkout -m works after (mistaken) resolution to remove
+ok 35 - checkout with --merge, in diff3 -m style
+ok 36 - checkout --conflict=merge, overriding config
+ok 37 - checkout --conflict=diff3
+ok 38 - checkout --conflict=diff3 --no-conflict does not merge
+ok 39 - checkout --conflict=diff3 --no-merge does not merge
+ok 40 - checkout --no-merge --conflict=diff3 does merge
+ok 41 - checkout --merge --conflict=diff3 --no-conflict does merge
+ok 42 - checkout with invalid conflict style
+ok 43 - failing checkout -b should not break working tree
+ok 44 - switch out of non-branch
+ok 45 - custom merge driver with checkout -m
+ok 46 - tracking info copied with autoSetupMerge=inherit
+# passed all 46 test(s)
+1..46
 *** t7300-clean.sh ***
 ok 1 - setup
 ok 2 - git clean with skip-worktree .gitignore
@@ -33392,8 +33434,11 @@ ok 67 - prompt - conflict indicator
 
 missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UTF8_NFD_TO_NFC WINDOWS
 
+
+failed test(s): t5700
+
 fixed   1
-success 29685
-failed  0
+success 29714
+failed  1
 broken  271
-total   30406
+total   30436
