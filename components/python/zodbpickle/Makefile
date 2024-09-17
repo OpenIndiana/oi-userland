@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project zodbpickle
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zodbpickle
-HUMAN_VERSION =			4.0
+HUMAN_VERSION =			4.1
 COMPONENT_SUMMARY =		Fork of Python 3 pickle module.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zodbpickle
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e85bad9560d6092a635bebee78a43b0f1c926a66912be390e88cab66f4dec180
+	sha256:7ac8356b0c62dc7400f9bd265325f615eecb24f1435859c1e2eb444358afb757
 COMPONENT_LICENSE =		PSF-2.0 OR ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
