@@ -25,18 +25,17 @@
 # Copyright (c) 2023, Klaus Ziegler
 #
 
-USE_COMMON_TEST_MASTER= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			tk
 COMPONENT_MJR_VERSION=	8.6
-COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).14
+COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).15
 COMPONENT_SUMMARY=		Tk - TCL GUI Toolkit
 COMPONENT_DESCRIPTION=	Tk is an open source, cross-platform widget toolkit that provides a library of basic elements for building a graphical user interface
 COMPONENT_PROJECT_URL=	https://www.tcl-lang.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-src.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:8ffdb720f47a6ca6107eac2dd877e30b0ef7fac14f3a84ebbd0b3612cee41a94
+COMPONENT_ARCHIVE_HASH= sha256:550969f35379f952b3020f3ab7b9dd5bfd11c1ef7c9b7c6a75f5c49aca793fec
 COMPONENT_ARCHIVE_URL=	https://prdownloads.sourceforge.net/tcl/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/tk-8
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -47,17 +46,15 @@ include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MJR_VERSION)
 
-COMPONENT_PREP_ACTION= \
-	(cd $(@D)/unix ; autoreconf -f)
+COMPONENT_PREP_ACTION= ( cd $(@D)/unix ; autoreconf -f )
 
-COMPONENT_PRE_CONFIGURE_ACTION= \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # This macro will help to look for the configure
 # file at the pointed location
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/unix/configure
 
-CFLAGS += $(XPG6MODE) -std=c99
+CFLAGS += $(XPG6MODE)
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-man-symlinks
