@@ -1,11 +1,11 @@
---- graphviz-9.0.0/configure.ac	2023-09-11 20:30:03.000000000 +0200
-+++ graphviz-9.0.0/configure.ac.new	2023-10-07 19:09:25.481849941 +0200
-@@ -624,7 +624,7 @@
+--- graphviz-12.1.1/configure.ac.orig
++++ graphviz-12.1.1/configure.ac
+@@ -580,7 +580,7 @@
          GUILE_VERSION_MAJOR=`echo $GUILE_VERSION | cut -d '.' -f 1`
          GUILE_VERSION_MINOR=`echo $GUILE_VERSION | cut -d '.' -f 2`
          AC_CHECK_PROGS(GUILE,guile$GUILE_VERSION_MAJOR.$GUILE_VERSION_MINOR guile$GUILE_VERSION_MAJOR guile)
 -        AX_COMPARE_VERSION([0$GUILE_VERSION_MAJOR.0$GUILE_VERSION_MINOR], [lt],
 +        AX_COMPARE_VERSION([$GUILE_VERSION_MAJOR.$GUILE_VERSION_MINOR], [lt],
                             [1.4], [GUILE_CONFIG=])
-         if test "x$GUILE_CONFIG" = "x"; then
+         if test "$GUILE_CONFIG" = ""; then
  	  use_guile="No (guile is too old)"
