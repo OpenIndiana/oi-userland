@@ -1,0 +1,48 @@
+#!/usr/bin/ksh93
+#
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2024 Marcel Telka
+#
+
+set -e
+
+. /lib/svc/share/smf_include.sh
+
+GRAPHVIZ_PLUGINS_DIR="/usr/lib/amd64/graphviz"
+GRAPHVIZ_PLUGINS_CONFIG="$GRAPHVIZ_PLUGINS_DIR/config6"
+GRAPHVIZ_PLUGINS="libgvplugin_*"
+FIND="/usr/bin/find"
+DOT="/usr/bin/dot"
+
+integer NEEDS_RECONFIGURE=0
+
+# Always reconfigure plugins on refresh
+[[ "$1" = "refresh" ]] && NEEDS_RECONFIGURE=1
+
+if [[ ! -f "$GRAPHVIZ_PLUGINS_CONFIG" ]] ; then
+	NEEDS_RECONFIGURE=1
+else
+	if [[ -n "$($FIND "$GRAPHVIZ_PLUGINS_DIR" \
+	    -name "$GRAPHVIZ_PLUGINS" \
+	    -newer "$GRAPHVIZ_PLUGINS_CONFIG")" ]] ; then
+		NEEDS_RECONFIGURE=1
+	fi
+fi
+
+if ((NEEDS_RECONFIGURE != 0)) ; then
+	printf "Configuring graphviz plugins\n"
+	$DOT -c
+fi
+
+exit $SMF_EXIT_OK

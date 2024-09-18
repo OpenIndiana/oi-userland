@@ -60,6 +60,10 @@
 <transform file path=etc/hpnssh/sshd?_config -> default preserve renamenew>
 <transform file path=etc/hpnssh/sshd_config -> default restart_fmri svc:/network/hpnssh:default>
 
+# Change in Graphviz plugins should refresh the plugins configuration
+<transform file link hardlink path=usr/lib.*/graphviz/libgvplugin_ -> \
+    default refresh_fmri svc:/application/graphviz/configure-plugins:default>
+
 #
 # Most directories and files under /etc/security are group sys
 #
