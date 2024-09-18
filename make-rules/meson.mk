@@ -49,6 +49,9 @@ endif
 
 MESON_BUILDPIE ?=	false
 
+# By default do not download any subprojects
+MESON_WRAPMODE ?=	nodownload
+
 # If the component prefers 64-bit binaries, then ensure builds deliver 64-bit
 # binaries to the standard directories and 32-bit binaries to the non-standard
 # location.  This allows simplification of package manifests and makes it
@@ -117,6 +120,7 @@ CONFIGURE_OPTIONS += --buildtype=$(MESON_BUILDTYPE)
 CONFIGURE_OPTIONS += --optimization=$(MESON_OPTIMIZATION)
 CONFIGURE_OPTIONS += -Ddefault_library=shared
 CONFIGURE_OPTIONS += -Db_pie=$(MESON_BUILDPIE)
+CONFIGURE_OPTIONS += --wrap-mode=$(MESON_WRAPMODE)
 
 # Install paths
 CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
