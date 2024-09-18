@@ -1,13 +1,13 @@
 We test in proto area not in site-packages.
 
---- pyproject_api-1.7.1/tox.ini.orig
-+++ pyproject_api-1.7.1/tox.ini
-@@ -28,7 +28,7 @@
-     COVERAGE_FILE = {env:COVERAGE_FILE:{toxworkdir}{/}.coverage.{envname}}
+--- pyproject_api-1.7.2/tox.ini.orig
++++ pyproject_api-1.7.2/tox.ini
+@@ -29,7 +29,7 @@
+     _COVERAGE_SRC = {env_site_packages_dir}/sphinx_argparse_cli
  commands =
-     pytest {tty:--color=yes} {posargs: --no-cov-on-fail --cov-context=test \
--      --cov={envsitepackagesdir}{/}pyproject_api --cov={toxinidir}{/}tests --cov-config={toxinidir}{/}pyproject.toml \
-+      --cov=pyproject_api --cov={toxinidir}{/}tests --cov-config={toxinidir}{/}pyproject.toml \
-       --cov-report=term-missing:skip-covered --cov-report=html:{envtmpdir}{/}htmlcov \
-       --cov-report=xml:{toxworkdir}{/}coverage.{envname}.xml --junitxml={toxworkdir}{/}junit.{envname}.xml \
-       tests}
+     pytest {tty:--color=yes} {posargs: \
+-      --junitxml {work_dir}{/}junit.{env_name}.xml --cov {env_site_packages_dir}{/}pyproject_api \
++      --junitxml {work_dir}{/}junit.{env_name}.xml --cov pyproject_api \
+       --cov {tox_root}{/}tests --cov-fail-under=100 \
+       --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test \
+       --cov-report html:{env_tmp_dir}{/}htmlcov --cov-report xml:{work_dir}{/}coverage.{env_name}.xml \
