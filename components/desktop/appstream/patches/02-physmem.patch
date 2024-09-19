@@ -1,0 +1,26 @@
+https://github.com/ximion/appstream/pull/666
+
+--- AppStream-1.0.3/src/as-system-info.c.orig
++++ AppStream-1.0.3/src/as-system-info.c
+@@ -52,6 +52,8 @@
+ #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__APPLE__)
+ #include <sys/types.h>
+ #include <sys/sysctl.h>
++#elif defined(__sun)
++#include <unistd.h>
+ #endif
+ #ifdef HAVE_SYSTEMD
+ #include <systemd/sd-hwdb.h>
+@@ -498,6 +500,12 @@
+ 	statex.dwLength = sizeof (statex);
+ 	GlobalMemoryStatusEx (&statex);
+ 	return statex.ullTotalPhys / (1024 * 1024);
++#elif defined(__sun)
++	long physpages = sysconf(_SC_PHYS_PAGES);
++	long pagesize = sysconf(_SC_PAGESIZE);
++	if (physpages > 0 && pagesize > 0)
++		return (physpages * pagesize) / MB_IN_BYTES;
++	return 0;
+ #else
+ #error "Implementation of as_get_physical_memory_total() missing for this OS."
+ #endif

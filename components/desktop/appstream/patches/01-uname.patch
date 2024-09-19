@@ -1,0 +1,13 @@
+https://github.com/ximion/appstream/pull/665
+
+--- AppStream-1.0.3/src/as-system-info.c.orig
++++ AppStream-1.0.3/src/as-system-info.c
+@@ -392,7 +392,7 @@
+ 	if (priv->kernel_name != NULL)
+ 		return;
+ 
+-	if (uname (&utsbuf) != 0) {
++	if (uname (&utsbuf) < 0) {
+ 		g_warning ("Unable to read kernel information via uname: %s", g_strerror (errno));
+ 		return;
+ 	}
