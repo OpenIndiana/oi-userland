@@ -20,19 +20,16 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gtk+
-COMPONENT_MJR_VERSION=	3.24
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).41
+HUMAN_VERSION=		3.24.43
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:47da61487af3087a94bc49296fd025ca0bc02f96ef06c556e7c8988bd651b6fa
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:7e04f0648515034b806b74ae5d774d87cffb1a2a96c468cb5be476d51bf2f3c7
 COMPONENT_PROJECT_URL=  https://www.gtk.org/
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_FMRI=         library/desktop/gtk3
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE=      LGPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
@@ -49,17 +46,14 @@ CONFIGURE_OPTIONS += -Dgtk_doc=true
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
-# Tests are run using an X virtual framebuffer.
-COMPONENT_TEST_ENV= DISPLAY=:1
-
-COMPONENT_PRE_TEST_ACTION = \
-    $(SHELL) $(COMPONENT_DIR)/start_Xvfb $(COMPONENT_DIR)
-COMPONENT_POST_TEST_ACTION = \
-    $(SHELL) $(COMPONENT_DIR)/stop_Xvfb $(COMPONENT_DIR)
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Test dependencies
 TEST_REQUIRED_PACKAGES += gnome/theme/hicolor-icon-theme
-TEST_REQUIRED_PACKAGES += x11/server/xvfb
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
