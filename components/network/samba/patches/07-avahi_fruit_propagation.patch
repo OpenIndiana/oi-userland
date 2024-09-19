@@ -1,0 +1,26 @@
+# This patch fixes the avahi service propagation.
+# It changes the propagated port from 0 to 9, making, e.g. 
+# timecapsule advertisement with MacOS working again.
+# Nevertheless, there is no communication done over that port.
+
+
+--- source3/smbd/avahi_register.c.old	2024-09-19 12:39:33.000000000 +0200
++++ source3/smbd/avahi_register.c	2024-09-19 12:41:02.000000000 +0200
+@@ -186,7 +186,7 @@
+ 			error = avahi_entry_group_add_service_strlst(
+ 				    state->entry_group, AVAHI_IF_UNSPEC,
+ 				    AVAHI_PROTO_UNSPEC, 0, hostname,
+-				    "_adisk._tcp", NULL, NULL, 0, adisk);
++				    "_adisk._tcp", NULL, NULL, 9, adisk);
+ 			avahi_string_list_free(adisk);
+ 			adisk = NULL;
+ 			if (error != AVAHI_OK) {
+@@ -212,7 +212,7 @@
+ 		error = avahi_entry_group_add_service_strlst(
+ 			    state->entry_group, AVAHI_IF_UNSPEC,
+ 			    AVAHI_PROTO_UNSPEC, 0, hostname,
+-			    "_device-info._tcp", NULL, NULL, 0,
++			    "_device-info._tcp", NULL, NULL, 9,
+ 			    dinfo);
+ 		avahi_string_list_free(dinfo);
+ 		if (error != AVAHI_OK) {
