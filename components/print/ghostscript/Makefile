@@ -30,14 +30,14 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
-COMPONENT_VERSION=      10.3.1
-HUMAN_VERSION=		10.03.1
+COMPONENT_VERSION=      10.4.0
+HUMAN_VERSION=		10.04.0
 NUMERICAL_VERSION=	$(subst .,,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	Ghostscript is an interpreter for the PostScript language and PDF files
 COMPONENT_PROJECT_URL=	https://ghostscript.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:157212edc96b8ccc409475dce2e49833fb4427f150c455258ded9632c106abee
+COMPONENT_ARCHIVE_HASH= sha256:527eef0b6cd04ecf1c8d7a11796c69a52d34ffe36afca86a400729a2fc01c887
 COMPONENT_DOWNLOAD_URL= https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/gs$(NUMERICAL_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	print/filter/ghostscript
