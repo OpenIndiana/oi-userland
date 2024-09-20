@@ -1,0 +1,65 @@
+GTK3 apps using libsoup3 won't start with this message:
+
+GTK+ 2.x symbols detected. Using GTK+ 2.x and GTK+ 3 in the same process is not supported 
+
+Apply equivalent  patch to libsoup3 that was also added libsoup.
+
+--- libsoup-3.6.0/meson.build.old	2024-09-20 13:41:59.904413534 -0400
++++ libsoup-3.6.0/meson.build	2024-09-20 13:43:01.350222270 -0400
+@@ -101,14 +101,12 @@
+ glib_required_version = '>= 2.70.0'
+ glib_dep = dependency('glib-2.0', version : glib_required_version,
+                        fallback: ['glib', 'libglib_dep'])
+-gmodule_dep = dependency('gmodule-no-export-2.0', version : glib_required_version,
+-                         fallback: ['glib', 'libgmodule_dep'])
+ gobject_dep = dependency('gobject-2.0', version : glib_required_version,
+                        fallback: ['glib', 'libgobject_dep'])
+ gio_dep = dependency('gio-2.0', version : glib_required_version,
+                        fallback: ['glib', 'libgio_dep'])
+ 
+-glib_deps = [glib_dep, gmodule_dep, gobject_dep, gio_dep]
++glib_deps = [glib_dep, gobject_dep, gio_dep]
+ 
+ cdata = configuration_data()
+ 
+--- libsoup-3.6.0/libsoup/soup-init.c.old	2024-09-20 13:43:42.199169399 -0400
++++ libsoup-3.6.0/libsoup/soup-init.c	2024-09-20 13:45:18.581578208 -0400
+@@ -10,7 +10,6 @@
+ #endif
+ 
+ #include <glib/gi18n-lib.h>
+-#include <gmodule.h>
+ #include "gconstructor.h"
+ 
+ #ifdef G_OS_WIN32
+@@ -20,21 +19,6 @@
+ HMODULE soup_dll;
+ #endif
+ 
+-static gboolean
+-soup2_is_loaded (void)
+-{
+-    GModule *module = g_module_open (NULL, 0);
+-    gpointer func;
+-    gboolean result = FALSE;
+-
+-    if (g_module_symbol (module, "soup_uri_new", &func))
+-        result = TRUE;
+-
+-    g_module_close (module);
+-
+-    return result;
+-}
+-
+ static void
+ soup_init (void)
+ {
+@@ -51,8 +35,6 @@
+ 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+ #endif
+ 
+-        if (soup2_is_loaded ())
+-                g_error ("libsoup2 symbols detected. Using libsoup2 and libsoup3 in the same process is not supported.");
+ }
+ 
+ #if defined (G_OS_WIN32)
