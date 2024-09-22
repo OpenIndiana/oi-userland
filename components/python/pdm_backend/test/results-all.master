@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 87 items
+collecting ... collected 91 items
 
 tests/pdm/backend/hooks/version/test_scm.py::test__get_version_from_scm__returns_tag_if_method_unspecified[git] PASSED
 tests/pdm/backend/hooks/version/test_scm.py::test__get_version_from_scm__returns_tag_if_method_unspecified[hg] PASSED
@@ -23,6 +23,10 @@ tests/pdm/backend/hooks/version/test_scm.py::test__get_version_from_scm__selects
 tests/pdm/backend/hooks/version/test_scm.py::test__get_version_from_scm__selects_by_tag_filter_on_different_commits[git-1] PASSED
 tests/pdm/backend/hooks/version/test_scm.py::test__get_version_from_scm__selects_by_tag_filter_on_different_commits[hg-0] PASSED
 tests/pdm/backend/hooks/version/test_scm.py::test__get_version_from_scm__selects_by_tag_filter_on_different_commits[hg-1] PASSED
+tests/pdm/backend/hooks/version/test_scm.py::test_default_version_formatter_distance[None-1.0.0] PASSED
+tests/pdm/backend/hooks/version/test_scm.py::test_default_version_formatter_distance[1-1.0.1.dev1+g1234567] PASSED
+tests/pdm/backend/hooks/version/test_scm.py::test_default_version_formatter_dirty[None-1.0.0+d20240922] PASSED
+tests/pdm/backend/hooks/version/test_scm.py::test_default_version_formatter_dirty[1-1.0.1.dev1+g1234567.d20240922] PASSED
 tests/test_api.py::test_build_single_module[demo-module] PASSED
 tests/test_api.py::test_build_single_module_with_build_number[demo-module] PASSED
 tests/test_api.py::test_build_single_module_without_build_number[demo-module] PASSED
@@ -57,6 +61,7 @@ tests/test_api.py::test_clean_not_called_if_envset[demo-using-scm-1-False] PASSE
 tests/test_api.py::test_clean_not_called_if_config_settings_exist[demo-using-scm--False] PASSED
 tests/test_api.py::test_clean_not_called_if_config_settings_exist[demo-using-scm-True-False] PASSED
 tests/test_api.py::test_clean_not_called_if_config_settings_exist[demo-using-scm-None-False] PASSED
+tests/test_api.py::test_build_wheel_with_license_file[demo-licenses] PASSED
 tests/test_file_finder.py::test_auto_include_tests_for_sdist[WheelBuilder] PASSED
 tests/test_file_finder.py::test_auto_include_tests_for_sdist[SdistBuilder] PASSED
 tests/test_file_finder.py::test_is_same_or_descendant_path[a/b-a-True] PASSED
@@ -71,11 +76,11 @@ tests/test_file_finder.py::test_merge_includes_and_excludes[includes1-excludes1-
 tests/test_file_finder.py::test_merge_includes_and_excludes[includes2-excludes2-False-True] PASSED
 tests/test_file_finder.py::test_merge_includes_and_excludes[includes3-excludes3-True-False] PASSED
 tests/test_file_finder.py::test_merge_includes_and_excludes[includes4-excludes4-False-False] PASSED
-tests/test_file_finder.py::test_license_file_globs_no_matching PASSED
+tests/test_file_finder.py::test_license_file_matching PASSED
+tests/test_file_finder.py::test_license_file_glob_matching PASSED
+tests/test_file_finder.py::test_default_license_files PASSED
 tests/test_file_finder.py::test_license_file_paths_no_matching PASSED
-tests/test_file_finder.py::test_license_file_explicit_empty[paths] PASSED
-tests/test_file_finder.py::test_license_file_explicit_empty[globs] PASSED
-tests/test_file_finder.py::test_reuse_spec_licenses_dir PASSED
+tests/test_file_finder.py::test_license_file_explicit_empty PASSED
 tests/test_file_finder.py::test_collect_build_files_with_src_layout PASSED
 tests/test_hooks.py::test_load_hooks PASSED
 tests/test_metadata.py::test_parse_module PASSED
@@ -86,11 +91,10 @@ tests/test_metadata.py::test_parse_pep420_namespace_package PASSED
 tests/test_metadata.py::test_explicit_package_dir PASSED
 tests/test_metadata.py::test_implicit_namespace_package PASSED
 tests/test_metadata.py::test_src_dir_containing_modules PASSED
-tests/test_metadata.py::test_default_license_files PASSED
 tests/test_utils.py::test_expand_vars_posix PASSED
 tests/test_utils.py::test_expand_vars_win SKIPPED (Windows path)
 tests/test_wheel.py::test_override_tags_in_wheel_filename[cp36-abi3-win_amd64-cp36-abi3-win_amd64] PASSED
 tests/test_wheel.py::test_override_tags_in_wheel_filename[py3-none-win_amd64-py3-none-win_amd64] PASSED
 tests/test_wheel.py::test_dist_info_name_with_no_version PASSED
 
-======== 86 passed, 1 skipped ========
+======== 90 passed, 1 skipped ========
