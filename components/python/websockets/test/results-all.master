@@ -5,9 +5,13 @@ Client can set additional headers with additional_headers. ... ok
 test_compression_is_enabled (tests.asyncio.test_client.ClientTests)
 Client enables compression by default. ... ok
 test_connection (tests.asyncio.test_client.ClientTests)
-Client connects to server and the handshake succeeds. ... ok
+Client connects to server. ... ok
 test_connection_closed_during_handshake (tests.asyncio.test_client.ClientTests)
 Client reads EOF before receiving handshake response from server. ... ok
+test_cross_origin_redirect (tests.asyncio.test_client.ClientTests)
+Client follows redirect to a secure URI on a different origin. ... ok
+test_cross_origin_redirect_with_explicit_host_port (tests.asyncio.test_client.ClientTests)
+Client doesn't follow cross-origin redirect with an explicit host / port. ... ok
 test_custom_connection_factory (tests.asyncio.test_client.ClientTests)
 Client runs ClientConnection factory provided in create_connection. ... ok
 test_disable_compression (tests.asyncio.test_client.ClientTests)
@@ -16,14 +20,34 @@ test_disable_keepalive (tests.asyncio.test_client.ClientTests)
 Client disables keepalive. ... ok
 test_existing_socket (tests.asyncio.test_client.ClientTests)
 Client connects using a pre-existing socket. ... ok
+test_explicit_host_port (tests.asyncio.test_client.ClientTests)
+Client connects using an explicit host / port. ... ok
 test_handshake_fails (tests.asyncio.test_client.ClientTests)
 Client connects to server but the handshake fails. ... ok
 test_invalid_uri (tests.asyncio.test_client.ClientTests)
 Client receives an invalid URI. ... ok
+test_junk_handshake (tests.asyncio.test_client.ClientTests)
+Client closes the connection when receiving non-HTTP response from server. ... ok
 test_keepalive_is_enabled (tests.asyncio.test_client.ClientTests)
 Client enables keepalive and measures latency by default. ... ok
+test_logger (tests.asyncio.test_client.ClientTests)
+Client accepts a logger argument. ... ok
 test_override_user_agent (tests.asyncio.test_client.ClientTests)
 Client can override User-Agent header with user_agent_header. ... ok
+test_reconnect (tests.asyncio.test_client.ClientTests)
+Client reconnects to server. ... ok
+test_reconnect_with_custom_process_exception (tests.asyncio.test_client.ClientTests)
+Client runs process_exception to tell if errors are retryable or fatal. ... ok
+test_reconnect_with_custom_process_exception_raising_exception (tests.asyncio.test_client.ClientTests)
+Client supports raising an exception in process_exception. ... ok
+test_redirect (tests.asyncio.test_client.ClientTests)
+Client follows redirect. ... ok
+test_redirect_limit (tests.asyncio.test_client.ClientTests)
+Client stops following redirects after limit is reached. ... ok
+test_redirect_with_existing_socket (tests.asyncio.test_client.ClientTests)
+Client doesn't follow redirect when using a pre-existing socket. ... ok
+test_redirect_with_explicit_host_port (tests.asyncio.test_client.ClientTests)
+Client follows redirect with an explicit host / port. ... ok
 test_remove_user_agent (tests.asyncio.test_client.ClientTests)
 Client can remove User-Agent header with user_agent_header. ... ok
 test_tcp_connection_fails (tests.asyncio.test_client.ClientTests)
@@ -44,6 +68,10 @@ test_unsupported_compression (tests.asyncio.test_client.ClientUsageErrorsTests)
 Client rejects incorrect value of compression. ... ok
 test_connection (tests.asyncio.test_client.SecureClientTests)
 Client connects to server securely. ... ok
+test_cross_origin_redirect (tests.asyncio.test_client.SecureClientTests)
+Client follows redirect to a secure URI on a different origin. ... ok
+test_redirect_to_insecure_uri (tests.asyncio.test_client.SecureClientTests)
+Client doesn't follow redirect from secure URI to non-secure URI. ... ok
 test_reject_invalid_server_certificate (tests.asyncio.test_client.SecureClientTests)
 Client rejects certificate where server certificate isn't trusted. ... ok
 test_reject_invalid_server_hostname (tests.asyncio.test_client.SecureClientTests)
@@ -58,6 +86,8 @@ test_set_server_hostname (tests.asyncio.test_client.SecureUnixClientTests)
 Client sets server_hostname to the host in the WebSocket URI. ... ok
 test_connection (tests.asyncio.test_client.UnixClientTests)
 Client connects to server over a Unix socket. ... ok
+test_cross_origin_redirect (tests.asyncio.test_client.UnixClientTests)
+Client doesn't follows redirect to a URI on a different origin. ... ok
 test_set_host_header (tests.asyncio.test_client.UnixClientTests)
 Client sets the Host header to the host in the WebSocket URI. ... ok
 test_acknowledge_ping (tests.asyncio.test_connection.ClientConnectionTests)
@@ -165,12 +195,16 @@ test_ping_explicit_binary (tests.asyncio.test_connection.ClientConnectionTests)
 ping sends a ping frame with a payload provided as binary. ... ok
 test_ping_explicit_text (tests.asyncio.test_connection.ClientConnectionTests)
 ping sends a ping frame with a payload provided as text. ... ok
+test_ping_unsupported_type (tests.asyncio.test_connection.ClientConnectionTests)
+ping raises TypeError when called with an unsupported type. ... ok
 test_pong (tests.asyncio.test_connection.ClientConnectionTests)
 pong sends a pong frame. ... ok
 test_pong_explicit_binary (tests.asyncio.test_connection.ClientConnectionTests)
 pong sends a pong frame with a payload provided as binary. ... ok
 test_pong_explicit_text (tests.asyncio.test_connection.ClientConnectionTests)
 pong sends a pong frame with a payload provided as text. ... ok
+test_pong_unsupported_type (tests.asyncio.test_connection.ClientConnectionTests)
+pong raises TypeError when called with an unsupported type. ... ok
 test_recv_binary (tests.asyncio.test_connection.ClientConnectionTests)
 recv receives a binary message. ... ok
 test_recv_cancellation_before_receiving (tests.asyncio.test_connection.ClientConnectionTests)
@@ -184,9 +218,9 @@ recv raises ConnectionClosedOK after a normal closure. ... ok
 test_recv_decoded_binary (tests.asyncio.test_connection.ClientConnectionTests)
 recv receives an UTF-8 decoded binary message. ... ok
 test_recv_during_recv (tests.asyncio.test_connection.ClientConnectionTests)
-recv raises RuntimeError when called concurrently with itself. ... ok
+recv raises ConcurrencyError when called concurrently. ... ok
 test_recv_during_recv_streaming (tests.asyncio.test_connection.ClientConnectionTests)
-recv raises RuntimeError when called concurrently with recv_streaming. ... ok
+recv raises ConcurrencyError when called concurrently with recv_streaming. ... ok
 test_recv_encoded_text (tests.asyncio.test_connection.ClientConnectionTests)
 recv receives an UTF-8 encoded text message. ... ok
 test_recv_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
@@ -206,9 +240,9 @@ recv_streaming raises ConnectionClosedOK after a normal closure. ... ok
 test_recv_streaming_decoded_binary (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming receives a UTF-8 decoded binary message. ... ok
 test_recv_streaming_during_recv (tests.asyncio.test_connection.ClientConnectionTests)
-recv_streaming raises RuntimeError when called concurrently with recv. ... ok
+recv_streaming raises ConcurrencyError when called concurrently with recv. ... ok
 test_recv_streaming_during_recv_streaming (tests.asyncio.test_connection.ClientConnectionTests)
-recv_streaming raises RuntimeError when called concurrently with itself. ... ok
+recv_streaming raises ConcurrencyError when called concurrently. ... ok
 test_recv_streaming_encoded_text (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming receives an UTF-8 encoded text message. ... ok
 test_recv_streaming_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
@@ -386,12 +420,16 @@ test_ping_explicit_binary (tests.asyncio.test_connection.ServerConnectionTests)
 ping sends a ping frame with a payload provided as binary. ... ok
 test_ping_explicit_text (tests.asyncio.test_connection.ServerConnectionTests)
 ping sends a ping frame with a payload provided as text. ... ok
+test_ping_unsupported_type (tests.asyncio.test_connection.ServerConnectionTests)
+ping raises TypeError when called with an unsupported type. ... ok
 test_pong (tests.asyncio.test_connection.ServerConnectionTests)
 pong sends a pong frame. ... ok
 test_pong_explicit_binary (tests.asyncio.test_connection.ServerConnectionTests)
 pong sends a pong frame with a payload provided as binary. ... ok
 test_pong_explicit_text (tests.asyncio.test_connection.ServerConnectionTests)
 pong sends a pong frame with a payload provided as text. ... ok
+test_pong_unsupported_type (tests.asyncio.test_connection.ServerConnectionTests)
+pong raises TypeError when called with an unsupported type. ... ok
 test_recv_binary (tests.asyncio.test_connection.ServerConnectionTests)
 recv receives a binary message. ... ok
 test_recv_cancellation_before_receiving (tests.asyncio.test_connection.ServerConnectionTests)
@@ -405,9 +443,9 @@ recv raises ConnectionClosedOK after a normal closure. ... ok
 test_recv_decoded_binary (tests.asyncio.test_connection.ServerConnectionTests)
 recv receives an UTF-8 decoded binary message. ... ok
 test_recv_during_recv (tests.asyncio.test_connection.ServerConnectionTests)
-recv raises RuntimeError when called concurrently with itself. ... ok
+recv raises ConcurrencyError when called concurrently. ... ok
 test_recv_during_recv_streaming (tests.asyncio.test_connection.ServerConnectionTests)
-recv raises RuntimeError when called concurrently with recv_streaming. ... ok
+recv raises ConcurrencyError when called concurrently with recv_streaming. ... ok
 test_recv_encoded_text (tests.asyncio.test_connection.ServerConnectionTests)
 recv receives an UTF-8 encoded text message. ... ok
 test_recv_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
@@ -427,9 +465,9 @@ recv_streaming raises ConnectionClosedOK after a normal closure. ... ok
 test_recv_streaming_decoded_binary (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming receives a UTF-8 decoded binary message. ... ok
 test_recv_streaming_during_recv (tests.asyncio.test_connection.ServerConnectionTests)
-recv_streaming raises RuntimeError when called concurrently with recv. ... ok
+recv_streaming raises ConcurrencyError when called concurrently with recv. ... ok
 test_recv_streaming_during_recv_streaming (tests.asyncio.test_connection.ServerConnectionTests)
-recv_streaming raises RuntimeError when called concurrently with itself. ... ok
+recv_streaming raises ConcurrencyError when called concurrently. ... ok
 test_recv_streaming_encoded_text (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming receives an UTF-8 encoded text message. ... ok
 test_recv_streaming_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
@@ -523,7 +561,7 @@ get returns a text message without UTF-8 decoding. ... ok
 test_get_fails_after_close (tests.asyncio.test_messages.AssemblerTests)
 get raises EOFError after close is called. ... ok
 test_get_fails_when_get_is_running (tests.asyncio.test_messages.AssemblerTests)
-get cannot be called concurrently with itself. ... ok
+get cannot be called concurrently. ... ok
 test_get_fails_when_get_iter_is_running (tests.asyncio.test_messages.AssemblerTests)
 get cannot be called concurrently with get_iter. ... ok
 test_get_fails_when_interrupted_by_close (tests.asyncio.test_messages.AssemblerTests)
@@ -553,7 +591,7 @@ get_iter raises EOFError after close is called. ... ok
 test_get_iter_fails_when_get_is_running (tests.asyncio.test_messages.AssemblerTests)
 get_iter cannot be called concurrently with get. ... ok
 test_get_iter_fails_when_get_iter_is_running (tests.asyncio.test_messages.AssemblerTests)
-get_iter cannot be called concurrently with itself. ... ok
+get_iter cannot be called concurrently. ... ok
 test_get_iter_fails_when_interrupted_by_close (tests.asyncio.test_messages.AssemblerTests)
 get_iter raises EOFError when close is called. ... ok
 test_get_iter_fragmented_binary_message_already_received (tests.asyncio.test_messages.AssemblerTests)
@@ -597,7 +635,7 @@ abort throws an exception in get. ... ok
 test_abort_clears_queue (tests.asyncio.test_messages.SimpleQueueTests)
 abort clears buffered data from the queue. ... ok
 test_get_concurrently (tests.asyncio.test_messages.SimpleQueueTests)
-get cannot be called concurrently with itself. ... ok
+get cannot be called concurrently. ... ok
 test_get_then_put (tests.asyncio.test_messages.SimpleQueueTests)
 get returns an item when it is put. ... ok
 test_len (tests.asyncio.test_messages.SimpleQueueTests)
@@ -606,6 +644,30 @@ test_put_then_get (tests.asyncio.test_messages.SimpleQueueTests)
 get returns an item that is already put. ... ok
 test_reset (tests.asyncio.test_messages.SimpleQueueTests)
 reset sets the content of the queue. ... ok
+test_authorization_with_incorrect_password (tests.asyncio.test_server.BasicAuthTests)
+basic_auth rejects client with incorrect password. ... ok
+test_authorization_with_unknown_username (tests.asyncio.test_server.BasicAuthTests)
+basic_auth rejects client with unknown username. ... ok
+test_bad_credentials (tests.asyncio.test_server.BasicAuthTests)
+basic_auth receives an unsupported credentials argument. ... ok
+test_bad_list_of_credentials (tests.asyncio.test_server.BasicAuthTests)
+basic_auth receives an unsupported credentials argument. ... ok
+test_check_credentials_coroutine (tests.asyncio.test_server.BasicAuthTests)
+basic_auth accepts a check_credentials coroutine. ... ok
+test_check_credentials_function (tests.asyncio.test_server.BasicAuthTests)
+basic_auth accepts a check_credentials function. ... ok
+test_list_of_credentials (tests.asyncio.test_server.BasicAuthTests)
+basic_auth accepts a list of hard coded credentials. ... ok
+test_missing_authorization (tests.asyncio.test_server.BasicAuthTests)
+basic_auth rejects client without credentials. ... ok
+test_unsupported_authorization (tests.asyncio.test_server.BasicAuthTests)
+basic_auth rejects client with unsupported credentials. ... ok
+test_valid_authorization (tests.asyncio.test_server.BasicAuthTests)
+basic_auth authenticates client with HTTP Basic Authentication. ... ok
+test_with_credentials_and_check_credentials (tests.asyncio.test_server.BasicAuthTests)
+basic_auth requires only one of credentials and check_credentials. ... ok
+test_without_credentials_or_check_credentials (tests.asyncio.test_server.BasicAuthTests)
+basic_auth requires either credentials or check_credentials. ... ok
 test_connection (tests.asyncio.test_server.SecureServerTests)
 Server receives secure connection from client. ... ok
 test_connection_closed_during_tls_handshake (tests.asyncio.test_server.SecureServerTests)
@@ -646,18 +708,24 @@ test_connection_handler_raises_exception (tests.asyncio.test_server.ServerTests)
 Connection handler raises an exception. ... ok
 test_connection_handler_returns (tests.asyncio.test_server.ServerTests)
 Connection handler returns. ... ok
+test_connections (tests.asyncio.test_server.ServerTests)
+Server provides a connections property. ... ok
 test_custom_connection_factory (tests.asyncio.test_server.ServerTests)
 Server runs ServerConnection factory provided in create_connection. ... ok
 test_disable_compression (tests.asyncio.test_server.ServerTests)
 Server disables compression. ... ok
 test_disable_keepalive (tests.asyncio.test_server.ServerTests)
-Client disables keepalive. ... ok
+Server disables keepalive. ... ok
 test_existing_socket (tests.asyncio.test_server.ServerTests)
 Server receives connection using a pre-existing socket. ... ok
 test_handshake_fails (tests.asyncio.test_server.ServerTests)
 Server receives connection from client but the handshake fails. ... ok
+test_junk_handshake (tests.asyncio.test_server.ServerTests)
+Server closes the connection when receiving non-HTTP request from client. ... ok
 test_keepalive_is_enabled (tests.asyncio.test_server.ServerTests)
 Server enables keepalive and measures latency. ... ok
+test_logger (tests.asyncio.test_server.ServerTests)
+Server accepts a logger argument. ... ok
 test_override_server (tests.asyncio.test_server.ServerTests)
 Server can override Server header with server_header. ... ok
 test_process_request_raises_exception (tests.asyncio.test_server.ServerTests)
@@ -694,8 +762,6 @@ test_unsupported_compression (tests.asyncio.test_server.ServerUsageErrorsTests)
 Server rejects incorrect value of compression. ... ok
 test_connection (tests.asyncio.test_server.UnixServerTests)
 Server receives connection from client over a Unix socket. ... ok
-test_logger (tests.asyncio.test_server.WebSocketServerTests)
-Server accepts a logger argument. ... ok
 test_get_request_params (tests.extensions.test_base.ClientExtensionFactoryTests) ... ok
 test_process_response_params (tests.extensions.test_base.ClientExtensionFactoryTests) ... ok
 test_decode (tests.extensions.test_base.ExtensionTests) ... ok
@@ -950,6 +1016,7 @@ test_ws_handler_argument_backwards_compatibility_partial (tests.legacy.test_clie
 test_ws_uri_is_rejected (tests.legacy.test_client_server.SecureClientServerTests) ... ok
 test_client (tests.legacy.test_client_server.YieldFromTests) ... ok
 test_server (tests.legacy.test_client_server.YieldFromTests) ... ok
+test_str (tests.legacy.test_exceptions.ExceptionsTests) ... ok
 test_bad_opcode (tests.legacy.test_framing.FramingTests) ... ok
 test_bad_reserved_bits (tests.legacy.test_framing.FramingTests) ... ok
 test_binary (tests.legacy.test_framing.FramingTests) ... ok
@@ -973,6 +1040,18 @@ test_parse_close_and_serialize_close (tests.legacy.test_framing.ParseAndSerializ
 test_parse_close_empty (tests.legacy.test_framing.ParseAndSerializeCloseTests) ... ok
 test_parse_close_errors (tests.legacy.test_framing.ParseAndSerializeCloseTests) ... ok
 test_serialize_close_errors (tests.legacy.test_framing.ParseAndSerializeCloseTests) ... ok
+test_prepare_ctrl_bytearray (tests.legacy.test_framing.PrepareCtrlTests) ... ok
+test_prepare_ctrl_bytes (tests.legacy.test_framing.PrepareCtrlTests) ... ok
+test_prepare_ctrl_list (tests.legacy.test_framing.PrepareCtrlTests) ... ok
+test_prepare_ctrl_memoryview (tests.legacy.test_framing.PrepareCtrlTests) ... ok
+test_prepare_ctrl_none (tests.legacy.test_framing.PrepareCtrlTests) ... ok
+test_prepare_ctrl_str (tests.legacy.test_framing.PrepareCtrlTests) ... ok
+test_prepare_data_bytearray (tests.legacy.test_framing.PrepareDataTests) ... ok
+test_prepare_data_bytes (tests.legacy.test_framing.PrepareDataTests) ... ok
+test_prepare_data_list (tests.legacy.test_framing.PrepareDataTests) ... ok
+test_prepare_data_memoryview (tests.legacy.test_framing.PrepareDataTests) ... ok
+test_prepare_data_none (tests.legacy.test_framing.PrepareDataTests) ... ok
+test_prepare_data_str (tests.legacy.test_framing.PrepareDataTests) ... ok
 test_request_additional_connection (tests.legacy.test_handshake.HandshakeTests) ... ok
 test_request_additional_key (tests.legacy.test_handshake.HandshakeTests) ... ok
 test_request_additional_upgrade (tests.legacy.test_handshake.HandshakeTests) ... ok
@@ -1048,7 +1127,6 @@ test_close_reason (tests.legacy.test_protocol.ClientTests) ... ok
 test_close_reason_not_set (tests.legacy.test_protocol.ClientTests) ... ok
 test_closed (tests.legacy.test_protocol.ClientTests) ... ok
 test_connection_close_in_fragmented_text (tests.legacy.test_protocol.ClientTests) ... ok
-test_connection_closed_attributes (tests.legacy.test_protocol.ClientTests) ... ok
 test_connection_lost (tests.legacy.test_protocol.ClientTests) ... ok
 test_control_frame_within_fragmented_text (tests.legacy.test_protocol.ClientTests) ... ok
 test_duplicate_ping (tests.legacy.test_protocol.ClientTests) ... ok
@@ -1185,7 +1263,6 @@ test_close_reason (tests.legacy.test_protocol.ServerTests) ... ok
 test_close_reason_not_set (tests.legacy.test_protocol.ServerTests) ... ok
 test_closed (tests.legacy.test_protocol.ServerTests) ... ok
 test_connection_close_in_fragmented_text (tests.legacy.test_protocol.ServerTests) ... ok
-test_connection_closed_attributes (tests.legacy.test_protocol.ServerTests) ... ok
 test_connection_lost (tests.legacy.test_protocol.ServerTests) ... ok
 test_control_frame_within_fragmented_text (tests.legacy.test_protocol.ServerTests) ... ok
 test_duplicate_ping (tests.legacy.test_protocol.ServerTests) ... ok
@@ -1310,6 +1387,10 @@ test_handshake_fails (tests.sync.test_client.ClientTests)
 Client connects to server but the handshake fails. ... ok
 test_invalid_uri (tests.sync.test_client.ClientTests)
 Client receives an invalid URI. ... ok
+test_junk_handshake (tests.sync.test_client.ClientTests)
+Client closes the connection when receiving non-HTTP response from server. ... ok
+test_logger (tests.sync.test_client.ClientTests)
+Client accepts a logger argument. ... ok
 test_override_user_agent (tests.sync.test_client.ClientTests)
 Client can override User-Agent header with user_agent_header. ... ok
 test_remove_user_agent (tests.sync.test_client.ClientTests)
@@ -1404,12 +1485,16 @@ test_ping_explicit_binary (tests.sync.test_connection.ClientConnectionTests)
 ping sends a ping frame with a payload provided as binary. ... ok
 test_ping_explicit_text (tests.sync.test_connection.ClientConnectionTests)
 ping sends a ping frame with a payload provided as text. ... ok
+test_ping_unsupported_type (tests.sync.test_connection.ClientConnectionTests)
+ping raises TypeError when called with an unsupported type. ... ok
 test_pong (tests.sync.test_connection.ClientConnectionTests)
 pong sends a pong frame. ... ok
 test_pong_explicit_binary (tests.sync.test_connection.ClientConnectionTests)
 pong sends a pong frame with a payload provided as binary. ... ok
 test_pong_explicit_text (tests.sync.test_connection.ClientConnectionTests)
 pong sends a pong frame with a payload provided as text. ... ok
+test_pong_unsupported_type (tests.sync.test_connection.ClientConnectionTests)
+pong raises TypeError when called with an unsupported type. ... ok
 test_reading_in_recv_events_fails (tests.sync.test_connection.ClientConnectionTests)
 Error when reading incoming frames is correctly reported. ... skipped 'works only on BSD'
 test_recv_binary (tests.sync.test_connection.ClientConnectionTests)
@@ -1419,9 +1504,9 @@ recv raises ConnectionClosedError after an error. ... ok
 test_recv_connection_closed_ok (tests.sync.test_connection.ClientConnectionTests)
 recv raises ConnectionClosedOK after a normal closure. ... ok
 test_recv_during_recv (tests.sync.test_connection.ClientConnectionTests)
-recv raises RuntimeError when called concurrently with itself. ... ok
+recv raises ConcurrencyError when called concurrently. ... ok
 test_recv_during_recv_streaming (tests.sync.test_connection.ClientConnectionTests)
-recv raises RuntimeError when called concurrently with recv_streaming. ... ok
+recv raises ConcurrencyError when called concurrently with recv_streaming. ... ok
 test_recv_fragmented_binary (tests.sync.test_connection.ClientConnectionTests)
 recv receives a fragmented binary message. ... ok
 test_recv_fragmented_text (tests.sync.test_connection.ClientConnectionTests)
@@ -1433,9 +1518,9 @@ recv_streaming raises ConnectionClosedError after an error. ... ok
 test_recv_streaming_connection_closed_ok (tests.sync.test_connection.ClientConnectionTests)
 recv_streaming raises ConnectionClosedOK after a normal closure. ... ok
 test_recv_streaming_during_recv (tests.sync.test_connection.ClientConnectionTests)
-recv_streaming raises RuntimeError when called concurrently with recv. ... ok
+recv_streaming raises ConcurrencyError when called concurrently with recv. ... ok
 test_recv_streaming_during_recv_streaming (tests.sync.test_connection.ClientConnectionTests)
-recv_streaming raises RuntimeError when called concurrently with itself. ... ok
+recv_streaming raises ConcurrencyError when called concurrently. ... ok
 test_recv_streaming_fragmented_binary (tests.sync.test_connection.ClientConnectionTests)
 recv_streaming receives a fragmented binary message. ... ok
 test_recv_streaming_fragmented_text (tests.sync.test_connection.ClientConnectionTests)
@@ -1459,7 +1544,7 @@ send raises ConnectionClosedOK after a normal closure. ... ok
 test_send_dict (tests.sync.test_connection.ClientConnectionTests)
 send raises TypeError when called with a dict. ... ok
 test_send_during_send (tests.sync.test_connection.ClientConnectionTests)
-send raises RuntimeError when called concurrently with itself. ... ok
+send raises ConcurrencyError when called concurrently. ... ok
 test_send_empty_iterable (tests.sync.test_connection.ClientConnectionTests)
 send does nothing when called with an empty iterable. ... ok
 test_send_fragmented_binary (tests.sync.test_connection.ClientConnectionTests)
@@ -1542,12 +1627,16 @@ test_ping_explicit_binary (tests.sync.test_connection.ServerConnectionTests)
 ping sends a ping frame with a payload provided as binary. ... ok
 test_ping_explicit_text (tests.sync.test_connection.ServerConnectionTests)
 ping sends a ping frame with a payload provided as text. ... ok
+test_ping_unsupported_type (tests.sync.test_connection.ServerConnectionTests)
+ping raises TypeError when called with an unsupported type. ... ok
 test_pong (tests.sync.test_connection.ServerConnectionTests)
 pong sends a pong frame. ... ok
 test_pong_explicit_binary (tests.sync.test_connection.ServerConnectionTests)
 pong sends a pong frame with a payload provided as binary. ... ok
 test_pong_explicit_text (tests.sync.test_connection.ServerConnectionTests)
 pong sends a pong frame with a payload provided as text. ... ok
+test_pong_unsupported_type (tests.sync.test_connection.ServerConnectionTests)
+pong raises TypeError when called with an unsupported type. ... ok
 test_reading_in_recv_events_fails (tests.sync.test_connection.ServerConnectionTests)
 Error when reading incoming frames is correctly reported. ... skipped 'works only on BSD'
 test_recv_binary (tests.sync.test_connection.ServerConnectionTests)
@@ -1557,9 +1646,9 @@ recv raises ConnectionClosedError after an error. ... ok
 test_recv_connection_closed_ok (tests.sync.test_connection.ServerConnectionTests)
 recv raises ConnectionClosedOK after a normal closure. ... ok
 test_recv_during_recv (tests.sync.test_connection.ServerConnectionTests)
-recv raises RuntimeError when called concurrently with itself. ... ok
+recv raises ConcurrencyError when called concurrently. ... ok
 test_recv_during_recv_streaming (tests.sync.test_connection.ServerConnectionTests)
-recv raises RuntimeError when called concurrently with recv_streaming. ... ok
+recv raises ConcurrencyError when called concurrently with recv_streaming. ... ok
 test_recv_fragmented_binary (tests.sync.test_connection.ServerConnectionTests)
 recv receives a fragmented binary message. ... ok
 test_recv_fragmented_text (tests.sync.test_connection.ServerConnectionTests)
@@ -1571,9 +1660,9 @@ recv_streaming raises ConnectionClosedError after an error. ... ok
 test_recv_streaming_connection_closed_ok (tests.sync.test_connection.ServerConnectionTests)
 recv_streaming raises ConnectionClosedOK after a normal closure. ... ok
 test_recv_streaming_during_recv (tests.sync.test_connection.ServerConnectionTests)
-recv_streaming raises RuntimeError when called concurrently with recv. ... ok
+recv_streaming raises ConcurrencyError when called concurrently with recv. ... ok
 test_recv_streaming_during_recv_streaming (tests.sync.test_connection.ServerConnectionTests)
-recv_streaming raises RuntimeError when called concurrently with itself. ... ok
+recv_streaming raises ConcurrencyError when called concurrently. ... ok
 test_recv_streaming_fragmented_binary (tests.sync.test_connection.ServerConnectionTests)
 recv_streaming receives a fragmented binary message. ... ok
 test_recv_streaming_fragmented_text (tests.sync.test_connection.ServerConnectionTests)
@@ -1597,7 +1686,7 @@ send raises ConnectionClosedOK after a normal closure. ... ok
 test_send_dict (tests.sync.test_connection.ServerConnectionTests)
 send raises TypeError when called with a dict. ... ok
 test_send_during_send (tests.sync.test_connection.ServerConnectionTests)
-send raises RuntimeError when called concurrently with itself. ... ok
+send raises ConcurrencyError when called concurrently. ... ok
 test_send_empty_iterable (tests.sync.test_connection.ServerConnectionTests)
 send does nothing when called with an empty iterable. ... ok
 test_send_fragmented_binary (tests.sync.test_connection.ServerConnectionTests)
@@ -1631,7 +1720,7 @@ get returns a binary message when it is received. ... ok
 test_get_fails_after_close (tests.sync.test_messages.AssemblerTests)
 get raises EOFError after close is called. ... ok
 test_get_fails_when_get_is_running (tests.sync.test_messages.AssemblerTests)
-get cannot be called concurrently with itself. ... ok
+get cannot be called concurrently. ... ok
 test_get_fails_when_get_iter_is_running (tests.sync.test_messages.AssemblerTests)
 get cannot be called concurrently with get_iter. ... ok
 test_get_fails_when_interrupted_by_close (tests.sync.test_messages.AssemblerTests)
@@ -1657,7 +1746,7 @@ get_iter raises EOFError after close is called. ... ok
 test_get_iter_fails_when_get_is_running (tests.sync.test_messages.AssemblerTests)
 get_iter cannot be called concurrently with get. ... ok
 test_get_iter_fails_when_get_iter_is_running (tests.sync.test_messages.AssemblerTests)
-get_iter cannot be called concurrently with itself. ... ok
+get_iter cannot be called concurrently. ... ok
 test_get_iter_fails_when_interrupted_by_close (tests.sync.test_messages.AssemblerTests)
 get_iter raises EOFError when close is called. ... ok
 test_get_iter_fragmented_binary_message_already_received (tests.sync.test_messages.AssemblerTests)
@@ -1689,10 +1778,32 @@ put raises EOFError after close is called. ... ok
 test_put_fails_when_interrupted_by_close (tests.sync.test_messages.AssemblerTests)
 put raises EOFError when close is called. ... ok
 test_put_fails_when_put_is_running (tests.sync.test_messages.AssemblerTests)
-put cannot be called concurrently with itself. ... ok
+put cannot be called concurrently. ... ok
 test_ssl_context_argument (tests.sync.test_server.BackwardsCompatibilityTests)
-Client supports the deprecated ssl_context argument. ... ok
+Server supports the deprecated ssl_context argument. ... ok
 test_web_socket_server_class (tests.sync.test_server.BackwardsCompatibilityTests) ... ok
+test_authorization_with_incorrect_password (tests.sync.test_server.BasicAuthTests)
+basic_auth rejects client with incorrect password. ... ok
+test_authorization_with_unknown_username (tests.sync.test_server.BasicAuthTests)
+basic_auth rejects client with unknown username. ... ok
+test_bad_credentials (tests.sync.test_server.BasicAuthTests)
+basic_auth receives an unsupported credentials argument. ... ok
+test_bad_list_of_credentials (tests.sync.test_server.BasicAuthTests)
+basic_auth receives an unsupported credentials argument. ... ok
+test_check_credentials (tests.sync.test_server.BasicAuthTests)
+basic_auth accepts a check_credentials function. ... ok
+test_list_of_credentials (tests.sync.test_server.BasicAuthTests)
+basic_auth accepts a list of hard coded credentials. ... ok
+test_missing_authorization (tests.sync.test_server.BasicAuthTests)
+basic_auth rejects client without credentials. ... ok
+test_unsupported_authorization (tests.sync.test_server.BasicAuthTests)
+basic_auth rejects client with unsupported credentials. ... ok
+test_valid_authorization (tests.sync.test_server.BasicAuthTests)
+basic_auth authenticates client with HTTP Basic Authentication. ... ok
+test_with_credentials_and_check_credentials (tests.sync.test_server.BasicAuthTests)
+basic_auth requires only one of credentials and check_credentials. ... ok
+test_without_credentials_or_check_credentials (tests.sync.test_server.BasicAuthTests)
+basic_auth requires either credentials or check_credentials. ... ok
 test_connection (tests.sync.test_server.SecureServerTests)
 Server receives secure connection from client. ... ok
 test_connection_closed_during_tls_handshake (tests.sync.test_server.SecureServerTests)
@@ -1717,8 +1828,14 @@ test_disable_compression (tests.sync.test_server.ServerTests)
 Server disables compression. ... ok
 test_existing_socket (tests.sync.test_server.ServerTests)
 Server receives connection using a pre-existing socket. ... ok
+test_fileno (tests.sync.test_server.ServerTests)
+Server provides a fileno attribute. ... ok
 test_handshake_fails (tests.sync.test_server.ServerTests)
 Server receives connection from client but the handshake fails. ... ok
+test_junk_handshake (tests.sync.test_server.ServerTests)
+Server closes the connection when receiving non-HTTP request from client. ... ok
+test_logger (tests.sync.test_server.ServerTests)
+Server accepts a logger argument. ... ok
 test_override_server (tests.sync.test_server.ServerTests)
 Server can override Server header with server_header. ... ok
 test_process_request_raises_exception (tests.sync.test_server.ServerTests)
@@ -1743,6 +1860,8 @@ test_select_subprotocol_raises_exception (tests.sync.test_server.ServerTests)
 Server returns an error if select_subprotocol raises an exception. ... ok
 test_select_subprotocol_rejects_handshake (tests.sync.test_server.ServerTests)
 Server rejects handshake if select_subprotocol raises NegotiationError. ... ok
+test_shutdown (tests.sync.test_server.ServerTests)
+Server provides a shutdown method. ... ok
 test_timeout_during_handshake (tests.sync.test_server.ServerTests)
 Server times out before receiving handshake request from client. ... ok
 test_invalid_subprotocol (tests.sync.test_server.ServerUsageErrorsTests)
@@ -1755,12 +1874,6 @@ test_unsupported_compression (tests.sync.test_server.ServerUsageErrorsTests)
 Server rejects incorrect value of compression. ... ok
 test_connection (tests.sync.test_server.UnixServerTests)
 Server receives connection from client over a Unix socket. ... ok
-test_fileno (tests.sync.test_server.WebSocketServerTests)
-Server provides a fileno attribute. ... ok
-test_logger (tests.sync.test_server.WebSocketServerTests)
-Server accepts a logger argument. ... ok
-test_shutdown (tests.sync.test_server.WebSocketServerTests)
-Server provides a shutdown method. ... ok
 test_no_timeout (tests.sync.test_utils.DeadlineTests)
 timeout returns None when no deadline is set. ... ok
 test_timeout_elapsed_exception (tests.sync.test_utils.DeadlineTests)
@@ -1769,50 +1882,100 @@ test_timeout_elapsed_no_exception (tests.sync.test_utils.DeadlineTests)
 timeout doesn't raise TimeoutError when raise_if_elapsed is disabled. ... ok
 test_timeout_pending (tests.sync.test_utils.DeadlineTests)
 timeout returns remaining time if deadline is in the future. ... ok
-test_accept_response (tests.test_client.AcceptRejectTests) ... ok
-test_basic (tests.test_client.AcceptRejectTests) ... ok
-test_extension (tests.test_client.AcceptRejectTests) ... ok
-test_invalid_accept (tests.test_client.AcceptRejectTests) ... ok
-test_invalid_connection (tests.test_client.AcceptRejectTests) ... ok
-test_invalid_upgrade (tests.test_client.AcceptRejectTests) ... ok
-test_missing_accept (tests.test_client.AcceptRejectTests) ... ok
-test_missing_connection (tests.test_client.AcceptRejectTests) ... ok
-test_missing_upgrade (tests.test_client.AcceptRejectTests) ... ok
-test_multiple_accept (tests.test_client.AcceptRejectTests) ... ok
-test_multiple_extensions (tests.test_client.AcceptRejectTests) ... ok
-test_multiple_extensions_order (tests.test_client.AcceptRejectTests) ... ok
-test_multiple_subprotocols (tests.test_client.AcceptRejectTests) ... ok
-test_multiple_supported_extension_parameters (tests.test_client.AcceptRejectTests) ... ok
-test_no_extension (tests.test_client.AcceptRejectTests) ... ok
-test_no_extensions (tests.test_client.AcceptRejectTests) ... ok
-test_no_response (tests.test_client.AcceptRejectTests) ... ok
-test_no_subprotocol (tests.test_client.AcceptRejectTests) ... ok
-test_no_subprotocols (tests.test_client.AcceptRejectTests) ... ok
-test_partial_response (tests.test_client.AcceptRejectTests) ... ok
-test_random_response (tests.test_client.AcceptRejectTests) ... ok
-test_receive_accept (tests.test_client.AcceptRejectTests) ... ok
-test_receive_reject (tests.test_client.AcceptRejectTests) ... ok
-test_reject_response (tests.test_client.AcceptRejectTests) ... ok
-test_subprotocol (tests.test_client.AcceptRejectTests) ... ok
-test_supported_extension_parameters (tests.test_client.AcceptRejectTests) ... ok
-test_supported_subprotocol (tests.test_client.AcceptRejectTests) ... ok
-test_unexpected_extension (tests.test_client.AcceptRejectTests) ... ok
-test_unexpected_subprotocol (tests.test_client.AcceptRejectTests) ... ok
-test_unsupported_extension (tests.test_client.AcceptRejectTests) ... ok
-test_unsupported_extension_parameters (tests.test_client.AcceptRejectTests) ... ok
-test_unsupported_subprotocol (tests.test_client.AcceptRejectTests) ... ok
-test_client_connection_class (tests.test_client.BackwardsCompatibilityTests) ... ok
-test_connect_request (tests.test_client.ConnectTests) ... ok
-test_extensions (tests.test_client.ConnectTests) ... ok
-test_origin (tests.test_client.ConnectTests) ... ok
-test_path (tests.test_client.ConnectTests) ... ok
-test_port (tests.test_client.ConnectTests) ... ok
-test_send_connect (tests.test_client.ConnectTests) ... ok
-test_subprotocols (tests.test_client.ConnectTests) ... ok
-test_user_info (tests.test_client.ConnectTests) ... ok
-test_bypass_handshake (tests.test_client.MiscTests) ... ok
-test_custom_logger (tests.test_client.MiscTests) ... ok
-test_connection_class (tests.test_connection.BackwardsCompatibilityTests) ... ok
+test_backoff (tests.test_client.BackoffTests)
+backoff() yields a random delay, then exponentially increasing delays. ... ok
+test_client_connection_class (tests.test_client.BackwardsCompatibilityTests)
+ClientConnection is a deprecated alias for ClientProtocol. ... ok
+test_receive_failed_response (tests.test_client.BasicTests)
+Client receives a failed handshake response. ... ok
+test_receive_successful_response (tests.test_client.BasicTests)
+Client receives a successful handshake response. ... ok
+test_send_request (tests.test_client.BasicTests)
+Client sends a handshake request. ... ok
+test_basic (tests.test_client.HandshakeTests)
+Handshake succeeds. ... ok
+test_enable_extension (tests.test_client.HandshakeTests)
+Client offers an extension and the server enables it. ... ok
+test_enable_subprotocol (tests.test_client.HandshakeTests)
+Client offers a subprotocol and the server enables it. ... ok
+test_extension_not_enabled (tests.test_client.HandshakeTests)
+Client offers an extension, but the server doesn't enable it. ... ok
+test_extension_not_offered (tests.test_client.HandshakeTests)
+Server enables an extension that the client didn't offer. ... ok
+test_invalid_accept (tests.test_client.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Accept header is invalid. ... ok
+test_invalid_connection (tests.test_client.HandshakeTests)
+Handshake fails when the Connection header is invalid. ... ok
+test_invalid_upgrade (tests.test_client.HandshakeTests)
+Handshake fails when the Upgrade header is invalid. ... ok
+test_missing_accept (tests.test_client.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Accept header is missing. ... ok
+test_missing_connection (tests.test_client.HandshakeTests)
+Handshake fails when the Connection header is missing. ... ok
+test_missing_upgrade (tests.test_client.HandshakeTests)
+Handshake fails when the Upgrade header is missing. ... ok
+test_multiple_accept (tests.test_client.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Accept header is repeated. ... ok
+test_multiple_extensions (tests.test_client.HandshakeTests)
+Client offers several extensions and the server enables them. ... ok
+test_multiple_extensions_order (tests.test_client.HandshakeTests)
+Client respects the order of extensions chosen by the server. ... ok
+test_multiple_subprotocols (tests.test_client.HandshakeTests)
+Client offers several subprotocols and the server enables one. ... ok
+test_multiple_subprotocols_accepted (tests.test_client.HandshakeTests)
+Server attempts to enable multiple subprotocols. ... ok
+test_multiple_supported_extension_parameters (tests.test_client.HandshakeTests)
+Client offers the same extension with several parameters. ... ok
+test_no_extensions (tests.test_client.HandshakeTests)
+Handshake succeeds without extensions. ... ok
+test_no_extensions_offered (tests.test_client.HandshakeTests)
+Server enables an extension when the client didn't offer any. ... ok
+test_no_subprotocol_accepted (tests.test_client.HandshakeTests)
+Client offers a subprotocol, but the server doesn't enable it. ... ok
+test_no_subprotocol_requested (tests.test_client.HandshakeTests)
+Client doesn't offer a subprotocol, but the server enables one. ... ok
+test_no_subprotocols (tests.test_client.HandshakeTests)
+Handshake succeeds without subprotocols. ... ok
+test_offer_extension (tests.test_client.HandshakeTests)
+Client offers an extension. ... ok
+test_offer_subprotocol (tests.test_client.HandshakeTests)
+Client offers a subprotocol. ... ok
+test_supported_extension_parameters (tests.test_client.HandshakeTests)
+Server enables an extension with parameters supported by the client. ... ok
+test_unsupported_extension_parameters (tests.test_client.HandshakeTests)
+Server enables an extension with parameters unsupported by the client. ... ok
+test_unsupported_subprotocol (tests.test_client.HandshakeTests)
+Client offers subprotocols but the server enables another one. ... ok
+test_bypass_handshake (tests.test_client.MiscTests)
+ClientProtocol bypasses the opening handshake. ... ok
+test_custom_logger (tests.test_client.MiscTests)
+ClientProtocol accepts a logger argument. ... ok
+test_connect (tests.test_client.RequestTests)
+connect() creates an opening handshake request. ... ok
+test_extensions (tests.test_client.RequestTests)
+connect(extensions=...) generates a Sec-WebSocket-Extensions header. ... ok
+test_origin (tests.test_client.RequestTests)
+connect(origin=...) generates an Origin header. ... ok
+test_path (tests.test_client.RequestTests)
+connect() uses the path from the URI. ... ok
+test_port (tests.test_client.RequestTests)
+connect() uses the port from the URI or the default port. ... ok
+test_subprotocols (tests.test_client.RequestTests)
+connect(subprotocols=...) generates a Sec-WebSocket-Protocol header. ... ok
+test_user_info (tests.test_client.RequestTests)
+connect() perfoms HTTP Basic Authentication with user info from the URI. ... ok
+test_receive_failed_response (tests.test_client.ResponseTests)
+Client receives a failed handshake response. ... ok
+test_receive_no_response (tests.test_client.ResponseTests)
+Client receives no handshake response. ... ok
+test_receive_random_response (tests.test_client.ResponseTests)
+Client receives a junk handshake response. ... ok
+test_receive_successful_response (tests.test_client.ResponseTests)
+Client receives a successful handshake response. ... ok
+test_receive_truncated_response (tests.test_client.ResponseTests)
+Client receives a truncated handshake response. ... ok
+test_connection_class (tests.test_connection.BackwardsCompatibilityTests)
+Connection is a deprecated alias for Protocol. ... ok
 test_clear (tests.test_datastructures.HeadersTests) ... ok
 test_contains (tests.test_datastructures.HeadersTests) ... ok
 test_contains_case_insensitive (tests.test_datastructures.HeadersTests) ... ok
@@ -1862,8 +2025,8 @@ test_serialize (tests.test_datastructures.MultiValueHeadersTests) ... ok
 test_setitem (tests.test_datastructures.MultiValueHeadersTests) ... ok
 test_str (tests.test_datastructures.MultiValueHeadersTests) ... ok
 test_multiple_values_error_str (tests.test_datastructures.MultipleValuesErrorTests) ... ok
-test_connection_closed_attributes_backwards_compatibility (tests.test_exceptions.ExceptionsTests) ... ok
-test_connection_closed_attributes_backwards_compatibility_defaults (tests.test_exceptions.ExceptionsTests) ... ok
+test_connection_closed_attributes_deprecation (tests.test_exceptions.DeprecationTests) ... ok
+test_connection_closed_attributes_deprecation_defaults (tests.test_exceptions.DeprecationTests) ... ok
 test_str (tests.test_exceptions.ExceptionsTests) ... ok
 test_submodule_exports_are_globally_unique (tests.test_exports.ExportsTests) ... ok
 test_top_level_module_reexports_all_submodule_exports (tests.test_exports.ExportsTests) ... ok
@@ -1891,18 +2054,6 @@ test_pong (tests.test_frames.FrameTests) ... ok
 test_text_masked (tests.test_frames.FrameTests) ... ok
 test_text_unmasked (tests.test_frames.FrameTests) ... ok
 test_very_long (tests.test_frames.FrameTests) ... ok
-test_prepare_ctrl_bytearray (tests.test_frames.PrepareCtrlTests) ... ok
-test_prepare_ctrl_bytes (tests.test_frames.PrepareCtrlTests) ... ok
-test_prepare_ctrl_list (tests.test_frames.PrepareCtrlTests) ... ok
-test_prepare_ctrl_memoryview (tests.test_frames.PrepareCtrlTests) ... ok
-test_prepare_ctrl_none (tests.test_frames.PrepareCtrlTests) ... ok
-test_prepare_ctrl_str (tests.test_frames.PrepareCtrlTests) ... ok
-test_prepare_data_bytearray (tests.test_frames.PrepareDataTests) ... ok
-test_prepare_data_bytes (tests.test_frames.PrepareDataTests) ... ok
-test_prepare_data_list (tests.test_frames.PrepareDataTests) ... ok
-test_prepare_data_memoryview (tests.test_frames.PrepareDataTests) ... ok
-test_prepare_data_none (tests.test_frames.PrepareDataTests) ... ok
-test_prepare_data_str (tests.test_frames.PrepareDataTests) ... ok
 test_binary (tests.test_frames.StrTests) ... ok
 test_binary_from_memoryview (tests.test_frames.StrTests) ... ok
 test_binary_non_final (tests.test_frames.StrTests) ... ok
@@ -1963,7 +2114,7 @@ test_parse_empty (tests.test_http11.RequestTests) ... ok
 test_parse_invalid_header (tests.test_http11.RequestTests) ... ok
 test_parse_invalid_request_line (tests.test_http11.RequestTests) ... ok
 test_parse_unsupported_method (tests.test_http11.RequestTests) ... ok
-test_parse_unsupported_version (tests.test_http11.RequestTests) ... ok
+test_parse_unsupported_protocol (tests.test_http11.RequestTests) ... ok
 test_serialize (tests.test_http11.RequestTests) ... ok
 test_parse (tests.test_http11.ResponseTests) ... ok
 test_parse_body_no_content (tests.test_http11.ResponseTests) ... ok
@@ -1976,10 +2127,10 @@ test_parse_body_without_content_length_too_long (tests.test_http11.ResponseTests
 test_parse_empty (tests.test_http11.ResponseTests) ... ok
 test_parse_invalid_header (tests.test_http11.ResponseTests) ... ok
 test_parse_invalid_reason (tests.test_http11.ResponseTests) ... ok
-test_parse_invalid_status (tests.test_http11.ResponseTests) ... ok
 test_parse_invalid_status_line (tests.test_http11.ResponseTests) ... ok
-test_parse_unsupported_status (tests.test_http11.ResponseTests) ... ok
-test_parse_unsupported_version (tests.test_http11.ResponseTests) ... ok
+test_parse_non_integer_status (tests.test_http11.ResponseTests) ... ok
+test_parse_non_three_digit_status (tests.test_http11.ResponseTests) ... ok
+test_parse_unsupported_protocol (tests.test_http11.ResponseTests) ... ok
 test_serialize (tests.test_http11.ResponseTests) ... ok
 test_serialize_with_body (tests.test_http11.ResponseTests) ... ok
 test_attribute_error (tests.test_imports.ImportsTests) ... ok
@@ -2168,58 +2319,114 @@ test_server_sends_fragmented_text (tests.test_protocol.TextTests) ... ok
 test_server_sends_text (tests.test_protocol.TextTests) ... ok
 test_server_sends_text_after_sending_close (tests.test_protocol.TextTests) ... ok
 test_server_sends_unexpected_text (tests.test_protocol.TextTests) ... ok
-test_accept_response (tests.test_server.AcceptRejectTests) ... ok
-test_basic (tests.test_server.AcceptRejectTests) ... ok
-test_extension (tests.test_server.AcceptRejectTests) ... ok
-test_invalid_connection (tests.test_server.AcceptRejectTests) ... ok
-test_invalid_key (tests.test_server.AcceptRejectTests) ... ok
-test_invalid_upgrade (tests.test_server.AcceptRejectTests) ... ok
-test_invalid_version (tests.test_server.AcceptRejectTests) ... ok
-test_missing_connection (tests.test_server.AcceptRejectTests) ... ok
-test_missing_key (tests.test_server.AcceptRejectTests) ... ok
-test_missing_upgrade (tests.test_server.AcceptRejectTests) ... ok
-test_missing_version (tests.test_server.AcceptRejectTests) ... ok
-test_multiple_extensions (tests.test_server.AcceptRejectTests) ... ok
-test_multiple_extensions_order (tests.test_server.AcceptRejectTests) ... ok
-test_multiple_key (tests.test_server.AcceptRejectTests) ... ok
-test_multiple_origin (tests.test_server.AcceptRejectTests) ... ok
-test_multiple_subprotocols (tests.test_server.AcceptRejectTests) ... ok
-test_multiple_supported_extension_parameters (tests.test_server.AcceptRejectTests) ... ok
-test_multiple_version (tests.test_server.AcceptRejectTests) ... ok
-test_no_extension (tests.test_server.AcceptRejectTests) ... ok
-test_no_extensions (tests.test_server.AcceptRejectTests) ... ok
-test_no_origin (tests.test_server.AcceptRejectTests) ... ok
-test_no_origin_accepted (tests.test_server.AcceptRejectTests) ... ok
-test_no_subprotocol (tests.test_server.AcceptRejectTests) ... ok
-test_no_subprotocols (tests.test_server.AcceptRejectTests) ... ok
-test_origin (tests.test_server.AcceptRejectTests) ... ok
-test_reject_response (tests.test_server.AcceptRejectTests) ... ok
-test_reject_response_supports_int_status (tests.test_server.AcceptRejectTests) ... ok
-test_select_no_subprotocol (tests.test_server.AcceptRejectTests) ... ok
-test_select_subprotocol (tests.test_server.AcceptRejectTests) ... ok
-test_send_accept (tests.test_server.AcceptRejectTests) ... ok
-test_send_reject (tests.test_server.AcceptRejectTests) ... ok
-test_subprotocol (tests.test_server.AcceptRejectTests) ... ok
-test_supported_extension_parameters (tests.test_server.AcceptRejectTests) ... ok
-test_supported_origin (tests.test_server.AcceptRejectTests) ... ok
-test_supported_subprotocol (tests.test_server.AcceptRejectTests) ... ok
-test_truncated_key (tests.test_server.AcceptRejectTests) ... ok
-test_unexpected_exception (tests.test_server.AcceptRejectTests) ... ok
-test_unexpected_extension (tests.test_server.AcceptRejectTests) ... ok
-test_unexpected_origin (tests.test_server.AcceptRejectTests) ... ok
-test_unexpected_subprotocol (tests.test_server.AcceptRejectTests) ... ok
-test_unsupported_extension (tests.test_server.AcceptRejectTests) ... ok
-test_unsupported_extension_parameters (tests.test_server.AcceptRejectTests) ... ok
-test_unsupported_origin (tests.test_server.AcceptRejectTests) ... ok
-test_unsupported_subprotocol (tests.test_server.AcceptRejectTests) ... ok
-test_server_connection_class (tests.test_server.BackwardsCompatibilityTests) ... ok
-test_connect_request (tests.test_server.ConnectTests) ... ok
-test_no_request (tests.test_server.ConnectTests) ... ok
-test_partial_request (tests.test_server.ConnectTests) ... ok
-test_random_request (tests.test_server.ConnectTests) ... ok
-test_receive_connect (tests.test_server.ConnectTests) ... ok
-test_bypass_handshake (tests.test_server.MiscTests) ... ok
-test_custom_logger (tests.test_server.MiscTests) ... ok
+test_server_connection_class (tests.test_server.BackwardsCompatibilityTests)
+ServerConnection is a deprecated alias for ServerProtocol. ... ok
+test_accept_and_send_successful_response (tests.test_server.BasicTests)
+Server accepts a handshake request and sends a successful response. ... ok
+test_receive_request (tests.test_server.BasicTests)
+Server receives a handshake request. ... ok
+test_send_response_after_failed_accept (tests.test_server.BasicTests)
+Server accepts a handshake request but sends a failed response. ... ok
+test_send_response_after_reject (tests.test_server.BasicTests)
+Server rejects a handshake request and sends a failed response. ... ok
+test_send_response_without_accept_or_reject (tests.test_server.BasicTests)
+Server doesn't accept or reject and sends a failed response. ... ok
+test_basic (tests.test_server.HandshakeTests)
+Handshake succeeds. ... ok
+test_extension (tests.test_server.HandshakeTests)
+Server enables an extension when the client offers it. ... ok
+test_extension_not_enabled (tests.test_server.HandshakeTests)
+Server doesn't enable an extension when the client doesn't offer it. ... ok
+test_extension_not_supported (tests.test_server.HandshakeTests)
+Client offers an extension, but the server doesn't support it. ... ok
+test_invalid_connection (tests.test_server.HandshakeTests)
+Handshake fails when the Connection header is invalid. ... ok
+test_invalid_key (tests.test_server.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Key header is invalid. ... ok
+test_invalid_upgrade (tests.test_server.HandshakeTests)
+Handshake fails when the Upgrade header is invalid. ... ok
+test_invalid_version (tests.test_server.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Version header is invalid. ... ok
+test_missing_connection (tests.test_server.HandshakeTests)
+Handshake fails when the Connection header is missing. ... ok
+test_missing_key (tests.test_server.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Key header is missing. ... ok
+test_missing_upgrade (tests.test_server.HandshakeTests)
+Handshake fails when the Upgrade header is missing. ... ok
+test_missing_version (tests.test_server.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Version header is missing. ... ok
+test_multiple_extensions (tests.test_server.HandshakeTests)
+Server enables several extensions when the client offers them. ... ok
+test_multiple_extensions_order (tests.test_server.HandshakeTests)
+Server respects the order of extensions set in its configuration. ... ok
+test_multiple_key (tests.test_server.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Key header is repeated. ... ok
+test_multiple_origin (tests.test_server.HandshakeTests)
+Handshake fails when checking origins and the Origin header is repeated. ... ok
+test_multiple_subprotocols (tests.test_server.HandshakeTests)
+Server enables all of the subprotocols when the client offers them. ... ok
+test_multiple_supported_extension_parameters (tests.test_server.HandshakeTests)
+Server supports the same extension with several parameters. ... ok
+test_multiple_version (tests.test_server.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Version header is repeated. ... ok
+test_no_extensions (tests.test_server.HandshakeTests)
+Handshake succeeds without extensions. ... ok
+test_no_extensions_supported (tests.test_server.HandshakeTests)
+Client offers an extension, but the server doesn't support any. ... ok
+test_no_origin (tests.test_server.HandshakeTests)
+Handshake fails when checking origin and the Origin header is missing. ... ok
+test_no_origin_accepted (tests.test_server.HandshakeTests)
+Handshake succeeds when the lack of an origin is accepted. ... ok
+test_no_subprotocol_requested (tests.test_server.HandshakeTests)
+Server expects a subprotocol, but the client doesn't offer it. ... ok
+test_no_subprotocols (tests.test_server.HandshakeTests)
+Handshake succeeds without subprotocols. ... ok
+test_no_subprotocols_supported (tests.test_server.HandshakeTests)
+Client offers a subprotocol, but the server doesn't support any. ... ok
+test_origin (tests.test_server.HandshakeTests)
+Handshake succeeds when checking origin. ... ok
+test_select_no_subprotocol (tests.test_server.HandshakeTests)
+Server doesn't enable any subprotocol with select_subprotocol. ... ok
+test_select_subprotocol (tests.test_server.HandshakeTests)
+Server enables a subprotocol with select_subprotocol. ... ok
+test_subprotocol (tests.test_server.HandshakeTests)
+Server enables a subprotocol when the client offers it. ... ok
+test_supported_extension_parameters (tests.test_server.HandshakeTests)
+Client offers an extension with parameters supported by the server. ... ok
+test_supported_origin (tests.test_server.HandshakeTests)
+Handshake succeeds when checking origins and the origin is supported. ... ok
+test_supported_subprotocol (tests.test_server.HandshakeTests)
+Server enables one of the subprotocols when the client offers it. ... ok
+test_truncated_key (tests.test_server.HandshakeTests)
+Handshake fails when the Sec-WebSocket-Key header is truncated. ... ok
+test_unexpected_origin (tests.test_server.HandshakeTests)
+Handshake fails when checking origin and the Origin header is unexpected. ... ok
+test_unsupported_extension_parameters (tests.test_server.HandshakeTests)
+Client offers an extension with parameters unsupported by the server. ... ok
+test_unsupported_origin (tests.test_server.HandshakeTests)
+Handshake succeeds when checking origins and the origin is unsupported. ... ok
+test_unsupported_subprotocol (tests.test_server.HandshakeTests)
+Server expects one of the subprotocols, but the client doesn't offer any. ... ok
+test_bypass_handshake (tests.test_server.MiscTests)
+ServerProtocol bypasses the opening handshake. ... ok
+test_custom_logger (tests.test_server.MiscTests)
+ServerProtocol accepts a logger argument. ... ok
+test_receive_junk_request (tests.test_server.RequestTests)
+Server receives a junk handshake request. ... ok
+test_receive_no_request (tests.test_server.RequestTests)
+Server receives no handshake request. ... ok
+test_receive_request (tests.test_server.RequestTests)
+Server receives a handshake request. ... ok
+test_receive_truncated_request (tests.test_server.RequestTests)
+Server receives a truncated handshake request. ... ok
+test_accept_response (tests.test_server.ResponseTests)
+accept() creates a successful opening handshake response. ... ok
+test_reject_response (tests.test_server.ResponseTests)
+reject() creates a failed opening handshake response. ... ok
+test_reject_response_supports_int_status (tests.test_server.ResponseTests)
+reject() accepts an integer status code instead of an HTTPStatus. ... ok
+test_unexpected_error (tests.test_server.ResponseTests)
+accept() handles unexpected errors and returns an error response. ... ok
 test_at_eof_after_feed_data (tests.test_streams.StreamReaderTests) ... ok
 test_at_eof_after_feed_eof (tests.test_streams.StreamReaderTests) ... ok
 test_discard (tests.test_streams.StreamReaderTests) ... ok
@@ -2256,7 +2463,7 @@ test_accept_key (tests.test_utils.UtilsTests) ... ok
 test_generate_key (tests.test_utils.UtilsTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 1670 tests
+Ran 1725 tests
 
 OK (skipped=23)
   py$(PYV): OK
