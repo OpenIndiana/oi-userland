@@ -12,16 +12,15 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bluefish
-COMPONENT_VERSION=	2.2.15
+COMPONENT_VERSION=	2.2.16
 COMPONENT_SUMMARY=	Bluefish, a powerful editor for experienced web designers
 COMPONENT_PROJECT_URL=	https://bluefish.openoffice.nl/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:6143e51c6b5579d596f3a9a85e0f0d8580c9f58f828575b119880e0ca1d941bc
+COMPONENT_ARCHIVE_HASH= sha256:14e6476fcee8fa326f7f63f1f693d252195f9dcb16af0fe3c915c499baf5dd74
 COMPONENT_ARCHIVE_URL=	https://www.bennewitz.com/bluefish/stable/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/editor/bluefish
 COMPONENT_CLASSIFICATION=	Development/Editors
