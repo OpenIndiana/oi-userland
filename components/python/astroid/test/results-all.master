@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 1694 items / 3 deselected / 1 skipped / 1691 selected
+collecting ... collected 1698 items / 3 deselected / 1 skipped / 1695 selected
 
 tests/brain/numpy/test_core_einsumfunc.py::test_numpy_function_calls_inferred_as_ndarray PASSED
 tests/brain/numpy/test_core_einsumfunc.py::test_function_parameters PASSED
@@ -964,6 +964,9 @@ tests/test_inference.py::TestOldStyleStringFormatting::test_old_style_string_for
 tests/test_inference.py::TestOldStyleStringFormatting::test_old_style_string_formatting_uninferable[("%" + str(20)) % 0] PASSED
 tests/test_inference.py::TestOldStyleStringFormatting::test_old_style_string_formatting_with_specs PASSED
 tests/test_inference.py::test_sys_argv_uninferable PASSED
+tests/test_inference.py::test_empty_format_spec PASSED
+tests/test_inference.py::test_joined_str_returns_string[\nclass Cls:\n    # pylint: disable=too-few-public-methods\n    pass\n\nc_obj = Cls()\n\ns1 = f'{c_obj!r}' #@\n-<__main__.Cls] PASSED
+tests/test_inference.py::test_joined_str_returns_string[s1 = f'{5}' #@-5] PASSED
 tests/test_inference_calls.py::test_no_return PASSED
 tests/test_inference_calls.py::test_one_return PASSED
 tests/test_inference_calls.py::test_one_return_possible PASSED
@@ -1087,6 +1090,7 @@ tests/test_manager.py::ClearCacheTest::test_brain_plugins_reloaded_after_clearin
 tests/test_manager.py::ClearCacheTest::test_builtins_inference_after_clearing_cache PASSED
 tests/test_manager.py::ClearCacheTest::test_builtins_inference_after_clearing_cache_manually PASSED
 tests/test_manager.py::ClearCacheTest::test_clear_cache_clears_other_lru_caches PASSED
+tests/test_manager.py::ClearCacheTest::test_file_cache_after_clear_cache PASSED
 tests/test_modutils.py::ModuleFileTest::test_find_egg_module PASSED
 tests/test_modutils.py::ModuleFileTest::test_find_zipped_module PASSED
 tests/test_modutils.py::LoadModuleFromNameTest::test_known_values_load_module_from_name_1 PASSED
@@ -1703,6 +1707,6 @@ tests/test_utils.py::InferenceUtil::test_unpack_infer_uninferable_nodes PASSED [
 
 
 
-======== 1640 passed, 35 skipped, 3 deselected, 16 xfailed, 1 xpassed ========
+======== 1644 passed, 35 skipped, 3 deselected, 16 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)
