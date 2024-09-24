@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
 COMPONENT_VERSION=	4.8.32
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The GNU Midnight Commander file manager
 COMPONENT_DESCRIPTION=	GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell
 COMPONENT_PROJECT_URL=	https://www.midnight-commander.org/
@@ -45,8 +46,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
 
-CONFIGURE_OPTIONS += --sysconfdir=$(USRSHAREDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset
 CONFIGURE_OPTIONS += --disable-vfs-undelfs
@@ -58,9 +57,9 @@ CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 # '#!/usr/bin/python' or '#!/usr/bin/env python'so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
 COMPONENT_POST_INSTALL_ACTION += \
     $(GSED) -i -e 's?\/usr\/bin\/python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
-    $(PROTO_DIR)/usr/share/mc/extfs.d/s3+ ; \
-    $(GSED) -i -e 's?\/usr\/bin\/env python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
-    $(PROTO_DIR)/usr/share/mc/extfs.d/uc1541 ;
+    $(PROTO_DIR)/usr/libexec/mc/extfs.d/s3+ ; \
+    $(GSED) -i -e 's?\/usr\/bin\/env python3?\/usr\/bin\/python$(PYTHON_VERSION)?' \
+    $(PROTO_DIR)/usr/libexec/mc/extfs.d/uc1541 ;
 
 # Manually added dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
@@ -71,5 +70,7 @@ TEST_REQUIRED_PACKAGES += developer/check
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/slang
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += sysutils/e2fsprogs
