@@ -124,7 +124,7 @@ ok 27 - init creates a new deep directory
 ok 28 - init creates a new deep directory (umask vs. shared)
 ok 29 - init notices EEXIST (1)
 ok 30 - init notices EEXIST (2)
-ok 31 - init notices EPERM
+ok 31 # skip init notices EPERM (missing SANITY of POSIXPERM,SANITY)
 ok 32 - init creates a new bare directory with global --bare
 ok 33 - init prefers command line to GIT_DIR
 ok 34 - init with separate gitdir
@@ -132,7 +132,7 @@ ok 35 - explicit bare & --separate-git-dir incompatible
 ok 36 - implicit bare & --separate-git-dir incompatible
 ok 37 - bare & --separate-git-dir incompatible within worktree
 ok 38 - init in long base path
-ok 39 # skip init in long restricted base path (missing GETCWD_IGNORES_PERMS)
+ok 39 - init in long restricted base path
 ok 40 - re-init on .git file
 ok 41 - re-init to update git link
 ok 42 - re-init to move gitdir
@@ -250,14 +250,14 @@ ok 54 - user defined builtin_objectmode values are ignored
 1..54
 *** t0004-unwritable.sh ***
 ok 1 - setup
-ok 2 - write-tree should notice unwritable repository
-ok 3 - write-tree output on unwritable repository
-ok 4 - commit should notice unwritable repository
-ok 5 - commit output on unwritable repository
-ok 6 - update-index should notice unwritable repository
-ok 7 - update-index output on unwritable repository
-ok 8 - add should notice unwritable repository
-ok 9 - add output on unwritable repository
+ok 2 # skip write-tree should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 3 # skip write-tree output on unwritable repository (missing WRITE_TREE_OUT)
+ok 4 # skip commit should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 5 # skip commit output on unwritable repository (missing COMMIT_OUT)
+ok 6 # skip update-index should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 7 # skip update-index output on unwritable repository (missing UPDATE_INDEX_OUT)
+ok 8 # skip add should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 9 # skip add output on unwritable repository (missing ADD_OUT)
 # passed all 9 test(s)
 1..9
 *** t0005-signals.sh ***
@@ -4300,7 +4300,7 @@ ok 6 - run_command can run a script without a #! line
 ok 7 - run_command does not try to execute a directory
 ok 8 - run_command passes over non-executable file
 ok 9 - run_command reports EACCES
-ok 10 - unreadable directory in PATH
+ok 10 # skip unreadable directory in PATH (missing SANITY of POSIXPERM,SANITY)
 ok 11 - run_command runs in parallel with more jobs available than tasks
 ok 12 - run_command runs ungrouped in parallel with more jobs available than tasks
 ok 13 - run_command runs in parallel with as many jobs as tasks
@@ -4356,8 +4356,8 @@ ok 2 - dir-iterator should iterate through all files
 ok 3 - dir-iterator should list files in the correct order
 ok 4 - begin should fail upon inexistent paths
 ok 5 - begin should fail upon non directory paths
-ok 6 - advance should not fail on errors by default
-ok 7 - advance should fail on errors, w/ pedantic flag
+ok 6 # skip advance should not fail on errors by default (missing SANITY of POSIXPERM,SANITY)
+ok 7 # skip advance should fail on errors, w/ pedantic flag (missing SANITY of POSIXPERM,SANITY)
 ok 8 - setup dirs with symlinks
 ok 9 - dir-iterator should not follow symlinks by default
 ok 10 - dir-iterator does not resolve top-level symlinks
@@ -4384,7 +4384,7 @@ ok 5 - --keep-going
 1..5
 *** t0070-fundamental.sh ***
 ok 1 - mktemp to nonexistent directory prints filename
-ok 2 - mktemp to unwritable directory prints filename
+ok 2 # skip mktemp to unwritable directory prints filename (missing SANITY of POSIXPERM,SANITY)
 ok 3 - git_mkstemps_mode does not fail if fd 0 is not open
 ok 4 - check for a bug in the regex routines
 ok 5 - incomplete sideband messages are reassembled
@@ -4783,7 +4783,7 @@ ok 52 - helper (store) not confused by long header
 ok 53 - if custom xdg file exists, home and xdg files not created
 ok 54 - get: use home file if both home and xdg files have matches
 ok 55 - get: use xdg file if home file has no matches
-ok 56 - get: use xdg file if home file is unreadable
+ok 56 # skip get: use xdg file if home file is unreadable (missing SANITY of POSIXPERM,SANITY)
 ok 57 - store: if both xdg and home files exist, only store in home file
 ok 58 - erase: erase matching credentials from both xdg and home files
 ok 59 - get: ignore credentials without scheme as invalid
@@ -5957,7 +5957,7 @@ ok 9 - 3-way not overwriting local changes (setup)
 ok 10 - 3-way not overwriting local changes (our side)
 ok 11 - 3-way not overwriting local changes (their side)
 ok 12 - funny symlink in work tree
-ok 13 - funny symlink in work tree, un-unlink-able
+ok 13 # skip funny symlink in work tree, un-unlink-able (missing SANITY)
 ok 14 - D/F setup
 ok 15 - D/F
 ok 16 - D/F resolve
@@ -7719,7 +7719,7 @@ ok 30 - find value with highest priority from a configset
 ok 31 - find value_list for a key from a configset
 ok 32 - proper error on non-existent files
 ok 33 - proper error on directory "files"
-ok 34 - proper error on non-accessible files
+ok 34 # skip proper error on non-accessible files (missing SANITY of POSIXPERM,SANITY)
 ok 35 - proper error on error in default config files
 ok 36 - proper error on error in custom config files
 ok 37 - check line errors for malformed values
@@ -9315,7 +9315,7 @@ ok 21 - check splitIndex.sharedIndexExpire set to "never" and "now"
 ok 22 - same mode for index & split index
 ok 23 - split index respects core.sharedrepository 0666
 ok 24 - split index respects core.sharedrepository 0642
-ok 25 - graceful handling when splitting index is not allowed
+ok 25 # skip graceful handling when splitting index is not allowed (missing SANITY of POSIXPERM,SANITY)
 ok 26 - writing split index with null sha1 does not write cache tree
 ok 27 - do not refresh null base index
 ok 28 - reading split index at alternate location
@@ -10386,7 +10386,7 @@ ok 1 - initialize
 ok 2 - worktree prune on normal repo
 ok 3 - prune files inside $GIT_DIR/worktrees
 ok 4 - prune directories without gitdir
-ok 5 - prune directories with unreadable gitdir
+ok 5 # skip prune directories with unreadable gitdir (missing SANITY)
 ok 6 - prune directories with invalid gitdir
 ok 7 - prune directories with gitdir pointing to nowhere
 ok 8 - not prune locked checkout
@@ -14698,7 +14698,7 @@ ok 5 - detect duplicate GIT_AUTHOR_NAME
 ok 6 - detect duplicate GIT_AUTHOR_EMAIL
 ok 7 - detect duplicate GIT_AUTHOR_DATE
 ok 8 - unknown key in author-script
-ok 9 - unwritable rebased-patches does not leak
+ok 9 # skip unwritable rebased-patches does not leak (missing SANITY of POSIXPERM,SANITY)
 # passed all 9 test(s)
 1..9
 *** t3500-cherry.sh ***
@@ -15015,7 +15015,7 @@ ok 11 - Test that "git rm bar" succeeds
 ok 12 - Post-check that bar does not exist and is not in index after "git rm -f bar"
 ok 13 - Test that "git rm -- -q" succeeds (remove a file that looks like an option)
 ok 14 - Test that "git rm -f" succeeds with embedded space, tab, or newline characters.
-ok 15 - Test that "git rm -f" fails if its rm fails
+ok 15 # skip Test that "git rm -f" fails if its rm fails (missing SANITY)
 ok 16 - When the rm in "git rm -f" fails, it should not remove the file from the index
 ok 17 - Remove nonexistent file with --ignore-unmatch
 ok 18 - "rm" command printed
@@ -15154,11 +15154,11 @@ ok 23 - git add with filemode=0, symlinks=0 prefers stage 2 over stage 1
 ok 24 - git add --refresh
 ok 25 - git add --refresh with pathspec
 ok 26 - git add --refresh correctly reports no match error
-ok 27 - git add should fail atomically upon an unreadable file
-ok 28 - git add --ignore-errors
-ok 29 - git add (add.ignore-errors)
-ok 30 - git add (add.ignore-errors = false)
-ok 31 - --no-ignore-errors overrides config
+ok 27 # skip git add should fail atomically upon an unreadable file (missing SANITY of POSIXPERM,SANITY)
+ok 28 # skip git add --ignore-errors (missing SANITY of POSIXPERM,SANITY)
+ok 29 # skip git add (add.ignore-errors) (missing SANITY of POSIXPERM,SANITY)
+ok 30 # skip git add (add.ignore-errors = false) (missing SANITY of POSIXPERM,SANITY)
+ok 31 # skip --no-ignore-errors overrides config (missing SANITY of POSIXPERM,SANITY)
 ok 32 - git add 'fo\[ou\]bar' ignores foobar
 ok 33 - git add to resolve conflicts on otherwise ignored path
 ok 34 - "add non-existent" should fail
@@ -16675,8 +16675,19 @@ ok 22 - check should test not just the last line
 ok 23 - check detects leftover conflict markers
 ok 24 - check honors conflict marker length
 ok 25 - option errors are not confused by --exit-code
-# passed all 25 test(s)
-1..25
+ok 26 - git diff --exit-code returns 1 for copied file
+ok 27 - git diff --exit-code returns 1 for renamed file
+ok 28 - git diff --quiet returns 1 for copied file
+ok 29 - git diff --quiet returns 1 for renamed file
+ok 30 - setup dirty subrepo
+ok 31 - git diff --exit-code --submodule=diff returns 1 for dirty subrepo
+ok 32 - git diff --exit-code --submodule=log returns 1 for dirty subrepo
+ok 33 - git diff --exit-code --submodule=short returns 1 for dirty subrepo
+ok 34 - git diff --quiet --submodule=diff returns 1 for dirty subrepo
+ok 35 - git diff --quiet --submodule=log returns 1 for dirty subrepo
+ok 36 - git diff --quiet --submodule=short returns 1 for dirty subrepo
+# passed all 36 test(s)
+1..36
 *** t4018-diff-funcname.sh ***
 ok 1 - setup
 ok 2 - setup: test-tool userdiff
@@ -17813,7 +17824,7 @@ ok 9 - -U0 is valid, so is diff.context=0
 ok 1 - setup
 ok 2 - no order (=tree object order)
 ok 3 - missing orderfile
-ok 4 - unreadable orderfile
+ok 4 # skip unreadable orderfile (missing SANITY of POSIXPERM,SANITY)
 ok 5 - orderfile using option from subdir with --output
 ok 6 - orderfile using option (1)
 ok 7 - orderfile is fifo (1)
@@ -19087,32 +19098,28 @@ ok 4 - patch-id detects inequality
 ok 5 - patch-id detects equality binary
 ok 6 - patch-id detects inequality binary
 ok 7 - patch-id supports git-format-patch output
-ok 8 - patch-id computes the same for various formats
-ok 9 - patch-id with <07cc3954621a0b8e9da46b164f8d583956d8fe4b> in log message
-ok 10 - patch-id with <commit 07cc3954621a0b8e9da46b164f8d583956d8fe4b is bad> in log message
-ok 11 - patch-id with <From 07cc3954621a0b8e9da46b164f8d583956d8fe4b status> in log message
-ok 12 - whitespace is irrelevant in footer
-ok 13 - file order is irrelevant with --stable
-ok 14 - file order is relevant with --unstable
-ok 15 - whitespace is relevant with --verbatim
-ok 16 - whitespace is irrelevant without --verbatim
-ok 17 - default is unstable
-ok 18 - patchid.stable = true is stable
-ok 19 - patchid.stable = false is unstable
-ok 20 - patchid.verbatim = true is correct and stable
-ok 21 - patchid.verbatim = false is unstable
-ok 22 - --unstable overrides patchid.stable = true
-ok 23 - --stable overrides patchid.stable = false
-ok 24 - --verbatim overrides patchid.stable = false
-ok 25 - patch-id supports git-format-patch MIME output
-ok 26 - patch-id respects config from subdir
-ok 27 - patch-id handles no-nl-at-eof markers
-ok 28 - patch-id handles diffs with one line of before/after
-not ok 29 - patch-id computes same ID with different object hashes # TODO known breakage
-ok 30 - patch-id without repository
+ok 8 - whitespace is irrelevant in footer
+ok 9 - file order is irrelevant with --stable
+ok 10 - file order is relevant with --unstable
+ok 11 - whitespace is relevant with --verbatim
+ok 12 - whitespace is irrelevant without --verbatim
+ok 13 - default is unstable
+ok 14 - patchid.stable = true is stable
+ok 15 - patchid.stable = false is unstable
+ok 16 - patchid.verbatim = true is correct and stable
+ok 17 - patchid.verbatim = false is unstable
+ok 18 - --unstable overrides patchid.stable = true
+ok 19 - --stable overrides patchid.stable = false
+ok 20 - --verbatim overrides patchid.stable = false
+ok 21 - patch-id supports git-format-patch MIME output
+ok 22 - patch-id respects config from subdir
+ok 23 - patch-id handles no-nl-at-eof markers
+ok 24 - patch-id handles diffs with one line of before/after
+not ok 25 - patch-id computes same ID with different object hashes # TODO known breakage
+ok 26 - patch-id without repository
 # still have 1 known breakage(s)
-# passed all remaining 29 test(s)
-1..30
+# passed all remaining 25 test(s)
+1..26
 *** t4205-log-pretty-formats.sh ***
 ok 1 - set up basic repos
 ok 2 - alias builtin format
@@ -19783,7 +19790,7 @@ ok 28 - Check conflicted oids and modes without messages
 ok 29 - NUL terminated conflicted file "lines"
 ok 30 - error out by default for unrelated histories
 ok 31 - can override merge of unrelated histories
-ok 32 - merge-ort fails gracefully in a read-only repository
+ok 32 # skip merge-ort fails gracefully in a read-only repository (missing SANITY)
 ok 33 - --stdin with both a successful and a conflicted merge
 ok 34 - --merge-base is incompatible with --stdin
 ok 35 - specify merge-base as parent of branch2
@@ -20750,7 +20757,7 @@ ok 60 - replace-objects invalidates commit-graph
 ok 61 - warn on improper hash version
 ok 62 - lower layers have overflow chunk
 ok 63 - git commit-graph verify
-ok 64 - detect permission problem
+ok 64 # skip detect permission problem (missing SANITY of POSIXPERM,SANITY)
 ok 65 - detect too small
 ok 66 - detect bad signature
 ok 67 - detect bad version
@@ -23632,7 +23639,7 @@ ok 10 - fetch --update-shallow
 ok 11 - fetch --update-shallow into a repo with submodules
 ok 12 - fetch --update-shallow a commit that is also a shallow point into a repo with submodules
 ok 13 - fetch --update-shallow (with fetch.writeCommitGraph)
-ok 14 - shallow fetch from a read-only repo
+ok 14 # skip shallow fetch from a read-only repo (missing SANITY of POSIXPERM,SANITY)
 ok 15 - .git/shallow is edited by repack
 # passed all 15 test(s)
 # SKIP no web server found at ''
@@ -24505,20 +24512,7 @@ ok 4 - pull with git:// using protocol v1
 ok 5 - push with git:// using protocol v1
 ok 6 - create repo to be served by file:// transport
 ok 7 - clone with file:// using protocol v1
-not ok 8 - fetch with file:// using protocol v1
-#	
-#		test_commit -C file_parent two &&
-#	
-#		GIT_TRACE_PACKET=1 git -C file_child -c protocol.version=1 \
-#			fetch 2>log &&
-#	
-#		git -C file_child log -1 --format=%s origin/main >actual &&
-#		git -C file_parent log -1 --format=%s >expect &&
-#		test_cmp expect actual &&
-#	
-#		# Server responded using protocol v1
-#		grep "fetch< version 1" log
-#	
+ok 8 - fetch with file:// using protocol v1
 ok 9 - pull with file:// using protocol v1
 ok 10 - push with file:// using protocol v1
 ok 11 - cloning branchless tagless but not refless remote
@@ -24529,7 +24523,8 @@ ok 15 - fetch with ssh:// using protocol v1
 ok 16 - pull with ssh:// using protocol v1
 ok 17 - push with ssh:// using protocol v1
 ok 18 - clone propagates object-format from empty repo
-# failed 1 among 18 test(s)
+# passed all 18 test(s)
+# SKIP no web server found at ''
 1..18
 *** t5701-git-serve.sh ***
 ok 1 - test capability advertisement
@@ -28816,11 +28811,11 @@ ok 25 - clean.requireForce and -n
 ok 26 - clean.requireForce and -f
 ok 27 - clean.requireForce and --interactive
 ok 28 - core.excludesfile
-ok 29 - removal failure
+ok 29 # skip removal failure (missing SANITY)
 ok 30 - nested git work tree
 ok 31 - should clean things that almost look like git but are not
 ok 32 - should not clean submodules
-ok 33 - should avoid cleaning possible submodules
+ok 33 # skip should avoid cleaning possible submodules (missing SANITY of POSIXPERM,SANITY)
 ok 34 - nested (empty) git should be kept
 ok 35 - nested bare repositories should be cleaned
 not ok 36 - nested (empty) bare repositories should be cleaned even when in .git # TODO known breakage
@@ -28830,7 +28825,7 @@ ok 39 - giving path to nested .git will not remove it
 ok 40 - giving path to nested .git/ will NOT remove contents
 ok 41 - force removal of nested git work tree
 ok 42 - git clean -e
-ok 43 - git clean -d with an unreadable empty directory
+ok 43 # skip git clean -d with an unreadable empty directory (missing SANITY)
 ok 44 - git clean -d respects pathspecs (dir is prefix of pathspec)
 ok 45 - git clean -d respects pathspecs (pathspec is prefix of dir)
 ok 46 - git clean -d skips untracked dirs containing ignored files
@@ -29849,7 +29844,7 @@ ok 66 - status submodule summary (clean submodule): commit
 ok 67 - status -s submodule summary (clean submodule)
 ok 68 - status -z implies porcelain
 ok 69 - commit --dry-run submodule summary (--amend)
-ok 70 - status succeeds in a read-only repository
+ok 70 # skip status succeeds in a read-only repository (missing SANITY of POSIXPERM,SANITY)
 ok 71 - --ignore-submodules=untracked suppresses submodules with untracked content
 ok 72 - .gitmodules ignore=untracked suppresses submodules with untracked content
 ok 73 - .git/config ignore=untracked suppresses submodules with untracked content
@@ -30039,94 +30034,97 @@ ok 7 - without config in another order
 ok 8 - --trim-empty without config
 ok 9 - with config option on the command line
 ok 10 - with only a title in the message
-ok 11 - with multiline title in the message
-ok 12 - with non-trailer lines mixed with Signed-off-by
-ok 13 - with non-trailer lines mixed with cherry picked from
-ok 14 - with non-trailer lines mixed with a configured trailer
-ok 15 - with non-trailer lines mixed with a non-configured trailer
-ok 16 - with all non-configured trailers
-ok 17 - with non-trailer lines only
-ok 18 - line with leading whitespace is not trailer
-ok 19 - multiline field treated as one trailer for 25% check
-ok 20 - multiline field treated as atomic for placement
-ok 21 - multiline field treated as atomic for replacement
-ok 22 - multiline field treated as atomic for difference check
-ok 23 - multiline field treated as atomic for neighbor check
-ok 24 - with config setup
-ok 25 - with config setup and ":=" as separators
-ok 26 - with config setup and "%" as separators
-ok 27 - with "%" as separators and a message with trailers
-ok 28 - with config setup and ":=#" as separators
-ok 29 - with commit basic message
-ok 30 - with basic patch
-ok 31 - with commit complex message as argument
-ok 32 - with 2 files arguments
-ok 33 - with message that has comments (#)
-ok 34 - with message that has comments (;)
-ok 35 - with message that has an old style conflict block
-ok 36 - with commit complex message and trailer args
-ok 37 - with complex patch, args and --trim-empty
-ok 38 - in-place editing with basic patch
-ok 39 - in-place editing with additional trailer
-ok 40 - in-place editing on stdin disallowed
-ok 41 - in-place editing on non-existing file
-ok 42 - in-place editing doesn't clobber original file on error
-ok 43 - using "where = before"
-ok 44 - overriding configuration with "--where after"
-ok 45 - using "--where after" with "--no-where"
-ok 46 - using "--where after" with "--no-where" defaults to configuration
-ok 47 - using "--no-where" defaults to harcoded default if nothing configured
-ok 48 - using "where = after"
-ok 49 - using "where = end"
-ok 50 - using "where = start"
-ok 51 - using "where = before" for a token in the middle of the message
-ok 52 - using "where = before" and --trim-empty
-ok 53 - the default is "ifExists = addIfDifferentNeighbor"
-ok 54 - default "ifExists" is now "addIfDifferent"
-ok 55 - using "ifExists = addIfDifferent" with "where = end"
-ok 56 - using "ifExists = addIfDifferent" with "where = before"
-ok 57 - using "ifExists = addIfDifferentNeighbor" with "where = end"
-ok 58 - using "ifExists = addIfDifferentNeighbor"  with "where = after"
-ok 59 - using "ifExists = addIfDifferentNeighbor" and --trim-empty
-ok 60 - using "ifExists = add" with "where = end"
-ok 61 - using "ifExists = add" with "where = after"
-ok 62 - overriding configuration with "--if-exists replace"
-ok 63 - using "--if-exists replace" with "--no-if-exists" defaults to configuration
-ok 64 - using "--no-if-exists" defaults to hardcoded default if nothing configured
-ok 65 - using "--no-if-exists" defaults to hardcoded default if nothing configured (no addition)
-ok 66 - using "ifExists = replace"
-ok 67 - using "ifExists = replace" with "where = after"
-ok 68 - using "ifExists = doNothing"
-ok 69 - the default is "ifMissing = add"
-ok 70 - overriding configuration with "--if-missing doNothing"
-ok 71 - when default "ifMissing" is "doNothing"
-ok 72 - using "ifMissing = add" with "where = end"
-ok 73 - using "ifMissing = add" with "where = before"
-ok 74 - using "ifMissing = doNothing"
-ok 75 - using "--no-if-missing" defaults to configuration
-ok 76 - using "--no-if-missing" defaults to hardcoded default if nothing configured
-ok 77 - default "where" is now "after"
-ok 78 - with simple command
-ok 79 - with command using committer information
-ok 80 - with command using author information
-ok 81 - setup a commit
-ok 82 - cmd takes precedence over command
-ok 83 - with command using $ARG
-ok 84 - with failing command using $ARG
-ok 85 - with empty tokens
-ok 86 - with command but no key
-ok 87 - with no command and no key
-ok 88 - with cut line
-ok 89 - only trailers
-ok 90 - only-trailers omits non-trailer in middle of block
-ok 91 - only input
-ok 92 - unfold
-ok 93 - handling of --- lines in input
-ok 94 - suppress --- handling
-ok 95 - suppressing --- does not disable cut-line handling
-ok 96 - handling of --- lines in conjunction with cut-lines
-# passed all 96 test(s)
-1..96
+ok 11 - with a bodiless message that lacks a trailing newline after the subject
+ok 12 - with a bodied message that lacks a trailing newline after the body
+ok 13 - with a message that lacks a trailing newline after the trailers
+ok 14 - with multiline title in the message
+ok 15 - with non-trailer lines mixed with Signed-off-by
+ok 16 - with non-trailer lines mixed with cherry picked from
+ok 17 - with non-trailer lines mixed with a configured trailer
+ok 18 - with non-trailer lines mixed with a non-configured trailer
+ok 19 - with all non-configured trailers
+ok 20 - with non-trailer lines only
+ok 21 - line with leading whitespace is not trailer
+ok 22 - multiline field treated as one trailer for 25% check
+ok 23 - multiline field treated as atomic for placement
+ok 24 - multiline field treated as atomic for replacement
+ok 25 - multiline field treated as atomic for difference check
+ok 26 - multiline field treated as atomic for neighbor check
+ok 27 - with config setup
+ok 28 - with config setup and ":=" as separators
+ok 29 - with config setup and "%" as separators
+ok 30 - with "%" as separators and a message with trailers
+ok 31 - with config setup and ":=#" as separators
+ok 32 - with commit basic message
+ok 33 - with basic patch
+ok 34 - with commit complex message as argument
+ok 35 - with 2 files arguments
+ok 36 - with message that has comments (#)
+ok 37 - with message that has comments (;)
+ok 38 - with message that has an old style conflict block
+ok 39 - with commit complex message and trailer args
+ok 40 - with complex patch, args and --trim-empty
+ok 41 - in-place editing with basic patch
+ok 42 - in-place editing with additional trailer
+ok 43 - in-place editing on stdin disallowed
+ok 44 - in-place editing on non-existing file
+ok 45 # skip in-place editing doesn't clobber original file on error (missing SANITY of POSIXPERM,SANITY)
+ok 46 - using "where = before"
+ok 47 - overriding configuration with "--where after"
+ok 48 - using "--where after" with "--no-where"
+ok 49 - using "--where after" with "--no-where" defaults to configuration
+ok 50 - using "--no-where" defaults to harcoded default if nothing configured
+ok 51 - using "where = after"
+ok 52 - using "where = end"
+ok 53 - using "where = start"
+ok 54 - using "where = before" for a token in the middle of the message
+ok 55 - using "where = before" and --trim-empty
+ok 56 - the default is "ifExists = addIfDifferentNeighbor"
+ok 57 - default "ifExists" is now "addIfDifferent"
+ok 58 - using "ifExists = addIfDifferent" with "where = end"
+ok 59 - using "ifExists = addIfDifferent" with "where = before"
+ok 60 - using "ifExists = addIfDifferentNeighbor" with "where = end"
+ok 61 - using "ifExists = addIfDifferentNeighbor"  with "where = after"
+ok 62 - using "ifExists = addIfDifferentNeighbor" and --trim-empty
+ok 63 - using "ifExists = add" with "where = end"
+ok 64 - using "ifExists = add" with "where = after"
+ok 65 - overriding configuration with "--if-exists replace"
+ok 66 - using "--if-exists replace" with "--no-if-exists" defaults to configuration
+ok 67 - using "--no-if-exists" defaults to hardcoded default if nothing configured
+ok 68 - using "--no-if-exists" defaults to hardcoded default if nothing configured (no addition)
+ok 69 - using "ifExists = replace"
+ok 70 - using "ifExists = replace" with "where = after"
+ok 71 - using "ifExists = doNothing"
+ok 72 - the default is "ifMissing = add"
+ok 73 - overriding configuration with "--if-missing doNothing"
+ok 74 - when default "ifMissing" is "doNothing"
+ok 75 - using "ifMissing = add" with "where = end"
+ok 76 - using "ifMissing = add" with "where = before"
+ok 77 - using "ifMissing = doNothing"
+ok 78 - using "--no-if-missing" defaults to configuration
+ok 79 - using "--no-if-missing" defaults to hardcoded default if nothing configured
+ok 80 - default "where" is now "after"
+ok 81 - with simple command
+ok 82 - with command using committer information
+ok 83 - with command using author information
+ok 84 - setup a commit
+ok 85 - cmd takes precedence over command
+ok 86 - with command using $ARG
+ok 87 - with failing command using $ARG
+ok 88 - with empty tokens
+ok 89 - with command but no key
+ok 90 - with no command and no key
+ok 91 - with cut line
+ok 92 - only trailers
+ok 93 - only-trailers omits non-trailer in middle of block
+ok 94 - only input
+ok 95 - unfold
+ok 96 - handling of --- lines in input
+ok 97 - suppress --- handling
+ok 98 - suppressing --- does not disable cut-line handling
+ok 99 - handling of --- lines in conjunction with cut-lines
+# passed all 99 test(s)
+1..99
 *** t7514-commit-patch.sh ***
 ok 1 - setup (initial)
 ok 2 - edit hunk "commit -p -m message"
@@ -33432,13 +33430,10 @@ ok 67 - prompt - conflict indicator
 # passed all 67 test(s)
 1..67
 
-missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UTF8_NFD_TO_NFC WINDOWS
-
-
-failed test(s): t5700
+missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS ADD_OUT AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE FSMONITOR_DAEMON GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
 
 fixed   1
-success 29714
-failed  1
+success 29692
+failed  0
 broken  271
-total   30436
+total   30446
