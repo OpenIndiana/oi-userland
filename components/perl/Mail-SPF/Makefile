@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::SPF
-HUMAN_VERSION =			3.20240827
+HUMAN_VERSION =			3.20240923
 COMPONENT_SUMMARY =		Mail::SPF - An object-oriented implementation of Sender Policy Framework
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b643b58e73eec3681451a6ffc9f0f95e4dd9a3c6a1af01eb2bd527dab3cfbaa2
+	sha256:dd348caaf4947ec5013f79cc66ae99b92b38b8723619efbe36760e12cb221430
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
