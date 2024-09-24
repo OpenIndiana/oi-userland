@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mozilla::CA
-HUMAN_VERSION =			20240730
+HUMAN_VERSION =			20240924
 COMPONENT_SUMMARY =		Mozilla::CA - Mozilla's CA cert bundle in PEM format
 COMPONENT_CPAN_AUTHOR =		LWP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:55bbee1875a905616e0c39457245f94f8173227fbe906f643673f5adadedf863
+	sha256:c4b1412bbc37dff8cf29af6f92cb47defbe90eebcbc29e407a98638f7a31bcd0
 COMPONENT_LICENSE =		MPL-2.0
 
 include $(WS_MAKE_RULES)/common.mk
