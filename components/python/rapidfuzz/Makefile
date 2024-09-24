@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		rapidfuzz
-HUMAN_VERSION =			3.9.7
+HUMAN_VERSION =			3.10.0
 COMPONENT_SUMMARY =		rapid fuzzy string matching
-COMPONENT_PROJECT_URL =		https://github.com/rapidfuzz/RapidFuzz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f1c7296534c1afb6f495aa95871f14ccdc197c6db42965854e483100df313030
+	sha256:6b62af27e65bb39276a66533655a2fa3c60a487b03935721c45b7809527979be
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,8 +34,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH = $(PATH.gnu)
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/scikit-build
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/scikit-build-core
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
