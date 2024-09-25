@@ -17,9 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openbox
 COMPONENT_VERSION=      3.6.1
-COMPONENT_REVISION=     5
-COMPONENT_PROJECT_URL=  http://openbox.org
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=      A minimalistic,highly configurable, next generation window manager with extensive standards support.
+COMPONENT_PROJECT_URL=  https://openbox.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:abe75855cc5616554ffd47134ad15291fe37ebbebf1a80b69cbde9d670f0e26d
@@ -35,8 +35,8 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_BUILD_ENV=	DEST_DIR=$(PROTO_DIR)
 COMPONENT_INSTALL_ENV=	DEST_DIR=$(PROTO_DIR)
 
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --libexecdir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --disable-imlib2
 
 COMPONENT_PRE_BUILD_ACTION = \
