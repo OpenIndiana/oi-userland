@@ -22,8 +22,8 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
-# Copyright (c) 2021, Andreas Wacknitz
 # Copyright (c) 2022, Niklas Poslovski
+# Copyright (c) 2024, Andreas Wacknitz
 #
 
 include ../../../make-rules/shared-macros.mk
