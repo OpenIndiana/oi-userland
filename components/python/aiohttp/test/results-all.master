@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-collecting ... collected 3223 items / 9 deselected / 3214 selected
+collecting ... collected 3301 items / 9 deselected / 3292 selected
 
 tests/test_base_protocol.py::test_loop PASSED
 tests/test_base_protocol.py::test_pause_writing PASSED
@@ -157,11 +157,23 @@ tests/test_client_functional.py::test_post_data_bytesio[pyloop] PASSED
 tests/test_client_functional.py::test_post_data_with_bytesio_file[pyloop] PASSED
 tests/test_client_functional.py::test_post_data_stringio[pyloop] PASSED
 tests/test_client_functional.py::test_post_data_textio_encoding[pyloop] PASSED
+tests/test_client_functional.py::test_post_data_zipfile_filelike[pyloop] PASSED
+tests/test_client_functional.py::test_post_data_tarfile_filelike[pyloop] PASSED
 tests/test_client_functional.py::test_ssl_client[pyloop] PASSED
 tests/test_client_functional.py::test_tcp_connector_fingerprint_ok[pyloop] PASSED
 tests/test_client_functional.py::test_tcp_connector_fingerprint_fail[pyloop] PASSED
 tests/test_client_functional.py::test_format_task_get[pyloop] PASSED
 tests/test_client_functional.py::test_str_params[pyloop] PASSED
+tests/test_client_functional.py::test_params_and_query_string[pyloop-True] PASSED
+tests/test_client_functional.py::test_params_and_query_string[pyloop-False] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-True-None] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-True-] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-True-params2] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-True-params3] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-False-None] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-False-] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-False-params2] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-False-params3] PASSED
 tests/test_client_functional.py::test_drop_params_on_redirect[pyloop] PASSED
 tests/test_client_functional.py::test_drop_fragment_on_redirect[pyloop] PASSED
 tests/test_client_functional.py::test_drop_fragment[pyloop] PASSED
@@ -202,6 +214,8 @@ tests/test_client_functional.py::test_POST_DATA_with_charset[pyloop] PASSED
 tests/test_client_functional.py::test_POST_DATA_formdats_with_charset[pyloop] PASSED
 tests/test_client_functional.py::test_POST_DATA_with_charset_post[pyloop] PASSED
 tests/test_client_functional.py::test_POST_MultiDict[pyloop] PASSED
+tests/test_client_functional.py::test_GET_DEFLATE[pyloop-None] PASSED
+tests/test_client_functional.py::test_GET_DEFLATE[pyloop-] PASSED
 tests/test_client_functional.py::test_POST_DATA_DEFLATE[pyloop] PASSED
 tests/test_client_functional.py::test_POST_FILES[pyloop] PASSED
 tests/test_client_functional.py::test_POST_FILES_DEFLATE[pyloop] PASSED
@@ -330,6 +344,8 @@ tests/test_client_functional.py::test_await_after_cancelling[pyloop] PASSED
 tests/test_client_functional.py::test_async_payload_generator[pyloop] PASSED
 tests/test_client_functional.py::test_read_from_closed_response[pyloop] PASSED
 tests/test_client_functional.py::test_read_from_closed_response2[pyloop] PASSED
+tests/test_client_functional.py::test_read_after_catch_raise_for_status[pyloop] PASSED
+tests/test_client_functional.py::test_read_after_raise_outside_context[pyloop] PASSED
 tests/test_client_functional.py::test_read_from_closed_content[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout[pyloop] PASSED
 tests/test_client_functional.py::test_socket_timeout[pyloop] PASSED
@@ -347,10 +363,11 @@ tests/test_client_functional.py::test_max_line_size_session_default[pyloop] PASS
 tests/test_client_functional.py::test_max_line_size_session_default_fail[pyloop] PASSED
 tests/test_client_functional.py::test_max_line_size_session_explicit[pyloop] PASSED
 tests/test_client_functional.py::test_max_line_size_request_explicit[pyloop] PASSED
-tests/test_client_functional.py::test_rejected_upload[pyloop] XFAIL
+tests/test_client_functional.py::test_rejected_upload[pyloop] PASSED
 tests/test_client_functional.py::test_request_with_wrong_proxy[pyloop-42-TypeError] PASSED
 tests/test_client_functional.py::test_request_with_wrong_proxy[pyloop-InvalidUrl-InvalidURL] PASSED
 tests/test_client_functional.py::test_raise_for_status_is_none[pyloop] PASSED
+tests/test_client_functional.py::test_exception_when_read_outside_of_session[pyloop] PASSED
 tests/test_client_proto.py::test_oserror[pyloop] PASSED
 tests/test_client_proto.py::test_pause_resume_on_error[pyloop] PASSED
 tests/test_client_proto.py::test_client_proto_bad_message[pyloop] PASSED
@@ -420,6 +437,7 @@ tests/test_client_request.py::test_basic_auth[pyloop] PASSED
 tests/test_client_request.py::test_basic_auth_utf8[pyloop] PASSED
 tests/test_client_request.py::test_basic_auth_tuple_forbidden[pyloop] PASSED
 tests/test_client_request.py::test_basic_auth_from_url[pyloop] PASSED
+tests/test_client_request.py::test_basic_auth_no_user_from_url[pyloop] PASSED
 tests/test_client_request.py::test_basic_auth_from_url_overridden[pyloop] PASSED
 tests/test_client_request.py::test_path_is_not_double_encoded1[pyloop] PASSED
 tests/test_client_request.py::test_path_is_not_double_encoded2[pyloop] PASSED
@@ -485,6 +503,8 @@ tests/test_client_request.py::test_close[pyloop] PASSED
 tests/test_client_request.py::test_bad_version[pyloop] PASSED
 tests/test_client_request.py::test_custom_response_class[pyloop] PASSED
 tests/test_client_request.py::test_oserror_on_write_bytes[pyloop] PASSED
+tests/test_client_request.py::test_cancel_close[pyloop] SKIPPED (Needs
+Task.cancelling())
 tests/test_client_request.py::test_terminate[pyloop] PASSED
 tests/test_client_request.py::test_terminate_with_closed_loop[pyloop] PASSED
 tests/test_client_request.py::test_terminate_without_writer[pyloop] PASSED
@@ -517,6 +537,7 @@ tests/test_client_response.py::test_response_eof_upgraded[pyloop] PASSED
 tests/test_client_response.py::test_response_eof_after_connection_detach[pyloop] PASSED
 tests/test_client_response.py::test_text[pyloop] PASSED
 tests/test_client_response.py::test_text_bad_encoding[pyloop] PASSED
+tests/test_client_response.py::test_text_badly_encoded_encoding_header[pyloop] PASSED
 tests/test_client_response.py::test_text_custom_encoding[pyloop] PASSED
 tests/test_client_response.py::test_text_charset_resolver[pyloop-text/plain] PASSED
 tests/test_client_response.py::test_text_charset_resolver[pyloop-text/plain;charset=invalid] PASSED
@@ -609,7 +630,7 @@ tests/test_client_session.py::test_client_session_inheritance PASSED
 tests/test_client_session.py::test_client_session_custom_attr[pyloop] SKIPPED
 tests/test_client_session.py::test_client_session_timeout_args[pyloop] PASSED
 tests/test_client_session.py::test_client_session_timeout_default_args[pyloop] PASSED
-tests/test_client_session.py::test_client_session_timeout_zero PASSED
+tests/test_client_session.py::test_client_session_timeout_zero[pyloop] PASSED
 tests/test_client_session.py::test_client_session_timeout_bad_argument PASSED
 tests/test_client_session.py::test_requote_redirect_url_default PASSED
 tests/test_client_session.py::test_requote_redirect_url_default_disable PASSED
@@ -643,7 +664,8 @@ tests/test_client_ws.py::test_close_eofstream[pyloop] PASSED
 tests/test_client_ws.py::test_close_connection_lost[pyloop] PASSED
 tests/test_client_ws.py::test_close_exc[pyloop] PASSED
 tests/test_client_ws.py::test_close_exc2[pyloop] PASSED
-tests/test_client_ws.py::test_send_data_after_close[pyloop] PASSED
+tests/test_client_ws.py::test_send_data_after_close[pyloop-ClientConnectionResetError] PASSED
+tests/test_client_ws.py::test_send_data_after_close[pyloop-ConnectionResetError] PASSED
 tests/test_client_ws.py::test_send_data_type_errors[pyloop] PASSED
 tests/test_client_ws.py::test_reader_read_exception[pyloop] PASSED
 tests/test_client_ws.py::test_receive_runtime_err[pyloop] PASSED
@@ -771,8 +793,6 @@ tests/test_connector.py::test_insecure_fingerprint_md5[pyloop] PASSED
 tests/test_connector.py::test_insecure_fingerprint_sha1[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_clear_dns_cache[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_clear_dns_cache_bad_args[pyloop] PASSED
-tests/test_connector.py::test_dont_recreate_ssl_context PASSED
-tests/test_connector.py::test_dont_recreate_ssl_context2 PASSED
 tests/test_connector.py::test___get_ssl_context1 PASSED
 tests/test_connector.py::test___get_ssl_context2[pyloop] PASSED
 tests/test_connector.py::test___get_ssl_context3[pyloop] PASSED
@@ -780,11 +800,9 @@ tests/test_connector.py::test___get_ssl_context4[pyloop] PASSED
 tests/test_connector.py::test___get_ssl_context5[pyloop] PASSED
 tests/test_connector.py::test___get_ssl_context6 PASSED
 tests/test_connector.py::test_ssl_context_once PASSED
-tests/test_connector.py::test_ssl_context_creation_raises[OSError] PASSED
-tests/test_connector.py::test_ssl_context_creation_raises[SSLError] PASSED
-tests/test_connector.py::test_ssl_context_creation_raises[CancelledError] PASSED
 tests/test_connector.py::test_close_twice[pyloop] PASSED
 tests/test_connector.py::test_close_cancels_cleanup_handle[pyloop] PASSED
+tests/test_connector.py::test_close_cancels_resolve_host[pyloop] PASSED
 tests/test_connector.py::test_close_abort_closed_transports[pyloop] PASSED
 tests/test_connector.py::test_close_cancels_cleanup_closed_handle[pyloop] PASSED
 tests/test_connector.py::test_ctor_with_default_loop[pyloop] PASSED
@@ -842,6 +860,8 @@ tests/test_connector.py::TestDNSCacheTable::test_next_addrs_single PASSED
 tests/test_connector.py::test_connector_cache_trace_race PASSED
 tests/test_connector.py::test_connector_throttle_trace_race[pyloop] PASSED
 tests/test_connector.py::test_connector_does_not_remove_needed_waiters[pyloop] PASSED
+tests/test_connector.py::test_connector_multiple_event_loop PASSED
+tests/test_connector.py::test_default_ssl_context_creation_without_ssl PASSED
 tests/test_cookiejar.py::test_date_parsing PASSED
 tests/test_cookiejar.py::test_domain_matching PASSED
 tests/test_cookiejar.py::test_constructor[pyloop] PASSED
@@ -885,7 +905,11 @@ tests/test_cookiejar.py::test_dummy_cookie_jar PASSED
 tests/test_cookiejar.py::test_loose_cookies_types PASSED
 tests/test_cookiejar.py::test_cookie_jar_clear_all PASSED
 tests/test_cookiejar.py::test_cookie_jar_clear_expired PASSED
+tests/test_cookiejar.py::test_cookie_jar_expired_changes PASSED
+tests/test_cookiejar.py::test_cookie_jar_duplicates_with_expire_heap PASSED
 tests/test_cookiejar.py::test_cookie_jar_filter_cookies_expires PASSED
+tests/test_cookiejar.py::test_cookie_jar_heap_cleanup PASSED
+tests/test_cookiejar.py::test_cookie_jar_heap_maintains_order_after_cleanup PASSED
 tests/test_cookiejar.py::test_cookie_jar_clear_domain PASSED
 tests/test_cookiejar.py::test_pickle_format PASSED
 tests/test_cookiejar.py::test_treat_as_secure_origin_init[http://127.0.0.1/index.html] PASSED
@@ -910,6 +934,7 @@ tests/test_formdata.py::test_formdata_multipart PASSED
 tests/test_formdata.py::test_invalid_formdata_payload PASSED
 tests/test_formdata.py::test_invalid_formdata_params PASSED
 tests/test_formdata.py::test_invalid_formdata_params2 PASSED
+tests/test_formdata.py::test_formdata_textio_charset PASSED
 tests/test_formdata.py::test_invalid_formdata_content_type PASSED
 tests/test_formdata.py::test_invalid_formdata_filename PASSED
 tests/test_formdata.py::test_invalid_formdata_content_transfer_encoding PASSED
@@ -945,6 +970,7 @@ tests/test_helpers.py::test_basic_auth_decode_blank_username[username:-expected_
 tests/test_helpers.py::test_basic_auth_decode_blank_username[:password-expected_auth2] PASSED
 tests/test_helpers.py::test_basic_auth_decode_blank_username[username:password-expected_auth3] PASSED
 tests/test_helpers.py::test_basic_auth_from_url PASSED
+tests/test_helpers.py::test_basic_auth_no_user_from_url PASSED
 tests/test_helpers.py::test_basic_auth_from_not_url PASSED
 tests/test_helpers.py::TestPyReify::test_reify PASSED
 tests/test_helpers.py::TestPyReify::test_reify_class PASSED
@@ -1158,6 +1184,10 @@ tests/test_http_parser.py::test_request_te_chunked_with_content_length[py-parser
 tests/test_http_parser.py::test_request_te_chunked_with_content_length[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_request_te_chunked123[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_request_te_chunked123[c-parser-pyloop] PASSED
+tests/test_http_parser.py::test_request_te_last_chunked[py-parser-pyloop] PASSED
+tests/test_http_parser.py::test_request_te_last_chunked[c-parser-pyloop] PASSED
+tests/test_http_parser.py::test_request_te_first_chunked[py-parser-pyloop] PASSED
+tests/test_http_parser.py::test_request_te_first_chunked[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_conn_upgrade[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_conn_upgrade[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_bad_upgrade[py-parser-pyloop] PASSED
@@ -1418,6 +1448,8 @@ tests/test_http_parser.py::test_http_request_bad_status_line_separator[py-parser
 tests/test_http_parser.py::test_http_request_bad_status_line_separator[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_bad_status_line_whitespace[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_bad_status_line_whitespace[c-parser-pyloop] PASSED
+tests/test_http_parser.py::test_http_request_message_after_close[py-parser-pyloop] PASSED
+tests/test_http_parser.py::test_http_request_message_after_close[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_upgrade[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_upgrade[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_request_upgrade_unknown[py-parser-pyloop] PASSED
@@ -1502,6 +1534,10 @@ tests/test_http_parser.py::test_http_response_parser_bad_crlf[py-parser-pyloop] 
 tests/test_http_parser.py::test_http_response_parser_bad_crlf[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_response_parser_bad_chunked_lax[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_response_parser_bad_chunked_lax[c-parser-pyloop] PASSED
+tests/test_http_parser.py::test_http_response_parser_notchunked[py-parser-pyloop] PASSED
+tests/test_http_parser.py::test_http_response_parser_notchunked[c-parser-pyloop] PASSED
+tests/test_http_parser.py::test_http_response_parser_last_chunked[py-parser-pyloop] PASSED
+tests/test_http_parser.py::test_http_response_parser_last_chunked[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_response_parser_bad[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_response_parser_bad[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_http_response_parser_code_under_100[py-parser-pyloop] PASSED
@@ -1958,6 +1994,7 @@ tests/test_run_app.py::test_run_app_cancels_done_tasks[pyloop] PASSED
 tests/test_run_app.py::test_run_app_cancels_failed_tasks[pyloop] PASSED
 tests/test_run_app.py::test_run_app_keepalive_timeout[pyloop] PASSED
 tests/test_run_app.py::test_run_app_context_vars[pyloop] PASSED
+tests/test_run_app.py::test_run_app_raises_exception[pyloop] PASSED
 tests/test_run_app.py::TestShutdown::test_shutdown_wait_for_handler PASSED
 tests/test_run_app.py::TestShutdown::test_shutdown_timeout_handler PASSED
 tests/test_run_app.py::TestShutdown::test_shutdown_timeout_not_reached PASSED
@@ -2113,6 +2150,7 @@ tests/test_test_utils.py::test_make_mocked_request_app_can_store_values PASSED
 tests/test_test_utils.py::test_make_mocked_request_app_access_non_existing PASSED
 tests/test_test_utils.py::test_make_mocked_request_match_info PASSED
 tests/test_test_utils.py::test_make_mocked_request_content PASSED
+tests/test_test_utils.py::test_make_mocked_request_empty_payload PASSED
 tests/test_test_utils.py::test_make_mocked_request_transport PASSED
 tests/test_test_utils.py::test_test_client_props PASSED
 tests/test_test_utils.py::test_test_client_raw_server_props PASSED
@@ -2132,6 +2170,9 @@ tests/test_test_utils.py::test_client_context_manager_response[delete] PASSED
 tests/test_test_utils.py::test_custom_port PASSED
 tests/test_test_utils.py::test_base_test_server_socket_factory[TestServer] PASSED
 tests/test_test_utils.py::test_base_test_server_socket_factory[RawTestServer] PASSED
+tests/test_test_utils.py::test_test_server_hostnames[127.0.0.1-127.0.0.1] PASSED
+tests/test_test_utils.py::test_test_server_hostnames[localhost-127.0.0.1] PASSED
+tests/test_test_utils.py::test_test_server_hostnames[::1-::1] PASSED
 tests/test_tracing.py::TestTraceConfig::test_trace_config_ctx_default PASSED
 tests/test_tracing.py::TestTraceConfig::test_trace_config_ctx_factory PASSED
 tests/test_tracing.py::TestTraceConfig::test_trace_config_ctx_request_ctx PASSED
@@ -2200,7 +2241,10 @@ tests/test_urldispatch.py::test_contains PASSED
 tests/test_urldispatch.py::test_static_repr PASSED
 tests/test_urldispatch.py::test_static_adds_slash PASSED
 tests/test_urldispatch.py::test_static_remove_trailing_slash PASSED
-tests/test_urldispatch.py::test_add_route_with_re PASSED
+tests/test_urldispatch.py::test_add_route_with_re[{to:\\d+}-1234-expected0] PASSED
+tests/test_urldispatch.py::test_add_route_with_re[{name}.html-test.html-expected1] PASSED
+tests/test_urldispatch.py::test_add_route_with_re[{fn:\\w+ \\d+}-abc 123-expected2] PASSED
+tests/test_urldispatch.py::test_add_route_with_re[{fn:\\w+\\s\\d+}-abc 123-expected3] PASSED
 tests/test_urldispatch.py::test_add_route_with_re_and_slashes PASSED
 tests/test_urldispatch.py::test_add_route_with_re_not_match PASSED
 tests/test_urldispatch.py::test_add_route_with_re_including_slashes PASSED
@@ -2221,6 +2265,7 @@ tests/test_urldispatch.py::test_dynamic_match_non_ascii PASSED
 tests/test_urldispatch.py::test_dynamic_match_with_static_part PASSED
 tests/test_urldispatch.py::test_dynamic_match_two_part2 PASSED
 tests/test_urldispatch.py::test_dynamic_match_unquoted_path PASSED
+tests/test_urldispatch.py::test_dynamic_match_double_quoted_path PASSED
 tests/test_urldispatch.py::test_add_route_not_started_with_slash PASSED
 tests/test_urldispatch.py::test_add_route_invalid_method PASSED
 tests/test_urldispatch.py::test_routes_view_len PASSED
@@ -2329,7 +2374,8 @@ tests/test_web_app.py::test_cleanup_ctx PASSED
 tests/test_web_app.py::test_cleanup_ctx_exception_on_startup PASSED
 tests/test_web_app.py::test_cleanup_ctx_exception_on_cleanup PASSED
 tests/test_web_app.py::test_cleanup_ctx_cleanup_after_exception PASSED
-tests/test_web_app.py::test_cleanup_ctx_exception_on_cleanup_multiple PASSED
+tests/test_web_app.py::test_cleanup_ctx_exception_on_cleanup_multiple[Exception] PASSED
+tests/test_web_app.py::test_cleanup_ctx_exception_on_cleanup_multiple[CancelledError] PASSED
 tests/test_web_app.py::test_cleanup_ctx_multiple_yields PASSED
 tests/test_web_app.py::test_subapp_chained_config_dict_visibility[pyloop] PASSED
 tests/test_web_app.py::test_subapp_chained_config_dict_overriding[pyloop] PASSED
@@ -2368,12 +2414,18 @@ tests/test_web_exceptions.py::test_link_CRLF_451 PASSED
 tests/test_web_exceptions.py::test_HTTPException_retains_cause PASSED
 tests/test_web_exceptions.py::test_HTTPException_retains_cookie[pyloop] PASSED
 tests/test_web_exceptions.py::test_unicode_text_body_unauthorized PASSED
+tests/test_web_exceptions.py::test_multiline_reason PASSED
 tests/test_web_functional.py::test_simple_get[pyloop] PASSED
 tests/test_web_functional.py::test_simple_get_with_text[pyloop] PASSED
 tests/test_web_functional.py::test_handler_returns_not_response[pyloop] PASSED
 tests/test_web_functional.py::test_handler_returns_none[pyloop] PASSED
+tests/test_web_functional.py::test_handler_returns_not_response_after_100expect[pyloop] PASSED
 tests/test_web_functional.py::test_head_returns_empty_body[pyloop] PASSED
+tests/test_web_functional.py::test_default_content_type_no_body[pyloop-201] PASSED
+tests/test_web_functional.py::test_default_content_type_no_body[pyloop-204] PASSED
+tests/test_web_functional.py::test_default_content_type_no_body[pyloop-404] PASSED
 tests/test_web_functional.py::test_response_before_complete[pyloop] PASSED
+tests/test_web_functional.py::test_cancel_shutdown[pyloop] SKIPPED
 tests/test_web_functional.py::test_post_form[pyloop] PASSED
 tests/test_web_functional.py::test_post_text[pyloop] PASSED
 tests/test_web_functional.py::test_post_json[pyloop] PASSED
@@ -2487,6 +2539,7 @@ tests/test_web_functional.py::test_no_body_for_1xx_204_304_responses[pyloop-vers
 tests/test_web_functional.py::test_no_body_for_1xx_204_304_responses[pyloop-version1-101] PASSED
 tests/test_web_functional.py::test_no_body_for_1xx_204_304_responses[pyloop-version1-204] PASSED
 tests/test_web_functional.py::test_no_body_for_1xx_204_304_responses[pyloop-version1-304] PASSED
+tests/test_web_functional.py::test_keepalive_race_condition[pyloop] PASSED
 tests/test_web_log.py::test_access_logger_format PASSED
 tests/test_web_log.py::test_access_logger_atoms[%t-[01/Jan/1843:00:29:56 +0800]-extra0] PASSED
 tests/test_web_log.py::test_access_logger_atoms[%a %t %P %r %s %b %T %Tf %D "%{H1}i" "%{H2}i"-127.0.0.2 [01/Jan/1843:00:29:56 +0800] <42> GET /path HTTP/1.1 200 42 3 3.141593 3141593 "a" "b"-extra1] PASSED
@@ -2625,6 +2678,8 @@ tests/test_web_request.py::test_urlencoded_querystring PASSED
 tests/test_web_request.py::test_non_ascii_path PASSED
 tests/test_web_request.py::test_non_ascii_raw_path PASSED
 tests/test_web_request.py::test_absolute_url PASSED
+tests/test_web_request.py::test_clone_absolute_scheme PASSED
+tests/test_web_request.py::test_clone_absolute_host PASSED
 tests/test_web_request.py::test_content_length PASSED
 tests/test_web_request.py::test_range_to_slice_head PASSED
 tests/test_web_request.py::test_range_to_slice_mid PASSED
@@ -2784,6 +2839,7 @@ tests/test_web_response.py::test_force_compression_identity PASSED
 tests/test_web_response.py::test_force_compression_identity_response PASSED
 tests/test_web_response.py::test_rm_content_length_if_compression_http11 PASSED
 tests/test_web_response.py::test_rm_content_length_if_compression_http10 PASSED
+tests/test_web_response.py::test_rm_content_length_if_204 PASSED
 tests/test_web_response.py::test_rm_transfer_encoding_rfc_9112_6_3_http_11[100] PASSED
 tests/test_web_response.py::test_rm_transfer_encoding_rfc_9112_6_3_http_11[101] PASSED
 tests/test_web_response.py::test_rm_transfer_encoding_rfc_9112_6_3_http_11[204] PASSED
@@ -2810,6 +2866,7 @@ tests/test_web_response.py::test_response_cookie_path PASSED
 tests/test_web_response.py::test_response_cookie__issue_del_cookie PASSED
 tests/test_web_response.py::test_cookie_set_after_del PASSED
 tests/test_web_response.py::test_set_status_with_reason PASSED
+tests/test_web_response.py::test_set_status_with_empty_reason PASSED
 tests/test_web_response.py::test_start_force_close PASSED
 tests/test_web_response.py::test___repr__ PASSED
 tests/test_web_response.py::test___repr___not_prepared PASSED
@@ -2834,9 +2891,19 @@ tests/test_web_response.py::test_ctor_both_content_type_param_and_header PASSED
 tests/test_web_response.py::test_ctor_both_charset_param_and_header PASSED
 tests/test_web_response.py::test_assign_nonbyteish_body PASSED
 tests/test_web_response.py::test_assign_nonstr_text PASSED
+tests/test_web_response.py::test_payload_body_get_text[test-test] PASSED
+tests/test_web_response.py::test_payload_body_get_text[payload1-test] PASSED
+tests/test_web_response.py::test_payload_body_get_text[payload2-test] PASSED
+tests/test_web_response.py::test_payload_body_get_text[payload3-test] PASSED
+tests/test_web_response.py::test_payload_body_get_text[payload4-test] PASSED
+tests/test_web_response.py::test_payload_body_get_text[payload5-test] PASSED
+tests/test_web_response.py::test_payload_body_get_text[async_iter-None] PASSED
+tests/test_web_response.py::test_payload_body_get_text[payload7-None] PASSED
+tests/test_web_response.py::test_payload_body_get_text[payload8---x\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 4\r\n\r\ntest] PASSED
 tests/test_web_response.py::test_response_set_content_length PASSED
 tests/test_web_response.py::test_send_headers_for_empty_body PASSED
 tests/test_web_response.py::test_render_with_body PASSED
+tests/test_web_response.py::test_multiline_reason PASSED
 tests/test_web_response.py::test_send_set_cookie_header PASSED
 tests/test_web_response.py::test_consecutive_write_eof PASSED
 tests/test_web_response.py::test_set_text_with_content_type PASSED
@@ -2845,8 +2912,9 @@ tests/test_web_response.py::test_default_content_type_in_stream_response PASSED
 tests/test_web_response.py::test_default_content_type_in_response PASSED
 tests/test_web_response.py::test_content_type_with_set_text PASSED
 tests/test_web_response.py::test_content_type_with_set_body PASSED
-tests/test_web_response.py::test_started_when_not_started PASSED
-tests/test_web_response.py::test_started_when_started PASSED
+tests/test_web_response.py::test_prepared_when_not_started PASSED
+tests/test_web_response.py::test_prepared_when_started PASSED
+tests/test_web_response.py::test_prepared_after_eof PASSED
 tests/test_web_response.py::test_drain_before_start PASSED
 tests/test_web_response.py::test_changing_status_after_prepare_raises PASSED
 tests/test_web_response.py::test_nonstr_text_in_ctor PASSED
@@ -2877,6 +2945,7 @@ tests/test_web_runner.py::test_addresses[pyloop] PASSED
 tests/test_web_runner.py::test_named_pipe_runner_wrong_loop SKIPPED
 tests/test_web_runner.py::test_named_pipe_runner_proactor_loop SKIPPED
 tests/test_web_runner.py::test_tcpsite_default_host[pyloop] PASSED
+tests/test_web_runner.py::test_tcpsite_empty_str_host[pyloop] PASSED
 tests/test_web_runner.py::test_run_after_asyncio_run PASSED
 tests/test_web_runner.py::test_app_handler_args_failure PASSED
 tests/test_web_runner.py::test_app_handler_args_ceil_threshold[2-2_0] PASSED
@@ -2951,6 +3020,10 @@ tests/test_web_sendfile_functional.py::test_static_file_if_none_match[no_sendfil
 tests/test_web_sendfile_functional.py::test_static_file_if_none_match[no_sendfile-pyloop-additional_etags1-Fri, 31 Dec 9999 23:59:59 GMT] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_if_none_match_star[sendfile-pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_if_none_match_star[no_sendfile-pyloop] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_if_none_match_weak[sendfile-pyloop-] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_if_none_match_weak[sendfile-pyloop-Fri, 31 Dec 9999 23:59:59 GMT] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_if_none_match_weak[no_sendfile-pyloop-] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_if_none_match_weak[no_sendfile-pyloop-Fri, 31 Dec 9999 23:59:59 GMT] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_ssl[pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_directory_traversal_attack[pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_huge[pyloop] PASSED
@@ -3034,15 +3107,19 @@ tests/test_web_urldispatcher.py::test_412_is_returned[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_allow_head[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_reuse_last_added_resource[/a] PASSED
 tests/test_web_urldispatcher.py::test_reuse_last_added_resource[/{a}] PASSED
+tests/test_web_urldispatcher.py::test_reuse_last_added_resource[/{a:.*}] PASSED
 tests/test_web_urldispatcher.py::test_resource_raw_match PASSED
 tests/test_web_urldispatcher.py::test_add_view[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_decorate_view[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_web_view[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_static_absolute_url[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_for_issue_5250[pyloop] PASSED
-tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-urldecoded_route] XFAIL
-tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-urldecoded_route_with_regex] XFAIL
-tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-urlencoded_route] XFAIL
+tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-/467,802,24834/hello-/467%2C802%2C24834/hello-200] PASSED
+tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-/{user_ids:([0-9]+)(,([0-9]+))*}/hello-/467%2C802%2C24834/hello-200] PASSED
+tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-/467,802,24834/hello-/467,802,24834/hello-200] PASSED
+tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-/{user_ids:([0-9]+)(,([0-9]+))*}/hello-/467,802,24834/hello-200] PASSED
+tests/test_web_urldispatcher.py::test_decoded_url_match[pyloop-/1%2C3/hello-/1%2C3/hello-404] PASSED
+tests/test_web_urldispatcher.py::test_decoded_raw_match_regex[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_order_is_preserved[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_url_with_many_slashes[pyloop] PASSED
 tests/test_web_urldispatcher.py::test_route_with_regex[pyloop] PASSED
@@ -3132,6 +3209,8 @@ tests/test_web_websocket_functional.py::test_bug3380[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_receive_being_cancelled_keeps_connection_open[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_receive_timeout_keeps_connection_open[pyloop] PASSED
 tests/test_web_websocket_functional.py::test_websocket_shutdown[pyloop] PASSED
+tests/test_web_websocket_functional.py::test_ws_close_return_code[pyloop] PASSED
+tests/test_web_websocket_functional.py::test_abnormal_closure_when_server_does_not_receive[pyloop] PASSED
 tests/test_websocket_handshake.py::test_no_upgrade PASSED
 tests/test_websocket_handshake.py::test_no_connection PASSED
 tests/test_websocket_handshake.py::test_protocol_version_unset PASSED
@@ -3229,4 +3308,4 @@ tests/test_worker.py::test__create_ssl_context_with_ca_certs[AsyncioWorker-pyloo
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3173 passed, 31 skipped, 9 deselected, 10 xfailed ========
+======== 3253 passed, 33 skipped, 9 deselected, 6 xfailed ========
