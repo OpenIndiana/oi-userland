@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 <contributor>
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,11 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=etc/mke2fs.conf
 file path=usr/bin/chattr
 file path=usr/bin/compile_et
 file path=usr/bin/lsattr
 file path=usr/bin/mk_cmds
-file path=usr/etc/mke2fs.conf
 file path=usr/include/blkid/blkid.h
 file path=usr/include/blkid/blkid_types.h
 file path=usr/include/com_err.h
@@ -81,11 +81,11 @@ file path=usr/sbin/dumpe2fs
 file path=usr/sbin/e2freefrag
 hardlink path=usr/sbin/e2fsck target=fsck.ext2
 file path=usr/sbin/e2image
-hardlink path=usr/sbin/e2label target=findfs
+hardlink path=usr/sbin/e2label target=tune2fs
 hardlink path=usr/sbin/e2mmpstatus target=dumpe2fs
 file path=usr/sbin/e2undo
 file path=usr/sbin/filefrag
-file path=usr/sbin/findfs
+hardlink path=usr/sbin/findfs target=tune2fs
 file path=usr/sbin/fsck.ext2
 hardlink path=usr/sbin/fsck.ext3 target=fsck.ext2
 hardlink path=usr/sbin/fsck.ext4 target=fsck.ext2
@@ -96,7 +96,7 @@ hardlink path=usr/sbin/mkfs.ext3 target=mkfs.ext2
 hardlink path=usr/sbin/mkfs.ext4 target=mkfs.ext2
 file path=usr/sbin/mklost+found
 file path=usr/sbin/resize2fs
-hardlink path=usr/sbin/tune2fs target=findfs
+file path=usr/sbin/tune2fs
 file path=usr/share/et/et_c.awk
 file path=usr/share/et/et_h.awk
 file path=usr/share/info/libext2fs.info.gz
@@ -138,21 +138,21 @@ file path=usr/share/man/man8/blkid.8
 file path=usr/share/man/man8/debugfs.8
 file path=usr/share/man/man8/dumpe2fs.8
 file path=usr/share/man/man8/e2freefrag.8
-hardlink path=usr/share/man/man8/e2fsck.8 target=fsck.ext2.8
+hardlink path=usr/share/man/man8/e2fsck.8 target=fsck.ext4.8
 file path=usr/share/man/man8/e2image.8
 file path=usr/share/man/man8/e2label.8
 file path=usr/share/man/man8/e2mmpstatus.8
 file path=usr/share/man/man8/e2undo.8
 file path=usr/share/man/man8/filefrag.8
 file path=usr/share/man/man8/findfs.8
-file path=usr/share/man/man8/fsck.ext2.8
-hardlink path=usr/share/man/man8/fsck.ext3.8 target=fsck.ext2.8
-hardlink path=usr/share/man/man8/fsck.ext4.8 target=fsck.ext2.8
+hardlink path=usr/share/man/man8/fsck.ext2.8 target=fsck.ext4.8
+hardlink path=usr/share/man/man8/fsck.ext3.8 target=fsck.ext4.8
+file path=usr/share/man/man8/fsck.ext4.8
 file path=usr/share/man/man8/logsave.8
-hardlink path=usr/share/man/man8/mke2fs.8 target=mkfs.ext3.8
-hardlink path=usr/share/man/man8/mkfs.ext2.8 target=mkfs.ext3.8
-file path=usr/share/man/man8/mkfs.ext3.8
-hardlink path=usr/share/man/man8/mkfs.ext4.8 target=mkfs.ext3.8
+file path=usr/share/man/man8/mke2fs.8
+hardlink path=usr/share/man/man8/mkfs.ext2.8 target=mke2fs.8
+hardlink path=usr/share/man/man8/mkfs.ext3.8 target=mke2fs.8
+hardlink path=usr/share/man/man8/mkfs.ext4.8 target=mke2fs.8
 file path=usr/share/man/man8/mklost+found.8
 file path=usr/share/man/man8/resize2fs.8
 file path=usr/share/man/man8/tune2fs.8

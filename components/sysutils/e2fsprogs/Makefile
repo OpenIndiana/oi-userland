@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		e2fsprogs
 COMPONENT_VERSION=	1.47.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Second extended file system (ext2fs) management programs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -30,23 +31,22 @@ COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	NOTICE
 
-LIBUUID =  -luuid
-STATIC_LIBUUID = -luuid
-PROFILED_LIBUUID = -luuid
-
-CONFIGURE_OPTIONS+=--enable-libblkid
-CONFIGURE_OPTIONS+=--disable-libuuid
-CONFIGURE_OPTIONS+=--enable-elf-shlibs
-CONFIGURE_OPTIONS+=--enable-fsck=no
-CONFIGURE_OPTIONS+=--without-pthread
-
-COMPONENT_PRE_BUILD_ACTION = \
- patches/convert-Makefiles.sh $(@D)
-
-TEST_TARGET=		$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/prep-patch.mk
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PRE_BUILD_ACTION= patches/convert-Makefiles.sh $(@D)
+
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --enable-libblkid
+CONFIGURE_OPTIONS += --disable-libuuid
+CONFIGURE_OPTIONS += --enable-elf-shlibs
+CONFIGURE_OPTIONS += --enable-fsck=no
+CONFIGURE_OPTIONS += --without-pthread
+
+LIBUUID=  -luuid
+STATIC_LIBUUID= -luuid
+PROFILED_LIBUUID= -luuid
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
