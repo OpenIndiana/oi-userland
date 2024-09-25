@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gawk
 COMPONENT_VERSION=		5.3.1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		GNU awk
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gawk/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -44,6 +45,7 @@ PATH= $(PATH.gnu)
 
 CFLAGS += $(XPG6MODE)
 
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --with-mpfr=$(LIBDIR.$(BITS))
 
@@ -57,6 +59,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Making/d" ' \
 	'-e "/^--- _/d" ' \
 	'-e "s|\(\*\*\* \\$$(SOURCE_DIR)/test/[^[:space:]]*\).*|\1|g" '
+
+PKGHARDLINKS += usr/bin/gawk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(READLINE_PKG)
