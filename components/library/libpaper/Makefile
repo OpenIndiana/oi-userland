@@ -23,12 +23,12 @@
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpaper
 COMPONENT_VERSION=	2.2.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The libpaper package enables users to indicate their preferred paper size
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/rrthomas/libpaper
@@ -51,6 +51,7 @@ COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 # Enable ASLR for this component
 ASLR_MODE= $(ASLR_ENABLE)
 
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --enable-relocatable
 CONFIGURE_OPTIONS += --enable-year2038
