@@ -12,12 +12,14 @@
 # Copyright 2015 Aurelien Larcher
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
+BUILD_STYLE = cmake
 USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libjpeg-turbo
 COMPONENT_VERSION= 3.0.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libjpeg -JPEG Turbo libraries
 COMPONENT_PROJECT_URL= https://www.libjpeg-turbo.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,90 +31,109 @@ COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE= IJG,BSD,zlib
 COMPONENT_LICENSE_FILE= LICENSE.md
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+COMPONENT_FMRI.libjpeg6-turbo =		image/library/libjpeg6-turbo
 
-CMAKE_DEFAULT_DIRS= no
+COMPONENT_FMRI.libjpeg6-turbo-32 =	$(COMPONENT_FMRI.libjpeg6-turbo)/32
+COMPONENT_SUMMARY.libjpeg6-turbo-32 =	$(COMPONENT_SUMMARY) (32-bit)
 
-# Warnings are normal: libtool:   error: ignoring unknown tag NASM
+COMPONENT_FMRI.libjpeg7-turbo =		image/library/libjpeg7-turbo
 
+COMPONENT_FMRI.libjpeg7-turbo-32 =	$(COMPONENT_FMRI.libjpeg7-turbo)/32
+COMPONENT_SUMMARY.libjpeg7-turbo-32 =	$(COMPONENT_SUMMARY) (32-bit)
+
+COMPONENT_FMRI.libjpeg8-turbo =		image/library/libjpeg8-turbo
+
+COMPONENT_FMRI.libjpeg8-turbo-32 =	$(COMPONENT_FMRI.libjpeg8-turbo)/32
+COMPONENT_SUMMARY.libjpeg8-turbo-32 =	$(COMPONENT_SUMMARY) (32-bit)
+
+JPEG_API_VERSIONS = 6 7 8
+
+# Custom BUILD_*, INSTALL_*, and TEST_* variables needs to be defined before
+# the common.mk include.
+$(foreach b,32 64, \
+	$(eval BUILD_$(b) = $(foreach v,$(JPEG_API_VERSIONS),$(BUILD_DIR)/$(MACH$(b))/$(v)/.built)) \
+	$(eval INSTALL_$(b) = $(foreach v,$(JPEG_API_VERSIONS),$(BUILD_DIR)/$(MACH$(b))/$(v)/.installed)) \
+	$(if $(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)), \
+		$(eval TEST_$(b) = $(foreach v,$(JPEG_API_VERSIONS),$(BUILD_DIR)/$(MACH$(b))/$(v)/.tested-and-compared)) \
+		, \
+		$(eval TEST_$(b) = $(foreach v,$(JPEG_API_VERSIONS),$(BUILD_DIR)/$(MACH$(b))/$(v)/.tested)) \
+	) \
+)
+
+include $(WS_MAKE_RULES)/common.mk
+
+# Set BITS and JPEG_API_VERSION for all targets
+$(foreach t,configured built installed tested tested-and-compared, \
+	$(foreach b,32 64, \
+		$(eval $(BUILD_DIR_$(b))/%/.$(t): BITS=$(b)) \
+	) \
+	$(foreach v,$(JPEG_API_VERSIONS), \
+		$(eval $(BUILD_DIR)/%/$(v)/.$(t): JPEG_API_VERSION=$(v)) \
+	) \
+)
+
+# Settings to build the desired libjpeg API
 CMAKE_OPTIONS.JPEG6= 
 CMAKE_OPTIONS.JPEG7= -DWITH_JPEG7=ON
 CMAKE_OPTIONS.JPEG8= -DWITH_JPEG8=ON
 
-LIBJPEG_TURBO_X_PREFIX=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo
+# TurboAPI does not depend on libjpeg API version so it is enough to build it
+# once only.
+CMAKE_OPTIONS.JPEG6 += -DWITH_TURBOJPEG=FALSE
+CMAKE_OPTIONS.JPEG7 += -DWITH_TURBOJPEG=FALSE
 
+# Include files for old libjpeg API versions goes to separate directory
+CMAKE_OPTIONS.JPEG6 += -DCMAKE_INSTALL_INCLUDEDIR=$(USRINCDIR)/libjpeg$(JPEG_API_VERSION)-turbo
+CMAKE_OPTIONS.JPEG7 += -DCMAKE_INSTALL_INCLUDEDIR=$(USRINCDIR)/libjpeg$(JPEG_API_VERSION)-turbo
+
+# Libraries for old libjpeg API versions goes to separate directory
+CMAKE_OPTIONS.JPEG6 += -DCMAKE_INSTALL_LIBDIR=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/$(CMAKE_LIBDIR.$(BITS))
+CMAKE_OPTIONS.JPEG7 += -DCMAKE_INSTALL_LIBDIR=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/$(CMAKE_LIBDIR.$(BITS))
+
+# Disable static libs
 CMAKE_OPTIONS+=	-DENABLE_STATIC=FALSE
+
 # Allow for build with different API compliance
 CMAKE_OPTIONS+=	$(CMAKE_OPTIONS.JPEG$(JPEG_API_VERSION))
-CMAKE_OPTIONS+=	-DCMAKE_INSTALL_PREFIX=$(LIBJPEG_TURBO_X_PREFIX)
-CMAKE_OPTIONS+= -DCMAKE_INSTALL_MANDIR=$(USRSHAREMANDIR)
-CMAKE_OPTIONS+= -DCMAKE_INSTALL_DOCDIR=$(USRSHAREDOCDIR)/libjpeg-turbo
-CMAKE_OPTIONS+= -DCMAKE_INSTALL_INCLUDEDIR=$(USRINCDIR)/libjpeg$(JPEG_API_VERSION)-turbo
-CMAKE_OPTIONS.32+= -DCMAKE_INSTALL_BINDIR=$(LIBJPEG_TURBO_X_PREFIX)/bin
-CMAKE_OPTIONS.32+= -DCMAKE_INSTALL_LIBDIR=$(LIBJPEG_TURBO_X_PREFIX)/lib
-CMAKE_OPTIONS.64+= -DCMAKE_INSTALL_BINDIR=$(LIBJPEG_TURBO_X_PREFIX)/bin/$(MACH64)
-CMAKE_OPTIONS.64+= -DCMAKE_INSTALL_LIBDIR=$(LIBJPEG_TURBO_X_PREFIX)/lib/$(MACH64)
 
-COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
+# We need to install just a subset of files for various combinations of libjpeg
+# API version and bitness
+CMAKE_COMPONENTS.JPEG6 +=	lib
+CMAKE_COMPONENTS.JPEG6.64 +=	include
+CMAKE_COMPONENTS.JPEG7 +=	lib
+CMAKE_COMPONENTS.JPEG7.64 +=	include
+CMAKE_COMPONENTS.JPEG8.32 +=	lib
+CMAKE_COMPONENTS +=		$(CMAKE_COMPONENTS.JPEG$(JPEG_API_VERSION))
+CMAKE_COMPONENTS +=		$(CMAKE_COMPONENTS.JPEG$(JPEG_API_VERSION).$(BITS))
 
-# Define rules for each API build
-BUILD_DIR_32_6 =		$(BUILD_DIR)/$(MACH32)/6
-BUILD_DIR_32_7 =		$(BUILD_DIR)/$(MACH32)/7
-BUILD_DIR_32_8 =		$(BUILD_DIR)/$(MACH32)/8
-BUILD_DIR_64_6 =		$(BUILD_DIR)/$(MACH64)/6
-BUILD_DIR_64_7 =		$(BUILD_DIR)/$(MACH64)/7
-BUILD_DIR_64_8 =		$(BUILD_DIR)/$(MACH64)/8
-$(BUILD_DIR_32)/%/.configured:	BITS=32
-$(BUILD_DIR_64)/%/.configured:	BITS=64
-$(BUILD_DIR)/%/6/.configured:	JPEG_API_VERSION=6
-$(BUILD_DIR)/%/7/.configured:	JPEG_API_VERSION=7
-$(BUILD_DIR)/%/8/.configured:	JPEG_API_VERSION=8
+# Create library symlinks at standard locations
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in $(PROTOUSRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/$(CMAKE_LIBDIR.$(BITS))/*.so.* ; do \
+		[ -e "$$f" ] || continue ; \
+		t=$(PROTOUSRLIBDIR.$(BITS)) ; \
+		while true ; do \
+			while [ "$${f\#/}" != "$$f" ] ; do f=$${f\#/} ; done ; \
+			while [ "$${t\#/}" != "$$t" ] ; do t=$${t\#/} ; done ; \
+			[ "$${f%%/*}" == "$${t%%/*}" ] || break ; \
+			f=$${f\#$${f%%/*}} ; \
+			t=$${t\#$${t%%/*}} ; \
+		done ; \
+		[ "$$t" ] && t=$$t/ ; \
+		f=$$(echo $$t | $(GSED) -e 's|[^/]\{1,\}|..|g')$$f ; \
+		$(MKDIR) $(PROTOUSRLIBDIR.$(BITS)) ; \
+		$(SYMLINK) $$f $(PROTOUSRLIBDIR.$(BITS))/$$(basename $$f) ; \
+	done ;
 
-BUILD_32 =		$(BUILD_DIR_32_6)/.built $(BUILD_DIR_32_7)/.built $(BUILD_DIR_32_8)/.built
-BUILD_64 =		$(BUILD_DIR_64_6)/.built $(BUILD_DIR_64_7)/.built $(BUILD_DIR_64_8)/.built
-BUILD_32_and_64 =	$(BUILD_32) $(BUILD_64)
-$(BUILD_DIR_32)/%/.built:	BITS=32
-$(BUILD_DIR_64)/%/.built:	BITS=64
-$(BUILD_DIR)/%/6/.built:	JPEG_API_VERSION=6
-$(BUILD_DIR)/%/7/.built:	JPEG_API_VERSION=7
-$(BUILD_DIR)/%/8/.built:	JPEG_API_VERSION=8
+# Per libjpeg API version test directory
+COMPONENT_TEST_BUILD_DIR = $(BUILD_DIR)/test/$(MACH$(BITS))/$(JPEG_API_VERSION)
+# Per libjpeg API version master test results file
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS)-$(JPEG_API_VERSION).master
 
-INSTALL_32 =		$(BUILD_DIR_32_6)/.installed $(BUILD_DIR_32_7)/.installed $(BUILD_DIR_32_8)/.installed
-INSTALL_64 =		$(BUILD_DIR_64_6)/.installed $(BUILD_DIR_64_7)/.installed $(BUILD_DIR_64_8)/.installed
-INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
-$(BUILD_DIR_32)/%/.installed: BITS=32
-$(BUILD_DIR_64)/%/.installed: BITS=64
-$(BUILD_DIR)/%/6/.installed: JPEG_API_VERSION=6
-$(BUILD_DIR)/%/7/.installed: JPEG_API_VERSION=7
-$(BUILD_DIR)/%/8/.installed: JPEG_API_VERSION=8
-
-ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
-TEST_32 = $(BUILD_DIR_32_6)/.tested $(BUILD_DIR_32_7)/.tested $(BUILD_DIR_32_8)/.tested
-TEST_64 = $(BUILD_DIR_64_6)/.tested $(BUILD_DIR_64_7)/.tested $(BUILD_DIR_64_8)/.tested
-$(BUILD_DIR_32)/%/.tested:		BITS=32
-$(BUILD_DIR_64)/%/.tested:		BITS=64
-$(BUILD_DIR)/%/6/.tested: JPEG_API_VERSION=6
-$(BUILD_DIR)/%/7/.tested: JPEG_API_VERSION=7
-$(BUILD_DIR)/%/8/.tested: JPEG_API_VERSION=8
-else
-TEST_32 = $(BUILD_DIR_32_6)/.tested-and-compared $(BUILD_DIR_32_7)/.tested-and-compared $(BUILD_DIR_32_8)/.tested-and-compared
-TEST_64 = $(BUILD_DIR_64_6)/.tested-and-compared $(BUILD_DIR_64_7)/.tested-and-compared $(BUILD_DIR_64_8)/.tested-and-compared
-$(BUILD_DIR_32)/%/.tested-and-compared:	BITS=32
-$(BUILD_DIR_64)/%/.tested-and-compared:	BITS=64
-$(BUILD_DIR)/%/6/.tested-and-compared: JPEG_API_VERSION=6
-$(BUILD_DIR)/%/7/.tested-and-compared: JPEG_API_VERSION=7
-$(BUILD_DIR)/%/8/.tested-and-compared: JPEG_API_VERSION=8
-endif
-
-TEST_32_and_64 =	$(TEST_32) $(TEST_64)
-
-build:         $(BUILD_32_and_64)
-
-install:       $(INSTALL_32_and_64)
-
-test:          $(TEST_32_and_64)
+# Normalize test results
+COMPONENT_TEST_TRANSFORMS += "-e 's/ *[0-9]\{1,\}\.[0-9]\{1,\} sec\$$//'"			# timing
+COMPONENT_TEST_TRANSFORMS += "-e '/^Total Test time/d'"						# timing
+COMPONENT_TEST_TRANSFORMS += "-e '/^ *Start/d'"							# drop Start lines
+COMPONENT_TEST_TRANSFORMS += "-e 's/^ *[0-9]\{1,\}\/[0-9]\{1,\} Test *\#[0-9]\{1,\}:/Test/'"	# drop test numbers
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
