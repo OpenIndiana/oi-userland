@@ -31,13 +31,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
 HUMAN_VERSION=		2.13.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Libxml2 is the XML C parser and toolkit developed for the Gnome project
 COMPONENT_ARCHIVE_HASH=	sha256:65d042e1c8010243e617efb02afda20b85c2160acdbfbcb5b26b80cec6515650
 COMPONENT_FMRI=		library/libxml2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright
+
+COMPONENT_FMRI.libxml2-32=	$(COMPONENT_FMRI)/32
 
 # W3C XML Conformance Test Suites
 COMPONENT_ARCHIVE_1= xmlts20130923.tar.gz
