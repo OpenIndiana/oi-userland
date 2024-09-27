@@ -1016,6 +1016,7 @@ MYSQL_CONFIG.64 =  $(MYSQL_BINDIR.64)/mysql_config
 MYSQL_CONFIG =     $(MYSQL_CONFIG.$(BITS))
 MYSQL_PKG_CONFIG_PATH =	$(MYSQL_LIBDIR)/pkgconfig
 PATH.prepend +=		$(MYSQL_BINDIR)
+PKG_CONFIG_PATH.prepend +=	$(MYSQL_PKG_CONFIG_PATH)
 
 PKG_MACROS +=   MYSQL_VERSION=$(MYSQL_VERSION)
 PKG_MACROS +=   MYSQL_VERNUM=$(MYSQL_VERNUM)
@@ -1144,6 +1145,8 @@ OPENSSL_PKG_CONFIG_PATH.64= $(OPENSSL_PREFIX)/lib/64/pkgconfig
 OPENSSL_PKG_CONFIG_PATH= $(OPENSSL_PKG_CONFIG_PATH.$(BITS))
 OPENSSL_INCDIR=$(OPENSSL_PREFIX)/include
 
+PKG_CONFIG_PATH.prepend +=	$(OPENSSL_PKG_CONFIG_PATH)
+
 # The OpenSSL 1.0 package is without the version suffix so it needs special handling
 OPENSSL_PKG =			library/security/openssl$(subst -10,,-$(subst .,,$(OPENSSL_VERSION)))
 REQUIRED_PACKAGES_SUBST +=	OPENSSL_PKG
@@ -1151,8 +1154,7 @@ REQUIRED_PACKAGES_SUBST +=	OPENSSL_PKG
 # Pkg-config paths
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
-PKG_CONFIG_PATH = \
-    $(OPENSSL_PKG_CONFIG_PATH):$(MYSQL_PKG_CONFIG_PATH):$(PKG_CONFIG_PATH.$(BITS)):$(PKG_CONFIG_PATH.32)
+PKG_CONFIG_PATH = $(subst $(space),:,$(strip $(PKG_CONFIG_PATH.prepend))):$(PKG_CONFIG_PATH.$(BITS)):$(PKG_CONFIG_PATH.32)
 
 # Set default path for environment modules
 MODULE_VERSION =	3.2.10
