@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-X workers [1222 items]
+X workers [1258 items]
 
 scheduling tests via LoadScheduling
 
@@ -655,6 +655,8 @@ tests/test_url.py::test_authority_full_nonasci PASSED
 tests/test_url.py::test_authority_short PASSED
 tests/test_url.py::test_authority_unknown_scheme PASSED
 tests/test_url.py::test_bool PASSED
+tests/test_url.py::test_build_with_invalid_ipv6_host[other_gen_delim_[-False] PASSED
+tests/test_url.py::test_build_with_invalid_ipv6_host[other_gen_delim_]-False] PASSED
 tests/test_url.py::test_bytes PASSED
 tests/test_url.py::test_clear_fragment_on_getting_parent PASSED
 tests/test_url.py::test_clear_fragment_on_getting_parent_toplevel PASSED
@@ -708,6 +710,10 @@ tests/test_url.py::test_from_non_ascii_path PASSED
 tests/test_url.py::test_from_non_ascii_query_parts PASSED
 tests/test_url.py::test_from_non_ascii_query_parts2 PASSED
 tests/test_url.py::test_host_non_ascii PASSED
+tests/test_url.py::test_host_subcomponent[[::1]] PASSED
+tests/test_url.py::test_host_subcomponent[example.com] PASSED
+tests/test_url.py::test_host_subcomponent[xn--gnter-4ya.com] PASSED
+tests/test_url.py::test_host_subcomponent_return_idna_encoded_host PASSED
 tests/test_url.py::test_host_with_underscore PASSED
 tests/test_url.py::test_human_repr PASSED
 tests/test_url.py::test_human_repr_default_port PASSED
@@ -1035,13 +1041,28 @@ tests/test_url_build.py::test_build_simple PASSED
 tests/test_url_build.py::test_build_with_all PASSED
 tests/test_url_build.py::test_build_with_authority PASSED
 tests/test_url_build.py::test_build_with_authority_and_host PASSED
+tests/test_url_build.py::test_build_with_authority_and_only_user PASSED
+tests/test_url_build.py::test_build_with_authority_empty_host_no_scheme PASSED
 tests/test_url_build.py::test_build_with_authority_percent_encoded PASSED
 tests/test_url_build.py::test_build_with_authority_percent_encoded_already_encoded PASSED
 tests/test_url_build.py::test_build_with_authority_with_empty_path PASSED
+tests/test_url_build.py::test_build_with_authority_with_ipv6 PASSED
+tests/test_url_build.py::test_build_with_authority_with_ipv6_and_port PASSED
 tests/test_url_build.py::test_build_with_authority_with_path_with_leading_slash PASSED
 tests/test_url_build.py::test_build_with_authority_with_path_without_leading_slash PASSED
+tests/test_url_build.py::test_build_with_authority_with_port PASSED
 tests/test_url_build.py::test_build_with_authority_without_encoding PASSED
 tests/test_url_build.py::test_build_with_host PASSED
+tests/test_url_build.py::test_build_with_invalid_host[host:com-False] PASSED
+tests/test_url_build.py::test_build_with_invalid_host[not_percent_encoded%Zf-False] PASSED
+tests/test_url_build.py::test_build_with_invalid_host[other_gen_delim_#-False] PASSED
+tests/test_url_build.py::test_build_with_invalid_host[other_gen_delim_/-False] PASSED
+tests/test_url_build.py::test_build_with_invalid_host[other_gen_delim_?-False] PASSED
+tests/test_url_build.py::test_build_with_invalid_host[other_gen_delim_[-False] PASSED
+tests/test_url_build.py::test_build_with_invalid_host[other_gen_delim_]-False] PASSED
+tests/test_url_build.py::test_build_with_invalid_host[still_not_percent_encoded%fZ-False] PASSED
+tests/test_url_build.py::test_build_with_invalid_host[user:pass@host.com-True] PASSED
+tests/test_url_build.py::test_build_with_invalid_host[user@host.com-True] PASSED
 tests/test_url_build.py::test_build_with_none_fragment PASSED
 tests/test_url_build.py::test_build_with_none_host PASSED
 tests/test_url_build.py::test_build_with_none_path PASSED
@@ -1057,7 +1078,8 @@ tests/test_url_build.py::test_build_without_arguments PASSED
 tests/test_url_build.py::test_query_dict PASSED
 tests/test_url_build.py::test_query_str PASSED
 tests/test_url_build.py::test_url_build_ipv6 PASSED
-tests/test_url_build.py::test_url_build_ipv6_brackets PASSED
+tests/test_url_build.py::test_url_build_ipv6_brackets_encoded PASSED
+tests/test_url_build.py::test_url_build_ipv6_brackets_not_encoded PASSED
 tests/test_url_build.py::test_url_ipv4_in_ipv6 PASSED
 tests/test_url_cmp_and_hash.py::test_eq PASSED
 tests/test_url_cmp_and_hash.py::test_ge_eq PASSED
@@ -1142,6 +1164,10 @@ tests/test_url_parsing.py::test_schemes_that_require_host[http] PASSED
 tests/test_url_parsing.py::test_schemes_that_require_host[https] PASSED
 tests/test_url_parsing.py::test_schemes_that_require_host[ws] PASSED
 tests/test_url_parsing.py::test_schemes_that_require_host[wss] PASSED
+tests/test_url_parsing.py::test_url_round_trips[http://127.0.0.1:8080-127.0.0.1-127.0.0.1] PASSED
+tests/test_url_parsing.py::test_url_round_trips[http://[::1]-[::1]-::1] PASSED
+tests/test_url_parsing.py::test_url_round_trips[http://[::1]:8080-[::1]-::1] PASSED
+tests/test_url_parsing.py::test_url_round_trips[http://xn--jxagkqfkduily1i.eu-xn--jxagkqfkduily1i.eu-xn--jxagkqfkduily1i.eu] PASSED
 tests/test_url_query.py::test_query_basic_parsing[original_url0-expected_query0] PASSED
 tests/test_url_query.py::test_query_basic_parsing[original_url1-expected_query1] PASSED
 tests/test_url_query.py::test_query_basic_parsing[original_url2-expected_query2] PASSED
@@ -1201,6 +1227,16 @@ tests/test_url_update_netloc.py::test_with_host_for_relative_url PASSED
 tests/test_url_update_netloc.py::test_with_host_invalid_type PASSED
 tests/test_url_update_netloc.py::test_with_host_non_ascii PASSED
 tests/test_url_update_netloc.py::test_with_host_percent_encoded PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[host:com-False] PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[not_percent_encoded%Zf-False] PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[other_gen_delim_#-False] PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[other_gen_delim_/-False] PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[other_gen_delim_?-False] PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[other_gen_delim_[-False] PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[other_gen_delim_]-False] PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[still_not_percent_encoded%fZ-False] PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[user:pass@host.com-True] PASSED
+tests/test_url_update_netloc.py::test_with_invalid_host[user@host.com-True] PASSED
 tests/test_url_update_netloc.py::test_with_password PASSED
 tests/test_url_update_netloc.py::test_with_password_None PASSED
 tests/test_url_update_netloc.py::test_with_password_and_empty_user PASSED
@@ -1233,4 +1269,4 @@ tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 1218 passed, 4 xfailed ========
+======== 1254 passed, 4 xfailed ========
