@@ -1,10 +1,14 @@
+$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
-collecting ... collected 27 items
+asyncio: mode=strict, default_loop_scope=None
+collecting ... collected 44 items
 
 tests/test_impl.py::test_single_addr_info_errors PASSED
 tests/test_impl.py::test_single_addr_success PASSED
@@ -27,9 +31,29 @@ tests/test_impl.py::test_ipv64_laddr_eyeballs_ipv4_only_tried PASSED
 tests/test_impl.py::test_ipv64_laddr_bind_fails_all_eyeballs_interleave_first__ipv6_fails PASSED
 tests/test_impl.py::test_all_same_exception_and_same_errno PASSED
 tests/test_impl.py::test_all_same_exception_and_with_different_errno PASSED
+tests/test_impl.py::test_uvloop_runtime_error PASSED
+tests/test_impl.py::test_uvloop_different_runtime_error PASSED
+tests/test_impl.py::test_uvloop_mixing_os_and_runtime_error PASSED
+tests/test_impl.py::test_handling_system_exit XFAIL (raises
+RuntimeError: coroutine ignored GeneratorExit)
+tests/test_impl.py::test_handling_system_exit XFAIL (raises
+RuntimeError: coroutine ignored GeneratorExit)
+tests/test_impl.py::test_cancellation_is_not_swallowed PASSED
 tests/test_impl.py::test_python_38_compat SKIPPED (requires < python
 3.8.2)
 tests/test_init.py::test_init PASSED
+tests/test_staggered.py::test_one_winners PASSED
+tests/test_staggered.py::test_multiple_winners PASSED
+tests/test_staggered.py::test_multiple_winners_eager_task_factory SKIPPED
+tests/test_staggered_cpython.py::StaggeredTests::test_empty PASSED
+tests/test_staggered_cpython.py::StaggeredTests::test_first_error_second_successful PASSED
+tests/test_staggered_cpython.py::StaggeredTests::test_first_timeout_second_successful PASSED
+tests/test_staggered_cpython.py::StaggeredTests::test_long_delay_early_failure PASSED
+tests/test_staggered_cpython.py::StaggeredTests::test_loop_argument PASSED
+tests/test_staggered_cpython.py::StaggeredTests::test_none_successful PASSED
+tests/test_staggered_cpython.py::StaggeredTests::test_one_successful PASSED
+tests/test_staggered_cpython_eager_task_factory.py::EagerTaskFactoryLoopTests::test_staggered_race_with_eager_tasks SKIPPED
+tests/test_staggered_cpython_eager_task_factory.py::EagerTaskFactoryLoopTests::test_staggered_race_with_eager_tasks_no_delay SKIPPED
 tests/test_utils.py::test_pop_addr_infos_interleave PASSED
 tests/test_utils.py::test_remove_addr_infos PASSED
 tests/test_utils.py::test_remove_addr_infos_slow_path PASSED
@@ -38,4 +62,4 @@ tests/test_utils.py::test_addr_to_addr_infos PASSED
 3 files skipped due to complete coverage.
 
 
-======== 26 passed, 1 skipped ========
+======== 39 passed, 4 skipped, 2 xfailed ========
