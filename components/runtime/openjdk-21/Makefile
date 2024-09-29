@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 OPENJDK_VERSION=	21
 OPENJDK_UPDATE=	0
 OPENJDK_BUILD=	4
+COMPONENT_REVISION= 1
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
@@ -57,7 +58,7 @@ CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
 CONFIGURE_OPTIONS+=        --x-libraries=$(USRLIBDIR64)
 CONFIGURE_OPTIONS+=        --with-version-pre=
 CONFIGURE_OPTIONS+=        --with-conf-name=oi
-CONFIGURE_OPTIONS+=        --with-boot-jdk=/usr/jdk/openjdk20/
+CONFIGURE_OPTIONS+=        --with-boot-jdk=/usr/jdk/openjdk21/
 CONFIGURE_OPTIONS+=        --with-freetype=system
 CONFIGURE_OPTIONS+=        --with-giflib=system
 CONFIGURE_OPTIONS+=        --with-harfbuzz=system
@@ -132,7 +133,7 @@ REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/library/c++/sunpro
 
 # Manually added boot JDK
-REQUIRED_PACKAGES += runtime/java/openjdk20
+REQUIRED_PACKAGES += runtime/java/openjdk21
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
