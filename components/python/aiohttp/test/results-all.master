@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-collecting ... collected 3301 items / 9 deselected / 3292 selected
+collecting ... collected 3301 items / 6 deselected / 3295 selected
 
 tests/test_base_protocol.py::test_loop PASSED
 tests/test_base_protocol.py::test_pause_writing PASSED
@@ -164,16 +164,11 @@ tests/test_client_functional.py::test_tcp_connector_fingerprint_ok[pyloop] PASSE
 tests/test_client_functional.py::test_tcp_connector_fingerprint_fail[pyloop] PASSED
 tests/test_client_functional.py::test_format_task_get[pyloop] PASSED
 tests/test_client_functional.py::test_str_params[pyloop] PASSED
-tests/test_client_functional.py::test_params_and_query_string[pyloop-True] PASSED
-tests/test_client_functional.py::test_params_and_query_string[pyloop-False] PASSED
-tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-True-None] PASSED
-tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-True-] PASSED
-tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-True-params2] PASSED
-tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-True-params3] PASSED
-tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-False-None] PASSED
-tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-False-] PASSED
-tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-False-params2] PASSED
-tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-False-params3] PASSED
+tests/test_client_functional.py::test_params_and_query_string[pyloop] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-None] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-params2] PASSED
+tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-params3] PASSED
 tests/test_client_functional.py::test_drop_params_on_redirect[pyloop] PASSED
 tests/test_client_functional.py::test_drop_fragment_on_redirect[pyloop] PASSED
 tests/test_client_functional.py::test_drop_fragment[pyloop] PASSED
@@ -409,7 +404,8 @@ tests/test_client_request.py::test_host_header_host_unicode[pyloop] PASSED
 tests/test_client_request.py::test_host_header_explicit_host[pyloop] PASSED
 tests/test_client_request.py::test_host_header_explicit_host_with_port[pyloop] PASSED
 tests/test_client_request.py::test_host_header_ipv4[pyloop] PASSED
-tests/test_client_request.py::test_host_header_ipv6[pyloop] PASSED
+tests/test_client_request.py::test_host_header_ipv6[pyloop-True] PASSED
+tests/test_client_request.py::test_host_header_ipv6[pyloop-False] PASSED
 tests/test_client_request.py::test_host_header_ipv4_with_port[pyloop] PASSED
 tests/test_client_request.py::test_host_header_ipv6_with_port[pyloop] PASSED
 tests/test_client_request.py::test_default_loop[pyloop] PASSED
@@ -989,6 +985,8 @@ tests/test_helpers.py::test_when_timeout_smaller_second[pyloop] PASSED
 tests/test_helpers.py::test_when_timeout_smaller_second_with_low_threshold[pyloop] PASSED
 tests/test_helpers.py::test_timeout_handle_cb_exc[pyloop] PASSED
 tests/test_helpers.py::test_timer_context_not_cancelled PASSED
+tests/test_helpers.py::test_timer_context_timeout_does_not_leak_upward SKIPPED
+tests/test_helpers.py::test_timer_context_timeout_does_swallow_cancellation SKIPPED
 tests/test_helpers.py::test_timer_context_no_task[pyloop] PASSED
 tests/test_helpers.py::test_weakref_handle[pyloop] PASSED
 tests/test_helpers.py::test_weakref_handle_with_small_threshold[pyloop] PASSED
@@ -1903,7 +1901,10 @@ tests/test_proxy.py::TestProxy::test_proxy_headers PASSED
 tests/test_proxy.py::TestProxy::test_proxy_server_hostname_default PASSED
 tests/test_proxy.py::TestProxy::test_proxy_server_hostname_override PASSED
 tests/test_proxy.py::TestProxy::test_request_port PASSED
+tests/test_pytest_plugin.py::test_aiohttp_plugin PASSED
 tests/test_pytest_plugin.py::test_warning_checks PASSED
+tests/test_pytest_plugin.py::test_aiohttp_plugin_async_fixture PASSED
+tests/test_pytest_plugin.py::test_aiohttp_plugin_async_gen_fixture PASSED
 tests/test_resolver.py::test_async_resolver_positive_ipv4_lookup[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_positive_link_local_ipv6_lookup[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_multiple_replies[pyloop] SKIPPED
@@ -2724,6 +2725,8 @@ tests/test_web_request.py::test_host_by_host_header PASSED
 tests/test_web_request.py::test_raw_headers PASSED
 tests/test_web_request.py::test_rel_url PASSED
 tests/test_web_request.py::test_url_url PASSED
+tests/test_web_request.py::test_url_non_default_port PASSED
+tests/test_web_request.py::test_url_ipv6 PASSED
 tests/test_web_request.py::test_clone PASSED
 tests/test_web_request.py::test_clone_client_max_size PASSED
 tests/test_web_request.py::test_clone_override_client_max_size PASSED
@@ -3308,4 +3311,94 @@ tests/test_worker.py::test__create_ssl_context_with_ca_certs[AsyncioWorker-pyloo
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3253 passed, 33 skipped, 9 deselected, 6 xfailed ========
+======== 3254 passed, 35 skipped, 6 deselected, 6 xfailed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
