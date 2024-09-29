@@ -26,16 +26,16 @@
 #
 
 BUILD_BITS= 32_and_64
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libtool
-COMPONENT_VERSION=      2.4.7
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=      2.5.3
 COMPONENT_SUMMARY=      GNU libtool
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/libtool/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:4f7f217f057ce655ff22559ad221a0fd8ef84ad1fc5fcb6990cecc333aa1635d
+COMPONENT_ARCHIVE_HASH= sha256:898011232cc59b6b3bbbe321b60aba9db1ac11578ab61ed0df0299458146ae2e
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/libtool
 COMPONENT_CLASSIFICATION=Development/GNU
@@ -70,8 +70,6 @@ COMPONENT_POST_INSTALL_ACTION= \
 			-e 's|^LTCC="/.*$$|LTCC="gcc"|' \
 			-e 's|^CC="/.*$$|CC="gcc"|' libtool ; \
 	done)
-
-unexport SHELLOPTS
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
