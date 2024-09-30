@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject-hooks
-HUMAN_VERSION =			1.1.0
+HUMAN_VERSION =			1.2.0
 COMPONENT_SUMMARY =		Wrappers to call pyproject.toml-based build backend hooks.
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pypa/pyproject-hooks/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1cbbabcd93ea1ac50cca7f23e5b640904684ae6c85003c6f7cf02b598c33f28f
+	sha256:d993cda99f6c41c2679a0cd5528fc15608cc114df26553deb41db62185c11206
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -43,6 +43,9 @@ TEST_REQUIREMENTS += dev-requirements.txt
 
 # https://github.com/pypa/pyproject-hooks/issues/203
 PYTEST_ADDOPTS += --deselect tests/test_call_hooks.py::test_setup_py
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
