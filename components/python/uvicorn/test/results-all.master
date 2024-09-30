@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 606 items
+collecting ... collected 819 items
 
 tests/importer/test_importer.py::test_invalid_format PASSED
 tests/importer/test_importer.py::test_invalid_module PASSED
@@ -28,16 +28,228 @@ tests/middleware/test_logging.py::test_unknown_status_code PASSED
 tests/middleware/test_logging.py::test_server_start_with_port_zero PASSED
 tests/middleware/test_message_logger.py::test_message_logger PASSED
 tests/middleware/test_message_logger.py::test_message_logger_exc PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[*-Remote: https://1.2.3.4:0] PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[127.0.0.1-Remote: https://1.2.3.4:0] PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[trusted_hosts2-Remote: https://1.2.3.4:0] PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[trusted_hosts3-Remote: https://1.2.3.4:0] PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[127.0.0.1, 10.0.0.1-Remote: https://1.2.3.4:0] PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[192.168.0.1-Remote: http://127.0.0.1:123] PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_multiple_proxies[*-Remote: https://1.2.3.4:0] PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_multiple_proxies[trusted_hosts1-Remote: https://1.2.3.4:0] PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_multiple_proxies[trusted_hosts2-Remote: https://1.2.3.4:0] PASSED
-tests/middleware/test_proxy_headers.py::test_proxy_headers_multiple_proxies[trusted_hosts3-Remote: https://10.0.2.1:0] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts0-127.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts1-127.0.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts2-127.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts3-127.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts4-10.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts5-10.0.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts6-10.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts7-10.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts8-192.168.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts9-192.168.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts10-1.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts11-2001:db8::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts12-2001:db8:abcd:0012::0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts13-2001:db8:abcd:0012::1:1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts14-::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts15-::1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts16-2001:db8:3333:4444:5555:6666:102:304-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts17-::b16:212c-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts18-a:b:c:d::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts19-::a:b:c:d-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts20-some-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts21-unix:///foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts22-/foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts23-*-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts24-another-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts25-unix:///another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts26-/another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts27--False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-127.0.0.0-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-127.0.0.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-127.1.1.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-127.255.255.255-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-10.0.0.0-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-10.0.0.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-10.1.1.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-10.255.255.255-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-192.168.0.0-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-192.168.0.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-1.1.1.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts39-1.1.1.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-2001:db8::-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-2001:db8:abcd:0012::0-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-2001:db8:abcd:0012::1:1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-::-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-::1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-2001:db8:3333:4444:5555:6666:102:304-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-::b16:212c-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-a:b:c:d::-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-::a:b:c:d-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts49-::a:b:c:d-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-some-literal-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-unix:///foo/bar-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-/foo/bar-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-*-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-another-literal-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-unix:///another/path-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*-/another/path-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[*--True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts58--True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-127.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-127.0.0.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-127.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-127.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-10.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-10.0.0.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-10.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-10.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-192.168.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-192.168.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-1.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-2001:db8::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-2001:db8:abcd:0012::0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-2001:db8:abcd:0012::1:1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-::1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-2001:db8:3333:4444:5555:6666:102:304-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-::b16:212c-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-a:b:c:d::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-::a:b:c:d-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-some-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-unix:///foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-*-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-/foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-another-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-unix:///another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1-/another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[127.0.0.1, 10.0.0.1--False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts87-127.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts88-127.0.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts89-127.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts90-127.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts91-10.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts92-10.0.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts93-10.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts94-10.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts95-192.168.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts96-192.168.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts97-1.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts98-2001:db8::-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts99-2001:db8:abcd:0012::0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts100-2001:db8:abcd:0012::1:1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts101-::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts102-::1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts103-2001:db8:3333:4444:5555:6666:102:304-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts104-::b16:212c-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts105-a:b:c:d::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts106-::a:b:c:d-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts107-some-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts108-unix:///foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts109-*-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts110-/foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts111-another-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts112-unix:///another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts113-/another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts114--False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts115-127.0.0.0-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts116-127.0.0.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts117-127.1.1.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts118-127.255.255.255-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts119-10.0.0.0-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts120-10.0.0.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts121-10.1.1.1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts122-10.255.255.255-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts123-192.168.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts124-192.168.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts125-1.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts126-2001:db8::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts127-2001:db8:abcd:0012::0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts128-2001:db8:abcd:0012::1:1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts129-::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts130-::1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts131-2001:db8:3333:4444:5555:6666:102:304-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts132-::b16:212c-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts133-a:b:c:d::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts134-::a:b:c:d-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts135-some-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts136-unix:///foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts137-*-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts138-/foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts139-another-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts140-unix:///another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts141-/another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[init_hosts142--False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-127.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-127.0.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-127.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-127.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-10.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-10.0.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-10.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-10.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-192.168.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-192.168.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-1.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-2001:db8::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-2001:db8:abcd:0012::0-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-2001:db8:abcd:0012::1:1-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-::1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-2001:db8:3333:4444:5555:6666:102:304-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-::b16:212c-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-a:b:c:d::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-::a:b:c:d-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-some-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-unix:///foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-*-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-/foo/bar-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-another-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-unix:///another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64-/another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[2001:db8:abcd:0012::0/64--False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-127.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-127.0.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-127.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-127.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-10.0.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-10.0.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-10.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-10.255.255.255-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-192.168.0.0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-192.168.0.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-1.1.1.1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-2001:db8::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-2001:db8:abcd:0012::0-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-2001:db8:abcd:0012::1:1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-::1-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-2001:db8:3333:4444:5555:6666:102:304-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-::b16:212c-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-a:b:c:d::-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-::a:b:c:d-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-some-literal-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-unix:///foo/bar-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-*-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-/foo/bar-True] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-another-literal-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-unix:///another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*-/another/path-False] PASSED
+tests/middleware/test_proxy_headers.py::test_forwarded_hosts[some-literal , unix:///foo/bar  ,  /foo/bar, garba*gewith*--False] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[*-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[127.0.0.1-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[trusted_hosts2-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[trusted_hosts3-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[127.0.0.1, 10.0.0.1-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[127.0.0.0/24, 10.0.0.1-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[192.168.0.1-http://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[192.168.0.0/16-http://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts[trusted_hosts8-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts_malformed[--http://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts_malformed[-None-http://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts_malformed[-asdf-http://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts_malformed[ , -https-https://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts_malformed[, , -https-https://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts_malformed[ , 10.0.0.1-https-https://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts_malformed[9.9.9.9 , , , 10.0.0.1-https-https://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts_malformed[, , 9.9.9.9-https-https://9.9.9.9:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_trusted_hosts_malformed[, , 9.9.9.9, , -https-https://127.0.0.1:123] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_multiple_proxies[*-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_multiple_proxies[trusted_hosts1-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_multiple_proxies[trusted_hosts2-https://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_multiple_proxies[trusted_hosts3-https://10.0.2.1:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_multiple_proxies[trusted_hosts4-https://1.2.3.4:0] PASSED
 tests/middleware/test_proxy_headers.py::test_proxy_headers_invalid_x_forwarded_for PASSED
 tests/middleware/test_proxy_headers.py::test_proxy_headers_websocket_x_forwarded_proto[wsproto-httptools-http-ws://1.2.3.4:0] SKIPPED
 tests/middleware/test_proxy_headers.py::test_proxy_headers_websocket_x_forwarded_proto[wsproto-httptools-https-wss://1.2.3.4:0] SKIPPED
@@ -55,6 +267,7 @@ tests/middleware/test_proxy_headers.py::test_proxy_headers_websocket_x_forwarded
 tests/middleware/test_proxy_headers.py::test_proxy_headers_websocket_x_forwarded_proto[websockets-h11-https-wss://1.2.3.4:0] PASSED
 tests/middleware/test_proxy_headers.py::test_proxy_headers_websocket_x_forwarded_proto[websockets-h11-ws-ws://1.2.3.4:0] PASSED
 tests/middleware/test_proxy_headers.py::test_proxy_headers_websocket_x_forwarded_proto[websockets-h11-wss-wss://1.2.3.4:0] PASSED
+tests/middleware/test_proxy_headers.py::test_proxy_headers_empty_x_forwarded_for PASSED
 tests/middleware/test_wsgi.py::test_wsgi_get[_WSGIMiddleware] PASSED
 tests/middleware/test_wsgi.py::test_wsgi_post[_WSGIMiddleware] PASSED
 tests/middleware/test_wsgi.py::test_wsgi_put_more_body[_WSGIMiddleware] PASSED
@@ -613,4 +826,22 @@ tests/test_subprocess.py::test_get_subprocess PASSED
 tests/test_subprocess.py::test_subprocess_started PASSED
 
 =========================== short test summary info ============================
-======== 351 passed, 255 skipped ========
+======== 564 passed, 255 skipped ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(

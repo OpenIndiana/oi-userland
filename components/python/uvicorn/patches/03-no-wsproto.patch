@@ -1,18 +1,18 @@
 We have no wsproto packaged yet.
 
---- uvicorn-0.30.6/requirements.txt.orig
-+++ uvicorn-0.30.6/requirements.txt
+--- uvicorn-0.31.1/requirements.txt.orig
++++ uvicorn-0.31.1/requirements.txt
 @@ -5,7 +5,6 @@
  h11 @ git+https://github.com/python-hyper/h11.git@master
  
  # Explicit optionals
 -wsproto==1.2.0
- websockets==12.0
+ websockets==13.1
  
  # Packaging
---- uvicorn-0.30.6/tests/protocols/test_websocket.py.orig
-+++ uvicorn-0.30.6/tests/protocols/test_websocket.py
-@@ -1089,12 +1089,8 @@
+--- uvicorn-0.31.1/tests/protocols/test_websocket.py.orig
++++ uvicorn-0.31.1/tests/protocols/test_websocket.py
+@@ -905,12 +905,8 @@
          response = await wsresponse(url)
          assert response.status_code == 403
          assert response.content == b"hardbody"
@@ -25,5 +25,5 @@ We have no wsproto packaged yet.
 +        # websockets automatically adds a content-length
 +        assert response.headers["content-length"] == "8"
  
-     config = Config(
-         app=app,
+     config = Config(app=app, ws=ws_protocol_cls, http=http_protocol_cls, lifespan="off", port=unused_tcp_port)
+     async with run_server(config):
