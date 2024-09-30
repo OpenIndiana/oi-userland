@@ -641,6 +641,10 @@ GCC_DEFAULT =	13
 GCC_VERSION ?=	$(GCC_DEFAULT)
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
+# If a component asked for non-default gcc version we need to make sure it is
+# installed
+USERLAND_REQUIRED_PACKAGES += $(if $(filter-out $(GCC_DEFAULT),$(GCC_VERSION)),developer/gcc-$(GCC_VERSION))
+
 # Define runtime package names to be used in dependencies
 GCC_RUNTIME_PKG =	system/library/gcc-$(GCC_VERSION)-runtime
 GXX_RUNTIME_PKG =	system/library/g++-$(GCC_VERSION)-runtime
@@ -706,6 +710,10 @@ CLANG_RUNTIME_PKG        = runtime/clang-$(CLANG_VERSION)
 REQUIRED_PACKAGES_SUBST += CLANG_DEVELOPER_PKG
 REQUIRED_PACKAGES_SUBST += CLANG_RUNTIME_PKG
 PATH.prepend +=		$(CLANG_BINDIR)
+
+# If a component asked for non-default clang version we need to make sure it is
+# installed
+USERLAND_REQUIRED_PACKAGES += $(if $(filter-out $(CLANG_DEFAULT),$(CLANG_VERSION)),$(CLANG_DEVELOPER_PKG))
 
 # Python definitions
 PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
