@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.10.6
+HUMAN_VERSION =			3.10.8
 COMPONENT_SUMMARY =		Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d2578ef941be0c2ba58f6f421a703527d08427237ed45ecb091fed6f83305336
+	sha256:21f8225f7dc187018e8433c9326be01477fb2810721e048b33ac49091b19fb4a
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -62,8 +62,8 @@ PYTEST_ADDOPTS += --ignore tests/test_proxy_functional.py
 # We have no python-on-whales packaged yet.
 PYTEST_ADDOPTS += --ignore tests/autobahn/test_autobahn.py
 
-# https://github.com/aio-libs/aiohttp/issues/8234
-PYTEST_ADDOPTS += --deselect tests/test_pytest_plugin.py::test_aiohttp_plugin
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/aiohappyeyeballs
