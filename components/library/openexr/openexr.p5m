@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 Andreas Wacknitz
+# Copyright 2024 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,16 +23,17 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/exr2aces
-file path=usr/bin/$(MACH64)/exrenvmap
-file path=usr/bin/$(MACH64)/exrheader
-file path=usr/bin/$(MACH64)/exrinfo
-file path=usr/bin/$(MACH64)/exrmakepreview
-file path=usr/bin/$(MACH64)/exrmaketiled
-file path=usr/bin/$(MACH64)/exrmanifest
-file path=usr/bin/$(MACH64)/exrmultipart
-file path=usr/bin/$(MACH64)/exrmultiview
-file path=usr/bin/$(MACH64)/exrstdattr
+file path=usr/bin/exr2aces
+file path=usr/bin/exrenvmap
+file path=usr/bin/exrheader
+file path=usr/bin/exrinfo
+file path=usr/bin/exrmakepreview
+file path=usr/bin/exrmaketiled
+file path=usr/bin/exrmanifest
+file path=usr/bin/exrmetrics
+file path=usr/bin/exrmultipart
+file path=usr/bin/exrmultiview
+file path=usr/bin/exrstdattr
 file path=usr/include/OpenEXR/Iex.h
 file path=usr/include/OpenEXR/IexBaseExc.h
 file path=usr/include/OpenEXR/IexConfig.h
@@ -52,6 +53,7 @@ file path=usr/include/OpenEXR/IlmThreadForward.h
 file path=usr/include/OpenEXR/IlmThreadMutex.h
 file path=usr/include/OpenEXR/IlmThreadNamespace.h
 file path=usr/include/OpenEXR/IlmThreadPool.h
+file path=usr/include/OpenEXR/IlmThreadProcessGroup.h
 file path=usr/include/OpenEXR/IlmThreadSemaphore.h
 file path=usr/include/OpenEXR/ImfAcesFile.h
 file path=usr/include/OpenEXR/ImfArray.h
@@ -67,6 +69,8 @@ file path=usr/include/OpenEXR/ImfCompositeDeepScanLine.h
 file path=usr/include/OpenEXR/ImfCompression.h
 file path=usr/include/OpenEXR/ImfCompressionAttribute.h
 file path=usr/include/OpenEXR/ImfCompressor.h
+file path=usr/include/OpenEXR/ImfContext.h
+file path=usr/include/OpenEXR/ImfContextInit.h
 file path=usr/include/OpenEXR/ImfConvert.h
 file path=usr/include/OpenEXR/ImfDeepCompositing.h
 file path=usr/include/OpenEXR/ImfDeepFrameBuffer.h
@@ -180,33 +184,33 @@ file path=usr/lib/$(MACH64)/cmake/OpenEXR/OpenEXRConfig.cmake
 file path=usr/lib/$(MACH64)/cmake/OpenEXR/OpenEXRConfigVersion.cmake
 file path=usr/lib/$(MACH64)/cmake/OpenEXR/OpenEXRTargets-none.cmake
 file path=usr/lib/$(MACH64)/cmake/OpenEXR/OpenEXRTargets.cmake
-link path=usr/lib/$(MACH64)/libIex-3_2.so target=libIex-3_2.so.31
-link path=usr/lib/$(MACH64)/libIex-3_2.so.31 \
-    target=libIex-3_2.so.31.$(HUMAN_VERSION)
-file path=usr/lib/$(MACH64)/libIex-3_2.so.31.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libIex.so target=libIex-3_2.so
-link path=usr/lib/$(MACH64)/libIlmThread-3_2.so target=libIlmThread-3_2.so.31
-link path=usr/lib/$(MACH64)/libIlmThread-3_2.so.31 \
-    target=libIlmThread-3_2.so.31.$(HUMAN_VERSION)
-file path=usr/lib/$(MACH64)/libIlmThread-3_2.so.31.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libIlmThread.so target=libIlmThread-3_2.so
-link path=usr/lib/$(MACH64)/libOpenEXR-3_2.so target=libOpenEXR-3_2.so.31
-link path=usr/lib/$(MACH64)/libOpenEXR-3_2.so.31 \
-    target=libOpenEXR-3_2.so.31.$(HUMAN_VERSION)
-file path=usr/lib/$(MACH64)/libOpenEXR-3_2.so.31.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libOpenEXR.so target=libOpenEXR-3_2.so
-link path=usr/lib/$(MACH64)/libOpenEXRCore-3_2.so \
-    target=libOpenEXRCore-3_2.so.31
-link path=usr/lib/$(MACH64)/libOpenEXRCore-3_2.so.31 \
-    target=libOpenEXRCore-3_2.so.31.$(HUMAN_VERSION)
-file path=usr/lib/$(MACH64)/libOpenEXRCore-3_2.so.31.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libOpenEXRCore.so target=libOpenEXRCore-3_2.so
-link path=usr/lib/$(MACH64)/libOpenEXRUtil-3_2.so \
-    target=libOpenEXRUtil-3_2.so.31
-link path=usr/lib/$(MACH64)/libOpenEXRUtil-3_2.so.31 \
-    target=libOpenEXRUtil-3_2.so.31.$(HUMAN_VERSION)
-file path=usr/lib/$(MACH64)/libOpenEXRUtil-3_2.so.31.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libOpenEXRUtil.so target=libOpenEXRUtil-3_2.so
+link path=usr/lib/$(MACH64)/libIex-3_3.so target=libIex-3_3.so.32
+link path=usr/lib/$(MACH64)/libIex-3_3.so.32 \
+    target=libIex-3_3.so.32.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libIex-3_3.so.32.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libIex.so target=libIex-3_3.so
+link path=usr/lib/$(MACH64)/libIlmThread-3_3.so target=libIlmThread-3_3.so.32
+link path=usr/lib/$(MACH64)/libIlmThread-3_3.so.32 \
+    target=libIlmThread-3_3.so.32.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libIlmThread-3_3.so.32.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libIlmThread.so target=libIlmThread-3_3.so
+link path=usr/lib/$(MACH64)/libOpenEXR-3_3.so target=libOpenEXR-3_3.so.32
+link path=usr/lib/$(MACH64)/libOpenEXR-3_3.so.32 \
+    target=libOpenEXR-3_3.so.32.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libOpenEXR-3_3.so.32.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libOpenEXR.so target=libOpenEXR-3_3.so
+link path=usr/lib/$(MACH64)/libOpenEXRCore-3_3.so \
+    target=libOpenEXRCore-3_3.so.32
+link path=usr/lib/$(MACH64)/libOpenEXRCore-3_3.so.32 \
+    target=libOpenEXRCore-3_3.so.32.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libOpenEXRCore-3_3.so.32.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libOpenEXRCore.so target=libOpenEXRCore-3_3.so
+link path=usr/lib/$(MACH64)/libOpenEXRUtil-3_3.so \
+    target=libOpenEXRUtil-3_3.so.32
+link path=usr/lib/$(MACH64)/libOpenEXRUtil-3_3.so.32 \
+    target=libOpenEXRUtil-3_3.so.32.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libOpenEXRUtil-3_3.so.32.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libOpenEXRUtil.so target=libOpenEXRUtil-3_3.so
 file path=usr/lib/$(MACH64)/pkgconfig/OpenEXR.pc
 file path=usr/share/doc/OpenEXR/examples/deepExamples.cpp
 file path=usr/share/doc/OpenEXR/examples/deepExamples.h
