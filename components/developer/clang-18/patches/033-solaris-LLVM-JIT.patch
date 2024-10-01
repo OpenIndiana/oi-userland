@@ -10,8 +10,8 @@ gnome-shell cores dump on sparc when mesa is build with llvm without this.
  00000000ea6af60c llvm::RuntimeDyldImpl::resolveRelocations() (3cd2e10, 6, 1, e7b04430, 3cd42d0, 3ee67b0) + 2dc
  00000000ea6af888 llvm::RuntimeDyld::resolveRelocations() (3e13038, 3d801a0, 3fa49a0, 3fa49b0, e7b04430, e7b04430) + 30 
 
---- llvm-13.0.0.src/include/llvm/BinaryFormat/ELFRelocs/Sparc.def
-+++ llvm-13.0.0.src/include/llvm/BinaryFormat/ELFRelocs/Sparc.def
+--- llvm-18.1.8.src/include/llvm/BinaryFormat/ELFRelocs/Sparc.def.orig
++++ llvm-18.1.8.src/include/llvm/BinaryFormat/ELFRelocs/Sparc.def
 @@ -87,3 +87,8 @@
  ELF_RELOC(R_SPARC_GOTDATA_OP_HIX22,  82)
  ELF_RELOC(R_SPARC_GOTDATA_OP_LOX10,  83)
@@ -21,8 +21,8 @@ gnome-shell cores dump on sparc when mesa is build with llvm without this.
 +ELF_RELOC(R_SPARC_SIZE64,         87)
 +ELF_RELOC(R_SPARC_WDISP10,        88)
 +ELF_RELOC(R_SPARC_NUM,            89)
---- llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldImpl.h.~1~	2021-09-24 19:18:10.000000000 +0000
-+++ llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldImpl.h	2022-01-02 14:26:31.003875610 +0000
+--- llvm-18.1.8.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldImpl.h.orig
++++ llvm-18.1.8.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldImpl.h
 @@ -109,6 +109,11 @@
      assert(StubOffset <= AllocationSize && "Not enough space allocated!");
    }
@@ -35,8 +35,8 @@ gnome-shell cores dump on sparc when mesa is build with llvm without this.
    uintptr_t getObjAddress() const { return ObjAddress; }
  };
  
---- llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.h.~1~	2021-09-24 19:18:10.000000000 +0000
-+++ llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.h	2022-01-02 14:26:31.004157633 +0000
+--- llvm-18.1.8.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.h.orig
++++ llvm-18.1.8.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.h
 @@ -54,6 +54,14 @@
    void resolvePPC64Relocation(const SectionEntry &Section, uint64_t Offset,
                                uint64_t Value, uint32_t Type, int64_t Addend);
@@ -63,9 +63,9 @@ gnome-shell cores dump on sparc when mesa is build with llvm without this.
      else if (Arch == Triple::x86_64)
        return 6; // 2-byte jmp instruction + 32-bit relative address
      else if (Arch == Triple::systemz)
---- llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp.~1~	2021-09-24 19:18:10.000000000 +0000
-+++ llvm-13.0.0.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp	2022-01-02 14:26:31.005058486 +0000
-@@ -887,6 +887,448 @@
+--- llvm-18.1.8.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp.orig
++++ llvm-18.1.8.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp
+@@ -927,6 +927,448 @@
    }
  }
  
@@ -514,7 +514,7 @@ gnome-shell cores dump on sparc when mesa is build with llvm without this.
  void RuntimeDyldELF::resolveSystemZRelocation(const SectionEntry &Section,
                                                uint64_t Offset, uint64_t Value,
                                                uint32_t Type, int64_t Addend) {
-@@ -1037,6 +1479,12 @@
+@@ -1077,6 +1519,12 @@
    case Triple::bpfeb:
      resolveBPFRelocation(Section, Offset, Value, Type, Addend);
      break;
@@ -527,7 +527,7 @@ gnome-shell cores dump on sparc when mesa is build with llvm without this.
    default:
      llvm_unreachable("Unsupported CPU type!");
    }
-@@ -1672,6 +2120,160 @@
+@@ -1711,6 +2159,160 @@
        else
          addRelocationForSection(RE, Value.SectionID);
      }
@@ -688,9 +688,9 @@ gnome-shell cores dump on sparc when mesa is build with llvm without this.
    } else if (Arch == Triple::systemz &&
               (RelType == ELF::R_390_PLT32DBL || RelType == ELF::R_390_GOTENT)) {
      // Create function stubs for both PLT and GOT references, regardless of
---- llvm-13.0.0.src/include/llvm/Object/ELFObjectFile.h.~1~	2021-09-24 19:18:10.000000000 +0000
-+++ llvm-13.0.0.src/include/llvm/Object/ELFObjectFile.h	2022-01-02 14:26:31.005542785 +0000
-@@ -1190,8 +1190,9 @@
+--- llvm-18.1.8.src/include/llvm/Object/ELFObjectFile.h.orig
++++ llvm-18.1.8.src/include/llvm/Object/ELFObjectFile.h
+@@ -1237,8 +1237,9 @@
      case ELF::EM_CSKY:
        return "elf32-csky";
      case ELF::EM_SPARC:
@@ -700,8 +700,8 @@ gnome-shell cores dump on sparc when mesa is build with llvm without this.
 +      return "elf32-sparc32plus";
      case ELF::EM_AMDGPU:
        return "elf32-amdgpu";
-     default:
-@@ -1212,7 +1213,7 @@
+     case ELF::EM_LOONGARCH:
+@@ -1263,7 +1264,7 @@
      case ELF::EM_S390:
        return "elf64-s390";
      case ELF::EM_SPARCV9:
@@ -710,7 +710,7 @@ gnome-shell cores dump on sparc when mesa is build with llvm without this.
      case ELF::EM_MIPS:
        return "elf64-mips";
      case ELF::EM_AMDGPU:
-@@ -1278,8 +1279,8 @@
+@@ -1331,8 +1332,8 @@
      return Triple::systemz;
  
    case ELF::EM_SPARC:

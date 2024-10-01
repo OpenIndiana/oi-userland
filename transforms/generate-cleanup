@@ -130,6 +130,16 @@
 <transform dir file link hardlink -> \
 	edit target "$(IPS_COMPONENT_RE_VERSION)" "$!(IPS_COMPONENT_VERSION)">
 
+# Clang support (must be after HUMAN_VERSION transforms)
+<transform dir file link hardlink path="usr/clang/[^/]+/lib/lib.*\.so" -> \
+	edit path "(lib[^/]+\.so\.)\d+" "\1$!(CLANGVER)">
+<transform link hardlink path="usr/clang/[^/]+/lib/lib.*\.so" -> \
+	edit target "(lib[^/]+\.so\.)\d+" "\1$!(CLANGVER)">
+<transform dir file link hardlink -> \
+	edit path "^(usr/clang/[^/]+/lib/clang/)\d+/" "\1$!(CLANGVER)/">
+<transform dir file link hardlink -> \
+	edit path "^(usr/clang/)\d+/" "\1$!(CLANGVER)/">
+
 # convert temporary macro names to their real name
 <transform set -> \
 	edit value "\$!\((.*)\)" "$(\1)">
