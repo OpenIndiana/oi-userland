@@ -27,12 +27,12 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tree-sitter
-COMPONENT_VERSION=      0.23.0
+COMPONENT_VERSION=      0.23.1
 COMPONENT_SUMMARY=      Tree-sitter is a parser generator tool and an incremental parsing library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://tree-sitter.github.io/tree-sitter/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:6403b361b0014999e96f61b9c84d6950d42f0c7d6e806be79382e0232e48a11b
+COMPONENT_ARCHIVE_HASH= sha256:30ea382bdaea8fc71e3d52850da509398f56d77b7c41e3494da46a1158d37b86
 COMPONENT_ARCHIVE_URL=  https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
