@@ -230,6 +230,7 @@ COMPONENT_POST_TEST_ACTION += $(COMPONENT_POST_TEST_ACTION.$(MACH))
 # components to opt-in for parallel build by setting USE_PARALLEL_BUILD = yes.
 PARALLEL_JOBS ?= $(shell /usr/sbin/psrinfo -t -c)
 ifeq ($(strip $(USE_PARALLEL_BUILD)),yes)
+COMPONENT_BUILD_CMAKE_ARGS += -j$(PARALLEL_JOBS)
 COMPONENT_BUILD_GMAKE_ARGS += -j$(PARALLEL_JOBS)
 COMPONENT_BUILD_SETUP_PY_ARGS += -j$(PARALLEL_JOBS)
 endif
