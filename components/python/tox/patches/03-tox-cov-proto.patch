@@ -1,13 +1,13 @@
 We test in proto area not in site-packages.
 
---- tox-4.20.0/tox.ini.orig
-+++ tox-4.20.0/tox.ini
+--- tox-4.21.0/tox.ini.orig
++++ tox-4.21.0/tox.ini
 @@ -29,7 +29,7 @@
-     COVERAGE_PROCESS_START = {toxinidir}{/}pyproject.toml
+     COVERAGE_PROCESS_START = {tox_root}{/}pyproject.toml
  commands =
      pytest {posargs: \
--      --junitxml {toxworkdir}{/}junit.{envname}.xml --cov {envsitepackagesdir}{/}tox --cov {toxinidir}{/}tests \
-+      --junitxml {toxworkdir}{/}junit.{envname}.xml --cov {env:PYTHONPATH}{/}tox --cov {toxinidir}{/}tests \
-       --cov-config={toxinidir}{/}pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test \
-       --cov-report html:{envtmpdir}{/}htmlcov \
-       --cov-report xml:{toxworkdir}{/}coverage.{envname}.xml \
+-      --junitxml {work_dir}{/}junit.{env_name}.xml --cov {env_site_packages_dir}{/}tox --cov {tox_root}{/}tests \
++      --junitxml {work_dir}{/}junit.{env_name}.xml --cov {env:PYTHONPATH}{/}tox --cov {tox_root}{/}tests \
+       --cov-config={tox_root}{/}pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test \
+       --cov-report html:{env_tmp_dir}{/}htmlcov \
+       --cov-report xml:{work_dir}{/}coverage.{env_name}.xml \

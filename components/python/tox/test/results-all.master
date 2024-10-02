@@ -1,11 +1,11 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config=$(@D)/pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml -n=auto tests --durations 5 --run-integration
+py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config=$(@D)/pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml -n=auto tests --durations 15 --run-integration
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [1731 items]
+X workers [1785 items]
 
 scheduling tests via LoadScheduling
 
@@ -613,33 +613,6 @@ tests/config/cli/test_parser.py::test_parser_const_with_default_none PASSED
 tests/config/cli/test_parser.py::test_parser_hint PASSED
 tests/config/cli/test_parser.py::test_parser_unsupported_type PASSED
 tests/config/cli/test_parser.py::test_sub_sub_command PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[py-{foo,bar}-None] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[py37-{base,i18n},b-None] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[py37-{i18n,base},b-None] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[{env}-MatchError\\('No variable name was supplied in {env} substitution'\\)] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[{toxinidir,}-None] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[123[]-exp_output1] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[C:\\WINDOWS\\foo\\bar-exp_output18] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[[\\] []-exp_output4] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[[]-exp_output0] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[[]123-exp_output2] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\-exp_output16] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\[\\] []-exp_output3] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\[] []-exp_output5] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\d-exp_output17] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\{foo} {bar}-exp_output7] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[p{foo:b{a{r}:t}:{ba}z}s-exp_output15] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{\\{}-exp_output13] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{\\}}-exp_output14] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo:B:c:D:e}-exp_output12] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo:{bar}}-exp_output10] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo\\::{bar}}-exp_output11] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo\\} {bar}-exp_output9] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo} {bar}-exp_output8] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo}-exp_output6] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expression_repr[match_expression0-MatchExpression(expr=[['posargs']], term_pos=None)] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expression_repr[match_expression1-MatchExpression(expr=[['posargs']], term_pos=1)] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expression_repr[match_expression2-MatchExpression(expr='foo', term_pos=-42)] PASSED
 tests/config/loader/ini/replace/test_replace_env_var.py::test_replace_env_default_deep PASSED
 tests/config/loader/ini/replace/test_replace_env_var.py::test_replace_env_default_with_colon PASSED
 tests/config/loader/ini/replace/test_replace_env_var.py::test_replace_env_missing PASSED
@@ -815,6 +788,33 @@ tests/config/loader/test_memory_loader.py::test_memory_loader_fails_invalid[valu
 tests/config/loader/test_memory_loader.py::test_memory_loader_fails_invalid[value4-of_type4-ValueError-invalid literal for int] PASSED
 tests/config/loader/test_memory_loader.py::test_memory_loader_override PASSED
 tests/config/loader/test_memory_loader.py::test_memory_loader_repr PASSED
+tests/config/loader/test_replace.py::test_dont_replace[py-{foo,bar}-None] PASSED
+tests/config/loader/test_replace.py::test_dont_replace[py37-{base,i18n},b-None] PASSED
+tests/config/loader/test_replace.py::test_dont_replace[py37-{i18n,base},b-None] PASSED
+tests/config/loader/test_replace.py::test_dont_replace[{env}-MatchError\\('No variable name was supplied in {env} substitution'\\)] PASSED
+tests/config/loader/test_replace.py::test_dont_replace[{toxinidir,}-None] PASSED
+tests/config/loader/test_replace.py::test_match_expr[123[]-exp_output1] PASSED
+tests/config/loader/test_replace.py::test_match_expr[C:\\WINDOWS\\foo\\bar-exp_output18] PASSED
+tests/config/loader/test_replace.py::test_match_expr[[\\] []-exp_output4] PASSED
+tests/config/loader/test_replace.py::test_match_expr[[]-exp_output0] PASSED
+tests/config/loader/test_replace.py::test_match_expr[[]123-exp_output2] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\-exp_output16] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\[\\] []-exp_output3] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\[] []-exp_output5] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\d-exp_output17] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\{foo} {bar}-exp_output7] PASSED
+tests/config/loader/test_replace.py::test_match_expr[p{foo:b{a{r}:t}:{ba}z}s-exp_output15] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{\\{}-exp_output13] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{\\}}-exp_output14] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo:B:c:D:e}-exp_output12] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo:{bar}}-exp_output10] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo\\::{bar}}-exp_output11] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo\\} {bar}-exp_output9] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo} {bar}-exp_output8] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo}-exp_output6] PASSED
+tests/config/loader/test_replace.py::test_match_expression_repr[match_expression0-MatchExpression(expr=[['posargs']], term_pos=None)] PASSED
+tests/config/loader/test_replace.py::test_match_expression_repr[match_expression1-MatchExpression(expr=[['posargs']], term_pos=1)] PASSED
+tests/config/loader/test_replace.py::test_match_expression_repr[match_expression2-MatchExpression(expr='foo', term_pos=-42)] PASSED
 tests/config/loader/test_section.py::test_section_eq PASSED
 tests/config/loader/test_section.py::test_section_not_eq[section0-a-b] PASSED
 tests/config/loader/test_section.py::test_section_not_eq[section1-other1] PASSED
@@ -988,6 +988,30 @@ tests/config/loader/test_str_convert.py::test_str_convert_ok[magic-magic-str] PA
 tests/config/loader/test_str_convert.py::test_str_convert_ok[true-True-bool] PASSED
 tests/config/loader/test_str_convert.py::test_str_convert_ok_py$(PYV)[-None-of_type0] PASSED
 tests/config/loader/test_str_convert.py::test_str_convert_ok_py$(PYV)[1,2-value1-of_type1] PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_bool_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_bool_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_command_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_command_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_dict_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_dict_nok_key PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_dict_nok_value PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_dict_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_env_list_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_env_list_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_found_keys PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_literal_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_literal_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_nok_element PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_optional_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_optional_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_load_raw PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_load_repr PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_path_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_path_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_str_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_str_ok PASSED
 tests/config/source/test_discover.py::test_bad_src_content PASSED
 tests/config/source/test_discover.py::test_no_src_cwd PASSED
 tests/config/source/test_discover.py::test_no_src_has_py_project_toml_above PASSED
@@ -999,6 +1023,36 @@ tests/config/source/test_source_ini.py::test_source_ini_custom_non_testenv_secti
 tests/config/source/test_source_ini.py::test_source_ini_ignore_invalid_factor_filters PASSED
 tests/config/source/test_source_ini.py::test_source_ini_ignore_non_testenv_sections PASSED
 tests/config/source/test_source_ini.py::test_source_ini_with_interpolated PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_bad_type_env PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_bad_type_env_name PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_core PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_extra PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_non_default PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_default PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_circular_set PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_circular_unset PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_default PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_name_via_env PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_name_via_env_set PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_set PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_fails PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_core PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_env_section_absolute PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_section_absolute PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_section_absolute_nok PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_default PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_set PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_ref_env PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_ref_raw PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_with_legacy PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_core PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_extra PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_non_default PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_default PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_env_name_via_env PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_env_name_via_env_set PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_from_env_section_absolute PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_from_section_absolute PASSED
 tests/config/test_main.py::test_args_are_paths_when_disabled PASSED
 tests/config/test_main.py::test_args_are_paths_when_from_child_dir PASSED
 tests/config/test_main.py::test_args_are_paths_when_with_change_dir PASSED
@@ -1743,13 +1797,121 @@ tests/util/test_spinner.py::test_td_human_readable[61-1 minute 1 second] PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-169 files skipped due to complete coverage.
+178 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 88.0% reached. Total coverage: 98.56%
-============================= slowest 5 durations ==============================
+Required test coverage of 88.0% reached. Total coverage: 98.57%
+============================= slowest 15 durations =============================
 =========================== short test summary info ============================
-======== 1730 passed, 1 skipped ========
+======== 1784 passed, 1 skipped ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
   py$(PYV): OK
   congratulations :)
