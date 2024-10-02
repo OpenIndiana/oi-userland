@@ -700,7 +700,7 @@ LD =		/usr/bin/ld
 
 # Clang definitions (we only have 64 bit clang)
 CLANG_DEFAULT =		18
-CLANG_VERSION =		$(CLANG_DEFAULT)
+CLANG_VERSION ?=	$(CLANG_DEFAULT)
 CLANG_FULL_VERSION =	$(CLANG_VERSION).1
 CLANG_PREFIX             = /usr/clang/$(CLANG_FULL_VERSION)
 CLANG_BINDIR =		$(CLANG_PREFIX)/bin
