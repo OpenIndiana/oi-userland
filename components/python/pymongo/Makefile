@@ -19,28 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.8.0
+HUMAN_VERSION =			4.10.1
 COMPONENT_SUMMARY =		Python driver for MongoDB <http://www.mongodb.org>
 COMPONENT_PROJECT_URL =		https://www.mongodb.org
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/mongodb/mongo-python-driver/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3639d459b06257b529c5675bb68e0f89d4a4d77fe5f76c01107202c3ba52d4cb
+	sha256:a9de02be53b6bb98efe0b9eda84ffa1ec027fcb23a2de62c4f941d9a2f2f3330
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Github tarball use different source directory than sdist
-COMPONENT_SRC =		mongo-python-driver-$(HUMAN_VERSION)
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Test results order varies between runs
-PYTEST_SORT_TESTS = yes
-
-# Normalize pointer
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(traceback object at \)0x[a-f0-9]\{12\}>/\1\$$(POINTER)>/g'"
-# The order of items in the list is random
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(Must be one of (\)[^)]\{1,\})/\1LIST)/g'"
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements/test.txt
 
 # For testing the svc:/application/database/mongodb-44:default service must be
 # online.
@@ -56,3 +49,4 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
