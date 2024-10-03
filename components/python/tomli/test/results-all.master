@@ -1,10 +1,23 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m unittest
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m unittest -v
+test_invalid (tests.test_data.TestData) ... ok
+test_valid (tests.test_data.TestData) ... ok
+test_invalid_char_quotes (tests.test_error.TestError) ... ok
+test_invalid_parse_float (tests.test_error.TestError) ... ok
+test_line_and_col (tests.test_error.TestError) ... ok
+test_missing_value (tests.test_error.TestError) ... ok
+test_module_name (tests.test_error.TestError) ... ok
+test_type_error (tests.test_error.TestError) ... ok
+test_deepcopy (tests.test_misc.TestMiscellaneous) ... ok
+test_incorrect_load (tests.test_misc.TestMiscellaneous) ... ok
+test_inline_array_recursion_limit (tests.test_misc.TestMiscellaneous) ... ok
+test_inline_table_recursion_limit (tests.test_misc.TestMiscellaneous) ... ok
+test_load (tests.test_misc.TestMiscellaneous) ... ok
+test_parse_float (tests.test_misc.TestMiscellaneous) ... ok
 
 ----------------------------------------------------------------------
-Ran 0 tests
+Ran 14 tests
 
 OK
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+  py$(PYV): OK
   congratulations :)
