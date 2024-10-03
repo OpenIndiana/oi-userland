@@ -138,6 +138,7 @@ endef
 $(foreach isa,$(MACH_LIST),$(eval $(call mach-list-generate-macros,$(isa))))
 
 PKG_MACROS +=		GCCVER=$(GCC_VERSION)
+PKG_MACROS +=		CLANGVER=$(CLANG_VERSION)
 
 define python-generate-macros
 PKG_MACROS +=           PYTHON_$(1)_ONLY=\#
