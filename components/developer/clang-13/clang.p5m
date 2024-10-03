@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2024 <contributor>
+# Copyright 2022 Klaus Ziegler
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,8 +23,14 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file path=usr/clang/$(CLANGVER)/bin/+ -> default mode 0555>
+
+# Create mediated symlinks in /usr/bin for Clang binaries
+<transform file link path="usr/clang/([^/]+)(/bin/[^/]+)$" -> emit \
+    link path=usr%<2> target=../clang/%<1>%<2> mediator=clang mediator-version=%<1> >
+
 file path=usr/clang/$(CLANGVER)/bin/FileCheck
-file path=usr/clang/$(CLANGVER)/bin/analyze-build
+file path=usr/clang/$(CLANGVER)/bin/analyze-build pkg.depend.bypass-generate=.*
 file path=usr/clang/$(CLANGVER)/bin/bugpoint
 file path=usr/clang/$(CLANGVER)/bin/c-index-test
 link path=usr/clang/$(CLANGVER)/bin/clang target=clang-13
@@ -46,7 +52,7 @@ file path=usr/clang/$(CLANGVER)/bin/diagtool
 file path=usr/clang/$(CLANGVER)/bin/dsymutil
 file path=usr/clang/$(CLANGVER)/bin/git-clang-format
 file path=usr/clang/$(CLANGVER)/bin/hmaptool
-file path=usr/clang/$(CLANGVER)/bin/intercept-build
+file path=usr/clang/$(CLANGVER)/bin/intercept-build pkg.depend.bypass-generate=.*
 file path=usr/clang/$(CLANGVER)/bin/llc
 file path=usr/clang/$(CLANGVER)/bin/lli
 file path=usr/clang/$(CLANGVER)/bin/lli-child-target
@@ -120,8 +126,8 @@ file path=usr/clang/$(CLANGVER)/bin/opt
 file path=usr/clang/$(CLANGVER)/bin/sancov
 file path=usr/clang/$(CLANGVER)/bin/sanstats
 file path=usr/clang/$(CLANGVER)/bin/scan-build
-file path=usr/clang/$(CLANGVER)/bin/scan-build-py
-file path=usr/clang/$(CLANGVER)/bin/scan-view
+file path=usr/clang/$(CLANGVER)/bin/scan-build-py pkg.depend.bypass-generate=.*
+file path=usr/clang/$(CLANGVER)/bin/scan-view pkg.depend.bypass-generate=.*
 file path=usr/clang/$(CLANGVER)/bin/split-file
 file path=usr/clang/$(CLANGVER)/bin/verify-uselistorder
 file path=usr/clang/$(CLANGVER)/bin/yaml-bench
@@ -2650,10 +2656,6 @@ file path=usr/clang/$(CLANGVER)/lib/cmake/llvm/TableGen.cmake
 file path=usr/clang/$(CLANGVER)/lib/cmake/llvm/TensorFlowCompile.cmake
 file path=usr/clang/$(CLANGVER)/lib/cmake/llvm/UseLibtool.cmake
 file path=usr/clang/$(CLANGVER)/lib/cmake/llvm/VersionFromVCS.cmake
-link path=usr/clang/$(CLANGVER)/lib/libLLVM-$(HUMAN_VERSION).so \
-    target=libLLVM-13.so
-file path=usr/clang/$(CLANGVER)/lib/libLLVM-13.so
-link path=usr/clang/$(CLANGVER)/lib/libLLVM.so target=libLLVM-13.so
 file path=usr/clang/$(CLANGVER)/lib/libLLVMAArch64AsmParser.a
 file path=usr/clang/$(CLANGVER)/lib/libLLVMAArch64CodeGen.a
 file path=usr/clang/$(CLANGVER)/lib/libLLVMAArch64Desc.a
@@ -2816,16 +2818,6 @@ file path=usr/clang/$(CLANGVER)/lib/libLLVMXCoreDisassembler.a
 file path=usr/clang/$(CLANGVER)/lib/libLLVMXCoreInfo.a
 file path=usr/clang/$(CLANGVER)/lib/libLLVMXRay.a
 file path=usr/clang/$(CLANGVER)/lib/libLLVMipo.a
-link path=usr/clang/$(CLANGVER)/lib/libLTO.so target=libLTO.so.$(CLANGVER)
-file path=usr/clang/$(CLANGVER)/lib/libLTO.so.$(CLANGVER)
-link path=usr/clang/$(CLANGVER)/lib/libRemarks.so \
-    target=libRemarks.so.$(CLANGVER)
-file path=usr/clang/$(CLANGVER)/lib/libRemarks.so.$(CLANGVER)
-link path=usr/clang/$(CLANGVER)/lib/libclang-cpp.so \
-    target=libclang-cpp.so.$(CLANGVER)
-file path=usr/clang/$(CLANGVER)/lib/libclang-cpp.so.$(CLANGVER)
-link path=usr/clang/$(CLANGVER)/lib/libclang.so target=libclang.so.$(CLANGVER)
-file path=usr/clang/$(CLANGVER)/lib/libclang.so.$(CLANGVER)
 file path=usr/clang/$(CLANGVER)/lib/libclangAPINotes.a
 file path=usr/clang/$(CLANGVER)/lib/libclangARCMigrate.a
 file path=usr/clang/$(CLANGVER)/lib/libclangAST.a
