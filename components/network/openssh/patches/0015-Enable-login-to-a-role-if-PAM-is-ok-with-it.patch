@@ -1,7 +1,7 @@
-diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
 --- a~/auth-pam.c	1970-01-01 00:00:00
 +++ a/auth-pam.c	1970-01-01 00:00:00
-@@ -1200,6 +1200,20 @@ do_pam_account(void)
+@@ -1213,6 +1213,20 @@ do_pam_account(void)
  	return (sshpam_account_status);
  }
  
@@ -20,9 +20,9 @@ diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
 +#endif
 +
  void
- do_pam_setcred(int init)
+ do_pam_setcred(void)
  {
-diff -wpruN '--exclude=*.orig' a~/auth-pam.h a/auth-pam.h
+diff -wpruN --no-dereference '--exclude=*.orig' a~/auth-pam.h a/auth-pam.h
 --- a~/auth-pam.h	1970-01-01 00:00:00
 +++ a/auth-pam.h	1970-01-01 00:00:00
 @@ -44,4 +44,9 @@ int sshpam_get_maxtries_reached(void);
@@ -35,7 +35,7 @@ diff -wpruN '--exclude=*.orig' a~/auth-pam.h a/auth-pam.h
 +void do_pam_set_tty(const char *);
 +
  #endif /* USE_PAM */
-diff -wpruN '--exclude=*.orig' a~/auth.h a/auth.h
+diff -wpruN --no-dereference '--exclude=*.orig' a~/auth.h a/auth.h
 --- a~/auth.h	1970-01-01 00:00:00
 +++ a/auth.h	1970-01-01 00:00:00
 @@ -98,6 +98,9 @@ struct Authctxt {
@@ -48,7 +48,7 @@ diff -wpruN '--exclude=*.orig' a~/auth.h a/auth.h
  };
  
  /*
-diff -wpruN '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hostbased.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hostbased.c
 --- a~/auth2-hostbased.c	1970-01-01 00:00:00
 +++ a/auth2-hostbased.c	1970-01-01 00:00:00
 @@ -81,6 +81,9 @@ userauth_hostbased(struct ssh *ssh, cons
@@ -61,8 +61,8 @@ diff -wpruN '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hostbased.c
  	pktype = sshkey_type_from_name(pkalg);
  	if (pktype == KEY_UNSPEC) {
  		/* this is perfectly legal */
-@@ -158,6 +161,13 @@ userauth_hostbased(struct ssh *ssh, cons
- 	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL)) == 0)
+@@ -152,6 +155,13 @@ userauth_hostbased(struct ssh *ssh, cons
+ 	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL) == 0)
  		authenticated = 1;
  
 +#ifdef HAVE_PAM_AUSER
@@ -75,28 +75,10 @@ diff -wpruN '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hostbased.c
  	auth2_record_key(authctxt, authenticated, key);
  	sshbuf_free(b);
  done:
-diff -wpruN '--exclude=*.orig' a~/auth2.c a/auth2.c
---- a~/auth2.c	1970-01-01 00:00:00
-+++ a/auth2.c	1970-01-01 00:00:00
-@@ -405,6 +405,14 @@ userauth_finish(struct ssh *ssh, int aut
- #endif
- 	}
- 
-+#ifdef HAVE_PAM_AUSER
-+	if (!use_privsep) {
-+		do_pam_set_auser(authctxt->auser);
-+		free(authctxt->auser);
-+		authctxt->auser = NULL;	
-+	}
-+#endif
-+
- 	if (authenticated && options.num_auth_methods != 0) {
- 
- #if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
-diff -wpruN '--exclude=*.orig' a~/monitor.c a/monitor.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/monitor.c a/monitor.c
 --- a~/monitor.c	1970-01-01 00:00:00
 +++ a/monitor.c	1970-01-01 00:00:00
-@@ -389,6 +389,12 @@ monitor_child_preauth(struct ssh *ssh, s
+@@ -393,6 +393,12 @@ monitor_child_preauth(struct ssh *ssh, s
  		}
  	}
  
@@ -109,7 +91,7 @@ diff -wpruN '--exclude=*.orig' a~/monitor.c a/monitor.c
  	if (!authctxt->valid)
  		fatal_f("authenticated invalid user");
  	if (strcmp(auth_method, "unknown") == 0)
-@@ -592,14 +598,16 @@ monitor_reset_key_state(void)
+@@ -597,14 +603,16 @@ monitor_reset_key_state(void)
  {
  	/* reset state */
  	free(key_blob);
@@ -127,7 +109,7 @@ diff -wpruN '--exclude=*.orig' a~/monitor.c a/monitor.c
  	hostbased_chost = NULL;
  }
  
-@@ -1072,6 +1080,11 @@ mm_answer_pam_account(struct ssh *ssh, i
+@@ -1096,6 +1104,11 @@ mm_answer_pam_account(struct ssh *ssh, i
  	if (!options.use_pam)
  		fatal("%s: PAM not enabled", __func__);
  

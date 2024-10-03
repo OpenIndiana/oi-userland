@@ -4,33 +4,19 @@ Date: Wed, 5 Aug 2015 12:25:15 -0700
 Subject: [PATCH 21/34] Try to create privsep chroot dir if it doesn't exist
  yet
 
-diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
---- a~/sshd.c	1970-01-01 00:00:00
-+++ a/sshd.c	1970-01-01 00:00:00
-@@ -1965,11 +1965,30 @@ main(int ac, char **av)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd-session.c a/sshd-session.c
+--- a~/sshd-session.c	1970-01-01 00:00:00
++++ a/sshd-session.c	1970-01-01 00:00:00
+@@ -303,6 +303,20 @@ privsep_preauth_child(void)
  
+ 	/* Demote the child */
  	if (privsep_chroot) {
- 		struct stat st;
++		struct stat st;
 +		int rc;
- 
- 		if ((stat(_PATH_PRIVSEP_CHROOT_DIR, &st) == -1) ||
--		    (S_ISDIR(st.st_mode) == 0))
--			fatal("Missing privilege separation directory: %s",
--			    _PATH_PRIVSEP_CHROOT_DIR);
++
++ 		if ((stat(_PATH_PRIVSEP_CHROOT_DIR, &st) == -1) ||
 +		    (S_ISDIR(st.st_mode) == 0)) {
 +			rc = mkdir(_PATH_PRIVSEP_CHROOT_DIR, 0755);
-+			if (rc == 0) {
-+				/*
-+				 * If mkdir works, try stat again, so the
-+				 * permissions check below can work.
-+				 */
-+				rc = stat(_PATH_PRIVSEP_CHROOT_DIR, &st);
-+				if (rc == 0 && S_ISDIR(st.st_mode) == 0) {
-+					rc = -1;
-+					errno = ENOTDIR;
-+				}
-+			}
-+
 +			if (rc != 0) {
 +				fatal("Failed to create privilege separation "
 +				    "directory %s: %s",
@@ -38,6 +24,7 @@ diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
 +				    strerror(errno));
 +			}
 +		}
- 
- #ifdef HAVE_CYGWIN
- 		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
++
+ 		/* Change our root directory */
+ 		if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
+ 			fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,

@@ -10,21 +10,19 @@ behaviour (at least the parts that are most commonly used).
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -173,7 +173,7 @@ initialize_server_options(ServerOptions
- 	options->client_alive_interval = -1;
+@@ -201,6 +201,7 @@ initialize_server_options(ServerOptions
  	options->client_alive_count_max = -1;
  	options->num_authkeys_files = 0;
--	options->num_accept_env = 0;
-+	options->num_accept_env = -1;
+ 	options->num_accept_env = 0;
++	options->default_accept_env = 1;
  	options->num_setenv = 0;
  	options->permit_tun = -1;
  	options->permitted_opens = NULL;
-@@ -488,6 +488,33 @@ fill_default_server_options(ServerOption
+@@ -536,6 +537,32 @@ fill_default_server_options(ServerOption
  		options->max_sessions = DEFAULT_SESSIONS_MAX;
  	if (options->use_dns == -1)
  		options->use_dns = 0;
-+	if (options->num_accept_env == -1) {
-+		options->num_accept_env = 0;
++	if (options->default_accept_env == 1) {
 +		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LANG");
@@ -53,12 +51,11 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  	if (options->client_alive_interval == -1)
  		options->client_alive_interval = 0;
  	if (options->client_alive_count_max == -1)
-@@ -2213,9 +2240,13 @@ process_server_config_line_depth(ServerO
+@@ -2329,9 +2356,12 @@ process_server_config_line_depth(ServerO
  			if (*arg == '\0' || strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
-+			if (options->num_accept_env == -1)
-+				options->num_accept_env = 0;
++			options->default_accept_env = 0;
  			found = 1;
  			if (!*activep)
  				continue;
@@ -67,19 +64,21 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  			opt_array_append(filename, linenum, keyword,
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
-@@ -2978,7 +3009,7 @@ copy_set_server_options(ServerOptions *d
- } while(0)
- #define M_CP_STRARRAYOPT(s, num_s) do {\
- 	u_int i; \
--	if (src->num_s != 0) { \
-+	if (src->num_s != 0 && src->num_s != -1) { \
- 		for (i = 0; i < dst->num_s; i++) \
- 			free(dst->s[i]); \
- 		free(dst->s); \
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
+--- a~/servconf.h	1970-01-01 00:00:00
++++ a/servconf.h	1970-01-01 00:00:00
+@@ -179,6 +179,7 @@ typedef struct {
+ 	char   **subsystem_args;
+ 
+ 	u_int num_accept_env;
++	int    default_accept_env;
+ 	char   **accept_env;
+ 	u_int num_setenv;
+ 	char   **setenv;
 diff -wpruN --no-dereference '--exclude=*.orig' a~/session.c a/session.c
 --- a~/session.c	1970-01-01 00:00:00
 +++ a/session.c	1970-01-01 00:00:00
-@@ -842,6 +842,18 @@ check_quietlogin(Session *s, const char
+@@ -831,6 +831,18 @@ check_quietlogin(Session *s, const char
  }
  
  /*
@@ -98,7 +97,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/session.c a/session.c
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
   * Otherwise, it must consist of empty lines, comments (line starts with '#')
-@@ -1025,6 +1037,16 @@ do_setup_env(struct ssh *ssh, Session *s
+@@ -1014,6 +1026,16 @@ do_setup_env(struct ssh *ssh, Session *s
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -115,7 +114,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/session.c a/session.c
  	/* Set basic environment. */
  	for (i = 0; i < s->num_env; i++)
  		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
-@@ -1068,8 +1090,7 @@ do_setup_env(struct ssh *ssh, Session *s
+@@ -1057,8 +1079,7 @@ do_setup_env(struct ssh *ssh, Session *s
  	/* Normal systems set SHELL by default. */
  	child_set_env(&env, &envsize, "SHELL", shell);
  
