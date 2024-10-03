@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
-PYTHON3_SOABI = abi3
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycryptodome
-HUMAN_VERSION =			3.20.0
-COMPONENT_SUMMARY =		pycryptodome - Cryptographic library for Python
+HUMAN_VERSION =			3.21.0
+COMPONENT_SUMMARY =		Cryptographic library for Python
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b9/ed/19223a0a0186b8a91ebbdd2852865839237a21c74f1fbc4b8d5b62965239/pycryptodome-3.20.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:09609209ed7de61c2b560cc5c8c4fbf892f8b15b1faf7e4cbffac97db1fffda7
+	sha256:f7787e0d469bdae763b876174cf2e6c0f7be79808af26b1da96f1a64bcf47297
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
@@ -44,7 +41,6 @@ TEST_REQUIREMENTS += requirements-test.txt
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodome-test-vectors
