@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomli
-HUMAN_VERSION =			2.0.1
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		tomli - A lil' TOML parser
+HUMAN_VERSION =			2.0.2
+COMPONENT_SUMMARY =		A lil' TOML parser
 COMPONENT_PROJECT_URL =		https://github.com/hukkin/tomli
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c0/3f/d7af728f075fb08564c5949a9c95e44352e23dee646869fa104a3b2060a3/tomli-2.0.1.tar.gz
+	https://github.com/hukkin/tomli/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f
+	sha256:a3a652f16bf326ba763ada67169165daf87ff9c465e21ad8264f2657beaf5264
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,13 +34,16 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - build
 # - flit_scm (test bootstrap)
 # - hatchling (test bootstrap)
-# - pep517
+# - pyproject_api (test bootstrap)
 # - pytest (test bootstrap)
-# - setuptools_scm
+# - setuptools-scm
 # - tox (test bootstrap)
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Force verbose test output via tox posargs
+TOX_POSARGS += -v
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
