@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.proxy
 HUMAN_VERSION =			6.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Generic Transparent Proxies
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.proxy
 COMPONENT_ARCHIVE_HASH =	\
