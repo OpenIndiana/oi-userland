@@ -1,11 +1,11 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config=$(@D)/pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml -n=auto tests --durations 15 --run-integration
+py$(PYV): commands[0]> pytest --durations 15 -n auto --junitxml $(@D)/.tox/junit.py$(PYV).xml --no-cov-on-fail --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config $(@D)/pyproject.toml --cov-context test --cov-report term-missing:skip-covered --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests --run-integration
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [1785 items]
+X workers [1791 items]
 
 scheduling tests via LoadScheduling
 
@@ -1023,6 +1023,8 @@ tests/config/source/test_source_ini.py::test_source_ini_custom_non_testenv_secti
 tests/config/source/test_source_ini.py::test_source_ini_ignore_invalid_factor_filters PASSED
 tests/config/source/test_source_ini.py::test_source_ini_ignore_non_testenv_sections PASSED
 tests/config/source/test_source_ini.py::test_source_ini_with_interpolated PASSED
+tests/config/source/test_toml_pyproject.py::test_config_deps PASSED
+tests/config/source/test_toml_pyproject.py::test_config_deps_req PASSED
 tests/config/source/test_toml_pyproject.py::test_config_in_toml_bad_type_env PASSED
 tests/config/source/test_toml_pyproject.py::test_config_in_toml_bad_type_env_name PASSED
 tests/config/source/test_toml_pyproject.py::test_config_in_toml_core PASSED
@@ -1041,10 +1043,14 @@ tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_env
 tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_section_absolute PASSED
 tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_section_absolute_nok PASSED
 tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_default PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_empty PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_empty_optional PASSED
 tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_set PASSED
 tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_ref_env PASSED
-tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_ref_raw PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_ref_of PASSED
 tests/config/source/test_toml_pyproject.py::test_config_in_toml_with_legacy PASSED
+tests/config/source/test_toml_pyproject.py::test_config_requires PASSED
+tests/config/source/test_toml_pyproject.py::test_config_set_env_ref PASSED
 tests/config/source/test_toml_tox.py::test_config_in_toml_core PASSED
 tests/config/source/test_toml_tox.py::test_config_in_toml_extra PASSED
 tests/config/source/test_toml_tox.py::test_config_in_toml_non_default PASSED
@@ -1801,82 +1807,10 @@ tests/util/test_spinner.py::test_td_human_readable[61-1 minute 1 second] PASSED
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 88.0% reached. Total coverage: 98.57%
+Required test coverage of 88.0% reached. Total coverage: 98.56%
 ============================= slowest 15 durations =============================
 =========================== short test summary info ============================
-======== 1784 passed, 1 skipped ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 1790 passed, 1 skipped ========
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
 <class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
   warnings.warn(
