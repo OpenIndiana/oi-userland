@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Math::Random::ISAAC
 HUMAN_VERSION =			1.004
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Math::Random::ISAAC - Perl interface to the ISAAC PRNG algorithm
 COMPONENT_CPAN_AUTHOR =		JAWNSY
 COMPONENT_ARCHIVE_HASH =	\
@@ -42,5 +43,6 @@ MANGLE_DEPEND_RUNTIME += | \
 	$(GNU_GREP) -v '^depend type=require fmri=__TBD pkg\.debug\.depend\.file=Math/Random/ISAAC/XS\.pm'
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/math-random-isaac-xs
 PERL_REQUIRED_PACKAGES += library/perl-5/test-nowarnings
 PERL_REQUIRED_PACKAGES += runtime/perl
