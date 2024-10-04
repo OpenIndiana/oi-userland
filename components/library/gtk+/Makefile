@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
 COMPONENT_VERSION= 2.24.33
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -28,6 +28,8 @@ COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/2.24
 COMPONENT_PROJECT_URL= https://www.gtk.org/
 
 include $(WS_MAKE_RULES)/common.mk
+
+PATH= $(PATH.gnu)
 
 gcc_OPT = -O2
 CFLAGS += -I/usr/X11/include
@@ -41,7 +43,6 @@ COMPONENT_PREP_ACTION = \
           autoconf )
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-#CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/$(MACH64)
 CONFIGURE_OPTIONS += --enable-shm
 CONFIGURE_OPTIONS += --with-gdktarget=x11
 CONFIGURE_OPTIONS += --enable-explicit-deps=yes
