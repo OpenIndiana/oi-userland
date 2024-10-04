@@ -14,14 +14,15 @@
 #
 
 BUILD_STYLE = meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gtk
-HUMAN_VERSION =			4.16.4
+HUMAN_VERSION =			4.16.5
 COMPONENT_SUMMARY =		The GTK toolkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:36b96c158babd29085181b857577a81f5a0a6a3b182811b171cd688a709b0b41
+	sha256:302d6813fbed95c419fb3ab67c5da5e214882b6a645c3eab9028dfb91ab418a4
 COMPONENT_PROJECT_URL =		https://www.gtk.org/
 COMPONENT_FMRI =		library/desktop/gtk4
 COMPONENT_CLASSIFICATION =	Desktop (GNOME)/Libraries
@@ -31,10 +32,8 @@ COMPONENT_LICENSE_FILE =	COPYING
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH=$(PATH.gnu)
-
-# Uses isinf, etc. only available in c99 and newer
-CFLAGS.gcc += -std=gnu11
 
 #needed to produce /usr/lib/amd64/girepository-1.0 files
 CONFIGURE_OPTIONS += -Dintrospection=enabled
@@ -47,9 +46,6 @@ CONFIGURE_OPTIONS += -Dwayland-backend=false
 # We have no vulkan support
 CONFIGURE_OPTIONS += -Dvulkan=disabled
 
-COMPONENT_BUILD_ENV += CC=$(CC)
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
 # Note that the number of failing tests vary for unknown reasons between runs
 #
 # Testing needs an X server
@@ -57,24 +53,6 @@ TEST_REQUIRED_PACKAGES += x11/server/xvfb
 COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
 COMPONENT_TEST_ENV += DISPLAY=:1
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
-
-# Remove the empty line after the 'Summary of Failures:'
-COMPONENT_TEST_TRANSFORMS += "-e '/^Summary of Failures:/{n; N; D; }' | $(COMPONENT_TEST_TRANSFORMER)"
-# Remove the list of failed tests so we do not see the failed tests twice
-COMPONENT_TEST_TRANSFORMS += "-e '/^Summary of Failures:/,/^\$$/d'"
-# By default ignore all lines
-COMPONENT_TEST_TRANSFORMS += "-n"
-# Print the individual test result with removed test number and timing
-COMPONENT_TEST_TRANSFORMS += "-e '/^ *[0-9]\{1,\}\/[0-9]\{1,\} /{s///; s/ \{1,\}[0-9]*[0-9]\.[0-9][0-9]s//; p; }'"
-# Print the test summary too
-COMPONENT_TEST_TRANSFORMS += "-e '/^Ok:/,/^\$$/p'"
-# Include empty line before the test summary
-COMPONENT_TEST_TRANSFORMS += "| $(COMPONENT_TEST_TRANSFORMER) -e '/^Ok:/{H; x; }'"
-# Sort test results
-COMPONENT_TEST_TRANSFORMS += "| ( \
-		$(GSED) -u -e '/^\$$/Q' | $(SORT) | $(COMPONENT_TEST_TRANSFORMER) -e '\$$G' ; \
-		$(CAT) \
-	) | $(COMPONENT_TEST_TRANSFORMER) -e ''"
 
 #
 # Installed gtk4 libraries are causing many tests to fail and we didn't found a
@@ -92,6 +70,16 @@ COMPONENT_TEST_TRANSFORMS += "| ( \
 #    no way how to prevent their loading, except by removing them.
 #
 TEST_CONFLICTING_PACKAGES += library/desktop/gtk4
+
+# Dynamic library version number
+SOVER := 1.$(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
+SOVER_RE = $(subst .,\.,$(SOVER))
+
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/python/docutils
