@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-bad1
 COMPONENT_VERSION=      1.22.10
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=	gst-plugins-bad
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -39,8 +39,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
-CFLAGS += -I/usr/X11/include/mesa
-CFLAGS += -I/usr/X11/include
+CFLAGS += -I/usr/include/mesa
+CFLAGS += -I/usr/include/X11
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dexamples=disabled
@@ -79,6 +79,7 @@ REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += audio/faac
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += compress/bzip2
@@ -104,14 +105,13 @@ REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/opus
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libdvdnav
 REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/x265
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += video/rtmpdump
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
