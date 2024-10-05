@@ -16,16 +16,17 @@
 #
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
-COMPONENT_VERSION=	2.58.2
+COMPONENT_VERSION=	2.59.1
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/LibRsvg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:18e9d70c08cf25f50d610d6d5af571561d67cf4179f962e04266475df6e2e224
+COMPONENT_ARCHIVE_HASH= sha256:6116267c7ddabfd4daaf1c341326da0a773139a7223e885ae40ee09bd6986ef6
 COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/library/librsvg
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -39,20 +40,11 @@ CARGO_HOME=             $(@D)/.cargo
 # if -z ignore is added to LD_OPTIONS the build will fail
 LD_OPTIONS=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.noexdata -M /usr/lib/ld/map.pagealign -Bdirect
 
-PATH=                   $(PATH.gnu)
+COMPONENT_PRE_CONFIGURE_ACTION= ( CARGO_HOME=$(CARGO_HOME) cargo install --force cargo-c )
 
-# Cloning is required for gmake test to pass
-COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D); )
+PATH=                   $(CARGO_HOME)/bin:$(PATH.gnu)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS += --disable-Bsymbolic
-CONFIGURE_OPTIONS += --disable-static
-# does not build
-CONFIGURE_OPTIONS += --disable-gtk-doc
-CONFIGURE_OPTIONS += --enable-introspection
-CONFIGURE_OPTIONS += --enable-vala
-
-COMPONENT_BUILD_ENV += CARGO_HOME=$(CARGO_HOME)
+LDFLAGS=		-lsocket
 
 COMPONENT_TEST_TRANSFORMS = \
 	'-n ' \
@@ -68,8 +60,6 @@ REQUIRED_PACKAGES += library/python/docutils-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libpng16
-REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/pango
@@ -77,5 +67,4 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += service/gnome/desktop-cache
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
