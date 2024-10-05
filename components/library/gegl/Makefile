@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).48
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -38,13 +38,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 # strptime needs this:
-CFLAGS += -D_XOPEN_SOURCE_EXTENDED=1
-CFLAGS += $(CFLAGS.$(BITS))
-
-# build with the distribution default libjpeg
-CFLAGS		+=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS	+=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS		+=    $(JPEG_LDFLAGS)
+CFLAGS += $(XPG6MODE)
 
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS+= -Ddocs=false
@@ -59,11 +53,15 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_64)/gegl
-COMPONENT_TEST_TRANSFORMS += \
+#COMPONENT_TEST_TRANSFORMS += \
 	' -e "s/[0-9]*\.[0-9]*s//" ' \
 	' -e "/OK/p" ' \
 	' -e "/SKIP/p" ' \
 	' -e "/FAIL/p" ' \
+	' -e "/Summary/p" '
+
+COMPONENT_TEST_TRANSFORMS += \
+	' -e "s/[0-9]*\.[0-9]*s//" ' \
 	' -e "/Summary/p" '
 
 # Auto-generated dependencies
@@ -73,7 +71,6 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += image/library/babl
 REQUIRED_PACKAGES += image/library/lensfun
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
