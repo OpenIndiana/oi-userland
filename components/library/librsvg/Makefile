@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
 COMPONENT_VERSION=	2.59.1
+COMPONENT_REVISION=	1
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/LibRsvg
