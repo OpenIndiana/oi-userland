@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdk-pixbuf
 HUMAN_VERSION=		2.42.12
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GdkPixbuf: Image loading library
 COMPONENT_ARCHIVE_HASH=	sha256:b9505b3445b9a7e48ced34760c3bcb73e966df3ac94c95a148cb669ab748e3c7
 COMPONENT_FMRI=         library/desktop/gdk-pixbuf
@@ -40,9 +41,8 @@ PATH = $(PATH.gnu)
 
 # Enable all loaders
 CONFIGURE_OPTIONS += -Dothers=enabled
-# We prefer no builtin loaders, but we need to make png builtin because
-# otherwise the build fails.
-CONFIGURE_OPTIONS += -Dbuiltin_loaders=png
+# We prefer no builtin loaders
+CONFIGURE_OPTIONS += -Dbuiltin_loaders=none
 # Do not install tests
 CONFIGURE_OPTIONS += -Dinstalled_tests=false
 
