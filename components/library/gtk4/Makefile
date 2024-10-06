@@ -18,10 +18,10 @@ BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gtk
-HUMAN_VERSION =			4.16.1
+HUMAN_VERSION =			4.16.3
 COMPONENT_SUMMARY =		The GTK toolkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:926a1eabd481f9bfa25538f95016fdfcfaf963b2f90b40ae69e90def5499215c
+	sha256:2ec53e07d18c9f003b39e4a6a838054d9259e048b6c4c05d80c0d05aa721d944
 COMPONENT_PROJECT_URL =		https://www.gtk.org/
 COMPONENT_FMRI =		library/desktop/gtk4
 COMPONENT_CLASSIFICATION =	Desktop (GNOME)/Libraries
@@ -50,10 +50,12 @@ CONFIGURE_OPTIONS += -Dvulkan=disabled
 COMPONENT_BUILD_ENV += CC=$(CC)
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
+# Note that the number of failing tests vary for unknown reasons between runs
+#
 # Testing needs an X server
 TEST_REQUIRED_PACKAGES += x11/server/xvfb
-COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
-COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:1
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Remove the empty line after the 'Summary of Failures:'
@@ -96,7 +98,6 @@ REQUIRED_PACKAGES += library/python/docutils
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
