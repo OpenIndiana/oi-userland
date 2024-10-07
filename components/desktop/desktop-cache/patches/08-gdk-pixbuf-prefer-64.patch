@@ -1,0 +1,93 @@
+Prefer 64 bit binaries for gdk-pixbuf.
+Do not generate gdk-pixbuf.loaders in /etc
+
+--- desktop-cache-smf-services-0.2.2/pixbuf-loaders/pixbuf-loaders-installer.orig
++++ desktop-cache-smf-services-0.2.2/pixbuf-loaders/pixbuf-loaders-installer
+@@ -53,36 +53,33 @@
+ #   if list generate loader list     
+ #
+ 
+-ARCH64=`/bin/isainfo -k`
+-
+-if [[ $ARCH64 != "amd64" ]] && [[ "$ARCH64" != "sparcv9" ]]; then
+-  ARCH64=""
+-fi
+-
+ start_pixbuf_loaders_installer ()
+ {
+-for DIR in "" $ARCH64; do
+-  test -x /usr/bin/$DIR/gdk-pixbuf-query-loaders || {
++for ARCH in $(/bin/isainfo) ; do
++  BINDIR='/usr/bin'
++  DIR="$ARCH"
++  [ "$ARCH" == "i386" ] && BIDDIR='/usr/bin/i86' && DIR=''
++
++  test -x $BINDIR/gdk-pixbuf-query-loaders || {
+       echo "gdk-pixbuf-query-loaders not installed"
+       continue
+   }
+-  if [ -a "/etc/$DIR/gtk-2.0/gdk-pixbuf.loaders" ]; then
++  if [ -a "/usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache" ]; then
+     RESULT=`${FIND_NEWER} -f -c -m --name '*.so' \
+-	--newer /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders \
+-	/usr/lib/$DIR/gdk-pixbuf-2.0/*/loaders 2>/dev/null`
++	--newer /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache \
++	/usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders 2>/dev/null`
+   else
+     RESULT="no loader file"
+   fi
+ 
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating gdk pixbuf loader file"
+-    /usr/bin/$DIR/gdk-pixbuf-query-loaders > /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders
+-    /usr/bin/$DIR/gdk-pixbuf-query-loaders > /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache
++    $BINDIR/gdk-pixbuf-query-loaders > /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache
+     if [ $? -ne 0 ]; then
+-      echo "gdk-pixbuf-query-loaders exited with an error while generating the installer file /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders"
++      echo "gdk-pixbuf-query-loaders exited with an error while generating the installer file /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+       exit $SMF_EXIT_ERR_FATAL
+     else
+-      echo "gdk pixbuf loaders installed in /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders"
++      echo "gdk pixbuf loaders installed in /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+     fi
+   fi
+ done
+@@ -90,13 +87,17 @@
+ 
+ refresh_pixbuf_loaders_installer ()
+ {
+-for DIR in "" $ARCH64; do
+-  test -x /usr/bin/$DIR/gdk-pixbuf-query-loaders || {
++for ARCH in $(/bin/isainfo) ; do
++  BINDIR='/usr/bin'
++  DIR="$ARCH"
++  [ "$ARCH" == "i386" ] && BIDDIR='/usr/bin/i86' && DIR=''
++
++  test -x $BINDIR/gdk-pixbuf-query-loaders || {
+       echo "gdk-pixbuf-query-loaders not installed"
+       continue
+   }
+-  if [ -a "/etc/$DIR/gtk-2.0/gdk-pixbuf.loaders" ]; then
+-    RESULT=`/usr/bin/find /usr/lib/$DIR/gdk-pixbuf-2.0/*/loaders/*.so ! -type d \
++  if [ -a "/usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache" ]; then
++    RESULT=`/usr/bin/find /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders/*.so ! -type d \
+ 	   -follow -print 2>/dev/null`
+   else
+     RESULT="no loader file"
+@@ -104,13 +105,12 @@
+ 
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating gdk pixbuf loader file"
+-    /usr/bin/$DIR/gdk-pixbuf-query-loaders > /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders
+-    /usr/bin/$DIR/gdk-pixbuf-query-loaders > /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache
++    $BINDIR/gdk-pixbuf-query-loaders > /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache
+     if [ $? -ne 0 ]; then
+-      echo "gdk-pixbuf-query-loaders exited with an error while generating the installer file /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders"
++      echo "gdk-pixbuf-query-loaders exited with an error while generating the installer file /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+       exit $SMF_EXIT_ERR_FATAL
+     else
+-      echo "gdk pixbuf loaders installed in /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders"
++      echo "gdk pixbuf loaders installed in /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+     fi
+   fi
+ done
