@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= desktop-cache
 COMPONENT_VERSION= 0.2.2
-COMPONENT_REVISION= 13
+COMPONENT_REVISION= 14
 COMPONENT_SUMMARY= desktop-cache is a set of SMF services used to update the various GNOME desktop caches.
 COMPONENT_SRC= desktop-cache-smf-services-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
