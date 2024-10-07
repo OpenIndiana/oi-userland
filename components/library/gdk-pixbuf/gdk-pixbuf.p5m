@@ -23,6 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Need to generate loaders.cache
+depend type=require fmri=service/gnome/desktop-cache
+
 # Otherwise `gdk-pixbuf-csource` won't recognize file types
 depend type=require fmri=desktop/shared-mime-info
 
@@ -46,7 +49,6 @@ file path=usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-simple-anim.h
 file path=usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-transform.h
 file path=usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf.h
 file path=usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixdata.h
-file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders.cache
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-ani.so
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-bmp.so
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-gif.so
@@ -63,9 +65,9 @@ file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xpm.so
 file path=usr/lib/$(MACH64)/girepository-1.0/GdkPixbuf-2.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/GdkPixdata-2.0.typelib
 link path=usr/lib/$(MACH64)/libgdk_pixbuf-2.0.so target=libgdk_pixbuf-2.0.so.0
+file path=usr/lib/$(MACH64)/libgdk_pixbuf-2.0.so.$(SOVER)
 link path=usr/lib/$(MACH64)/libgdk_pixbuf-2.0.so.0 \
-    target=libgdk_pixbuf-2.0.so.0.4200.12
-file path=usr/lib/$(MACH64)/libgdk_pixbuf-2.0.so.0.4200.12
+    target=libgdk_pixbuf-2.0.so.$(SOVER)
 file path=usr/lib/$(MACH64)/pkgconfig/gdk-pixbuf-2.0.pc
 file path=usr/share/gir-1.0/GdkPixbuf-2.0.gir
 file path=usr/share/gir-1.0/GdkPixdata-2.0.gir

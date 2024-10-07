@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdk-pixbuf
 HUMAN_VERSION=		2.42.12
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	GdkPixbuf: Image loading library
 COMPONENT_ARCHIVE_HASH=	sha256:b9505b3445b9a7e48ced34760c3bcb73e966df3ac94c95a148cb669ab748e3c7
 COMPONENT_FMRI=         library/desktop/gdk-pixbuf
@@ -46,10 +46,15 @@ CONFIGURE_OPTIONS += -Dbuiltin_loaders=none
 # Do not install tests
 CONFIGURE_OPTIONS += -Dinstalled_tests=false
 
-COMPONENT_POST_INSTALL_ACTION += LD_LIBRARY_PATH=$(PROTOUSRLIBDIR.$(BITS)) \
-	$(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS))/gdk-pixbuf-query-loaders \
-	   $(PROTOUSRLIBDIR.$(BITS))/gdk-pixbuf-2.0/*/loaders/*.so | sed -e "s:$(PROTO_DIR)/*:/:" \
-	   > $(PROTOUSRLIBDIR.$(BITS))/gdk-pixbuf-2.0/2.10.0/loaders.cache ;
+# Dynamic library version number
+SOVER := 0.$(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
+SOVER_RE = $(subst .,\.,$(SOVER))
+
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Manually added build dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/gi-docgen
