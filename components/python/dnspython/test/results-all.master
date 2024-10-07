@@ -2,7 +2,8 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-collecting ... collected 1345 items
+configfile: pyproject.toml
+collecting ... collected 1326 items / 4 deselected / 1322 selected
 
 tests/test_address.py::IPv4Tests::test_invalid PASSED
 tests/test_address.py::IPv4Tests::test_valid PASSED
@@ -10,11 +11,17 @@ tests/test_address.py::IPv6Tests::test_invalid PASSED
 tests/test_address.py::IPv6Tests::test_valid PASSED
 tests/test_async.py::AsyncDetectionTests::test_get_default_backend PASSED
 tests/test_async.py::AsyncDetectionTests::test_sniff PASSED
+tests/test_async.py::NoSniffioAsyncDetectionTests::test_get_default_backend PASSED
+tests/test_async.py::NoSniffioAsyncDetectionTests::test_sniff PASSED
+tests/test_async.py::MiscBackend::test_bogus_backend PASSED
+tests/test_async.py::MiscBackend::test_sniff_without_run_loop PASSED
+tests/test_async.py::MiscQuery::test_source_tuple PASSED
 tests/test_async.py::AsyncTests::testCanonicalNameCNAME PASSED
 tests/test_async.py::AsyncTests::testCanonicalNameDangling PASSED
 tests/test_async.py::AsyncTests::testCanonicalNameNoCNAME PASSED
 tests/test_async.py::AsyncTests::testDOHGetRequest PASSED
 tests/test_async.py::AsyncTests::testDOHPostRequest PASSED
+tests/test_async.py::AsyncTests::testDoH3GetRequest SKIPPED (aioquic...)
 tests/test_async.py::AsyncTests::testQueryTCP PASSED
 tests/test_async.py::AsyncTests::testQueryTCPWithSocket PASSED
 tests/test_async.py::AsyncTests::testQueryTLS PASSED
@@ -52,11 +59,6 @@ tests/test_async.py::IgnoreErrors::test_trailing_wire PASSED
 tests/test_async.py::IgnoreErrors::test_trailing_wire_not_ignored PASSED
 tests/test_async.py::IgnoreErrors::test_wrong_id_wire_with_truncation_flag_and_no_truncation_raise PASSED
 tests/test_async.py::IgnoreErrors::test_wrong_id_wire_with_truncation_flag_and_truncation_raise PASSED
-tests/test_async.py::MiscBackend::test_bogus_backend PASSED
-tests/test_async.py::MiscBackend::test_sniff_without_run_loop PASSED
-tests/test_async.py::MiscQuery::test_source_tuple PASSED
-tests/test_async.py::NoSniffioAsyncDetectionTests::test_get_default_backend PASSED
-tests/test_async.py::NoSniffioAsyncDetectionTests::test_sniff PASSED
 tests/test_bugs.py::BugsTestCase::test_CAA_from_wire PASSED
 tests/test_bugs.py::BugsTestCase::test_SOA_BIND8_TTL PASSED
 tests/test_bugs.py::BugsTestCase::test_TXT_conversions PASSED
@@ -69,43 +71,8 @@ tests/test_constants.py::ConstantsTestCase::test_edns_constants PASSED
 tests/test_constants.py::ConstantsTestCase::test_flags_constants PASSED
 tests/test_constants.py::ConstantsTestCase::test_message_constants PASSED
 tests/test_constants.py::ConstantsTestCase::test_rdata_constants PASSED
-tests/test_ddr.py::test_basic_ddr_async PASSED
 tests/test_ddr.py::test_basic_ddr_sync PASSED
-tests/test_dnssec.py::DNSSECMakeDNSKEYTestCase::testInvalidMakeDNSKEY PASSED
-tests/test_dnssec.py::DNSSECMakeDNSKEYTestCase::testKnownDNSKEYs PASSED
-tests/test_dnssec.py::DNSSECMakeDNSKEYTestCase::testMakeCDNSKEY PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testInvalidAlgorithm PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testInvalidDigestLength PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testInvalidDigestLengthCDS0 PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeCDS PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA1DS PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA1DSDeniedByPolicy PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA1DSValidationOkByPolicy PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA256DS PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA384DS PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeManyDSfromCDS PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeManyDSfromDNSKEY PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeSHA256CDS PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeSHA256DS PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testMnemonicParser PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testReservedDigestType PASSED
-tests/test_dnssec.py::DNSSECMakeDSTestCase::testUnknownDigestType PASSED
-tests/test_dnssec.py::DNSSECMiscTestCase::testDigestToBig PASSED
-tests/test_dnssec.py::DNSSECMiscTestCase::testInceptionExpiration PASSED
-tests/test_dnssec.py::DNSSECMiscTestCase::testNSEC3HashTooBig PASSED
-tests/test_dnssec.py::DNSSECMiscTestCase::testToTimestamp PASSED
-tests/test_dnssec.py::DNSSECMiscTestCase::test_sign_zone_absolute PASSED
-tests/test_dnssec.py::DNSSECMiscTestCase::test_sign_zone_nsec_null_signer PASSED
-tests/test_dnssec.py::DNSSECMiscTestCase::test_sign_zone_relative PASSED
-tests/test_dnssec.py::DNSSECSignatureTestCase::testSignRdataset PASSED
-tests/test_dnssec.py::DNSSECSignatureTestCase::testSignWildRdataset PASSED
-tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureData PASSED
-tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureECDSAP256SHA256 PASSED
-tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureECDSAP384SHA384 PASSED
-tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureED25519 PASSED
-tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureED448 PASSED
-tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureRSASHA1 PASSED
-tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureRSASHA256 PASSED
+tests/test_ddr.py::test_basic_ddr_async PASSED
 tests/test_dnssec.py::DNSSECValidatorTestCase::testAbsoluteDSABad PASSED
 tests/test_dnssec.py::DNSSECValidatorTestCase::testAbsoluteDSAGood PASSED
 tests/test_dnssec.py::DNSSECValidatorTestCase::testAbsoluteDSAGoodDeniedByPolicy PASSED
@@ -136,9 +103,42 @@ tests/test_dnssec.py::DNSSECValidatorTestCase::testRelativeRSAGood PASSED
 tests/test_dnssec.py::DNSSECValidatorTestCase::testTimeBounds PASSED
 tests/test_dnssec.py::DNSSECValidatorTestCase::testUnknownAlgorithm PASSED
 tests/test_dnssec.py::DNSSECValidatorTestCase::testWildcardGoodAndBad PASSED
+tests/test_dnssec.py::DNSSECMiscTestCase::testDigestToBig PASSED
+tests/test_dnssec.py::DNSSECMiscTestCase::testInceptionExpiration PASSED
+tests/test_dnssec.py::DNSSECMiscTestCase::testNSEC3HashTooBig PASSED
+tests/test_dnssec.py::DNSSECMiscTestCase::testToTimestamp PASSED
+tests/test_dnssec.py::DNSSECMiscTestCase::test_sign_zone_absolute PASSED
+tests/test_dnssec.py::DNSSECMiscTestCase::test_sign_zone_nsec_null_signer PASSED
+tests/test_dnssec.py::DNSSECMiscTestCase::test_sign_zone_relative PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testInvalidAlgorithm PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testInvalidDigestLength PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testInvalidDigestLengthCDS0 PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeCDS PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA1DS PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA1DSDeniedByPolicy PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA1DSValidationOkByPolicy PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA256DS PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeExampleSHA384DS PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeManyDSfromCDS PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeManyDSfromDNSKEY PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeSHA256CDS PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMakeSHA256DS PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testMnemonicParser PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testReservedDigestType PASSED
+tests/test_dnssec.py::DNSSECMakeDSTestCase::testUnknownDigestType PASSED
+tests/test_dnssec.py::DNSSECMakeDNSKEYTestCase::testInvalidMakeDNSKEY PASSED
+tests/test_dnssec.py::DNSSECMakeDNSKEYTestCase::testKnownDNSKEYs PASSED
+tests/test_dnssec.py::DNSSECMakeDNSKEYTestCase::testMakeCDNSKEY PASSED
+tests/test_dnssec.py::DNSSECSignatureTestCase::testNonDeterministicSignatureECDSAP256SHA256 PASSED
+tests/test_dnssec.py::DNSSECSignatureTestCase::testSignRdataset PASSED
+tests/test_dnssec.py::DNSSECSignatureTestCase::testSignWildRdataset PASSED
+tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureData PASSED
+tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureED25519 PASSED
+tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureED448 PASSED
+tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureRSASHA1 PASSED
+tests/test_dnssec.py::DNSSECSignatureTestCase::testSignatureRSASHA256 PASSED
 tests/test_dnssecalgs.py::DNSSECAlgorithm::test_algorithm_mismatch PASSED
 tests/test_dnssecalgs.py::DNSSECAlgorithm::test_dsa PASSED
-tests/test_dnssecalgs.py::DNSSECAlgorithm::test_ecdsa PASSED
 tests/test_dnssecalgs.py::DNSSECAlgorithm::test_eddsa PASSED
 tests/test_dnssecalgs.py::DNSSECAlgorithm::test_rsa PASSED
 tests/test_dnssecalgs.py::DNSSECAlgorithmPrivateAlgorithm::test_private PASSED
@@ -151,8 +151,12 @@ tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_new_session PASSED
 tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_padded_get PASSED
 tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_post_request PASSED
 tests/test_doh.py::DNSOverHTTPSTestCaseHttpx::test_resolver PASSED
-tests/test_doq.py::test_basic_asyncio SKIPPED (requires aioquic)
+tests/test_doh.py::DNSOverHTTP3TestCase::testDoH3GetRequest SKIPPED
+tests/test_doh.py::DNSOverHTTP3TestCase::testDoH3PostRequest SKIPPED
+tests/test_doh.py::DNSOverHTTP3TestCase::test_build_url_from_ip SKIPPED
 tests/test_doq.py::test_basic_sync SKIPPED (requires aioquic)
+tests/test_doq.py::test_basic_asyncio SKIPPED (requires aioquic)
+tests/test_edns.py::OptionTestCase::testCookieOption PASSED
 tests/test_edns.py::OptionTestCase::testECSOption PASSED
 tests/test_edns.py::OptionTestCase::testECSOption25 PASSED
 tests/test_edns.py::OptionTestCase::testECSOption_from_text_invalid PASSED
@@ -165,23 +169,24 @@ tests/test_edns.py::OptionTestCase::testEDEOption_from_wire PASSED
 tests/test_edns.py::OptionTestCase::testEDEOption_invalid PASSED
 tests/test_edns.py::OptionTestCase::testGenericOption PASSED
 tests/test_edns.py::OptionTestCase::testNSIDOption PASSED
+tests/test_edns.py::OptionTestCase::testReportChannelOption PASSED
 tests/test_edns.py::OptionTestCase::test_basic_relations PASSED
 tests/test_edns.py::OptionTestCase::test_incompatible_relations PASSED
 tests/test_edns.py::OptionTestCase::test_option_registration PASSED
-tests/test_entropy.py::EntropyForcePoolTestCase::test_functions PASSED
 tests/test_entropy.py::EntropyTestCase::test_functions PASSED
 tests/test_entropy.py::EntropyTestCase::test_pool PASSED
 tests/test_entropy.py::EntropyTestCase::test_pool_random PASSED
 tests/test_entropy.py::EntropyTestCase::test_pool_random_between PASSED
+tests/test_entropy.py::EntropyForcePoolTestCase::test_functions PASSED
 tests/test_exceptions.py::ExceptionTestCase::test_custom_message PASSED
 tests/test_exceptions.py::ExceptionTestCase::test_formatted_error PASSED
 tests/test_exceptions.py::ExceptionTestCase::test_implicit_message PASSED
 tests/test_exceptions.py::ExceptionTestCase::test_kwargs_only PASSED
 tests/test_exceptions.py::ExceptionTestCase::test_kwargs_unsupported PASSED
-tests/test_features.py::test_force PASSED
-tests/test_features.py::test_have PASSED
 tests/test_features.py::test_tuple_from_text PASSED
 tests/test_features.py::test_version_check PASSED
+tests/test_features.py::test_have PASSED
+tests/test_features.py::test_force PASSED
 tests/test_flags.py::FlagsTestCase::test_flags1 PASSED
 tests/test_flags.py::FlagsTestCase::test_flags2 PASSED
 tests/test_flags.py::FlagsTestCase::test_rcode1 PASSED
@@ -221,12 +226,12 @@ tests/test_grange.py::GRangeTestCase::testFromText3 PASSED
 tests/test_grange.py::GRangeTestCase::testFromText4 PASSED
 tests/test_grange.py::GRangeTestCase::testFromText5 PASSED
 tests/test_grange.py::GRangeTestCase::testFromText6 PASSED
-tests/test_immutable.py::DecoratorTestCase::test_basic PASSED
-tests/test_immutable.py::DecoratorTestCase::test_constructor_deletes_attribute PASSED
-tests/test_immutable.py::DecoratorTestCase::test_no_collateral_damage PASSED
 tests/test_immutable.py::ImmutableTestCase::test_constify PASSED
 tests/test_immutable.py::ImmutableTestCase::test_immutable_dict_hash PASSED
 tests/test_immutable.py::ImmutableTestCase::test_immutable_dict_hash_cache PASSED
+tests/test_immutable.py::DecoratorTestCase::test_basic PASSED
+tests/test_immutable.py::DecoratorTestCase::test_constructor_deletes_attribute PASSED
+tests/test_immutable.py::DecoratorTestCase::test_no_collateral_damage PASSED
 tests/test_message.py::MessageTestCase::test_CleanTruncated PASSED
 tests/test_message.py::MessageTestCase::test_EDNSVersionCoherence PASSED
 tests/test_message.py::MessageTestCase::test_EDNSVersionCoherenceWithDNSSEC PASSED
@@ -245,6 +250,10 @@ tests/test_message.py::MessageTestCase::test_GetRRset PASSED
 tests/test_message.py::MessageTestCase::test_GetRRsetStrings PASSED
 tests/test_message.py::MessageTestCase::test_IDNA_2003 PASSED
 tests/test_message.py::MessageTestCase::test_IDNA_2008 PASSED
+tests/test_message.py::MessageTestCase::test_MakeResponseCopyDefault PASSED
+tests/test_message.py::MessageTestCase::test_MakeResponseCopyEverything PASSED
+tests/test_message.py::MessageTestCase::test_MakeResponseCopyNothing PASSED
+tests/test_message.py::MessageTestCase::test_MakeResponseCopyQuestion PASSED
 tests/test_message.py::MessageTestCase::test_MessyTruncated PASSED
 tests/test_message.py::MessageTestCase::test_RespondingToEDNSRequestAndSettingRA PASSED
 tests/test_message.py::MessageTestCase::test_RespondingToResponse PASSED
@@ -273,10 +282,12 @@ tests/test_message.py::MessageTestCase::test_continue_on_error PASSED
 tests/test_message.py::MessageTestCase::test_edns_properties PASSED
 tests/test_message.py::MessageTestCase::test_eflags_turns_on_edns PASSED
 tests/test_message.py::MessageTestCase::test_explicit_header_comment PASSED
+tests/test_message.py::MessageTestCase::test_extended_errors PASSED
 tests/test_message.py::MessageTestCase::test_from_file PASSED
 tests/test_message.py::MessageTestCase::test_from_wire_makes_Flag PASSED
 tests/test_message.py::MessageTestCase::test_generic_message_class PASSED
 tests/test_message.py::MessageTestCase::test_is_a_response_empty_question PASSED
+tests/test_message.py::MessageTestCase::test_keeping_wire PASSED
 tests/test_message.py::MessageTestCase::test_more_not_equal_cases PASSED
 tests/test_message.py::MessageTestCase::test_non_question_setters PASSED
 tests/test_message.py::MessageTestCase::test_not_a_response PASSED
@@ -290,6 +301,7 @@ tests/test_message.py::MessageTestCase::test_prefer_truncation_answer PASSED
 tests/test_message.py::MessageTestCase::test_prefer_truncation_edns PASSED
 tests/test_message.py::MessageTestCase::test_question_only PASSED
 tests/test_message.py::MessageTestCase::test_read_no_content_message PASSED
+tests/test_message.py::MessageTestCase::test_recording_wire PASSED
 tests/test_message.py::MessageTestCase::test_repr PASSED
 tests/test_message.py::MessageTestCase::test_resolve_chaining_no_infinite_loop PASSED
 tests/test_message.py::MessageTestCase::test_response_padding PASSED
@@ -551,19 +563,28 @@ tests/test_ntoaaton.py::NtoAAtoNTestCase::test_ntoa8 PASSED
 tests/test_ntoaaton.py::NtoAAtoNTestCase::test_ntoa9 PASSED
 tests/test_ntoaaton.py::NtoAAtoNTestCase::test_ptontop PASSED
 tests/test_ntoaaton.py::NtoAAtoNTestCase::test_rfc5952_section_4_2_2 PASSED
-tests/test_processing_order.py::test_processing_all_zero_weight_srv PASSED
-tests/test_processing_order.py::test_processing_order_empty PASSED
-tests/test_processing_order.py::test_processing_order_priority_mx PASSED
-tests/test_processing_order.py::test_processing_order_priority_naptr PASSED
-tests/test_processing_order.py::test_processing_order_priority_weighted PASSED
 tests/test_processing_order.py::test_processing_order_shuffle PASSED
-tests/test_processing_order.py::test_processing_order_svcb PASSED
-tests/test_processing_order.py::test_processing_order_uri PASSED
+tests/test_processing_order.py::test_processing_order_priority_mx PASSED
+tests/test_processing_order.py::test_processing_order_priority_weighted PASSED
+tests/test_processing_order.py::test_processing_order_priority_naptr PASSED
+tests/test_processing_order.py::test_processing_order_empty PASSED
 tests/test_processing_order.py::test_processing_singleton_priority PASSED
 tests/test_processing_order.py::test_processing_singleton_weighted PASSED
-tests/test_query.py::AddressesEqualTestCase::test_mixed PASSED
-tests/test_query.py::AddressesEqualTestCase::test_v4 PASSED
-tests/test_query.py::AddressesEqualTestCase::test_v6 PASSED
+tests/test_processing_order.py::test_processing_all_zero_weight_srv PASSED
+tests/test_processing_order.py::test_processing_order_uri PASSED
+tests/test_processing_order.py::test_processing_order_svcb PASSED
+tests/test_query.py::QueryTests::testQueryTCP PASSED
+tests/test_query.py::QueryTests::testQueryTCPWithSocket PASSED
+tests/test_query.py::QueryTests::testQueryTLS PASSED
+tests/test_query.py::QueryTests::testQueryTLSWithContext PASSED
+tests/test_query.py::QueryTests::testQueryTLSWithSocket PASSED
+tests/test_query.py::QueryTests::testQueryTLSwithPadding PASSED
+tests/test_query.py::QueryTests::testQueryUDP PASSED
+tests/test_query.py::QueryTests::testQueryUDPFallback PASSED
+tests/test_query.py::QueryTests::testQueryUDPFallbackNoFallback PASSED
+tests/test_query.py::QueryTests::testQueryUDPFallbackWithSocket PASSED
+tests/test_query.py::QueryTests::testQueryUDPWithSocket PASSED
+tests/test_query.py::QueryTests::testUDPReceiveQuery PASSED
 tests/test_query.py::DestinationAndSourceTests::test_af_inferred_from_source PASSED
 tests/test_query.py::DestinationAndSourceTests::test_af_inferred_from_where PASSED
 tests/test_query.py::DestinationAndSourceTests::test_af_mismatch PASSED
@@ -572,6 +593,23 @@ tests/test_query.py::DestinationAndSourceTests::test_source_port_but_no_af_infer
 tests/test_query.py::DestinationAndSourceTests::test_v4_wildcard_source_set PASSED
 tests/test_query.py::DestinationAndSourceTests::test_v6_wildcard_source_set PASSED
 tests/test_query.py::DestinationAndSourceTests::test_where_must_be_an_address PASSED
+tests/test_query.py::AddressesEqualTestCase::test_mixed PASSED
+tests/test_query.py::AddressesEqualTestCase::test_v4 PASSED
+tests/test_query.py::AddressesEqualTestCase::test_v6 PASSED
+tests/test_query.py::XfrTests::test_axfr SKIPPED (nanonameserver req...)
+tests/test_query.py::XfrTests::test_axfr_bad_rcode SKIPPED (nanoname...)
+tests/test_query.py::XfrTests::test_axfr_root_tsig SKIPPED (nanoname...)
+tests/test_query.py::XfrTests::test_axfr_trailing_junk SKIPPED (nano...)
+tests/test_query.py::XfrTests::test_axfr_tsig SKIPPED (nanonameserve...)
+tests/test_query.py::XfrTests::test_axfr_udp SKIPPED (nanonameserver...)
+tests/test_query.py::XfrTests::test_ixfr_base_serial_mismatch SKIPPED
+tests/test_query.py::XfrTests::test_ixfr_tcp SKIPPED (nanonameserver...)
+tests/test_query.py::XfrTests::test_ixfr_trailing_junk SKIPPED (nano...)
+tests/test_query.py::XfrTests::test_ixfr_udp SKIPPED (nanonameserver...)
+tests/test_query.py::XfrTests::test_ixfr_up_to_date SKIPPED (nanonam...)
+tests/test_query.py::TsigTests::test_tsig SKIPPED (nanonameserver re...)
+tests/test_query.py::LowLevelWaitTests::test_wait_for PASSED
+tests/test_query.py::MiscTests::test_matches_destination PASSED
 tests/test_query.py::IgnoreErrors::test_bad_address PASSED
 tests/test_query.py::IgnoreErrors::test_bad_address_not_ignored PASSED
 tests/test_query.py::IgnoreErrors::test_bad_id PASSED
@@ -586,40 +624,6 @@ tests/test_query.py::IgnoreErrors::test_trailing_wire PASSED
 tests/test_query.py::IgnoreErrors::test_trailing_wire_not_ignored PASSED
 tests/test_query.py::IgnoreErrors::test_wrong_id_wire_with_truncation_flag_and_no_truncation_raise PASSED
 tests/test_query.py::IgnoreErrors::test_wrong_id_wire_with_truncation_flag_and_truncation_raise PASSED
-tests/test_query.py::LowLevelWaitTests::test_wait_for PASSED
-tests/test_query.py::MiscTests::test_matches_destination PASSED
-tests/test_query.py::QueryTests::testQueryTCP PASSED
-tests/test_query.py::QueryTests::testQueryTCPWithSocket PASSED
-tests/test_query.py::QueryTests::testQueryTLS PASSED
-tests/test_query.py::QueryTests::testQueryTLSWithContext PASSED
-tests/test_query.py::QueryTests::testQueryTLSWithSocket PASSED
-tests/test_query.py::QueryTests::testQueryTLSwithPadding PASSED
-tests/test_query.py::QueryTests::testQueryUDP PASSED
-tests/test_query.py::QueryTests::testQueryUDPFallback PASSED
-tests/test_query.py::QueryTests::testQueryUDPFallbackNoFallback PASSED
-tests/test_query.py::QueryTests::testQueryUDPFallbackWithSocket PASSED
-tests/test_query.py::QueryTests::testQueryUDPWithSocket PASSED
-tests/test_query.py::QueryTests::testUDPReceiveQuery PASSED
-tests/test_query.py::TsigTests::test_tsig SKIPPED (nanonameserver re...)
-tests/test_query.py::XfrTests::test_axfr SKIPPED (nanonameserver req...)
-tests/test_query.py::XfrTests::test_axfr_bad_rcode SKIPPED (nanoname...)
-tests/test_query.py::XfrTests::test_axfr_root_tsig SKIPPED (nanoname...)
-tests/test_query.py::XfrTests::test_axfr_trailing_junk SKIPPED (nano...)
-tests/test_query.py::XfrTests::test_axfr_tsig SKIPPED (nanonameserve...)
-tests/test_query.py::XfrTests::test_axfr_udp SKIPPED (nanonameserver...)
-tests/test_query.py::XfrTests::test_ixfr_base_serial_mismatch SKIPPED
-tests/test_query.py::XfrTests::test_ixfr_tcp SKIPPED (nanonameserver...)
-tests/test_query.py::XfrTests::test_ixfr_trailing_junk SKIPPED (nano...)
-tests/test_query.py::XfrTests::test_ixfr_udp SKIPPED (nanonameserver...)
-tests/test_query.py::XfrTests::test_ixfr_up_to_date SKIPPED (nanonam...)
-tests/test_rdata.py::RdataConvertersTestCase::test_as_bool PASSED
-tests/test_rdata.py::RdataConvertersTestCase::test_as_int PASSED
-tests/test_rdata.py::RdataConvertersTestCase::test_as_name PASSED
-tests/test_rdata.py::RdataConvertersTestCase::test_as_ttl PASSED
-tests/test_rdata.py::RdataConvertersTestCase::test_as_uint16 PASSED
-tests/test_rdata.py::RdataConvertersTestCase::test_as_uint32 PASSED
-tests/test_rdata.py::RdataConvertersTestCase::test_as_uint48 PASSED
-tests/test_rdata.py::RdataConvertersTestCase::test_as_uint8 PASSED
 tests/test_rdata.py::RdataTestCase::test_AFSDB_properties PASSED
 tests/test_rdata.py::RdataTestCase::test_CERT_algorithm PASSED
 tests/test_rdata.py::RdataTestCase::test_CERT_with_string_type PASSED
@@ -627,7 +631,8 @@ tests/test_rdata.py::RdataTestCase::test_DNSKEY_chunking PASSED
 tests/test_rdata.py::RdataTestCase::test_GPOS_constructor_conversion PASSED
 tests/test_rdata.py::RdataTestCase::test_GPOS_float_converters PASSED
 tests/test_rdata.py::RdataTestCase::test_LOC_to_text_SW_hemispheres PASSED
-tests/test_rdata.py::RdataTestCase::test_absolute_vs_absolute_compare PASSED
+tests/test_rdata.py::RdataTestCase::test_absolute_vs_absolute_compare_strict PASSED
+tests/test_rdata.py::RdataTestCase::test_absolute_vs_absolute_compare_unstrict PASSED
 tests/test_rdata.py::RdataTestCase::test_bad_APLItem_address_length PASSED
 tests/test_rdata.py::RdataTestCase::test_bad_CAA_text PASSED
 tests/test_rdata.py::RdataTestCase::test_bad_GPOS_text PASSED
@@ -648,6 +653,7 @@ tests/test_rdata.py::RdataTestCase::test_covers_and_extended_rdatatype PASSED
 tests/test_rdata.py::RdataTestCase::test_digestable_downcasing PASSED
 tests/test_rdata.py::RdataTestCase::test_digestable_no_downcasing PASSED
 tests/test_rdata.py::RdataTestCase::test_empty_TXT PASSED
+tests/test_rdata.py::RdataTestCase::test_empty_TXT_wire PASSED
 tests/test_rdata.py::RdataTestCase::test_empty_generic PASSED
 tests/test_rdata.py::RdataTestCase::test_escaped_newline_in_nonquoted_string PASSED
 tests/test_rdata.py::RdataTestCase::test_escaped_newline_in_quoted_string PASSED
@@ -676,6 +682,7 @@ tests/test_rdata.py::RdataTestCase::test_relative_vs_relative_compare_strict PAS
 tests/test_rdata.py::RdataTestCase::test_relative_vs_relative_compare_unstrict PASSED
 tests/test_rdata.py::RdataTestCase::test_replace PASSED
 tests/test_rdata.py::RdataTestCase::test_replace_comment PASSED
+tests/test_rdata.py::RdataTestCase::test_simple_ordered_compare_when_equal PASSED
 tests/test_rdata.py::RdataTestCase::test_str PASSED
 tests/test_rdata.py::RdataTestCase::test_to_generic PASSED
 tests/test_rdata.py::RdataTestCase::test_too_long_TXT PASSED
@@ -703,8 +710,14 @@ tests/test_rdata.py::UtilTestCase::test_Gateway_type4 PASSED
 tests/test_rdata.py::UtilTestCase::test_compressed_in_generic_is_bad PASSED
 tests/test_rdata.py::UtilTestCase::test_nsap_ptr_type PASSED
 tests/test_rdata.py::UtilTestCase::test_rdataset_ttl_conversion PASSED
-tests/test_rdataset.py::ImmutableRdatasetTestCase::test_basic PASSED
-tests/test_rdataset.py::ImmutableRdatasetTestCase::test_cloning PASSED
+tests/test_rdata.py::RdataConvertersTestCase::test_as_bool PASSED
+tests/test_rdata.py::RdataConvertersTestCase::test_as_int PASSED
+tests/test_rdata.py::RdataConvertersTestCase::test_as_name PASSED
+tests/test_rdata.py::RdataConvertersTestCase::test_as_ttl PASSED
+tests/test_rdata.py::RdataConvertersTestCase::test_as_uint16 PASSED
+tests/test_rdata.py::RdataConvertersTestCase::test_as_uint32 PASSED
+tests/test_rdata.py::RdataConvertersTestCase::test_as_uint48 PASSED
+tests/test_rdata.py::RdataConvertersTestCase::test_as_uint8 PASSED
 tests/test_rdataset.py::RdatasetTestCase::testAddIncompatible PASSED
 tests/test_rdataset.py::RdatasetTestCase::testCodec2003 PASSED
 tests/test_rdataset.py::RdatasetTestCase::testCodec2008 PASSED
@@ -721,6 +734,8 @@ tests/test_rdataset.py::RdatasetTestCase::testToTextNoName PASSED
 tests/test_rdataset.py::RdatasetTestCase::testToTextOverrideClass PASSED
 tests/test_rdataset.py::RdatasetTestCase::testTruncatedRepr PASSED
 tests/test_rdataset.py::RdatasetTestCase::testUnionUpdate PASSED
+tests/test_rdataset.py::ImmutableRdatasetTestCase::test_basic PASSED
+tests/test_rdataset.py::ImmutableRdatasetTestCase::test_cloning PASSED
 tests/test_rdtypeandclass.py::RdTypeAndClassTestCase::test_class_bytext1 PASSED
 tests/test_rdtypeandclass.py::RdTypeAndClassTestCase::test_class_bytext2 PASSED
 tests/test_rdtypeandclass.py::RdTypeAndClassTestCase::test_class_bytext_bounds1 PASSED
@@ -867,59 +882,17 @@ tests/test_resolver.py::LiveResolverTests::testZoneForName4 PASSED
 tests/test_resolver.py::NXDOMAINExceptionTestCase::test_nxdomain_canonical_name PASSED
 tests/test_resolver.py::NXDOMAINExceptionTestCase::test_nxdomain_compatible PASSED
 tests/test_resolver.py::NXDOMAINExceptionTestCase::test_nxdomain_merge PASSED
-tests/test_resolver.py::NanoTests::testE164Query SKIPPED (Internet a...)
-tests/test_resolver.py::PollResolverTestCase::testCanonicalNameCNAME PASSED
-tests/test_resolver.py::PollResolverTestCase::testCanonicalNameDangling PASSED
-tests/test_resolver.py::PollResolverTestCase::testCanonicalNameNoCNAME PASSED
-tests/test_resolver.py::PollResolverTestCase::testNameserverSetting PASSED
-tests/test_resolver.py::PollResolverTestCase::testQuicNameserver SKIPPED
-tests/test_resolver.py::PollResolverTestCase::testResolve PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveAddress PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveAtAddress PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveAtName PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveCacheHit PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveEdnsOptions PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveNXDOMAIN PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveName PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveNodataAnswer PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveNodataException PASSED
-tests/test_resolver.py::PollResolverTestCase::testResolveTCP PASSED
-tests/test_resolver.py::PollResolverTestCase::testTLSNameserver PASSED
-tests/test_resolver.py::PollResolverTestCase::testZoneForName1 PASSED
-tests/test_resolver.py::PollResolverTestCase::testZoneForName2 PASSED
-tests/test_resolver.py::PollResolverTestCase::testZoneForName3 PASSED
-tests/test_resolver.py::PollResolverTestCase::testZoneForName4 PASSED
 tests/test_resolver.py::ResolverMiscTestCase::test_compute_timeout PASSED
 tests/test_resolver.py::ResolverMiscTestCase::test_read_nonexistent_config PASSED
 tests/test_resolver.py::ResolverNameserverValidTypeTestCase::test_set_nameservers_invalid_type PASSED
 tests/test_resolver.py::ResolverNameserverValidTypeTestCase::test_set_nameservers_to_list PASSED
 tests/test_resolver.py::ResolverNameserverValidTypeTestCase::test_set_namservers_to_empty_list PASSED
-tests/test_resolver.py::SelectResolverTestCase::testCanonicalNameCNAME PASSED
-tests/test_resolver.py::SelectResolverTestCase::testCanonicalNameDangling PASSED
-tests/test_resolver.py::SelectResolverTestCase::testCanonicalNameNoCNAME PASSED
-tests/test_resolver.py::SelectResolverTestCase::testNameserverSetting PASSED
-tests/test_resolver.py::SelectResolverTestCase::testQuicNameserver SKIPPED
-tests/test_resolver.py::SelectResolverTestCase::testResolve PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveAddress PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveAtAddress PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveAtName PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveCacheHit PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveEdnsOptions PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveNXDOMAIN PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveName PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveNodataAnswer PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveNodataException PASSED
-tests/test_resolver.py::SelectResolverTestCase::testResolveTCP PASSED
-tests/test_resolver.py::SelectResolverTestCase::testTLSNameserver PASSED
-tests/test_resolver.py::SelectResolverTestCase::testZoneForName1 PASSED
-tests/test_resolver.py::SelectResolverTestCase::testZoneForName2 PASSED
-tests/test_resolver.py::SelectResolverTestCase::testZoneForName3 PASSED
-tests/test_resolver.py::SelectResolverTestCase::testZoneForName4 PASSED
+tests/test_resolver.py::NanoTests::testE164Query SKIPPED (Internet a...)
 tests/test_resolver.py::ZoneForNameTests::testHelpfulNXDOMAIN SKIPPED
 tests/test_resolver.py::ZoneForNameTests::testHelpfulNoErrorNoData SKIPPED
 tests/test_resolver.py::ZoneForNameTests::testNoRootSOA SKIPPED (Int...)
-tests/test_resolver.py::testResolverNoNameservers SKIPPED (Internet ...)
 tests/test_resolver.py::testResolverTimeout SKIPPED (Internet and Na...)
+tests/test_resolver.py::testResolverNoNameservers SKIPPED (Internet ...)
 tests/test_resolver.py::testZoneForNameLifetimeTimeout SKIPPED (Inte...)
 tests/test_resolver_override.py::OverrideSystemResolverTestCase::test_basic_getaddrinfo PASSED
 tests/test_resolver_override.py::OverrideSystemResolverTestCase::test_getaddrinfo_nxdomain PASSED
@@ -930,11 +903,11 @@ tests/test_resolver_override.py::OverrideSystemResolverTestCase::test_getnameinf
 tests/test_resolver_override.py::OverrideSystemResolverTestCase::test_getnameinfo_udp PASSED
 tests/test_resolver_override.py::OverrideSystemResolverTestCase::test_override PASSED
 tests/test_resolver_override.py::OverrideSystemResolverTestCase::test_unknown_service_fails PASSED
-tests/test_resolver_override.py::OverrideSystemResolverUsingDefaultResolverTestCase::test_override PASSED
 tests/test_resolver_override.py::OverrideSystemResolverUsingFakeResolverTestCase::test_AI_ADDRCONFIG_fails PASSED
 tests/test_resolver_override.py::OverrideSystemResolverUsingFakeResolverTestCase::test_gethostbyaddr_of_name_fails PASSED
 tests/test_resolver_override.py::OverrideSystemResolverUsingFakeResolverTestCase::test_no_host_or_service_fails PASSED
 tests/test_resolver_override.py::OverrideSystemResolverUsingFakeResolverTestCase::test_temporary_failure PASSED
+tests/test_resolver_override.py::OverrideSystemResolverUsingDefaultResolverTestCase::test_override PASSED
 tests/test_rrset.py::RRsetTestCase::testCodec2003 PASSED
 tests/test_rrset.py::RRsetTestCase::testCodec2008 PASSED
 tests/test_rrset.py::RRsetTestCase::testCopy PASSED
@@ -957,17 +930,17 @@ tests/test_rrset.py::RRsetTestCase::testNotEqualOtherType PASSED
 tests/test_rrset.py::RRsetTestCase::testRepr PASSED
 tests/test_rrset.py::RRsetTestCase::testTTLMinimization PASSED
 tests/test_rrset.py::RRsetTestCase::testToRdataset PASSED
-tests/test_rrset_reader.py::test_default_rdclass_is_none PASSED
-tests/test_rrset_reader.py::test_name_rdclass_forced PASSED
-tests/test_rrset_reader.py::test_name_rdclass_rdtype_force PASSED
 tests/test_rrset_reader.py::test_name_ttl_rdclass_forced PASSED
 tests/test_rrset_reader.py::test_name_ttl_rdclass_forced_rdata_split PASSED
 tests/test_rrset_reader.py::test_name_ttl_rdclass_rdtype_forced PASSED
+tests/test_rrset_reader.py::test_name_rdclass_forced PASSED
 tests/test_rrset_reader.py::test_rdclass_forced PASSED
 tests/test_rrset_reader.py::test_rdclass_forced_with_origin PASSED
 tests/test_rrset_reader.py::test_rdclass_forced_with_origin_relativized PASSED
 tests/test_rrset_reader.py::test_rdclass_matching_default_tolerated PASSED
 tests/test_rrset_reader.py::test_rdclass_not_matching_default_rejected PASSED
+tests/test_rrset_reader.py::test_default_rdclass_is_none PASSED
+tests/test_rrset_reader.py::test_name_rdclass_rdtype_force PASSED
 tests/test_rrset_reader.py::test_rdclass_rdtype_force PASSED
 tests/test_serial.py::SerialTestCase::test_addition_bounds PASSED
 tests/test_serial.py::SerialTestCase::test_casting PASSED
@@ -1095,53 +1068,54 @@ tests/test_tokenizer.py::TokenizerTestCase::testUnget2 PASSED
 tests/test_tokenizer.py::TokenizerTestCase::testUngetBranches PASSED
 tests/test_tokenizer.py::TokenizerTestCase::testWS1 PASSED
 tests/test_tokenizer.py::TokenizerTestCase::testWS2 PASSED
-tests/test_transaction.py::test_add PASSED
-tests/test_transaction.py::test_bad_parameters PASSED
 tests/test_transaction.py::test_basic PASSED
-tests/test_transaction.py::test_cannot_store_non_origin_soa PASSED
+tests/test_transaction.py::test_get PASSED
+tests/test_transaction.py::test_add PASSED
+tests/test_transaction.py::test_replacement PASSED
 tests/test_transaction.py::test_delete PASSED
 tests/test_transaction.py::test_delete_exact PASSED
-tests/test_transaction.py::test_explicit_rollback_and_commit[Zone0] PASSED
-tests/test_transaction.py::test_explicit_rollback_and_commit[Zone1] PASSED
-tests/test_transaction.py::test_get PASSED
-tests/test_transaction.py::test_iteration_in_replacement_txn[Zone0] PASSED
-tests/test_transaction.py::test_iteration_in_replacement_txn[Zone1] PASSED
 tests/test_transaction.py::test_parameter_forms PASSED
-tests/test_transaction.py::test_replacement PASSED
-tests/test_transaction.py::test_replacement_commit[Zone0] PASSED
-tests/test_transaction.py::test_replacement_commit[Zone1] PASSED
-tests/test_transaction.py::test_replacement_get[Zone0] PASSED
-tests/test_transaction.py::test_replacement_get[Zone1] PASSED
-tests/test_transaction.py::test_update_serial[Zone0] PASSED
-tests/test_transaction.py::test_update_serial[Zone1] PASSED
-tests/test_transaction.py::test_vzone_concurrency PASSED
-tests/test_transaction.py::test_vzone_multiple_versions PASSED
-tests/test_transaction.py::test_vzone_open_txn_pins_versions PASSED
-tests/test_transaction.py::test_vzone_read_only PASSED
-tests/test_transaction.py::test_write_after_rollback[Zone0] PASSED
-tests/test_transaction.py::test_write_after_rollback[Zone1] PASSED
-tests/test_transaction.py::test_zone_add_and_delete[Zone0] PASSED
-tests/test_transaction.py::test_zone_add_and_delete[Zone1] PASSED
-tests/test_transaction.py::test_zone_bad_class[Zone0] PASSED
-tests/test_transaction.py::test_zone_bad_class[Zone1] PASSED
-tests/test_transaction.py::test_zone_base_layer[Zone0] PASSED
-tests/test_transaction.py::test_zone_base_layer[Zone1] PASSED
+tests/test_transaction.py::test_bad_parameters PASSED
+tests/test_transaction.py::test_cannot_store_non_origin_soa PASSED
+tests/test_transaction.py::test_checks PASSED
 tests/test_transaction.py::test_zone_basic[Zone0] PASSED
 tests/test_transaction.py::test_zone_basic[Zone1] PASSED
+tests/test_transaction.py::test_explicit_rollback_and_commit[Zone0] PASSED
+tests/test_transaction.py::test_explicit_rollback_and_commit[Zone1] PASSED
 tests/test_transaction.py::test_zone_changed[Zone0] PASSED
 tests/test_transaction.py::test_zone_changed[Zone1] PASSED
+tests/test_transaction.py::test_zone_base_layer[Zone0] PASSED
+tests/test_transaction.py::test_zone_base_layer[Zone1] PASSED
+tests/test_transaction.py::test_zone_transaction_layer[Zone0] PASSED
+tests/test_transaction.py::test_zone_transaction_layer[Zone1] PASSED
+tests/test_transaction.py::test_zone_add_and_delete[Zone0] PASSED
+tests/test_transaction.py::test_zone_add_and_delete[Zone1] PASSED
+tests/test_transaction.py::test_write_after_rollback[Zone0] PASSED
+tests/test_transaction.py::test_write_after_rollback[Zone1] PASSED
 tests/test_transaction.py::test_zone_get_deleted[Zone0] PASSED
 tests/test_transaction.py::test_zone_get_deleted[Zone1] PASSED
+tests/test_transaction.py::test_zone_bad_class[Zone0] PASSED
+tests/test_transaction.py::test_zone_bad_class[Zone1] PASSED
+tests/test_transaction.py::test_update_serial[Zone0] PASSED
+tests/test_transaction.py::test_update_serial[Zone1] PASSED
+tests/test_transaction.py::test_zone_rollback[Zone0] PASSED
+tests/test_transaction.py::test_zone_rollback[Zone1] PASSED
+tests/test_transaction.py::test_zone_ooz_name[Zone0] PASSED
+tests/test_transaction.py::test_zone_ooz_name[Zone1] PASSED
 tests/test_transaction.py::test_zone_iteration[Zone0] PASSED
 tests/test_transaction.py::test_zone_iteration[Zone1] PASSED
 tests/test_transaction.py::test_zone_name_iteration[Zone0] PASSED
 tests/test_transaction.py::test_zone_name_iteration[Zone1] PASSED
-tests/test_transaction.py::test_zone_ooz_name[Zone0] PASSED
-tests/test_transaction.py::test_zone_ooz_name[Zone1] PASSED
-tests/test_transaction.py::test_zone_rollback[Zone0] PASSED
-tests/test_transaction.py::test_zone_rollback[Zone1] PASSED
-tests/test_transaction.py::test_zone_transaction_layer[Zone0] PASSED
-tests/test_transaction.py::test_zone_transaction_layer[Zone1] PASSED
+tests/test_transaction.py::test_iteration_in_replacement_txn[Zone0] PASSED
+tests/test_transaction.py::test_iteration_in_replacement_txn[Zone1] PASSED
+tests/test_transaction.py::test_replacement_commit[Zone0] PASSED
+tests/test_transaction.py::test_replacement_commit[Zone1] PASSED
+tests/test_transaction.py::test_replacement_get[Zone0] PASSED
+tests/test_transaction.py::test_replacement_get[Zone1] PASSED
+tests/test_transaction.py::test_vzone_read_only PASSED
+tests/test_transaction.py::test_vzone_multiple_versions PASSED
+tests/test_transaction.py::test_vzone_open_txn_pins_versions PASSED
+tests/test_transaction.py::test_vzone_concurrency PASSED
 tests/test_tsig.py::TSIGTestCase::test_get_context PASSED
 tests/test_tsig.py::TSIGTestCase::test_gss_key_repr PASSED
 tests/test_tsig.py::TSIGTestCase::test_gssapi_context PASSED
@@ -1155,6 +1129,8 @@ tests/test_tsig.py::TSIGTestCase::test_peer_errors PASSED
 tests/test_tsig.py::TSIGTestCase::test_sign_and_validate PASSED
 tests/test_tsig.py::TSIGTestCase::test_sign_and_validate_with_other_data PASSED
 tests/test_tsig.py::TSIGTestCase::test_sign_respond_and_validate PASSED
+tests/test_tsig.py::TSIGTestCase::test_signature_is_invalid PASSED
+tests/test_tsig.py::TSIGTestCase::test_signature_is_invalid_and_ignored PASSED
 tests/test_tsig.py::TSIGTestCase::test_text_hmac_sha256_128 PASSED
 tests/test_tsig.py::TSIGTestCase::test_text_hmac_sha384_192 PASSED
 tests/test_tsig.py::TSIGTestCase::test_text_hmac_sha512_256 PASSED
@@ -1176,6 +1152,8 @@ tests/test_ttl.py::TTLTestCase::test_bind_style_ok PASSED
 tests/test_ttl.py::TTLTestCase::test_bind_style_ok2 PASSED
 tests/test_ttl.py::TTLTestCase::test_bind_style_unit_without_digits PASSED
 tests/test_ttl.py::TTLTestCase::test_empty PASSED
+tests/test_ttl.py::TTLTestCase::test_ttl_technically_too_big PASSED
+tests/test_ttl.py::TTLTestCase::test_ttl_technically_too_big_but_tolerated PASSED
 tests/test_update.py::UpdateTestCase::test_TSIG PASSED
 tests/test_update.py::UpdateTestCase::test_added_rdata PASSED
 tests/test_update.py::UpdateTestCase::test_added_rdataset PASSED
@@ -1206,54 +1184,37 @@ tests/test_wire.py::BinaryTestCase::test_not_reading_everything_in_restriction P
 tests/test_wire.py::BinaryTestCase::test_relativized_name PASSED
 tests/test_wire.py::BinaryTestCase::test_restriction_does_not_mask_exception PASSED
 tests/test_wire.py::BinaryTestCase::test_seek PASSED
-tests/test_xfr.py::test_asyncio_inbound_xfr SKIPPED (requires nanona...)
-tests/test_xfr.py::test_asyncio_retry_tcp_inbound_xfr SKIPPED (requi...)
-tests/test_xfr.py::test_axfr_answers_after_final_soa PASSED
-tests/test_xfr.py::test_axfr_unexpected_origin PASSED
-tests/test_xfr.py::test_bad_empty_ixfr PASSED
-tests/test_xfr.py::test_bad_qname PASSED
-tests/test_xfr.py::test_bad_qtype PASSED
 tests/test_xfr.py::test_basic_axfr PASSED
-tests/test_xfr.py::test_basic_axfr_two_parts PASSED
 tests/test_xfr.py::test_basic_axfr_unversioned PASSED
+tests/test_xfr.py::test_basic_axfr_two_parts PASSED
+tests/test_xfr.py::test_axfr_unexpected_origin PASSED
 tests/test_xfr.py::test_basic_ixfr PASSED
-tests/test_xfr.py::test_basic_ixfr_many_parts PASSED
 tests/test_xfr.py::test_basic_ixfr_unversioned PASSED
 tests/test_xfr.py::test_compressed_ixfr PASSED
-tests/test_xfr.py::test_extract_serial_from_query PASSED
+tests/test_xfr.py::test_basic_ixfr_many_parts PASSED
 tests/test_xfr.py::test_good_empty_ixfr PASSED
-tests/test_xfr.py::test_ixfr_bad_serial PASSED
+tests/test_xfr.py::test_retry_tcp_ixfr PASSED
+tests/test_xfr.py::test_bad_empty_ixfr PASSED
+tests/test_xfr.py::test_serial_went_backwards_ixfr PASSED
 tests/test_xfr.py::test_ixfr_is_axfr PASSED
 tests/test_xfr.py::test_ixfr_requires_serial PASSED
 tests/test_xfr.py::test_ixfr_unexpected_end_bad_diff_sequence PASSED
-tests/test_xfr.py::test_make_query_bad_serial PASSED
-tests/test_xfr.py::test_make_query_basic PASSED
-tests/test_xfr.py::test_no_answer PASSED
+tests/test_xfr.py::test_udp_ixfr_unexpected_end_just_stops PASSED
+tests/test_xfr.py::test_ixfr_bad_serial PASSED
 tests/test_xfr.py::test_no_udp_with_axfr PASSED
 tests/test_xfr.py::test_refused PASSED
-tests/test_xfr.py::test_retry_tcp_ixfr PASSED
-tests/test_xfr.py::test_serial_went_backwards_ixfr PASSED
+tests/test_xfr.py::test_bad_qname PASSED
+tests/test_xfr.py::test_bad_qtype PASSED
 tests/test_xfr.py::test_soa_not_first PASSED
+tests/test_xfr.py::test_no_answer PASSED
+tests/test_xfr.py::test_axfr_answers_after_final_soa PASSED
+tests/test_xfr.py::test_make_query_basic PASSED
+tests/test_xfr.py::test_make_query_bad_serial PASSED
+tests/test_xfr.py::test_extract_serial_from_query PASSED
 tests/test_xfr.py::test_sync_inbound_xfr SKIPPED (requires nanonames...)
+tests/test_xfr.py::test_asyncio_inbound_xfr SKIPPED (requires nanona...)
 tests/test_xfr.py::test_sync_retry_tcp_inbound_xfr SKIPPED (requires...)
-tests/test_xfr.py::test_udp_ixfr_unexpected_end_just_stops PASSED
-tests/test_zone.py::VersionedZoneTestCase::testCannotSpecifyBothSerialAndVersionIdToReader PASSED
-tests/test_zone.py::VersionedZoneTestCase::testCnameAndOtherDataAddCname PASSED
-tests/test_zone.py::VersionedZoneTestCase::testCnameAndOtherDataAddOther PASSED
-tests/test_zone.py::VersionedZoneTestCase::testGetRdataset1 PASSED
-tests/test_zone.py::VersionedZoneTestCase::testGetRdataset2 PASSED
-tests/test_zone.py::VersionedZoneTestCase::testGetSoa PASSED
-tests/test_zone.py::VersionedZoneTestCase::testGetSoaEmptyZone PASSED
-tests/test_zone.py::VersionedZoneTestCase::testGetSoaTxn PASSED
-tests/test_zone.py::VersionedZoneTestCase::testImmutableNodes PASSED
-tests/test_zone.py::VersionedZoneTestCase::testNoRelativizeReader PASSED
-tests/test_zone.py::VersionedZoneTestCase::testNoRelativizeReaderAbsoluteGet PASSED
-tests/test_zone.py::VersionedZoneTestCase::testNoRelativizeReaderOriginInText PASSED
-tests/test_zone.py::VersionedZoneTestCase::testSelectDefaultPruningPolicy PASSED
-tests/test_zone.py::VersionedZoneTestCase::testSetAlternatePruningPolicyInConstructor PASSED
-tests/test_zone.py::VersionedZoneTestCase::testUnknownSerial PASSED
-tests/test_zone.py::VersionedZoneTestCase::testUnknownVersion PASSED
-tests/test_zone.py::VersionedZoneTestCase::testUseTransaction PASSED
+tests/test_xfr.py::test_asyncio_retry_tcp_inbound_xfr SKIPPED (requi...)
 tests/test_zone.py::ZoneTestCase::testAllowedButNotImplementedDirective PASSED
 tests/test_zone.py::ZoneTestCase::testBadClass PASSED
 tests/test_zone.py::ZoneTestCase::testBadDirective PASSED
@@ -1338,6 +1299,23 @@ tests/test_zone.py::ZoneTestCase::testZoneFromXFR PASSED
 tests/test_zone.py::ZoneTestCase::testZoneMiscCases PASSED
 tests/test_zone.py::ZoneTestCase::testZoneOrigin PASSED
 tests/test_zone.py::ZoneTestCase::testZoneOriginNone PASSED
+tests/test_zone.py::VersionedZoneTestCase::testCannotSpecifyBothSerialAndVersionIdToReader PASSED
+tests/test_zone.py::VersionedZoneTestCase::testCnameAndOtherDataAddCname PASSED
+tests/test_zone.py::VersionedZoneTestCase::testCnameAndOtherDataAddOther PASSED
+tests/test_zone.py::VersionedZoneTestCase::testGetRdataset1 PASSED
+tests/test_zone.py::VersionedZoneTestCase::testGetRdataset2 PASSED
+tests/test_zone.py::VersionedZoneTestCase::testGetSoa PASSED
+tests/test_zone.py::VersionedZoneTestCase::testGetSoaEmptyZone PASSED
+tests/test_zone.py::VersionedZoneTestCase::testGetSoaTxn PASSED
+tests/test_zone.py::VersionedZoneTestCase::testImmutableNodes PASSED
+tests/test_zone.py::VersionedZoneTestCase::testNoRelativizeReader PASSED
+tests/test_zone.py::VersionedZoneTestCase::testNoRelativizeReaderAbsoluteGet PASSED
+tests/test_zone.py::VersionedZoneTestCase::testNoRelativizeReaderOriginInText PASSED
+tests/test_zone.py::VersionedZoneTestCase::testSelectDefaultPruningPolicy PASSED
+tests/test_zone.py::VersionedZoneTestCase::testSetAlternatePruningPolicyInConstructor PASSED
+tests/test_zone.py::VersionedZoneTestCase::testUnknownSerial PASSED
+tests/test_zone.py::VersionedZoneTestCase::testUnknownVersion PASSED
+tests/test_zone.py::VersionedZoneTestCase::testUseTransaction PASSED
 tests/test_zonedigest.py::ZoneDigestTestCase::test_relative_zone_sorting PASSED
 tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_complex PASSED
 tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_invalid_digest_length PASSED
@@ -1350,4 +1328,4 @@ tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_simple_absolute PASSED
 tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_unknown_hash_algorithm PASSED
 tests/test_zonedigest.py::ZoneDigestTestCase::test_zonemd_unknown_scheme PASSED
 
-======== 1316 passed, 29 skipped ========
+======== 1291 passed, 31 skipped, 4 deselected ========
