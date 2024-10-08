@@ -4,64 +4,85 @@ py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: setup.cfg
+configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 53 items
+collecting ... collected 74 items
 
-tests/test_escape.py::test_escape[markupsafe._native-&><'"\U0001f37a xyz-&amp;&gt;&lt;&#39;&#34;\U0001f37a xyz] PASSED
-tests/test_escape.py::test_escape[markupsafe._native-&><'"\u3053\u3093\u3070\u3093\u306f-&amp;&gt;&lt;&#39;&#34;\u3053\u3093\u3070\u3093\u306f] PASSED
-tests/test_escape.py::test_escape[markupsafe._native-&><'"efgh-&amp;&gt;&lt;&#39;&#34;efgh] PASSED
 tests/test_escape.py::test_escape[markupsafe._native--] PASSED
-tests/test_escape.py::test_escape[markupsafe._native-\U0001f363\U0001f362&><'"-\U0001f363\U0001f362&amp;&gt;&lt;&#39;&#34;] PASSED
-tests/test_escape.py::test_escape[markupsafe._native-\U0001f363\U0001f362&><'"\U0001f37a xyz-\U0001f363\U0001f362&amp;&gt;&lt;&#39;&#34;\U0001f37a xyz] PASSED
-tests/test_escape.py::test_escape[markupsafe._native-\u3053\u3093\u306b\u3061\u306f&><'"-\u3053\u3093\u306b\u3061\u306f&amp;&gt;&lt;&#39;&#34;] PASSED
-tests/test_escape.py::test_escape[markupsafe._native-\u3053\u3093\u306b\u3061\u306f&><'"\u3053\u3093\u3070\u3093\u306f-\u3053\u3093\u306b\u3061\u306f&amp;&gt;&lt;&#39;&#34;\u3053\u3093\u3070\u3093\u306f] PASSED
-tests/test_escape.py::test_escape[markupsafe._native-abcd&><'"-abcd&amp;&gt;&lt;&#39;&#34;] PASSED
 tests/test_escape.py::test_escape[markupsafe._native-abcd&><'"efgh-abcd&amp;&gt;&lt;&#39;&#34;efgh] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups-&><'"\U0001f37a xyz-&amp;&gt;&lt;&#39;&#34;\U0001f37a xyz] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups-&><'"\u3053\u3093\u3070\u3093\u306f-&amp;&gt;&lt;&#39;&#34;\u3053\u3093\u3070\u3093\u306f] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups-&><'"efgh-&amp;&gt;&lt;&#39;&#34;efgh] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups--] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups-\U0001f363\U0001f362&><'"-\U0001f363\U0001f362&amp;&gt;&lt;&#39;&#34;] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups-\U0001f363\U0001f362&><'"\U0001f37a xyz-\U0001f363\U0001f362&amp;&gt;&lt;&#39;&#34;\U0001f37a xyz] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups-\u3053\u3093\u306b\u3061\u306f&><'"-\u3053\u3093\u306b\u3061\u306f&amp;&gt;&lt;&#39;&#34;] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups-\u3053\u3093\u306b\u3061\u306f&><'"\u3053\u3093\u3070\u3093\u306f-\u3053\u3093\u306b\u3061\u306f&amp;&gt;&lt;&#39;&#34;\u3053\u3093\u3070\u3093\u306f] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups-abcd&><'"-abcd&amp;&gt;&lt;&#39;&#34;] PASSED
-tests/test_escape.py::test_escape[markupsafe._speedups-abcd&><'"efgh-abcd&amp;&gt;&lt;&#39;&#34;efgh] PASSED
+tests/test_escape.py::test_escape[markupsafe._native-&><'"efgh-&amp;&gt;&lt;&#39;&#34;efgh] PASSED
+tests/test_escape.py::test_escape[markupsafe._native-abcd&><'"-abcd&amp;&gt;&lt;&#39;&#34;] PASSED
+tests/test_escape.py::test_escape[markupsafe._native-\u3053\u3093\u306b\u3061\u306f&><'"\u3053\u3093\u3070\u3093\u306f-\u3053\u3093\u306b\u3061\u306f&amp;&gt;&lt;&#39;&#34;\u3053\u3093\u3070\u3093\u306f] PASSED
+tests/test_escape.py::test_escape[markupsafe._native-&><'"\u3053\u3093\u3070\u3093\u306f-&amp;&gt;&lt;&#39;&#34;\u3053\u3093\u3070\u3093\u306f] PASSED
+tests/test_escape.py::test_escape[markupsafe._native-\u3053\u3093\u306b\u3061\u306f&><'"-\u3053\u3093\u306b\u3061\u306f&amp;&gt;&lt;&#39;&#34;] PASSED
+tests/test_escape.py::test_escape[markupsafe._native-\U0001f363\U0001f362&><'"\U0001f37a xyz-\U0001f363\U0001f362&amp;&gt;&lt;&#39;&#34;\U0001f37a xyz] PASSED
+tests/test_escape.py::test_escape[markupsafe._native-&><'"\U0001f37a xyz-&amp;&gt;&lt;&#39;&#34;\U0001f37a xyz] PASSED
+tests/test_escape.py::test_escape[markupsafe._native-\U0001f363\U0001f362&><'"-\U0001f363\U0001f362&amp;&gt;&lt;&#39;&#34;] PASSED
 tests/test_exception_custom_html.py::test_exception_custom_html[markupsafe._native] PASSED
-tests/test_exception_custom_html.py::test_exception_custom_html[markupsafe._speedups] PASSED
-tests/test_leak.py::test_markup_leaks PASSED
+tests/test_leak.py::test_markup_leaks[markupsafe._native] PASSED
 tests/test_markupsafe.py::test_adding[markupsafe._native] PASSED
-tests/test_markupsafe.py::test_adding[markupsafe._speedups] PASSED
-tests/test_markupsafe.py::test_complex_custom_formatting PASSED
-tests/test_markupsafe.py::test_custom_formatting PASSED
-tests/test_markupsafe.py::test_dict_interpol PASSED
-tests/test_markupsafe.py::test_escape_return_type[markupsafe._native] PASSED
-tests/test_markupsafe.py::test_escape_return_type[markupsafe._speedups] PASSED
-tests/test_markupsafe.py::test_escape_silent[markupsafe._native] PASSED
-tests/test_markupsafe.py::test_escape_silent[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_string_interpolation[markupsafe._native-<em>%s</em>-<bad user>-<em>&lt;bad user&gt;</em>] PASSED
+tests/test_markupsafe.py::test_string_interpolation[markupsafe._native-<em>%(username)s</em>-data1-<em>&lt;bad user&gt;</em>] PASSED
+tests/test_markupsafe.py::test_string_interpolation[markupsafe._native-%i-3.14-3] PASSED
+tests/test_markupsafe.py::test_string_interpolation[markupsafe._native-%.2f-3.14-3.14] PASSED
+tests/test_markupsafe.py::test_type_behavior[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_html_interop[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_missing_interpol[markupsafe._native-foo] PASSED
+tests/test_markupsafe.py::test_missing_interpol[markupsafe._native-42] PASSED
+tests/test_markupsafe.py::test_missing_interpol[markupsafe._native-args2] PASSED
+tests/test_markupsafe.py::test_tuple_interpol[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_dict_interpol[markupsafe._native] PASSED
 tests/test_markupsafe.py::test_escaping[markupsafe._native] PASSED
-tests/test_markupsafe.py::test_escaping[markupsafe._speedups] PASSED
-tests/test_markupsafe.py::test_format PASSED
-tests/test_markupsafe.py::test_format_map PASSED
-tests/test_markupsafe.py::test_formatting_empty PASSED
-tests/test_markupsafe.py::test_formatting_with_objects PASSED
-tests/test_markupsafe.py::test_html_interop PASSED
-tests/test_markupsafe.py::test_missing_interpol[42] PASSED
-tests/test_markupsafe.py::test_missing_interpol[args2] PASSED
-tests/test_markupsafe.py::test_missing_interpol[foo] PASSED
-tests/test_markupsafe.py::test_mul PASSED
+tests/test_markupsafe.py::test_unescape[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_format[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_format_map[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_formatting_empty[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_custom_formatting[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_complex_custom_formatting[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_formatting_with_objects[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_escape_silent[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_splitting[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_mul[markupsafe._native] PASSED
+tests/test_markupsafe.py::test_escape_return_type[markupsafe._native] PASSED
 tests/test_markupsafe.py::test_soft_str[markupsafe._native] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups--] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups-abcd&><'"efgh-abcd&amp;&gt;&lt;&#39;&#34;efgh] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups-&><'"efgh-&amp;&gt;&lt;&#39;&#34;efgh] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups-abcd&><'"-abcd&amp;&gt;&lt;&#39;&#34;] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups-\u3053\u3093\u306b\u3061\u306f&><'"\u3053\u3093\u3070\u3093\u306f-\u3053\u3093\u306b\u3061\u306f&amp;&gt;&lt;&#39;&#34;\u3053\u3093\u3070\u3093\u306f] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups-&><'"\u3053\u3093\u3070\u3093\u306f-&amp;&gt;&lt;&#39;&#34;\u3053\u3093\u3070\u3093\u306f] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups-\u3053\u3093\u306b\u3061\u306f&><'"-\u3053\u3093\u306b\u3061\u306f&amp;&gt;&lt;&#39;&#34;] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups-\U0001f363\U0001f362&><'"\U0001f37a xyz-\U0001f363\U0001f362&amp;&gt;&lt;&#39;&#34;\U0001f37a xyz] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups-&><'"\U0001f37a xyz-&amp;&gt;&lt;&#39;&#34;\U0001f37a xyz] PASSED
+tests/test_escape.py::test_escape[markupsafe._speedups-\U0001f363\U0001f362&><'"-\U0001f363\U0001f362&amp;&gt;&lt;&#39;&#34;] PASSED
+tests/test_exception_custom_html.py::test_exception_custom_html[markupsafe._speedups] PASSED
+tests/test_leak.py::test_markup_leaks[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_adding[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_string_interpolation[markupsafe._speedups-<em>%s</em>-<bad user>-<em>&lt;bad user&gt;</em>] PASSED
+tests/test_markupsafe.py::test_string_interpolation[markupsafe._speedups-<em>%(username)s</em>-data1-<em>&lt;bad user&gt;</em>] PASSED
+tests/test_markupsafe.py::test_string_interpolation[markupsafe._speedups-%i-3.14-3] PASSED
+tests/test_markupsafe.py::test_string_interpolation[markupsafe._speedups-%.2f-3.14-3.14] PASSED
+tests/test_markupsafe.py::test_type_behavior[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_html_interop[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_missing_interpol[markupsafe._speedups-foo] PASSED
+tests/test_markupsafe.py::test_missing_interpol[markupsafe._speedups-42] PASSED
+tests/test_markupsafe.py::test_missing_interpol[markupsafe._speedups-args2] PASSED
+tests/test_markupsafe.py::test_tuple_interpol[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_dict_interpol[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_escaping[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_unescape[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_format[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_format_map[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_formatting_empty[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_custom_formatting[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_complex_custom_formatting[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_formatting_with_objects[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_escape_silent[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_splitting[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_mul[markupsafe._speedups] PASSED
+tests/test_markupsafe.py::test_escape_return_type[markupsafe._speedups] PASSED
 tests/test_markupsafe.py::test_soft_str[markupsafe._speedups] PASSED
-tests/test_markupsafe.py::test_splitting PASSED
-tests/test_markupsafe.py::test_string_interpolation[%.2f-3.14-3.14] PASSED
-tests/test_markupsafe.py::test_string_interpolation[%i-3.14-3] PASSED
-tests/test_markupsafe.py::test_string_interpolation[<em>%(username)s</em>-data1-<em>&lt;bad user&gt;</em>] PASSED
-tests/test_markupsafe.py::test_string_interpolation[<em>%s</em>-<bad user>-<em>&lt;bad user&gt;</em>] PASSED
-tests/test_markupsafe.py::test_tuple_interpol PASSED
-tests/test_markupsafe.py::test_type_behavior PASSED
-tests/test_markupsafe.py::test_unescape PASSED
 
-======== 53 passed ========
+======== 74 passed ========
   py$(PYV): OK
   congratulations :)
