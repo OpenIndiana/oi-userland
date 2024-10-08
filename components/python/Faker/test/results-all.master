@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 1997 items
+collecting ... collected 2003 items
 
 tests/providers/__init__.py::TestBaseProvider::test_locale PASSED
 tests/providers/__init__.py::TestBaseProvider::test_language_code PASSED
@@ -814,6 +814,9 @@ tests/providers/test_date_time.py::TestDateTime::test_date_between PASSED
 tests/providers/test_date_time.py::TestDateTime::test_date_between_dates PASSED
 tests/providers/test_date_time.py::TestDateTime::test_date_between_months PASSED
 tests/providers/test_date_time.py::TestDateTime::test_date_object PASSED
+tests/providers/test_date_time.py::TestDateTime::test_date_string_between PASSED
+tests/providers/test_date_time.py::TestDateTime::test_date_string_between_dates PASSED
+tests/providers/test_date_time.py::TestDateTime::test_date_string_this_period PASSED
 tests/providers/test_date_time.py::TestDateTime::test_date_this_period PASSED
 tests/providers/test_date_time.py::TestDateTime::test_date_time_between PASSED
 tests/providers/test_date_time.py::TestDateTime::test_date_time_between_dates PASSED
@@ -825,6 +828,7 @@ tests/providers/test_date_time.py::TestDateTime::test_date_time_this_period_with
 tests/providers/test_date_time.py::TestDateTime::test_datetimes_with_and_without_tzinfo PASSED
 tests/providers/test_date_time.py::TestDateTime::test_day PASSED
 tests/providers/test_date_time.py::TestDateTime::test_future_date PASSED
+tests/providers/test_date_time.py::TestDateTime::test_future_date_string PASSED
 tests/providers/test_date_time.py::TestDateTime::test_future_datetime PASSED
 tests/providers/test_date_time.py::TestDateTime::test_iso8601_fractional_seconds_non_win PASSED
 tests/providers/test_date_time.py::TestDateTime::test_iso8601_fractional_seconds_win SKIPPED
@@ -833,6 +837,7 @@ tests/providers/test_date_time.py::TestDateTime::test_parse_date PASSED
 tests/providers/test_date_time.py::TestDateTime::test_parse_date_time PASSED
 tests/providers/test_date_time.py::TestDateTime::test_parse_timedelta PASSED
 tests/providers/test_date_time.py::TestDateTime::test_past_date PASSED
+tests/providers/test_date_time.py::TestDateTime::test_past_date_string PASSED
 tests/providers/test_date_time.py::TestDateTime::test_past_datetime PASSED
 tests/providers/test_date_time.py::TestDateTime::test_past_datetime_within_second PASSED
 tests/providers/test_date_time.py::TestDateTime::test_pytimezone PASSED
@@ -857,6 +862,7 @@ tests/providers/test_date_time.py::DatesOfBirth::test_acceptable_age_range_five_
 tests/providers/test_date_time.py::DatesOfBirth::test_bad_age_range PASSED
 tests/providers/test_date_time.py::DatesOfBirth::test_date_of_birth PASSED
 tests/providers/test_date_time.py::DatesOfBirth::test_date_of_birth_on_leap_day PASSED
+tests/providers/test_date_time.py::DatesOfBirth::test_date_of_birth_string PASSED
 tests/providers/test_date_time.py::DatesOfBirth::test_distant_age_range PASSED
 tests/providers/test_date_time.py::DatesOfBirth::test_identical_age_range PASSED
 tests/providers/test_date_time.py::DatesOfBirth::test_type_errors PASSED
@@ -2027,79 +2033,7 @@ tests/test_providers_formats.py::test_no_invalid_formats[fr_QC]
     warnings.warn("fr_QC locale is deprecated. Please use fr_CA.")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1966 passed, 31 skipped, 1 warning ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 1972 passed, 31 skipped, 1 warning ========
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
 <class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
   warnings.warn(
@@ -2168,7 +2102,7 @@ faker/decode/__init__.py                             10      0   100%
 faker/decode/codes.py                                 1      0   100%
 faker/documentor.py                                  73      7    90%
 faker/exceptions.py                                   6      0   100%
-faker/factory.py                                     56      1    98%
+faker/factory.py                                     58      1    98%
 faker/generator.py                                   98      7    93%
 faker/providers/__init__.py                         132      0   100%
 faker/providers/address/__init__.py                  57      2    96%
@@ -2426,7 +2360,7 @@ faker/providers/currency/sv_SE/__init__.py            3      0   100%
 faker/providers/currency/th_TH/__init__.py            3      0   100%
 faker/providers/currency/tr_TR/__init__.py            5      0   100%
 faker/providers/currency/vi_VN/__init__.py            5      0   100%
-faker/providers/date_time/__init__.py               329     10    97%
+faker/providers/date_time/__init__.py               348     10    97%
 faker/providers/date_time/ar_AA/__init__.py          17      0   100%
 faker/providers/date_time/ar_EG/__init__.py           3      0   100%
 faker/providers/date_time/az_AZ/__init__.py          10      0   100%
@@ -2629,7 +2563,7 @@ faker/providers/person/en_US/__init__.py             21      0   100%
 faker/providers/person/es/__init__.py                 3      0   100%
 faker/providers/person/es_AR/__init__.py             11      0   100%
 faker/providers/person/es_CA/__init__.py              5      0   100%
-faker/providers/person/es_CL/__init__.py             41      7    83%
+faker/providers/person/es_CL/__init__.py             41      5    88%
 faker/providers/person/es_CO/__init__.py             13      0   100%
 faker/providers/person/es_ES/__init__.py             11      0   100%
 faker/providers/person/es_MX/__init__.py              6      0   100%
@@ -2767,7 +2701,7 @@ faker/providers/ssn/en_US/__init__.py                52      0   100%
 faker/providers/ssn/es_CA/__init__.py                 3      0   100%
 faker/providers/ssn/es_CL/__init__.py                29      3    90%
 faker/providers/ssn/es_CO/__init__.py                27      0   100%
-faker/providers/ssn/es_ES/__init__.py                52      1    98%
+faker/providers/ssn/es_ES/__init__.py                52      0   100%
 faker/providers/ssn/es_MX/__init__.py                77      2    97%
 faker/providers/ssn/et_EE/__init__.py                27      0   100%
 faker/providers/ssn/fi_FI/__init__.py                31      0   100%
@@ -2812,6 +2746,6 @@ faker/utils/distribution.py                          56     13    77%
 faker/utils/loading.py                               36      6    83%
 faker/utils/text.py                                  16      0   100%
 ---------------------------------------------------------------------
-TOTAL                                             10230    442    96%
+TOTAL                                             10251    439    96%
   py$(PYV): OK
   congratulations :)
