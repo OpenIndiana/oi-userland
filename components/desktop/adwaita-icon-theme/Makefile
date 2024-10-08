@@ -13,26 +13,23 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS=				64
+BUILD_STYLE = meson
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			adwaita-icon-theme
-COMPONENT_MJR_VERSION=	3.38
-COMPONENT_MNR_VERSION=	0
-COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://github.com/GNOME/adwaita-icon-theme
+HUMAN_VERSION=			47.0
 COMPONENT_SUMMARY=		GNOME Icon Theme
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:6683a1aaf2430ccd9ea638dd4bfe1002bc92b412050c3dba20e480f979faaf97
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=		sha256:ad088a22958cb8469e41d9f1bba0efb27e586a2102213cd89cc26db2e002bdfe
 COMPONENT_FMRI=			gnome/theme/adwaita-icon-theme
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Theming
+COMPONENT_LICENSE=		LGPL-3.0-only OR CC-BY-SA-3.0
+COMPONENT_LICENSE_FILE=		COPYING
 
-TEST_TARGET=			$(NO_TESTS)
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
 # Build dependencies
-REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 
 # Auto-generated dependencies
