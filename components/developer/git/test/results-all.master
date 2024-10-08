@@ -145,35 +145,48 @@ ok 48 - remote init from does not use config from cwd
 ok 49 - re-init from a linked worktree
 ok 50 - init honors GIT_DEFAULT_HASH
 ok 51 - init honors --object-format
-ok 52 - extensions.objectFormat is not allowed with repo version 0
-ok 53 - init rejects attempts to initialize with different hash
-ok 54 - extensions.refStorage is not allowed with repo version 0
-ok 55 - extensions.refStorage with files backend
-ok 56 - extensions.refStorage with unknown backend
-ok 57 - init with GIT_DEFAULT_REF_FORMAT=files
-ok 58 - init with GIT_DEFAULT_REF_FORMAT=garbage
-ok 59 - init with --ref-format=files
-ok 60 - re-init with same format (files)
-ok 61 - re-init with different format fails (files -> reftable)
-ok 62 - re-init with same format (reftable)
-ok 63 - re-init with different format fails (reftable -> files)
-ok 64 - init with --ref-format=garbage
-ok 65 # skip core.hidedotfiles = false (missing MINGW)
-ok 66 # skip redirect std handles (missing MINGW)
-ok 67 - --initial-branch
-ok 68 - overridden default initial branch name (config)
-ok 69 - advice on unconfigured init.defaultBranch
-ok 70 - overridden default main branch name (env)
-ok 71 - invalid default branch name
-ok 72 - branch -m with the initial branch
-ok 73 - init with includeIf.onbranch condition
-ok 74 - init with includeIf.onbranch condition with existing directory
-ok 75 - re-init with includeIf.onbranch condition
-ok 76 - re-init with includeIf.onbranch condition
-ok 77 - re-init skips non-matching includeIf.onbranch
-ok 78 - re-init reads matching includeIf.onbranch
-# passed all 78 test(s)
-1..78
+ok 52 - init honors init.defaultObjectFormat
+ok 53 - init warns about invalid init.defaultObjectFormat
+ok 54 - --object-format overrides GIT_DEFAULT_HASH
+ok 55 - GIT_DEFAULT_HASH overrides init.defaultObjectFormat
+ok 56 - extensions.objectFormat is not allowed with repo version 0
+ok 57 - init rejects attempts to initialize with different hash
+ok 58 - extensions.refStorage is not allowed with repo version 0
+ok 59 - extensions.refStorage with files backend
+ok 60 - extensions.refStorage with unknown backend
+ok 61 - init with GIT_DEFAULT_REF_FORMAT=garbage
+ok 62 - init warns about invalid init.defaultRefFormat
+ok 63 - init with GIT_DEFAULT_REF_FORMAT=files
+ok 64 - init with --ref-format=files
+ok 65 - init with init.defaultRefFormat=files
+ok 66 - --ref-format=files overrides GIT_DEFAULT_REF_FORMAT
+ok 67 - init with GIT_DEFAULT_REF_FORMAT=reftable
+ok 68 - init with --ref-format=reftable
+ok 69 - init with init.defaultRefFormat=reftable
+ok 70 - --ref-format=reftable overrides GIT_DEFAULT_REF_FORMAT
+ok 71 - --ref-format= overrides GIT_DEFAULT_REF_FORMAT
+ok 72 - GIT_DEFAULT_REF_FORMAT= overrides init.defaultRefFormat
+ok 73 - re-init with same format (files)
+ok 74 - re-init with different format fails (files -> reftable)
+ok 75 - re-init with same format (reftable)
+ok 76 - re-init with different format fails (reftable -> files)
+ok 77 - init with --ref-format=garbage
+ok 78 # skip core.hidedotfiles = false (missing MINGW)
+ok 79 # skip redirect std handles (missing MINGW)
+ok 80 - --initial-branch
+ok 81 - overridden default initial branch name (config)
+ok 82 - advice on unconfigured init.defaultBranch
+ok 83 - overridden default main branch name (env)
+ok 84 - invalid default branch name
+ok 85 - branch -m with the initial branch
+ok 86 - init with includeIf.onbranch condition
+ok 87 - init with includeIf.onbranch condition with existing directory
+ok 88 - re-init with includeIf.onbranch condition
+ok 89 - re-init with includeIf.onbranch condition
+ok 90 - re-init skips non-matching includeIf.onbranch
+ok 91 - re-init reads matching includeIf.onbranch
+# passed all 91 test(s)
+1..91
 *** t0002-gitfile.sh ***
 ok 1 - initial setup
 ok 2 - bad setup: invalid .git file format
@@ -843,23 +856,6 @@ ok 9 - Racy git trial #4 part A
 ok 10 - Racy git trial #4 part B
 # passed all 10 test(s)
 1..10
-*** t0011-hashmap.sh ***
-ok 1 - put
-ok 2 - put (case insensitive)
-ok 3 - replace
-ok 4 - replace (case insensitive)
-ok 5 - get
-ok 6 - get (case insensitive)
-ok 7 - add
-ok 8 - add (case insensitive)
-ok 9 - remove
-ok 10 - remove (case insensitive)
-ok 11 - iterate
-ok 12 - iterate (case insensitive)
-ok 13 - grow / shrink
-ok 14 - string interning
-# passed all 14 test(s)
-1..14
 *** t0012-help.sh ***
 ok 1 - setup
 ok 2 - basic help commands
@@ -3863,10 +3859,6 @@ ok 29 - -c outside git repository
 ok 30 - avoid SP-HT sequence in commented line
 # passed all 30 test(s)
 1..30
-*** t0032-reftable-unittest.sh ***
-ok 1 - unittests
-# passed all 1 test(s)
-1..1
 *** t0033-safe-directory.sh ***
 ok 1 - safe.directory is not set
 ok 2 - safe.directory on the command line
@@ -4338,18 +4330,6 @@ ok 13 - test filter_string_list
 ok 14 - test remove_duplicates
 # passed all 14 test(s)
 1..14
-*** t0064-oid-array.sh ***
-ok 1 - without repository
-ok 2 - ordered enumeration
-ok 3 - ordered enumeration with duplicate suppression
-ok 4 - lookup
-ok 5 - lookup non-existing entry
-ok 6 - lookup with duplicates
-ok 7 - lookup non-existing entry with duplicates
-ok 8 - lookup with almost duplicate values
-ok 9 - lookup with single duplicate value
-# passed all 9 test(s)
-1..9
 *** t0066-dir-iterator.sh ***
 ok 1 - setup
 ok 2 - dir-iterator should iterate through all files
@@ -4493,20 +4473,6 @@ ok 7 - notice misspelled upstream
 ok 8 - complain about total nonsense
 # passed all 8 test(s)
 1..8
-*** t0110-urlmatch-normalization.sh ***
-ok 1 - url scheme
-ok 2 - url authority
-ok 3 - url port checks
-ok 4 - url port normalization
-ok 5 - url general escapes
-ok 6 - url high-bit escapes
-ok 7 - url utf-8 escapes
-ok 8 - url username/password escapes
-ok 9 - url normalized lengths
-ok 10 - url . and .. segments
-ok 11 - url equivalents
-# passed all 11 test(s)
-1..11
 *** t0200-gettext-basic.sh ***
 # lib-gettext: Found 'is_IS.UTF-8' as an is_IS UTF-8 locale
 # lib-gettext: Found 'is_IS.ISO8859-1' as an is_IS ISO-8859-1 locale
@@ -5662,32 +5628,41 @@ ok 15 - test --no-exclude refs clears excluded refs
 ok 16 - test only included refs are packed
 ok 17 - test --no-include refs clears included refs
 ok 18 - test --exclude takes precedence over --include
-ok 19 - --auto packs and prunes refs as usual
-ok 20 - see if up-to-date packed refs are preserved
-ok 21 - pack, prune and repack
-ok 22 - explicit pack-refs with dangling packed reference
-ok 23 - delete ref with dangling packed version
-ok 24 - delete ref while another dangling packed ref
-ok 25 - pack ref directly below refs/
-ok 26 - do not pack ref in refs/bisect
-ok 27 - disable reflogs
-ok 28 - create packed foo/bar/baz branch
-ok 29 - notice d/f conflict with existing directory
-ok 30 - existing directory reports concrete ref
-ok 31 - notice d/f conflict with existing ref
-ok 32 - reject packed-refs with unterminated line
-ok 33 - reject packed-refs containing junk
-ok 34 - reject packed-refs with a short SHA-1
-ok 35 - timeout if packed-refs.lock exists
-ok 36 - retry acquiring packed-refs.lock
-ok 37 - pack symlinked packed-refs
-ok 38 - refs/worktree must not be packed
-ok 39 - create packed-refs file with broken ref
-ok 40 - pack-refs does not silently delete broken packed ref
-ok 41 - pack-refs does not drop broken refs during deletion
-ok 42 - maintenance --auto unconditionally packs loose refs
-# passed all 42 test(s)
-1..42
+ok 19 - see if up-to-date packed refs are preserved
+ok 20 - pack, prune and repack
+ok 21 - explicit pack-refs with dangling packed reference
+ok 22 - delete ref with dangling packed version
+ok 23 - delete ref while another dangling packed ref
+ok 24 - pack ref directly below refs/
+ok 25 - do not pack ref in refs/bisect
+ok 26 - disable reflogs
+ok 27 - create packed foo/bar/baz branch
+ok 28 - notice d/f conflict with existing directory
+ok 29 - existing directory reports concrete ref
+ok 30 - notice d/f conflict with existing ref
+ok 31 - reject packed-refs with unterminated line
+ok 32 - reject packed-refs containing junk
+ok 33 - reject packed-refs with a short SHA-1
+ok 34 - timeout if packed-refs.lock exists
+ok 35 - retry acquiring packed-refs.lock
+ok 36 - pack symlinked packed-refs
+ok 37 - refs/worktree must not be packed
+ok 38 - create packed-refs file with broken ref
+ok 39 - pack-refs does not silently delete broken packed ref
+ok 40 - pack-refs does not drop broken refs during deletion
+ok 41 - git pack-refs --all --auto does not repack below 16 refs without packed-refs
+ok 42 - git pack-refs --all --auto does not repack below 16 refs with small packed-refs
+ok 43 - git pack-refs --all --auto scales with size of packed-refs
+ok 44 - git maintenance run --task=pack-refs --auto does not repack below 16 refs without packed-refs
+ok 45 - git maintenance run --task=pack-refs --auto does not repack below 16 refs with small packed-refs
+ok 46 - git maintenance run --task=pack-refs --auto scales with size of packed-refs
+# passed all 46 test(s)
+1..46
+*** t0602-reffiles-fsck.sh ***
+ok 1 - ref name should be checked
+ok 2 - ref name check should be adapted into fsck messages
+# passed all 2 test(s)
+1..2
 *** t0610-reftable-basics.sh ***
 ok 1 - init: creates basic reftable structures
 ok 2 - init: sha256 object format via environment variable
@@ -5733,50 +5708,53 @@ ok 41 - ref transaction: alternating table sizes are compacted
 ok 42 - ref transaction: writes are synced
 ok 43 - ref transaction: empty transaction in empty repo
 ok 44 - ref transaction: fails gracefully when auto compaction fails
-ok 45 - pack-refs: compacts tables
-ok 46 - pack-refs: compaction raises locking errors
-ok 47 - pack-refs: auto compaction
-ok 48 - gc: auto compaction
-ok 49 - maintenance run --task=pack-refs: auto compaction
-ok 50 - pack-refs: prunes stale tables
-ok 51 - pack-refs: does not prune non-table files
-ok 52 - packed-refs: writes are synced
-ok 53 - ref iterator: bogus names are flagged
-ok 54 - ref iterator: missing object IDs are not flagged
-ok 55 - basic: commit and list refs
-ok 56 - basic: can write large commit message
-ok 57 - basic: show-ref fails with empty repository
-ok 58 - basic: can check out unborn branch
-ok 59 - basic: peeled tags are stored
-ok 60 - basic: for-each-ref can print symrefs
-ok 61 - basic: notes
-ok 62 - basic: stash
-ok 63 - basic: cherry-pick
-ok 64 - basic: rebase
-ok 65 - reflog: can delete separate reflog entries
-ok 66 - reflog: can switch to previous branch
-ok 67 - reflog: copying branch writes reflog entry
-ok 68 - reflog: renaming branch writes reflog entry
-ok 69 - reflog: can store empty logs
-ok 70 - reflog: expiry empties reflog
-ok 71 - reflog: can be deleted
-ok 72 - reflog: garbage collection deletes reflog entries
-ok 73 - reflog: updates via HEAD update HEAD reflog
-ok 74 - branch: copying branch with D/F conflict
-ok 75 - branch: moving branch with D/F conflict
-ok 76 - worktree: adding worktree creates separate stack
-ok 77 - worktree: pack-refs in main repo packs main refs
-ok 78 - worktree: pack-refs in worktree packs worktree refs
-ok 79 - worktree: creating shared ref updates main stack
-ok 80 - worktree: creating per-worktree ref updates worktree stack
-ok 81 - worktree: creating per-worktree ref from main repo
-ok 82 - worktree: creating per-worktree ref from second worktree
-ok 83 - worktree: can create shared and per-worktree ref in one transaction
-ok 84 - worktree: can access common refs
-ok 85 - worktree: adds worktree with detached HEAD
-ok 86 - fetch: accessing FETCH_HEAD special ref works
-# passed all 86 test(s)
-1..86
+ok 45 - ref transaction: timeout acquiring tables.list lock
+ok 46 - ref transaction: retry acquiring tables.list lock
+ok 47 - ref transaction: many concurrent writers
+ok 48 - pack-refs: compacts tables
+ok 49 - pack-refs: compaction raises locking errors
+ok 50 - pack-refs: auto compaction
+ok 51 - gc: auto compaction
+ok 52 - maintenance run --task=pack-refs: auto compaction
+ok 53 - pack-refs: prunes stale tables
+ok 54 - pack-refs: does not prune non-table files
+ok 55 - packed-refs: writes are synced
+ok 56 - ref iterator: bogus names are flagged
+ok 57 - ref iterator: missing object IDs are not flagged
+ok 58 - basic: commit and list refs
+ok 59 - basic: can write large commit message
+ok 60 - basic: show-ref fails with empty repository
+ok 61 - basic: can check out unborn branch
+ok 62 - basic: peeled tags are stored
+ok 63 - basic: for-each-ref can print symrefs
+ok 64 - basic: notes
+ok 65 - basic: stash
+ok 66 - basic: cherry-pick
+ok 67 - basic: rebase
+ok 68 - reflog: can delete separate reflog entries
+ok 69 - reflog: can switch to previous branch
+ok 70 - reflog: copying branch writes reflog entry
+ok 71 - reflog: renaming branch writes reflog entry
+ok 72 - reflog: can store empty logs
+ok 73 - reflog: expiry empties reflog
+ok 74 - reflog: can be deleted
+ok 75 - reflog: garbage collection deletes reflog entries
+ok 76 - reflog: updates via HEAD update HEAD reflog
+ok 77 - branch: copying branch with D/F conflict
+ok 78 - branch: moving branch with D/F conflict
+ok 79 - worktree: adding worktree creates separate stack
+ok 80 - worktree: pack-refs in main repo packs main refs
+ok 81 - worktree: pack-refs in worktree packs worktree refs
+ok 82 - worktree: creating shared ref updates main stack
+ok 83 - worktree: creating per-worktree ref updates worktree stack
+ok 84 - worktree: creating per-worktree ref from main repo
+ok 85 - worktree: creating per-worktree ref from second worktree
+ok 86 - worktree: can create shared and per-worktree ref in one transaction
+ok 87 - worktree: can access common refs
+ok 88 - worktree: adds worktree with detached HEAD
+ok 89 - fetch: accessing FETCH_HEAD special ref works
+# passed all 89 test(s)
+1..89
 *** t0611-reftable-httpd.sh ***
 1..0 # SKIP no web server found at ''
 *** t0612-reftable-jgit-compatibility.sh ***
@@ -7013,7 +6991,7 @@ ok 58 - sparse-index is not expanded: merge conflict in cone
 ok 59 - sparse-index is not expanded: stash
 ok 60 - describe tested on all
 ok 61 - sparse-index is not expanded: describe
-ok 62 - sparse index is not expanded: diff
+ok 62 - sparse index is not expanded: diff and diff-index
 ok 63 - sparse index is not expanded: show and rev-parse
 ok 64 - sparse index is not expanded: update-index
 ok 65 - sparse index is not expanded: blame
@@ -7048,9 +7026,11 @@ ok 93 - check-attr with pathspec outside sparse definition
 not ok 94 - diff --check with pathspec outside sparse definition # TODO known breakage
 ok 95 - sparse-index is not expanded: check-attr
 ok 96 - advice.sparseIndexExpanded
+ok 97 - cat-file -p
+ok 98 - cat-file --batch
 # still have 2 known breakage(s)
-# passed all remaining 94 test(s)
-1..96
+# passed all remaining 96 test(s)
+1..98
 *** t1100-commit-tree-options.sh ***
 ok 1 - test preparation: write empty tree
 ok 2 - construct commit
@@ -7643,8 +7623,12 @@ ok 30 - conditional include, onbranch
 ok 31 - conditional include, onbranch, wildcard
 ok 32 - conditional include, onbranch, implicit /** for /
 ok 33 - include cycles are detected
-# passed all 33 test(s)
-1..33
+ok 34 - onbranch with unborn branch
+ok 35 - onbranch with detached HEAD
+ok 36 - onbranch without repository
+ok 37 - onbranch without repository but explicit nonexistent Git directory
+# passed all 37 test(s)
+1..37
 *** t1306-xdg-files.sh ***
 ok 1 - read config: xdg file exists and ~/.gitconfig doesn't
 ok 2 - read config: xdg file exists and ~/.gitconfig exists
@@ -8452,10 +8436,11 @@ ok 5 - disjoint excluded regions
 ok 6 - adjacent, non-overlapping excluded regions
 ok 7 - overlapping excluded regions
 ok 8 - several overlapping excluded regions
-ok 9 - non-matching excluded section
-ok 10 - meta-characters are discarded
-# passed all 10 test(s)
-1..10
+ok 9 - unordered excludes
+ok 10 - non-matching excluded section
+ok 11 - meta-characters are discarded
+# passed all 11 test(s)
+1..11
 *** t1420-lost-found.sh ***
 ok 1 - setup
 ok 2 - lost and found something
@@ -13642,22 +13627,23 @@ ok 20 - default to common base in @{upstream}s reflog if no upstream arg (--appl
 ok 21 - cherry-picked commits and fork-point work together
 ok 22 - rebase --apply -q is quiet
 ok 23 - rebase --merge -q is quiet
-ok 24 - Rebase a commit that sprinkles CRs in
-ok 25 - rebase can copy notes
-ok 26 - rebase -m can copy notes
-ok 27 - rebase commit with an ancient timestamp
-ok 28 - rebase with "From " line in commit message
-ok 29 - rebase --apply and --show-current-patch
-ok 30 - rebase --apply and .gitattributes
-ok 31 - rebase--merge.sh and --show-current-patch
-ok 32 - switch to branch checked out here
-ok 33 - switch to branch checked out elsewhere fails
-ok 34 - switch to branch not checked out
-ok 35 - switch to non-branch detaches HEAD
-ok 36 - refuse to switch to branch checked out elsewhere
-ok 37 - rebase when inside worktree subdirectory
-# passed all 37 test(s)
-1..37
+ok 24 - rebase --exec -q is quiet
+ok 25 - Rebase a commit that sprinkles CRs in
+ok 26 - rebase can copy notes
+ok 27 - rebase -m can copy notes
+ok 28 - rebase commit with an ancient timestamp
+ok 29 - rebase with "From " line in commit message
+ok 30 - rebase --apply and --show-current-patch
+ok 31 - rebase --apply and .gitattributes
+ok 32 - rebase--merge.sh and --show-current-patch
+ok 33 - switch to branch checked out here
+ok 34 - switch to branch checked out elsewhere fails
+ok 35 - switch to branch not checked out
+ok 36 - switch to non-branch detaches HEAD
+ok 37 - refuse to switch to branch checked out elsewhere
+ok 38 - rebase when inside worktree subdirectory
+# passed all 38 test(s)
+1..38
 *** t3401-rebase-and-am-rename.sh ***
 ok 1 - setup testcase where directory rename should be detected
 ok 2 - rebase --interactive: directory rename detected
@@ -14070,48 +14056,57 @@ ok 8 - do not drop patch modechange
 ok 1 - setup
 ok 2 - rebase: fast-forward rebase
 ok 3 - rebase: noop rebase
-ok 4 - rebase --apply: dirty worktree, --no-autostash
-ok 5 - rebase --apply: dirty worktree, non-conflicting rebase
-ok 6 - rebase --apply --autostash: check output
-ok 7 - rebase --apply: dirty index, non-conflicting rebase
-ok 8 - rebase --apply: conflicting rebase
-ok 9 - rebase --apply: --continue
-ok 10 - rebase --apply: --skip
-ok 11 - rebase --apply: --abort
-ok 12 - rebase --apply: --quit
-ok 13 - rebase --apply: non-conflicting rebase, conflicting stash
-ok 14 - rebase --apply: check output with conflicting stash
-ok 15 - rebase --merge: dirty worktree, --no-autostash
-ok 16 - rebase --merge: dirty worktree, non-conflicting rebase
-ok 17 - rebase --merge --autostash: check output
-ok 18 - rebase --merge: dirty index, non-conflicting rebase
-ok 19 - rebase --merge: conflicting rebase
-ok 20 - rebase --merge: --continue
-ok 21 - rebase --merge: --skip
-ok 22 - rebase --merge: --abort
-ok 23 - rebase --merge: --quit
-ok 24 - rebase --merge: non-conflicting rebase, conflicting stash
-ok 25 - rebase --merge: check output with conflicting stash
-ok 26 - rebase --interactive: dirty worktree, --no-autostash
-ok 27 - rebase --interactive: dirty worktree, non-conflicting rebase
-ok 28 - rebase --interactive --autostash: check output
-ok 29 - rebase --interactive: dirty index, non-conflicting rebase
-ok 30 - rebase --interactive: conflicting rebase
-ok 31 - rebase --interactive: --continue
-ok 32 - rebase --interactive: --skip
-ok 33 - rebase --interactive: --abort
-ok 34 - rebase --interactive: --quit
-ok 35 - rebase --interactive: non-conflicting rebase, conflicting stash
-ok 36 - rebase --interactive: check output with conflicting stash
-ok 37 - abort rebase -i with --autostash
-ok 38 - restore autostash on editor failure
-ok 39 - autostash is saved on editor failure with conflict
-ok 40 - autostash with dirty submodules
-ok 41 - branch is left alone when possible
-ok 42 - never change active branch
-ok 43 - autostash commit is marked as reachable
-# passed all 43 test(s)
-1..43
+ok 4 - rebase --apply: restore autostash when pre-rebase hook fails
+ok 5 - rebase --apply: restore autostash when checkout onto fails
+ok 6 - rebase --apply: restore autostash when branch checkout fails
+ok 7 - rebase --apply: dirty worktree, --no-autostash
+ok 8 - rebase --apply: dirty worktree, non-conflicting rebase
+ok 9 - rebase --apply --autostash: check output
+ok 10 - rebase --apply: dirty index, non-conflicting rebase
+ok 11 - rebase --apply: conflicting rebase
+ok 12 - rebase --apply: --continue
+ok 13 - rebase --apply: --skip
+ok 14 - rebase --apply: --abort
+ok 15 - rebase --apply: --quit
+ok 16 - rebase --apply: non-conflicting rebase, conflicting stash
+ok 17 - rebase --apply: check output with conflicting stash
+ok 18 - rebase --merge: restore autostash when pre-rebase hook fails
+ok 19 - rebase --merge: restore autostash when checkout onto fails
+ok 20 - rebase --merge: restore autostash when branch checkout fails
+ok 21 - rebase --merge: dirty worktree, --no-autostash
+ok 22 - rebase --merge: dirty worktree, non-conflicting rebase
+ok 23 - rebase --merge --autostash: check output
+ok 24 - rebase --merge: dirty index, non-conflicting rebase
+ok 25 - rebase --merge: conflicting rebase
+ok 26 - rebase --merge: --continue
+ok 27 - rebase --merge: --skip
+ok 28 - rebase --merge: --abort
+ok 29 - rebase --merge: --quit
+ok 30 - rebase --merge: non-conflicting rebase, conflicting stash
+ok 31 - rebase --merge: check output with conflicting stash
+ok 32 - rebase --interactive: restore autostash when pre-rebase hook fails
+ok 33 - rebase --interactive: restore autostash when checkout onto fails
+ok 34 - rebase --interactive: restore autostash when branch checkout fails
+ok 35 - rebase --interactive: dirty worktree, --no-autostash
+ok 36 - rebase --interactive: dirty worktree, non-conflicting rebase
+ok 37 - rebase --interactive --autostash: check output
+ok 38 - rebase --interactive: dirty index, non-conflicting rebase
+ok 39 - rebase --interactive: conflicting rebase
+ok 40 - rebase --interactive: --continue
+ok 41 - rebase --interactive: --skip
+ok 42 - rebase --interactive: --abort
+ok 43 - rebase --interactive: --quit
+ok 44 - rebase --interactive: non-conflicting rebase, conflicting stash
+ok 45 - rebase --interactive: check output with conflicting stash
+ok 46 - abort rebase -i with --autostash
+ok 47 - restore autostash on editor failure
+ok 48 - autostash is saved on editor failure with conflict
+ok 49 - autostash with dirty submodules
+ok 50 - branch is left alone when possible
+ok 51 - never change active branch
+ok 52 - autostash commit is marked as reachable
+# passed all 52 test(s)
+1..52
 *** t3421-rebase-topology-linear.sh ***
 ok 1 - setup
 ok 2 - simple rebase --apply
@@ -15236,42 +15231,45 @@ ok 45 - goto hunk 1 with "g 1"
 ok 46 - goto hunk 1 with "g1"
 ok 47 - navigate to hunk via regex /pattern
 ok 48 - navigate to hunk via regex / pattern
-ok 49 - split hunk "add -p (edit)"
-ok 50 - split hunk "add -p (no, yes, edit)"
-ok 51 - split hunk with incomplete line at end
-ok 52 - edit, adding lines to the first hunk
-ok 53 - patch mode ignores unmerged entries
-ok 54 - index is refreshed after applying patch
-ok 55 - diffs can be colorized
-ok 56 - colors can be overridden
-ok 57 - brackets appear without color
-ok 58 - colors can be skipped with color.ui=false
-ok 59 - colorized diffs respect diff.wsErrorHighlight
-ok 60 - diffFilter filters diff
-ok 61 - detect bogus diffFilter output
-ok 62 - handle iffy colored hunk headers
-ok 63 - handle very large filtered diff
-ok 64 - diff.algorithm is passed to `git diff-files`
-ok 65 - patch-mode via -i prompts for files
-ok 66 - add -p handles globs
-ok 67 - add -p handles relative paths
-ok 68 - add -p does not expand argument lists
-ok 69 - hunk-editing handles custom comment char
-ok 70 - add -p works even with color.ui=always
-ok 71 - setup different kinds of dirty submodules
-ok 72 - status ignores dirty submodules (except HEAD)
-ok 73 - handle submodules
-ok 74 - set up pathological context
-ok 75 - add -p works with pathological context lines
-ok 76 - add -p patch editing works with pathological context lines
-ok 77 - checkout -p works with pathological context lines
-ok 78 - add -N followed by add -p patch editing
-ok 79 - checkout -p patch editing of added file
-ok 80 - show help from add--helper
-ok 81 - reset -p with unmerged files
-ok 82 - hunk splitting works with diff.suppressBlankEmpty
-# passed all 82 test(s)
-1..82
+ok 49 - print again the hunk
+ok 50 - print again the hunk (PAGER)
+ok 51 - P handles SIGPIPE when writing to pager
+ok 52 - split hunk "add -p (edit)"
+ok 53 - split hunk "add -p (no, yes, edit)"
+ok 54 - split hunk with incomplete line at end
+ok 55 - edit, adding lines to the first hunk
+ok 56 - patch mode ignores unmerged entries
+ok 57 - index is refreshed after applying patch
+ok 58 - diffs can be colorized
+ok 59 - colors can be overridden
+ok 60 - brackets appear without color
+ok 61 - colors can be skipped with color.ui=false
+ok 62 - colorized diffs respect diff.wsErrorHighlight
+ok 63 - diffFilter filters diff
+ok 64 - detect bogus diffFilter output
+ok 65 - handle iffy colored hunk headers
+ok 66 - handle very large filtered diff
+ok 67 - diff.algorithm is passed to `git diff-files`
+ok 68 - patch-mode via -i prompts for files
+ok 69 - add -p handles globs
+ok 70 - add -p handles relative paths
+ok 71 - add -p does not expand argument lists
+ok 72 - hunk-editing handles custom comment char
+ok 73 - add -p works even with color.ui=always
+ok 74 - setup different kinds of dirty submodules
+ok 75 - status ignores dirty submodules (except HEAD)
+ok 76 - handle submodules
+ok 77 - set up pathological context
+ok 78 - add -p works with pathological context lines
+ok 79 - add -p patch editing works with pathological context lines
+ok 80 - checkout -p works with pathological context lines
+ok 81 - add -N followed by add -p patch editing
+ok 82 - checkout -p patch editing of added file
+ok 83 - show help from add--helper
+ok 84 - reset -p with unmerged files
+ok 85 - hunk splitting works with diff.suppressBlankEmpty
+# passed all 85 test(s)
+1..85
 *** t3702-add-edit.sh ***
 ok 1 - setup
 ok 2 - add -e
@@ -16675,19 +16673,21 @@ ok 22 - check should test not just the last line
 ok 23 - check detects leftover conflict markers
 ok 24 - check honors conflict marker length
 ok 25 - option errors are not confused by --exit-code
-ok 26 - git diff --exit-code returns 1 for copied file
-ok 27 - git diff --exit-code returns 1 for renamed file
-ok 28 - git diff --quiet returns 1 for copied file
-ok 29 - git diff --quiet returns 1 for renamed file
-ok 30 - setup dirty subrepo
-ok 31 - git diff --exit-code --submodule=diff returns 1 for dirty subrepo
-ok 32 - git diff --exit-code --submodule=log returns 1 for dirty subrepo
-ok 33 - git diff --exit-code --submodule=short returns 1 for dirty subrepo
-ok 34 - git diff --quiet --submodule=diff returns 1 for dirty subrepo
-ok 35 - git diff --quiet --submodule=log returns 1 for dirty subrepo
-ok 36 - git diff --quiet --submodule=short returns 1 for dirty subrepo
-# passed all 36 test(s)
-1..36
+ok 26 - git diff --exit-code returns 1 for changed binary file
+ok 27 - git diff --exit-code returns 1 for copied file
+ok 28 - git diff --exit-code returns 1 for renamed file
+ok 29 - git diff --quiet returns 1 for changed binary file
+ok 30 - git diff --quiet returns 1 for copied file
+ok 31 - git diff --quiet returns 1 for renamed file
+ok 32 - setup dirty subrepo
+ok 33 - git diff --exit-code --submodule=diff returns 1 for dirty subrepo
+ok 34 - git diff --exit-code --submodule=log returns 1 for dirty subrepo
+ok 35 - git diff --exit-code --submodule=short returns 1 for dirty subrepo
+ok 36 - git diff --quiet --submodule=diff returns 1 for dirty subrepo
+ok 37 - git diff --quiet --submodule=log returns 1 for dirty subrepo
+ok 38 - git diff --quiet --submodule=short returns 1 for dirty subrepo
+# passed all 38 test(s)
+1..38
 *** t4018-diff-funcname.sh ***
 ok 1 - setup
 ok 2 - setup: test-tool userdiff
@@ -18230,19 +18230,22 @@ ok 1 - setup
 ok 2 - apply without --3way
 ok 3 - apply with --3way
 ok 4 - apply with --3way with merge.conflictStyle = diff3
-ok 5 - apply with --3way with rerere enabled
-ok 6 - apply -3 with add/add conflict setup
-ok 7 - apply -3 with add/add conflict
-ok 8 - apply -3 with add/add conflict (dirty working tree)
-ok 9 - apply -3 with ambiguous repeating file
-ok 10 - apply with --3way --cached clean apply
-ok 11 - apply with --3way --cached and conflicts
-ok 12 - apply binary file patch
-ok 13 - apply binary file patch with 3way
-ok 14 - apply full-index patch with 3way
-ok 15 - apply delete then new patch with 3way
-# passed all 15 test(s)
-1..15
+ok 5 - apply with --3way --ours
+ok 6 - apply with --3way --theirs
+ok 7 - apply with --3way --union
+ok 8 - apply with --3way with rerere enabled
+ok 9 - apply -3 with add/add conflict setup
+ok 10 - apply -3 with add/add conflict
+ok 11 - apply -3 with add/add conflict (dirty working tree)
+ok 12 - apply -3 with ambiguous repeating file
+ok 13 - apply with --3way --cached clean apply
+ok 14 - apply with --3way --cached and conflicts
+ok 15 - apply binary file patch
+ok 16 - apply binary file patch with 3way
+ok 17 - apply full-index patch with 3way
+ok 18 - apply delete then new patch with 3way
+# passed all 18 test(s)
+1..18
 *** t4109-apply-multifrag.sh ***
 ok 1 - git apply (1)
 ok 2 - git apply (2)
@@ -19025,71 +19028,73 @@ ok 3 - check-mailmap arguments
 ok 4 - check-mailmap --stdin
 ok 5 - check-mailmap --stdin arguments: no mapping
 ok 6 - check-mailmap --stdin arguments: mapping
-ok 7 - check-mailmap bogus contact
-ok 8 - check-mailmap bogus contact --stdin
-ok 9 - No mailmap
-ok 10 - setup default .mailmap
-ok 11 - test default .mailmap
-ok 12 - mailmap.file set
-ok 13 - mailmap.file override
-ok 14 - mailmap.file non-existent
-ok 15 - name entry after email entry
-ok 16 - name entry after email entry, case-insensitive
-ok 17 - No mailmap files, but configured
-ok 18 - setup mailmap blob tests
-ok 19 - mailmap.blob set
-ok 20 - mailmap.blob overrides .mailmap
-ok 21 - mailmap.file overrides mailmap.blob
-ok 22 - mailmap.file can be missing
-ok 23 - mailmap.blob can be missing
-ok 24 - mailmap.blob might be the wrong type
-ok 25 - mailmap.blob defaults to off in non-bare repo
-ok 26 - mailmap.blob defaults to HEAD:.mailmap in bare repo
-ok 27 - mailmap.blob can handle blobs without trailing newline
-ok 28 - single-character name
-ok 29 - preserve canonical email case
-ok 30 - gitmailmap(5) example output: setup
-ok 31 - gitmailmap(5) example output: example #1
-ok 32 - gitmailmap(5) example output: example #2
-ok 33 - gitmailmap(5) example output: example #3
-ok 34 - Shortlog output (complex mapping)
-ok 35 - Log output (complex mapping)
-ok 36 - Log output (local-part email address)
-ok 37 - Log output with --use-mailmap
-ok 38 - Log output with log.mailmap
-ok 39 - log.mailmap=false disables mailmap
-ok 40 - --no-use-mailmap disables mailmap
-ok 41 - Grep author with --use-mailmap
-ok 42 - Grep author with log.mailmap
-ok 43 - log.mailmap is true by default these days
-ok 44 - Only grep replaced author with --use-mailmap
-ok 45 - Blame --porcelain output (complex mapping)
-ok 46 - Blame output (complex mapping)
-ok 47 - commit --author honors mailmap
-ok 48 - comment syntax: setup
-ok 49 - whitespace syntax: setup
-ok 50 - empty syntax: setup
-ok 51 - set up mailmap location tests
-ok 52 - bare repo with --work-tree finds mailmap at top-level
-ok 53 - bare repo does not look in current directory
-ok 54 - non-git shortlog respects mailmap in current dir
-ok 55 - shortlog on stdin respects mailmap from repo
-ok 56 - find top-level mailmap from subdir
-ok 57 - set up symlink tests
-ok 58 - symlinks respected in mailmap.file
-ok 59 - symlinks respected in non-repo shortlog
-ok 60 - symlinks not respected in-tree
-ok 61 - prepare for cat-file --mailmap
-ok 62 - --no-use-mailmap disables mailmap in cat-file
-ok 63 - --use-mailmap enables mailmap in cat-file
-ok 64 - --no-mailmap disables mailmap in cat-file for annotated tag objects
-ok 65 - --mailmap enables mailmap in cat-file for annotated tag objects
-ok 66 - git cat-file -s returns correct size with --use-mailmap
-ok 67 - git cat-file -s returns correct size with --use-mailmap for tag objects
-ok 68 - git cat-file --batch-check returns correct size with --use-mailmap
-ok 69 - git cat-file --batch-command returns correct size with --use-mailmap
-# passed all 69 test(s)
-1..69
+ok 7 - check-mailmap simple address: mapping
+ok 8 - check-mailmap --stdin simple address: mapping
+ok 9 - check-mailmap simple address: no mapping
+ok 10 - check-mailmap --stdin simple address: no mapping
+ok 11 - No mailmap
+ok 12 - setup default .mailmap
+ok 13 - test default .mailmap
+ok 14 - mailmap.file set
+ok 15 - mailmap.file override
+ok 16 - mailmap.file non-existent
+ok 17 - name entry after email entry
+ok 18 - name entry after email entry, case-insensitive
+ok 19 - No mailmap files, but configured
+ok 20 - setup mailmap blob tests
+ok 21 - mailmap.blob set
+ok 22 - mailmap.blob overrides .mailmap
+ok 23 - mailmap.file overrides mailmap.blob
+ok 24 - mailmap.file can be missing
+ok 25 - mailmap.blob can be missing
+ok 26 - mailmap.blob might be the wrong type
+ok 27 - mailmap.blob defaults to off in non-bare repo
+ok 28 - mailmap.blob defaults to HEAD:.mailmap in bare repo
+ok 29 - mailmap.blob can handle blobs without trailing newline
+ok 30 - single-character name
+ok 31 - preserve canonical email case
+ok 32 - gitmailmap(5) example output: setup
+ok 33 - gitmailmap(5) example output: example #1
+ok 34 - gitmailmap(5) example output: example #2
+ok 35 - gitmailmap(5) example output: example #3
+ok 36 - Shortlog output (complex mapping)
+ok 37 - Log output (complex mapping)
+ok 38 - Log output (local-part email address)
+ok 39 - Log output with --use-mailmap
+ok 40 - Log output with log.mailmap
+ok 41 - log.mailmap=false disables mailmap
+ok 42 - --no-use-mailmap disables mailmap
+ok 43 - Grep author with --use-mailmap
+ok 44 - Grep author with log.mailmap
+ok 45 - log.mailmap is true by default these days
+ok 46 - Only grep replaced author with --use-mailmap
+ok 47 - Blame --porcelain output (complex mapping)
+ok 48 - Blame output (complex mapping)
+ok 49 - commit --author honors mailmap
+ok 50 - comment syntax: setup
+ok 51 - whitespace syntax: setup
+ok 52 - empty syntax: setup
+ok 53 - set up mailmap location tests
+ok 54 - bare repo with --work-tree finds mailmap at top-level
+ok 55 - bare repo does not look in current directory
+ok 56 - non-git shortlog respects mailmap in current dir
+ok 57 - shortlog on stdin respects mailmap from repo
+ok 58 - find top-level mailmap from subdir
+ok 59 - set up symlink tests
+ok 60 - symlinks respected in mailmap.file
+ok 61 - symlinks respected in non-repo shortlog
+ok 62 - symlinks not respected in-tree
+ok 63 - prepare for cat-file --mailmap
+ok 64 - --no-use-mailmap disables mailmap in cat-file
+ok 65 - --use-mailmap enables mailmap in cat-file
+ok 66 - --no-mailmap disables mailmap in cat-file for annotated tag objects
+ok 67 - --mailmap enables mailmap in cat-file for annotated tag objects
+ok 68 - git cat-file -s returns correct size with --use-mailmap
+ok 69 - git cat-file -s returns correct size with --use-mailmap for tag objects
+ok 70 - git cat-file --batch-check returns correct size with --use-mailmap
+ok 71 - git cat-file --batch-command returns correct size with --use-mailmap
+# passed all 71 test(s)
+1..71
 *** t4204-patch-id.sh ***
 ok 1 - setup
 ok 2 - patch-id output is well-formed
@@ -19882,17 +19887,18 @@ ok 77 - archive and :(glob)
 ok 78 - catch non-matching pathspec
 ok 79 - reject paths outside the current directory
 ok 80 - allow pathspecs that resolve to the current directory
-ok 81 - set up repository with huge blob
-ok 82 - generate tar with huge size
-ok 83 - system tar can read our huge size
-ok 84 - set up repository with far-future (2^34 - 1) commit
-ok 85 - generate tar with far-future mtime
-ok 86 - system tar can read our future mtime
-ok 87 - set up repository with far-far-future (2^36 + 1) commit
-ok 88 - generate tar with far-far-future mtime
-ok 89 - system tar can read our future mtime
-# passed all 89 test(s)
-1..89
+ok 81 - attr pathspec in bare repo
+ok 82 - set up repository with huge blob
+ok 83 - generate tar with huge size
+ok 84 - system tar can read our huge size
+ok 85 - set up repository with far-future (2^34 - 1) commit
+ok 86 - generate tar with far-future mtime
+ok 87 - system tar can read our future mtime
+ok 88 - set up repository with far-far-future (2^36 + 1) commit
+ok 89 - generate tar with far-far-future mtime
+ok 90 - system tar can read our future mtime
+# passed all 90 test(s)
+1..90
 *** t5001-archive-attr.sh ***
 ok 1 - setup
 ok 2 - git archive
@@ -21776,8 +21782,9 @@ ok 9 - reuse objects from middle pack with middle gap
 ok 10 - omit delta with uninteresting base (same pack)
 ok 11 - omit delta from uninteresting base (cross pack)
 ok 12 - non-omitted delta in MIDX preferred pack
-# passed all 12 test(s)
-1..12
+ok 13 - duplicate objects
+# passed all 13 test(s)
+1..13
 *** t5333-pseudo-merge-bitmaps.sh ***
 ok 1 - setup
 ok 2 - bitmap traversal without pseudo-merges
@@ -21794,8 +21801,17 @@ ok 12 - pseudo-merge overlap generates overlapping groups
 ok 13 - pseudo-merge overlap traversal
 ok 14 - pseudo-merge overlap stale traversal
 ok 15 - pseudo-merge reuse
-# passed all 15 test(s)
-1..15
+ok 16 - empty pseudo-merge group
+ok 17 - pseudo-merge closure
+# passed all 17 test(s)
+1..17
+*** t5334-incremental-multi-pack-index.sh ***
+ok 1 - convert non-incremental MIDX to incremental
+ok 2 - check normal git operations: incremental MIDX
+ok 3 - convert incremental to non-incremental
+ok 4 - check normal git operations: non-incremental MIDX conversion
+# passed all 4 test(s)
+1..4
 *** t5351-unpack-large-objects.sh ***
 ok 1 - create large objects (1.5 MB) and PACK
 ok 2 - set memory limitation to 1MB
@@ -22711,13 +22727,14 @@ ok 6 - check that transfer.hideRefs does not match unstripped refs
 ok 7 - hide full refs with transfer.hideRefs
 ok 8 - try to update a hidden ref
 ok 9 - try to update a ref that is not hidden
-ok 10 - try to update a hidden full ref
-ok 11 - set up ambiguous HEAD
-ok 12 - clone chooses correct HEAD (v0)
-ok 13 - clone chooses correct HEAD (v2)
-ok 14 - denyCurrentBranch and unborn branch with ref namespace
-# passed all 14 test(s)
-1..14
+ok 10 - git-receive-pack(1) with transfer.hideRefs does not match unstripped refs during advertisement
+ok 11 - try to update a hidden full ref
+ok 12 - set up ambiguous HEAD
+ok 13 - clone chooses correct HEAD (v0)
+ok 14 - clone chooses correct HEAD (v2)
+ok 15 - denyCurrentBranch and unborn branch with ref namespace
+# passed all 15 test(s)
+1..15
 *** t5510-fetch.sh ***
 ok 1 - setup
 ok 2 - clone and setup child repos
@@ -24730,9 +24747,10 @@ ok 31 - push messages
 ok 32 - fetch HEAD
 ok 33 - fetch url
 ok 34 - fetch tag
+ok 35 - totally broken helper reports failure message
 # still have 1 known breakage(s)
-# passed all remaining 33 test(s)
-1..34
+# passed all remaining 34 test(s)
+1..35
 *** t5802-connect-helper.sh ***
 ok 1 - setup
 ok 2 - clone
@@ -26731,52 +26749,55 @@ ok 377 - %(trailers:key=foo,valueonly) shows only value
 ok 378 - %(trailers:separator) changes separator
 ok 379 - %(trailers:key_value_separator) changes key-value separator
 ok 380 - %(trailers:separator,key_value_separator) changes both separators
-ok 381 - %(trailers) rejects unknown trailers arguments
-ok 382 - %(trailers:key) without value is error
-ok 383 - if arguments, %(contents:trailers) shows error if colon is missing
-ok 384 - basic atom: head contents:trailers
-ok 385 - basic atom: rest must fail
-ok 386 - HEAD atom does not take arguments
-ok 387 - subject atom rejects unknown arguments
-ok 388 - refname atom rejects unknown arguments
-ok 389 - trailer parsing not fooled by --- line
-ok 390 - Add symbolic ref for the following tests
-ok 391 - Verify usage of %(symref) atom
-ok 392 - Verify usage of %(symref:short) atom
-ok 393 - Verify usage of %(symref:lstrip) atom
-ok 394 - Verify usage of %(symref:rstrip) atom
-ok 395 - :remotename and :remoteref
-ok 396 - for-each-ref --ignore-case ignores case
-ok 397 - for-each-ref --omit-empty works
-ok 398 - for-each-ref --ignore-case works on multiple sort keys
-ok 399 - for-each-ref reports broken tags
-ok 400 - set up tag with signature and no blank lines
-ok 401 # skip basic atom: refs/tags/fake-sig-no-blanks contents:subject (missing GPG)
-ok 402 # skip basic atom: refs/tags/fake-sig-no-blanks contents:body (missing GPG)
-ok 403 # skip basic atom: refs/tags/fake-sig-no-blanks contents:signature (missing GPG)
-ok 404 - set up tag with CRLF signature
-ok 405 # skip basic atom: refs/tags/fake-sig-crlf contents:subject (missing GPG)
-ok 406 # skip basic atom: refs/tags/fake-sig-crlf contents:body (missing GPG)
-ok 407 # skip basic atom: refs/tags/fake-sig-crlf contents:signature (missing GPG)
-ok 408 - git for-each-ref --stdin: empty
-ok 409 - git for-each-ref --stdin: fails if extra args
-ok 410 - git for-each-ref --stdin: matches
-ok 411 - git for-each-ref with non-existing refs
-ok 412 - git for-each-ref with nested tags
-ok 413 # skip setup for signature atom using gpg (missing GPG)
-ok 414 - setup for signature atom using ssh
-ok 415 # skip bare signature atom (missing GPG2)
-ok 416 # skip show good signature with custom format (missing GPG)
-ok 417 - show good signature with custom format
-			    with ssh
-ok 418 # skip signature atom with grade option and bad signature (missing GPG)
-ok 419 # skip show untrusted signature with custom format (missing GPG)
-ok 420 # skip show untrusted signature with undefined trust level (missing GPG)
-ok 421 # skip show untrusted signature with ultimate trust level (missing GPG)
-ok 422 # skip show unknown signature with custom format (missing GPG)
-ok 423 # skip show lack of signature with custom format (missing GPG)
-# passed all 423 test(s)
-1..423
+ok 381 - multiple %(trailers) use their own options
+ok 382 - %(trailers) rejects unknown trailers arguments
+ok 383 - %(trailers:key) without value is error
+ok 384 - if arguments, %(contents:trailers) shows error if colon is missing
+ok 385 - basic atom: head contents:trailers
+ok 386 - basic atom: rest must fail
+ok 387 - HEAD atom does not take arguments
+ok 388 - subject atom rejects unknown arguments
+ok 389 - refname atom rejects unknown arguments
+ok 390 - trailer parsing not fooled by --- line
+ok 391 - Add symbolic ref for the following tests
+ok 392 - Verify usage of %(symref) atom
+ok 393 - Verify usage of %(symref:short) atom
+ok 394 - Verify usage of %(symref:lstrip) atom
+ok 395 - Verify usage of %(symref:rstrip) atom
+ok 396 - :remotename and :remoteref
+ok 397 - for-each-ref --ignore-case ignores case
+ok 398 - for-each-ref --omit-empty works
+ok 399 - for-each-ref --ignore-case works on multiple sort keys
+ok 400 - for-each-ref reports broken tags
+ok 401 - set up tag with signature and no blank lines
+ok 402 # skip basic atom: refs/tags/fake-sig-no-blanks contents:subject (missing GPG)
+ok 403 # skip basic atom: refs/tags/fake-sig-no-blanks contents:body (missing GPG)
+ok 404 # skip basic atom: refs/tags/fake-sig-no-blanks contents:signature (missing GPG)
+ok 405 - set up tag with CRLF signature
+ok 406 # skip basic atom: refs/tags/fake-sig-crlf contents:subject (missing GPG)
+ok 407 # skip basic atom: refs/tags/fake-sig-crlf contents:body (missing GPG)
+ok 408 # skip basic atom: refs/tags/fake-sig-crlf contents:signature (missing GPG)
+ok 409 - set up tag with signature and trailers
+ok 410 # skip basic atom: refs/tags/fake-sig-trailer trailers:separator= (missing GPG)
+ok 411 - git for-each-ref --stdin: empty
+ok 412 - git for-each-ref --stdin: fails if extra args
+ok 413 - git for-each-ref --stdin: matches
+ok 414 - git for-each-ref with non-existing refs
+ok 415 - git for-each-ref with nested tags
+ok 416 - is-base atom with non-commits
+ok 417 # skip setup for signature atom using gpg (missing GPG)
+ok 418 - setup for signature atom using ssh
+ok 419 # skip bare signature atom (missing GPG2)
+ok 420 # skip show good signature with custom format (missing GPG)
+ok 421 - show good signature with custom format with ssh
+ok 422 # skip signature atom with grade option and bad signature (missing GPG)
+ok 423 # skip show untrusted signature with custom format (missing GPG)
+ok 424 # skip show untrusted signature with undefined trust level (missing GPG)
+ok 425 # skip show untrusted signature with ultimate trust level (missing GPG)
+ok 426 # skip show unknown signature with custom format (missing GPG)
+ok 427 # skip show lack of signature with custom format (missing GPG)
+# passed all 427 test(s)
+1..427
 *** t6301-for-each-ref-errors.sh ***
 ok 1 - setup
 ok 2 - Broken refs are reported correctly
@@ -27602,8 +27623,10 @@ ok 26 - --max-cruft-size sets appropriate repack options
 ok 27 - gc.maxCruftSize sets appropriate repack options
 ok 28 - background auto gc does not run if gc.log is present and recent but does if it is old
 ok 29 - background auto gc respects lock for all operations
-# passed all 29 test(s)
-1..29
+ok 30 - --detach overrides gc.autoDetach=false
+ok 31 - --no-detach overrides gc.autoDetach=true
+# passed all 31 test(s)
+1..31
 *** t6501-freshen-objects.sh ***
 ok 1 - make repo completely empty (loose)
 ok 2 - disable reflogs (loose)
@@ -27687,8 +27710,15 @@ ok 34 - for-each-ref merged:all
 ok 35 - for-each-ref ahead-behind:some
 ok 36 - for-each-ref merged:some, multibase
 ok 37 - for-each-ref merged:none
-# passed all 37 test(s)
-1..37
+ok 38 - get_branch_base_for_tip: none reach
+ok 39 - get_branch_base_for_tip: equal to tip
+ok 40 - get_branch_base_for_tip: all reach tip
+ok 41 - for-each-ref is-base: none reach
+ok 42 - for-each-ref is-base: all reach
+ok 43 - for-each-ref is-base: equal to tip
+ok 44 - for-each-ref is-base:multiple
+# passed all 44 test(s)
+1..44
 *** t6700-tree-depth.sh ***
 ok 1 - create small tree
 ok 2 - create big tree
@@ -29314,8 +29344,9 @@ ok 14 - git submodule --quiet status --cached
 ok 15 - git submodule status --cached --quiet
 ok 16 - git submodule status --cached --recursive
 ok 17 - git submodule --cached status --recursive
-# passed all 17 test(s)
-1..17
+ok 18 - git submodule status --recursive propagates SIGPIPE
+# passed all 18 test(s)
+1..18
 *** t7423-submodule-symlinks.sh ***
 ok 1 - prepare
 ok 2 - git submodule update must not create submodule behind symlink
@@ -29325,6 +29356,16 @@ ok 5 - git restore --recurse-submodules must not migrate git dir of symlinked re
 ok 6 - git checkout -f --recurse-submodules must not migrate git dir of symlinked repo when removing submodule
 # passed all 6 test(s)
 1..6
+*** t7424-submodule-mixed-ref-formats.sh ***
+ok 1 - setup
+ok 2 - add existing repository with different ref storage format
+ok 3 - add submodules with different ref storage format
+ok 4 - recursive clone propagates ref storage format
+ok 5 - clone submodules with different ref storage format
+ok 6 - status with mixed submodule ref storages
+ok 7 - recursive pull with mixed formats
+# passed all 7 test(s)
+1..7
 *** t7450-bad-git-dotfiles.sh ***
 ok 1 - setup
 ok 2 - check names
@@ -30596,6 +30637,16 @@ ok 3 - git merge does not add a sign-off line
 ok 4 - git merge --no-signoff flag cancels --signoff flag
 # passed all 4 test(s)
 1..4
+*** t7615-diff-algo-with-mergy-operations.sh ***
+ok 1 - setup
+ok 2 - merge c2 to c1 with recursive merge strategy fails with the current default myers diff algorithm
+ok 3 - merge c2 to c1 with recursive merge strategy succeeds with -Xdiff-algorithm=histogram
+ok 4 - merge c2 to c1 with recursive merge strategy succeeds with diff.algorithm = histogram
+ok 5 - cherry-pick c2 to c1 with recursive merge strategy fails with the current default myers diff algorithm
+ok 6 - cherry-pick c2 to c1 with recursive merge strategy succeeds with -Xdiff-algorithm=histogram
+ok 7 - cherry-pick c2 to c1 with recursive merge strategy succeeds with diff.algorithm = histogram
+# passed all 7 test(s)
+1..7
 *** t7700-repack.sh ***
 ok 1 - objects in packs marked .keep are not repacked
 ok 2 - writing bitmaps via command-line can duplicate .keep objects
@@ -31324,50 +31375,58 @@ ok 8 - grep --cached searches index entries with both CE_VALID and SKIP_WORKTREE
 ok 1 - help text
 ok 2 - run [--auto|--quiet]
 ok 3 - maintenance.auto config option
-ok 4 - register uses XDG_CONFIG_HOME config if it exists
-ok 5 - register does not need XDG_CONFIG_HOME config to exist
-ok 6 - unregister uses XDG_CONFIG_HOME config if it exists
-ok 7 - unregister does not need XDG_CONFIG_HOME config to exist
-ok 8 - maintenance.<task>.enabled
-ok 9 - run --task=<task>
-ok 10 - core.commitGraph=false prevents write process
-ok 11 - commit-graph auto condition
-ok 12 - run --task=bogus
-ok 13 - run --task duplicate
-ok 14 - run --task=prefetch with no remotes
-ok 15 - prefetch multiple remotes
-ok 16 - loose-objects task
-ok 17 - maintenance.loose-objects.auto
-ok 18 - incremental-repack task
-ok 19 # skip incremental-repack 2g limit (missing EXPENSIVE)
-ok 20 - maintenance.incremental-repack.auto
-ok 21 - maintenance.incremental-repack.auto (when config is unset)
-ok 22 - pack-refs task
-ok 23 - --auto and --schedule incompatible
-ok 24 - invalid --schedule value
-ok 25 - --schedule inheritance weekly -> daily -> hourly
-ok 26 - maintenance.strategy inheritance
-ok 27 - register and unregister
-ok 28 - register with no value for maintenance.repo
-ok 29 - unregister with no value for maintenance.repo
-ok 30 - register and unregister with regex metacharacters
-ok 31 - start --scheduler=<scheduler>
-ok 32 - start from empty cron table
-ok 33 - stop from existing schedule
-ok 34 - start preserves existing schedule
-ok 35 - magic markers are correct
-ok 36 - stop preserves surrounding schedule
-ok 37 - start and stop macOS maintenance
-ok 38 - use launchctl list to prevent extra work
-ok 39 - start and stop Windows maintenance
-ok 40 - start and stop Linux/systemd maintenance
-ok 41 - start and stop when several schedulers are available
-ok 42 - register preserves existing strategy
-ok 43 - fails when running outside of a repository
-ok 44 - register and unregister bare repo
-ok 45 - failed schedule prevents config change
-# passed all 45 test(s)
-1..45
+ok 4 - maintenance.autoDetach=true config option
+ok 5 - maintenance.autoDetach=false config option
+ok 6 - gc.autoDetach=true config option
+ok 7 - gc.autoDetach=false config option
+ok 8 - maintenance.autoDetach overrides gc.autoDetach
+ok 9 - register uses XDG_CONFIG_HOME config if it exists
+ok 10 - register does not need XDG_CONFIG_HOME config to exist
+ok 11 - unregister uses XDG_CONFIG_HOME config if it exists
+ok 12 - unregister does not need XDG_CONFIG_HOME config to exist
+ok 13 - maintenance.<task>.enabled
+ok 14 - run --task=<task>
+ok 15 - core.commitGraph=false prevents write process
+ok 16 - commit-graph auto condition
+ok 17 - run --task=bogus
+ok 18 - run --task duplicate
+ok 19 - run --task=prefetch with no remotes
+ok 20 - prefetch multiple remotes
+ok 21 - loose-objects task
+ok 22 - maintenance.loose-objects.auto
+ok 23 - incremental-repack task
+ok 24 # skip incremental-repack 2g limit (missing EXPENSIVE)
+ok 25 - maintenance.incremental-repack.auto
+ok 26 - maintenance.incremental-repack.auto (when config is unset)
+ok 27 - pack-refs task
+ok 28 - --auto and --schedule incompatible
+ok 29 - invalid --schedule value
+ok 30 - --schedule inheritance weekly -> daily -> hourly
+ok 31 - maintenance.strategy inheritance
+ok 32 - register and unregister
+ok 33 - register with no value for maintenance.repo
+ok 34 - unregister with no value for maintenance.repo
+ok 35 - register and unregister with regex metacharacters
+ok 36 - start --scheduler=<scheduler>
+ok 37 - start from empty cron table
+ok 38 - stop from existing schedule
+ok 39 - start preserves existing schedule
+ok 40 - magic markers are correct
+ok 41 - stop preserves surrounding schedule
+ok 42 - start and stop macOS maintenance
+ok 43 - use launchctl list to prevent extra work
+ok 44 - start and stop Windows maintenance
+ok 45 - start and stop Linux/systemd maintenance
+ok 46 - start and stop when several schedulers are available
+ok 47 - register preserves existing strategy
+ok 48 - fails when running outside of a repository
+ok 49 - register and unregister bare repo
+ok 50 - failed schedule prevents config change
+ok 51 - --no-detach causes maintenance to not run in background
+ok 52 - --detach causes maintenance to run in background
+ok 53 - repacking loose objects is quiet
+# passed all 53 test(s)
+1..53
 *** t8001-annotate.sh ***
 ok 1 - setup A lines
 ok 2 - blame 1 author
@@ -32072,41 +32131,55 @@ ok 165 - --dump-aliases mailrc format
 ok 166 - --dump-aliases pine format
 ok 167 - --dump-aliases gnus format
 ok 168 - --dump-aliases must be used alone
-ok 169 - aliases and sendemail.identity
-ok 170 - sendemail.aliasfiletype=sendmail
-ok 171 - sendmail aliases line folding
-ok 172 - sendmail aliases tolerate bogus line folding
-ok 173 - sendmail aliases empty
-ok 174 - alias support in To header
-ok 175 - alias support in Cc header
-ok 176 - tocmd works with aliases
-ok 177 - cccmd works with aliases
-ok 178 - --[no-]xmailer without any configuration
-ok 179 - --[no-]xmailer with sendemail.xmailer=true
-ok 180 - --[no-]xmailer with sendemail.xmailer
-ok 181 - --[no-]xmailer with sendemail.xmailer=false
-ok 182 - --[no-]xmailer with sendemail.xmailer=
-ok 183 - setup expected-list
-ok 184 - use email list in --cc --to and --bcc
-ok 185 - aliases work with email list
-ok 186 - leading and trailing whitespaces are removed
-ok 187 - test using command name with --sendmail-cmd
-ok 188 - test using arguments with --sendmail-cmd
-ok 189 - test shell expression with --sendmail-cmd
-ok 190 - set up in-reply-to/references patches
-ok 191 - patch reply headers correct with --no-thread
-ok 192 - cmdline in-reply-to used with --no-thread
-ok 193 - invoke hook
-ok 194 - --validate hook allows counting of messages
-ok 195 - test that send-email works outside a repo
-ok 196 - send-email relays -v 3 to format-patch
-ok 197 - test that sendmail config is rejected
-ok 198 - test that sendmail config rejection is specific
-ok 199 - test forbidSendmailVariables behavior override
-ok 200 - --compose handles lowercase headers
-ok 201 - --compose handles to headers
-# passed all 201 test(s)
-1..201
+ok 169 - --translate-aliases sendmail format
+ok 170 - --translate-aliases mutt format
+ok 171 - --translate-aliases mailrc format
+ok 172 - --translate-aliases pine format
+ok 173 - --translate-aliases gnus format
+ok 174 - --translate-aliases passes valid addresses through
+ok 175 - --translate-aliases passes unknown aliases through
+ok 176 - aliases and sendemail.identity
+ok 177 - sendemail.aliasfiletype=sendmail
+ok 178 - sendmail aliases line folding
+ok 179 - sendmail aliases tolerate bogus line folding
+ok 180 - sendmail aliases empty
+ok 181 - alias support in To header
+ok 182 - alias support in Cc header
+ok 183 - tocmd works with aliases
+ok 184 - cccmd works with aliases
+ok 185 - --[no-]xmailer without any configuration
+ok 186 - --[no-]xmailer with sendemail.xmailer=true
+ok 187 - --[no-]xmailer with sendemail.xmailer
+ok 188 - --[no-]xmailer with sendemail.xmailer=false
+ok 189 - --[no-]xmailer with sendemail.xmailer=
+ok 190 - setup expected-list
+ok 191 - use email list in --cc --to and --bcc
+ok 192 - aliases work with email list
+ok 193 - leading and trailing whitespaces are removed
+ok 194 - mailmap support with --to
+ok 195 - sendemail.mailmap configuration
+ok 196 - sendemail.mailmap.file configuration
+ok 197 - sendemail.mailmap identity overrides configuration
+ok 198 - --no-mailmap overrides configuration
+ok 199 - mailmap support in To header
+ok 200 - mailmap support in Cc header
+ok 201 - test using command name with --sendmail-cmd
+ok 202 - test using arguments with --sendmail-cmd
+ok 203 - test shell expression with --sendmail-cmd
+ok 204 - set up in-reply-to/references patches
+ok 205 - patch reply headers correct with --no-thread
+ok 206 - cmdline in-reply-to used with --no-thread
+ok 207 - invoke hook
+ok 208 - --validate hook allows counting of messages
+ok 209 - test that send-email works outside a repo
+ok 210 - send-email relays -v 3 to format-patch
+ok 211 - test that sendmail config is rejected
+ok 212 - test that sendmail config rejection is specific
+ok 213 - test forbidSendmailVariables behavior override
+ok 214 - --compose handles lowercase headers
+ok 215 - --compose handles to headers
+# passed all 215 test(s)
+1..215
 *** t9002-column.sh ***
 ok 1 - setup
 ok 2 - never
@@ -32303,17 +32376,18 @@ ok 8 - scalar register warns when background maintenance fails
 ok 9 - scalar unregister
 ok 10 - set up repository to clone
 ok 11 - scalar clone
-ok 12 - scalar reconfigure
-ok 13 - scalar reconfigure --all with includeIf.onbranch
-ok 14 - scalar reconfigure --all with detached HEADs
-ok 15 - `reconfigure -a` removes stale config entries
-ok 16 - scalar delete without enlistment shows a usage
-ok 17 - scalar delete with enlistment
-ok 18 - scalar supports -c/-C
-ok 19 - `scalar [...] <dir>` errors out when dir is missing
-ok 20 - scalar diagnose
-# passed all 20 test(s)
-1..20
+ok 12 - scalar clone --no-... opts
+ok 13 - scalar reconfigure
+ok 14 - scalar reconfigure --all with includeIf.onbranch
+ok 15 - scalar reconfigure --all with detached HEADs
+ok 16 - `reconfigure -a` removes stale config entries
+ok 17 - scalar delete without enlistment shows a usage
+ok 18 - scalar delete with enlistment
+ok 19 - scalar supports -c/-C
+ok 20 - `scalar [...] <dir>` errors out when dir is missing
+ok 21 - scalar diagnose
+# passed all 21 test(s)
+1..21
 *** t9211-scalar-clone.sh ***
 ok 1 - set up repository to clone
 ok 2 - creates content in enlistment root
@@ -33433,7 +33507,7 @@ ok 67 - prompt - conflict indicator
 missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS ADD_OUT AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE FSMONITOR_DAEMON GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
 
 fixed   1
-success 29692
+success 29766
 failed  0
 broken  271
-total   30446
+total   30521
