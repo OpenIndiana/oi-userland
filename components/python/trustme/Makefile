@@ -19,27 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		trustme
-HUMAN_VERSION =			1.1.0
-COMPONENT_SUMMARY =		trustme - #1 quality TLS certs while you wait, for the discerning tester
+HUMAN_VERSION =			1.2.0
+COMPONENT_SUMMARY =		\#1 quality TLS certs while you wait, for the discerning tester
 COMPONENT_PROJECT_URL =		https://github.com/python-trio/trustme
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/60/65/1e0fa6e1d336e4e50e41999699903ee216ac500c40ebb2578742d8f1c656/trustme-1.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5375ad7fb427074bec956592e0d4ee2a4cf4da68934e1ba4bcf4217126bc45e6
+	sha256:ed2264fb46c35459e6de9e454ed4bab73be44b6a2a26ad417f9b6854aebb644a
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:cov
-PYTEST_ADDOPTS += -p no:mypy
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cryptography
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/idna
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
