@@ -6,7 +6,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [59 items]
+X workers [63 items]
 
 scheduling tests via LoadScheduling
 
@@ -20,6 +20,10 @@ tests/test_ipynb.py::test_cell_magic_noop PASSED
 tests/test_ipynb.py::test_cell_magic_with_custom_python_magic[Correctly change when cell magic registered] PASSED
 tests/test_ipynb.py::test_cell_magic_with_custom_python_magic[No change when cell magic not registered] PASSED
 tests/test_ipynb.py::test_cell_magic_with_custom_python_magic[No change when other cell magics registered] PASSED
+tests/test_ipynb.py::test_cell_magic_with_custom_python_magic_after_spaces_and_comments_noop[   %%custom_magic \nx=2] PASSED
+tests/test_ipynb.py::test_cell_magic_with_custom_python_magic_after_spaces_and_comments_noop[# comment\n%%custom_magic\nx=2] PASSED
+tests/test_ipynb.py::test_cell_magic_with_custom_python_magic_after_spaces_and_comments_noop[\n  \n # comment with %%time\n\t\n %%custom_magic # comment \nx=2] PASSED
+tests/test_ipynb.py::test_cell_magic_with_custom_python_magic_after_spaces_and_comments_noop[\n\n%%custom_magic\nx=2] PASSED
 tests/test_ipynb.py::test_cell_magic_with_invalid_body PASSED
 tests/test_ipynb.py::test_cell_magic_with_magic PASSED
 tests/test_ipynb.py::test_cell_magic_with_magic_noop PASSED
@@ -71,7 +75,37 @@ tests/test_ipynb.py::test_unable_to_replace_magics PASSED
 tests/test_ipynb.py::test_unparseable_notebook PASSED
 
 
-======== 59 passed ========
+======== 63 passed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
 <class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
   warnings.warn(
@@ -82,7 +116,7 @@ py$(PYV): commands[2]> python -m coverage report
 Name                                                                                                                                       Stmts   Miss Branch BrPart  Cover
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/_black_version.py                  1      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/__init__.py                602    225    336     69    56%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/__init__.py                603    228    333     70    56%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/_width_table.py              2      0      0      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/brackets.py                165     70     86     20    52%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/cache.py                    89     23     24      2    69%
@@ -90,26 +124,26 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/comments.py                205  
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/concurrency.py              97     75     44      0    16%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/const.py                     4      0      0      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/debug.py                    39     21     12      0    39%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/files.py                   215    102    106     22    48%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/handle_ipynb_magics.py     176      5     66      4    96%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/linegen.py                 739    521    417     31    24%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/files.py                   213    101    104     21    48%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/handle_ipynb_magics.py     190      5     75      4    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/linegen.py                 756    537    432     31    24%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/lines.py                   514    284    327     29    36%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/mode.py                     90      5     18      6    88%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/nodes.py                   470    260    304     46    37%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/mode.py                     94      7     18      6    87%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/nodes.py                   471    261    304     46    37%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/numerics.py                 35     20     14      5    41%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/output.py                   68     20     32      5    61%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/parsing.py                 121     46     49      8    59%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/parsing.py                 125     48     53      9    58%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/ranges.py                  208    179    112      0    10%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/report.py                   63     12     24      5    76%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/rusty.py                    14      4      0      0    71%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/strings.py                 201    124     98     12    31%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/black/trans.py                   931    809    456      1     9%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blackd/__init__.py               156    112     40      1    23%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blackd/middlewares.py             30     21     10      1    25%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blackd/__init__.py               155    112     40      1    23%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blackd/middlewares.py             24     17      6      0    23%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/__init__.py               0      0      0      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/pgen2/__init__.py         0      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/pgen2/driver.py         206     69     76     17    62%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/pgen2/grammar.py         69     14     10      1    81%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/pgen2/driver.py         206     70     76     17    61%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/pgen2/grammar.py         69     21     10      1    70%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/pgen2/parse.py          184     78     62     10    54%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/pgen2/pgen.py           314     29    132      7    89%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/pgen2/token.py           77      3      4      0    96%
@@ -119,11 +153,11 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/blib2to3/pytree.py               472  
 tests/__init__.py                                                                                                                              0      0      0      0   100%
 tests/conftest.py                                                                                                                             10      0      0      0   100%
 tests/optional.py                                                                                                                             70     10     26      6    83%
-tests/test_black.py                                                                                                                         1676   1428    124      1    14%
-tests/test_blackd.py                                                                                                                         160    105     12      1    34%
+tests/test_black.py                                                                                                                         1693   1444    140      1    14%
+tests/test_blackd.py                                                                                                                         136    102      8      0    25%
 tests/test_docs.py                                                                                                                            40     31     22      0    15%
 tests/test_format.py                                                                                                                          39     22      4      0    40%
-tests/test_ipynb.py                                                                                                                          201      0     10      0   100%
+tests/test_ipynb.py                                                                                                                          205      0     10      0   100%
 tests/test_no_ipynb.py                                                                                                                        22     13      0      0    41%
 tests/test_ranges.py                                                                                                                          33     18      0      0    45%
 tests/test_schema.py                                                                                                                          11      8      4      0    20%
@@ -131,6 +165,6 @@ tests/test_tokenize.py                                                          
 tests/test_trans.py                                                                                                                           33     30      2      0     9%
 tests/util.py                                                                                                                                175    105     42      0    35%
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                       9825   5674   3674    359    38%
+TOTAL                                                                                                                                       9854   5714   3705    358    38%
   py$(PYV): OK
   congratulations :)
