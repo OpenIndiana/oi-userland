@@ -19,17 +19,15 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinx_rtd_theme
-HUMAN_VERSION =			2.0.0
-COMPONENT_SUMMARY =		sphinx_rtd_theme - Read the Docs theme for Sphinx
+HUMAN_VERSION =			3.0.0
+COMPONENT_SUMMARY =		Read the Docs theme for Sphinx
 COMPONENT_PROJECT_URL =		https://github.com/readthedocs/sphinx_rtd_theme
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fe/33/2a35a9cdbfda9086bda11457bcc872173ab3565b16b6d7f6b3efaa6dc3d6/sphinx_rtd_theme-2.0.0.tar.gz
+	https://github.com/readthedocs/sphinx_rtd_theme/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bd5d7b80622406762073a04ef8fadc5f9151261563d47027de09910ce03afe6b
+	sha256:6de403ec3f0a07de4728cf940d1a2c83fd92fa1786889b3617716774591032ef
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -38,3 +36,4 @@ PYTHON_REQUIRED_PACKAGES += library/python/docutils
 PYTHON_REQUIRED_PACKAGES += library/python/sphinx
 PYTHON_REQUIRED_PACKAGES += library/python/sphinxcontrib-jquery
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest

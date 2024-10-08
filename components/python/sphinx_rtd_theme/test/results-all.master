@@ -1,138 +1,97 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest tests/
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
+configfile: pytest.ini
 collecting ... collected 3 items
 
 tests/test_builders.py::test_basic PASSED
 tests/test_builders.py::test_empty PASSED
 tests/test_builders.py::test_missing_toctree PASSED
 
-=============================== warnings summary ===============================
-tests/test_builders.py: 11 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:106: RemovedInSphinx90Warning: 'sphinx.builders.html.StandaloneHTMLBuilder.css_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    if inject_css and theme_css not in app.builder.css_files:
+======== 3 passed ========
+py$(PYV): commands[1]> python -m sphinx.cmd.build -b html -Dhtml4_writer=0 -d $(@D)/.tox/py$(PYV)/tmp/doctrees docs/ $(@D)/.tox/py$(PYV)/tmp/html
+Running Sphinx v7.4.7
+loading translations [en]... done
+Converting `source_suffix = '.rst'` to `source_suffix = {'.rst': 'restructuredtext'}`.
+loading intersphinx inventory 'rtd' from https://docs.readthedocs.io/en/stable/objects.inv...
+loading intersphinx inventory 'rtd-dev' from https://dev.readthedocs.io/en/stable/objects.inv...
+loading intersphinx inventory 'sphinx' from https://www.sphinx-doc.org/en/master/objects.inv...
+[autosummary] generating autosummary for: changelog.rst, configuring.rst, contributing.rst, demo/api.rst, demo/demo.rst, demo/level1/index.rst, demo/level1/level2/index.rst, demo/level1/level2/level3/index.rst, demo/level1/level2/level3/level4/index.rst, demo/level1/level2/level3/level4/level5/index.rst, demo/level1/level2/level3/level4/level5/level6/index.rst, demo/lists_tables.rst, demo/long.rst, demo/structure.rst, development.rst, index.rst, installing.rst
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [html]: targets for 17 source files that are out of date
+updating environment: [new config] 17 added, 0 changed, 0 removed
+reading sources... [  6%] changelog
+reading sources... [ 12%] configuring
+reading sources... [ 18%] contributing
+reading sources... [ 24%] demo/api
+reading sources... [ 29%] demo/demo
+reading sources... [ 35%] demo/level1/index
+reading sources... [ 41%] demo/level1/level2/index
+reading sources... [ 47%] demo/level1/level2/level3/index
+reading sources... [ 53%] demo/level1/level2/level3/level4/index
+reading sources... [ 59%] demo/level1/level2/level3/level4/level5/index
+reading sources... [ 65%] demo/level1/level2/level3/level4/level5/level6/index
+reading sources... [ 71%] demo/lists_tables
+reading sources... [ 76%] demo/long
+reading sources... [ 82%] demo/structure
+reading sources... [ 88%] development
+reading sources... [ 94%] index
+reading sources... [100%] installing
 
-tests/test_builders.py: 84 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:106: RemovedInSphinx90Warning: The str interface for _CascadingStyleSheet objects is deprecated. Use css.filename instead.
-    if inject_css and theme_css not in app.builder.css_files:
+WARNING: Summarised items should not include the current module. Replace 'test_py_module.test.add_numbers' with 'add_numbers'.
+WARNING: Summarised items should not include the current module. Replace 'test_py_module.test.subtract_numbers' with 'subtract_numbers'.
+WARNING: Summarised items should not include the current module. Replace 'test_py_module.test.Foo' with 'Foo'.
+$(@D)/docs/demo/test_py_module/test.py:docstring of test_py_module.test.Foo:17: WARNING: Footnote [1] is not referenced.
+$(@D)/docs/demo/demo.rst:265: WARNING: Footnote [4] is not referenced.
+$(@D)/docs/demo/demo.rst:18: ERROR: Undefined substitution referenced: "problematic".
+$(@D)/docs/demo/demo.rst:271: WARNING: duplicate citation Citation, other instance in $(@D)/docs/demo/api.rst
+$(@D)/docs/demo/demo.rst:265: ERROR: Unknown target name: "5".
+$(@D)/docs/demo/demo.rst:318: ERROR: Unknown target name: "hyperlink reference without a target".
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+copying assets... 
+copying downloadable files... [100%] demo/static/yi_jing_01_chien.jpg
 
-tests/test_builders.py: 11 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:120: RemovedInSphinx90Warning: 'sphinx.builders.html.StandaloneHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    hasattr(app.builder, 'script_files'),
+copying static files... done
+copying extra files... done
+copying assets: done
+writing output... [  6%] changelog
+writing output... [ 12%] configuring
+writing output... [ 18%] contributing
+writing output... [ 24%] demo/api
+writing output... [ 29%] demo/demo
+writing output... [ 35%] demo/level1/index
+writing output... [ 41%] demo/level1/level2/index
+writing output... [ 47%] demo/level1/level2/level3/index
+writing output... [ 53%] demo/level1/level2/level3/level4/index
+writing output... [ 59%] demo/level1/level2/level3/level4/level5/index
+writing output... [ 65%] demo/level1/level2/level3/level4/level5/level6/index
+writing output... [ 71%] demo/lists_tables
+writing output... [ 76%] demo/long
+writing output... [ 82%] demo/structure
+writing output... [ 88%] development
+writing output... [ 94%] index
+writing output... [100%] installing
 
-tests/test_builders.py: 11 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:121: RemovedInSphinx90Warning: 'sphinx.builders.html.StandaloneHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    js_file not in app.builder.script_files,
+$(@D)/docs/demo/demo.rst:279: WARNING: citation not found: nonexistent
+generating indices... genindex py-modindex done
+highlighting module code... [100%] test_py_module.test
 
-tests/test_builders.py: 210 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:121: RemovedInSphinx90Warning: The str interface for _JavaScript objects is deprecated. Use js.filename instead.
-    js_file not in app.builder.script_files,
+writing additional pages... search done
+copying images... [100%] demo/static/yi_jing_01_chien.jpg
 
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_basic
-  $(@D)/tests/test_builders.py:21: PendingDeprecationWarning: nodes.Node.traverse() is obsoleted by Node.findall().
-    assert app.env.get_doctree('index').traverse(addnodes.toctree)
+dumping search index in English (code: en)... done
+dumping object inventory... done
+build succeeded, 10 warnings.
 
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_missing_toctree
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:106: RemovedInSphinx90Warning: 'sphinx.builders.html.SingleFileHTMLBuilder.css_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    if inject_css and theme_css not in app.builder.css_files:
-
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_missing_toctree
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:120: RemovedInSphinx90Warning: 'sphinx.builders.html.SingleFileHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    hasattr(app.builder, 'script_files'),
-
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_missing_toctree
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:121: RemovedInSphinx90Warning: 'sphinx.builders.html.SingleFileHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    js_file not in app.builder.script_files,
-
-tests/test_builders.py: 11 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:106: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsBuilder.css_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    if inject_css and theme_css not in app.builder.css_files:
-
-tests/test_builders.py: 11 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:120: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    hasattr(app.builder, 'script_files'),
-
-tests/test_builders.py: 11 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:121: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    js_file not in app.builder.script_files,
-
-tests/test_builders.py: 11 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:106: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsDirectoryHTMLBuilder.css_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    if inject_css and theme_css not in app.builder.css_files:
-
-tests/test_builders.py: 11 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:120: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsDirectoryHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    hasattr(app.builder, 'script_files'),
-
-tests/test_builders.py: 11 warnings
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:121: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsDirectoryHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    js_file not in app.builder.script_files,
-
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_missing_toctree
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:106: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsSingleFileHTMLBuilder.css_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    if inject_css and theme_css not in app.builder.css_files:
-
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_missing_toctree
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:120: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsSingleFileHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    hasattr(app.builder, 'script_files'),
-
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_missing_toctree
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:121: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsSingleFileHTMLBuilder.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    js_file not in app.builder.script_files,
-
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_missing_toctree
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:106: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsSingleFileHTMLBuilderLocalMedia.css_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    if inject_css and theme_css not in app.builder.css_files:
-
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_missing_toctree
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:120: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsSingleFileHTMLBuilderLocalMedia.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    hasattr(app.builder, 'script_files'),
-
-tests/test_builders.py::test_basic
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_missing_toctree
-  $(PYTHON_DIR)/vendor-packages/readthedocs_ext/readthedocs.py:121: RemovedInSphinx90Warning: 'sphinx.builders.html.ReadtheDocsSingleFileHTMLBuilderLocalMedia.script_files' is deprecated. Check CHANGES for Sphinx API modifications.
-    js_file not in app.builder.script_files,
-
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_empty
-tests/test_builders.py::test_empty
-  $(@D)/tests/test_builders.py:69: PendingDeprecationWarning: nodes.Node.traverse() is obsoleted by Node.findall().
-    assert app.env.get_doctree('index').traverse(addnodes.toctree)
-
-tests/test_builders.py::test_missing_toctree
-tests/test_builders.py::test_missing_toctree
-tests/test_builders.py::test_missing_toctree
-tests/test_builders.py::test_missing_toctree
-tests/test_builders.py::test_missing_toctree
-tests/test_builders.py::test_missing_toctree
-  $(@D)/tests/test_builders.py:84: PendingDeprecationWarning: nodes.Node.traverse() is obsoleted by Node.findall().
-    assert app.env.get_doctree('index').traverse(addnodes.toctree) == []
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 3 passed, 438 warnings ========
+The HTML pages are in .tox/py$(PYV)/tmp/html.
+py$(PYV): commands[2]> echo 'Open the following URL for visual testing: file://$(@D)/.tox/py$(PYV)/tmp/html/demo/demo.html'
+Open the following URL for visual testing: file://$(@D)/.tox/py$(PYV)/tmp/html/demo/demo.html
+  py$(PYV): OK
+  congratulations :)
