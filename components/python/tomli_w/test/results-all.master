@@ -1,22 +1,318 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml
-collecting ... collected 1 item
+rootdir: $(@D)
+configfile: pyproject.toml
+collecting ... collected 269 items
 
-::project PASSED
+tests/test_for_profiler.py::test_for_profiler PASSED
+tests/test_invalid.py::test_invalid_time PASSED
+tests/test_invalid.py::test_invalid_type_nested PASSED
+tests/test_invalid.py::test_negative_indent PASSED
+tests/test_style.py::test_array_indent_override PASSED
+tests/test_style.py::test_array_of_long_tables PASSED
+tests/test_style.py::test_array_of_short_tables PASSED
+tests/test_style.py::test_array_of_tables_containing_lists PASSED
+tests/test_style.py::test_dont_write_redundant_tables PASSED
+tests/test_style.py::test_empty_doc PASSED
+tests/test_style.py::test_example_issue_12 PASSED
+tests/test_style.py::test_multiline PASSED
+tests/test_style.py::test_multiline_in_aot PASSED
+tests/test_style.py::test_nested_keys PASSED
+tests/test_style.py::test_newline_before_table PASSED
+tests/test_style.py::test_non_trivial_nesting PASSED
+tests/test_style.py::test_only_tables PASSED
+tests/test_style.py::test_table_with_empty_array PASSED
+tests/test_style.py::test_tricky_keys PASSED
+tests/test_types.py::test_decimal PASSED
+tests/test_types.py::test_tuple PASSED
+tests/test_valid.py::test_obj_to_str_mapping[obj0-cr-newline = "foo\\rbar"\n-True] PASSED
+tests/test_valid.py::test_obj_to_str_mapping[obj1-crlf-newline = """\nfoo\nbar"""\n-True] PASSED
+tests/test_valid.py::test_valid[apostrophes-in-literal-string] PASSED
+tests/test_valid.py::test_valid[array-empty] PASSED
+tests/test_valid.py::test_valid[array-hetergeneous] PASSED
+tests/test_valid.py::test_valid[array-nested-inline-table] PASSED
+tests/test_valid.py::test_valid[array-nested] PASSED
+tests/test_valid.py::test_valid[array-nospaces] PASSED
+tests/test_valid.py::test_valid[array-string-quote-comma-2] PASSED
+tests/test_valid.py::test_valid[array-string-quote-comma] PASSED
+tests/test_valid.py::test_valid[array-string-with-comma] PASSED
+tests/test_valid.py::test_valid[array-subtables] PASSED
+tests/test_valid.py::test_valid[array-table-array-string-backslash] PASSED
+tests/test_valid.py::test_valid[array] PASSED
+tests/test_valid.py::test_valid[arrays-hetergeneous] PASSED
+tests/test_valid.py::test_valid[arrays-nested] PASSED
+tests/test_valid.py::test_valid[arrays] PASSED
+tests/test_valid.py::test_valid[bool] PASSED
+tests/test_valid.py::test_valid[comment-at-eof2] PASSED
+tests/test_valid.py::test_valid[comment-at-eof] PASSED
+tests/test_valid.py::test_valid[comment-everywhere] PASSED
+tests/test_valid.py::test_valid[comment-tricky] PASSED
+tests/test_valid.py::test_valid[comments-at-eof2] PASSED
+tests/test_valid.py::test_valid[comments-at-eof] PASSED
+tests/test_valid.py::test_valid[comments-everywhere] PASSED
+tests/test_valid.py::test_valid[datetime-local-date] PASSED
+tests/test_valid.py::test_valid[datetime-local-time] PASSED
+tests/test_valid.py::test_valid[datetime-local] PASSED
+tests/test_valid.py::test_valid[datetime-timezone] PASSED
+tests/test_valid.py::test_valid[datetime] PASSED
+tests/test_valid.py::test_valid[double-quote-escape] PASSED
+tests/test_valid.py::test_valid[empty-file] PASSED
+tests/test_valid.py::test_valid[empty-inline-table] PASSED
+tests/test_valid.py::test_valid[empty] PASSED
+tests/test_valid.py::test_valid[ends-in-whitespace-escape] PASSED
+tests/test_valid.py::test_valid[escaped-escape] PASSED
+tests/test_valid.py::test_valid[example] PASSED
+tests/test_valid.py::test_valid[exponent-part-float] PASSED
+tests/test_valid.py::test_valid[five-quotes] PASSED
+tests/test_valid.py::test_valid[float-exponent] PASSED
+tests/test_valid.py::test_valid[float-inf-and-nan] PASSED
+tests/test_valid.py::test_valid[float-long] PASSED
+tests/test_valid.py::test_valid[float-underscore] PASSED
+tests/test_valid.py::test_valid[float] PASSED
+tests/test_valid.py::test_valid[implicit-and-explicit-after] PASSED
+tests/test_valid.py::test_valid[implicit-and-explicit-before] PASSED
+tests/test_valid.py::test_valid[implicit-groups] PASSED
+tests/test_valid.py::test_valid[inline-table-array] PASSED
+tests/test_valid.py::test_valid[inline-table-empty] PASSED
+tests/test_valid.py::test_valid[inline-table-end-in-bool] PASSED
+tests/test_valid.py::test_valid[inline-table-multiline] PASSED
+tests/test_valid.py::test_valid[inline-table-nest] PASSED
+tests/test_valid.py::test_valid[inline-table] PASSED
+tests/test_valid.py::test_valid[integer-literals] PASSED
+tests/test_valid.py::test_valid[integer-long] PASSED
+tests/test_valid.py::test_valid[integer-underscore] PASSED
+tests/test_valid.py::test_valid[integer] PASSED
+tests/test_valid.py::test_valid[key-alphanum] PASSED
+tests/test_valid.py::test_valid[key-case-sensitive] PASSED
+tests/test_valid.py::test_valid[key-dotted] PASSED
+tests/test_valid.py::test_valid[key-empty] PASSED
+tests/test_valid.py::test_valid[key-equals-nospace] PASSED
+tests/test_valid.py::test_valid[key-escapes] PASSED
+tests/test_valid.py::test_valid[key-numeric] PASSED
+tests/test_valid.py::test_valid[key-quoted-dots] PASSED
+tests/test_valid.py::test_valid[key-space] PASSED
+tests/test_valid.py::test_valid[key-special-chars] PASSED
+tests/test_valid.py::test_valid[key-special-word] PASSED
+tests/test_valid.py::test_valid[keys-with-dots] PASSED
+tests/test_valid.py::test_valid[long-float] PASSED
+tests/test_valid.py::test_valid[long-integer] PASSED
+tests/test_valid.py::test_valid[multiline-string-accidental-whitespace] PASSED
+tests/test_valid.py::test_valid[multiline-string-quotes] PASSED
+tests/test_valid.py::test_valid[multiline-string] PASSED
+tests/test_valid.py::test_valid[nested-inline-table-array] PASSED
+tests/test_valid.py::test_valid[newline-crlf] PASSED
+tests/test_valid.py::test_valid[newline-lf] PASSED
+tests/test_valid.py::test_valid[no-newlines] PASSED
+tests/test_valid.py::test_valid[open-parent-table] PASSED
+tests/test_valid.py::test_valid[qa-array-inline-1000] PASSED
+tests/test_valid.py::test_valid[qa-array-inline-nested-1000] XFAIL (...)
+tests/test_valid.py::test_valid[qa-key-literal-40kb] PASSED
+tests/test_valid.py::test_valid[qa-key-string-40kb] PASSED
+tests/test_valid.py::test_valid[qa-scalar-literal-40kb] PASSED
+tests/test_valid.py::test_valid[qa-scalar-literal-multiline-40kb] PASSED
+tests/test_valid.py::test_valid[qa-scalar-string-40kb] PASSED
+tests/test_valid.py::test_valid[qa-scalar-string-multiline-40kb] PASSED
+tests/test_valid.py::test_valid[qa-table-inline-1000] PASSED
+tests/test_valid.py::test_valid[qa-table-inline-nested-1000] XFAIL (...)
+tests/test_valid.py::test_valid[raw-multiline-string] PASSED
+tests/test_valid.py::test_valid[raw-string] PASSED
+tests/test_valid.py::test_valid[right-curly-brace-after-boolean] PASSED
+tests/test_valid.py::test_valid[spec-array-1] PASSED
+tests/test_valid.py::test_valid[spec-array-2] PASSED
+tests/test_valid.py::test_valid[spec-array-3] PASSED
+tests/test_valid.py::test_valid[spec-array-4] PASSED
+tests/test_valid.py::test_valid[spec-array-5] PASSED
+tests/test_valid.py::test_valid[spec-array-7] PASSED
+tests/test_valid.py::test_valid[spec-array-8] PASSED
+tests/test_valid.py::test_valid[spec-array-mixed-number-types] PASSED
+tests/test_valid.py::test_valid[spec-array-more-mixed-types] PASSED
+tests/test_valid.py::test_valid[spec-array-of-tables-1] PASSED
+tests/test_valid.py::test_valid[spec-array-of-tables-2] PASSED
+tests/test_valid.py::test_valid[spec-array-of-tables-3] PASSED
+tests/test_valid.py::test_valid[spec-boolean-1] PASSED
+tests/test_valid.py::test_valid[spec-boolean-2] PASSED
+tests/test_valid.py::test_valid[spec-case-sensitive] PASSED
+tests/test_valid.py::test_valid[spec-comment-mid-array] PASSED
+tests/test_valid.py::test_valid[spec-comment-mid-string] PASSED
+tests/test_valid.py::test_valid[spec-comment-tab] PASSED
+tests/test_valid.py::test_valid[spec-comment] PASSED
+tests/test_valid.py::test_valid[spec-date-local-1] PASSED
+tests/test_valid.py::test_valid[spec-date-time-1] PASSED
+tests/test_valid.py::test_valid[spec-date-time-2] PASSED
+tests/test_valid.py::test_valid[spec-date-time-3] PASSED
+tests/test_valid.py::test_valid[spec-date-time-4] PASSED
+tests/test_valid.py::test_valid[spec-date-time-5] PASSED
+tests/test_valid.py::test_valid[spec-date-time-6] PASSED
+tests/test_valid.py::test_valid[spec-date-time-local-1] PASSED
+tests/test_valid.py::test_valid[spec-date-time-local-2] PASSED
+tests/test_valid.py::test_valid[spec-dotted-keys-1] PASSED
+tests/test_valid.py::test_valid[spec-dotted-keys-2] PASSED
+tests/test_valid.py::test_valid[spec-dotted-keys-3] PASSED
+tests/test_valid.py::test_valid[spec-empty-key-name-1] PASSED
+tests/test_valid.py::test_valid[spec-empty-key-name-2] PASSED
+tests/test_valid.py::test_valid[spec-example-1-compact] PASSED
+tests/test_valid.py::test_valid[spec-example-1] PASSED
+tests/test_valid.py::test_valid[spec-extend-dotted-object-1] PASSED
+tests/test_valid.py::test_valid[spec-extend-dotted-object-2] PASSED
+tests/test_valid.py::test_valid[spec-extend-dotted-object-3] PASSED
+tests/test_valid.py::test_valid[spec-float-10] PASSED
+tests/test_valid.py::test_valid[spec-float-11] PASSED
+tests/test_valid.py::test_valid[spec-float-12] PASSED
+tests/test_valid.py::test_valid[spec-float-13] PASSED
+tests/test_valid.py::test_valid[spec-float-14] PASSED
+tests/test_valid.py::test_valid[spec-float-15] PASSED
+tests/test_valid.py::test_valid[spec-float-1] PASSED
+tests/test_valid.py::test_valid[spec-float-2] PASSED
+tests/test_valid.py::test_valid[spec-float-3] PASSED
+tests/test_valid.py::test_valid[spec-float-4] PASSED
+tests/test_valid.py::test_valid[spec-float-5] PASSED
+tests/test_valid.py::test_valid[spec-float-6] PASSED
+tests/test_valid.py::test_valid[spec-float-7] PASSED
+tests/test_valid.py::test_valid[spec-float-8] PASSED
+tests/test_valid.py::test_valid[spec-float-9] PASSED
+tests/test_valid.py::test_valid[spec-int-1] PASSED
+tests/test_valid.py::test_valid[spec-int-2] PASSED
+tests/test_valid.py::test_valid[spec-int-3] PASSED
+tests/test_valid.py::test_valid[spec-int-3a] PASSED
+tests/test_valid.py::test_valid[spec-int-3b] PASSED
+tests/test_valid.py::test_valid[spec-int-4] PASSED
+tests/test_valid.py::test_valid[spec-int-5] PASSED
+tests/test_valid.py::test_valid[spec-int-6] PASSED
+tests/test_valid.py::test_valid[spec-int-7] PASSED
+tests/test_valid.py::test_valid[spec-int-bin1] PASSED
+tests/test_valid.py::test_valid[spec-int-hex1] PASSED
+tests/test_valid.py::test_valid[spec-int-hex2] PASSED
+tests/test_valid.py::test_valid[spec-int-hex3] PASSED
+tests/test_valid.py::test_valid[spec-int-max] PASSED
+tests/test_valid.py::test_valid[spec-int-min] PASSED
+tests/test_valid.py::test_valid[spec-int-oct1] PASSED
+tests/test_valid.py::test_valid[spec-int-oct2] PASSED
+tests/test_valid.py::test_valid[spec-key-value-pair-1] PASSED
+tests/test_valid.py::test_valid[spec-key-value-pair-2] PASSED
+tests/test_valid.py::test_valid[spec-key-value-pair-3] PASSED
+tests/test_valid.py::test_valid[spec-key-value-pair-4] PASSED
+tests/test_valid.py::test_valid[spec-key-value-pair-5] PASSED
+tests/test_valid.py::test_valid[spec-key-value-pair-6] PASSED
+tests/test_valid.py::test_valid[spec-key-value-pair-7] PASSED
+tests/test_valid.py::test_valid[spec-key-value-pair-8] PASSED
+tests/test_valid.py::test_valid[spec-key-value-pair-9] PASSED
+tests/test_valid.py::test_valid[spec-newline-1] PASSED
+tests/test_valid.py::test_valid[spec-newline-2] PASSED
+tests/test_valid.py::test_valid[spec-newline-3] PASSED
+tests/test_valid.py::test_valid[spec-quoted-basic-keys-1] PASSED
+tests/test_valid.py::test_valid[spec-quoted-literal-keys-1] PASSED
+tests/test_valid.py::test_valid[spec-readme-example] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-multiline-1] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-multiline-2] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-multiline-3] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-multiline-4] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-multiline-5] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-multiline-6] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-multiline-7] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-multiline-8] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-multiline-9] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-tab-multiline] PASSED
+tests/test_valid.py::test_valid[spec-string-basic-tab] PASSED
+tests/test_valid.py::test_valid[spec-string-basic] PASSED
+tests/test_valid.py::test_valid[spec-string-escape-1] PASSED
+tests/test_valid.py::test_valid[spec-string-escape-2] PASSED
+tests/test_valid.py::test_valid[spec-string-escape-3] PASSED
+tests/test_valid.py::test_valid[spec-string-escape-4] PASSED
+tests/test_valid.py::test_valid[spec-string-escape-5] PASSED
+tests/test_valid.py::test_valid[spec-string-escape-6] PASSED
+tests/test_valid.py::test_valid[spec-string-escape-7] PASSED
+tests/test_valid.py::test_valid[spec-string-escape-8] PASSED
+tests/test_valid.py::test_valid[spec-string-escape-9] PASSED
+tests/test_valid.py::test_valid[spec-string-literal-1] PASSED
+tests/test_valid.py::test_valid[spec-string-literal-2] PASSED
+tests/test_valid.py::test_valid[spec-string-literal-3] PASSED
+tests/test_valid.py::test_valid[spec-string-literal-4] PASSED
+tests/test_valid.py::test_valid[spec-string-literal-multiline-1] PASSED
+tests/test_valid.py::test_valid[spec-string-literal-multiline-2] PASSED
+tests/test_valid.py::test_valid[spec-string-literal-multiline-3] PASSED
+tests/test_valid.py::test_valid[spec-string-literal-multiline-4] PASSED
+tests/test_valid.py::test_valid[spec-table-1] PASSED
+tests/test_valid.py::test_valid[spec-table-2] PASSED
+tests/test_valid.py::test_valid[spec-table-3] PASSED
+tests/test_valid.py::test_valid[spec-table-4] PASSED
+tests/test_valid.py::test_valid[spec-table-5] PASSED
+tests/test_valid.py::test_valid[spec-table-6] PASSED
+tests/test_valid.py::test_valid[spec-table-7] PASSED
+tests/test_valid.py::test_valid[spec-table-8] PASSED
+tests/test_valid.py::test_valid[spec-table-inline-1] PASSED
+tests/test_valid.py::test_valid[spec-table-inline-2] PASSED
+tests/test_valid.py::test_valid[spec-table-inline-3] PASSED
+tests/test_valid.py::test_valid[spec-table] PASSED
+tests/test_valid.py::test_valid[spec-time-1] PASSED
+tests/test_valid.py::test_valid[spec-time-2] PASSED
+tests/test_valid.py::test_valid[string-double-quote-escape] PASSED
+tests/test_valid.py::test_valid[string-empty] PASSED
+tests/test_valid.py::test_valid[string-escape-tricky] PASSED
+tests/test_valid.py::test_valid[string-escaped-escape] PASSED
+tests/test_valid.py::test_valid[string-escapes] PASSED
+tests/test_valid.py::test_valid[string-nl] PASSED
+tests/test_valid.py::test_valid[string-simple] PASSED
+tests/test_valid.py::test_valid[string-unicode-escape] PASSED
+tests/test_valid.py::test_valid[string-unicode-literal] PASSED
+tests/test_valid.py::test_valid[string-with-pound] PASSED
+tests/test_valid.py::test_valid[table-array-implicit] PASSED
+tests/test_valid.py::test_valid[table-array-many] PASSED
+tests/test_valid.py::test_valid[table-array-nest] PASSED
+tests/test_valid.py::test_valid[table-array-one] PASSED
+tests/test_valid.py::test_valid[table-array-table-array] PASSED
+tests/test_valid.py::test_valid[table-empty] PASSED
+tests/test_valid.py::test_valid[table-no-eol] PASSED
+tests/test_valid.py::test_valid[table-sub-empty] PASSED
+tests/test_valid.py::test_valid[table-whitespace] PASSED
+tests/test_valid.py::test_valid[table-with-literal-string] PASSED
+tests/test_valid.py::test_valid[table-with-pound] PASSED
+tests/test_valid.py::test_valid[table-with-single-quotes] PASSED
+tests/test_valid.py::test_valid[table-without-super] PASSED
+tests/test_valid.py::test_valid[underscored-float] PASSED
+tests/test_valid.py::test_valid[underscored-integer] PASSED
+tests/test_valid.py::test_valid[unicode-escape] PASSED
+tests/test_valid.py::test_valid[unicode-literal] PASSED
+tests/test_write_file.py::test_dump PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17
-  $(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1 passed, 2 warnings ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 267 passed, 2 xfailed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+  py$(PYV): OK
   congratulations :)
