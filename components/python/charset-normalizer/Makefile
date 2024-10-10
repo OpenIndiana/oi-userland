@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project charset-normalizer
+#   $WS_TOOLS/python-integrate-project -d python/charset-normalizer charset_normalizer
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		charset-normalizer
-HUMAN_VERSION =			3.3.2
-COMPONENT_SUMMARY =		charset-normalizer - The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.
+COMPONENT_NAME =		charset_normalizer
+HUMAN_VERSION =			3.4.0
+COMPONENT_SUMMARY =		The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.
 COMPONENT_PROJECT_URL =		https://github.com/Ousret/charset_normalizer
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/63/09/c1bc53dab74b1816a00d8d030de5bf98f724c52c1635e07681d312f20be8/charset-normalizer-3.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f30c3cb33b24454a82faecaf01b19c18562b1e89558fb6c56de4d9118a032fd5
+	sha256:223217c3d4f82c3ac5e29032b3f1c2eb0fb591b72161f86d93f5719079dae93e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
