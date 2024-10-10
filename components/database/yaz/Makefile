@@ -18,11 +18,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yaz
-COMPONENT_VERSION=	5.34.1
+COMPONENT_VERSION=	5.34.2
 COMPONENT_SUMMARY=	toolkit supporting the development of Z39.50/SRW/SRU clients and servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:393ff4fbbf9194465996236f39efb2962848820247296aec2a6170b0d5d2a44c
+COMPONENT_ARCHIVE_HASH= sha256:ab45cf48036fc6da7493815c033b5db2b1e7a34632caed1a43e9cdef745b9618
 COMPONENT_ARCHIVE_URL=	http://ftp.indexdata.dk/pub/yaz/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.indexdata.com/resources/software/yaz/
 COMPONENT_FMRI=		database/yaz
@@ -43,6 +43,7 @@ COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(READLINE_PKG)
+REQUIRED_PACKAGES += database/hiredis
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libmemcached
 REQUIRED_PACKAGES += library/libxml2
