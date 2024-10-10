@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml_html_clean
-HUMAN_VERSION =			0.2.2
+HUMAN_VERSION =			0.3.1
 COMPONENT_SUMMARY =		HTML cleaner from lxml project
 COMPONENT_PROJECT_URL =		https://github.com/fedora-python/lxml_html_clean/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cc34178e34673025c49c3d7f4bd48754e9e4b23875df2308f43c21733d8437fb
+	sha256:d9f7d8ae36092f4ed5079cfbf95ff06d3c6fd04f4a861422ce251ece72d3c4b5
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
