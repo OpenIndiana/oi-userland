@@ -24,12 +24,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
 HUMAN_VERSION=		2.82.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_ARCHIVE_HASH=	sha256:478634440bf52ee4ec4428d558787398c0be6b043c521beb308334b3db4489a6
 COMPONENT_FMRI=		library/glib2
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
+
+COMPONENT_FMRI.glib-32 =		$(COMPONENT_FMRI)/32
+COMPONENT_SUMMARY.glib-32 =		$(COMPONENT_SUMMARY) (32-bit)
 
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
@@ -54,8 +58,7 @@ CFLAGS += -Wno-error=format-security
 
 # We do not have getxattr() so disable xattr
 CONFIGURE_OPTIONS += -Dxattr=false
-CONFIGURE_OPTIONS += -Dman=true
-CONFIGURE_OPTIONS += -Druntime_libdir=$(USRLIBDIR)
+CONFIGURE_OPTIONS.64 += -Dman-pages=enabled
 CONFIGURE_OPTIONS += -Dcharsetalias_dir=$(USRLIBDIR)
 CONFIGURE_OPTIONS += -Druntime_dir=$(VARDIR)/run
 CONFIGURE_OPTIONS += -Dselinux=disabled
@@ -67,6 +70,9 @@ CONFIGURE_OPTIONS += -Dsystemtap=disabled
 CONFIGURE_OPTIONS += -Dsysprof=disabled
 # see https://gitlab.gnome.org/GNOME/glib/-/issues/3421
 CONFIGURE_OPTIONS += -Dglib_debug=disabled
+# The glib documentation is needed to build documentation for other projects.
+# See also https://gitlab.gnome.org/GNOME/gtk-doc/-/issues/73#note_420663
+CONFIGURE_OPTIONS.64 += -Ddocumentation=true
 
 COMPONENT_POST_CONFIGURE_ACTION= \
   ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
@@ -81,13 +87,6 @@ COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 # Without this the gi-compile-repository loads system libraries which makes the
 # typelib compilation to fail
 COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=gio:glib:gobject
-
-# necessary otherwise make REQUIRED_PACKAGES will fail
-COMPONENT_POST_INSTALL_ACTION.32= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR32)/g*
-COMPONENT_POST_INSTALL_ACTION.64= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR)/g*
-
-# We need to install libraries and set correct LD_LIBRARY_PATH before test
-$(TEST_TARGET): $(INSTALL_TARGET)
 
 # dbus-daemon is in /usr/lib
 COMPONENT_TEST_ENV.32 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib PATH=$(PATH):/usr/lib
