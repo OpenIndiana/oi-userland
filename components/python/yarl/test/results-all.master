@@ -1,10 +1,11 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-X workers [1258 items]
+X workers [1263 items]
 
 scheduling tests via LoadScheduling
 
@@ -16,16 +17,6 @@ tests/test_cache.py::test_cache_info PASSED
 tests/test_cached_property.py::test_reify PASSED
 tests/test_cached_property.py::test_reify_assignment PASSED
 tests/test_cached_property.py::test_reify_class PASSED
-tests/test_helpers.py::TestCCachedProperty::test_cached_property PASSED
-tests/test_helpers.py::TestCCachedProperty::test_cached_property_assignment PASSED
-tests/test_helpers.py::TestCCachedProperty::test_cached_property_check_without_cache PASSED
-tests/test_helpers.py::TestCCachedProperty::test_cached_property_class PASSED
-tests/test_helpers.py::TestCCachedProperty::test_cached_property_without_cache PASSED
-tests/test_helpers.py::TestPyCachedProperty::test_cached_property PASSED
-tests/test_helpers.py::TestPyCachedProperty::test_cached_property_assignment PASSED
-tests/test_helpers.py::TestPyCachedProperty::test_cached_property_check_without_cache PASSED
-tests/test_helpers.py::TestPyCachedProperty::test_cached_property_class PASSED
-tests/test_helpers.py::TestPyCachedProperty::test_cached_property_without_cache PASSED
 tests/test_normalize_path.py::test__normalize_path[-] PASSED
 tests/test_normalize_path.py::test__normalize_path[../path/to-path/to] PASSED
 tests/test_normalize_path.py::test__normalize_path[././path/to-path/to] PASSED
@@ -141,6 +132,8 @@ tests/test_quoting.py::test_default_quoting_partial[c_quoter] PASSED
 tests/test_quoting.py::test_default_quoting_partial[py_quoter] PASSED
 tests/test_quoting.py::test_default_quoting_percent[c_quoter] PASSED
 tests/test_quoting.py::test_default_quoting_percent[py_quoter] PASSED
+tests/test_quoting.py::test_fuzz__PyQuoter PASSED
+tests/test_quoting.py::test_fuzz__PyUnquoter PASSED
 tests/test_quoting.py::test_never_quote[c_quoter] PASSED
 tests/test_quoting.py::test_never_quote[py_quoter] PASSED
 tests/test_quoting.py::test_quote_None[c_quoter] PASSED
@@ -207,6 +200,18 @@ tests/test_quoting.py::test_quote_unfinished_tail_safe_non_strict[c_quoter] PASS
 tests/test_quoting.py::test_quote_unfinished_tail_safe_non_strict[py_quoter] PASSED
 tests/test_quoting.py::test_quote_unfinished_tail_unsafe_non_strict[c_quoter] PASSED
 tests/test_quoting.py::test_quote_unfinished_tail_unsafe_non_strict[py_quoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter[CUnquoter-CQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter[CUnquoter-PyQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter[PyUnquoter-CQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter[PyUnquoter-PyQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter_path_safe[CUnquoter-CQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter_path_safe[CUnquoter-PyQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter_path_safe[PyUnquoter-CQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter_path_safe[PyUnquoter-PyQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter_requote[CUnquoter-CQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter_requote[CUnquoter-PyQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter_requote[PyUnquoter-CQuoter] PASSED
+tests/test_quoting.py::test_quote_unquote_parameter_requote[PyUnquoter-PyQuoter] PASSED
 tests/test_quoting.py::test_quote_unquoted[c_quoter] PASSED
 tests/test_quoting.py::test_quote_unquoted[py_quoter] PASSED
 tests/test_quoting.py::test_quote_very_large_string[c_quoter] PASSED
@@ -874,6 +879,7 @@ tests/test_url.py::test_origin_ipv6 PASSED
 tests/test_url.py::test_origin_no_scheme PASSED
 tests/test_url.py::test_origin_nonascii PASSED
 tests/test_url.py::test_origin_not_absolute_url PASSED
+tests/test_url.py::test_origin_with_no_auth PASSED
 tests/test_url.py::test_parent_for_empty_url PASSED
 tests/test_url.py::test_parent_raw_parts PASSED
 tests/test_url.py::test_parent_raw_path PASSED
@@ -1269,4 +1275,4 @@ tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 1254 passed, 4 xfailed ========
+======== 1259 passed, 4 xfailed ========
