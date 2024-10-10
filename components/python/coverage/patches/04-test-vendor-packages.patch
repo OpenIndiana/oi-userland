@@ -1,8 +1,8 @@
 We have pytest and pluggy in vendor-packages.
 
---- coverage-7.6.1/tests/test_cmdline.py.orig
-+++ coverage-7.6.1/tests/test_cmdline.py
-@@ -347,8 +347,8 @@
+--- coverage-7.6.4/tests/test_cmdline.py.orig
++++ coverage-7.6.4/tests/test_cmdline.py
+@@ -348,8 +348,8 @@
          s = re.escape(os.sep)
          assert lines[0].startswith("-- premain ----")
          assert len(lines) > 25
@@ -13,3 +13,45 @@ We have pytest and pluggy in vendor-packages.
          assert re.search(fr"(?m)^\s+test_debug_premain : .*{s}tests{s}test_cmdline.py:\d+$", out)
          assert re.search(fr"(?m)^\s+command_line : .*{s}coverage{s}cmdline.py:\d+$", out)
          assert re.search(fr"(?m)^\s+do_debug : .*{s}coverage{s}cmdline.py:\d+$", out)
+--- coverage-7.6.4/tests/test_debug.py.orig
++++ coverage-7.6.4/tests/test_debug.py
+@@ -378,8 +378,8 @@
+             py = "pypy" if env.PYPY else "python"
+             majv, minv = sys.version_info[:2]
+             pylib = f"lib{s}{py}{majv}.{minv}{sys.abiflags}"
+-        assert len(re_lines(fr"{s}{pylib}{s}site-packages{s}_pytest", stack_text)) > 3
+-        assert len(re_lines(fr"{s}{pylib}{s}site-packages{s}pluggy", stack_text)) > 3
++        assert len(re_lines(fr"{s}{pylib}{s}vendor-packages{s}_pytest", stack_text)) > 3
++        assert len(re_lines(fr"{s}{pylib}{s}vendor-packages{s}pluggy", stack_text)) > 3
+         assert not re_lines(r" 0x[0-9a-fA-F]+", stack_text) # No frame ids
+         stack = stack_text.splitlines()
+         assert len(stack) > 25
+@@ -391,7 +391,7 @@
+     def test_short_stack_short_filenames(self) -> None:
+         stack_text = f_one(full=True, short_filenames=True)
+         s = re.escape(os.sep)
+-        assert not re_lines(r"site-packages", stack_text)
++        assert not re_lines(r"vendor-packages", stack_text)
+         assert len(re_lines(fr"syspath:{s}_pytest", stack_text)) > 3
+         assert len(re_lines(fr"syspath:{s}pluggy", stack_text)) > 3
+ 
+--- coverage-7.6.4/coverage/debug.py.orig
++++ coverage-7.6.4/coverage/debug.py
+@@ -230,7 +230,7 @@
+     functions can call this and not be included in the result.
+ 
+     If `full` is true, then include all frames.  Otherwise, initial "boring"
+-    frames (ones in site-packages and earlier) are omitted.
++    frames (ones in vendor-packages and earlier) are omitted.
+ 
+     `short_filenames` will shorten filenames using `short_filename`, to reduce
+     the amount of repetitive noise in stack traces.
+@@ -240,7 +240,7 @@
+     BORING_PRELUDE = [
+         "<string>",             # pytest-xdist has string execution.
+         r"\bigor.py$",          # Our test runner.
+-        r"\bsite-packages\b",   # pytest etc getting to our tests.
++        r"\bvendor-packages\b", # pytest etc getting to our tests.
+     ]
+ 
+     stack: Iterable[inspect.FrameInfo] = inspect.stack()[:skip:-1]

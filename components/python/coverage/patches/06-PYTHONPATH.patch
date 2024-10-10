@@ -1,0 +1,27 @@
+We set PYTHONPATH during testing.
+
+--- coverage-7.6.4/tests/coveragetest.py.orig
++++ coverage-7.6.4/tests/coveragetest.py
+@@ -443,11 +443,9 @@
+ 
+     def add_test_modules_to_pythonpath(self) -> None:
+         """Add our test modules directory to PYTHONPATH."""
+-        # Check that there isn't already a PYTHONPATH.
+-        assert os.getenv("PYTHONPATH") is None
+         testmods = nice_file(self.working_root(), "tests/modules")
+         zipfile = nice_file(self.working_root(), "tests/zipmods.zip")
+-        self.set_environ("PYTHONPATH", testmods + os.pathsep + zipfile)
++        self.set_environ("PYTHONPATH", os.getenv("PYTHONPATH") + os.pathsep + testmods + os.pathsep + zipfile)
+ 
+     def working_root(self) -> str:
+         """Where is the root of the coverage.py working tree?"""
+--- coverage-7.6.4/tests/test_testing.py.orig
++++ coverage-7.6.4/tests/test_testing.py
+@@ -30,7 +30,6 @@
+ def test_xdist_sys_path_nuttiness_is_fixed() -> None:
+     # See conftest.py:fix_xdist_sys_path
+     assert sys.path[1] != ""
+-    assert os.getenv("PYTHONPATH") is None
+ 
+ 
+ def test_assert_count_equal() -> None:

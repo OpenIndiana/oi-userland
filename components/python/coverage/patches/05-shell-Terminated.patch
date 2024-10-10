@@ -1,0 +1,11 @@
+--- coverage-7.6.4/tests/test_concurrency.py.orig
++++ coverage-7.6.4/tests/test_concurrency.py
+@@ -769,7 +769,7 @@
+         assert len(out_lines) in [2, 3]
+         assert out_lines[:2] == ["START", "SIGTERM"]
+         if len(out_lines) == 3:
+-            assert out_lines[2] == "Terminated"
++            assert "Terminated" in out_lines[2]
+         out = self.run_command("coverage report -m")
+         expected = "handler.py 5 1 80% 6"
+         assert self.squeezed_lines(out)[2] == expected

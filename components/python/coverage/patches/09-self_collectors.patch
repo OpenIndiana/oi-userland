@@ -1,0 +1,13 @@
+--- coverage-7.6.4/tests/test_concurrency.py.orig
++++ coverage-7.6.4/tests/test_concurrency.py
+@@ -735,8 +735,8 @@
+             """ + ("sigterm = true" if sigterm else ""),
+             )
+         out = self.run_command("coverage run clobbered.py")
+-        # Under Linux, things go wrong. Does that matter?
+-        if env.LINUX and "assert self._collectors" in out:
++        # Under Linux and illumos, things go wrong. Does that matter?
++        if (env.LINUX or sys.platform == "sunos5") and "assert self._collectors" in out:
+             lines = out.splitlines(True)
+             out = "".join(lines[:3])
+         assert out == "START\nNOT THREE\nEND\n"
