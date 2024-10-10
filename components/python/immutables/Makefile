@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		immutables
-HUMAN_VERSION =			0.20
-COMPONENT_SUMMARY =		immutables - Immutable Collections
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7d/63/27f038a28ff2110bc04908a047817fd316d5a16ae06d0d3707732dee8013/immutables-0.20.tar.gz
+HUMAN_VERSION =			0.21
+COMPONENT_SUMMARY =		Immutable Collections
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1d2f83e6a6a8455466cd97b9a90e2b4f7864648616dfa6b19d18f49badac3876
+	sha256:b55ffaf0449790242feb4c56ab799ea7af92801a0a43f9e2f4f8af2ab24dfc4a
 COMPONENT_LICENSE =		Apache-2.0 AND 0BSD
 
 TEST_STYLE = pytest
