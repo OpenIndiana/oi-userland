@@ -1,13 +1,13 @@
 We test in proto area not in site-packages.
 
---- pyproject_fmt_rust-1.1.6/tox.ini.orig
-+++ pyproject_fmt_rust-1.1.6/tox.ini
+--- pyproject_fmt_rust-1.2.0/tox.ini.orig
++++ pyproject_fmt_rust-1.2.0/tox.ini
 @@ -24,7 +24,7 @@
-     _COVERAGE_SRC = {envsitepackagesdir}/sphinx_argparse_cli
+     COVERAGE_FILE = {work_dir}/.coverage.{env_name}
  commands =
      python -m pytest {tty:--color=yes} {posargs: \
--      --junitxml {toxworkdir}{/}junit.{envname}.xml --cov {envsitepackagesdir}{/}pyproject_fmt_rust \
-+      --junitxml {toxworkdir}{/}junit.{envname}.xml --cov pyproject_fmt_rust \
-       --cov {toxinidir}{/}tests --cov-fail-under=100 \
+-      --cov {env_site_packages_dir}{/}pyproject_fmt_rust --cov {tox_root}{/}tests \
++      --cov pyproject_fmt_rust --cov {tox_root}{/}tests \
        --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test \
-       --cov-report html:{envtmpdir}{/}htmlcov --cov-report xml:{toxworkdir}{/}coverage.{envname}.xml \
+       --cov-report html:{env_tmp_dir}{/}htmlcov --cov-report xml:{work_dir}{/}coverage.{env_name}.xml \
+       --junitxml {work_dir}{/}junit.{env_name}.xml \
