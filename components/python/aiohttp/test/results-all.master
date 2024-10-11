@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-collecting ... collected 3306 items / 6 deselected / 3300 selected
+collecting ... collected 3313 items / 6 deselected / 3307 selected
 
 tests/test_base_protocol.py::test_loop PASSED
 tests/test_base_protocol.py::test_pause_writing PASSED
@@ -48,7 +48,6 @@ tests/test_circular_imports.py::test_no_warnings[aiohttp.http_exceptions] PASSED
 tests/test_circular_imports.py::test_no_warnings[aiohttp.http_parser] PASSED
 tests/test_circular_imports.py::test_no_warnings[aiohttp.http_websocket] PASSED
 tests/test_circular_imports.py::test_no_warnings[aiohttp.http_writer] PASSED
-tests/test_circular_imports.py::test_no_warnings[aiohttp.locks] PASSED
 tests/test_circular_imports.py::test_no_warnings[aiohttp.log] PASSED
 tests/test_circular_imports.py::test_no_warnings[aiohttp.multipart] PASSED
 tests/test_circular_imports.py::test_no_warnings[aiohttp.payload] PASSED
@@ -322,6 +321,8 @@ tests/test_client_functional.py::test_close_detached_session_on_non_existing_add
 tests/test_client_functional.py::test_aiohttp_request_context_manager[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ctx_manager_close_sess_on_error[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ctx_manager_not_found PASSED
+tests/test_client_functional.py::test_raising_client_connector_dns_error_on_dns_failure PASSED
+tests/test_client_functional.py::test_aiohttp_request_coroutine[pyloop] PASSED
 tests/test_client_functional.py::test_yield_from_in_session_request[pyloop] PASSED
 tests/test_client_functional.py::test_close_context_manager[pyloop] PASSED
 tests/test_client_functional.py::test_session_auth[pyloop] PASSED
@@ -803,6 +804,11 @@ tests/test_connector.py::test_ssl_context_once PASSED
 tests/test_connector.py::test_close_twice[pyloop] PASSED
 tests/test_connector.py::test_close_cancels_cleanup_handle[pyloop] PASSED
 tests/test_connector.py::test_close_cancels_resolve_host[pyloop] PASSED
+tests/test_connector.py::test_multiple_dns_resolution_requests_success[pyloop] PASSED
+tests/test_connector.py::test_multiple_dns_resolution_requests_failure[pyloop] PASSED
+tests/test_connector.py::test_multiple_dns_resolution_requests_cancelled[pyloop] PASSED
+tests/test_connector.py::test_multiple_dns_resolution_requests_first_cancelled[pyloop] PASSED
+tests/test_connector.py::test_multiple_dns_resolution_requests_first_fails_second_successful[pyloop] PASSED
 tests/test_connector.py::test_close_abort_closed_transports[pyloop] PASSED
 tests/test_connector.py::test_close_cancels_cleanup_closed_handle[pyloop] PASSED
 tests/test_connector.py::test_ctor_with_default_loop[pyloop] PASSED
@@ -1653,9 +1659,6 @@ tests/test_imports.py::test___all__ PASSED
 tests/test_imports.py::test_web___all__ PASSED
 tests/test_imports.py::test_import_time SKIPPED (Timing is more reliable
 on Linux)
-tests/test_locks.py::TestEventResultOrError::test_set_exception[pyloop] PASSED
-tests/test_locks.py::TestEventResultOrError::test_set[pyloop] PASSED
-tests/test_locks.py::TestEventResultOrError::test_cancel_waiters[pyloop] PASSED
 tests/test_loop.py::test_subprocess_co[pyloop] PASSED
 tests/test_loop.py::TestCase::test_default_loop PASSED
 tests/test_loop.py::TestCase::test_on_startup_hook PASSED
@@ -1927,6 +1930,10 @@ tests/test_resolver.py::test_close_for_async_resolver[pyloop] SKIPPED
 tests/test_resolver.py::test_default_loop_for_threaded_resolver[pyloop] PASSED
 tests/test_resolver.py::test_async_resolver_ipv6_positive_lookup[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_query_ipv6_positive_lookup[pyloop] SKIPPED
+tests/test_resolver.py::test_async_resolver_query_fallback_error_messages_passed[pyloop] SKIPPED
+tests/test_resolver.py::test_async_resolver_query_fallback_error_messages_passed_no_hosts[pyloop] SKIPPED
+tests/test_resolver.py::test_async_resolver_error_messages_passed[pyloop] SKIPPED
+tests/test_resolver.py::test_async_resolver_error_messages_passed_no_hosts[pyloop] SKIPPED
 tests/test_resolver.py::test_async_resolver_aiodns_not_present[pyloop] PASSED
 tests/test_resolver.py::test_aio_dns_is_default SKIPPED (aiodns >=3.2.0
 required)
@@ -3316,4 +3323,4 @@ tests/test_worker.py::test__create_ssl_context_with_ca_certs[AsyncioWorker-pyloo
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3259 passed, 35 skipped, 6 deselected, 6 xfailed ========
+======== 3262 passed, 39 skipped, 6 deselected, 6 xfailed ========
