@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		objgraph
-HUMAN_VERSION =			3.6.1
-COMPONENT_SUMMARY =		objgraph - Draws Python object reference graphs with graphviz
+HUMAN_VERSION =			3.6.2
+COMPONENT_SUMMARY =		Draws Python object reference graphs with graphviz
 COMPONENT_PROJECT_URL =		https://mg.pov.lt/objgraph/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fe96c74147bbcaae8665b396e5388bdcc3197deebba4e6381f05202ee5b453a7
+	sha256:00b9f2f40f7422e3c7f45a61c4dafdaf81f03ff0649d6eaec866f01030e51ad8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
