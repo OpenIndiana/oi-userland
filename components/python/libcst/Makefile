@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libcst
-HUMAN_VERSION =			1.4.0
-COMPONENT_SUMMARY =		A concrete syntax tree with AST-like properties for Python 3.0 through 3.12 programs.
+HUMAN_VERSION =			1.5.0
+COMPONENT_SUMMARY =		A concrete syntax tree with AST-like properties for Python 3.0 through 3.13 programs.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:449e0b16604f054fa7f27c3ffe86ea7ef6c409836fe68fe4e752a1894175db00
+	sha256:8478abf21ae3861a073e898d80b822bd56e578886331b33129ba77fec05b8c24
 COMPONENT_LICENSE =		MIT OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -60,6 +60,9 @@ PYTEST_ADDOPTS += --ignore libcst-RENAMED/tests/test_fuzz.py
 
 # https://github.com/Instagram/LibCST/issues/818
 PYTEST_ADDOPTS += --ignore libcst-RENAMED/codegen/tests/test_codegen_clean.py
+
+# https://github.com/Instagram/LibCST/issues/1220
+PYTEST_ADDOPTS += --deselect libcst-RENAMED/codemod/tests/test_codemod_cli.py::TestCodemodCLI::test_codemod_formatter_error_input
 
 # Remove extra -RENAMED from test report
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(libcst\)-RENAMED/\1/g'"
