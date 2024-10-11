@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project zope.interface
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.interface
-HUMAN_VERSION =			7.0.3
+HUMAN_VERSION =			7.1.1
 COMPONENT_SUMMARY =		Interfaces for Python
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.interface
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cd2690d4b08ec9eaf47a85914fe513062b20da78d10d6d789a792c0b20307fb1
+	sha256:4284d664ef0ff7b709836d4de7b13d80873dc5faeffc073abdb280058bfac5e3
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -42,6 +42,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
+TEST_REQUIRED_PACKAGES.python += library/python/tomli
 TEST_REQUIRED_PACKAGES.python += library/python/zope-event
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
