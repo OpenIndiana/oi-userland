@@ -36,7 +36,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  #include "kex.h"
  #include "sshbuf.h"
  #include "log.h"
-@@ -84,6 +91,15 @@ format_key(const struct sshkey *key)
+@@ -85,6 +92,15 @@ format_key(const struct sshkey *key)
  	return ret;
  }
  
@@ -52,7 +52,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  static int
  userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -745,6 +761,124 @@ user_key_command_allowed2(struct passwd
+@@ -746,6 +762,135 @@ user_key_command_allowed2(struct passwd
  	return found_key;
  }
  
@@ -126,7 +126,9 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
 +	argfp = fp + 4;
 +
 +	switch (key->type) {
-+	case KEY_RSA:
++	case KEY_RSA: {
++		RSA *rsa;
++
 +		rsa_sym = (RSA_SYM)dlsym(handle, RSA_SYM_NAME);
 +		if (rsa_sym == NULL) {
 +			debug("Unable to resolve symbol %s: %s", RSA_SYM_NAME,
@@ -135,9 +137,14 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
 +		}
 +		debug2("Invoking %s from %s", RSA_SYM_NAME,
 +		    options.pubkey_plugin);
-+		success = (*rsa_sym)(pw, key->rsa, argfp);
++		rsa = EVP_PKEY_get1_RSA(key->pkey);
++		success = (*rsa_sym)(pw, rsa, argfp);
++		RSA_free(rsa);
 +		break;
-+	case KEY_ECDSA:
++	}
++	case KEY_ECDSA: {
++		EC_KEY *ec;
++
 +		ecdsa_sym = (ECDSA_SYM)dlsym(handle, ECDSA_SYM_NAME);
 +		if (ecdsa_sym == NULL) {
 +			debug("Unable to resolve symbol %s: %s", ECDSA_SYM_NAME,
@@ -146,8 +153,11 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
 +		}
 +		debug2("Invoking %s from %s", ECDSA_SYM_NAME,
 +		    options.pubkey_plugin);
-+		success = (*ecdsa_sym)(pw, key->ecdsa, argfp);
++		ec = EVP_PKEY_get1_EC_KEY(key->pkey);
++		success = (*ecdsa_sym)(pw, ec, argfp);
++		EC_KEY_free(ec);
 +		break;
++	}
 +	default:
 +		debug2("user_key_plugins only support RSA and ECDSA keys");
 +	}
@@ -164,7 +174,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
 +	}
 +
 +	if (success)
-+		verbose("Found matching %s key: %s", sshkey_type(key), fp);
++		verbose("Found matching %s key: %s", sshkey_type(key),
++		    fp != NULL ? fp : "NULL");
 +
 +	if (fp != NULL) {
 +		free(fp);
@@ -177,7 +188,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -796,6 +930,10 @@ user_key_allowed(struct ssh *ssh, struct
+@@ -797,6 +942,10 @@ user_key_allowed(struct ssh *ssh, struct
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -191,23 +202,23 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -209,6 +209,7 @@ initialize_server_options(ServerOptions
- 	 */
- 	options->pam_service_per_authmethod = 1;
- #endif
+@@ -226,6 +226,7 @@ initialize_server_options(ServerOptions
+ 	options->unused_connection_timeout = -1;
+ 	options->sshd_session_path = NULL;
+ 	options->refuse_connection = -1;
 +	options->pubkey_plugin = NULL;
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -557,6 +558,7 @@ typedef enum {
- 	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
- 	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
- 	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
+@@ -595,6 +596,7 @@ typedef enum {
+ 	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
+ 	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
+ 	sKexAlgorithms, sCASignatureAlgorithms, sIPQoS, sVersionAddendum,
 +	sPubKeyPlugin,
- 	sDeprecated, sIgnore, sUnsupported
- } ServerOpCodes;
- 
-@@ -723,6 +725,7 @@ static struct {
+ 	sAuthorizedKeysCommand, sAuthorizedKeysCommandUser,
+ 	sAuthenticationMethods, sHostKeyAgent, sPermitUserRC,
+ 	sStreamLocalBindMask, sStreamLocalBindUnlink,
+@@ -778,6 +780,7 @@ static struct {
  	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
  	{ "rdomain", sRDomain, SSHCFG_ALL },
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
@@ -215,9 +226,9 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
  	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
  	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
-@@ -2631,6 +2634,18 @@ process_server_config_line_depth(ServerO
- 		}
- 		break;
+@@ -2755,6 +2758,18 @@ process_server_config_line_depth(ServerO
+ 		multistate_ptr = multistate_flag;
+ 		goto parse_multistate;
  
 +	case sPubKeyPlugin:
 +		/*
@@ -237,7 +248,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
 --- a~/servconf.h	1970-01-01 00:00:00
 +++ a/servconf.h	1970-01-01 00:00:00
-@@ -237,6 +237,7 @@ typedef struct {
+@@ -243,6 +243,7 @@ typedef struct {
  
  	int	fingerprint_hash;
  	int	expose_userauth_info;

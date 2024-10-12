@@ -3,10 +3,10 @@ From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
 Subject: [PATCH 07/34] DTrace support for SFTP
 
-diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Makefile.in a/Makefile.in
 --- a~/Makefile.in	1970-01-01 00:00:00
 +++ a/Makefile.in	1970-01-01 00:00:00
-@@ -103,6 +103,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
+@@ -105,6 +105,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
  	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-ecdsa-sk.o \
  	ssh-ed25519-sk.o ssh-rsa.o dh.o \
  	msg.o progressmeter.o dns.o entropy.o gss-genr.o umac.o umac128.o \
@@ -14,8 +14,8 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  	ssh-pkcs11.o smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o cipher-chachapoly-libcrypto.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o \
-@@ -131,7 +132,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
- 	srclimit.o sftp-server.o sftp-common.o \
+@@ -139,7 +140,7 @@ SSHD_SESSION_OBJS=sshd-session.o auth-rh
+ 	sftp-server.o sftp-common.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
  	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
 -	sandbox-solaris.o uidswap.o $(SKOBJS)
@@ -23,7 +23,7 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  
  SFTP_CLIENT_OBJS=sftp-common.o sftp-client.o sftp-glob.o
  
-@@ -151,7 +152,8 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o
+@@ -159,7 +160,8 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o
  
  SSHKEYSCAN_OBJS=ssh-keyscan.o $(SKOBJS)
  
@@ -33,7 +33,7 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  
  SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)
  
-@@ -264,9 +266,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
+@@ -275,9 +277,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
  moduli:
  	echo
  
@@ -57,7 +57,7 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  	rm -f regress/check-perm$(EXEEXT)
  	rm -f regress/mkdtemp$(EXEEXT)
  	rm -f regress/unittests/test_helper/*.a
-@@ -428,6 +443,7 @@ install-files:
+@@ -440,6 +455,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
@@ -65,7 +65,7 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
-diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
 --- a~/sftp-server.c	1970-01-01 00:00:00
 +++ a/sftp-server.c	1970-01-01 00:00:00
 @@ -56,6 +56,9 @@
@@ -78,9 +78,12 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
  
  char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
  
-@@ -803,14 +806,17 @@ process_read(u_int32_t id)
+@@ -801,16 +804,19 @@ process_read(u_int32_t id)
+ 	static u_char *buf;
+ 	static size_t buflen;
  	u_int32_t len;
- 	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
+-	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
++	int r, handle, fd, ret = 0, status = SSH2_FX_FAILURE;
  	u_int64_t off;
 +	char *fpath;
  
@@ -159,7 +162,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
  			if (ret == -1) {
  				status = errno_to_portable(errno);
  				error_f("write \"%.100s\": %s",
-diff -wpruN '--exclude=*.orig' a~/sftp64.d a/sftp64.d
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sftp64.d a/sftp64.d
 --- a~/sftp64.d	1970-01-01 00:00:00
 +++ a/sftp64.d	1970-01-01 00:00:00
 @@ -0,0 +1,56 @@
@@ -219,7 +222,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp64.d a/sftp64.d
 +	sfi_pathname = copyinstr((uintptr_t)*(uint64_t *)copyin(
 +	    (uintptr_t)&s->sftp_pathname, sizeof (uint64_t)));
 +};
-diff -wpruN '--exclude=*.orig' a~/sftp_provider.d a/sftp_provider.d
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sftp_provider.d a/sftp_provider.d
 --- a~/sftp_provider.d	1970-01-01 00:00:00
 +++ a/sftp_provider.d	1970-01-01 00:00:00
 @@ -0,0 +1,61 @@
@@ -284,7 +287,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp_provider.d a/sftp_provider.d
 +#pragma D attributes Private/Private/Unknown provider sftp function
 +#pragma D attributes Private/Private/ISA provider sftp name
 +#pragma D attributes Evolving/Evolving/ISA provider sftp args
-diff -wpruN '--exclude=*.orig' a~/sftp_provider_impl.h a/sftp_provider_impl.h
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sftp_provider_impl.h a/sftp_provider_impl.h
 --- a~/sftp_provider_impl.h	1970-01-01 00:00:00
 +++ a/sftp_provider_impl.h	1970-01-01 00:00:00
 @@ -0,0 +1,73 @@

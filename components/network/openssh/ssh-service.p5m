@@ -20,7 +20,7 @@
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-<transform file path=usr/lib/ssh/sshd$ -> default restart_fmri svc:/network/ssh:default>
+<transform file path=usr/sbin/sshd$ -> default restart_fmri svc:/network/ssh:default>
 
 set name=pkg.fmri value=pkg:/service/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="OpenSSH servers and SSH (Secure Shell) services"
@@ -51,10 +51,11 @@ file files/sshd path=lib/svc/method/sshd
 
 file path=etc/ssh/moduli
 file usr/lib/dtrace/64/sftp64.d path=usr/lib/dtrace/sftp.d mode=0555
-file path=usr/lib/ssh/sftp-server mode=0555
-file path=usr/lib/ssh/ssh-keysign mode=4555
-file path=usr/lib/ssh/ssh-pkcs11-helper mode=0555
-file path=usr/lib/ssh/sshd mode=0555
+file path=usr/libexec/sftp-server
+file path=usr/libexec/ssh-keysign mode=4555
+file path=usr/libexec/ssh-pkcs11-helper
+file path=usr/libexec/sshd-session
+file path=usr/sbin/sshd
 file path=usr/share/man/man8/sftp-server.8
 file path=usr/share/man/man8/ssh-keysign.8
 file path=usr/share/man/man8/ssh-pkcs11-helper.8
