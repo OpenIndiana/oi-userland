@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yarl
-HUMAN_VERSION =			1.15.0
+HUMAN_VERSION =			1.15.1
 COMPONENT_SUMMARY =		Yet another URL library
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/yarl
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:efc0430b80ed834c80c99c32946cfc6ee29dfcd7c62ad3c8f15657322ade7942
+	sha256:02e1c9e36528de270c22c06aac6a5a1de8cc870fafefb5e90e5b35cb8985d0b2
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -55,6 +55,10 @@ TEST_REQUIREMENTS += requirements/test.txt
 #
 COMPONENT_PRE_TEST_ACTION +=	$(MV) $(@D)/yarl $(@D)/yarl-RENAMED ;
 COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/yarl-RENAMED $(@D)/yarl ;
+
+# We have no pytest-codspeed packaged yet.
+PYTEST_ADDOPTS += --ignore tests/test_quoting_benchmarks.py
+PYTEST_ADDOPTS += --ignore tests/test_url_benchmarks.py
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
