@@ -12,18 +12,18 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geeqie
-COMPONENT_VERSION=	1.7.3
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY=	Geeqie is a lightweight Gtk+ based image viewer
+COMPONENT_VERSION=	2.5
+COMPONENT_SUMMARY=	Geeqie is a lightweight image viewer and organizer
 COMPONENT_PROJECT_URL=	https://www.geeqie.org/
 COMPONENT_PROJECT_URL=	https://www.geeqie.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:25b1f71cf91bd9a96f399d2a9e70507e54bb377a56e64d89521c0f7a9ce5dd38
-COMPONENT_ARCHIVE_URL=	https://www.geeqie.org/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:cc991c9d4c78c58668105a15f7ece953bfc21b6b78cedc26ccbaaee6a12b8952
+COMPONENT_ARCHIVE_URL=	https://github.com/BestImageViewer/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         image/viewer/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=      GPLv2
@@ -32,20 +32,10 @@ COMPONENT_LICENSE_FILE= COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
-
 PATH= $(PATH.gnu)
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
-CONFIGURE_ENV += LIBS="-lm -lsocket -lnsl"
-
 CFLAGS += $(CPP_XPG6MODE)
-
-CONFIGURE_OPTIONS += --disable-gtk3
+LDFLAGS += -lm -lsocket -lnsl
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -57,12 +47,17 @@ REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += image/library/openjpeg
 REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/clutter
+REQUIRED_PACKAGES += library/desktop/clutter/clutter-gtk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gspell
+REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/libchamplain
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libarchive
+REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,18 @@
+--- geeqie-2.5/src/collect-io.cc.old	2024-10-13 12:04:59.138515935 -0400
++++ geeqie-2.5/src/collect-io.cc	2024-10-13 12:06:00.973789502 -0400
+@@ -287,6 +287,7 @@
+ 						}
+ 					endmntent(mount_entries);
+ #else
++#ifndef __sun__
+ 					struct statfs* mounts;
+ 					int num_mounts = getmntinfo(&mounts, MNT_NOWAIT);
+ 
+@@ -309,6 +310,7 @@
+ 								}
+ 							}
+ 						}
++#endif  // ifndef __sun
+ #endif
+ 
+ 					if (!found)
