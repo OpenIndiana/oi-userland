@@ -17,12 +17,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mingle
-COMPONENT_VERSION=      0.14
+COMPONENT_VERSION=      0.15
 COMPONENT_SUMMARY=      Simple GTK4-Libadwaita app to play with Google's Emoji Kitchen
 COMPONENT_PROJECT_URL=  https://github.com/halfmexican/mingle
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2c0179f3d02077e93187f35e8b3bc28b8b77fc282bb21e71e29af8684b114f56
+COMPONENT_ARCHIVE_HASH= sha256:deb96f228449be55de31d60fc2ac4095bdc798f7d4e7999a26872c3fb52fbf53
 COMPONENT_ARCHIVE_URL=  https://github.com/halfmexican/mingle/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         font/editor/mingle
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
