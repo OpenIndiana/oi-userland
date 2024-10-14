@@ -12,26 +12,24 @@
 # Copyright (c) 2024 Geoff Weiss
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghex
-COMPONENT_VERSION=      45.2
+HUMAN_VERSION=		46.0
 COMPONENT_SUMMARY=      Hex editor for the GNOME desktop
-COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/ghex
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e72da3c6b39fc724b57a82f3d6ab337eaf7992a3bda7a7beb884942f4200ea1c
-COMPONENT_ARCHIVE_URL=  https://gitlab.gnome.org/GNOME/ghex/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:a1c46f3020cb358b8323025db3a539c97d994a4c46f701f48edc6357f7fbcbd1
 COMPONENT_FMRI=         desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/System Utilities
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH= $(PATH.gnu)
 
 # illumos does not have mremap support
