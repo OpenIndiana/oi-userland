@@ -110,7 +110,7 @@ endif
 COMPONENT_LICENSE        = MIT License
 COMPONENT_LICENSE_FILE   = COPYING
 COMPONENT_PREP_ACTION = ( cd $(@D) && \
-                          libtoolize --automake --copy --force && \
+                          PATH="$(PATH)" libtoolize --automake --copy --force && \
                           aclocal && \
                           autoheader && \
                           automake -a -f -c && \
