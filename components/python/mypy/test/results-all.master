@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: mypy/test, mypyc/test
-X workers [11963 items]
+X workers [12044 items]
 
 scheduling tests via LoadScheduling
 
@@ -196,6 +196,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-async-await.test::testAwaitReturnE
 mypy/test/testcheck.py::TypeCheckSuite::check-async-await.test::testAwaitUnion PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-async-await.test::testAwaitableSubclass PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-async-await.test::testFullCoroutineMatrix PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-async-await.test::testImplicitAsyncGenerator PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-async-await.test::testInvalidComprehensionNoCrash PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-async-await.test::testNestedAsyncFunctionAndTypeVarAvalues PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-async-await.test::testNestedAsyncGeneratorAndTypeVarAvalues PASSED
@@ -1166,6 +1167,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-dataclasses.test::testDeferredData
 mypy/test/testcheck.py::TypeCheckSuite::check-dataclasses.test::testDeferredDataclassInitSignatureSubclass PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-dataclasses.test::testDisallowUntypedWorksForward PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-dataclasses.test::testDisallowUntypedWorksForwardBad PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-dataclasses.test::testDunderReplacePresent PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-dataclasses.test::testFinalInDataclass PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-dataclasses.test::testIfConditionsInDefinition PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-dataclasses.test::testMemberExprWorksAsField PASSED
@@ -1439,6 +1441,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-errorcodes.test::testNamedTupleNam
 mypy/test/testcheck.py::TypeCheckSuite::check-errorcodes.test::testNarrowedTypeNotSubtype PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-errorcodes.test::testNoOverloadImplementation PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-errorcodes.test::testNoteAboutChangedTypedDictErrorCode PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-errorcodes.test::testOverloadedFunctionSignature PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-errorcodes.test::testRecommendErrorCode PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-errorcodes.test::testRecommendErrorCode2 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-errorcodes.test::testRedundantExprTruthiness PASSED
@@ -2117,6 +2120,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testFunctionTypeCo
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testFunctionTypesWithDifferentArgumentCounts PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testFunctionTypesWithOverloads PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testFunctionWithNameUnderscore PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testGeneratorInDeferredDecoratorNoCrash PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testGenericFunctionOnReturnTypeOnly PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testGenericFunctionReturnAsDecorator PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testGenericFunctionTypeDecl PASSED
@@ -2124,6 +2128,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testGenericUnionFu
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testIncompatibleConditionalFunctionDefinition PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testIncompatibleConditionalFunctionDefinition2 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testIncompatibleConditionalFunctionDefinition3 PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testIncompatibleConditionalFunctionDefinition4 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testIncompatibleConditionalMethodDefinition PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testInferConstraintsUnequalLengths PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testInferredTypeIsObjectMismatch PASSED
@@ -2138,6 +2143,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testLackOfNames PA
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testLackOfNamesFastparse PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testLambdaAlwaysAllowed PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testLambdaDefaultTypeErrors PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testLambdaInDeferredDecoratorNoCrash PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testLambdaSemanal PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testLambdaTypeCheck PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testLambdaTypeInference PASSED
@@ -2225,6 +2231,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testUnconditionalR
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testUndefinedDecoratorInImportCycle PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functions.test::testUnknownFunctionNotCallable PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testCachedProperty PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialAbstractType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialBasic PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialCallable PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialClassObjectMatchingPartial PASSED
@@ -2234,13 +2241,17 @@ mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsParti
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialNestedGeneric PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialNestedPartial PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialOverload PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialSelfType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialStar PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialTypeGuard PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialTypeObject PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialTypeVarBound PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialTypeVarTuple PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialTypeVarValues PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialTypedDictUnpack PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialUnion PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testFunctoolsPartialUnionOfTypeAndCallable PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testTotalOrderingAllowsAny PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testTotalOrderingEqLt PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-functools.test::testTotalOrderingLambda PASSED
@@ -3326,6 +3337,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-isinstance.test::testIsSubclassAdH
 mypy/test/testcheck.py::TypeCheckSuite::check-isinstance.test::testIsSubclassTooFewArgs PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-isinstance.test::testIsinstanceAnd PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-isinstance.test::testIsinstanceAndNarrowTypeVariable PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-isinstance.test::testIsinstanceAndNegativeNarrowTypeVariableWithUnionBound PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-isinstance.test::testIsinstanceAndOr PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-isinstance.test::testIsinstanceAndTypeType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-isinstance.test::testIsinstanceAnyAlias PASSED
@@ -3931,6 +3943,8 @@ mypy/test/testcheck.py::TypeCheckSuite::check-namedtuple.test::testGenericNamedT
 mypy/test/testcheck.py::TypeCheckSuite::check-namedtuple.test::testGenericNamedTupleNoLegacySyntax PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-namedtuple.test::testGenericNamedTupleSubtyping PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-namedtuple.test::testInvalidNamedTupleWithinFunction PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-namedtuple.test::testNameErrorInNamedTupleNestedInFunction1 PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-namedtuple.test::testNameErrorInNamedTupleNestedInFunction2 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-namedtuple.test::testNamedTupleAccessingAttributes PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-namedtuple.test::testNamedTupleAdditionalArgs PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-namedtuple.test::testNamedTupleAndOtherSuperclass PASSED
@@ -4018,6 +4032,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingEqual
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingEqualityRequiresExplicitEnumLiteral PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingEqualityRequiresExplicitStrLiteral PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingExprPropagation PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingFalseyToLiteral PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingIsInstanceFinalSubclass PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingIsInstanceFinalSubclassWithUnions PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingIsInstanceNoIntersectionWithFinalTypeAndNoneType PASSED
@@ -4088,6 +4103,9 @@ mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingUsing
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingUsingTypeVar PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingWithAnyOps PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingWithDef PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingWithIntEnum PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingWithIntEnum2 PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingWithStrEnum PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingWithTupleOfTypes PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testNarrowingWithTupleOfTypesPy310Plus PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-narrowing.test::testTypeNarrowingReachableNegative PASSED
@@ -4551,6 +4569,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-overloading.test::testOverloadMult
 mypy/test/testcheck.py::TypeCheckSuite::check-overloading.test::testOverloadNeedsImplementation PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-overloading.test::testOverloadNotConfusedForProperty PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-overloading.test::testOverloadNotImportedNoCrash PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-overloading.test::testOverloadOnInvalidTypeArgument PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-overloading.test::testOverloadOnOverloadWithType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-overloading.test::testOverloadOverlapWithNameOnlyArgs PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-overloading.test::testOverloadOverlapWithTypeVars PASSED
@@ -4789,6 +4808,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::test
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testParamSpecInferenceWithCallbackProtocol PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testParamSpecInferredFromAny PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testParamSpecInferredFromLambda PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testParamSpecInheritNoCrashOnNested PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testParamSpecInvalidCalls PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testParamSpecJoin PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testParamSpecLiteralEllipsis PASSED
@@ -4817,6 +4837,10 @@ mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::test
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testParamSpecTwiceSolving PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testParamSpecVariance PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testPropagatedAnyConstraintsAreOK PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testRunParamSpecConcatenateInsufficientArgs PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testRunParamSpecConcatenateInsufficientArgsInDecorator PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testRunParamSpecInsufficientArgs PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testRunParamSpecOverload PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testSolveParamSpecWithSelfType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testStackedConcatenateIsIllegal PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-parameter-specification.test::testTrivialParametersHandledCorrectly PASSED
@@ -4899,6 +4923,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-plugin-attrs.test::testAttrsPrivat
 mypy/test/testcheck.py::TypeCheckSuite::check-plugin-attrs.test::testAttrsRepeatedName PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-plugin-attrs.test::testAttrsSeriousNames PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-plugin-attrs.test::testAttrsSimple_no_empty PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-plugin-attrs.test::testAttrsStrictOptionalSetProperly PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-plugin-attrs.test::testAttrsTypeAlias PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-plugin-attrs.test::testAttrsTypeComments PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-plugin-attrs.test::testAttrsTypeEquals PASSED
@@ -5114,6 +5139,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testNotManyFlagCon
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testObjectAllowedInProtocolBases PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testOnlyMethodProtocolUsableWithIsSubclass PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testOverloadOnProtocol PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testOverloadedMethodWithExplictSelfTypes PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testOverloadedMethodsInProtocols PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testPartialAttributeNoneType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testPartialAttributeNoneTypeStrictOptional PASSED
@@ -5197,6 +5223,8 @@ mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testSubtleBadVaria
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testTwoUncomfortablyIncompatibleProtocolsWithoutRunningInIssue9771 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testTypeAliasInProtocolBody PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testTypeVarInProtocolBody PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testTypeVarValueConstraintAgainstGenericProtocol PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testTypeVarValueConstraintAgainstGenericProtocol2 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testUnionsOfNormalClassesWithProtocols PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testUnrealtedGenericProtolsEquivalent PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testWeirdRecursiveInferenceForProtocols SKIPPED
@@ -5316,6 +5344,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-recursive-types.test::testRecursiv
 mypy/test/testcheck.py::TypeCheckSuite::check-recursive-types.test::testRecursiveTupleFallback2 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-recursive-types.test::testRecursiveTupleFallback3 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-recursive-types.test::testRecursiveTupleFallback4 PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-recursive-types.test::testRecursiveTupleFallback5 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-recursive-types.test::testRecursiveTypedDictCreation PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-recursive-types.test::testRecursiveTypedDictJoin PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-recursive-types.test::testRecursiveTypedDictMethods PASSED
@@ -5386,6 +5415,8 @@ mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testAccessingSelfCl
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testAccessingTypingSelfUnion PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testAttributeOnSelfAttributeInSubclass PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testBadClassLevelDecoratorHack PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testCallableProtocolOldSelf PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testCallableProtocolTypingSelf PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testDequeReturningSelfFromCopy PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testEnumerateReturningSelfFromIter PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testMixinAllowedWithProtocol PASSED
@@ -6116,6 +6147,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testGenericTypedDi
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testGenericTypedDictInference PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testGenericTypedDictMultipleGenerics PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testGenericTypedDictStrictOptionalExtending PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testIncorrectTypedDictSpecialFormsUsage PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testInitTypedDictFromType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testInitTypedDictFromTypeGeneric PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testJoinOfDisjointTypedDictsIsEmptyTypedDict PASSED
@@ -6133,6 +6165,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testMeetOfTypedDic
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testMeetOfTypedDictsWithNoCommonKeysHasAllKeysAndNewFallback PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testMeetOfTypedDictsWithNonTotal PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testMeetOfTypedDictsWithNonTotalAndTotal PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testMeetOfTypedDictsWithReadOnly PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testNameUndefinedErrorDoesNotLoseUnpackedKWArgsInformation PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testNoCrashOnUnImportedAnyNotRequired PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testNonTotalTypedDictCanBeEmpty PASSED
@@ -6180,6 +6213,9 @@ mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictFlexi
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictFlexibleUpdateUnionExtra PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictFlexibleUpdateUnionStrict PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictForwardAsUpperBound PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictFromMypyExtensionsReadOnlyMutateMethods PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictFromTypingExtensionsReadOnlyMutateMethods PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictGenericReadOnly PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictGetDefaultParameterStillTypeChecked PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictGetMethod PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictGetMethodInvalidArgs PASSED
@@ -6188,6 +6224,13 @@ mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictImpor
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictInClassNamespace PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictInFunction PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictIndexingWithNonRequiredKey PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictInlineMergeAnother PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictInlineNestedSchema PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictInlineNoEmpty PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictInlineNoOldStyleAlias PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictInlineNotRequired PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictInlineReadOnly PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictInlineYesMidStyleAlias PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictIsInstance PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictIsInstanceABCs PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictJoinWithTotalFalse PASSED
@@ -6214,6 +6257,21 @@ mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictOverl
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictOverloading5 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictOverloading6 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictPopMethod PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnly PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyABCSubtypes PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyAndNotRequired PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyCall PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyCovariant PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyCreation PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyDel PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyInheritance PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyMutateMethods PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyMutateWithOtherDicts PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyMutate__ior__Statements PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyMutate__or__Statements PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyOtherTypedDict PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlySubtyping PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictReadOnlyUnpack PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictRequiredUnimportedAny PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictSelfItemNotAllowed PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictStrictUpdate PASSED
@@ -6244,6 +6302,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictUnpac
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictUnpackOverrideRequired PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictUnpackRequiredKeyMissing PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictUnpackSame PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictUnpackSingleWithSubtypingNoCrash PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictUnpackStrictMode PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictUnpackUnionRequiredMissing PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typeddict.test::testTypedDictUnpackUntypedDict PASSED
@@ -6400,6 +6459,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-typevar-tuple.test::testHomogeneou
 mypy/test/testcheck.py::TypeCheckSuite::check-typevar-tuple.test::testInferenceAgainstGenericVariadicWithBadType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typevar-tuple.test::testInvalidTypeVarTupleUseNoCrash PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typevar-tuple.test::testJoinOfVariadicTupleCallablesNoCrash PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-typevar-tuple.test::testMixingTypeVarTupleAndParamSpec PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typevar-tuple.test::testPackingVariadicTuplesHomogeneous PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typevar-tuple.test::testPackingVariadicTuplesTypeVar PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-typevar-tuple.test::testRepackingVariadicTuplesHomogeneous PASSED
@@ -7565,6 +7625,7 @@ mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-modules.test::testS
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-modules.test::testSkipImportsWithinPackage PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-modules.test::testTurnPackageToModule PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-python312.test::testPEP695ChangeOldStyleToNewStyleTypeAlias SKIPPED
+mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-python312.test::testPEP695NestedGenericClassMethodUpdated SKIPPED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-python312.test::testPEP695TypeAliasChangesDueToDependency SKIPPED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-python312.test::testPEP695TypeAliasDep SKIPPED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-python312.test::testPEP695VarianceChangesDueToDependency SKIPPED
@@ -7990,6 +8051,10 @@ mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testRemoveBas
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testRemovedIgnoreWithMissingImport PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testRemovedModuleUnderIgnore PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testRenameSubModule PASSED
+mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testReplaceFunctionWithClassIndirect PASSED
+mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testReplaceFunctionWithClassIndirect2 PASSED
+mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testReplaceFunctionWithDecoratedFunctionIndirect PASSED
+mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testReplaceFunctionWithDecoratedFunctionIndirect2 PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testReprocessCallableArg PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testReprocessEllipses1 PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testReprocessEllipses2 PASSED
@@ -8049,6 +8114,7 @@ mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testTypedDict
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testTypedDictUpdate2 PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testTypedDictUpdate3 PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testTypedDictUpdateGeneric PASSED
+mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testTypedDictUpdateReadOnly PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testTypingSelfFine PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testUnannotatedClass PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained.test::testUnionOfSimilarCallablesCrash PASSED
@@ -8296,6 +8362,7 @@ mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-modules.t
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-modules.test::testSkipImports_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-modules.test::testTurnPackageToModule_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-python312.test::testPEP695ChangeOldStyleToNewStyleTypeAlias_cached SKIPPED
+mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-python312.test::testPEP695NestedGenericClassMethodUpdated_cached SKIPPED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-python312.test::testPEP695TypeAliasChangesDueToDependency_cached SKIPPED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-python312.test::testPEP695TypeAliasDep_cached SKIPPED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-python312.test::testPEP695VarianceChangesDueToDependency_cached SKIPPED
@@ -8721,6 +8788,10 @@ mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::tes
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testRemovedIgnoreWithMissingImport_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testRemovedModuleUnderIgnore_cached SKIPPED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testRenameSubModule_cached PASSED
+mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testReplaceFunctionWithClassIndirect2_cached PASSED
+mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testReplaceFunctionWithClassIndirect_cached PASSED
+mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testReplaceFunctionWithDecoratedFunctionIndirect2_cached PASSED
+mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testReplaceFunctionWithDecoratedFunctionIndirect_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testReprocessCallableArg_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testReprocessEllipses1_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testReprocessEllipses2_cached PASSED
@@ -8779,6 +8850,7 @@ mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::tes
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testTypedDictUpdate2_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testTypedDictUpdate3_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testTypedDictUpdateGeneric_cached PASSED
+mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testTypedDictUpdateReadOnly_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testTypedDictUpdate_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testTypingSelfFine_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained.test::testUnannotatedClass_cached PASSED
@@ -9330,6 +9402,7 @@ mypy/test/testpythoneval.py::PythonEvaluationSuite::pythoneval.test::testOpenRet
 mypy/test/testpythoneval.py::PythonEvaluationSuite::pythoneval.test::testOverlappingOperatorMethods PASSED
 mypy/test/testpythoneval.py::PythonEvaluationSuite::pythoneval.test::testPEP695TypeAliasWithDifferentTargetTypes PASSED
 mypy/test/testpythoneval.py::PythonEvaluationSuite::pythoneval.test::testPEP695VarianceInference PASSED
+mypy/test/testpythoneval.py::PythonEvaluationSuite::pythoneval.test::testPEP695VarianceInferenceSpecialCaseWithTypeshed PASSED
 mypy/test/testpythoneval.py::PythonEvaluationSuite::pythoneval.test::testPathOpenReturnTypeInference PASSED
 mypy/test/testpythoneval.py::PythonEvaluationSuite::pythoneval.test::testPathOpenReturnTypeInferenceSpecialCases PASSED
 mypy/test/testpythoneval.py::PythonEvaluationSuite::pythoneval.test::testPyiTakesPrecedenceOverPy PASSED
@@ -10003,6 +10076,8 @@ mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testCallable PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testCallableAliasPreserved PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testCannotCalculateMRO_semanal PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testClass PASSED
+mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testClassInheritanceWithKeywordsConstants PASSED
+mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testClassInheritanceWithKeywordsDynamic PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testClassMethod PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testClassMethod_inspect PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testClassVariable PASSED
@@ -10132,6 +10207,7 @@ mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testInferOptionalOnl
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testInitTypeAnnotationPreserved PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testInvalidNumberOfArgsInAnnotation PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testKeywordOnlyArg PASSED
+mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testKeywordOnlyArg_inspect PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testKnownMagicMethodsArgTypes PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testKnownMagicMethodsArgTypes_inspect PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testKnownMagicMethodsReturnTypes PASSED
@@ -10306,10 +10382,14 @@ mypy/test/teststubgen.py::StubgencSuite::test_infer_getitem_sig PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_infer_hash_sig PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_infer_setitem_sig PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_infer_unary_op_sig PASSED
+mypy/test/teststubgen.py::StubgencSuite::test_non_c_generate_signature_with_kw_only_args PASSED
 mypy/test/teststubinfo.py::TestStubInfo::test_is_legacy_bundled_packages PASSED
 mypy/test/teststubtest.py::StubtestMiscUnit::test_allowlist PASSED
 mypy/test/teststubtest.py::StubtestMiscUnit::test_builtin_signature_with_unrepresentable_default PASSED
 mypy/test/teststubtest.py::StubtestMiscUnit::test_config_file PASSED
+mypy/test/teststubtest.py::StubtestMiscUnit::test_config_file_error_codes PASSED
+mypy/test/teststubtest.py::StubtestMiscUnit::test_config_file_error_codes_invalid PASSED
+mypy/test/teststubtest.py::StubtestMiscUnit::test_config_file_wrong_incomplete_feature PASSED
 mypy/test/teststubtest.py::StubtestMiscUnit::test_get_typeshed_stdlib_modules PASSED
 mypy/test/teststubtest.py::StubtestMiscUnit::test_ignore_flags PASSED
 mypy/test/teststubtest.py::StubtestMiscUnit::test_missing_stubs PASSED
@@ -10329,6 +10409,7 @@ mypy/test/teststubtest.py::StubtestUnit::test_arg_mismatch PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_arg_name PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_bad_literal PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_basic_good PASSED
+mypy/test/teststubtest.py::StubtestUnit::test_cached_property PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_coroutines PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_decorator PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_default_presence PASSED
@@ -11974,6 +12055,6 @@ mypyc/test/test_typeops.py::TestUnionSimplification::test_nested PASSED
 mypyc/test/test_typeops.py::TestUnionSimplification::test_remove_duplicate PASSED
 mypyc/test/test_typeops.py::TestUnionSimplification::test_simple_type_result PASSED
 
-======== 11602 passed, 352 skipped, 9 xfailed ========
+======== 11681 passed, 354 skipped, 9 xfailed ========
   py$(PYV): OK
   congratulations :)
