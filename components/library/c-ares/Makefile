@@ -28,27 +28,30 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c-ares
-COMPONENT_VERSION=	1.34.1
+COMPONENT_VERSION=	1.34.2
 COMPONENT_SUMMARY=	c-ares - C library for asynchronous DNS requests
 COMPONENT_DESCRIPTION=	c-ares is a C library for asynchronous DNS requests including name resolves
 COMPONENT_PROJECT_URL=	https://c-ares.haxx.se/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7e846f1742ab5998aced36d170408557de5292b92ec404fb0f7422f946d60103
+COMPONENT_ARCHIVE_HASH= sha256:35410aa625cc9ee95b66475f54aea7c81c673fb63d75fad5eee267711503b72a
 COMPONENT_ARCHIVE_URL=	https://github.com/c-ares/c-ares/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libcares
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=		MIT
 COMPONENT_LICENSE_FILE=	LICENSE.md
 
-# We don't have Googletest.
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(XPG6MODE)
 
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --disable-dependency-tracking
+
+# At the moment we have 10 failing tests (out of 1110 total tests)
+
+# Manually added dependencies
+TEST_REQUIRED_PACKAGES += developer/googletest
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
