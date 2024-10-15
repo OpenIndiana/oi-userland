@@ -5,7 +5,7 @@ hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-X workers [1267 items]
+X workers [1271 items]
 
 scheduling tests via LoadScheduling
 
@@ -838,8 +838,10 @@ tests/test_url.py::test_joinpath[root-with-slash] PASSED
 tests/test_url.py::test_joinpath[root] PASSED
 tests/test_url.py::test_joinpath[trailing-slash-empty-string] PASSED
 tests/test_url.py::test_joinpath[trailing-slash] PASSED
+tests/test_url.py::test_joinpath_backtrack_to_base PASSED
 tests/test_url.py::test_joinpath_edgecases[with-colon-and-at] PASSED
 tests/test_url.py::test_joinpath_edgecases[with-dots] PASSED
+tests/test_url.py::test_joinpath_empty_segments[backtrack-in-both] PASSED
 tests/test_url.py::test_joinpath_empty_segments[default_default] PASSED
 tests/test_url.py::test_joinpath_empty_segments[default_embedded-empty-segment] PASSED
 tests/test_url.py::test_joinpath_empty_segments[default_empty-segment] PASSED
@@ -852,6 +854,8 @@ tests/test_url.py::test_joinpath_empty_segments[empty-segment_relative] PASSED
 tests/test_url.py::test_joinpath_empty_segments[empty-segments_default] PASSED
 tests/test_url.py::test_joinpath_empty_segments[empty-segments_empty-segment] PASSED
 tests/test_url.py::test_joinpath_empty_segments[empty-segments_relative] PASSED
+tests/test_url.py::test_joinpath_empty_segments[long-backtrack-with-dots] PASSED
+tests/test_url.py::test_joinpath_empty_segments[long-backtrack] PASSED
 tests/test_url.py::test_joinpath_encoding[encoded-percent-encoded] PASSED
 tests/test_url.py::test_joinpath_encoding[non-ascii] PASSED
 tests/test_url.py::test_joinpath_encoding[percent-encoded] PASSED
@@ -1279,22 +1283,4 @@ tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 1249 passed, 14 skipped, 4 xfailed ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 1253 passed, 14 skipped, 4 xfailed ========
