@@ -19,18 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dulwich
-HUMAN_VERSION =			0.22.1
-COMPONENT_SUMMARY =		dulwich - Python Git Library
+HUMAN_VERSION =			0.22.3
+COMPONENT_SUMMARY =		Python Git Library
 COMPONENT_PROJECT_URL =		https://www.dulwich.io/
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/jelmer/dulwich/archive/refs/tags/dulwich-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:de781e7355d922c790ca7c5d6c8c2ad94c79e815401dee717785eb807a5174c6
+	sha256:7968c7b8a877b614c46b5ee7c1b28411772123004d7cf6357e763ad2cbeb8254
 COMPONENT_LICENSE =		Apache-2.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
-
-# Github tarball uses different source directory than sdist
-COMPONENT_SRC =		dulwich-dulwich-$(HUMAN_VERSION)
 
 # see tox.ini
 TEST_STYLE = unittest
@@ -53,5 +48,4 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/\(laddr=('\''127.0.0.1'\'', \)[0-9]\{1,\})/\
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-rust
 PYTHON_REQUIRED_PACKAGES += library/python/urllib3
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python

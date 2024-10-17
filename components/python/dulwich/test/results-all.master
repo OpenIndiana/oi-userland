@@ -1,3 +1,7 @@
+$(PYTHON_DIR)/vendor-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from this module in 48.0.0.
+  "cipher": algorithms.TripleDES,
+$(PYTHON_DIR)/vendor-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from this module in 48.0.0.
+  "class": algorithms.TripleDES,
 test_empty (tests.test_archive.ArchiveTests) ... ok
 test_gzip_mtime (tests.test_archive.ArchiveTests) ... ok
 test_prefix (tests.test_archive.ArchiveTests) ... ok
@@ -62,7 +66,8 @@ test_init_username_passwd_set (tests.test_client.HttpGitClientTests) ... ok
 test_init_username_set_no_password (tests.test_client.HttpGitClientTests) ... ok
 test_smart_request_content_type_with_directive_check (tests.test_client.HttpGitClientTests) ... ok
 test_url_redirect_location (tests.test_client.HttpGitClientTests) ... ok
-test_clone (tests.test_client.LocalGitClientTests) ... $(@D)/dulwich/repo.py:888: DeprecationWarning: use get_user_identity() rather than Repo._get_user_identity
+test_urllib3_protocol_error (tests.test_client.HttpGitClientTests) ... ok
+test_clone (tests.test_client.LocalGitClientTests) ... $(@D)/dulwich/repo.py:886: DeprecationWarning: use get_user_identity() rather than Repo._get_user_identity
   warnings.warn(
 ok
 test_fetch_empty (tests.test_client.LocalGitClientTests) ... ok
@@ -691,6 +696,7 @@ test_branchy_chain (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_ext_ref (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_ext_ref_chain (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_ext_ref_chain_degenerate (tests.test_pack.DeltaChainIteratorTests) ... ok
+test_ext_ref_deltified_object_based_on_itself (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_ext_ref_multiple_times (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_long_chain (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_mixed_chain (tests.test_pack.DeltaChainIteratorTests) ... ok
@@ -811,7 +817,7 @@ test_add_file_clrf_conversion (tests.test_porcelain.AddTests) ... ok
 test_add_ignored (tests.test_porcelain.AddTests) ... ok
 test_add_not_in_repo (tests.test_porcelain.AddTests) ... ok
 test_simple (tests.test_porcelain.ArchiveTests) ... ok
-test_branch_exists (tests.test_porcelain.BranchCreateTests) ... $(@D)/dulwich/repo.py:888: DeprecationWarning: use get_user_identity() rather than Repo._get_user_identity
+test_branch_exists (tests.test_porcelain.BranchCreateTests) ... $(@D)/dulwich/repo.py:886: DeprecationWarning: use get_user_identity() rather than Repo._get_user_identity
   warnings.warn(
 ok
 test_new_branch (tests.test_porcelain.BranchCreateTests) ... ok
@@ -925,8 +931,8 @@ counting objects: 2, done.
 copying pack entries: 0/2copying pack entries: 1/2copied 1 pack entries
 generating index: 0/2generating index: 1/2ok
 test_push (tests.test_porcelain.ServerTests) ... 127.0.0.1 - - [XX/XXX/XXXX XX:XX:XX] "GET /info/refs?service=git-receive-pack HTTP/1.1" 200 195
-127.0.0.1 - - [XX/XXX/XXXX XX:XX:XX] "POST /git-receive-pack HTTP/1.1" 200 52
 Ref refs/heads/master updated
+127.0.0.1 - - [XX/XXX/XXXX XX:XX:XX] "POST /git-receive-pack HTTP/1.1" 200 52
 ok
 test_blob (tests.test_porcelain.ShowTests) ... ok
 test_commit_no_parent (tests.test_porcelain.ShowTests) ... ok
@@ -1339,27 +1345,41 @@ test_archive (tests.compat.test_client.DulwichHttpClientTest) ... skipped 'expor
 test_fetch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichHttpClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_get_refs (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_repeat (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_new_branch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichHttpClientTest) ... $(PYTHON_DIR)/email/parser.py:38: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
-  self._class = _class
-ResourceWarning: Enable tracemalloc to get the object allocation traceback
-ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_multiple_errors (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_nothing_to_send (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_one_error (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_without_report_status (tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... skipped 'exporting archives not supported over http'
+test_fetch_empty_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_fetch_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_fetch_pack_zero_sha (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_get_refs (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_incremental_fetch_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_repeat (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack_multiple_errors (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack_nothing_to_send (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack_one_error (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_remove_branch (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_without_report_status (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
 test_archive (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_empty_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
-test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichMockSSHClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_get_refs (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
@@ -1372,11 +1392,31 @@ test_send_pack_nothing_to_send (tests.compat.test_client.DulwichMockSSHClientTes
 test_send_pack_one_error (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_send_without_report_status (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_empty_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... $(PYTHON_DIR)/_collections_abc.py:826: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
+  yield from self._mapping
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_pack_zero_sha (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_get_refs (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_incremental_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_repeat (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack_multiple_errors (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack_nothing_to_send (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack_one_error (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_remove_branch (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_without_report_status (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
 test_archive (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_fetch_empty_pack (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
-test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichSubprocessClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_get_refs (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
@@ -1389,11 +1429,28 @@ test_send_pack_nothing_to_send (tests.compat.test_client.DulwichSubprocessClient
 test_send_pack_one_error (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_send_without_report_status (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
-test_archive (tests.compat.test_client.DulwichTCPClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_empty_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_pack_zero_sha (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_get_refs (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_incremental_fetch_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_repeat (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack_multiple_errors (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack_nothing_to_send (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack_one_error (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_remove_branch (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_without_report_status (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_archive (tests.compat.test_client.DulwichTCPClientTest) ... skipped 'git-daemon was already running on port 9418'
 test_fetch_empty_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichTCPClientTest) ... ok
-test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichTCPClientTest) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichTCPClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_get_refs (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
@@ -1406,6 +1463,23 @@ test_send_pack_nothing_to_send (tests.compat.test_client.DulwichTCPClientTest) .
 test_send_pack_one_error (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichTCPClientTest) ... skipped 'skip flaky test; see #1015'
 test_send_without_report_status (tests.compat.test_client.DulwichTCPClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_empty_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_pack_zero_sha (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_get_refs (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_incremental_fetch_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_repeat (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack_multiple_errors (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack_nothing_to_send (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack_one_error (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_remove_branch (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... skipped 'skip flaky test; see #1015'
+test_send_without_report_status (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
 test_copy (tests.compat.test_pack.TestPack) ... ok
 test_delta_large_object (tests.compat.test_pack.TestPack) ... skipped 'skipping slow, large test'
 test_delta_medium_object (tests.compat.test_pack.TestPack) ... ok
@@ -1529,8 +1603,7 @@ test_push_to_dulwich_no_op (tests.compat.test_web.SmartWebTestCase) ... ok
 test_push_to_dulwich_remove_branch (tests.compat.test_web.SmartWebTestCase) ... ok
 test_shallow_clone_from_git_is_identical (tests.compat.test_web.SmartWebTestCase) ... ok
 test_run_command_data_transfer (tests.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... ok
-test_run_command_password (tests.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... Socket exception: Connection reset by peer (131)
-ok
+test_run_command_password (tests.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... ok
 test_run_command_with_privkey (tests.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... ok
 test_get_recent_tags (tests.contrib.test_release_robot.GetRecentTagsTest)
 Test get recent tags. ... ok
@@ -1581,6 +1654,6 @@ test_init_no_data (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required
 test_put_named_file (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 
 ----------------------------------------------------------------------
-Ran 1514 tests
+Ran 1584 tests
 
-OK (skipped=84, expected failures=1)
+OK (skipped=91, expected failures=1)
