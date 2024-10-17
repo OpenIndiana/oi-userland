@@ -23,23 +23,22 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-HUMAN_VERSION=		2.82.1
-COMPONENT_REVISION=	3
+HUMAN_VERSION=		2.82.2
 COMPONENT_SUMMARY=	GNOME core libraries
-COMPONENT_ARCHIVE_HASH=	sha256:478634440bf52ee4ec4428d558787398c0be6b043c521beb308334b3db4489a6
+COMPONENT_ARCHIVE_HASH=	sha256:ab45f5a323048b1659ee0fbda5cecd94b099ab3e4b9abf26ae06aeb3e781fd63
 COMPONENT_FMRI=		library/glib2
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
 
-COMPONENT_FMRI.glib-32 =		$(COMPONENT_FMRI)/32
-COMPONENT_SUMMARY.glib-32 =		$(COMPONENT_SUMMARY) (32-bit)
+COMPONENT_FMRI.$(COMPONENT_NAME)-32 =		$(COMPONENT_FMRI)/32
+COMPONENT_SUMMARY.$(COMPONENT_NAME)-32 =	$(COMPONENT_SUMMARY) (32-bit)
 
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
-# /usr/lib and /usr/lib/$(MACH64) needed to make dbus-daemon program available
-PATH = $(PATH.gnu):/usr/lib:/usr/lib/$(MACH64)
+# GNU msgfmt is needed
+PATH = $(PATH.gnu)
 
 # socketpair(3socket) requires -lsocket -lnsl
 LDFLAGS += -lsocket -lnsl
@@ -50,16 +49,13 @@ LDFLAGS += -lsocket -lnsl
 CFLAGS += -std=gnu11
 
 # We need standard conforming getpwnam_r()/getpwuid_r()
+CPPFLAGS += $(CPP_POSIX)
+# Workaround for https://www.illumos.org/issues/16836
 CPPFLAGS += $(CPP_XPG6MODE)
-
-# Some warnings are treated as errors by default but we do not want that
-CFLAGS += -Wno-error=format-nonliteral
-CFLAGS += -Wno-error=format-security
 
 # We do not have getxattr() so disable xattr
 CONFIGURE_OPTIONS += -Dxattr=false
 CONFIGURE_OPTIONS.64 += -Dman-pages=enabled
-CONFIGURE_OPTIONS += -Dcharsetalias_dir=$(USRLIBDIR)
 CONFIGURE_OPTIONS += -Druntime_dir=$(VARDIR)/run
 CONFIGURE_OPTIONS += -Dselinux=disabled
 CONFIGURE_OPTIONS += -Dlibmount=disabled
@@ -70,9 +66,6 @@ CONFIGURE_OPTIONS += -Dsystemtap=disabled
 CONFIGURE_OPTIONS += -Dsysprof=disabled
 # see https://gitlab.gnome.org/GNOME/glib/-/issues/3421
 CONFIGURE_OPTIONS += -Dglib_debug=disabled
-# The glib documentation is needed to build documentation for other projects.
-# See also https://gitlab.gnome.org/GNOME/gtk-doc/-/issues/73#note_420663
-CONFIGURE_OPTIONS.64 += -Ddocumentation=true
 
 COMPONENT_POST_CONFIGURE_ACTION= \
   ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
