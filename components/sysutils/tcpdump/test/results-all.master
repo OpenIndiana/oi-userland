@@ -1,9 +1,10 @@
-make[1]: Entering directory '$(@D)'
 $(SOURCE_DIR)/tests/TESTrun
 Running tests from $(SOURCE_DIR)/tests
 with ./tcpdump, version:
-tcpdump version 4.99.4
-libpcap version 1.10.4
+tcpdump version 4.99.5
+libpcap version 1.10.5
+64-bit build, 64-bit time_t
+./tcpdump --fp-type => HAVE_FPTYPE1
     print-x                                 : passed
     print-xx                                : passed
     print-X                                 : passed
@@ -47,6 +48,7 @@ libpcap version 1.10.4
     isakmp5-v                               : passed
     lmp                                     : passed
     mpls-ldp-hello                          : passed
+    ldp-common-session                      : passed
     ldp_infloop                             : passed
     lspping-fec-ldp                         : passed
     lspping-fec-ldp-v                       : passed
@@ -58,7 +60,15 @@ libpcap version 1.10.4
     mpls-traceroute-v                       : passed
     mpls-over-udp                           : passed
     mpls-over-udp-v                         : passed
+    ospf-gmpls                              : passed
+    ospf-nssa-bitnt                         : passed
+    ospf-ack                                : passed
+    ospf3_ah-vv                             : passed
     ospf3_auth-vv                           : passed
+    ospf3_bc-vv                             : passed
+    ospf3_mp-vv                             : passed
+    ospf3_nbma-vv                           : passed
+    ospf2-seg-fault-1-v                     : passed
     ikev2four                               : passed
     ikev2fourv                              : passed
     ikev2fourv4                             : passed
@@ -86,6 +96,7 @@ libpcap version 1.10.4
     babel_pad1                              : passed
     babel_rtt                               : passed
     babel_rfc6126bis                        : passed
+    ppp_error_hexdump                       : passed
     pppoe                                   : passed
     pppoes                                  : passed
     pppoes_id                               : passed
@@ -125,6 +136,7 @@ libpcap version 1.10.4
     dhcpv6-sip-server-d                     : passed
     dhcpv6-domain-list                      : passed
     dhcpv6-mud                              : passed
+    dhcpv6-rfc6355-duid-uuid                : passed
     zmtp1v                                  : passed
     pgmv                                    : passed
     epgmv                                   : passed
@@ -152,8 +164,11 @@ libpcap version 1.10.4
     of13_ericsson                           : passed
     of13_ericsson-v                         : passed
     of13_ericsson-vv                        : passed
-    geonet-calm-fast                        : passed
+    of10_inv_OFPST_FLOW-v                   : passed
+    of10_inv_QUEUE_GET_CONFIG_REPLY-vv      : passed
+    geonet_v0_and_calm_fast                 : passed
     m3ua                                    : passed
+    m3ua-vv                                 : passed
     nflog-e                                 : passed
     syslog-v                                : passed
     dns_tcp                                 : passed
@@ -169,6 +184,12 @@ libpcap version 1.10.4
     dns_udp_8053                            : passed
     dns_udp_8053-T                          : passed
     dnssec-vv                               : passed
+    ipv4_invalid_length                     : passed
+    ipv4_invalid_hdr_length                 : passed
+    ipv4_invalid_total_length               : passed
+    ipv4_tcp_http_xml                       : passed
+    ipv4_invalid_total_length_2             : passed
+    ipv4_tcp_http_xml_tso                   : passed
     ipv6-bad-version                        : passed
     ipv6-routing-header                     : passed
     ipv6-srh-ext-header                     : passed
@@ -176,6 +197,13 @@ libpcap version 1.10.4
     ipv6-srh-ipproto-ether-v                : passed
     ipv6-srh-ipproto-ether-ev               : passed
     ipv6-too-long-jumbo                     : passed
+    ipv6_jumbogram_1                        : passed
+    ipv6_invalid_length                     : passed
+    ipv6_invalid_length_2                   : passed
+    ipv6_jumbogram_invalid_length           : passed
+    ipv6_39_byte_header                     : passed
+    ipv6_missing_jumbo_payload_option       : passed
+    ipv6_frag6_negative_len                 : passed
     loopback                                : passed
     dccp_partial_csum_v4_simple             : passed
     dccp_partial_csum_v4_longer             : passed
@@ -209,19 +237,21 @@ libpcap version 1.10.4
     isis-seg-fault-2-v                      : passed
     isis-seg-fault-3-v                      : passed
     isis_sid                                : passed
+    rsvp_infloop-v                          : passed
     rsvp_cap                                : passed
     rsvp-inf-loop-2-v                       : passed
     hdlc1                                   : passed
     hdlc2                                   : passed
     hdlc3                                   : passed
     hdlc4                                   : passed
+    decnet                                  : passed
     radius-v                                : passed
     radius-rfc3162                          : passed
     radius-rfc4675                          : passed
     radius-rfc5176                          : passed
     radius-port1700                         : passed
     radius-rfc5176-2                        : passed
-    radius-rfc5447                          : passed
+    radius_rfc5447_invalid_length           : passed
     radius-rfc5580                          : passed
     dtp-v                                   : passed
     lacp-ev                                 : passed
@@ -354,7 +384,7 @@ libpcap version 1.10.4
     hoobr_juniper2                          : passed
     hoobr_juniper3                          : passed
     hoobr_juniper4                          : passed
-    hoobr_parse_field                       : passed
+    hoobr_zephyr_parse_field                : passed
     hoobr_chdlc_print                       : passed
     hoobr_lookup_nsap                       : passed
     hoobr_rt6_print                         : passed
@@ -372,11 +402,14 @@ libpcap version 1.10.4
     icmp-cksum-oobr-4                       : passed
     tok2str-oobr-1                          : passed
     tok2str-oobr-2                          : passed
+    eigrp-tlv-oobr                          : passed
     zephyr-oobr                             : passed
     isakmp-no-none-np                       : passed
     telnet-iac-check-oobr                   : passed
     resp_4_infiniteloop                     : passed
     dns_fwdptr                              : passed
+    isis-areaaddr-oobr-1                    : passed
+    isis-areaaddr-oobr-2                    : passed
     isis-extd-ipreach-oobr                  : passed
     lldp-infinite-loop-1                    : passed
     lldp-infinite-loop-2                    : passed
@@ -392,6 +425,7 @@ libpcap version 1.10.4
     juniper_atm1_oobr                       : passed
     juniper_es_oobr                         : passed
     l2tp-avp-overflow                       : passed
+    pktap-heap-overflow                     : passed
     wb-oobr                                 : passed
     lldp_asan                               : passed
     extract_read2_asan                      : passed
@@ -495,22 +529,20 @@ libpcap version 1.10.4
     macsec-short-longer                     : passed
     macsec-short-valid                      : passed
     nfs-write-verf-cookie                   : passed
+    nfs_large_credentials_length            : passed
     nfs-seg-fault-1                         : passed
     nfs-cannot-pad-32-bit                   : passed
+    dns-zlip-1                              : passed
+    dns-zlip-2                              : passed
+    dns-zlip-3                              : passed
     ntp                                     : passed
     ntp-v                                   : passed
     ntp-time                                : passed
     ntp-time--v                             : passed
-    ntp-time--vv                            : passed
-    ntp-time--vvv                           : passed
     ntp-control                             : passed
     ntp-control--v                          : passed
-    ntp-control--vv                         : passed
-    ntp-control--vvv                        : passed
     ntp-mode7                               : passed
     ntp-mode7--v                            : passed
-    ntp-mode7--vv                           : passed
-    ntp-mode7--vvv                          : passed
     rx                                      : passed
     rx-v                                    : passed
     empty-pcap                              : passed
@@ -528,13 +560,16 @@ libpcap version 1.10.4
     bfd-multihop-v                          : passed
     bfd-lag                                 : passed
     bfd-lag-v                               : passed
+    bfd_source_port_49152                   : passed
     arista-ether                            : passed
     arista-ether-e                          : passed
     arista-ether-ev                         : passed
     huge-tipc-messages                      : passed
+    sflow_print-segv                        : passed
     ptp                                     : passed
     ptp_ethernet                            : passed
     ptp_corrections                         : passed
+    ptp_v2_1                                : passed
     ldp_tlv_print-oobr                      : passed
     dns-badlabel                            : passed
     igrp-oobr                               : passed
@@ -547,6 +582,13 @@ libpcap version 1.10.4
     unsupported-link-type-dbus              : passed
     lsp-ping-timestamp                      : passed
     lwres_with_extra                        : passed
+    dhcpv4v6-rfc5970-rfc8572                : passed
+    dhcpv6-rfc8415-duid-type2               : passed
+    ip-snmp-leftshift-unsigned              : passed
+    ip6-snmp-oid-unsigned                   : passed
+    lwres-pointer-arithmetic-ub             : passed
+    ospf-signed-integer-ubsan               : passed
+    bgp-ub                                  : passed
 FILE: $(SOURCE_DIR)/tests/crypto.tests
     esp1                                    : skipped (HAVE_LIBCRYPTO not set)
     esp2                                    : skipped (HAVE_LIBCRYPTO not set)
@@ -567,43 +609,24 @@ FILE: $(SOURCE_DIR)/tests/lmp-v.tests
     lmp-v-fptype2                           : skipped (HAVE_FPTYPE2 not set)
 FILE: $(SOURCE_DIR)/tests/non-bsd.tests
     heap-overflow-1                         : passed
-FILE: $(SOURCE_DIR)/tests/printf_z.tests
-    ospf-gmpls                              : passed
-    ospf-nssa-bitnt                         : passed
-    ospf3_ah-vv                             : passed
-    ospf3_bc-vv                             : passed
-    ospf3_mp-vv                             : passed
-    ospf3_nbma-vv                           : passed
-    ospf2-seg-fault-1-v                     : passed
-    m3ua-vv                                 : passed
-    rsvp_infloop-v                          : passed
-    decnet                                  : passed
-    eigrp-tlv-oobr                          : passed
-    isis-areaaddr-oobr-1                    : passed
-    isis-areaaddr-oobr-2                    : passed
-    pktap-heap-overflow                     : passed
-    dns-zlip-1                              : passed
-    dns-zlip-2                              : passed
-    dns-zlip-3                              : passed
-    sflow_print-segv                        : passed
 FILE: $(SOURCE_DIR)/tests/smb.tests
-    eapon1                                  : skipped (ENABLE_SMB not set)
-    eapon1-nosmb                            : passed
-    eapon1-v                                : skipped (ENABLE_SMB not set)
-    eapon1-v-nosmb                          : passed
-    ipx                                     : skipped (ENABLE_SMB not set)
-    ipx-nosmb                               : passed
-    nbns-valgrind                           : skipped (ENABLE_SMB not set)
-    nbns-valgrind-nosmb                     : passed
-    smb_print_trans-oobr1                   : skipped (ENABLE_SMB not set)
-    smb_print_trans-oobr1-nosmb             : passed
-    smb_print_trans-oobr2                   : skipped (ENABLE_SMB not set)
-    smb_print_trans-oobr2-nosmb             : passed
-    smb_data_print-oobr                     : skipped (ENABLE_SMB not set)
-    smb_data_print-oobr-nosmb               : passed
-    smb_data_print-segv                     : skipped (ENABLE_SMB not set)
-    smb_data_print-segv-nosmb               : passed
+    eapon1                                  : passed
+    eapon1-nosmb                            : skipped (ENABLE_SMB set)
+    eapon1-v                                : passed
+    eapon1-v-nosmb                          : skipped (ENABLE_SMB set)
+    ipx                                     : passed
+    ipx-nosmb                               : skipped (ENABLE_SMB set)
+    nbns-valgrind                           : passed
+    nbns-valgrind-nosmb                     : skipped (ENABLE_SMB set)
+    smb_print_trans-oobr1                   : passed
+    smb_print_trans-oobr1-nosmb             : skipped (ENABLE_SMB set)
+    smb_print_trans-oobr2                   : passed
+    smb_print_trans-oobr2-nosmb             : skipped (ENABLE_SMB set)
+    smb_data_print-oobr                     : passed
+    smb_data_print-oobr-nosmb               : skipped (ENABLE_SMB set)
+    smb_data_print-segv                     : passed
+    smb_data_print-segv-nosmb               : skipped (ENABLE_SMB set)
 ------------------------------------------------
+  19 tests skipped
    0 tests failed
- 574 tests passed
-make[1]: Leaving directory '$(@D)'
+ 597 tests passed
