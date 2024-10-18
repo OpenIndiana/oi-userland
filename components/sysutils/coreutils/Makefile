@@ -27,12 +27,16 @@
 # Copyright 2020-2021 Nona Hansel
 #
 
+BUILD_BITS= 64_and_32
 USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
 COMPONENT_VERSION=      9.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=		GNU Core Utilities are the basic file, shell and text manipulation utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/coreutils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,21 +45,14 @@ COMPONENT_ARCHIVE_HASH= sha256:cd328edeac92f6a665de9f323c93b712af1858bc2e0d88f3f
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         file/gnu-coreutils	
 COMPONENT_CLASSIFICATION=Applications/System Utilities
-COMPONENT_LICENSE=      GPLv3, FDLv1.3
+COMPONENT_LICENSE=	GPL-3.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-# We need the GNU grep command to configure/build.
-PATH = $(PATH.gnu)
-
-PATCH_LEVEL = 0
 
 gcc_OPT.sparc.32 = -O1
 
 CFLAGS += $(CPP_LARGEFILES)
-
-# Recreate configure and Makefile to pick up changes in .../src/local.mk
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 
 CONFIGURE_PREFIX	 =	$(GNUDIR)
 CONFIGURE_BINDIR.64	 =	$(GNUBIN)
@@ -63,8 +60,9 @@ CONFIGURE_OPTIONS	+=	CPPFLAGS=" -I$(USRINCDIR)/gmp"
 CONFIGURE_OPTIONS	+=	--libdir=$(USRLIBDIR.$(BITS))
 # Put libstdbuf in the library directory
 CONFIGURE_OPTIONS	+=	--libexecdir=$(USRLIBDIR.$(BITS))
-CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS.32 +=	--disable-year2038
+# chcon and runcon are linux only
+CONFIGURE_OPTIONS += --enable-no-install-program=chcon,runcon
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -72,39 +70,46 @@ ASLR_MODE = $(ASLR_ENABLE)
 # OS as reported by `uname -o`
 CONFIGURE_ENV += gl_cv_host_operating_system=illumos
 
-COMPONENT_POST_INSTALL_ACTION += ( cp $(COMPONENT_DIR)/files/*.1 \
-                                      $(PROTOGNUSHAREMAN1) ) 
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOGNUBIN32) ;
+# Drop info files installed for 32-bit build
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRSHAREDIR)/info ;
+# Drop man pages installed for 32-bit build
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOGNUSHAREMAN) ;
+# Drop locale installed for 32-bit build
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOGNUSHARE)/locale ;
 
-# Build 32-bit for libstdbuf only, then overwrite with 64bit binaries
-build:		$(BUILD_32_and_64)
+# We do not want the info index file
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
-# Make sure 32-bit binaries are installed first
-$(INSTALL_64): $(INSTALL_32)
+# Move some non-conflicting binaries and their manpages to default location
+# /usr/bin or /usr/share/man respectively.
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(MKDIR) $(PROTOUSRBINDIR) ; \
+	$(MKDIR) $(PROTOUSRSHAREMAN1DIR) ; \
+	for f in b2sum base32 base64 dir dircolors md5sum pinky printenv ptx \
+	    readlink realpath seq sha1sum sha224sum sha256sum sha384sum sha512sum \
+	    shred shuf stat stdbuf tac timeout truncate vdir whoami ; do \
+		$(MV) $(PROTOGNUBIN)/$$f $(PROTOUSRBINDIR) ; \
+		$(MV) $(PROTOGNUSHAREMAN1)/$$f.1 $(PROTOUSRSHAREMAN1DIR) ; \
+	done ;
 
-install:	$(INSTALL_32_and_64)
+# Compatibility symlinks for binaries and their manpages
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	for f in $$(ls $(PROTOGNUBIN)) ; do \
+		[ "$$f" == "[" ] && continue ; \
+		[ "$$f" == "nproc" ] && continue ; \
+		[ "$$f" == "numfmt" ] && continue ; \
+		[ "$$f" == "users" ] && continue ; \
+		$(SYMLINK) ../gnu/bin/$$f $(PROTOUSRBINDIR)/g$$f ; \
+		$(SYMLINK) ../../../gnu/share/man/man1/$$f.1 $(PROTOUSRSHAREMAN1DIR)/g$$f.1 ; \
+	done ;
 
-# Needed for "gmake test" to work successfully.
-# If SHELLOPTS is exported (as it is by the userland makefiles),
-# then all shell options get exported to child invocations of bash,
-# which results in test failures due to nounset and xtrace being
-# set unexpectedly, and errors such as "$1: unbound variable" and
-# diffs failing due to script tracing in output files.
-unexport SHELLOPTS
+# We want the libstdbuf.so library at default location
+COMPONENT_POST_INSTALL_ACTION += $(MV) $(PROTOUSRLIBDIR.$(BITS))/coreutils/libstdbuf.so $(PROTOUSRLIBDIR.$(BITS)) ;
 
 # Get the binaries to test from the component proto area.
 COMPONENT_TEST_ENV += PATH=$(PROTOGNUBIN):$(USRBINDIR)
-
-# Always show the build and link lines for easier debugging.
-# COMPONENT_TEST_ARGS +=	V=1
-#
-
-# Master test results are different between x86 and SPARC (different # of
-# tests run).
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
-
-# Some tests pass or are skip depending on the host.
-
-test:		install $(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
