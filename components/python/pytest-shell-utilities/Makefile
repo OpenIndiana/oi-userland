@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_shell_utilities
-HUMAN_VERSION =			1.9.3
+HUMAN_VERSION =			1.9.4
 COMPONENT_SUMMARY =		Pytest plugin to simplify running shell commands against the system
 COMPONENT_PROJECT_URL =		https://github.com/saltstack/pytest-shell-utilities
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:91072e92ab56658497ed168e905cde75b983ffc84e479e10099632391a5389b5
+	sha256:f0f1cecbbae89c5a142788e06d5a7bbde5ee625188b2023a84c57018be8b4c6e
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
