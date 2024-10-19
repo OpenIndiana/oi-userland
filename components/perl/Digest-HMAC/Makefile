@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Digest::HMAC
-HUMAN_VERSION =			1.04
-COMPONENT_REVISION =		4
+HUMAN_VERSION =			1.05
 COMPONENT_SUMMARY =		Digest::HMAC - Keyed-Hashing for Message Authentication
 COMPONENT_CPAN_AUTHOR =		ARODLAND
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d6bc8156aa275c44d794b7c18f44cdac4a58140245c959e6b19b2c3838b08ed4
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:215cb59cba610745cfb2d4b3f8ef756d590e57e3ad7986a992e87c4969fcdc7a
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
