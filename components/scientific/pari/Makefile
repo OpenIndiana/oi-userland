@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
 COMPONENT_VERSION=	2.17.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The PARI Computer Algebra System
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_SRC=		pari-$(COMPONENT_VERSION)
@@ -38,8 +38,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-# Configure complains when built outside of source tree
-# The PARI script config/genfunclist uses find -type f and fails on symlinks
+# Configure has an option --builddir but this fails when built outside of source tree
+# The PARI script config/genfunclist uses find -type f and skips symlinks
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # PARI/gp Configure is not autoconf 
@@ -49,7 +49,7 @@ CONFIGURE_SCRIPT= $(SOURCE_DIR)/Configure
 CONFIGURE_OPTIONS= --prefix=$(CONFIGURE_PREFIX)
 # PARI/gp installs its 64bit library in /usr/lib
 CONFIGURE_OPTIONS += --libdir=$(USRLIBDIR64)
-# multi-threaded libraries
+# multi-threaded libraries (enables tls, or thread local stack)
 CONFIGURE_OPTIONS += --mt=pthread
 CONFIGURE_OPTIONS += --with-readline
 
@@ -69,6 +69,9 @@ COMPONENT_TEST_TARGETS= dyntest-all
 COMPONENT_TEST_TRANSFORMS += '-e "s/gp-sta..TIME=[ ]*[0-9]*//g"'
 COMPONENT_TEST_TRANSFORMS += '-e "s/gp-dyn..TIME=[ ]*[0-9]*//g"'
 COMPONENT_TEST_TRANSFORMS += '-e "/Total bench/d"'
+
+# gmake test dependencies
+TEST_REQUIRED_PACKAGES += library/math/pari-elldata
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(READLINE_PKG)
