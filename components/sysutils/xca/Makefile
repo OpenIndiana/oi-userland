@@ -17,7 +17,7 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xca
-COMPONENT_VERSION=	2.7.0
+COMPONENT_VERSION=	2.8.0
 COMPONENT_SUMMARY=	XCA - X Certificate and Key Management
 COMPONENT_DESCRIPTION=	This application is intended for creating and managing \
 			X.509 certificates, certificate requests, RSA, DSA and EC \
@@ -27,7 +27,7 @@ COMPONENT_DESCRIPTION=	This application is intended for creating and managing \
 			are shown clearly.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:15ff6fbe4c004ac2ad18885ab35ae6940364a8246d5fe8562a41312fe45ec15e
+COMPONENT_ARCHIVE_HASH=	sha256:87955987ad6e05ba3dcac826cd22f7d9cedf00e4a409a1931e94e5347e79a7d0
 COMPONENT_PROJECT_URL=	http://xca.hohnstaedt.de
 COMPONENT_ARCHIVE_URL=	https://github.com/chris2511/$(COMPONENT_NAME)/releases/download/RELEASE.$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	sysutils/$(COMPONENT_NAME)
