@@ -470,6 +470,14 @@ INSTALL_64 =		$(BUILD_DIR_64)/.installed
 INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
 $(BUILD_DIR_32)/.installed:       BITS=32
 $(BUILD_DIR_64)/.installed:       BITS=64
+# If we are building both 32 and 64 bit then make sure we install in the
+# desired order: the preferred one last
+ifeq ($(strip $(BUILD_BITS)),64_and_32)
+$(INSTALL_64):	$(INSTALL_32)
+endif
+ifeq ($(strip $(BUILD_BITS)),32_and_64)
+$(INSTALL_32):	$(INSTALL_64)
+endif
 
 # set the default target for installation of the component
 COMPONENT_INSTALL_TARGETS =	install
