@@ -1,0 +1,47 @@
+https://gitlab.gnome.org/GNOME/gcr/-/issues/127
+
+--- gcr-4.3.0/gcr/fixtures/gnupg-mock/mock-simple-output.orig
++++ gcr-4.3.0/gcr/fixtures/gnupg-mock/mock-simple-output
+@@ -3,6 +3,6 @@
+ # This script is used with test-gnupg-process
+ set -euf
+ 
+-echo -n "simple-"
+-echo -n "outp"
+-echo "ut"
+\ No newline at end of file
++printf "simple-"
++printf "outp"
++echo "ut"
+--- gcr-4.3.0/gcr/fixtures/gnupg-mock/mock-simple-error.orig
++++ gcr-4.3.0/gcr/fixtures/gnupg-mock/mock-simple-error
+@@ -3,7 +3,7 @@
+ # This script is used with test-gnupg-process
+ set -euf
+ 
+-echo -n "line 1: " >&2
++printf "line 1: " >&2
+ echo "more line 1" >&2
+ echo "line 2" >&2
+ echo "line 3" >&2
+\ No newline at end of file
+--- gcr-4.3.0/gcr/fixtures/gnupg-mock/mock-status-and-attribute.orig
++++ gcr-4.3.0/gcr/fixtures/gnupg-mock/mock-status-and-attribute
+@@ -29,6 +29,6 @@
+ 	exit 23
+ fi
+ 
+-echo -n "1lc923g4laoeurc23rc2" >&$AFD
++printf "1lc923g4laoeurc23rc2" >&$AFD
+ echo "[GNUPG:] SCHEMA one two three four " >&$SFD
+-echo -n "41lcg2r23c4gr3" >&$AFD
++printf "41lcg2r23c4gr3" >&$AFD
+--- gcr-4.3.0/gcr/fixtures/gnupg-mock/mock-arguments-environ.orig
++++ gcr-4.3.0/gcr/fixtures/gnupg-mock/mock-arguments-environ
+@@ -18,5 +18,5 @@
+ 	esac
+ done
+ 
+-echo -n $ENVIRON1 >&2
++printf $ENVIRON1 >&2
+ echo $ENVIRON2 >&2

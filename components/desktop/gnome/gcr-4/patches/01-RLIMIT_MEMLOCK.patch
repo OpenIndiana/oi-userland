@@ -1,0 +1,22 @@
+https://www.illumos.org/issues/16847
+
+--- gcr-4.3.0/gcr/test-secure-memory.c.orig
++++ gcr-4.3.0/gcr/test-secure-memory.c
+@@ -54,6 +54,9 @@
+ static gsize
+ get_rlimit_memlock (void)
+ {
++#ifdef __illumos__
++	return 0;
++#else
+ 	struct rlimit memlock;
+ 
+ 	/* If the test program is running as a privileged user, it is
+@@ -82,6 +85,7 @@
+ 	}
+ 
+ 	return memlock.rlim_cur;
++#endif
+ }
+ 
+ static void
