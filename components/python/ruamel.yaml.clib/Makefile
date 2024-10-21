@@ -19,17 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ruamel.yaml.clib
-HUMAN_VERSION =			0.2.8
-COMPONENT_SUMMARY =		ruamel.yaml.clib - C version of reader, parser and emitter for ruamel.yaml derived from libyaml
-COMPONENT_PROJECT_URL =		https://sourceforge.net/p/ruamel-yaml-clib/code/ci/default/tree
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/46/ab/bab9eb1566cd16f060b54055dd39cf6a34bfa0240c53a7218c43e974295b/ruamel.yaml.clib-0.2.8.tar.gz
+HUMAN_VERSION =			0.2.12
+COMPONENT_SUMMARY =		C version of reader, parser and emitter for ruamel.yaml derived from libyaml
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:beb2e0404003de9a4cab9753a8805a8fe9320ee6673136ed7f04255fe60bb512
+	sha256:6c8fbb13ec503f99a91901ab46e0b07ae7941cd527393187039aec586fdfd36f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
