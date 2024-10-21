@@ -1,0 +1,10 @@
+--- coverage-7.6.4/tests/test_process.py.orig
++++ coverage-7.6.4/tests/test_process.py
+@@ -1163,6 +1163,7 @@
+ 
+ 
+ @pytest.mark.skipif(env.WINDOWS, reason="Windows can't delete the directory in use.")
++@pytest.mark.skipif(sys.platform == "sunos5", reason="illumos can't delete the directory in use.")
+ class YankedDirectoryTest(CoverageTest):
+     """Tests of what happens when the current directory is deleted."""
+ 

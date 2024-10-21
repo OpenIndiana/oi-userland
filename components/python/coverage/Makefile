@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		coverage
-HUMAN_VERSION =			7.6.1
+HUMAN_VERSION =			7.6.4
 COMPONENT_SUMMARY =		Code coverage measurement for Python
 COMPONENT_PROJECT_URL =		https://github.com/nedbat/coveragepy
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:953510dfb7b12ab69d20135a0662397f077c59b1e6379a768e97c59d852ee51d
+	sha256:29fc0f17b1d3fea332f8001d4558f8214af7f1d87a345f3a133c901d60347c73
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -34,7 +34,7 @@ COMPONENT_PRE_TEST_ACTION += touch $(PROTO_DIR)/$(PYTHON_LIB)/foo.pth
 COMPONENT_POST_TEST_ACTION += $(RM) $(PROTO_DIR)/$(PYTHON_LIB)/foo.pth
 
 # Force verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -v
+TOX_POSARGS += -v
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
