@@ -27,27 +27,42 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
 COMPONENT_VERSION=	1.11.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GnuPG libgcrypt library
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libgcrypt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= sha256:09120c9867ce7f2081d6aaa1775386b98c2f2f246135761aae47d81f58685b9c
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://gnupg.org/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/library/security/libgcrypt
 COMPONENT_CLASSIFICATION= System/Security
-COMPONENT_LICENSE=	LGPL, BSD, BSD-like
+COMPONENT_LICENSE=	GPL-2.0-only AND LGPL-2.1-only AND BSD-3-Clause
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --disable-static
+# helper target
+update-license-file: patch
+	( \
+		printf -- '--- LICENSES --------------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/LICENSES ; \
+		printf '\n--- COPYING ---------------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING ; \
+		printf '\n--- COPYING.LIB -----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LIB \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
-# We disalbe asm as this code doesn't compile.
-# But libgcrypt still tries to use asm functions.
-# gcry_cv_gcc_amd64_platform_as_ok switch allows us to prevent this
-CONFIGURE_OPTIONS += --disable-asm
-CONFIGURE_ENV += gcry_cv_gcc_amd64_platform_as_ok=no
+# We do not want the info index file
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
+
+# Some tests are using mlock(3c) and expects it pass.  Since mlock() is
+# restricted function in illumos we need to make sure the additional privileges
+# are granted.
+COMPONENT_PRE_TEST_ACTION += \
+	/usr/bin/ppriv $$$$ | $(GNU_GREP) -q 'E:.*proc_lock_memory' || ( \
+		/usr/bin/printf "\nERROR: The proc_lock_memory privilege is needed!!!\n\n" ; \
+		/usr/bin/printf "Use\n\n\tusermod -K defaultpriv=basic,proc_lock_memory USERNAME\n" ; \
+		/usr/bin/printf "\nto grant the required privileges.\n\n" ; \
+		exit 1 ) ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/libgpg-error
