@@ -18,13 +18,13 @@ BUILD_STYLE = meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gucharmap
-HUMAN_VERSION=			16.0.1
+HUMAN_VERSION=			16.0.2
 COMPONENT_SUMMARY=		GNOME Character Map
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
 	https://gitlab.gnome.org/GNOME/$(COMPONENT_NAME)/-/archive/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:d687d3a3d4990ea7aff4066e17768ec9fefe7b3129b98090c750b8d7074b4764
+	sha256:f320ad67318dbf0ec26691849c0fe8f5ef4d72e6e78873fb083ad12c94bcda00
 COMPONENT_FMRI=			desktop/character-map/gucharmap
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Documentation
 COMPONENT_LICENSE=		GPL-3.0-only
@@ -41,6 +41,7 @@ CONFIGURE_OPTIONS += -Ducd_path=$(USRSHAREDIR)/unicode/ucd
 
 # Building of documentation fails
 # https://github.com/mesonbuild/meson/issues/5843
+# https://gitlab.gnome.org/GNOME/gtk-doc/-/issues/162
 CONFIGURE_OPTIONS += -Ddocs=false
 
 # Build dependencies
@@ -48,7 +49,7 @@ REQUIRED_PACKAGES += data/unicode-ucd
 REQUIRED_PACKAGES += data/unicode-ucd-unihan
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
