@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tokenize_rt
-HUMAN_VERSION =			6.0.0
+HUMAN_VERSION =			6.1.0
 COMPONENT_SUMMARY =		A wrapper around the stdlib \`tokenize\` which roundtrips.
 COMPONENT_PROJECT_URL =		https://github.com/asottile/tokenize-rt
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/asottile/tokenize-rt/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e8d005272f9fd60c1268fe83dcdf3c97bef79569d465f9e87fe0a17649fdbc95
+	sha256:67d25a612c7c08ddfa0ed273c81e9d180142a31b53141b0ee242d16fe5d4b641
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
