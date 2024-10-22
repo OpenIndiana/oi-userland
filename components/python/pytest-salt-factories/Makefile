@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-salt-factories
+#   $WS_TOOLS/python-integrate-project -d python/pytest-salt-factories pytest_salt_factories
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-salt-factories
-HUMAN_VERSION =			1.0.1
-COMPONENT_SUMMARY =		pytest-salt-factories - Pytest Salt Plugin
+COMPONENT_NAME =		pytest_salt_factories
+HUMAN_VERSION =			1.0.3
+COMPONENT_SUMMARY =		Pytest Salt Plugin
 COMPONENT_PROJECT_URL =		https://github.com/saltstack/pytest-salt-factories
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:daf267a4810d01c91f5e9ae09cd084c4732d9c8a0cad7e207264a2b78c3199c5
+	sha256:30d5e491e0a177a22fd87d65b7fbca64a69b51ace64799287a84d8ffca24cee0
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
