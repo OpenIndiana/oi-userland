@@ -34,7 +34,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.9.4
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -62,6 +62,10 @@ PATH= $(PATH.gnu)
 DOXYGEN= /usr/bin/doxygen
 
 CONFIGURE_ENV.64 += PERL=$(PERL)
+
+# Make sure generated files from build dir are used instead of files already
+# installed in /usr/include
+CFLAGS += -I$(BUILD_DIR_$(BITS))/include
 
 CONFIGURE_OPTIONS += --enable-static=no
 # should not be used anylonger
