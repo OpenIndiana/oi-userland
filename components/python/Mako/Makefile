@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Mako
+#   $WS_TOOLS/python-integrate-project -d python/Mako mako
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Mako
-HUMAN_VERSION =			1.3.5
+COMPONENT_NAME =		mako
+HUMAN_VERSION =			1.3.6
 COMPONENT_SUMMARY =		A super-fast templating language that borrows the best ideas from the existing templating languages.
 COMPONENT_PROJECT_URL =		https://www.makotemplates.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:48dbc20568c1d276a2698b36d968fa76161bf127194907ea6fc594fa81f943bc
+	sha256:9ec3a1583713479fae654f83ed9fa8c9a4c16b7bb0daba0e6bbebff50c0d983d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
