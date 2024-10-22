@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6915 items / 5919 deselected / 996 selected
+collecting ... collected 6928 items / 5928 deselected / 1000 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
@@ -474,28 +474,7 @@ test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[HTTPSup
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions0-AssertionError] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions1-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions2-AssertionError] PASSED
-----------------------------------------
-Exception occurred during processing of request from ('127.0.0.1', 39556)
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
-    self.finish_request(request, client_address)
-  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
-    self.RequestHandlerClass(request, client_address, self)
-  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
-    self.handle()
-  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
-    self.handle_one_request()
-  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
-    method()
-  File "$(@D)/test/test_networking.py", line 259, in do_GET
-    self._headers()
-  File "$(@D)/test/test_networking.py", line 84, in _headers
-    self.wfile.write(payload)
-  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
-    self._sock.sendall(b)
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions3-False] PASSED
-BrokenPipeError: [Errno 32] Broken pipe
-----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions4-AssertionError] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions5-UnsupportedRequest] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[Urllib-http-extensions6-False] PASSED
@@ -662,6 +641,7 @@ test/test_networking_utils.py::TestNetworkingExceptions::test_incomplete_read_er
 test/test_plugins.py::TestPlugins::test_directories_containing_plugins PASSED
 test/test_plugins.py::TestPlugins::test_extractor_classes PASSED
 test/test_plugins.py::TestPlugins::test_importing_zipped_module PASSED
+test/test_plugins.py::TestPlugins::test_plugin_dirs PASSED
 test/test_plugins.py::TestPlugins::test_postprocessor_classes PASSED
 test/test_postprocessors.py::TestMetadataFromField::test_field_to_template PASSED
 test/test_postprocessors.py::TestMetadataFromField::test_format_to_regex PASSED
@@ -852,6 +832,9 @@ test/test_traversal.py::TestTraversal::test_traversal_re PASSED
 test/test_traversal.py::TestTraversal::test_traversal_xml_etree PASSED
 test/test_traversal.py::TestTraversal::test_traversal_unbranching PASSED
 test/test_traversal.py::TestTraversal::test_traversal_morsel PASSED
+test/test_traversal.py::TestTraversal::test_traversal_filter PASSED
+test/test_traversal.py::TestTraversalHelpers::test_traversal_require PASSED
+test/test_traversal.py::TestTraversalHelpers::test_subs_list_to_dict PASSED
 test/test_traversal.py::TestDictGet::test_dict_get PASSED
 test/test_update.py::TestUpdate::test_query_update PASSED
 test/test_update.py::TestUpdate::test_update_spec PASSED
@@ -1030,6 +1013,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 843 passed, 153 skipped, 5919 deselected ========
+======== 847 passed, 153 skipped, 5928 deselected ========
   py$(PYV): OK
   congratulations :)
