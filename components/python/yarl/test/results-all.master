@@ -5,14 +5,17 @@ hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-X workers [1285 items]
+X workers [1342 items]
 
 scheduling tests via LoadScheduling
 
 tests/test_cache.py::test_cache_clear PASSED
 tests/test_cache.py::test_cache_configure_None PASSED
+tests/test_cache.py::test_cache_configure_None_including_deprecated PASSED
+tests/test_cache.py::test_cache_configure_None_only_deprecated PASSED
 tests/test_cache.py::test_cache_configure_default PASSED
 tests/test_cache.py::test_cache_configure_explicit PASSED
+tests/test_cache.py::test_cache_configure_waring PASSED
 tests/test_cache.py::test_cache_info PASSED
 tests/test_cached_property.py::test_reify PASSED
 tests/test_cached_property.py::test_reify_assignment PASSED
@@ -674,6 +677,39 @@ tests/test_url.py::test_clear_fragment_on_getting_parent_toplevel PASSED
 tests/test_url.py::test_clear_query_on_getting_parent PASSED
 tests/test_url.py::test_clear_query_on_getting_parent_toplevel PASSED
 tests/test_url.py::test_compressed_ipv6 PASSED
+tests/test_url.py::test_control_chars_are_removed[ ] PASSED
+tests/test_url.py::test_control_chars_are_removed[\n] PASSED
+tests/test_url.py::test_control_chars_are_removed[\r] PASSED
+tests/test_url.py::test_control_chars_are_removed[\t] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x00] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x01] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x02] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x03] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x04] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x05] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x06] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x07] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x08] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x0b] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x0c] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x0e] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x0f] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x10] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x11] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x12] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x13] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x14] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x15] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x16] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x17] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x18] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x19] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x1a] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x1b] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x1c] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x1d] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x1e] PASSED
+tests/test_url.py::test_control_chars_are_removed[\x1f] PASSED
 tests/test_url.py::test_decode_pct_in_path PASSED
 tests/test_url.py::test_decode_pct_in_path_lower_case PASSED
 tests/test_url.py::test_decoding_with_26_and_3D_in_query PASSED
@@ -734,7 +770,12 @@ tests/test_url.py::test_human_repr_delimiters PASSED
 tests/test_url.py::test_human_repr_ipv6 PASSED
 tests/test_url.py::test_human_repr_non_printable PASSED
 tests/test_url.py::test_inheritance PASSED
+tests/test_url.py::test_invalid_idna_hyphen_encoding PASSED
+tests/test_url.py::test_ipfuture_brackets_not_allowed PASSED
+tests/test_url.py::test_ipv4_brackets_not_allowed PASSED
 tests/test_url.py::test_ipv4_zone PASSED
+tests/test_url.py::test_ipv6_missing_left_bracket PASSED
+tests/test_url.py::test_ipv6_missing_right_bracket PASSED
 tests/test_url.py::test_is PASSED
 tests/test_url.py::test_is_absolute_for_absolute_url PASSED
 tests/test_url.py::test_is_absolute_for_relative_url PASSED
@@ -887,7 +928,7 @@ tests/test_url.py::test_nonascii_in_qs PASSED
 tests/test_url.py::test_none_value_for_query PASSED
 tests/test_url.py::test_origin PASSED
 tests/test_url.py::test_origin_ipv6 PASSED
-tests/test_url.py::test_origin_is_self PASSED
+tests/test_url.py::test_origin_is_equal_to_self PASSED
 tests/test_url.py::test_origin_no_scheme PASSED
 tests/test_url.py::test_origin_nonascii PASSED
 tests/test_url.py::test_origin_not_absolute_url PASSED
@@ -984,10 +1025,13 @@ tests/test_url.py::test_requoting PASSED
 tests/test_url.py::test_scheme PASSED
 tests/test_url.py::test_slash_and_question_in_fragment PASSED
 tests/test_url.py::test_slash_and_question_in_query PASSED
+tests/test_url.py::test_split_result_encoded PASSED
 tests/test_url.py::test_split_result_non_decoded PASSED
 tests/test_url.py::test_str PASSED
+tests/test_url.py::test_str_encoded PASSED
 tests/test_url.py::test_str_for_empty_url PASSED
 tests/test_url.py::test_str_subclass PASSED
+tests/test_url.py::test_subclassed_str_encoded PASSED
 tests/test_url.py::test_suffix_for_empty_url PASSED
 tests/test_url.py::test_suffix_multi_dot PASSED
 tests/test_url.py::test_suffix_non_ascii PASSED
@@ -1001,8 +1045,14 @@ tests/test_url.py::test_suffixes_with_empty_name PASSED
 tests/test_url.py::test_to_idna PASSED
 tests/test_url.py::test_to_str PASSED
 tests/test_url.py::test_to_str_long PASSED
+tests/test_url.py::test_unsafe_url_bytes_are_removed[\n] PASSED
+tests/test_url.py::test_unsafe_url_bytes_are_removed[\r] PASSED
+tests/test_url.py::test_unsafe_url_bytes_are_removed[\t] PASSED
 tests/test_url.py::test_url_from_url PASSED
 tests/test_url.py::test_url_is_not_str PASSED
+tests/test_url.py::test_url_with_invalid_unicode[\u2100] PASSED
+tests/test_url.py::test_url_with_invalid_unicode[\ufe13] PASSED
+tests/test_url.py::test_url_with_invalid_unicode[\uff03] PASSED
 tests/test_url.py::test_user_empty_password PASSED
 tests/test_url.py::test_user_non_ascii PASSED
 tests/test_url.py::test_with_fragment PASSED
@@ -1055,6 +1105,8 @@ tests/test_url.py::test_with_suffix_with_slash PASSED
 tests/test_url.py::test_with_suffix_with_slash2 PASSED
 tests/test_url.py::test_with_suffix_without_dot PASSED
 tests/test_url_build.py::test_build_already_encoded PASSED
+tests/test_url_build.py::test_build_already_encoded_empty_host PASSED
+tests/test_url_build.py::test_build_already_encoded_username_password PASSED
 tests/test_url_build.py::test_build_drop_dots PASSED
 tests/test_url_build.py::test_build_encode PASSED
 tests/test_url_build.py::test_build_path_quoting PASSED
@@ -1236,6 +1288,11 @@ tests/test_url_query.py::test_query_separators_from_with_query[original_url4-1-1
 tests/test_url_query.py::test_query_separators_from_with_query[original_url5-1-10;b=20] PASSED
 tests/test_url_query.py::test_skip_dropping_query_params[a=10&b=M%C3%B9a+xu%C3%A2n&c=30-keys_to_drop0] PASSED
 tests/test_url_query.py::test_skip_dropping_query_params[a=10&b=M%C3%B9a+xu%C3%A2n-keys_to_drop1] PASSED
+tests/test_url_query.py::test_update_query_rejects_bytearray PASSED
+tests/test_url_query.py::test_update_query_rejects_bytes PASSED
+tests/test_url_query.py::test_update_query_rejects_invalid_type PASSED
+tests/test_url_query.py::test_update_query_rejects_memoryview PASSED
+tests/test_url_query.py::test_update_query_with_sequence_of_pairs PASSED
 tests/test_url_query.py::test_without_query_params[a=10&b=M%C3%B9a+xu%C3%A2n&c=30-keys_to_drop2-a=10&c=30] PASSED
 tests/test_url_query.py::test_without_query_params[a=10&b=M%C3%B9a+xu%C3%A2n&u%E1%BB%91ng=cafe-keys_to_drop0-b=M\xf9a xu\xe2n&u\u1ed1ng=cafe] PASSED
 tests/test_url_query.py::test_without_query_params[a=10&b=M%C3%B9a+xu%C3%A2n&u%E1%BB%91ng=cafe-keys_to_drop3-a=10&b=M\xf9a xu\xe2n] PASSED
@@ -1297,4 +1354,4 @@ tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 1281 passed, 4 xfailed ========
+======== 1338 passed, 4 xfailed ========
