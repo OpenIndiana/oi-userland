@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      29.4
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -219,7 +220,19 @@ COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
 # Solaris, it is delivered by system/prerequisite/gnu.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 
+# Add enough emacs sources such that xref-find-definitions is able to show functions definitions of internal functions.
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTO_DIR)/usr/share/emacs/$(COMPONENT_VERSION)/src ; \
+	$(CP) $(SOURCE_DIR)/src/*.[ch] $(PROTO_DIR)/usr/share/emacs/$(COMPONENT_VERSION)/src/ ;
+
+# Create site-start.el for actual version
+COMPONENT_POST_UNPACK_ACTION += \
+	$(GSED) -e 's/COMPONENT_VERSION/$(COMPONENT_VERSION)/' $(COMPONENT_DIR)/augment/source.el >$(COMPONENT_DIR)/site-start.el ;
+
 install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed
+
+clean::
+	$(RM) $(COMPONENT_DIR)/site-start.el
 
 # build dependencies.
 REQUIRED_PACKAGES += mail/mailutils
