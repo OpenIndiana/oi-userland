@@ -1,0 +1,23 @@
+--- meson-1.6.0/mesonbuild/dependencies/misc.py.orig
++++ meson-1.6.0/mesonbuild/dependencies/misc.py
+@@ -339,10 +339,10 @@
+         super().__init__(name, env, kwargs)
+ 
+         candidates = [
++            ('curses',  ['curses.h']),
+             ('pdcurses', ['pdcurses/curses.h']),
+             ('ncursesw',  ['ncursesw/ncurses.h', 'ncurses.h']),
+             ('ncurses',  ['ncurses/ncurses.h', 'ncurses/curses.h', 'ncurses.h']),
+-            ('curses',  ['curses.h']),
+         ]
+ 
+         # Not sure how else to elegantly break out of both loops
+@@ -364,6 +364,8 @@
+                             v_major, _ = self.clib_compiler.get_define('PDC_VER_MAJOR', f'#include <{header}>', env, [], [self])
+                             v_minor, _ = self.clib_compiler.get_define('PDC_VER_MINOR', f'#include <{header}>', env, [], [self])
+                             self.version = f'{v_major}.{v_minor}'
++                        if lib.startswith('curses'):
++                            self.version = f'0'
+ 
+                         # Check the version if possible, emit a warning if we can't
+                         req = kwargs.get('version')

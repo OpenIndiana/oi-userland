@@ -1,0 +1,14 @@
+Workaround for this issue:
+https://github.com/HDFGroup/hdf5/issues/4932
+
+--- meson-1.6.0/mesonbuild/dependencies/hdf5.py.orig
++++ meson-1.6.0/mesonbuild/dependencies/hdf5.py
+@@ -121,6 +121,8 @@
+         # We first need to call the tool with -c to get the compile arguments
+         # and then without -c to get the link arguments.
+         args = self.get_config_value(['-show', '-c'], 'args')[1:]
++        if language == 'cpp':
++            args += ['-I/usr/include/hdf5']
+         args += self.get_config_value(['-show', '-noshlib' if self.static else '-shlib'], 'args')[1:]
+         found = False
+         for arg in args:

@@ -1,0 +1,57 @@
+illumos ld does not support --version-script.
+Use -M instead.
+
+--- "meson-1.6.0/test cases/linuxlike/3 linker script/meson.build.orig"
++++ "meson-1.6.0/test cases/linuxlike/3 linker script/meson.build"
+@@ -1,14 +1,8 @@
+ project('linker script', 'c')
+ 
+-# Solaris 11.4 ld supports --version-script only when you also specify
+-# -z gnu-version-script-compat
+-if meson.get_compiler('c').get_linker_id() == 'ld.solaris'
+-  add_project_link_arguments('-Wl,-z,gnu-version-script-compat', language: 'C')
+-endif
+-
+ # Static map file
+ mapfile = 'bob.map'
+-vflag = '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), mapfile)
++vflag = '-Wl,-M,@0@/@1@'.format(meson.current_source_dir(), mapfile)
+ 
+ l = shared_library('bob', 'bob.c', link_args : vflag, link_depends : mapfile)
+ e = executable('prog', 'prog.c', link_with : l)
+@@ -22,7 +16,7 @@
+   output : 'bob-conf.map',
+   configuration : conf,
+ )
+-vflag = '-Wl,--version-script,@0@'.format(meson.current_build_dir() / 'bob-conf.map')
++vflag = '-Wl,-M,@0@'.format(meson.current_build_dir() / 'bob-conf.map')
+ 
+ l = shared_library('bob-conf', 'bob.c', link_args : vflag, link_depends : m)
+ e = executable('prog-conf', 'prog.c', link_with : l)
+@@ -37,7 +31,7 @@
+   output : 'bob-ct.map',
+   depend_files : 'bob.map',
+ )
+-vflag = '-Wl,--version-script,@0@'.format(m.full_path())
++vflag = '-Wl,-M,@0@'.format(m.full_path())
+ 
+ l = shared_library('bob-ct', ['bob.c', m], link_args : vflag, link_depends : m)
+ e = executable('prog-ct', 'prog.c', link_with : l)
+@@ -47,7 +41,7 @@
+ 
+ # With map file in subdir
+ mapfile = 'sub/foo.map'
+-vflag = '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), mapfile)
++vflag = '-Wl,-M,@0@/@1@'.format(meson.current_source_dir(), mapfile)
+ 
+ l = shared_library('bar', 'bob.c', link_args : vflag, link_depends : mapfile)
+ e = executable('prog-bar', 'prog.c', link_with : l)
+--- "meson-1.6.0/test cases/linuxlike/3 linker script/sub/meson.build.orig"
++++ "meson-1.6.0/test cases/linuxlike/3 linker script/sub/meson.build"
+@@ -1,5 +1,5 @@
+ mapfile = 'foo.map'
+-vflag = '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), mapfile)
++vflag = '-Wl,-M,@0@/@1@'.format(meson.current_source_dir(), mapfile)
+ 
+ l = shared_library('foo', '../bob.c', link_args : vflag, link_depends : mapfile)
+ e = executable('prog-foo', '../prog.c', link_with : l)
