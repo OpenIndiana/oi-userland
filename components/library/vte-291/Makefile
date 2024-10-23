@@ -1,88 +1,89 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
-# Copyright 2020 Michal Nowak
+# Copyright 2024 Marcel Telka
 #
 
-BUILD_BITS=		32_and_64
+BUILD_STYLE = meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		vte
-COMPONENT_MJR_VERSION=	0.54
-COMPONENT_MNR_VERSION=	5
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	3
-COMPONENT_PROJECT_URL=	http://www.gnome.org
-COMPONENT_SUMMARY=	Terminal emulation widget for GTK+
-COMPONENT_FMRI=		library/desktop/vte-291
+# This is vte-2.91 ABI series
+ABIVER = 2.91
+
+COMPONENT_NAME=			vte
+HUMAN_VERSION=			0.78.1
+COMPONENT_SUMMARY=		Virtual terminal widget for GTK applications
+COMPONENT_ARCHIVE_HASH=		sha256:6499d25179315255f9bcfce03c66fb84c03ad325dea23d0e372178521eca42b5
+COMPONENT_FMRI=			library/desktop/vte-291
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:f3725ed9ea3109cb4e55e144e6e606be9bbb9c42e355e03e809c677800a8dd84
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	LGPLv2.1 LGPLv3 GPLv3
-COMPONENT_LICENSE_FILE=	COPYING.GPL3
+COMPONENT_LICENSE=		CC-BY-4.0 AND GPL-3.0-only AND LGPL-3.0-only AND MIT
 
-include $(WS_TOP)/make-rules/common.mk
+include $(WS_MAKE_RULES)/gnome.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+# helper target
+update-license-file: patch
+	( \
+		printf -- '--- COPYING.CC-BY-4-0 -----------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.CC-BY-4-0 ; \
+		printf '\n--- COPYING.GPL3 ----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPL3 ; \
+		printf '\n--- COPYING.LGPL3 ---------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPL3 ; \
+		printf '\n--- COPYING.XTERM ---------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.XTERM \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
-COMPONENT_PREP_ACTION = ( cd $(@D)  && \
-				libtoolize --force &&\
-				gtkdocize &&\
-				aclocal -I . &&\
-				autoconf &&\
-				autoheader &&\
-				automake -c -f -a )
+# We need IMAXBEL and so we need to define __EXTENSIONS__
+CFLAGS += -D__EXTENSIONS__
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-CONFIGURE_OPTIONS+=	--disable-Bsymbolic
-CONFIGURE_OPTIONS+=	--disable-vala
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS.32+=	--disable-introspection
+# We have no /etc/profile.d support
+# See also https://www.illumos.org/issues/3395
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOETCDIR)/profile.d ;
 
-# gobject introspection
-COMPONENT_BUILD_ENV +=	CC="$(CC)"
-COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
+# Replace ABI version number by ABIVER
+ABIVER_RE = $(subst .,\.,$(ABIVER))
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/\([Vv]te-\)$(ABIVER_RE)/\1$$(ABIVER)/g'
 
-# Fixes tests run
-unexport SHELLOPTS
-COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ERROR:/p" '
+# ABIVER is needed for manifest processing
+PKG_MACROS += ABIVER=$(ABIVER)
 
-$(INSTALL_32):	$(INSTALL_64)
+# Dynamic library version number
+SOVER := $(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
+SOVER_RE = $(subst .,\.,$(SOVER))
 
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/graphene
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/gtk4
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

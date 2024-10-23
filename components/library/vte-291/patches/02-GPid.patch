@@ -1,0 +1,13 @@
+https://gitlab.gnome.org/GNOME/vte/-/issues/2833
+
+--- vte-0.78.1/src/vtegtk.cc.orig
++++ vte-0.78.1/src/vtegtk.cc
+@@ -5020,7 +5020,7 @@
+         SpawnAsyncCallbackData *data = reinterpret_cast<SpawnAsyncCallbackData*>(user_data);
+         VtePty *pty = VTE_PTY(source);
+ 
+-        auto pid = pid_t{-1};
++        auto pid = GPid{-1};
+         auto error = vte::glib::Error{};
+         if (source) {
+                 vte_pty_spawn_finish(pty, result, &pid, error);
