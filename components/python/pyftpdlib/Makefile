@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyftpdlib
-HUMAN_VERSION =			2.0.0
+HUMAN_VERSION =			2.0.1
 COMPONENT_SUMMARY =		Very fast asynchronous FTP server library
 COMPONENT_PROJECT_URL =		https://github.com/giampaolo/pyftpdlib/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1aded131fc7d41b0fa734c7879a96a6251366b141e8886782bcb1de616ffc791
+	sha256:ef0d172a82bfae10e2dec222e87533514609d41bf4b0fd0f07e29d4380fb96bf
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
