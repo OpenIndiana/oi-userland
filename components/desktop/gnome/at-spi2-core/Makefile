@@ -21,6 +21,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			at-spi2-core
 HUMAN_VERSION=			2.54.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		DBus interface definitions for AT-SPI (Assistive Technology Service Provider Interface)
 COMPONENT_ARCHIVE_HASH=		sha256:d7eee7e75beddcc272cedc2b60535600f3aae6e481589ebc667afc437c0a6079
 COMPONENT_FMRI=			gnome/accessibility/at-spi2-core
