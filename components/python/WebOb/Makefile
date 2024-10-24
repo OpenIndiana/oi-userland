@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		webob
-HUMAN_VERSION =			1.8.8
+HUMAN_VERSION =			1.8.9
 COMPONENT_SUMMARY =		WSGI request and response object
 COMPONENT_PROJECT_URL =		http://webob.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2abc1555e118fc251e705fc6dc66c7f5353bb9fbfab6d20e22f1c02b4b71bcee
+	sha256:ad6078e2edb6766d1334ec3dee072ac6a7f95b1e32ce10def8ff7f0f02d56589
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	docs/license.txt
 
