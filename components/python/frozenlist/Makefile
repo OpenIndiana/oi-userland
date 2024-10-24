@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		frozenlist
-HUMAN_VERSION =			1.4.1
-COMPONENT_SUMMARY =		frozenlist - A list-like structure which implements collections.abc.MutableSequence
+HUMAN_VERSION =			1.5.0
+COMPONENT_SUMMARY =		A list-like structure which implements collections.abc.MutableSequence
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/frozenlist
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/cf/3d/2102257e7acad73efc4a0c306ad3953f68c504c16982bbdfee3ad75d8085/frozenlist-1.4.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c037a86e8513059a2613aaba4d817bb90b9d9b6b69aace3ce9c877e8c8ed402b
+	sha256:81d5af29e61b9c8348e876d442253723928dce6433e0e76cd925cd83f1b4b817
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,6 +36,5 @@ PYTHON_REQUIRED_PACKAGES += library/python/cython
 PYTHON_REQUIRED_PACKAGES += library/python/expandvars
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
