@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cmd2
-HUMAN_VERSION =			2.4.3
-COMPONENT_SUMMARY =		cmd2 - cmd2 - quickly build feature-rich and user-friendly interactive command line applications in Python
+HUMAN_VERSION =			2.5.2
+COMPONENT_SUMMARY =		cmd2 - quickly build feature-rich and user-friendly interactive command line applications in Python
 COMPONENT_PROJECT_URL =		https://github.com/python-cmd2/cmd2
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/13/04/b85213575a7bf31cbf1d699cc7d5500d8ca8e52cbd1f3569a753a5376d5c/cmd2-2.4.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:71873c11f72bd19e2b1db578214716f0d4f7c8fa250093c601265a9a717dee52
+	sha256:62c55943414edd0f94adf13c511ee8906435a6337f4c747ec65e332b3750c697
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,13 +31,22 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += test
+
+# Testing needs to find cmd2_ext_test in source directory
+COMPONENT_TEST_ENV += PYTHONPATH=$(SOURCE_DIR)/plugins/ext_test:$(PROTO_DIR)/$(PYTHON_LIB)
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/build
 PYTHON_REQUIRED_PACKAGES += library/python/pyperclip
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wcwidth
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/codecov
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
