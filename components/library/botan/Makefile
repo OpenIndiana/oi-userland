@@ -63,6 +63,8 @@ CONFIGURE_OPTIONS += --with-lzma
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-sqlite3
 CONFIGURE_OPTIONS += --with-python-versions=$(PYTHON_VERSION)
+# Make documentation consistent
+CONFIGURE_OPTIONS += --without-sphinx
 
 COMPONENT_TEST_TRANSFORMS += \
 	' -e "s/in [0-9]*.[0-9]* msec //" ' \
