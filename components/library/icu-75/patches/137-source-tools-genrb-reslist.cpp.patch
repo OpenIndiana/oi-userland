@@ -6,9 +6,9 @@ https://unicode-org.atlassian.net/browse/ICU-12378
 
 --- icu/source/tools/genrb/reslist.cpp.orig
 +++ icu/source/tools/genrb/reslist.cpp
-@@ -1509,8 +1509,16 @@
-     const StringResource *left = *static_cast<const StringResource* const*>(l);
-     const StringResource *right = *static_cast<const StringResource* const*>(r);
+@@ -1507,8 +1507,16 @@
+     const StringResource *left = *((const StringResource **)l);
+     const StringResource *right = *((const StringResource **)r);
      const char16_t *lStart = left->getBuffer();
 +    if (lStart == nullptr) {
 +        fprintf(stderr, "Could not allocate memory!!");

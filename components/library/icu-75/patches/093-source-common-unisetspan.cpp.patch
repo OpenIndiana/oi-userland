@@ -8,7 +8,7 @@ https://unicode-org.atlassian.net/browse/ICU-12378
 +++ icu/source/common/unisetspan.cpp
 @@ -660,6 +660,8 @@
                  }
-                 const UnicodeString& string = *static_cast<const UnicodeString*>(strings.elementAt(i));
+                 const UnicodeString &string=*(const UnicodeString *)strings.elementAt(i);
                  const char16_t *s16=string.getBuffer();
 +                if (s16 == nullptr)
 +                    continue;
@@ -17,7 +17,7 @@ https://unicode-org.atlassian.net/browse/ICU-12378
  
 @@ -1373,6 +1375,8 @@
              }
-             const UnicodeString& string = *static_cast<const UnicodeString*>(strings.elementAt(i));
+             const UnicodeString &string=*(const UnicodeString *)strings.elementAt(i);
              const char16_t *s16=string.getBuffer();
 +            if (s16 == nullptr)
 +                continue;
@@ -26,7 +26,7 @@ https://unicode-org.atlassian.net/browse/ICU-12378
              if(length16<=rest && matches16CPB(s, pos, length, s16, length16)) {
 @@ -1417,6 +1421,8 @@
              }
-             const UnicodeString& string = *static_cast<const UnicodeString*>(strings.elementAt(i));
+             const UnicodeString &string=*(const UnicodeString *)strings.elementAt(i);
              const char16_t *s16=string.getBuffer();
 +            if (s16 == nullptr)
 +                continue;
