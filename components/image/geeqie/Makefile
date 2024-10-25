@@ -13,10 +13,12 @@
 #
 
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geeqie
 COMPONENT_VERSION=	2.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Geeqie is a lightweight image viewer and organizer
 COMPONENT_PROJECT_URL=	https://www.geeqie.org/
 COMPONENT_PROJECT_URL=	https://www.geeqie.org/
@@ -29,12 +31,11 @@ COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-CFLAGS += $(CPP_XPG6MODE)
+CFLAGS += $(XPG6MODE)
 LDFLAGS += -lm -lsocket -lnsl
 
 # Auto-generated dependencies
@@ -50,7 +51,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/clutter
 REQUIRED_PACKAGES += library/desktop/clutter/clutter-gtk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gspell
+REQUIRED_PACKAGES += library/desktop/gspell-3
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libchamplain
 REQUIRED_PACKAGES += library/desktop/pango
