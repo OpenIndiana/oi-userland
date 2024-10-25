@@ -4,88 +4,278 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 81 items
+collecting ... collected 271 items
 
-tests/test_rfc822.py::test_headers[items0-] PASSED
-tests/test_rfc822.py::test_headers[items1-Foo: Bar\n] PASSED
-tests/test_rfc822.py::test_headers[items2-            Foo: Bar\n            Foo2: Bar2\n            ] PASSED
-tests/test_rfc822.py::test_headers[items3-] PASSED
-tests/test_rfc822.py::test_headers[items4-            ItemA: ValueA\n            ItemB: ValueB\n            ItemC: ValueC\n            ] PASSED
-tests/test_rfc822.py::test_headers[items5-            ItemB: ValueB\n            ItemC: ValueC\n            ItemA: ValueA\n            ] PASSED
-tests/test_rfc822.py::test_headers[items6-            ItemA: ValueA1\n            ItemA: ValueA2\n            ItemB: ValueB\n            ItemC: ValueC\n            ] PASSED
-tests/test_rfc822.py::test_headers[items7-            ItemA: ValueA\n            ItemB: ValueB1\n                    ValueB2\n                    ValueB3\n            ItemC: ValueC\n            ] PASSED
+tests/test_internals.py::test_all PASSED
+tests/test_internals.py::test_project_table_all PASSED
 tests/test_rfc822.py::test_body PASSED
-tests/test_rfc822.py::test_convert_optional_dependencies PASSED
 tests/test_rfc822.py::test_convert_author_email PASSED
-tests/test_standard_metadata.py::test_load[-Section "project" missing in pyproject.toml] PASSED
-tests/test_standard_metadata.py::test_load[[project]-Field "project.name" missing] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = true\n                version = '0.1.0'\n            -Field "project.name" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = true\n                version = '0.1.0'\n                dynamic = [\n                    'name',\n                ]\n            -Unsupported field "name" in "project.dynamic"] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = true\n            -Field "project.version" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n            -Field "project.version" missing and "version" not specified in "project.dynamic"] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                license = true\n            -Field "project.license" has an invalid type, expecting a dictionary of strings (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                license = {}\n            -Invalid "project.license" value, expecting either "file" or "text" (got "{}")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                license = { file = '...', text = '...' }\n            -Invalid "project.license" value, expecting either "file" or "text" (got "{'file': '...', 'text': '...'}")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                license = { made-up = ':(' }\n            -Unexpected field "project.license.made-up"] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                license = { file = true }\n            -Field "project.license.file" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                license = { text = true }\n            -Field "project.license.text" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                license = { file = 'this-file-does-not-exist' }\n            -License file not found ("this-file-does-not-exist")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                readme = true\n            -Field "project.readme" has an invalid type, expecting either, a string or dictionary of strings (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                readme = {}\n            -Invalid "project.readme" value, expecting either "file" or "text" (got "{}")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                readme = { file = '...', text = '...' }\n            -Invalid "project.readme" value, expecting either "file" or "text" (got "{'file': '...', 'text': '...'}")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                readme = { made-up = ':(' }\n            -Unexpected field "project.readme.made-up"] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                readme = { file = true }\n            -Field "project.readme.file" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                readme = { text = true }\n            -Field "project.readme.text" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                readme = { file = 'this-file-does-not-exist', content-type = '...' }\n            -Readme file not found ("this-file-does-not-exist")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                readme = { file = 'README.md' }\n            -Field "project.readme.content-type" missing] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                readme = { text = '...' }\n            -Field "project.readme.content-type" missing] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                description = true\n            -Field "project.description" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                dependencies = 'some string!'\n            -Field "project.dependencies" has an invalid type, expecting a list of strings (got "some string!")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                dependencies = [\n                    99,\n                ]\n            -Field "project.dependencies" contains item with invalid type, expecting a string (got "99")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                dependencies = [\n                    'definitely not a valid PEP 508 requirement!',\n                ]\n            -Field "project.dependencies" contains an invalid PEP 508 requirement string "definitely not a valid PEP 508 requirement!" ] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                optional-dependencies = true\n            -Field "project.optional-dependencies" has an invalid type, expecting a dictionary of PEP 508 requirement strings (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                [project.optional-dependencies]\n                test = 'some string!'\n            -Field "project.optional-dependencies.test" has an invalid type, expecting a dictionary PEP 508 requirement strings (got "some string!")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                [project.optional-dependencies]\n                test = [\n                    true,\n                ]\n            -Field "project.optional-dependencies.test" has an invalid type, expecting a PEP 508 requirement string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                [project.optional-dependencies]\n                test = [\n                    'definitely not a valid PEP 508 requirement!',\n                ]\n            -Field "project.optional-dependencies.test" contains an invalid PEP 508 requirement string "definitely not a valid PEP 508 requirement!" ] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                requires-python = true\n            -Field "project.requires-python" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                keywords = 'some string!'\n            -Field "project.keywords" has an invalid type, expecting a list of strings (got "some string!")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                keywords = [\n                    true,\n                ]\n            -Field "project.keywords" contains item with invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                authors = {}\n            -Field "project.authors" has an invalid type, expecting a list of dictionaries containing the "name" and/or "email" keys (got "{}")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                authors = [\n                    true,\n                ]\n            -Field "project.authors" has an invalid type, expecting a list of dictionaries containing the "name" and/or "email" keys (got "[True]")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                maintainers = {}\n            -Field "project.maintainers" has an invalid type, expecting a list of dictionaries containing the "name" and/or "email" keys (got "{}")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                maintainers = [\n                    10\n                ]\n            -Field "project.maintainers" has an invalid type, expecting a list of dictionaries containing the "name" and/or "email" keys (got "[10]")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                classifiers = 'some string!'\n            -Field "project.classifiers" has an invalid type, expecting a list of strings (got "some string!")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                classifiers = [\n                    true,\n                ]\n            -Field "project.classifiers" contains item with invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                [project.urls]\n                homepage = true\n            -Field "project.urls.homepage" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                [project.urls]\n                documentation = true\n            -Field "project.urls.documentation" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                [project.urls]\n                repository = true\n            -Field "project.urls.repository" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                [project.urls]\n                changelog = true\n            -Field "project.urls.changelog" has an invalid type, expecting a string (got "True")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                scripts = []\n            -Field "project.scripts" has an invalid type, expecting a dictionary of strings (got "[]")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                gui-scripts = []\n            -Field "project.gui-scripts" has an invalid type, expecting a dictionary of strings (got "[]")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                entry-points = []\n            -Field "project.entry-points" has an invalid type, expecting a dictionary of entrypoint sections (got "[]")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                entry-points = { section = 'something' }\n            -Field "project.entry-points.section" has an invalid type, expecting a dictionary of entrypoints (got "something")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                [project.entry-points.section]\n                entrypoint = []\n            -Field "project.entry-points.section.entrypoint" has an invalid type, expecting a string (got "[]")] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = '.test'\n                version = '0.1.0'\n            -Invalid project name ".test". A valid name consists only of ASCII letters and numbers, period, underscore and hyphen. It must start and end with a letter or number] PASSED
-tests/test_standard_metadata.py::test_load[\n                [project]\n                name = 'test'\n                version = '0.1.0'\n                [project.entry-points.bad-name]\n            -Field "project.entry-points" has an invalid value, expecting a name containing only alphanumeric, underscore, or dot characters (got "bad-name")] PASSED
-tests/test_standard_metadata.py::test_value[False] PASSED
-tests/test_standard_metadata.py::test_value[True] PASSED
+tests/test_rfc822.py::test_convert_optional_dependencies PASSED
+tests/test_rfc822.py::test_headers[emoji] PASSED
+tests/test_rfc822.py::test_headers[empty] PASSED
+tests/test_rfc822.py::test_headers[multiline] PASSED
+tests/test_rfc822.py::test_headers[multiple keys] PASSED
+tests/test_rfc822.py::test_headers[multiple] PASSED
+tests/test_rfc822.py::test_headers[none] PASSED
+tests/test_rfc822.py::test_headers[order 1] PASSED
+tests/test_rfc822.py::test_headers[order 2] PASSED
+tests/test_rfc822.py::test_headers[simple] PASSED
+tests/test_rfc822.py::test_headers[unicode] PASSED
+tests/test_rfc822.py::test_known_field PASSED
+tests/test_rfc822.py::test_long_version PASSED
+tests/test_rfc822.py::test_unknown_field PASSED
+tests/test_standard_metadata.py::test_as_json PASSED
+tests/test_standard_metadata.py::test_as_json_set_metadata PASSED
+tests/test_standard_metadata.py::test_as_json_spdx PASSED
+tests/test_standard_metadata.py::test_as_rfc822 PASSED
+tests/test_standard_metadata.py::test_as_rfc822_dynamic PASSED
+tests/test_standard_metadata.py::test_as_rfc822_invalid_dynamic PASSED
+tests/test_standard_metadata.py::test_as_rfc822_mapped_dynamic PASSED
+tests/test_standard_metadata.py::test_as_rfc822_missing_version PASSED
+tests/test_standard_metadata.py::test_as_rfc822_set_metadata[2.1] PASSED
+tests/test_standard_metadata.py::test_as_rfc822_set_metadata[2.2] PASSED
+tests/test_standard_metadata.py::test_as_rfc822_set_metadata[2.3] PASSED
+tests/test_standard_metadata.py::test_as_rfc822_set_metadata[2.4] PASSED
+tests/test_standard_metadata.py::test_as_rfc822_set_metadata_invalid PASSED
+tests/test_standard_metadata.py::test_as_rfc822_spdx PASSED
+tests/test_standard_metadata.py::test_as_rfc822_spdx_empty_glob[all_errors] PASSED
+tests/test_standard_metadata.py::test_as_rfc822_spdx_empty_glob[exceptiongroup] PASSED
+tests/test_standard_metadata.py::test_as_rfc822_spdx_empty_glob[one_error] PASSED
+tests/test_standard_metadata.py::test_extra_build_system PASSED
+tests/test_standard_metadata.py::test_extra_top_level PASSED
+tests/test_standard_metadata.py::test_license_file_24[2.1] PASSED
+tests/test_standard_metadata.py::test_license_file_24[2.2] PASSED
+tests/test_standard_metadata.py::test_license_file_24[2.3] PASSED
+tests/test_standard_metadata.py::test_license_file_24[2.4] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Absolute license-files glob] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Both keys for license] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Both license files and classic license] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Both readme fields] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Empty readme table] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Got made-up license field] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid authors item type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid authors type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid classifiers item type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid classifiers type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid dependencies item type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid dependencies item] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid dependencies type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid description type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid entry-points entrypoint type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid entry-points name] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid entry-points section type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid entry-points type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid gui-scripts type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid keyword type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid keywords item type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid keywords type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers item type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers nested type0] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers nested type1] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid name type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid optional-dependencies item type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid optional-dependencies item] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid optional-dependencies not list] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid optional-dependencies type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid project key] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid project name] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid readme type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid requires-python type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid requires-python value] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid scripts type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid type for license.file] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid type for license.text] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid type for readme.file] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid type for readme.text] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid urls changelog type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid urls documentation type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid urls homepage type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid urls repository type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid version type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid version value] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-License file not present] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-License invalid type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Missing content-type for readme0] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Missing content-type for readme1] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Missing license keys] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Missing project section] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Missing version] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Parent license-files glob] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Parent license-files invalid type0] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Parent license-files invalid type1] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Readme file not present] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-SPDX license and License trove classifiers] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-URL name too long] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Unexpected field in readme] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Unsupported field in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Unsupported filename in readme] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Unsupported type in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Wrong content-type type for readme] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Absolute license-files glob] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Both keys for license] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Both license files and classic license] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Both readme fields] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Empty readme table] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Got made-up license field] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid authors item type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid authors type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid classifiers item type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid classifiers type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid dependencies item type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid dependencies item] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid dependencies type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid description type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid entry-points entrypoint type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid entry-points name] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid entry-points section type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid entry-points type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid gui-scripts type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid keyword type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid keywords item type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid keywords type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers item type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers nested type0] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers nested type1] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid name type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid optional-dependencies item type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid optional-dependencies item] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid optional-dependencies not list] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid optional-dependencies type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid project key] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid project name] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid readme type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid requires-python type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid requires-python value] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid scripts type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid type for license.file] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid type for license.text] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid type for readme.file] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid type for readme.text] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid urls changelog type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid urls documentation type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid urls homepage type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid urls repository type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid version type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid version value] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-License file not present] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-License invalid type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Missing content-type for readme0] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Missing content-type for readme1] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Missing license keys] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Missing project section] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Missing version] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Parent license-files glob] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Parent license-files invalid type0] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Parent license-files invalid type1] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Readme file not present] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-SPDX license and License trove classifiers] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-URL name too long] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Unexpected field in readme] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Unsupported field in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Unsupported filename in readme] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Unsupported type in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Wrong content-type type for readme] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Absolute license-files glob] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Both keys for license] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Both license files and classic license] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Both readme fields] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Empty readme table] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Got made-up license field] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid authors item type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid authors type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid classifiers item type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid classifiers type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid dependencies item type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid dependencies item] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid dependencies type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid description type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid entry-points entrypoint type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid entry-points name] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid entry-points section type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid entry-points type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid gui-scripts type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid keyword type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid keywords item type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid keywords type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers item type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers nested type0] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers nested type1] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid name type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid optional-dependencies item type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid optional-dependencies item] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid optional-dependencies not list] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid optional-dependencies type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid project key] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid project name] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid readme type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid requires-python type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid requires-python value] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid scripts type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid type for license.file] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid type for license.text] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid type for readme.file] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid type for readme.text] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid urls changelog type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid urls documentation type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid urls homepage type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid urls repository type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid version type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid version value] PASSED
+tests/test_standard_metadata.py::test_load[one_error-License file not present] PASSED
+tests/test_standard_metadata.py::test_load[one_error-License invalid type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Missing content-type for readme0] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Missing content-type for readme1] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Missing license keys] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Missing project section] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Missing version] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Parent license-files glob] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Parent license-files invalid type0] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Parent license-files invalid type1] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Readme file not present] PASSED
+tests/test_standard_metadata.py::test_load[one_error-SPDX license and License trove classifiers] PASSED
+tests/test_standard_metadata.py::test_load[one_error-URL name too long] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Unexpected field in readme] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Unsupported field in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Unsupported filename in readme] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Unsupported type in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Wrong content-type type for readme] PASSED
+tests/test_standard_metadata.py::test_load_multierror[all_errors-Four errors including extra keys] PASSED
+tests/test_standard_metadata.py::test_load_multierror[all_errors-Missing project name] PASSED
+tests/test_standard_metadata.py::test_load_multierror[all_errors-Unsupported field in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load_multierror[all_errors-Unsupported filename in readme] PASSED
+tests/test_standard_metadata.py::test_load_multierror[all_errors-Unsupported type in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Four errors including extra keys] PASSED
+tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Missing project name] PASSED
+tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Unsupported field in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Unsupported filename in readme] PASSED
+tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Unsupported type in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load_multierror[one_error-Four errors including extra keys] PASSED
+tests/test_standard_metadata.py::test_load_multierror[one_error-Missing project name] PASSED
+tests/test_standard_metadata.py::test_load_multierror[one_error-Unsupported field in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load_multierror[one_error-Unsupported filename in readme] PASSED
+tests/test_standard_metadata.py::test_load_multierror[one_error-Unsupported type in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load_with_metadata_version[SPDX with metadata_version 2.3] PASSED
+tests/test_standard_metadata.py::test_load_with_metadata_version[license-files with metadata_version 2.3] PASSED
+tests/test_standard_metadata.py::test_load_with_metadata_version_warnings[Classic license with metadata 2.4] PASSED
+tests/test_standard_metadata.py::test_load_with_metadata_version_warnings[License trove classifiers with metadata 2.4] PASSED
+tests/test_standard_metadata.py::test_missing_keys_okay PASSED
+tests/test_standard_metadata.py::test_missing_keys_warns PASSED
+tests/test_standard_metadata.py::test_modify_dynamic PASSED
+tests/test_standard_metadata.py::test_multiline_description_warns PASSED
 tests/test_standard_metadata.py::test_read_license PASSED
 tests/test_standard_metadata.py::test_readme_content_type[full-metadata-text/markdown] PASSED
 tests/test_standard_metadata.py::test_readme_content_type[full-metadata2-text/x-rst] PASSED
 tests/test_standard_metadata.py::test_readme_content_type_unknown PASSED
-tests/test_standard_metadata.py::test_as_rfc822 PASSED
-tests/test_standard_metadata.py::test_as_rfc822_dynamic PASSED
-tests/test_standard_metadata.py::test_as_rfc822_set_metadata[2.1] PASSED
-tests/test_standard_metadata.py::test_as_rfc822_set_metadata[2.2] PASSED
-tests/test_standard_metadata.py::test_as_rfc822_set_metadata[2.3] PASSED
-tests/test_standard_metadata.py::test_as_rfc822_set_metadata_invalid PASSED
-tests/test_standard_metadata.py::test_as_rfc822_invalid_dynamic PASSED
-tests/test_standard_metadata.py::test_as_rfc822_missing_version PASSED
-tests/test_standard_metadata.py::test_stically_defined_dynamic_field PASSED
 tests/test_standard_metadata.py::test_requires_python[<3.10] PASSED
-tests/test_standard_metadata.py::test_requires_python[>3.7,<3.11] PASSED
 tests/test_standard_metadata.py::test_requires_python[>3.7,<3.11,!=3.8.4] PASSED
+tests/test_standard_metadata.py::test_requires_python[>3.7,<3.11] PASSED
 tests/test_standard_metadata.py::test_requires_python[~=3.10,!=3.10.3] PASSED
+tests/test_standard_metadata.py::test_stically_defined_dynamic_field PASSED
+tests/test_standard_metadata.py::test_value[False] PASSED
+tests/test_standard_metadata.py::test_value[True] PASSED
 tests/test_standard_metadata.py::test_version_dynamic PASSED
 
-======== 81 passed ========
+======== 271 passed ========
