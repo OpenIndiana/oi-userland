@@ -11,22 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project cached-property
+#   $WS_TOOLS/python-integrate-project -d python/cached-property cached_property
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		cached-property
-HUMAN_VERSION =			1.5.2
-COMPONENT_SUMMARY =		cached-property - A decorator for caching properties in classes.
+COMPONENT_NAME =		cached_property
+HUMAN_VERSION =			2.0.1
+COMPONENT_SUMMARY =		A decorator for caching properties in classes.
 COMPONENT_PROJECT_URL =		https://github.com/pydanny/cached-property
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/61/2c/d21c1c23c2895c091fa7a91a54b6872098fea913526932d21902088a7c41/cached-property-1.5.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9fa5755838eecbb2d234c3aa390bd80fbd3ac6b6869109bfc1b499f7bd89a130
+	sha256:484d617105e3ee0e4f1f58725e72a8ef9e93deee462222dbd51cd91230897641
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
