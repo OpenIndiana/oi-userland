@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		keyring
-HUMAN_VERSION =			25.4.1
+HUMAN_VERSION =			25.5.0
 COMPONENT_SUMMARY =		Store and access your passwords safely.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b07ebc55f3e8ed86ac81dd31ef14e81ace9dd9c3d4b5d77a6e9a2016d0d71a1b
+	sha256:4c753b3ec91717fe713c4edd522d625889d8973a349b0e582622f49766de58e6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
