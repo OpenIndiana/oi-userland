@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 905 items / 24 deselected / 881 selected
+collecting ... collected 914 items / 25 deselected / 889 selected
 
 tests/middleware/test_dispatcher.py::test_dispatcher PASSED
 tests/middleware/test_lint.py::test_lint_middleware PASSED
@@ -320,6 +320,7 @@ tests/test_formparser.py::TestMultiPart::test_empty_multipart PASSED
 tests/test_formparser.py::TestMultiPartParser::test_constructor_not_pass_stream_factory_and_cls PASSED
 tests/test_formparser.py::TestMultiPartParser::test_constructor_pass_stream_factory_and_cls PASSED
 tests/test_formparser.py::TestMultiPartParser::test_file_rfc2231_filename_continuations PASSED
+tests/test_formparser.py::test_multipart_max_form_memory_size PASSED
 tests/test_http.py::TestHTTPUtility::test_accept PASSED
 tests/test_http.py::TestHTTPUtility::test_accept_parameter_with_space PASSED
 tests/test_http.py::TestHTTPUtility::test_mime_accept PASSED
@@ -332,10 +333,13 @@ tests/test_http.py::TestHTTPUtility::test_list_header[a b-expect0] PASSED
 tests/test_http.py::TestHTTPUtility::test_list_header[a b, c-expect1] PASSED
 tests/test_http.py::TestHTTPUtility::test_list_header[a b, "c, d"-expect2] PASSED
 tests/test_http.py::TestHTTPUtility::test_list_header["a\\"b", c-expect3] PASSED
-tests/test_http.py::TestHTTPUtility::test_dict_header PASSED
+tests/test_http.py::TestHTTPUtility::test_dict_header[foo="bar baz", blah=42-expect0] PASSED
+tests/test_http.py::TestHTTPUtility::test_dict_header[foo, bar=-expect1] PASSED
+tests/test_http.py::TestHTTPUtility::test_dict_header[=foo, =-expect2] PASSED
 tests/test_http.py::TestHTTPUtility::test_cache_control_header PASSED
 tests/test_http.py::TestHTTPUtility::test_csp_header PASSED
 tests/test_http.py::TestHTTPUtility::test_authorization_header PASSED
+tests/test_http.py::TestHTTPUtility::test_authorization_ignore_invalid_parameters PASSED
 tests/test_http.py::TestHTTPUtility::test_authorization_token_padding PASSED
 tests/test_http.py::TestHTTPUtility::test_authorization_basic_incorrect_padding PASSED
 tests/test_http.py::TestHTTPUtility::test_bad_authorization_header_encoding PASSED
@@ -622,7 +626,10 @@ tests/test_security.py::test_pbkdf2 PASSED
 tests/test_security.py::test_salted_hashes PASSED
 tests/test_security.py::test_require_salt PASSED
 tests/test_security.py::test_invalid_method PASSED
-tests/test_security.py::test_safe_join PASSED
+tests/test_security.py::test_safe_join[b/c-a/b/c] PASSED
+tests/test_security.py::test_safe_join[../b/c-None] PASSED
+tests/test_security.py::test_safe_join[b\\c-a/b\\c] PASSED
+tests/test_security.py::test_safe_join[//b/c-None] PASSED
 tests/test_security.py::test_safe_join_os_sep PASSED
 tests/test_security.py::test_safe_join_empty_trusted PASSED
 tests/test_send_file.py::test_path[path0] PASSED
@@ -658,6 +665,7 @@ tests/test_send_file.py::test_from_directory_not_found[null\x00.txt] PASSED
 tests/test_send_file.py::test_root_path PASSED
 tests/test_send_file.py::test_max_age_callable PASSED
 tests/test_serving.py::test_watchdog_reloader_ignores_opened PASSED
+tests/test_serving.py::test_watchdog_reloader_ignores_closed_no_write PASSED
 tests/test_serving.py::test_windows_get_args_for_reloading PASSED
 tests/test_serving.py::test_exclude_patterns[_find_stat_paths] PASSED
 tests/test_serving.py::test_exclude_patterns[_find_watchdog_paths] PASSED
@@ -890,7 +898,7 @@ tests/test_wsgi.py::test_get_current_url_invalid_utf8 PASSED
 tests/test_wsgi.py::test_range_wrapper PASSED
 tests/test_wsgi.py::test_closing_iterator PASSED
 
-======== 881 passed, 24 deselected ========
+======== 889 passed, 25 deselected ========
 pytest-xprocess reminder::Be sure to terminate the started process by running 'pytest --xkill' if you have not explicitly done so in your fixture with 'xprocess.getinfo(<process_name>).terminate()'.
   py$(PYV): OK
   congratulations :)

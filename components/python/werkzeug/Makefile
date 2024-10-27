@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		werkzeug
-HUMAN_VERSION =			3.0.4
+HUMAN_VERSION =			3.0.6
 COMPONENT_SUMMARY =		The comprehensive WSGI web application library.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:34f2371506b250df4d4f84bfe7b0921e4762525762bbd936614909fe25cd7306
+	sha256:a8dd59d4de28ca70471a34cba79bed5f7ef2e036a76b3ab0835474246eb41f8d
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
