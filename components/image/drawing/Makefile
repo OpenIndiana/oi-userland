@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         drawing
 COMPONENT_VERSION=      1.0.2
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Simple image editor
 COMPONENT_PROJECT_URL=  https://maoschanz.github.io/drawing/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,3 +41,4 @@ PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 REQUIRED_PACKAGES += library/desktop/gtk3
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
