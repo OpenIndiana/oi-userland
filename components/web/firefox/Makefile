@@ -36,7 +36,7 @@ ESR =
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	131.0.3
+COMPONENT_VERSION =	132.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     4f853572bc85822005fc302549a7ecef32c6a2e7
+COMPONENT_GIT_HASH=     837f3a1ff2622c8303750c35d84bdc41a5cd079c
 COMPONENT_SRC=          gecko-dev-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla/gecko-dev/archive/$(COMPONENT_ARCHIVE)
@@ -73,11 +73,11 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:7a7df3f97737453efaa243ca9dbaf95d0f0f833c5dc8afacb5704ee16ef060d0
+COMPONENT_ARCHIVE_HASH= sha256:8908b144895b354460c6975291b75ea804b07bf9bb0ee386eafeaf3c82c55c7e
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.80.0
+RUST_VERSION = 1.81.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -180,6 +180,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-update-channel=$(FIREFOX_UPDATE_CHANNEL)" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-distribution-id=org.openindiana" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
@@ -197,7 +198,7 @@ LD_MAP_NOEXBSS.sparc=
 LD_Z_IGNORE=
 
 # missing symbols from gtk3 during Firefox start
-LD_B_DIRECT=
+# LD_B_DIRECT=
 
 # hope to get args data in stacks of core dumps
 LD_OPTIONS += -msave-args
@@ -248,6 +249,8 @@ COMPONENT_POST_INSTALL_ACTION  = \
         /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
     done ; \
+    mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution ; \
+    $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution/distribution.ini ; \
     unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/toolkit/content/global/license.html \
     | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
 
@@ -280,8 +283,8 @@ REQUIRED_PACKAGES += web/browser/lynx
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
