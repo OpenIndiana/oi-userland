@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project tox-current-env
+#   $WS_TOOLS/python-integrate-project -d python/tox-current-env tox_current_env
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		tox-current-env
-HUMAN_VERSION =			0.0.12
+COMPONENT_NAME =		tox_current_env
+HUMAN_VERSION =			0.0.14
 COMPONENT_SUMMARY =		Use current environment instead of virtualenv for tox testenvs
 COMPONENT_PROJECT_URL =		https://github.com/fedora-python/tox-current-env
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:aaee9e1bc204788065402827c75885ad678a1bec073cf2c4e2cecd1b898d520f
+	sha256:5bae55e40d544239128699c32061edd635593538d60695925c6442a0e18540f0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -53,4 +53,3 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
-TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
