@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-benchmark
-HUMAN_VERSION =			4.0.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			5.1.0
 COMPONENT_SUMMARY =		A \`\`pytest\`\` fixture for benchmarking code. It will group the tests into rounds that are calibrated to the chosen timer.
 COMPONENT_PROJECT_URL =		https://github.com/ionelmc/pytest-benchmark
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fb0785b83efe599a6a956361c0691ae1dbb5318018561af10f3e915caa0048d1
+	sha256:9ea661cdc292e8231f7cd4c10b0319e56a2118e2c09d9f50e1b3d150d2aca105
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,7 +46,10 @@ PYTEST_ADDOPTS += --deselect tests/test_with_weaver.py::test_weave_method
 # https://github.com/ionelmc/pytest-benchmark/issues/163
 PYTEST_ADDOPTS += --deselect tests/test_utils.py::test_parse_elasticsearch_storage
 
-# Drob benchmark reports
+# https://github.com/fedora-python/tox-current-env/issues/68
+PYTEST_ADDOPTS += --deselect tests/test_cli.py::test_hooks
+
+# Drop benchmark reports
 COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} benchmark:/,/^$$/d'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} cProfile/,/^$$/d'"
 
@@ -55,8 +57,8 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} cProfile/,/^$$/d'"
 PYTHON_REQUIRED_PACKAGES += library/python/py-cpuinfo
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/elasticsearch
 TEST_REQUIRED_PACKAGES.python += library/python/freezegun
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
