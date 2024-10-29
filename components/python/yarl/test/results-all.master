@@ -5,7 +5,7 @@ hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-X workers [1342 items]
+X workers [1352 items]
 
 scheduling tests via LoadScheduling
 
@@ -758,6 +758,15 @@ tests/test_url.py::test_from_non_ascii_query_parts PASSED
 tests/test_url.py::test_from_non_ascii_query_parts2 PASSED
 tests/test_url.py::test_handling_port_zero PASSED
 tests/test_url.py::test_host_non_ascii PASSED
+tests/test_url.py::test_host_port_subcomponent[/-None] PASSED
+tests/test_url.py::test_host_port_subcomponent[http://[::1]-[::1]] PASSED
+tests/test_url.py::test_host_port_subcomponent[http://[::1]:8080-[::1]:8080] PASSED
+tests/test_url.py::test_host_port_subcomponent[http://example.com-example.com] PASSED
+tests/test_url.py::test_host_port_subcomponent[http://example.com.-example.com] PASSED
+tests/test_url.py::test_host_port_subcomponent[http://example.com:80-example.com] PASSED
+tests/test_url.py::test_host_port_subcomponent[http://example.com:8080-example.com:8080] PASSED
+tests/test_url.py::test_host_port_subcomponent[http://xn--gnter-4ya.com-xn--gnter-4ya.com] PASSED
+tests/test_url.py::test_host_port_subcomponent[https://example.com.-example.com] PASSED
 tests/test_url.py::test_host_subcomponent[[::1]] PASSED
 tests/test_url.py::test_host_subcomponent[example.com] PASSED
 tests/test_url.py::test_host_subcomponent[xn--gnter-4ya.com] PASSED
@@ -770,6 +779,7 @@ tests/test_url.py::test_human_repr_delimiters PASSED
 tests/test_url.py::test_human_repr_ipv6 PASSED
 tests/test_url.py::test_human_repr_non_printable PASSED
 tests/test_url.py::test_inheritance PASSED
+tests/test_url.py::test_invalid_idna_a_label_encoding PASSED
 tests/test_url.py::test_invalid_idna_hyphen_encoding PASSED
 tests/test_url.py::test_ipfuture_brackets_not_allowed PASSED
 tests/test_url.py::test_ipv4_brackets_not_allowed PASSED
@@ -1354,4 +1364,4 @@ tests/test_url_update_netloc.py::test_with_user_percent_encoded PASSED
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 1338 passed, 4 xfailed ========
+======== 1348 passed, 4 xfailed ========
