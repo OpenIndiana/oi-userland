@@ -17,8 +17,7 @@
 # Copyright 2021, Andreas Wacknitz
 #
 
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
@@ -31,10 +30,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend fmri=__TBD pkg.debug.depend.file=usr/lib/pinentry type=require
 
-# Drop info dir files
-<transform file path=.+/share/info/dir -> drop>
-
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform dir path=usr/share/gnupg$ -> default facet.locale true>
 <transform file path=usr/share/gnupg/help\.([^/]+)(\..+){0,1}(/.+){0,1}\.txt$ -> default facet.locale.%<\1> true>
 
@@ -54,6 +49,7 @@ file path=usr/bin/gpg-auth
 file path=usr/bin/gpg-card
 file path=usr/bin/gpg-check-pattern
 file path=usr/bin/gpg-connect-agent
+file path=usr/bin/gpg-mail-tube
 file path=usr/bin/gpg-pair-tool
 file path=usr/bin/gpg-preset-passphrase
 file path=usr/bin/gpg-protect-tool
@@ -125,7 +121,6 @@ file path=usr/share/gnupg/help.txt
 file path=usr/share/gnupg/help.zh_CN.txt
 file path=usr/share/gnupg/help.zh_TW.txt
 file path=usr/share/gnupg/sks-keyservers.netCA.pem
-file path=usr/share/info/dir
 file path=usr/share/info/gnupg.info
 file path=usr/share/info/gnupg.info-1
 file path=usr/share/info/gnupg.info-2
@@ -148,6 +143,7 @@ file path=usr/share/locale/id/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/it/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/ja/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/nb/LC_MESSAGES/gnupg2.mo
+file path=usr/share/locale/nl/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/pl/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/pt/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/ro/LC_MESSAGES/gnupg2.mo
@@ -163,6 +159,7 @@ file path=usr/share/man/man1/gpg-agent.1
 file path=usr/share/man/man1/gpg-card.1
 file path=usr/share/man/man1/gpg-check-pattern.1
 file path=usr/share/man/man1/gpg-connect-agent.1
+file path=usr/share/man/man1/gpg-mail-tube.1
 file path=usr/share/man/man1/gpg-preset-passphrase.1
 file path=usr/share/man/man1/gpg-wks-client.1
 file path=usr/share/man/man1/gpg-wks-server.1
@@ -178,3 +175,4 @@ file path=usr/share/man/man7/gnupg.7
 file path=usr/share/man/man8/addgnupghome.8
 file path=usr/share/man/man8/applygnupgdefaults.8
 file path=usr/share/man/man8/dirmngr.8
+file path=usr/share/man/manh/gnupg.7.html

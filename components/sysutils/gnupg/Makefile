@@ -29,14 +29,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
-COMPONENT_VERSION=      2.4.5
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=      2.4.6
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnupg.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:f68f7d75d06cb1635c336d34d844af97436c3f64ea14bcb7c869782f96f44277
+COMPONENT_ARCHIVE_HASH= sha256:95acfafda7004924a6f5c901677f15ac1bda2754511d973bb4523e8dd840e17a
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         crypto/gnupg
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -60,11 +59,8 @@ CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 CONFIGURE_ENV += LDAPLIBS="-lldap-2.6 -llber-2.6"
 
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --datadir=$(CONFIGURE_PREFIX)/share
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --enable-largefile
 CONFIGURE_OPTIONS += --disable-selinux-support
@@ -79,17 +75,16 @@ CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-bzip2=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-readline=$(CONFIGURE_PREFIX)
 
-MAN8LIST= addgnupghome applygnupgdefaults
-
-install:	$(INSTALL_64)
+COMPONENT_POST_INSTALL_ACTION += \
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
-	    $(CP) -R 'en@boldquot' en )
+	    $(CP) -R 'en@boldquot' en ) ;
+
+# We do not want the info index file
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
 # Testing fails without HOME set
 COMPONENT_TEST_ENV += HOME=/tmp
 
-# Alas we have some failing tests after changes in shared-macros.mk:
-# build, install and test in clean environment (c86a36b0fd6dda8c75b28642c319842ace789385)
 COMPONENT_TEST_TRANSFORMS += "-e '/Failed tests/p'"
 COMPONENT_TEST_TRANSFORMS += "-e '/tests run/p'"
 COMPONENT_TEST_TRANSFORMS += "-e '/test passed/p'"
