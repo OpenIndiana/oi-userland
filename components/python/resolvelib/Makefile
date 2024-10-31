@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		resolvelib
-HUMAN_VERSION =			1.0.1
-COMPONENT_SUMMARY =		resolvelib - Resolve abstract dependencies into concrete ones
+HUMAN_VERSION =			1.1.0
+COMPONENT_SUMMARY =		Resolve abstract dependencies into concrete ones
 COMPONENT_PROJECT_URL =		https://github.com/sarugaku/resolvelib
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ce/10/f699366ce577423cbc3df3280063099054c23df70856465080798c6ebad6/resolvelib-1.0.1.tar.gz
+	https://github.com/sarugaku/resolvelib/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:04ce76cbd63fded2078ce224785da6ecd42b9564b1390793f64ddecbe997b309
+	sha256:660e2cef5342adfcdf2144539b4bfcba660682db3a8f3feb31d9ff153af8c461
 COMPONENT_LICENSE =		ISC
 COMPONENT_LICENSE_FILE =	LICENSE
 
