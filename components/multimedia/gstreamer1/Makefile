@@ -17,16 +17,18 @@
 #
 
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gstreamer1
-COMPONENT_VERSION=	1.24.8
+COMPONENT_VERSION=	1.24.9
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC_NAME=		gstreamer
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:b807dbf36c5d2b3ce1c604133ed0c737350f9523ce4d8d644a1177c5f9d6ded3
+COMPONENT_ARCHIVE_HASH=	sha256:ebf47b6beef508a00c8557d4c1f1713e5c7ef9ba70dac45deed80e182bcf260f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -39,11 +41,7 @@ CONFIGURE_OPTIONS += -Dexamples=disabled
 CONFIGURE_OPTIONS += -Dintrospection=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += CC="$(CC)"
+PYTHON_SCRIPTS += usr/libexec/gstreamer-1.0/gst-plugins-doc-cache-generator
 
 # Install additional file
 COMPONENT_POST_INSTALL_ACTION += \
@@ -58,11 +56,6 @@ GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 
 # Testing fails without TZ set
 COMPONENT_TEST_ENV += TZ=UTC
-
-# As test results keep only everything between the lines containing Ok: and Timeout:
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/^Ok:/,/^Timeout:/p" '
 
 # SOVER is needed for manifest processing
 PKG_MACROS += SOVER=$(SOVER)
