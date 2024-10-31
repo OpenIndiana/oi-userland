@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Image::ExifTool
-HUMAN_VERSION =			12.76
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			13.00
 COMPONENT_SUMMARY =		Image::ExifTool - Read and write meta information
 COMPONENT_CPAN_AUTHOR =		EXIFTOOL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5d3430ec57aa031f7ca43170f7ed6338a66bda99ab95b9e071f1ee27555f515f
+	sha256:4895788f34f834765f86be4a5ad5a32433f572d757160ecd7b612eaf5ed37e84
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -35,3 +34,4 @@ PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-lzma
 PERL_REQUIRED_PACKAGES += library/perl-5/io-compress-brotli
 PERL_REQUIRED_PACKAGES += library/perl-5/posix-strptime
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += SUNWcs
