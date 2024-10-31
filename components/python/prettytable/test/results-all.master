@@ -5,7 +5,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 179 items
+testpaths: tests
+collecting ... collected 207 items
 
 tests/test_colortable.py::TestColorTable::test_themeless PASSED
 tests/test_colortable.py::TestColorTable::test_theme_setter PASSED
@@ -15,7 +16,11 @@ tests/test_colortable.py::TestFormatCode::test_escapes PASSED
 tests/test_colortable.py::TestFormatCode::test_empty PASSED
 tests/test_colortable.py::TestFormatCode::test_stripped PASSED
 tests/test_colortable.py::TestFormatCode::test_multiple PASSED
-tests/test_colortable.py::TestColorTableRendering::test_color_table_rendering PASSED
+tests/test_colortable.py::TestColorTableRendering::test_color_table_rendering[False-True] PASSED
+tests/test_colortable.py::TestColorTableRendering::test_color_table_rendering[True-True0] PASSED
+tests/test_colortable.py::TestColorTableRendering::test_color_table_rendering[True-False] PASSED
+tests/test_colortable.py::TestColorTableRendering::test_color_table_rendering[True-True1] PASSED
+tests/test_colortable.py::TestColorTableRendering::test_all_themes PASSED
 tests/test_prettytable.py::test_version PASSED
 tests/test_prettytable.py::TestNoneOption::test_none_char_valid_option PASSED
 tests/test_prettytable.py::TestNoneOption::test_none_char_invalid_option PASSED
@@ -85,9 +90,9 @@ tests/test_prettytable.py::TestSorting::test_sort_slice PASSED
 tests/test_prettytable.py::TestFloatFormat::test_no_decimals PASSED
 tests/test_prettytable.py::TestFloatFormat::test_round_to_5dp PASSED
 tests/test_prettytable.py::TestFloatFormat::test_pad_with_2zeroes PASSED
-tests/test_prettytable.py::TestBreakLine::test_break_line_ascii[rows0-1-\n+---------+-------------+\n| Field 1 |   Field 2   |\n+---------+-------------+\n| value 1 |    value2   |\n|         | second line |\n+---------+-------------+\n| value 3 |    value4   |\n+---------+-------------+\n] PASSED
-tests/test_prettytable.py::TestBreakLine::test_break_line_ascii[rows1-1-\n+------------+-------------+\n|  Field 1   |   Field 2   |\n+------------+-------------+\n|  value 1   |    value2   |\n|            | second line |\n+------------+-------------+\n|  value 3   |    value4   |\n|            |             |\n| other line |             |\n|            |    value5   |\n+------------+-------------+\n] PASSED
-tests/test_prettytable.py::TestBreakLine::test_break_line_ascii[rows2-0-\n+------------+-------------+\n|  Field 1   |   Field 2   |\n+------------+-------------+\n|  value 1   |    value2   |\n|            | second line |\n|  value 3   |    value4   |\n|            |             |\n| other line |             |\n|            |    value5   |\n+------------+-------------+\n] PASSED
+tests/test_prettytable.py::TestBreakLine::test_break_line_ascii[rows0-HRuleStyle.ALL-\n+---------+-------------+\n| Field 1 |   Field 2   |\n+---------+-------------+\n| value 1 |    value2   |\n|         | second line |\n+---------+-------------+\n| value 3 |    value4   |\n+---------+-------------+\n] PASSED
+tests/test_prettytable.py::TestBreakLine::test_break_line_ascii[rows1-HRuleStyle.ALL-\n+------------+-------------+\n|  Field 1   |   Field 2   |\n+------------+-------------+\n|  value 1   |    value2   |\n|            | second line |\n+------------+-------------+\n|  value 3   |    value4   |\n|            |             |\n| other line |             |\n|            |    value5   |\n+------------+-------------+\n] PASSED
+tests/test_prettytable.py::TestBreakLine::test_break_line_ascii[rows2-HRuleStyle.FRAME-\n+------------+-------------+\n|  Field 1   |   Field 2   |\n+------------+-------------+\n|  value 1   |    value2   |\n|            | second line |\n|  value 3   |    value4   |\n|            |             |\n| other line |             |\n|            |    value5   |\n+------------+-------------+\n] PASSED
 tests/test_prettytable.py::TestBreakLine::test_break_line_html PASSED
 tests/test_prettytable.py::TestAnsiWidth::test_color PASSED
 tests/test_prettytable.py::TestAnsiWidth::test_reset PASSED
@@ -119,8 +124,8 @@ tests/test_prettytable.py::TestStyle::test_style[MSWORD_FRIENDLY] PASSED
 tests/test_prettytable.py::TestStyle::test_style[ORGMODE] PASSED
 tests/test_prettytable.py::TestStyle::test_style[PLAIN_COLUMNS] PASSED
 tests/test_prettytable.py::TestStyle::test_style[RANDOM] PASSED
-tests/test_prettytable.py::TestStyle::test_style[15-\n\u2554\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n\u2551   \u2551 Field 1 \u2551 Field 2 \u2551 Field 3 \u2551\n\u2560\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563\n\u2551 1 \u2551 value 1 \u2551  value2 \u2551  value3 \u2551\n\u2551 4 \u2551 value 4 \u2551  value5 \u2551  value6 \u2551\n\u2551 7 \u2551 value 7 \u2551  value8 \u2551  value9 \u2551\n\u255a\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n] PASSED
-tests/test_prettytable.py::TestStyle::test_style[16-\n\u250c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502   \u2502 Field 1 \u2502 Field 2 \u2502 Field 3 \u2502\n\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 1 \u2502 value 1 \u2502  value2 \u2502  value3 \u2502\n\u2502 4 \u2502 value 4 \u2502  value5 \u2502  value6 \u2502\n\u2502 7 \u2502 value 7 \u2502  value8 \u2502  value9 \u2502\n\u2514\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n] PASSED
+tests/test_prettytable.py::TestStyle::test_style[TableStyle.DOUBLE_BORDER-\n\u2554\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n\u2551   \u2551 Field 1 \u2551 Field 2 \u2551 Field 3 \u2551\n\u2560\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563\n\u2551 1 \u2551 value 1 \u2551  value2 \u2551  value3 \u2551\n\u2551 4 \u2551 value 4 \u2551  value5 \u2551  value6 \u2551\n\u2551 7 \u2551 value 7 \u2551  value8 \u2551  value9 \u2551\n\u255a\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n] PASSED
+tests/test_prettytable.py::TestStyle::test_style[TableStyle.SINGLE_BORDER-\n\u250c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502   \u2502 Field 1 \u2502 Field 2 \u2502 Field 3 \u2502\n\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 1 \u2502 value 1 \u2502  value2 \u2502  value3 \u2502\n\u2502 4 \u2502 value 4 \u2502  value5 \u2502  value6 \u2502\n\u2502 7 \u2502 value 7 \u2502  value8 \u2502  value9 \u2502\n\u2514\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n] PASSED
 tests/test_prettytable.py::TestStyle::test_style_invalid PASSED
 tests/test_prettytable.py::TestStyle::test_style_align[MARKDOWN] PASSED
 tests/test_prettytable.py::TestCsvOutput::test_csv_output PASSED
@@ -186,8 +191,32 @@ tests/test_prettytable.py::TestGeneralOutput::test_json PASSED
 tests/test_prettytable.py::TestGeneralOutput::test_html PASSED
 tests/test_prettytable.py::TestGeneralOutput::test_latex PASSED
 tests/test_prettytable.py::TestGeneralOutput::test_invalid PASSED
+tests/test_prettytable.py::TestDeprecations::test_hrule_constant_deprecations[FRAME-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_hrule_constant_deprecations[FRAME-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_hrule_constant_deprecations[ALL-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_hrule_constant_deprecations[ALL-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_hrule_constant_deprecations[NONE-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_hrule_constant_deprecations[NONE-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_hrule_constant_deprecations[HEADER-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_hrule_constant_deprecations[HEADER-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[DEFAULT-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[DEFAULT-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[MSWORD_FRIENDLY-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[MSWORD_FRIENDLY-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[PLAIN_COLUMNS-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[PLAIN_COLUMNS-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[MARKDOWN-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[MARKDOWN-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[ORGMODE-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[ORGMODE-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[DOUBLE_BORDER-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[DOUBLE_BORDER-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[SINGLE_BORDER-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[SINGLE_BORDER-prettytable.prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[RANDOM-prettytable] PASSED
+tests/test_prettytable.py::TestDeprecations::test_table_style_constant_deprecations[RANDOM-prettytable.prettytable] PASSED
 
 
-======== 179 passed ========
+======== 207 passed ========
   py$(PYV): OK
   congratulations :)
