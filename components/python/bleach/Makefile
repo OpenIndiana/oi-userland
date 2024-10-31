@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bleach
-HUMAN_VERSION =			6.1.0
-COMPONENT_SUMMARY =		bleach - An easy safelist-based HTML-sanitizing tool.
+HUMAN_VERSION =			6.2.0
+COMPONENT_SUMMARY =		An easy safelist-based HTML-sanitizing tool.
 COMPONENT_PROJECT_URL =		https://github.com/mozilla/bleach
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6d/10/77f32b088738f40d4f5be801daa5f327879eadd4562f36a2b5ab975ae571/bleach-6.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0a31f1837963c41d46bbf1331b8778e1308ea0791db03cc4e7357b97cf42a8fe
+	sha256:123e894118b8a599fd80d3ec1a6d4cc7ce4e5882b1317a7e1ba69b56e95f991f
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,8 +40,10 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/six
 PYTHON_REQUIRED_PACKAGES += library/python/webencodings
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
