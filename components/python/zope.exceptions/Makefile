@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.exceptions
-HUMAN_VERSION =			5.1
+HUMAN_VERSION =			5.2
 COMPONENT_SUMMARY =		Zope Exceptions
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.exceptions
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:611b4c4946c30160db4b7bbd4f38613b32684af167d319650af9b73bc7b0e978
+	sha256:4cba3248678773bbac6faa3ae3537df09a843881b89fb9e81aca282f3b92b2f3
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -41,12 +41,13 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
