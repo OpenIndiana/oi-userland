@@ -76,6 +76,12 @@ endif
 ifneq ($(strip $(BUILD_STYLE)),archive)
 ifneq ($(strip $(BUILD_STYLE)),pkg)
 include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE)).mk
+
+# Include common rules used by build styles that opted to use them
+USE_COMMON_RULES ?= no
+ifneq ($(strip $(USE_COMMON_RULES)),no)
+include $(WS_MAKE_RULES)/common-rules.mk
+endif
 endif
 endif
 
