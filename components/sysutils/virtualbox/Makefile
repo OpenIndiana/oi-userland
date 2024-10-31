@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      7.0.20
+COMPONENT_VERSION=      7.1.4
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
@@ -78,7 +78,7 @@ VBOX_FS_MODULES= vboxfs
 VBOX_BINS= VBoxControl VBoxService VBoxClient
 VBOX_SBINS= vboxmslnk
 
-QT5_ROOT=/usr/lib/qt/5.15
+QT5_ROOT=/usr/lib/qt/6.6
 PATH=$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
 PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT5_ROOT)/lib/$(MACH64)/pkgconfig
 
@@ -115,6 +115,9 @@ LOCAL_CONFIG +='\nVBOX_WITH_TESTSUITE='
 LOCAL_CONFIG +='\nVBOX_WITH_TESTCASES='
 LOCAL_CONFIG +='\nVBOX_WITH_DRAG_AND_DROP_GH = 1'
 LOCAL_CONFIG +='\nVBOX_WITH_X11_ADDITIONS = 1'
+
+# needs also patch 27
+LOCAL_CONFIG +='\nVBOX_WITH_VIDEOHWACCEL = 1'
 
 # Disable DTrace, needs patching
 LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_R3 ='
@@ -163,7 +166,7 @@ CONFIGURE_OPTIONS+= --enable-vnc
 CONFIGURE_OPTIONS += --with-openssl-dir=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS.debug += --build-debug
 
-CONFIGURE_OPTIONS += --enable-qt5
+CONFIGURE_OPTIONS += --enable-qt6
 
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(FLAVOUR))
@@ -235,17 +238,16 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/gsoap
 REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/qt5
+REQUIRED_PACKAGES += library/qt6
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
-REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/toolkit/libxt

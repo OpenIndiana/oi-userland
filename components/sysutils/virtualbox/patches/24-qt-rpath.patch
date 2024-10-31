@@ -11,15 +11,17 @@ UICommon.so needs the rpath for Qt5 libs too
      TEMPLATE_VBoxQtGuiExe_LIBS += \
      	rt socket nsl
     endif
---- VirtualBox-7.0.18/configure.orig
-+++ VirtualBox-7.0.18/configure
-@@ -1687,7 +1687,8 @@
+diff --git a/configure b/configure
+index c1c2965..82c9971 100755
+--- a/configure
++++ b/configure
+@@ -1699,7 +1699,8 @@ EOF
            # store only the first path, remove all other paths
-           # most likely pkg-config gave us -I/usr/include/qt5 -I/usr/include/qt5/QtCore
-           INCQT5=`echo "$INCQT5"|$KBUILD_SED 's|\([^ ]*\) .*|\1|'`
--          cnf_append "VBOX_PATH_QT_LIB" "`strip_L "$LIBQT5"`"
+           # most likely pkg-config gave us -I/usr/include/qt6 -I/usr/include/qt6/QtCore
+           INCQT6=`echo "$INCQT6"|$KBUILD_SED 's|\([^ ]*\) .*|\1|'`
+-          cnf_append "VBOX_PATH_QT_LIB" "`strip_L "$LIBQT6"`"
 +          # This is not quite right since the qt libpath does not have to be first but only one entry works...
-+          cnf_append "VBOX_PATH_QT_LIB" '$'"(firstword `strip_L "$LIBQT5"`)"
-           cnf_append "PATH_SDK_QT5_INC" "$INCQT5"
++          cnf_append "VBOX_PATH_QT_LIB" '$'"(firstword `strip_L "$LIBQT6"`)"
+           cnf_append "PATH_SDK_QT6_INC" "$INCQT6"
            # This is not quite right since the qt libpath does not have to be first...
-           cnf_append "PATH_SDK_QT5_LIB" '$'"(firstword `strip_L "$LIBQT5"`)"
+           cnf_append "PATH_SDK_QT6_LIB" '$'"(firstword `strip_L "$LIBQT6"`)"
