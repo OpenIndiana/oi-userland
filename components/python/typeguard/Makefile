@@ -19,28 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typeguard
-HUMAN_VERSION =			4.3.0
+HUMAN_VERSION =			4.4.0
 COMPONENT_SUMMARY =		Run-time type checker for Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:92ee6a0aec9135181eae6067ebd617fd9de8d75d714fb548728a4933b1dea651
+	sha256:463bd8697a65a4aa576a63767c369b1ecfba8a5ba735edfe3223127b6ecfa28c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/pytest-dev/pytest/issues/12186
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-black
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-flake8
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-salt-factories
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
