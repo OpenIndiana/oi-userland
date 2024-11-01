@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		twisted
-HUMAN_VERSION =			24.7.0
+HUMAN_VERSION =			24.10.0
 COMPONENT_SUMMARY =		An asynchronous networking framework written in Python
-COMPONENT_PROJECT_URL =		https://twistedmatrix.com/
+COMPONENT_PROJECT_URL =		https://twisted.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5a60147f044187a127ec7da96d170d49bcce50c6fd36f594e60f4587eff4d394
+	sha256:02951299672595fea0f70fa2d5f7b5e3d56836157eda68859a6ad6492d36756e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,6 +44,8 @@ PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cython-test-exception-raiser
+TEST_REQUIRED_PACKAGES.python += library/python/h2
+TEST_REQUIRED_PACKAGES.python += library/python/httpx
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/pyhamcrest
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv

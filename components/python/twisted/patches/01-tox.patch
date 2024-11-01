@@ -1,7 +1,7 @@
 We do not need to build wheels during testing so let's remove tox-wheel.
 
---- twisted-24.7.0/tox.ini.orig
-+++ twisted-24.7.0/tox.ini
+--- twisted-24.10.0/tox.ini.orig
++++ twisted-24.10.0/tox.ini
 @@ -19,8 +19,7 @@
  minversion=3.24.1
  requires=
@@ -25,8 +25,8 @@ We do not need to build wheels during testing so let's remove tox-wheel.
      posix: python -c "print('Running on POSIX (no special dependencies)')"
  
      ; Run tests without wrapping them using coverage.
--    nocov: python -m twisted.trial --temp-directory={envtmpdir}/_trial_temp --reporter={env:TRIAL_REPORTER:verbose} {env:TRIAL_ARGS:-j8} {posargs:twisted}
-+    python -m twisted.trial --temp-directory={envtmpdir}/_trial_temp --reporter={env:TRIAL_REPORTER:verbose} {env:TRIAL_ARGS:-j8} {posargs:twisted}
+-    nocov: python -m twisted.trial --temp-directory={envtmpdir}/_trial_temp --reporter={env:TRIAL_REPORTER:verbose} {env:TRIAL_ARGS:-jauto} {posargs:twisted}
++    python -m twisted.trial --temp-directory={envtmpdir}/_trial_temp --reporter={env:TRIAL_REPORTER:verbose} {env:TRIAL_ARGS:-jauto} {posargs:twisted}
  
      ; Run the tests wrapped using coverage.
      withcov: python {toxinidir}/admin/_copy.py {toxinidir}/admin/zz_coverage.pth {envsitepackagesdir}/zz_coverage.pth
