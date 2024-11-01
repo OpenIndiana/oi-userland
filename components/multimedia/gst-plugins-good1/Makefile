@@ -17,30 +17,27 @@
 #
 
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-good1
-COMPONENT_VERSION=	1.24.8
+COMPONENT_VERSION=	1.24.9
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=		gst-plugins-good
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:613a20f03bd4544b52f10f6ceb4e0fffd25eff15bf338ab8b12b971982eb0153
+COMPONENT_ARCHIVE_HASH=	sha256:897de50bff337e3ca2f86f1eaa28e0828d83024156162a50c4ea0af86e29799f
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(PATH.gnu)
-
-CFLAGS += -I/usr/X11/include
-
 # almost everything is "auto" with meson
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dorc=enabled
 CONFIGURE_OPTIONS += -Dlame=enabled
 CONFIGURE_OPTIONS += -Doss=enabled
@@ -50,21 +47,10 @@ CONFIGURE_OPTIONS += -Dqt6=disabled
 CONFIGURE_OPTIONS += -Dtwolame=enabled
 CONFIGURE_OPTIONS += -Dsoup=enabled
 CONFIGURE_OPTIONS += -Dtests=enabled
-# diable amrnb and amrwbdec because they are in opencore-amr which is in encumbered.
+# disable amrnb and amrwbdec because they are in opencore-amr which is in encumbered
 CONFIGURE_OPTIONS += -Damrnb=disabled
 CONFIGURE_OPTIONS += -Damrwbdec=disabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
-
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
-
-COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-# As test results keep only everything between the lines containing Ok: and Timeout:
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/^Ok:/,/^Timeout:/p" '
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
@@ -80,7 +66,6 @@ REQUIRED_PACKAGES += audio/wavpack
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/aalib
 REQUIRED_PACKAGES += library/audio/gstreamer1
