@@ -18,21 +18,20 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.2
-COMPONENT_MNR_VERSION=	24
+COMPONENT_MNR_VERSION=	25
 COMPONENT_SUMMARY=      PHP 8.2
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:4cc76ec644eee97d17c92bfe8d0e84714fedf299a538b7dfadc0639dd0dc432f
+COMPONENT_ARCHIVE_HASH= sha256:07b41c5e96c60c096510e45f02f818414d11bdd0d5da1b6840ddba2ba7289401
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-82
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
 COMPONENT_LICENSE=      PHP License
 COMPONENT_LICENSE_FILE= LICENSE
-COMPONENT_REVISION= 1
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -182,7 +181,8 @@ CONFIGURE_OPTIONS += --with-openssl-dir=$(OPENSSL_PREFIX)
 # now with fix to cover all EXTRA_LDFLAGS conditions
 COMPONENT_POST_CONFIGURE_ACTION= \
 	(cd $(@D) ; \
-        $(GSED) -i -e 's:^EXTRA_LDFLAGS = .*:EXTRA_LDFLAGS = -avoid-version -module:' -e 's:-L/usr/lib/$(MACH64) ::' -e 's:-R/usr/lib/$(MACH64) ::' Makefile )
+        $(GSED) -i -e 's:^EXTRA_LDFLAGS = .*:EXTRA_LDFLAGS = -avoid-version -module:' -e 's:-L/usr/lib/$(MACH64) ::' \
+        -e '/^CFLAGS_CLEAN/s/-Wl,-Wl,//' -e 's:-R/usr/lib/$(MACH64) ::' Makefile )
 
 # Installation Arguments
 COMPONENT_INSTALL_ARGS += INSTALL_ROOT=$(PROTO_DIR)
