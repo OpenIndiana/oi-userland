@@ -13,26 +13,27 @@
 #
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libzip
-COMPONENT_VERSION=	1.11.1
+COMPONENT_VERSION=	1.11.2
 COMPONENT_SUMMARY=	A C library for reading, creating, and modifying zip archives
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://libzip.org/
-COMPONENT_ARCHIVE_HASH=	sha256:721e0e4e851073b508c243fd75eda04e4c5006158a900441de10ce274cc3b633
+COMPONENT_ARCHIVE_HASH=	sha256:5d471308cef4c4752bbcf973d9cd37ba4cb53739116c30349d4764ba1410dfc1
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_FMRI=		library/libzip
 COMPONENT_LICENSE=	BSD 3-clause
 COMPONENT_LICENSE_FILE=	LICENSE
 
-# We are lackaing nihtest (INSTALL.md mentions the test prerequisites):
+# We are lacking nihtest (INSTALL.md mentions the test prerequisites):
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9. ]*sec//g"'
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTOUSRLIBDIR)/cmake/libzip ; \
