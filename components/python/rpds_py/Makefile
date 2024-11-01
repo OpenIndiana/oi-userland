@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		rpds_py
-HUMAN_VERSION =			0.20.0
+HUMAN_VERSION =			0.20.1
 COMPONENT_SUMMARY =		Python bindings to Rust's persistent data structures (rpds)
 COMPONENT_PROJECT_URL =		https://github.com/crate-py/rpds
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d72a210824facfdaf8768cf2d7ca25a042c30320b3020de2fa04640920d4e121
+	sha256:e1791c4aabd117653530dccd24108fa03cc6baf21f58b950d0a73c3b3b29a350
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
