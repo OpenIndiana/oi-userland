@@ -1,0 +1,26 @@
+https://github.com/ibus/ibus/commit/7db9d986a0f7c4040f12f31796efba2a9b4fee2e
+
+From 7db9d986a0f7c4040f12f31796efba2a9b4fee2e Mon Sep 17 00:00:00 2001
+From: Izumi Tsutsui <tsutsui@ceres.dti.ne.jp>
+Date: Sun, 8 Sep 2024 09:13:29 +0900
+Subject: [PATCH] src/ibuscomposetable: Replace obsolete index(3) with
+ strchr(3)
+
+BUG=https://github.com/ibus/ibus/pull/2676
+---
+ src/ibuscomposetable.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/ibuscomposetable.c b/src/ibuscomposetable.c
+index a8e41a33c..abf51244c 100644
+--- a/src/ibuscomposetable.c
++++ b/src/ibuscomposetable.c
+@@ -192,7 +192,7 @@ parse_compose_sequence (IBusComposeData *compose_data,
+ 
+     for (i = 1; words[i] != NULL; i++) {
+         char *start = words[i];
+-        char *end = index (words[i], '>');
++        char *end = strchr (start, '>');
+         char *match;
+         gunichar codepoint;
+ 

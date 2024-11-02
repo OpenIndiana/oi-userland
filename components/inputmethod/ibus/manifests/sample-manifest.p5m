@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2024 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -25,9 +26,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file path=etc/dconf/db/ibus.d/00-upstream-settings
 file path=etc/dconf/profile/ibus
 file path=etc/xdg/Xwayland-session.d/10-ibus-x11
-file path=usr/bin/$(MACH32)/ibus
-file path=usr/bin/$(MACH32)/ibus-daemon
-file path=usr/bin/$(MACH32)/ibus-setup
 file path=usr/bin/ibus
 file path=usr/bin/ibus-daemon
 file path=usr/bin/ibus-setup
@@ -74,27 +72,17 @@ file path=usr/include/ibus-1.0/ibusxml.h
 file path=usr/lib/$(MACH64)/girepository-1.0/IBus-1.0.typelib
 file path=usr/lib/$(MACH64)/gtk-2.0/2.10.0/immodules/im-ibus.so
 file path=usr/lib/$(MACH64)/gtk-3.0/3.0.0/immodules/im-ibus.so
-link path=usr/lib/$(MACH64)/libibus-1.0.so target=libibus-1.0.so.5.0.526
-link path=usr/lib/$(MACH64)/libibus-1.0.so.5 target=libibus-1.0.so.5.0.526
-file path=usr/lib/$(MACH64)/libibus-1.0.so.5.0.526
+file path=usr/lib/$(MACH64)/gtk-4.0/4.0.0/immodules/libim-ibus.so
+link path=usr/lib/$(MACH64)/libibus-1.0.so target=libibus-1.0.so.5.0.527
+link path=usr/lib/$(MACH64)/libibus-1.0.so.5 target=libibus-1.0.so.5.0.527
+file path=usr/lib/$(MACH64)/libibus-1.0.so.5.0.527
 file path=usr/lib/$(MACH64)/pkgconfig/ibus-1.0.pc
-file path=usr/lib/gtk-2.0/2.10.0/immodules/im-ibus.so
-file path=usr/lib/gtk-3.0/3.0.0/immodules/im-ibus.so
-file path=usr/lib/ibus/$(MACH64)/ibus-dconf
-file path=usr/lib/ibus/$(MACH64)/ibus-engine-simple
-file path=usr/lib/ibus/$(MACH64)/ibus-portal
-file path=usr/lib/ibus/$(MACH64)/ibus-ui-gtk3
-file path=usr/lib/ibus/$(MACH64)/ibus-x11
-file path=usr/lib/ibus/ibus-dconf
-file path=usr/lib/ibus/ibus-engine-simple
-file path=usr/lib/ibus/ibus-portal
-file path=usr/lib/ibus/ibus-ui-gtk3
-file path=usr/lib/ibus/ibus-x11
-link path=usr/lib/libibus-1.0.so target=libibus-1.0.so.5.0.526
-link path=usr/lib/libibus-1.0.so.5 target=libibus-1.0.so.5.0.526
-file path=usr/lib/libibus-1.0.so.5.0.526
-file path=usr/lib/pkgconfig/ibus-1.0.pc
-file path=usr/lib/python3.9/vendor-packages/gi/overrides/IBus.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gi/overrides/IBus.py
+file path=usr/libexec/ibus-dconf
+file path=usr/libexec/ibus-engine-simple
+file path=usr/libexec/ibus-portal
+file path=usr/libexec/ibus-ui-gtk3
+file path=usr/libexec/ibus-x11
 file path=usr/share/GConf/gsettings/ibus.convert
 file path=usr/share/applications/org.freedesktop.IBus.Setup.desktop
 file path=usr/share/bash-completion/completions/ibus.bash
@@ -255,9 +243,9 @@ file path=usr/share/locale/vi/LC_MESSAGES/ibus10.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/ibus10.mo
 file path=usr/share/locale/zh_HK/LC_MESSAGES/ibus10.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/ibus10.mo
-file path=usr/share/man/man1/ibus-daemon.1
-file path=usr/share/man/man1/ibus-setup.1
-file path=usr/share/man/man1/ibus.1
+file path=usr/share/man/man1/ibus-daemon.1.gz
+file path=usr/share/man/man1/ibus-setup.1.gz
+file path=usr/share/man/man1/ibus.1.gz
 file path=usr/share/man/man5/00-upstream-settings.5.gz
 file path=usr/share/man/man5/ibus.5.gz
 file path=usr/share/vala/vapi/ibus-1.0.deps
