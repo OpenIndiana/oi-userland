@@ -26,12 +26,11 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libusb
-COMPONENT_VERSION= 1.0.26
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.0.27
 COMPONENT_SUMMARY= A cross-platform user library to access USB devices
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:12ce7a61fc9854d1d2a1ffe095f7b5fac19ddba095c259e6067a46500381b5a5
+COMPONENT_ARCHIVE_HASH= sha256:ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575
 COMPONENT_ARCHIVE_URL= https://github.com/libusb/libusb/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://libusb.info/
 COMPONENT_FMRI= library/libusb-1
@@ -40,6 +39,8 @@ COMPONENT_LICENSE= LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += $(XPG6MODE)
 
 # Find issues with undefined symbols in build time
 LD_OPTIONS += $(LD_Z_DEFS)
@@ -55,11 +56,12 @@ COMPONENT_BUILD_ARGS += "MAKE=$(GMAKE)"
 # Test target just runs the 'stress' binary; requires Global Zone
 COMPONENT_TEST_TARGETS=
 COMPONENT_TEST_ENV_CMD=
-COMPONENT_TEST_DIR= $(BUILD_DIR)/$(MACH$(BITS))/tests/.libs
+COMPONENT_TEST_DIR = $(@D)/tests
 COMPONENT_TEST_CMD= ./stress
 
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-usb
 REQUIRED_PACKAGES += system/header/header-ugen
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
