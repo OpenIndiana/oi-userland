@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cargo-c
 HUMAN_VERSION =			0.10.5+cargo-0.83.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Helper program to build and install c-like libraries
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5bfa9ba93806384d940e71dafbc185316e0a6a47561b33b7105fcf67f99df70a
