@@ -10,20 +10,18 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2024 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
-
-# Note: Some files are commented out because they will be delivered in a separate manifest.
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/gegl
 file path=usr/bin/gegl-imgcmp
@@ -78,16 +76,25 @@ file path=usr/include/gegl-0.4/npd/npd_gegl.h
 file path=usr/include/gegl-0.4/npd/npd_math.h
 file path=usr/include/gegl-0.4/opencl/cl.h
 file path=usr/include/gegl-0.4/opencl/cl_d3d10.h
+file path=usr/include/gegl-0.4/opencl/cl_d3d11.h
+file path=usr/include/gegl-0.4/opencl/cl_dx9_media_sharing.h
+file path=usr/include/gegl-0.4/opencl/cl_egl.h
 file path=usr/include/gegl-0.4/opencl/cl_ext.h
 file path=usr/include/gegl-0.4/opencl/cl_gl.h
-file path=usr/include/gegl-0.4/opencl/cl_gl_ext.h
+file path=usr/include/gegl-0.4/opencl/cl_half.h
+file path=usr/include/gegl-0.4/opencl/cl_icd.h
+file path=usr/include/gegl-0.4/opencl/cl_layer.h
 file path=usr/include/gegl-0.4/opencl/cl_platform.h
+file path=usr/include/gegl-0.4/opencl/cl_va_api_media_sharing_intel.h
+file path=usr/include/gegl-0.4/opencl/cl_version.h
 file path=usr/include/gegl-0.4/opencl/gegl-cl-color.h
 file path=usr/include/gegl-0.4/opencl/gegl-cl-init.h
 file path=usr/include/gegl-0.4/opencl/gegl-cl-random.h
 file path=usr/include/gegl-0.4/opencl/gegl-cl-types.h
+file path=usr/include/gegl-0.4/opencl/gegl-cl-version.h
 file path=usr/include/gegl-0.4/opencl/gegl-cl.h
 file path=usr/include/gegl-0.4/opencl/opencl.h
+file path=usr/include/gegl-0.4/opencl/opencl.hpp
 file path=usr/include/gegl-0.4/operation/gegl-extension-handler.h
 file path=usr/include/gegl-0.4/operation/gegl-operation-area-filter.h
 file path=usr/include/gegl-0.4/operation/gegl-operation-composer.h
@@ -110,8 +117,9 @@ file path=usr/include/gegl-0.4/sc/sc-common.h
 file path=usr/include/gegl-0.4/sc/sc-context.h
 file path=usr/include/gegl-0.4/sc/sc-outline.h
 file path=usr/include/gegl-0.4/sc/sc-sample.h
-#file path=usr/lib/$(MACH64)/gegl-0.4/average.so
-#file path=usr/lib/$(MACH64)/gegl-0.4/blend-reflect.so
+file path=usr/lib/$(MACH64)/gegl-0.4/average.so
+file path=usr/lib/$(MACH64)/gegl-0.4/blend-reflect.so
+file path=usr/lib/$(MACH64)/gegl-0.4/ctx-script.so
 file path=usr/lib/$(MACH64)/gegl-0.4/dropshadow2.json
 file path=usr/lib/$(MACH64)/gegl-0.4/exr-load.so
 file path=usr/lib/$(MACH64)/gegl-0.4/exr-save.so
@@ -130,16 +138,16 @@ file path=usr/lib/$(MACH64)/gegl-0.4/gegl-generated-x86_64-v3.so
 file path=usr/lib/$(MACH64)/gegl-0.4/gegl-generated.so
 file path=usr/lib/$(MACH64)/gegl-0.4/gegl-transformops-x86_64-v2.so
 file path=usr/lib/$(MACH64)/gegl-0.4/gegl-transformops-x86_64-v3.so
-#file path=usr/lib/$(MACH64)/gegl-0.4/gegl-workshop.so
+file path=usr/lib/$(MACH64)/gegl-0.4/gegl-workshop.so
 file path=usr/lib/$(MACH64)/gegl-0.4/gif-load.so
 file path=usr/lib/$(MACH64)/gegl-0.4/grey2.json
 file path=usr/lib/$(MACH64)/gegl-0.4/jp2-load.so
 file path=usr/lib/$(MACH64)/gegl-0.4/jpg-load.so
 file path=usr/lib/$(MACH64)/gegl-0.4/jpg-save.so
 file path=usr/lib/$(MACH64)/gegl-0.4/lcms-from-profile.so
-#file path=usr/lib/$(MACH64)/gegl-0.4/lens-correct.so
-#file path=usr/lib/$(MACH64)/gegl-0.4/line-profile.so
-#file path=usr/lib/$(MACH64)/gegl-0.4/negation.so
+file path=usr/lib/$(MACH64)/gegl-0.4/lens-correct.so
+file path=usr/lib/$(MACH64)/gegl-0.4/line-profile.so
+file path=usr/lib/$(MACH64)/gegl-0.4/negation.so
 file path=usr/lib/$(MACH64)/gegl-0.4/npd.so
 file path=usr/lib/$(MACH64)/gegl-0.4/npy-save.so
 file path=usr/lib/$(MACH64)/gegl-0.4/path.so
@@ -156,9 +164,9 @@ file path=usr/lib/$(MACH64)/gegl-0.4/rgbe-save.so
 file path=usr/lib/$(MACH64)/gegl-0.4/sdl2-display.so
 file path=usr/lib/$(MACH64)/gegl-0.4/seamless-clone-compose.so
 file path=usr/lib/$(MACH64)/gegl-0.4/seamless-clone.so
-#file path=usr/lib/$(MACH64)/gegl-0.4/soft-burn.so
-#file path=usr/lib/$(MACH64)/gegl-0.4/soft-dodge.so
-#file path=usr/lib/$(MACH64)/gegl-0.4/subtractive.so
+file path=usr/lib/$(MACH64)/gegl-0.4/soft-burn.so
+file path=usr/lib/$(MACH64)/gegl-0.4/soft-dodge.so
+file path=usr/lib/$(MACH64)/gegl-0.4/subtractive.so
 file path=usr/lib/$(MACH64)/gegl-0.4/svg-load.so
 file path=usr/lib/$(MACH64)/gegl-0.4/text.so
 file path=usr/lib/$(MACH64)/gegl-0.4/tiff-load.so
@@ -166,13 +174,13 @@ file path=usr/lib/$(MACH64)/gegl-0.4/tiff-save.so
 file path=usr/lib/$(MACH64)/gegl-0.4/transformops.so
 file path=usr/lib/$(MACH64)/gegl-0.4/vector-fill.so
 file path=usr/lib/$(MACH64)/gegl-0.4/vector-stroke.so
-#file path=usr/lib/$(MACH64)/gegl-0.4/voroni_diagram.so
+file path=usr/lib/$(MACH64)/gegl-0.4/voroni_diagram.so
 file path=usr/lib/$(MACH64)/gegl-0.4/webp-load.so
 file path=usr/lib/$(MACH64)/gegl-0.4/webp-save.so
 file path=usr/lib/$(MACH64)/girepository-1.0/Gegl-0.4.typelib
 link path=usr/lib/$(MACH64)/libgegl-0.4.so target=libgegl-0.4.so.0
-link path=usr/lib/$(MACH64)/libgegl-0.4.so.0 target=libgegl-0.4.so.0.447.1
-file path=usr/lib/$(MACH64)/libgegl-0.4.so.0.447.1
+link path=usr/lib/$(MACH64)/libgegl-0.4.so.0 target=libgegl-0.4.so.0.449.1
+file path=usr/lib/$(MACH64)/libgegl-0.4.so.0.449.1
 file path=usr/lib/$(MACH64)/libgegl-npd-0.4.so
 file path=usr/lib/$(MACH64)/libgegl-sc-0.4.so
 file path=usr/lib/$(MACH64)/pkgconfig/gegl-0.4.pc
@@ -201,6 +209,7 @@ file path=usr/share/locale/mr/LC_MESSAGES/gegl-0.4.mo
 file path=usr/share/locale/nb/LC_MESSAGES/gegl-0.4.mo
 file path=usr/share/locale/ne/LC_MESSAGES/gegl-0.4.mo
 file path=usr/share/locale/nl/LC_MESSAGES/gegl-0.4.mo
+file path=usr/share/locale/nn/LC_MESSAGES/gegl-0.4.mo
 file path=usr/share/locale/oc/LC_MESSAGES/gegl-0.4.mo
 file path=usr/share/locale/pl/LC_MESSAGES/gegl-0.4.mo
 file path=usr/share/locale/pt/LC_MESSAGES/gegl-0.4.mo
