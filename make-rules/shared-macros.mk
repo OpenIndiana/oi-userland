@@ -125,10 +125,13 @@ PKG_OS_VERSION ?= 0.$(PKG_SOLARIS_VERSION)
 # GNU target triplet
 GNU_TRIPLET=$(GNU_CPU)-$(GNU_VENDOR)-$(GNU_OS)
 # The cpu part of the triplet is basically the same as $(MACH):
-# i386 - for x86 and GCC version older than 9
-# x86_64 - for x86 and GCC version 9 and newer
-# sparc - for SPARC
+# i386/sparc     - for GCC version older than 9
+# x86_64/sparcv9 - for GCC version 9 and newer
+ifeq ($(MACH), i386)
 GNU_CPU = $(if $(filter $(GCC_VERSION),3 4 7),$(MACH),$(MACH:i386=x86_64))
+else
+GNU_CPU = $(if $(filter $(GCC_VERSION),3 4 7),$(MACH),$(MACH:sparc=sparcv9))
+endif
 # The vendor part of the triplet is:
 # pc - for x86
 # sun - for SPARC
