@@ -12,17 +12,16 @@
 # Copyright (c) 2024 Geoff Weiss
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         srain
-COMPONENT_VERSION=      1.7.0
+COMPONENT_VERSION=      1.8.0
 COMPONENT_SUMMARY=      Modern IRC client written in GTK.
 COMPONENT_PROJECT_URL=  https://srain.silverrainz.me/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a79bc0d3c257db1c1037b75c330a36c40660580f99327710419a0dacb1b5b18d
+COMPONENT_ARCHIVE_HASH= sha256:0c9830c79a3d5656bfe6aaf926f091b09b57eaacbfdc98270c40274fdbd680c2
 COMPONENT_ARCHIVE_URL=  https://github.com/SrainApp/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         desktop/irc/srain
 COMPONENT_CLASSIFICATION=Applications/Internet
@@ -38,6 +37,7 @@ PATH= $(PATH.gnu)
 CONFIGURE_OPTIONS += -Dapp_indicator=false
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
@@ -45,5 +45,4 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libconfig
 REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/libsoup3
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
