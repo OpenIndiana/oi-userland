@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yt_dlp
-HUMAN_VERSION =			2024.10.22
+HUMAN_VERSION =			2024.11.4
 COMPONENT_SUMMARY =		A feature-rich command-line audio/video downloader
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:47b82a1fd22411b5c95ef2f0a1ae1af4e6dfd736ea99fdb2a0ea41445abc62ba
+	sha256:ed204c1b61bc563e134447766d1ab343173540799e13ebb953e887ce7dcf6865
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +34,17 @@ COMPONENT_CLASSIFICATION =	Applications/Sound and Video
 SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+#
+# Add optional runtime dependencies.  Technically, we do not need all of them
+# because only subset is strongly recommended but it is easier to add all of
+# them than to maintain the list of the strongly recommended.
+#
+# See also https://github.com/yt-dlp/yt-dlp/pull/11255
+#
+COMPONENT_POST_INSTALL_ACTION += \
+	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) default >> $(@D)/.depend-runtime ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/brotli

@@ -5,10 +5,11 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6928 items / 5928 deselected / 1000 selected
+collecting ... collected 6959 items / 5950 deselected / 1009 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
+test/test_InfoExtractor.py::TestInfoExtractor::test_get_netrc_login_info PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_html_search_meta PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_html_search_regex PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_ie_key PASSED
@@ -62,6 +63,7 @@ test/test_aes.py::TestAES::test_decrypt_text PASSED
 test/test_aes.py::TestAES::test_ecb_decrypt PASSED
 test/test_aes.py::TestAES::test_ecb_encrypt PASSED
 test/test_aes.py::TestAES::test_encrypt PASSED
+test/test_aes.py::TestAES::test_gcm_aligned_decrypt PASSED
 test/test_aes.py::TestAES::test_gcm_decrypt PASSED
 test/test_aes.py::TestAES::test_key_expansion PASSED
 test/test_aes.py::TestAES::test_pad_block PASSED
@@ -98,10 +100,12 @@ test/test_config.py::TestConfig::test_config_override_commandline PASSED
 test/test_config.py::TestConfig::test_config_override_files PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_linux_derive_key PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_linux_v10 PASSED
+test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_linux_v10_meta24 PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_linux_v11 PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_mac_derive_key PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_mac_v10 PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_windows_v10 PASSED
+test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_windows_v10_meta24 PASSED
 test/test_cookies.py::TestCookies::test_get_desktop_environment PASSED
 test/test_cookies.py::TestCookies::test_pbkdf2_sha1 PASSED
 test/test_cookies.py::TestCookies::test_safari_cookie_parsing PASSED
@@ -498,7 +502,28 @@ test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-h
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions24-False] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions25-False] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions26-False] SKIPPED
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 43329)
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
+    self.handle()
+  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
+    self.handle_one_request()
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions27-AssertionError] SKIPPED
+  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
+    method()
+  File "$(@D)/test/test_networking.py", line 259, in do_GET
+    self._headers()
+  File "$(@D)/test/test_networking.py", line 84, in _headers
+    self.wfile.write(payload)
+  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions28-False] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions29-False] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_extension[CurlCFFI-http-extensions30-AssertionError] SKIPPED
@@ -835,6 +860,10 @@ test/test_traversal.py::TestTraversal::test_traversal_morsel PASSED
 test/test_traversal.py::TestTraversal::test_traversal_filter PASSED
 test/test_traversal.py::TestTraversalHelpers::test_traversal_require PASSED
 test/test_traversal.py::TestTraversalHelpers::test_subs_list_to_dict PASSED
+test/test_traversal.py::TestTraversalHelpers::test_trim_str PASSED
+test/test_traversal.py::TestTraversalHelpers::test_unpack PASSED
+test/test_traversal.py::TestTraversalHelpers::test_find_element PASSED
+test/test_traversal.py::TestTraversalHelpers::test_find_elements PASSED
 test/test_traversal.py::TestDictGet::test_dict_get PASSED
 test/test_update.py::TestUpdate::test_query_update PASSED
 test/test_update.py::TestUpdate::test_update_spec PASSED
@@ -910,6 +939,7 @@ test/test_utils.py::TestUtil::test_parse_duration PASSED
 test/test_utils.py::TestUtil::test_parse_filesize PASSED
 test/test_utils.py::TestUtil::test_parse_iso8601 PASSED
 test/test_utils.py::TestUtil::test_parse_resolution PASSED
+test/test_utils.py::TestUtil::test_partial_application PASSED
 test/test_utils.py::TestUtil::test_pkcs1pad PASSED
 test/test_utils.py::TestUtil::test_prepend_extension PASSED
 test/test_utils.py::TestUtil::test_read_batch_urls PASSED
@@ -1013,6 +1043,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 847 passed, 153 skipped, 5928 deselected ========
+======== 856 passed, 153 skipped, 5950 deselected ========
   py$(PYV): OK
   congratulations :)
