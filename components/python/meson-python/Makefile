@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		meson_python
 HUMAN_VERSION =			0.17.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Meson Python build backend (PEP 517)
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:efb91f69f2e19eef7bc9a471ed2a4e730088cc6b39eacaf3e49fc4f930eb5f83
@@ -40,6 +41,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pyproject-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += developer/object-file
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/cython
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
