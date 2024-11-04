@@ -1,11 +1,11 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -bb -m pytest
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 132 items / 4 skipped
+collecting ... collected 135 items / 1 deselected / 4 skipped / 134 selected
 
 tests/test_0_watchmedo.py::test_load_config_valid PASSED
 tests/test_0_watchmedo.py::test_load_config_invalid PASSED
@@ -15,11 +15,12 @@ tests/test_0_watchmedo.py::test_shell_command_subprocess_termination_nowait PASS
 tests/test_0_watchmedo.py::test_shell_command_subprocess_termination_not_happening_on_file_opened_event PASSED
 tests/test_0_watchmedo.py::test_auto_restart_not_happening_on_file_opened_event PASSED
 tests/test_0_watchmedo.py::test_auto_restart_on_file_change PASSED
-tests/test_0_watchmedo.py::test_auto_restart_on_file_change_debounce PASSED
 tests/test_0_watchmedo.py::test_auto_restart_subprocess_termination[True] PASSED
 tests/test_0_watchmedo.py::test_auto_restart_subprocess_termination[False] PASSED
 tests/test_0_watchmedo.py::test_auto_restart_arg_parsing_basic PASSED
 tests/test_0_watchmedo.py::test_auto_restart_arg_parsing PASSED
+tests/test_0_watchmedo.py::test_auto_restart_events_echoed PASSED
+tests/test_0_watchmedo.py::test_logger_events_echoed PASSED
 tests/test_0_watchmedo.py::test_shell_command_arg_parsing PASSED
 tests/test_0_watchmedo.py::test_valid_verbosity[verbosity0-cmdline0] PASSED
 tests/test_0_watchmedo.py::test_valid_verbosity[verbosity0-cmdline1] PASSED
@@ -78,6 +79,8 @@ tests/test_events.py::test_dir_modified_event PASSED
 tests/test_events.py::test_dir_created_event PASSED
 tests/test_events.py::test_file_system_event_handler_dispatch PASSED
 tests/test_events.py::test_event_comparison PASSED
+tests/test_isolated.py::test_observer_stops_in_eventlet SKIPPED
+tests/test_isolated.py::test_eventlet_skip_repeat_queue SKIPPED
 tests/test_logging_event_handler.py::test_logging_event_handler_dispatch PASSED
 tests/test_observer.py::test_schedule_should_start_emitter_if_running PASSED
 tests/test_observer.py::test_schedule_should_not_start_emitter_if_not_running PASSED
@@ -125,7 +128,6 @@ tests/test_skip_repeats_queue.py::test_allow_nonconsecutive PASSED
 tests/test_skip_repeats_queue.py::test_put_with_watchdog_events PASSED
 tests/test_skip_repeats_queue.py::test_prevent_consecutive PASSED
 tests/test_skip_repeats_queue.py::test_consecutives_allowed_across_empties PASSED
-tests/test_skip_repeats_queue.py::test_eventlet_monkey_patching SKIPPED
 tests/test_snapshot_diff.py::test_pickle PASSED
 tests/test_snapshot_diff.py::test_move_to PASSED
 tests/test_snapshot_diff.py::test_move_to_with_context_manager PASSED
@@ -140,7 +142,7 @@ tests/test_snapshot_diff.py::test_permission_error PASSED
 tests/test_snapshot_diff.py::test_ignore_device PASSED
 tests/test_snapshot_diff.py::test_empty_snapshot PASSED
 
-2 files skipped due to complete coverage.
+5 files skipped due to complete coverage.
 
 ===Flaky Test Report===
 
@@ -151,6 +153,6 @@ test_nondelayed_get passed 1 out of the required 1 times. Success!
 
 ===End Flaky Test Report===
 
-======== 131 passed, 5 skipped ========
+======== 132 passed, 6 skipped, 1 deselected ========
   py$(PYV): OK
   congratulations :)
