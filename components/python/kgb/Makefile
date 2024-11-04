@@ -14,24 +14,22 @@
 #   $WS_TOOLS/python-integrate-project kgb
 #
 
-BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		kgb
-HUMAN_VERSION =			7.1.1
-COMPONENT_SUMMARY =		kgb - Utilities for spying on function calls in unit tests.
+HUMAN_VERSION =			7.2
+COMPONENT_SUMMARY =		Utilities for spying on function calls in unit tests.
 COMPONENT_PROJECT_URL =		https://github.com/beanbaginc/kgb
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0c/2e/2b608fa158cd87d7372b1d1c94d70b9b90e4ab5316c77f26feb1e4b6549f/kgb-7.1.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:74912c8761651f2063151c6c2a36ebe023393de491ec86744771a2888ab9845b
+	sha256:58dcae53a843a7121829e187dfcc13b80785a8a66ca459705371cb74cff8f155
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

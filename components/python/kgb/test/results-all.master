@@ -1,14 +1,12 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg
-asyncio: mode=strict
-collecting ... collected 218 items
+rootdir: $(@D)
+configfile: setup.cfg
+collecting ... collected 217 items
 
-::project PASSED
 kgb/tests/py3/test_function_spy.py::FunctionSpyTests::test_call_with_function_and_keyword_only_args PASSED
 kgb/tests/py3/test_function_spy.py::FunctionSpyTests::test_call_with_function_and_keyword_only_args_no_kw_passed PASSED
 kgb/tests/py3/test_function_spy.py::FunctionSpyTests::test_call_with_function_and_positional_only_args PASSED
@@ -64,6 +62,7 @@ kgb/tests/test_function_spy.py::FunctionSpyTests::test_call_with_fake_and_contex
 kgb/tests/test_function_spy.py::FunctionSpyTests::test_call_with_fake_and_contextmanager_func_raises_exception PASSED
 kgb/tests/test_function_spy.py::FunctionSpyTests::test_call_with_fake_and_kwargs PASSED
 kgb/tests/test_function_spy.py::FunctionSpyTests::test_call_with_fake_and_unbound_method PASSED
+kgb/tests/test_function_spy.py::FunctionSpyTests::test_call_with_function_providing_closure_access_args PASSED
 kgb/tests/test_function_spy.py::FunctionSpyTests::test_call_with_function_providing_closure_vars PASSED
 kgb/tests/test_function_spy.py::FunctionSpyTests::test_call_with_inline_function_using_closure_vars PASSED
 kgb/tests/test_function_spy.py::FunctionSpyTests::test_call_with_inline_function_using_closure_vars_and_args PASSED
@@ -166,18 +165,18 @@ kgb/tests/test_ops.py::SpyOpMatchInOrderTests::test_with_function_and_op PASSED
 kgb/tests/test_ops.py::SpyOpMatchInOrderTests::test_with_unbound_method PASSED
 kgb/tests/test_ops.py::SpyOpMatchInOrderTests::test_with_unbound_method_and_op PASSED
 kgb/tests/test_ops.py::SpyOpMatchInOrderTests::test_with_unexpected_call PASSED
-kgb/tests/test_ops.py::SpyOpRaiseInOrderTests::test_with_classmethod PASSED
-kgb/tests/test_ops.py::SpyOpRaiseInOrderTests::test_with_function PASSED
-kgb/tests/test_ops.py::SpyOpRaiseInOrderTests::test_with_unbound_method PASSED
 kgb/tests/test_ops.py::SpyOpRaiseTests::test_with_classmethod PASSED
 kgb/tests/test_ops.py::SpyOpRaiseTests::test_with_function PASSED
 kgb/tests/test_ops.py::SpyOpRaiseTests::test_with_unbound_method PASSED
-kgb/tests/test_ops.py::SpyOpReturnInOrderTests::test_with_classmethod PASSED
-kgb/tests/test_ops.py::SpyOpReturnInOrderTests::test_with_function PASSED
-kgb/tests/test_ops.py::SpyOpReturnInOrderTests::test_with_unbound_method PASSED
+kgb/tests/test_ops.py::SpyOpRaiseInOrderTests::test_with_classmethod PASSED
+kgb/tests/test_ops.py::SpyOpRaiseInOrderTests::test_with_function PASSED
+kgb/tests/test_ops.py::SpyOpRaiseInOrderTests::test_with_unbound_method PASSED
 kgb/tests/test_ops.py::SpyOpReturnTests::test_with_classmethod PASSED
 kgb/tests/test_ops.py::SpyOpReturnTests::test_with_function PASSED
 kgb/tests/test_ops.py::SpyOpReturnTests::test_with_unbound_method PASSED
+kgb/tests/test_ops.py::SpyOpReturnInOrderTests::test_with_classmethod PASSED
+kgb/tests/test_ops.py::SpyOpReturnInOrderTests::test_with_function PASSED
+kgb/tests/test_ops.py::SpyOpReturnInOrderTests::test_with_unbound_method PASSED
 kgb/tests/test_pytest_plugin.py::test_pytest_plugin PASSED
 kgb/tests/test_spy_agency.py::SpyAgencyTests::test_spy_for PASSED
 kgb/tests/test_spy_agency.py::SpyAgencyTests::test_spy_on PASSED
@@ -227,6 +226,5 @@ kgb/tests/test_spy_call.py::SpyCallTests::test_raised_with_message PASSED
 kgb/tests/test_spy_call.py::SpyCallTests::test_returned PASSED
 
 ======== 217 passed ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+  py$(PYV): OK
   congratulations :)
