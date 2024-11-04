@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 474 items
+collecting ... collected 489 items
 
 tests/mypy/test_type_annotations.py::test_positive PASSED
 tests/mypy/test_type_annotations.py::test_negative PASSED
@@ -141,6 +141,9 @@ tests/test_checkers.py::TestUnion::test_union_fail[float-pep604] SKIPPED
 tests/test_checkers.py::TestUnion::test_union_fail[bytes-pep484] PASSED
 tests/test_checkers.py::TestUnion::test_union_fail[bytes-pep604] SKIPPED
 tests/test_checkers.py::TestUnion::test_union_reference_leak PASSED
+tests/test_checkers.py::TestUnion::test_uniontype_reference_leak SKIPPED
+tests/test_checkers.py::TestUnion::test_raw_uniontype_success SKIPPED
+tests/test_checkers.py::TestUnion::test_raw_uniontype_fail SKIPPED (...)
 tests/test_checkers.py::TestTypevar::test_bound PASSED
 tests/test_checkers.py::TestTypevar::test_bound_fail PASSED
 tests/test_checkers.py::TestTypevar::test_collection_constraints[int] PASSED
@@ -185,8 +188,16 @@ tests/test_checkers.py::TestIntersectingProtocol::test_raises_for_non_member[gen
 tests/test_checkers.py::TestIntersectingProtocol::test_raises_for_non_member[range_str_specialized] XFAIL
 tests/test_checkers.py::TestIntersectingProtocol::test_raises_for_non_member[int_tuple_str_specialized] XFAIL
 tests/test_checkers.py::TestIntersectingProtocol::test_raises_for_non_member[str_tuple_int_specialized] XFAIL
-tests/test_checkers.py::TestProtocol::test_success[typing] PASSED
-tests/test_checkers.py::TestProtocol::test_success[typing_extensions] PASSED
+tests/test_checkers.py::TestProtocol::test_success[typing-instance] PASSED
+tests/test_checkers.py::TestProtocol::test_success[typing-class] PASSED
+tests/test_checkers.py::TestProtocol::test_success[typing_extensions-instance] PASSED
+tests/test_checkers.py::TestProtocol::test_success[typing_extensions-class] PASSED
+tests/test_checkers.py::TestProtocol::test_empty_protocol[object-instance] PASSED
+tests/test_checkers.py::TestProtocol::test_empty_protocol[object-class] PASSED
+tests/test_checkers.py::TestProtocol::test_empty_protocol[str-instance] PASSED
+tests/test_checkers.py::TestProtocol::test_empty_protocol[str-class] PASSED
+tests/test_checkers.py::TestProtocol::test_empty_protocol[Parent-instance] PASSED
+tests/test_checkers.py::TestProtocol::test_empty_protocol[Parent-class] PASSED
 tests/test_checkers.py::TestProtocol::test_member_checks[True] PASSED
 tests/test_checkers.py::TestProtocol::test_member_checks[False] PASSED
 tests/test_checkers.py::TestProtocol::test_missing_method PASSED
@@ -357,7 +368,9 @@ tests/test_transformer.py::test_avoid_global_names PASSED
 tests/test_transformer.py::test_avoid_local_names PASSED
 tests/test_transformer.py::test_avoid_nonlocal_names PASSED
 tests/test_transformer.py::test_method PASSED
+tests/test_transformer.py::test_method_posonlyargs PASSED
 tests/test_transformer.py::test_classmethod PASSED
+tests/test_transformer.py::test_classmethod_posonlyargs PASSED
 tests/test_transformer.py::test_staticmethod PASSED
 tests/test_transformer.py::test_new_with_self PASSED
 tests/test_transformer.py::test_new_with_explicit_class_name PASSED
@@ -381,6 +394,8 @@ tests/test_transformer.py::TestAssign::test_kwargs_assign PASSED
 tests/test_transformer.py::TestAssign::test_pep604_assign PASSED
 tests/test_transformer.py::TestAssign::test_multi_assign PASSED
 tests/test_transformer.py::TestAssign::test_star_multi_assign PASSED
+tests/test_transformer.py::TestAssign::test_complex_multi_assign PASSED
+tests/test_transformer.py::TestAssign::test_unpacking_assign_to_self PASSED
 tests/test_transformer.py::TestAssign::test_assignment_annotated_argument PASSED
 tests/test_transformer.py::TestAssign::test_assignment_expr PASSED
 tests/test_transformer.py::TestAssign::test_assignment_expr_annotated_argument PASSED
@@ -446,6 +461,8 @@ tests/test_typechecked.py::TestSelf::test_arg_valid PASSED
 tests/test_typechecked.py::TestSelf::test_arg_invalid PASSED
 tests/test_typechecked.py::TestSelf::test_classmethod_arg_valid PASSED
 tests/test_typechecked.py::TestSelf::test_classmethod_arg_invalid PASSED
+tests/test_typechecked.py::TestSelf::test_self_type_valid PASSED
+tests/test_typechecked.py::TestSelf::test_self_type_invalid PASSED
 tests/test_typechecked.py::TestMock::test_mock_argument PASSED
 tests/test_typechecked.py::TestMock::test_return_mock PASSED
 tests/test_typechecked.py::test_decorator_before_classmethod PASSED
@@ -465,16 +482,14 @@ tests/test_typechecked.py::test_getter_setter PASSED
 tests/test_typechecked.py::test_duplicate_method PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int-Union[str, int]] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int | bytes-Union[str, int, bytes]] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | Union[int | bytes, set]-Union[str, int, bytes, Set]] PASSED
+tests/test_union_transformer.py::test_union_transformer[str | Union[int | bytes, set]-Union[str, int, bytes, set]] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int | Callable[..., bytes]-Union[str, int, Callable[..., bytes]]] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int | Callable[[], bytes]-Union[str, int, Callable[[], bytes]]] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int | Callable[[], bytes | set]-Union[str, int, Callable[[], Union[bytes, Set]]]] PASSED
+tests/test_union_transformer.py::test_union_transformer[str | int | Callable[[], bytes | set]-Union[str, int, Callable[[], Union[bytes, set]]]] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int | Literal['foo']-Union[str, int, Literal['foo']]] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int | Literal[-1]-Union[str, int, Literal[-1]]0] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int | Literal[-1]-Union[str, int, Literal[-1]]1] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int | Literal["It's a string '\\""]-Union[str, int, Literal['It\\'s a string \\'"']]] PASSED
-tests/test_union_transformer.py::test_union_transformer[typing.Tuple | typing.List | Literal[-1]-Union[Tuple, List, Literal[-1]]] PASSED
-tests/test_union_transformer.py::test_union_transformer[tuple[int, ...]-Tuple[int, ...]] PASSED
 tests/test_utils.py::test_qualified_name[func] PASSED
 tests/test_utils.py::test_qualified_name[instance] PASSED
 tests/test_utils.py::test_qualified_name[builtintype] PASSED
@@ -483,6 +498,6 @@ tests/test_utils.py::test_function_name PASSED
 tests/test_warn_on_error.py::test_check_type PASSED
 tests/test_warn_on_error.py::test_typechecked PASSED
 
-======== 461 passed, 4 skipped, 9 xfailed ========
+======== 473 passed, 7 skipped, 9 xfailed ========
   py$(PYV): OK
   congratulations :)
