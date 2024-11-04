@@ -30,22 +30,25 @@
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
+# ESR should be set to esr for esr build, or an empty string for other builds
+ESR = esr
+
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
 # CANDIDATE_BUILD= 1
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	128.4.0
+COMPONENT_VERSION =	128.4.1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)esr.source.tar.xz
+COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)$(ESR).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:81f43a2680412a6afdb5fdf6b8296c92d0d6812892399b174723c4f753d5429f
+	 sha256:d2bf9bc61e5833c351216b4c3806cb111a6ee4b9c23487546b91312da400fa93
 ifndef CANDIDATE_BUILD
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)esr
+MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)esr-candidates/build$(CANDIDATE_BUILD)
+MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)
 endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = mail/thunderbird
@@ -72,10 +75,10 @@ LANG_LIST = af ar ast be bg br ca cak cs cy \
 
     ifdef CANDIDATE_BUILD
 LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)esr-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
     else
 LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)esr/linux-x86_64/xpi
+        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
 endif
 
 CLEAN_PATHS += $(COMPONENT_DIR)/xpi
@@ -132,6 +135,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-release" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-update-channel=release" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-distribution-id=org.openindiana" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
@@ -205,6 +209,11 @@ COMPONENT_POST_INSTALL_ACTION += \
             $(CP) $$f.xpi \
                 $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/extensions/langpack-$$f@thunderbird.mozilla.org.xpi ; \
         done ;
+
+# copy distribution.ini to install staging area
+COMPONENT_POST_INSTALL_ACTION += \
+   mkdir $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution ; \
+   $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/distribution.ini ;
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
