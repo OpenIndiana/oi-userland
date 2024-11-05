@@ -13,24 +13,21 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		remmina
-COMPONENT_VERSION=	1.4.31
-COMPONENT_REVISION=	1
+COMPONENT_NAME=		Remmina
+COMPONENT_VERSION=	1.4.36
 COMPONENT_SUMMARY=	Remmina remote desktop client
 COMPONENT_PROJECT_URL=	https://remmina.org
 COMPONENT_FMRI=		desktop/remote-desktop/remmina
 COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_SRC_NAME=	Remmina
-COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c59444e4f97c26205455b8ad4b7dbffc8dffd24dcef3f4094090f9fa97a5be0d
+COMPONENT_ARCHIVE_HASH=	sha256:4055e94638b955178d3bbcffcd9b165a94ad237540383ffe3d525716949a4c28
 COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/Remmina/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE=	Apache v2.0
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_LICENSE=	GPL-2.0-or-later WITH cryptsetup-OpenSSL-exception
+COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -44,7 +41,7 @@ CMAKE_OPTIONS += -DGETTEXT_MSGMERGE_EXECUTABLE=/usr/bin/gmsgmerge
 CMAKE_OPTIONS += -DGETTEXT_MSGFMT_EXECUTABLE=/usr/bin/gmsgfmt
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += desktop/library/libayatana-appindicator
 REQUIRED_PACKAGES += desktop/remote-desktop/freerdp
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -57,5 +54,7 @@ REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/libsodium
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += web/curl
