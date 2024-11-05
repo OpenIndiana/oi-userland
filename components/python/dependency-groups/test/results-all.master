@@ -1,0 +1,43 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m coverage run -m pytest -v
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pyproject.toml
+collecting ... collected 30 items
+
+tests/test_lint_cli.py::test_lint_no_groups_ok PASSED
+tests/test_lint_cli.py::test_lint_bad_group_item PASSED
+tests/test_lint_cli.py::test_no_toml_failure PASSED
+tests/test_lint_cli.py::test_dependency_groups_list_format PASSED
+tests/test_resolve_func.py::test_empty_group PASSED
+tests/test_resolve_func.py::test_str_list_group PASSED
+tests/test_resolve_func.py::test_single_include_group PASSED
+tests/test_resolve_func.py::test_sdual_include_group PASSED
+tests/test_resolve_func.py::test_normalized_group_name PASSED
+tests/test_resolve_func.py::test_malformed_group_data PASSED
+tests/test_resolve_func.py::test_malformed_group_query PASSED
+tests/test_resolve_func.py::test_no_such_group_name PASSED
+tests/test_resolve_func.py::test_duplicate_normalized_name PASSED
+tests/test_resolve_func.py::test_cyclic_include PASSED
+tests/test_resolve_func.py::test_cyclic_include_many_steps PASSED
+tests/test_resolve_func.py::test_cyclic_include_self PASSED
+tests/test_resolve_func.py::test_cyclic_include_ring_under_root PASSED
+tests/test_resolve_func.py::test_non_list_data PASSED
+tests/test_resolve_func.py::test_unknown_object_shape[item0] PASSED
+tests/test_resolve_func.py::test_unknown_object_shape[item1] PASSED
+tests/test_resolve_func.py::test_unknown_object_shape[item2] PASSED
+tests/test_resolve_func.py::test_unknown_object_shape[item3] PASSED
+tests/test_resolver_class.py::test_resolver_init_handles_bad_type PASSED
+tests/test_resolver_class.py::test_resolver_init_catches_normalization_conflict PASSED
+tests/test_resolver_class.py::test_lookup_catches_bad_type PASSED
+tests/test_resolver_class.py::test_lookup_on_trivial_normalization PASSED
+tests/test_resolver_class.py::test_lookup_with_include_result PASSED
+tests/test_resolver_class.py::test_lookup_does_not_trigger_cyclic_include PASSED
+tests/test_resolver_class.py::test_expand_contract_model_only_does_inner_lookup_once PASSED
+tests/test_resolver_class.py::test_no_double_parse PASSED
+
+======== 30 passed ========
+  py$(PYV): OK
+  congratulations :)
