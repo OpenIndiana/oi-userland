@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
 COMPONENT_VERSION=	1.11.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	GnuPG libgcrypt library
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libgcrypt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,6 +39,10 @@ COMPONENT_CLASSIFICATION= System/Security
 COMPONENT_LICENSE=	GPL-2.0-only AND LGPL-2.1-only AND BSD-3-Clause
 
 include $(WS_MAKE_RULES)/common.mk
+
+ifeq ($(MACH), sparc)
+CONFIGURE_OPTIONS += --disable-asm
+endif
 
 # helper target
 update-license-file: patch
