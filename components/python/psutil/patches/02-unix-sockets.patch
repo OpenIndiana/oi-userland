@@ -1,0 +1,38 @@
+https://github.com/giampaolo/psutil/pull/2592
+
+--- psutil-7.0.0/psutil/tests/test_connections.py.orig
++++ psutil-7.0.0/psutil/tests/test_connections.py
+@@ -225,6 +225,9 @@
+             client.close()
+ 
+     @pytest.mark.skipif(not POSIX, reason="POSIX only")
++    @pytest.mark.skipif(
++        not HAS_NET_CONNECTIONS_UNIX, reason="can't list UNIX sockets"
++    )
+     def test_unix(self):
+         testfn = self.get_testfn()
+         server, client = unix_socketpair(testfn)
+--- psutil-7.0.0/psutil/tests/test_testutils.py.orig
++++ psutil-7.0.0/psutil/tests/test_testutils.py
+@@ -325,6 +325,9 @@
+     @pytest.mark.skipif(
+         NETBSD or FREEBSD, reason="/var/run/log UNIX socket opened by default"
+     )
++    @pytest.mark.skipif(
++        not HAS_NET_CONNECTIONS_UNIX, reason="can't list UNIX sockets"
++    )
+     def test_unix_socketpair(self):
+         p = psutil.Process()
+         num_fds = p.num_fds()
+--- psutil-7.0.0/psutil/tests/test_unicode.py.orig
++++ psutil-7.0.0/psutil/tests/test_unicode.py
+@@ -225,6 +225,9 @@
+             assert os.path.normcase(path) == os.path.normcase(self.funky_name)
+ 
+     @pytest.mark.skipif(not POSIX, reason="POSIX only")
++    @pytest.mark.skipif(
++        not HAS_NET_CONNECTIONS_UNIX, reason="can't list UNIX sockets"
++    )
+     def test_proc_net_connections(self):
+         name = self.get_testfn(suffix=self.funky_suffix)
+         sock = bind_unix_socket(name)
