@@ -56,19 +56,22 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ; \
 	fi ;
 
-# Generate raw lists of poetry, pdm, and pipenv test dependencies per Python version
+# Generate raw lists of hatch, pdm, pipenv, and poetry test dependencies per Python version
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 	cfg=$(BUILD_DIR)/pyproject_deps-$(PYTHON_VERSION).json ; \
 	$(RM) $$cfg ; \
-	for p in $(TEST_REQUIREMENTS_POETRY) ; do \
-		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add poetry_$$p poetry $$p ; \
+	for p in $(TEST_REQUIREMENTS_HATCH) ; do \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add hatch_$$p hatch pyproject.toml $$p ; \
 	done ; \
 	for p in $(TEST_REQUIREMENTS_PDM) ; do \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pdm_$$p pdm $$p ; \
 	done ; \
 	for p in $(TEST_REQUIREMENTS_PIPENV) ; do \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pipenv_$$p pipenv Pipfile $$p ; \
+	done ; \
+	for p in $(TEST_REQUIREMENTS_POETRY) ; do \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add poetry_$$p poetry $$p ; \
 	done ; \
 	if [ -f $$cfg ] ; then \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg sync ; \
