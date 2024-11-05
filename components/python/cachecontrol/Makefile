@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cachecontrol
-HUMAN_VERSION =			0.14.0
-COMPONENT_SUMMARY =		cachecontrol - httplib2 caching for requests
+HUMAN_VERSION =			0.14.1
+COMPONENT_SUMMARY =		httplib2 caching for requests
 COMPONENT_PROJECT_URL =		https://pypi.org/project/CacheControl/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/06/55/edea9d90ee57ca54d34707607d15c20f72576b96cb9f3e7fc266cb06b426/cachecontrol-0.14.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7db1195b41c81f8274a7bbd97c956f44e8348265a1bc7641c37dfebc39f0c938
+	sha256:06ef916a1e4eb7dba9948cdfc9c76e749db2e02104a9a1277e8b642591a0f717
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
