@@ -346,25 +346,44 @@ COMPONENT_TEST_TRANSFORMS += \
 USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox
 USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox-current-env
 
+# The dependency-groups is used to print dependency groups if they are
+# specified in the tox config (see below)
+USERLAND_TEST_REQUIRED_PACKAGES += library/python/dependency-groups
+
 # Generate raw lists of test dependencies per Python version
-# Please note we set PATH below four times for $(COMPONENT_TEST_CMD) (aka tox)
-# to workaround https://github.com/tox-dev/tox/issues/2538
+# Please note we set PATH below six times for tox to workaround
+# https://github.com/tox-dev/tox/issues/2538
 COMPONENT_POST_INSTALL_ACTION += \
 	if [ -x "$(COMPONENT_TEST_CMD)" ] ; then \
 		cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 		echo "Testing dependencies:" ; \
-		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
+		PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
 		echo "Testing extras:" ; \
-		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(TOX_TESTENV) || exit 1 ; \
-		( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
+		PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV) || exit 1 ; \
+		echo "Testing dependency groups:" ; \
+		PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV) || exit 1 ; \
+		( PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
 			| $(WS_TOOLS)/python-resolve-deps \
 				PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 			| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
-		for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
+		for e in $$(PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
 			PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
-		done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' >> $(@D)/.depend-test ; \
+		done ; \
+		PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV) \
+			| /usr/gnu/bin/xargs -r /usr/bin/dependency-groups-$(PYTHON_VERSION) \
+			| $(WS_TOOLS)/python-resolve-deps \
+				PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
+			| $(PYTHON) $(WS_TOOLS)/python-requires - \
+		) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' >> $(@D)/.depend-test ; \
 	fi ;
 else ifeq ($(strip $(TEST_STYLE)),pytest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
