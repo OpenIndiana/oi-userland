@@ -12,37 +12,47 @@
 # Copyright 2022 Niklas Poslovski
 #
 
+USE_PARALLEL_BUILD = yes
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         abiword
-COMPONENT_VERSION=      3.0.5
-COMPONENT_REVISION=	3
+COMPONENT_NAME=		AbiWord
+COMPONENT_VERSION=	3.0.6
 COMPONENT_SUMMARY=      Fully-featured word processor
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/World/AbiWord
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1257247e9970508d6d1456d3e330cd1909c4b42b25e0f0a1bc32526d6f3a21b4
-COMPONENT_ARCHIVE_URL=	https://fossies.org/linux/misc/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=		$(COMPONENT_NAME)-release-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH=	sha256:c560058f16caf28cf0937f993325f426ba4b082720ef42fa767118e02def1b63
+COMPONENT_ARCHIVE_URL=	https://gitlab.gnome.org/World/AbiWord/-/archive/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         desktop/office/abiword
 COMPONENT_CLASSIFICATION=       Applications/Office
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
+include $(WS_MAKE_RULES)/common.mk
+
+# GNU make is needed
 CONFIGURE_OPTIONS += MAKE=gmake
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && sed -i 's/enchant >=/enchant-2 >=/' configure)
+# We need to run autogen.sh because:
+# - configure is missing in source tarball
+# - we patched configure.ac
+COMPONENT_PREP_ACTION= ( cd $(@D) && $(ENV) PATH="$(PATH)" NOCONFIGURE=1 ./autogen.sh ) ;
 
-TEST_TARGET = $(NO_TESTS)
-include $(WS_MAKE_RULES)/common.mk
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/clutter
 REQUIRED_PACKAGES += library/desktop/clutter/clutter-gtk
