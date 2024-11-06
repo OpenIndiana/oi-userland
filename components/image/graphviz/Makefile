@@ -28,8 +28,7 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
-COMPONENT_VERSION=		12.1.2
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=		12.2.0
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
@@ -40,7 +39,7 @@ COMPONENT_SUMMARY=		Graph visualization software
 COMPONENT_PROJECT_URL=	https://www.graphviz.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:cf9e6de9d5949dffbc4dd46f833085ff8e7e55482ffb84641819bbf0d18c5f02
+COMPONENT_ARCHIVE_HASH= sha256:66d4acc201536a378a28d5254deeec8cf3e98cc66d7e4cb1cbfa5fc620f86474
 COMPONENT_ARCHIVE_URL=	https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			image/graphviz
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -50,6 +49,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 # no usable tests available
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += $(XPG6MODE)
 
 RUBY_VERSION= 3.2
 RUBY= /usr/bin/ruby32
