@@ -1,7 +1,7 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=True warmup_iterations=100000)
+benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=True warmup_iterations=100000)
 hypothesis profile 'fast' -> max_examples=2, database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
 configfile: pyproject.toml
@@ -9,7 +9,7 @@ testpaths: tests
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 4577 items
+collecting ... collected 4593 items
 
 tests/benchmarks/test_complete_benchmark.py::test_complete_valid PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_invalid PASSED
@@ -415,6 +415,9 @@ tests/serializers/test_generator.py::test_generator_any PASSED
 tests/serializers/test_generator.py::test_generator_int PASSED
 tests/serializers/test_generator.py::test_include PASSED
 tests/serializers/test_generator.py::test_custom_serializer PASSED
+tests/serializers/test_infer.py::test_infer_to_python PASSED
+tests/serializers/test_infer.py::test_infer_serialize PASSED
+tests/serializers/test_infer.py::test_infer_json_key PASSED
 tests/serializers/test_json.py::test_json_int PASSED
 tests/serializers/test_json.py::test_list_json PASSED
 tests/serializers/test_json.py::test_dict_key_json PASSED
@@ -1279,6 +1282,19 @@ tests/test_validation_context.py::test_wrap[json] PASSED
 tests/test_validation_context.py::test_isinstance[python] PASSED
 tests/test_validation_context.py::test_isinstance[json] PASSED
 tests/test_validation_context.py::test_validate_assignment_with_context PASSED
+tests/validators/test_allow_partial.py::test_list PASSED
+tests/validators/test_allow_partial.py::test_set_frozenset[set_schema] PASSED
+tests/validators/test_allow_partial.py::test_set_frozenset[frozenset_schema] PASSED
+tests/validators/test_allow_partial.py::test_dict PASSED
+tests/validators/test_allow_partial.py::test_dict_list PASSED
+tests/validators/test_allow_partial.py::test_partial_typed_dict PASSED
+tests/validators/test_allow_partial.py::test_non_partial_typed_dict PASSED
+tests/validators/test_allow_partial.py::test_double_nested PASSED
+tests/validators/test_allow_partial.py::test_tuple_list PASSED
+tests/validators/test_allow_partial.py::test_dataclass PASSED
+tests/validators/test_allow_partial.py::test_nullable PASSED
+tests/validators/test_allow_partial.py::test_json[None] PASSED
+tests/validators/test_allow_partial.py::test_json[json_nested_type1] PASSED
 tests/validators/test_arguments.py::test_args_kwargs PASSED
 tests/validators/test_arguments.py::test_positional_args[python-(1, 'a', True)-((1, 'a', True), {})] PASSED
 tests/validators/test_arguments.py::test_positional_args[python-[1, 'a', True]-((1, 'a', True), {})] PASSED
@@ -1871,7 +1887,7 @@ tests/validators/test_datetime.py::test_datetime[input_value12-expected12] PASSE
 tests/validators/test_datetime.py::test_datetime[input_value13-expected13] PASSED
 tests/validators/test_datetime.py::test_datetime[1654646400.1234568-expected14] PASSED
 tests/validators/test_datetime.py::test_datetime[253402300800000-expected15] PASSED
-tests/validators/test_datetime.py::test_datetime[-20000000000-expected16] PASSED
+tests/validators/test_datetime.py::test_datetime[-80000000000000-expected16] PASSED
 tests/validators/test_datetime.py::test_datetime[nan-expected17] PASSED
 tests/validators/test_datetime.py::test_datetime[inf-expected18] PASSED
 tests/validators/test_datetime.py::test_datetime[-inf-expected19] PASSED
@@ -3482,6 +3498,8 @@ tests/validators/test_string.py::test_lax_subclass[{'to_lower': True}] PASSED
 tests/validators/test_string.py::test_lax_subclass_plain_enum[{}] PASSED
 tests/validators/test_string.py::test_lax_subclass_plain_enum[{'to_lower': True}] PASSED
 tests/validators/test_string.py::test_subclass_preserved PASSED
+tests/validators/test_string.py::test_coerce_numbers_to_str_with_invalid_unicode_character[True] PASSED
+tests/validators/test_string.py::test_coerce_numbers_to_str_with_invalid_unicode_character[False] PASSED
 tests/validators/test_string.py::test_coerce_numbers_to_str_disabled_in_strict_mode PASSED
 tests/validators/test_string.py::test_coerce_numbers_to_str_raises_for_bool PASSED
 tests/validators/test_string.py::test_coerce_numbers_to_str[42] PASSED
@@ -4381,8 +4399,6 @@ tests/validators/test_url.py::test_multi_url_build_hosts_empty_host PASSED
 tests/validators/test_url.py::test_multi_url_build_hosts PASSED
 tests/validators/test_url.py::test_multi_url_build_neither_host_and_hosts_set PASSED
 tests/validators/test_url.py::test_url_build PASSED
-tests/validators/test_url.py::test_url_subclass PASSED
-tests/validators/test_url.py::test_multi_host_url_subclass PASSED
 tests/validators/test_uuid.py::test_uuid[12345678-1234-1234-1234-567812345678-expected0] PASSED
 tests/validators/test_uuid.py::test_uuid[550e8400-e29b-41d4-a716-446655440000-expected1] PASSED
 tests/validators/test_uuid.py::test_uuid[f47ac10b-58cc-4372-a567-0e02b2c3d479-expected2] PASSED
@@ -4588,5 +4604,6 @@ tests/validators/test_with_default.py::test_validate_default_raises_dataclass[in
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value8-expected8] PASSED
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value9-expected9] PASSED
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value10-expected10] PASSED
+=============================== inline snapshot ================================
 
-======== 4480 passed, 95 skipped, 2 xfailed ========
+======== 4496 passed, 95 skipped, 2 xfailed ========
