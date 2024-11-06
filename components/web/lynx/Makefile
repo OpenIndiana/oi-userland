@@ -14,12 +14,16 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+# disable CONFIGURE_DEFAULT_DIRS, because lynx does not support --localdir
+CONFIGURE_DEFAULT_DIRS=no
+
 BUILD_BITS=			64
 OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lynx
 COMPONENT_VERSION=	2.9.2
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		web/browser/lynx
 COMPONENT_SUMMARY=	Text-mode web browser
 COMPONENT_CLASSIFICATION=	Applications/Internet
