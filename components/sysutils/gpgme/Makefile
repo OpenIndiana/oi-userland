@@ -26,14 +26,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gpgme
-COMPONENT_VERSION=	1.23.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.24.0
 COMPONENT_SUMMARY=	GnuPG Made Easy
 COMPONENT_DESCRIPTION=	A library designed to make access to GnuPG easier for applications
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:9499e8b1f33cccb6815527a1bc16049d35a6198a6c5fae0185f2bd561bce5224
+COMPONENT_ARCHIVE_HASH=	sha256:61e3a6ad89323fecfaff176bc1728fb8c3312f2faa83424d9d5077ba20f5f7da
 COMPONENT_ARCHIVE_URL=	https://www.gnupg.org/ftp/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/security/gpgme
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -56,8 +55,7 @@ CFLAGS += $(gcc_C99_ENABLE)
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+#CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
@@ -96,9 +94,14 @@ COMPONENT_BUILD_ARGS += GNUPGHOME="$$(< "$(@D)/$(GNUPG_HOME_LINK)")"
 # overcome it.
 COMPONENT_BUILD_ARGS += CC_FOR_BUILD='$(CC) $(CONFIGURE_CPPFLAGS) $(CC_PIC_ENABLE)'
 
+# Note that as of 2024.11.14 the failing tests are due to pinentry erroring with
+# "inappropriate ioctl for device".
+
 COMPONENT_PRE_TEST_ACTION = $(COMPONENT_PRE_BUILD_ACTION)
 COMPONENT_POST_TEST_ACTION = $(COMPONENT_POST_BUILD_ACTION)
 COMPONENT_TEST_ARGS += GNUPGHOME="$$(< "$(@D)/$(GNUPG_HOME_LINK)")"
+
+COMPONENT_POST_INSTALL_ACTION += ($(RM) $(PROTOUSRSHAREDIR)/info/dir );
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/libassuan
