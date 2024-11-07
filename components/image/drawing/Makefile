@@ -12,12 +12,14 @@
 # Copyright (c) 2024 Geoff Weiss
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         drawing
 COMPONENT_VERSION=      1.0.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Simple image editor
 COMPONENT_PROJECT_URL=  https://maoschanz.github.io/drawing/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -26,17 +28,18 @@ COMPONENT_ARCHIVE_HASH= sha256:539e7e28fe4db96cfedd4477e217d5d48b9422ad8c98f33d8
 COMPONENT_ARCHIVE_URL=  https://github.com/maoschanz/drawing/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         image/editor/drawing
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
-COMPONENT_LICENSE=      GPLv3
+COMPONENT_LICENSE=	GPL-3.0-only
 COMPONENT_LICENSE_FILE= LICENSE
 
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH= $(PATH.gnu)
 
 # Not detected dependencies 
 PYTHON_REQUIRED_PACKAGES += library/python/pycairo
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 REQUIRED_PACKAGES += library/desktop/gtk3
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
+PYTHON_REQUIRED_PACKAGES += runtime/python

@@ -1,3 +1,4 @@
+#
 # This file and its contents are supplied under the terms of the
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
@@ -22,10 +23,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/bin/drawing -> add pkg.depend.bypass-generate .* >
-
-# mate menu icon needs to be in /usr/share/pixmaps
-file usr/share/icons/hicolor/128x128/apps/com.github.maoschanz.drawing.png path=usr/share/pixmaps/com.github.maoschanz.drawing.png
+# The drawing Python module is provided by this package.  Since it is at
+# non-default location the pkgdepend is unable to find it and so we need to
+# bypass it.
+<transform file path=usr/bin/drawing -> add pkg.depend.bypass-generate .*drawing.* >
 
 file path=usr/bin/drawing
 file path=usr/share/applications/com.github.maoschanz.drawing.desktop
@@ -140,10 +141,8 @@ link path=usr/share/help/es/drawing/figures/screenshot_hsl.png \
     target=../../../C/drawing/figures/screenshot_hsl.png
 link path=usr/share/help/es/drawing/figures/screenshot_menu.png \
     target=../../../C/drawing/figures/screenshot_menu.png
-link path=usr/share/help/es/drawing/figures/screenshot_prefs_images.png \
-    target=../../../C/drawing/figures/screenshot_prefs_images.png
-link path=usr/share/help/es/drawing/figures/screenshot_prefs_tools.png \
-    target=../../../C/drawing/figures/screenshot_prefs_tools.png
+file path=usr/share/help/es/drawing/figures/screenshot_prefs_images.png
+file path=usr/share/help/es/drawing/figures/screenshot_prefs_tools.png
 link path=usr/share/help/es/drawing/figures/screenshot_scale.png \
     target=../../../C/drawing/figures/screenshot_scale.png
 link path=usr/share/help/es/drawing/figures/screenshot_selection.png \
@@ -167,30 +166,22 @@ link path=usr/share/help/ru/drawing/figures/drawing.svg \
     target=../../../C/drawing/figures/drawing.svg
 link path=usr/share/help/ru/drawing/figures/screenshot_arrow.png \
     target=../../../C/drawing/figures/screenshot_arrow.png
-link path=usr/share/help/ru/drawing/figures/screenshot_color_editor.png \
-    target=../../../C/drawing/figures/screenshot_color_editor.png
-link path=usr/share/help/ru/drawing/figures/screenshot_color_palette.png \
-    target=../../../C/drawing/figures/screenshot_color_palette.png
-link path=usr/share/help/ru/drawing/figures/screenshot_filters.png \
-    target=../../../C/drawing/figures/screenshot_filters.png
-link path=usr/share/help/ru/drawing/figures/screenshot_fullscreen.png \
-    target=../../../C/drawing/figures/screenshot_fullscreen.png
+file path=usr/share/help/ru/drawing/figures/screenshot_color_editor.png
+file path=usr/share/help/ru/drawing/figures/screenshot_color_palette.png
+file path=usr/share/help/ru/drawing/figures/screenshot_filters.png
+file path=usr/share/help/ru/drawing/figures/screenshot_fullscreen.png
 link path=usr/share/help/ru/drawing/figures/screenshot_hsl.png \
     target=../../../C/drawing/figures/screenshot_hsl.png
 link path=usr/share/help/ru/drawing/figures/screenshot_menu.png \
     target=../../../C/drawing/figures/screenshot_menu.png
-link path=usr/share/help/ru/drawing/figures/screenshot_prefs_images.png \
-    target=../../../C/drawing/figures/screenshot_prefs_images.png
-link path=usr/share/help/ru/drawing/figures/screenshot_prefs_tools.png \
-    target=../../../C/drawing/figures/screenshot_prefs_tools.png
+file path=usr/share/help/ru/drawing/figures/screenshot_prefs_images.png
+file path=usr/share/help/ru/drawing/figures/screenshot_prefs_tools.png
 link path=usr/share/help/ru/drawing/figures/screenshot_scale.png \
     target=../../../C/drawing/figures/screenshot_scale.png
-link path=usr/share/help/ru/drawing/figures/screenshot_selection.png \
-    target=../../../C/drawing/figures/screenshot_selection.png
+file path=usr/share/help/ru/drawing/figures/screenshot_selection.png
 link path=usr/share/help/ru/drawing/figures/screenshot_text.png \
     target=../../../C/drawing/figures/screenshot_text.png
-link path=usr/share/help/ru/drawing/figures/screenshot_zoom.png \
-    target=../../../C/drawing/figures/screenshot_zoom.png
+file path=usr/share/help/ru/drawing/figures/screenshot_zoom.png
 file path=usr/share/help/ru/drawing/fullscreen.page
 file path=usr/share/help/ru/drawing/index.page
 file path=usr/share/help/ru/drawing/legal.xml
@@ -206,10 +197,8 @@ link path=usr/share/help/tr/drawing/figures/drawing.svg \
     target=../../../C/drawing/figures/drawing.svg
 link path=usr/share/help/tr/drawing/figures/screenshot_arrow.png \
     target=../../../C/drawing/figures/screenshot_arrow.png
-link path=usr/share/help/tr/drawing/figures/screenshot_color_editor.png \
-    target=../../../C/drawing/figures/screenshot_color_editor.png
-link path=usr/share/help/tr/drawing/figures/screenshot_color_palette.png \
-    target=../../../C/drawing/figures/screenshot_color_palette.png
+file path=usr/share/help/tr/drawing/figures/screenshot_color_editor.png
+file path=usr/share/help/tr/drawing/figures/screenshot_color_palette.png
 link path=usr/share/help/tr/drawing/figures/screenshot_filters.png \
     target=../../../C/drawing/figures/screenshot_filters.png
 link path=usr/share/help/tr/drawing/figures/screenshot_fullscreen.png \
@@ -218,10 +207,8 @@ link path=usr/share/help/tr/drawing/figures/screenshot_hsl.png \
     target=../../../C/drawing/figures/screenshot_hsl.png
 link path=usr/share/help/tr/drawing/figures/screenshot_menu.png \
     target=../../../C/drawing/figures/screenshot_menu.png
-link path=usr/share/help/tr/drawing/figures/screenshot_prefs_images.png \
-    target=../../../C/drawing/figures/screenshot_prefs_images.png
-link path=usr/share/help/tr/drawing/figures/screenshot_prefs_tools.png \
-    target=../../../C/drawing/figures/screenshot_prefs_tools.png
+file path=usr/share/help/tr/drawing/figures/screenshot_prefs_images.png
+file path=usr/share/help/tr/drawing/figures/screenshot_prefs_tools.png
 link path=usr/share/help/tr/drawing/figures/screenshot_scale.png \
     target=../../../C/drawing/figures/screenshot_scale.png
 link path=usr/share/help/tr/drawing/figures/screenshot_selection.png \
