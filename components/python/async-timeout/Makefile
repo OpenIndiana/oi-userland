@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project async-timeout
+#   $WS_TOOLS/python-integrate-project -d python/async-timeout async_timeout
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		async-timeout
-HUMAN_VERSION =			5.0.0
+COMPONENT_NAME =		async_timeout
+HUMAN_VERSION =			5.0.1
 COMPONENT_SUMMARY =		Timeout context manager for asyncio programs
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/async-timeout
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/aio-libs/async-timeout/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:279c8fbe54492ba80ca02bad1d4835b3ec729ef723a32d303277ee42217772dc
+	sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
