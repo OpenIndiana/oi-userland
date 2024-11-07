@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Bignum
 HUMAN_VERSION =			0.09
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Crypt::OpenSSL::Bignum - OpenSSL's multiprecision integer arithmetic
 COMPONENT_CPAN_AUTHOR =		KMX
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,5 +32,5 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
