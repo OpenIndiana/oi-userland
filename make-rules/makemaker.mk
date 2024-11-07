@@ -27,6 +27,7 @@ COMMON_PERL_ENV +=	PATH=$(dir $(CC)):$(PATH)
 COMMON_PERL_ENV +=	LANG=""
 COMMON_PERL_ENV +=	CC="$(CC)"
 COMMON_PERL_ENV +=	CFLAGS="$(CC_BITS) $(PERL_OPTIMIZE)"
+COMMON_PERL_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 # Particular perl runtime is always required (at least to run Makefile.PL)
 PERL_REQUIRED_PACKAGES += runtime/perl
