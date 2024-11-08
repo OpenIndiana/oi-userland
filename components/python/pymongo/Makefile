@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
 HUMAN_VERSION =			4.10.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python driver for MongoDB <http://www.mongodb.org>
 COMPONENT_PROJECT_URL =		https://www.mongodb.org
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,12 +35,6 @@ include $(WS_MAKE_RULES)/common.mk
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS += requirements/test.txt
-
-# For testing the svc:/application/database/mongodb-44:default service must be
-# online.
-
-# Manually added test dependencies
-TEST_REQUIRED_PACKAGES += service/database/mongodb-44
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/dnspython
