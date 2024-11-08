@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Random
 HUMAN_VERSION =			0.17
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::OpenSSL::Random - OpenSSL/LibreSSL pseudo-random number generator access
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,9 +30,12 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Set OPENSSL_PREFIX so Crypt::OpenSSL::Guess is able to find our preferred OpenSSL
+COMPONENT_CONFIGURE_ENV += OPENSSL_PREFIX=$(OPENSSL_PREFIX)
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-guess
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
