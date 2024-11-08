@@ -38,11 +38,15 @@ COMPONENT_PREP_ACTION += $(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
 		--versioned-dirs --offline $(CARGO_VENDOR_DIR) \
 	| $(TEE) $(SOURCE_DIR)/.cargo/config.toml ;
 
+# Common cargo environment
+CARGO_ENV += CARGO_HOME=$(@D)/.cargo
+CARGO_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+
 # Build
 COMPONENT_BUILD_CMD = $(CARGO) build
 COMPONENT_BUILD_ARGS += --release
 COMPONENT_BUILD_ARGS += --offline
-COMPONENT_BUILD_ENV += CARGO_HOME=$(@D)/.cargo
+COMPONENT_BUILD_ENV += $(CARGO_ENV)
 
 # https://www.illumos.org/issues/15767
 LD_Z_IGNORE=
@@ -55,14 +59,14 @@ COMPONENT_INSTALL_ARGS += --force
 COMPONENT_INSTALL_ARGS += --no-track
 COMPONENT_INSTALL_ARGS += --offline
 COMPONENT_INSTALL_ARGS += --locked
-COMPONENT_INSTALL_ENV += CARGO_HOME=$(@D)/.cargo
+COMPONENT_INSTALL_ENV += $(CARGO_ENV)
 
 # Test
 COMPONENT_TEST_CMD = $(CARGO) test
 COMPONENT_TEST_ARGS += --release
 COMPONENT_TEST_ARGS += --offline
 COMPONENT_TEST_TARGETS =
-COMPONENT_TEST_ENV += CARGO_HOME=$(@D)/.cargo
+COMPONENT_TEST_ENV += $(CARGO_ENV)
 
 # drop header
 COMPONENT_TEST_TRANSFORMS += "-e '0,/Finished/d'"
