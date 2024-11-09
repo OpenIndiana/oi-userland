@@ -25,7 +25,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		atril
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	MATE PDF document viewer
 COMPONENT_ARCHIVE_HASH= sha256:ced4725f6e9b71c4ea63676bfc3cc3be09d29dba08aa7a7ab97964e0b4355162
 COMPONENT_FMRI=		desktop/pdf-viewer/atril
@@ -51,9 +51,9 @@ CONFIGURE_OPTIONS += --disable-epub
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/caja
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += image/djvulibre
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
