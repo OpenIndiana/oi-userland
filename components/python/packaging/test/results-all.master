@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 26854 items
+collecting ... collected 26921 items
 
 tests/test_elffile.py::test_elffile_bad_ident[no-magic] PASSED
 tests/test_elffile.py::test_elffile_bad_ident[unknown-format] PASSED
@@ -20,6 +20,8 @@ tests/test_elffile.py::test_elffile_musl[i386-EIClass.C32-EIData.Lsb-EMachine.I3
 tests/test_elffile.py::test_elffile_musl[x86_64-EIClass.C64-EIData.Lsb-EMachine.X8664-x86_64] PASSED
 tests/test_elffile.py::test_elffile_no_section PASSED
 tests/test_elffile.py::test_elffle_no_interpreter_section PASSED
+tests/test_licenses.py::test_exceptions PASSED
+tests/test_licenses.py::test_licenses PASSED
 tests/test_manylinux.py::test_check_glibc_version_warning[2] PASSED
 tests/test_manylinux.py::test_check_glibc_version_warning[glibc-2.4.5] PASSED
 tests/test_manylinux.py::test_glibc_version_string[2.4-2.4_0] PASSED
@@ -2294,6 +2296,30 @@ tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text
 tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/plain; charset=ascii] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/plain; charset=utf-8] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_dynamic_value PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[(mit] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[Apache-2.0 OR 2-BSD-Clause] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[LicenseRef-License with spaces] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[LicenseRef-License_with_underscores] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[Use-it-after-midnight] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[and mit] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[and] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit and] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit or apache-2.0 (bsd-3-clause and MPL-2.0)] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit or or apache-2.0] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit or] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit with] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit)] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[or mit] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[or] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[with mit] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[with] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_files[license_files0] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_files[license_files1] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_files[license_files2] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_files[license_files3] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_files[license_files4] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_files[license_files5] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_metadata_version[1.3] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_metadata_version[2.0] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_name PASSED
@@ -2328,6 +2354,8 @@ tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[dynamic] PA
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[home_page] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[keywords] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[license] PASSED
+tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[license_expression] PASSED
+tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[license_files] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[maintainer] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[maintainer_email] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[obsoletes] PASSED
@@ -2369,6 +2397,34 @@ tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/p
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/x-rst; charset=UTF-8] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/x-rst] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_dynamic PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[ mIt -MIT] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[(LicenseRef-Special-License OR LicenseRef-OtherLicense) OR Unlicense-(LicenseRef-Special-License OR LicenseRef-OtherLicense) OR Unlicense] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[(LicenseRef-Special-License OR licenseref-OtherLicense) OR unlicense-(LicenseRef-Special-License OR LicenseRef-OtherLicense) OR Unlicense] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[BSD-3-Clause-BSD-3-Clause] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[Bsd-3-clause-BSD-3-Clause] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[GPL-3.0-only WITH Classpath-exception-2.0 OR BSD-3-Clause-GPL-3.0-only WITH Classpath-exception-2.0 OR BSD-3-Clause] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[LicenseRef-Beerware-4.2-LicenseRef-Beerware-4.2] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[LicenseRef-Proprietary-LicenseRef-Proprietary] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[LicenseRef-Public-Domain-LicenseRef-Public-Domain] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[LicenseRef-Special-License OR CC0-1.0 OR Unlicense-LicenseRef-Special-License OR CC0-1.0 OR Unlicense] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[MIT AND (Apache-2.0 OR BSD-2-Clause)-MIT AND (Apache-2.0 OR BSD-2-Clause)] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[MIT OR GPL-2.0-or-later OR (FSFUL AND BSD-2-Clause)-MIT OR GPL-2.0-or-later OR (FSFUL AND BSD-2-Clause)] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[MIT-MIT] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[gpl-2.0-or-later with bison-exception-2.2-GPL-2.0-or-later WITH Bison-exception-2.2] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[licenseref-beerware-4.2-LicenseRef-beerware-4.2] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[licenseref-proprietary-LicenseRef-proprietary] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[licenseref-public-domain-LicenseRef-public-domain] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[mIt-MIT] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[mit  and  ( apache-2.0+  or  mpl-2.0+ )-MIT AND (Apache-2.0+ OR MPL-2.0+)] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[mit and (apache-2.0 or bsd-2-clause)-MIT AND (Apache-2.0 OR BSD-2-Clause)] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[mit and (apache-2.0+ or mpl-2.0+)-MIT AND (Apache-2.0+ OR MPL-2.0+)] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[mit and apache-2.0-MIT AND Apache-2.0] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[mit or apache-2.0 and (bsd-3-clause or mpl-2.0)-MIT OR Apache-2.0 AND (BSD-3-Clause OR MPL-2.0)] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[mit or apache-2.0-MIT OR Apache-2.0] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[mit-MIT] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_files[license_files0] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_files[license_files1] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_files[license_files2] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_metadata_version[1.0] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_metadata_version[1.1] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_metadata_version[1.2] PASSED
@@ -2411,6 +2467,7 @@ tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_only_once[des
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_only_once[download_url] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_only_once[home_page] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_only_once[license] PASSED
+tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_only_once[license_expression] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_only_once[maintainer] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_only_once[maintainer_email] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_only_once[metadata_version] PASSED
@@ -2425,6 +2482,7 @@ tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_repeated[desc
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_repeated[download_url] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_repeated[home_page] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_repeated[license] PASSED
+tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_repeated[license_expression] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_repeated[maintainer] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_repeated[maintainer_email] PASSED
 tests/test_metadata.py::TestRawMetadata::test_non_repeating_fields_repeated[metadata_version] PASSED
@@ -2441,6 +2499,7 @@ tests/test_metadata.py::TestRawMetadata::test_project_urls_parsing[A,B-expected2
 tests/test_metadata.py::TestRawMetadata::test_project_urls_parsing[A-expected1] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[classifiers] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[dynamic] PASSED
+tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[license_files] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[obsoletes] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[obsoletes_dist] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[platforms] PASSED
@@ -2453,6 +2512,7 @@ tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[require
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[supported_platforms] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[classifiers] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[dynamic] PASSED
+tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[license_files] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[obsoletes] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[obsoletes_dist] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[platforms] PASSED
@@ -7935,9 +7995,14 @@ tests/test_specifiers.py::TestSpecifier::test_length[>=2.0,<3,==2.4-3] PASSED
 tests/test_specifiers.py::TestSpecifier::test_length[>=2.0,<3-2] PASSED
 tests/test_specifiers.py::TestSpecifier::test_length[>=2.0-1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_equal_for_compatible_operator PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=2.0a1-None-input3-expected3] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[<2.0a1-None-input6-expected6] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[==2.0a1-None-input4-expected4] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>2.0a1-None-input5-expected5] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0-None-input0-expected0] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0.dev1-False-input2-expected2] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0.dev1-None-input1-expected1] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[~=2.0a1-None-input7-expected7] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_hash_for_compatible_operator PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_operator_property[!=2.2.*-!=] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_operator_property[!=2.2.0.5-!=] PASSED
@@ -7949,15 +8014,16 @@ tests/test_specifiers.py::TestSpecifier::test_specifier_operator_property[===lol
 tests/test_specifiers.py::TestSpecifier::test_specifier_operator_property[>2.0.post1->] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_operator_property[>=7.9a1->=] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_operator_property[~=2.0-~=] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[!=1.0.dev1-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[<1.0-False] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[<1.0.dev1-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[<1.0.dev1-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[<=1.0-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[<=1.0.dev1-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[==1.0-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[==1.0.*-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[==1.0.dev1-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[>1.0-False] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[>1.0.dev1-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[>1.0.dev1-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[>=1.0-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[>=1.0.dev1-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[~=1.0-False] PASSED
@@ -8131,6 +8197,10 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers[3-<2-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers[3-<=2-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers[3->2-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers[3->=2-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers[3.0.0a7-<3.0.0a8-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers[3.0.0a7-<=3.0.0a8-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers[3.0.0a8->3.0.0a7-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers[3.0.0a8->=3.0.0a7-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_hash[!=2.2.*] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_hash[!=2.2.0.5] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_hash[<1.0.dev1] PASSED
@@ -8244,12 +8314,10 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0A] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0BETA] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0B] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0C] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0DEV0] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0DEV1] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0DEV2] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0POST0] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0DEV] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0POST1] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0POST2] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0POST] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0RC] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0a05] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0a] PASSED
@@ -8259,12 +8327,10 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0b] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0beta] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0c056] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0c] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0dev0] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0dev1] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0dev2] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0post0] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0dev] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0post1] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0post2] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0post] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0rc09] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0rc] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.1.dev09000] PASSED
@@ -8462,6 +8528,7 @@ tests/test_specifiers.py::TestSpecifierSet::test_comparison_true[~=2.0->2.0.post
 tests/test_specifiers.py::TestSpecifierSet::test_comparison_true[~=2.0->=7.9a1-ne] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_comparison_true[~=2.0-~=2.0-eq] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_contains_with_compatible_operator PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_create_from_specifiers PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier[1!1.0.dev456] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier[1!1.0.post456.dev34] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier[1!1.0.post456] PASSED
@@ -8636,6 +8703,9 @@ tests/test_tags.py::TestGenericTags::test_generic_platforms_space PASSED
 tests/test_tags.py::TestGenericTags::test_interpreter_default PASSED
 tests/test_tags.py::TestGenericTags::test_iterator_returned PASSED
 tests/test_tags.py::TestGenericTags::test_platforms_default PASSED
+tests/test_tags.py::TestIOSPlatforms::test_ios_platforms PASSED
+tests/test_tags.py::TestIOSPlatforms::test_multiarch_detection PASSED
+tests/test_tags.py::TestIOSPlatforms::test_version_detection PASSED
 tests/test_tags.py::TestInterpreterName::test_interpreter_short_names PASSED
 tests/test_tags.py::TestInterpreterName::test_sys_implementation_name PASSED
 tests/test_tags.py::TestInterpreterVersion::test_python_version_nodot PASSED
@@ -8742,6 +8812,7 @@ tests/test_tags.py::TestTag::test_str PASSED
 tests/test_tags.py::test_platform_tags[Darwin-mac_platforms] PASSED
 tests/test_tags.py::test_platform_tags[Generic-_generic_platforms] PASSED
 tests/test_tags.py::test_platform_tags[Linux-_linux_platforms] PASSED
+tests/test_tags.py::test_platform_tags[iOS-ios_platforms] PASSED
 tests/test_tags.py::test_platform_tags_space PASSED
 tests/test_utils.py::test_canonicalize_name[Foo-foo] PASSED
 tests/test_utils.py::test_canonicalize_name[Foo.....Bar-foo-bar] PASSED
@@ -26386,11 +26457,9 @@ tests/test_version.py::TestVersion::test_normalized_versions[1.0ALPHA-1.0a0] PAS
 tests/test_version.py::TestVersion::test_normalized_versions[1.0B-1.0b0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0BETA-1.0b0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0C-1.0rc0] PASSED
-tests/test_version.py::TestVersion::test_normalized_versions[1.0DEV-1.0.dev0_0] PASSED
-tests/test_version.py::TestVersion::test_normalized_versions[1.0DEV-1.0.dev0_1] PASSED
+tests/test_version.py::TestVersion::test_normalized_versions[1.0DEV-1.0.dev0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0DEV1-1.0.dev1] PASSED
-tests/test_version.py::TestVersion::test_normalized_versions[1.0POST-1.0.post0_0] PASSED
-tests/test_version.py::TestVersion::test_normalized_versions[1.0POST-1.0.post0_1] PASSED
+tests/test_version.py::TestVersion::test_normalized_versions[1.0POST-1.0.post0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0POST1-1.0.post1] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0RC-1.0rc0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0a-1.0a0] PASSED
@@ -26401,11 +26470,9 @@ tests/test_version.py::TestVersion::test_normalized_versions[1.0b07-1.0b7] PASSE
 tests/test_version.py::TestVersion::test_normalized_versions[1.0beta-1.0b0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0c-1.0rc0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0c056-1.0rc56] PASSED
-tests/test_version.py::TestVersion::test_normalized_versions[1.0dev-1.0.dev0_0] PASSED
-tests/test_version.py::TestVersion::test_normalized_versions[1.0dev-1.0.dev0_1] PASSED
+tests/test_version.py::TestVersion::test_normalized_versions[1.0dev-1.0.dev0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0dev1-1.0.dev1] PASSED
-tests/test_version.py::TestVersion::test_normalized_versions[1.0post-1.0.post0_0] PASSED
-tests/test_version.py::TestVersion::test_normalized_versions[1.0post-1.0.post0_1] PASSED
+tests/test_version.py::TestVersion::test_normalized_versions[1.0post-1.0.post0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0post1-1.0.post1] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0r-1.0.post0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.0rc-1.0rc0] PASSED
@@ -26860,4 +26927,4 @@ tests/test_version.py::TestVersion::test_version_str_repr[7!1.1.dev1-7!1.1.dev1]
 tests/test_version.py::test_parse PASSED
 tests/test_version.py::test_parse_raises PASSED
 
-======== 26853 passed, 1 skipped ========
+======== 26920 passed, 1 skipped ========
