@@ -1,0 +1,72 @@
+--- fts-xapian-1.7.17/src/fts-backend-xapian.cpp	2024-11-04 15:10:16.000000000 +0100
++++ fts-xapian-1.7.17/src/fts-backend-xapian.cpp.new	2024-11-09 20:05:15.907047326 +0100
+@@ -463,6 +463,7 @@
+ 	struct dirent * dp;
+ 	char *s;
+ 	uint32_t uid;
++	struct stat     t_statbuf;
+ 	int ret=0;
+ 	std::vector<uint32_t> uids(0);
+ 	char *zErrMsg = 0;
+@@ -471,7 +472,8 @@
+ //	struct stat fileinfo;
+ 	while ((dp = readdir(dirp)) != NULL)
+ 	{
+-		if((dp->d_type == DT_DIR) && (strncmp(dp->d_name,"db_",3)==0))
++		if (stat(dp->d_name, &t_statbuf) == 0) {
++		if(S_ISDIR(t_statbuf.st_mode) && (strncmp(dp->d_name,"db_",3)==0))
+ 		{
+ 			uids.clear();
+ 			/* s = i_strdup_printf("%s/%s",backend->path,dp->d_name);
+@@ -579,6 +581,7 @@
+ 			}
+ 			i_free(s);
+ 		}
++		}
+ 	}
+ 	closedir(dirp);
+ 	return ret;
+@@ -599,35 +602,40 @@
+ 
+ 	DIR* dirp = opendir(backend->path);
+ 	struct dirent * dp;
++	struct stat     t_statbuf, t2_statbuf;
+ 	char *s,*s2;
+ 	while ((dp = readdir(dirp)) != NULL)
+ 	{
++		if (stat(dp->d_name, &t_statbuf) == 0) {
+ 		s = i_strdup_printf("%s/%s",backend->path,dp->d_name);
+ 
+-		if((dp->d_type == DT_REG) && (strncmp(dp->d_name,"expunge_",8)==0))
++		if(S_ISREG(t_statbuf.st_mode) && (strncmp(dp->d_name,"expunge_",8)==0))
+ 		{
+ 			i_info("Removing[1] %s",s);
+ 			remove(s);
+ 		}
+-		else if((dp->d_type == DT_DIR) && (strncmp(dp->d_name,"db_",3)==0))
++		else if(S_ISDIR(t_statbuf.st_mode) && (strncmp(dp->d_name,"db_",3)==0))
+ 		{
+ 			DIR * d2 = opendir(s);
+ 			struct dirent *dp2;
+ 			while ((dp2 = readdir(d2)) != NULL)
+ 			{
++				if (stat(dp2->d_name, &t2_statbuf) == 0) {
+ 				s2 = i_strdup_printf("%s/%s",s,dp2->d_name);
+-				if(dp2->d_type == DT_REG)
++				if(S_ISREG(t2_statbuf.st_mode))
+ 				{
+ 					i_info("Removing[2] %s",s2);
+ 					remove(s2);
+ 				}
+ 				i_free(s2);
+ 			}
++			}
+ 			closedir(d2);
+ 			i_info("Removing dir %s",s);
+ 			remove(s);
+ 		}
+ 		i_free(s);
++		}
+ 	}
+ 	closedir(dirp);
+ 
