@@ -18,11 +18,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xterm
-COMPONENT_VERSION=	394
+COMPONENT_VERSION=	395
 COMPONENT_SUMMARY=	Xterm - terminal emulator for X 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:a2a0cb206eb0423dedc34794f5c2d38c83390d2dd1106b66aba0960c3a976c7a
+COMPONENT_ARCHIVE_HASH=	sha256:286e3caa5938eae38e202827621567629dfeaae689e8070b413ca11398093dc8
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://invisible-island.net/xterm/
 COMPONENT_FMRI=		terminal/xterm
@@ -33,6 +33,8 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+COMPONENT_PREP_ACTION= ( cd $(@D) && aclocal && autoconf )
 
 CONFIGURE_OPTIONS += --enable-256-color
 CONFIGURE_OPTIONS += --enable-88-color
@@ -55,7 +57,6 @@ REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxft
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxmu
