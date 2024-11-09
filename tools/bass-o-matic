@@ -47,7 +47,7 @@ from bass.component import Component
 logger = logging.getLogger('bass-o-matic')
 
 # Locate SCM directories containing Userland components by searching from
-# from a supplied top of tree for .p5m files.  Once a .p5m file is located,
+# the supplied top of tree for .p5m files.  Once a .p5m file is located,
 # that directory is added to the list and no children are searched.
 def FindComponentPaths(path, debug=False, subdir='components',
                        incremental=False, begin_commit=None, end_commit=None):
@@ -129,13 +129,8 @@ def FindComponentPaths(path, debug=False, subdir='components',
                         not os.path.isfile(os.path.join(workspace_path, dirname, 'pkg5.ignore')):
                     paths.append(os.path.dirname(line))
 
-        # Add meta-packages/history only if we build the main repository, where
-        # subdir is equal to 'components'.
-        if subdir == 'components':
-            paths.append('meta-packages/history')
-        # Add encumbered/meta-packages/history only if we build the encumbered repository
-        if subdir == 'components/encumbered':
-            paths.append('encumbered/meta-packages/history')
+        # Add meta-packages/history
+        paths.append('meta-packages/history')
 
         paths = list(set(paths))
 
