@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		diff_cover
 HUMAN_VERSION =			9.2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Run coverage and linting reports on diffs
 COMPONENT_PROJECT_URL =		https://github.com/Bachmann1234/diff-cover
 COMPONENT_ARCHIVE_HASH =	\
@@ -45,7 +46,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/isort
 TEST_REQUIRED_PACKAGES.python += library/python/pycodestyle
-TEST_REQUIRED_PACKAGES.python += library/python/pydocstyle
 TEST_REQUIRED_PACKAGES.python += library/python/pyflakes
 TEST_REQUIRED_PACKAGES.python += library/python/pylint
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
