@@ -13,10 +13,8 @@
 # Copyright 2022 Daniel Bell
 #
 
-OPENSSL_VERSION= 3.1
 USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
-BITS=64
 ENV = /usr/bin/env
 
 # BUILD_BETA is the beta version; define with build number for beta release
@@ -48,6 +46,7 @@ COMPONENT_FULL_VERSION=$(COMPONENT_FULL_VERSION)-buildfix$(BUILD_FIX)
 endif
 # repology wants to use HUMAN_VERSION
 HUMAN_VERSION=          $(COMPONENT_FULL_VERSION)
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
 ifdef BUILD_GITHUB
@@ -323,7 +322,7 @@ endif
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(GCC_BINDIR):$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 #Ensure asm is built in 64-bit.
 AFLAGS= -m64
@@ -340,8 +339,7 @@ COMPONENT_BUILD_ENV+=  LD_LIBRARY_PATH="$(GCC_LIBDIR)"
 COMPONENT_TEST_ENV= LD_LIBRARY_PATH='$(GCC_LIBDIR):$(BUILD_DIR_64)/instdir/program/' GMAKE_OPTIONS=-rsk
 
 CONFIGURE_ENV = $(COMPONENT_BUILD_ENV)
-CONFIGURE_ENV += PYTHON=$(PYTHON.3.9)
-CONFIGURE_ENV += GPG=/usr/bin/gpg2
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 CONFIGURE_ENV += GPGCONF=/usr/bin/gpgconf
 
 CONFIGURE_ENV += MARIADBCONFIG=$(MYSQL_CONFIG)
@@ -378,9 +376,9 @@ else
 COMPONENT_PREP_ACTION += )
 endif
 
-LDFLAGS += $(JPEG_LDFLAGS) -lX11-xcb -lX11 
+LDFLAGS += -lX11-xcb -lX11 
 
-CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS) -lssp_nonshared
+CFLAGS += -lssp_nonshared
 #CONFIGURE_OPTIONS += --enable-debug
 #CONFIGURE_OPTIONS += --enable-optimized=no
 CXXFLAGS = $(CFLAGS)
@@ -540,8 +538,8 @@ REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer1
@@ -566,7 +564,6 @@ REQUIRED_PACKAGES += library/c++/libwpd
 REQUIRED_PACKAGES += library/c++/libwpg
 REQUIRED_PACKAGES += library/c++/libwps
 REQUIRED_PACKAGES += library/c++/libzmf
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/graphene
