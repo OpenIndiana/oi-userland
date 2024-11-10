@@ -24,6 +24,10 @@ test_explicit_host_port (tests.asyncio.test_client.ClientTests)
 Client connects using an explicit host / port. ... ok
 test_handshake_fails (tests.asyncio.test_client.ClientTests)
 Client connects to server but the handshake fails. ... ok
+test_http_response (tests.asyncio.test_client.ClientTests)
+Client reads HTTP response. ... ok
+test_http_response_without_content_length (tests.asyncio.test_client.ClientTests)
+Client reads HTTP response without a Content-Length header. ... ok
 test_invalid_uri (tests.asyncio.test_client.ClientTests)
 Client receives an invalid URI. ... ok
 test_junk_handshake (tests.asyncio.test_client.ClientTests)
@@ -207,6 +211,8 @@ test_pong_unsupported_type (tests.asyncio.test_connection.ClientConnectionTests)
 pong raises TypeError when called with an unsupported type. ... ok
 test_recv_binary (tests.asyncio.test_connection.ClientConnectionTests)
 recv receives a binary message. ... ok
+test_recv_binary_as_text (tests.asyncio.test_connection.ClientConnectionTests)
+recv receives a binary message as a str. ... ok
 test_recv_cancellation_before_receiving (tests.asyncio.test_connection.ClientConnectionTests)
 recv can be cancelled before receiving a frame. ... ok
 test_recv_cancellation_while_receiving (tests.asyncio.test_connection.ClientConnectionTests)
@@ -215,20 +221,20 @@ test_recv_connection_closed_error (tests.asyncio.test_connection.ClientConnectio
 recv raises ConnectionClosedError after an error. ... ok
 test_recv_connection_closed_ok (tests.asyncio.test_connection.ClientConnectionTests)
 recv raises ConnectionClosedOK after a normal closure. ... ok
-test_recv_decoded_binary (tests.asyncio.test_connection.ClientConnectionTests)
-recv receives an UTF-8 decoded binary message. ... ok
 test_recv_during_recv (tests.asyncio.test_connection.ClientConnectionTests)
 recv raises ConcurrencyError when called concurrently. ... ok
 test_recv_during_recv_streaming (tests.asyncio.test_connection.ClientConnectionTests)
 recv raises ConcurrencyError when called concurrently with recv_streaming. ... ok
-test_recv_encoded_text (tests.asyncio.test_connection.ClientConnectionTests)
-recv receives an UTF-8 encoded text message. ... ok
 test_recv_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
 recv receives a fragmented binary message. ... ok
 test_recv_fragmented_text (tests.asyncio.test_connection.ClientConnectionTests)
 recv receives a fragmented text message. ... ok
+test_recv_non_utf8_text (tests.asyncio.test_connection.ClientConnectionTests)
+recv receives a non-UTF-8 text message. ... ok
 test_recv_streaming_binary (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming receives a binary message. ... ok
+test_recv_streaming_binary_as_str (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming receives a binary message as a str. ... ok
 test_recv_streaming_cancellation_before_receiving (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming can be cancelled before receiving a frame. ... ok
 test_recv_streaming_cancellation_while_receiving (tests.asyncio.test_connection.ClientConnectionTests)
@@ -237,22 +243,24 @@ test_recv_streaming_connection_closed_error (tests.asyncio.test_connection.Clien
 recv_streaming raises ConnectionClosedError after an error. ... ok
 test_recv_streaming_connection_closed_ok (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming raises ConnectionClosedOK after a normal closure. ... ok
-test_recv_streaming_decoded_binary (tests.asyncio.test_connection.ClientConnectionTests)
-recv_streaming receives a UTF-8 decoded binary message. ... ok
 test_recv_streaming_during_recv (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming raises ConcurrencyError when called concurrently with recv. ... ok
 test_recv_streaming_during_recv_streaming (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming raises ConcurrencyError when called concurrently. ... ok
-test_recv_streaming_encoded_text (tests.asyncio.test_connection.ClientConnectionTests)
-recv_streaming receives an UTF-8 encoded text message. ... ok
 test_recv_streaming_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming receives a fragmented binary message. ... ok
 test_recv_streaming_fragmented_text (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming receives a fragmented text message. ... ok
+test_recv_streaming_non_utf8_text (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming receives a non-UTF-8 text message. ... ok
 test_recv_streaming_text (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming receives a text message. ... ok
+test_recv_streaming_text_as_bytes (tests.asyncio.test_connection.ClientConnectionTests)
+recv_streaming receives a text message as bytes. ... ok
 test_recv_text (tests.asyncio.test_connection.ClientConnectionTests)
 recv receives a text message. ... ok
+test_recv_text_as_bytes (tests.asyncio.test_connection.ClientConnectionTests)
+recv receives a text message as bytes. ... ok
 test_remote_address (tests.asyncio.test_connection.ClientConnectionTests)
 Connection provides a remote_address attribute. ... ok
 test_request (tests.asyncio.test_connection.ClientConnectionTests)
@@ -261,10 +269,16 @@ test_response (tests.asyncio.test_connection.ClientConnectionTests)
 Connection has a response attribute. ... ok
 test_send_async_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
 send sends a fragmented binary message asynchronously. ... ok
+test_send_async_fragmented_binary_from_str (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a fragmented binary message from a str asynchronously. ... ok
 test_send_async_fragmented_text (tests.asyncio.test_connection.ClientConnectionTests)
 send sends a fragmented text message asynchronously. ... ok
+test_send_async_fragmented_text_from_bytes (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a fragmented text message from bytes asynchronously. ... ok
 test_send_binary (tests.asyncio.test_connection.ClientConnectionTests)
 send sends a binary message. ... ok
+test_send_binary_from_str (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a binary message from a str. ... ok
 test_send_connection_closed_error (tests.asyncio.test_connection.ClientConnectionTests)
 send raises ConnectionClosedError after an error. ... ok
 test_send_connection_closed_ok (tests.asyncio.test_connection.ClientConnectionTests)
@@ -279,14 +293,20 @@ test_send_empty_iterable (tests.asyncio.test_connection.ClientConnectionTests)
 send does nothing when called with an empty iterable. ... ok
 test_send_fragmented_binary (tests.asyncio.test_connection.ClientConnectionTests)
 send sends a fragmented binary message. ... ok
+test_send_fragmented_binary_from_str (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a fragmented binary message from a str. ... ok
 test_send_fragmented_text (tests.asyncio.test_connection.ClientConnectionTests)
 send sends a fragmented text message. ... ok
+test_send_fragmented_text_from_bytes (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a fragmented text message from bytes. ... ok
 test_send_mixed_async_iterable (tests.asyncio.test_connection.ClientConnectionTests)
 send raises TypeError when called with an iterable of inconsistent types. ... ok
 test_send_mixed_iterable (tests.asyncio.test_connection.ClientConnectionTests)
 send raises TypeError when called with an iterable of inconsistent types. ... ok
 test_send_text (tests.asyncio.test_connection.ClientConnectionTests)
 send sends a text message. ... ok
+test_send_text_from_bytes (tests.asyncio.test_connection.ClientConnectionTests)
+send sends a text message from bytes. ... ok
 test_send_unsupported_async_iterable (tests.asyncio.test_connection.ClientConnectionTests)
 send raises TypeError when called with an iterable of unsupported type. ... ok
 test_send_unsupported_iterable (tests.asyncio.test_connection.ClientConnectionTests)
@@ -432,6 +452,8 @@ test_pong_unsupported_type (tests.asyncio.test_connection.ServerConnectionTests)
 pong raises TypeError when called with an unsupported type. ... ok
 test_recv_binary (tests.asyncio.test_connection.ServerConnectionTests)
 recv receives a binary message. ... ok
+test_recv_binary_as_text (tests.asyncio.test_connection.ServerConnectionTests)
+recv receives a binary message as a str. ... ok
 test_recv_cancellation_before_receiving (tests.asyncio.test_connection.ServerConnectionTests)
 recv can be cancelled before receiving a frame. ... ok
 test_recv_cancellation_while_receiving (tests.asyncio.test_connection.ServerConnectionTests)
@@ -440,20 +462,20 @@ test_recv_connection_closed_error (tests.asyncio.test_connection.ServerConnectio
 recv raises ConnectionClosedError after an error. ... ok
 test_recv_connection_closed_ok (tests.asyncio.test_connection.ServerConnectionTests)
 recv raises ConnectionClosedOK after a normal closure. ... ok
-test_recv_decoded_binary (tests.asyncio.test_connection.ServerConnectionTests)
-recv receives an UTF-8 decoded binary message. ... ok
 test_recv_during_recv (tests.asyncio.test_connection.ServerConnectionTests)
 recv raises ConcurrencyError when called concurrently. ... ok
 test_recv_during_recv_streaming (tests.asyncio.test_connection.ServerConnectionTests)
 recv raises ConcurrencyError when called concurrently with recv_streaming. ... ok
-test_recv_encoded_text (tests.asyncio.test_connection.ServerConnectionTests)
-recv receives an UTF-8 encoded text message. ... ok
 test_recv_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
 recv receives a fragmented binary message. ... ok
 test_recv_fragmented_text (tests.asyncio.test_connection.ServerConnectionTests)
 recv receives a fragmented text message. ... ok
+test_recv_non_utf8_text (tests.asyncio.test_connection.ServerConnectionTests)
+recv receives a non-UTF-8 text message. ... ok
 test_recv_streaming_binary (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming receives a binary message. ... ok
+test_recv_streaming_binary_as_str (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming receives a binary message as a str. ... ok
 test_recv_streaming_cancellation_before_receiving (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming can be cancelled before receiving a frame. ... ok
 test_recv_streaming_cancellation_while_receiving (tests.asyncio.test_connection.ServerConnectionTests)
@@ -462,22 +484,24 @@ test_recv_streaming_connection_closed_error (tests.asyncio.test_connection.Serve
 recv_streaming raises ConnectionClosedError after an error. ... ok
 test_recv_streaming_connection_closed_ok (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming raises ConnectionClosedOK after a normal closure. ... ok
-test_recv_streaming_decoded_binary (tests.asyncio.test_connection.ServerConnectionTests)
-recv_streaming receives a UTF-8 decoded binary message. ... ok
 test_recv_streaming_during_recv (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming raises ConcurrencyError when called concurrently with recv. ... ok
 test_recv_streaming_during_recv_streaming (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming raises ConcurrencyError when called concurrently. ... ok
-test_recv_streaming_encoded_text (tests.asyncio.test_connection.ServerConnectionTests)
-recv_streaming receives an UTF-8 encoded text message. ... ok
 test_recv_streaming_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming receives a fragmented binary message. ... ok
 test_recv_streaming_fragmented_text (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming receives a fragmented text message. ... ok
+test_recv_streaming_non_utf8_text (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming receives a non-UTF-8 text message. ... ok
 test_recv_streaming_text (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming receives a text message. ... ok
+test_recv_streaming_text_as_bytes (tests.asyncio.test_connection.ServerConnectionTests)
+recv_streaming receives a text message as bytes. ... ok
 test_recv_text (tests.asyncio.test_connection.ServerConnectionTests)
 recv receives a text message. ... ok
+test_recv_text_as_bytes (tests.asyncio.test_connection.ServerConnectionTests)
+recv receives a text message as bytes. ... ok
 test_remote_address (tests.asyncio.test_connection.ServerConnectionTests)
 Connection provides a remote_address attribute. ... ok
 test_request (tests.asyncio.test_connection.ServerConnectionTests)
@@ -486,10 +510,16 @@ test_response (tests.asyncio.test_connection.ServerConnectionTests)
 Connection has a response attribute. ... ok
 test_send_async_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
 send sends a fragmented binary message asynchronously. ... ok
+test_send_async_fragmented_binary_from_str (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a fragmented binary message from a str asynchronously. ... ok
 test_send_async_fragmented_text (tests.asyncio.test_connection.ServerConnectionTests)
 send sends a fragmented text message asynchronously. ... ok
+test_send_async_fragmented_text_from_bytes (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a fragmented text message from bytes asynchronously. ... ok
 test_send_binary (tests.asyncio.test_connection.ServerConnectionTests)
 send sends a binary message. ... ok
+test_send_binary_from_str (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a binary message from a str. ... ok
 test_send_connection_closed_error (tests.asyncio.test_connection.ServerConnectionTests)
 send raises ConnectionClosedError after an error. ... ok
 test_send_connection_closed_ok (tests.asyncio.test_connection.ServerConnectionTests)
@@ -504,14 +534,20 @@ test_send_empty_iterable (tests.asyncio.test_connection.ServerConnectionTests)
 send does nothing when called with an empty iterable. ... ok
 test_send_fragmented_binary (tests.asyncio.test_connection.ServerConnectionTests)
 send sends a fragmented binary message. ... ok
+test_send_fragmented_binary_from_str (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a fragmented binary message from a str. ... ok
 test_send_fragmented_text (tests.asyncio.test_connection.ServerConnectionTests)
 send sends a fragmented text message. ... ok
+test_send_fragmented_text_from_bytes (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a fragmented text message from bytes. ... ok
 test_send_mixed_async_iterable (tests.asyncio.test_connection.ServerConnectionTests)
 send raises TypeError when called with an iterable of inconsistent types. ... ok
 test_send_mixed_iterable (tests.asyncio.test_connection.ServerConnectionTests)
 send raises TypeError when called with an iterable of inconsistent types. ... ok
 test_send_text (tests.asyncio.test_connection.ServerConnectionTests)
 send sends a text message. ... ok
+test_send_text_from_bytes (tests.asyncio.test_connection.ServerConnectionTests)
+send sends a text message from bytes. ... ok
 test_send_unsupported_async_iterable (tests.asyncio.test_connection.ServerConnectionTests)
 send raises TypeError when called with an iterable of unsupported type. ... ok
 test_send_unsupported_iterable (tests.asyncio.test_connection.ServerConnectionTests)
@@ -545,7 +581,7 @@ get can be canceled safely after reading the first frame. ... ok
 test_cancel_get_before_first_frame (tests.asyncio.test_messages.AssemblerTests)
 get can be canceled safely before reading the first frame. ... ok
 test_cancel_get_iter_after_first_frame (tests.asyncio.test_messages.AssemblerTests)
-get cannot be canceled after reading the first frame. ... ok
+get_iter cannot be canceled after reading the first frame. ... ok
 test_cancel_get_iter_before_first_frame (tests.asyncio.test_messages.AssemblerTests)
 get_iter can be canceled safely before reading the first frame. ... ok
 test_close_is_idempotent (tests.asyncio.test_messages.AssemblerTests)
@@ -623,7 +659,7 @@ put raises EOFError after close is called. ... ok
 test_put_pauses_reading (tests.asyncio.test_messages.AssemblerTests)
 put pauses reading when queue goes above the high-water mark. ... ok
 test_set_high_and_low_water_mark (tests.asyncio.test_messages.AssemblerTests)
-high sets the high-water mark. ... ok
+high sets the high-water mark and low-water mark. ... ok
 test_set_high_water_mark (tests.asyncio.test_messages.AssemblerTests)
 high sets the high-water mark. ... ok
 test_set_invalid_high_water_mark (tests.asyncio.test_messages.AssemblerTests)
@@ -780,6 +816,7 @@ test_decompress_max_size (tests.extensions.test_permessage_deflate.PerMessageDef
 test_encode_decode_binary_frame (tests.extensions.test_permessage_deflate.PerMessageDeflateTests) ... ok
 test_encode_decode_fragmented_binary_frame (tests.extensions.test_permessage_deflate.PerMessageDeflateTests) ... ok
 test_encode_decode_fragmented_text_frame (tests.extensions.test_permessage_deflate.PerMessageDeflateTests) ... ok
+test_encode_decode_large_frame (tests.extensions.test_permessage_deflate.PerMessageDeflateTests) ... ok
 test_encode_decode_text_frame (tests.extensions.test_permessage_deflate.PerMessageDeflateTests) ... ok
 test_local_no_context_takeover (tests.extensions.test_permessage_deflate.PerMessageDeflateTests) ... ok
 test_name (tests.extensions.test_permessage_deflate.PerMessageDeflateTests) ... ok
@@ -1385,6 +1422,10 @@ test_existing_socket (tests.sync.test_client.ClientTests)
 Client connects using a pre-existing socket. ... ok
 test_handshake_fails (tests.sync.test_client.ClientTests)
 Client connects to server but the handshake fails. ... ok
+test_http_response (tests.sync.test_client.ClientTests)
+Client reads HTTP response. ... ok
+test_http_response_without_content_length (tests.sync.test_client.ClientTests)
+Client reads HTTP response without a Content-Length header. ... ok
 test_invalid_uri (tests.sync.test_client.ClientTests)
 Client receives an invalid URI. ... ok
 test_junk_handshake (tests.sync.test_client.ClientTests)
@@ -1435,6 +1476,7 @@ test_acknowledge_previous_ping (tests.sync.test_connection.ClientConnectionTests
 ping is acknowledged by a pong with the same payload as a later ping. ... ok
 test_close (tests.sync.test_connection.ClientConnectionTests)
 close sends a close frame. ... ok
+test_close_does_not_wait_for_recv (tests.sync.test_connection.ClientConnectionTests) ... ok
 test_close_during_recv (tests.sync.test_connection.ClientConnectionTests)
 close aborts recv when called concurrently with recv. ... ok
 test_close_during_send (tests.sync.test_connection.ClientConnectionTests)
@@ -1445,16 +1487,16 @@ test_close_idempotency (tests.sync.test_connection.ClientConnectionTests)
 close does nothing if the connection is already closed. ... ok
 test_close_idempotency_race_condition (tests.sync.test_connection.ClientConnectionTests)
 close waits if the connection is already closing. ... ok
+test_close_timeout (tests.sync.test_connection.ClientConnectionTests)
+close_timeout parameter configures close timeout. ... ok
 test_close_timeout_waiting_for_close_frame (tests.sync.test_connection.ClientConnectionTests)
 close times out if no close frame is received. ... ok
 test_close_timeout_waiting_for_connection_closed (tests.sync.test_connection.ClientConnectionTests)
 close times out if EOF isn't received. ... ok
-test_close_timeout_waiting_for_recv (tests.sync.test_connection.ClientConnectionTests) ... ok
 test_close_waits_for_close_frame (tests.sync.test_connection.ClientConnectionTests)
 close waits for a close frame (then EOF) before returning. ... ok
 test_close_waits_for_connection_closed (tests.sync.test_connection.ClientConnectionTests)
 close waits for EOF before returning. ... ok
-test_close_waits_for_recv (tests.sync.test_connection.ClientConnectionTests) ... ok
 test_enter (tests.sync.test_connection.ClientConnectionTests)
 __enter__ returns the connection itself. ... ok
 test_exit (tests.sync.test_connection.ClientConnectionTests)
@@ -1477,6 +1519,10 @@ test_local_address (tests.sync.test_connection.ClientConnectionTests)
 Connection provides a local_address attribute. ... ok
 test_logger (tests.sync.test_connection.ClientConnectionTests)
 Connection has a logger attribute. ... ok
+test_max_queue (tests.sync.test_connection.ClientConnectionTests)
+max_queue parameter configures high-water mark of frames buffer. ... ok
+test_max_queue_tuple (tests.sync.test_connection.ClientConnectionTests)
+max_queue parameter configures high-water mark of frames buffer. ... ok
 test_ping (tests.sync.test_connection.ClientConnectionTests)
 ping sends a ping frame with a random payload. ... ok
 test_ping_duplicate_payload (tests.sync.test_connection.ClientConnectionTests)
@@ -1499,6 +1545,8 @@ test_reading_in_recv_events_fails (tests.sync.test_connection.ClientConnectionTe
 Error when reading incoming frames is correctly reported. ... skipped 'works only on BSD'
 test_recv_binary (tests.sync.test_connection.ClientConnectionTests)
 recv receives a binary message. ... ok
+test_recv_binary_as_text (tests.sync.test_connection.ClientConnectionTests)
+recv receives a binary message as a str. ... ok
 test_recv_connection_closed_error (tests.sync.test_connection.ClientConnectionTests)
 recv raises ConnectionClosedError after an error. ... ok
 test_recv_connection_closed_ok (tests.sync.test_connection.ClientConnectionTests)
@@ -1511,8 +1559,12 @@ test_recv_fragmented_binary (tests.sync.test_connection.ClientConnectionTests)
 recv receives a fragmented binary message. ... ok
 test_recv_fragmented_text (tests.sync.test_connection.ClientConnectionTests)
 recv receives a fragmented text message. ... ok
+test_recv_non_utf8_text (tests.sync.test_connection.ClientConnectionTests)
+recv receives a non-UTF-8 text message. ... ok
 test_recv_streaming_binary (tests.sync.test_connection.ClientConnectionTests)
 recv_streaming receives a binary message. ... ok
+test_recv_streaming_binary_as_str (tests.sync.test_connection.ClientConnectionTests)
+recv_streaming receives a binary message as a str. ... ok
 test_recv_streaming_connection_closed_error (tests.sync.test_connection.ClientConnectionTests)
 recv_streaming raises ConnectionClosedError after an error. ... ok
 test_recv_streaming_connection_closed_ok (tests.sync.test_connection.ClientConnectionTests)
@@ -1525,10 +1577,16 @@ test_recv_streaming_fragmented_binary (tests.sync.test_connection.ClientConnecti
 recv_streaming receives a fragmented binary message. ... ok
 test_recv_streaming_fragmented_text (tests.sync.test_connection.ClientConnectionTests)
 recv_streaming receives a fragmented text message. ... ok
+test_recv_streaming_non_utf8_text (tests.sync.test_connection.ClientConnectionTests)
+recv_streaming receives a non-UTF-8 text message. ... ok
 test_recv_streaming_text (tests.sync.test_connection.ClientConnectionTests)
 recv_streaming receives a text message. ... ok
+test_recv_streaming_text_as_bytes (tests.sync.test_connection.ClientConnectionTests)
+recv_streaming receives a text message as bytes. ... ok
 test_recv_text (tests.sync.test_connection.ClientConnectionTests)
 recv receives a text message. ... ok
+test_recv_text_as_bytes (tests.sync.test_connection.ClientConnectionTests)
+recv receives a text message as bytes. ... ok
 test_remote_address (tests.sync.test_connection.ClientConnectionTests)
 Connection provides a remote_address attribute. ... ok
 test_request (tests.sync.test_connection.ClientConnectionTests)
@@ -1537,6 +1595,8 @@ test_response (tests.sync.test_connection.ClientConnectionTests)
 Connection has a response attribute. ... ok
 test_send_binary (tests.sync.test_connection.ClientConnectionTests)
 send sends a binary message. ... ok
+test_send_binary_from_str (tests.sync.test_connection.ClientConnectionTests)
+send sends a binary message from a str. ... ok
 test_send_connection_closed_error (tests.sync.test_connection.ClientConnectionTests)
 send raises ConnectionClosedError after an error. ... ok
 test_send_connection_closed_ok (tests.sync.test_connection.ClientConnectionTests)
@@ -1549,12 +1609,18 @@ test_send_empty_iterable (tests.sync.test_connection.ClientConnectionTests)
 send does nothing when called with an empty iterable. ... ok
 test_send_fragmented_binary (tests.sync.test_connection.ClientConnectionTests)
 send sends a fragmented binary message. ... ok
+test_send_fragmented_binary_from_str (tests.sync.test_connection.ClientConnectionTests)
+send sends a fragmented binary message from a str. ... ok
 test_send_fragmented_text (tests.sync.test_connection.ClientConnectionTests)
 send sends a fragmented text message. ... ok
+test_send_fragmented_text_from_bytes (tests.sync.test_connection.ClientConnectionTests)
+send sends a fragmented text message from bytes. ... ok
 test_send_mixed_iterable (tests.sync.test_connection.ClientConnectionTests)
 send raises TypeError when called with an iterable of inconsistent types. ... ok
 test_send_text (tests.sync.test_connection.ClientConnectionTests)
 send sends a text message. ... ok
+test_send_text_from_bytes (tests.sync.test_connection.ClientConnectionTests)
+send sends a text message from bytes. ... ok
 test_send_unsupported_iterable (tests.sync.test_connection.ClientConnectionTests)
 send raises TypeError when called with an iterable of unsupported type. ... ok
 test_send_unsupported_type (tests.sync.test_connection.ClientConnectionTests)
@@ -1577,6 +1643,7 @@ test_acknowledge_previous_ping (tests.sync.test_connection.ServerConnectionTests
 ping is acknowledged by a pong with the same payload as a later ping. ... ok
 test_close (tests.sync.test_connection.ServerConnectionTests)
 close sends a close frame. ... ok
+test_close_does_not_wait_for_recv (tests.sync.test_connection.ServerConnectionTests) ... ok
 test_close_during_recv (tests.sync.test_connection.ServerConnectionTests)
 close aborts recv when called concurrently with recv. ... ok
 test_close_during_send (tests.sync.test_connection.ServerConnectionTests)
@@ -1587,16 +1654,16 @@ test_close_idempotency (tests.sync.test_connection.ServerConnectionTests)
 close does nothing if the connection is already closed. ... ok
 test_close_idempotency_race_condition (tests.sync.test_connection.ServerConnectionTests)
 close waits if the connection is already closing. ... ok
+test_close_timeout (tests.sync.test_connection.ServerConnectionTests)
+close_timeout parameter configures close timeout. ... ok
 test_close_timeout_waiting_for_close_frame (tests.sync.test_connection.ServerConnectionTests)
 close times out if no close frame is received. ... ok
 test_close_timeout_waiting_for_connection_closed (tests.sync.test_connection.ServerConnectionTests)
 close times out if EOF isn't received. ... skipped 'only relevant on the client-side'
-test_close_timeout_waiting_for_recv (tests.sync.test_connection.ServerConnectionTests) ... ok
 test_close_waits_for_close_frame (tests.sync.test_connection.ServerConnectionTests)
 close waits for a close frame (then EOF) before returning. ... ok
 test_close_waits_for_connection_closed (tests.sync.test_connection.ServerConnectionTests)
 close waits for EOF before returning. ... skipped 'only relevant on the client-side'
-test_close_waits_for_recv (tests.sync.test_connection.ServerConnectionTests) ... ok
 test_enter (tests.sync.test_connection.ServerConnectionTests)
 __enter__ returns the connection itself. ... ok
 test_exit (tests.sync.test_connection.ServerConnectionTests)
@@ -1619,6 +1686,10 @@ test_local_address (tests.sync.test_connection.ServerConnectionTests)
 Connection provides a local_address attribute. ... ok
 test_logger (tests.sync.test_connection.ServerConnectionTests)
 Connection has a logger attribute. ... ok
+test_max_queue (tests.sync.test_connection.ServerConnectionTests)
+max_queue parameter configures high-water mark of frames buffer. ... ok
+test_max_queue_tuple (tests.sync.test_connection.ServerConnectionTests)
+max_queue parameter configures high-water mark of frames buffer. ... ok
 test_ping (tests.sync.test_connection.ServerConnectionTests)
 ping sends a ping frame with a random payload. ... ok
 test_ping_duplicate_payload (tests.sync.test_connection.ServerConnectionTests)
@@ -1641,6 +1712,8 @@ test_reading_in_recv_events_fails (tests.sync.test_connection.ServerConnectionTe
 Error when reading incoming frames is correctly reported. ... skipped 'works only on BSD'
 test_recv_binary (tests.sync.test_connection.ServerConnectionTests)
 recv receives a binary message. ... ok
+test_recv_binary_as_text (tests.sync.test_connection.ServerConnectionTests)
+recv receives a binary message as a str. ... ok
 test_recv_connection_closed_error (tests.sync.test_connection.ServerConnectionTests)
 recv raises ConnectionClosedError after an error. ... ok
 test_recv_connection_closed_ok (tests.sync.test_connection.ServerConnectionTests)
@@ -1653,8 +1726,12 @@ test_recv_fragmented_binary (tests.sync.test_connection.ServerConnectionTests)
 recv receives a fragmented binary message. ... ok
 test_recv_fragmented_text (tests.sync.test_connection.ServerConnectionTests)
 recv receives a fragmented text message. ... ok
+test_recv_non_utf8_text (tests.sync.test_connection.ServerConnectionTests)
+recv receives a non-UTF-8 text message. ... ok
 test_recv_streaming_binary (tests.sync.test_connection.ServerConnectionTests)
 recv_streaming receives a binary message. ... ok
+test_recv_streaming_binary_as_str (tests.sync.test_connection.ServerConnectionTests)
+recv_streaming receives a binary message as a str. ... ok
 test_recv_streaming_connection_closed_error (tests.sync.test_connection.ServerConnectionTests)
 recv_streaming raises ConnectionClosedError after an error. ... ok
 test_recv_streaming_connection_closed_ok (tests.sync.test_connection.ServerConnectionTests)
@@ -1667,10 +1744,16 @@ test_recv_streaming_fragmented_binary (tests.sync.test_connection.ServerConnecti
 recv_streaming receives a fragmented binary message. ... ok
 test_recv_streaming_fragmented_text (tests.sync.test_connection.ServerConnectionTests)
 recv_streaming receives a fragmented text message. ... ok
+test_recv_streaming_non_utf8_text (tests.sync.test_connection.ServerConnectionTests)
+recv_streaming receives a non-UTF-8 text message. ... ok
 test_recv_streaming_text (tests.sync.test_connection.ServerConnectionTests)
 recv_streaming receives a text message. ... ok
+test_recv_streaming_text_as_bytes (tests.sync.test_connection.ServerConnectionTests)
+recv_streaming receives a text message as bytes. ... ok
 test_recv_text (tests.sync.test_connection.ServerConnectionTests)
 recv receives a text message. ... ok
+test_recv_text_as_bytes (tests.sync.test_connection.ServerConnectionTests)
+recv receives a text message as bytes. ... ok
 test_remote_address (tests.sync.test_connection.ServerConnectionTests)
 Connection provides a remote_address attribute. ... ok
 test_request (tests.sync.test_connection.ServerConnectionTests)
@@ -1679,6 +1762,8 @@ test_response (tests.sync.test_connection.ServerConnectionTests)
 Connection has a response attribute. ... ok
 test_send_binary (tests.sync.test_connection.ServerConnectionTests)
 send sends a binary message. ... ok
+test_send_binary_from_str (tests.sync.test_connection.ServerConnectionTests)
+send sends a binary message from a str. ... ok
 test_send_connection_closed_error (tests.sync.test_connection.ServerConnectionTests)
 send raises ConnectionClosedError after an error. ... ok
 test_send_connection_closed_ok (tests.sync.test_connection.ServerConnectionTests)
@@ -1691,12 +1776,18 @@ test_send_empty_iterable (tests.sync.test_connection.ServerConnectionTests)
 send does nothing when called with an empty iterable. ... ok
 test_send_fragmented_binary (tests.sync.test_connection.ServerConnectionTests)
 send sends a fragmented binary message. ... ok
+test_send_fragmented_binary_from_str (tests.sync.test_connection.ServerConnectionTests)
+send sends a fragmented binary message from a str. ... ok
 test_send_fragmented_text (tests.sync.test_connection.ServerConnectionTests)
 send sends a fragmented text message. ... ok
+test_send_fragmented_text_from_bytes (tests.sync.test_connection.ServerConnectionTests)
+send sends a fragmented text message from bytes. ... ok
 test_send_mixed_iterable (tests.sync.test_connection.ServerConnectionTests)
 send raises TypeError when called with an iterable of inconsistent types. ... ok
 test_send_text (tests.sync.test_connection.ServerConnectionTests)
 send sends a text message. ... ok
+test_send_text_from_bytes (tests.sync.test_connection.ServerConnectionTests)
+send sends a text message from bytes. ... ok
 test_send_unsupported_iterable (tests.sync.test_connection.ServerConnectionTests)
 send raises TypeError when called with an iterable of unsupported type. ... ok
 test_send_unsupported_type (tests.sync.test_connection.ServerConnectionTests)
@@ -1717,6 +1808,10 @@ test_get_binary_message_already_received (tests.sync.test_messages.AssemblerTest
 get returns a binary message that is already received. ... ok
 test_get_binary_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
 get returns a binary message when it is received. ... ok
+test_get_decoded_binary_message (tests.sync.test_messages.AssemblerTests)
+get returns a binary message with UTF-8 decoding. ... ok
+test_get_encoded_text_message (tests.sync.test_messages.AssemblerTests)
+get returns a text message without UTF-8 decoding. ... ok
 test_get_fails_after_close (tests.sync.test_messages.AssemblerTests)
 get raises EOFError after close is called. ... ok
 test_get_fails_when_get_is_running (tests.sync.test_messages.AssemblerTests)
@@ -1741,6 +1836,10 @@ test_get_iter_binary_message_already_received (tests.sync.test_messages.Assemble
 get_iter yields a binary message that is already received. ... ok
 test_get_iter_binary_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
 get_iter yields a binary message when it is received. ... ok
+test_get_iter_decoded_binary_message (tests.sync.test_messages.AssemblerTests)
+get_iter yields a binary message with UTF-8 decoding. ... ok
+test_get_iter_encoded_text_message (tests.sync.test_messages.AssemblerTests)
+get_iter yields a text message without UTF-8 decoding. ... ok
 test_get_iter_fails_after_close (tests.sync.test_messages.AssemblerTests)
 get_iter raises EOFError after close is called. ... ok
 test_get_iter_fails_when_get_is_running (tests.sync.test_messages.AssemblerTests)
@@ -1761,24 +1860,34 @@ test_get_iter_fragmented_text_message_being_received (tests.sync.test_messages.A
 get_iter yields a fragmented text message that is partially received. ... ok
 test_get_iter_fragmented_text_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
 get_iter yields a fragmented text message when it is received. ... ok
+test_get_iter_resumes_reading (tests.sync.test_messages.AssemblerTests)
+get_iter resumes reading when queue goes below the high-water mark. ... ok
 test_get_iter_text_message_already_received (tests.sync.test_messages.AssemblerTests)
 get_iter yields a text message that is already received. ... ok
 test_get_iter_text_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
 get_iter yields a text message when it is received. ... ok
+test_get_resumes_reading (tests.sync.test_messages.AssemblerTests)
+get resumes reading when queue goes below the high-water mark. ... ok
 test_get_text_message_already_received (tests.sync.test_messages.AssemblerTests)
 get returns a text message that is already received. ... ok
 test_get_text_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
 get returns a text message when it is received. ... ok
-test_get_with_timeout_completes (tests.sync.test_messages.AssemblerTests)
-get returns a message when it is received before the timeout. ... ok
-test_get_with_timeout_times_out (tests.sync.test_messages.AssemblerTests)
-get raises TimeoutError when no message is received before the timeout. ... ok
+test_get_timeout_after_first_frame (tests.sync.test_messages.AssemblerTests)
+get times out after reading the first frame. ... ok
+test_get_timeout_before_first_frame (tests.sync.test_messages.AssemblerTests)
+get times out before reading the first frame. ... ok
 test_put_fails_after_close (tests.sync.test_messages.AssemblerTests)
 put raises EOFError after close is called. ... ok
-test_put_fails_when_interrupted_by_close (tests.sync.test_messages.AssemblerTests)
-put raises EOFError when close is called. ... ok
-test_put_fails_when_put_is_running (tests.sync.test_messages.AssemblerTests)
-put cannot be called concurrently. ... ok
+test_put_pauses_reading (tests.sync.test_messages.AssemblerTests)
+put pauses reading when queue goes above the high-water mark. ... ok
+test_set_high_and_low_water_mark (tests.sync.test_messages.AssemblerTests)
+high sets the high-water mark and low-water mark. ... ok
+test_set_high_water_mark (tests.sync.test_messages.AssemblerTests)
+high sets the high-water mark. ... ok
+test_set_invalid_high_water_mark (tests.sync.test_messages.AssemblerTests)
+high must be a non-negative integer. ... ok
+test_set_invalid_low_water_mark (tests.sync.test_messages.AssemblerTests)
+low must be higher than high. ... ok
 test_ssl_context_argument (tests.sync.test_server.BackwardsCompatibilityTests)
 Server supports the deprecated ssl_context argument. ... ok
 test_web_socket_server_class (tests.sync.test_server.BackwardsCompatibilityTests) ... ok
@@ -1882,6 +1991,7 @@ test_timeout_elapsed_no_exception (tests.sync.test_utils.DeadlineTests)
 timeout doesn't raise TimeoutError when raise_if_elapsed is disabled. ... ok
 test_timeout_pending (tests.sync.test_utils.DeadlineTests)
 timeout returns remaining time if deadline is in the future. ... ok
+test_headers_class (tests.test_auth.BackwardsCompatibilityTests) ... ok
 test_backoff (tests.test_client.BackoffTests)
 backoff() yields a random delay, then exponentially increasing delays. ... ok
 test_client_connection_class (tests.test_client.BackwardsCompatibilityTests)
@@ -2027,9 +2137,10 @@ test_str (tests.test_datastructures.MultiValueHeadersTests) ... ok
 test_multiple_values_error_str (tests.test_datastructures.MultipleValuesErrorTests) ... ok
 test_connection_closed_attributes_deprecation (tests.test_exceptions.DeprecationTests) ... ok
 test_connection_closed_attributes_deprecation_defaults (tests.test_exceptions.DeprecationTests) ... ok
+test_payload_too_big_with_message (tests.test_exceptions.DeprecationTests) ... ok
 test_str (tests.test_exceptions.ExceptionsTests) ... ok
 test_submodule_exports_are_globally_unique (tests.test_exports.ExportsTests) ... ok
-test_top_level_module_reexports_all_submodule_exports (tests.test_exports.ExportsTests) ... ok
+test_top_level_module_reexports_submodule_exports (tests.test_exports.ExportsTests) ... ok
 test_parse_and_serialize (tests.test_frames.CloseTests) ... ok
 test_parse_empty (tests.test_frames.CloseTests) ... ok
 test_parse_errors (tests.test_frames.CloseTests) ... ok
@@ -2286,12 +2397,16 @@ test_server_sends_pong_after_connection_is_closed (tests.test_protocol.PongTests
 test_server_sends_pong_after_sending_close (tests.test_protocol.PongTests) ... ok
 test_server_sends_pong_with_data (tests.test_protocol.PongTests) ... ok
 test_client_default (tests.test_protocol.TCPCloseTests) ... ok
+test_client_failed_connecting (tests.test_protocol.TCPCloseTests) ... ok
 test_client_fails_connection (tests.test_protocol.TCPCloseTests) ... ok
+test_client_is_connecting (tests.test_protocol.TCPCloseTests) ... ok
 test_client_receives_close (tests.test_protocol.TCPCloseTests) ... ok
 test_client_receives_close_then_eof (tests.test_protocol.TCPCloseTests) ... ok
 test_client_sends_close (tests.test_protocol.TCPCloseTests) ... ok
 test_server_default (tests.test_protocol.TCPCloseTests) ... ok
+test_server_failed_connecting (tests.test_protocol.TCPCloseTests) ... ok
 test_server_fails_connection (tests.test_protocol.TCPCloseTests) ... ok
+test_server_is_connecting (tests.test_protocol.TCPCloseTests) ... ok
 test_server_receives_close (tests.test_protocol.TCPCloseTests) ... ok
 test_server_receives_close_then_eof (tests.test_protocol.TCPCloseTests) ... ok
 test_server_sends_close (tests.test_protocol.TCPCloseTests) ... ok
@@ -2463,7 +2578,7 @@ test_accept_key (tests.test_utils.UtilsTests) ... ok
 test_generate_key (tests.test_utils.UtilsTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 1725 tests
+Ran 1785 tests
 
 OK (skipped=23)
   py$(PYV): OK

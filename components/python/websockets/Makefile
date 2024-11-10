@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		websockets
-HUMAN_VERSION =			13.1
+HUMAN_VERSION =			14.0
 COMPONENT_SUMMARY =		An implementation of the WebSocket Protocol (RFC 6455 & 7692)
 COMPONENT_PROJECT_URL =		https://github.com/python-websockets/websockets
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/python-websockets/websockets/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:39345b087381694ca06c5b2b922aa8c2a54dc8f08fcaee358eafaa2222c4dd22
+	sha256:59d73ef8aab835afebc8f3acf7c7250383f68ac570cf08e455ba9ceeeeb89afa
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
