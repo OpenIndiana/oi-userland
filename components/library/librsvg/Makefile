@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
 COMPONENT_VERSION=	2.59.2
+COMPONENT_REVISION=	1
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/LibRsvg
@@ -43,11 +44,6 @@ LD_OPTIONS=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.noexdata -M /usr/lib/ld
 PATH=                   $(PATH.gnu)
 
 LDFLAGS=		-lsocket
-
-COMPONENT_TEST_TRANSFORMS = \
-	'-n ' \
-	'-e "s/finished in.*s$$//"' \
-    '-e "/^test result:/p" '
 
 # Manually added dependencies
 REQUIRED_PACKAGES += developer/vala
