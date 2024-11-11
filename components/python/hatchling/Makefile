@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatchling
-HUMAN_VERSION =			1.25.0
+HUMAN_VERSION =			1.26.1
 COMPONENT_SUMMARY =		Modern, extensible Python build backend
 COMPONENT_PROJECT_URL =		https://hatch.pypa.io/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7064631a512610b52250a4d3ff1bd81551d6d1431c4eb7b72e734df6c74f4262
+	sha256:8d956592e6c5d5df1f591be1e97a941c7b9ec6fd039f4c8624c29557bac034e9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
