@@ -42,6 +42,9 @@ COMPONENT_PREP_ACTION += $(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
 CARGO_ENV += CARGO_HOME=$(@D)/.cargo
 CARGO_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
+# Some tests fails with the default symlink cloney mode
+CLONEY_MODE = copy
+
 # Build
 COMPONENT_BUILD_CMD = $(CARGO) build
 COMPONENT_BUILD_ARGS += --release
