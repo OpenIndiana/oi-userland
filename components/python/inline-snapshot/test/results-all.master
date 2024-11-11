@@ -4,9 +4,8 @@ cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 377 items
+collecting ... collected 381 items
 
-=============================== inline snapshot ================================
 tests/test_align.py::test_align PASSED
 tests/test_code_repr.py::test_dataclass_field_repr PASSED
 tests/test_code_repr.py::test_datatypes[d0] PASSED
@@ -46,6 +45,7 @@ tests/test_code_repr.py::test_tuple PASSED
 tests/test_code_repr.py::test_type PASSED
 tests/test_config.py::test_config_env PASSED
 tests/test_config.py::test_config_pyproject PASSED
+tests/test_config.py::test_shortcuts PASSED
 tests/test_docs.py::test_docs[CHANGELOG.md] SKIPPED (\r in stdout ca...)
 tests/test_docs.py::test_docs[CONTRIBUTING.md] SKIPPED (\r in stdout...)
 tests/test_docs.py::test_docs[README.md] SKIPPED (\r in stdout can c...)
@@ -78,6 +78,7 @@ tests/test_docs.py::test_docs[extra.py] SKIPPED (\r in stdout can ca...)
 tests/test_docs.py::test_docs[getitem_snapshot.md] SKIPPED (\r in st...)
 tests/test_docs.py::test_docs[in_snapshot.md] SKIPPED (\r in stdout ...)
 tests/test_docs.py::test_docs[index.md] SKIPPED (\r in stdout can ca...)
+tests/test_docs.py::test_docs[limitations.md] SKIPPED (\r in stdout ...)
 tests/test_docs.py::test_docs[outsource.md] SKIPPED (\r in stdout ca...)
 tests/test_docs.py::test_docs[pytest.md] SKIPPED (\r in stdout can c...)
 tests/test_docs.py::test_docs[pytest_plugin.py] SKIPPED (\r in stdou...)
@@ -1261,6 +1262,7 @@ tests/test_preserve_values.py::test_generic [{} -> {0: 8, 1: 8, 2: 8} <fix>] SUB
 tests/test_preserve_values.py::test_no_update_for_dirty_equals PASSED
 tests/test_preserve_values.py::test_preserve_case_from_original_mr PASSED
 tests/test_pydantic.py::test_pydantic_repr PASSED
+tests/test_pypy.py::test_pypy PASSED
 tests/test_pytest_plugin.py::test_assertion_error PASSED
 tests/test_pytest_plugin.py::test_assertion_error_loop PASSED
 tests/test_pytest_plugin.py::test_assertion_error_multiple PASSED
@@ -1275,6 +1277,7 @@ tests/test_pytest_plugin.py::test_equal_check PASSED
 tests/test_pytest_plugin.py::test_fix PASSED
 tests/test_pytest_plugin.py::test_help_message PASSED
 tests/test_pytest_plugin.py::test_multiple PASSED
+tests/test_pytest_plugin.py::test_multiple_report PASSED
 tests/test_pytest_plugin.py::test_persist_unknown_external PASSED
 tests/test_pytest_plugin.py::test_pytest_inlinesnapshot_auto PASSED
 tests/test_pytest_plugin.py::test_run_without_pytest PASSED
@@ -1288,4 +1291,27 @@ tests/test_xdist.py::test_xdist PASSED
 tests/test_xdist.py::test_xdist_and_disable PASSED
 tests/test_xdist.py::test_xdist_disabled PASSED
 
-======== 339 passed, 38 skipped, 903 subtests passed ========
+=============================== warnings summary ===============================
+tests/test_inline_snapshot.py:21
+  $(@D)/tests/test_inline_snapshot.py:21: PytestUnknownMarkWarning: Unknown pytest.mark.no_rewriting - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.no_rewriting
+
+tests/test_inline_snapshot.py:28
+  $(@D)/tests/test_inline_snapshot.py:28: PytestUnknownMarkWarning: Unknown pytest.mark.no_rewriting - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.no_rewriting
+
+tests/test_pypy.py:8
+  $(@D)/tests/test_pypy.py:8: PytestUnknownMarkWarning: Unknown pytest.mark.no_rewriting - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.no_rewriting
+
+tests/test_pytest_plugin.py:253
+  $(@D)/tests/test_pytest_plugin.py:253: PytestUnknownMarkWarning: Unknown pytest.mark.no_rewriting - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.no_rewriting
+
+tests/test_pytest_plugin.py:479
+  $(@D)/tests/test_pytest_plugin.py:479: PytestUnknownMarkWarning: Unknown pytest.mark.no_rewriting - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.no_rewriting
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=============================== inline snapshot ================================
+======== 342 passed, 39 skipped, 5 warnings, 903 subtests passed ========
