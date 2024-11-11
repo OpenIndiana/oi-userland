@@ -152,7 +152,7 @@ COMPONENT_POST_INSTALL_ACTION  = \
         /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf:/usr/lib/mps/amd64"' $$file ; \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf:/usr/lib/mps/amd64"' $$file ; \
     done ; \
-	mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution ; \
+    mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/distribution ; \
     $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/distribution/distribution.ini ; \
     unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/toolkit/content/global/license.html \
     | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
