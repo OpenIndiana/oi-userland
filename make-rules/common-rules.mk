@@ -28,7 +28,9 @@
 # build the configured source
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
+	$(if $(filter none,$(CLONEY_MODE)),,$(ENV) \
+		$(CLONEY_ARGS) $(CLONEY_MODE:%=CLONEY_MODE="%") \
+		$(CLONEY) $(SOURCE_DIR) $(@D))
 	$(COMPONENT_PRE_BUILD_ACTION)
 	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(COMPONENT_BUILD_CMD) $(COMPONENT_BUILD_ARGS))
