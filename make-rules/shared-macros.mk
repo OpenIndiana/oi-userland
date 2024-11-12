@@ -1228,6 +1228,18 @@ CC_BITS =	-m$(BITS)
 # Turn on C99 for gcc
 gcc_C99_ENABLE =	-std=c99
 
+# Turn on C23 for gcc
+#
+# Please note that gcc up to version 14 does not fully support C23 and so
+# __STDC_VERSION__ does not expand to 202311L there, but to 202000L instead.
+# This is not sufficient for turning on C23 in our headers and so we need to
+# define _STDC_C23 as well.  See /usr/include/sys/feature_tests.h for details.
+#
+# Although the -std=c2x option is deprecated (since gcc 14) and -std=c23 should
+# be used instead, it is not available for gcc 13 and older and so we opted to
+# use -std=c2x for compatibility.
+gcc_C23_ENABLE =	-std=c2x -D_STDC_C23
+
 # Control register usage for generated code.  SPARC ABI requires system
 # libraries not to use application registers.
 gcc_XREGS.sparc =	-mno-app-regs
