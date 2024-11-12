@@ -44,7 +44,9 @@ COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 CONFIGURE_OPTIONS += --enable-sbcl-exec
 CONFIGURE_OPTIONS += --enable-quiet-build
 
-COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
+# Remove info/dir
+COMPONENT_POST_INSTALL_ACTION += \
+	$(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
 # Note that the detailed test results are
 # 4 tests failed out of 18,244 total tests.
