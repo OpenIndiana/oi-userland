@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-X workers [1372 items]
+X workers [1375 items]
 
 scheduling tests via LoadScheduling
 
@@ -195,6 +195,7 @@ setuptools/_path.py::mypy PASSED
 setuptools/_path.py::setuptools._path.paths_on_pythonpath PASSED
 setuptools/_path.py::setuptools._path.same_path PASSED
 setuptools/_reqs.py::mypy PASSED
+setuptools/_shutil.py::mypy PASSED
 setuptools/archive_util.py::mypy PASSED
 setuptools/build_meta.py::mypy PASSED
 setuptools/build_meta.py::setuptools.build_meta._ConfigSettingsTranslator._ConfigSettingsTranslator__dist_info_args PASSED
@@ -369,6 +370,7 @@ setuptools/tests/config/test_pyprojecttoml.py::test_include_package_data_by_defa
 setuptools/tests/config/test_pyprojecttoml.py::test_include_package_data_in_setuppy PASSED
 setuptools/tests/config/test_pyprojecttoml.py::test_invalid_example[\n            [project]\n            name = "myproj"\n            version = "1.2"\n            requires = ['pywin32; platform_system=="Windows"' ]\n            -configuration error: .project. must not contain ..requires.. properties] PASSED
 setuptools/tests/config/test_pyprojecttoml.py::test_read_configuration PASSED
+setuptools/tests/config/test_pyprojecttoml.py::test_warn_skipping_validation PASSED
 setuptools/tests/config/test_pyprojecttoml.py::test_warn_tools_typo PASSED
 setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::mypy PASSED
 setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::test_dynamic_dependencies PASSED
@@ -495,7 +497,6 @@ setuptools/tests/test_bdist_wheel.py::test_platform_linux32[linux-aarch64-linux_
 setuptools/tests/test_bdist_wheel.py::test_platform_linux32[linux-x86_64-linux_i686] SKIPPED
 setuptools/tests/test_bdist_wheel.py::test_platform_with_space PASSED
 setuptools/tests/test_bdist_wheel.py::test_preserve_unicode_metadata PASSED
-setuptools/tests/test_bdist_wheel.py::test_rmtree_readonly PASSED
 setuptools/tests/test_bdist_wheel.py::test_unicode_record PASSED
 setuptools/tests/test_bdist_wheel.py::test_universal_deprecated PASSED
 setuptools/tests/test_bdist_wheel.py::test_unix_epoch_timestamps PASSED
@@ -1021,7 +1022,7 @@ setuptools/tests/test_editable_install.py::TestOverallBehaviour::test_editable_i
 setuptools/tests/test_editable_install.py::TestPep420Namespaces::test_namespace_accidental_config_in_lenient_mode PASSED
 setuptools/tests/test_editable_install.py::TestPep420Namespaces::test_namespace_created_via_package_dir[lenient] PASSED
 setuptools/tests/test_editable_install.py::TestPep420Namespaces::test_namespace_created_via_package_dir[strict] PASSED
-setuptools/tests/test_editable_install.py::TestPep420Namespaces::test_namespace_package_importable[lenient] $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:116: CoverageWarning: Couldn't parse '/tmp/easy_install-7t_uqasp/setup.py': No source for code: '/tmp/easy_install-7t_uqasp/setup.py'. (couldnt-parse) PASSED
+setuptools/tests/test_editable_install.py::TestPep420Namespaces::test_namespace_package_importable[lenient] PASSED
 setuptools/tests/test_editable_install.py::TestPep420Namespaces::test_namespace_package_importable[strict] PASSED
 setuptools/tests/test_editable_install.py::mypy PASSED
 setuptools/tests/test_editable_install.py::test_compat_install PASSED
@@ -1324,6 +1325,8 @@ setuptools/tests/test_setuptools.py::test_findall_missing_symlink PASSED
 setuptools/tests/test_setuptools.py::test_its_own_wheel_does_not_contain_tests XFAIL
 setuptools/tests/test_setuptools.py::test_wheel_includes_cli_scripts PASSED
 setuptools/tests/test_setuptools.py::test_wheel_includes_vendored_metadata PASSED
+setuptools/tests/test_shutil_wrapper.py::mypy PASSED
+setuptools/tests/test_shutil_wrapper.py::test_rmtree_readonly PASSED
 setuptools/tests/test_unicode_utils.py::mypy PASSED
 setuptools/tests/test_unicode_utils.py::test_filesys_decode_fs_encoding_is_None PASSED
 setuptools/tests/test_virtualenv.py::mypy PASSED
@@ -1367,7 +1370,7 @@ setuptools/tests/test_wheel.py::test_wheel_mode PASSED
 setuptools/tests/test_wheel.py::test_wheel_no_dist_dir PASSED
 setuptools/tests/test_windows_wrappers.py::TestCLI::test_basic SKIPPED
 setuptools/tests/test_windows_wrappers.py::TestCLI::test_symlink SKIPPED
-setuptools/tests/test_windows_wrappers.py::TestCLI::test_with_options SKIPPED
+setuptools/tests/test_windows_wrappers.py::TestCLI::test_with_options $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:116: CoverageWarning: Couldn't parse '/tmp/easy_install-c6nzg67h/setup.py': No source for code: '/tmp/easy_install-c6nzg67h/setup.py'. (couldnt-parse) SKIPPED
 setuptools/tests/test_windows_wrappers.py::TestGUI::test_basic SKIPPED
 setuptools/tests/test_windows_wrappers.py::mypy PASSED
 setuptools/tests/text.py::mypy PASSED
@@ -1385,7 +1388,7 @@ tools/vendored.py::mypy PASSED
 
 ===================================== mypy =====================================
 
-Success: no issues found in 139 source files
-======== 1256 passed, 111 skipped, 4 xfailed, 1 xpassed ========
+Success: no issues found in 141 source files
+======== 1259 passed, 111 skipped, 4 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)
