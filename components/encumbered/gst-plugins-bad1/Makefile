@@ -17,32 +17,26 @@
 #
 
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         gst-plugins-bad1
-COMPONENT_VERSION=      1.22.10
-COMPONENT_REVISION=		1
+COMPONENT_NAME=		gst-plugins-bad
+COMPONENT_VERSION=	1.24.9
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
-COMPONENT_SRC_NAME=	gst-plugins-bad
-COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:dabcd60c762165bb043eba753d599212514c94684e4db9a2e25484cb6508ebbf
+COMPONENT_ARCHIVE_HASH=	sha256:36fcf7a9af0a753b43bb03b9835246f74d72f7124369e66a1e2dc7b04f5a5cab
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/bad
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
-
-CFLAGS += -I/usr/X11/include/mesa
-CFLAGS += -I/usr/X11/include
-
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dexamples=disabled
 CONFIGURE_OPTIONS += -Dopenexr=enabled
 CONFIGURE_OPTIONS += -Dintrospection=enabled
@@ -53,25 +47,17 @@ CONFIGURE_OPTIONS += -Dspandsp=disabled
 # Openh264 has no licensing issues but needs some porting
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CXX="$(CXX)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
-COMPONENT_INSTALL_ENV += CC="$(CC)"
-COMPONENT_INSTALL_ENV += CXX="$(CXX)"
-COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += CXXFLAGS="$(CXXFLAGS)"
+# Dynamic library version number
+SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION)))).0
+SOVER_RE = $(subst .,\.,$(SOVER))
 
-COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 
-# As test results keep only everything between the lines containing Ok: and Timeout:
-COMPONENT_TEST_TRANSFORMS += \
-    '-n ' \
-    '-e "/^Ok:/,/^Timeout:/p" '
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Build dependencies
-# gstkcms now required libdrm >= 2.4.98, so not currently being built
 REQUIRED_PACKAGES += system/header/header-drm
 # Introspection
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
@@ -79,6 +65,7 @@ REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += audio/faac
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += compress/bzip2
@@ -104,14 +91,13 @@ REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/opus
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libdvdnav
 REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/x265
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += video/rtmpdump
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
