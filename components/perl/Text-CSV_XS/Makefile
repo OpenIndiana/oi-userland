@@ -19,12 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Text::CSV_XS
-HUMAN_VERSION =			1.56
+HUMAN_VERSION =			1.57
 COMPONENT_SUMMARY =		Text::CSV_XS - comma-separated values manipulation routines
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Text-CSV_XS-1.56.tgz
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Text-CSV_XS-1.57.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6457894075b2cb3dece3d08657e789123803e9c20d25708a41eb41ae272bf4fb
+	sha256:54dd63feb59e80d2ec596ac6bd8f8f80eb2042099fb68e35f3b47901c768621f
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
