@@ -13,37 +13,36 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         gst-rtsp-server1
-COMPONENT_VERSION=      1.22.10
+COMPONENT_NAME=		gst-rtsp-server
+COMPONENT_VERSION=	1.24.9
 COMPONENT_SUMMARY=      Multimedia graph framework - rtsp server
-COMPONENT_SRC_NAME=		gst-rtsp-server
-COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:60eb4f80b5a7ca929c21a61d50be9813a3413787959a5875de56a8ad5ca25f35
+COMPONENT_ARCHIVE_HASH=	sha256:299c9aafac3c91bbebe4cd481ed4e4ade8cb2b0677097bc4a8dcf6d4364c9804
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/rtsp-server
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+# Dynamic library version number
+SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION)))).0
+SOVER_RE = $(subst .,\.,$(SOVER))
 
-# gobject-introspection
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 
-# As test results keep only everything between the lines containing Ok: and Timeout:
-COMPONENT_TEST_TRANSFORMS += \
-    '-n ' \
-    '-e "/^Ok:/,/^Timeout:/p" '
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
