@@ -18,45 +18,32 @@
 #
 
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-libav
-COMPONENT_VERSION=      1.22.12
+COMPONENT_VERSION=	1.24.9
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:3b60d4cac2fbcd085a93e9389ca23e0443bee1ca75574d31d4f12bb1bbecab48
+COMPONENT_ARCHIVE_HASH=	sha256:32682e9ae508ee01f4fb134b3a520081e2ac007220997577624b1d16171d456c
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/libav
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
-
-# We need to force compilation with ffmpeg 6
-# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3378
-FFMPEG_VERSION = 6
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
-
-CFLAGS += -I/usr/X11/include/mesa
-CFLAGS += -I/usr/X11/include
-
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
-# As test results keep only everything between the lines containing Ok: and Timeout:
-COMPONENT_TEST_TRANSFORMS += \
-    '-n ' \
-    '-e "/^Ok:/,/^Timeout:/p" '
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += developer/ffmpeg-6
+REQUIRED_PACKAGES += developer/ffmpeg-7
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
-REQUIRED_PACKAGES += library/ffmpeg-6
+REQUIRED_PACKAGES += library/ffmpeg-7
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
