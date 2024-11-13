@@ -13,32 +13,26 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gst-editing-services1
-COMPONENT_VERSION=	1.22.10
+COMPONENT_NAME=		gst-editing-services
+COMPONENT_VERSION=	1.24.9
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
-COMPONENT_SRC_NAME=	gst-editing-services
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:bfb1ee1b352dd4d929c3a5b7fe19071a6c62b4828bb70318ad44bcf06828e9f0
+COMPONENT_ARCHIVE_HASH=	sha256:07506e53bec6c54ec1dfaa5033bad8df42d2f217451822b4c8bf783ef8a27012
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI=		library/audio/gstreamer1/editing-services
-COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
-
-PATH = $(PATH.gnu)
-
-# gobject-introspection
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # We use python vendor-packages instead of site-packages
 COMPONENT_POST_INSTALL_ACTION += \
@@ -46,19 +40,24 @@ COMPONENT_POST_INSTALL_ACTION += \
     $(RM) -r vendor-packages ; \
     $(MV) site-packages vendor-packages ;
 
-# As test results keep only everything between the lines containing Ok: and Timeout:
-COMPONENT_TEST_TRANSFORMS += \
-    '-n ' \
-    '-e "/^Ok:/,/^Timeout:/p" '
+# Dynamic library version number
+SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION)))).0
+SOVER_RE = $(subst .,\.,$(SOVER))
+
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Dependencies not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
-REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
