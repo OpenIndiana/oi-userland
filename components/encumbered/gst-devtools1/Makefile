@@ -13,48 +13,48 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         gst-devtools1
-COMPONENT_VERSION=      1.22.10
+COMPONENT_NAME=		gst-devtools
+COMPONENT_VERSION=	1.24.9
 COMPONENT_SUMMARY=      Multimedia graph framework - devtools
-COMPONENT_SRC_NAME=		gst-devtools
-COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:0e1ec0d0b8f2d3d314a397399cd01dfc50c02ac088176996f934758119075ea9
+COMPONENT_ARCHIVE_HASH=	sha256:cf1de1aafa6eb4fd0365932b251528e2340b88697541e021628c5f7259970fb8
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/devtools
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE=	LGPL-2.1-only
+COMPONENT_LICENSE_FILE=	validate/COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PYTHON_SCRIPTS += usr/bin/gst-validate-launcher
 
-# gobject-introspection
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# Python modules are installed in non-default location so make sure pkgdepend
+# is able to find them
+PKGDEPEND_RUNPATH += $(PROTOUSRLIBDIR64)/gst-validate-launcher/python
 
-# pkgdepend doesn't like the first line of a Python script to be:
-# '#!/usr/bin/env python3' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
-#
-COMPONENT_POST_INSTALL_ACTION += \
-    $(GSED) -i -e 's?env python3?python$(PYTHON_VERSION)?' \
-	$(PROTOUSRBINDIR)/gst-validate-launcher;
+# Dynamic library version number
+SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION)))).0
+SOVER_RE = $(subst .,\.,$(SOVER))
 
-# As test results keep only everything between the lines containing Ok: and Timeout:
-COMPONENT_TEST_TRANSFORMS += \
-    '-n ' \
-    '-e "/^Ok:/,/^Timeout:/p" '
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
