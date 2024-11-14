@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pinentry
 COMPONENT_VERSION=	1.3.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	A small utility for entering passwords.
 COMPONENT_DESCRIPTION=	A small collection of dialog programs that allow GnuPG to read passphrases and PIN numbers in a secure manner.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -60,8 +60,6 @@ CONFIGURE_ENV += LIBS="$(LIBS)"
 # Following line is required if FLTK pinentry is to be shipped
 # CONFIGURE_ENV +=	FLTK_CONFIG="$(USRBINDIR.$(BITS))/fltk-config"
 
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-libsecret
 CONFIGURE_OPTIONS += --enable-pinentry-curses
 CONFIGURE_OPTIONS += --enable-ncurses
@@ -73,14 +71,14 @@ CONFIGURE_OPTIONS += --disable-pinentry-gnome3
 CONFIGURE_OPTIONS += --disable-pinentry-qt
 
 install: $(INSTALL_64)
-	$(MKDIR) $(PROTOUSRLIBDIR)
+	$(MKDIR) $(PROTOUSRLIBEXECDIR)
 	if test -f $(PROTOUSRBINDIR)/pinentry-curses ; then \
-	$(MV) $(PROTOUSRBINDIR)/pinentry-curses $(PROTOUSRLIBDIR)/ ; fi
+	$(MV) $(PROTOUSRBINDIR)/pinentry-curses $(PROTOUSRLIBEXECDIR)/ ; fi
 	if test -f $(PROTOUSRBINDIR)/pinentry-gtk-2 ; then \
-	$(MV) $(PROTOUSRBINDIR)/pinentry-gtk-2 $(PROTOUSRLIBDIR)/ ; fi
+	$(MV) $(PROTOUSRBINDIR)/pinentry-gtk-2 $(PROTOUSRLIBEXECDIR)/ ; fi
 	if test -f $(PROTOUSRBINDIR)/pinentry-emacs ; then \
-	$(MV) $(PROTOUSRBINDIR)/pinentry-emacs $(PROTOUSRLIBDIR)/ ; fi
-	cd $(PROTOUSRLIBDIR) && ln -sf pinentry-gtk-2 pinentry
+	$(MV) $(PROTOUSRBINDIR)/pinentry-emacs $(PROTOUSRLIBEXECDIR)/ ; fi
+	cd $(PROTOUSRLIBEXECDIR) && ln -sf pinentry-gtk-2 pinentry
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk2
