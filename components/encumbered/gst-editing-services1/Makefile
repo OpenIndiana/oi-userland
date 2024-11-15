@@ -53,6 +53,7 @@ PKG_MACROS += SOVER=$(SOVER)
 # Dependencies not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
+REQUIRED_PACKAGES += utility/bash-completion
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
