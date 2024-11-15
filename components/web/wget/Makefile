@@ -23,20 +23,19 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wget
-COMPONENT_VERSION=      1.24.5
-COMPONENT_SUMMARY=		GNU wget - a utility to retrieve files from the World Wide Web
+COMPONENT_VERSION=      1.25.0
+COMPONENT_SUMMARY=	GNU wget - a utility to retrieve files from the World Wide Web
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH= sha256:57a107151e4ef94fdf94affecfac598963f372f13293ed9c74032105390b36ee
+COMPONENT_ARCHIVE_HASH= sha256:19225cc756b0a088fc81148dc6a40a0c8f329af7fd8483f1c7b2fe50f4e08a1f
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=			web/wget
+COMPONENT_FMRI=		web/wget
 COMPONENT_CLASSIFICATION= Applications/Internet
-COMPONENT_LICENSE=		GPLv3, FDLv1.2
+COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -66,10 +65,9 @@ TEST_REQUIRED_PACKAGES += library/perl-5/http-daemon
 TEST_REQUIRED_PACKAGES += library/perl-5/http-message
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libpsl
-REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
