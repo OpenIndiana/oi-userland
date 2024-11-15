@@ -56,7 +56,11 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ; \
 	fi ;
 
-# Generate raw lists of hatch, pdm, pipenv, and poetry test dependencies per Python version
+# Generate raw list of hatch, pdm, pep735, pipenv, and poetry test dependencies
+# per Python version.
+#
+# Please note we set PATH below for tox to workaround
+# https://github.com/tox-dev/tox/issues/2538
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 	cfg=$(BUILD_DIR)/pyproject_deps-$(PYTHON_VERSION).json ; \
@@ -67,6 +71,15 @@ COMPONENT_POST_INSTALL_ACTION += \
 	for p in $(TEST_REQUIREMENTS_PDM) ; do \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pdm_$$p pdm $$p ; \
 	done ; \
+	for p in $(TEST_REQUIREMENTS_PEP735) ; do \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
+	done ; \
+	if [ "$(strip $(TEST_STYLE))" == "tox" -a -x "$(TOX)" ] ; then \
+		for p in $$(PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV)) ; do \
+				$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
+		done ; \
+	fi ; \
 	for p in $(TEST_REQUIREMENTS_PIPENV) ; do \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pipenv_$$p pipenv Pipfile $$p ; \
 	done ; \
@@ -75,8 +88,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done ; \
 	if [ -f $$cfg ] ; then \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg sync ; \
-		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg eval --depformat '$$nname' \
-			>> $(@D)/.depend-test ; \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg eval \
+			| $(PYTHON) $(WS_TOOLS)/python-requires - >> $(@D)/.depend-test ; \
 	fi ;
 
 # Add build dependencies from project metadata to REQUIRED_PACKAGES
