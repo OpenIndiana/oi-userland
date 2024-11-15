@@ -142,7 +142,8 @@ test_broadcast_type_error (tests.asyncio.test_connection.ClientConnectionTests)
 broadcast raises TypeError when called with an unsupported type. ... ok
 test_close (tests.asyncio.test_connection.ClientConnectionTests)
 close sends a close frame. ... ok
-test_close_does_not_wait_for_recv (tests.asyncio.test_connection.ClientConnectionTests) ... ok
+test_close_code (tests.asyncio.test_connection.ClientConnectionTests)
+Connection has a close_code attribute. ... ok
 test_close_during_recv (tests.asyncio.test_connection.ClientConnectionTests)
 close aborts recv when called concurrently with recv. ... ok
 test_close_during_send (tests.asyncio.test_connection.ClientConnectionTests)
@@ -155,6 +156,10 @@ test_close_no_timeout_waits_for_close_frame (tests.asyncio.test_connection.Clien
 close without timeout waits for a close frame (then EOF) before returning. ... ok
 test_close_no_timeout_waits_for_connection_closed (tests.asyncio.test_connection.ClientConnectionTests)
 close without timeout waits for EOF before returning. ... ok
+test_close_preserves_queued_messages (tests.asyncio.test_connection.ClientConnectionTests)
+close preserves messages buffered in the assembler. ... ok
+test_close_reason (tests.asyncio.test_connection.ClientConnectionTests)
+Connection has a close_reason attribute. ... ok
 test_close_timeout (tests.asyncio.test_connection.ClientConnectionTests)
 close_timeout parameter configures close timeout. ... ok
 test_close_timeout_waiting_for_close_frame (tests.asyncio.test_connection.ClientConnectionTests)
@@ -188,9 +193,11 @@ Connection provides a local_address attribute. ... ok
 test_logger (tests.asyncio.test_connection.ClientConnectionTests)
 Connection has a logger attribute. ... ok
 test_max_queue (tests.asyncio.test_connection.ClientConnectionTests)
-max_queue parameter configures high-water mark of frames buffer. ... ok
+max_queue configures high-water mark of frames buffer. ... ok
+test_max_queue_none (tests.asyncio.test_connection.ClientConnectionTests)
+max_queue disables high-water mark of frames buffer. ... ok
 test_max_queue_tuple (tests.asyncio.test_connection.ClientConnectionTests)
-max_queue parameter configures high-water mark of frames buffer. ... ok
+max_queue configures high-water and low-water marks of frames buffer. ... ok
 test_ping (tests.asyncio.test_connection.ClientConnectionTests)
 ping sends a ping frame with a random payload. ... ok
 test_ping_duplicate_payload (tests.asyncio.test_connection.ClientConnectionTests)
@@ -383,7 +390,8 @@ test_broadcast_type_error (tests.asyncio.test_connection.ServerConnectionTests)
 broadcast raises TypeError when called with an unsupported type. ... ok
 test_close (tests.asyncio.test_connection.ServerConnectionTests)
 close sends a close frame. ... ok
-test_close_does_not_wait_for_recv (tests.asyncio.test_connection.ServerConnectionTests) ... ok
+test_close_code (tests.asyncio.test_connection.ServerConnectionTests)
+Connection has a close_code attribute. ... ok
 test_close_during_recv (tests.asyncio.test_connection.ServerConnectionTests)
 close aborts recv when called concurrently with recv. ... ok
 test_close_during_send (tests.asyncio.test_connection.ServerConnectionTests)
@@ -396,6 +404,10 @@ test_close_no_timeout_waits_for_close_frame (tests.asyncio.test_connection.Serve
 close without timeout waits for a close frame (then EOF) before returning. ... ok
 test_close_no_timeout_waits_for_connection_closed (tests.asyncio.test_connection.ServerConnectionTests)
 close without timeout waits for EOF before returning. ... skipped 'only relevant on the client-side'
+test_close_preserves_queued_messages (tests.asyncio.test_connection.ServerConnectionTests)
+close preserves messages buffered in the assembler. ... ok
+test_close_reason (tests.asyncio.test_connection.ServerConnectionTests)
+Connection has a close_reason attribute. ... ok
 test_close_timeout (tests.asyncio.test_connection.ServerConnectionTests)
 close_timeout parameter configures close timeout. ... ok
 test_close_timeout_waiting_for_close_frame (tests.asyncio.test_connection.ServerConnectionTests)
@@ -429,9 +441,11 @@ Connection provides a local_address attribute. ... ok
 test_logger (tests.asyncio.test_connection.ServerConnectionTests)
 Connection has a logger attribute. ... ok
 test_max_queue (tests.asyncio.test_connection.ServerConnectionTests)
-max_queue parameter configures high-water mark of frames buffer. ... ok
+max_queue configures high-water mark of frames buffer. ... ok
+test_max_queue_none (tests.asyncio.test_connection.ServerConnectionTests)
+max_queue disables high-water mark of frames buffer. ... ok
 test_max_queue_tuple (tests.asyncio.test_connection.ServerConnectionTests)
-max_queue parameter configures high-water mark of frames buffer. ... ok
+max_queue configures high-water and low-water marks of frames buffer. ... ok
 test_ping (tests.asyncio.test_connection.ServerConnectionTests)
 ping sends a ping frame with a random payload. ... ok
 test_ping_duplicate_payload (tests.asyncio.test_connection.ServerConnectionTests)
@@ -592,6 +606,8 @@ test_get_binary_message_not_received_yet (tests.asyncio.test_messages.AssemblerT
 get returns a binary message when it is received. ... ok
 test_get_decoded_binary_message (tests.asyncio.test_messages.AssemblerTests)
 get returns a binary message with UTF-8 decoding. ... ok
+test_get_does_not_resume_reading (tests.asyncio.test_messages.AssemblerTests)
+get does not resume reading when the low-water mark is unset. ... ok
 test_get_encoded_text_message (tests.asyncio.test_messages.AssemblerTests)
 get returns a text message without UTF-8 decoding. ... ok
 test_get_fails_after_close (tests.asyncio.test_messages.AssemblerTests)
@@ -620,6 +636,8 @@ test_get_iter_binary_message_not_received_yet (tests.asyncio.test_messages.Assem
 get_iter yields a binary message when it is received. ... ok
 test_get_iter_decoded_binary_message (tests.asyncio.test_messages.AssemblerTests)
 get_iter yields a binary message with UTF-8 decoding. ... ok
+test_get_iter_does_not_resume_reading (tests.asyncio.test_messages.AssemblerTests)
+get_iter does not resume reading when the low-water mark is unset. ... ok
 test_get_iter_encoded_text_message (tests.asyncio.test_messages.AssemblerTests)
 get_iter yields a text message without UTF-8 decoding. ... ok
 test_get_iter_fails_after_close (tests.asyncio.test_messages.AssemblerTests)
@@ -642,36 +660,50 @@ test_get_iter_fragmented_text_message_being_received (tests.asyncio.test_message
 get_iter yields a fragmented text message that is partially received. ... ok
 test_get_iter_fragmented_text_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
 get_iter yields a fragmented text message when it is received. ... ok
+test_get_iter_partially_queued_fragmented_message_after_close (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a partial fragmented message after close is called. ... ok
+test_get_iter_queued_fragmented_message_after_close (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a fragmented message after close is called. ... ok
+test_get_iter_queued_message_after_close (tests.asyncio.test_messages.AssemblerTests)
+get_iter yields a message after close is called. ... ok
 test_get_iter_resumes_reading (tests.asyncio.test_messages.AssemblerTests)
-get_iter resumes reading when queue goes below the high-water mark. ... ok
+get_iter resumes reading when queue goes below the low-water mark. ... ok
 test_get_iter_text_message_already_received (tests.asyncio.test_messages.AssemblerTests)
 get_iter yields a text message that is already received. ... ok
 test_get_iter_text_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
 get_iter yields a text message when it is received. ... ok
+test_get_partially_queued_fragmented_message_after_close (tests.asyncio.test_messages.AssemblerTests)
+get raises EOF on a partial fragmented message after close is called. ... ok
+test_get_queued_fragmented_message_after_close (tests.asyncio.test_messages.AssemblerTests)
+get reassembles a fragmented message after close is called. ... ok
+test_get_queued_message_after_close (tests.asyncio.test_messages.AssemblerTests)
+get returns a message after close is called. ... ok
 test_get_resumes_reading (tests.asyncio.test_messages.AssemblerTests)
-get resumes reading when queue goes below the high-water mark. ... ok
+get resumes reading when queue goes below the low-water mark. ... ok
 test_get_text_message_already_received (tests.asyncio.test_messages.AssemblerTests)
 get returns a text message that is already received. ... ok
 test_get_text_message_not_received_yet (tests.asyncio.test_messages.AssemblerTests)
 get returns a text message when it is received. ... ok
+test_put_does_not_pause_reading (tests.asyncio.test_messages.AssemblerTests)
+put does not pause reading when the high-water mark is unset. ... ok
 test_put_fails_after_close (tests.asyncio.test_messages.AssemblerTests)
 put raises EOFError after close is called. ... ok
 test_put_pauses_reading (tests.asyncio.test_messages.AssemblerTests)
 put pauses reading when queue goes above the high-water mark. ... ok
-test_set_high_and_low_water_mark (tests.asyncio.test_messages.AssemblerTests)
-high sets the high-water mark and low-water mark. ... ok
+test_set_high_and_low_water_marks (tests.asyncio.test_messages.AssemblerTests)
+high and low set the high-water and low-water marks. ... ok
 test_set_high_water_mark (tests.asyncio.test_messages.AssemblerTests)
-high sets the high-water mark. ... ok
+high sets the high-water and low-water marks. ... ok
 test_set_invalid_high_water_mark (tests.asyncio.test_messages.AssemblerTests)
 high must be a non-negative integer. ... ok
 test_set_invalid_low_water_mark (tests.asyncio.test_messages.AssemblerTests)
 low must be higher than high. ... ok
+test_set_low_water_mark (tests.asyncio.test_messages.AssemblerTests)
+low sets the low-water and high-water marks. ... ok
+test_unset_high_and_low_water_marks (tests.asyncio.test_messages.AssemblerTests)
+High-water and low-water marks are unset. ... ok
 test_abort (tests.asyncio.test_messages.SimpleQueueTests)
 abort throws an exception in get. ... ok
-test_abort_clears_queue (tests.asyncio.test_messages.SimpleQueueTests)
-abort clears buffered data from the queue. ... ok
-test_get_concurrently (tests.asyncio.test_messages.SimpleQueueTests)
-get cannot be called concurrently. ... ok
 test_get_then_put (tests.asyncio.test_messages.SimpleQueueTests)
 get returns an item when it is put. ... ok
 test_len (tests.asyncio.test_messages.SimpleQueueTests)
@@ -1476,7 +1508,8 @@ test_acknowledge_previous_ping (tests.sync.test_connection.ClientConnectionTests
 ping is acknowledged by a pong with the same payload as a later ping. ... ok
 test_close (tests.sync.test_connection.ClientConnectionTests)
 close sends a close frame. ... ok
-test_close_does_not_wait_for_recv (tests.sync.test_connection.ClientConnectionTests) ... ok
+test_close_code (tests.sync.test_connection.ClientConnectionTests)
+Connection has a close_code attribute. ... ok
 test_close_during_recv (tests.sync.test_connection.ClientConnectionTests)
 close aborts recv when called concurrently with recv. ... ok
 test_close_during_send (tests.sync.test_connection.ClientConnectionTests)
@@ -1487,6 +1520,10 @@ test_close_idempotency (tests.sync.test_connection.ClientConnectionTests)
 close does nothing if the connection is already closed. ... ok
 test_close_idempotency_race_condition (tests.sync.test_connection.ClientConnectionTests)
 close waits if the connection is already closing. ... ok
+test_close_preserves_queued_messages (tests.sync.test_connection.ClientConnectionTests)
+close preserves messages buffered in the assembler. ... ok
+test_close_reason (tests.sync.test_connection.ClientConnectionTests)
+Connection has a close_reason attribute. ... ok
 test_close_timeout (tests.sync.test_connection.ClientConnectionTests)
 close_timeout parameter configures close timeout. ... ok
 test_close_timeout_waiting_for_close_frame (tests.sync.test_connection.ClientConnectionTests)
@@ -1520,9 +1557,11 @@ Connection provides a local_address attribute. ... ok
 test_logger (tests.sync.test_connection.ClientConnectionTests)
 Connection has a logger attribute. ... ok
 test_max_queue (tests.sync.test_connection.ClientConnectionTests)
-max_queue parameter configures high-water mark of frames buffer. ... ok
+max_queue configures high-water mark of frames buffer. ... ok
+test_max_queue_none (tests.sync.test_connection.ClientConnectionTests)
+max_queue disables high-water mark of frames buffer. ... ok
 test_max_queue_tuple (tests.sync.test_connection.ClientConnectionTests)
-max_queue parameter configures high-water mark of frames buffer. ... ok
+max_queue configures high-water and low-water marks of frames buffer. ... ok
 test_ping (tests.sync.test_connection.ClientConnectionTests)
 ping sends a ping frame with a random payload. ... ok
 test_ping_duplicate_payload (tests.sync.test_connection.ClientConnectionTests)
@@ -1625,6 +1664,8 @@ test_send_unsupported_iterable (tests.sync.test_connection.ClientConnectionTests
 send raises TypeError when called with an iterable of unsupported type. ... ok
 test_send_unsupported_type (tests.sync.test_connection.ClientConnectionTests)
 send raises TypeError when called with an unsupported type. ... ok
+test_state (tests.sync.test_connection.ClientConnectionTests)
+Connection has a state attribute. ... ok
 test_subprotocol (tests.sync.test_connection.ClientConnectionTests)
 Connection has a subprotocol attribute. ... ok
 test_unexpected_failure_in_recv_events (tests.sync.test_connection.ClientConnectionTests)
@@ -1643,7 +1684,8 @@ test_acknowledge_previous_ping (tests.sync.test_connection.ServerConnectionTests
 ping is acknowledged by a pong with the same payload as a later ping. ... ok
 test_close (tests.sync.test_connection.ServerConnectionTests)
 close sends a close frame. ... ok
-test_close_does_not_wait_for_recv (tests.sync.test_connection.ServerConnectionTests) ... ok
+test_close_code (tests.sync.test_connection.ServerConnectionTests)
+Connection has a close_code attribute. ... ok
 test_close_during_recv (tests.sync.test_connection.ServerConnectionTests)
 close aborts recv when called concurrently with recv. ... ok
 test_close_during_send (tests.sync.test_connection.ServerConnectionTests)
@@ -1654,6 +1696,10 @@ test_close_idempotency (tests.sync.test_connection.ServerConnectionTests)
 close does nothing if the connection is already closed. ... ok
 test_close_idempotency_race_condition (tests.sync.test_connection.ServerConnectionTests)
 close waits if the connection is already closing. ... ok
+test_close_preserves_queued_messages (tests.sync.test_connection.ServerConnectionTests)
+close preserves messages buffered in the assembler. ... ok
+test_close_reason (tests.sync.test_connection.ServerConnectionTests)
+Connection has a close_reason attribute. ... ok
 test_close_timeout (tests.sync.test_connection.ServerConnectionTests)
 close_timeout parameter configures close timeout. ... ok
 test_close_timeout_waiting_for_close_frame (tests.sync.test_connection.ServerConnectionTests)
@@ -1687,9 +1733,11 @@ Connection provides a local_address attribute. ... ok
 test_logger (tests.sync.test_connection.ServerConnectionTests)
 Connection has a logger attribute. ... ok
 test_max_queue (tests.sync.test_connection.ServerConnectionTests)
-max_queue parameter configures high-water mark of frames buffer. ... ok
+max_queue configures high-water mark of frames buffer. ... ok
+test_max_queue_none (tests.sync.test_connection.ServerConnectionTests)
+max_queue disables high-water mark of frames buffer. ... ok
 test_max_queue_tuple (tests.sync.test_connection.ServerConnectionTests)
-max_queue parameter configures high-water mark of frames buffer. ... ok
+max_queue configures high-water and low-water marks of frames buffer. ... ok
 test_ping (tests.sync.test_connection.ServerConnectionTests)
 ping sends a ping frame with a random payload. ... ok
 test_ping_duplicate_payload (tests.sync.test_connection.ServerConnectionTests)
@@ -1792,6 +1840,8 @@ test_send_unsupported_iterable (tests.sync.test_connection.ServerConnectionTests
 send raises TypeError when called with an iterable of unsupported type. ... ok
 test_send_unsupported_type (tests.sync.test_connection.ServerConnectionTests)
 send raises TypeError when called with an unsupported type. ... ok
+test_state (tests.sync.test_connection.ServerConnectionTests)
+Connection has a state attribute. ... ok
 test_subprotocol (tests.sync.test_connection.ServerConnectionTests)
 Connection has a subprotocol attribute. ... ok
 test_unexpected_failure_in_recv_events (tests.sync.test_connection.ServerConnectionTests)
@@ -1810,6 +1860,8 @@ test_get_binary_message_not_received_yet (tests.sync.test_messages.AssemblerTest
 get returns a binary message when it is received. ... ok
 test_get_decoded_binary_message (tests.sync.test_messages.AssemblerTests)
 get returns a binary message with UTF-8 decoding. ... ok
+test_get_does_not_resume_reading (tests.sync.test_messages.AssemblerTests)
+get does not resume reading when the low-water mark is unset. ... ok
 test_get_encoded_text_message (tests.sync.test_messages.AssemblerTests)
 get returns a text message without UTF-8 decoding. ... ok
 test_get_fails_after_close (tests.sync.test_messages.AssemblerTests)
@@ -1838,6 +1890,8 @@ test_get_iter_binary_message_not_received_yet (tests.sync.test_messages.Assemble
 get_iter yields a binary message when it is received. ... ok
 test_get_iter_decoded_binary_message (tests.sync.test_messages.AssemblerTests)
 get_iter yields a binary message with UTF-8 decoding. ... ok
+test_get_iter_does_not_resume_reading (tests.sync.test_messages.AssemblerTests)
+get_iter does not resume reading when the low-water mark is unset. ... ok
 test_get_iter_encoded_text_message (tests.sync.test_messages.AssemblerTests)
 get_iter yields a text message without UTF-8 decoding. ... ok
 test_get_iter_fails_after_close (tests.sync.test_messages.AssemblerTests)
@@ -1860,14 +1914,26 @@ test_get_iter_fragmented_text_message_being_received (tests.sync.test_messages.A
 get_iter yields a fragmented text message that is partially received. ... ok
 test_get_iter_fragmented_text_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
 get_iter yields a fragmented text message when it is received. ... ok
+test_get_iter_partially_queued_fragmented_message_after_close (tests.sync.test_messages.AssemblerTests)
+get_iter yields a partial fragmented message after close is called. ... ok
+test_get_iter_queued_fragmented_message_after_close (tests.sync.test_messages.AssemblerTests)
+get_iter yields a fragmented message after close is called. ... ok
+test_get_iter_queued_message_after_close (tests.sync.test_messages.AssemblerTests)
+get_iter yields a message after close is called. ... ok
 test_get_iter_resumes_reading (tests.sync.test_messages.AssemblerTests)
-get_iter resumes reading when queue goes below the high-water mark. ... ok
+get_iter resumes reading when queue goes below the low-water mark. ... ok
 test_get_iter_text_message_already_received (tests.sync.test_messages.AssemblerTests)
 get_iter yields a text message that is already received. ... ok
 test_get_iter_text_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
 get_iter yields a text message when it is received. ... ok
+test_get_partially_queued_fragmented_message_after_close (tests.sync.test_messages.AssemblerTests)
+get raises EOF on a partial fragmented message after close is called. ... ok
+test_get_queued_fragmented_message_after_close (tests.sync.test_messages.AssemblerTests)
+get reassembles a fragmented message after close is called. ... ok
+test_get_queued_message_after_close (tests.sync.test_messages.AssemblerTests)
+get returns a message after close is called. ... ok
 test_get_resumes_reading (tests.sync.test_messages.AssemblerTests)
-get resumes reading when queue goes below the high-water mark. ... ok
+get resumes reading when queue goes below the low-water mark. ... ok
 test_get_text_message_already_received (tests.sync.test_messages.AssemblerTests)
 get returns a text message that is already received. ... ok
 test_get_text_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
@@ -1876,18 +1942,24 @@ test_get_timeout_after_first_frame (tests.sync.test_messages.AssemblerTests)
 get times out after reading the first frame. ... ok
 test_get_timeout_before_first_frame (tests.sync.test_messages.AssemblerTests)
 get times out before reading the first frame. ... ok
+test_put_does_not_pause_reading (tests.sync.test_messages.AssemblerTests)
+put does not pause reading when the high-water mark is unset. ... ok
 test_put_fails_after_close (tests.sync.test_messages.AssemblerTests)
 put raises EOFError after close is called. ... ok
 test_put_pauses_reading (tests.sync.test_messages.AssemblerTests)
 put pauses reading when queue goes above the high-water mark. ... ok
-test_set_high_and_low_water_mark (tests.sync.test_messages.AssemblerTests)
-high sets the high-water mark and low-water mark. ... ok
+test_set_high_and_low_water_marks (tests.sync.test_messages.AssemblerTests)
+high and low set the high-water and low-water marks. ... ok
 test_set_high_water_mark (tests.sync.test_messages.AssemblerTests)
-high sets the high-water mark. ... ok
+high sets the high-water and low-water marks. ... ok
 test_set_invalid_high_water_mark (tests.sync.test_messages.AssemblerTests)
 high must be a non-negative integer. ... ok
 test_set_invalid_low_water_mark (tests.sync.test_messages.AssemblerTests)
 low must be higher than high. ... ok
+test_set_low_water_mark (tests.sync.test_messages.AssemblerTests)
+low sets the low-water and high-water marks. ... ok
+test_unset_high_and_low_water_marks (tests.sync.test_messages.AssemblerTests)
+High-water and low-water marks are unset. ... ok
 test_ssl_context_argument (tests.sync.test_server.BackwardsCompatibilityTests)
 Server supports the deprecated ssl_context argument. ... ok
 test_web_socket_server_class (tests.sync.test_server.BackwardsCompatibilityTests) ... ok
@@ -2578,7 +2650,7 @@ test_accept_key (tests.test_utils.UtilsTests) ... ok
 test_generate_key (tests.test_utils.UtilsTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 1785 tests
+Ran 1819 tests
 
 OK (skipped=23)
   py$(PYV): OK
