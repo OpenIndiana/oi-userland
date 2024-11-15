@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.10.10
+HUMAN_VERSION =			3.11.2
 COMPONENT_SUMMARY =		Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0631dd7c9f0822cc61c88586ca76d5b5ada26538097d0f1df510b082bad3411a
+	sha256:68d1f46f9387db3785508f5225d3acbc5825ca13d9c29f2b5cce203d5863eb79
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -61,6 +61,14 @@ COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/aiohttp-RENAMED $(@D)/aiohttp ;
 PYTEST_ADDOPTS += --ignore tests/test_proxy_functional.py
 # We have no python-on-whales packaged yet.
 PYTEST_ADDOPTS += --ignore tests/autobahn/test_autobahn.py
+# We have no pytest_codspeed packaged yet so we cannot run benchmark tests.
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_cookiejar.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client_request.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_http_writer.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_http_websocket.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client_ws.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_middleware.py
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
@@ -72,6 +80,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/async-timeout
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
 PYTHON_REQUIRED_PACKAGES += library/python/frozenlist
 PYTHON_REQUIRED_PACKAGES += library/python/multidict
+PYTHON_REQUIRED_PACKAGES += library/python/propcache
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/yarl
 PYTHON_REQUIRED_PACKAGES += runtime/python
@@ -87,9 +96,11 @@ TEST_REQUIRED_PACKAGES.python += library/python/frozenlist
 TEST_REQUIRED_PACKAGES.python += library/python/gunicorn
 TEST_REQUIRED_PACKAGES.python += library/python/multidict
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/propcache
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/re-assert
 TEST_REQUIRED_PACKAGES.python += library/python/trustme
 TEST_REQUIRED_PACKAGES.python += library/python/yarl
