@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			75.4.0
+HUMAN_VERSION =			75.5.0
 COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1dc484f5cf56fd3fe7216d7b8df820802e7246cfb534a1db2aa64f14fcb9cdcb
+	sha256:5c4ccb41111392671f02bb5f8436dfc5a9a7185e80500531b133f5775c4163ef
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
