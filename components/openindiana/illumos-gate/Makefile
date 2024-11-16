@@ -166,8 +166,10 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/forth/brand-hipster.4th group=sys mode=0444 owner=root >" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/forth/logo-openindiana.4th group=sys mode=0444 owner=root >" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
-	# Settings for tagged pointers
+ifeq ($(MACH), i386)
+	# Settings for tagged pointers - causes several UltraI and UltraII systems to panic.
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/kernel@.* -> emit file path=etc/system.d/reserve_bits_for_tagged_pointers group=sys mode=0644 owner=root preserve=true>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+endif
 
 	# Fix dependencies on renamed runtime/java and runtime/java/runtime64 packages
 	echo '<transform depend fmri=runtime/java$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
