@@ -59,13 +59,14 @@ DRI_DRIVERS='i915'
 
 # 'Gallium' DRI drivers
 # Initially add Intel i915 and crocus drivers as a starting point
-# Other Intel Gallium drivers: i915g (future i915), iris
+# Other Intel Gallium drivers: i915g (future i915), crocus, iris
+# Note: crocus (at a minimum) depends on glslang
 # Other AMD Gallium drivers: r300, r600, radeonsi
 # Other NVIDIA Gallium drivers: nouveau
 # swrast Gallium driver: swrast
 # Note: swrast gallium driver in future splits to softpipe and llvmpipe (v24)
 # Other Gallium drivers: virgl (virtip-gpu), svga (vmware)
-GALLIUM_DRIVERS='i915, crocus'
+GALLIUM_DRIVERS='i915'
 
 # 'Vulkan' DRI drivers
 # We have some work to do before these can be enabled
