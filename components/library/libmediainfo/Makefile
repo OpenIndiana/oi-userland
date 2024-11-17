@@ -18,14 +18,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		MediaInfoLib
-COMPONENT_VERSION=	24.4
-HUMAN_VERSION=		24.04
+COMPONENT_VERSION=	24.11
 COMPONENT_SUMMARY=	MediaInfo(Lib) is a convenient unified display of the most relevant technical and tag data for video and audio files.
 COMPONENT_PROJECT_URL=	https://github.com/MediaArea/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ab81016e2e0f8c385d440487f2f202df407ef00b5f0bc26f06da4523d712f788
+COMPONENT_ARCHIVE_HASH=	sha256:75ee5b3b7c79fb6fa3a70bdb1dc2db37592107b128ac36524ff5d79d5ba092aa
 COMPONENT_FMRI=		library/libmediainfo
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	BSD 2-Clause
