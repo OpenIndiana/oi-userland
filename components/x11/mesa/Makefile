@@ -57,8 +57,18 @@ PKG_HARDLINKS += usr/lib/xorg/modules/dri/i915_dri.so
 # Other classic DRI drivers: swrast
 DRI_DRIVERS='i915'
 
+# 'Gallium' DRI drivers
+# Initially add Intel i915 and crocus drivers as a starting point
+# Other Intel Gallium drivers: i915g (future i915), iris
+# Other AMD Gallium drivers: r300, r600, radeonsi
+# Other NVIDIA Gallium drivers: nouveau
+# swrast Gallium driver: swrast
+# Note: swrast gallium driver in future splits to softpipe and llvmpipe (v24)
+# Other Gallium drivers: virgl (virtip-gpu), svga (vmware)
+GALLIUM_DRIVERS='i915, crocus'
+
 # Command line options to GNU autoconf configure script
-CONFIGURE_OPTIONS += -Dgallium-drivers='swrast, r600'
+CONFIGURE_OPTIONS += -Dgallium-drivers=$(GALLIUM_DRIVERS)
 CONFIGURE_OPTIONS += -Dvulkan-drivers=''
 CONFIGURE_OPTIONS += -Dgbm=enabled
 CONFIGURE_OPTIONS += -Dglvnd=false
