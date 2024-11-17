@@ -89,6 +89,7 @@ CONFIGURE_OPTIONS += -Dglx='dri'
 CONFIGURE_OPTIONS += -Degl=enabled
 CONFIGURE_OPTIONS += -Dgles1=enabled
 CONFIGURE_OPTIONS += -Dgles2=enabled
+CONFIGURE_OPTIONS += -Ddri3=enabled
 CONFIGURE_OPTIONS += -Dosmesa=true
 CONFIGURE_OPTIONS += -Dshared-glapi=enabled
 CONFIGURE_OPTIONS += -Dgallium-xvmc=disabled
