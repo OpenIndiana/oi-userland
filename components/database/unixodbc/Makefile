@@ -30,6 +30,7 @@ PATH= $(PATH.illumos)
 
 COMPONENT_NAME=		unixODBC
 COMPONENT_VERSION=	2.3.12
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The UnixODBC Subsystem and SDK
 COMPONENT_DESCRIPTION= An Open Source implementation of the ODBC Standard providing a Library Framework for Software Development
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -91,7 +92,8 @@ CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)/32
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
