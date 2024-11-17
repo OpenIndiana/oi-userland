@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ogl-select
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=	ogl-select - boot time selection of OpenGL vendor files
 COMPONENT_PROJECT_URL = https://www.openindiana.org/
 COMPONENT_FMRI=		service/opengl/ogl-select
@@ -42,3 +42,4 @@ clean:
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
