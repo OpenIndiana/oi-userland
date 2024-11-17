@@ -33,6 +33,16 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL= 0
 
+# Mesa 21.x requires 2.4.100 - 2.4.109
+# Mesa 22.x requires 2.4.9 - 2.4.110
+# Mesa 24.x requires 2.4.110 - 2.4.119
+# Mesa 25.x requires 2.4.121
+# Note: See below if ever downgrading libdrm
+# Mesa's dri.pc specifies a version requirement in dri.pc for >= the version of libdrm ..
+# .. that Mesa was built against, thus preventing packages from being rebuilt with the older version
+# Note2: see https://gitweb.gentoo.org/repo/gentoo.git/commit?id=a117c20f1b3127d4c397dddef4a7680359f1c9a3 
+LIBDRM_DEPENDENCY='2.4.109'
+
 ARCHLIBSUBDIR.64= /$(MACH64)
 ARCHLIBSUBDIR= $(ARCHLIBSUBDIR.$(BITS))
 
