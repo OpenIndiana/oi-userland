@@ -49,6 +49,14 @@ CONFIGURE_OPTIONS += --libdir='lib/mesa/amd64'
 PKG_HARDLINKS += usr/lib/xorg/modules/dri/kms_swrast_dri.so
 PKG_HARDLINKS += usr/lib/xorg/modules/dri/i915_dri.so
 
+# 'Classic' DRI drivers
+# Only add Intel i915 for now as these start getting removed in Mesa 22.x
+# Other Intel classic DRI drivers: i965, iris
+# Other AMD classic DRI drivers: r100, r200, r300, r600
+# Other NVIDIA classic DRI drivers: nv, nouveau
+# Other classic DRI drivers: swrast
+DRI_DRIVERS='i915'
+
 # Command line options to GNU autoconf configure script
 CONFIGURE_OPTIONS += -Dgallium-drivers='swrast, r600'
 CONFIGURE_OPTIONS += -Dvulkan-drivers=''
@@ -66,7 +74,7 @@ CONFIGURE_OPTIONS += -Dosmesa=true
 CONFIGURE_OPTIONS += -Dshared-glapi=enabled
 CONFIGURE_OPTIONS += -Dgallium-xvmc=disabled
 CONFIGURE_OPTIONS += -Dgallium-xa=disabled
-CONFIGURE_OPTIONS += -Ddri-drivers='i915'
+CONFIGURE_OPTIONS += -Ddri-drivers=$(DRI_DRIVERS)
 CONFIGURE_OPTIONS += -Ddri-drivers-path=$(X11_SERVERMODS_DIR)/dri
 CONFIGURE_OPTIONS += -Delf-tls=false
 
