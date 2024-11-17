@@ -54,7 +54,6 @@ PKG_HARDLINKS += usr/lib/xorg/modules/dri/i915_dri.so
 # Other Intel classic DRI drivers: i965, iris
 # Other AMD classic DRI drivers: r100, r200, r300, r600
 # Other NVIDIA classic DRI drivers: nv, nouveau
-# Other classic DRI drivers: swrast
 DRI_DRIVERS='i915'
 
 # 'Gallium' DRI drivers
