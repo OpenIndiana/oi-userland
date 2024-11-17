@@ -67,9 +67,18 @@ DRI_DRIVERS='i915'
 # Other Gallium drivers: virgl (virtip-gpu), svga (vmware)
 GALLIUM_DRIVERS='i915, crocus'
 
+# 'Vulkan' DRI drivers
+# We have some work to do before these can be enabled
+# Intel: intel, intel_hasvk
+# AMD: amd
+# nvidia: nouveau, nvk
+# swrast: swrast
+# virtio-gpu: virtio
+VULKAN_DRIVERS=''
+
 # Command line options to GNU autoconf configure script
 CONFIGURE_OPTIONS += -Dgallium-drivers=$(GALLIUM_DRIVERS)
-CONFIGURE_OPTIONS += -Dvulkan-drivers=''
+CONFIGURE_OPTIONS += -Dvulkan-drivers=$(VULKAN_DRIVERS)
 CONFIGURE_OPTIONS += -Dgbm=enabled
 CONFIGURE_OPTIONS += -Dglvnd=false
 # Wayland currently requires linux specific socket options and epoll for events.
