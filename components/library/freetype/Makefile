@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         freetype
 COMPONENT_VERSION=      2.13.3
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=  	FreeType 2 font engine
 COMPONENT_SRC=      	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -37,7 +38,6 @@ PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --enable-biarch-config
 CONFIGURE_OPTIONS += --enable-freetype-config
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-bzip2
