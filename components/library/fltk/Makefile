@@ -12,17 +12,16 @@
 # Copyright 2017 Aurelien Larcher
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			fltk
-COMPONENT_VERSION=		1.3.9
+COMPONENT_VERSION=		1.3.10
 COMPONENT_SUMMARY=		fltk - Fast Light Toolkit
 COMPONENT_PROJECT_URL=	https://www.fltk.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
 COMPONENT_ARCHIVE_URL=	https://fltk.org/pub/fltk/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:d736b0445c50d607432c03d5ba5e82f3fba2660b10bc1618db8e077a42d9511b
+COMPONENT_ARCHIVE_HASH=	sha256:c1c96d4f2ca7844f4b7945b4670aff2846f150cd5f3e23e3e4c70a61807108c7
 COMPONENT_FMRI=			library/fltk
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=		GPLv2
@@ -34,11 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-static=no
