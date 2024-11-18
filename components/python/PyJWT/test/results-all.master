@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
 testpaths: tests
-collecting ... collected 276 items
+collecting ... collected 290 items
 
 tests/test_advisory.py::TestAdvisory::test_ghsa_ffqj_6fqr_9h24 PASSED
 tests/test_algorithms.py::TestAlgorithms::test_none_algorithm_should_throw_exception_if_key_is_not_none PASSED
@@ -23,6 +23,7 @@ tests/test_algorithms.py::TestAlgorithms::test_hmac_jwk_should_parse_and_verify 
 tests/test_algorithms.py::TestAlgorithms::test_hmac_to_jwk_returns_correct_values[False] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_to_jwk_returns_correct_values[True] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_from_jwk_should_raise_exception_if_not_hmac_key PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_from_jwk_should_raise_exception_if_empty_json PASSED
 tests/test_algorithms.py::TestAlgorithms::test_rsa_should_parse_pem_public_key PASSED
 tests/test_algorithms.py::TestAlgorithms::test_rsa_should_accept_pem_private_key_bytes PASSED
 tests/test_algorithms.py::TestAlgorithms::test_rsa_should_accept_unicode_key PASSED
@@ -123,10 +124,12 @@ tests/test_api_jws.py::TestJWS::test_decode_missing_segments_throws_exception PA
 tests/test_api_jws.py::TestJWS::test_decode_invalid_token_type_is_none PASSED
 tests/test_api_jws.py::TestJWS::test_decode_invalid_token_type_is_int PASSED
 tests/test_api_jws.py::TestJWS::test_decode_with_non_mapping_header_throws_exception PASSED
+tests/test_api_jws.py::TestJWS::test_encode_default_algorithm PASSED
 tests/test_api_jws.py::TestJWS::test_encode_algorithm_param_should_be_case_sensitive PASSED
 tests/test_api_jws.py::TestJWS::test_encode_with_headers_alg_none PASSED
 tests/test_api_jws.py::TestJWS::test_encode_with_headers_alg_es256 PASSED
 tests/test_api_jws.py::TestJWS::test_encode_with_alg_hs256_and_headers_alg_es256 PASSED
+tests/test_api_jws.py::TestJWS::test_encode_with_jwk PASSED
 tests/test_api_jws.py::TestJWS::test_decode_algorithm_param_should_be_case_sensitive PASSED
 tests/test_api_jws.py::TestJWS::test_bad_secret PASSED
 tests/test_api_jws.py::TestJWS::test_decodes_valid_jws PASSED
@@ -243,6 +246,17 @@ tests/test_api_jwt.py::TestJWT::test_decode_strict_aud_forbids_list_audience PAS
 tests/test_api_jwt.py::TestJWT::test_decode_strict_aud_forbids_list_claim PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_strict_aud_does_not_match PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_strict_ok PASSED
+tests/test_api_jwt.py::TestJWT::test_encode_decode_sub_claim PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_without_and_not_required_sub_claim PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_missing_sub_but_required_claim PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_invalid_int_sub_claim PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_with_valid_sub_claim PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_with_invalid_sub_claim PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_with_sub_claim_and_none_subject PASSED
+tests/test_api_jwt.py::TestJWT::test_encode_decode_with_valid_jti_claim PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_missing_jti_when_required_claim PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_missing_jti_claim PASSED
+tests/test_api_jwt.py::TestJWT::test_jti_claim_with_invalid_int_value PASSED
 tests/test_compressed_jwt.py::test_decodes_complete_valid_jwt_with_compressed_payload PASSED
 tests/test_exceptions.py::test_missing_required_claim_error_has_proper_str PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_fetch_data_forwards_headers_to_correct_url PASSED
@@ -266,12 +280,12 @@ tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_timeout PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_sslcontext_default PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_sslcontext_no_ca PASSED
 tests/test_jwt.py::test_encode_decode PASSED
-tests/test_utils.py::test_to_base64url_uint[0-AA] PASSED
-tests/test_utils.py::test_to_base64url_uint[1-AQ] PASSED
-tests/test_utils.py::test_to_base64url_uint[255-_w] PASSED
-tests/test_utils.py::test_to_base64url_uint[65537-AQAB] PASSED
-tests/test_utils.py::test_to_base64url_uint[123456789-B1vNFQ] PASSED
-tests/test_utils.py::test_to_base64url_uint[-1-] XFAIL
+tests/test_utils.py::test_to_base64url_uint[0-expected0] PASSED
+tests/test_utils.py::test_to_base64url_uint[1-expected1] PASSED
+tests/test_utils.py::test_to_base64url_uint[255-expected2] PASSED
+tests/test_utils.py::test_to_base64url_uint[65537-expected3] PASSED
+tests/test_utils.py::test_to_base64url_uint[123456789-expected4] PASSED
+tests/test_utils.py::test_to_base64url_uint[-1-expected5] PASSED
 tests/test_utils.py::test_from_base64url_uint[AA-0] PASSED
 tests/test_utils.py::test_from_base64url_uint[AQ-1] PASSED
 tests/test_utils.py::test_from_base64url_uint[_w-255] PASSED
@@ -286,6 +300,6 @@ tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp384] PASSED
 tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp521] PASSED
 
 =========================== short test summary info ============================
-======== 271 passed, 4 skipped, 1 xfailed ========
+======== 286 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
