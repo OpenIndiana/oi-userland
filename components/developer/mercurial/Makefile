@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mercurial
-HUMAN_VERSION =			6.8.1
+HUMAN_VERSION =			6.8.2
 COMPONENT_SUMMARY =		Fast scalable distributed SCM (revision control, version control) system
 COMPONENT_PROJECT_URL =		https://mercurial-scm.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:030e8a7a6d590e4eaeb403ee25675615cd80d236f3ab8a0b56dcc84181158b05
+	sha256:aac618106768ad1ed976c3fe7c8659fec99e6f0b5337ea6ea554fae8490c4f4e
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
