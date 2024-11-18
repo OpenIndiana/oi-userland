@@ -601,6 +601,7 @@ test_get_nonexistant (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_get_raw (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_iter (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_iter_prefix (tests.test_object_store.DiskObjectStoreTests) ... ok
+test_iter_prefix_not_found (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_iter_tree_contents (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_iter_tree_contents_include_trees (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_loose_compression_level (tests.test_object_store.DiskObjectStoreTests) ... ok
@@ -633,6 +634,7 @@ test_get_nonexistant (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_get_raw (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_iter (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_iter_prefix (tests.test_object_store.MemoryObjectStoreTests) ... ok
+test_iter_prefix_not_found (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_iter_tree_contents (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_iter_tree_contents_include_trees (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_peel_sha (tests.test_object_store.MemoryObjectStoreTests) ... ok
@@ -660,6 +662,7 @@ test_get_nonexistant (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_get_raw (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_iter (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_iter_prefix (tests.test_object_store.OverlayObjectStoreTests) ... ok
+test_iter_prefix_not_found (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_iter_tree_contents (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_iter_tree_contents_include_trees (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_peel_sha (tests.test_object_store.OverlayObjectStoreTests) ... ok
@@ -1171,7 +1174,7 @@ test_contains_object (tests.test_repository.RepositoryRootTests) ... ok
 test_contains_ref (tests.test_repository.RepositoryRootTests) ... ok
 test_delitem (tests.test_repository.RepositoryRootTests) ... ok
 test_fetch (tests.test_repository.RepositoryRootTests) ... ok
-test_fetch_ignores_missing_refs (tests.test_repository.RepositoryRootTests) ... $(@D)/dulwich/refs.py:1284: UserWarning: ref refs/heads/blah points at non-present sha 1234566789123456789123567891234657373833
+test_fetch_ignores_missing_refs (tests.test_repository.RepositoryRootTests) ... $(@D)/dulwich/refs.py:1286: UserWarning: ref refs/heads/blah points at non-present sha 1234566789123456789123567891234657373833
   warnings.warn(
 ok
 test_get_config (tests.test_repository.RepositoryRootTests) ... ok
@@ -1347,10 +1350,7 @@ Doctest: conclusion.txt ... ok
 test_archive (tests.compat.test_client.DulwichHttpClientTest) ... skipped 'exporting archives not supported over http'
 test_fetch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_fetch_pack_depth (tests.compat.test_client.DulwichHttpClientTest) ... $(PYTHON_DIR)/contextlib.py:404: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
-  def _exit_wrapper(exc_type, exc, tb):
-ResourceWarning: Enable tracemalloc to get the object allocation traceback
-ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichHttpClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
 test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichHttpClientTest) ... ok
@@ -1390,7 +1390,10 @@ test_send_without_report_status (tests.compat.test_client.DulwichHttpClientTestG
 test_archive (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_empty_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
-test_fetch_pack_depth (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichMockSSHClientTest) ... $(PYTHON_DIR)/contextlib.py:404: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
+  def _exit_wrapper(exc_type, exc, tb):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
 test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichMockSSHClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
 test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
@@ -1467,7 +1470,7 @@ test_send_pack_nothing_to_send (tests.compat.test_client.DulwichSubprocessClient
 test_send_pack_one_error (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
 test_send_without_report_status (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
-test_archive (tests.compat.test_client.DulwichTCPClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichTCPClientTest) ... skipped 'git-daemon was already running on port 9418'
 test_fetch_empty_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichTCPClientTest) ... ok
@@ -1650,6 +1653,7 @@ test_get_nonexistant (tests.contrib.test_swift.SwiftObjectStoreTests) ... skippe
 test_get_raw (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_iter (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_iter_prefix (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
+test_iter_prefix_not_found (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_iter_tree_contents (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_iter_tree_contents_include_trees (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_peel_sha (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
@@ -1682,6 +1686,6 @@ test_init_no_data (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required
 test_put_named_file (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 
 ----------------------------------------------------------------------
-Ran 1616 tests
+Ran 1620 tests
 
-OK (skipped=89, expected failures=1)
+OK (skipped=91, expected failures=1)
