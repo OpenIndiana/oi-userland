@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yarl
-HUMAN_VERSION =			1.17.1
+HUMAN_VERSION =			1.17.2
 COMPONENT_SUMMARY =		Yet another URL library
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/yarl
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:067a63fcfda82da6b198fa73079b1ca40b7c9b7994995b6ee38acda728b64d47
+	sha256:753eaaa0c7195244c84b5cc159dc8204b7fd99f716f11198f999f2332a86b178
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
