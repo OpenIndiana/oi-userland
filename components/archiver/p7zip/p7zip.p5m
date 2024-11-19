@@ -32,6 +32,15 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license copying.txt license=LGPLv2.1+
 license unRarLicense.txt license=unRAR
 
+# add links to libs for mySplitCommandLine.cpp patch
+link path=usr/lib/$(MACH64)/7z/7z.so target=../../p7zip/$(MACH64)/7z.so
+link path=usr/lib/$(MACH64)/7z/Codecs/Rar.so target=../../../p7zip/$(MACH64)/Codecs/Rar.so
+
+<transform file path=usr/lib/p7zip/$(MACH64)/7z ->default mode 0555>
+<transform file path=usr/lib/p7zip/$(MACH64)/7zCon.sfx ->default mode 0555>
+<transform file path=usr/lib/p7zip/$(MACH64)/7za ->default mode 0555>
+<transform file path=usr/lib/p7zip/$(MACH64)/7zr ->default mode 0555>
+
 file path=usr/bin/7z
 file path=usr/bin/7za
 file path=usr/bin/7zr
@@ -130,6 +139,6 @@ file path=usr/share/doc/p7zip/DOC/readme.txt
 file path=usr/share/doc/p7zip/DOC/src-history.txt
 file path=usr/share/doc/p7zip/DOC/unRarLicense.txt
 file path=usr/share/doc/p7zip/README
-file path=usr/share/man/man1/7z.1.gz
-file path=usr/share/man/man1/7za.1.gz
-file path=usr/share/man/man1/7zr.1.gz
+file path=usr/share/man/man1/7z.1
+file path=usr/share/man/man1/7za.1
+file path=usr/share/man/man1/7zr.1
