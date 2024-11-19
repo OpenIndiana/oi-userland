@@ -42,8 +42,11 @@ COMPONENT_PREP_ACTION += $(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
 CARGO_ENV += CARGO_HOME=$(@D)/.cargo
 CARGO_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
+# Configure
 # Some tests fails with the default symlink cloney mode
 CLONEY_MODE = copy
+# this is needed to override the default set in shared-macros.mk
+CONFIG_SHELL =
 
 # Build
 COMPONENT_BUILD_CMD = $(CARGO) build
@@ -62,6 +65,8 @@ COMPONENT_INSTALL_ARGS += --force
 COMPONENT_INSTALL_ARGS += --no-track
 COMPONENT_INSTALL_ARGS += --offline
 COMPONENT_INSTALL_ARGS += --locked
+# this is needed to override the default set in shared-macros.mk
+COMPONENT_INSTALL_TARGETS =
 COMPONENT_INSTALL_ENV += $(CARGO_ENV)
 
 # Test

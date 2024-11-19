@@ -22,18 +22,28 @@
 #
 
 #
-# Common rules used for building, installing, and testing of components.
+# Common rules for components
 #
 
-# build the configured source
-$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
+# configure the unpacked source for building
+$(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(if $(filter none,$(CLONEY_MODE)),,$(ENV) \
 		$(CLONEY_ARGS) $(CLONEY_MODE:%=CLONEY_MODE="%") \
 		$(CLONEY) $(SOURCE_DIR) $(@D))
+	$(COMPONENT_PRE_CONFIGURE_ACTION)
+	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(CONFIGURE_ENV) \
+		$(CONFIG_SHELL) \
+		$(CONFIGURE_SCRIPT) $(CONFIGURE_OPTIONS))
+	$(COMPONENT_POST_CONFIGURE_ACTION)
+	$(TOUCH) $@
+
+# build the configured source
+$(BUILD_DIR)/%/.built:	$(BUILD_DIR)/%/.configured
 	$(COMPONENT_PRE_BUILD_ACTION)
 	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_BUILD_ENV) \
-		$(COMPONENT_BUILD_CMD) $(COMPONENT_BUILD_ARGS))
+		$(COMPONENT_BUILD_CMD) $(COMPONENT_BUILD_ARGS) \
+		$(COMPONENT_BUILD_TARGETS))
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
@@ -41,7 +51,8 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
-		$(COMPONENT_INSTALL_CMD) $(COMPONENT_INSTALL_ARGS))
+		$(COMPONENT_INSTALL_CMD) $(COMPONENT_INSTALL_ARGS) \
+		$(COMPONENT_INSTALL_TARGETS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 

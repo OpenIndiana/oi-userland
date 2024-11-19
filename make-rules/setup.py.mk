@@ -176,6 +176,9 @@ $(foreach pyver,$(filter-out $(PYTHON_VERSION),$(PYTHON_VERSIONS)),$(eval $(call
 # where egg-info is re-generated
 CLONEY_ARGS = CLONEY_MODE="copy"
 
+# this is needed to override the default set in shared-macros.mk
+CONFIG_SHELL =
+
 COMPONENT_BUILD_CMD = $(PYTHON) setup.py --no-user-cfg build $(COMPONENT_BUILD_SETUP_PY_ARGS)
 
 
@@ -186,6 +189,9 @@ COMPONENT_INSTALL_ARGS +=	--install-lib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=	--install-data=$(PYTHON_DATA)
 COMPONENT_INSTALL_ARGS +=	--skip-build
 COMPONENT_INSTALL_ARGS +=	--force
+
+# this is needed to override the default set in shared-macros.mk
+COMPONENT_INSTALL_TARGETS =
 
 ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 # Rename binaries in /usr/bin to contain version number
