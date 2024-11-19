@@ -31,6 +31,7 @@ ENV = /usr/bin/env
 COMPONENT_NAME=         p7zip
 COMPONENT_VERSION=      17.5
 HUMAN_VERSION=		17.05
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      The p7zip compression and archiving utility
 COMPONENT_PROJECT_URL=  https://github.com/p7zip-project/p7zip
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -41,7 +42,6 @@ COMPONENT_FMRI=         compress/p7zip
 COMPONENT_CLASSIFICATION= System/Core
 
 include $(WS_MAKE_RULES)/common.mk
-
 
 COMPONENT_TEST_DIR =           $(@D)
 COMPONENT_TEST_ENV =           P7ZIP_HOME_DIR=$(BUILD_DIR)/$(MACH$(BITS))/bin
@@ -77,7 +77,12 @@ install:	build $(INSTALL_64) $(EXTRATARGETS)
 
 # When p7zip's install target is run, it creates all its directories mode 555,
 # so they're impossible to remove without adding the write bit first.
-COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR)
+COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR) ;
+
+# Move man page folder to our preferred location
+COMPONENT_POST_INSTALL_ACTION += ( \
+	$(MKDIR) $(PROTOUSRSHAREMANDIR) ; \
+	$(MV) $(PROTOUSRDIR)/man/* $(PROTOUSRSHAREMANDIR)/ ) ;
 
 COMPONENT_TEST_TRANSFORMS += '-e "/^REP=/d" '
 COMPONENT_TEST_TRANSFORMS += '-e "/^Comment = /d" '
