@@ -1543,6 +1543,25 @@ TEST_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(TEST_REQUIRED_PACKAGE
 # Generate conflicting packages for all built python version variants for given package
 TEST_CONFLICTING_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_CONFLICTING_PACKAGES.python:%=%-$(subst .,,$(ver))))
 
+# This is useful for symlinks creation in the post-install step
+define create-symlinks
+	for f in $(1:%=$(PROTO_DIR)/%) ; do \
+		[ -e "$$f" ] || continue ; \
+		t=$(PROTO_DIR)/$(2) ; \
+		while true ; do \
+			while [ "$${f#/}" != "$$f" ] ; do f=$${f#/} ; done ; \
+			while [ "$${t#/}" != "$$t" ] ; do t=$${t#/} ; done ; \
+			[ "$${f%%/*}" == "$${t%%/*}" ] || break ; \
+			f=$${f#$${f%%/*}} ; \
+			t=$${t#$${t%%/*}} ; \
+		done ; \
+		[ "$$t" ] && t=$$t/ ; \
+		f=$$(echo $$t | $(GSED) -e 's|[^/]\{1,\}|..|g')$$f ; \
+		$(MKDIR) $(PROTO_DIR)/$(2) ; \
+		$(SYMLINK) $$f $(PROTO_DIR)/$(2)/$$(basename $$f) ; \
+	done
+endef
+
 # Targets for some tools rarely used by the build framework.  We do not add
 # these tools to USERLAND_REQUIRED_PACKAGES to do not pollute it.
 $(QUILT):
