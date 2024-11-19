@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.11.2
+HUMAN_VERSION =			3.11.4
 COMPONENT_SUMMARY =		Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:68d1f46f9387db3785508f5225d3acbc5825ca13d9c29f2b5cce203d5863eb79
+	sha256:9d95cce8bb010597b3f2217155befe4708e0538d3548aa08d640ebf54e3f57cb
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -69,6 +69,8 @@ PYTEST_ADDOPTS += --ignore tests/test_benchmarks_http_websocket.py
 PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client.py
 PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client_ws.py
 PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_middleware.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_response.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_urldispatcher.py
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
