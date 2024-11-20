@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::ScanDeps
-HUMAN_VERSION =			1.35
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.37
 COMPONENT_SUMMARY =		Module::ScanDeps - Recursively scan Perl code for dependencies
 COMPONENT_CPAN_AUTHOR =		RSCHUPP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e5beb3adf55be3dab71f9a1416d4bad57b14e5e05c96370741b9d8f96a51b612
+	sha256:1f5e119cade1466c39c71e5bc35a8d4f4e672635db03d79a5a0dcf08c4e2b5a3
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
