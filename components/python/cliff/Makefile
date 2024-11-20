@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project cliff
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cliff
-HUMAN_VERSION =			4.7.0
+HUMAN_VERSION =			4.8.0
 COMPONENT_SUMMARY =		Command Line Interface Formulation Framework
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/cliff/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6ca45f8df519bbc0722c61049de7b7e442a465fa7f3f552b96d735fa26fd5b26
+	sha256:23eff502e603cf0aa841eaea6662a42cd3064169162b3e596b20226400e34dfd
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,8 +47,10 @@ TOX_POSARGS += --suppress-attachments
 PYTHON_REQUIRED_PACKAGES += library/python/autopage
 PYTHON_REQUIRED_PACKAGES += library/python/cmd2
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/pbr
 PYTHON_REQUIRED_PACKAGES += library/python/prettytable
 PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/stevedore
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/autopage
