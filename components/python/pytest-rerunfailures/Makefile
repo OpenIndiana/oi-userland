@@ -19,31 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-rerunfailures
-HUMAN_VERSION =			14.0
-COMPONENT_SUMMARY =		pytest-rerunfailures - pytest plugin to re-run tests to eliminate flaky failures
+HUMAN_VERSION =			15.0
+COMPONENT_SUMMARY =		pytest plugin to re-run tests to eliminate flaky failures
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-rerunfailures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4a400bcbcd3c7a4ad151ab8afac123d90eca3abe27f98725dc4d9702887d2e92
+	sha256:2d9ac7baf59f4c13ac730b47f6fa80e755d1ba0581da45ce30b72fb3542b4474
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/pytest-dev/pluggy/issues/457
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
-TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
-# https://github.com/pytest-dev/pytest-rerunfailures/issues/218
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
-# https://github.com/pytest-dev/pytest-rerunfailures/issues/217
-TEST_CONFLICTING_PACKAGES.python += library/python/flaky
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
