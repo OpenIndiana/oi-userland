@@ -196,9 +196,17 @@ endif
 # The list of FMRIs to ignore is also useful for other things, and is easier to
 # use when not phrased directly as a sed script.
 #
+# Package: system/library/processor has been obsoleted on x86/amd64 systems.
+# SPARC systems can't boot without it.
+#
 $(BUILD_DIR)/$(MACH)/packages.ignore: packages.ignore.in
 	$(MKDIR) $(@D)
+ifneq ($(strip $(MACH)),sparc)
 	sed -e 's,/,\\/,g' -e 's,.*,/^pkg:\\/\\/on-nightly\\/&@.*/d,' $< > $@
+else
+	sed -e 's,/,\\/,g' -e 's,.*,/^pkg:\\/\\/on-nightly\\/&@.*/d,' \
+		-e '/system\/library\/processor/d' $< > $@
+endif
 
 packages.ignore: $(BUILD_DIR)/$(MACH)/packages.ignore
 
