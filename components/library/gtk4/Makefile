@@ -19,10 +19,10 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gtk
-HUMAN_VERSION =			4.16.5
+HUMAN_VERSION =			4.16.6
 COMPONENT_SUMMARY =		The GTK toolkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:302d6813fbed95c419fb3ab67c5da5e214882b6a645c3eab9028dfb91ab418a4
+	sha256:db1ce6604f5f3116d7a7bfc6426aeb994b746b09d5ed4d3e24d34f7a1d6677b6
 COMPONENT_PROJECT_URL =		https://www.gtk.org/
 COMPONENT_FMRI =		library/desktop/gtk4
 COMPONENT_CLASSIFICATION =	Desktop (GNOME)/Libraries
