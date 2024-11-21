@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mozilla::PublicSuffix
 HUMAN_VERSION =			1.0.7
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mozilla::PublicSuffix - Get a domain name's public suffix via the Mozilla Public Suffix List
 COMPONENT_CPAN_AUTHOR =		TOMHUKINS
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,7 +32,15 @@ COMPONENT_SRC =			$(COMPONENT_NAME)-v$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
+# sanity check to make sure we (still) update an existing file
 COMPONENT_POST_UNPACK_ACTION += \
+	[ -f $(SOURCE_DIR)/effective_tld_names.dat ] || exit 1 ;
+# Save the original data file
+COMPONENT_POST_UNPACK_ACTION += \
+	$(CP) $(SOURCE_DIR)/effective_tld_names.dat $(SOURCE_DIR)/effective_tld_names.dat.orig ;
+# use the up-to-date data file
+COMPONENT_POST_UNPACK_ACTION += \
+	[ -f $(COMPONENT_DIR)/files/public_suffix_list.dat ] && \
 	$(CP) $(COMPONENT_DIR)/files/public_suffix_list.dat $(SOURCE_DIR)/effective_tld_names.dat ;
 
 # Auto-generated dependencies
