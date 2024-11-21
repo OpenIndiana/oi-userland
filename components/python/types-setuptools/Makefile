@@ -11,20 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-setuptools
+#   $WS_TOOLS/python-integrate-project -d python/types-setuptools types_setuptools
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-setuptools
-HUMAN_VERSION =			75.5.0.20241119
+COMPONENT_NAME =		types_setuptools
+HUMAN_VERSION =			75.5.0.20241122
 COMPONENT_SUMMARY =		Typing stubs for setuptools
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2b1ec21346656aeb4f43fa6b70b223b4fa726e324c509a05f35611209f134014
+	sha256:196aaf1811cbc1c77ac1d4c4879d5308b6fdf426e56b73baadbca2a1827dadef
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
 
