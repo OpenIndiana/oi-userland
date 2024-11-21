@@ -1,0 +1,61 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2024 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/glslang
+link path=usr/bin/glslangValidator target=glslang
+file path=usr/bin/spirv-remap
+file path=usr/include/glslang/Include/ResourceLimits.h
+file path=usr/include/glslang/Include/glslang_c_interface.h
+file path=usr/include/glslang/Include/glslang_c_shader_types.h
+file path=usr/include/glslang/MachineIndependent/Versions.h
+file path=usr/include/glslang/Public/ResourceLimits.h
+file path=usr/include/glslang/Public/ShaderLang.h
+file path=usr/include/glslang/Public/resource_limits_c.h
+file path=usr/include/glslang/SPIRV/GlslangToSpv.h
+file path=usr/include/glslang/SPIRV/Logger.h
+file path=usr/include/glslang/SPIRV/SPVRemapper.h
+file path=usr/include/glslang/SPIRV/disassemble.h
+file path=usr/include/glslang/SPIRV/spirv.hpp
+file path=usr/include/glslang/build_info.h
+file path=usr/lib/$(MACH64)/cmake/glslang/glslang-config-version.cmake
+file path=usr/lib/$(MACH64)/cmake/glslang/glslang-config.cmake
+file path=usr/lib/$(MACH64)/cmake/glslang/glslang-targets-none.cmake
+file path=usr/lib/$(MACH64)/cmake/glslang/glslang-targets.cmake
+link path=usr/lib/$(MACH64)/libSPIRV.so target=libSPIRV.so.14
+file path=usr/lib/$(MACH64)/libSPIRV.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libSPIRV.so.14 target=libSPIRV.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libSPVRemapper.so target=libSPVRemapper.so.14
+file path=usr/lib/$(MACH64)/libSPVRemapper.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libSPVRemapper.so.14 \
+    target=libSPVRemapper.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libglslang-default-resource-limits.so \
+    target=libglslang-default-resource-limits.so.14
+file path=usr/lib/$(MACH64)/libglslang-default-resource-limits.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libglslang-default-resource-limits.so.14 \
+    target=libglslang-default-resource-limits.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libglslang.so target=libglslang.so.14
+file path=usr/lib/$(MACH64)/libglslang.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libglslang.so.14 \
+    target=libglslang.so.$(HUMAN_VERSION)
