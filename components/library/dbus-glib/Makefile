@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dbus-glib
 COMPONENT_VERSION=      0.112
-COMPONENT_REVISION=     4
+COMPONENT_REVISION=     5
 COMPONENT_PROJECT_URL=  https://dbus.freedesktop.org/doc/dbus-glib/
 COMPONENT_SUMMARY=      D-Bus GLib bindings
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -52,6 +52,8 @@ COMPONENT_TEST_ARGS += -k
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/expat/32
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/glib2/32
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
