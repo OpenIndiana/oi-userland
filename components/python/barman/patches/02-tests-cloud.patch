@@ -1,19 +1,21 @@
 We have no packages needed for cloud testing
 
---- barman-release-3.11.1/tests/requirements_dev.txt.orig
-+++ barman-release-3.11.1/tests/requirements_dev.txt
-@@ -1,8 +1,4 @@
+--- barman-release-3.12.0/tests/requirements_dev.txt.orig
++++ barman-release-3.12.0/tests/requirements_dev.txt
+@@ -1,10 +1,6 @@
  .
 -.[cloud]
 -.[azure]
 -.[snappy]
+ .[zstandard]
+ .[lz4]
 -.[google]
  pytest
  mock
  py
---- barman-release-3.11.1/tests/test_barman_cloud_backup.py.orig
-+++ barman-release-3.11.1/tests/test_barman_cloud_backup.py
-@@ -157,6 +157,7 @@
+--- barman-release-3.12.0/tests/test_barman_cloud_backup.py.orig
++++ barman-release-3.12.0/tests/test_barman_cloud_backup.py
+@@ -158,6 +158,7 @@
          )
          assert expected_message in err
  
@@ -21,7 +23,7 @@ We have no packages needed for cloud testing
      @pytest.mark.parametrize(
          ("snapshot_args", "expected_error"),
          (
-@@ -337,6 +338,7 @@
+@@ -338,6 +339,7 @@
          # AND its backup function was called exactly once
          mock_snapshot_backup.backup.assert_called_once()
  
@@ -29,7 +31,7 @@ We have no packages needed for cloud testing
      @pytest.mark.parametrize(
          ("aws_cli_args", "expected_cloud_interface_kwargs"),
          [
-@@ -386,6 +388,7 @@
+@@ -387,6 +389,7 @@
              **expected_cloud_interface_kwargs
          )
  
@@ -37,8 +39,8 @@ We have no packages needed for cloud testing
      @pytest.mark.parametrize(
          ("gcp_cli_args", "expected_cloud_interface_kwargs"),
          [
---- barman-release-3.11.1/tests/test_barman_cloud_restore.py.orig
-+++ barman-release-3.11.1/tests/test_barman_cloud_restore.py
+--- barman-release-3.12.0/tests/test_barman_cloud_restore.py.orig
++++ barman-release-3.12.0/tests/test_barman_cloud_restore.py
 @@ -93,6 +93,7 @@
              mock_backup_info, recovery_dir, {}
          )
@@ -47,8 +49,8 @@ We have no packages needed for cloud testing
      @pytest.mark.parametrize(
          ("provider", "snapshot_args", "expected_error"),
          (
---- barman-release-3.11.1/tests/test_executor.py.orig
-+++ barman-release-3.11.1/tests/test_executor.py
+--- barman-release-3.12.0/tests/test_executor.py.orig
++++ barman-release-3.12.0/tests/test_executor.py
 @@ -1901,6 +1901,7 @@
          # AND the exception message was logged
          assert "test-message" in caplog.text

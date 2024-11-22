@@ -4,7 +4,7 @@ py$(PYV): commands[0]> python -m py.test tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 1357 items
+collecting ... collected 1400 items
 
 tests/storage/test_file_stats.py::TestFileStats::test_file_exists_false PASSED
 tests/storage/test_local_file_manager.py::TestLocalFileManager::test_file_exists_false PASSED
@@ -64,6 +64,8 @@ tests/test_backup.py::TestBackup::test_get_latest_archived_wals_info PASSED
 tests/test_backup.py::TestBackup::test_backup_manager_has_keep_manager_capability PASSED
 tests/test_backup.py::TestBackup::test_cron_retention_only_deletes_OBSOLETE_backups PASSED
 tests/test_backup.py::TestBackup::test_cron_retention_skip_OBSOLETE_backups_if_lock PASSED
+tests/test_backup.py::TestBackup::test_cron_retention_obsoletes_backups_with_delete_annotation PASSED
+tests/test_backup.py::TestBackup::test_cron_retention_orphan_backup_warning PASSED
 tests/test_backup.py::TestBackup::test_backup_with_name[True] PASSED
 tests/test_backup.py::TestBackup::test_backup_with_name[False] PASSED
 tests/test_backup.py::TestBackup::test_backup_without_name[True] PASSED
@@ -268,7 +270,8 @@ tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_if_wal_not_found PA
 tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_if_bucket_not_found PASSED
 tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_on_invalid_wal_name PASSED
 tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_on_download_exception PASSED
-tests/test_barman_wal_archive.py::TestMain::test_ok PASSED
+tests/test_barman_wal_archive.py::TestMain::test_ok[sha256-SHA256SUMS-] PASSED
+tests/test_barman_wal_archive.py::TestMain::test_ok[md5-MD5SUMS---md5] PASSED
 tests/test_barman_wal_archive.py::TestMain::test_ssh_port PASSED
 tests/test_barman_wal_archive.py::TestMain::test_error_dir PASSED
 tests/test_barman_wal_archive.py::TestMain::test_error_io PASSED
@@ -276,18 +279,29 @@ tests/test_barman_wal_archive.py::TestMain::test_error_ssh PASSED
 tests/test_barman_wal_archive.py::TestMain::test_error_barman PASSED
 tests/test_barman_wal_archive.py::TestMain::test_connectivity_test_returns_subprocess_output PASSED
 tests/test_barman_wal_archive.py::TestMain::test_connectivity_test_error PASSED
-tests/test_barman_wal_archive.py::TestRemotePutWal::test_str_source_file PASSED
+tests/test_barman_wal_archive.py::TestRemotePutWal::test_str_source_file[md5-MD5SUMS-True] PASSED
+tests/test_barman_wal_archive.py::TestRemotePutWal::test_str_source_file[sha256-SHA256SUMS-False] PASSED
 tests/test_barman_wal_archive.py::TestRemotePutWal::test_error PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_tar PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_md5copyfileobj[0-0] PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_md5copyfileobj[10-None] PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_md5copyfileobj[10-0] PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_md5copyfileobj[10-1] PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_md5copyfileobj[10--5] PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_md5copyfileobj[16384-0] PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_md5copyfileobj[32767--1] PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_md5copyfileobj[32767-0] PASSED
-tests/test_barman_wal_archive.py::TestChecksumTarFile::test_md5copyfileobj[32767-1] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_tar[sha256-SHA256SUMS] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_tar[md5-MD5SUMS] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[sha256-0-0] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[sha256-10-None] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[sha256-10-0] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[sha256-10-1] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[sha256-10--5] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[sha256-16384-0] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[sha256-32767--1] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[sha256-32767-0] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[sha256-32767-1] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[md5-0-0] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[md5-10-None] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[md5-10-0] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[md5-10-1] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[md5-10--5] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[md5-16384-0] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[md5-32767--1] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[md5-32767-0] PASSED
+tests/test_barman_wal_archive.py::TestChecksumTarFile::test_hashCopyfileobj[md5-32767-1] PASSED
 tests/test_barman_wal_restore.py::TestRemoteGetWal::test_string_dest_file PASSED
 tests/test_barman_wal_restore.py::TestRemoteGetWal::test_connectivity_test_ok PASSED
 tests/test_barman_wal_restore.py::TestRemoteGetWal::test_connectivity_test_error PASSED
@@ -296,6 +310,7 @@ tests/test_barman_wal_restore.py::TestRemoteGetWal::test_ssh_connectivity_error 
 tests/test_barman_wal_restore.py::TestRemoteGetWal::test_ssh_exit_code_is_passed_through PASSED
 tests/test_barman_wal_restore.py::TestRemoteGetWal::test_exit_code_if_wal_dest_is_dir PASSED
 tests/test_barman_wal_restore.py::TestRemoteGetWal::test_exit_code_if_wal_dest_not_writable PASSED
+tests/test_barman_wal_restore.py::TestRemoteGetWal::test_decompression PASSED
 tests/test_cli.py::TestCli::test_get_server PASSED
 tests/test_cli.py::TestCli::test_get_server_with_conflicts PASSED
 tests/test_cli.py::TestCli::test_get_server_inactive PASSED
@@ -303,7 +318,7 @@ tests/test_cli.py::TestCli::test_get_server_wal_streaming[False-ws_conninfo-w_co
 tests/test_cli.py::TestCli::test_get_server_wal_streaming[True-None-None-s_conninfo-conninfo] PASSED
 tests/test_cli.py::TestCli::test_get_server_wal_streaming[True-ws_conninfo-w_conninfo-ws_conninfo-w_conninfo] PASSED
 tests/test_cli.py::TestCli::test_get_server_wal_streaming[True-ws_conninfo-None-ws_conninfo-ws_conninfo] PASSED
-tests/test_cli.py::TestCli::test_get_server_wal_streaming[True-None-w_conninfo-s_conninfo-conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_wal_streaming[True-None-w_conninfo-s_conninfo-w_conninfo] PASSED
 tests/test_cli.py::TestCli::test_manage_server_command PASSED
 tests/test_cli.py::TestCli::test_get_server_global_error_list PASSED
 tests/test_cli.py::TestCli::test_get_server_list PASSED
@@ -312,48 +327,48 @@ tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[False-ws_conninfo
 tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[True-None-None-s_conninfo-conninfo] PASSED
 tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[True-ws_conninfo-w_conninfo-ws_conninfo-w_conninfo] PASSED
 tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[True-ws_conninfo-None-ws_conninfo-ws_conninfo] PASSED
-tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[True-None-w_conninfo-s_conninfo-conninfo] PASSED
+tests/test_cli.py::TestCli::test_get_server_list_wal_streaming[True-None-w_conninfo-s_conninfo-w_conninfo] PASSED
 tests/test_cli.py::TestCli::test_get_model PASSED
 tests/test_cli.py::TestCli::test_manage_model_command[None] PASSED
 tests/test_cli.py::TestCli::test_manage_model_command[model1] PASSED
 tests/test_cli.py::TestCli::test_get_models_list_invalid_args PASSED
 tests/test_cli.py::TestCli::test_get_models_list_none_args PASSED
 tests/test_cli.py::TestCli::test_get_models_list_valid_args PASSED
-tests/test_cli.py::TestCli::test_recover_multiple_targets PASSED
-tests/test_cli.py::TestCli::test_recover_one_target PASSED
-tests/test_cli.py::TestCli::test_recover_default_target PASSED
-tests/test_cli.py::TestCli::test_recover_get_wal[-False-False-False] PASSED
-tests/test_cli.py::TestCli::test_recover_get_wal[-False-True-False] PASSED
-tests/test_cli.py::TestCli::test_recover_get_wal[-True-False-True] PASSED
-tests/test_cli.py::TestCli::test_recover_get_wal[get-wal-False-False-True] PASSED
-tests/test_cli.py::TestCli::test_recover_get_wal[get-wal-False-True-False] PASSED
-tests/test_cli.py::TestCli::test_recover_get_wal[get-wal-True-False-True] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[False-None-None-None-False-None] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-None-None-None-True-backup is compressed with gzip compression but no recovery staging path is provided.] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-/from/arg-None-/from/arg-False-None] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-from/arg-None-None-True-Cannot parse recovery staging path: Invalid value : 'from/arg' (must be an absolute path)] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-None-/from/conf-/from/conf-False-None] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_staging_path[True-/from/arg-/from/conf-/from/arg-False-None] PASSED
-tests/test_cli.py::TestCli::test_recover_local_staging_path[False-None-None-None-False-None] PASSED
-tests/test_cli.py::TestCli::test_recover_local_staging_path[True-None-None-None-True-backup will be combined with pg_combinebackup in the barman host but no local staging path is provided.] PASSED
-tests/test_cli.py::TestCli::test_recover_local_staging_path[True-/from/arg-None-/from/arg-False-None] PASSED
-tests/test_cli.py::TestCli::test_recover_local_staging_path[True-from/arg-None-None-True-Cannot parse local staging path: Invalid value : 'from/arg' (must be an absolute path)] PASSED
-tests/test_cli.py::TestCli::test_recover_local_staging_path[True-None-/from/conf-/from/conf-False-None] PASSED
-tests/test_cli.py::TestCli::test_recover_local_staging_path[True-/from/arg-/from/conf-/from/arg-False-None] PASSED
-tests/test_cli.py::TestCli::test_recover_backup_status[DONE-False] PASSED
-tests/test_cli.py::TestCli::test_recover_backup_status[WAITING_FOR_WALS-False] PASSED
-tests/test_cli.py::TestCli::test_recover_backup_status[FAILED-True] PASSED
-tests/test_cli.py::TestCli::test_recover_backup_status[EMPTY-True] PASSED
-tests/test_cli.py::TestCli::test_recover_backup_status[SYNCING-True] PASSED
-tests/test_cli.py::TestCli::test_recover_backup_status[STARTED-True] PASSED
-tests/test_cli.py::TestCli::test_recover_snapshots[None-snapshot_recovery_args0-extra_recovery_args0-Backup backup_id is not a snapshot backup but the following snapshot arguments have been used: --snapshot-recovery-instance] PASSED
-tests/test_cli.py::TestCli::test_recover_snapshots[snapshots_info1-snapshot_recovery_args1-extra_recovery_args1-Backup backup_id is a snapshot backup and the following required arguments have not been provided: --snapshot-recovery-instance] PASSED
-tests/test_cli.py::TestCli::test_recover_snapshots[snapshots_info2-snapshot_recovery_args2-extra_recovery_args2-Backup backup_id is a snapshot backup therefore tablespace relocation rules cannot be used] PASSED
-tests/test_cli.py::TestCli::test_recover_snapshots[snapshots_info3-snapshot_recovery_args3-extra_recovery_args3-None] PASSED
-tests/test_cli.py::TestCli::test_recover_recovery_instance_kwarg_not_passed PASSED
-tests/test_cli.py::TestCli::test_recover_snapshot_provider_args[gcp_zone-snapshot_recovery_zone] PASSED
-tests/test_cli.py::TestCli::test_recover_snapshot_provider_args[azure_resource_group-None] PASSED
-tests/test_cli.py::TestCli::test_recover_snapshot_provider_args[aws_region-None] PASSED
+tests/test_cli.py::TestCli::test_restore_multiple_targets PASSED
+tests/test_cli.py::TestCli::test_restore_one_target PASSED
+tests/test_cli.py::TestCli::test_restore_default_target PASSED
+tests/test_cli.py::TestCli::test_restore_get_wal[-False-False-False] PASSED
+tests/test_cli.py::TestCli::test_restore_get_wal[-False-True-False] PASSED
+tests/test_cli.py::TestCli::test_restore_get_wal[-True-False-True] PASSED
+tests/test_cli.py::TestCli::test_restore_get_wal[get-wal-False-False-True] PASSED
+tests/test_cli.py::TestCli::test_restore_get_wal[get-wal-False-True-False] PASSED
+tests/test_cli.py::TestCli::test_restore_get_wal[get-wal-True-False-True] PASSED
+tests/test_cli.py::TestCli::test_restore_recovery_staging_path[False-None-None-None-False-None] PASSED
+tests/test_cli.py::TestCli::test_restore_recovery_staging_path[True-None-None-None-True-backup is compressed with gzip compression but no recovery staging path is provided.] PASSED
+tests/test_cli.py::TestCli::test_restore_recovery_staging_path[True-/from/arg-None-/from/arg-False-None] PASSED
+tests/test_cli.py::TestCli::test_restore_recovery_staging_path[True-from/arg-None-None-True-Cannot parse recovery staging path: Invalid value : 'from/arg' (must be an absolute path)] PASSED
+tests/test_cli.py::TestCli::test_restore_recovery_staging_path[True-None-/from/conf-/from/conf-False-None] PASSED
+tests/test_cli.py::TestCli::test_restore_recovery_staging_path[True-/from/arg-/from/conf-/from/arg-False-None] PASSED
+tests/test_cli.py::TestCli::test_restore_local_staging_path[False-None-None-None-False-None] PASSED
+tests/test_cli.py::TestCli::test_restore_local_staging_path[True-None-None-None-True-backup will be combined with pg_combinebackup in the barman host but no local staging path is provided.] PASSED
+tests/test_cli.py::TestCli::test_restore_local_staging_path[True-/from/arg-None-/from/arg-False-None] PASSED
+tests/test_cli.py::TestCli::test_restore_local_staging_path[True-from/arg-None-None-True-Cannot parse local staging path: Invalid value : 'from/arg' (must be an absolute path)] PASSED
+tests/test_cli.py::TestCli::test_restore_local_staging_path[True-None-/from/conf-/from/conf-False-None] PASSED
+tests/test_cli.py::TestCli::test_restore_local_staging_path[True-/from/arg-/from/conf-/from/arg-False-None] PASSED
+tests/test_cli.py::TestCli::test_restore_backup_status[DONE-False] PASSED
+tests/test_cli.py::TestCli::test_restore_backup_status[WAITING_FOR_WALS-False] PASSED
+tests/test_cli.py::TestCli::test_restore_backup_status[FAILED-True] PASSED
+tests/test_cli.py::TestCli::test_restore_backup_status[EMPTY-True] PASSED
+tests/test_cli.py::TestCli::test_restore_backup_status[SYNCING-True] PASSED
+tests/test_cli.py::TestCli::test_restore_backup_status[STARTED-True] PASSED
+tests/test_cli.py::TestCli::test_restore_snapshots[None-snapshot_recovery_args0-extra_recovery_args0-Backup backup_id is not a snapshot backup but the following snapshot arguments have been used: --snapshot-recovery-instance] PASSED
+tests/test_cli.py::TestCli::test_restore_snapshots[snapshots_info1-snapshot_recovery_args1-extra_recovery_args1-Backup backup_id is a snapshot backup and the following required arguments have not been provided: --snapshot-recovery-instance] PASSED
+tests/test_cli.py::TestCli::test_restore_snapshots[snapshots_info2-snapshot_recovery_args2-extra_recovery_args2-Backup backup_id is a snapshot backup therefore tablespace relocation rules cannot be used] PASSED
+tests/test_cli.py::TestCli::test_restore_snapshots[snapshots_info3-snapshot_recovery_args3-extra_recovery_args3-None] PASSED
+tests/test_cli.py::TestCli::test_restore_recovery_instance_kwarg_not_passed PASSED
+tests/test_cli.py::TestCli::test_restore_snapshot_provider_args[gcp_zone-snapshot_recovery_zone] PASSED
+tests/test_cli.py::TestCli::test_restore_snapshot_provider_args[azure_resource_group-None] PASSED
+tests/test_cli.py::TestCli::test_restore_snapshot_provider_args[aws_region-None] PASSED
 tests/test_cli.py::TestCli::test_check_target_action PASSED
 tests/test_cli.py::TestCli::test_backup_immediate_checkpoint[False-None-False] PASSED
 tests/test_cli.py::TestCli::test_backup_immediate_checkpoint[True-None-True] PASSED
@@ -489,6 +504,9 @@ tests/test_compressor.py::TestCompressionManager::test_get_compressor_custom PAS
 tests/test_compressor.py::TestCompressionManager::test_get_compressor_custom_nomagic PASSED
 tests/test_compressor.py::TestCompressionManager::test_get_compressor_gzip PASSED
 tests/test_compressor.py::TestCompressionManager::test_get_compressor_bzip2 PASSED
+tests/test_compressor.py::TestCompressionManager::test_get_compressor_xz PASSED
+tests/test_compressor.py::TestCompressionManager::test_get_compressor_zstd PASSED
+tests/test_compressor.py::TestCompressionManager::test_get_compressor_lz4 PASSED
 tests/test_compressor.py::TestCompressionManager::test_get_compressor_invalid PASSED
 tests/test_compressor.py::TestCompressionManager::test_identify_compression PASSED
 tests/test_compressor.py::TestCompressor::test_validate[BZh-BZh-True] PASSED
@@ -502,6 +520,9 @@ tests/test_compressor.py::TestCommandCompressors::test_gzip PASSED
 tests/test_compressor.py::TestCommandCompressors::test_bzip2 PASSED
 tests/test_compressor.py::TestInternalCompressors::test_gzip PASSED
 tests/test_compressor.py::TestInternalCompressors::test_bzip2 PASSED
+tests/test_compressor.py::TestInternalCompressors::test_xz PASSED
+tests/test_compressor.py::TestInternalCompressors::test_zstd PASSED
+tests/test_compressor.py::TestInternalCompressors::test_lz4 PASSED
 tests/test_compressor.py::TestCustomCompressor::test_custom_compressor_creation PASSED
 tests/test_compressor.py::TestPgBaseBackupCompression::test_get_pg_basebackup_compression[None-NoneType-None-None] PASSED
 tests/test_compressor.py::TestPgBaseBackupCompression::test_get_pg_basebackup_compression[gzip-PgBaseBackupCompression-GZipPgBaseBackupCompressionOption-GZipCompression] PASSED
@@ -1046,27 +1067,18 @@ tests/test_retention_policies.py::TestRetentionPolicies::test_redundancy_report 
 tests/test_retention_policies.py::TestRetentionPolicies::test_recovery_window_report PASSED
 tests/test_retention_policies.py::TestRetentionPolicies::test_backup_status PASSED
 tests/test_retention_policies.py::TestRetentionPolicies::test_first_backup PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-OBSOLETE] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-VALID] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-OBSOLETE*] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-KEEP:FULL] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS-KEEP:STANDALONE] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[RECOVERY WINDOW OF 4 WEEKS--] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-OBSOLETE] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-VALID] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-OBSOLETE*] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-KEEP:FULL] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2-KEEP:STANDALONE] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children[REDUNDANCY 2--] PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test_redundancy_report_with_incrementals PASSED
-tests/test_retention_policies.py::TestRetentionPolicies::test_recovery_window_report_with_incrementals PASSED
+tests/test_retention_policies.py::TestRetentionPolicies::test__propagate_retention_status_to_children PASSED
 tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_standalone_within_policy PASSED
+tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_standalone_with_incrementals PASSED
 tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_full_within_policy PASSED
+tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_full_with_incrementals PASSED
 tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_standalone_out_of_policy PASSED
 tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_full_out_of_policy PASSED
 tests/test_retention_policies.py::TestRedundancyRetentionPolicyWithKeepAnnotation::test_keep_unknown_recovery_target PASSED
 tests/test_retention_policies.py::TestRecoveryWindowRetentionPolicyWithKeepAnnotation::test_keep_standalone_within_policy PASSED
+tests/test_retention_policies.py::TestRecoveryWindowRetentionPolicyWithKeepAnnotation::test_keep_standalone_with_incrementals PASSED
 tests/test_retention_policies.py::TestRecoveryWindowRetentionPolicyWithKeepAnnotation::test_keep_full_within_policy PASSED
+tests/test_retention_policies.py::TestRecoveryWindowRetentionPolicyWithKeepAnnotation::test_keep_full_with_incrementals PASSED
 tests/test_retention_policies.py::TestRecoveryWindowRetentionPolicyWithKeepAnnotation::test_keep_standalone_out_of_policy PASSED
 tests/test_retention_policies.py::TestRecoveryWindowRetentionPolicyWithKeepAnnotation::test_keep_full_out_of_policy PASSED
 tests/test_retention_policies.py::TestRecoveryWindowRetentionPolicyWithKeepAnnotation::test_keep_standalone_minimum_redundancy PASSED
@@ -1139,16 +1151,27 @@ tests/test_server.py::TestServer::test_receive_wal_checks[remote_status6-Check '
 tests/test_server.py::TestServer::test_check_backup PASSED
 tests/test_server.py::TestServer::test_wait_for_wal PASSED
 tests/test_server.py::TestServer::test_get_wal_sendfile_uncompress_fail PASSED
-tests/test_server.py::TestServer::test_put_wal[plain-True-None] PASSED
-tests/test_server.py::TestServer::test_put_wal[relative-True-None] PASSED
-tests/test_server.py::TestServer::test_put_wal[bad_sum_line-True-Bad checksum line] PASSED
-tests/test_server.py::TestServer::test_put_wal[bad_file_type-False-Unsupported file type] PASSED
-tests/test_server.py::TestServer::test_put_wal[subdir-False-Unsupported filename] PASSED
-tests/test_server.py::TestServer::test_put_wal_fail[file_absent-Checksum without corresponding file] PASSED
-tests/test_server.py::TestServer::test_put_wal_fail[sum_absent-Missing checksum for file] PASSED
-tests/test_server.py::TestServer::test_put_wal_fail[sum_mismatch-Bad file checksum] PASSED
-tests/test_server.py::TestServer::test_put_wal_fail[dest_exists-Impossible to write already existing] PASSED
-tests/test_server.py::TestServer::test_put_wal_fsync PASSED
+tests/test_server.py::TestServer::test_get_wal_keep_compression PASSED
+tests/test_server.py::TestServer::test_put_wal[obj0-MD5SUMS-md5-34743e1e454e967eb76a16c66372b0ef-plain-True-None] PASSED
+tests/test_server.py::TestServer::test_put_wal[obj1-MD5SUMS-md5-34743e1e454e967eb76a16c66372b0ef-relative-True-None] PASSED
+tests/test_server.py::TestServer::test_put_wal[obj2-MD5SUMS-md5-34743e1e454e967eb76a16c66372b0ef-bad_sum_line-True-Bad checksum line] PASSED
+tests/test_server.py::TestServer::test_put_wal[obj3-MD5SUMS-md5-34743e1e454e967eb76a16c66372b0ef-bad_file_type-False-Unsupported file type] PASSED
+tests/test_server.py::TestServer::test_put_wal[obj4-MD5SUMS-md5-34743e1e454e967eb76a16c66372b0ef-subdir-False-Unsupported filename] PASSED
+tests/test_server.py::TestServer::test_put_wal[obj5-SHA256SUMS-sha256-2432a5281590f6c17323a8dc9c5442757e79fdc4d2028ae36bcb0010410dfc64-plain-True-None] PASSED
+tests/test_server.py::TestServer::test_put_wal[obj6-SHA256SUMS-sha256-2432a5281590f6c17323a8dc9c5442757e79fdc4d2028ae36bcb0010410dfc64-relative-True-None] PASSED
+tests/test_server.py::TestServer::test_put_wal[obj7-SHA256SUMS-sha256-2432a5281590f6c17323a8dc9c5442757e79fdc4d2028ae36bcb0010410dfc64-bad_sum_line-True-Bad checksum line] PASSED
+tests/test_server.py::TestServer::test_put_wal[obj8-SHA256SUMS-sha256-2432a5281590f6c17323a8dc9c5442757e79fdc4d2028ae36bcb0010410dfc64-bad_file_type-False-Unsupported file type] PASSED
+tests/test_server.py::TestServer::test_put_wal[obj9-SHA256SUMS-sha256-2432a5281590f6c17323a8dc9c5442757e79fdc4d2028ae36bcb0010410dfc64-subdir-False-Unsupported filename] PASSED
+tests/test_server.py::TestServer::test_put_wal_fail[MD5SUMS-md5-file_absent-Checksum without corresponding file] PASSED
+tests/test_server.py::TestServer::test_put_wal_fail[MD5SUMS-md5-sum_absent-Missing checksum for file] PASSED
+tests/test_server.py::TestServer::test_put_wal_fail[MD5SUMS-md5-sum_mismatch-Bad file checksum] PASSED
+tests/test_server.py::TestServer::test_put_wal_fail[MD5SUMS-md5-dest_exists-Impossible to write already existing] PASSED
+tests/test_server.py::TestServer::test_put_wal_fail[SHA256SUMS-sha256-file_absent-Checksum without corresponding file] PASSED
+tests/test_server.py::TestServer::test_put_wal_fail[SHA256SUMS-sha256-sum_absent-Missing checksum for file] PASSED
+tests/test_server.py::TestServer::test_put_wal_fail[SHA256SUMS-sha256-sum_mismatch-Bad file checksum] PASSED
+tests/test_server.py::TestServer::test_put_wal_fail[SHA256SUMS-sha256-dest_exists-Impossible to write already existing] PASSED
+tests/test_server.py::TestServer::test_put_wal_fsync[obj0-MD5SUMS-md5-34743e1e454e967eb76a16c66372b0ef] PASSED
+tests/test_server.py::TestServer::test_put_wal_fsync[obj1-SHA256SUMS-sha256-2432a5281590f6c17323a8dc9c5442757e79fdc4d2028ae36bcb0010410dfc64] PASSED
 tests/test_server.py::TestServer::test_get_systemid_file_path PASSED
 tests/test_server.py::TestServer::test_write_systemid_file PASSED
 tests/test_server.py::TestServer::test_check_systemid PASSED
@@ -1274,6 +1297,26 @@ tests/test_utils.py::TestCheckBackupNames::test_check_backup_name_success[backup
 tests/test_utils.py::TestCheckBackupNames::test_get_backup_info_from_name_match PASSED
 tests/test_utils.py::TestCheckBackupNames::test_get_backup_info_from_name_multiple_match PASSED
 tests/test_utils.py::TestCheckBackupNames::test_get_backup_info_from_name_no_match PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_expiration_date_format PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_expiration_date_format_error[2024-01-01] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_expiration_date_format_error[2024-01-01T00:00:00] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_expiration_date_format_error[2024-01-01T00:00:00.000] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_duration_range[1] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_duration_range[12000] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_duration_range[36500] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_duration_range_error[-1] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_duration_range_error[0] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_duration_range_error[36501] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_cool_off_period_range[1] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_cool_off_period_range[30] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_cool_off_period_range[72] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_cool_off_period_range_error[-1] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_cool_off_period_range_error[0] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_cool_off_period_range_error[73] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_mode[governance] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_mode[compliance] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_mode_error[nogovernance] PASSED
+tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_snapshot_lock_mode_error[nocompliance] PASSED
 tests/test_utils.py::TestEditConfig::test_edit_config_existing_section PASSED
 tests/test_utils.py::TestEditConfig::test_edit_config_new_section PASSED
 tests/test_utils.py::TestEditConfig::test_edit_config_existing_option PASSED
@@ -1384,7 +1427,7 @@ tests/test_backup.py::TestBackup::test_keyboard_interrupt
     warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
 
 tests/test_command_wrappers.py: 36 warnings
-  $(@D)/barman/command_wrappers.py:767: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:766: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("9.3"):
 
 tests/test_command_wrappers.py: 83 warnings
@@ -1396,25 +1439,25 @@ tests/test_wal_archiver.py: 14 warnings
     other = LooseVersion(other)
 
 tests/test_command_wrappers.py: 26 warnings
-  $(@D)/barman/command_wrappers.py:959: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:958: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("10"):
 
 tests/test_command_wrappers.py: 17 warnings
-  $(@D)/barman/command_wrappers.py:1014: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:1013: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("15"):
 
 tests/test_command_wrappers.py: 2 warnings
 tests/test_executor.py: 3 warnings
 tests/test_recovery_executor.py: 2 warnings
 tests/test_wal_archiver.py: 6 warnings
-  $(@D)/barman/command_wrappers.py:894: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:893: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     version_info["full_version"] = Version(full_version)
 
 tests/test_command_wrappers.py: 2 warnings
 tests/test_executor.py: 3 warnings
 tests/test_recovery_executor.py: 2 warnings
 tests/test_wal_archiver.py: 6 warnings
-  $(@D)/barman/command_wrappers.py:895: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:894: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     version_info["major_version"] = Version(
 
 tests/test_compressor.py::TestPgBaseBackupCompressionOption::test_validate[14-140000-compression_options2-expected_errors2]
@@ -1422,15 +1465,15 @@ tests/test_compressor.py::TestPgBaseBackupCompressionOption::test_validate[14-15
 tests/test_compressor.py::TestPgBaseBackupCompressionOption::test_validate[15-150000-compression_options6-expected_errors6]
 tests/test_compressor.py::TestPgBaseBackupCompressionOption::test_validate[15-150000-compression_options8-expected_errors8]
 tests/test_compressor.py::TestPgBaseBackupCompressionOption::test_validate[15-150000-compression_options9-expected_errors9]
-  $(@D)/barman/compression.py:548: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/compression.py:628: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if remote_status["pg_basebackup_version"] < Version("15"):
 
 tests/test_compressor.py: 10 warnings
-  $(@D)/barman/compression.py:586: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/compression.py:666: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     ] < Version("15"):
 
 tests/test_compressor.py: 10 warnings
-  $(@D)/barman/compression.py:597: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/compression.py:677: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     and remote_status["pg_basebackup_version"] >= Version("15")
 
 tests/test_compressor.py::TestLZ4PgBaseBackupCompressionOption::test_validate[15-15000-compression_options0-expected_errors0]
@@ -1440,7 +1483,7 @@ tests/test_compressor.py::TestLZ4PgBaseBackupCompressionOption::test_validate[15
 tests/test_compressor.py::TestLZ4PgBaseBackupCompressionOption::test_validate[15-15000-compression_options4-expected_errors4]
 tests/test_compressor.py::TestLZ4PgBaseBackupCompressionOption::test_validate[14-15000-compression_options5-expected_errors5]
 tests/test_compressor.py::TestLZ4PgBaseBackupCompressionOption::test_validate[15-14000-compression_options6-expected_errors6]
-  $(@D)/barman/compression.py:630: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/compression.py:710: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if remote_status["pg_basebackup_version"] < Version("15"):
 
 tests/test_compressor.py::TestZSTDPgBaseBackupCompressionOption::test_validate[15-15000-compression_options0-expected_errors0]
@@ -1450,31 +1493,31 @@ tests/test_compressor.py::TestZSTDPgBaseBackupCompressionOption::test_validate[1
 tests/test_compressor.py::TestZSTDPgBaseBackupCompressionOption::test_validate[15-15000-compression_options4-expected_errors4]
 tests/test_compressor.py::TestZSTDPgBaseBackupCompressionOption::test_validate[14-15000-compression_options5-expected_errors5]
 tests/test_compressor.py::TestZSTDPgBaseBackupCompressionOption::test_validate[14-15000-compression_options6-expected_errors6]
-  $(@D)/barman/compression.py:666: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/compression.py:746: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if remote_status["pg_basebackup_version"] < Version("15"):
 
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
-  $(@D)/barman/backup_executor.py:453: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/backup_executor.py:457: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     pg_version = Version(postgres.server_txt_version)
 
 tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status
 tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status
-  $(@D)/barman/backup_executor.py:549: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/backup_executor.py:553: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     pg_version = Version(pg_version)
 
 tests/test_executor.py::TestSnapshotBackupExecutor::test_find_missing_and_unmounted_disks_resolve_exception
-  $(@D)/barman/backup_executor.py:1640: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
+  $(@D)/barman/backup_executor.py:1697: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
     logging.warn("Error resolving mount point: {}".format(exc))
 
 tests/test_utils.py::TestBarmanEncoder::test_version_objects
-  $(@D)/tests/test_utils.py:552: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/tests/test_utils.py:551: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     json_dump = json.dumps(LooseVersion("9.5.3"), cls=barman.utils.BarmanEncoder)
 
 tests/test_utils.py::TestBarmanEncoderV2::test_version_objects
-  $(@D)/tests/test_utils.py:643: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/tests/test_utils.py:642: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     json_dump = json.dumps(LooseVersion("9.5.3"), cls=barman.utils.BarmanEncoderV2)
 
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
@@ -1482,10 +1525,34 @@ tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
-  $(@D)/barman/wal_archiver.py:695: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/wal_archiver.py:694: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     pg_version = Version(pg_version)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1334 passed, 23 skipped, 313 warnings ========
+======== 1377 passed, 23 skipped, 313 warnings ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw4'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw5'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
   py$(PYV): OK
   congratulations :)
