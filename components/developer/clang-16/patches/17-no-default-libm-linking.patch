@@ -1,0 +1,12 @@
+--- llvm-16.0.6.src/tools/clang/lib/Driver/ToolChains/Solaris.cpp.old	2024-11-20 00:40:14.162989172 -0500
++++ llvm-16.0.6.src/tools/clang/lib/Driver/ToolChains/Solaris.cpp	2024-11-20 00:41:05.733162936 -0500
+@@ -149,7 +149,8 @@
+     CmdArgs.push_back("-lc");
+     if (!Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-lgcc");
+-      CmdArgs.push_back("-lm");
++      if (D.CCCIsCXX())
++        CmdArgs.push_back("-lm");
+     }
+     if (NeedsSanitizerDeps) {
+       linkSanitizerRuntimeDeps(getToolChain(), CmdArgs);

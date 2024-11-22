@@ -1,0 +1,45 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 Friedrich Kink
+#
+
+set name=pkg.fmri value=pkg:/runtime/clang-16@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="Runtime for $(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/clang/$(CLANGVER)/lib/.*.so.* -> \
+        default pkg.linted.userland.action001.2 true >
+
+link path=usr/clang/$(CLANGVER)/lib/libLLVM-$(HUMAN_VERSION).so \
+    target=libLLVM-16.so
+file path=usr/clang/$(CLANGVER)/lib/libLLVM-16.so
+link path=usr/clang/$(CLANGVER)/lib/libLLVM.so target=libLLVM-16.so
+link path=usr/clang/$(CLANGVER)/lib/libLTO.so target=libLTO.so.$(CLANGVER)
+file path=usr/clang/$(CLANGVER)/lib/libLTO.so.$(CLANGVER)
+link path=usr/clang/$(CLANGVER)/lib/libRemarks.so \
+    target=libRemarks.so.$(CLANGVER)
+file path=usr/clang/$(CLANGVER)/lib/libRemarks.so.$(CLANGVER)
+link path=usr/clang/$(CLANGVER)/lib/libclang-cpp.so \
+    target=libclang-cpp.so.$(CLANGVER)
+file path=usr/clang/$(CLANGVER)/lib/libclang-cpp.so.$(CLANGVER)
+link path=usr/clang/$(CLANGVER)/lib/libclang.so target=libclang.so.$(CLANGVER)
+file path=usr/clang/$(CLANGVER)/lib/libclang.so.$(CLANGVER)
+file path=usr/clang/$(CLANGVER)/lib/libscanbuild/resources/scanview.css
+file path=usr/clang/$(CLANGVER)/lib/libscanbuild/resources/selectable.js
+file path=usr/clang/$(CLANGVER)/lib/libscanbuild/resources/sorttable.js
