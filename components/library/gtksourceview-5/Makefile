@@ -22,9 +22,9 @@ include ../../../make-rules/shared-macros.mk
 ABIVER = 5
 
 COMPONENT_NAME=			gtksourceview
-HUMAN_VERSION=			5.14.1
+HUMAN_VERSION=			5.14.2
 COMPONENT_SUMMARY=		Text editor widget for code editing
-COMPONENT_ARCHIVE_HASH=		sha256:009862e87b929da5a724ece079f01f8cee29e74797a1ecac349f58c15a3cbc58
+COMPONENT_ARCHIVE_HASH=		sha256:1a6d387a68075f8aefd4e752cf487177c4a6823b14ff8a434986858aeaef6264
 COMPONENT_FMRI=			library/desktop/gtksourceview-5
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
