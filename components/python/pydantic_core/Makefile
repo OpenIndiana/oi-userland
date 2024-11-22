@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic_core
-HUMAN_VERSION =			2.27.0
+HUMAN_VERSION =			2.27.1
 COMPONENT_SUMMARY =		Core functionality for Pydantic validation and serialization
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f57783fbaf648205ac50ae7d646f27582fc706be3977e87c3c124e7a92407b10
+	sha256:62a763352879b84aa31058fc931884055fd75089cccbd9d58bb6afd01141b235
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,7 +36,8 @@ LD_Z_IGNORE=
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS += tests/requirements.txt
+TEST_REQUIREMENTS_PEP735 += testing
+# https://github.com/pydantic/pydantic-core/issues/1554
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
 
 # Normalize pointers
