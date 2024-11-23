@@ -18,37 +18,24 @@ BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libsoup3
-COMPONENT_VERSION= 3.6.0
+COMPONENT_NAME=		libsoup
+HUMAN_VERSION=		3.6.1
 COMPONENT_SUMMARY= Libsoup is an HTTP client/server library for GNOME
-COMPONENT_SRC= libsoup-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:62959f791e8e8442f8c13cedac8c4919d78f9120d5bb5301be67a5e53318b4a3
-COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/libsoup/3.6/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:ceb1f1aa2bdd73b2cd8159d3998c96c55ef097ef15e4b4f36029209fa18af838
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/libsoup
 COMPONENT_FMRI= library/libsoup3
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_LICENSE= LGPLv2
+COMPONENT_LICENSE=	LGPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
-#TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= "$(PATH.gnu):/usr/apache2/2.4/bin"
+# GNU msgfmt is needed
+PATH=$(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION = ( \
-        $(CP) $(COMPONENT_DIR)/files/krb5-config $(BUILD_DIR) && \
-        chmod u+x $(BUILD_DIR)/krb5-config )
-
-COMPONENT_CONFIGURE_ENV += PATH="$(PATH)"
-COMPONENT_BUILD_ENV += PATH="$(PATH)"
-COMPONENT_TEST_ENV += PATH="$(PATH)"
-
-CONFIGURE_OPTIONS += -Dsysprof=disabled
-CONFIGURE_OPTIONS += -Dkrb5_config=$(BUILD_DIR)/krb5-config
-
-unexport SHELLOPTS
-#COMPONENT_TEST_TRANSFORMS += ' -e "s/[0-9]*\.[0-9]*s//" '
+# Testing needs apachectl and httpd
+PATH.prepend += /usr/apache2/2.4/bin
 
 # Manually added dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/gi-docgen
