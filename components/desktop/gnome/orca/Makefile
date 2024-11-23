@@ -18,9 +18,9 @@ BUILD_STYLE = meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			orca
-HUMAN_VERSION=			47.1
+HUMAN_VERSION=			47.2
 COMPONENT_SUMMARY=		Screen reader for graphical applications that use the atspi protocol
-COMPONENT_ARCHIVE_HASH=		sha256:d07d7acde8565546973a9f29730732f31726ab6bc9dcccead2e1204d7d8044ed
+COMPONENT_ARCHIVE_HASH=		sha256:5e67af357f7198ea00a44381cab4c4f94e6826d6ed800668f39416ce2aab8e5a
 COMPONENT_FMRI=			gnome/accessibility/orca
 COMPONENT_CLASSIFICATION=	Applications/Universal Access
 COMPONENT_LICENSE=		LGPL-2.1-only
