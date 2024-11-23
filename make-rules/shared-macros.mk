@@ -722,8 +722,11 @@ REQUIRED_PACKAGES_SUBST += CLANG_RUNTIME_PKG
 PATH.prepend +=		$(CLANG_BINDIR)
 
 # If a component asked for non-default clang version we need to make sure it is
-# installed
-USERLAND_REQUIRED_PACKAGES += $(if $(filter-out $(CLANG_DEFAULT),$(CLANG_VERSION)),$(CLANG_DEVELOPER_PKG))
+# installed.  The clang component is an exception because its CLANG_VERSION
+# often does not match the CLANG_DEFAULT and it does not need any clang for
+# building (clang is built using gcc).
+USERLAND_REQUIRED_PACKAGES += $(if $(filter-out clang,$(COMPONENT_NAME)), \
+	$(if $(filter-out $(CLANG_DEFAULT),$(CLANG_VERSION)),$(CLANG_DEVELOPER_PKG)))
 
 # Python definitions
 PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
