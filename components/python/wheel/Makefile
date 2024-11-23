@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-HUMAN_VERSION =			0.45.0
+HUMAN_VERSION =			0.45.1
 COMPONENT_SUMMARY =		A built-package format for Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a57353941a3183b3d5365346b567a260a0602a0f8a635926a7dede41b94c674a
+	sha256:661e1abd9198507b1409a20c02106d9670b2576e916d58f520316666abca6729
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -41,6 +41,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
