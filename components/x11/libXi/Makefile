@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXi
 COMPONENT_VERSION= 1.8.2
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=    x11/library/libxi
 COMPONENT_SUMMARY= libXi - X Input extension client library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
