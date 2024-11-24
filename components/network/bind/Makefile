@@ -28,7 +28,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.18.30
+COMPONENT_VERSION=	9.18.31
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -36,7 +36,7 @@ COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain N
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:9f6817640970267317e5aa143ecf70531040f2155636b1a63ea45379aa09034a
+COMPONENT_ARCHIVE_HASH=	sha256:51b258969275c5206ef745a5aac03dbe98f1c8031fefed378d53597e7987b1b3
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -69,8 +69,6 @@ CONFIGURE_LIBDIR.64= $(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --with-openssl=$(USRDIR)
 CONFIGURE_OPTIONS += --enable-warn-error
 CONFIGURE_OPTIONS += --enable-fixed-rrset
@@ -119,7 +117,7 @@ PKG_HARDLINKS += usr/bin/named-checkzone
 PKG_HARDLINKS += usr/sbin/ddns-confgen
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += library/cmocka
+TEST_REQUIRED_PACKAGES += library/cmocka
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
