@@ -16,14 +16,14 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ayatana-ido
-COMPONENT_VERSION=      0.10.2
-COMPONENT_PROJECT_URL=  https://github.com/AyatanaIndicators/ayatana-ido
+COMPONENT_VERSION=      0.10.4
 COMPONENT_SUMMARY=      Application Indicators are a GTK implementation of the StatusNotifierItem Specification (SNI)
-COMPONENT_FMRI=         desktop/library/ayatana-ido
+COMPONENT_PROJECT_URL=  https://github.com/AyatanaIndicators/ayatana-ido
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0daf8a2e5bba51225bc3724c0e53c3b569269f28ac3a14f6bed9920b44ecc856
+COMPONENT_ARCHIVE_HASH= sha256:bd59abd5f1314e411d0d55ce3643e91cef633271f58126be529de5fb71c5ab38
 COMPONENT_ARCHIVE_URL=  https://github.com/AyatanaIndicators/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=         desktop/library/ayatana-ido
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      LGPLv3
 COMPONENT_LICENSE_FILE= COPYING
