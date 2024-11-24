@@ -1,0 +1,41 @@
+--- php-8.3.13/TSRM/TSRM.h	2024-10-22 20:39:14.000000000 +0200
++++ php-8.3.13/TSRM/TSRM.h.new	2024-10-30 20:44:25.776973719 +0100
+@@ -149,7 +149,7 @@
+ # define __has_attribute(x) 0
+ #endif
+ 
+-#if !__has_attribute(tls_model) || defined(__FreeBSD__) || defined(__MUSL__) || defined(__HAIKU__)
++#if !__has_attribute(tls_model) || defined(__FreeBSD__) || defined(__MUSL__) || defined(__HAIKU__) || defined(__solaris__)
+ # define TSRM_TLS_MODEL_ATTR
+ # define TSRM_TLS_MODEL_DEFAULT
+ #elif __PIC__
+--- php-8.3.14/TSRM/TSRM.c	2024-11-19 16:14:23.000000000 +0100
++++ php-8.3.14/TSRM/TSRM.c.orig	2024-11-24 18:09:53.875421274 +0100
+@@ -756,14 +756,14 @@
+     // TODO: Implement support for fast JIT ZTS code ???
+ 	return 0;
+ #elif defined(__x86_64__) && defined(__GNUC__) && !defined(__FreeBSD__) && \
+-	!defined(__OpenBSD__) && !defined(__MUSL__) && !defined(__HAIKU__)
++	!defined(__OpenBSD__) && !defined(__MUSL__) && !defined(__HAIKU__) && !defined(__solaris__)
+ 	size_t ret;
+ 
+ 	asm ("movq _tsrm_ls_cache@gottpoff(%%rip),%0"
+           : "=r" (ret));
+ 	return ret;
+ #elif defined(__i386__) && defined(__GNUC__) && !defined(__FreeBSD__) && \
+-	!defined(__OpenBSD__) && !defined(__MUSL__) && !defined(__HAIKU__)
++	!defined(__OpenBSD__) && !defined(__MUSL__) && !defined(__HAIKU__) && !defined(__solaris__)
+ 	size_t ret;
+ 
+ 	asm ("leal _tsrm_ls_cache@ntpoff,%0"
+--- php-8.3.14/ext/opcache/jit/zend_jit_x86.dasc	2024-11-24 19:30:55.628281141 +0100
++++ php-8.3.14/ext/opcache/jit/zend_jit_x86.dasc.orig	2024-11-24 19:29:19.354837996 +0100
+@@ -2896,7 +2896,7 @@
+ # elif defined(__GNUC__) && defined(__x86_64__)
+ 	tsrm_ls_cache_tcb_offset = tsrm_get_ls_cache_tcb_offset();
+ 	if (tsrm_ls_cache_tcb_offset == 0) {
+-#if defined(__has_attribute) && __has_attribute(tls_model) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__MUSL__)
++#if defined(__has_attribute) && __has_attribute(tls_model) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__MUSL__) && !defined(__solaris__)
+ 		size_t ret;
+ 
+ 		asm ("movq _tsrm_ls_cache@gottpoff(%%rip),%0"
