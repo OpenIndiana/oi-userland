@@ -26,18 +26,19 @@
 
 BUILD_BITS=		64
 BUILD_STYLE=		cmake
+USE_PARALLEL_BUILD= yes
 
 include ../../../make-rules/shared-macros.mk
 
 MAJOR_VERSION=4.4
-MICRO_VERSION=0
+MICRO_VERSION=2
 
 COMPONENT_NAME=		wireshark
 COMPONENT_VERSION=	$(MAJOR_VERSION).$(MICRO_VERSION)
 COMPONENT_PROJECT_URL=	https://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:ead5cdcc08529a2e7ce291e01defc3b0f8831ba24c938db0762b1ebc59c71269
+COMPONENT_ARCHIVE_HASH=	sha256:6053d97499c83feb87ce1d7f732d9c889c6c18bb334de67e65dca11483b0514e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
@@ -46,10 +47,10 @@ TEST_TARGET:		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Set path to Qt6 libs
+# Set path to QT6 libs
 QT6_LIBDIR = /usr/lib/qt/6.6/lib/amd64
 
-# Set path to Qt5 cmake modules.
+# Set path to QT6 cmake modules.
 CMAKE_OPTIONS += -DCMAKE_PREFIX_PATH=$(QT6_LIBDIR)/cmake
 # Add non-standard path to perl pod2man and pod2html commands.
 CMAKE_OPTIONS += -DCMAKE_PROGRAM_PATH=$(USRDIR)/perl5/bin/
