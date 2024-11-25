@@ -29,13 +29,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
-COMPONENT_VERSION=      2.4.6
+COMPONENT_VERSION=      2.4.7
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnupg.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:95acfafda7004924a6f5c901677f15ac1bda2754511d973bb4523e8dd840e17a
+COMPONENT_ARCHIVE_HASH= sha256:7b24706e4da7e0e3b06ca068231027401f238102c41c909631349dcc3b85eb46
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         crypto/gnupg
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -65,7 +65,7 @@ CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --enable-largefile
 CONFIGURE_OPTIONS += --disable-selinux-support
 CONFIGURE_OPTIONS += --disable-libdns
-CONFIGURE_OPTIONS += --with-pinentry-pgm=$(CONFIGURE_PREFIX)/lib/pinentry
+CONFIGURE_OPTIONS += --with-pinentry-pgm=$(CONFIGURE_PREFIX)/libexec/pinentry
 CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-libassuan-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-ksba-prefix=$(CONFIGURE_PREFIX)
@@ -95,6 +95,7 @@ COMPONENT_TEST_TRANSFORMS += "-e '/====/p'"
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsecret
+REQUIRED_PACKAGES += security/pinentry
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(READLINE_PKG)
@@ -108,7 +109,6 @@ REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libksba
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += security/pinentry
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
