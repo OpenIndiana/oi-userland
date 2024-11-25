@@ -1078,7 +1078,7 @@ ok 12 - pretty nested inline object and array 2
 ok 13 - inline object with no members
 ok 14 - inline array with no members
 ok 15 - larger empty example
-ok 16 # skip parse JSON using Perl (missing PERLJSON)
+ok 16 - parse JSON using Perl
 # passed all 16 test(s)
 1..16
 *** t0020-crlf.sh ***
@@ -17861,17 +17861,17 @@ ok 4 - diff-tree with renames
 ok 5 - diff-tree FROM duplicate tree
 ok 6 - diff-tree FROM duplicate tree, with renames
 ok 7 - create a few commits
-not ok 8 - git read-tree does not segfault # TODO known breakage
-not ok 9 - reset --hard does not segfault # TODO known breakage
-not ok 10 - git diff HEAD does not segfault # TODO known breakage
+ok 8 - git read-tree does not segfault
+ok 9 - reset --hard does not segfault
+ok 10 - git diff HEAD does not segfault
 not ok 11 - can switch to another branch when status is empty # TODO known breakage
 ok 12 - forcibly switch to another branch, verify status empty
 ok 13 - fast-forward from non-duplicate entries to duplicate
 not ok 14 - clean status, switch branches, status still clean # TODO known breakage
 ok 15 - switch to base branch and force status to be clean
 not ok 16 - fast-forward from duplicate entries to non-duplicate # TODO known breakage
-# still have 6 known breakage(s)
-# passed all remaining 10 test(s)
+# still have 3 known breakage(s)
+# passed all remaining 13 test(s)
 1..16
 *** t4059-diff-submodule-not-initialized.sh ***
 ok 1 - setup - submodules
@@ -19417,8 +19417,9 @@ ok 48 - setup tests for zero-width regular expressions
 ok 49 - zero-width regex $ matches any function name
 ok 50 - zero-width regex ^ matches any function name
 ok 51 - zero-width regex .* matches any function name
-# passed all 51 test(s)
-1..51
+ok 52 - show line-log with graph
+# passed all 52 test(s)
+1..52
 *** t4212-log-corrupt.sh ***
 ok 1 - setup
 ok 2 - fsck notices broken commit
@@ -23988,9 +23989,10 @@ ok 64 - pull --rebase --recurse-submodules (remote superproject submodule change
 ok 65 - pull --rebase --recurse-submodules fails if both sides record submodule changes
 ok 66 - pull --rebase --recurse-submodules (no submodule changes, no fork-point)
 ok 67 - branch has no merge base with remote-tracking counterpart
+ok 68 - fetch submodule remote of different name from superproject
 # still have 8 known breakage(s)
-# passed all remaining 59 test(s)
-1..67
+# passed all remaining 60 test(s)
+1..68
 *** t5573-pull-verify-signatures.sh ***
 ok 1 # skip create repositories with signed commits (missing GPG)
 ok 2 # skip pull unsigned commit with --verify-signatures (missing GPG)
@@ -31407,26 +31409,27 @@ ok 32 - register and unregister
 ok 33 - register with no value for maintenance.repo
 ok 34 - unregister with no value for maintenance.repo
 ok 35 - register and unregister with regex metacharacters
-ok 36 - start --scheduler=<scheduler>
-ok 37 - start from empty cron table
-ok 38 - stop from existing schedule
-ok 39 - start preserves existing schedule
-ok 40 - magic markers are correct
-ok 41 - stop preserves surrounding schedule
-ok 42 - start and stop macOS maintenance
-ok 43 - use launchctl list to prevent extra work
-ok 44 - start and stop Windows maintenance
-ok 45 - start and stop Linux/systemd maintenance
-ok 46 - start and stop when several schedulers are available
-ok 47 - register preserves existing strategy
-ok 48 - fails when running outside of a repository
-ok 49 - register and unregister bare repo
-ok 50 - failed schedule prevents config change
-ok 51 - --no-detach causes maintenance to not run in background
-ok 52 - --detach causes maintenance to run in background
-ok 53 - repacking loose objects is quiet
-# passed all 53 test(s)
-1..53
+ok 36 - start without GIT_TEST_MAINT_SCHEDULER
+ok 37 - start --scheduler=<scheduler>
+ok 38 - start from empty cron table
+ok 39 - stop from existing schedule
+ok 40 - start preserves existing schedule
+ok 41 - magic markers are correct
+ok 42 - stop preserves surrounding schedule
+ok 43 - start and stop macOS maintenance
+ok 44 - use launchctl list to prevent extra work
+ok 45 - start and stop Windows maintenance
+ok 46 - start and stop Linux/systemd maintenance
+ok 47 - start and stop when several schedulers are available
+ok 48 - register preserves existing strategy
+ok 49 - fails when running outside of a repository
+ok 50 - register and unregister bare repo
+ok 51 - failed schedule prevents config change
+ok 52 - --no-detach causes maintenance to not run in background
+ok 53 - --detach causes maintenance to run in background
+ok 54 - repacking loose objects is quiet
+# passed all 54 test(s)
+1..54
 *** t8001-annotate.sh ***
 ok 1 - setup A lines
 ok 2 - blame 1 author
@@ -33504,10 +33507,10 @@ ok 67 - prompt - conflict indicator
 # passed all 67 test(s)
 1..67
 
-missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS ADD_OUT AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE FSMONITOR_DAEMON GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
+missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS ADD_OUT AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE FSMONITOR_DAEMON GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
 
 fixed   1
-success 29766
+success 29773
 failed  0
-broken  271
-total   30521
+broken  268
+total   30524
