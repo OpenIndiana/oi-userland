@@ -16,15 +16,13 @@ BUILD_STYLE=cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         toxcore
-COMPONENT_VERSION=      0.2.18
-#COMPONENT_REVISION=     1
+COMPONENT_VERSION=      0.2.20
 COMPONENT_PROJECT_URL=  https://tox.chat
 COMPONENT_SUMMARY=      Secure, configuration-free, P2P Skype replacement backend
 COMPONENT_FMRI=         network/chat/toxcore
 COMPONENT_SRC=          c-toxcore-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:1fba883638fd18985fd41acd35fed198c2cdd6e91651eb1c3fe602b610b535fe
+COMPONENT_ARCHIVE_HASH= sha256:5c1bc37d24a1e37fc6c03580e2602019a09393cd2e8ae1f58e338438f14d5871
 COMPONENT_ARCHIVE_URL=	https://github.com/TokTok/c-toxcore/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=       Applications/Internet
 COMPONENT_LICENSE=      GPLv3
