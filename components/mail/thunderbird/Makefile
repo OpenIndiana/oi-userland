@@ -38,13 +38,13 @@ ESR = esr
 # CANDIDATE_BUILD= 1
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	128.4.4
+COMPONENT_VERSION =	128.5.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)$(ESR).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:370fae094c0f600e8eb54628c34485c7da6528f905613d41d6975092566731cd
+	 sha256:e92ef24c1da888853d78d926c56599d1e0c7ad67a404d10dfea9483124e731cd
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -61,10 +61,7 @@ ALLOW_UNVERIFIED_DOWNLOADS=yes
 export ALLOW_UNVERIFIED_DOWNLOADS
 
 # There are a set of .xpi files (as given in the LANG_LIST definition
-# below) that we need. We could download and unpack them individually, but
-# they doesn't contain version in its file name and there is lot of them.
-# Therefore we will download them and archive them in Userland cache using
-# one file with version number.
+# below) that we need. They are downloaded and unpacked individually.
 
 LANG_LIST = af ar ast be bg br ca cak cs cy \
        da de dsb el en-CA en-GB en-US es-AR es-ES es-MX et \
