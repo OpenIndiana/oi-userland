@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gtk+
 HUMAN_VERSION=		3.24.43
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_ARCHIVE_HASH= sha256:7e04f0648515034b806b74ae5d774d87cffb1a2a96c468cb5be476d51bf2f3c7
 COMPONENT_PROJECT_URL=  https://www.gtk.org/
@@ -59,9 +60,8 @@ TEST_REQUIRED_PACKAGES += gnome/theme/hicolor-icon-theme
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += gnome/accessibility/at-spi2-atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/pango
