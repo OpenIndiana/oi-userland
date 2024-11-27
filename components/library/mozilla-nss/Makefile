@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
 COMPONENT_VERSION=	3.98
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -146,5 +147,6 @@ REQUIRED_PACKAGES += text/xmlto
 # Auto-generated dependencies
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += library/nspr/32
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
