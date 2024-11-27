@@ -1,11 +1,11 @@
---- virtualenv-20.27.1/tasks/make_zipapp.py.orig
-+++ virtualenv-20.27.1/tasks/make_zipapp.py
+--- virtualenv-20.28.0/tasks/make_zipapp.py.orig
++++ virtualenv-20.28.0/tasks/make_zipapp.py
 @@ -92,7 +92,7 @@
          into.mkdir(parents=True)
          self.into = into
          self.collected = defaultdict(lambda: defaultdict(dict))
 -        self.pip_cmd = [str(Path(sys.executable).parent / "pip")]
 +        self.pip_cmd = ["python", "-m", "pip"]
-         self._cmd = [*self.pip_cmd, "download", "-q", "--no-deps", "--dest", str(self.into)]
+         self._cmd = [*self.pip_cmd, "download", "-q", "--no-deps", "--no-cache-dir", "--dest", str(self.into)]
  
      def run(self, target, versions):

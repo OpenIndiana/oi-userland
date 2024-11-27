@@ -9,8 +9,9 @@ configfile: pyproject.toml
 timeout: 600.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 333 items
+collecting ... collected 339 items
 
+tests/integration/test_cachedir_tag.py::test_cachedir_tag_ignored_by_tag PASSED
 tests/integration/test_run_int.py::test_app_data_pinning PASSED
 tests/integration/test_zipapp.py::test_zipapp_create[app-data] PASSED
 tests/integration/test_zipapp.py::test_zipapp_create[pip] PASSED
@@ -35,6 +36,8 @@ tests/unit/activation/test_bash.py::test_bash[with_prompt-False] PASSED
 tests/unit/activation/test_bash.py::test_bash[with_prompt-True] PASSED
 tests/unit/activation/test_batch.py::test_batch[no_prompt] SKIPPED (...)
 tests/unit/activation/test_batch.py::test_batch[with_prompt] SKIPPED
+tests/unit/activation/test_batch.py::test_batch_output[no_prompt] SKIPPED
+tests/unit/activation/test_batch.py::test_batch_output[with_prompt] SKIPPED
 tests/unit/activation/test_csh.py::test_csh[no_prompt] PASSED
 tests/unit/activation/test_csh.py::test_csh[with_prompt] PASSED
 tests/unit/activation/test_fish.py::test_fish[no_prompt] PASSED
@@ -63,6 +66,9 @@ tests/unit/config/test_env_var.py::test_value_alias PASSED
 tests/unit/config/test_env_var.py::test_value_bad PASSED
 tests/unit/config/test_env_var.py::test_value_ok PASSED
 tests/unit/config/test_ini.py::test_ini_can_be_overwritten_by_flag PASSED
+tests/unit/create/test_creator.py::test_create_cachedir_tag PASSED
+tests/unit/create/test_creator.py::test_create_cachedir_tag_exists PASSED
+tests/unit/create/test_creator.py::test_create_cachedir_tag_exists_override PASSED
 tests/unit/create/test_creator.py::test_create_clear_resets[clear-cpython3-posix] PASSED
 tests/unit/create/test_creator.py::test_create_clear_resets[clear-venv] PASSED
 tests/unit/create/test_creator.py::test_create_clear_resets[no_clear-cpython3-posix] PASSED
@@ -346,7 +352,7 @@ tests/unit/test_util.py::test_reentrant_file_lock_is_thread_safe PASSED
 tests/unit/test_util.py::test_run_fail PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 311 passed, 22 skipped ========
+======== 315 passed, 24 skipped ========
 py$(PYV): commands[2]> python -m coverage combine
 py$(PYV): commands[3]> python -m coverage report --skip-covered --show-missing
 Name                                                                                                                                                                              Stmts   Miss Branch BrPart  Cover   Missing
@@ -355,66 +361,66 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/batch/__init__.p
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/nushell/__init__.py                           19      2      4      1    87%   22-23
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/python/activate_this.py                       20     20      2      0     0%   10-38
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/via_template.py                               50      3     10      1    93%   11-14
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/__init__.py                                     35      5     12      2    85%   20, 27-28, 41-42
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/__init__.py                                     36      5     12      2    85%   22, 29-30, 43-44
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/base.py                                         49      3      2      1    92%   54-55, 90
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/na.py                                           37      6      0      0    84%   29, 32, 37, 41, 44, 56
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/read_only.py                                    24      6      2      1    73%   15-16, 21-22, 36-37
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/via_disk_folder.py                             104     15     10      2    83%   51, 65-67, 71-76, 92->89, 127, 134-135, 139-140
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/app_data/via_disk_folder.py                             105     15     10      2    83%   53, 67-69, 73-78, 94->91, 129, 136-137, 141-142
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/config/cli/parser.py                                     98      6     34      4    92%   35, 39, 57-58, 98-99, 117->119
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/config/convert.py                                        52      6     10      2    84%   34-35, 41-43, 74
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/config/ini.py                                            58      7      8      3    85%   25, 35-36, 44-45, 47, 56
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/creator.py                                       132     10     34      5    90%   67, 123-125, 127-129, 143->152, 208-211, 218->220
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/config/convert.py                                        53      6     10      2    84%   36-37, 43-45, 76
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/config/ini.py                                            59      7      8      3    85%   27, 37-38, 46-47, 49, 58
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/creator.py                                       140     10     36      5    90%   69, 125-127, 129-131, 145->154, 223-226, 233->235
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/debug.py                                          49     49      8      0     0%   3-94
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/describe.py                                       73      3      6      2    91%   45->47, 51-53, 57->59
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/pyenv_cfg.py                                      49      1      4      0    98%   61
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/pyenv_cfg.py                                      50      1      4      0    98%   63
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/_virtualenv.py                     58     58     18      0     0%   3-103
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/api.py                             72      4     18      6    89%   45, 50, 63-64, 66->74, 74->exit, 89->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/api.py                             73      4     18      6    89%   47, 52, 65-66, 68->76, 76->exit, 91->exit
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/cpython/common.py          41      1      4      1    96%   54
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/cpython/cpython3.py        74      5     20      2    90%   33, 54-56, 101
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/cpython/mac_os.py         167    128     42      0    19%   30-41, 45-50, 63, 66, 70-74, 78-79, 117-126, 131-260, 270-272
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/cpython/mac_os.py         168    128     42      0    19%   32-43, 47-52, 65, 68, 72-76, 80-81, 119-128, 133-262, 272-274
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/pypy/pypy3.py              41      7     10      1    80%   28, 31, 53, 62, 67-69
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/ref.py                    123     25     40     11    73%   42-43, 49, 53->62, 58-61, 66->71, 68, 75-80, 88, 90, 105, 109->117, 112->114, 116, 128-134, 144, 168
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/via_global_self_do.py      79     11     36      7    79%   34->36, 43, 45-53, 55, 57, 90->89
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/store.py                           10      5      2      0    42%   7-9, 13-14
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/venv.py                            71      9     22      5    83%   32, 35, 37, 41, 57-58, 61-69
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/builtin.py                                    148     36     58     12    72%   79, 98-109, 121->124, 125, 131->136, 137-145, 164-167, 168->exit, 171->169, 184-192, 201, 207
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/cached_py_info.py                             110      8     32      7    89%   58-59, 71-74, 131->139, 135, 141->149, 145, 165
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/venv.py                            72      9     22      5    83%   34, 37, 39, 43, 59-60, 63-71
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/builtin.py                                    149     36     58     12    72%   80, 99-110, 122->125, 126, 132->137, 138-146, 165-168, 169->exit, 172->170, 185-193, 202, 208
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/cached_py_info.py                             111      8     32      7    90%   59-60, 72-75, 132->140, 136, 142->150, 146, 166
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/discover.py                                    18      0      2      1    95%   40->43
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/py_info.py                                    344     50    116     16    81%   42, 71-72, 91-96, 134-155, 179-180, 183->186, 196, 204-205, 209, 218, 243-245, 257, 307->318, 312-314, 386-390, 413-422, 426, 435-436, 464, 473->475, 536->538, 544->539, 548->539
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/py_info.py                                    345     50    116     16    81%   43, 72-73, 92-97, 135-156, 180-181, 184->187, 197, 205-206, 210, 219, 244-246, 258, 308->319, 313-315, 387-391, 414-423, 427, 436-437, 465, 474->476, 537->539, 545->540, 549->540
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/py_spec.py                                     74      0     30      1    99%   56->61
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/windows/__init__.py                            18     18      6      0     0%   1-44
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/windows/pep514.py                             106    106     36      0     0%   3-148
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/info.py                                                  40      9      8      2    77%   34->47, 36-44
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/info.py                                                  41      9      8      2    78%   35->48, 37-45
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/report.py                                                29      1      6      1    94%   28
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/__init__.py                                          74      3     10      1    95%   95, 100-101
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/plugin/activators.py                                 30      2      4      1    91%   34-35
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/plugin/base.py                                       46      3      8      2    91%   17, 48-49
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/plugin/creators.py                                   58      5     18      3    89%   33-34, 38, 50-51
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/session.py                                           57      1      6      0    98%   26
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/session.py                                           58      1      6      0    98%   28
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/base_embed.py                                 55      4     16      4    89%   30, 75, 107, 110
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/pip_invoke.py                                 43      6     12      4    82%   18, 30-31, 38, 52-53
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/pip_install/base.py             149     11     38      3    90%   59-69, 109, 124->133, 180-181
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/pip_invoke.py                                 44      6     12      4    82%   20, 32-33, 40, 54-55
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/pip_install/base.py             150     11     38      3    90%   61-71, 111, 126->135, 182-183
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/pip_install/symlink.py           41      6      8      1    82%   25-27, 51-53
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/via_app_data.py                 103     19     32      4    79%   41, 81->99, 96-98, 100-113, 127-128
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/acquire.py                                   60      1     22      2    96%   45->48, 97
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/bundle.py                                    30      1     14      3    91%   23, 29->36, 42->41
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/periodic_update.py                          243      3     70      4    98%   85-86, 221, 280->284, 282->284
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/via_app_data.py                 104     19     32      4    79%   43, 83->101, 98-100, 102-115, 129-130
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/acquire.py                                   61      1     22      2    96%   47->50, 99
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/bundle.py                                    30      0     14      2    95%   29->36, 42->41
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/periodic_update.py                          244      3     70      4    98%   86-87, 222, 281->285, 283->285
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/util.py                                      79      0     20      1    99%   59->57
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/lock.py                                            112      1     16      2    98%   29->31, 52, 92->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/lock.py                                            113      1     16      2    98%   31->33, 54, 94->exit
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_permission.py                                 20      2      8      1    89%   10->exit, 17-18
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_sync.py                                       55      6     16      2    86%   18-19, 47->49, 57-61
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_sync.py                                       56      6     16      2    86%   20-21, 49->51, 59-63
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_win.py                                        14     11      2      0    19%   6-18
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/subprocess/__init__.py                              14      1      2      1    88%   23
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/zipapp.py                                           27     18      4      0    29%   11-13, 17-22, 26-35
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/zipapp.py                                           28     18      4      0    31%   13-15, 19-24, 28-37
 tests/conftest.py                                                                                                                                                                   253     33     68     17    81%   30->exit, 40, 45-47, 59-64, 71, 84-85, 89, 116, 135, 160-161, 167->186, 177-184, 231, 242->271, 266->265, 281-282, 290->287, 292-293, 334, 354->exit, 360-362
 tests/integration/test_run_int.py                                                                                                                                                    18      1      4      1    91%   27
 tests/integration/test_zipapp.py                                                                                                                                                     77     16     10      2    72%   25-53, 56
 tests/unit/activation/conftest.py                                                                                                                                                   161     11     18      3    92%   52, 69, 82-85, 185-190
-tests/unit/activation/test_batch.py                                                                                                                                                  26      6      2      0    71%   24, 27-30, 33
+tests/unit/activation/test_batch.py                                                                                                                                                  53     15      4      0    67%   24, 27-30, 33, 60-62, 71, 74-77, 80
 tests/unit/activation/test_nushell.py                                                                                                                                                20      5      2      1    73%   14, 22, 26-28
 tests/unit/activation/test_powershell.py                                                                                                                                             29      8      0      0    72%   24, 27, 30, 38-39, 43-45
 tests/unit/create/conftest.py                                                                                                                                                        25      7      6      3    68%   29-35, 48, 50
-tests/unit/create/test_creator.py                                                                                                                                                   401     46     92     16    84%   66, 85, 98->102, 100, 102->96, 141, 173->179, 180, 189, 207-209, 212-216, 220, 249, 319, 352-354, 360, 428-436, 443-462, 501->503, 568-569
+tests/unit/create/test_creator.py                                                                                                                                                   417     46     92     16    85%   67, 86, 99->103, 101, 103->97, 142, 174->180, 181, 190, 208-210, 213-217, 221, 277, 347, 380-382, 388, 456-464, 471-490, 529->531, 596-597
 tests/unit/create/via_global_ref/builtin/testing/path.py                                                                                                                             62      4      8      3    90%   20, 50->55, 57, 73-74
 tests/unit/create/via_global_ref/builtin/testing/py_info.py                                                                                                                          14      3      0      0    79%   13-16
 tests/unit/create/via_global_ref/test_build_c_ext.py                                                                                                                                 36      8      4      0    70%   19-26
@@ -426,13 +432,12 @@ tests/unit/discovery/windows/conftest.py                                        
 tests/unit/discovery/windows/test_windows.py                                                                                                                                         13      4      0      0    69%   31-35
 tests/unit/discovery/windows/test_windows_pep514.py                                                                                                                                  22     12      0      0    45%   12-15, 33-65
 tests/unit/seed/embed/test_bootstrap_link_via_app_data.py                                                                                                                           149      0     22      1    99%   117->exit
-tests/unit/seed/embed/test_pip_invoke.py                                                                                                                                             61      1     18      1    97%   40
 tests/unit/seed/wheels/test_periodic_update.py                                                                                                                                      334      1      8      1    99%   321
 tests/unit/test_util.py                                                                                                                                                              27      2      2      0    93%   35-36
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                                              6977    994   1338    194    83%
+TOTAL                                                                                                                                                                              7069   1001   1342    192    83%
 
-58 files skipped due to complete coverage.
+60 files skipped due to complete coverage.
 py$(PYV): commands[4]> python -m coverage xml -o $(@D)/.tox/coverage.py$(PYV).xml
 Wrote XML report to $(@D)/.tox/coverage.py$(PYV).xml
 py$(PYV): commands[5]> python -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/htmlcov --show-contexts --title virtualenv-py$(PYV)-coverage
