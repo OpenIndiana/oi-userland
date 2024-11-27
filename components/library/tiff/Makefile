@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tiff
 COMPONENT_VERSION= 4.7.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libtiff - library for reading and writing TIFF
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -59,9 +60,9 @@ COMPONENT_TEST_ENV+= PATH=$(PATH.gnu)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)/32
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

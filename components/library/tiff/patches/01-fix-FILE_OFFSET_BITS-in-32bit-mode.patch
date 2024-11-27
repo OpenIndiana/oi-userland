@@ -1,0 +1,18 @@
+
+This is to fix the following warnings, during the 32 bit build:
+
+/usr/include/sys/feature_tests.h:263: note: this is the location of the previous definition
+  263 | #define _FILE_OFFSET_BITS       32
+
+--- tiff-4.7.0/configure.orig	2024-09-11 09:42:32.000000000 +0200
++++ tiff-4.7.0/configure	2024-11-06 21:14:53.704371346 +0100
+@@ -18075,6 +18075,9 @@
+   break
+ done
+ fi
++case $CFLAGS in
++  *-m32*) ac_cv_sys_file_offset_bits=32 ;;
++esac
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sys_file_offset_bits" >&5
+ $as_echo "$ac_cv_sys_file_offset_bits" >&6; }
+ case $ac_cv_sys_file_offset_bits in #(
