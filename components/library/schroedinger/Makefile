@@ -13,43 +13,39 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= schroedinger
 COMPONENT_VERSION= 1.0.11
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Library for decoding and encoding video in the Dirac format
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:1e572a0735b92aca5746c4528f9bebd35aa0ccf8619b22fa2756137a8cc9f912
-COMPONENT_ARCHIVE_URL= \
-  https://launchpad.net/schroedinger/trunk/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://diracvideo.org
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING.LGPL
-COMPONENT_CLASSIFICATION = System/Media
-COMPONENT_FMRI = library/video/libschroedinger
+COMPONENT_ARCHIVE_HASH= sha256:1e572a0735b92aca5746c4528f9bebd35aa0ccf8619b22fa2756137a8cc9f912
+COMPONENT_ARCHIVE_URL= https://launchpad.net/schroedinger/trunk/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://launchpad.net/schroedinger
+COMPONENT_FMRI= library/video/libschroedinger
+COMPONENT_CLASSIFICATION= System/Media
+COMPONENT_LICENSE= LGPLv2
+COMPONENT_LICENSE_FILE= COPYING.LGPL
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Build can't create generated sources without this
-COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_SCRIPT=$(@D)/configure
+CONFIGURE_SCRIPT= $(@D)/configure
 
 CONFIGURE_OPTIONS += --disable-gtk-doc
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/orc
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
