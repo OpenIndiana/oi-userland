@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomli
-HUMAN_VERSION =			2.1.0
+HUMAN_VERSION =			2.2.1
 COMPONENT_SUMMARY =		A lil' TOML parser
 COMPONENT_PROJECT_URL =		https://github.com/hukkin/tomli
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/hukkin/tomli/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:28acaee6066d53256a2351ad5dc9003ba25d43578b4177c421de0ece71caa103
+	sha256:3af7c4b571d1ccddaba020c558da0ce5b5e24edc830e478a903d82dc2d9013ae
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
