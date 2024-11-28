@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [3376 items]
+X workers [3385 items]
 
 scheduling tests via LoadScheduling
 
@@ -378,15 +378,18 @@ tests/test_client_functional.py::test_yield_from_in_session_request[pyloop] PASS
 tests/test_client_proto.py::test_client_proto_bad_message[pyloop] PASSED
 tests/test_client_proto.py::test_client_protocol_readuntil_eof[pyloop] PASSED
 tests/test_client_proto.py::test_connection_lost_sets_transport_to_none[pyloop] PASSED
+tests/test_client_proto.py::test_data_received_after_close[pyloop] PASSED
 tests/test_client_proto.py::test_drop_timeout[pyloop] PASSED
 tests/test_client_proto.py::test_empty_data[pyloop] PASSED
 tests/test_client_proto.py::test_eof_received[pyloop] PASSED
 tests/test_client_proto.py::test_force_close[pyloop] PASSED
+tests/test_client_proto.py::test_multiple_responses_one_byte_at_a_time[pyloop] PASSED
 tests/test_client_proto.py::test_oserror[pyloop] PASSED
 tests/test_client_proto.py::test_pause_resume_on_error[pyloop] PASSED
 tests/test_client_proto.py::test_reschedule_timeout[pyloop] PASSED
 tests/test_client_proto.py::test_schedule_timeout[pyloop] PASSED
 tests/test_client_proto.py::test_uncompleted_message[pyloop] PASSED
+tests/test_client_proto.py::test_unexpected_exception_during_data_received[pyloop] PASSED
 tests/test_client_request.py::test_bad_fingerprint[pyloop] PASSED
 tests/test_client_request.py::test_bad_version[pyloop] PASSED
 tests/test_client_request.py::test_basic_auth[pyloop] PASSED
@@ -538,6 +541,7 @@ tests/test_client_response.py::test_content_disposition_no_header PASSED
 tests/test_client_response.py::test_content_disposition_no_parameters PASSED
 tests/test_client_response.py::test_content_type PASSED
 tests/test_client_response.py::test_content_type_no_header PASSED
+tests/test_client_response.py::test_default_encoding_is_utf8 PASSED
 tests/test_client_response.py::test_del PASSED
 tests/test_client_response.py::test_get_encoding_body_none[pyloop] PASSED
 tests/test_client_response.py::test_get_encoding_unknown[pyloop] PASSED
@@ -563,6 +567,7 @@ tests/test_client_response.py::test_repr_non_ascii_reason PASSED
 tests/test_client_response.py::test_repr_non_ascii_url PASSED
 tests/test_client_response.py::test_request_info_in_exception PASSED
 tests/test_client_response.py::test_resp_host PASSED
+tests/test_client_response.py::test_response_cookies[pyloop] PASSED
 tests/test_client_response.py::test_response_eof[pyloop] PASSED
 tests/test_client_response.py::test_response_eof_after_connection_detach[pyloop] PASSED
 tests/test_client_response.py::test_response_eof_upgraded[pyloop] PASSED
@@ -3130,6 +3135,10 @@ tests/test_web_server.py::test_raw_server_do_not_swallow_exceptions[pyloop] PASS
 tests/test_web_server.py::test_raw_server_handler_timeout[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_html_exception[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_html_exception_debug[pyloop] PASSED
+tests/test_web_server.py::test_raw_server_logs_bad_status_line_as_exception[pyloop] PASSED
+tests/test_web_server.py::test_raw_server_logs_invalid_method_second_request[pyloop] PASSED
+tests/test_web_server.py::test_raw_server_logs_invalid_method_with_loop_debug[pyloop] PASSED
+tests/test_web_server.py::test_raw_server_logs_invalid_method_without_loop_debug[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_not_http_exception[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_not_http_exception_debug[pyloop] PASSED
 tests/test_web_server.py::test_simple_server[pyloop] PASSED
@@ -3388,4 +3397,4 @@ tests/test_worker.py::test_run_not_app[AsyncioWorker-pyloop] PASSED
 
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3333 passed, 38 skipped, 5 xfailed ========
+======== 3342 passed, 38 skipped, 5 xfailed ========
