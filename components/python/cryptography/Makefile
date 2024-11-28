@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cryptography
-HUMAN_VERSION =			43.0.3
+HUMAN_VERSION =			44.0.0
 COMPONENT_SUMMARY =		cryptography is a package which provides cryptographic recipes and primitives to Python developers.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:315b9001266a492a6ff443b61238f956b214dbec9910a081ba5b6646a055a805
+	sha256:cd4e834f340b4293430701e772ec543b0fbe6c2dea510a5286fe0acabe153a02
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
 TEST_STYLE = pytest
