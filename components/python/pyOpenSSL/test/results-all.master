@@ -2,27 +2,27 @@ py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> openssl version
 OpenSSL 1.0.2u  20 Dec 2019
 py$(PYV): commands[1]> python -m coverage run --parallel -m OpenSSL.debug
-pyOpenSSL: 24.2.1
-cryptography: 42.0.8
-cffi: 1.16.0
-cryptography's compiled against OpenSSL: OpenSSL 3.1.5 30 Jan 2024
-cryptography's linked OpenSSL: OpenSSL 3.1.6 4 Jun 2024
-Python's OpenSSL: OpenSSL 1.1.1w  11 Sep 2023
+pyOpenSSL: 24.3.0
+cryptography: 43.0.3
+cffi: 1.17.1
+cryptography's compiled against OpenSSL: OpenSSL 3.1.7 3 Sep 2024
+cryptography's linked OpenSSL: OpenSSL 3.4.0 22 Oct 2024
+Python's OpenSSL: OpenSSL 1.1.1x  25 Jan 2024
 Python executable: $(@D)/.tox/py$(PYV)/bin/python
-Python version: 3.9.19 (main, Mar 26 2024, 20:30:24) 
-[GCC 13.2.0]
+Python version: 3.9.20 (main, Sep  8 2024, 11:56:02) 
+[GCC 13.3.0]
 Platform: sunos5
 sys.path: ['$(@D)', '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages', '/usr/lib/python39.zip', '$(PYTHON_DIR)', '$(PYTHON_DIR)/lib-dynload', '$(PYTHON_DIR)/site-packages', '$(PYTHON_DIR)/vendor-packages']
 py$(PYV): commands[2]> python -m coverage run --parallel -m pytest -v
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-OpenSSL: b'OpenSSL 3.1.6 4 Jun 2024'
-cryptography: 42.0.8
+OpenSSL: b'OpenSSL 3.4.0 22 Oct 2024'
+cryptography: 43.0.3
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 510 items
+collecting ... collected 472 items
 
 tests/test_crypto.py::TestX509Ext::test_str PASSED
 tests/test_crypto.py::TestX509Ext::test_type PASSED
@@ -198,41 +198,8 @@ tests/test_crypto.py::TestFunction::test_dump_privatekey_truncated PASSED
 tests/test_crypto.py::TestFunction::test_load_privatekey_truncated PASSED
 tests/test_crypto.py::TestLoadCertificate::test_bad_file_type PASSED
 tests/test_crypto.py::TestLoadCertificate::test_bad_certificate PASSED
-tests/test_crypto.py::TestRevoked::test_ignores_unsupported_revoked_cert_extension_get_reason PASSED
-tests/test_crypto.py::TestRevoked::test_ignores_unsupported_revoked_cert_extension_set_new_reason PASSED
-tests/test_crypto.py::TestRevoked::test_construction PASSED
-tests/test_crypto.py::TestRevoked::test_serial PASSED
-tests/test_crypto.py::TestRevoked::test_date PASSED
-tests/test_crypto.py::TestRevoked::test_reason PASSED
-tests/test_crypto.py::TestRevoked::test_set_reason_wrong_args[reason0] PASSED
-tests/test_crypto.py::TestRevoked::test_set_reason_wrong_args[1.0] PASSED
-tests/test_crypto.py::TestRevoked::test_set_reason_wrong_args[foo] PASSED
-tests/test_crypto.py::TestRevoked::test_set_reason_invalid_reason PASSED
-tests/test_crypto.py::TestCRL::test_construction PASSED
-tests/test_crypto.py::TestCRL::test_export_pem PASSED
-tests/test_crypto.py::TestCRL::test_export_der PASSED
-tests/test_crypto.py::TestCRL::test_export_text PASSED
-tests/test_crypto.py::TestCRL::test_export_custom_digest PASSED
-tests/test_crypto.py::TestCRL::test_export_md5_digest PASSED
-tests/test_crypto.py::TestCRL::test_export_default_digest PASSED
-tests/test_crypto.py::TestCRL::test_export_invalid PASSED
-tests/test_crypto.py::TestCRL::test_add_revoked_keyword PASSED
-tests/test_crypto.py::TestCRL::test_export_wrong_args PASSED
-tests/test_crypto.py::TestCRL::test_export_unknown_filetype PASSED
-tests/test_crypto.py::TestCRL::test_export_unknown_digest PASSED
-tests/test_crypto.py::TestCRL::test_get_revoked PASSED
-tests/test_crypto.py::TestCRL::test_load_crl PASSED
-tests/test_crypto.py::TestCRL::test_load_crl_bad_filetype PASSED
-tests/test_crypto.py::TestCRL::test_load_crl_bad_data PASSED
-tests/test_crypto.py::TestCRL::test_get_issuer PASSED
-tests/test_crypto.py::TestCRL::test_dump_crl PASSED
-tests/test_crypto.py::TestCRL::test_verify_with_revoked[pyOpenSSL CRL] PASSED
-tests/test_crypto.py::TestCRL::test_verify_with_revoked[cryptography CRL] PASSED
-tests/test_crypto.py::TestCRL::test_verify_with_missing_crl[pyOpenSSL CRL] PASSED
-tests/test_crypto.py::TestCRL::test_verify_with_missing_crl[cryptography CRL] PASSED
-tests/test_crypto.py::TestCRL::test_convert_from_cryptography PASSED
-tests/test_crypto.py::TestCRL::test_convert_from_cryptography_unsupported_type PASSED
-tests/test_crypto.py::TestCRL::test_convert_to_cryptography_key PASSED
+tests/test_crypto.py::TestCRL::test_verify_with_revoked PASSED
+tests/test_crypto.py::TestCRL::test_verify_with_missing_crl PASSED
 tests/test_crypto.py::TestX509StoreContext::test_valid PASSED
 tests/test_crypto.py::TestX509StoreContext::test_reuse PASSED
 tests/test_crypto.py::TestX509StoreContext::test_verify_success_with_chain[intermediate in chain] PASSED
@@ -261,11 +228,6 @@ tests/test_crypto.py::TestX509StoreContext::test_verify_with_cafile_and_capath P
 tests/test_crypto.py::TestX509StoreContext::test_verify_with_multiple_ca_files PASSED
 tests/test_crypto.py::TestX509StoreContext::test_verify_failure_with_empty_ca_directory PASSED
 tests/test_crypto.py::TestX509StoreContext::test_verify_with_partial_chain PASSED
-tests/test_crypto.py::TestSignVerify::test_sign_verify PASSED
-tests/test_crypto.py::TestSignVerify::test_sign_verify_with_text PASSED
-tests/test_crypto.py::TestSignVerify::test_sign_verify_ecdsa PASSED
-tests/test_crypto.py::TestSignVerify::test_sign_nulls PASSED
-tests/test_crypto.py::TestSignVerify::test_sign_with_large_key PASSED
 tests/test_crypto.py::TestEllipticCurve::test_set PASSED
 tests/test_crypto.py::TestEllipticCurve::test_a_curve PASSED
 tests/test_crypto.py::TestEllipticCurve::test_not_a_curve PASSED
@@ -537,26 +499,506 @@ tests/test_ssl.py::TestDTLS::test_timeout PASSED
 tests/test_util.py::TestErrors::test_exception_from_error_queue_nonexistent_reason PASSED
 
 =============================== warnings summary ===============================
-tests/test_crypto.py:27
-tests/test_crypto.py:27
-tests/test_crypto.py:27
-  $(@D)/tests/test_crypto.py:27: DeprecationWarning: CSR support in pyOpenSSL is deprecated. You should use the APIs in cryptography.
+tests/test_crypto.py:26
+tests/test_crypto.py:26
+tests/test_crypto.py:26
+  $(@D)/tests/test_crypto.py:26: DeprecationWarning: CSR support in pyOpenSSL is deprecated. You should use the APIs in cryptography.
     from OpenSSL.crypto import (
 
-tests/test_crypto.py:27
-  $(@D)/tests/test_crypto.py:27: DeprecationWarning: sign() is deprecated. Use the equivalent APIs in cryptography.
+tests/test_crypto.py:26
+  $(@D)/tests/test_crypto.py:26: DeprecationWarning: get_elliptic_curve is deprecated. You should use the APIs in cryptography instead.
     from OpenSSL.crypto import (
 
-tests/test_crypto.py:27
-  $(@D)/tests/test_crypto.py:27: DeprecationWarning: verify() is deprecated. Use the equivalent APIs in cryptography.
+tests/test_crypto.py:26
+  $(@D)/tests/test_crypto.py:26: DeprecationWarning: get_elliptic_curves is deprecated. You should use the APIs in cryptography instead.
     from OpenSSL.crypto import (
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
+  $(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184: DeprecationWarning: OpenSSL.rand is deprecated - you should use os.urandom instead
+    exec(co, module.__dict__)
+
+tests/test_ssl.py:47
+  $(@D)/tests/test_ssl.py:47: DeprecationWarning: get_elliptic_curves is deprecated. You should use the APIs in cryptography instead.
+    from OpenSSL.crypto import (
+
+tests/test_crypto.py::TestX509Ext::test_unused_subject
+  $(@D)/tests/test_crypto.py:981: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    x509.add_extensions([ext1])
+
+tests/test_crypto.py::TestX509Ext::test_subject
+  $(@D)/tests/test_crypto.py:997: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    x509.add_extensions([ext3])
+
+tests/test_crypto.py::TestX509Ext::test_unused_issuer
+  $(@D)/tests/test_crypto.py:1030: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    x509.add_extensions([ext1])
+
+tests/test_crypto.py::TestX509Ext::test_issuer
+  $(@D)/tests/test_crypto.py:1045: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    x509.add_extensions([ext2])
+
+tests/test_crypto.py::TestX509Req::test_add_extensions
+  $(@D)/tests/test_crypto.py:1719: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    request.add_extensions(
+
+tests/test_crypto.py::TestX509Req::test_add_extensions
+  $(@D)/tests/test_crypto.py:1722: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    exts = request.get_extensions()
+
+tests/test_crypto.py::TestX509Req::test_get_extensions
+  $(@D)/tests/test_crypto.py:1734: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    exts = request.get_extensions()
+
+tests/test_crypto.py::TestX509Req::test_get_extensions
+  $(@D)/tests/test_crypto.py:1736: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    request.add_extensions(
+
+tests/test_crypto.py::TestX509Req::test_get_extensions
+  $(@D)/tests/test_crypto.py:1742: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    exts = request.get_extensions()
+
+tests/test_crypto.py::TestX509Req::test_get_extensions
+  $(@D)/tests/test_crypto.py:1751: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    exts = request.get_extensions()
+
+tests/test_crypto.py::TestX509Req::test_add_extensions_wrong_args
+  $(@D)/tests/test_crypto.py:1770: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    request.add_extensions(object())
+
+tests/test_crypto.py::TestX509Req::test_add_extensions_wrong_args
+  $(@D)/tests/test_crypto.py:1772: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    request.add_extensions([object()])
+
+tests/test_crypto.py::TestX509::test_get_extension
+  $(@D)/tests/test_crypto.py:2160: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    ext = cert.get_extension(0)
+
+tests/test_crypto.py::TestX509::test_get_extension
+  $(@D)/tests/test_crypto.py:2165: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    ext = cert.get_extension(1)
+
+tests/test_crypto.py::TestX509::test_get_extension
+  $(@D)/tests/test_crypto.py:2170: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    ext = cert.get_extension(2)
+
+tests/test_crypto.py::TestX509::test_get_extension
+  $(@D)/tests/test_crypto.py:2176: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    cert.get_extension(-1)
+
+tests/test_crypto.py::TestX509::test_get_extension
+  $(@D)/tests/test_crypto.py:2178: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    cert.get_extension(4)
+
+tests/test_crypto.py::TestX509::test_get_extension
+  $(@D)/tests/test_crypto.py:2180: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    cert.get_extension("hello")
+
+tests/test_crypto.py::TestX509::test_nullbyte_subjectAltName
+  $(@D)/tests/test_crypto.py:2190: DeprecationWarning: This API is deprecated and will be removed in a future version of pyOpenSSL. You should use pyca/cryptography's X.509 APIs instead.
+    ext = cert.get_extension(3)
 
 tests/test_ssl.py::TestContext::test_set_cipher_list[hello world:AES128-SHA1]
-  $(@D)/tests/test_ssl.py:499: DeprecationWarning: str for cipher_list is no longer accepted, use bytes
+  $(@D)/tests/test_ssl.py:515: DeprecationWarning: str for cipher_list is no longer accepted, use bytes
     context.set_cipher_list(cipher_string)
+
+tests/test_ssl.py::TestContext::test_check_privatekey_valid
+  $(@D)/tests/test_ssl.py:748: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    context.use_privatekey(key)
+
+tests/test_ssl.py::TestContext::test_check_privatekey_valid
+  $(@D)/tests/test_ssl.py:749: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    context.use_certificate(cert)
+
+tests/test_ssl.py::TestContext::test_check_privatekey_valid
+  $(@D)/tests/test_ssl.py:754: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    context.use_certificate(cert)
+
+tests/test_ssl.py::TestContext::test_check_privatekey_invalid
+  $(@D)/tests/test_ssl.py:766: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    context.use_privatekey(key)
+
+tests/test_ssl.py::TestContext::test_check_privatekey_invalid
+  $(@D)/tests/test_ssl.py:767: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    context.use_certificate(cert)
+
+tests/test_ssl.py::TestContext::test_check_privatekey_invalid
+  $(@D)/tests/test_ssl.py:773: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    context.use_certificate(cert)
+
+tests/test_ssl.py::TestContext::test_set_info_callback
+  $(@D)/tests/test_ssl.py:983: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    context.use_certificate(load_certificate(FILETYPE_PEM, root_cert_pem))
+
+tests/test_ssl.py::TestContext::test_set_info_callback
+  $(@D)/tests/test_ssl.py:984: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    context.use_privatekey(load_privatekey(FILETYPE_PEM, root_key_pem))
+
+tests/test_ssl.py::TestContext::test_set_keylog_callback
+  $(@D)/tests/test_ssl.py:1021: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_context.use_certificate(
+
+tests/test_ssl.py::TestContext::test_set_keylog_callback
+  $(@D)/tests/test_ssl.py:1024: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_context.use_privatekey(
+
+tests/test_ssl.py::TestContext::test_set_proto_version
+  $(@D)/tests/test_ssl.py:1041: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_context.use_certificate(
+
+tests/test_ssl.py::TestContext::test_set_proto_version
+  $(@D)/tests/test_ssl.py:1044: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_context.use_privatekey(
+
+tests/test_ssl.py::TestContext::test_load_verify_bytes_cafile
+tests/test_ssl.py::TestContext::test_load_verify_unicode_cafile
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[bytes_arg-ascii_path]
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[bytes_arg-unicode_path]
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[unicode_arg-ascii_path]
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[unicode_arg-unicode_path]
+  $(@D)/tests/test_ssl.py:1079: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.use_certificate(
+
+tests/test_ssl.py::TestContext::test_load_verify_bytes_cafile
+tests/test_ssl.py::TestContext::test_load_verify_unicode_cafile
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[bytes_arg-ascii_path]
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[bytes_arg-unicode_path]
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[unicode_arg-ascii_path]
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[unicode_arg-unicode_path]
+  $(@D)/tests/test_ssl.py:1082: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(
+
+tests/test_ssl.py::TestContext::test_set_verify_callback_connection_argument
+  $(@D)/tests/test_ssl.py:1351: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(
+
+tests/test_ssl.py::TestContext::test_set_verify_callback_connection_argument
+  $(@D)/tests/test_ssl.py:1354: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.use_certificate(
+
+tests/test_ssl.py::TestContext::test_x509_in_verify_works
+  $(@D)/tests/test_ssl.py:1382: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(
+
+tests/test_ssl.py::TestContext::test_x509_in_verify_works
+  $(@D)/tests/test_ssl.py:1385: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.use_certificate(
+
+tests/test_ssl.py::TestContext::test_set_verify_callback_exception
+  $(@D)/tests/test_ssl.py:1408: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(
+
+tests/test_ssl.py::TestContext::test_set_verify_callback_exception
+  $(@D)/tests/test_ssl.py:1411: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.use_certificate(
+
+tests/test_ssl.py::TestContext::test_set_verify_callback_reference
+  $(@D)/tests/test_ssl.py:1434: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(
+
+tests/test_ssl.py::TestContext::test_set_verify_callback_reference
+  $(@D)/tests/test_ssl.py:1437: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.use_certificate(
+
+tests/test_ssl.py::TestContext::test_set_verify_default_callback[1]
+tests/test_ssl.py::TestContext::test_set_verify_default_callback[0]
+  $(@D)/tests/test_ssl.py:1478: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(
+
+tests/test_ssl.py::TestContext::test_set_verify_default_callback[1]
+tests/test_ssl.py::TestContext::test_set_verify_default_callback[0]
+  $(@D)/tests/test_ssl.py:1481: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.use_certificate(
+
+tests/test_ssl.py::TestContext::test_add_extra_chain_cert
+  $(@D)/tests/test_ssl.py:1526: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(skey)
+
+tests/test_ssl.py::TestContext::test_add_extra_chain_cert
+  $(@D)/tests/test_ssl.py:1527: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.use_certificate(scert)
+
+tests/test_ssl.py::TestContext::test_add_extra_chain_cert
+  $(@D)/tests/test_ssl.py:1529: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.add_extra_chain_cert(icert)
+
+tests/test_ssl.py::TestContext::test_use_certificate_chain_file_bytes
+tests/test_ssl.py::TestContext::test_use_certificate_chain_file_unicode
+  $(@D)/tests/test_ssl.py:1569: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(skey)
+
+tests/test_ssl.py::TestServerNameCallback::test_no_servername
+  $(@D)/tests/test_ssl.py:1836: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    context.use_privatekey(load_privatekey(FILETYPE_PEM, server_key_pem))
+
+tests/test_ssl.py::TestServerNameCallback::test_no_servername
+  $(@D)/tests/test_ssl.py:1837: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    context.use_certificate(
+
+tests/test_ssl.py::TestServerNameCallback::test_servername
+  $(@D)/tests/test_ssl.py:1868: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    context.use_privatekey(load_privatekey(FILETYPE_PEM, server_key_pem))
+
+tests/test_ssl.py::TestServerNameCallback::test_servername
+  $(@D)/tests/test_ssl.py:1869: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    context.use_certificate(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_success
+  $(@D)/tests/test_ssl.py:1910: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_context.use_privatekey(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_success
+  $(@D)/tests/test_ssl.py:1913: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_context.use_certificate(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_set_on_connection
+  $(@D)/tests/test_ssl.py:1958: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_context.use_privatekey(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_set_on_connection
+  $(@D)/tests/test_ssl.py:1961: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_context.use_certificate(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_server_fail
+  $(@D)/tests/test_ssl.py:1999: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_context.use_privatekey(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_server_fail
+  $(@D)/tests/test_ssl.py:2002: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_context.use_certificate(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_no_server_overlap
+  $(@D)/tests/test_ssl.py:2038: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_context.use_privatekey(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_no_server_overlap
+  $(@D)/tests/test_ssl.py:2041: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_context.use_certificate(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_select_cb_returns_invalid_value
+  $(@D)/tests/test_ssl.py:2078: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_context.use_privatekey(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_select_cb_returns_invalid_value
+  $(@D)/tests/test_ssl.py:2081: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_context.use_certificate(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_no_server
+  $(@D)/tests/test_ssl.py:2111: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_context.use_privatekey(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_no_server
+  $(@D)/tests/test_ssl.py:2114: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_context.use_certificate(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_callback_exception
+  $(@D)/tests/test_ssl.py:2147: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_context.use_privatekey(
+
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_callback_exception
+  $(@D)/tests/test_ssl.py:2150: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_context.use_certificate(
+
+tests/test_ssl.py::TestContextConnection::test_use_privatekey[context]
+tests/test_ssl.py::TestContextConnection::test_use_privatekey[connection]
+  $(@D)/tests/test_ssl.py:2202: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    ctx_or_conn.use_privatekey(key)
+
+tests/test_ssl.py::TestContextConnection::test_use_privatekey_wrong_key[context]
+tests/test_ssl.py::TestContextConnection::test_use_privatekey_wrong_key[connection]
+  $(@D)/tests/test_ssl.py:2215: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx_or_conn.use_certificate(
+
+tests/test_ssl.py::TestContextConnection::test_use_privatekey_wrong_key[context]
+tests/test_ssl.py::TestContextConnection::test_use_privatekey_wrong_key[connection]
+  $(@D)/tests/test_ssl.py:2219: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    ctx_or_conn.use_privatekey(key)
+
+tests/test_ssl.py::TestContextConnection::test_use_certificate[context]
+tests/test_ssl.py::TestContextConnection::test_use_certificate[connection]
+  $(@D)/tests/test_ssl.py:2230: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx_or_conn.use_certificate(
+
+tests/test_ssl.py::TestContextConnection::test_use_certificate_uninitialized[context]
+tests/test_ssl.py::TestContextConnection::test_use_certificate_uninitialized[connection]
+  $(@D)/tests/test_ssl.py:2252: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx_or_conn.use_certificate(X509())
+
+tests/test_ssl.py: 36 warnings
+  $(@D)/tests/test_ssl.py:332: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    ctx.use_privatekey(load_privatekey(FILETYPE_PEM, server_key_pem))
+
+tests/test_ssl.py: 36 warnings
+  $(@D)/tests/test_ssl.py:333: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.use_certificate(load_certificate(FILETYPE_PEM, server_cert_pem))
+
+tests/test_ssl.py::TestConnection::test_accept
+  $(@D)/tests/test_ssl.py:2446: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    ctx.use_privatekey(load_privatekey(FILETYPE_PEM, server_key_pem))
+
+tests/test_ssl.py::TestConnection::test_accept
+  $(@D)/tests/test_ssl.py:2447: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.use_certificate(load_certificate(FILETYPE_PEM, server_cert_pem))
+
+tests/test_ssl.py::TestConnection::test_shutdown_truncated
+  $(@D)/tests/test_ssl.py:2511: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_ctx.use_privatekey(
+
+tests/test_ssl.py::TestConnection::test_shutdown_truncated
+  $(@D)/tests/test_ssl.py:2514: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_ctx.use_certificate(
+
+tests/test_ssl.py::TestConnection::test_get_certificate
+  $(@D)/tests/test_ssl.py:2582: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    context.use_certificate(scert)
+
+tests/test_ssl.py::TestConnection::test_get_peer_cert_chain
+  $(@D)/tests/test_ssl.py:2614: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(skey)
+
+tests/test_ssl.py::TestConnection::test_get_peer_cert_chain
+  $(@D)/tests/test_ssl.py:2615: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.use_certificate(scert)
+
+tests/test_ssl.py::TestConnection::test_get_peer_cert_chain
+  $(@D)/tests/test_ssl.py:2616: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.add_extra_chain_cert(icert)
+
+tests/test_ssl.py::TestConnection::test_get_peer_cert_chain_none
+  $(@D)/tests/test_ssl.py:2656: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    ctx.use_privatekey(load_privatekey(FILETYPE_PEM, server_key_pem))
+
+tests/test_ssl.py::TestConnection::test_get_peer_cert_chain_none
+  $(@D)/tests/test_ssl.py:2657: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.use_certificate(load_certificate(FILETYPE_PEM, server_cert_pem))
+
+tests/test_ssl.py::TestConnection::test_get_verified_chain
+  $(@D)/tests/test_ssl.py:2673: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    serverContext.use_privatekey(skey)
+
+tests/test_ssl.py::TestConnection::test_get_verified_chain
+  $(@D)/tests/test_ssl.py:2674: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.use_certificate(scert)
+
+tests/test_ssl.py::TestConnection::test_get_verified_chain
+  $(@D)/tests/test_ssl.py:2676: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    serverContext.add_extra_chain_cert(cacert)
+
+tests/test_ssl.py::TestConnection::test_get_verified_chain_none
+  $(@D)/tests/test_ssl.py:2718: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    ctx.use_privatekey(load_privatekey(FILETYPE_PEM, server_key_pem))
+
+tests/test_ssl.py::TestConnection::test_get_verified_chain_none
+  $(@D)/tests/test_ssl.py:2719: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.use_certificate(load_certificate(FILETYPE_PEM, server_cert_pem))
+
+tests/test_ssl.py::TestConnection::test_client_set_session
+  $(@D)/tests/test_ssl.py:2833: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    ctx.use_privatekey(key)
+
+tests/test_ssl.py::TestConnection::test_client_set_session
+  $(@D)/tests/test_ssl.py:2834: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.use_certificate(cert)
+
+tests/test_ssl.py::TestConnection::test_set_session_wrong_method
+  $(@D)/tests/test_ssl.py:2874: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    ctx.use_privatekey(key)
+
+tests/test_ssl.py::TestConnection::test_set_session_wrong_method
+  $(@D)/tests/test_ssl.py:2875: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.use_certificate(cert)
+
+tests/test_ssl.py: 12 warnings
+  $(@D)/tests/test_ssl.py:3641: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    server_ctx.use_privatekey(
+
+tests/test_ssl.py: 12 warnings
+  $(@D)/tests/test_ssl.py:3644: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    server_ctx.use_certificate(
+
+tests/test_ssl.py: 11 warnings
+  $(@D)/tests/test_ssl.py:3668: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    client_ctx.use_privatekey(
+
+tests/test_ssl.py: 11 warnings
+  $(@D)/tests/test_ssl.py:3671: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    client_ctx.use_certificate(
+
+tests/test_ssl.py::TestMemoryBIO::test_one_add_client_ca
+  $(@D)/tests/test_ssl.py:3987: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.add_client_ca(cacert)
+
+tests/test_ssl.py::TestMemoryBIO::test_multiple_add_client_ca
+  $(@D)/tests/test_ssl.py:4004: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.add_client_ca(cacert)
+
+tests/test_ssl.py::TestMemoryBIO::test_set_and_add_client_ca
+  $(@D)/tests/test_ssl.py:4026: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.add_client_ca(clcert)
+
+tests/test_ssl.py::TestMemoryBIO::test_set_after_add_client_ca
+  $(@D)/tests/test_ssl.py:4047: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.add_client_ca(secert)
+
+tests/test_ssl.py::TestOCSP::test_callbacks_arent_called_by_default
+tests/test_ssl.py::TestOCSP::test_client_receives_servers_data
+tests/test_ssl.py::TestOCSP::test_callbacks_are_invoked_with_connections
+tests/test_ssl.py::TestOCSP::test_opaque_data_is_passed_through
+tests/test_ssl.py::TestOCSP::test_server_returns_empty_string
+tests/test_ssl.py::TestOCSP::test_client_returns_false_terminates_handshake
+tests/test_ssl.py::TestOCSP::test_exceptions_in_client_bubble_up
+tests/test_ssl.py::TestOCSP::test_exceptions_in_server_bubble_up
+tests/test_ssl.py::TestOCSP::test_server_must_return_bytes
+  $(@D)/tests/test_ssl.py:4171: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    ctx.use_privatekey(load_privatekey(FILETYPE_PEM, server_key_pem))
+
+tests/test_ssl.py::TestOCSP::test_callbacks_arent_called_by_default
+tests/test_ssl.py::TestOCSP::test_client_receives_servers_data
+tests/test_ssl.py::TestOCSP::test_callbacks_are_invoked_with_connections
+tests/test_ssl.py::TestOCSP::test_opaque_data_is_passed_through
+tests/test_ssl.py::TestOCSP::test_server_returns_empty_string
+tests/test_ssl.py::TestOCSP::test_client_returns_false_terminates_handshake
+tests/test_ssl.py::TestOCSP::test_exceptions_in_client_bubble_up
+tests/test_ssl.py::TestOCSP::test_exceptions_in_server_bubble_up
+tests/test_ssl.py::TestOCSP::test_server_must_return_bytes
+  $(@D)/tests/test_ssl.py:4172: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    ctx.use_certificate(load_certificate(FILETYPE_PEM, server_cert_pem))
+
+tests/test_ssl.py::TestDTLS::test_it_works_at_all
+tests/test_ssl.py::TestDTLS::test_it_works_with_srtp
+  $(@D)/tests/test_ssl.py:4465: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+    s_ctx.use_privatekey(load_privatekey(FILETYPE_PEM, server_key_pem))
+
+tests/test_ssl.py::TestDTLS::test_it_works_at_all
+tests/test_ssl.py::TestDTLS::test_it_works_with_srtp
+  $(@D)/tests/test_ssl.py:4466: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+    s_ctx.use_certificate(load_certificate(FILETYPE_PEM, server_cert_pem))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 508 passed, 2 skipped, 6 warnings ========
+======== 470 passed, 2 skipped, 259 warnings ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw5'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw5'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
   py$(PYV): OK
   congratulations :)
