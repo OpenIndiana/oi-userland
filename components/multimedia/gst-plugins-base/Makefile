@@ -13,14 +13,12 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
 USE_DEFAULT_TEST_TRANSFORMS= yes
-USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-base
 COMPONENT_VERSION= 0.10.36
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 6
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -38,12 +36,8 @@ gcc_OPT= -O2
 
 PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --enable-external
 CONFIGURE_OPTIONS += --enable-experimental
-CONFIGURE_OPTIONS.32 += --enable-introspection=no
 CONFIGURE_OPTIONS += --disable-alsa
 CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
 CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
@@ -69,11 +63,11 @@ REQUIRED_PACKAGES += library/gnome/gnome-vfs
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxv
