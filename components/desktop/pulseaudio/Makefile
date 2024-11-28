@@ -16,12 +16,11 @@
 
 BUILD_BITS= 64
 BUILD_STYLE=meson
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pulseaudio
 COMPONENT_VERSION=	17.0
-COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Sample Rate Converter for audio
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -79,6 +78,7 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 PYTHON_REQUIRED_PACKAGES += library/python/sip
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/soxr
@@ -87,14 +87,13 @@ REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += system/network/avahi
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
