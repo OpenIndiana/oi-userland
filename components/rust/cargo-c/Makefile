@@ -18,11 +18,10 @@ BUILD_STYLE = cargo
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cargo-c
-HUMAN_VERSION =			0.10.5+cargo-0.83.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.10.6+cargo-0.84.0
 COMPONENT_SUMMARY =		Helper program to build and install c-like libraries
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5bfa9ba93806384d940e71dafbc185316e0a6a47561b33b7105fcf67f99df70a
+	sha256:7f3621cfeb9a10d93583fa81fb37d7066613ac14a4dac24e914925979581f18c
 COMPONENT_FMRI =		developer/cargo-c
 COMPONENT_CLASSIFICATION =	Development/Other Languages
 COMPONENT_LICENSE =		MIT
@@ -37,3 +36,4 @@ REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
