@@ -26,7 +26,7 @@ CURL="/usr/bin/curl -s"
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
-	printf "Usage: %s [-d DIR] [-f] [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" "$THIS" >&2
+	printf "Usage: %s [-d DIR] [-f] [-l VERSION] [-o OBSOLETE].. [-u] DISTRIBUTION|MODULE\n" "$THIS" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
@@ -69,29 +69,50 @@ BASE_DIR="$WS_TOP/components"
 [[ -d "$BASE_DIR" ]] || usage "Directory $BASE_DIR not found"
 
 
-# Get data from metacpan
-METACPAN_MODULE=$($CURL "$APIURL/module/$MODULE")
-if (($? != 0)) || [[ -z "$METACPAN_MODULE" ]] ; then
-	printf "FATAL: Failed to get data from metacpan\n" >&2
+# Query MetaCPAN
+METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"released"}},' ; \
+	printf '{"bool":{"should":[{"term":{"distribution":"%s"}},' "$MODULE" ; \
+	printf '{"term":{"main_module":"%s"}}]}}]}},' "$MODULE" ; \
+	printf '"size":1,"sort":[{"date":"desc"}],' ; \
+	printf '"fields":["distribution","version","author","download_url","abstract"]}') \
+		| $CURL "$APIURL/release/_search" -d @- \
+		| /usr/bin/jq -r '.hits.hits[].fields')
+if (($? != 0)) ; then
+	printf 'FATAL: Failed to get distribution info from MetaCPAN\n' >&2
 	exit 1
 fi
 
-# Detect distribution for module
-DISTRIBUTION=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.distribution')
+# If we didn't found the distribution directly try to find the module
+if [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
+	DISTRIBUTION=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"released"}},' ; \
+		printf '{"term":{"module.name":"%s"}}]}},' "$MODULE" ; \
+		printf '"size":1,"fields":["distribution"]}') \
+			| $CURL "$APIURL/module/_search" -d @- \
+			| /usr/bin/jq -r '.hits.hits[].fields.distribution')
+	if (($? != 0)) || [[ -z "$DISTRIBUTION" || "$DISTRIBUTION" == "null" ]] ; then
+		printf 'FATAL: Failed to find distribution for %s at MetaCPAN\n' "$MODULE" >&2
+		exit 1
+	fi
+	METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"released"}},' ; \
+		printf '{"term":{"distribution":"%s"}}]}},' "$DISTRIBUTION" ; \
+		printf '"size":1,"sort":[{"date":"desc"}],' ; \
+		printf '"fields":["distribution","version","author","download_url","abstract"]}') \
+			| $CURL "$APIURL/release/_search" -d @- \
+			| /usr/bin/jq -r '.hits.hits[].fields')
+	if (($? != 0)) || [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
+		printf 'FATAL: Failed to get distribution info from MetaCPAN\n' >&2
+		exit 1
+	fi
+fi
+
+# Get distribution
+DISTRIBUTION=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.distribution')
 if (($? != 0)) || [[ -z "$DISTRIBUTION" || "$DISTRIBUTION" == "null" ]] ; then
-	printf "FATAL: Failed to get distribution for module %s from metacpan\n" "$MODULE" >&2
+	printf 'FATAL: Failed to confirm or detect distribution\n' >&2
 	exit 1
 fi
-if [[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] then
-	NEW_MODULE="${DISTRIBUTION//-/::}"
-	NEW_METACPAN_MODULE=$($CURL "$APIURL/module/$NEW_MODULE")
-	NEW_DISTRIBUTION=$(printf "%s" "$NEW_METACPAN_MODULE" | /usr/bin/jq -r '.distribution')
-	if [[ "$NEW_DISTRIBUTION" == "$DISTRIBUTION" ]] ; then
-		printf "WARNING: Module %s does not match distribution %s\n" "$MODULE" "$DISTRIBUTION" >&2
-		printf "WARNING: Continue with module %s instead of %s\n" "$NEW_MODULE" "$MODULE" >&2
-		MODULE="$NEW_MODULE"
-		METACPAN_MODULE="$NEW_METACPAN_MODULE"
-	fi
+if [[ "$DISTRIBUTION" != "$MODULE" ]] then
+	printf 'WARNING: Using distribution %s for module %s\n' "$DISTRIBUTION" "$MODULE" >&2
 fi
 
 
@@ -120,14 +141,20 @@ fi
 # Version specified as option takes precedence
 [[ -n "$OPT_VERSION" ]] && VERSION="$OPT_VERSION"
 
-# Find the latest version if not already provided
+# Find the latest version
+LATEST_VERSION=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.version')
+if (($? != 0)) || [[ -z "$LATEST_VERSION" || "$LATEST_VERSION" == "null" ]] ; then
+	printf 'FATAL: Failed to detect the latest version\n' >&2
+	exit 1
+fi
+
+# Use the latest version if version was not provided
 if [[ -z "$VERSION" ]] ; then
-	VERSION=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.version')
-	if (($? != 0)) || [[ -z "$VERSION" || "$VERSION" == "null" ]] ; then
-		printf "FATAL: Failed to get version for module %s from metacpan\n" "$MODULE" >&2
-		exit 1
-	fi
+	VERSION=$LATEST_VERSION
 	VERSION=${VERSION#v}
+elif [[ "$VERSION" != "$LATEST_VERSION" ]] ; then
+	# MetaCPAN data are no longer valid because we need different version
+	METACPAN_DATA=
 fi
 
 
@@ -161,18 +188,33 @@ fi
 
 # Get download_url if not already provided
 if [[ -z "$DOWNLOAD_URL" ]] ; then
-	# Get module author
-	# TODO: here we get author of the latest version, not the specified version
-	AUTHOR=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.author')
+	# Get new MetaCPAN data if needed
+	if [[ -z "$METACPAN_DATA" ]] ; then
+		METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[' ; \
+			printf '{"term":{"maturity":"released"}},' ; \
+			printf '{"term":{"distribution":"%s"}},' "$DISTRIBUTION" ; \
+			printf '{"term":{"version":"%s"}}]}},' "$VERSION" ; \
+			printf '"size":1,' ; \
+			printf '"fields":["author","download_url","abstract"]}') \
+				| $CURL "$APIURL/release/_search" -d @- \
+				| /usr/bin/jq -r '.hits.hits[].fields')
+		if (($? != 0)) || [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
+			printf 'FATAL: Failed to get data from MetaCPAN\n' >&2
+			exit 1
+		fi
+	fi
+
+	# Get author
+	AUTHOR=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.author')
 	if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
-		printf "FATAL: Failed to get author for module %s from metacpan\n" "$MODULE" >&2
+		printf 'FATAL: Failed to get author from MetaCPAN\n' >&2
 		exit 1
 	fi
 
 	# Get download_url
-	DOWNLOAD_URL=$($CURL "$APIURL/download_url/$MODULE?version===$VERSION" | /usr/bin/jq -r '.download_url')
+	DOWNLOAD_URL=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.download_url')
 	if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
-		printf "WARNING: Failed to get download_url for module %s, version %s from metacpan\n" "$MODULE" "$VERSION" >&2
+		printf 'WARNING: Failed to get download_url for version %s from MetaCPAN\n' "$VERSION" >&2
 		DOWNLOAD_URL=
 	fi
 fi
@@ -202,7 +244,7 @@ done
 # Makefile template
 GENERATE_CMD="\$WS_TOOLS/$THIS"
 [[ "$DIRECTORY" != "perl/$DISTRIBUTION" ]] && GENERATE_CMD="$GENERATE_CMD -d $DIRECTORY"
-GENERATE_CMD="$GENERATE_CMD $MODULE"
+GENERATE_CMD="$GENERATE_CMD $DISTRIBUTION"
 (
 cat $WS_TOP/transforms/copyright-template | sed -e '/^$/,$d'
 cat <<EOF
@@ -220,13 +262,10 @@ cat <<EOF
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		$MODULE
-EOF
-[[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] && printf "COMPONENT_PERL_DISTRIBUTION =\t%s\n" "$DISTRIBUTION"
-cat <<EOF
+COMPONENT_NAME =		$DISTRIBUTION
 HUMAN_VERSION =			$VERSION
 COMPONENT_REVISION =		$((PREV_REV + 1))
-COMPONENT_SUMMARY =		$MODULE - TODO
+COMPONENT_SUMMARY =		TODO
 COMPONENT_CPAN_AUTHOR =		$AUTHOR
 COMPONENT_ARCHIVE_HASH =	\\
 	sha256:TODO
@@ -286,10 +325,25 @@ COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
 
 # Get summary if not already provided
 if [[ -z "$SUMMARY" ]] ; then
-	# Get abstract and use it as summary.  Either from metacpan, or directly from sources.
-	ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
+	# Get new MetaCPAN data if needed
+	if [[ -z "$METACPAN_DATA" ]] ; then
+		METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[' ; \
+			printf '{"term":{"maturity":"released"}},' ; \
+			printf '{"term":{"distribution":"%s"}},' "$DISTRIBUTION" ; \
+			printf '{"term":{"version":"%s"}}]}},' "$VERSION" ; \
+			printf '"size":1,"fields":["abstract"]}') \
+				| $CURL "$APIURL/release/_search" -d @- \
+				| /usr/bin/jq -r '.hits.hits[].fields')
+		if (($? != 0)) || [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
+			printf 'FATAL: Failed to get data from MetaCPAN\n' >&2
+			exit 1
+		fi
+	fi
+
+	# Get abstract and use it as summary.  Either from MetaCPAN, or directly from sources.
+	ABSTRACT=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.abstract')
 	if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
-		printf "WARNING: Failed to get abstract for module %s from metacpan\n" "$MODULE" >&2
+		printf 'WARNING: Failed to get abstract from MetaCPAN\n' >&2
 		ABSTRACT="TODO"
 	fi
 	if [[ "$ABSTRACT" == "TODO" ]] ; then
@@ -600,7 +654,7 @@ git add .gitignore
 # Construct the commit message
 MSG=
 if ((NEW)) ; then
-	MSG="Add $MODULE Perl module"
+	MSG="Add $DISTRIBUTION Perl distribution"
 else
 	[[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && MSG="change version format"
 	[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION"
