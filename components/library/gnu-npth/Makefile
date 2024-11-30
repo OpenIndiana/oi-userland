@@ -24,18 +24,17 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         npth
-COMPONENT_VERSION=      1.7
+COMPONENT_VERSION=      1.8
 COMPONENT_SUMMARY=      The New GNU Portable Threads Library
 COMPONENT_DESCRIPTION=	A portable library that uses the system's standard threads library to provid non-preemptive priority-based scheduling for multiple threads using the npth API
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.gnupg.org/related_software/npth/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:8589f56937b75ce33b28d312fccbf302b3b71ec3f3945fde6aaa74027914ad05
+COMPONENT_ARCHIVE_HASH= sha256:8bd24b4f23a3065d6e5b26e98aba9ce783ea4fd781069c1b35d149694e90ca3e
 COMPONENT_ARCHIVE_URL=  https://gnupg.org/ftp/gcrypt/npth/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/npth
 COMPONENT_CLASSIFICATION=System/Libraries
