@@ -18,15 +18,14 @@
 #
 
 MATE_CATEGORY= APP
-BUILD_STYLE= configure
 include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-notification-daemon
 COMPONENT_MJR_VERSION=	1.28
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	3
 COMPONENT_SUMMARY=	Notification Daemon for Mate
-COMPONENT_ARCHIVE_HASH= sha256:fffef553bea15becff5ed40d64e18c23d3b649c4599cc1eb1e82f70533853b34
+COMPONENT_ARCHIVE_HASH= sha256:e00cecb1ff9f75b9ccc2644558e44343b80941edb40377dd8100ed3922adf413
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION= System/Libraries
 
@@ -37,7 +36,7 @@ REQUIRED_PACKAGES += developer/build/autoconf-archive
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
