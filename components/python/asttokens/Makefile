@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		asttokens
-HUMAN_VERSION =			2.4.1
-COMPONENT_SUMMARY =		asttokens - Annotate AST trees with source code positions
+HUMAN_VERSION =			3.0.0
+COMPONENT_SUMMARY =		Annotate AST trees with source code positions
 COMPONENT_PROJECT_URL =		https://github.com/gristlabs/asttokens
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/45/1d/f03bcb60c4a3212e15f99a56085d93093a497718adf828d050b9d675da81/asttokens-2.4.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b03869718ba9a6eb027e134bfdf69f38a236d681c83c160d510768af11254ba0
+	sha256:0dcd8baa8d62b0c1d118b399b2ddba3c4aff271d0d7a9e0d4c1681c79035bbc7
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,8 +32,9 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/six
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/astroid
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
