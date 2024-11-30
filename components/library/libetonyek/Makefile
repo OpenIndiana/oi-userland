@@ -25,12 +25,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libetonyek
-COMPONENT_VERSION=	0.1.11
+COMPONENT_VERSION=	0.1.12
 COMPONENT_SUMMARY=      libetonyek - library for reading Apple iWork documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libetonyek
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:4bbce5aecbfc939e24a2c654efed561930c4605c270476df455fb3118b3ce3ce
+COMPONENT_ARCHIVE_HASH=	sha256:b9fa82fbeb8cb7a701101060e4f3e1e4ef7c38f574b2859d3ecbe43604c21f83
 COMPONENT_ARCHIVE_URL=	https://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     	library/c++/libetonyek
 COMPONENT_CLASSIFICATION=System/Libraries
