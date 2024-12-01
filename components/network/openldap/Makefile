@@ -25,11 +25,13 @@
 # Copyright (c) 2022, Friedrich Kink
 #
 
+
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
 COMPONENT_VERSION=      2.6.8
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
@@ -86,7 +88,7 @@ CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-tls=openssl
 CONFIGURE_OPTIONS += --with-mp=gmp
 CONFIGURE_OPTIONS += --with-odbc=unixodbc
-CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_INCDIR) -I/usr/include/odbc"
 
 # Force known perl version
@@ -111,6 +113,7 @@ COMPONENT_TEST_TRANSFORMS += \
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
