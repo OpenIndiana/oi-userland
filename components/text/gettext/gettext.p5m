@@ -12,7 +12,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2020, 2023, Andreas Wacknitz
+# Copyright (c) 2020, 2024, Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -28,8 +28,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=.+/share/info/dir -> drop>
 # Drop all documentation:
 <transform file path=.+/share/doc/ -> drop>
-# Binaries in usr/lib should be executable
-<transform file path=usr/lib/$(MACH64)/gettext/ -> set mode 0555>
 
 # Compatibility
 link path=usr/lib/intltool/gettext-tools/lib/libgettextlib.so target=../../../$(MACH64)/libgettextlib-$(COMPONENT_VERSION).so
@@ -80,23 +78,23 @@ file path=usr/include/textstyle.h
 file path=usr/include/textstyle/stdbool.h
 file path=usr/include/textstyle/version.h
 file path=usr/include/textstyle/woe32dll.h
-file path=usr/lib/$(MACH64)/gettext/cldr-plurals
-file path=usr/lib/$(MACH64)/gettext/hostname
-file path=usr/lib/$(MACH64)/gettext/project-id
-file path=usr/lib/$(MACH64)/gettext/urlget
-file path=usr/lib/$(MACH64)/gettext/user-email
 file path=usr/lib/$(MACH64)/libgettextlib-$(HUMAN_VERSION).so
 link path=usr/lib/$(MACH64)/libgettextlib.so \
     target=libgettextlib-$(HUMAN_VERSION).so
-link path=usr/lib/$(MACH64)/libgettextpo.so target=libgettextpo.so.0.5.10
-link path=usr/lib/$(MACH64)/libgettextpo.so.0 target=libgettextpo.so.0.5.10
-file path=usr/lib/$(MACH64)/libgettextpo.so.0.5.10
+link path=usr/lib/$(MACH64)/libgettextpo.so target=libgettextpo.so.0.5.11
+link path=usr/lib/$(MACH64)/libgettextpo.so.0 target=libgettextpo.so.0.5.11
+file path=usr/lib/$(MACH64)/libgettextpo.so.0.5.11
 file path=usr/lib/$(MACH64)/libgettextsrc-$(HUMAN_VERSION).so
 link path=usr/lib/$(MACH64)/libgettextsrc.so \
     target=libgettextsrc-$(HUMAN_VERSION).so
-link path=usr/lib/$(MACH64)/libtextstyle.so target=libtextstyle.so.0.2.1
-link path=usr/lib/$(MACH64)/libtextstyle.so.0 target=libtextstyle.so.0.2.1
-file path=usr/lib/$(MACH64)/libtextstyle.so.0.2.1
+link path=usr/lib/$(MACH64)/libtextstyle.so target=libtextstyle.so.0.2.2
+link path=usr/lib/$(MACH64)/libtextstyle.so.0 target=libtextstyle.so.0.2.2
+file path=usr/lib/$(MACH64)/libtextstyle.so.0.2.2
+file path=usr/libexec/gettext/cldr-plurals
+file path=usr/libexec/gettext/hostname
+file path=usr/libexec/gettext/project-id
+file path=usr/libexec/gettext/urlget
+file path=usr/libexec/gettext/user-email
 file path=usr/share/aclocal/build-to-host.m4
 file path=usr/share/aclocal/gettext.m4
 file path=usr/share/aclocal/host-cpu-c-abi.m4
@@ -1922,6 +1920,9 @@ file path=usr/share/doc/libtextstyle/libtextstyle_6.html
 file path=usr/share/doc/libtextstyle/libtextstyle_7.html
 file path=usr/share/doc/libtextstyle/libtextstyle_abt.html
 file path=usr/share/doc/libtextstyle/libtextstyle_toc.html
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/docbook.loc
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/docbook4.its
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/docbook5.its
 file path=usr/share/gettext-$(HUMAN_VERSION)/its/glade.loc
 file path=usr/share/gettext-$(HUMAN_VERSION)/its/glade1.its
 file path=usr/share/gettext-$(HUMAN_VERSION)/its/glade2.its
@@ -1933,6 +1934,7 @@ file path=usr/share/gettext-$(HUMAN_VERSION)/its/metainfo.loc
 file path=usr/share/gettext/ABOUT-NLS
 file path=usr/share/gettext/archive.dir.tar.xz
 file path=usr/share/gettext/config.rpath
+file path=usr/share/gettext/disclaim-translations.txt
 file path=usr/share/gettext/gettext.h
 file path=usr/share/gettext/javaversion.class
 file path=usr/share/gettext/msgunfmt.tcl
@@ -1942,9 +1944,9 @@ file path=usr/share/gettext/po/Rules-quot
 file path=usr/share/gettext/po/boldquot.sed
 file path=usr/share/gettext/po/en@boldquot.header
 file path=usr/share/gettext/po/en@quot.header
-file path=usr/share/gettext/po/insert-header.sin
+file path=usr/share/gettext/po/insert-header.sed
 file path=usr/share/gettext/po/quot.sed
-file path=usr/share/gettext/po/remove-potcdate.sin
+file path=usr/share/gettext/po/remove-potcdate.sed
 file path=usr/share/gettext/projects/GNOME/team-address
 file path=usr/share/gettext/projects/GNOME/teams.html
 file path=usr/share/gettext/projects/GNOME/teams.url
@@ -1959,6 +1961,11 @@ file path=usr/share/gettext/projects/TP/teams.url
 file path=usr/share/gettext/projects/TP/trigger
 file path=usr/share/gettext/projects/index
 file path=usr/share/gettext/projects/team-address
+file path=usr/share/gettext/schema/its-extensions.xsd
+file path=usr/share/gettext/schema/its.xsd10
+file path=usr/share/gettext/schema/its.xsd11
+file path=usr/share/gettext/schema/locating-rules.xsd10
+file path=usr/share/gettext/schema/locating-rules.xsd11
 file path=usr/share/gettext/styles/po-default.css
 file path=usr/share/gettext/styles/po-emacs-x.css
 file path=usr/share/gettext/styles/po-emacs-xterm.css
