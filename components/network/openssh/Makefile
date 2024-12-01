@@ -31,6 +31,7 @@ COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
 COMPONENT_VERSION=	9.9.0.1
 HUMAN_VERSION=		9.9p1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openssh.org
