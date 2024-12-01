@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Bignum
 HUMAN_VERSION =			0.09
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Crypt::OpenSSL::Bignum - OpenSSL's multiprecision integer arithmetic
 COMPONENT_CPAN_AUTHOR =		KMX
 COMPONENT_ARCHIVE_HASH =	\
