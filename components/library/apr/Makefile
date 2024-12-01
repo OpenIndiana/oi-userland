@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         apr
 COMPONENT_VERSION=      1.7.5
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Apache Portable Runtime (APR) Shared Libraries
 COMPONENT_PROJECT_URL=  https://apr.apache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
