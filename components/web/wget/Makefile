@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wget
 COMPONENT_VERSION=      1.25.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	GNU wget - a utility to retrieve files from the World Wide Web
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
