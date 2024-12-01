@@ -1,4 +1,4 @@
-We prefer amd64 over 64.  It fits better our packaging.
+We prefer amd64/sparcv9 over 64.  It fits better our packaging.
 
 --- openssl-3.4.0/Configurations/10-main.conf.orig
 +++ openssl-3.4.0/Configurations/10-main.conf
@@ -11,3 +11,12 @@ We prefer amd64 over 64.  It fits better our packaging.
      },
  
  #### Solaris x86 with Sun C setups
+@@ -335,7 +335,7 @@
+         inherit_from     => [ "solaris-sparcv9-gcc" ],
+         cflags           => sub { my $f=join(" ",@_); $f =~ s/\-m32/-m64/; $f; },
+         bn_ops           => "BN_LLONG RC4_CHAR",
+-        multilib         => "/64",
++        multilib         => "/sparcv9",
+     },
+
+ #### SPARC Solaris with Sun C setups
