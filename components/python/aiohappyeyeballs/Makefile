@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohappyeyeballs
-HUMAN_VERSION =			2.4.3
+HUMAN_VERSION =			2.4.4
 COMPONENT_SUMMARY =		Happy Eyeballs for asyncio
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohappyeyeballs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:75cf88a15106a5002a8eb1dab212525c00d1f4c0fa96e551c9fbe6f09a621586
+	sha256:5fdd7d87889c63183afc18ce9271f9b0a7d32c2303e394468dd45d514a757745
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
