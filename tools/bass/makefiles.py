@@ -1,4 +1,3 @@
-#!/usr/bin/python3.9
 #
 # CDDL HEADER START
 #
