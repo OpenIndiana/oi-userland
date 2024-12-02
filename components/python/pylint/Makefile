@@ -19,15 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pylint
-HUMAN_VERSION =			3.3.1
+HUMAN_VERSION =			3.3.2
 COMPONENT_SUMMARY =		python code static checker
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9f3dcc87b1203e612b78d91a896407787e708b3f189b5fa0b307712d49ff0c6e
+	sha256:9ec054ec992cd05ad30a6df1676229739a73f8feeabf3912c995d17601052b01
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# Manifest options for developer/python/pylint package
-COMPONENT_FMRI.pylint-meta =		developer/python/pylint
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -54,6 +51,9 @@ COMPONENT_PREP_ACTION += \
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/astroid
