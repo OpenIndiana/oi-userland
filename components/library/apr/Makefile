@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         apr
 COMPONENT_VERSION=      1.7.5
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Apache Portable Runtime (APR) Shared Libraries
 COMPONENT_PROJECT_URL=  https://apr.apache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -61,6 +62,7 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += LTFLAGS="--tag=CC --silent"
 CONFIGURE_OPTIONS += --enable-layout=OpenSolaris-$(MACH64)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_PREFIX)/bin
+CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/$(COMPONENT_NAME)
 
 COMPONENT_POST_INSTALL_ACTION += \
     cd $(SOURCE_DIR); \
