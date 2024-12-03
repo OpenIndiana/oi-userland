@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		propcache
-HUMAN_VERSION =			0.2.0
+HUMAN_VERSION =			0.2.1
 COMPONENT_SUMMARY =		Accelerated property cache
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/propcache
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:df81779732feb9d01e5d513fad0122efb3d53bbc75f61b2a4f29a020bc985e70
+	sha256:3f77ce728b19cb537714499928fe800c3dda29e8d9428778fc7c186da4c09a64
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +34,9 @@ include $(WS_MAKE_RULES)/common.mk
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS += requirements/test.txt
+
+# We have no pytest-codspeed packaged yet
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks.py
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
