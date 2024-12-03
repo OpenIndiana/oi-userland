@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_flake8
 HUMAN_VERSION =			1.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest plugin to check FLAKE8 requirements
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:88fb35562ce32d915c6ba41ef0d5e1cfcdd8ff884a32b7d46aa99fc77a3d1fe6
@@ -27,9 +28,6 @@ COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Testing fails with the flake8-docstring installed
-TEST_CONFLICTING_PACKAGES.python += library/python/flake8-docstring
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flake8
