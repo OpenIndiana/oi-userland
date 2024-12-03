@@ -25,11 +25,11 @@
 # Copyright (c) 2023, Niklas Poslovski
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
 COMPONENT_VERSION=	2.4.62
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
