@@ -19,11 +19,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	21.4.3
+COMPONENT_VERSION=	22.1.0
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:bd9f492d3a9e6a5c9f0a69440402be61285d14df9dc7049377f29f9cbecfeeda
+COMPONENT_ARCHIVE_HASH=	sha256:c892e9a51919d62bee2bed8b7c6f59ec79dfd48768ae289df61dba2da83f4413
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk
@@ -53,6 +53,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) );
 COMPONENT_POST_CONFIGURE_ACTION += ( \
 	cd $(@D); \
 	$(GSED) -i -e 's:LDAP_INCLUDE=:LDAP_INCLUDE=-I/usr/include/openldap:' makeopts; \
+	$(GSED) -i -e 's:-L/usr/lib/amd64::g' makeopts; \
 	$(GSED) -i -e 's/ -lldap-2.6//' makeopts; \
 	$(GSED) -i -e 's/LDAP_LIB= -lldap/LDAP_LIB= -lldap-2.6/' makeopts; \
 	$(GSED) -i -e "s:-L$(OPENSSL_PREFIX)/lib :-L$(OPENSSL_LIBDIR.$(BITS)) :" makeopts; \
@@ -62,7 +63,14 @@ COMPONENT_POST_CONFIGURE_ACTION += ( \
 	$(GMAKE) menuselect.makeopts; \
 	./menuselect/menuselect --disable res_geolocation menuselect.makeopts; \
 	./menuselect/menuselect --enable res_config_mysql menuselect.makeopts; \
+	./menuselect/menuselect --enable cdr_radius menuselect.makeopts; \
+	./menuselect/menuselect --enable cel_radius menuselect.makeopts; \
 	./menuselect/menuselect --enable res_mwi_external menuselect.makeopts; \
+	./menuselect/menuselect --enable res_ari_mailboxes menuselect.makeopts; \
+	./menuselect/menuselect --enable res_cliexec menuselect.makeopts; \
+	./menuselect/menuselect --enable check_expr menuselect.makeopts; \
+	./menuselect/menuselect --enable check_expr2 menuselect.makeopts; \
+	./menuselect/menuselect --enable stereorize menuselect.makeopts; \
 	./menuselect/menuselect --enable res_chan_stats menuselect.makeopts; \
 	./menuselect/menuselect --enable res_endpoint_stats menuselect.makeopts; \
 	./menuselect/menuselect --enable res_stasis_mailbox menuselect.makeopts; \
@@ -86,7 +94,7 @@ CONFIGURE_OPTIONS +=    --with-gnu-ld=no
 CONFIGURE_OPTIONS +=	--with-crypto=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	--with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	--with-pjproject-bundled
-#CONFIGURE_OPTIONS +=	--with-libjwt-bundled
+CONFIGURE_OPTIONS +=	--with-libjwt-bundled
 CONFIGURE_OPTIONS +=	--with-gsm=internal
 CONFIGURE_OPTIONS +=	--with-ilbc=internal
 CONFIGURE_OPTIONS +=	--with-unixodbc
@@ -118,8 +126,7 @@ CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS))
 CONFIGURE_OPTIONS +=	LDFLAGS="-m64 -lldap-2.6 -L$(JPEG_LIBDIR)"
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap"
 # HAVE_OPENSSL_BIO_METHOD not properly recognised by configure therefore expiclitly set
-CONFIGURE_OPTIONS +=	CFLAGS="-m64 -I/usr/include/odbc -DHAVE_OPENSSL_BIO_METHOD $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="-m64 $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)"
+CONFIGURE_OPTIONS +=	CFLAGS="-m64 -I/usr/include/odbc -DHAVE_OPENSSL_BIO_METHOD"
 
 COMPONENT_INSTALL_TARGETS += samples
 
