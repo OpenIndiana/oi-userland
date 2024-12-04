@@ -1,0 +1,85 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2024 Marcel Telka
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/perl5/$(PERLVER)/bin/cpan
+file path=usr/perl5/$(PERLVER)/lib/App/Cpan.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/API/HOWTO.pod
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Author.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Bundle.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/CacheMgr.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Complete.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Debug.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/DeferredCode.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Distribution.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Distroprefs.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Distrostatus.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Exception/RecursiveDependency.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Exception/blocked_urllist.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Exception/yaml_not_installed.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Exception/yaml_process_error.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/FTP.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/FTP/netrc.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/FirstTime.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/HTTP/Client.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/HTTP/Credentials.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/HandleConfig.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Index.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/InfoObj.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Kwalify.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Kwalify/distroprefs.dd
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Kwalify/distroprefs.yml
+file path=usr/perl5/$(PERLVER)/lib/CPAN/LWP/UserAgent.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Mirrors.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Module.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Nox.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Plugin.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Plugin/Specfile.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Prompt.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Queue.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Shell.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Tarzip.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/URL.pm
+file path=usr/perl5/$(PERLVER)/lib/CPAN/Version.pm
+file path=usr/perl5/$(PERLVER)/man/man1/cpan.1
+file path=usr/perl5/$(PERLVER)/man/man3perl/App::Cpan.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::API::HOWTO.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Debug.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Distroprefs.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::FirstTime.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::HandleConfig.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Kwalify.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Mirrors.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Nox.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Plugin.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Plugin::Specfile.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Queue.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Tarzip.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Version.3perl
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
