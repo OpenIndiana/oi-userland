@@ -24,15 +24,15 @@
 # Copyright (c) 2022, 2023, 2024 Friedrich Kink
 #
 
-OPENSSL_VERSION=	3.1
 BUILD_STYLE=		justmake
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sendmail
 COMPONENT_VERSION=      8.18.1
+COMPONENT_REVISION=     1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  ftp://ftp.sendmail.org/pub/sendmail/
+COMPONENT_PROJECT_URL=  https://ftp.sendmail.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:cbf1f309c38e4806f7cf3ead24260f17d1fe8fb63256d13edb3cdd1a098f0770
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
@@ -189,10 +189,10 @@ COMPONENT_TEST_TRANSFORMS += -n \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
