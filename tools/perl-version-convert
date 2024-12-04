@@ -71,6 +71,7 @@ function convert_version
 	# we need to follow it for now.
 	#
 	[[ "$DIST" == "Authen-PAM" && "${VERSION:0:2}" == "0." ]] && ((${#VERSION} == 4)) && VERSION=$((1${VERSION:2:2} - 100))
+	[[ "$DIST" == "CPAN-Meta" && "${VERSION:0:2}" == "2." ]] && ((${#VERSION} == 8)) && VER[2]=$((1${VERSION:4:3} - 1000)) && VER[3]=$((1${VERSION:7:1} - 10)) && VERSION=${VERSION:0:4}
 	[[ "$DIST" == "Crypt-PBKDF2" && "${VERSION:0:2}" == "0." ]] && ((${#VERSION} == 8)) && VER[1]=$((1${VERSION:2:6} - 1000000)) && VERSION=${VERSION:0:1}
 	[[ "$DIST" == "Email-Sender" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 8)) && VER[1]=${VERSION:2:1} && VER[2]=$((1${VERSION:3:5} - 100000)) && VERSION=${VERSION:0:1}
 	[[ "$DIST" == "Email-Sender" && "${VERSION:0:2}" != "0." && "${VERSION:3:2}" == "00" ]] && ((${#VERSION} == 5)) && VER[1]=${VERSION:2:1} && VERSION=${VERSION:0:1}
@@ -81,6 +82,7 @@ function convert_version
 	[[ "$DIST" == "Geography-Countries" ]] && ((${#VERSION} == 10)) && VER[1]=$((1${VERSION:4:2} - 100)) && VER[2]=$((1${VERSION:6:2} - 100)) && VER[3]=$((1${VERSION:8:2} - 100)) && VERSION=${VERSION:0:4}
 	[[ "$DIST" == "IPC-Run" ]] && ((${#VERSION} == 3)) && VERSION="${VERSION}0"
 	[[ "$DIST" == "IPC-Run" ]] && ((${#VERSION} == 10)) && VER[3]=$((1${VERSION:9:1} - 10)) && VER[2]=$((1${VERSION:6:2} - 100)) && VER[1]=$((1${VERSION:4:2} - 100)) && VERSION=${VERSION:0:4}
+	[[ "$DIST" == "JSON-PP" ]] && ((${#VERSION} == 7)) && VER[2]=$((1${VERSION:4:3} - 1000)) && VERSION=${VERSION:0:4}
 	[[ "$DIST" == "Log-Dispatch" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 3)) && VERSION=${VERSION}0
 	[[ "$DIST" == "Log-Dispatch" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 5)) && VER[2]=$((1${VERSION:4:1} - 10)) && VERSION=${VERSION:0:4}
 	[[ "$DIST" == "Mail-AuthenticationResults" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 10)) && VER[1]=$((1${VERSION:2:4} - 10000)) && VER[2]=$((1${VERSION:6:2} - 100)) && VER[3]=$((1${VERSION:8:2} - 100)) && VERSION=${VERSION:0:1}
@@ -105,6 +107,8 @@ function convert_version
 		done
 	fi
 	[[ "$DIST" == "Mail-SPF" && "${VERSION:0:2}" == "3." ]] && ((${#VERSION} == 10)) && VER[1]=$((1${VERSION:2:4} - 10000)) && VER[2]=$((1${VERSION:6:2} - 100)) && VER[3]=$((1${VERSION:8:2} - 100)) && VERSION=${VERSION:0:1}
+	[[ "$DIST" == "Math-BigInt" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 5)) && VERSION=${VERSION}0
+	[[ "$DIST" == "Math-BigInt" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 8)) && VER[3]=$((1${VERSION:6:2} - 100)) && VERSION=${VERSION:0:6}
 	[[ "$DIST" == "MIME-Base32" ]] && VERSION=${VERSION/%a/.1}
 	[[ "$DIST" == "Module-Build" ]] && ((${#VERSION} == 6)) && VER[1]=$((1${VERSION:2:4} - 10000)) && VERSION=${VERSION:0:1}
 	[[ "$DIST" == "Mozilla-CA" ]] && ((${#VERSION} == 8)) && VER[1]=$((1${VERSION:4:2} - 100)) && VER[2]=$((1${VERSION:6:2} - 100)) && VERSION=${VERSION:0:4}
@@ -113,6 +117,7 @@ function convert_version
 	[[ "$DIST" == "Perl-Critic" && "${VERSION:0:2}" == "0." ]] && ((${#VERSION} == 3)) && VERSION=${VERSION}0
 	[[ "$DIST" == "Perl-Critic" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 4)) && VERSION=${VERSION}0
 	[[ "$DIST" == "Perl-Tidy" ]] && ((${#VERSION} == 8)) && VER[1]=$((1${VERSION:4:2} - 100)) && VER[2]=$((1${VERSION:6:2} - 100)) && VERSION=${VERSION:0:4}
+	[[ "$DIST" == "perlfaq" && "${VERSION:0:4}" == "5.20" ]] && ((${#VERSION} == 10)) && VER[1]=$((1${VERSION:2:4} - 10000)) && VER[2]=$((1${VERSION:6:2} - 100)) && VER[3]=$((1${VERSION:8:2} - 100)) && VERSION=${VERSION:0:1}
 	[[ "$DIST" == "PkgConfig" && "${VERSION:4:3}" == "026" ]] && ((${#VERSION} == 7)) && VER[1]=$((1${VERSION:2:2} - 100)) && VERSION=${VERSION:0:1}
 	[[ "$DIST" == "Proc-ProcessTable" && "${VERSION:0:2}" == "0." ]] && ((${#VERSION} == 5)) && VER[2]=$((1${VERSION:4:1} - 10)) && VERSION=${VERSION:0:4}
 	[[ "$DIST" == "Regexp-Common" ]] && ((${#VERSION} == 10)) && VER[1]=$((1${VERSION:4:2} - 100)) && VER[2]=$((1${VERSION:6:2} - 100)) && VER[3]=$((1${VERSION:8:2} - 100)) && VERSION=${VERSION:0:4}
