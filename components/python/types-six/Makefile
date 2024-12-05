@@ -11,20 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-six
+#   $WS_TOOLS/python-integrate-project -d python/types-six types_six
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-six
-HUMAN_VERSION =			1.16.21.20241105
+COMPONENT_NAME =		types_six
+HUMAN_VERSION =			1.17.0.20241205
 COMPONENT_SUMMARY =		Typing stubs for six
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ce3534c38079ec3242f4a20376283eb265a3837f80592b0ecacb14bd41acc29e
+	sha256:1f662347a8f3b2bf30517d629d82f591420df29811794b0bf3804e14d716f6e0
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
 
