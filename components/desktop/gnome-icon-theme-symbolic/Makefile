@@ -13,11 +13,12 @@
 # Copyright (c) 2014 Ken Mays
 #
 
+BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-icon-theme-symbolic
 COMPONENT_VERSION=	3.12.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME Symbolic Icons
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -26,21 +27,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:851a4c9d8e8cb0000c9e5e78259ab8b8e67c5334e4250ebcc8dfdaa33520068b
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/3.12/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
+# Auto-generated dependencies
