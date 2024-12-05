@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 500 items
+collecting ... collected 510 items
 
 test/ext/test_babelplugin.py::PluginExtractTest::test_parse_python_expression PASSED
 test/ext/test_babelplugin.py::PluginExtractTest::test_python_gettext_call PASSED
@@ -37,6 +37,7 @@ test/test_ast.py::AstParseTest::test_locate_identifiers_21 PASSED
 test/test_ast.py::AstParseTest::test_no_global_imports PASSED
 test/test_ast.py::AstParseTest::test_python_fragment PASSED
 test/test_ast.py::AstParseTest::test_argument_list PASSED
+test/test_ast.py::AstParseTest::test_conflict_argument_list PASSED
 test/test_ast.py::AstParseTest::test_function_decl PASSED
 test/test_ast.py::AstParseTest::test_function_decl_2 PASSED
 test/test_ast.py::AstParseTest::test_function_decl_3 PASSED
@@ -253,6 +254,7 @@ test/test_filters.py::BufferTest::test_capture PASSED
 test/test_filters.py::BufferTest::test_capture_exception PASSED
 test/test_filters.py::BufferTest::test_buffered_exception PASSED
 test/test_filters.py::BufferTest::test_capture_ccall PASSED
+test/test_filters.py::BufferTest::test_conflict_filter_ident PASSED
 test/test_inheritance.py::InheritanceTest::test_basic PASSED
 test/test_inheritance.py::InheritanceTest::test_multilevel_nesting PASSED
 test/test_inheritance.py::InheritanceTest::test_includes PASSED
@@ -292,8 +294,16 @@ test/test_lexer.py::LexerTest::test_code PASSED
 test/test_lexer.py::LexerTest::test_code_and_tags PASSED
 test/test_lexer.py::LexerTest::test_expression PASSED
 test/test_lexer.py::LexerTest::test_tricky_expression PASSED
-test/test_lexer.py::LexerTest::test_dict_expression_issue_400_regression PASSED
+test/test_lexer.py::LexerTest::test_dict_expression_issue_400_regression[expr0] PASSED
+test/test_lexer.py::LexerTest::test_dict_expression_issue_400_regression[expr1] PASSED
+test/test_lexer.py::LexerTest::test_dict_expression_issue_400_regression[expr2] PASSED
+test/test_lexer.py::LexerTest::test_dict_expression_issue_400_regression[expr3] PASSED
 test/test_lexer.py::LexerTest::test_ampersand_issue_412 PASSED
+test/test_lexer.py::LexerTest::test_dict_expression_issue_400 PASSED
+test/test_lexer.py::LexerTest::test_dict_expression_2_issue_400 PASSED
+test/test_lexer.py::LexerTest::test_dict_expression PASSED
+test/test_lexer.py::LexerTest::test_dict_expression_2 PASSED
+test/test_lexer.py::LexerTest::test_brace_expression PASSED
 test/test_lexer.py::LexerTest::test_tricky_code PASSED
 test/test_lexer.py::LexerTest::test_tricky_code_2 PASSED
 test/test_lexer.py::LexerTest::test_tricky_code_3 PASSED
@@ -523,49 +533,49 @@ test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
   $(PYTHON_DIR)/vendor-packages/lingua/extractors/__init__.py:2: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
     from pkg_resources import DistributionNotFound
 
-test/ext/test_linguaplugin.py: 16 warnings
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3154: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
+test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3149: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3149: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
 test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
 test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3154: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3149: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
 test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3154: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3149: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
 test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
-test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3154: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3154: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
-  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
-    declare_namespace(pkg)
-
-test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2563: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2558: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(parent)
 
 test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3154: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3149: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
 test/ext/test_linguaplugin.py::MakoExtractTest::test_extract
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3154: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3149: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+test/ext/test_linguaplugin.py: 16 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3149: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 477 passed, 23 skipped, 26 warnings ========
+======== 487 passed, 23 skipped, 26 warnings ========
   py$(PYV): OK
   congratulations :)
