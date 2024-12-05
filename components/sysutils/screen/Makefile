@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
 COMPONENT_VERSION=	4.9.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	GNU Screen terminal multiplexer
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/screen/
 COMPONENT_FMRI=		terminal/screen
@@ -51,7 +51,6 @@ COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
 CONFIGURE_OPTIONS += --enable-colors256
 CONFIGURE_OPTIONS += --with-sys-screenrc=/etc/screenrc
-CONFIGURE_OPTIONS += --disable-socket-dir
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 
 PROTOTERMINFODIR= $(PROTOUSRSHAREDIR)/lib/terminfo
