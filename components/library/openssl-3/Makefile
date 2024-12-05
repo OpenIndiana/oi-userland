@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			openssl
 COMPONENT_VERSION=		3.4.0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=		OpenSSL software library is a robust, commercial-grade, full-featured toolkit for general-purpose cryptography and secure communication
 COMPONENT_PROJECT_URL=		https://openssl-library.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -85,7 +85,7 @@ COMPONENT_POST_INSTALL_ACTION.64 += \
 	nd=$(notdir $(OPENSSL_INCDIR)) ; \
 	for f in $$($(ENV) $(GDIFF) -qr $$nd-32 $$nd \
 	    | $(GSED) -n -e 's|^Files .* '"$$nd"'/\([^ ]\{1,\}\) differ$$|\1|p') ; do \
-		f32=$$f ; f64=$$f ; \
+		f32=$$f-32 ; f64=$$f-64 ; \
 		[ "$${f\#\#*.}" != "$$f" ] \
 			&& f32=$${f%.*}-32.$${f\#\#*.} && f64=$${f%.*}-64.$${f\#\#*.} ; \
 		[ -e "$$nd/$$f32" ] && exit 1 ; \
@@ -117,6 +117,9 @@ COMPONENT_POST_INSTALL_ACTION += $(call create-symlinks,$(OPENSSL_LIBDIR)/cmake/
 COMPONENT_POST_INSTALL_ACTION.64 += $(call create-symlinks,$(OPENSSL_BINDIR)/*,$(USRBINDIR)) ;
 COMPONENT_POST_INSTALL_ACTION.64 += $(call create-symlinks,$(OPENSSL_INCDIR)/*,$(USRINCDIR)) ;
 COMPONENT_POST_INSTALL_ACTION.64 += $(SYMLINK) $(OPENSSL_VERSION) $(PROTOETCDIR)/openssl/default ;
+
+# Compatibility symlink for 64 bit libraries
+COMPONENT_POST_INSTALL_ACTION.64 += $(SYMLINK) $(MACH64) $(PROTO_DIR)/$(OPENSSL_LIBDIR)/../64 ;
 
 # Convert the (empty) certs directory to a symlink
 COMPONENT_POST_INSTALL_ACTION.64 += \
