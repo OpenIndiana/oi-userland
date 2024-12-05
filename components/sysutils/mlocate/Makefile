@@ -23,11 +23,12 @@
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mlocate
 COMPONENT_VERSION=      0.26
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      mlocate - A utility for finding files by name quickly
 COMPONENT_FMRI=         file/mlocate 
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -39,13 +40,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  https://releases.pagure.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_OPTIONS += CC="$(CC) $(CC_BITS)"
-CONFIGURE_OPTIONS += --localstatedir="/var/cache"
-CONFIGURE_OPTIONS += --sysconfdir="/etc"
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -vif )
 COMPONENT_POST_INSTALL_ACTION= \
@@ -54,13 +49,6 @@ COMPONENT_POST_INSTALL_ACTION= \
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-		
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
