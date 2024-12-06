@@ -1,0 +1,58 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2024 Marcel Telka
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/perl5/$(PERLVER)/bin/perldoc
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/BaseTo.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/GetOptsOO.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToANSI.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToChecker.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToMan.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToNroff.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToPod.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToRtf.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToTerm.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToText.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToTk.pm
+file path=usr/perl5/$(PERLVER)/lib/Pod/Perldoc/ToXml.pm
+file path=usr/perl5/$(PERLVER)/lib/pod/perldoc.pod
+file path=usr/perl5/$(PERLVER)/man/man1/perldoc.1
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::BaseTo.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::GetOptsOO.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToANSI.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToChecker.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToMan.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToNroff.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToPod.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToRtf.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToTerm.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToText.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToTk.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Perldoc::ToXml.3perl
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
