@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6985 items / 5980 deselected / 1005 selected
+collecting ... collected 6987 items / 5982 deselected / 1005 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
@@ -451,27 +451,6 @@ test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-socks5h-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Urllib-http-socks-UnsupportedRequest] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Requests-http-http-False] PASSED
-----------------------------------------
-Exception occurred during processing of request from ('127.0.0.1', 54601)
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
-    self.finish_request(request, client_address)
-  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
-    self.RequestHandlerClass(request, client_address, self)
-  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
-    self.handle()
-  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
-    self.handle_one_request()
-  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
-    method()
-  File "$(@D)/test/test_networking.py", line 259, in do_GET
-    self._headers()
-  File "$(@D)/test/test_networking.py", line 84, in _headers
-    self.wfile.write(payload)
-  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
-    self._sock.sendall(b)
-BrokenPipeError: [Errno 32] Broken pipe
-----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Requests-http-https-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Requests-http-socks4-False] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_proxy_scheme[Requests-http-socks4a-False] PASSED
@@ -582,6 +561,27 @@ test/test_networking.py::TestRequest::test_update_req PASSED
 test/test_networking.py::TestRequest::test_proxies PASSED
 test/test_networking.py::TestRequest::test_extensions PASSED
 test/test_networking.py::TestRequest::test_copy PASSED
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53015)
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
+    self.handle()
+  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
+    method()
+  File "$(@D)/test/test_networking.py", line 259, in do_GET
+    self._headers()
+  File "$(@D)/test/test_networking.py", line 84, in _headers
+    self.wfile.write(payload)
+  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
 test/test_networking.py::TestRequest::test_url PASSED
 test/test_networking.py::TestResponse::test_reason[custom-200-custom] PASSED
 test/test_networking.py::TestResponse::test_reason[None-404-Not Found] PASSED
@@ -1039,6 +1039,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 852 passed, 153 skipped, 5980 deselected ========
+======== 852 passed, 153 skipped, 5982 deselected ========
   py$(PYV): OK
   congratulations :)
