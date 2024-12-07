@@ -11,23 +11,23 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project PyQt5_sip
+#   $WS_TOOLS/python-integrate-project -d python/PyQt5_sip pyqt5_sip
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		PyQt5_sip
-HUMAN_VERSION =			12.15.0
+COMPONENT_NAME =		pyqt5_sip
+HUMAN_VERSION =			12.16.1
 COMPONENT_SUMMARY =		The sip module support for PyQt5
 COMPONENT_PROJECT_URL =		https://github.com/Python-SIP/sip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d23fdfcf363b5cedd9d39f8a9c5710e7d52804f5b08a58e91c638b36eafcb702
+	sha256:8c831f8b619811a32369d72339faa50ae53a963f5fdfa4d71f845c63e9673125
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,6 +36,5 @@ COMPONENT_PRE_TEST_ACTION += $(MKDIR) $(@D)/PyQt5 ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
