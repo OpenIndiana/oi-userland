@@ -28,7 +28,7 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
-COMPONENT_VERSION=		12.2.0
+COMPONENT_VERSION=		12.2.1
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
@@ -39,7 +39,7 @@ COMPONENT_SUMMARY=		Graph visualization software
 COMPONENT_PROJECT_URL=	https://www.graphviz.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:66d4acc201536a378a28d5254deeec8cf3e98cc66d7e4cb1cbfa5fc620f86474
+COMPONENT_ARCHIVE_HASH= sha256:85e34b5c982777c30f01dfab9ea7c713b4335a2f584e62c0abb9868413eb915b
 COMPONENT_ARCHIVE_URL=	https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			image/graphviz
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -116,6 +116,11 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(RM) -r vendor-packages ; \
 	$(MV) site-packages vendor-packages ;
 
+# python interpreter 
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i -e '1 s:\#!/usr/bin/env python[0-9.]*:\#!/usr/bin/python$(PYTHON_VERSION):' \
+        $(PROTOUSRBINDIR)/dot_sandbox ;
+
 # Install the plugin configuration service
 COMPONENT_POST_INSTALL_ACTION += \
 	$(INSTALL) -D $(COMPONENT_DIR)/files/graphviz-configure-plugins $(PROTOLIBDIR)/svc/method/graphviz-configure-plugins ; \
@@ -130,6 +135,7 @@ REQUIRED_PACKAGES += developer/golang
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
