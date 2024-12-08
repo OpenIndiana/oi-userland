@@ -41,6 +41,9 @@ CMAKE_OPTIONS += -DWITH_DAV1D=ON
 CMAKE_OPTIONS += -DWITH_JPEG_DECODER=ON
 CMAKE_OPTIONS += -DWITH_UNCOMPRESSED_CODEC=ON
 
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
