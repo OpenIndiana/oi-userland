@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 32 items
+collecting ... collected 38 items
 
 tests/test_subtests.py::TestFixture::test_simple_terminal_normal[normal] PASSED
 tests/test_subtests.py::TestFixture::test_simple_terminal_normal[xdist] PASSED
@@ -29,6 +29,12 @@ tests/test_subtests.py::TestSubTest::test_skip[pytest-xdist] XFAIL (...)
 tests/test_subtests.py::TestSubTest::test_xfail[unittest] XFAIL (Not...)
 tests/test_subtests.py::TestSubTest::test_xfail[pytest-normal] XFAIL
 tests/test_subtests.py::TestSubTest::test_xfail[pytest-xdist] XFAIL
+tests/test_subtests.py::TestSubTest::test_skip_with_failure[unittest] PASSED
+tests/test_subtests.py::TestSubTest::test_skip_with_failure[pytest-normal] PASSED
+tests/test_subtests.py::TestSubTest::test_skip_with_failure[pytest-xdist] XFAIL
+tests/test_subtests.py::TestSubTest::test_skip_with_failure_and_non_subskip[unittest] PASSED
+tests/test_subtests.py::TestSubTest::test_skip_with_failure_and_non_subskip[pytest-normal] PASSED
+tests/test_subtests.py::TestSubTest::test_skip_with_failure_and_non_subskip[pytest-xdist] XFAIL
 tests/test_subtests.py::TestCapture::test_capturing PASSED
 tests/test_subtests.py::TestCapture::test_no_capture PASSED
 tests/test_subtests.py::TestCapture::test_capture_with_fixture[capsys] PASSED
@@ -40,13 +46,57 @@ tests/test_subtests.py::TestDebugging::test_pdb_fixture PASSED
 tests/test_subtests.py::TestDebugging::test_pdb_unittest PASSED
 tests/test_subtests.py::test_exitfirst PASSED
 
-================================== XFAILURES ===================================
-$(@D)/tests/test_subtests.py:304: _pytest.outcomes.XFailed: Not producing the expected results (#5)
-$(@D)/tests/test_subtests.py:304: _pytest.outcomes.XFailed: Not producing the expected results (#5)
-$(@D)/tests/test_subtests.py:336: Failed: nomatch: 'Ran 1 test in *'
-$(@D)/tests/test_subtests.py:339: Failed: nomatch: 'collected 1 item'
-$(@D)/tests/test_subtests.py:339: Failed: nomatch: 'collected 1 item'
+=============================== warnings summary ===============================
+tests/test_subtests.py:369
+  $(@D)/tests/test_subtests.py:369: DeprecationWarning: invalid escape sequence \(
+    "FAIL: test_foo \(__main__\.T\) \[custom message\] \(i=4\).*",
+
+tests/test_subtests.py:370
+  $(@D)/tests/test_subtests.py:370: DeprecationWarning: invalid escape sequence \(
+    "FAIL: test_foo \(__main__\.T\) \[custom message\] \(i=9\).*",
+
+tests/test_subtests.py:372
+  $(@D)/tests/test_subtests.py:372: DeprecationWarning: invalid escape sequence \(
+    "FAILED \(failures=6, skipped=4\)",
+
+tests/test_subtests.py:378
+  $(@D)/tests/test_subtests.py:378: DeprecationWarning: invalid escape sequence \(
+    "FAIL: test_foo \(__main__\.T\.test_foo\) \[custom message\] \(i=4\).*",
+
+tests/test_subtests.py:379
+  $(@D)/tests/test_subtests.py:379: DeprecationWarning: invalid escape sequence \(
+    "FAIL: test_foo \(__main__\.T\.test_foo\) \[custom message\] \(i=9\).*",
+
+tests/test_subtests.py:381
+  $(@D)/tests/test_subtests.py:381: DeprecationWarning: invalid escape sequence \(
+    "FAILED \(failures=6, skipped=4\)",
+
+tests/test_subtests.py:438
+  $(@D)/tests/test_subtests.py:438: DeprecationWarning: invalid escape sequence \(
+    "FAIL: test_foo \(__main__\.T\) \[custom message\] \(i=4\).*",
+
+tests/test_subtests.py:439
+  $(@D)/tests/test_subtests.py:439: DeprecationWarning: invalid escape sequence \(
+    "FAIL: test_foo \(__main__\.T\) \[custom message\] \(i=9\).*",
+
+tests/test_subtests.py:441
+  $(@D)/tests/test_subtests.py:441: DeprecationWarning: invalid escape sequence \(
+    "FAILED \(failures=6, skipped=5\)",
+
+tests/test_subtests.py:447
+  $(@D)/tests/test_subtests.py:447: DeprecationWarning: invalid escape sequence \(
+    "FAIL: test_foo \(__main__\.T\.test_foo\) \[custom message\] \(i=4\).*",
+
+tests/test_subtests.py:448
+  $(@D)/tests/test_subtests.py:448: DeprecationWarning: invalid escape sequence \(
+    "FAIL: test_foo \(__main__\.T\.test_foo\) \[custom message\] \(i=9\).*",
+
+tests/test_subtests.py:450
+  $(@D)/tests/test_subtests.py:450: DeprecationWarning: invalid escape sequence \(
+    "FAILED \(failures=6, skipped=5\)",
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 27 passed, 5 xfailed ========
+======== 31 passed, 7 xfailed, 12 warnings ========
   py$(PYV): OK
   congratulations :)
