@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liblouis
-COMPONENT_VERSION= 3.31.0
+COMPONENT_VERSION= 3.32.0
 COMPONENT_SUMMARY= The Liblouis software suite provides an open-source braille translator, back-translator and formatter for a large number of languages and braille codes
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:296d612b55ca6fb8adcf1a5f9268936c0d11c3149771171fe8a994e723804af7
+COMPONENT_ARCHIVE_HASH=	sha256:a5024d2a3f1b63336440e329f8cfb7166f64ce54da961ce97e847e4cef063e32
 COMPONENT_ARCHIVE_URL=	https://github.com/liblouis/liblouis/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = https://liblouis.io/
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -40,7 +40,8 @@ COMPONENT_BUILD_ARGS=
 COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -f -i ) 
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION += ( cp -a $(SOURCE_DIR)/* $(@D)) ;
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) );
+COMPONENT_POST_INSTALL_ACTION += ( $(RM) $(PROTOUSRSHAREDIR)/info/dir );
 
 CONFIGURE_SCRIPT= $(@D)/configure
 
