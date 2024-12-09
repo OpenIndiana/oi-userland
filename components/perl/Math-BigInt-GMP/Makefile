@@ -11,30 +11,28 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Math::BigInt::GMP
+#   $WS_TOOLS/perl-integrate-module Math-BigInt-GMP
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Math::BigInt::GMP
+COMPONENT_NAME =		Math-BigInt-GMP
 HUMAN_VERSION =			1.7001
-COMPONENT_SUMMARY =		Math::BigInt::GMP - backend library for Math::BigInt etc. based on GMP
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		check that a library is available
 COMPONENT_CPAN_AUTHOR =		PJACKLAM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:417581fdce63892e24f08279cdd6b065cb60c41d5acfa22dd2ad93b6d3e87071
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
-# Math::BigInt::GMP >= 1.6012 requires Math::BigInt >= 1.999838
-# Perl 5.36 comes with Math::BigInt 1.999830
-# Perl 5.38 comes with Math::BigInt 1.999837
-# Perl 5.40 comes with Math::BigInt 2.003002
-PERL_VERSIONS := $(filter-out 5.36 5.38, $(PERL_VERSIONS))
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
