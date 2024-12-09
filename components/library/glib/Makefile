@@ -23,9 +23,9 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-HUMAN_VERSION=		2.82.2
+HUMAN_VERSION=		2.82.3
 COMPONENT_SUMMARY=	GNOME core libraries
-COMPONENT_ARCHIVE_HASH=	sha256:ab45f5a323048b1659ee0fbda5cecd94b099ab3e4b9abf26ae06aeb3e781fd63
+COMPONENT_ARCHIVE_HASH=	sha256:5d669bd01ad23b8ef8082c58a0d205f4007a9b9c42b0a69fe7aeb17bbee58ce4
 COMPONENT_FMRI=		library/glib2
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
@@ -66,9 +66,9 @@ CONFIGURE_OPTIONS += -Dsystemtap=disabled
 CONFIGURE_OPTIONS += -Dsysprof=disabled
 # see https://gitlab.gnome.org/GNOME/glib/-/issues/3421
 CONFIGURE_OPTIONS += -Dglib_debug=disabled
-
-COMPONENT_POST_CONFIGURE_ACTION= \
-  ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
+# Our 32 bit libelf is missing the large file support
+# https://www.illumos.org/issues/1587
+CONFIGURE_OPTIONS.32 += -Dlibelf=disabled
 
 # We need to install libraries and set correct LD_LIBRARY_PATH before test
 $(TEST_TARGET): $(INSTALL_TARGET)
