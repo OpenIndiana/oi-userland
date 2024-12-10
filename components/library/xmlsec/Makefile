@@ -23,17 +23,16 @@
 # Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
 #
 
-OPENSSL_VERSION= 3.1
 CLONEY_ARGS= CLONEY_MODE="copy"
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xmlsec
-COMPONENT_VERSION=	1.2.38
+COMPONENT_VERSION=	1.3.6
 COMPONENT_SUMMARY=	XML Security Library
 COMPONENT_PROJECT_URL=	https://www.aleksey.com/xmlsec
 COMPONENT_SRC=	$(COMPONENT_NAME)1-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9de8cf8d7d2e288a9cef205cc6cb93c926a67dadfaf44aaff76ed63c28ce9902
+COMPONENT_ARCHIVE_HASH= sha256:952b626ad3f3be1a4598622dab52fdab2a8604d0837c1b00589f3637535af92f
 COMPONENT_ARCHIVE_URL=	https://www.aleksey.com/xmlsec/download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/xmlsec
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -60,12 +59,12 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/OK/p" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/nspr
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/mozilla-nss
