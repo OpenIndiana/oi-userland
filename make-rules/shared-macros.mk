@@ -710,7 +710,7 @@ endif
 LD =		/usr/bin/ld
 
 # Clang definitions (we only have 64 bit clang)
-CLANG_DEFAULT =		18
+CLANG_DEFAULT =		19
 CLANG_VERSION ?=	$(CLANG_DEFAULT)
 CLANG_PREFIX =		/usr/clang/$(CLANG_VERSION)
 CLANG_BINDIR =		$(CLANG_PREFIX)/bin
