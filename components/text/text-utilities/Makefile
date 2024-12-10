@@ -30,7 +30,7 @@ COMPONENT_NAME=		text-utilities
 COMPONENT_MAJOR_VERSION=2.33
 COMPONENT_MINOR_VERSION=2
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Various Linux utilities
 COMPONENT_FMRI=		text/text-utilities
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -42,6 +42,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	README.licensing
 COMPONENT_LICENSE=	GPL-2.0-or-later, GPL-2.0, LGPL-2.1-or-later, BSD-3-Clause, BSD-4-Clause-UC, Public Domain
+
+# Testing needs the proto area prepared
+COMPONENT_TEST_DEP += $(BUILD_DIR)/%/.installed
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -66,7 +69,7 @@ COMPONENT_INSTALL_TARGETS =	install-man install-binPROGRAMS
 
 # Limit translations to the text utilities (and lib/* and include/* ) only.
 COMPONENT_PRE_INSTALL_ACTION = \
-	(cd $(@D)/po ; $(GMAKE) text-utilities.pot-update)
+	(cd $(@D)/po ; $(ENV) PATH="$(PATH)" $(GMAKE) text-utilities.pot-update)
 
 # Install the message files.
 COMPONENT_POST_INSTALL_ACTION = \
@@ -97,8 +100,6 @@ COMPONENT_TEST_TARGETS =	colrm colcrt column hexdump rename
 # Remove date from diff
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/ *20[12][0-9].*//"'
-
-TEST_TARGET= install $(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
