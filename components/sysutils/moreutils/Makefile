@@ -27,12 +27,12 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		moreutils
-COMPONENT_VERSION=	0.69
+COMPONENT_VERSION=	0.70
 COMPONENT_SUMMARY=	moreutils is a collection of the unix tools that nobody thought to write long ago when unix was young
 COMPONENT_PROJECT_URL=	https://joeyh.name/code/moreutils
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0f795d25356ca61544966646fb707d5be0b9864116be0269df5433f62d4e05d1
+COMPONENT_ARCHIVE_HASH= sha256:f2bf46d410ba567cc8d01507e94916994e48742722e690dc498fab59f5250132
 COMPONENT_ARCHIVE_URL=	https://git.joeyh.name/index.cgi/moreutils.git/snapshot/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		utility/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -41,9 +41,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CFLAGS   += $(CPP_XPG6MODE)
+CFLAGS   += $(XPG6MODE)
 LDFLAGS  += -lsocket -lnsl
 
 COMPONENT_BUILD_ENV += DOCBOOKXSL="/usr/share/sgml/docbook/xsl-stylesheets"
