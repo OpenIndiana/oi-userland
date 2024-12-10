@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		clang
 COMPONENT_VERSION=	19.1.5
+COMPONENT_REVISION=	1
 CLANG_VERSION=		$(firstword $(subst ., ,$(COMPONENT_VERSION)))
 COMPONENT_SUMMARY=	LLVM tools and Clang compiler
 COMPONENT_PROJECT_URL=	https://llvm.org/
