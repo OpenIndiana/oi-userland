@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipenv
-HUMAN_VERSION =			2024.4.0
+HUMAN_VERSION =			2024.4.1
 COMPONENT_SUMMARY =		Python Development Workflow for Humans.
 COMPONENT_PROJECT_URL =		https://github.com/pypa/pipenv
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pypa/pipenv/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1a451482dea28de6ed730b33dc7c9d619d301063a9b4f288cf6019e44f3cde83
+	sha256:23ba41983863ba157f8cefc45daeca0a11b661a277bbccb3ec065b7d2b3d68c6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,6 +38,9 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_POST_INSTALL_ACTION += \
 	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/docs ; \
 	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/examples ;
+
+# https://github.com/pypa/pipenv/issues/6294#issuecomment-2537370184
+PYTEST_ADDOPTS += -m "not cli and not needs_internet" tests/unit/
 
 # This project does not support tox so we need to provide test requirements
 # manually.
