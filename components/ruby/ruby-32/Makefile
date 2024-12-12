@@ -22,15 +22,14 @@
 #
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2023, Friedrich Kink
+# Copyright 2024, Klaus Ziegler
 #
-
-BUILD_BITS=		64
-OPENSSL_VERSION=	3.1
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	3.2.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Ruby, RubyGems, and Rake
 COMPONENT_PROJECT_URL=	https://www.ruby-lang.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -56,10 +55,15 @@ RUBY_VER= $(word 1,$(RUBY_VER_WORDS)).$(word 2,$(RUBY_VER_WORDS))
 RUBY_LIB_VER= $(RUBY_VER)
 
 PROTORUBYDIR= $(PROTO_DIR)/usr/ruby/$(RUBY_VER)
-PROTO_RBCONFIG_FILE= $(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/x86_64-solaris$(SOLARIS_VERSION)/rbconfig.rb
+ifeq ($(MACH), i386)
+GNU_CPU=x86_64
+else
+GNU_CPU=sparc
+endif
+PROTO_RBCONFIG_FILE= $(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(GNU_CPU)-$(GNU_OS)/rbconfig.rb
 
 # these macros are used in the package manifest
-PKG_MACROS += RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER)
+PKG_MACROS += RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER) GNU_CPU=$(GNU_CPU) GNU_OS=$(GNU_OS)
 
 # Apply some of the edits here--including to the sed scripts themselves.
 # These modifications of ruby.1 must occur after ruby
@@ -86,10 +90,11 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    $(PROTORUBYDIR)/share/man/man1/ruby.1 ; \
 	/usr/bin/sed -f Solaris/rbconfig.sedscript.mod \
 	$(PROTO_RBCONFIG_FILE) > rbconfig.rb.mod ; \
-	$(MV) rbconfig.rb.mod $(PROTO_RBCONFIG_FILE) ;
+	$(MV) rbconfig.rb.mod $(PROTO_RBCONFIG_FILE) ; \
+	$(MW) $(PROTO_DIR)/usr/include $(PROTORUBYDIR) ;
 
 COMPONENT_POST_INSTALL_ACTION += \
-	encdir="$(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/x86_64-solaris$(SOLARIS_VERSION)/enc"; \
+	encdir="$(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(GNU_CPU)-$(GNU_OS)/enc"; \
 	filelist=`ls -1I trans $$encdir`; \
 	subdirlist=`ls -1 $$encdir/trans`; \
         for f in $$filelist; \
@@ -125,25 +130,26 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
 			Solaris/ruby.1.sedscript.mod
-
 COMPONENT_TEST_TRANSFORMS += \
     '-n' \
     '-e "s/Finished tests in .*s, .* tests\/s, .* assertions/Finished tests in Xs, X tests\/s, X assertions/"' \
     '-e "s/\(.*\) tests, .* assertions, \(.*\) failures, \(.*\) errors, .* skips/\1 tests, X assertions, \2 failures, \3 errors, X skips/"' \
     '-e "/^make/d"' \
+    '-e "/^fatal:/d"' \
     '-e "/fatal/Ip"' \
     '-e "/test succeeded/p"' \
     '-e "/Running tests/p"' \
     '-e "/Finished tests in Xs, X tests\/s, X assertions/p"' \
     '-e "/.* tests, X assertions, .* failures, .* errors, X skips/p"'
+COMPONENT_TEST_TRANSFORMS += ' | head -4'
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libyaml
-REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
