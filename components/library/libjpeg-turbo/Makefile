@@ -18,13 +18,12 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libjpeg-turbo
-COMPONENT_VERSION= 3.0.4
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 3.1.0
 COMPONENT_SUMMARY= libjpeg -JPEG Turbo libraries
 COMPONENT_PROJECT_URL= https://www.libjpeg-turbo.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:99130559e7d62e8d695f2c0eaeef912c5828d5b84a0537dcb24c9678c9d5b76b
+COMPONENT_ARCHIVE_HASH=	sha256:9564c72b1dfd1d6fe6274c5f95a8d989b59854575d4bbee44ade7bc17aa9bc93
 COMPONENT_ARCHIVE_URL=	https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= image/library/libjpeg-turbo
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -107,22 +106,7 @@ CMAKE_COMPONENTS +=		$(CMAKE_COMPONENTS.JPEG$(JPEG_API_VERSION))
 CMAKE_COMPONENTS +=		$(CMAKE_COMPONENTS.JPEG$(JPEG_API_VERSION).$(BITS))
 
 # Create library symlinks at standard locations
-COMPONENT_POST_INSTALL_ACTION += \
-	for f in $(PROTOUSRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/$(CMAKE_LIBDIR.$(BITS))/*.so.* ; do \
-		[ -e "$$f" ] || continue ; \
-		t=$(PROTOUSRLIBDIR.$(BITS)) ; \
-		while true ; do \
-			while [ "$${f\#/}" != "$$f" ] ; do f=$${f\#/} ; done ; \
-			while [ "$${t\#/}" != "$$t" ] ; do t=$${t\#/} ; done ; \
-			[ "$${f%%/*}" == "$${t%%/*}" ] || break ; \
-			f=$${f\#$${f%%/*}} ; \
-			t=$${t\#$${t%%/*}} ; \
-		done ; \
-		[ "$$t" ] && t=$$t/ ; \
-		f=$$(echo $$t | $(GSED) -e 's|[^/]\{1,\}|..|g')$$f ; \
-		$(MKDIR) $(PROTOUSRLIBDIR.$(BITS)) ; \
-		$(SYMLINK) $$f $(PROTOUSRLIBDIR.$(BITS))/$$(basename $$f) ; \
-	done ;
+COMPONENT_POST_INSTALL_ACTION += $(call create-symlinks,$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/$(CMAKE_LIBDIR.$(BITS))/*.so.*,$(USRLIBDIR.$(BITS))) ;
 
 # Per libjpeg API version test directory
 COMPONENT_TEST_BUILD_DIR = $(BUILD_DIR)/test/$(MACH$(BITS))/$(JPEG_API_VERSION)
