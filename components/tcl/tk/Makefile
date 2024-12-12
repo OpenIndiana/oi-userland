@@ -29,13 +29,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			tk
 COMPONENT_MJR_VERSION=	8.6
-COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).15
+COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).16
 COMPONENT_SUMMARY=		Tk - TCL GUI Toolkit
 COMPONENT_DESCRIPTION=	Tk is an open source, cross-platform widget toolkit that provides a library of basic elements for building a graphical user interface
 COMPONENT_PROJECT_URL=	https://www.tcl-lang.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-src.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:550969f35379f952b3020f3ab7b9dd5bfd11c1ef7c9b7c6a75f5c49aca793fec
+COMPONENT_ARCHIVE_HASH= sha256:be9f94d3575d4b3099d84bc3c10de8994df2d7aa405208173c709cc404a7e5fe
 COMPONENT_ARCHIVE_URL=	https://prdownloads.sourceforge.net/tcl/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/tk-8
 COMPONENT_CLASSIFICATION=	Development/Other Languages
