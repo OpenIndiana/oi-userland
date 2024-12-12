@@ -30,14 +30,13 @@
 
 BUILD_BITS=		32_and_64
 BUILD_STYLE=		cmake
-# USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
-GCC_VERSION= 		11
 
 # the FMRI is telegramdb , the project is tdlib, component is td
 
 COMPONENT_NAME=		td
 COMPONENT_VERSION=	1.6.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Telegram Database Library
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://core.telegram.org/tdlib
@@ -46,13 +45,15 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:9dce57a96f9d4bac8f99aab13ef5cbf6fed04b234a5d22dfa7ef7dce06ea43f8
 COMPONENT_ARCHIVE_URL=	https://github.com/tdlib/td/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		library/telegramdb
-COMPONENT_LICENSE=	Boost Software License
-COMPONENT_LICENSE_FILE= td.license
+COMPONENT_LICENSE=	BSL-1.0
+COMPONENT_LICENSE_FILE=	LICENSE_1_0.txt
 
 # there are tests in the tdlib but currently we don't run them yet
 # we currently are at version 1.6.0 - that is what the Squeak client requires
 # there is an open request upstream to support 1.8.0
 TEST_TARGET = $(NO_TESTS)
+
+DROP_STATIC_LIBRARIES = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -62,13 +63,12 @@ CMAKE_OPTIONS +=	-DLIB_INSTALL_DIR=/usr/$(CMAKE_LIBDIR.$(BITS))
 CMAKE_OPTIONS +=	-DCMAKE_BUILD_TYPE=Release
 
 REQUIRED_PACKAGES += developer/gperf
-REQUIRED_PACKAGES += developer/gcc-11
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-
