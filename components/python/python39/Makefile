@@ -25,19 +25,18 @@
 # Copyright (c) 2021, Aurelien Larcher
 #
 
-USE_OPENSSL11= yes
 USE_PARALLEL_BUILD=	yes
 USE_CTF=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
-COMPONENT_VERSION=      3.9.20
+COMPONENT_VERSION=      3.9.21
 PYTHON_VERSION =	$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:6b281279efd85294d2d6993e173983a57464c0133956fbbb5536ec9646beaf0c
+COMPONENT_ARCHIVE_HASH=	sha256:3126f59592c9b0d798584755f2bf7b081fa1ca35ce7a6fea980108d752a05bb1
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/python-39
 COMPONENT_CLASSIFICATION= Development/Python
@@ -92,9 +91,7 @@ XPROFILE_DIR= $(BUILD_DIR_$(BITS))/.profile
 # PYTHONPATH in the environment can be harmful, but setting it to empty via
 # _INSTALL_ENV causes problems too, so just ignore the entire environment.
 # (see 20396493) Because of this, we have to explicitly specify PATH in
-# multiple places below. Also up the limit of maximum opened files for
-# testing purposes and pgo.
-ENV := ulimit -n 16384; $(ENV) -i
+# multiple places below.
 
 # Configure script should look into sbin folder when looking for dtrace
 CONFIGURE_ENV += PATH="$(PATH):/usr/sbin"
