@@ -1,19 +1,15 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> make test
-coverage run --parallel-mode --omit */_version.py -m pytest
-$(@D)/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
-The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
-
-  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+coverage run -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
-configfile: setup.cfg
+configfile: pyproject.toml
 testpaths: docs, tests
-asyncio: mode=auto, default_loop_scope=None
-collecting ... collected 193 items
+asyncio: mode=auto, asyncio_default_fixture_loop_scope=function
+collecting ... collected 202 items
 
 docs/concepts_function_scope_example.py::test_runs_in_a_loop PASSED
 docs/concepts_module_scope_example.py::test_remember_loop PASSED
@@ -43,6 +39,13 @@ docs/reference/markers/module_scoped_loop_strict_mode_example.py::test_this_runs
 docs/reference/markers/module_scoped_loop_strict_mode_example.py::TestClassA::test_this_runs_in_same_loop PASSED
 tests/async_fixtures/test_async_fixtures.py::test_async_fixture PASSED
 tests/async_fixtures/test_async_fixtures.py::TestAsyncFixtureMethod::test_async_fixture_method PASSED
+tests/async_fixtures/test_async_fixtures_contextvars.py::test_var_from_sync_generator_propagates_to_async PASSED
+tests/async_fixtures/test_async_fixtures_contextvars.py::test_var_from_async_generator_propagates_to_sync XFAIL
+tests/async_fixtures/test_async_fixtures_contextvars.py::test_var_from_async_fixture_propagates_to_sync XFAIL
+tests/async_fixtures/test_async_fixtures_contextvars.py::test_var_from_generator_reset_before_previous_fixture_cleanup XFAIL
+tests/async_fixtures/test_async_fixtures_contextvars.py::test_var_from_fixture_reset_before_previous_fixture_cleanup XFAIL
+tests/async_fixtures/test_async_fixtures_contextvars.py::test_var_previous_value_restored_after_fixture XFAIL
+tests/async_fixtures/test_async_fixtures_contextvars.py::test_var_set_to_existing_value_ok XFAIL
 tests/async_fixtures/test_async_fixtures_scope.py::test_async_fixture_scope PASSED
 tests/async_fixtures/test_async_fixtures_with_finalizer.py::test_module_with_event_loop_finalizer PASSED
 tests/async_fixtures/test_async_fixtures_with_finalizer.py::test_module_with_get_event_loop_finalizer PASSED
@@ -131,6 +134,8 @@ tests/modes/test_strict_mode.py::test_strict_mode_cfg PASSED
 tests/modes/test_strict_mode.py::test_strict_mode_method_fixture PASSED
 tests/modes/test_strict_mode.py::test_strict_mode_ignores_unmarked_coroutine PASSED
 tests/modes/test_strict_mode.py::test_strict_mode_ignores_unmarked_fixture PASSED
+tests/modes/test_strict_mode.py::test_strict_mode_marked_test_unmarked_fixture_warning PASSED
+tests/modes/test_strict_mode.py::test_strict_mode_marked_test_unmarked_autouse_fixture_warning PASSED
 tests/test_asyncio_fixture.py::test_bare_fixture PASSED
 tests/test_asyncio_fixture.py::test_fixture_with_name PASSED
 tests/test_asyncio_fixture.py::test_fixture_with_params[2] PASSED
@@ -209,30 +214,7 @@ tests/test_skips.py::test_unittest_skiptest_compatibility PASSED
 tests/test_skips.py::test_skip_in_module_does_not_skip_package PASSED
 tests/test_subprocess.py::test_subprocess PASSED
 
-=============================== warnings summary ===============================
-tests/async_fixtures/test_shared_module_fixture.py: 1 warning
-tests/hypothesis/test_base.py: 2 warnings
-tests/markers/test_class_scope.py: 7 warnings
-tests/markers/test_function_scope.py: 5 warnings
-tests/markers/test_module_scope.py: 7 warnings
-tests/markers/test_package_scope.py: 7 warnings
-tests/markers/test_session_scope.py: 9 warnings
-tests/modes/test_auto_mode.py: 6 warnings
-tests/modes/test_strict_mode.py: 3 warnings
-tests/test_asyncio_fixture.py: 2 warnings
-tests/test_doctest.py: 2 warnings
-tests/test_event_loop_fixture_finalizer.py: 3 warnings
-tests/test_explicit_event_loop_fixture_request.py: 2 warnings
-tests/test_import.py: 3 warnings
-tests/test_is_async_test.py: 4 warnings
-tests/test_simple.py: 3 warnings
-tests/test_skips.py: 7 warnings
-  $(@D)/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
-  The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
-  
-    warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 193 passed, 73 warnings ========
+=========================== short test summary info ============================
+======== 196 passed, 6 xfailed ========
   py$(PYV): OK
   congratulations :)
