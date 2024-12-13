@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ntp
 HUMAN_VERSION=		4.2.8p18
 COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
 COMPONENT_PROJECT_URL=	https://www.ntp.org/
@@ -53,6 +53,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 # We modified configure.ac and m4 macros
 COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" ./bootstrap )
+
+# this is needed because the first part of the test-suite fails,
+# and we don't get the other parts tested at all.
+COMPONENT_TEST_ARGS += -k
 
 CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 

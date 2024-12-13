@@ -38,7 +38,7 @@ fi
 #
 if [ ! -f /etc/inet/ntp.conf ]; then
 	echo "Error: Configuration file '/etc/inet/ntp.conf' not found." \
-	    "  See ntpd(1M)."
+	    "  See ntpd(8)."
 	exit $SMF_EXIT_ERR_CONFIG
 fi
 
