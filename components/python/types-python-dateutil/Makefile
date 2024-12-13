@@ -11,20 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-python-dateutil
+#   $WS_TOOLS/python-integrate-project -d python/types-python-dateutil types_python_dateutil
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-python-dateutil
-HUMAN_VERSION =			2.9.0.20241003
+COMPONENT_NAME =		types_python_dateutil
+HUMAN_VERSION =			2.9.0.20241206
 COMPONENT_SUMMARY =		Typing stubs for python-dateutil
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:58cb85449b2a56d6684e41aeefb4c4280631246a0da1a719bdbe6f3fb0317446
+	sha256:18f493414c26ffba692a72369fea7a154c502646301ebfe3d56a04b3767284cb
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
 
