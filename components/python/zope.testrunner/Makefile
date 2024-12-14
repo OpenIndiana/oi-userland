@@ -19,15 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.testrunner
-HUMAN_VERSION =			6.6
+HUMAN_VERSION =			6.6.1
 COMPONENT_SUMMARY =		Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/06/53/c2d928fb5eb70ab91044f57ecf431c2e9c7ccc5ab718122fe52a3cb1059c/zope.testrunner-6.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b11797e975a8707b1e33b6544cacf9037287886ee5780ecfed4bf1899d4215ef
+	sha256:949426d4ae5f572dc8a6b07309f26f4da4e63e6f91e03bc7c4b9f5b8f6db0650
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
+
+COMPONENT_SRC =			zope_testrunner-$(HUMAN_VERSION)
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
