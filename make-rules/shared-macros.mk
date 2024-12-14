@@ -561,8 +561,9 @@ COMPONENT_TEST_ENV_CMD =	$(ENV)
 # set the default command to use for test of the component
 COMPONENT_TEST_CMD =	$(GMAKE)
 
-# set the default target for test of the component
-COMPONENT_TEST_TARGETS =	check
+# set the default target for test of the component,
+# add -k flag to gmake, to test as much as possible.
+COMPONENT_TEST_TARGETS =	check -k
 
 # set the default directory for test of the component
 COMPONENT_TEST_DIR =	$(@D)
