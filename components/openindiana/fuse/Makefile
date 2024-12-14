@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-fusefs
 COMPONENT_VERSION=	f7c3e8c785091774d75d4f11ac12f2309a3f2dbd
+COMPONENT_REVISION=  1
 IPS_COMPONENT_VERSION=	1.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
@@ -40,7 +41,7 @@ PATH=/opt/onbld/bin/i386:$(PATH.illumos)
 $(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
 	$(MKDIR) $(@D)
 	$(CLONEY) $(SOURCE_DIR) $(@D)
-	(cd $(@D)/kernel && $(ENV) - CC=$(CC) PATH=$(PATH) dmake -e)
+	(cd $(@D)/kernel && $(ENV) CC=$(CC) PATH=$(PATH) dmake -e)
 	$(TOUCH) $@
 
 $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
