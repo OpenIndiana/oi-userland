@@ -12,9 +12,12 @@
 #
 #
 
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 13.3.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -35,23 +38,8 @@ GMP_ARCHIVE_HASH= \
 
 include $(WS_MAKE_RULES)/gcc-component.mk
 
-CC=/usr/gcc/13/bin/gcc
-CXX=/usr/gcc/13/bin/g++
-
 CPPFLAGS+=" -D_TS_ERRNO"
 LDFLAGS="-R$OPT/lib"
-
-GCC_MAJOR="$(GCC_COMPONENT_VERSION_MAJOR)"
-PKG_VARS += GCC_MAJOR
-
-# Workaround platform definition inconsistency
-ifeq ($(strip $(BUILD_BITS)),64)
-PARCH = $(MACH:i386=x86_64-pc)
-else
-PARCH = $(MACH:i386=i386-pc)
-endif
-GNU_TRIPLET = $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
-PKG_MACROS += GNU_TRIPLET="$(GNU_TRIPLET)"
 
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	cd $(SOURCE_DIR) && autogen Makefile.def
