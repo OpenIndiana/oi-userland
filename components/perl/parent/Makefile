@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		parent
-HUMAN_VERSION =			0.243
+HUMAN_VERSION =			0.244
 COMPONENT_SUMMARY =		Establish an ISA relationship with base classes at compile time
 COMPONENT_CPAN_AUTHOR =		CORION
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:47b3e7af5c59bf88073bb8095b91c53fb8e35f915dc159370f6c11479c279b02
+	sha256:149a65f019909c289714b57fb5c7cadba593e7b86ccf25cb49f7e54a2a1af1ce
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
