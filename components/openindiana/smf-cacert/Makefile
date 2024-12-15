@@ -16,12 +16,12 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		smf-cacert
-COMPONENT_VERSION=	20241103
+COMPONENT_VERSION=	20241215
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_VERSION).zip
 COMPONENT_SUMMARY=	illumos SMF root certificate service	
 COMPONENT_ARCHIVE_URL=  https://github.com/Openindiana/smf-cacert/archive/refs/tags/$(COMPONENT_VERSION).zip
-COMPONENT_ARCHIVE_HASH= sha256:aee47999423feb67a97baf2a2f7bcbfdf552bf6155a76fee16ef8aa145e19214
+COMPONENT_ARCHIVE_HASH= sha256:c382a9e5b2f904cae91e00d04eaabbcbb41dcd43f0f2d8c28b2b7bc1e3cc7d7c
 COMPONENT_PROJECT_URL=	https://openindiana.org
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_FMRI= system/ca-certificates	
