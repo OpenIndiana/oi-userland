@@ -18,7 +18,7 @@ BUILD_STYLE = pkg
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		build-essential
-COMPONENT_VERSION =	17
+COMPONENT_VERSION =	18
 COMPONENT_SUMMARY=	A meta-package that installs common development tools such as gcc
 COMPONENT_CLASSIFICATION=	Meta Packages/Group Packages
 COMPONENT_FMRI=	metapackages/build-essential
@@ -26,3 +26,6 @@ COMPONENT_FMRI=	metapackages/build-essential
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(CLANG_DEVELOPER_PKG)
+REQUIRED_PACKAGES += developer/gcc-10
+REQUIRED_PACKAGES += developer/gcc-14
