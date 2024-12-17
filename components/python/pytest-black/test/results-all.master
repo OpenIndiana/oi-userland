@@ -1,24 +1,28 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=strict
 collecting ... collected 9 items
 
+tests/test_black.py::test_help_message PASSED
+tests/test_black.py::test_fail PASSED
+tests/test_black.py::test_pass PASSED
+tests/test_black.py::test_mtime_cache PASSED
 tests/test_black.py::test_exclude PASSED
 tests/test_black.py::test_exclude_folder PASSED
-tests/test_black.py::test_fail PASSED
-tests/test_black.py::test_help_message PASSED
 tests/test_black.py::test_include PASSED
-tests/test_black.py::test_mtime_cache PASSED
-tests/test_black.py::test_pass PASSED
 tests/test_black.py::test_pytest_deprecation_warning PASSED
 tests/test_no_black.py::test_skipped_when_black_unavailable SKIPPED
 
-======== 8 passed, 1 skipped ========
+=============================== warnings summary ===============================
+tests/test_black.py: 10 warnings
+  $(@D)/pytest_black.py:23: PytestRemovedIn9Warning: The (path: py.path.local) argument is deprecated, please use (file_path: pathlib.Path)
+  see https://docs.pytest.org/en/latest/deprecations.html#py-path-local-arguments-for-hooks-replaced-with-pathlib-path
+    def pytest_collect_file(file_path, path, parent):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 8 passed, 1 skipped, 10 warnings ========
   py$(PYV): OK
   congratulations :)
