@@ -71,8 +71,8 @@ BASE_DIR="$WS_TOP/components"
 
 # Query MetaCPAN
 METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"released"}},' ; \
-	printf '{"bool":{"should":[{"term":{"distribution":"%s"}},' "$MODULE" ; \
-	printf '{"term":{"main_module":"%s"}}]}}]}},' "$MODULE" ; \
+	printf '{"term":{"distribution":"%s"}}],' "$MODULE" ; \
+	printf '"must_not":{"term":{"status":"backpan"}}}},' ; \
 	printf '"size":1,"sort":[{"date":"desc"}],' ; \
 	printf '"fields":["distribution","version","author","download_url","abstract"]}') \
 		| $CURL "$APIURL/release/_search" -d @- \
@@ -85,7 +85,8 @@ fi
 # If we didn't found the distribution directly try to find the module
 if [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
 	DISTRIBUTION=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"released"}},' ; \
-		printf '{"term":{"module.name":"%s"}}]}},' "$MODULE" ; \
+		printf '{"term":{"module.name":"%s"}}],' "$MODULE" ; \
+		printf '"must_not":{"term":{"status":"backpan"}}}},' ; \
 		printf '"size":1,"fields":["distribution"]}') \
 			| $CURL "$APIURL/module/_search" -d @- \
 			| /usr/bin/jq -r '.hits.hits[].fields.distribution')
@@ -94,7 +95,8 @@ if [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
 		exit 1
 	fi
 	METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"released"}},' ; \
-		printf '{"term":{"distribution":"%s"}}]}},' "$DISTRIBUTION" ; \
+		printf '{"term":{"distribution":"%s"}}],' "$DISTRIBUTION" ; \
+		printf '"must_not":{"term":{"status":"backpan"}}}},' ; \
 		printf '"size":1,"sort":[{"date":"desc"}],' ; \
 		printf '"fields":["distribution","version","author","download_url","abstract"]}') \
 			| $CURL "$APIURL/release/_search" -d @- \
