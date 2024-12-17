@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		YAML-Tiny
-HUMAN_VERSION =			1.75
+HUMAN_VERSION =			1.76
 COMPONENT_SUMMARY =		Read/Write YAML files with as little code as possible
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:de1b13affad57ae8493e755adef5b0ce0fd028956ea8c6faba7df8bbe181d646
+	sha256:a8d584394cf069bf8f17cba3dd5099003b097fce316c31fb094f1b1c171c08a3
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
