@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
 COMPONENT_VERSION=	0.23
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU gettext - message handling utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,6 +42,12 @@ COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Our sed misbehaves during the tests and let msgfilter-2 and msgfilter-4 tests being skipped.
+PATH= $(PATH.gnu)
+
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_OPTIONS += --disable-java
 CONFIGURE_OPTIONS += --disable-libasprintf
