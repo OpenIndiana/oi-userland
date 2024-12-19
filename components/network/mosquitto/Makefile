@@ -13,12 +13,11 @@
 #
 
 BUILD_STYLE= cmake
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosquitto
 COMPONENT_VERSION=	2.0.18
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Eclipse Mosquitto - An open source MQTT broker
 COMPONENT_PROJECT_URL=	https://mosquitto.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,13 +32,15 @@ COMPONENT_LICENSE_FILE=	epl-v20
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+CFLAGS += $(XPG7MODE)
+
 LDFLAGS += -lsocket
 
 CMAKE_OPTIONS += -DCMAKE_INSTALL_SYSCONFDIR=/etc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
