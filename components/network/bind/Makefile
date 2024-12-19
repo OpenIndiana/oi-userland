@@ -28,7 +28,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.18.31
+COMPONENT_VERSION=	9.18.32
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -36,7 +36,7 @@ COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain N
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:51b258969275c5206ef745a5aac03dbe98f1c8031fefed378d53597e7987b1b3
+COMPONENT_ARCHIVE_HASH=	sha256:dc840cdf9d54578d98400f2edf7008b1b33a1721be6e490eb1e42d0d11d9cff4
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -102,7 +102,7 @@ CONFIGURE_OPTIONS += READLINE_LIBS="-lreadline -ltermcap"
 # which results in test failures due to nounset and xtrace being
 # set unexpectedly, and errors such as "$1: unbound variable" and
 # diffs failing due to script tracing in output files.
-#unexport SHELLOPTS
+unexport SHELLOPTS
 
 COMPONENT_TEST_DIR = $(@D)/tests
 COMPONENT_TEST_ENV_CMD =
