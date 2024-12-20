@@ -1,6 +1,6 @@
-$(PYTHON_DIR)/vendor-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from this module in 48.0.0.
+$(PYTHON_DIR)/vendor-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
   "cipher": algorithms.TripleDES,
-$(PYTHON_DIR)/vendor-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from this module in 48.0.0.
+$(PYTHON_DIR)/vendor-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
   "class": algorithms.TripleDES,
 test_empty (tests.test_archive.ArchiveTests) ... ok
 test_gzip_mtime (tests.test_archive.ArchiveTests) ... ok
@@ -140,6 +140,7 @@ test_ssh_port_homepath (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
 test_ssh_user_host_relpath (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
 test_tcp (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
 test_tcp_port (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
+test_win32_url_to_path (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
 test_apply (tests.test_config.ApplyInsteadOfTests) ... ok
 test_apply_multiple (tests.test_config.ApplyInsteadOfTests) ... ok
 test_none (tests.test_config.ApplyInsteadOfTests) ... ok
@@ -513,6 +514,7 @@ test_check_tag_with_unparseable_field (tests.test_objects.TagParseTests) ... ok
 test_parse (tests.test_objects.TagParseTests) ... ok
 test_parse_no_message (tests.test_objects.TagParseTests) ... ok
 test_parse_no_tagger (tests.test_objects.TagParseTests) ... ok
+test_tag_withough_sig (tests.test_objects.TagParseTests) ... ok
 test_tree_copy_after_update (tests.test_objects.TagParseTests)
 Check Tree.id is correctly updated when the tree is copied after updated. ... ok
 test_serialize_none_message (tests.test_objects.TagSerializeTests) ... ok
@@ -1174,7 +1176,7 @@ test_contains_object (tests.test_repository.RepositoryRootTests) ... ok
 test_contains_ref (tests.test_repository.RepositoryRootTests) ... ok
 test_delitem (tests.test_repository.RepositoryRootTests) ... ok
 test_fetch (tests.test_repository.RepositoryRootTests) ... ok
-test_fetch_ignores_missing_refs (tests.test_repository.RepositoryRootTests) ... $(@D)/dulwich/refs.py:1286: UserWarning: ref refs/heads/blah points at non-present sha 1234566789123456789123567891234657373833
+test_fetch_ignores_missing_refs (tests.test_repository.RepositoryRootTests) ... $(@D)/dulwich/refs.py:1288: UserWarning: ref refs/heads/blah points at non-present sha 1234566789123456789123567891234657373833
   warnings.warn(
 ok
 test_get_config (tests.test_repository.RepositoryRootTests) ... ok
@@ -1359,7 +1361,10 @@ test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichHttpClientTest) .
 test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_repeat (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_send_new_branch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... $(PYTHON_DIR)/warnings.py:186: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
+  filters.remove(item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
 test_send_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_multiple_errors (tests.compat.test_client.DulwichHttpClientTest) ... ok
@@ -1390,10 +1395,7 @@ test_send_without_report_status (tests.compat.test_client.DulwichHttpClientTestG
 test_archive (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_empty_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
-test_fetch_pack_depth (tests.compat.test_client.DulwichMockSSHClientTest) ... $(PYTHON_DIR)/contextlib.py:404: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
-  def _exit_wrapper(exc_type, exc, tb):
-ResourceWarning: Enable tracemalloc to get the object allocation traceback
-ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichMockSSHClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
 test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
@@ -1470,7 +1472,7 @@ test_send_pack_nothing_to_send (tests.compat.test_client.DulwichSubprocessClient
 test_send_pack_one_error (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
 test_send_without_report_status (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
-test_archive (tests.compat.test_client.DulwichTCPClientTest) ... skipped 'git-daemon was already running on port 9418'
+test_archive (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_empty_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichTCPClientTest) ... ok
@@ -1515,8 +1517,11 @@ test_delta_large_object (tests.compat.test_pack.TestPack) ... skipped 'skipping 
 test_delta_medium_object (tests.compat.test_pack.TestPack) ... ok
 test_deltas_work (tests.compat.test_pack.TestPack) ... ok
 test_patch_apply (tests.compat.test_patch.CompatPatchTestCase) ... ok
-test_sign (tests.compat.test_porcelain.TagCreateSignTestCase) ... skipped 'gpg is not available'
-test_verify (tests.compat.test_porcelain.TagCreateSignTestCase) ... skipped 'gpg is not available'
+test_sign (tests.compat.test_porcelain.CommitCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
+test_verify (tests.compat.test_porcelain.CommitCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
+test_verify_with_empty_message (tests.compat.test_porcelain.CommitCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
+test_sign (tests.compat.test_porcelain.TagCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
+test_verify (tests.compat.test_porcelain.TagCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
 test_all_objects (tests.compat.test_repository.InitNewWorkingDirectoryTestCase) ... ok
 test_bare (tests.compat.test_repository.InitNewWorkingDirectoryTestCase) ... ok
 test_git_worktree_config (tests.compat.test_repository.InitNewWorkingDirectoryTestCase)
@@ -1686,6 +1691,6 @@ test_init_no_data (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required
 test_put_named_file (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 
 ----------------------------------------------------------------------
-Ran 1620 tests
+Ran 1625 tests
 
-OK (skipped=91, expected failures=1)
+OK (skipped=93, expected failures=1)
