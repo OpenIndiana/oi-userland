@@ -18,13 +18,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swipl
-COMPONENT_VERSION=	9.2.8
+COMPONENT_VERSION=	9.2.9
 COMPONENT_SUMMARY=	Robust, mature, free. Prolog for the real world.
 COMPONENT_PROJECT_URL= https://www.swi-prolog.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/stable/src/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:b331637a57c913c49edcfcb10ddcf6c031278ce93d2411d54542778531abb5c7
+COMPONENT_ARCHIVE_HASH=	sha256:53f428e2d9bbdf30e53b06c9c42def9a13ff82fc36a111d410fc8b0bc889ee2d
 COMPONENT_FMRI=		runtime/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/System
 COMPONENT_LICENSE=	BSD-2 license, others
@@ -41,6 +41,9 @@ CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 CFLAGS += $(XPG8MODE)
 CFLAGS += -I$(PCRE_INCLUDE)
 CFLAGS += -I$(JAVA_HOME)/include/solaris
+# GCC-14 complains about these:
+CFLAGS += -Wno-error=builtin-declaration-mismatch
+CFLAGS += -Wno-error=implicit-function-declaration
 
 LDFLAGS += -lsocket -lnsl
 LD_OPTIONS += -L$(QT5_LIBDIR) -R$(QT5_LIBDIR)
