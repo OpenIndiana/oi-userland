@@ -12,14 +12,14 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
-# Copyright 2020, 2021 Andreas Wacknitz
+# Copyright 2020, 2024 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libass
 COMPONENT_VERSION=	0.17.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
 COMPONENT_PROJECT_URL=	https://github.com/libass/libass
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,6 +33,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
