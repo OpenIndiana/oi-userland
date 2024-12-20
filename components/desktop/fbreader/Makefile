@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fbreader
 COMPONENT_VERSION=	0.99.4
-COMPONENT_REVISION=	7
+COMPONENT_REVISION=	8
 COMPONENT_SUMMARY=	Powerful e-book reader
 COMPONENT_PROJECT_URL=	https://www.fbreader.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/files/desktop/$(COMPONENT_ARCHIV
 COMPONENT_FMRI=	desktop/fbreader
 COMPONENT_CLASSIFICATION=	Applications/Office
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE= fbreader/LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -48,6 +49,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(GCC_LIBDIR):$(QT5_LIBDIR)"' $(PROTO_DIR)/usr/bin/FBReader; \
 	/usr/bin/elfedit -e 'dyn:value -s RPATH   "$(GCC_LIBDIR):$(QT5_LIBDIR)"' $(PROTO_DIR)/usr/bin/FBReader;
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += web/curl
 
 # Auto-generated dependencies
