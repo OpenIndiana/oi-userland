@@ -11,19 +11,19 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
-# Copyright 2023 Andreas Wacknitz
+# Copyright 2024 Andreas Wacknitz
 #
 
 BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libunibreak
-COMPONENT_VERSION= 5.1
+COMPONENT_VERSION= 6.1
 COMPONENT_SUMMARY= Implementation of the line and word breaking algorithm for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:dd1a92d4c5646aa0e457ff41d89812ec5243863be6c20bbcb5ee380f3dd78377
-COMPONENT_ARCHIVE_URL=	https://github.com/adah1972/libunibreak/releases/download/libunibreak_5_1/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:cc4de0099cf7ff05005ceabff4afed4c582a736abc38033e70fdac86335ce93f
+COMPONENT_ARCHIVE_URL=	https://github.com/adah1972/libunibreak/releases/download/libunibreak_6_1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://vimgadgets.sourceforge.net/libunibreak/
 COMPONENT_FMRI=			library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Libraries
