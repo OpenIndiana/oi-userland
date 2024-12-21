@@ -31,15 +31,18 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.1.915
-HUMAN_VERSION=		9.1.0915
+COMPONENT_VERSION=	9.1.950
+HUMAN_VERSION=		9.1.0950
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:766f1683d88947c16d85f334b872fd47dd9119f9bdcba329bd02ba495f6d4a0a
+COMPONENT_ARCHIVE_HASH=	sha256:ff31083fdbdde49a1cd6e95ac751f194d75065d79c8d07d138a9c1afe3494b31
 
 include $(WS_MAKE_RULES)/common.mk
+
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 COMPONENT_POST_UNPACK_ACTION += ( \
 	chmod +x $(@D)/configure $(@D)/src/auto/configure $(@D)/src/configure $(@D)/src/mkinstalldirs ; \
