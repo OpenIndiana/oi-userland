@@ -28,14 +28,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	3.2.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.2.6
 COMPONENT_SUMMARY=	Ruby, RubyGems, and Rake
 COMPONENT_PROJECT_URL=	https://www.ruby-lang.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://cache.ruby-lang.org/pub/ruby/3.2/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:4b352d0f7ec384e332e3e44cdbfdcd5ff2d594af3c8296b5636c710975149e23
+COMPONENT_ARCHIVE_HASH= sha256:671134022238c2c4a9d79dc7d1e58c909634197617901d25863642f735a27ecb
 COMPONENT_FMRI=		runtime/ruby-32
 COMPONENT_CLASSIFICATION= Development/Ruby
 COMPONENT_LICENSE=	Ruby License
@@ -44,6 +43,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+CFLAGS += $(XPG7MODE)
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -130,6 +131,7 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
 			Solaris/ruby.1.sedscript.mod
+
 COMPONENT_TEST_TRANSFORMS += \
     '-n' \
     '-e "s/Finished tests in .*s, .* tests\/s, .* assertions/Finished tests in Xs, X tests\/s, X assertions/"' \
