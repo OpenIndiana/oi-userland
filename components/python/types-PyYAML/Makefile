@@ -11,20 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-PyYAML
+#   $WS_TOOLS/python-integrate-project -d python/types-PyYAML types_pyyaml
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-PyYAML
-HUMAN_VERSION =			6.0.12.20240917
+COMPONENT_NAME =		types_pyyaml
+HUMAN_VERSION =			6.0.12.20241221
 COMPONENT_SUMMARY =		Typing stubs for PyYAML
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d1405a86f9576682234ef83bcb4e6fff7c9305c8b1fbad5e0bcd4f7dbdc9c587
+	sha256:4f149aa893ff6a46889a30af4c794b23833014c469cc57cbc3ad77498a58996f
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
 
