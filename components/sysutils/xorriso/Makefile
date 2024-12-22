@@ -23,18 +23,16 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xorriso
 COMPONENT_VERSION=      1.5.7
-#IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).2
-#HUMAN_VERSION=			1.5.6.pl02
-COMPONENT_SUMMARY=		command line ISO-9660 and Rock Ridge manipulation tool
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=	command line ISO-9660 and Rock Ridge manipulation tool
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/xorriso/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:867577c387f6b4a9a3224eb441ded8fb1638df6cbc060f8d1a1e5d00f318f502
+COMPONENT_ARCHIVE_HASH= sha256:0d9cf80df436a16b4c4051fb4893307d109f2394c58fa94138a2270160eaca4d
 COMPONENT_ARCHIVE_URL=  https://www.gnu.org/software/xorriso/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			media/xorriso
 COMPONENT_CLASSIFICATION=	System/Media
@@ -52,8 +50,8 @@ CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
