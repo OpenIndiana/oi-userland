@@ -14,11 +14,11 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
 COMPONENT_VERSION=	2.30
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Text based web browser
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://links.twibright.com/
