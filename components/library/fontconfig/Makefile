@@ -13,12 +13,13 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fontconfig
 COMPONENT_VERSION=	2.15.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Fontconfig - Font configuration and customization library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -32,15 +33,20 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Make gcc 14 accept the old code.
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=int-conversion
+
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION=  ( cd $(@D); autoreconf )
+COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf )
 
 # Gperf files should be regenerated
 # https://bugs.freedesktop.org/show_bug.cgi?id=101280
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(RM) $(SOURCE_DIR)/src/fcobjshash.h )
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-baseconfigdir=$(ETCDIR)/fonts
 CONFIGURE_OPTIONS += --with-default-fonts='/usr/share/fonts'
 CONFIGURE_OPTIONS += --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript/fonts,/usr/X11/lib/X11/fonts'
@@ -57,9 +63,6 @@ $(BUILD_DIR)/.fonts_installed:	$(INSTALL_64)
 	$(TOUCH) $@
 
 install:	$(INSTALL_64) $(BUILD_DIR)/.fonts_installed
-
-# This is necessary to pass tests
-unexport SHELLOPTS
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/gperf
