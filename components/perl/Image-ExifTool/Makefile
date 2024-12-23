@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Image::ExifTool
+#   $WS_TOOLS/perl-integrate-module Image-ExifTool
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Image::ExifTool
-HUMAN_VERSION =			13.00
-COMPONENT_SUMMARY =		Image::ExifTool - Read and write meta information
+COMPONENT_NAME =		Image-ExifTool
+HUMAN_VERSION =			13.10
+COMPONENT_SUMMARY =		Read and write meta information
 COMPONENT_CPAN_AUTHOR =		EXIFTOOL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4895788f34f834765f86be4a5ad5a32433f572d757160ecd7b612eaf5ed37e84
+	sha256:d15bae18b6ea205869f3fc815cbc35af9022a24506bb540d8cb2e85b7795b600
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -31,6 +31,10 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/archive-zip
 PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-lzma
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
 PERL_REQUIRED_PACKAGES += library/perl-5/io-compress-brotli
 PERL_REQUIRED_PACKAGES += library/perl-5/posix-strptime
 PERL_REQUIRED_PACKAGES += runtime/perl
