@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geeqie
 COMPONENT_VERSION=	2.5
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Geeqie is a lightweight image viewer and organizer
 COMPONENT_PROJECT_URL=	https://www.geeqie.org/
 COMPONENT_PROJECT_URL=	https://www.geeqie.org/
@@ -37,6 +37,9 @@ PATH= $(PATH.gnu)
 
 CFLAGS += $(XPG6MODE)
 LDFLAGS += -lm -lsocket -lnsl
+
+# libheic is in encumbered
+CONFIGURE_OPTIONS += -Dheif=disabled
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
