@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     transset
-COMPONENT_VERSION=  1.0.3
+COMPONENT_VERSION=  1.0.4
 COMPONENT_SUMMARY=  transset - Set transparency on a X window 
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:1fe38f30dddd0dd88b5f05f121e5c6632315915468cd6a49d65fc0b17aa3e6fe
+COMPONENT_ARCHIVE_HASH= sha256:81a9ab74af137733aa8cb6a37f8292948526fe7ef06b859fc0ff272c437c0b38
 COMPONENT_FMRI=     x11/transset
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
