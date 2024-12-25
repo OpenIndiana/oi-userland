@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_black
 HUMAN_VERSION =			0.6.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A pytest plugin to enable format checking with black
 COMPONENT_PROJECT_URL =		https://github.com/coherent-oss/pytest-black
 COMPONENT_ARCHIVE_HASH =	\
