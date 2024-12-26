@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		inline_snapshot
-HUMAN_VERSION =			0.17.1
+HUMAN_VERSION =			0.18.1
 COMPONENT_SUMMARY =		golden master/snapshot/approval testing library which puts the values right into your source code
 COMPONENT_PROJECT_URL =		https://15r10nk.github.io/inline-snapshot/latest
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7759c05a1a0ff6d6c115ddb9df362e354e6ae81161a395080454f8a6604a92a1
+	sha256:a93bcf0aec68edf27323fa8dfc902354ef9a730050ab8939a4b174419828db6b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -53,11 +53,9 @@ PYTHON_REQUIRED_PACKAGES += library/python/rich
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/dirty-equals
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
-TEST_REQUIRED_PACKAGES.python += library/python/pydantic
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-freezer
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-subtests

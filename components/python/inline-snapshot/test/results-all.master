@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 431 items
+collecting ... collected 438 items
 
 =============================== inline snapshot ================================
 tests/adapter/test_dataclass.py::test_add_argument PASSED
@@ -19,8 +19,6 @@ tests/adapter/test_dataclass.py::test_disabled[executing] PASSED
 tests/adapter/test_dataclass.py::test_disabled[without-executing] PASSED
 tests/adapter/test_dataclass.py::test_namedtuple PASSED
 tests/adapter/test_dataclass.py::test_positional_star_args PASSED
-tests/adapter/test_dataclass.py::test_pydantic_default_value PASSED
-tests/adapter/test_dataclass.py::test_pydantic_field_repr PASSED
 tests/adapter/test_dataclass.py::test_reeval PASSED
 tests/adapter/test_dataclass.py::test_remove_positional_argument PASSED
 tests/adapter/test_dataclass.py::test_starred_warns PASSED
@@ -123,6 +121,7 @@ tests/test_docs.py::test_docs[in_snapshot.md] SKIPPED (there is no r...)
 tests/test_docs.py::test_docs[index.md] SKIPPED (there is no reason ...)
 tests/test_docs.py::test_docs[limitations.md] SKIPPED (there is no r...)
 tests/test_docs.py::test_docs[outsource.md] SKIPPED (there is no rea...)
+tests/test_docs.py::test_docs[pydantic_fix.py] SKIPPED (there is no ...)
 tests/test_docs.py::test_docs[pytest.md] SKIPPED (there is no reason...)
 tests/test_docs.py::test_docs[pytest_plugin.py] SKIPPED (there is no...)
 tests/test_docs.py::test_docs[sequence_adapter.py] SKIPPED (there is...)
@@ -1306,7 +1305,12 @@ tests/test_preserve_values.py::test_generic [{2: 5} -> {0: 8, 1: 8} <fix>] SUBPA
 tests/test_preserve_values.py::test_generic [{} -> {0: 8, 1: 8, 2: 8} <fix>] SUBPASS
 tests/test_preserve_values.py::test_no_update_for_dirty_equals PASSED
 tests/test_preserve_values.py::test_preserve_case_from_original_mr PASSED
-tests/test_pydantic.py::test_pydantic_repr PASSED
+tests/test_pydantic.py::test_pydantic_create_snapshot[pydantic<2.0.0] SKIPPED
+tests/test_pydantic.py::test_pydantic_create_snapshot[pydantic>=2.0.0] PASSED
+tests/test_pydantic.py::test_pydantic_default_value[pydantic<2.0.0] SKIPPED
+tests/test_pydantic.py::test_pydantic_default_value[pydantic>=2.0.0] PASSED
+tests/test_pydantic.py::test_pydantic_field_repr[pydantic<2.0.0] SKIPPED
+tests/test_pydantic.py::test_pydantic_field_repr[pydantic>=2.0.0] PASSED
 tests/test_pypy.py::test_pypy PASSED
 tests/test_pytest_plugin.py::test_assertion_error PASSED
 tests/test_pytest_plugin.py::test_assertion_error_loop PASSED
@@ -1319,6 +1323,7 @@ tests/test_pytest_plugin.py::test_disable_option PASSED
 tests/test_pytest_plugin.py::test_disabled PASSED
 tests/test_pytest_plugin.py::test_empty_sub_snapshot PASSED
 tests/test_pytest_plugin.py::test_equal_check PASSED
+tests/test_pytest_plugin.py::test_find_pyproject_in_parent_directories PASSED
 tests/test_pytest_plugin.py::test_fix PASSED
 tests/test_pytest_plugin.py::test_help_message PASSED
 tests/test_pytest_plugin.py::test_multiple PASSED
@@ -1326,6 +1331,8 @@ tests/test_pytest_plugin.py::test_multiple_report PASSED
 tests/test_pytest_plugin.py::test_persist_unknown_external PASSED
 tests/test_pytest_plugin.py::test_pytest_inlinesnapshot_auto PASSED
 tests/test_pytest_plugin.py::test_run_without_pytest PASSED
+tests/test_pytest_plugin.py::test_storage_dir_config[None] PASSED
+tests/test_pytest_plugin.py::test_storage_dir_config[tests/snapshots] PASSED
 tests/test_pytest_plugin.py::test_trim PASSED
 tests/test_pytest_plugin.py::test_unknown_flag PASSED
 tests/test_pytest_plugin.py::test_update PASSED
@@ -1342,4 +1349,4 @@ tests/test_xdist.py::test_xdist PASSED
 tests/test_xdist.py::test_xdist_and_disable PASSED
 tests/test_xdist.py::test_xdist_disabled PASSED
 
-======== 380 passed, 51 skipped, 903 subtests passed ========
+======== 383 passed, 55 skipped, 903 subtests passed ========
