@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-mypy-plugins
+#   $WS_TOOLS/python-integrate-project -d python/pytest-mypy-plugins pytest_mypy_plugins
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-mypy-plugins
-HUMAN_VERSION =			3.1.2
-COMPONENT_SUMMARY =		pytest-mypy-plugins - pytest plugin for writing tests for mypy plugins
+COMPONENT_NAME =		pytest_mypy_plugins
+HUMAN_VERSION =			3.2.0
+COMPONENT_SUMMARY =		pytest plugin for writing tests for mypy plugins
 COMPONENT_PROJECT_URL =		https://github.com/TypedDjango/pytest-mypy-plugins
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:14fa9b00e59713a6fdb88fcf04e8139b9467e117b98d61fc12038c60afb7febe
+	sha256:68bd95400c8f128327acd9a16c737dbec18b20fced3184ad97f391b07d4662f4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,10 +40,10 @@ PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
 PYTHON_REQUIRED_PACKAGES += library/python/regex
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/isort
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/types-decorator
 TEST_REQUIRED_PACKAGES.python += library/python/types-pyyaml
 TEST_REQUIRED_PACKAGES.python += library/python/types-setuptools
