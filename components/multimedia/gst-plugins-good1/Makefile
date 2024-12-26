@@ -23,6 +23,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-good
 COMPONENT_VERSION=	1.24.10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -35,6 +36,9 @@ COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 # almost everything is "auto" with meson
 CONFIGURE_OPTIONS += -Dorc=enabled
