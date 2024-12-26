@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::OpenPGP
+#   $WS_TOOLS/perl-integrate-module Crypt-OpenPGP
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::OpenPGP
-HUMAN_VERSION =			1.18
-COMPONENT_SUMMARY =		Crypt::OpenPGP - Pure-Perl OpenPGP implementation
+COMPONENT_NAME =		Crypt-OpenPGP
+HUMAN_VERSION =			1.19
+COMPONENT_SUMMARY =		Pure-Perl OpenPGP implementation
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e72931d39599be85b828599ab808d53854c904078a997dfa556d0d02c116b719
+	sha256:f4592864d219d74cd01aa6ab9449b5cadab449b5a410ebb7ae4d832ffbf6ac2a
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,8 +44,15 @@ PERL_REQUIRED_PACKAGES += library/perl-5/crypt-rijndael
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-ripemd160
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-twofish
 PERL_REQUIRED_PACKAGES += library/perl-5/data-buffer
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/file-homedir
+PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
 PERL_REQUIRED_PACKAGES += library/perl-5/libwww-perl
+PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
