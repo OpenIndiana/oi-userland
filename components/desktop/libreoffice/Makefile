@@ -34,7 +34,7 @@ ENV = /usr/bin/env
 COMPONENT_NAME=         libreoffice
 COMPONENT_VERSION=      24.8.4
 COMPONENT_RC_VERSION=	2
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 ifdef BUILD_ALPHA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).alpha$(BUILD_ALPHA)
 else ifdef BUILD_BETA
@@ -321,6 +321,8 @@ ADDITIONAL_PATCHES += patches/dictionaries-translations-help-already-downloaded-
 endif
 
 include $(WS_MAKE_RULES)/common.mk
+
+GCC_VERSION= 13
 
 PATH= $(PATH.gnu)
 
