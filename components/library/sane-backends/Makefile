@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
 COMPONENT_VERSION=	1.1.1
-COMPONENT_REVISION= 6
+COMPONENT_REVISION= 7
 COMPONENT_SUMMARY=      SANE library and backends
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,9 +41,12 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# gcc-14 complains about these
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=int-conversion
+
 LDFLAGS += -lnsl -lsocket
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-locking
 CONFIGURE_OPTIONS += --enable-pthread
 CONFIGURE_OPTIONS += --with-gphoto2
