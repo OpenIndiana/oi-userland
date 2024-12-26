@@ -43,6 +43,10 @@ COMPONENT_LICENSE=	BSD 2-clause, GPLv2, LGPLv2.1, Small
 
 include $(WS_MAKE_RULES)/common.mk
 
+# gcc 14 complains about these
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
+
 CONFIGURE_BINDIR.64= $(USRBINDIR)
 CONFIGURE_SBINDIR.64= $(USRSBINDIR)
 
