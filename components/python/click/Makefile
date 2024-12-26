@@ -14,24 +14,22 @@
 #   $WS_TOOLS/python-integrate-project click
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		click
-HUMAN_VERSION =			8.1.7
-COMPONENT_SUMMARY =		click - Composable command line interface toolkit
-COMPONENT_PROJECT_URL =		https://palletsprojects.com/p/click/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz
+HUMAN_VERSION =			8.1.8
+COMPONENT_SUMMARY =		Composable command line interface toolkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de
+	sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a
 COMPONENT_LICENSE =		BSD-3-Clause
-COMPONENT_LICENSE_FILE =	LICENSE.rst
+COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/iniconfig
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
