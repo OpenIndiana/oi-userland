@@ -2,7 +2,7 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-configfile: setup.cfg
+configfile: pyproject.toml
 collecting ... collected 150 items
 
 tests/test_base_detection.py::test_empty PASSED
@@ -123,15 +123,15 @@ tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<?xml 
 tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<?xml version="1.0" encoding="ibm037"?>-cp037] PASSED
 tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<html><head><meta charset=WINDOWS-1252></head></html>-cp1252] PASSED
 tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<html><head><meta charset="WINDOWS-1256"></head></html>-cp1256] PASSED
-tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<?xml version="1.0" encoding="EUC-JP"?>-<?xml version="1.0" encoding="utf_8"?>] PASSED
+tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<?xml version="1.0" encoding="EUC-JP"?>-<?xml version="1.0" encoding="utf-8"?>] PASSED
 tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<html><head><meta charset="utf-8"></head></html>-<html><head><meta charset="utf-8"></head></html>] PASSED
 tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<html><head><meta charset="utf-57"></head></html>-<html><head><meta charset="utf-57"></head></html>] PASSED
 tests/test_preemptive_detection.py::test_preemptive_mark_replacement[# coding: utf-8-# coding: utf-8] PASSED
 tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<?xml version="1.0" encoding="UTF-8"?>-<?xml version="1.0" encoding="UTF-8"?>] PASSED
-tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<?xml version="1.0" encoding="US-ASCII"?>-<?xml version="1.0" encoding="utf_8"?>] PASSED
-tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<?xml version="1.0" encoding="JohaB"?>-<?xml version="1.0" encoding="utf_8"?>] PASSED
-tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<html><head><meta charset=WINDOWS-1252></head></html>-<html><head><meta charset=utf_8></head></html>] PASSED
-tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<html><head><meta charset="WINDOWS-1256"></head></html>-<html><head><meta charset="utf_8"></head></html>] PASSED
+tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<?xml version="1.0" encoding="US-ASCII"?>-<?xml version="1.0" encoding="utf-8"?>] PASSED
+tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<?xml version="1.0" encoding="JohaB"?>-<?xml version="1.0" encoding="utf-8"?>] PASSED
+tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<html><head><meta charset=WINDOWS-1252></head></html>-<html><head><meta charset=utf-8></head></html>] PASSED
+tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<html><head><meta charset="WINDOWS-1256"></head></html>-<html><head><meta charset="utf-8"></head></html>] PASSED
 tests/test_utils.py::test_is_accentuated[\xe9-True] PASSED
 tests/test_utils.py::test_is_accentuated[\xe8-True] PASSED
 tests/test_utils.py::test_is_accentuated[\xe0-True] PASSED
@@ -155,6 +155,5 @@ tests/test_utils.py::test_cp_similarity[latin_1-cp1252-True] PASSED
 tests/test_utils.py::test_cp_similarity[latin_1-iso8859_4-True] PASSED
 tests/test_utils.py::test_cp_similarity[latin_1-cp1251-False] PASSED
 tests/test_utils.py::test_cp_similarity[cp1251-mac_turkish-False] PASSED
-
 
 ======== 150 passed ========
