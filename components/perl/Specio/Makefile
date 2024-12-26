@@ -18,13 +18,12 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Specio
-HUMAN_VERSION =			0.48
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Specio - Type constraints and coercions for Perl
+COMPONENT_NAME =		Specio
+HUMAN_VERSION =			0.49
+COMPONENT_SUMMARY =		Type constraints and coercions for Perl
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0c85793580f1274ef08173079131d101f77b22accea7afa8255202f0811682b2
+	sha256:e85766262b3738efc8dcbeb039b0d632d0aa393a55a33c36df5b21b4d44dc7af
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,15 +33,24 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-autoclean
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/clone
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
 PERL_REQUIRED_PACKAGES += library/perl-5/eval-closure
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += library/perl-5/mro-compat
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
 PERL_REQUIRED_PACKAGES += library/perl-5/ref-util
 PERL_REQUIRED_PACKAGES += library/perl-5/role-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-quote
 PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/version
 PERL_REQUIRED_PACKAGES += library/perl-5/xstring
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
