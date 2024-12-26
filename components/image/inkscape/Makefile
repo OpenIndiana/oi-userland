@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
 COMPONENT_VERSION=	1.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 # COMPONENT_ITEM_NO is part of the download path
 # (find it on https://inkscape.org/release/1.3/platforms/ under "Download")
 # eg. https://inkscape.org/gallery/item/42328/inkscape-1.3.tar.xz
@@ -42,6 +42,9 @@ COMPONENT_LICENSE=	GPLv2, GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# iconv will not be found without
+CFLAGS += $(XPG6MODE)
 
 PYV = $(subst .,,$(PYTHON_VERSION))
 PKG_MACROS += PYV=$(PYV)
