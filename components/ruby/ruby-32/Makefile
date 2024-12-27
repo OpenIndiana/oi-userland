@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	3.2.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Ruby, RubyGems, and Rake
 COMPONENT_PROJECT_URL=	https://www.ruby-lang.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -56,15 +57,21 @@ RUBY_VER= $(word 1,$(RUBY_VER_WORDS)).$(word 2,$(RUBY_VER_WORDS))
 RUBY_LIB_VER= $(RUBY_VER)
 
 PROTORUBYDIR= $(PROTO_DIR)/usr/ruby/$(RUBY_VER)
+
 ifeq ($(MACH), i386)
-GNU_CPU=x86_64
+RUBY_CPU=x86_64
 else
-GNU_CPU=sparc
+RUBY_CPU=sparc
 endif
-PROTO_RBCONFIG_FILE= $(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(GNU_CPU)-$(GNU_OS)/rbconfig.rb
+
+PROTO_RBCONFIG_FILE= $(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(RUBY_CPU)-solaris2.11/rbconfig.rb
 
 # these macros are used in the package manifest
-PKG_MACROS += RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER) GNU_CPU=$(GNU_CPU) GNU_OS=$(GNU_OS)
+PKG_MACROS += RUBY_VER=$(RUBY_VER)
+PKG_MACROS += RUBY_LIB_VER=$(RUBY_LIB_VER)
+PKG_MACROS += RUBY_CPU=$(RUBY_CPU)
+
+GENERATE_EXTRA_CMD += | $(GSED) -e 's|x86_64|$$(RUBY_CPU)|g'
 
 # Apply some of the edits here--including to the sed scripts themselves.
 # These modifications of ruby.1 must occur after ruby
@@ -95,7 +102,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MW) $(PROTO_DIR)/usr/include $(PROTORUBYDIR) ;
 
 COMPONENT_POST_INSTALL_ACTION += \
-	encdir="$(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(GNU_CPU)-$(GNU_OS)/enc"; \
+	encdir="$(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(RUBY_CPU)-solaris2.11/enc"; \
 	filelist=`ls -1I trans $$encdir`; \
 	subdirlist=`ls -1 $$encdir/trans`; \
         for f in $$filelist; \
