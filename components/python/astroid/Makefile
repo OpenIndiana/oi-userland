@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		astroid
-HUMAN_VERSION =			3.3.5
+HUMAN_VERSION =			3.3.8
 COMPONENT_SUMMARY =		An abstract syntax tree for Python with inference support.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5cfc40ae9f68311075d27ef68a4841bdc5cc7f6cf86671b49f00607d30188e2d
+	sha256:a88c7994f914a4ea8572fac479459f4955eeccc877be3f2d959a33273b0cf40b
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,7 +32,13 @@ include $(WS_MAKE_RULES)/common.mk
 PYTEST_ADDOPTS += --deselect tests/brain/test_dataclasses.py::test_pydantic_field
 # fails with tox-current-env
 PYTEST_ADDOPTS += --deselect tests/test_modutils.py::GetModulePartTest::test_known_values_get_builtin_module_part
-# fails with our numpy
+# https://github.com/pylint-dev/astroid/issues/2442
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_einsumfunc.py::test_numpy_function_calls_inferred_as_ndarray
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_fromnumeric.py::BrainNumpyCoreFromNumericTest::test_numpy_function_calls_inferred_as_ndarray
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_multiarray.py::BrainNumpyCoreMultiarrayTest::test_numpy_function_calls_inferred_as_ndarray
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_numerictypes.py::NumpyBrainCoreNumericTypesTest::test_datetime_astype_return
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_numerictypes.py::NumpyBrainCoreNumericTypesTest::test_generic_types_are_subscriptables
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_umath.py::NumpyBrainCoreUmathTest::test_numpy_core_umath_functions_return_type
 PYTEST_ADDOPTS += --deselect tests/test_regrtest.py::NonRegressionTests::test_numpy_distutils
 
 # Random temporary dir name
