@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fixtures
-HUMAN_VERSION =			4.1.0
-COMPONENT_SUMMARY =		fixtures - Fixtures, reusable state for writing clean tests and more.
+HUMAN_VERSION =			4.2.2
+COMPONENT_SUMMARY =		Fixtures, reusable state for writing clean tests and more.
 COMPONENT_PROJECT_URL =		https://github.com/testing-cabal/fixtures
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5e/4c/3c3faee9f554d753ee428bef3a5e8176995cffbf0b5ad3f1d6c272ab2148/fixtures-4.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:82b1c5e69f615526ef6c067188a1e6c6067df7f88332509c99f8b8fdbb9776f3
+	sha256:af9368737fad6fd501638ca99c78000c3f3fb03fa40a60f9e9d39aa64f342bc1
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
 #
@@ -45,8 +42,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pbr
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/docutils
-TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/testtools
