@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 851 items
+collecting ... collected 889 items
 
 tests/test_api.py::TestExtendedAPI::test_item_and_attribute PASSED
 tests/test_api.py::TestExtendedAPI::test_finalize PASSED
@@ -41,17 +41,18 @@ tests/test_api.py::TestUndefined::test_none_gives_proper_error PASSED
 tests/test_api.py::TestUndefined::test_object_repr PASSED
 tests/test_api.py::TestLowLevel::test_custom_code_generator PASSED
 tests/test_api.py::TestLowLevel::test_custom_context PASSED
-tests/test_async.py::test_basic_async PASSED
-tests/test_async.py::test_await_on_calls PASSED
+tests/test_api.py::test_overlay_enable_async PASSED
+tests/test_async.py::test_basic_async[asyncio] PASSED
+tests/test_async.py::test_await_on_calls[asyncio] PASSED
 tests/test_async.py::test_await_on_calls_normal_render PASSED
-tests/test_async.py::test_await_and_macros PASSED
-tests/test_async.py::test_async_blocks PASSED
+tests/test_async.py::test_await_and_macros[asyncio] PASSED
+tests/test_async.py::test_async_blocks[asyncio] PASSED
 tests/test_async.py::test_async_generate PASSED
 tests/test_async.py::test_async_iteration_in_templates PASSED
 tests/test_async.py::test_async_iteration_in_templates_extended PASSED
 tests/test_async.py::TestAsyncImports::test_context_imports PASSED
 tests/test_async.py::TestAsyncImports::test_trailing_comma PASSED
-tests/test_async.py::TestAsyncImports::test_exports PASSED
+tests/test_async.py::TestAsyncImports::test_exports[asyncio] PASSED
 tests/test_async.py::TestAsyncImports::test_import_with_globals PASSED
 tests/test_async.py::TestAsyncImports::test_import_with_globals_override PASSED
 tests/test_async.py::TestAsyncImports::test_from_import_with_globals PASSED
@@ -81,7 +82,7 @@ tests/test_async.py::TestAsyncForLoop::test_recursive_depth0 PASSED
 tests/test_async.py::TestAsyncForLoop::test_recursive_depth PASSED
 tests/test_async.py::TestAsyncForLoop::test_looploop PASSED
 tests/test_async.py::TestAsyncForLoop::test_reversed_bug PASSED
-tests/test_async.py::TestAsyncForLoop::test_loop_errors PASSED
+tests/test_async.py::TestAsyncForLoop::test_loop_errors[asyncio] PASSED
 tests/test_async.py::TestAsyncForLoop::test_loop_filter PASSED
 tests/test_async.py::TestAsyncForLoop::test_scoped_special_var PASSED
 tests/test_async.py::TestAsyncForLoop::test_scoped_loop_var PASSED
@@ -93,14 +94,18 @@ tests/test_async.py::TestAsyncForLoop::test_recursive_loop_filter PASSED
 tests/test_async.py::TestAsyncForLoop::test_nonrecursive_loop_filter PASSED
 tests/test_async.py::TestAsyncForLoop::test_bare_async PASSED
 tests/test_async.py::TestAsyncForLoop::test_awaitable_property_slicing PASSED
-tests/test_async.py::test_namespace_awaitable PASSED
-tests/test_async.py::test_chainable_undefined_aiter PASSED
-tests/test_async.py::test_native_async PASSED
-tests/test_async.py::test_native_list_async PASSED
+tests/test_async.py::test_namespace_awaitable[asyncio] PASSED
+tests/test_async.py::test_chainable_undefined_aiter[asyncio] PASSED
+tests/test_async.py::test_native_async[asyncio] PASSED
+tests/test_async.py::test_native_list_async[asyncio] PASSED
 tests/test_async.py::test_getitem_after_filter PASSED
 tests/test_async.py::test_getitem_after_call PASSED
-tests/test_async_filters.py::test_first[<lambda>0] PASSED
-tests/test_async_filters.py::test_first[<lambda>1] PASSED
+tests/test_async.py::test_basic_generate_async[asyncio] PASSED
+tests/test_async.py::test_include_generate_async[asyncio] PASSED
+tests/test_async.py::test_blocks_generate_async[asyncio] PASSED
+tests/test_async.py::test_async_extend[asyncio] PASSED
+tests/test_async_filters.py::test_first[asyncio-<lambda>0] PASSED
+tests/test_async_filters.py::test_first[asyncio-<lambda>1] PASSED
 tests/test_async_filters.py::test_groupby[<lambda>0] PASSED
 tests/test_async_filters.py::test_groupby[<lambda>1] PASSED
 tests/test_async_filters.py::test_groupby_case[False-a: 1, 3\nb: 2\n] PASSED
@@ -139,14 +144,19 @@ tests/test_async_filters.py::test_sum_attributes_nested PASSED
 tests/test_async_filters.py::test_sum_attributes_tuple PASSED
 tests/test_async_filters.py::test_slice[<lambda>0] PASSED
 tests/test_async_filters.py::test_slice[<lambda>1] PASSED
-tests/test_async_filters.py::test_custom_async_filter PASSED
-tests/test_async_filters.py::test_custom_async_iteratable_filter[<lambda>0] PASSED
-tests/test_async_filters.py::test_custom_async_iteratable_filter[<lambda>1] PASSED
+tests/test_async_filters.py::test_unique_with_async_gen PASSED
+tests/test_async_filters.py::test_custom_async_filter[asyncio] PASSED
+tests/test_async_filters.py::test_custom_async_iteratable_filter[asyncio-<lambda>0] PASSED
+tests/test_async_filters.py::test_custom_async_iteratable_filter[asyncio-<lambda>1] PASSED
 tests/test_bytecode_cache.py::TestByteCodeCache::test_simple PASSED
 tests/test_bytecode_cache.py::TestMemcachedBytecodeCache::test_dump_load PASSED
 tests/test_bytecode_cache.py::TestMemcachedBytecodeCache::test_exception PASSED
 tests/test_compile.py::test_filters_deterministic PASSED
 tests/test_compile.py::test_import_as_with_context_deterministic PASSED
+tests/test_compile.py::test_top_level_set_vars_unpacking_deterministic PASSED
+tests/test_compile.py::test_loop_set_vars_unpacking_deterministic PASSED
+tests/test_compile.py::test_block_set_vars_unpacking_deterministic PASSED
+tests/test_compile.py::test_undefined_import_curly_name PASSED
 tests/test_core_tags.py::TestForLoop::test_simple PASSED
 tests/test_core_tags.py::TestForLoop::test_else PASSED
 tests/test_core_tags.py::TestForLoop::test_else_scoping_item PASSED
@@ -204,6 +214,7 @@ tests/test_core_tags.py::TestSet::test_namespace_block PASSED
 tests/test_core_tags.py::TestSet::test_init_namespace PASSED
 tests/test_core_tags.py::TestSet::test_namespace_loop PASSED
 tests/test_core_tags.py::TestSet::test_namespace_macro PASSED
+tests/test_core_tags.py::TestSet::test_namespace_set_tuple PASSED
 tests/test_core_tags.py::TestSet::test_block_escaping_filtered PASSED
 tests/test_core_tags.py::TestSet::test_block_filtered PASSED
 tests/test_core_tags.py::TestSet::test_block_filtered_set PASSED
@@ -297,6 +308,7 @@ tests/test_filters.py::TestFilter::test_int[42-42] PASSED
 tests/test_filters.py::TestFilter::test_int[abc-0] PASSED
 tests/test_filters.py::TestFilter::test_int[32.32-32] PASSED
 tests/test_filters.py::TestFilter::test_int[12345678901234567890-12345678901234567890] PASSED
+tests/test_filters.py::TestFilter::test_int[1e10000-0] PASSED
 tests/test_filters.py::TestFilter::test_int_base[0x4d32-16-19762] PASSED
 tests/test_filters.py::TestFilter::test_int_base[011-8-9] PASSED
 tests/test_filters.py::TestFilter::test_int_base[0x33Z-16-0] PASSED
@@ -609,6 +621,7 @@ tests/test_loader.py::TestFileSystemLoader::test_caches_template_based_on_mtime 
 tests/test_loader.py::TestFileSystemLoader::test_uses_specified_encoding[utf-8-\u6587\u5b57\u5316\u3051] PASSED
 tests/test_loader.py::TestFileSystemLoader::test_uses_specified_encoding[iso-8859-1-\xe6\x96\x87\xe5\xad\x97\xe5\x8c\x96\xe3\x81\x91] PASSED
 tests/test_loader.py::TestFileSystemLoader::test_filename_normpath PASSED
+tests/test_loader.py::TestFileSystemLoader::test_error_includes_paths PASSED
 tests/test_loader.py::TestModuleLoader::test_log PASSED
 tests/test_loader.py::TestModuleLoader::test_deflated_zip_compile PASSED
 tests/test_loader.py::TestModuleLoader::test_stored_zip_compile PASSED
@@ -631,6 +644,7 @@ tests/test_loader.py::test_package_zip_omit_curdir[] PASSED
 tests/test_loader.py::test_package_zip_omit_curdir[.] PASSED
 tests/test_loader.py::test_package_zip_omit_curdir[./] PASSED
 tests/test_loader.py::test_pep_451_import_hook PASSED
+tests/test_loader.py::test_package_loader_no_dir PASSED
 tests/test_nativetypes.py::test_is_defined_native_return PASSED
 tests/test_nativetypes.py::test_undefined_native_return PASSED
 tests/test_nativetypes.py::test_adding_undefined_native_return PASSED
@@ -657,6 +671,7 @@ tests/test_nativetypes.py::test_no_intermediate_eval PASSED
 tests/test_nativetypes.py::test_spontaneous_env PASSED
 tests/test_nativetypes.py::test_leading_spaces PASSED
 tests/test_nativetypes.py::test_macro PASSED
+tests/test_nativetypes.py::test_block PASSED
 tests/test_nodes.py::test_template_hash PASSED
 tests/test_pickle.py::test_environment PASSED
 tests/test_regression.py::TestCorner::test_assigned_scoping PASSED
@@ -709,6 +724,8 @@ tests/test_regression.py::TestBug::test_pass_context_block_and_loop PASSED
 tests/test_regression.py::TestBug::test_cached_extends[extends] PASSED
 tests/test_regression.py::TestBug::test_cached_extends[include] PASSED
 tests/test_regression.py::TestBug::test_nested_loop_scoping PASSED
+tests/test_regression.py::TestBug::test_pass_context_with_select PASSED
+tests/test_regression.py::test_load_parameter_when_set_in_all_if_branches PASSED
 tests/test_regression.py::test_unicode_whitespace[\x0c] PASSED
 tests/test_regression.py::test_unicode_whitespace[\x85] PASSED
 tests/test_runtime.py::test_loop_idx PASSED
@@ -718,6 +735,18 @@ tests/test_runtime.py::test_loopcontext1 PASSED
 tests/test_runtime.py::test_loopcontext2 PASSED
 tests/test_runtime.py::test_iterator_not_advanced_early PASSED
 tests/test_runtime.py::test_mock_not_pass_arg_marker PASSED
+tests/test_runtime.py::test_undefined_copy[Undefined] PASSED
+tests/test_runtime.py::test_undefined_copy[ChainableUndefined] PASSED
+tests/test_runtime.py::test_undefined_copy[DebugUndefined] PASSED
+tests/test_runtime.py::test_undefined_copy[StrictUndefined] PASSED
+tests/test_runtime.py::test_undefined_deepcopy[Undefined] PASSED
+tests/test_runtime.py::test_undefined_deepcopy[ChainableUndefined] PASSED
+tests/test_runtime.py::test_undefined_deepcopy[DebugUndefined] PASSED
+tests/test_runtime.py::test_undefined_deepcopy[StrictUndefined] PASSED
+tests/test_runtime.py::test_undefined_pickle[Undefined] PASSED
+tests/test_runtime.py::test_undefined_pickle[ChainableUndefined] PASSED
+tests/test_runtime.py::test_undefined_pickle[DebugUndefined] PASSED
+tests/test_runtime.py::test_undefined_pickle[StrictUndefined] PASSED
 tests/test_security.py::TestSandbox::test_unsafe PASSED
 tests/test_security.py::TestSandbox::test_immutable_environment PASSED
 tests/test_security.py::TestSandbox::test_restricted PASSED
@@ -733,6 +762,7 @@ tests/test_security.py::TestStringFormat::test_empty_braces_format PASSED
 tests/test_security.py::TestStringFormatMap::test_basic_format_safety PASSED
 tests/test_security.py::TestStringFormatMap::test_basic_format_all_okay PASSED
 tests/test_security.py::TestStringFormatMap::test_safe_format_all_okay PASSED
+tests/test_security.py::TestStringFormatMap::test_indirect_call PASSED
 tests/test_tests.py::TestTestsCase::test_defined PASSED
 tests/test_tests.py::TestTestsCase::test_even PASSED
 tests/test_tests.py::TestTestsCase::test_odd PASSED
@@ -852,6 +882,7 @@ tests/test_utils.py::TestLRUCache::test_setdefault PASSED
 tests/test_utils.py::TestHelpers::test_object_type_repr PASSED
 tests/test_utils.py::TestHelpers::test_autoescape_select PASSED
 tests/test_utils.py::TestEscapeUrlizeTarget::test_escape_urlize_target PASSED
+tests/test_utils.py::TestEscapeUrlizeTarget::test_urlize_mail_mastodon PASSED
 tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_markup PASSED
 tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_html PASSED
 tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_n PASSED
@@ -859,7 +890,14 @@ tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_min PASSED
 tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_max PASSED
 tests/test_utils.py::test_missing PASSED
 tests/test_utils.py::test_consume PASSED
+tests/test_utils.py::test_pickle_missing[0] PASSED
+tests/test_utils.py::test_pickle_missing[1] PASSED
+tests/test_utils.py::test_pickle_missing[2] PASSED
+tests/test_utils.py::test_pickle_missing[3] PASSED
+tests/test_utils.py::test_pickle_missing[4] PASSED
+tests/test_utils.py::test_pickle_missing[5] PASSED
+tests/test_utils.py::test_copy_missing PASSED
 
-======== 851 passed ========
+======== 889 passed ========
   py$(PYV): OK
   congratulations :)
