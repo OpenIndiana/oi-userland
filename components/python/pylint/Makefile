@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pylint
-HUMAN_VERSION =			3.3.2
+HUMAN_VERSION =			3.3.3
 COMPONENT_SUMMARY =		python code static checker
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9ec054ec992cd05ad30a6df1676229739a73f8feeabf3912c995d17601052b01
+	sha256:07c607523b17e6d16e2ae0d7ef59602e332caa762af64203c24b41c27139f36a
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -78,4 +78,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/requests
 TEST_REQUIRED_PACKAGES.python += library/python/six
+TEST_REQUIRED_PACKAGES.python += library/python/types-setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
