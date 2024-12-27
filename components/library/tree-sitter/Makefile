@@ -20,19 +20,19 @@
 #
 
 #
-# Copyright (c) 2023, Andreas Wacknitz
+# Copyright (c) 2024, Andreas Wacknitz
 #
 
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tree-sitter
-COMPONENT_VERSION=      0.24.5
+COMPONENT_VERSION=      0.24.6
 COMPONENT_SUMMARY=      Tree-sitter is a parser generator tool and an incremental parsing library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://tree-sitter.github.io/tree-sitter/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b5ac48acf5a04fd82ccd4246ad46354d9c434be26c9606233917549711e4252c
+COMPONENT_ARCHIVE_HASH= sha256:03c7ee1e6f9f4f3821fd4af0ae06e1da60433b304a73ff92ee9694933009121a
 COMPONENT_ARCHIVE_URL=  https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
