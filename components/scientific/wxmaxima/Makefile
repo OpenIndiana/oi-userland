@@ -19,13 +19,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           wxmaxima
-COMPONENT_VERSION=        23.12.0
+COMPONENT_VERSION=        24.5.0
+HUMAN_VERSION=            24.05.0
 COMPONENT_SUMMARY=        wxMaxima is a document based interface for the computer algebra system Maxima
 COMPONENT_PROJECT_URL=    https://github.com/wxMaxima-developers/wxmaxima
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=    https://github.com/wxMaxima-developers/wxmaxima/archive/refs/tags/Version-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:abec636e96474adf6451e81728b16afaa83ed1a70b86a695fa083ecec65aaae1
+COMPONENT_ARCHIVE_URL=    https://github.com/wxMaxima-developers/wxmaxima/archive/refs/tags/Version-$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=   sha256:21dc8715b71372dc35743486307254a5a0285f35a6acbc68b894d432c4f14c98
 COMPONENT_FMRI=           application/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/Office
 COMPONENT_LICENSE=        GPLv2
@@ -35,7 +36,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_NAME)-Version-$(COMPONENT_VERSION) $(COMPONENT_SRC) );
+COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_NAME)-Version-$(HUMAN_VERSION) $(COMPONENT_SRC) );
 
 CFLAGS += $(XPG6MODE)
 
