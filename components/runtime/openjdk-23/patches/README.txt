@@ -3,12 +3,41 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for note on a project zero variant.
 
-JDK 23 now that jdk22 has been forked off.
+Cleanup: remove audio solaris 7 compatibility code
+
+Cleanup: use pset_getloadavg() directly
+
+Cleanup: Remove SolarisX86JavaThreadPDAccess, it's for 32-bit.
+
+Cleanup: allow fastdebug builds, see fastdebug.patch
+
+Cleanup: remove unused JSIG_VERSION_1_4_1 define
+
+Cleanup: remove unused SOLARIS_MUTATOR_LIBTHREAD hunk
+
+23.0.1
+
+Minimal patch noise.
+
+Dropped the png patch, like we did with all the other releases this
+update cycle.
+
+Note: jdk23 was developed as a branch in the jdk repo; there is no
+separate jdk23 repo. For updates, we go straight to the jdk23u repo.
+
+Cleanup: Fix TestMemoryAllocationLogging failures. The tests were
+looking for specific output for mmap and munmap failures.
+
+Cleanup: jdk.internal.vm.ci/share/classes/jdk/vm/ci/services/Services.java
+needs to know about Solaris.
+
+Cleanup: remove the epoll provider code, it wasn't used on illumos and
+doesn't compile on Solaris.
 
 Cleanup: Removed last remnants of extended_FILE_stdio, it's unused as 32-bit
 only, and the code to enable it had already been removed.
 
-23+27, 23+28, 23+29, 23+30, 23+31, 23+32, 23+33, 23+34, 23+35, 23+36
+23+27, 23+28, 23+29, 23+30, 23+31, 23+32, 23+33, 23+34, 23+35, 23+36, 23+37
 
 No changes.
 
