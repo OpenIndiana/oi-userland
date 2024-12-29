@@ -3,9 +3,32 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for patches to build a project zero variant.
 
-Most patches -p0
-
 JDK17:
+
+Cleanup: remove SPARC_WORKS
+
+Cleanup: remove 32-bit SSE check
+
+Cleanup: os::is_allocatable() is always true on 64-bit
+
+Cleanup: src/hotspot/os/solaris and src/hotspot/os_cpu/solaris_x86
+split out into separate restore patches.
+
+Cleanup: remove audio solaris 7 compatibility code
+
+Cleanup: remove unused JSIG_VERSION_1_4_1 define
+
+Cleanup: remove unused SOLARIS_MUTATOR_LIBTHREAD hunk
+
+17.0.13
+
+Drop the png patch. It no longer applies and appears unnecessary with
+the png update.
+
+Pipewire has been added, so need to patch that like wed id in jdk21.
+See illumos-port-20.patch.
+
+Cleanup: Since Solaris 10, fork() has always been fork1()
 
 17.0.12
 
