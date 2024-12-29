@@ -21,7 +21,7 @@ illumos-zero-2.patch
 Adds the src/hotspot/os_cpu/solaris_zero directory and contents
 
 These are current and tested for a successful build (not necessarily
-fully working) as of jdk 23+29. They don't provide a proper zero port,
+fully working) as of jdk 23+37. They don't provide a proper zero port,
 as they still have assembler that needs to be removed. But this
 provides a starting point.
 
