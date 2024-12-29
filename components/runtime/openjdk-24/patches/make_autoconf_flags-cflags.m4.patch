@@ -31,7 +31,7 @@ Support for SunOS/gcc.
  
        # arm specific settings
        if test "x$OPENJDK_TARGET_CPU" = "xarm"; then
-@@ -502,6 +512,7 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
+@@ -506,6 +516,7 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
  
    if test "x$TOOLCHAIN_TYPE" = xgcc; then
      ALWAYS_DEFINES_JVM="-D_GNU_SOURCE -D_REENTRANT"
