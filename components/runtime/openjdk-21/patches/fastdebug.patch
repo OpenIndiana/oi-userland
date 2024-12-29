@@ -1,0 +1,30 @@
+To build in fastdebug mode, configure with
+
+  bash ./configure ... --with-debug-level=fastdebug
+
+The patches here are for code that's only built in debug mode.
+
+--- a/src/hotspot/share/opto/type.cpp	Fri Oct 11 20:42:42 2024
++++ b/src/hotspot/share/opto/type.cpp	Thu Nov 21 11:50:19 2024
+@@ -905,6 +905,9 @@
+   assert(Compile::current()->_type_verify == nullptr || Compile::current()->_type_verify->empty_cache(), "cache should have been discarded");
+ }
+ 
++#ifdef _C
++#undef _C
++#endif
+ class VerifyMeet {
+ private:
+   Compile* _C;
+--- a/src/hotspot/share/utilities/vmError.cpp	Thu Nov 21 11:00:15 2024
++++ b/src/hotspot/share/utilities/vmError.cpp	Thu Nov 21 12:00:25 2024
+@@ -78,6 +78,9 @@
+ #ifndef PRODUCT
+ #include <signal.h>
+ #endif // PRODUCT
++#ifdef ASSERT
++# include <alloca.h>
++#endif // ASSERT
+ 
+ bool              VMError::coredump_status;
+ char              VMError::coredump_message[O_BUFLEN];
