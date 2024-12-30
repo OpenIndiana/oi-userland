@@ -12,11 +12,12 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_STYLE=cmake
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         toxcore
 COMPONENT_VERSION=      0.2.20
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=  https://tox.chat
 COMPONENT_SUMMARY=      Secure, configuration-free, P2P Skype replacement backend
 COMPONENT_FMRI=         network/chat/toxcore
@@ -31,15 +32,13 @@ COMPONENT_LICENSE_FILE= LICENSE
 GIT_BRANCH_1=           4c3737d1a172ee74d2b35b5fd6865d1fe9dac7af
 COMPONENT_SRC_1=        cmp-$(GIT_BRANCH_1)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_URL_1=https://github.com/camgunz/cmp/archive/$(GIT_BRANCH_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1= \
-    sha256:a13a479f747854b990cee074cdc7a7309ec6e025059b7213b9ca311860de1b02
+COMPONENT_ARCHIVE_URL_1= https://github.com/camgunz/cmp/archive/$(GIT_BRANCH_1).tar.gz
+COMPONENT_ARCHIVE_HASH_1= sha256:a13a479f747854b990cee074cdc7a7309ec6e025059b7213b9ca311860de1b02
 
-COMPONENT_POST_UNPACK_ACTION_1= \
-        mv $(COMPONENT_SRC_1)/* $(SOURCE_DIR)/third_party/cmp
-
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_POST_UNPACK_ACTION_1= $(MV) $(COMPONENT_SRC_1)/* $(SOURCE_DIR)/third_party/cmp
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libconfig
