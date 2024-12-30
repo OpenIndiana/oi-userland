@@ -145,6 +145,7 @@ REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/video/x265
+REQUIRED_PACKAGES += library/video/x265-41
 REQUIRED_PACKAGES += library/video/xvid
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
