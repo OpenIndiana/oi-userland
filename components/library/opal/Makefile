@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opal
 COMPONENT_VERSION= 3.16.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= OPAL - Open Phone Abstraction Library
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= library/libopal
@@ -38,24 +38,24 @@ PATH= $(PATH.gnu)
 
 COMPONENT_BUILD_ARGS += VERBOSE=1
 
-OPAL_FFMPEG_PATCH = \
-	$(GSED) -e '/<< mime.PrintContents/ s/mime/(const std::string\&)&/' -i src/im/msrp.cxx
-
 COMPONENT_PREP_ACTION=( cd $(@D)/plugins && aclocal && autoconf && \
-	cd $(@D) && aclocal && autoconf && $(OPAL_FFMPEG_PATCH) )
+	cd $(@D) && aclocal && autoconf )
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =  ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 COMPONENT_POST_CONFIGURE_ACTION = ( \
+        $(CP) $(@D)/src/rtp/libsrtp/Makefile $(SOURCE_DIR)/src/rtp/libsrtp; \
 	echo "install: ;  @\$$(MAKE) --file=$(SOURCE_DIR)/Makefile \$$(MAKECMDGOALS)" >> $(@D)/Makefile )
 
+CXXFLAGS += -I$(@D)/src/rtp/libsrtp/crypto/include -fpic
+CFLAGS += -I$(@D)/src/rtp/libsrtp/include -I$(@D)/src/rtp/libsrtp/crypto/include -fpic
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --disable-srtp
-CONFIGURE_OPTIONS += --disable-spandsp
-CONFIGURE_OPTIONS += --disable-libavutil
 CONFIGURE_OPTIONS += --enable-localsrtp
+CONFIGURE_OPTIONS += --enable-localopenh264
 CONFIGURE_OPTIONS += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
+CONFIGURE_OPTIONS += SPEEXDSP_CFLAGS=-I/usr/include/speex
 
 # opal comes with SILK SDK, which has own build system
 COMPONENT_BUILD_ENV += SILK_CC="$(CC)"
@@ -69,6 +69,7 @@ REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += library/desktop/ptlib
 REQUIRED_PACKAGES += library/opus
+REQUIRED_PACKAGES += library/spandsp
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += system/library
