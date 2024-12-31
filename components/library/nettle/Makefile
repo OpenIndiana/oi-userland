@@ -16,16 +16,17 @@
 #
 
 BUILD_BITS= 64_and_32
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nettle
-COMPONENT_VERSION=	3.10
+COMPONENT_VERSION=	3.10.1
 COMPONENT_SUMMARY=	A low-level cryptographic library
 COMPONENT_PROJECT_URL=	https://www.lysator.liu.se/~nisse/nettle/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b4c518adb174e484cb4acea54118f02380c7133771e7e9beb98a0787194ee47c
+COMPONENT_ARCHIVE_HASH=	sha256:b0fcdd7fc0cdea6e80dcf1dd85ba794af0d5b4a57e26397eee3bc193272d9132
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/nettle/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/nettle
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -36,6 +37,8 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -f -i )
+
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
 CONFIGURE_OPTIONS += --disable-static
 
