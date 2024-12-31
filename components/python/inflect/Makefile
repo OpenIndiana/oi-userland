@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		inflect
-HUMAN_VERSION =			7.4.0
+HUMAN_VERSION =			7.5.0
 COMPONENT_SUMMARY =		Correctly generate plurals, singular nouns, ordinals, indefinite articles
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:904baa17cc2cb74827a6c27b95692e95670dadc72b208b3e8c1c05aeed47026b
+	sha256:faf19801c3742ed5a05a8ce388e0d8fe1a07f8d095c82201eb904f5d27ad571f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
