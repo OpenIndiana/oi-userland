@@ -1,16 +1,27 @@
---- mosquitto-2.0.14/src/CMakeLists.txt.bak	Tue Jun 14 04:02:07 2022
-+++ mosquitto-2.0.14/src/CMakeLists.txt	Tue Jun 14 04:02:26 2022
-@@ -210,13 +210,5 @@
- 	set_target_properties(mosquitto PROPERTIES ENABLE_EXPORTS 1)
- endif (WIN32)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/lib/CMakeLists.txt a/lib/CMakeLists.txt
+--- a~/lib/CMakeLists.txt	1970-01-01 00:00:00
++++ a/lib/CMakeLists.txt	1970-01-01 00:00:00
+@@ -108,7 +108,7 @@ set_target_properties(libmosquitto PROPE
+ 	SOVERSION 1
+ )
  
--if (UNIX)
--	if (APPLE)
--		set_target_properties(mosquitto PROPERTIES LINK_FLAGS "-Wl,-exported_symbols_list -Wl,${mosquitto_SOURCE_DIR}/src/linker-macosx.syms")
+-if(UNIX AND NOT APPLE)
++if(UNIX AND NOT APPLE AND NOT ${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+ 	set_target_properties(libmosquitto PROPERTIES
+ 		LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/linker.version
+ 		LINK_FLAGS "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/linker.version"
+diff -wpruN --no-dereference '--exclude=*.orig' a~/src/CMakeLists.txt a/src/CMakeLists.txt
+--- a~/src/CMakeLists.txt	1970-01-01 00:00:00
++++ a/src/CMakeLists.txt	1970-01-01 00:00:00
+@@ -213,9 +213,9 @@ endif (WIN32)
+ if (UNIX)
+ 	if (APPLE)
+ 		set_target_properties(mosquitto PROPERTIES LINK_FLAGS "-Wl,-exported_symbols_list -Wl,${mosquitto_SOURCE_DIR}/src/linker-macosx.syms")
 -	else (APPLE)
--		set_target_properties(mosquitto PROPERTIES LINK_FLAGS "-Wl,-dynamic-list=${mosquitto_SOURCE_DIR}/src/linker.syms")
++	elseif (NOT CMAKE_SYSTEM_NAME STREQUAL SunOS)
+ 		set_target_properties(mosquitto PROPERTIES LINK_FLAGS "-Wl,-dynamic-list=${mosquitto_SOURCE_DIR}/src/linker.syms")
 -	endif (APPLE)
--endif (UNIX)
--
++	endif ()
+ endif (UNIX)
+ 
  install(TARGETS mosquitto RUNTIME DESTINATION "${CMAKE_INSTALL_SBINDIR}")
- install(FILES ../include/mosquitto_broker.h ../include/mosquitto_plugin.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
