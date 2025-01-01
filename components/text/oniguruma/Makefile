@@ -12,12 +12,11 @@
 # Copyright 2021 Till Wegmueller
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			oniguruma
-COMPONENT_VERSION_BASE=		6.9.9
+COMPONENT_VERSION_BASE=		6.9.10
 COMPONENT_VERSION=		$(COMPONENT_VERSION_BASE)
 COMPONENT_SUMMARY=		oniguruma - regular expression library 
 COMPONENT_PROJECT_URL=		https://github.com/kkos/oniguruma
@@ -25,7 +24,7 @@ COMPONENT_SRC=			onig-$(COMPONENT_VERSION_BASE)
 COMPONENT_SRC2=			onig-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC2).tar.gz
 COMPONENT_ARCHIVE_URL=		https://github.com/kkos/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:60162bd3b9fc6f4886d4c7a07925ffd374167732f55dce8c491bfd9cd818a6cf
+COMPONENT_ARCHIVE_HASH=		sha256:2a5cfc5ae259e4e97f86b68dfffc152cdaffe94e2060b770cb827238d769fc05
 COMPONENT_FMRI=			text/oniguruma
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=		BSD like
@@ -34,8 +33,6 @@ COMPONENT_LICENSE_FILE=		COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --enable-static=no
-
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
