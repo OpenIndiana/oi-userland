@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2016 Jim Klimov
+# Copyright 2025 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,22 +23,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/libmikmod-config
 file path=usr/bin/libmikmod-config
-
 file path=usr/include/mikmod.h
-
-file path=usr/lib/$(MACH64)/libmikmod.so.3.3.0
 link path=usr/lib/$(MACH64)/libmikmod.so target=libmikmod.so.3.3.0
 link path=usr/lib/$(MACH64)/libmikmod.so.3 target=libmikmod.so.3.3.0
+file path=usr/lib/$(MACH64)/libmikmod.so.3.3.0
 file path=usr/lib/$(MACH64)/pkgconfig/libmikmod.pc
-
-file path=usr/lib/libmikmod.so.3.3.0
-link path=usr/lib/libmikmod.so target=libmikmod.so.3.3.0
-link path=usr/lib/libmikmod.so.3 target=libmikmod.so.3.3.0
-file path=usr/lib/pkgconfig/libmikmod.pc
-
 file path=usr/share/aclocal/libmikmod.m4
-
 file path=usr/share/info/mikmod.info
 file path=usr/share/man/man1/libmikmod-config.1
