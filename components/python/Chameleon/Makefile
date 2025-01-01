@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Chameleon
-HUMAN_VERSION =			4.5.4
-COMPONENT_SUMMARY =		Chameleon - Fast HTML/XML Template Compiler.
+HUMAN_VERSION =			4.6.0
+COMPONENT_SUMMARY =		Fast HTML/XML Template Compiler.
 COMPONENT_PROJECT_URL =		https://chameleon.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:42f646e1208e8cdcc106182b246adf11900e89cbe4440ba334d28c4087bb02f1
+	sha256:910cd729f6f7f38adad132ee51faa4f3ccc8344a6721aac31aa51a31f5781c1b
 COMPONENT_LICENSE =		BSD-3-Clause OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
