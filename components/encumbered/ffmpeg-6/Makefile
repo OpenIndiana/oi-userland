@@ -102,6 +102,7 @@ CONFIGURE_OPTIONS += --disable-doc
 # Install ffmpeg-6 development support into dedicated directories
 CONFIGURE_OPTIONS += --incdir=$(CONFIGURE_PREFIX)/include/ffmpeg-6
 CONFIGURE_OPTIONS += --pkgconfigdir=$(PKG_CONFIG_PATH.$(BITS))/ffmpeg-6
+
 # We do not need programs in /usr/bin.  We cannot use --disable-programs
 # configure option because testing needs the ffmpeg binary.
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR) ;
