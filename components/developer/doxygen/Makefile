@@ -27,14 +27,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			doxygen
-COMPONENT_VERSION=		1.12.0
+COMPONENT_VERSION=		1.13.0
 COMPONENT_VERSION_=		$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=		Doxygen - Source Code Documentation Tool 
 COMPONENT_PROJECT_URL=	https://www.doxygen.nl
 COMPONENT_FILE=			Release_$(COMPONENT_VERSION_)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_FILE)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5ca35e1258020df5fe8b21c3656aed156c317def4a81b7fe52f452edc9f35768
+COMPONENT_ARCHIVE_HASH=	sha256:f447f6d3dce91e70d323611fc5e1b15dfff705093eddbe8f36f2d9b10d99743d
 COMPONENT_ARCHIVE_URL=	https://github.com/doxygen/doxygen/archive/$(COMPONENT_FILE).tar.gz
 COMPONENT_FMRI=			developer/documentation-tool/doxygen		
 COMPONENT_CLASSIFICATION= Development/Distribution Tools
@@ -43,7 +43,7 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1=	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
-COMPONENT_ARCHIVE_HASH_1=	sha256:656af62eba2104389bd2bc268c0e372baf46dbb15ca958c397e88a716c7e9400
+COMPONENT_ARCHIVE_HASH_1=	sha256:4102421d88577b825abdef7e4a84598f5d6b97fd5023e7aa50eeab74632534da
 COMPONENT_ARCHIVE_URL_1=	https://doxygen.nl/files/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -51,14 +51,17 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+
+# iconv needs XPG6
+CFLAGS += $(XPG6MODE)
 
 CMAKE_OPTIONS += -G "Unix Makefiles"
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 
 ASLR_MODE= $(ASLR_ENABLE)
 
-# Test 12 is a known failure (we don't have bibtex in Solaris).
+# Test 12 is a known failure (we don't have bibtex in OpenIndiana).
 COMPONENT_TEST_ENV=		PATH="$(PROTO_DIR)/usr/bin:$(PATH)"
 COMPONENT_TEST_DIR=		$(BUILD_DIR_64)/testing
 COMPONENT_TEST_TARGETS=	tests
@@ -71,8 +74,8 @@ install:	$(INSTALL_64)
 	$(INSTALL) -d $(PROTOUSRSHAREMAN1DIR)
 	$(INSTALL) -vm644 $(SOURCE_DIR)/doc/*.1 $(PROTOUSRSHAREMAN1DIR)
 
-# Build dependencies
-REQUIRED_PACKAGES+= developer/lexer/flex
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/lexer/flex
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
