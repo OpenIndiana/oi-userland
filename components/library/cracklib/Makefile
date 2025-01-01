@@ -12,17 +12,16 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cracklib
-COMPONENT_VERSION=	2.10.2
+COMPONENT_VERSION=	2.10.3
 COMPONENT_SUMMARY=	CrackLib Library and Dictionaries
 COMPONENT_PROJECT_URL=	https://github.com/cracklib/cracklib
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:e157c78e6f26a97d05e04b6fe9ced468e91fa015cc2b2b7584889d667a958887
+COMPONENT_ARCHIVE_HASH= sha256:f3dcb54725d5604523f54a137b378c0427c1a0be3e91cfb8650281a485d10dae
 COMPONENT_ARCHIVE_URL=	https://github.com/cracklib/cracklib/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/security/cracklib
 COMPONENT_CLASSIFICATION=	System/Libraries
