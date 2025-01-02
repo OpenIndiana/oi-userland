@@ -1,46 +1,112 @@
-test 010_require_cert              	ok
-test 011_verify_peer               	ok
-test 012_verify_chain              	ok
-test 013_CRL_file                  	ok
-test 014_PSK_secrets               	ok
-test 015_p12_cert                  	ok
-test 020_IPv6                      	ok
-test 021_FIPS                      	skipped
-test 022_bind                      	ok
-test 028_redirect_chain            	ok
-test 029_no_redirect_chain         	ok
-test 030_simple_execute            	ok
-test 031_redirect                  	ok
-test 032_no_redirect               	ok
-test 033_redirect_exec             	ok
-test 034_no_redirect_exec          	ok
-test 035_SNI                       	ok
-test 036_no_SNI                    	ok
-test 037_failover_prio1            	ok
-test 038_failover_prio2            	ok
-test 039_failover_rr               	ok
-test 040_reload                    	ok
-test 041_exec_connect              	ok
-test 042_inetd                     	ok
-test 043_session_delay             	ok
-test 044_session_nodelay           	ok
-test 045_include                   	ok
-test 046_resume_PSK                	ok
-test 047_resume_redirect           	ok
-test 048_resume_noredirect         	ok
-test 049_redirect_nocert           	ok
-test 050_ticket_secrets            	ok
-test 051_resume_cache_old          	skipped
-test 052_resume_cache              	ok
-test 053_resume_ticket             	ok
-test 054_resume_TLSv1_3            	ok
-test 055_socket_close              	ok
-test 110_failure_require_cert      	ok
-test 111_failure_verify_peer       	ok
-test 112_failure_verify_chain      	ok
-test 113_failure_CRL_file          	ok
-test 114_failure_PSK_secrets       	ok
-test 115_failure_wrong_config      	ok
-test 121_failure_FIPS_ciphers      	skipped
-test 122_failure_FIPS_curves       	skipped
-summary: success 41, skip 4, fail 0
+011. Test "cert" option
+...................................................................... succeeded
+012. Test no "cert" option
+...................................................................... succeeded
+021. Test "requireCert" option
+...................................................................... succeeded
+022. Failure test "requireCert" option
+...................................................................... succeeded
+031. Test "verifyPeer" option
+...................................................................... succeeded
+032. Failure test "verifyPeer" option
+...................................................................... succeeded
+041. Test "verifyChain" option
+...................................................................... succeeded
+042. Failure test "verifyChain" option
+...................................................................... succeeded
+051. CRL file with valid certificate
+...................................................................... succeeded
+052. CRL file with revoked certificate
+...................................................................... succeeded
+061. Test "PSKsecrets" option
+...................................................................... succeeded
+062. Failure test "PSKsecrets" option
+...................................................................... succeeded
+071. Test PKCS#12 certificate
+...................................................................... succeeded
+081. Test IPv6 support
+...................................................................... succeeded
+091. Binding server
+...................................................................... succeeded
+101. Test FIPS mode
+...................................................................... skipped
+111. Failure FIPS mode with unavailable cipher
+...................................................................... skipped
+112. Failure FIPS mode with unavailable ciphersuite
+...................................................................... skipped
+113. Failure FIPS mode with unavailable elliptic curve
+...................................................................... skipped
+121. Test "sni" option
+...................................................................... succeeded
+122. Failure test "sni" option
+...................................................................... succeeded
+131. Resume session with PSK authentication
+...................................................................... succeeded
+132. Cache session resumption with TLSv1.2
+...................................................................... succeeded
+133. Test enabled "sessionResume" option
+...................................................................... succeeded
+134. Test disabled "sessionResume" option
+...................................................................... succeeded
+141. Stateless session ticket resumption with TLSv1.2
+...................................................................... succeeded
+142. Stateless session ticket resumption with TLSv1.3
+...................................................................... succeeded
+151. Session resumption with secret keys
+...................................................................... succeeded
+161. Redirect connection (wrong peer certificate)
+...................................................................... succeeded
+162. Redirect connection (no peer certificate)
+...................................................................... succeeded
+163. Not redirected connection (valid peer certificate)
+...................................................................... succeeded
+164. Redirect connection (wrong chain)
+...................................................................... succeeded
+165. Redirect connection (no chain)
+...................................................................... succeeded
+166. Not redirected connection (valid chain)
+...................................................................... succeeded
+171. Redirect proxy connection (wrong peer certificate)
+...................................................................... succeeded
+172. Redirect proxy connection (no peer certificate)
+...................................................................... succeeded
+173. Not redirected proxy connection (valid peer certificate)
+...................................................................... succeeded
+181. Session resumption and redirect (wrong certificate)
+...................................................................... succeeded
+182. Session resumption and redirect (no certificate)
+...................................................................... succeeded
+183. Session resumption and no redirect (valid certificate)
+...................................................................... succeeded
+191. Reload configuration
+...................................................................... succeeded
+201. Failover round robin (rr) strategy
+...................................................................... succeeded
+202. Failover priority (prio) strategy
+...................................................................... succeeded
+211. Included configuration files
+...................................................................... succeeded
+221. Client inetd mode
+...................................................................... succeeded
+231. Test exec+connect service
+...................................................................... succeeded
+241. Resume session with delay option
+...................................................................... succeeded
+242. Resume session with disable delay option
+...................................................................... succeeded
+251. Wrong client configuration
+...................................................................... succeeded
+261. Wrong server configuration
+...................................................................... succeeded
+271. Test OCSP stapling
+...................................................................... succeeded
+272. Test OCSP client-driven
+...................................................................... succeeded
+273. Failure test OCSP stapling
+...................................................................... succeeded
+274. Failure test OCSP client-driven
+...................................................................... succeeded
+Summary:
+	succeeded: 50
+	failed: 0
+	skipped: 4
