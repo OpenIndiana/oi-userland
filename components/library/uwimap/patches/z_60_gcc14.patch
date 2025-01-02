@@ -1,0 +1,59 @@
+
+this is to fix the following error, caused by the next patch in: os_soln.h
+
+/usr/gcc/14/bin/gcc -fPIC -DPIC -D_REENTRANT `cat CFLAGS` `cat OSCFLAGS` -c osdep.c
+In file included from osdep.c:31:
+osdep.h:70:19: error: conflicting types for 'Alphasort'; have 'int(void *, void *)'
+   70 | #define alphasort Alphasort
+      |                   ^~~~~~~~~
+scandir.c:77:5: note: in expansion of macro 'alphasort'
+   77 | int alphasort (void *d1,void *d2)
+      |     ^~~~~~~~~
+osdep.h:70:19: note: previous declaration of 'Alphasort' with type 'int(const void *, const void *)'
+   70 | #define alphasort Alphasort
+      |                   ^~~~~~~~~
+osdep.h:83:5: note: in expansion of macro 'alphasort'
+   83 | int alphasort (const void *d1,const void *d2);
+      |     ^~~~~~~~~
+
+
+--- imap-2007f/src/osdep/unix/scandir.c.orig	2011-07-23 03:20:09.000000000 +0300
++++ imap-2007f/src/osdep/unix/scandir.c	2025-01-02 14:26:18.314225146 +0200
+@@ -74,7 +74,7 @@
+  * Returns: negative if d1 < d2, 0 if d1 == d2, postive if d1 > d2
+  */
+ 
+-int alphasort (void *d1,void *d2)
++int alphasort (const void *d1,const void *d2)
+ {
+   return strcmp ((*(struct direct **) d1)->d_name,
+ 		 (*(struct direct **) d2)->d_name);
+
+this is the initial error caused by using gcc14:
+
+/usr/gcc/14/bin/gcc -fPIC -DPIC -D_REENTRANT `cat CFLAGS` `cat OSCFLAGS` -c osdep.c
+In file included from osdep.c:31:
+osdep.h:70:19: error: conflicting types for 'Alphasort'; have 'int(const void *, const void *)'
+   70 | #define alphasort Alphasort
+      |                   ^~~~~~~~~
+scandir.c:77:5: note: in expansion of macro 'alphasort'
+   77 | int alphasort (const void *d1,const void *d2)
+      |     ^~~~~~~~~
+osdep.h:70:19: note: previous declaration of 'Alphasort' with type 'int(void *, void *)'
+   70 | #define alphasort Alphasort
+      |                   ^~~~~~~~~
+osdep.h:83:5: note: in expansion of macro 'alphasort'
+   83 | int alphasort (void *d1,void *d2);
+      |     ^~~~~~~~~
+
+--- imap-2007f/src/osdep/unix/os_soln.h.orig	2025-01-02 14:42:48.161310774 +0200
++++ imap-2007f/src/osdep/unix/os_soln.h	2025-01-02 14:21:30.234870676 +0200
+@@ -80,7 +80,7 @@
+ typedef int (*compar_t) (const void *d1,const void *d2);
+ int scandir (char *dirname,struct direct ***namelist,select_t select,
+ 	     compar_t compar);
+-int alphasort (void *d1,void *d2);
++int alphasort (const void *d1,const void *d2);
+ 
+ 
+ #include "env_unix.h"
