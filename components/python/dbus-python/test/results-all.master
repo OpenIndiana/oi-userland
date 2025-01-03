@@ -1,1 +1,71 @@
-============================== 38 passed
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
+rootdir: $(@D)
+configfile: pyproject.toml
+collecting ... collected 89 items / 51 deselected / 38 selected
+
+test/test-exception-py3.py::DBusExceptionTestCase::test_dbus_exception PASSED
+test/test-exception-py3.py::DBusExceptionTestCase::test_subclass_exception PASSED
+test/test-standalone.py::TestTypes::test_Array PASSED
+test/test-standalone.py::TestTypes::test_Byte PASSED
+test/test-standalone.py::TestTypes::test_ByteArray PASSED
+test/test-standalone.py::TestTypes::test_Dictionary PASSED
+test/test-standalone.py::TestTypes::test_Double PASSED
+test/test-standalone.py::TestTypes::test_Signature PASSED
+test/test-standalone.py::TestTypes::test_Struct PASSED
+test/test-standalone.py::TestTypes::test_boolean PASSED
+test/test-standalone.py::TestTypes::test_integer_limits_16 PASSED
+test/test-standalone.py::TestTypes::test_integer_limits_32 PASSED
+test/test-standalone.py::TestTypes::test_integer_limits_64 PASSED
+test/test-standalone.py::TestTypes::test_integers PASSED
+test/test-standalone.py::TestTypes::test_object_path PASSED
+test/test-standalone.py::TestTypes::test_object_path_attr PASSED
+test/test-standalone.py::TestTypes::test_string PASSED
+test/test-standalone.py::TestMessageMarshalling::test_append PASSED
+test/test-standalone.py::TestMessageMarshalling::test_append_Byte PASSED
+test/test-standalone.py::TestMessageMarshalling::test_append_ByteArray PASSED
+test/test-standalone.py::TestMessageMarshalling::test_append_Variant PASSED
+test/test-standalone.py::TestMessageMarshalling::test_count PASSED
+test/test-standalone.py::TestMessageMarshalling::test_destination PASSED
+test/test-standalone.py::TestMessageMarshalling::test_get_args_options PASSED
+test/test-standalone.py::TestMessageMarshalling::test_guess_signature PASSED
+test/test-standalone.py::TestMessageMarshalling::test_guess_signature_dbus_types PASSED
+test/test-standalone.py::TestMessageMarshalling::test_guess_signature_python_ints PASSED
+test/test-standalone.py::TestMessageMarshalling::test_interface PASSED
+test/test-standalone.py::TestMessageMarshalling::test_member PASSED
+test/test-standalone.py::TestMessageMarshalling::test_object_path_attr PASSED
+test/test-standalone.py::TestMessageMarshalling::test_path PASSED
+test/test-standalone.py::TestMessageMarshalling::test_sender PASSED
+test/test-standalone.py::TestMessageMarshalling::test_struct PASSED
+test/test-standalone.py::TestMessageMarshalling::test_unix_fd PASSED
+test/test-standalone.py::TestMessageMarshalling::test_utf8 PASSED
+test/test-standalone.py::TestMatching::test_object_path_no_match PASSED
+test/test-standalone.py::TestMatching::test_string_match PASSED
+test/test-standalone.py::TestVersion::test_version PASSED
+
+=============================== warnings summary ===============================
+test/test-client.py:38
+  $(@D)/test/test-client.py:38: DeprecationWarning: Importing dbus.glib to use the GLib main loop with dbus-python is deprecated.
+  Instead, use this sequence:
+  
+      from dbus.mainloop.glib import DBusGMainLoop
+  
+      DBusGMainLoop(set_as_default=True)
+  
+    import dbus.glib
+
+test/test-service.py:116
+  $(@D)/test/test-service.py:116: DeprecationWarning: dbus.service.signal::path_keyword has been deprecated since dbus-python 0.82.0, and will not work on objects that support multiple object paths
+    @dbus.service.signal(IFACE, signature='ss', path_keyword='path')
+
+test/test-service.py:87
+  $(@D)/test/test-service.py:87: PytestCollectionWarning: cannot collect test class 'TestGObject' because it has a __init__ constructor (from: test/test-service.py)
+    class TestGObject(ExportedGObject):
+
+test/test-service.py:142
+  $(@D)/test/test-service.py:142: PytestCollectionWarning: cannot collect test class 'TestObject' because it has a __init__ constructor (from: test/test-service.py)
+    class TestObject(dbus.service.Object, TestInterface):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 38 passed, 51 deselected, 4 warnings ========
