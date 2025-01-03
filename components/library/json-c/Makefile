@@ -11,13 +11,15 @@
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2022 Niklas Poslovski
+# Copyright 2025 Klaus Ziegler
 #
-BUILD_BITS= 64
+BUILD_BITS= 64_and_32
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		json-c
 COMPONENT_VERSION=	0.17
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A JSON implementation in C
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -30,6 +32,8 @@ COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_FMRI.json-c-32= $(COMPONENT_FMRI)/32
 
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DBUILD_STATIC_LIBS:BOOL=OFF
