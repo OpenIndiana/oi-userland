@@ -1,0 +1,18 @@
+--- ntpsec-1.2.3/libntp/clockwork.c	2025-01-02 19:43:23.169693700 +0100
++++ ntpsec-1.2.3/libntp/clockwork.c.new	2025-01-02 19:46:37.056896596 +0100
+@@ -68,6 +68,7 @@
+ #endif
+ 		ntx->offset /= 1000;
+ 
++#ifdef STA_NANO
+ #ifdef MOD_TAI
+ 	if (!(ntx->modes & MOD_TAI))
+ #endif
+@@ -80,6 +81,7 @@
+ 			ntx->constant = 0;
+ 		}
+ 	}
++#endif
+ 
+ 
+ 	int errval = ntp_adjtime(ntx);
