@@ -13,39 +13,40 @@
 # Copyright 2022 OmniOS Community Edition (OmniOSce) Association.
 #
 
+BUILD_STYLE = justmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		uefi-edk2
 COMPONENT_VERSION=	20230801
-#COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		system/bhyve/firmware
 COMPONENT_CLASSIFICATION=System/Core
-COMPONENT_SUMMARY=	UEFI-EDK2(+CSM) firmware for bhyve
+COMPONENT_SUMMARY=	UEFI-EDK2 firmware for bhyve
 
-COMPONENT_TAG=		il-udk2014.sp1-3
+COMPONENT_TAG=		il-edk2-stable202308-1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_TAG).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:998236765edaa683afc9a4799d40992c92d7ed543abf3fd28a3bc8b40aa2bc3d
+	sha256:8aaacf4b7c6a875c78492ad74856802abcbce89ee8cf980efbd12c74946b3b79
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/illumos/$(COMPONENT_NAME)/releases/download/$(COMPONENT_TAG)/$(COMPONENT_ARCHIVE)
-
-COMPONENT_TAG_1=	il-edk2-stable202308-1
-COMPONENT_SRC_1=	$(COMPONENT_NAME)-$(COMPONENT_TAG_1)
-COMPONENT_ARCHIVE_1=	$(COMPONENT_NAME)-$(COMPONENT_TAG_1).tar.xz
-COMPONENT_ARCHIVE_HASH_1= \
-	sha256:8aaacf4b7c6a875c78492ad74856802abcbce89ee8cf980efbd12c74946b3b79
-COMPONENT_ARCHIVE_URL_1= \
-	https://github.com/illumos/$(COMPONENT_NAME)/releases/download/$(COMPONENT_TAG_1)/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_PROJECT_URL=	https://github.com/illumos/uefi-edk2
 COMPONENT_LICENSE=	simplified-BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
 
-ENV = /usr/bin/env -i
+# Two variants of the bhyve firmware are built;
+# DEBUG and RELEASE
+VARIANTS =	DEBUG RELEASE
+
+# Custom BUILD_*, and INSTALL_*, variables needs to be defined before the
+# common.mk include.
+BUILD_64 =	$(VARIANTS:%=$(BUILD_DIR)/%/.built)
+INSTALL_64 =	$(VARIANTS:%=$(BUILD_DIR)/%/.installed)
+
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV = PATH=$(PATH.illumos)
 COMPONENT_BUILD_ENV += GMAKE=/usr/bin/gmake
@@ -54,39 +55,20 @@ COMPONENT_BUILD_ENV += GAR=/usr/bin/gar
 COMPONENT_BUILD_ENV += GLD=/usr/bin/gld
 COMPONENT_BUILD_ENV += GOBJCOPY=/usr/bin/gobjcopy
 
-# Four variants of the bhyve firmware are built;
-# DEBUG and RELEASE, and with and without CSM.
-VARIANTS =	DEBUG DEBUG.csm RELEASE RELEASE.csm
-
-BUILD_64 =	$(VARIANTS:%=$(BUILD_DIR)/%/.built)
-INSTALL_64 =	$(VARIANTS:%=$(BUILD_DIR)/%/.installed)
-
 COMPONENT_BUILD_ACTION = \
 	cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) \
 	./build $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS)
 
-$(BUILD_DIR)/RELEASE/.built: SOURCE_DIR = $(SOURCE_DIR_1)
 $(BUILD_DIR)/RELEASE/.built: COMPONENT_BUILD_ENV += GCCPATH=$(GCC_ROOT)
 $(BUILD_DIR)/RELEASE/.built: COMPONENT_BUILD_ARGS =
 $(BUILD_DIR)/RELEASE/.built: COMPONENT_BUILD_TARGETS = RELEASE
 
-$(BUILD_DIR)/DEBUG/.built: SOURCE_DIR = $(SOURCE_DIR_1)
 $(BUILD_DIR)/DEBUG/.built: COMPONENT_BUILD_ENV += GCCPATH=$(GCC_ROOT)
 $(BUILD_DIR)/DEBUG/.built: COMPONENT_BUILD_ARGS =
 $(BUILD_DIR)/DEBUG/.built: COMPONENT_BUILD_TARGETS = DEBUG
 
-$(BUILD_DIR)/RELEASE.csm/.built: COMPONENT_BUILD_ENV += GCCPATH=/opt/gcc/4.4.4
-$(BUILD_DIR)/RELEASE.csm/.built: COMPONENT_BUILD_ENV += PYTHON=/usr/bin/amd64/python2.7
-$(BUILD_DIR)/RELEASE.csm/.built: COMPONENT_BUILD_ARGS = -csm
-$(BUILD_DIR)/RELEASE.csm/.built: COMPONENT_BUILD_TARGETS = RELEASE
-
-$(BUILD_DIR)/DEBUG.csm/.built: COMPONENT_BUILD_ENV += GCCPATH=/opt/gcc/4.4.4
-$(BUILD_DIR)/DEBUG.csm/.built: COMPONENT_BUILD_ENV += PYTHON=/usr/bin/amd64/python2.7
-$(BUILD_DIR)/DEBUG.csm/.built: COMPONENT_BUILD_ARGS = -csm
-$(BUILD_DIR)/DEBUG.csm/.built: COMPONENT_BUILD_TARGETS = DEBUG
-
 COMPONENT_PRE_INSTALL_ACTION = \
-	$(MKDIR) -p $(PROTO_DIR)/usr/share/bhyve/firmware
+	$(MKDIR) $(PROTO_DIR)/usr/share/bhyve/firmware
 
 COMPONENT_INSTALL_ACTION = \
 	cd $(@D); \
@@ -96,10 +78,6 @@ COMPONENT_INSTALL_ACTION = \
 $(BUILD_DIR)/DEBUG/.installed: COMPONENT_INSTALL_SOURCE = BHYVE_CODE.fd
 $(BUILD_DIR)/DEBUG/.installed: COMPONENT_INSTALL_TARGETS = DEBUG
 $(BUILD_DIR)/DEBUG/.installed: COMPONENT_INSTALL_FILE = BHYVE_DEBUG.fd
-
-$(BUILD_DIR)/DEBUG.csm/.installed: COMPONENT_INSTALL_SOURCE = BHYVE.fd
-$(BUILD_DIR)/DEBUG.csm/.installed: COMPONENT_INSTALL_TARGETS = DEBUG
-$(BUILD_DIR)/DEBUG.csm/.installed: COMPONENT_INSTALL_FILE = BHYVE_DEBUG_CSM.fd
 
 $(BUILD_DIR)/RELEASE/.installed: COMPONENT_INSTALL_SOURCE = BHYVE_CODE.fd
 $(BUILD_DIR)/RELEASE/.installed: COMPONENT_INSTALL_TARGETS = RELEASE
@@ -111,22 +89,7 @@ $(BUILD_DIR)/RELEASE/.installed: \
 	    $(CP) $(@D)/Build/BhyveX64/$(COMPONENT_INSTALL_TARGETS)_ILLGCC/FV/BHYVE_VARS.fd \
 		$(PROTO_DIR)/usr/share/bhyve/firmware/BHYVE_VARS.fd
 
-$(BUILD_DIR)/RELEASE.csm/.installed: COMPONENT_INSTALL_SOURCE = BHYVE.fd
-$(BUILD_DIR)/RELEASE.csm/.installed: COMPONENT_INSTALL_TARGETS = RELEASE
-$(BUILD_DIR)/RELEASE.csm/.installed: COMPONENT_INSTALL_FILE = BHYVE_RELEASE_CSM.fd
-$(BUILD_DIR)/RELEASE.csm/.installed: \
-	COMPONENT_POST_INSTALL_ACTION = $(LN) -s $(COMPONENT_INSTALL_FILE) \
-	$(PROTO_DIR)/usr/share/bhyve/firmware/BHYVE_CSM.fd
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
 # Build dependencies
 REQUIRED_PACKAGES += developer/acpi
-REQUIRED_PACKAGES += developer/illumos-gcc
-REQUIRED_PACKAGES += runtime/python-27
 
 # Auto-generated dependencies
