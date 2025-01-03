@@ -11,15 +11,17 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2025 Klaus Ziegler
 #
 
+BUILD_BITS= 64_and_32
 USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fontconfig
 COMPONENT_VERSION=	2.15.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Fontconfig - Font configuration and customization library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -32,6 +34,8 @@ COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_FMRI.fontconfig-32= $(COMPONENT_FMRI)/32
 
 # Make gcc 14 accept the old code.
 CFLAGS += -Wno-error=incompatible-pointer-types
@@ -66,10 +70,13 @@ install:	$(INSTALL_64) $(BUILD_DIR)/.fonts_installed
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/gperf
+REQUIRED_PACKAGES += library/json-c/32
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/expat/32
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/freetype-2/32
