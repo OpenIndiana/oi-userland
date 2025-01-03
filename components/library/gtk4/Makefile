@@ -19,10 +19,10 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gtk
-HUMAN_VERSION =			4.16.7
+HUMAN_VERSION =			4.16.12
 COMPONENT_SUMMARY =		The GTK toolkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5303c7624e15a48880591b9ddd43389afba3de4fb92a219719519bb1642ce3dc
+	sha256:ef31bdbd6f082c4401634a20c850b0050c9bf252ef1e079764ee95a2a0c4c95a
 COMPONENT_PROJECT_URL =		https://www.gtk.org/
 COMPONENT_FMRI =		library/desktop/gtk4
 COMPONENT_CLASSIFICATION =	Desktop (GNOME)/Libraries
@@ -35,7 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 # GNU msgfmt is needed
 PATH=$(PATH.gnu)
 
-#needed to produce /usr/lib/amd64/girepository-1.0 files
+# needed to produce /usr/lib/amd64/girepository-1.0 files
 CONFIGURE_OPTIONS += -Dintrospection=enabled
 
 CONFIGURE_OPTIONS += -Dman-pages=true
