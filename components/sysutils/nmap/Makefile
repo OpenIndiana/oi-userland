@@ -23,14 +23,13 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2016 Jim Klimov
 # Copyright 2022 Nona Hansel
+# Copyright 2025 Klaus Ziegler
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		nmap
-COMPONENT_VERSION=		7.80
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=		7.95
 COMPONENT_PROJECT_URL=	http://nmap.org/
 COMPONENT_FMRI=			diagnostic/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
@@ -52,19 +51,20 @@ PKG_OPTIONS +=	-D COMPONENT_DESCRIPTION="$(COMPONENT_DESCRIPTION)"
 
 COMPONENT_PREP_ACTION = (cd $(@D)/libdnet-stripped && autoconf)
 
-COMPONENT_PRE_CONFIGURE_ACTION = $(CP) -rp $(SOURCE_DIR)/. $(@D)
+CLONEY_MODE = copy
 
-CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS  +=   CPPFLAGS="-I$(USRINCDIR)/pcre"
+# otherwise it picks up the 32 bit library instead
+CONFIGURE_OPTIONS  +=   LDFLAGS="-L$(OPENSSL_LIBDIR)"
 CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
 CONFIGURE_OPTIONS  +=   --srcdir=$(BUILD_DIR_$(BITS))
 CONFIGURE_OPTIONS  +=   --localstatedir=/var
 CONFIGURE_OPTIONS  +=   --without-localdirs
 CONFIGURE_OPTIONS  +=   --without-ndiff
 CONFIGURE_OPTIONS  +=   --without-zenmap
-CONFIGURE_OPTIONS  +=   --with-openssl
+CONFIGURE_OPTIONS  +=   --with-openssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS  +=   --with-libpcap
-CONFIGURE_OPTIONS  +=   --with-libpcre
-CONFIGURE_OPTIONS  +=   --with-liblua
+CONFIGURE_OPTIONS  +=   --with-libpcre=$(USRDIR)
 CONFIGURE_OPTIONS  +=   --with-ncat
 
 TEST_TARGET= $(NO_TESTS)
@@ -72,11 +72,11 @@ TEST_TARGET= $(NO_TESTS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/libssh2
-REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/lua-53
+REQUIRED_PACKAGES += runtime/lua-54
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
