@@ -17,17 +17,15 @@
 # See https://github.com/yo8192/fcron and http://fcron.free.fr/
 #
 
-BUILD_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           fcron
-COMPONENT_VERSION=        3.3.1
+COMPONENT_VERSION=        3.3.2
 COMPONENT_SUMMARY=        Frequency Cron
 COMPONENT_PROJECT_URL=    http://fcron.free.fr
 COMPONENT_SRC=		  fcron-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	  $(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	  sha256:f359daa08a63ddfb7fe2f964bb3f5c52244c25aa36f9225a3cc54d36f4681106
+COMPONENT_ARCHIVE_HASH=	  sha256:0d25586c5a5875b2bd853a7d57a7a01938e3b1ac5a68ae52525b66b302ca196e
 COMPONENT_ARCHIVE_URL=	  http://fcron.free.fr/archives/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           sysutils/fcron
 COMPONENT_CLASSIFICATION= System/Administration and Configuration
@@ -36,10 +34,15 @@ COMPONENT_LICENSE=        GPLv2
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+CFLAGS += $(XPG6MODE)
+# gcc 14 complains about this
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=int-conversion
+
 # a modified copy of the sysVinit-launcher script
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --with-cflags="$(CFLAGS)"
 CONFIGURE_OPTIONS += --with-spooldir=/var/spool/fcron
 CONFIGURE_OPTIONS += --with-piddir=/var/run
 CONFIGURE_OPTIONS += --with-fifodir=/var/run
@@ -59,10 +62,11 @@ CONFIGURE_OPTIONS += --with-pam=no
 
 COMPONENT_INSTALL_TARGETS=install-staged
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += editor/vim
 REQUIRED_PACKAGES += service/network/smtp/sendmail
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
