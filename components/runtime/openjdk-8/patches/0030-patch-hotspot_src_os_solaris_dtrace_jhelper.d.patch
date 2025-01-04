@@ -2,7 +2,7 @@ $NetBSD: patch-hotspot_src_os_solaris_dtrace_jhelper.d,v 1.1 2015/07/03 20:40:59
 
 GCC support.
 
---- hotspot/src/os/solaris/dtrace/jhelper.d.orig	2015-06-10 10:31:52.000000000 +0000
+--- hotspot/src/os/solaris/dtrace/jhelper.d.orig
 +++ hotspot/src/os/solaris/dtrace/jhelper.d
 @@ -43,12 +43,33 @@
  
@@ -44,7 +44,7 @@ GCC support.
  
  #define copyin_ptr(ADDR)    *(pointer*)  copyin((pointer) (ADDR), sizeof(pointer))
  #define copyin_uchar(ADDR)  *(uchar_t*)  copyin((pointer) (ADDR), sizeof(uchar_t))
-@@ -152,7 +173,7 @@ dtrace:helper:ustack:
+@@ -152,7 +173,7 @@
  #error "Don't know architecture"
  #endif
  
@@ -53,7 +53,7 @@ GCC support.
  
    this->CodeCache_low = copyin_ptr(this->CodeCache_heap_address + 
        OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_low);
-@@ -169,12 +190,12 @@ dtrace:helper:ustack:
+@@ -169,12 +190,12 @@
    this->CodeHeap_log2_segment_size = copyin_uint32(
        this->CodeCache_heap_address + OFFSET_CodeHeap_log2_segment_size);
  
@@ -68,7 +68,7 @@ GCC support.
    this->heap_start = copyin_ptr(this->Universe_collectedHeap +
        OFFSET_CollectedHeap_reserved +
        OFFSET_MemRegion_start);
-@@ -275,8 +296,8 @@ dtrace:helper:ustack:
+@@ -275,8 +296,8 @@
    this->start = this->block + SIZE_HeapBlockHeader;
    this->vtbl = copyin_ptr(this->start);
  
