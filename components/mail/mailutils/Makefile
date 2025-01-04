@@ -26,12 +26,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mailutils
-COMPONENT_VERSION=	3.17
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	3.18
 COMPONENT_SUMMARY=	GNU-mailutils provides IMAP4D LMTPD MDA POP3D servers and various mail programs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:fa49bacec37566fe52f88221d3871673a633aeee0cd923cc3a8e65bbef2b84e9
+COMPONENT_ARCHIVE_HASH=	sha256:559049c8d8516041528a906c139d9bb7a62f1d05d7e5617fa8fe0f231a131577
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://mailutils.org/
 COMPONENT_FMRI=		mail/mailutils
@@ -41,6 +40,10 @@ COMPONENT_LICENSE=	GPLv3,LGPLv3
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
+
+CFLAGS += $(XPG6MODE)
+# gcc 14 complains about this
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_ENV += PYTHON_CONFIG=/usr/bin/python3.9-config
 
