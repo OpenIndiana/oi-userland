@@ -823,11 +823,24 @@ PYTHON_SCRIPTS_PROCESS= \
 # and re-add $(PYTHON_SCRIPTS_PROCESS)
 COMPONENT_POST_INSTALL_ACTION += $(PYTHON_SCRIPTS_PROCESS)
 
-JAVA8_HOME =	/usr/jdk/openjdk1.8.0
+
+# JAVA_DEFAULT should be always set to a LTS version
+JAVA_DEFAULT = 17
+JAVA_VERSION ?= $(JAVA_DEFAULT)
+JAVA_HOME = /usr/jdk/openjdk$(JAVA_VERSION)
+PATH.prepend += $(JAVA_HOME)/bin
+
+# JAVA8_HOME and JAVA11_HOME are kept for backward compatibility and should be
+# removed once they are no longer used.
+#
+# Components should set JAVA_VERSION and use JAVA_HOME instead.
+JAVA8_HOME =	/usr/jdk/openjdk8
 JAVA11_HOME =	/usr/jdk/openjdk11
-JAVA17_HOME =	/usr/jdk/openjdk17
-JAVA21_HOME =	/usr/jdk/openjdk21
-JAVA_HOME = $(JAVA17_HOME)
+
+# If a component asked for non-default java version we need to make sure it is
+# installed
+USERLAND_REQUIRED_PACKAGES += $(if $(filter-out $(JAVA_DEFAULT),$(JAVA_VERSION)),runtime/java/openjdk$(JAVA_VERSION))
+
 
 # QT macros
 # We deliver version 5 in 32- and 64-bit variants.
