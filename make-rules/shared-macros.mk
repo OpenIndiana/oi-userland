@@ -742,6 +742,7 @@ FC =		$(FC.$(COMPILER).$(BITS))
 # +--------------+----------------+
 # |     2.3      |   2019-03-31   |
 # |     3.2      |   2026-03-31   |
+# |     3.4      |   TBD          |
 # +--------------+----------------+
 #
 # See https://www.ruby-lang.org/en/downloads/branches/
@@ -752,11 +753,9 @@ RUBY_VERSION = 3.2
 RUBY_LIB_VERSION.2.3 = 2.3.0
 RUBY_LIB_VERSION.3.2 = 3.2.0
 
-RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
-RUBY.3.2 =	/usr/ruby/3.2/bin/ruby
-
-RUBY =          $(RUBY.$(RUBY_VERSION))
+RUBY =		/usr/ruby/$(RUBY_VERSION)/bin/ruby
 RUBY_LIB_VERSION = $(RUBY_LIB_VERSION.$(RUBY_VERSION))
+PATH.prepend += /usr/ruby/$(RUBY_VERSION)/bin
 
 # Transform Ruby scripts to call the supported
 # version-specific ruby; used in multiple *.mk files
