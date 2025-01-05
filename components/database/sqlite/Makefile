@@ -23,16 +23,17 @@
 #
 
 BUILD_BITS= 64_and_32
+ENV=/usr/bin/env
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.46.1
-TARBALL_VERSION=		3460100
+COMPONENT_VERSION=      3.47.2
+TARBALL_VERSION=		3470200
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:def3fc292eb9ecc444f6c1950e5c79d8462ed5e7b3d605fd6152d145e1d5abb4
+COMPONENT_ARCHIVE_HASH= sha256:e6a471f1238225f34c2c48c5601b54024cc538044368230f59ff0672be1fc623
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2024/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         database/sqlite-3
@@ -72,12 +73,10 @@ CONFIGURE_OPTIONS		+= --enable-readline
 CONFIGURE_OPTIONS		+= --enable-fts3
 CONFIGURE_OPTIONS		+= --enable-fts4
 CONFIGURE_OPTIONS		+= --enable-fts5
-CONFIGURE_OPTIONS		+= --enable-json1
 CONFIGURE_OPTIONS		+= --enable-update-limit
 CONFIGURE_OPTIONS		+= --enable-rtree
 CONFIGURE_OPTIONS		+= --enable-threadsafe 
 CONFIGURE_OPTIONS		+= --enable-shared
-CONFIGURE_OPTIONS		+= --enable-dynamic-extensions
 
 CONFIGURE_ENV.64 += TCLLIBDIR=$(USRLIBDIR)/tcl8.6/sqlite3/$(MACH64)
 
@@ -86,7 +85,10 @@ COMPONENT_BUILD_ENV += PATH=$(PATH)
 COMPONENT_INSTALL_ENV += PATH=$(PATH)
 
 # Install sqlite3(1) man page
-COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/
+COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/ ;
+
+# Move tcl components to expected location
+COMPONENT_POST_INSTALL_ACTION.64 += $(MKDIR) $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/amd64 ; /usr/bin/mv $(PROTOUSRLIBDIR.64)/sqlite$(COMPONENT_VERSION)/* $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/amd64/ ;
 
 COMPONENT_TEST_TARGETS= test
 
