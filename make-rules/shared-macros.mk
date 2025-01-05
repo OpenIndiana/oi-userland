@@ -823,8 +823,8 @@ PYTHON_SCRIPTS_PROCESS= \
 COMPONENT_POST_INSTALL_ACTION += $(PYTHON_SCRIPTS_PROCESS)
 
 
-# JAVA_DEFAULT should be always set to a LTS version
-JAVA_DEFAULT = 17
+# JAVA_DEFAULT should be always set to the latest LTS version
+JAVA_DEFAULT = 21
 JAVA_VERSION ?= $(JAVA_DEFAULT)
 JAVA_HOME = /usr/jdk/openjdk$(JAVA_VERSION)
 PATH.prepend += $(JAVA_HOME)/bin
