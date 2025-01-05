@@ -1,8 +1,8 @@
 The fixes here are restoring Solaris and SPARC functionality to the test
 suite. It would be nice to be complete, but that isn't true yet.
 
---- a/test/lib/jdk/test/lib/Platform.java	Wed Sep 15 21:15:33 2021
-+++ b/test/lib/jdk/test/lib/Platform.java	Tue Apr  2 11:22:50 2024
+--- jdk23u-jdk-23.0.1-ga/test/lib/jdk/test/lib/Platform.java.orig
++++ jdk23u-jdk-23.0.1-ga/test/lib/jdk/test/lib/Platform.java
 @@ -129,6 +129,10 @@
          return isOs("mac");
      }
@@ -52,8 +52,8 @@ suite. It would be nice to be complete, but that isn't true yet.
      }
  
      /**
---- a/test/lib-test/jdk/test/lib/TestMutuallyExclusivePlatformPredicates.java	Tue Jan  9 21:18:15 2024
-+++ b/test/lib-test/jdk/test/lib/TestMutuallyExclusivePlatformPredicates.java	Tue Apr  2 11:28:16 2024
+--- jdk23u-jdk-23.0.1-ga/test/lib-test/jdk/test/lib/TestMutuallyExclusivePlatformPredicates.java.orig
++++ jdk23u-jdk-23.0.1-ga/test/lib-test/jdk/test/lib/TestMutuallyExclusivePlatformPredicates.java
 @@ -45,9 +45,9 @@
   */
  public class TestMutuallyExclusivePlatformPredicates {
@@ -66,8 +66,8 @@ suite. It would be nice to be complete, but that isn't true yet.
          VM_TYPE("isClient", "isServer", "isMinimal", "isZero", "isEmbedded"),
          MODE("isInt", "isMixed", "isComp"),
          IGNORED("isEmulatedClient", "isDebugBuild", "isFastDebugBuild", "isMusl",
---- a/test/jdk/java/lang/ProcessBuilder/DestroyTest.java	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/lang/ProcessBuilder/DestroyTest.java	Tue Apr  2 12:25:30 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/java/lang/ProcessBuilder/DestroyTest.java.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/java/lang/ProcessBuilder/DestroyTest.java
 @@ -113,6 +113,7 @@
              File tempFile = File.createTempFile("ProcessTrap-", ".sh", userDir);
              if (osName.startsWith("Linux")
@@ -76,8 +76,8 @@ suite. It would be nice to be complete, but that isn't true yet.
                      || osName.equals("AIX")) {
                  return new UnixTest(tempFile);
              }
---- a/test/jdk/java/lang/RuntimeTests/exec/ExitValue.java	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/lang/RuntimeTests/exec/ExitValue.java	Tue Apr  2 12:26:47 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/java/lang/RuntimeTests/exec/ExitValue.java.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/java/lang/RuntimeTests/exec/ExitValue.java
 @@ -97,7 +97,7 @@
  
          checkPosixShellExitValue("exit 7", 7);
@@ -87,8 +87,8 @@ suite. It would be nice to be complete, but that isn't true yet.
          checkPosixShellExitValue(UnixCommands.kill() + " -9 $$", sigoffset+9);
      }
  
---- a/test/jdk/java/lang/RuntimeTests/exec/UnixCommands.java	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/lang/RuntimeTests/exec/UnixCommands.java	Tue Apr  2 12:35:44 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/java/lang/RuntimeTests/exec/UnixCommands.java.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/java/lang/RuntimeTests/exec/UnixCommands.java
 @@ -32,6 +32,7 @@
  
      public static final boolean isUnix = ! System.getProperty("os.name").startsWith("Windows");
@@ -97,8 +97,8 @@ suite. It would be nice to be complete, but that isn't true yet.
  
      private static final String[] paths = {"/bin", "/usr/bin"};
  
---- a/test/hotspot/jtreg/runtime/jni/terminatedThread/TestTerminatedThread.java	Tue Jan  9 21:18:15 2024
-+++ b/test/hotspot/jtreg/runtime/jni/terminatedThread/TestTerminatedThread.java	Tue Apr  2 13:28:55 2024
+--- jdk23u-jdk-23.0.1-ga/test/hotspot/jtreg/runtime/jni/terminatedThread/TestTerminatedThread.java.orig
++++ jdk23u-jdk-23.0.1-ga/test/hotspot/jtreg/runtime/jni/terminatedThread/TestTerminatedThread.java
 @@ -25,14 +25,17 @@
  /*
   * @test
@@ -119,8 +119,8 @@ suite. It would be nice to be complete, but that isn't true yet.
   * @run main/othervm/native TestTerminatedThread
   */
  
---- a/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Jan  9 21:18:15 2024
-+++ b/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Apr  2 13:33:53 2024
+--- jdk23u-jdk-23.0.1-ga/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java.orig
++++ jdk23u-jdk-23.0.1-ga/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java
 @@ -109,7 +109,7 @@
          // We check for that here, but allow it for Aix and Windows slowdebug builds
          // because the compiler ends up not inlining AllocateHeap.
@@ -130,8 +130,8 @@ suite. It would be nice to be complete, but that isn't true yet.
          if (!okToHaveAllocateHeap) {
              output.shouldNotContain("AllocateHeap");
          }
---- a/test/hotspot/jtreg/runtime/ReservedStack/ReservedStackTest.java	Tue Jan  9 21:18:15 2024
-+++ b/test/hotspot/jtreg/runtime/ReservedStack/ReservedStackTest.java	Thu Apr  4 10:25:01 2024
+--- jdk23u-jdk-23.0.1-ga/test/hotspot/jtreg/runtime/ReservedStack/ReservedStackTest.java.orig
++++ jdk23u-jdk-23.0.1-ga/test/hotspot/jtreg/runtime/ReservedStack/ReservedStackTest.java
 @@ -241,6 +241,7 @@
              (Platform.isLinux() &&
               (Platform.isPPC() || Platform.isS390x() || Platform.isX64() ||
@@ -140,8 +140,8 @@ suite. It would be nice to be complete, but that isn't true yet.
              Platform.isOSX();
      }
  
---- a/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh	Thu Apr  4 11:02:00 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh
 @@ -34,6 +34,10 @@
  # set platform-dependent variables
  OS=`uname -s`
@@ -153,8 +153,8 @@ suite. It would be nice to be complete, but that isn't true yet.
    Linux )
      PATHSEP=":"
      FILESEP="/"
---- a/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh	Thu Apr  4 11:02:20 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh
 @@ -50,6 +50,10 @@
  # set platform-dependent variables
  OS=`uname -s`
@@ -166,8 +166,8 @@ suite. It would be nice to be complete, but that isn't true yet.
    Linux )
      PATHSEP=":"
      FILESEP="/"
---- a/test/jdk/sun/security/krb5/runNameEquals.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/sun/security/krb5/runNameEquals.sh	Thu Apr  4 11:04:28 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/sun/security/krb5/runNameEquals.sh.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/sun/security/krb5/runNameEquals.sh
 @@ -52,7 +52,7 @@
  # set platform-dependent variables
  OS=`uname -s`
@@ -177,8 +177,8 @@ suite. It would be nice to be complete, but that isn't true yet.
      PATHSEP=":"
      FILESEP="/"
      NATIVE=true
---- a/test/jdk/sun/security/provider/PolicyFile/getinstance/getinstance.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/sun/security/provider/PolicyFile/getinstance/getinstance.sh	Thu Apr  4 11:06:23 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/sun/security/provider/PolicyFile/getinstance/getinstance.sh.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/sun/security/provider/PolicyFile/getinstance/getinstance.sh
 @@ -51,6 +51,10 @@
  # set platform-dependent variables
  OS=`uname -s`
@@ -190,8 +190,8 @@ suite. It would be nice to be complete, but that isn't true yet.
    Linux )
      PS=":"
      FS="/"
---- a/test/jdk/sun/security/ssl/SSLSocketImpl/NotifyHandshakeTest.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/sun/security/ssl/SSLSocketImpl/NotifyHandshakeTest.sh	Thu Apr  4 11:07:24 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/sun/security/ssl/SSLSocketImpl/NotifyHandshakeTest.sh.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/sun/security/ssl/SSLSocketImpl/NotifyHandshakeTest.sh
 @@ -46,7 +46,7 @@
  
  OS=`uname -s`
@@ -201,8 +201,8 @@ suite. It would be nice to be complete, but that isn't true yet.
          FILESEP="/"
          PATHSEP=":"
          ;;
---- a/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Thu Apr  4 11:29:40 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh
 @@ -57,6 +57,12 @@
  
  OS=`uname -s`
@@ -216,8 +216,8 @@ suite. It would be nice to be complete, but that isn't true yet.
    Linux )
      FS="/"
      PS=":"
---- a/test/jdk/jdk/internal/util/OSTest.java	Mon Apr  8 07:22:11 2024
-+++ b/test/jdk/jdk/internal/util/OSTest.java	Wed Jun  5 20:11:03 2024
+--- jdk23u-jdk-23.0.1-ga/test/jdk/jdk/internal/util/OSTest.java.orig
++++ jdk23u-jdk-23.0.1-ga/test/jdk/jdk/internal/util/OSTest.java
 @@ -30,6 +30,7 @@
  import static jdk.internal.util.OperatingSystem.AIX;
  import static jdk.internal.util.OperatingSystem.LINUX;

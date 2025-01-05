@@ -23,6 +23,7 @@ OPENJDK_UPDATE=	0
 OPENJDK_BUILD=	1
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
@@ -34,11 +35,15 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_LICENSE=	GPLv2 with Classpath Exception
+COMPONENT_LICENSE_FILE=	LICENSE
 
 OPENJDK_INSTANCE=	openjdk$(COMPONENT_VERSION)
 CACERTS_STORE=	cacerts.out
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Use OpenJDK 23 as the boot JDK
+JAVA_VERSION = 23
 
 PKG_MACROS  += OPENJDK_INSTANCE=$(OPENJDK_INSTANCE)
 PKG_MACROS  += OPENJDK_VERSION=$(OPENJDK_VERSION)
@@ -57,7 +62,7 @@ CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
 CONFIGURE_OPTIONS+=        --x-libraries=$(USRLIBDIR64)
 CONFIGURE_OPTIONS+=        --with-version-pre=
 CONFIGURE_OPTIONS+=        --with-conf-name=oi
-CONFIGURE_OPTIONS+=        --with-boot-jdk=/usr/jdk/openjdk22/
+CONFIGURE_OPTIONS+=        --with-boot-jdk=$(JAVA_HOME)
 CONFIGURE_OPTIONS+=        --with-freetype=system
 CONFIGURE_OPTIONS+=        --with-giflib=system
 CONFIGURE_OPTIONS+=        --with-harfbuzz=system
@@ -130,9 +135,6 @@ test:		$(NO_TESTS)
 # manually added to support audio
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/library/c++/sunpro
-
-# Manually added boot JDK
-REQUIRED_PACKAGES += runtime/java/openjdk22
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

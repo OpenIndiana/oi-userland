@@ -1,6 +1,5 @@
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/bin/unshuffle_list.txt jdk23u-jdk-23.0.1-ga/bin/unshuffle_list.txt
---- jdk23u-jdk-23.0.1-ga.orig/bin/unshuffle_list.txt	2024-12-29 14:18:27.483362049 +0100
-+++ jdk23u-jdk-23.0.1-ga/bin/unshuffle_list.txt	2024-12-29 14:18:52.766775791 +0100
+--- jdk23u-jdk-23.0.1-ga/bin/unshuffle_list.txt.orig
++++ jdk23u-jdk-23.0.1-ga/bin/unshuffle_list.txt
 @@ -100,6 +100,7 @@
  src/langtools/sample : langtools/src/sample
  src/linux : jdk/src/linux
@@ -25,9 +24,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/bin/unshuffle_list.txt jdk23u-jdk-23.0.1-ga/
  src/hotspot/os_cpu/windows_x86 : hotspot/src/os_cpu/windows_x86/vm
  src/hotspot : hotspot/src
  src/utils/IdealGraphVisualizer : hotspot/src/share/tools/IdealGraphVisualizer
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/basic_tools.m4 jdk23u-jdk-23.0.1-ga/make/autoconf/basic_tools.m4
---- jdk23u-jdk-23.0.1-ga.orig/make/autoconf/basic_tools.m4	2024-12-29 14:18:37.490986041 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/autoconf/basic_tools.m4	2024-12-29 14:18:52.768305200 +0100
+--- jdk23u-jdk-23.0.1-ga/make/autoconf/basic_tools.m4.orig
++++ jdk23u-jdk-23.0.1-ga/make/autoconf/basic_tools.m4
 @@ -290,6 +290,8 @@
      TAR_TYPE="bsd"
    elif test "x$($TAR --version | $GREP "busybox")" != "x"; then
@@ -37,9 +35,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/basic_tools.m4 jdk23u-jdk-23.0
    elif test "x$OPENJDK_BUILD_OS" = "xaix"; then
      TAR_TYPE="aix"
    fi
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/build-aux/config.guess jdk23u-jdk-23.0.1-ga/make/autoconf/build-aux/config.guess
---- jdk23u-jdk-23.0.1-ga.orig/make/autoconf/build-aux/config.guess	2024-12-29 14:18:37.496579767 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/autoconf/build-aux/config.guess	2024-12-29 14:18:52.768660330 +0100
+--- jdk23u-jdk-23.0.1-ga/make/autoconf/build-aux/config.guess.orig
++++ jdk23u-jdk-23.0.1-ga/make/autoconf/build-aux/config.guess
 @@ -53,6 +53,14 @@
    fi
  fi
@@ -55,9 +52,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/build-aux/config.guess jdk23u-
  # Test and fix cygwin on x86_64
  echo $OUT | grep 86-pc-cygwin > /dev/null 2> /dev/null
  if test $? != 0; then
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/build-performance.m4 jdk23u-jdk-23.0.1-ga/make/autoconf/build-performance.m4
---- jdk23u-jdk-23.0.1-ga.orig/make/autoconf/build-performance.m4	2024-12-29 14:18:37.490830561 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/autoconf/build-performance.m4	2024-12-29 14:18:52.769082594 +0100
+--- jdk23u-jdk-23.0.1-ga/make/autoconf/build-performance.m4.orig
++++ jdk23u-jdk-23.0.1-ga/make/autoconf/build-performance.m4
 @@ -33,6 +33,9 @@
      if test "$NUM_CORES" -eq "0"; then
        NUM_CORES=`cat /proc/cpuinfo  | grep -c ^CPU`
@@ -77,9 +73,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/build-performance.m4 jdk23u-jd
      MEMORY_SIZE=`/usr/sbin/prtconf 2> /dev/null | grep "^Memory [[Ss]]ize" | awk '{ print [$]3 }'`
      FOUND_MEM=yes
    elif test -x /usr/sbin/sysctl; then
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/flags-cflags.m4 jdk23u-jdk-23.0.1-ga/make/autoconf/flags-cflags.m4
---- jdk23u-jdk-23.0.1-ga.orig/make/autoconf/flags-cflags.m4	2024-12-29 14:18:37.494381892 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/autoconf/flags-cflags.m4	2024-12-29 14:18:52.769599427 +0100
+--- jdk23u-jdk-23.0.1-ga/make/autoconf/flags-cflags.m4.orig
++++ jdk23u-jdk-23.0.1-ga/make/autoconf/flags-cflags.m4
 @@ -455,6 +455,9 @@
    if test "x$OPENJDK_TARGET_OS" = xlinux; then
      CFLAGS_OS_DEF_JVM="-DLINUX -D_FILE_OFFSET_BITS=64"
@@ -90,9 +85,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/flags-cflags.m4 jdk23u-jdk-23.
    elif test "x$OPENJDK_TARGET_OS" = xmacosx; then
      CFLAGS_OS_DEF_JVM="-D_ALLBSD_SOURCE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE"
      CFLAGS_OS_DEF_JDK="-D_ALLBSD_SOURCE -D_DARWIN_UNLIMITED_SELECT"
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/jdk-options.m4 jdk23u-jdk-23.0.1-ga/make/autoconf/jdk-options.m4
---- jdk23u-jdk-23.0.1-ga.orig/make/autoconf/jdk-options.m4	2024-12-29 14:18:37.497303726 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/autoconf/jdk-options.m4	2024-12-29 14:18:52.770073837 +0100
+--- jdk23u-jdk-23.0.1-ga/make/autoconf/jdk-options.m4.orig
++++ jdk23u-jdk-23.0.1-ga/make/autoconf/jdk-options.m4
 @@ -281,7 +281,7 @@
      ZIP_EXTERNAL_DEBUG_SYMBOLS=false
    elif test "x$with_native_debug_symbols" = xexternal; then
@@ -111,9 +105,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/jdk-options.m4 jdk23u-jdk-23.0
        if test "x$OBJCOPY" = x; then
          # enabling of enable-debug-symbols and can't find objcopy
          # this is an error
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/libraries.m4 jdk23u-jdk-23.0.1-ga/make/autoconf/libraries.m4
---- jdk23u-jdk-23.0.1-ga.orig/make/autoconf/libraries.m4	2024-12-29 14:18:37.497075524 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/autoconf/libraries.m4	2024-12-29 14:18:52.770467966 +0100
+--- jdk23u-jdk-23.0.1-ga/make/autoconf/libraries.m4.orig
++++ jdk23u-jdk-23.0.1-ga/make/autoconf/libraries.m4
 @@ -133,13 +133,15 @@
    BASIC_JVM_LIBS="$LIBM"
  
@@ -144,9 +137,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/libraries.m4 jdk23u-jdk-23.0.1
    if test "x$OPENJDK_TARGET_OS" = xwindows; then
      BASIC_JVM_LIBS="$BASIC_JVM_LIBS kernel32.lib user32.lib gdi32.lib winspool.lib \
          comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib powrprof.lib uuid.lib \
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/platform.m4 jdk23u-jdk-23.0.1-ga/make/autoconf/platform.m4
---- jdk23u-jdk-23.0.1-ga.orig/make/autoconf/platform.m4	2024-12-29 14:18:37.493214576 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/autoconf/platform.m4	2024-12-29 14:18:52.770994057 +0100
+--- jdk23u-jdk-23.0.1-ga/make/autoconf/platform.m4.orig
++++ jdk23u-jdk-23.0.1-ga/make/autoconf/platform.m4
 @@ -202,6 +202,10 @@
        VAR_OS=linux
        VAR_OS_TYPE=unix
@@ -186,9 +178,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/platform.m4 jdk23u-jdk-23.0.1-
    if test "x$OPENJDK_TARGET_OS" = "xlinux"; then
      RELEASE_FILE_OS_NAME=Linux
    fi
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/toolchain.m4 jdk23u-jdk-23.0.1-ga/make/autoconf/toolchain.m4
---- jdk23u-jdk-23.0.1-ga.orig/make/autoconf/toolchain.m4	2024-12-29 14:18:37.494829681 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/autoconf/toolchain.m4	2024-12-29 14:18:52.771433084 +0100
+--- jdk23u-jdk-23.0.1-ga/make/autoconf/toolchain.m4.orig
++++ jdk23u-jdk-23.0.1-ga/make/autoconf/toolchain.m4
 @@ -39,6 +39,7 @@
  
  # These toolchains are valid on different platforms
@@ -197,9 +188,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/autoconf/toolchain.m4 jdk23u-jdk-23.0.1
  VALID_TOOLCHAINS_macosx="clang"
  VALID_TOOLCHAINS_aix="clang"
  VALID_TOOLCHAINS_windows="microsoft"
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/common/FileUtils.gmk jdk23u-jdk-23.0.1-ga/make/common/FileUtils.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/common/FileUtils.gmk	2024-12-29 14:18:37.460118032 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/common/FileUtils.gmk	2024-12-29 14:18:52.771863796 +0100
+--- jdk23u-jdk-23.0.1-ga/make/common/FileUtils.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/common/FileUtils.gmk
 @@ -114,7 +114,33 @@
  ################################################################################
  # All install-file and related macros automatically call DecodeSpace when needed.
@@ -235,9 +225,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/common/FileUtils.gmk jdk23u-jdk-23.0.1-
    # On mac, extended attributes sometimes creep into the source files, which may later
    # cause the creation of ._* files which confuses testing. Clear these with xattr if
    # set. Some files get their write permissions removed after being copied to the
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/common/modules/LauncherCommon.gmk jdk23u-jdk-23.0.1-ga/make/common/modules/LauncherCommon.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/common/modules/LauncherCommon.gmk	2024-12-29 14:18:37.459952774 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/common/modules/LauncherCommon.gmk	2024-12-29 14:18:52.772291926 +0100
+--- jdk23u-jdk-23.0.1-ga/make/common/modules/LauncherCommon.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/common/modules/LauncherCommon.gmk
 @@ -133,17 +133,20 @@
            -DLAUNCHER_NAME='"$$(LAUNCHER_NAME)"' \
            -DPROGNAME='"$1"' \
@@ -259,9 +248,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/common/modules/LauncherCommon.gmk jdk23
        LIBS_macosx := \
            -framework ApplicationServices \
            -framework Cocoa \
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/gensrc/GensrcAdlc.gmk jdk23u-jdk-23.0.1-ga/make/hotspot/gensrc/GensrcAdlc.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/gensrc/GensrcAdlc.gmk	2024-12-29 14:18:37.464906449 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/gensrc/GensrcAdlc.gmk	2024-12-29 14:18:52.772766038 +0100
+--- jdk23u-jdk-23.0.1-ga/make/hotspot/gensrc/GensrcAdlc.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/gensrc/GensrcAdlc.gmk
 @@ -36,6 +36,9 @@
    # NOTE: No optimization or debug flags set here
    ifeq ($(call isBuildOs, linux), true)
@@ -281,9 +269,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/gensrc/GensrcAdlc.gmk jdk23u-jd
    else ifeq ($(call isTargetOs, aix), true)
      ADLCFLAGS += -DAIX=1
    else ifeq ($(call isTargetOs, macosx), true)
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/gensrc/GensrcDtrace.gmk jdk23u-jdk-23.0.1-ga/make/hotspot/gensrc/GensrcDtrace.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/gensrc/GensrcDtrace.gmk	2024-12-29 14:18:37.465203381 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/gensrc/GensrcDtrace.gmk	2024-12-29 14:18:52.773169856 +0100
+--- jdk23u-jdk-23.0.1-ga/make/hotspot/gensrc/GensrcDtrace.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/gensrc/GensrcDtrace.gmk
 @@ -28,7 +28,10 @@
  
  ifeq ($(call check-jvm-feature, dtrace), true)
@@ -356,9 +343,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/gensrc/GensrcDtrace.gmk jdk23u-
 +  endif
 +
  endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/CompileDtraceLibraries.gmk jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileDtraceLibraries.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/CompileDtraceLibraries.gmk	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileDtraceLibraries.gmk	2024-12-29 14:18:52.825231949 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileDtraceLibraries.gmk
 @@ -0,0 +1,62 @@
 +#
 +# Copyright (c) 2013, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -422,9 +408,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/CompileDtraceLibraries.gmk 
 +
 +  endif
 +endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/CompileJvm.gmk jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileJvm.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/CompileJvm.gmk	2024-12-29 14:18:37.464192496 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileJvm.gmk	2024-12-29 14:18:52.773610343 +0100
+--- jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileJvm.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileJvm.gmk
 @@ -31,6 +31,9 @@
  include lib/JvmOverrideFiles.gmk
  include lib/JvmFlags.gmk
@@ -443,9 +428,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/CompileJvm.gmk jdk23u-jdk-2
      DEFAULT_CFLAGS := false, \
      CFLAGS := $(JVM_CFLAGS), \
      abstract_vm_version.cpp_CXXFLAGS := $(CFLAGS_VM_VERSION), \
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/CompileLibraries.gmk jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileLibraries.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/CompileLibraries.gmk	2024-12-29 14:18:37.463870578 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileLibraries.gmk	2024-12-29 14:18:52.773936423 +0100
+--- jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileLibraries.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/lib/CompileLibraries.gmk
 @@ -32,6 +32,7 @@
  include HotspotCommon.gmk
  
@@ -454,9 +438,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/CompileLibraries.gmk jdk23u
  
  ifneq ($(GTEST_FRAMEWORK_SRC), )
    ifneq ($(CREATING_BUILDJDK), true)
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/JvmDtraceObjects.gmk jdk23u-jdk-23.0.1-ga/make/hotspot/lib/JvmDtraceObjects.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/JvmDtraceObjects.gmk	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/lib/JvmDtraceObjects.gmk	2024-12-29 14:18:52.825510499 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/lib/JvmDtraceObjects.gmk
 @@ -0,0 +1,122 @@
 +#
 +# Copyright (c) 2013, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -580,9 +563,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/lib/JvmDtraceObjects.gmk jdk23u
 +
 +  endif
 +endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/src/native/dtrace/generateJvmOffsets.cpp jdk23u-jdk-23.0.1-ga/make/hotspot/src/native/dtrace/generateJvmOffsets.cpp
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/src/native/dtrace/generateJvmOffsets.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/src/native/dtrace/generateJvmOffsets.cpp	2024-12-29 14:18:52.825983064 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/src/native/dtrace/generateJvmOffsets.cpp
 @@ -0,0 +1,316 @@
 +/*
 + * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -900,9 +882,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/src/native/dtrace/generateJvmOf
 +    }
 +    return generateJvmOffsets(gen_var);
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/symbols/symbols-solaris jdk23u-jdk-23.0.1-ga/make/hotspot/symbols/symbols-solaris
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/symbols/symbols-solaris	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/symbols/symbols-solaris	2024-12-29 14:18:52.826262443 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/symbols/symbols-solaris
 @@ -0,0 +1,25 @@
 +#
 +# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
@@ -929,9 +910,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/symbols/symbols-solaris jdk23u-
 +
 +JVM_handle_solaris_signal
 +sysThreadAvailableStackWithSlack
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/symbols/symbols-solaris-dtrace-compiler1 jdk23u-jdk-23.0.1-ga/make/hotspot/symbols/symbols-solaris-dtrace-compiler1
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/symbols/symbols-solaris-dtrace-compiler1	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/symbols/symbols-solaris-dtrace-compiler1	2024-12-29 14:18:52.826489722 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/symbols/symbols-solaris-dtrace-compiler1
 @@ -0,0 +1,34 @@
 +#
 +# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
@@ -967,9 +947,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/symbols/symbols-solaris-dtrace-
 +__1cSDeoptimizationBlobG__vtbl_
 +
 +__JvmOffsets
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/symbols/symbols-solaris-dtrace-compiler2 jdk23u-jdk-23.0.1-ga/make/hotspot/symbols/symbols-solaris-dtrace-compiler2
---- jdk23u-jdk-23.0.1-ga.orig/make/hotspot/symbols/symbols-solaris-dtrace-compiler2	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/hotspot/symbols/symbols-solaris-dtrace-compiler2	2024-12-29 14:18:52.826713025 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/make/hotspot/symbols/symbols-solaris-dtrace-compiler2
 @@ -0,0 +1,36 @@
 +#
 +# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
@@ -1007,9 +986,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/hotspot/symbols/symbols-solaris-dtrace-
 +__1cQUncommonTrapBlobG__vtbl_
 +
 +__JvmOffsets
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/ide/visualstudio/hotspot/CreateVSProject.gmk jdk23u-jdk-23.0.1-ga/make/ide/visualstudio/hotspot/CreateVSProject.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/ide/visualstudio/hotspot/CreateVSProject.gmk	2024-12-29 14:18:37.443833142 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/ide/visualstudio/hotspot/CreateVSProject.gmk	2024-12-29 14:18:52.774329828 +0100
+--- jdk23u-jdk-23.0.1-ga/make/ide/visualstudio/hotspot/CreateVSProject.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/ide/visualstudio/hotspot/CreateVSProject.gmk
 @@ -76,6 +76,7 @@
      -ignorePath linux \
      -ignorePath posix \
@@ -1018,9 +996,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/ide/visualstudio/hotspot/CreateVSProjec
      -ignorePath x86_32 \
      -ignorePath zero \
        #
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/Copy.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.base/Copy.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/Copy.gmk	2024-12-29 14:18:37.429156545 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.base/Copy.gmk	2024-12-29 14:18:52.774721184 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.base/Copy.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.base/Copy.gmk
 @@ -190,7 +190,7 @@
  
  TARGETS += $(NET_PROPERTIES_DST)
@@ -1030,9 +1007,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/Copy.gmk jdk23u-jdk-2
    $(eval $(call SetupCopyFiles, COPY_SDP_CONF, \
        FILES := $(TOPDIR)/src/java.base/$(OPENJDK_TARGET_OS_TYPE)/conf/sdp/sdp.conf.template, \
        DEST := $(CONF_DST_DIR)/sdp, \
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/gensrc/GensrcMisc.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.base/gensrc/GensrcMisc.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/gensrc/GensrcMisc.gmk	2024-12-29 14:18:37.428071491 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.base/gensrc/GensrcMisc.gmk	2024-12-29 14:18:52.775503137 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.base/gensrc/GensrcMisc.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.base/gensrc/GensrcMisc.gmk
 @@ -136,6 +136,21 @@
  
  endif
@@ -1055,9 +1031,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/gensrc/GensrcMisc.gmk
  # Create the javax/crypto/JceSecurity.class, using the build default.
  #
  ifeq ($(UNLIMITED_CRYPTO), true)
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/lib/CoreLibraries.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.base/lib/CoreLibraries.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/lib/CoreLibraries.gmk	2024-12-29 14:18:37.426884885 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.base/lib/CoreLibraries.gmk	2024-12-29 14:18:52.775939282 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.base/lib/CoreLibraries.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.base/lib/CoreLibraries.gmk
 @@ -28,7 +28,7 @@
  ################################################################################
  
@@ -1083,9 +1058,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/lib/CoreLibraries.gmk
      LIBS_macosx := \
          -framework ApplicationServices \
          -framework Cocoa \
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.base/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/Lib.gmk	2024-12-29 14:18:37.427323746 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.base/Lib.gmk	2024-12-29 14:18:52.775145186 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.base/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.base/Lib.gmk
 @@ -56,6 +56,7 @@
          -delayload:winhttp.dll, \
      JDK_LIBS := libjava libjvm, \
@@ -1113,9 +1087,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.base/Lib.gmk jdk23u-jdk-23
        LIBS_aix := $(LIBDL), \
    ))
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/Gensrc.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/Gensrc.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/Gensrc.gmk	2024-12-29 14:18:37.411543330 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/Gensrc.gmk	2024-12-29 14:18:52.776293145 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/Gensrc.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/Gensrc.gmk
 @@ -32,7 +32,7 @@
    include gensrc/GensrcIcons.gmk
  endif
@@ -1125,9 +1098,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/Gensrc.gmk jdk23u-
    include gensrc/GensrcX11Wrappers.gmk
  endif
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/lib/AwtLibraries.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/lib/AwtLibraries.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/lib/AwtLibraries.gmk	2024-12-29 14:18:37.412775334 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/lib/AwtLibraries.gmk	2024-12-29 14:18:52.777250017 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/lib/AwtLibraries.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/lib/AwtLibraries.gmk
 @@ -57,7 +57,7 @@
        #
  endif
@@ -1182,9 +1154,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/lib/AwtLibraries.g
      JDK_LIBS_windows := libawt, \
      JDK_LIBS_macosx := libawt_lwawt, \
      LIBS_macosx := -framework Cocoa, \
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/lib/ClientLibraries.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/lib/ClientLibraries.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/lib/ClientLibraries.gmk	2024-12-29 14:18:37.412955846 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/lib/ClientLibraries.gmk	2024-12-29 14:18:52.777778884 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/lib/ClientLibraries.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/lib/ClientLibraries.gmk
 @@ -87,7 +87,7 @@
      DISABLED_WARNINGS_gcc := format-nonliteral type-limits \
          stringop-truncation, \
@@ -1220,9 +1191,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/lib/ClientLibrarie
       HARFBUZZ_CFLAGS += -DHAVE_INTEL_ATOMIC_PRIMITIVES -DHB_NO_VISIBILITY
     endif
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/Lib.gmk	2024-12-29 14:18:37.413125294 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/Lib.gmk	2024-12-29 14:18:52.776645118 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.desktop/Lib.gmk
 @@ -48,10 +48,15 @@
        -DX_PLATFORM=X_$(OPENJDK_TARGET_OS_UPPERCASE) \
        -DUSE_PORTS=TRUE \
@@ -1241,9 +1211,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.desktop/Lib.gmk jdk23u-jdk
    LIBJSOUND_LINK_TYPE := C
    ifeq ($(call isTargetOs, macosx), true)
      LIBJSOUND_LINK_TYPE := C++
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.instrument/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.instrument/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.instrument/Lib.gmk	2024-12-29 14:18:37.419721865 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.instrument/Lib.gmk	2024-12-29 14:18:52.778113725 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.instrument/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.instrument/Lib.gmk
 @@ -39,6 +39,7 @@
      JDK_LIBS := java.base:libjava java.base:libjli java.base:libjvm, \
      LIBS_unix := $(LIBZ_LIBS), \
@@ -1252,9 +1221,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.instrument/Lib.gmk jdk23u-
      LIBS_aix := $(LIBDL) -liconv, \
      LIBS_macosx := -liconv \
          -framework ApplicationServices \
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.management/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/java.management/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/java.management/Lib.gmk	2024-12-29 14:18:37.434823028 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/java.management/Lib.gmk	2024-12-29 14:18:52.778480801 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/java.management/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/java.management/Lib.gmk
 @@ -30,7 +30,7 @@
  ################################################################################
  
@@ -1272,9 +1240,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/java.management/Lib.gmk jdk23u-
      LIBS_aix := -lperfstat,\
      LIBS_windows := advapi32.lib psapi.lib, \
  ))
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.attach/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/jdk.attach/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.attach/Lib.gmk	2024-12-29 14:18:37.432927434 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.attach/Lib.gmk	2024-12-29 14:18:52.778809973 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/jdk.attach/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.attach/Lib.gmk
 @@ -41,7 +41,8 @@
      OPTIMIZATION := LOW, \
      CFLAGS := $(LIBATTACH_CFLAGS), \
@@ -1285,9 +1252,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.attach/Lib.gmk jdk23u-jdk-2
      LIBS_windows := advapi32.lib psapi.lib, \
  ))
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.crypto.cryptoki/Copy.gmk jdk23u-jdk-23.0.1-ga/make/modules/jdk.crypto.cryptoki/Copy.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.crypto.cryptoki/Copy.gmk	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.crypto.cryptoki/Copy.gmk	2024-12-29 14:18:52.826986276 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.crypto.cryptoki/Copy.gmk
 @@ -0,0 +1,45 @@
 +#
 +# Copyright (c) 2014, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -1334,9 +1300,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.crypto.cryptoki/Copy.gmk jd
 +endif
 +
 +################################################################################
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.hotspot.agent/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/jdk.hotspot.agent/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.hotspot.agent/Lib.gmk	2024-12-29 14:18:37.424798599 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.hotspot.agent/Lib.gmk	2024-12-29 14:18:52.779145192 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/jdk.hotspot.agent/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.hotspot.agent/Lib.gmk
 @@ -67,8 +67,9 @@
      CFLAGS := $(LIBSAPROC_CFLAGS), \
      CXXFLAGS := $(LIBSAPROC_CFLAGS) $(LIBSAPROC_CXXFLAGS), \
@@ -1348,9 +1313,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.hotspot.agent/Lib.gmk jdk23
      LIBS_macosx := \
          -framework CoreFoundation \
          -framework Foundation \
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.jdwp.agent/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/jdk.jdwp.agent/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.jdwp.agent/Lib.gmk	2024-12-29 14:18:37.408971031 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.jdwp.agent/Lib.gmk	2024-12-29 14:18:52.779514728 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/jdk.jdwp.agent/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.jdwp.agent/Lib.gmk
 @@ -37,6 +37,7 @@
          include \
          libjdwp/export, \
@@ -1367,9 +1331,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.jdwp.agent/Lib.gmk jdk23u-j
      LIBS_macosx := -liconv, \
      LIBS_aix := -liconv, \
  ))
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.management/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/jdk.management/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.management/Lib.gmk	2024-12-29 14:18:37.410778298 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.management/Lib.gmk	2024-12-29 14:18:52.779910572 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/jdk.management/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.management/Lib.gmk
 @@ -37,7 +37,7 @@
  endif
  
@@ -1387,9 +1350,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.management/Lib.gmk jdk23u-j
      LIBS_aix := -lperfstat,\
      LIBS_windows := advapi32.lib psapi.lib, \
  ))
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.management.agent/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/jdk.management.agent/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.management.agent/Lib.gmk	2024-12-29 14:18:37.415203887 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.management.agent/Lib.gmk	2024-12-29 14:18:52.780282061 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/jdk.management.agent/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.management.agent/Lib.gmk
 @@ -32,7 +32,7 @@
  $(eval $(call SetupJdkLibrary, BUILD_LIBMANAGEMENT_AGENT, \
      NAME := management_agent, \
@@ -1399,9 +1361,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.management.agent/Lib.gmk jd
      LIBS_windows := advapi32.lib, \
  ))
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.net/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/jdk.net/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.net/Lib.gmk	2024-12-29 14:18:37.416870399 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.net/Lib.gmk	2024-12-29 14:18:52.780640845 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/jdk.net/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.net/Lib.gmk
 @@ -29,6 +29,8 @@
  ## Build libextnet
  ################################################################################
@@ -1417,9 +1378,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.net/Lib.gmk jdk23u-jdk-23.0
  TARGETS += $(BUILD_LIBEXTNET)
 +
 +endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.sctp/Lib.gmk jdk23u-jdk-23.0.1-ga/make/modules/jdk.sctp/Lib.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.sctp/Lib.gmk	2024-12-29 14:18:37.420013150 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.sctp/Lib.gmk	2024-12-29 14:18:52.780963281 +0100
+--- jdk23u-jdk-23.0.1-ga/make/modules/jdk.sctp/Lib.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/modules/jdk.sctp/Lib.gmk
 @@ -40,6 +40,7 @@
            java.base:libnio/ch, \
        JDK_LIBS := java.base:libjava java.base:libnet, \
@@ -1428,9 +1388,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/modules/jdk.sctp/Lib.gmk jdk23u-jdk-23.
    ))
  
    TARGETS += $(BUILD_LIBSCTP)
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/RunTestsPrebuilt.gmk jdk23u-jdk-23.0.1-ga/make/RunTestsPrebuilt.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/RunTestsPrebuilt.gmk	2024-12-29 14:18:37.462291000 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/RunTestsPrebuilt.gmk	2024-12-29 14:18:52.767374292 +0100
+--- jdk23u-jdk-23.0.1-ga/make/RunTestsPrebuilt.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/RunTestsPrebuilt.gmk
 @@ -168,6 +168,8 @@
      OPENJDK_TARGET_OS := linux
    else ifeq ($(UNAME_OS), Darwin)
@@ -1489,9 +1448,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/RunTestsPrebuilt.gmk jdk23u-jdk-23.0.1-
  else ifeq ($(OPENJDK_TARGET_OS), windows)
    NUM_CORES := $(NUMBER_OF_PROCESSORS)
    MEMORY_SIZE := $(shell \
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/RunTestsPrebuiltSpec.gmk jdk23u-jdk-23.0.1-ga/make/RunTestsPrebuiltSpec.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/RunTestsPrebuiltSpec.gmk	2024-12-29 14:18:37.468577961 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/RunTestsPrebuiltSpec.gmk	2024-12-29 14:18:52.767751794 +0100
+--- jdk23u-jdk-23.0.1-ga/make/RunTestsPrebuiltSpec.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/RunTestsPrebuiltSpec.gmk
 @@ -173,6 +173,16 @@
  FILE := file
  ULIMIT := ulimit
@@ -1509,9 +1467,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/RunTestsPrebuiltSpec.gmk jdk23u-jdk-23.
  ifeq ($(OPENJDK_BUILD_OS), windows)
    PATHTOOL := cygpath
  endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/scripts/compare.sh jdk23u-jdk-23.0.1-ga/make/scripts/compare.sh
---- jdk23u-jdk-23.0.1-ga.orig/make/scripts/compare.sh	2024-12-29 14:18:37.471655509 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/scripts/compare.sh	2024-12-29 14:18:52.781761392 +0100
+--- jdk23u-jdk-23.0.1-ga/make/scripts/compare.sh.orig
++++ jdk23u-jdk-23.0.1-ga/make/scripts/compare.sh
 @@ -75,7 +75,14 @@
  # Disassembly diff filters. These filters try to filter out ephemeral parts of the
  # disassembly, such as hard-coded addresses, to be able to catch "actual" differences.
@@ -1572,9 +1529,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/scripts/compare.sh jdk23u-jdk-23.0.1-ga
      elif [ "$OPENJDK_TARGET_OS" = "aix" ]; then
          $OBJDUMP -T $ORIG_OTHER_FILE 2> /dev/null | $GREP -v $NAME | $AWK '{print $2, $3, $4, $5}' | $SYM_SORT_CMD > $WORK_FILE_BASE.symbols.other
          $OBJDUMP -T $ORIG_THIS_FILE  2> /dev/null | $GREP -v $NAME | $AWK '{print $2, $3, $4, $5}' | $SYM_SORT_CMD > $WORK_FILE_BASE.symbols.this
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/scripts/hide_important_warnings_from_javac.sh jdk23u-jdk-23.0.1-ga/make/scripts/hide_important_warnings_from_javac.sh
---- jdk23u-jdk-23.0.1-ga.orig/make/scripts/hide_important_warnings_from_javac.sh	2024-12-29 14:18:37.471077847 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/scripts/hide_important_warnings_from_javac.sh	2024-12-29 14:18:52.782099618 +0100
+--- jdk23u-jdk-23.0.1-ga/make/scripts/hide_important_warnings_from_javac.sh.orig
++++ jdk23u-jdk-23.0.1-ga/make/scripts/hide_important_warnings_from_javac.sh
 @@ -22,8 +22,13 @@
  # questions.
  #
@@ -1591,9 +1547,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/scripts/hide_important_warnings_from_ja
  #
  EXP="Note: Some input files use or override a deprecated API."
  EXP="${EXP}|Note: Recompile with -Xlint:deprecation for details."
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/test/JtregNativeHotspot.gmk jdk23u-jdk-23.0.1-ga/make/test/JtregNativeHotspot.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/test/JtregNativeHotspot.gmk	2024-12-29 14:18:37.467712836 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/test/JtregNativeHotspot.gmk	2024-12-29 14:18:52.782796368 +0100
+--- jdk23u-jdk-23.0.1-ga/make/test/JtregNativeHotspot.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/test/JtregNativeHotspot.gmk
 @@ -867,6 +867,10 @@
  BUILD_HOTSPOT_JTREG_LIBRARIES_JDK_LIBS_libatExit := java.base:libjvm
  BUILD_HOTSPOT_JTREG_EXECUTABLES_JDK_LIBS_exedaemonDestroy := java.base:libjvm
@@ -1605,9 +1560,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/test/JtregNativeHotspot.gmk jdk23u-jdk-
  ifeq ($(call isTargetOs, windows), true)
    BUILD_HOTSPOT_JTREG_EXECUTABLES_CFLAGS_exeFPRegs := -MT
    BUILD_HOTSPOT_JTREG_EXCLUDE += exesigtest.c libterminatedThread.c libTestJNI.c libCompleteExit.c libMonitorWithDeadObjectTest.c libTestPsig.c exeGetCreatedJavaVMs.c
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/test/JtregNativeJdk.gmk jdk23u-jdk-23.0.1-ga/make/test/JtregNativeJdk.gmk
---- jdk23u-jdk-23.0.1-ga.orig/make/test/JtregNativeJdk.gmk	2024-12-29 14:18:37.466957714 +0100
-+++ jdk23u-jdk-23.0.1-ga/make/test/JtregNativeJdk.gmk	2024-12-29 14:18:52.783255273 +0100
+--- jdk23u-jdk-23.0.1-ga/make/test/JtregNativeJdk.gmk.orig
++++ jdk23u-jdk-23.0.1-ga/make/test/JtregNativeJdk.gmk
 @@ -59,10 +59,10 @@
  BUILD_JDK_JTREG_EXECUTABLES_JDK_LIBS_exeCallerAccessTest := java.base:libjvm
  BUILD_JDK_JTREG_EXECUTABLES_JDK_LIBS_exeNullCallerTest := java.base:libjvm
@@ -1641,9 +1595,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/make/test/JtregNativeJdk.gmk jdk23u-jdk-23.0
    endif
    BUILD_JDK_JTREG_EXECUTABLES_LIBS_exeNullCallerTest := $(LIBCXX)
  endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/cpu/x86/globalDefinitions_x86.hpp jdk23u-jdk-23.0.1-ga/src/hotspot/cpu/x86/globalDefinitions_x86.hpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/cpu/x86/globalDefinitions_x86.hpp	2024-12-29 14:18:26.681495613 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/cpu/x86/globalDefinitions_x86.hpp	2024-12-29 14:18:52.783803853 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/cpu/x86/globalDefinitions_x86.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/cpu/x86/globalDefinitions_x86.hpp
 @@ -57,7 +57,7 @@
  #define INCLUDE_RTM_OPT 1
  #endif
@@ -1653,9 +1606,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/cpu/x86/globalDefinitions_x86.hp
  #define SUPPORT_RESERVED_STACK_AREA
  #endif
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/include/jvm_md.h jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/include/jvm_md.h
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/include/jvm_md.h	2024-12-29 14:18:26.858700096 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/include/jvm_md.h	2024-12-29 14:18:52.784231126 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/include/jvm_md.h.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/include/jvm_md.h
 @@ -54,7 +54,7 @@
  #endif
  #define JNI_LIB_NAME(NAME) JNI_LIB_PREFIX NAME JNI_LIB_SUFFIX
@@ -1675,9 +1627,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/include/jvm_md.h jdk23u
  #define SHUTDOWN1_SIGNAL SIGHUP            /* Shutdown Hooks support.    */
  #define SHUTDOWN2_SIGNAL SIGINT
  #define SHUTDOWN3_SIGNAL SIGTERM
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/os_posix.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/os_posix.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/os_posix.cpp	2024-12-29 14:18:26.866946750 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/os_posix.cpp	2024-12-29 14:18:52.784936643 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/os_posix.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/os_posix.cpp
 @@ -500,7 +500,7 @@
    st->print("%ld", sysconf(_SC_CHILD_MAX));
  
@@ -1700,9 +1651,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/os_posix.cpp jdk23u-jdk
    // MacOS; The maximum size (in bytes) to which a process's resident set size may grow.
  #if defined(__APPLE__)
    print_rlimit(st, ", RSS", RLIMIT_RSS, true);
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/os_posix.inline.hpp jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/os_posix.inline.hpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/os_posix.inline.hpp	2024-12-29 14:18:26.864150885 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/os_posix.inline.hpp	2024-12-29 14:18:52.785244738 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/os_posix.inline.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/os_posix.inline.hpp
 @@ -34,8 +34,10 @@
  #include <sys/socket.h>
  #include <netdb.h>
@@ -1714,9 +1664,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/os_posix.inline.hpp jdk
  
  // Platform Mutex/Monitor implementation
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/vmError_posix.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/vmError_posix.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/vmError_posix.cpp	2024-12-29 14:18:26.867493163 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/vmError_posix.cpp	2024-12-29 14:18:52.785554955 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/vmError_posix.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/os/posix/vmError_posix.cpp
 @@ -41,6 +41,9 @@
  #include <sys/syscall.h>
  #include <unistd.h>
@@ -1727,9 +1676,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/os/posix/vmError_posix.cpp jdk23
  #ifdef AIX
  #include <unistd.h>
  #endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/c1/c1_LIR.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/c1/c1_LIR.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/c1/c1_LIR.cpp	2024-12-29 14:18:27.415079520 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/c1/c1_LIR.cpp	2024-12-29 14:18:52.786230716 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/c1/c1_LIR.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/c1/c1_LIR.cpp
 @@ -452,6 +452,8 @@
      case lir_monaddr:        // input and result always valid, info always invalid
      case lir_null_check:     // input and info always valid, result always invalid
@@ -1748,9 +1696,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/c1/c1_LIR.cpp jdk23u-jdk-2
       // LIR_Op2
       case lir_cmp:                   s = "cmp";           break;
       case lir_cmp_l2i:               s = "cmp_l2i";       break;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/c1/c1_LIR.hpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/c1/c1_LIR.hpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/c1/c1_LIR.hpp	2024-12-29 14:18:27.416672829 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/c1/c1_LIR.hpp	2024-12-29 14:18:52.786919665 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/c1/c1_LIR.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/c1/c1_LIR.hpp
 @@ -939,6 +939,8 @@
        , lir_monaddr
        , lir_roundfp
@@ -1770,9 +1717,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/c1/c1_LIR.hpp jdk23u-jdk-2
    void null_check(LIR_Opr opr, CodeEmitInfo* info, bool deoptimize_on_null = false);
    void throw_exception(LIR_Opr exceptionPC, LIR_Opr exceptionOop, CodeEmitInfo* info) {
      append(new LIR_Op2(lir_throw, exceptionPC, exceptionOop, LIR_OprFact::illegalOpr, info));
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/cds/classListParser.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/cds/classListParser.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/cds/classListParser.cpp	2024-12-29 14:18:27.426767918 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/cds/classListParser.cpp	2024-12-29 14:18:52.787435673 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/cds/classListParser.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/cds/classListParser.cpp
 @@ -456,7 +456,7 @@
  // This function is used for loading classes for customized class loaders
  // during archive dumping.
@@ -1782,9 +1728,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/cds/classListParser.cpp jd
    // The only supported platforms are: (1) Linux/64-bit and (2) Solaris/64-bit and
    // (3) MacOSX/64-bit and (4) Windowss/64-bit
    // This #if condition should be in sync with the areCustomLoadersSupportedForCDS
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/nmt/memTracker.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/nmt/memTracker.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/nmt/memTracker.cpp	2024-12-29 14:18:27.125261391 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/nmt/memTracker.cpp	2024-12-29 14:18:52.788728675 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/nmt/memTracker.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/nmt/memTracker.cpp
 @@ -48,6 +48,12 @@
  #include <windows.h>
  #endif
@@ -1798,9 +1743,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/nmt/memTracker.cpp jdk23u-
  NMT_TrackingLevel MemTracker::_tracking_level = NMT_unknown;
  
  MemBaseline MemTracker::_baseline;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/nmt/memTracker.hpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/nmt/memTracker.hpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/nmt/memTracker.hpp	2024-12-29 14:18:27.127016169 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/nmt/memTracker.hpp	2024-12-29 14:18:52.789073486 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/nmt/memTracker.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/nmt/memTracker.hpp
 @@ -35,9 +35,11 @@
  #include "utilities/debug.hpp"
  #include "utilities/nativeCallStack.hpp"
@@ -1815,9 +1759,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/nmt/memTracker.hpp jdk23u-
                      NativeCallStack(1) : FAKE_CALLSTACK)
  
  class MemBaseline;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/runtime/abstract_vm_version.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/abstract_vm_version.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/runtime/abstract_vm_version.cpp	2024-12-29 14:18:27.221191943 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/abstract_vm_version.cpp	2024-12-29 14:18:52.787975329 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/abstract_vm_version.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/abstract_vm_version.cpp
 @@ -171,6 +171,7 @@
  
  #define OS       LINUX_ONLY("linux")             \
@@ -1826,9 +1769,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/runtime/abstract_vm_versio
                   AIX_ONLY("aix")                 \
                   BSD_ONLY("bsd")
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/runtime/semaphore.hpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/semaphore.hpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/runtime/semaphore.hpp	2024-12-29 14:18:27.194624172 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/semaphore.hpp	2024-12-29 14:18:52.788290690 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/semaphore.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/semaphore.hpp
 @@ -28,7 +28,7 @@
  #include "memory/allocation.hpp"
  #include "utilities/globalDefinitions.hpp"
@@ -1838,9 +1780,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/runtime/semaphore.hpp jdk2
  # include "semaphore_posix.hpp"
  #else
  # include OS_HEADER(semaphore)
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/services/dtraceAttacher.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/services/dtraceAttacher.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/services/dtraceAttacher.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/services/dtraceAttacher.cpp	2024-12-29 14:18:52.827306053 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/services/dtraceAttacher.cpp
 @@ -0,0 +1,99 @@
 +/*
 + * Copyright (c) 2006, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -1941,9 +1882,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/services/dtraceAttacher.cp
 +}
 +
 +#endif /* SOLARIS */
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/debug.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/debug.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/debug.cpp	2024-12-29 14:18:27.106165986 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/debug.cpp	2024-12-29 14:18:52.789615638 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/debug.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/debug.cpp
 @@ -611,11 +611,12 @@
    tty->print_cr("  findm(intptr_t pc) - finds Method*");
    tty->print_cr("  find(intptr_t x)   - finds & prints nmethod/stub/bytecode/oop based on pointer into it");
@@ -1958,9 +1898,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/debug.cpp jdk23u
    tty->print_cr("                 - in gdb do 'set overload-resolution off' before calling pns()");
    tty->print_cr("                 - in dbx do 'frame 1' before calling pns()");
    tty->print_cr("class metadata.");
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/globalDefinitions_gcc.hpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/globalDefinitions_gcc.hpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/globalDefinitions_gcc.hpp	2024-12-29 14:18:27.123777955 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/globalDefinitions_gcc.hpp	2024-12-29 14:18:52.790070789 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/globalDefinitions_gcc.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/globalDefinitions_gcc.hpp
 @@ -50,15 +50,32 @@
  #endif
  #include <wchar.h>
@@ -2082,9 +2021,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/globalDefinition
  inline int g_isnan(double f) { return isnan(f); }
  #elif defined(LINUX) || defined(_ALLBSD_SOURCE) || defined(_AIX)
  inline int g_isnan(float  f) { return isnan(f); }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/macros.hpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/macros.hpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/macros.hpp	2024-12-29 14:18:27.105639359 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/macros.hpp	2024-12-29 14:18:52.790453621 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/macros.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/macros.hpp
 @@ -401,6 +401,14 @@
  #define NOT_AIX(code) code
  #endif
@@ -2100,9 +2038,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/macros.hpp jdk23
  #ifdef _WINDOWS
  #define WINDOWS_ONLY(code) code
  #define NOT_WINDOWS(code)
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/ostream.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/ostream.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/ostream.cpp	2024-12-29 14:18:27.118750381 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/ostream.cpp	2024-12-29 14:18:52.790928716 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/ostream.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/ostream.cpp
 @@ -1064,7 +1064,7 @@
  
  #ifndef PRODUCT
@@ -2112,9 +2049,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/ostream.cpp jdk2
  #include <sys/types.h>
  #include <sys/socket.h>
  #include <netinet/in.h>
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/vmError.cpp jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/vmError.cpp
---- jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/vmError.cpp	2024-12-29 14:18:27.102521394 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/vmError.cpp	2024-12-29 14:18:52.791533403 +0100
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/vmError.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/vmError.cpp
 @@ -1915,6 +1915,8 @@
        out.print_raw   ("#   Executing ");
  #if defined(LINUX) || defined(_ALLBSD_SOURCE)
@@ -2133,9 +2069,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/hotspot/share/utilities/vmError.cpp jdk2
  #endif
      tty->print_cr("\"%s\"...", cmd);
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/classes/sun/net/sdp/SdpSupport.java jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/net/sdp/SdpSupport.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/classes/sun/net/sdp/SdpSupport.java	2024-12-29 14:18:25.176213170 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/net/sdp/SdpSupport.java	2024-12-29 14:18:52.792014317 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/net/sdp/SdpSupport.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/net/sdp/SdpSupport.java
 @@ -39,7 +39,7 @@
   */
  
@@ -2145,9 +2080,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/classes/sun/net/sdp/SdpS
      private static final JavaIOFileDescriptorAccess fdAccess =
          SharedSecrets.getJavaIOFileDescriptorAccess();
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/classes/sun/nio/ch/Net.java jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/nio/ch/Net.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/classes/sun/nio/ch/Net.java	2024-12-29 14:18:25.187182169 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/nio/ch/Net.java	2024-12-29 14:18:52.792551391 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/nio/ch/Net.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/nio/ch/Net.java
 @@ -512,7 +512,7 @@
      private static native boolean isReusePortAvailable0();
  
@@ -2157,9 +2091,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/classes/sun/nio/ch/Net.j
       */
      private static native int isExclusiveBindAvailable();
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/classes/sun/nio/ch/SocketOptionRegistry.java.template jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/nio/ch/SocketOptionRegistry.java.template
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/classes/sun/nio/ch/SocketOptionRegistry.java.template	2024-12-29 14:18:25.186998297 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/nio/ch/SocketOptionRegistry.java.template	2024-12-29 14:18:52.792934084 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/nio/ch/SocketOptionRegistry.java.template.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/share/classes/sun/nio/ch/SocketOptionRegistry.java.template
 @@ -43,6 +43,8 @@
  #define SO_REUSEPORT 0
  #elif defined(__linux__)
@@ -2180,9 +2113,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/classes/sun/nio/ch/Socke
  /* To be able to name the Java constants the same as the C constants without
     having the preprocessor rewrite those identifiers, add PREFIX_ to all
     identifiers matching a C constant. The PREFIX_ is filtered out in the
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/conf/security/java.security jdk23u-jdk-23.0.1-ga/src/java.base/share/conf/security/java.security
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/conf/security/java.security	2024-12-29 14:18:24.976790568 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/share/conf/security/java.security	2024-12-29 14:18:52.793496626 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/share/conf/security/java.security.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/share/conf/security/java.security
 @@ -83,7 +83,11 @@
  #ifdef macosx
  security.provider.tbd=Apple
@@ -2195,9 +2127,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/conf/security/java.secur
  
  #
  # A list of preferred providers for specific algorithms. These providers will
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/native/libjli/jli_util.h jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libjli/jli_util.h
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/native/libjli/jli_util.h	2024-12-29 14:18:25.708577370 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libjli/jli_util.h	2024-12-29 14:18:52.793873262 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libjli/jli_util.h.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libjli/jli_util.h
 @@ -100,7 +100,11 @@
  #define JLI_StrCaseCmp(p1, p2)          strcasecmp((p1), (p2))
  #define JLI_StrNCaseCmp(p1, p2, p3)     strncasecmp((p1), (p2), (p3))
@@ -2210,9 +2141,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/native/libjli/jli_util.h
  #endif /* _WIN32 */
  
  /*
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/native/libnet/net_util.c jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libnet/net_util.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/native/libnet/net_util.c	2024-12-29 14:18:25.724034783 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libnet/net_util.c	2024-12-29 14:18:52.794246839 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libnet/net_util.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libnet/net_util.c
 @@ -81,6 +81,7 @@
  
      /* check if SO_REUSEPORT is supported on this platform */
@@ -2221,9 +2151,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/native/libnet/net_util.c
  
      return JNI_VERSION_1_2;
  }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/native/libnet/net_util.h jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libnet/net_util.h
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/native/libnet/net_util.h	2024-12-29 14:18:25.723316968 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libnet/net_util.h	2024-12-29 14:18:52.794599990 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libnet/net_util.h.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/share/native/libnet/net_util.h
 @@ -142,6 +142,8 @@
  JNIEXPORT jobject JNICALL
  NET_SockaddrToInetAddress(JNIEnv *env, SOCKETADDRESS *sa, int *port);
@@ -2233,9 +2162,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/share/native/libnet/net_util.h
  JNIEXPORT jint JNICALL NET_GetPortFromSockaddr(SOCKETADDRESS *sa);
  
  JNIEXPORT jboolean JNICALL
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DefaultAsynchronousChannelProvider.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DefaultAsynchronousChannelProvider.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DefaultAsynchronousChannelProvider.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DefaultAsynchronousChannelProvider.java	2024-12-29 14:18:52.827773932 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DefaultAsynchronousChannelProvider.java
 @@ -0,0 +1,47 @@
 +/*
 + * Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
@@ -2284,9 +2212,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/Def
 +        return new SolarisAsynchronousChannelProvider();
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DefaultSelectorProvider.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DefaultSelectorProvider.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DefaultSelectorProvider.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DefaultSelectorProvider.java	2024-12-29 14:18:52.828035888 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DefaultSelectorProvider.java
 @@ -0,0 +1,54 @@
 +/*
 + * Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -2342,9 +2269,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/Def
 +        return INSTANCE;
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DevPollArrayWrapper.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DevPollArrayWrapper.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DevPollArrayWrapper.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DevPollArrayWrapper.java	2024-12-29 14:18:52.828321119 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DevPollArrayWrapper.java
 @@ -0,0 +1,127 @@
 +/*
 + * Copyright (c) 2001, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -2473,9 +2399,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/Dev
 +        IOUtil.load();
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorImpl.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorImpl.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorImpl.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorImpl.java	2024-12-29 14:18:52.828663070 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorImpl.java
 @@ -0,0 +1,263 @@
 +/*
 + * Copyright (c) 2001, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -2740,9 +2665,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/Dev
 +        }
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorProvider.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorProvider.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorProvider.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorProvider.java	2024-12-29 14:18:52.828908542 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/DevPollSelectorProvider.java
 @@ -0,0 +1,42 @@
 +/*
 + * Copyright (c) 2001, 2012, Oracle and/or its affiliates. All rights reserved.
@@ -2786,9 +2710,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/Dev
 +        return InheritedChannel.getChannel();
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorImpl.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorImpl.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorImpl.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorImpl.java	2024-12-29 14:18:52.829269561 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorImpl.java
 @@ -0,0 +1,308 @@
 +/*
 + * Copyright (c) 2012, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -3098,9 +3021,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/Eve
 +        return (int) pollArray.getLong(offset);
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorProvider.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorProvider.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorProvider.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorProvider.java	2024-12-29 14:18:52.829525356 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/EventPortSelectorProvider.java
 @@ -0,0 +1,42 @@
 +/*
 + * Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
@@ -3144,9 +3066,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/Eve
 +        return InheritedChannel.getChannel();
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/SolarisAsynchronousChannelProvider.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/SolarisAsynchronousChannelProvider.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/SolarisAsynchronousChannelProvider.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/SolarisAsynchronousChannelProvider.java	2024-12-29 14:18:52.829800939 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/SolarisAsynchronousChannelProvider.java
 @@ -0,0 +1,93 @@
 +/*
 + * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -3241,9 +3162,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/Sol
 +        return new UnixAsynchronousSocketChannelImpl(toEventPort(group));
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/SolarisEventPort.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/SolarisEventPort.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/SolarisEventPort.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/SolarisEventPort.java	2024-12-29 14:18:52.830290123 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/ch/SolarisEventPort.java
 @@ -0,0 +1,273 @@
 +/*
 + * Copyright (c) 2008, 2020, Oracle and/or its affiliates. All rights reserved.
@@ -3518,9 +3438,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/ch/Sol
 +        IOUtil.load();
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/DefaultFileSystemProvider.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/DefaultFileSystemProvider.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/DefaultFileSystemProvider.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/DefaultFileSystemProvider.java	2024-12-29 14:18:52.830732770 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/DefaultFileSystemProvider.java
 @@ -0,0 +1,53 @@
 +/*
 + * Copyright (c) 2017, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -3575,9 +3494,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/Def
 +        return INSTANCE.theFileSystem();
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisAclFileAttributeView.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisAclFileAttributeView.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisAclFileAttributeView.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisAclFileAttributeView.java	2024-12-29 14:18:52.831169561 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisAclFileAttributeView.java
 @@ -0,0 +1,414 @@
 +/*
 + * Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
@@ -3993,9 +3911,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/Sol
 +        }
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisConstants.java.template jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisConstants.java.template
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisConstants.java.template	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisConstants.java.template	2024-12-29 14:18:52.831448028 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisConstants.java.template
 @@ -0,0 +1,89 @@
 +/*
 + * Copyright (c) 2008, 2016, Oracle and/or its affiliates. All rights reserved.
@@ -4086,9 +4003,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/Sol
 +    static final int PREFIX_ACE_GROUP = ACE_GROUP;
 +    static final int PREFIX_ACE_EVERYONE = ACE_EVERYONE;
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisFileStore.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisFileStore.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisFileStore.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisFileStore.java	2024-12-29 14:18:52.831723320 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisFileStore.java
 @@ -0,0 +1,111 @@
 +/*
 + * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -4201,9 +4117,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/Sol
 +        return super.supportsFileAttributeView(name);
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystem.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystem.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystem.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystem.java	2024-12-29 14:18:52.832042727 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystem.java
 @@ -0,0 +1,127 @@
 +/*
 + * Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
@@ -4332,9 +4247,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/Sol
 +        return new SolarisFileStore(this, entry);
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystemProvider.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystemProvider.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystemProvider.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystemProvider.java	2024-12-29 14:18:52.832323614 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisFileSystemProvider.java
 @@ -0,0 +1,94 @@
 +/*
 + * Copyright (c) 2008, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -4430,9 +4344,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/Sol
 +                     new MimeTypesFileTypeDetector(etcMimeTypes));
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisNativeDispatcher.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisNativeDispatcher.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisNativeDispatcher.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisNativeDispatcher.java	2024-12-29 14:18:52.832573575 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisNativeDispatcher.java
 @@ -0,0 +1,55 @@
 +/*
 + * Copyright (c) 2008, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -4489,9 +4402,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/Sol
 +        init();
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisUserDefinedFileAttributeView.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisUserDefinedFileAttributeView.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisUserDefinedFileAttributeView.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisUserDefinedFileAttributeView.java	2024-12-29 14:18:52.832867927 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisUserDefinedFileAttributeView.java
 @@ -0,0 +1,41 @@
 +/*
 + * Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
@@ -4534,9 +4446,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/Sol
 +    }
 +
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisWatchService.java jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisWatchService.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/SolarisWatchService.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisWatchService.java	2024-12-29 14:18:52.833457394 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/classes/sun/nio/fs/SolarisWatchService.java
 @@ -0,0 +1,821 @@
 +/*
 + * Copyright (c) 2008, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -5359,9 +5270,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/classes/sun/nio/fs/Sol
 +        init();
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjava/ProcessHandleImpl_solaris.c jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjava/ProcessHandleImpl_solaris.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjava/ProcessHandleImpl_solaris.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjava/ProcessHandleImpl_solaris.c	2024-12-29 14:18:52.833791798 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjava/ProcessHandleImpl_solaris.c
 @@ -0,0 +1,51 @@
 +/*
 + * Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
@@ -5414,9 +5324,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjava/Process
 +    unix_getCmdlineAndUserInfo(env, jinfo, pid);
 +}
 +
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_db/libjvm_db.c jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_db/libjvm_db.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_db/libjvm_db.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_db/libjvm_db.c	2024-12-29 14:18:52.834700136 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_db/libjvm_db.c
 @@ -0,0 +1,1552 @@
 +/*
 + * Copyright (c) 2003, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -6970,9 +6879,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_db/libjv
 +    update_gregs(gregs, jframe);
 +    return (0);
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_db/libjvm_db.h jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_db/libjvm_db.h
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_db/libjvm_db.h	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_db/libjvm_db.h	2024-12-29 14:18:52.834951912 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_db/libjvm_db.h
 @@ -0,0 +1,69 @@
 +/*
 + * Copyright (c) 2003, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -7043,9 +6951,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_db/libjv
 +#endif /* __cplusplus */
 +
 +#endif // OS_SOLARIS_DTRACE_LIBJVM_DB_H
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.c jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.c	2024-12-29 14:18:52.835512014 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.c
 @@ -0,0 +1,562 @@
 +/*
 + * Copyright (c) 2006, 2015, Oracle and/or its affiliates. All rights reserved.
@@ -7609,9 +7516,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_dtrace/j
 +    clear_jvm_error();
 +    return count;
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.h jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.h
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.h	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.h	2024-12-29 14:18:52.835771789 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libjvm_dtrace/jvm_dtrace.h
 @@ -0,0 +1,86 @@
 +/*
 + * Copyright (c) 2006, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -7699,9 +7605,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libjvm_dtrace/j
 +#endif
 +
 +#endif /* _JVM_DTRACE_H_ */
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnet/solaris_close.c jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnet/solaris_close.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnet/solaris_close.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnet/solaris_close.c	2024-12-29 14:18:52.836089154 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnet/solaris_close.c
 @@ -0,0 +1,107 @@
 +/*
 + * Copyright (c) 2014, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -7810,9 +7715,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnet/solaris_
 +        }
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/ch/DevPollArrayWrapper.c jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/ch/DevPollArrayWrapper.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/ch/DevPollArrayWrapper.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/ch/DevPollArrayWrapper.c	2024-12-29 14:18:52.836449678 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/ch/DevPollArrayWrapper.c
 @@ -0,0 +1,112 @@
 +/*
 + * Copyright (c) 2001, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -7926,9 +7830,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/ch/DevPo
 +    }
 +    return result;
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/ch/SolarisEventPort.c jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/ch/SolarisEventPort.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/ch/SolarisEventPort.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/ch/SolarisEventPort.c	2024-12-29 14:18:52.836728182 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/ch/SolarisEventPort.c
 @@ -0,0 +1,147 @@
 +/*
 + * Copyright (c) 2008, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -8077,9 +7980,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/ch/Solar
 +
 +    return (jint)n;
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/fs/SolarisNativeDispatcher.c jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/fs/SolarisNativeDispatcher.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/fs/SolarisNativeDispatcher.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/fs/SolarisNativeDispatcher.c	2024-12-29 14:18:52.837064240 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/fs/SolarisNativeDispatcher.c
 @@ -0,0 +1,143 @@
 +/*
 + * Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
@@ -8224,9 +8126,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/fs/Solar
 +
 +    return 0;
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/fs/SolarisWatchService.c jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/fs/SolarisWatchService.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/fs/SolarisWatchService.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/fs/SolarisWatchService.c	2024-12-29 14:18:52.837325910 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.base/solaris/native/libnio/fs/SolarisWatchService.c
 @@ -0,0 +1,104 @@
 +/*
 + * Copyright (c) 2008, 2009, Oracle and/or its affiliates. All rights reserved.
@@ -8332,9 +8233,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/solaris/native/libnio/fs/Solar
 +    }
 +    return (jint)n;
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/java/lang/ProcessImpl.java jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/java/lang/ProcessImpl.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/java/lang/ProcessImpl.java	2024-12-29 14:18:25.728198472 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/java/lang/ProcessImpl.java	2024-12-29 14:18:52.795292076 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/java/lang/ProcessImpl.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/java/lang/ProcessImpl.java
 @@ -83,6 +83,9 @@
      private /* final */ InputStream  stdout;
      private /* final */ InputStream  stderr;
@@ -8431,9 +8331,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/java/lang/Process
              default: throw new AssertionError("Unsupported platform: " + OperatingSystem.current());
          }
      }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/net/PortConfig.java jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/net/PortConfig.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/net/PortConfig.java	2024-12-29 14:18:25.738685501 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/net/PortConfig.java	2024-12-29 14:18:52.795677789 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/net/PortConfig.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/net/PortConfig.java
 @@ -48,6 +48,10 @@
                  defaultLower = 32768;
                  defaultUpper = 61000;
@@ -8445,9 +8344,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/net/PortConfi
              case MACOS:
                  defaultLower = 49152;
                  defaultUpper = 65535;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/nio/fs/UnixConstants.java.template jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixConstants.java.template
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/nio/fs/UnixConstants.java.template	2024-12-29 14:18:25.732434126 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixConstants.java.template	2024-12-29 14:18:52.796086169 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixConstants.java.template.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixConstants.java.template
 @@ -35,6 +35,10 @@
  #include <sys/clonefile.h>
  #endif
@@ -8459,9 +8357,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/nio/fs/UnixCo
  /* To be able to name the Java constants the same as the C constants without
     having the preprocessor rewrite those identifiers, add PREFIX_ to all
     identifiers matching a C constant. The PREFIX_ is filtered out in the
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/nio/fs/UnixFileSystem.java jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixFileSystem.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/nio/fs/UnixFileSystem.java	2024-12-29 14:18:25.730608156 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixFileSystem.java	2024-12-29 14:18:52.796587481 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixFileSystem.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixFileSystem.java
 @@ -127,6 +127,10 @@
          return rootDirectory;
      }
@@ -8473,9 +8370,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/nio/fs/UnixFi
      static List<String> standardFileAttributeViews() {
          return Arrays.asList("basic", "posix", "unix", "owner");
      }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/nio/fs/UnixPath.java jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixPath.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/nio/fs/UnixPath.java	2024-12-29 14:18:25.732678562 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixPath.java	2024-12-29 14:18:52.797043521 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixPath.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/nio/fs/UnixPath.java
 @@ -830,7 +830,15 @@
                      ("NOFOLLOW_LINKS is not supported on this platform");
              flags |= O_NOFOLLOW;
@@ -8493,9 +8389,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/nio/fs/UnixPa
      }
  
      void checkRead() {
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/security/provider/NativePRNG.java jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/security/provider/NativePRNG.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/security/provider/NativePRNG.java	2024-12-29 14:18:25.729029935 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/security/provider/NativePRNG.java	2024-12-29 14:18:52.797545399 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/security/provider/NativePRNG.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/classes/sun/security/provider/NativePRNG.java
 @@ -33,7 +33,7 @@
  import sun.security.util.Debug;
  
@@ -8505,9 +8400,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/classes/sun/security/prov
   * <p>
   * It obtains seed and random numbers by reading system files such as
   * the special device files /dev/random and /dev/urandom.  This
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/io_util_md.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/io_util_md.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/io_util_md.c	2024-12-29 14:18:25.748268807 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/io_util_md.c	2024-12-29 14:18:52.800544725 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/io_util_md.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/io_util_md.c
 @@ -30,6 +30,10 @@
  #include <string.h>
  #include <unistd.h>
@@ -8519,9 +8413,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/io_util_md
  #if defined(__linux__) || defined(_ALLBSD_SOURCE) || defined(_AIX)
  #include <sys/ioctl.h>
  #endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/java_props_md.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/java_props_md.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/java_props_md.c	2024-12-29 14:18:25.748718484 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/java_props_md.c	2024-12-29 14:18:52.800978778 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/java_props_md.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/java_props_md.c
 @@ -323,6 +323,27 @@
          }
  #endif
@@ -8550,9 +8443,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/java_props
  #ifdef MACOSX
          /*
           * For the case on MacOS X where encoding is set to US-ASCII, but we
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.c	2024-12-29 14:18:25.746514900 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.c	2024-12-29 14:18:52.798240517 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.c
 @@ -44,8 +44,16 @@
  #include <sys/stat.h>
  #include <sys/wait.h>
@@ -8642,9 +8534,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/ProcessHan
  
 -#endif // defined(_AIX)
 +#endif // defined(__solaris__) || defined(_AIX)
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.h jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.h
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.h	2024-12-29 14:18:25.748552064 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.h	2024-12-29 14:18:52.798586756 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.h.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessHandleImpl_unix.h
 @@ -29,7 +29,7 @@
   * Declaration of ProcessHandleImpl functions common on all Unix platforms.
   * 'unix_' functions have a single implementation in ProcessHandleImpl_unix.c
@@ -8654,9 +8545,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/ProcessHan
   * See ProcessHandleImpl_unix.c for more details.
   */
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/ProcessImpl_md.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessImpl_md.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/ProcessImpl_md.c	2024-12-29 14:18:25.747103554 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessImpl_md.c	2024-12-29 14:18:52.799121657 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessImpl_md.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/ProcessImpl_md.c
 @@ -230,7 +230,14 @@
  static const char*
  defaultPath(void)
@@ -8691,9 +8581,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/ProcessImp
        case MODE_VFORK:
          return vforkChild(c);
        #endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/TimeZone_md.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/TimeZone_md.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/TimeZone_md.c	2024-12-29 14:18:25.747826595 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/TimeZone_md.c	2024-12-29 14:18:52.799819030 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/TimeZone_md.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/TimeZone_md.c
 @@ -35,6 +35,9 @@
  #include <string.h>
  #include <dirent.h>
@@ -8948,9 +8837,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/TimeZone_m
          if (freetz == NULL) {
              /* strdup if we are still working on getenv result. */
              javatz = strdup(tz);
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/UnixFileSystem_md.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/UnixFileSystem_md.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/UnixFileSystem_md.c	2024-12-29 14:18:25.747657682 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/UnixFileSystem_md.c	2024-12-29 14:18:52.800196377 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/UnixFileSystem_md.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjava/UnixFileSystem_md.c
 @@ -57,6 +57,11 @@
    #endif
    #define statvfs statvfs64
@@ -8963,9 +8851,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjava/UnixFileSy
  /* -- Field IDs -- */
  
  static struct {
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjsig/jsig.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjsig/jsig.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjsig/jsig.c	2024-12-29 14:18:25.740622927 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjsig/jsig.c	2024-12-29 14:18:52.801659975 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjsig/jsig.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libjsig/jsig.c
 @@ -35,6 +35,16 @@
  
  #include "jni.h"
@@ -9079,9 +8966,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libjsig/jsig.c jdk
    /* Does race condition make sense here? */
    if (sigismember(&jvmsigs, sig)) {
      return &sact[sig];
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/Inet4AddressImpl.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/Inet4AddressImpl.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/Inet4AddressImpl.c	2024-12-29 14:18:25.745725312 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/Inet4AddressImpl.c	2024-12-29 14:18:52.802122841 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/Inet4AddressImpl.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/Inet4AddressImpl.c
 @@ -66,8 +66,27 @@
      if (gethostname(hostname, sizeof(hostname)) != 0) {
          strcpy(hostname, "localhost");
@@ -9110,9 +8996,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/Inet4Addres
      }
      return (*env)->NewStringUTF(env, hostname);
  }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/Inet6AddressImpl.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/Inet6AddressImpl.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/Inet6AddressImpl.c	2024-12-29 14:18:25.745906227 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/Inet6AddressImpl.c	2024-12-29 14:18:52.802568928 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/Inet6AddressImpl.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/Inet6AddressImpl.c
 @@ -67,8 +67,27 @@
      if (gethostname(hostname, sizeof(hostname)) != 0) {
          strcpy(hostname, "localhost");
@@ -9141,9 +9026,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/Inet6Addres
      }
      return (*env)->NewStringUTF(env, hostname);
  }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/net_util_md.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/net_util_md.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/net_util_md.c	2024-12-29 14:18:25.745246071 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/net_util_md.c	2024-12-29 14:18:52.804628374 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/net_util_md.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/net_util_md.c
 @@ -36,6 +36,14 @@
  #include <sys/utsname.h>
  #endif
@@ -9501,9 +9385,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/net_util_md
      return rv;
  }
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/net_util_md.h jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/net_util_md.h
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/net_util_md.h	2024-12-29 14:18:25.745554567 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/net_util_md.h	2024-12-29 14:18:52.805007603 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/net_util_md.h.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/net_util_md.h
 @@ -47,6 +47,8 @@
  #ifndef SO_REUSEPORT
  #ifdef __linux__
@@ -9522,9 +9405,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/net_util_md
 +#endif
 +
  #endif /* NET_UTILS_MD_H */
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/NetworkInterface.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/NetworkInterface.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/NetworkInterface.c	2024-12-29 14:18:25.745059236 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/NetworkInterface.c	2024-12-29 14:18:52.803435539 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/NetworkInterface.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/NetworkInterface.c
 @@ -37,6 +37,12 @@
  #include <strings.h>
  #endif
@@ -9935,9 +9817,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/NetworkInte
  /** BSD **/
  #if defined(_ALLBSD_SOURCE)
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/portconfig.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/portconfig.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/portconfig.c	2024-12-29 14:18:25.744618101 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/portconfig.c	2024-12-29 14:18:52.805343580 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/portconfig.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/portconfig.c
 @@ -60,6 +60,13 @@
          }
          return -1;
@@ -9952,9 +9833,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/portconfig.
  #elif defined(_ALLBSD_SOURCE)
      {
          int ret;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/SdpSupport.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/SdpSupport.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/SdpSupport.c	2024-12-29 14:18:25.744479940 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/SdpSupport.c	2024-12-29 14:18:52.803825007 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/SdpSupport.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnet/SdpSupport.c
 @@ -27,7 +27,11 @@
  #include <sys/socket.h>
  #include <errno.h>
@@ -9980,9 +9860,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnet/SdpSupport.
      /**
       * IPv6 not supported by SDP on Linux
       */
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/DatagramChannelImpl.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/DatagramChannelImpl.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/DatagramChannelImpl.c	2024-12-29 14:18:25.743695920 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/DatagramChannelImpl.c	2024-12-29 14:18:52.805773641 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/DatagramChannelImpl.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/DatagramChannelImpl.c
 @@ -50,6 +50,9 @@
      jint fd = fdval(env, fdo);
      int rv;
@@ -10002,9 +9881,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/Datagram
      if (rv < 0)
          handleSocketError(env, errno);
  }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/NativeThread.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/NativeThread.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/NativeThread.c	2024-12-29 14:18:25.742436774 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/NativeThread.c	2024-12-29 14:18:52.806126453 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/NativeThread.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/NativeThread.c
 @@ -40,6 +40,9 @@
  #elif defined(_AIX)
    /* Also defined in net/aix_close.c */
@@ -10038,9 +9916,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/NativeTh
  #ifdef MACOSX
      if (ret != 0 && ret != ESRCH)
  #else
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/Net.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/Net.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/Net.c	2024-12-29 14:18:25.743262341 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/Net.c	2024-12-29 14:18:52.806676391 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/Net.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/Net.c
 @@ -25,6 +25,7 @@
  
  #include <poll.h>
@@ -10067,9 +9944,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/Net.c jd
      /* IPV6_ADD_MEMBERSHIP can be used to join IPv4 multicast groups */
      return JNI_TRUE;
  #else
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/nio_util.h jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/nio_util.h
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/nio_util.h	2024-12-29 14:18:25.743551793 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/nio_util.h	2024-12-29 14:18:52.807011667 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/nio_util.h.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/ch/nio_util.h
 @@ -35,6 +35,8 @@
  #ifndef SO_REUSEPORT
  #ifdef __linux__
@@ -10079,9 +9955,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/ch/nio_util
  #elif defined(AIX) || defined(MACOSX)
  #define SO_REUSEPORT 0x0200
  #else
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c	2024-12-29 14:18:25.741633962 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c	2024-12-29 14:18:52.807553400 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
 @@ -46,10 +46,17 @@
  #include <sys/xattr.h>
  #endif
@@ -10111,9 +9986,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/unix/native/libnio/fs/UnixNati
      my_openat_func = (openat_func*)dlsym(RTLD_DEFAULT, "openat");
      my_fstatat_func = (fstatat_func*)dlsym(RTLD_DEFAULT, "fstatat");
  #else
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/windows/native/libnet/net_util_md.c jdk23u-jdk-23.0.1-ga/src/java.base/windows/native/libnet/net_util_md.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.base/windows/native/libnet/net_util_md.c	2024-12-29 14:18:24.974872350 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.base/windows/native/libnet/net_util_md.c	2024-12-29 14:18:52.808013010 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.base/windows/native/libnet/net_util_md.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.base/windows/native/libnet/net_util_md.c
 @@ -125,6 +125,8 @@
      }
      return TRUE;
@@ -10123,9 +9997,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.base/windows/native/libnet/net_util
  
  /*
   * Since winsock doesn't have the equivalent of strerror(errno)
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/classes/sun/awt/FontConfiguration.java jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/awt/FontConfiguration.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/classes/sun/awt/FontConfiguration.java	2024-12-29 14:18:22.718574305 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/awt/FontConfiguration.java	2024-12-29 14:18:52.808826566 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/awt/FontConfiguration.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/awt/FontConfiguration.java
 @@ -1422,6 +1422,22 @@
                  }
              }
@@ -10149,9 +10022,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/classes/sun/awt/FontC
          if (errors != 0) {
              System.err.println("!!THERE ARE " + errors + " ERROR(S) IN "
                                 + "THE FONTCONFIG FILE, PLEASE CHECK ITS CONTENT!!\n");
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/classes/sun/awt/OSInfo.java jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/awt/OSInfo.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/classes/sun/awt/OSInfo.java	2024-12-29 14:18:22.718916704 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/awt/OSInfo.java	2024-12-29 14:18:52.809219029 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/awt/OSInfo.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/awt/OSInfo.java
 @@ -39,6 +39,7 @@
      public static enum OSType {
          WINDOWS,
@@ -10168,9 +10040,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/classes/sun/awt/OSInf
              case MACOS -> MACOSX;
              case AIX -> AIX;
              default -> UNKNOWN;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/classes/sun/font/FontUtilities.java jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/font/FontUtilities.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/classes/sun/font/FontUtilities.java	2024-12-29 14:18:22.745184900 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/font/FontUtilities.java	2024-12-29 14:18:52.809732139 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/font/FontUtilities.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/share/classes/sun/font/FontUtilities.java
 @@ -41,6 +41,8 @@
   */
  public final class FontUtilities {
@@ -10189,9 +10060,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/classes/sun/font/Font
                  isLinux = OSInfo.getOSType() == OSInfo.OSType.LINUX;
  
                  isMacOSX = OSInfo.getOSType() == OSInfo.OSType.MACOSX;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/native/libjsound/SoundDefs.h jdk23u-jdk-23.0.1-ga/src/java.desktop/share/native/libjsound/SoundDefs.h
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/native/libjsound/SoundDefs.h	2024-12-29 14:18:23.234041194 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/share/native/libjsound/SoundDefs.h	2024-12-29 14:18:52.810218800 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/share/native/libjsound/SoundDefs.h.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/share/native/libjsound/SoundDefs.h
 @@ -29,9 +29,10 @@
  
  // types for X_PLATFORM
@@ -10227,9 +10097,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/share/native/libjsound/Soun
  #if X_PLATFORM == X_LINUX
  #define INLINE          inline
  #endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X11CNS11643.java jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X11CNS11643.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643.java	2024-12-29 14:18:52.837733841 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643.java
 @@ -0,0 +1,178 @@
 +/*
 + * Copyright (c) 2001, 2008, Oracle and/or its affiliates. All rights reserved.
@@ -10409,9 +10278,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X1
 +        }
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X11CNS11643P1.java jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643P1.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X11CNS11643P1.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643P1.java	2024-12-29 14:18:52.838043570 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643P1.java
 @@ -0,0 +1,33 @@
 +/*
 + * Copyright (c) 1996, 2005, Oracle and/or its affiliates. All rights reserved.
@@ -10446,9 +10314,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X1
 +        super(1, "X11CNS11643P1");
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X11CNS11643P2.java jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643P2.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X11CNS11643P2.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643P2.java	2024-12-29 14:18:52.838275472 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643P2.java
 @@ -0,0 +1,32 @@
 +/*
 + * Copyright (c) 1996, 2005, Oracle and/or its affiliates. All rights reserved.
@@ -10482,9 +10349,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X1
 +        super(2, "X11CNS11643P2");
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X11CNS11643P3.java jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643P3.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X11CNS11643P3.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643P3.java	2024-12-29 14:18:52.838502429 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/classes/sun/font/X11CNS11643P3.java
 @@ -0,0 +1,32 @@
 +/*
 + * Copyright (c) 1997, 2005, Oracle and/or its affiliates. All rights reserved.
@@ -10518,9 +10384,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/classes/sun/font/X1
 +        super(3, "X11CNS11643P3");
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/data/fontconfig/fontconfig.properties jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/data/fontconfig/fontconfig.properties
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/data/fontconfig/fontconfig.properties	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/data/fontconfig/fontconfig.properties	2024-12-29 14:18:52.824975553 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/data/fontconfig/fontconfig.properties
 @@ -0,0 +1,516 @@
 +#
 +#
@@ -11038,9 +10903,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/data/fontconfig/fon
 +
 +# Appended Font Path
 +
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_PCM.c jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_PCM.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_PCM.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_PCM.c	2024-12-29 14:18:52.839059458 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_PCM.c
 @@ -0,0 +1,627 @@
 +/*
 + * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
@@ -11669,9 +11533,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PL
 +
 +
 +#endif // USE_DAUDIO
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Ports.c jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Ports.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Ports.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Ports.c	2024-12-29 14:18:52.839545401 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Ports.c
 @@ -0,0 +1,579 @@
 +/*
 + * Copyright (c) 2002, 2016, Oracle and/or its affiliates. All rights reserved.
@@ -12252,9 +12115,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PL
 +}
 +
 +#endif // USE_PORTS
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.c jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.c	2024-12-29 14:18:52.839826568 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.c
 @@ -0,0 +1,193 @@
 +/*
 + * Copyright (c) 2002, 2007, Oracle and/or its affiliates. All rights reserved.
@@ -12449,9 +12311,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PL
 +    }
 +    return 0;
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.h jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.h
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.h	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.h	2024-12-29 14:18:52.840058468 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/solaris/native/libjsound/PLATFORM_API_SolarisOS_Utils.h
 @@ -0,0 +1,85 @@
 +/*
 + * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
@@ -12538,9 +12399,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/solaris/native/libjsound/PL
 +
 +
 +#endif // PLATFORM_API_SOLARISOS_UTILS_H_INCLUDED
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/awt/X11FontManager.java jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/awt/X11FontManager.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/awt/X11FontManager.java	2024-12-29 14:18:23.483301194 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/awt/X11FontManager.java	2024-12-29 14:18:52.810750348 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/awt/X11FontManager.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/awt/X11FontManager.java
 @@ -686,7 +686,8 @@
           * and do the best we can.
           */
@@ -12551,9 +12411,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/awt/X11Fon
              FcFontConfiguration fcFontConfig =
                  new FcFontConfiguration(this);
              if (fcFontConfig.init()) {
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/font/MFontConfiguration.java jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/font/MFontConfiguration.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/font/MFontConfiguration.java	2024-12-29 14:18:23.489346393 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/font/MFontConfiguration.java	2024-12-29 14:18:52.811293215 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/font/MFontConfiguration.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/font/MFontConfiguration.java
 @@ -68,7 +68,59 @@
       */
      protected void initReorderMap() {
@@ -12640,9 +12499,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/font/MFont
              try {
                  File f;
                  if ((f = new File("/etc/fedora-release")).canRead()) {
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java	2024-12-29 14:18:23.486381081 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java	2024-12-29 14:18:52.811981326 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
 @@ -150,6 +150,10 @@
          return OSInfo.getOSType() == OSInfo.OSType.MACOSX;
      }
@@ -12690,9 +12548,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/print/Prin
                  cmd[0] = "/usr/bin/sh";
                  cmd[1] = "-c";
                  cmd[2] = "env LC_ALL=C " + command;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/print/UnixPrintJob.java jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/UnixPrintJob.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/print/UnixPrintJob.java	2024-12-29 14:18:23.486108512 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/UnixPrintJob.java	2024-12-29 14:18:52.812452108 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/UnixPrintJob.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/UnixPrintJob.java
 @@ -872,25 +872,51 @@
                          isAttributeCategorySupported(JobSheets.class)) {
              ncomps+=1;
@@ -12764,9 +12621,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/print/Unix
          }
          execCmd[n++] = spoolFile;
          if (IPPPrintService.debugPrint) {
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/print/UnixPrintService.java jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/UnixPrintService.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/print/UnixPrintService.java	2024-12-29 14:18:23.484948464 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/UnixPrintService.java	2024-12-29 14:18:52.813173168 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/UnixPrintService.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/classes/sun/print/UnixPrintService.java
 @@ -220,6 +220,31 @@
          return name;
      }
@@ -12861,9 +12717,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/classes/sun/print/Unix
              return getAIXServiceAttributes();
          } else {
              return getBSDServiceAttributes();
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/native/common/awt/fontpath.c jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/common/awt/fontpath.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/native/common/awt/fontpath.c	2024-12-29 14:18:23.439072351 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/common/awt/fontpath.c	2024-12-29 14:18:52.814159445 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/common/awt/fontpath.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/common/awt/fontpath.c
 @@ -57,7 +57,57 @@
  
  #define MAXFDIRS 512    /* Max number of directories that contain fonts */
@@ -12947,9 +12802,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/native/common/awt/font
  #elif defined(_AIX)
      knowndirs = fullAixFontPath;
  #endif
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/native/libawt_xawt/awt/awt_GraphicsEnv.c jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/awt/awt_GraphicsEnv.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/native/libawt_xawt/awt/awt_GraphicsEnv.c	2024-12-29 14:18:23.443200374 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/awt/awt_GraphicsEnv.c	2024-12-29 14:18:52.814862971 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/awt/awt_GraphicsEnv.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/awt/awt_GraphicsEnv.c
 @@ -402,7 +402,12 @@
              xrenderLibHandle = dlopen("libXrender.so", RTLD_LAZY | RTLD_GLOBAL);
          }
@@ -12964,9 +12818,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/native/libawt_xawt/awt
          if (xrenderLibHandle == NULL) {
              xrenderLibHandle = dlopen("libXrender.a(libXrender.so.0)",
                                        RTLD_MEMBER | RTLD_LAZY | RTLD_GLOBAL);
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/native/libawt_xawt/java2d/x11/XRBackendNative.c jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/java2d/x11/XRBackendNative.c
---- jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/native/libawt_xawt/java2d/x11/XRBackendNative.c	2024-12-29 14:18:23.446481831 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/java2d/x11/XRBackendNative.c	2024-12-29 14:18:52.815531418 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/java2d/x11/XRBackendNative.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/java2d/x11/XRBackendNative.c
 @@ -61,6 +61,29 @@
  
  #include <dlfcn.h>
@@ -13053,9 +12906,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.desktop/unix/native/libawt_xawt/jav
      free(colors);
      free(stops);
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java	2024-12-29 14:18:23.903338639 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java	2024-12-29 14:18:52.815974191 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java
 @@ -91,6 +91,9 @@
                                  = System.getProperty("sun.security.jgss.lib");
                          if (defaultLib == null || defaultLib.trim().equals("")) {
@@ -13066,9 +12918,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.security.jgss/share/classes/sun/sec
                                  case LINUX -> new String[]{
                                          "libgssapi.so",
                                          "libgssapi_krb5.so",
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.security.jgss/share/classes/sun/security/krb5/Config.java jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/krb5/Config.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.security.jgss/share/classes/sun/security/krb5/Config.java	2024-12-29 14:18:23.936621176 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/krb5/Config.java	2024-12-29 14:18:52.816501013 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/krb5/Config.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/krb5/Config.java
 @@ -930,6 +930,8 @@
              if (name == null) {
                  name = "c:\\winnt\\krb5.ini";
@@ -13078,9 +12929,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.security.jgss/share/classes/sun/sec
          } else if (OperatingSystem.isMacOS()) {
              name = findMacosConfigFile();
          } else {
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.security.jgss/share/classes/sun/security/krb5/internal/rcache/DflCache.java jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/krb5/internal/rcache/DflCache.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.security.jgss/share/classes/sun/security/krb5/internal/rcache/DflCache.java	2024-12-29 14:18:23.918786048 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/krb5/internal/rcache/DflCache.java	2024-12-29 14:18:52.816968903 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/krb5/internal/rcache/DflCache.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.security.jgss/share/classes/sun/security/krb5/internal/rcache/DflCache.java
 @@ -107,7 +107,7 @@
  
      private static long uid;
@@ -13090,9 +12940,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.security.jgss/share/classes/sun/sec
          uid = jdk.internal.misc.VM.geteuid();
      }
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.smartcardio/unix/classes/sun/security/smartcardio/PlatformPCSC.java jdk23u-jdk-23.0.1-ga/src/java.smartcardio/unix/classes/sun/security/smartcardio/PlatformPCSC.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.smartcardio/unix/classes/sun/security/smartcardio/PlatformPCSC.java	2024-12-29 14:18:24.825922550 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.smartcardio/unix/classes/sun/security/smartcardio/PlatformPCSC.java	2024-12-29 14:18:52.817398017 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.smartcardio/unix/classes/sun/security/smartcardio/PlatformPCSC.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.smartcardio/unix/classes/sun/security/smartcardio/PlatformPCSC.java
 @@ -86,8 +86,12 @@
          if (k != -1) {
              String libDir;
@@ -13108,9 +12957,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.smartcardio/unix/classes/sun/securi
              } else {
                  // must be 32-bit
                  libDir = "lib";
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.xml/share/classes/com/sun/org/apache/xalan/internal/xsltc/runtime/output/WriterOutputBuffer.java jdk23u-jdk-23.0.1-ga/src/java.xml/share/classes/com/sun/org/apache/xalan/internal/xsltc/runtime/output/WriterOutputBuffer.java
---- jdk23u-jdk-23.0.1-ga.orig/src/java.xml/share/classes/com/sun/org/apache/xalan/internal/xsltc/runtime/output/WriterOutputBuffer.java	2024-12-29 14:18:24.376056257 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/java.xml/share/classes/com/sun/org/apache/xalan/internal/xsltc/runtime/output/WriterOutputBuffer.java	2024-12-29 14:18:52.817894462 +0100
+--- jdk23u-jdk-23.0.1-ga/src/java.xml/share/classes/com/sun/org/apache/xalan/internal/xsltc/runtime/output/WriterOutputBuffer.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.xml/share/classes/com/sun/org/apache/xalan/internal/xsltc/runtime/output/WriterOutputBuffer.java
 @@ -33,12 +33,21 @@
      private static final int KB = 1024;
      private static int BUFFER_SIZE = 4 * KB;
@@ -13134,9 +12982,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/java.xml/share/classes/com/sun/org/apach
       */
      public WriterOutputBuffer(Writer writer) {
          _writer = new BufferedWriter(writer, BUFFER_SIZE);
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.attach/solaris/classes/sun/tools/attach/AttachProviderImpl.java jdk23u-jdk-23.0.1-ga/src/jdk.attach/solaris/classes/sun/tools/attach/AttachProviderImpl.java
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.attach/solaris/classes/sun/tools/attach/AttachProviderImpl.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.attach/solaris/classes/sun/tools/attach/AttachProviderImpl.java	2024-12-29 14:18:52.840506211 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/jdk.attach/solaris/classes/sun/tools/attach/AttachProviderImpl.java
 @@ -0,0 +1,79 @@
 +/*
 + * Copyright (c) 2005, Oracle and/or its affiliates. All rights reserved.
@@ -13217,9 +13064,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.attach/solaris/classes/sun/tools/att
 +    }
 +
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.attach/solaris/classes/sun/tools/attach/VirtualMachineImpl.java jdk23u-jdk-23.0.1-ga/src/jdk.attach/solaris/classes/sun/tools/attach/VirtualMachineImpl.java
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.attach/solaris/classes/sun/tools/attach/VirtualMachineImpl.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.attach/solaris/classes/sun/tools/attach/VirtualMachineImpl.java	2024-12-29 14:18:52.840828217 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/jdk.attach/solaris/classes/sun/tools/attach/VirtualMachineImpl.java
 @@ -0,0 +1,272 @@
 +/*
 + * Copyright (c) 2005, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -13493,9 +13339,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.attach/solaris/classes/sun/tools/att
 +        System.loadLibrary("attach");
 +    }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.attach/solaris/native/libattach/VirtualMachineImpl.c jdk23u-jdk-23.0.1-ga/src/jdk.attach/solaris/native/libattach/VirtualMachineImpl.c
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.attach/solaris/native/libattach/VirtualMachineImpl.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.attach/solaris/native/libattach/VirtualMachineImpl.c	2024-12-29 14:18:52.841254286 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/jdk.attach/solaris/native/libattach/VirtualMachineImpl.c
 @@ -0,0 +1,389 @@
 +/*
 + * Copyright (c) 2005, 2018, Oracle and/or its affiliates. All rights reserved.
@@ -13886,9 +13731,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.attach/solaris/native/libattach/Virt
 +    free(buf);
 +    return result;
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.charsets/share/classes/sun/nio/cs/ext/JISAutoDetect.java jdk23u-jdk-23.0.1-ga/src/jdk.charsets/share/classes/sun/nio/cs/ext/JISAutoDetect.java
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.charsets/share/classes/sun/nio/cs/ext/JISAutoDetect.java	2024-12-29 14:18:22.545496830 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.charsets/share/classes/sun/nio/cs/ext/JISAutoDetect.java	2024-12-29 14:18:52.818521264 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.charsets/share/classes/sun/nio/cs/ext/JISAutoDetect.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.charsets/share/classes/sun/nio/cs/ext/JISAutoDetect.java
 @@ -95,7 +95,7 @@
      private static class Decoder extends CharsetDecoder {
  
@@ -13924,9 +13768,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.charsets/share/classes/sun/nio/cs/ex
 +
      }
  }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.crypto.cryptoki/share/classes/sun/security/pkcs11/Config.java jdk23u-jdk-23.0.1-ga/src/jdk.crypto.cryptoki/share/classes/sun/security/pkcs11/Config.java
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.crypto.cryptoki/share/classes/sun/security/pkcs11/Config.java	2024-12-29 14:18:26.560842111 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.crypto.cryptoki/share/classes/sun/security/pkcs11/Config.java	2024-12-29 14:18:52.819099111 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.crypto.cryptoki/share/classes/sun/security/pkcs11/Config.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.crypto.cryptoki/share/classes/sun/security/pkcs11/Config.java
 @@ -720,10 +720,15 @@
          lib = expand(lib);
          int i = lib.indexOf("/$ISA/");
@@ -13945,9 +13788,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.crypto.cryptoki/share/classes/sun/se
          }
          if (DEBUG) {
              System.out.println(keyword + ": " + lib);
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.crypto.cryptoki/solaris/conf/security/sunpkcs11-solaris.cfg jdk23u-jdk-23.0.1-ga/src/jdk.crypto.cryptoki/solaris/conf/security/sunpkcs11-solaris.cfg
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.crypto.cryptoki/solaris/conf/security/sunpkcs11-solaris.cfg	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.crypto.cryptoki/solaris/conf/security/sunpkcs11-solaris.cfg	2024-12-29 14:18:52.841605433 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/jdk.crypto.cryptoki/solaris/conf/security/sunpkcs11-solaris.cfg
 @@ -0,0 +1,23 @@
 +#
 +# Configuration file to allow the SunPKCS11 provider to utilize
@@ -13972,9 +13814,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.crypto.cryptoki/solaris/conf/securit
 +  SecureRandom
 +}
 +
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/HotSpotSolarisVtblAccess.java jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/HotSpotSolarisVtblAccess.java
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/HotSpotSolarisVtblAccess.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/HotSpotSolarisVtblAccess.java	2024-12-29 14:18:52.841882131 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/HotSpotSolarisVtblAccess.java
 @@ -0,0 +1,65 @@
 +/*
 + * Copyright (c) 2000, 2005, Oracle and/or its affiliates. All rights reserved.
@@ -14041,9 +13882,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/
 +    return mangled.toString();
 +  }
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/solaris_amd64/SolarisAMD64JavaThreadPDAccess.java jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/solaris_amd64/SolarisAMD64JavaThreadPDAccess.java
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/solaris_amd64/SolarisAMD64JavaThreadPDAccess.java	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/solaris_amd64/SolarisAMD64JavaThreadPDAccess.java	2024-12-29 14:18:52.842233961 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/solaris_amd64/SolarisAMD64JavaThreadPDAccess.java
 @@ -0,0 +1,140 @@
 +/*
 + * Copyright (c) 2004, 2020, Oracle and/or its affiliates. All rights reserved.
@@ -14185,9 +14025,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/
 +    }
 +
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/Threads.java jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/Threads.java
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/Threads.java	2024-12-29 14:18:26.199303651 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/Threads.java	2024-12-29 14:18:52.819656794 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/Threads.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/runtime/Threads.java
 @@ -28,6 +28,7 @@
  
  import sun.jvm.hotspot.debugger.*;
@@ -14207,9 +14046,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/
              if (cpu.equals("x86")) {
                  access =  new Win32X86JavaThreadPDAccess();
              } else if (cpu.equals("amd64")) {
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java	2024-12-29 14:18:26.222519770 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java	2024-12-29 14:18:52.820057815 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java
 @@ -28,10 +28,14 @@
      system. */
  
@@ -14227,9 +14065,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/classes/sun/jvm/
        return "linux";
      } else if (os.equals("FreeBSD")) {
        return "bsd";
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/native/libsaproc/ps_core_common.c jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/native/libsaproc/ps_core_common.c
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/native/libsaproc/ps_core_common.c	2024-12-29 14:18:26.059469536 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/native/libsaproc/ps_core_common.c	2024-12-29 14:18:52.820501671 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/native/libsaproc/ps_core_common.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/share/native/libsaproc/ps_core_common.c
 @@ -22,6 +22,8 @@
   *
   */
@@ -14239,9 +14076,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/share/native/libsaproc
  #if defined(LINUX) || defined(__APPLE__)
  #include <unistd.h>
  #include <fcntl.h>
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/test/libproc/libproctest.sh jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/test/libproc/libproctest.sh
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/test/libproc/libproctest.sh	2024-12-29 14:18:26.051686785 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/test/libproc/libproctest.sh	2024-12-29 14:18:52.820878615 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/test/libproc/libproctest.sh.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.hotspot.agent/test/libproc/libproctest.sh
 @@ -59,8 +59,10 @@
  kill -9 $pid
  
@@ -14254,9 +14090,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.hotspot.agent/test/libproc/libprocte
  
  # delete core
  rm -f core.$pid
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.jdwp.agent/unix/native/libdt_socket/socket_md.c jdk23u-jdk-23.0.1-ga/src/jdk.jdwp.agent/unix/native/libdt_socket/socket_md.c
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.jdwp.agent/unix/native/libdt_socket/socket_md.c	2024-12-29 14:18:24.128740782 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.jdwp.agent/unix/native/libdt_socket/socket_md.c	2024-12-29 14:18:52.821389522 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.jdwp.agent/unix/native/libdt_socket/socket_md.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.jdwp.agent/unix/native/libdt_socket/socket_md.c
 @@ -33,8 +33,12 @@
  #include <errno.h>
  #include <string.h>
@@ -14315,9 +14150,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.jdwp.agent/unix/native/libdt_socket/
  long
  dbgsysCurrentTimeMillis() {
      struct timeval t;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.management/solaris/native/libmanagement_ext/UnixOperatingSystem.c jdk23u-jdk-23.0.1-ga/src/jdk.management/solaris/native/libmanagement_ext/UnixOperatingSystem.c
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.management/solaris/native/libmanagement_ext/UnixOperatingSystem.c	1970-01-01 01:00:00.000000000 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.management/solaris/native/libmanagement_ext/UnixOperatingSystem.c	2024-12-29 14:18:52.842639679 +0100
+--- /dev/null
++++ jdk23u-jdk-23.0.1-ga/src/jdk.management/solaris/native/libmanagement_ext/UnixOperatingSystem.c
 @@ -0,0 +1,254 @@
 +/*
 + * Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -14573,9 +14407,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.management/solaris/native/libmanagem
 +{
 +    return -1;
 +}
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.management/unix/native/libmanagement_ext/OperatingSystemImpl.c jdk23u-jdk-23.0.1-ga/src/jdk.management/unix/native/libmanagement_ext/OperatingSystemImpl.c
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.management/unix/native/libmanagement_ext/OperatingSystemImpl.c	2024-12-29 14:18:23.983606906 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.management/unix/native/libmanagement_ext/OperatingSystemImpl.c	2024-12-29 14:18:52.821999924 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.management/unix/native/libmanagement_ext/OperatingSystemImpl.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.management/unix/native/libmanagement_ext/OperatingSystemImpl.c
 @@ -77,7 +77,63 @@
  // true = get available swap in bytes
  // false = get total swap in bytes
@@ -14689,9 +14522,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.management/unix/native/libmanagement
      clk_tck = (jlong) sysconf(_SC_CLK_TCK);
  #elif defined(__linux__) || defined(_ALLBSD_SOURCE)
      clk_tck = 100;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/classes/sun/nio/ch/sctp/SctpNet.java jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/classes/sun/nio/ch/sctp/SctpNet.java
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/classes/sun/nio/ch/sctp/SctpNet.java	2024-12-29 14:18:26.034787987 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/classes/sun/nio/ch/sctp/SctpNet.java	2024-12-29 14:18:52.822472028 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/classes/sun/nio/ch/sctp/SctpNet.java.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/classes/sun/nio/ch/sctp/SctpNet.java
 @@ -44,6 +44,12 @@
      /* -- Miscellaneous SCTP utilities -- */
  
@@ -14705,9 +14537,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/classes/sun/nio/ch/sctp/Sc
          /* lksctp/linux requires Ipv4 addresses */
          return false;
      }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/native/libsctp/Sctp.h jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/Sctp.h
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/native/libsctp/Sctp.h	2024-12-29 14:18:26.032440785 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/Sctp.h	2024-12-29 14:18:52.822943454 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/Sctp.h.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/Sctp.h
 @@ -26,6 +26,48 @@
  #ifndef SUN_NIO_CH_SCTP_H
  #define SUN_NIO_CH_SCTP_H
@@ -14766,9 +14597,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/native/libsctp/Sctp.h jdk2
  extern sctp_getladdrs_func* nio_sctp_getladdrs;
  extern sctp_freeladdrs_func* nio_sctp_freeladdrs;
  extern sctp_getpaddrs_func* nio_sctp_getpaddrs;
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c	2024-12-29 14:18:26.032606395 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c	2024-12-29 14:18:52.823339345 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c
 @@ -331,11 +331,10 @@
              break;
          case SCTP_ADDR_MADE_PRIM :
@@ -14782,9 +14612,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/native/libsctp/SctpChannel
  #endif  /* __linux__ */
      }
  
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/native/libsctp/SctpNet.c jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/SctpNet.c
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/native/libsctp/SctpNet.c	2024-12-29 14:18:26.032769865 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/SctpNet.c	2024-12-29 14:18:52.823806744 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/SctpNet.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.sctp/unix/native/libsctp/SctpNet.c
 @@ -371,7 +371,11 @@
      int i, addrCount;
      jobjectArray isaa;
@@ -14809,9 +14638,8 @@ diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.sctp/unix/native/libsctp/SctpNet.c j
          sctpHandleSocketError(env, errno);
          return NULL;
      }
-diff -Nru jdk23u-jdk-23.0.1-ga.orig/src/jdk.security.auth/unix/native/libjaas/Unix.c jdk23u-jdk-23.0.1-ga/src/jdk.security.auth/unix/native/libjaas/Unix.c
---- jdk23u-jdk-23.0.1-ga.orig/src/jdk.security.auth/unix/native/libjaas/Unix.c	2024-12-29 14:18:23.590011757 +0100
-+++ jdk23u-jdk-23.0.1-ga/src/jdk.security.auth/unix/native/libjaas/Unix.c	2024-12-29 14:18:52.824195080 +0100
+--- jdk23u-jdk-23.0.1-ga/src/jdk.security.auth/unix/native/libjaas/Unix.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/jdk.security.auth/unix/native/libjaas/Unix.c
 @@ -32,6 +32,10 @@
  #include <stdlib.h>
  #include <string.h>
