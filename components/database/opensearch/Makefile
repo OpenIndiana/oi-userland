@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opensearch
 COMPONENT_VERSION= 2.7.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Open source distributed and RESTful search engine
 COMPONENT_PROJECT_URL= https://opensearch.org
 COMPONENT_SRC=          OpenSearch-$(COMPONENT_VERSION)
@@ -35,7 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Build fails with Java 21
 JAVA_VERSION = 17
 
-COMPONENT_BUILD_ACTION = cd $(@D); $(ENV) PATH="$(PATH)" ./gradlew localDistro
+COMPONENT_BUILD_ACTION = cd $(@D); $(ENV) PATH="$(PATH)" GRADLE_USER_HOME=$(@D)/.gradle ./gradlew localDistro
 
 COMPONENT_INSTALL_ACTION = $(ENV) DIR=$(@D) COMPONENT_VERSION=$(COMPONENT_VERSION) PROTO_DIR=$(PROTO_DIR) files/install.sh
 
