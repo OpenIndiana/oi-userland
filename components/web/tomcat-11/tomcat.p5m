@@ -1,0 +1,290 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=var/tomcat11/webapps/ROOT/index.jsp -> \
+    set action.hash Solaris/index.jsp >
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file link hardlink path=usr/tomcat11/docs/.* -> \
+    default facet.doc.html true>
+set name=pkg.fmri \
+    value=pkg:/web/java-servlet/tomcat-11@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="Tomcat 11 Servlet/JSP Container"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license tomcat.license license="Apache v2.0"
+
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/jdk/openjdk21/bin/java
+
+link path=etc/tomcat11 target=../var/tomcat11/conf
+file Solaris/http-tomcat.xml path=lib/svc/manifest/network/http-tomcat11.xml
+file Solaris/http-tomcat path=lib/svc/method/http-tomcat11
+link path=usr/share/man/man1m/tomcat.1 target=tomcat11.1m mediator=tomcat \
+    mediator-version=8
+file Solaris/tomcat.1m path=usr/share/man/man1m/tomcat11.1m
+
+file path=usr/tomcat11/bin/bootstrap.jar
+file path=usr/tomcat11/bin/catalina-tasks.xml
+file path=usr/tomcat11/bin/catalina.bat
+file path=usr/tomcat11/bin/catalina.sh
+file path=usr/tomcat11/bin/ciphers.bat
+file path=usr/tomcat11/bin/ciphers.sh
+file path=usr/tomcat11/bin/configtest.bat
+file path=usr/tomcat11/bin/configtest.sh
+file path=usr/tomcat11/bin/daemon.sh
+file path=usr/tomcat11/bin/digest.bat
+file path=usr/tomcat11/bin/digest.sh
+file path=usr/tomcat11/bin/makebase.bat
+file path=usr/tomcat11/bin/makebase.sh
+file path=usr/tomcat11/bin/migrate.bat
+file path=usr/tomcat11/bin/migrate.sh
+file path=usr/tomcat11/bin/service.bat
+file path=usr/tomcat11/bin/setclasspath.bat
+file path=usr/tomcat11/bin/setclasspath.sh
+file path=usr/tomcat11/bin/shutdown.bat
+file path=usr/tomcat11/bin/shutdown.sh
+file path=usr/tomcat11/bin/startup.bat
+file path=usr/tomcat11/bin/startup.sh
+file path=usr/tomcat11/bin/tomcat-juli.jar
+file path=usr/tomcat11/bin/tool-wrapper.bat
+file path=usr/tomcat11/bin/tool-wrapper.sh
+file path=usr/tomcat11/bin/version.bat
+file path=usr/tomcat11/bin/version.sh
+file path=usr/tomcat11/docs/BUILDING.txt
+file path=usr/tomcat11/docs/META-INF/context.xml
+file path=usr/tomcat11/docs/RELEASE-NOTES.txt
+file path=usr/tomcat11/docs/RUNNING.txt
+file path=usr/tomcat11/docs/WEB-INF/jsp/403.jsp
+file path=usr/tomcat11/docs/WEB-INF/web.xml
+file path=usr/tomcat11/docs/aio.html
+file path=usr/tomcat11/docs/annotationapi/index.html
+file path=usr/tomcat11/docs/api/index.html
+file path=usr/tomcat11/docs/appdev/build.xml.txt
+file path=usr/tomcat11/docs/appdev/deployment.html
+file path=usr/tomcat11/docs/appdev/index.html
+file path=usr/tomcat11/docs/appdev/installation.html
+file path=usr/tomcat11/docs/appdev/introduction.html
+file path=usr/tomcat11/docs/appdev/processes.html
+file path=usr/tomcat11/docs/appdev/sample/build.xml
+file path=usr/tomcat11/docs/appdev/sample/docs/README.txt
+file path=usr/tomcat11/docs/appdev/sample/index.html
+file path=usr/tomcat11/docs/appdev/sample/sample.war
+file path=usr/tomcat11/docs/appdev/sample/src/mypackage/Hello.java
+file path=usr/tomcat11/docs/appdev/sample/web/WEB-INF/web.xml
+file path=usr/tomcat11/docs/appdev/sample/web/hello.jsp
+file path=usr/tomcat11/docs/appdev/sample/web/images/tomcat.gif
+file path=usr/tomcat11/docs/appdev/sample/web/index.html
+file path=usr/tomcat11/docs/appdev/source.html
+file path=usr/tomcat11/docs/appdev/web.xml.txt
+file path=usr/tomcat11/docs/apr.html
+file path=usr/tomcat11/docs/architecture/index.html
+file path=usr/tomcat11/docs/architecture/overview.html
+file path=usr/tomcat11/docs/architecture/requestProcess.html
+file path=usr/tomcat11/docs/architecture/requestProcess/authentication-process.png
+file path=usr/tomcat11/docs/architecture/requestProcess/request-process.png
+file path=usr/tomcat11/docs/architecture/startup.html
+file path=usr/tomcat11/docs/architecture/startup/1_overview.plantuml
+file path=usr/tomcat11/docs/architecture/startup/1_overview.png
+file path=usr/tomcat11/docs/architecture/startup/2_catalina_init.plantuml
+file path=usr/tomcat11/docs/architecture/startup/2_catalina_init.png
+file path=usr/tomcat11/docs/architecture/startup/3_catalina_start_1.plantuml
+file path=usr/tomcat11/docs/architecture/startup/3_catalina_start_1.png
+file path=usr/tomcat11/docs/architecture/startup/4_catalina_start_2.plantuml
+file path=usr/tomcat11/docs/architecture/startup/4_catalina_start_2.png
+file path=usr/tomcat11/docs/architecture/startup/5_catalina_start_3.plantuml
+file path=usr/tomcat11/docs/architecture/startup/5_catalina_start_3.png
+file path=usr/tomcat11/docs/architecture/startup/6_catalina_host_config.plantuml
+file path=usr/tomcat11/docs/architecture/startup/6_catalina_host_config.png
+file path=usr/tomcat11/docs/architecture/startup/7_catalina_context_config.plantuml
+file path=usr/tomcat11/docs/architecture/startup/7_catalina_context_config.png
+file path=usr/tomcat11/docs/balancer-howto.html
+file path=usr/tomcat11/docs/building.html
+file path=usr/tomcat11/docs/cdi.html
+file path=usr/tomcat11/docs/cgi-howto.html
+file path=usr/tomcat11/docs/changelog.html
+file path=usr/tomcat11/docs/class-loader-howto.html
+file path=usr/tomcat11/docs/cluster-howto.html
+file path=usr/tomcat11/docs/comments.html
+file path=usr/tomcat11/docs/config/ajp.html
+file path=usr/tomcat11/docs/config/automatic-deployment.html
+file path=usr/tomcat11/docs/config/cluster-channel.html
+file path=usr/tomcat11/docs/config/cluster-deployer.html
+file path=usr/tomcat11/docs/config/cluster-interceptor.html
+file path=usr/tomcat11/docs/config/cluster-listener.html
+file path=usr/tomcat11/docs/config/cluster-manager.html
+file path=usr/tomcat11/docs/config/cluster-membership.html
+file path=usr/tomcat11/docs/config/cluster-receiver.html
+file path=usr/tomcat11/docs/config/cluster-sender.html
+file path=usr/tomcat11/docs/config/cluster-valve.html
+file path=usr/tomcat11/docs/config/cluster.html
+file path=usr/tomcat11/docs/config/context.html
+file path=usr/tomcat11/docs/config/cookie-processor.html
+file path=usr/tomcat11/docs/config/credentialhandler.html
+file path=usr/tomcat11/docs/config/engine.html
+file path=usr/tomcat11/docs/config/executor.html
+file path=usr/tomcat11/docs/config/filter.html
+file path=usr/tomcat11/docs/config/globalresources.html
+file path=usr/tomcat11/docs/config/host.html
+file path=usr/tomcat11/docs/config/http.html
+file path=usr/tomcat11/docs/config/http2.html
+file path=usr/tomcat11/docs/config/index.html
+file path=usr/tomcat11/docs/config/jar-scan-filter.html
+file path=usr/tomcat11/docs/config/jar-scanner.html
+file path=usr/tomcat11/docs/config/jaspic.html
+file path=usr/tomcat11/docs/config/listeners.html
+file path=usr/tomcat11/docs/config/loader.html
+file path=usr/tomcat11/docs/config/manager.html
+file path=usr/tomcat11/docs/config/realm.html
+file path=usr/tomcat11/docs/config/resources.html
+file path=usr/tomcat11/docs/config/server.html
+file path=usr/tomcat11/docs/config/service.html
+file path=usr/tomcat11/docs/config/sessionidgenerator.html
+file path=usr/tomcat11/docs/config/systemprops.html
+file path=usr/tomcat11/docs/config/valve.html
+file path=usr/tomcat11/docs/connectors.html
+file path=usr/tomcat11/docs/default-servlet.html
+file path=usr/tomcat11/docs/deployer-howto.html
+file path=usr/tomcat11/docs/developers.html
+file path=usr/tomcat11/docs/elapi/index.html
+file path=usr/tomcat11/docs/graal.html
+file path=usr/tomcat11/docs/host-manager-howto.html
+file path=usr/tomcat11/docs/html-host-manager-howto.html
+file path=usr/tomcat11/docs/html-manager-howto.html
+file path=usr/tomcat11/docs/images/add.gif
+file path=usr/tomcat11/docs/images/asf-logo.svg
+file path=usr/tomcat11/docs/images/code.gif
+file path=usr/tomcat11/docs/images/cors-flowchart.png
+file path=usr/tomcat11/docs/images/design.gif
+file path=usr/tomcat11/docs/images/docs-stylesheet.css
+file path=usr/tomcat11/docs/images/docs.gif
+file path=usr/tomcat11/docs/images/fix.gif
+file path=usr/tomcat11/docs/images/fonts/OpenSans400.woff
+file path=usr/tomcat11/docs/images/fonts/OpenSans400italic.woff
+file path=usr/tomcat11/docs/images/fonts/OpenSans600.woff
+file path=usr/tomcat11/docs/images/fonts/OpenSans600italic.woff
+file path=usr/tomcat11/docs/images/fonts/OpenSans700.woff
+file path=usr/tomcat11/docs/images/fonts/OpenSans700italic.woff
+file path=usr/tomcat11/docs/images/fonts/fonts.css
+file path=usr/tomcat11/docs/images/tomcat.gif
+file path=usr/tomcat11/docs/images/tomcat.png
+file path=usr/tomcat11/docs/images/update.gif
+file path=usr/tomcat11/docs/images/void.gif
+file path=usr/tomcat11/docs/index.html
+file path=usr/tomcat11/docs/introduction.html
+file path=usr/tomcat11/docs/jasper-howto.html
+file path=usr/tomcat11/docs/jaspicapi/index.html
+file path=usr/tomcat11/docs/jdbc-pool.html
+file path=usr/tomcat11/docs/jndi-datasource-examples-howto.html
+file path=usr/tomcat11/docs/jndi-resources-howto.html
+file path=usr/tomcat11/docs/jspapi/index.html
+file path=usr/tomcat11/docs/logging.html
+file path=usr/tomcat11/docs/manager-howto.html
+file path=usr/tomcat11/docs/maven-jars.html
+file path=usr/tomcat11/docs/mbeans-descriptors-howto.html
+file path=usr/tomcat11/docs/mbeans-descriptors.dtd
+file path=usr/tomcat11/docs/monitoring.html
+file path=usr/tomcat11/docs/proxy-howto.html
+file path=usr/tomcat11/docs/realm-howto.html
+file path=usr/tomcat11/docs/rewrite.html
+file path=usr/tomcat11/docs/security-howto.html
+file path=usr/tomcat11/docs/servletapi/index.html
+file path=usr/tomcat11/docs/setup.html
+file path=usr/tomcat11/docs/ssi-howto.html
+file path=usr/tomcat11/docs/ssl-howto.html
+file path=usr/tomcat11/docs/tribes/developers.html
+file path=usr/tomcat11/docs/tribes/faq.html
+file path=usr/tomcat11/docs/tribes/interceptors.html
+file path=usr/tomcat11/docs/tribes/introduction.html
+file path=usr/tomcat11/docs/tribes/membership.html
+file path=usr/tomcat11/docs/tribes/setup.html
+file path=usr/tomcat11/docs/tribes/status.html
+file path=usr/tomcat11/docs/tribes/transport.html
+file path=usr/tomcat11/docs/virtual-hosting-howto.html
+file path=usr/tomcat11/docs/web-socket-howto.html
+file path=usr/tomcat11/docs/websocketapi/index.html
+file path=usr/tomcat11/docs/windows-auth-howto.html
+file path=usr/tomcat11/docs/windows-service-howto.html
+file path=usr/tomcat11/lib/annotations-api.jar
+file path=usr/tomcat11/lib/catalina-ant.jar
+file path=usr/tomcat11/lib/catalina-ha.jar
+file path=usr/tomcat11/lib/catalina-ssi.jar
+file path=usr/tomcat11/lib/catalina-storeconfig.jar
+file path=usr/tomcat11/lib/catalina-tribes.jar
+file path=usr/tomcat11/lib/catalina.jar
+file path=usr/tomcat11/lib/ecj-4.34.jar
+file path=usr/tomcat11/lib/el-api.jar
+file path=usr/tomcat11/lib/jakartaee-migration-1.0.8-shaded.jar
+file path=usr/tomcat11/lib/jasper-el.jar
+file path=usr/tomcat11/lib/jasper.jar
+file path=usr/tomcat11/lib/jaspic-api.jar
+file path=usr/tomcat11/lib/jsp-api.jar
+file path=usr/tomcat11/lib/servlet-api.jar
+file path=usr/tomcat11/lib/tomcat-api.jar
+file path=usr/tomcat11/lib/tomcat-coyote-ffm.jar
+file path=usr/tomcat11/lib/tomcat-coyote.jar
+file path=usr/tomcat11/lib/tomcat-dbcp.jar
+file path=usr/tomcat11/lib/tomcat-i18n-cs.jar
+file path=usr/tomcat11/lib/tomcat-i18n-de.jar
+file path=usr/tomcat11/lib/tomcat-i18n-es.jar
+file path=usr/tomcat11/lib/tomcat-i18n-fr.jar
+file path=usr/tomcat11/lib/tomcat-i18n-ja.jar
+file path=usr/tomcat11/lib/tomcat-i18n-ko.jar
+file path=usr/tomcat11/lib/tomcat-i18n-pt-BR.jar
+file path=usr/tomcat11/lib/tomcat-i18n-ru.jar
+file path=usr/tomcat11/lib/tomcat-i18n-zh-CN.jar
+file path=usr/tomcat11/lib/tomcat-jdbc.jar
+file path=usr/tomcat11/lib/tomcat-jni.jar
+file path=usr/tomcat11/lib/tomcat-util-scan.jar
+file path=usr/tomcat11/lib/tomcat-util.jar
+file path=usr/tomcat11/lib/tomcat-websocket.jar
+file path=usr/tomcat11/lib/websocket-api.jar
+file path=usr/tomcat11/lib/websocket-client-api.jar
+dir  path=var/tomcat11/conf owner=webservd group=webservd
+file path=var/tomcat11/conf/CONF.tar.gz
+file path=var/tomcat11/conf/catalina.properties mode=0644 \
+    original_name=SUNWtcat:var/tomcat6/conf/catalina.properties \
+    preserve=renamenew
+file path=var/tomcat11/conf/context.xml mode=0644 preserve=renamenew
+file path=var/tomcat11/conf/jaspic-providers.xml mode=0644 preserve=renamenew
+file path=var/tomcat11/conf/jaspic-providers.xsd mode=0644 preserve=renamenew
+file path=var/tomcat11/conf/logging.properties mode=0644 \
+    original_name=SUNWtcat:var/tomcat6/conf/logging.properties \
+    preserve=renamenew
+file path=var/tomcat11/conf/server.xml mode=0644 preserve=renamenew
+file path=var/tomcat11/conf/tomcat-users.xml owner=webservd group=webservd \
+    mode=0600 preserve=renamenew
+file path=var/tomcat11/conf/tomcat-users.xsd
+file path=var/tomcat11/conf/web.xml mode=0644 preserve=renamenew
+dir  path=var/tomcat11/logs owner=webservd group=webservd mode=0700
+dir  path=var/tomcat11/temp owner=webservd group=webservd
+dir  path=var/tomcat11/webapps owner=webservd group=webservd
+file path=var/tomcat11/webapps/ROOT/index.jsp mode=0644 preserve=renamenew
+dir  path=var/tomcat11/work owner=webservd group=webservd
