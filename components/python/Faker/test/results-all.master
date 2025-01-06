@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 2034 items
+collecting ... collected 2058 items
 
 tests/providers/__init__.py::TestBaseProvider::test_locale PASSED
 tests/providers/__init__.py::TestBaseProvider::test_language_code PASSED
@@ -230,6 +230,9 @@ tests/providers/test_address.py::TestKoKr::test_borough PASSED
 tests/providers/test_address.py::TestKoKr::test_town PASSED
 tests/providers/test_address.py::TestKoKr::test_town_suffix PASSED
 tests/providers/test_address.py::TestKoKr::test_building_name PASSED
+tests/providers/test_address.py::TestKoKr::test_building_number PASSED
+tests/providers/test_address.py::TestKoKr::test_building_number_underground PASSED
+tests/providers/test_address.py::TestKoKr::test_building_number_segregated PASSED
 tests/providers/test_address.py::TestKoKr::test_building_suffix PASSED
 tests/providers/test_address.py::TestKoKr::test_building_dong PASSED
 tests/providers/test_address.py::TestKoKr::test_road_address PASSED
@@ -424,6 +427,15 @@ tests/providers/test_address.py::TestFrCa::test_administrative_unit PASSED
 tests/providers/test_address.py::TestPlPl::test_postcode PASSED
 tests/providers/test_address.py::TestPlPl::test_zipcode PASSED
 tests/providers/test_address.py::TestPlPl::test_postalcode PASSED
+tests/providers/test_address.py::TestZuZa::test_postcode PASSED
+tests/providers/test_address.py::TestZuZa::test_city_name PASSED
+tests/providers/test_address.py::TestZuZa::test_city_suffix PASSED
+tests/providers/test_address.py::TestZuZa::test_city PASSED
+tests/providers/test_address.py::TestZuZa::test_country PASSED
+tests/providers/test_address.py::TestZuZa::test_street_name PASSED
+tests/providers/test_address.py::TestZuZa::test_address PASSED
+tests/providers/test_address.py::TestZuZa::test_province PASSED
+tests/providers/test_address.py::TestZuZa::test_administrative_unit PASSED
 tests/providers/test_automotive.py::TestArBh::test_license_plate PASSED
 tests/providers/test_automotive.py::TestArBh::test_vin PASSED
 tests/providers/test_automotive.py::TestAzAz::test_license_plate PASSED
@@ -811,6 +823,17 @@ tests/providers/test_currency.py::TestElGr::test_pricetag PASSED
 tests/providers/test_currency.py::TestTrTr::test_pricetag PASSED
 tests/providers/test_currency.py::TestViVn::test_currency PASSED
 tests/providers/test_currency.py::TestViVn::test_pricetag PASSED
+tests/providers/test_currency.py::TestUkUa::test_currency PASSED
+tests/providers/test_currency.py::TestUkUa::test_currency_code PASSED
+tests/providers/test_currency.py::TestUkUa::test_currency_name PASSED
+tests/providers/test_currency.py::TestUkUa::test_currency_code_has_symbol PASSED
+tests/providers/test_currency.py::TestUkUa::test_currency_symbol_no_code_supplied PASSED
+tests/providers/test_currency.py::TestUkUa::test_currency_symbol_with_valid_code PASSED
+tests/providers/test_currency.py::TestUkUa::test_currency_symbol_with_invalid_code PASSED
+tests/providers/test_currency.py::TestUkUa::test_cryptocurrency PASSED
+tests/providers/test_currency.py::TestUkUa::test_cryptocurrency_code PASSED
+tests/providers/test_currency.py::TestUkUa::test_cryptocurrency_name PASSED
+tests/providers/test_currency.py::TestUkUa::test_pricetag PASSED
 tests/providers/test_currency.py::TestUzUz::test_currency PASSED
 tests/providers/test_currency.py::TestUzUz::test_pricetag PASSED
 tests/providers/test_date_time.py::TestKoKR::test_day PASSED
@@ -1256,6 +1279,14 @@ tests/providers/test_misc.py::TestMiscProvider::test_fixed_width_invalid_argumen
 tests/providers/test_misc.py::TestMiscProvider::test_md5 PASSED
 tests/providers/test_misc.py::TestMiscProvider::test_sha1 PASSED
 tests/providers/test_misc.py::TestMiscProvider::test_sha256 PASSED
+tests/providers/test_passport.py::TestBaseProvider::test_dob PASSED
+tests/providers/test_passport.py::TestBaseProvider::test_owner_names PASSED
+tests/providers/test_passport.py::TestBaseProvider::test_num_formats PASSED
+tests/providers/test_passport.py::TestEnUS::test_dates PASSED
+tests/providers/test_passport.py::TestEnUS::test_gender PASSED
+tests/providers/test_passport.py::TestEnUS::test_full PASSED
+tests/providers/test_passport.py::TestRuRu::test_owner_names PASSED
+tests/providers/test_passport.py::TestRuRu::test_number PASSED
 tests/providers/test_person.py::TestAr::test_first_name PASSED
 tests/providers/test_person.py::TestAr::test_last_name PASSED
 tests/providers/test_person.py::TestAzAz::test_first_name PASSED
@@ -1334,7 +1365,6 @@ tests/providers/test_person.py::TestPtPt::test_male_first_name PASSED
 tests/providers/test_person.py::TestRuRU::test_language_name PASSED
 tests/providers/test_person.py::TestRuRU::test_name_female PASSED
 tests/providers/test_person.py::TestRuRU::test_name_male PASSED
-tests/providers/test_person.py::TestRuRU::test_passport_owner PASSED
 tests/providers/test_person.py::TestRuRU::test_translit PASSED
 tests/providers/test_person.py::TestSvSE::test_gender_first_names PASSED
 tests/providers/test_person.py::TestSkSK::test_name_female PASSED
@@ -1914,12 +1944,6 @@ tests/test_optional.py::TestOptionalClass::test_optional_probability PASSED
 tests/test_optional.py::TestOptionalClass::test_optional_arguments PASSED
 tests/test_optional.py::TestOptionalClass::test_optional_valid_range PASSED
 tests/test_optional.py::TestOptionalClass::test_functions_only PASSED
-tests/test_passport.py::TestPassportProvider::testDOB PASSED
-tests/test_passport.py::TestPassportProvider::testOwnerNames PASSED
-tests/test_passport.py::TestPassportProvider::testNumFormat PASSED
-tests/test_passport.py::TestEnUS::testDates PASSED
-tests/test_passport.py::TestEnUS::testGender PASSED
-tests/test_passport.py::TestEnUS::testfull PASSED
 tests/test_providers_formats.py::test_no_invalid_formats[ar_AA] PASSED
 tests/test_providers_formats.py::test_no_invalid_formats[ar_AE] PASSED
 tests/test_providers_formats.py::test_no_invalid_formats[ar_BH] PASSED
@@ -2064,7 +2088,7 @@ tests/test_providers_formats.py::test_no_invalid_formats[fr_QC]
     warnings.warn("fr_QC locale is deprecated. Please use fr_CA.")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 2003 passed, 31 skipped, 1 warning ========
+======== 2027 passed, 31 skipped, 1 warning ========
 py$(PYV): commands[1]> python -m coverage run --source=faker -a -m pytest --exclusive-faker-session tests/pytest/session_overrides
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
