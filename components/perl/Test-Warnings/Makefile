@@ -11,20 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Warnings
+#   $WS_TOOLS/perl-integrate-module Test-Warnings
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Warnings
-HUMAN_VERSION =			0.033
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Test::Warnings - Test for warnings and the lack of them
+COMPONENT_NAME =		Test-Warnings
+HUMAN_VERSION =			0.037
+COMPONENT_SUMMARY =		Test for warnings and the lack of them
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b9c375719f2c61c5f97aa5ee6cf4c901a972347c415969379b0b51f67c48bbcb
+	sha256:682de3e7a3e8ac9265c53d0e314b8b903294c5199c005bd37e808f4484c25df2
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENCE
 
@@ -34,6 +33,13 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += '-e "s/\(Does::Not::Exist::\)[0-9]*/\1RANDOM/"'
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-check
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-requirements
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/padwalker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
