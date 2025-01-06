@@ -19,10 +19,10 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_subprocess
-HUMAN_VERSION =			1.5.2
+HUMAN_VERSION =			1.5.3
 COMPONENT_SUMMARY =		A plugin to fake subprocess for pytest
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ad3ca8a35e798bf9c82d9f16d88700b30d98c5a28236117b86c5d6e581a8ed97
+	sha256:c00b1140fb0211b3153e09500d770db10770baccbe6e05ee9c140036d1d811d5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,7 +38,6 @@ TEST_REQUIREMENTS_EXTRAS += test
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/anyio
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/docutils
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
