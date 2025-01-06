@@ -12,19 +12,18 @@
 # Copyright 2016 Carsten Grzemba cgrzemba@opencsw.org
 #
 
-BUILD_BITS=64
-BUILD_STYLE=justmake
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =	LibreCAD
-COMPONENT_VERSION = 2.2.0.2
-COMPONENT_SUMMARY= LibreCAD is a 2D CAD drawing tool based on the community edition of QCAD.
-COMPONENT_PROJECT_URL =	https://github.com/LibreCAD
-COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = sha256:fcb888a550f1f515ef6a2f7af2dd02605dd5c6da8a23f6c3a52479f8532ac109
-COMPONENT_ARCHIVE_URL = https://github.com/LibreCAD/LibreCAD/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_FMRI =	desktop/librecad
+COMPONENT_NAME=		LibreCAD
+COMPONENT_VERSION=	2.2.1
+COMPONENT_SUMMARY=	LibreCAD is a 2D CAD drawing tool based on the community edition of QCAD.
+COMPONENT_PROJECT_URL=	https://github.com/LibreCAD
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:5f63661811d97560a3ab3e2d7252de8f1836af2e5197c8a96fdf07581d6e2c3b
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/LibreCAD/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=		desktop/librecad
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -32,8 +31,7 @@ COMPONENT_LICENSE_FILE=	LICENSE
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH.qt5 = /usr/lib/qt/5.15/bin/$(MACH64)
-PATH=$(GCC_BINDIR):$(PATH.qt5):$(PATH.illumos)
+PATH=$(GCC_BINDIR):$(QT5_BINDIR):$(PATH.illumos)
 
 COMPONENT_NAME_lc = $(shell echo $(COMPONENT_NAME) | tr '[A-Z]' '[a-z]')
 COMPONENT_INSTALL_ACTION = \
@@ -58,7 +56,7 @@ COMPONENT_INSTALL_ACTION = \
 COMPONENT_PRE_BUILD_ACTION = \
         (cd $(@D) && qmake $(COMPONENT_NAME_lc).pro 'CONFIG+=release')
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += system/library/boost
 
 # Auto-generated dependencies
