@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pillow
-HUMAN_VERSION =			11.0.0
+HUMAN_VERSION =			11.1.0
 COMPONENT_SUMMARY =		Python Imaging Library (Fork)
-COMPONENT_PROJECT_URL =		https://python-pillow.org
+COMPONENT_PROJECT_URL =		https://python-pillow.github.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:72bacbaf24ac003fea9bff9837d1eedb6088758d41e100c1552930151f677739
+	sha256:368da70808b36d73b4b390a8ffac11069f8a5c85f29eff1f1b01bcf3ef5b2a20
 COMPONENT_LICENSE =		HPND
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -52,3 +52,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pyroma
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
+TEST_REQUIRED_PACKAGES.python += library/python/trove-classifiers
