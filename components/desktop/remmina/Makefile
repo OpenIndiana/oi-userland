@@ -14,17 +14,19 @@
 #
 
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Remmina
-COMPONENT_VERSION=	1.4.37
+COMPONENT_VERSION=	1.4.39
 COMPONENT_SUMMARY=	Remmina remote desktop client
 COMPONENT_PROJECT_URL=	https://remmina.org
 COMPONENT_FMRI=		desktop/remote-desktop/remmina
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:de8287afd2f058e245550040a7e13f4b2e9aabcee5f3b51a4523aef013ff1fa8
+COMPONENT_ARCHIVE_HASH=	sha256:33cd3347226a1a7df05d74f0336b3da3bb34119a8809ccc9677c15a192ee401d
 COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/Remmina/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	GPL-2.0-or-later WITH cryptsetup-OpenSSL-exception
 COMPONENT_LICENSE_FILE=	COPYING
@@ -32,7 +34,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-LDFLAGS += -lnsl -lsocket
+# Remmina expects to find libsocket functions in libc
+LDFLAGS += -lsocket
 
 CMAKE_OPTIONS += -DWITH_AVAHI=OFF
 CMAKE_OPTIONS += -DWITH_LIBSSH=OFF
