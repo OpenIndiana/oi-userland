@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		smmap
-HUMAN_VERSION =			5.0.1
-COMPONENT_SUMMARY =		smmap - A pure Python implementation of a sliding window memory map manager
+HUMAN_VERSION =			5.0.2
+COMPONENT_SUMMARY =		A pure Python implementation of a sliding window memory map manager
 COMPONENT_PROJECT_URL =		https://github.com/gitpython-developers/smmap
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/88/04/b5bf6d21dc4041000ccba7eb17dd3055feb237e7ffc2c20d3fae3af62baa/smmap-5.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dceeb6c0028fdb6734471eb07c0cd2aae706ccaecab45965ee83f11c8d3b1f62
+	sha256:26ea65a03958fa0c8a1c7e8c7a58fdc77221b8910f6be2131affade476898ad5
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
