@@ -1182,6 +1182,20 @@ PKG_CONFIG_PATH.prepend +=	$(OPENSSL_PKG_CONFIG_PATH)
 OPENSSL_PKG =			library/security/openssl$(subst -10,,-$(subst .,,$(OPENSSL_VERSION)))
 REQUIRED_PACKAGES_SUBST +=	OPENSSL_PKG
 
+#
+# Rust macros
+#
+
+# Rust target triplet
+RUST_TRIPLET = $(RUST_CPU)-$(RUST_VENDOR)-$(RUST_OS)
+RUST_CPU = x86_64
+RUST_VENDOR = unknown
+RUST_OS = illumos
+
+# This is the linker we would like to use with cargo
+CARGO_TARGET_LINKER = $(CC)
+
+
 # Pkg-config paths
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
