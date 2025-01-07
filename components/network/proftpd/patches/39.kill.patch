@@ -1,0 +1,24 @@
+#
+# I've hit this stranch problem with @output = `$cmd`; on Solaris.
+# I'm sure the server process got started succesffully because
+# doing 'kill -0 $pid' from terminal worked. However in case of
+# perl the value of $? was -1 which is interpreted as process fails
+# to start. using system() insted `` seems to solve the problem.
+#
+# I have not submitted fix to upstream yet. I'd like to better
+# understand the issue first.
+#
+
+--- a/tests/t/lib/ProFTPD/TestSuite/Utils.pm
++++ b/tests/t/lib/ProFTPD/TestSuite/Utils.pm
+@@ -1012,8 +1012,8 @@ sub server_start {
+       $cmd .= " 2>/dev/null";
+     }
+ 
+-    @output = `$cmd`;
+-    if ($? != 0) {
++    my $ret = system($cmd);
++    if ($ret != 0) {
+       croak("server failed to start");
+     }
+   }
