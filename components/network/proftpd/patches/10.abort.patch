@@ -1,0 +1,486 @@
+#
+# the issue has been reported to upstream:
+#    https://github.com/proftpd/proftpd/issues/1499
+#
+# briefly: as soon as we close data session the underlying
+# FTP client library issues ABRT command. Server sends response
+# to ABRT back, which is not expected by many tests.
+#
+# patch has been also submitted to upstream:
+#    https://github.com/proftpd/proftpd/pull/1505
+#
+--- a/tests/t/lib/ProFTPD/Tests/Commands/LIST.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/LIST.pm
+@@ -653,12 +653,13 @@ sub list_file_rel_paths_bug4259 {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       if ($ENV{TEST_VERBOSE}) {
+         print STDERR "# response: $buf\n";
+       }
+@@ -690,12 +691,13 @@ sub list_file_rel_paths_bug4259 {
+ 
+       $buf = '';
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       $resp_code = $client->response_code();
+       $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       if ($ENV{TEST_VERBOSE}) {
+         print STDERR "# response: $buf\n";
+       }
+@@ -837,12 +839,13 @@ sub list_file_after_upload {
+       my $start = [gettimeofday()];
+       my $buf = "ABCD" x 10240;
+       $conn->write($buf, length($buf), 30);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       my $elapsed = tv_interval($start);
+       if ($ENV{TEST_VERBOSE}) {
+         print STDOUT "# elapsed upload duration: $elapsed\n";
+@@ -860,12 +863,13 @@ sub list_file_after_upload {
+ 
+       $buf = '';
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       $resp_code = $client->response_code();
+       $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       $client->quit();
+ 
+       my $res = {};
+@@ -3565,12 +3569,13 @@ sub list_symlink_issue940 {
+ 
+       $buf = '';
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       $resp_code = $client->response_code();
+       $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       if ($ENV{TEST_VERBOSE}) {
+         print STDERR "# RESPONSE:\n$buf\n";
+       }
+--- a/tests/t/lib/ProFTPD/Tests/Commands/RANG.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/RANG.pm
+@@ -1146,11 +1146,11 @@ sub rang_retr_ok_with_sendfile {
+       my $buf;
+       my $len = $conn->read($buf, 1024, $io_timeout);
+       sleep(1);
+-      eval { $conn->close($io_timeout) };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++      eval { $conn->close($io_timeout) };
+       $client->quit();
+ 
+       $self->assert($len == 3, "Expected len 3, got $len");
+@@ -1249,11 +1249,11 @@ sub rang_retr_ok_no_sendfile {
+ 
+       my $buf;
+       my $len = $conn->read($buf, 1024);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++      eval { $conn->close() };
+       $client->quit();
+ 
+       $self->assert($len == 3, "Expected len 3, got $len");
+@@ -1347,11 +1347,11 @@ sub rang_retr_ok_end_exceeds_file_size {
+ 
+       my $buf;
+       my $len = $conn->read($buf, 1024);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++      eval { $conn->close() };
+       $client->quit();
+ 
+       $self->assert($len == 14, "Expected len 14, got $len");
+--- a/tests/t/lib/ProFTPD/Tests/Commands/RETR.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/RETR.pm
+@@ -288,11 +288,12 @@ sub retr_ok_raw_active_multiple_downloads {
+ 
+         my $buf;
+         $conn->read($buf, 8192, 30);
+-        eval { $conn->close() };
+ 
+         my $resp_code = $client->response_code();
+         my $resp_msg = $client->response_msg();
+         $self->assert_transfer_ok($resp_code, $resp_msg);
++
++        eval { $conn->close() };
+       }
+ 
+       $client->quit();
+@@ -377,13 +378,13 @@ sub retr_ok_raw_passive {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       my ($resp_code, $resp_msg);
+       $resp_code = $client->response_code();
+       $resp_msg = $client->response_msg();
+-
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++
++      eval { $conn->close() };
+     };
+ 
+     if ($@) {
+@@ -969,11 +970,13 @@ sub retr_abs_symlink {
+       my $buf;
+       $conn->read($buf, 8192, 30);
+       my $size = $conn->bytes_read();
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++
++      eval { $conn->close() };
++
+       $client->quit();
+ 
+       my $expected = 5;
+@@ -1209,11 +1212,11 @@ sub retr_rel_symlink {
+       my $buf;
+       $conn->read($buf, 8192, 30);
+       my $size = $conn->bytes_read();
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++      eval { $conn->close() };
+       $client->quit();
+ 
+       my $expected = 5;
+@@ -2388,12 +2391,13 @@ sub retr_ok_dir_with_spaces {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       my ($resp_code, $resp_msg);
+       $resp_code = $client->response_code();
+       $resp_msg = $client->response_msg();
+ 
++      eval { $conn->close() };
++
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+     };
+ 
+@@ -2485,12 +2489,13 @@ sub retr_leading_whitespace {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       my ($resp_code, $resp_msg);
+       $resp_code = $client->response_code();
+       $resp_msg = $client->response_msg();
+ 
++      eval { $conn->close() };
++
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
+       my $buflen = length($buf);
+--- a/tests/t/lib/ProFTPD/Tests/Config/HiddenStores.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/HiddenStores.pm
+@@ -320,12 +320,13 @@ sub hiddenstores_bug3156 {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       $client->quit();
+ 
+       unless (-f $test_file) {
+@@ -1251,12 +1252,12 @@ sub hiddenstores_timeout_stalled_bug4035 {
+         die("File $hidden_file exists unexpectedly");
+       }
+ 
+-      eval { $conn->close() };
+-
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       eval { $client->quit() };
+       unless ($@) {
+         die("QUIT succeeded unexpectedly");
+--- a/tests/t/lib/ProFTPD/Tests/Config/HideNoAccess.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/HideNoAccess.pm
+@@ -130,12 +130,13 @@ sub hidenoaccess_ok {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 25);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       $client->quit();
+ 
+       # We have to be careful of the fact that readdir returns directory
+@@ -307,12 +308,13 @@ sub hidenoaccess_with_directory_glob {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 25);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       $client->quit();
+ 
+       # We have to be careful of the fact that readdir returns directory
+--- a/tests/t/lib/ProFTPD/Tests/Config/ListOptions.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/ListOptions.pm
+@@ -831,14 +831,16 @@ sub listoptions_opt_1_nlst_complex_glob {
+ 
+       my $buf;
+       $conn->read($buf, 16384, 25);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+-      $client->quit();
+ 
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++      $client->quit();
++
++
+       # We have to be careful of the fact that readdir returns directory
+       # entries in an unordered fashion.
+       my $res = [];
+@@ -1225,12 +1227,12 @@ sub listoptions_nlstonly {
+ 
+       my $buf;
+       $conn->read($buf, 16384, 25);
+-      eval { $conn->close() };
+       sleep(2);
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++      eval { $conn->close() };
+       $client->quit();
+ 
+       # We have to be careful of the fact that readdir returns directory
+@@ -1266,12 +1268,12 @@ sub listoptions_nlstonly {
+ 
+       $buf = '';
+       $conn->read($buf, 16384, 25);
+-      eval { $conn->close() };
+       sleep(2);
+ 
+       $resp_code = $client->response_code();
+       $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++      eval { $conn->close() };
+       $client->quit();
+ 
+       # We have to be careful of the fact that readdir returns directory
+@@ -1422,12 +1424,12 @@ sub listoptions_sortednlst_bug4267 {
+         $tmp = '';
+         $res = $conn->read($tmp, 8192, 5);
+       }
+-      eval { $conn->close() };
+       sleep(2);
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++      eval { $conn->close() };
+ 
+       if ($ENV{TEST_VERBOSE}) {
+         print STDERR "buf:\n$buf\n";
+@@ -1595,12 +1597,13 @@ sub listoptions_maxfiles {
+         $buf .= $tmp;
+       }
+ 
+-      eval { $conn->close() };
+-
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+ 
+       $self->assert_transfer_ok($resp_code, $resp_msg);
++
++      eval { $conn->close() };
++
+       $client->quit();
+ 
+       # We have to be careful of the fact that readdir returns directory
+@@ -1733,12 +1736,12 @@ sub listoptions_nlstnamesonly_issue251 {
+ 
+       my $buf;
+       $conn->read($buf, 16384, 25);
+-      eval { $conn->close() };
+-
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       $client->quit();
+ 
+       if ($ENV{TEST_VERBOSE}) {
+--- a/tests/t/lib/ProFTPD/Tests/Logging/ExtendedLog.pm
++++ b/tests/t/lib/ProFTPD/Tests/Logging/ExtendedLog.pm
+@@ -570,10 +570,10 @@ sub extlog_retr_default {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
++      eval { $conn->close() };
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
+       $client->quit();
+@@ -655,6 +655,11 @@ sub extlog_retr_default {
+           $self->assert($expected == $xfer_len,
+             "Expected tranferred bytes $expected, got $xfer_len");
+ 
++        } elsif ($line =~ /\"ABOR\" (\d+) /) {
++          my $resp_code = $1;
++          my $expected = '226';
++          $self->assert($expected eq $resp_code,
++            "Expected response code '$expected', got '$resp_code'");
+         } elsif ($line =~ /\"QUIT\" (\d+) /) {
+           my $resp_code = $1;
+ 
+@@ -9250,13 +9255,13 @@ EOC
+           $client->response_code());
+       }
+ 
++      my $resp_code = $client->response_code();
++      my $resp_msg = $client->response_msg();
++
+       my $buf;
+       $conn->read($buf, 12, 25);
+       eval { $conn->abort() };
+ 
+-      my $resp_code = $client->response_code();
+-      my $resp_msg = $client->response_msg();
+-
+       $self->assert_transfer_ok($resp_code, $resp_msg, 1);
+       $client->quit();
+     };
+@@ -9288,6 +9293,7 @@ EOC
+   eval {
+     if (open(my $fh, "< $ext_log")) {
+       my $expected_xfer_status = 0;
++      my $expected_abor_status = 0;
+ 
+       while (my $line = <$fh>) {
+         chomp($line);
+@@ -9297,9 +9303,13 @@ EOC
+           my $xfer_status = $2;
+ 
+           if ($cmd eq 'RETR') {
+-            if ($xfer_status eq 'cancelled') {
++            if ($xfer_status eq 'success') {
+               $expected_xfer_status = 1;
+-              last;
++            }
++          }
++          if ($cmd eq 'ABOR') {
++            if ($xfer_status eq 'cancelled') {
++              $expected_abor_status = 1;
+             }
+           }
+         }
+@@ -9310,6 +9320,9 @@ EOC
+       $self->assert($expected_xfer_status,
+         test_msg("Did not see expected transfer status in ExtendedLog"));
+ 
++      $self->assert($expected_abor_status,
++        test_msg("Did not see expected transfer status in ExtendedLog"));
++
+     } else {
+       die("Can't read $ext_log: $!");
+     }
+--- a/tests/t/lib/ProFTPD/Tests/Logging/TransferLog.pm
++++ b/tests/t/lib/ProFTPD/Tests/Logging/TransferLog.pm
+@@ -131,12 +131,13 @@ sub xferlog_retr_ascii_ok {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       $client->quit();
+     };
+     if ($@) {
+@@ -270,12 +271,13 @@ sub xferlog_retr_binary_ok {
+ 
+       my $buf;
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+       my $resp_code = $client->response_code();
+       my $resp_msg = $client->response_msg();
+       $self->assert_transfer_ok($resp_code, $resp_msg);
+ 
++      eval { $conn->close() };
++
+       $client->quit();
+     };
+     if ($@) {

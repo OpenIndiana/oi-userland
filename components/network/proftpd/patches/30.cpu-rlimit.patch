@@ -1,0 +1,19 @@
+#
+# CPU limit starts counting with reception of the first command.
+# Connection always succeed if limit is 0. Fix has been submitted
+# to upstream:
+#	https://github.com/proftpd/proftpd/pull/1516
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Config/RLimitCPU.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/RLimitCPU.pm
+@@ -337,7 +337,8 @@ sub rlimitcpu_session_min {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
+-      eval { ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1) };
++      my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 2, 2);
++      eval { $client->login($user, $passwd); };
+       unless ($@) {
+         die("Connecting to server succeeded unexpectedly");
+       }

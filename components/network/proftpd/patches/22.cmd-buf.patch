@@ -1,0 +1,17 @@
+#
+# default command buffer size (CommandBufferSize) is 1k on Solaris
+#
+# fix has not been submitted to upstream.
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Config/CommandBufferSize.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/CommandBufferSize.pm
+@@ -437,7 +437,7 @@ sub cmdbuffersz_default {
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+-      my $bad_file = ("A" x (8192 - 5)) . '.txt';
++      my $bad_file = ("A" x (1024 - 5)) . '.txt';
+ 
+       eval { $client->stat($bad_file) };
+       unless ($@) {

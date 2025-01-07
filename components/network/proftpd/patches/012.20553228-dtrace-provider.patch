@@ -1,0 +1,76 @@
+#
+# This is an Oracle Solaris specific patch currently. There
+# was an attempt to offer it to upstream:
+#    http://bugs.proftpd.org/show_bug.cgi?id=4162
+# unfortunately the conversation died...
+# I believe we should retry to upstream it, because
+# dtrace is also available on FreeBSD. We should fix
+# autoconf so it detects dtrace availability.
+#
+
+--- a/modules/mod_xfer.c
++++ b/modules/mod_xfer.c
+@@ -29,6 +29,9 @@
+ #include "conf.h"
+ #include "privs.h"
+ #include "error.h"
++#ifdef _SOLARIS_DTRACE
++#include "ftp_provider_impl.h"
++#endif
+ 
+ #ifdef HAVE_SYS_SENDFILE_H
+ # include <sys/sendfile.h>
+@@ -2155,6 +2158,13 @@ MODRET xfer_stor(cmd_rec *cmd) {
+      * be doing short writes, and we ideally should be more resilient/graceful
+      * in the face of such things.
+      */
++#ifdef _SOLARIS_DTRACE
++    if (ftp_transfer_start_enabled()) {
++      ftpproto_t proto;
++      FTP_TRANSFER_PROTO(&proto, stor_fh, 0);
++      ftp_transfer_start(&proto);
++    }
++#endif
+     res = pr_fsio_write_with_error(cmd->pool, stor_fh, lbuf, len, &err);
+     xerrno = errno;
+ 
+@@ -2167,7 +2177,13 @@ MODRET xfer_stor(cmd_rec *cmd) {
+       res = pr_fsio_write_with_error(cmd->pool, stor_fh, lbuf, len, &err);
+       xerrno = errno;
+     }
+-
++#ifdef _SOLARIS_DTRACE
++    if (ftp_transfer_done_enabled() && res == len) {
++      ftpproto_t proto;
++      FTP_TRANSFER_PROTO(&proto, stor_fh, res);
++      ftp_transfer_done(&proto);
++    }
++#endif
+     if (res != len) {
+       xerrno = EIO;
+ 
+@@ -2952,7 +2968,24 @@ MODRET xfer_retr(cmd_rec *cmd) {
+       break;
+     }
+ 
++#ifdef _SOLARIS_DTRACE
++    if (ftp_transfer_start_enabled()) {
++      ftpproto_t proto;
++      FTP_TRANSFER_PROTO(&proto, retr_fh, 0);
++      ftp_transfer_start(&proto);
++    }
++#endif
++
+     len = transmit_data(cmd->pool, curr_offset, &curr_pos, lbuf, bufsz);
++
++#ifdef _SOLARIS_DTRACE
++    if (ftp_transfer_done_enabled() && len > 0) {
++      ftpproto_t proto;
++      FTP_TRANSFER_PROTO(&proto, retr_fh, len);
++      ftp_transfer_done(&proto);
++    }
++#endif
++
+     if (len == 0) {
+       break;
+     }

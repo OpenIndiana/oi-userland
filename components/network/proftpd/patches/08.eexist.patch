@@ -1,0 +1,26 @@
+#
+# rmdir() syscall sets to errno to EEXIST
+#
+# on Solaris rmdir() sets errno to EEXIST when it
+# attempts to destroy directory which is not empty yet.
+#
+# patch has been submitted to upstream:
+#	https://github.com/proftpd/proftpd/pull/1503
+# it fixes t/commands/rmd.t test
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Commands/RMD.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/RMD.pm
+@@ -972,7 +972,11 @@ sub rmd_fails_enotempty {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$test_dir: Directory not empty";
++      if ($^O eq 'solaris') {
++        $expected = "$test_dir: File exists";
++      } else {
++        $expected = "$test_dir: Directory not empty";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };

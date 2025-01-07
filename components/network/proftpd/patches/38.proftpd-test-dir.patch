@@ -1,0 +1,55 @@
+# we should allow user to override default PROFTD_TEST_PATH
+#
+# ftpcount, ftpwho programs should not run in backround to avoid a race with test script
+#
+# let fpdctl to derive correct path from PROFTPD_TEST_PATH (when specified)
+# change has been submitted to upstream:
+#	https://github.com/proftpd/proftpd/pull/1525
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Modules/mod_ctrls.pm
++++ b/tests/t/lib/ProFTPD/Tests/Modules/mod_ctrls.pm
+@@ -53,7 +53,7 @@ sub ftpdctl {
+ 
+   my $ftpdctl_bin;
+   if ($ENV{PROFTPD_TEST_PATH}) {
+-    $ftpdctl_bin = "$ENV{PROFTPD_TEST_PATH}/ftpdctl";
++    $ftpdctl_bin = "$ENV{PROFTPD_TEST_PATH}/../ftpdctl";
+ 
+   } else {
+     $ftpdctl_bin = '../ftpdctl';
+--- a/tests/t/lib/ProFTPD/Tests/Utils/ftpcount.pm
++++ b/tests/t/lib/ProFTPD/Tests/Utils/ftpcount.pm
+@@ -52,7 +52,7 @@ sub ftpcount {
+     $ftpcount_bin = '../ftpcount';
+   }
+ 
+-  my $cmd = "$ftpcount_bin -f $scoreboard_file > $output_file 2>/dev/null &";
++  my $cmd = "$ftpcount_bin -f $scoreboard_file > $output_file 2>/dev/null";
+ 
+   if ($ENV{TEST_VERBOSE}) {
+     print STDERR "Executing ftpcount: $cmd\n";
+--- a/tests/t/lib/ProFTPD/Tests/Utils/ftpwho.pm
++++ b/tests/t/lib/ProFTPD/Tests/Utils/ftpwho.pm
+@@ -64,7 +64,7 @@ sub ftpwho {
+     $ftpwho_bin = '../ftpwho';
+   }
+ 
+-  my $cmd = "$ftpwho_bin -f $scoreboard_file $ftpwho_opts >$output_file 2>/dev/null &";
++  my $cmd = "$ftpwho_bin -f $scoreboard_file $ftpwho_opts >$output_file 2>/dev/null";
+ 
+   if ($ENV{TEST_VERBOSE}) {
+     print STDERR "Executing ftpwho: $cmd\n";
+--- a/tests/tests.pl
++++ b/tests/tests.pl
+@@ -43,7 +43,9 @@ unless (defined($ENV{PROFTPD_TEST_BIN})) {
+ # Set this environment variable, for other test cases which may want to
+ # know the directory, and not necessarily just the location of the uninstalled
+ # `proftpd' binary.  This is useful, for example, for using the utilities.
+-$ENV{PROFTPD_TEST_PATH} = $test_dir;
++unless (defined($ENV{PROFTPD_TEST_PATH})) {
++  $ENV{PROFTPD_TEST_PATH} = $test_dir;
++}
+ 
+ $| = 1;
+ 

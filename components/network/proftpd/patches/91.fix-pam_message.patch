@@ -1,0 +1,11 @@
+--- proftpd-1.3.8c/modules/mod_auth_pam.c.~1~	2024-12-11 13:17:36.000000000 -0500
++++ proftpd-1.3.8c/modules/mod_auth_pam.c	2025-01-02 16:27:06.125287079 -0500
+@@ -82,7 +82,7 @@
+  * const, but on Solaris, it isn't.  To avoid compiler warnings about
+  * incompatible pointer types, we need to use const or not as appropriate.
+  */
+-#ifndef SOLARIS2
++#if !defined(SOLARIS2) || ( defined(__illumos__) && !defined(_PAM_LEGACY_NONCONST) )
+ # define PR_PAM_CONST	const
+ #else
+ # define PR_PAM_CONST
