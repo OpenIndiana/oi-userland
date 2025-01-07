@@ -26,6 +26,7 @@ COMPONENT_ARCHIVE_URL=  https://www.windowmaker.org/pub/source/release/$(COMPONE
 COMPONENT_FMRI=         desktop/window-manager/wmaker
 COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_LICENSE=      GPL
+
 COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET= $(NO_TESTS)

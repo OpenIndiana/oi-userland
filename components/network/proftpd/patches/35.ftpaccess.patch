@@ -1,0 +1,28 @@
+#
+# this fixes the specific failure. looks like existing session process
+# does not refresh .ftpaccess files found in directory. I suspect
+# there might fs_cache in play.
+#
+# change has been submitted to upstream:
+#	https://github.com/proftpd/proftpd/pull/1522
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Config/FTPAccess/RETR.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/FTPAccess/RETR.pm
+@@ -197,6 +197,16 @@ EOF
+       # Now prove that the failures are caused by the .ftpaccess file
+       # by deleting that file.
+       unlink($ftpaccess_file);
++      $client->quit();
++
++      #
++      # reconnect so .ftpaccess is refreshed. I believe session
++      # process relies on stale information. so we get new session
++      # process with fresh information on .ftpaccess files.
++      # 
++      $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port);
++      $client->login($user, $passwd);
++      $client->cwd($sub_dir);
+ 
+       $conn = $client->retr_raw("test.txt");
+       unless ($conn) {

@@ -1,0 +1,37 @@
+#
+# we need to explicitly read a response code to given command.
+# fix has been submitted to upstream:
+#	https://github.com/proftpd/proftpd/pull/1521
+#
+--- a/tests/t/lib/ProFTPD/Tests/Config/FTPAccess/RETR.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/FTPAccess/RETR.pm
+@@ -206,11 +206,12 @@ EOF
+ 
+       my $buf;
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+-      $resp_code = $client->response_code();
++      $resp_code = $client->read_response();
+       $resp_msg = $client->response_msg();
+ 
++      eval { $conn->close() };
++
+       $expected = 226;
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+@@ -226,11 +227,12 @@ EOF
+       }
+ 
+       $conn->read($buf, 8192, 30);
+-      eval { $conn->close() };
+ 
+-      $resp_code = $client->response_code();
++      $resp_code = $client->read_response();
+       $resp_msg = $client->response_msg();
+ 
++      eval { $conn->close() };
++
+       $expected = 226;
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));

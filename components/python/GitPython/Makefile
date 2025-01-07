@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		GitPython
-HUMAN_VERSION =			3.1.43
-COMPONENT_SUMMARY =		GitPython - GitPython is a Python library used to interact with Git repositories
+HUMAN_VERSION =			3.1.44
+COMPONENT_SUMMARY =		GitPython is a Python library used to interact with Git repositories
 COMPONENT_PROJECT_URL =		https://github.com/gitpython-developers/GitPython
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/gitpython-developers/GitPython/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f87dfd8e0d0fce15690a5e84b92d3b02710161e116fda5d5f2324144b2cca23d
+	sha256:30101221a869968d4fe2a010ee9ca1134c22272089d9e9fee2040a68541443c6
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -59,12 +59,10 @@ TEST_REQUIRED_PACKAGES += developer/versioning/git
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/gitdb
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/ddt
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
-TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock

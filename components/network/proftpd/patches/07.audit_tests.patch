@@ -1,0 +1,118 @@
+# adjust tests for mod_solaris_audit.c
+#
+# mod_solaris_adudit.c audits various FTP commands (rmd, stor, etc)
+# the test suite presents various such as dead symlinks, chroots
+# etc. mod_solaris_audit.c handles all those errors with
+# generic error code 451. We have to adjust expected values
+# in test cases to fix test failures.
+#
+# this patch is specific to Solaris and has not been submitted
+# to upstream. It logically belongs to mod_solaris_audit.c
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Commands/MDTM.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/MDTM.pm
+@@ -1140,11 +1140,11 @@ sub mdtm_fails_eperm {
+ 
+       chmod($perms, $setup->{home_dir});
+ 
+-      my $expected = 550;
++      my $expected = 451;
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$test_file: Permission denied";
++      $expected = "Requested action aborted: local error in processing.";
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };
+--- a/tests/t/lib/ProFTPD/Tests/Commands/RETR.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/RETR.pm
+@@ -2283,11 +2283,11 @@ sub retr_fails_eperm {
+ 
+       my $expected;
+ 
+-      $expected = 550;
++      $expected = 451;
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$test_file: Permission denied";
++      $expected = "Requested action aborted: local error in processing.";
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };
+--- a/tests/t/lib/ProFTPD/Tests/Commands/RMD.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/RMD.pm
+@@ -1064,11 +1064,11 @@ sub rmd_fails_eloop {
+       my $resp_msg = $client->response_msg();
+       $client->quit();
+ 
+-      my $expected = 550;
++      my $expected = 451;
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$test_dir: Not a directory";
++      $expected = "Requested action aborted: local error in processing.";
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };
+@@ -1286,11 +1286,11 @@ sub rmd_fails_abs_symlink_enoent_chrooted_bug4219 {
+       my $resp_msg = $client->response_msg();
+       $client->quit();
+ 
+-      my $expected = 550;
++      my $expected = 451;
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$path: No such file or directory";
++      $expected = "$path: Requested action aborted: local error in processing.";
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };
+@@ -1518,11 +1518,11 @@ sub rmd_fails_rel_symlink_enoent_chrooted_bug4219 {
+       my $resp_msg = $client->response_msg();
+       $client->quit();
+ 
+-      my $expected = 550;
++      my $expected = 451;
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$path: No such file or directory";
++      $expected = "$path: Requested action aborted: local error in processing.";
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };
+--- a/tests/t/lib/ProFTPD/Tests/Commands/RNTO.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/RNTO.pm
+@@ -676,11 +676,11 @@ sub rnto_fails_no_rnfr {
+ 
+       my $expected;
+ 
+-      $expected = 503;
++      $expected = 451;
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "Bad sequence of commands";
++      $expected = "Requested action aborted: local error in processing.";
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+     };
+@@ -794,11 +794,11 @@ sub rnto_fails_enoent_no_file {
+       $resp_msg = $client->response_msg();
+       $client->quit();
+ 
+-      my $expected = 550;
++      my $expected = 451;
+       $self->assert($expected == $resp_code,
+         "Expected response code $expected, got $resp_code");
+ 
+-      $expected = "$dst_file: No such file or directory";
++      $expected = "Requested action aborted: local error in processing.";
+       $self->assert($expected eq $resp_msg,
+         "Expected response message '$expected', got '$resp_msg'");
+     };

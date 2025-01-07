@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		trustme
-HUMAN_VERSION =			1.2.0
+HUMAN_VERSION =			1.2.1
 COMPONENT_SUMMARY =		\#1 quality TLS certs while you wait, for the discerning tester
 COMPONENT_PROJECT_URL =		https://github.com/python-trio/trustme
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ed2264fb46c35459e6de9e454ed4bab73be44b6a2a26ad417f9b6854aebb644a
+	sha256:6528ba2bbc7f2db41f33825c8dd13e3e3eb9d334ba0f909713c8c3139f4ae47f
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 
 TEST_STYLE = pytest

@@ -17,7 +17,7 @@
 #
 --- a/include/proftpd.h
 +++ b/include/proftpd.h
-@@ -97,6 +97,9 @@ typedef struct {
+@@ -100,6 +100,9 @@ typedef struct {
     */
  
    int disable_id_switching;		/* Disable UID/GID switching */
@@ -27,11 +27,9 @@
    uid_t uid, ouid;                      /* Current and original UIDs */
    gid_t gid;                            /* Current GID */
  
-diff --git a/src/privs.c b/src/privs.c
-index 8a86947d8..7f18af07b 100644
 --- a/src/privs.c
 +++ b/src/privs.c
-@@ -185,7 +185,11 @@ int pr_privs_root(const char *file, int lineno) {
+@@ -169,7 +169,11 @@ int pr_privs_root(const char *file, int lineno) {
  
    pr_signals_block();
  
@@ -43,7 +41,7 @@ index 8a86947d8..7f18af07b 100644
  
  #if defined(HAVE_SETEUID)
      if (seteuid(PR_ROOT_UID) < 0) {
-@@ -247,7 +251,12 @@ int pr_privs_user(const char *file, int lineno) {
+@@ -219,7 +223,12 @@ int pr_privs_user(const char *file, int lineno) {
  
    pr_signals_block();
  
@@ -55,8 +53,8 @@ index 8a86947d8..7f18af07b 100644
 +
  #if defined(HAVE_SETEUID)
      if (seteuid(PR_ROOT_UID) < 0) {
-       int priority = (errno == EPERM ? PR_LOG_NOTICE : PR_LOG_ERR);
-@@ -335,7 +344,12 @@ int pr_privs_relinquish(const char *file, int lineno) {
+       privs_log_error("USER PRIVS: unable to seteuid(PR_ROOT_UID)", errno);
+@@ -294,7 +303,12 @@ int pr_privs_relinquish(const char *file, int lineno) {
  
    pr_signals_block();
  

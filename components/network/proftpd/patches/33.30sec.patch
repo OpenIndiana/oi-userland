@@ -1,0 +1,25 @@
+#
+# We add 30sec idle timeout on control session to provide enoygh time
+# to upload file. In our test environement it may take ~15 secs,
+# 30 seconds is enough.
+#
+# change has been submitted to upstream:
+#	https://github.com/proftpd/proftpd/pull/1520
+#
+add a 30sec timeout so there is enough (more than 8 secs) time to upload file
+
+--- a/tests/t/lib/ProFTPD/Tests/Config/TransferRate.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/TransferRate.pm
+@@ -282,7 +282,11 @@ sub transferrate_stor_ok {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
+-      my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port);
++      #
++      # 0, source port (any)
++      # 2, connection time out
++      # 30, command time out (plenty, transfer should take ~10secs)
++      my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 2, 30);
+       $client->login($user, $passwd);
+       $client->type('binary');
+ 
