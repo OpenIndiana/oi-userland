@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_core
-HUMAN_VERSION =			1.9.1
+HUMAN_VERSION =			2.0.0
 COMPONENT_SUMMARY =		Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7a2d49214bf58b4f17f99d6891d947a9836c9899a67a5069f52d7b67217f61b8
+	sha256:3317a3cc3932011a61114236b2d49883f4fb1403d2f5e97771ac0d077cfa396f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,6 +37,14 @@ TEST_REQUIREMENTS_POETRY += test
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
 
+# https://github.com/python-poetry/poetry/issues/9967
+PYTEST_ADDOPTS += --deselect tests/masonry/builders/test_complete.py::test_package_with_include
+PYTEST_ADDOPTS += --deselect tests/masonry/builders/test_sdist.py::test_default_with_excluded_data
+PYTEST_ADDOPTS += --deselect tests/masonry/builders/test_wheel.py::test_default_src_with_excluded_data
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
@@ -45,4 +53,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/tomli-w
+TEST_REQUIRED_PACKAGES.python += library/python/trove-classifiers
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
