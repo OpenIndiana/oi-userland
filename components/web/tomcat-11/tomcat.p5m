@@ -23,34 +23,50 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-<transform file path=var/tomcat11/webapps/ROOT/index.jsp -> \
-    set action.hash Solaris/index.jsp >
-
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-<transform file link hardlink path=usr/tomcat11/docs/.* -> \
-    default facet.doc.html true>
-set name=pkg.fmri \
-    value=pkg:/web/java-servlet/tomcat-11@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=pkg.summary value="Tomcat 11 Servlet/JSP Container"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license tomcat.license license="Apache v2.0"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend type=require fmri=__TBD \
-    pkg.debug.depend.file=usr/jdk/openjdk21/bin/java
+    pkg.debug.depend.file=usr/jdk/openjdk$(JAVAVER)/bin/java
+
+# doc
+<transform file link hardlink path=usr/tomcat11/docs/.* -> \
+    default facet.doc.html true>
+# man page
+<transform link target=tomcat11.1m -> default mediator tomcat>
+<transform link target=tomcat11.1m -> default mediator-version 11>
+# config files
+<transform file path=var/tomcat11/conf/.*\.properties$ -> default mode 0644>
+<transform file path=var/tomcat11/conf/.*\.properties$ -> default preserve renamenew>
+<transform file path=var/tomcat11/conf/tomcat-users\.xml$ -> default owner webservd>
+<transform file path=var/tomcat11/conf/tomcat-users\.xml$ -> default group webservd>
+<transform file path=var/tomcat11/conf/tomcat-users\.xml$ -> default mode 0600>
+<transform file path=var/tomcat11/conf/.*\.xml$ -> default mode 0644>
+<transform file path=var/tomcat11/conf/.*\.xml$ -> default preserve renamenew>
+<transform file path=var/tomcat11/conf/jaspic-providers\.xsd$ -> default mode 0644>
+<transform file path=var/tomcat11/conf/jaspic-providers\.xsd$ -> default preserve renamenew>
+# web pages
+<transform file path=var/tomcat11/webapps/ROOT/index\. -> default mode 0644>
+<transform file path=var/tomcat11/webapps/ROOT/index\. -> default preserve renamenew>
 
 link path=etc/tomcat11 target=../var/tomcat11/conf
-file Solaris/http-tomcat.xml path=lib/svc/manifest/network/http-tomcat11.xml
-file Solaris/http-tomcat path=lib/svc/method/http-tomcat11
-link path=usr/share/man/man1m/tomcat.1 target=tomcat11.1m mediator=tomcat \
-    mediator-version=8
-file Solaris/tomcat.1m path=usr/share/man/man1m/tomcat11.1m
+dir  path=var/tomcat11/conf owner=webservd group=webservd
+dir  path=var/tomcat11/logs owner=webservd group=webservd mode=0700
+dir  path=var/tomcat11/temp owner=webservd group=webservd
+dir  path=var/tomcat11/webapps owner=webservd group=webservd
+dir  path=var/tomcat11/work owner=webservd group=webservd
 
+file path=lib/svc/manifest/network/http-tomcat11.xml
+file path=lib/svc/method/http-tomcat11
+link path=usr/share/man/man1m/tomcat.1m target=tomcat11.1m
+file path=usr/share/man/man1m/tomcat11.1m
 file path=usr/tomcat11/bin/bootstrap.jar
 file path=usr/tomcat11/bin/catalina-tasks.xml
 file path=usr/tomcat11/bin/catalina.bat
@@ -267,24 +283,15 @@ file path=usr/tomcat11/lib/tomcat-util.jar
 file path=usr/tomcat11/lib/tomcat-websocket.jar
 file path=usr/tomcat11/lib/websocket-api.jar
 file path=usr/tomcat11/lib/websocket-client-api.jar
-dir  path=var/tomcat11/conf owner=webservd group=webservd
 file path=var/tomcat11/conf/CONF.tar.gz
-file path=var/tomcat11/conf/catalina.properties mode=0644 \
-    original_name=SUNWtcat:var/tomcat6/conf/catalina.properties \
-    preserve=renamenew
-file path=var/tomcat11/conf/context.xml mode=0644 preserve=renamenew
-file path=var/tomcat11/conf/jaspic-providers.xml mode=0644 preserve=renamenew
-file path=var/tomcat11/conf/jaspic-providers.xsd mode=0644 preserve=renamenew
-file path=var/tomcat11/conf/logging.properties mode=0644 \
-    original_name=SUNWtcat:var/tomcat6/conf/logging.properties \
-    preserve=renamenew
-file path=var/tomcat11/conf/server.xml mode=0644 preserve=renamenew
-file path=var/tomcat11/conf/tomcat-users.xml owner=webservd group=webservd \
-    mode=0600 preserve=renamenew
+file path=var/tomcat11/conf/catalina.properties
+file path=var/tomcat11/conf/context.xml
+file path=var/tomcat11/conf/jaspic-providers.xml
+file path=var/tomcat11/conf/jaspic-providers.xsd
+file path=var/tomcat11/conf/logging.properties
+file path=var/tomcat11/conf/server.xml
+file path=var/tomcat11/conf/tomcat-users.xml
 file path=var/tomcat11/conf/tomcat-users.xsd
-file path=var/tomcat11/conf/web.xml mode=0644 preserve=renamenew
-dir  path=var/tomcat11/logs owner=webservd group=webservd mode=0700
-dir  path=var/tomcat11/temp owner=webservd group=webservd
-dir  path=var/tomcat11/webapps owner=webservd group=webservd
-file path=var/tomcat11/webapps/ROOT/index.jsp mode=0644 preserve=renamenew
-dir  path=var/tomcat11/work owner=webservd group=webservd
+file path=var/tomcat11/conf/web.xml
+file path=var/tomcat11/webapps/ROOT/index.htm
+file path=var/tomcat11/webapps/ROOT/index.jsp
