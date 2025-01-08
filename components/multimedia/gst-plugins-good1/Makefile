@@ -22,12 +22,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-good
-COMPONENT_VERSION=	1.24.10
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.24.11
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:fce748fa66d7a8ee1fb261489e59d01e3fa787623d6d5c35068416fe7cd0acb3
+COMPONENT_ARCHIVE_HASH=	sha256:94bf3b5118dd4213af66048faac830569cc9a94a8c8e59e8a6d33b315f518462
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
@@ -36,9 +35,6 @@ COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-# gcc 14 complains about incompatible pointer types
-CFLAGS += -Wno-error=incompatible-pointer-types
 
 # almost everything is "auto" with meson
 CONFIGURE_OPTIONS += -Dorc=enabled
