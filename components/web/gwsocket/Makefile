@@ -15,32 +15,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gwsocket
-COMPONENT_VERSION=	0.2
+COMPONENT_VERSION=	0.4
 COMPONENT_SUMMARY=	fast, standalone, language-agnostic WebSocket server RFC6455 compliant
-COMPONENT_PROJECT_URL=	http://gwsocket.io/
-COMPONENT_FMRI=		web/gwsocket
-COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
+COMPONENT_PROJECT_URL=	https://gwsocket.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/allinurl/gwsocket/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cafb0cbde1d8b366c74c1602a8d2e1bde054834aa5c618cfad5603a871ae4082
+COMPONENT_ARCHIVE_HASH= sha256:328f1d5a141568a5093cef1167bc77d2a0b763ccb4b05d068049f87eaa73d32b
+COMPONENT_FMRI=		web/gwsocket
+COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION= \
-	(cd $(SOURCE_DIR) && autoreconf -vif)
+COMPONENT_PRE_CONFIGURE_ACTION= ( cd $(SOURCE_DIR) && autoreconf -vif )
 
-LDFLAGS+= -lsocket
-LDFLAGS+= -lnsl
+LDFLAGS += -lsocket
+LDFLAGS += -lnsl
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
