@@ -13,7 +13,6 @@
 # Copyright 2025 <contributor>
 #
 
-BUILD_BITS=64 # for binaries or 32_and_64 for libraries
 BUILD_STYLE=cmake
 include ../../../make-rules/shared-macros.mk
 

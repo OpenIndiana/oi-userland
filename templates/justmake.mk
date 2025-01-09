@@ -13,7 +13,6 @@
 # Copyright 2025 <contributor>
 #
 
-BUILD_BITS=64
 BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
