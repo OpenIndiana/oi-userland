@@ -3,17 +3,8 @@ Our build framework sets PYTEST_PLUGINS to contain 'asyncio' and so the
 line tries to load the plugin 2nd time.  This emits additional warning and so
 all tests that check the expected number of warnings fails here.
 
---- pytest_asyncio-0.25.1/tests/hypothesis/test_base.py.orig
-+++ pytest_asyncio-0.25.1/tests/hypothesis/test_base.py
-@@ -45,7 +45,7 @@
-     assert y in (1, 2)
- 
- 
--def test_can_use_explicit_event_loop_fixture(pytester: Pytester):
-+def test_can_use_explicit_event_loop_fixture(pytester: Pytester, monkeypatch):
-     pytester.makeini("[pytest]\nasyncio_default_fixture_loop_scope = module")
-     pytester.makepyfile(
-         dedent(
+--- pytest_asyncio-0.25.2/tests/hypothesis/test_base.py.orig
++++ pytest_asyncio-0.25.2/tests/hypothesis/test_base.py
 @@ -55,8 +55,6 @@
              from hypothesis import given
              import hypothesis.strategies as st
@@ -23,25 +14,8 @@ all tests that check the expected number of warnings fails here.
              @pytest.fixture(scope="module")
              def event_loop():
                  loop = asyncio.get_event_loop_policy().new_event_loop()
-@@ -72,6 +70,7 @@
-             """
-         )
-     )
-+    monkeypatch.setenv("PYTEST_PLUGINS", "asyncio")
-     result = pytester.runpytest_subprocess("--asyncio-mode=strict", "-W default")
-     result.assert_outcomes(passed=1, warnings=2)
-     result.stdout.fnmatch_lines(
---- pytest_asyncio-0.25.1/tests/test_event_loop_fixture_finalizer.py.orig
-+++ pytest_asyncio-0.25.1/tests/test_event_loop_fixture_finalizer.py
-@@ -99,7 +99,7 @@
- 
- 
- def test_event_loop_fixture_finalizer_raises_warning_when_fixture_leaves_loop_unclosed(
--    pytester: Pytester,
-+    pytester: Pytester, monkeypatch,
- ):
-     pytester.makeini("[pytest]\nasyncio_default_fixture_loop_scope = function")
-     pytester.makepyfile(
+--- pytest_asyncio-0.25.2/tests/test_event_loop_fixture_finalizer.py.orig
++++ pytest_asyncio-0.25.2/tests/test_event_loop_fixture_finalizer.py
 @@ -108,8 +108,6 @@
              import asyncio
              import pytest
@@ -51,23 +25,7 @@ all tests that check the expected number of warnings fails here.
              @pytest.fixture
              def event_loop():
                  loop = asyncio.get_event_loop_policy().new_event_loop()
-@@ -121,13 +119,14 @@
-             """
-         )
-     )
-+    monkeypatch.setenv("PYTEST_PLUGINS", "asyncio")
-     result = pytester.runpytest_subprocess("--asyncio-mode=strict", "-W", "default")
-     result.assert_outcomes(passed=1, warnings=2)
-     result.stdout.fnmatch_lines("*unclosed event loop*")
- 
- 
- def test_event_loop_fixture_finalizer_raises_warning_when_test_leaves_loop_unclosed(
--    pytester: Pytester,
-+    pytester: Pytester, monkeypatch,
- ):
-     pytester.makeini("[pytest]\nasyncio_default_fixture_loop_scope = function")
-     pytester.makepyfile(
-@@ -136,14 +135,13 @@
+@@ -136,8 +134,6 @@
              import asyncio
              import pytest
  
@@ -76,10 +34,14 @@ all tests that check the expected number of warnings fails here.
              @pytest.mark.asyncio
              async def test_ends_with_unclosed_loop():
                  asyncio.set_event_loop(asyncio.new_event_loop())
-             """
-         )
-     )
-+    monkeypatch.setenv("PYTEST_PLUGINS", "asyncio")
-     result = pytester.runpytest_subprocess("--asyncio-mode=strict", "-W", "default")
-     result.assert_outcomes(passed=1, warnings=1)
-     result.stdout.fnmatch_lines("*unclosed event loop*")
+--- pytest_asyncio-0.25.2/tests/test_event_loop_fixture.py.orig
++++ pytest_asyncio-0.25.2/tests/test_event_loop_fixture.py
+@@ -65,8 +65,6 @@
+             import asyncio
+             import pytest
+ 
+-            pytest_plugins = 'pytest_asyncio'
+-
+             @pytest.mark.asyncio
+             async def test_something():
+                 async def generator_fn():
