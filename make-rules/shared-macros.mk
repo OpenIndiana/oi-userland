@@ -757,7 +757,6 @@ RUBY_PREFIX = /usr/ruby/$(RUBY_VERSION)
 RUBY = $(RUBY_PREFIX)/bin/ruby
 RUBY_LIBDIR = $(RUBY_PREFIX)/lib/$(MACH64)
 RUBY_LIB_VERSION = $(RUBY_LIB_VERSION.$(RUBY_VERSION))
-RUBY_PKG_CONFIG_PATH = $(RUBY_LIBDIR)/pkgconfig
 PATH.prepend += $(RUBY_PREFIX)/bin
 
 # Transform Ruby scripts to call the supported
