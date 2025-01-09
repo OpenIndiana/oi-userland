@@ -17,10 +17,10 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-commander
-HUMAN_VERSION=		1.16.2
+HUMAN_VERSION=		1.18.1
 COMPONENT_SUMMARY=	gnome commander file manager
 COMPONENT_PROJECT_URL=	https://gcmd.github.io/
-COMPONENT_ARCHIVE_HASH=	sha256:7cf5d56c77a95d828f25407294312abaae20dc6b556ceafd9424dbfe209e5ed3
+COMPONENT_ARCHIVE_HASH=	sha256:240e87bd8fd8f546189ad41c0361fbdfafdaafe2cdc216287e026c5eeb21b0f4
 COMPONENT_FMRI=		desktop/file-manager/gnome-commander
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_LICENSE=	GPL-2.0-only
@@ -32,13 +32,20 @@ include $(WS_MAKE_RULES)/common.mk
 # GNU msgfmt is needed
 PATH= $(PATH.gnu)
 
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/exiv2
 REQUIRED_PACKAGES += library/audio/taglib
+REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libgsf
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
