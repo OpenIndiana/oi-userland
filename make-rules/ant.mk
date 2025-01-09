@@ -25,8 +25,7 @@ ANT = /usr/bin/ant
 USERLAND_REQUIRED_PACKAGES += developer/build/ant
 
 # Configure
-# this is needed to override the default set in shared-macros.mk
-CONFIG_SHELL =
+COMPONENT_CONFIGURE_ACTION = true
 
 # Build
 COMPONENT_BUILD_ENV += JAVA_HOME="$(JAVA_HOME)"

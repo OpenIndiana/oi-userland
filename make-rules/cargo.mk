@@ -46,8 +46,7 @@ CARGO_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 # Configure
 # Some tests fails with the default symlink cloney mode
 CLONEY_MODE = copy
-# this is needed to override the default set in shared-macros.mk
-CONFIG_SHELL =
+COMPONENT_CONFIGURE_ACTION = true
 
 # Build
 COMPONENT_BUILD_CMD = $(CARGO) build
