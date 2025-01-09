@@ -20,48 +20,30 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
-COMPONENT_MJR_VERSION=	1.55
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).5
+HUMAN_VERSION=		1.56.0
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e396126ea08203cbd8ef12638e6222e2e1fd8aa9cac6743072fedc5f2d820dd8
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/pango/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:1fb98b338ee6f7cf8ef96153b7d242f4568fe60f9b7434524eca630a57bd538b
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE=	LGPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# Testing needs GNU tools
 PATH= $(PATH.gnu)
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# Dynamic library version number
+SOVER := 0.$(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
+SOVER_RE = $(subst .,\.,$(SOVER))
 
-COMPONENT_POST_INSTALL_ACTION = ( \
-	$(RM) -fr $(PROTO_DIR)/etc/$(MACH64)/pango && $(MKDIR) $(PROTO_DIR)/etc/$(MACH64)/pango &&\
-	$(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) \
-	$(PROTO_DIR)/usr/bin/$(MACH64)/pango-querymodules \
-	  $(PROTO_DIR)/usr/lib/$(MACH64)/pango/*/modules/*.so | sed -e "s:$(PROTO_DIR)::" \
-	  > $(PROTO_DIR)/etc/$(MACH64)/pango/pango.modules )
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 
-# cp boundaries.utf8 to tests directory in the build area
-COMPONENT_PRE_TEST_ACTION += \
-	cp $(SOURCE_DIR)/tests/boundaries.utf8 $(BUILD_DIR_$(BITS))/tests/
-
-COMPONENT_TEST_TARGETS += ; cd tests; ./cxx-test; ./markup-parse; \
-	./test-break; ./test-converage; ./test-font ; ./test-ot-tags; \
-	./testboundaries; ./testcolor; ./testiter; ./testscript; \
-	./test-ellipsize; ./test-harfbuzz; ./test-itemize; ./test-layout; \
-	./test-pangocairo-threads; ./test-shape; ./testmisc; ./testattributes;
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/      [0-9].[0-9][0-9]s//" ' \
-	'-e "s/      [0-9][0-9].[0-9][0-9]s//" ' \
-	'-e "s/[0-9]*\:[0-9]*\:[0-9]*\.[0-9]*//" ' \
-	'-e "s/test-layout\:[0-9]*/test-layout/" '
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz
