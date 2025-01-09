@@ -18,12 +18,12 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		CGI
-HUMAN_VERSION =			4.66
-COMPONENT_SUMMARY =		CGI - Handle Common Gateway Interface requests and responses
+COMPONENT_NAME =		CGI
+HUMAN_VERSION =			4.67
+COMPONENT_SUMMARY =		Handle Common Gateway Interface requests and responses
 COMPONENT_CPAN_AUTHOR =		LEEJO
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4697437688a193e3f02556e1d223015590c1f2800b40becf83dc12d5cc5ed8e1
+	sha256:f4a6896eb94a3ecaa1c1ba02f7e0d2bed0be4c5ad3378d80196ec25662ac4111
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,8 +33,13 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += '-e "s/\[[^]]*\] *//g"'
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warn
