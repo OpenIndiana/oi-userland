@@ -18,7 +18,7 @@ SINGLE_PERL_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	4.4.3
+COMPONENT_VERSION=	4.5.1
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
 extensible chat client. Everything can be done with a keyboard. \
@@ -26,7 +26,7 @@ It is customizable and extensible with scripts.
 COMPONENT_PROJECT_URL=	https://weechat.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:295612f8dc24af28c918257d3014eb53342a5d077d5e3d9a3eadf303bd8febfa
+COMPONENT_ARCHIVE_HASH=	sha256:67c143c7bc70e689b9ea86df674c9a9ff3cf44ccc9cdff21be6a561d5eafc528
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/src/$(COMPONENT_ARCHIVE)
 # The signature is invalid
 #COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
@@ -52,8 +52,11 @@ CMAKE_OPTIONS += -DENABLE_PHP=OFF
 # We don't have libcjson
 CMAKE_OPTIONS += -DENABLE_CJSON=OFF
 
-#COMPONENT_TEST_CMD=    ctest -V
-#COMPONENT_TEST_TARGETS=
+COMPONENT_POST_INSTALL_ACTION= \
+	for file in `find $(PROTO_DIR)/usr/lib/weechat/plugins/ -name "ruby.so"`; do \
+		$(ELFEDIT) -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(RUBY_LIBDIR)"' $$file ; \
+		$(ELFEDIT) -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(RUBY_LIBDIR)"' $$file ; \
+	done ;
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
