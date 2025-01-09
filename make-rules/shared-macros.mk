@@ -753,9 +753,12 @@ RUBY_VERSION = 3.2
 RUBY_LIB_VERSION.2.3 = 2.3.0
 RUBY_LIB_VERSION.3.2 = 3.2.0
 
-RUBY =		/usr/ruby/$(RUBY_VERSION)/bin/ruby
+RUBY_PREFIX = /usr/ruby/$(RUBY_VERSION)
+RUBY = $(RUBY_PREFIX)/bin/ruby
+RUBY_LIBDIR = $(RUBY_PREFIX)/lib/$(MACH64)
 RUBY_LIB_VERSION = $(RUBY_LIB_VERSION.$(RUBY_VERSION))
-PATH.prepend += /usr/ruby/$(RUBY_VERSION)/bin
+RUBY_PKG_CONFIG_PATH = $(RUBY_LIB)/pkgconfig
+PATH.prepend += $(RUBY_PREFIX)/bin
 
 # Transform Ruby scripts to call the supported
 # version-specific ruby; used in multiple *.mk files
