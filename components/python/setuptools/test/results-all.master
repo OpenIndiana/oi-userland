@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-X workers [1393 items]
+X workers [1415 items]
 
 scheduling tests via LoadScheduling
 
@@ -196,6 +196,12 @@ setuptools/_path.py::setuptools._path.paths_on_pythonpath PASSED
 setuptools/_path.py::setuptools._path.same_path PASSED
 setuptools/_reqs.py::mypy PASSED
 setuptools/_shutil.py::mypy PASSED
+setuptools/_static.py::mypy PASSED
+setuptools/_static.py::setuptools._static.Dict PASSED
+setuptools/_static.py::setuptools._static.List PASSED
+setuptools/_static.py::setuptools._static.attempt_conversion PASSED
+setuptools/_static.py::setuptools._static.is_static PASSED
+setuptools/_static.py::setuptools._static.noop PASSED
 setuptools/archive_util.py::mypy PASSED
 setuptools/build_meta.py::mypy PASSED
 setuptools/build_meta.py::setuptools.build_meta._ConfigSettingsTranslator._ConfigSettingsTranslator__dist_info_args PASSED
@@ -301,6 +307,7 @@ setuptools/tests/config/test_apply_pyprojecttoml.py::TestPyModules::test_invalid
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestPyModules::test_invalid_module_name[pip-run-stubs] PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestPyModules::test_valid_module_name[abc-d.\u03bb-xyz-e] PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestPyModules::test_valid_module_name[pip-run] PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestStaticConfig::test_mark_static_fields PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::mypy PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equivalent_to_setupcfg[https://github.com/aio-libs/aiohttp/raw/5e0e6b7080f2408d5f1dd544c0e1cf88378b7b10/setup.cfg] SKIPPED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equivalent_to_setupcfg[https://github.com/django/django/raw/4e249d11a6e56ca8feb4b055b681cec457ef3a3d/setup.cfg] SKIPPED
@@ -335,6 +342,9 @@ setuptools/tests/config/test_expand.py::TestReadAttr::test_read_attr PASSED
 setuptools/tests/config/test_expand.py::TestReadAttr::test_read_attr_encoding_cookie[# -*- coding: latin1 -*-\n__version__ = '\xe9'\nraise SystemExit(1)\n] PASSED
 setuptools/tests/config/test_expand.py::TestReadAttr::test_read_attr_encoding_cookie[# -*- coding: utf-8 -*-\n__version__ = '\xc3\xa9'\nraise SystemExit(1)\n] PASSED
 setuptools/tests/config/test_expand.py::TestReadAttr::test_read_attr_encoding_cookie[__version__ = '\xc3\xa9'\nraise SystemExit(1)\n] PASSED
+setuptools/tests/config/test_expand.py::TestReadAttr::test_read_dynamic_attr[VERSION = (lambda: '0.1.1')()\n] PASSED
+setuptools/tests/config/test_expand.py::TestReadAttr::test_read_dynamic_attr[VERSION: str = (lambda: '0.1.1')()\n] PASSED
+setuptools/tests/config/test_expand.py::TestReadAttr::test_read_dynamic_attr[def fn(): return '0.1.1'\nVERSION = fn()\n] PASSED
 setuptools/tests/config/test_expand.py::mypy PASSED
 setuptools/tests/config/test_expand.py::test_fill_package_dir[files0-where0-expected_package_dir0] PASSED
 setuptools/tests/config/test_expand.py::test_fill_package_dir[files1-where1-expected_package_dir1] PASSED
@@ -818,6 +828,18 @@ setuptools/tests/test_config_discovery.py::mypy PASSED
 setuptools/tests/test_config_discovery.py::test_compatible_with_numpy_configuration PASSED
 setuptools/tests/test_config_discovery.py::test_name_discovery_doesnt_break_cli PASSED
 setuptools/tests/test_config_discovery.py::test_preserve_explicit_name_with_dynamic_version PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields0-pyproject.toml] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields0-setup.cfg] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields1-pyproject.toml] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields1-setup.cfg] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields2-pyproject.toml] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields2-setup.cfg] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields3-pyproject.toml] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields3-setup.cfg] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields4-pyproject.toml] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields4-setup.cfg] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_static_config_has_no_dynamic[pyproject.toml] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_static_config_has_no_dynamic[setup.cfg] PASSED
 setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[None] PASSED
 setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/aio-libs/aiohttp/raw/5e0e6b7080f2408d5f1dd544c0e1cf88378b7b10/setup.cfg] PASSED
 setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/django/django/raw/4e249d11a6e56ca8feb4b055b681cec457ef3a3d/setup.cfg] PASSED
@@ -1017,7 +1039,7 @@ setuptools/tests/test_editable_install.py::TestCustomBuildWheel::test_access_pla
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_case_sensitivity PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_combine_namespaces PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_combine_namespaces_nested PASSED
-setuptools/tests/test_editable_install.py::TestFinderTemplate::test_dynamic_path_computation PASSED
+setuptools/tests/test_editable_install.py::TestFinderTemplate::test_dynamic_path_computation $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:116: CoverageWarning: Couldn't parse '/tmp/easy_install-pxkhii0x/setup.py': No source for code: '/tmp/easy_install-pxkhii0x/setup.py'. (couldnt-parse) PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_intermediate_packages PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_namespace PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_namespace_case_sensitivity PASSED
@@ -1067,7 +1089,7 @@ setuptools/tests/test_egg_info.py::TestEggInfo::test_egg_info_tag_only_once PASS
 setuptools/tests/test_egg_info.py::TestEggInfo::test_expected_files_produced PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_extras_require_with_invalid_marker PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_extras_require_with_invalid_marker_in_req PASSED
-setuptools/tests/test_egg_info.py::TestEggInfo::test_handling_utime_error $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:116: CoverageWarning: Couldn't parse '/tmp/easy_install-9oc1s6yw/setup.py': No source for code: '/tmp/easy_install-9oc1s6yw/setup.py'. (couldnt-parse) PASSED
+setuptools/tests/test_egg_info.py::TestEggInfo::test_handling_utime_error PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_install_requires_unordered_disallowed PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_license PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_license_escape PASSED
@@ -1406,7 +1428,7 @@ tools/vendored.py::mypy PASSED
 
 ===================================== mypy =====================================
 
-Success: no issues found in 141 source files
-======== 1277 passed, 111 skipped, 4 xfailed, 1 xpassed ========
+Success: no issues found in 142 source files
+======== 1299 passed, 111 skipped, 4 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)
