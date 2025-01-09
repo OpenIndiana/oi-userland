@@ -19,9 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libadwaita
-HUMAN_VERSION=		1.6.2
+HUMAN_VERSION=		1.6.3
 COMPONENT_SUMMARY=	Building blocks for modern GNOME applications.
-COMPONENT_ARCHIVE_HASH=	sha256:7542f8354e6808dd4e9a31551bbdfc0170735e4af4d1b3e69186500ccb9c01eb
+COMPONENT_ARCHIVE_HASH=	sha256:c88d4516edd1e0fc61be925f414efc340e149171756064473a082b6ae9a5dc00
 COMPONENT_PROJECT_URL=	https://gnome.pages.gitlab.gnome.org/libadwaita/doc/
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
@@ -35,6 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 # Some warnings are treated as errors by default but we do not want that
+# see https://gitlab.gnome.org/GNOME/libadwaita/-/issues/985
 CFLAGS += -Wno-error=format-nonliteral
 
 # Testing needs an X server
@@ -42,6 +43,9 @@ TEST_REQUIRED_PACKAGES += x11/server/xvfb
 COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
 COMPONENT_TEST_ENV += DISPLAY=:0
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
+# Build dependencies
+REQUIRED_PACKAGES += developer/sassc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/appstream
