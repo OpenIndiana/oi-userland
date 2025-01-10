@@ -175,15 +175,13 @@ COMPONENT_TEST_TARGETS=
 CMAKE =	cmake
 
 # provide test transforms for ctest
-CMAKE_TEST_TRANSFORMS = \
-	' -e "s/[0-9]*\.[0-9]* sec//" ' \
-	' -n ' \
-	' -e "/Not Run/p" ' \
-	' -e "/Start/p" ' \
-	' -e "/Skipped/p" ' \
-	' -e "/Failed/p" ' \
-	' -e "/Passed/p" ' \
-	' -e "/failed/p" '
+# drop timing
+CMAKE_TEST_TRANSFORMS += "-e 's/ *[0-9]\{1,\}\.[0-9]\{1,\} sec\$$//'"
+CMAKE_TEST_TRANSFORMS += "-e '/^Total Test time/d'"
+# drop Start lines
+CMAKE_TEST_TRANSFORMS += "-e '/^ *Start/d'"
+# drop test numbers
+CMAKE_TEST_TRANSFORMS += "-e 's/^ *[0-9]\{1,\}\/[0-9]\{1,\} Test *\#[0-9]\{1,\}:/Test/'"
 
 USE_DEFAULT_TEST_TRANSFORMS?=no
 ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)
