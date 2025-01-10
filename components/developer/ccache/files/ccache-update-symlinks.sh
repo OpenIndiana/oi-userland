@@ -26,8 +26,8 @@ getproparg() {
 # wrap the real thing if called (gcc, clang, maybe icc... and compatibles).
 # Users who want build stuff with a speedup add this to front of their PATH,
 # and their PATH must later contain the location of the real tool's binary.
-# While it is not generally a problem for common /usr/bin it may be for e.g.
-# gcc-4.4.4-il or other not-exposed compilers.
+# While it is not generally a problem for common /usr/bin it may be for
+# not-exposed compilers.
 # Also note that even if the caller has this location in their PATH, they
 # can turn off effects of ccache without changing runtime PATHs just by
 # `export CCACHE_DISABLE=1` before a build.
@@ -53,10 +53,9 @@ fi
 
 cd "$LINKDIR" || exit
 
-# TODO: Option in the SMF service to enable additions to PATH for gcc-4.4.4-il
-# (/opt/gcc/4.4.4/bin/...) or other special compilers? It would help everyone
-# if that particular system's admin rather symlinked the custom compiler to
-# common /usr/bin/ instead.
+# TODO: Option in the SMF service to enable additions to PATH for other special
+# compilers? It would help everyone if that particular system's admin rather
+# symlinked the custom compiler to common /usr/bin/ instead.
 # Set value from SMF instance if present there
 [ -n "${ALLOW_DELETE-}" ] || ALLOW_DELETE="`getproparg ccache-update-symlinks/ALLOW_DELETE`"
 [ "${ALLOW_DELETE-}" = true -o "${ALLOW_DELETE-}" = false ] || { echo "Defaulting ALLOW_DELETE=false" >&2; ALLOW_DELETE=false; }

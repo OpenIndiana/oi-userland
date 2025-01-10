@@ -16,16 +16,17 @@
 
 BUILD_STYLE= cmake
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ccache
-COMPONENT_VERSION=      4.8.3
+COMPONENT_VERSION=	4.10.2
 COMPONENT_SUMMARY=      ccache - cacher of GCC-compiled files to avoid doing the same job twice
 COMPONENT_PROJECT_URL=  https://ccache.dev
-COMPONENT_DOCUMENTATION_URL =	https://ccache.dev/documentation.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e47374c810b248cfca3665ee1d86c7c763ffd68d9944bc422d9c1872611f2b11
+COMPONENT_ARCHIVE_HASH=	sha256:c0b85ddfc1a3e77b105ec9ada2d24aad617fa0b447c6a94d55890972810f0f5a
 COMPONENT_ARCHIVE_URL=  https://github.com/ccache/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/ccache
 COMPONENT_CLASSIFICATION= Development/C
@@ -34,18 +35,14 @@ COMPONENT_LICENSE_FILE= LICENSE.adoc
 
 include $(WS_MAKE_RULES)/common.mk
 
-unexport SHELLOPTS
-
-#COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9].[0-9][0-9] sec//" '
-#COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9][0-9].[0-9][0-9] sec//" '
-#COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9][0-9][0-9].[0-9][0-9] sec//" '
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += database/hiredis
+REQUIRED_PACKAGES += developer/fmt
+REQUIRED_PACKAGES += library/libxxhash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
