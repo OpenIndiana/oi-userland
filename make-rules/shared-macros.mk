@@ -127,7 +127,7 @@ GNU_TRIPLET=$(GNU_CPU)-$(GNU_VENDOR)-$(GNU_OS)
 # The cpu part of the triplet is this:
 # i386/sparc     - for GCC version older than 9 - so same as $(MACH)
 # x86_64/sparcv9 - for GCC version 9 and newer - $(MACH64) is close to this
-GNU_CPU = $(if $(filter $(GCC_VERSION),3 4 7),$(MACH),$(MACH64:amd64=x86_64))
+GNU_CPU = $(if $(filter $(GCC_VERSION),3 7),$(MACH),$(MACH64:amd64=x86_64))
 # The vendor part of the triplet is:
 # pc - for x86
 # sun - for SPARC
