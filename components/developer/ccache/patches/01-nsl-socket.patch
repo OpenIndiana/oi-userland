@@ -1,0 +1,22 @@
+--- ccache-4.10.2/CMakeLists.txt.orig
++++ ccache-4.10.2/CMakeLists.txt
+@@ -105,7 +105,7 @@
+ # ccache executable
+ #
+ add_executable(ccache src/ccache/main.cpp)
+-target_link_libraries(ccache PRIVATE standard_settings standard_warnings ccache_framework)
++target_link_libraries(ccache PRIVATE standard_settings standard_warnings ccache_framework nsl socket)
+ 
+ #
+ # Documentation
+--- ccache-4.10.2/unittest/CMakeLists.txt.orig
++++ ccache-4.10.2/unittest/CMakeLists.txt
+@@ -60,7 +60,7 @@
+ 
+ target_link_libraries(
+   unittest
+-  PRIVATE standard_settings standard_warnings ccache_framework dep_doctest
++  PRIVATE standard_settings standard_warnings ccache_framework dep_doctest nsl socket
+ )
+ 
+ target_include_directories(unittest PRIVATE ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${ccache_SOURCE_DIR}/src)
