@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aniso8601
-HUMAN_VERSION =			9.0.1
-COMPONENT_SUMMARY =		aniso8601 - A library for parsing ISO 8601 strings.
+HUMAN_VERSION =			10.0.0
+COMPONENT_SUMMARY =		A library for parsing ISO 8601 strings.
 COMPONENT_PROJECT_URL =		https://bitbucket.org/nielsenb/aniso8601
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/cb/72/be3db445b03944bfbb2b02b82d00cb2a2bcf96275c4543f14bf60fa79e12/aniso8601-9.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973
+	sha256:ff1d0fc2346688c62c0151547136ac30e322896ed8af316ef7602c47da9426cf
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
