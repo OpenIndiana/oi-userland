@@ -14,13 +14,13 @@
 #
 
 BUILD_STYLE = justmake
-BUILD_BITS = 64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-fusefs
 COMPONENT_VERSION=	5955f660e3eece3e9144ea1d990186cc9a88bc13
 IPS_COMPONENT_VERSION=	1.6
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=	sha256:d411a6077e234e770c9d418839230a29709f5e6d821a2b212a87b9b3cb03a74b
@@ -30,29 +30,24 @@ TEST_TARGET = $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Force gcc 7 for a case we would switch our default gcc to something else.
+# Force gcc 10.
 # This should match the compiler used to build illumos-gate.
-# Now switched to gcc 10
 GCC_VERSION = 10
 
-PATH=/opt/onbld/bin/i386:$(PATH.illumos)
+PATH.prepend += /opt/onbld/bin/i386
 
-$(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
-	$(MKDIR) $(@D)
-	$(CLONEY) $(SOURCE_DIR) $(@D)
-	(cd $(@D)/kernel && $(ENV) CC=$(CC) PATH=$(PATH) dmake -e)
-	$(TOUCH) $@
+# Build
+COMPONENT_BUILD_ACTION = \
+	cd $(@D)/kernel && $(ENV) CC=$(CC) PATH=$(PATH) dmake -e
 
-$(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
-	$(MKDIR) $(PROTO_DIR)
-
-	(cd $(@D)/kernel && dmake install)
-
-	$(MKDIR) $(PROTOUSRKERNELDRVDIR) $(PROTOUSRKERNELDRVDIR64)
-
-	$(INSTALL) $(@D)/kernel/proto/$(USRKERNELDRVDIR64)/fuse $(PROTOUSRKERNELDRVDIR64)
-	$(INSTALL) $(@D)/kernel/proto/$(USRKERNELDRVDIR)/fuse.conf $(PROTOUSRKERNELDRVDIR)
-
-	$(TOUCH) $@
+# Install
+COMPONENT_PRE_INSTALL_ACTION +=	\
+	$(MKDIR) $(PROTO_DIR) ;
+COMPONENT_INSTALL_ACTION = \
+	cd $(@D)/kernel && dmake install
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTOUSRKERNELDRVDIR) $(PROTOUSRKERNELDRVDIR64) ; \
+	$(INSTALL) $(@D)/kernel/proto/$(USRKERNELDRVDIR64)/fuse $(PROTOUSRKERNELDRVDIR64) ; \
+	$(INSTALL) $(@D)/kernel/proto/$(USRKERNELDRVDIR)/fuse.conf $(PROTOUSRKERNELDRVDIR) ;
 
 # Auto-generated dependencies
