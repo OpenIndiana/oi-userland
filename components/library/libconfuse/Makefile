@@ -20,37 +20,33 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libconfuse
-COMPONENT_VERSION=	2.7
-COMPONENT_SRC_NAME=	confuse
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.nongnu.org/confuse/
+COMPONENT_VERSION=	3.3
+COMPONENT_SUMMARY=	Configuration file parser library
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=	https://github.com/libconfuse/libconfuse
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:e32574fd837e950778dac7ade40787dd2259ef8e28acd6ede6847ca895c88778
-COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/confuse/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libconfuse
+COMPONENT_ARCHIVE_HASH=	sha256:cb90c06f2dbec971792af576d5b9a382fb3c4ca2b1deea55ea262b403f4e641e
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=		library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=	ISC
+COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--enable-shared
+PATH= $(PATH.gnu)
 
-# This is really only needed to get the test target to pass.
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
 
-ASLR_MODE = $(ASLR_ENABLE)
+COMPONENT_PREP_ACTION= ( cd $(@D); PATH=$(PATH) $(CONFIG_SHELL) autogen.sh )
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:	$(TEST_32_and_64)
+ASLR_MODE= $(ASLR_ENABLE)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
