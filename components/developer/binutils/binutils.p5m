@@ -34,6 +34,8 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 <transform link path=usr/bin/g.* -> default facet.compat.gnulinks true>
 <transform link path=usr/share/man/man1/g.* -> default facet.compat.gnulinks true>
 
@@ -73,15 +75,6 @@ file path=usr/gnu/bin/readelf
 file path=usr/gnu/bin/size
 file path=usr/gnu/bin/strings
 file path=usr/gnu/bin/strip
-file path=usr/gnu/include/ansidecl.h
-file path=usr/gnu/include/bfd.h
-file path=usr/gnu/include/bfdlink.h
-file path=usr/gnu/include/ctf-api.h
-file path=usr/gnu/include/ctf.h
-file path=usr/gnu/include/diagnostics.h
-file path=usr/gnu/include/dis-asm.h
-file path=usr/gnu/include/plugin-api.h
-file path=usr/gnu/include/symcat.h
 file path=usr/gnu/lib/$(MACH64)/bfd-plugins/libdep.so
 file path=usr/gnu/lib/$(MACH64)/libbfd.a
 file path=usr/gnu/lib/$(MACH64)/libctf-nobfd.a
@@ -152,6 +145,7 @@ file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/ro/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/ro/LC_MESSAGES/binutils.mo
+file path=usr/gnu/share/locale/ro/LC_MESSAGES/gas.mo
 file path=usr/gnu/share/locale/ro/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/ro/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/ro/LC_MESSAGES/opcodes.mo
@@ -218,16 +212,27 @@ file path=usr/gnu/share/man/man1/strings.1
 file path=usr/gnu/share/man/man1/strip.1
 file path=usr/gnu/share/man/man1/windmc.1
 file path=usr/gnu/share/man/man1/windres.1
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/ar target=../../bin/ar
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/as target=../../bin/as
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/ld target=../../bin/ld
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/ld.bfd target=../../bin/ld
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/nm target=../../bin/nm
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/objcopy target=../../bin/objcopy
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/objdump target=../../bin/objdump
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/ranlib target=../../bin/ranlib
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/readelf target=../../bin/readelf
-hardlink path=usr/gnu/$(GCC_GNU_TRIPLET)/bin/strip target=../../bin/strip
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/ar target=../../bin/ar
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/as target=../../bin/as
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/ld target=../../bin/ld
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/ld.bfd target=../../bin/ld
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/nm target=../../bin/nm
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/objcopy target=../../bin/objcopy
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/objdump target=../../bin/objdump
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/ranlib target=../../bin/ranlib
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/readelf target=../../bin/readelf
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/strip target=../../bin/strip
+file path=usr/include/ansidecl.h
+file path=usr/include/bfd.h
+file path=usr/include/bfdlink.h
+file path=usr/include/ctf-api.h
+file path=usr/include/ctf.h
+file path=usr/include/diagnostics.h
+file path=usr/include/dis-asm.h
+file path=usr/include/plugin-api.h
+file path=usr/include/sframe-api.h
+file path=usr/include/sframe.h
+file path=usr/include/symcat.h
 file path=usr/share/info/as.info
 file path=usr/share/info/bfd.info
 file path=usr/share/info/binutils.info
@@ -274,4 +279,3 @@ link path=usr/share/man/man1/gstrip.1 \
     target=../../../gnu/share/man/man1/strip.1
 legacy pkg=SUNWbinutils desc="GNU binutils - Binary file utilities" \
     name="binutils - GNU binutils"
-license binutils.license license="GPLv3, FDLv1.3"

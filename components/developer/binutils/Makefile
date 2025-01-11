@@ -28,20 +28,22 @@
 # Copyright (c) 2022 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 USE_COMMON_TEST_MASTER= no
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.42
+COMPONENT_VERSION=	2.43.1
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:f6e4d41fd5fc778b06b7891457b3620da5ecea1006c6a4a41ae998109f85a800
+COMPONENT_ARCHIVE_HASH=	sha256:13f74202a3c4c51118b797a39ea4200d3f6cfbe224da6d1d95bb938480132dfd
 COMPONENT_FMRI=		developer/gnu-binutils
 COMPONENT_CLASSIFICATION=Development/GNU
+COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,8 +51,6 @@ PATH= $(PATH.gnu)
 
 CONFIGURE_PREFIX= /usr/gnu
 
-CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--enable-64-bit-bfd
 CONFIGURE_OPTIONS +=    --enable-gold=no
 CONFIGURE_OPTIONS +=    --enable-plugins=yes
@@ -58,9 +58,9 @@ CONFIGURE_OPTIONS +=    --enable-nls
 CONFIGURE_OPTIONS +=    --disable-libtool-lock
 CONFIGURE_OPTIONS +=    --enable-largefile=yes
 CONFIGURE_OPTIONS +=	--with-system-zlib
-CONFIGURE_OPTIONS +=    --host=$(GCC_GNU_TRIPLET)
-CONFIGURE_OPTIONS +=    --build=$(GCC_GNU_TRIPLET)
-CONFIGURE_OPTIONS +=    --target=$(GCC_GNU_TRIPLET)
+CONFIGURE_OPTIONS +=    --host=$(GNU_TRIPLET)
+CONFIGURE_OPTIONS +=    --build=$(GNU_TRIPLET)
+CONFIGURE_OPTIONS +=    --target=$(GNU_TRIPLET)
 #
 # This warning will break build of current illumos-gate
 # as warnings will be generated for grub and loader.
@@ -80,15 +80,15 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
 
-PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/ar
-PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/as
-PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/ld
-PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/nm
-PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/objcopy
-PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/objdump
-PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/ranlib
-PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/readelf
-PKG_HARDLINKS += usr/gnu/$(GCC_GNU_TRIPLET)/bin/strip
+PKG_HARDLINKS += usr/gnu/$(GNU_TRIPLET)/bin/ar
+PKG_HARDLINKS += usr/gnu/$(GNU_TRIPLET)/bin/as
+PKG_HARDLINKS += usr/gnu/$(GNU_TRIPLET)/bin/ld
+PKG_HARDLINKS += usr/gnu/$(GNU_TRIPLET)/bin/nm
+PKG_HARDLINKS += usr/gnu/$(GNU_TRIPLET)/bin/objcopy
+PKG_HARDLINKS += usr/gnu/$(GNU_TRIPLET)/bin/objdump
+PKG_HARDLINKS += usr/gnu/$(GNU_TRIPLET)/bin/ranlib
+PKG_HARDLINKS += usr/gnu/$(GNU_TRIPLET)/bin/readelf
+PKG_HARDLINKS += usr/gnu/$(GNU_TRIPLET)/bin/strip
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
