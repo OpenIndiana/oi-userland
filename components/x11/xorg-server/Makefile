@@ -17,9 +17,11 @@
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
+GCC_VERSION=13
+
 COMPONENT_NAME=         xorg-server
 COMPONENT_VERSION=      1.19.7
-COMPONENT_REVISION=     11
+COMPONENT_REVISION=     12
 COMPONENT_SUMMARY=      Xorg - X11R7 X server
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -78,10 +80,13 @@ CONFIGURE_OPTIONS += --disable-xwin
 CONFIGURE_OPTIONS += --disable-xnest
 CONFIGURE_OPTIONS += --disable-systemd-logind
 CONFIGURE_OPTIONS += --disable-input-thread
+# ;( - temporary until we update xorg-server to v21.x
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --enable-dmx
 CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-dri2
 CONFIGURE_OPTIONS += --enable-dri3
+CONFIGURE_OPTIONS += --enable-libdrm
 CONFIGURE_OPTIONS += --disable-glamor
 CONFIGURE_OPTIONS += --enable-glx
 CONFIGURE_OPTIONS += --enable-kdrive
