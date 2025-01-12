@@ -19,13 +19,12 @@ USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		DBI
-HUMAN_VERSION =			1.645
-COMPONENT_SUMMARY =		DBI - Database independent interface for Perl
-COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBI-1.645.tgz
+COMPONENT_NAME =		DBI
+HUMAN_VERSION =			1.646
+COMPONENT_SUMMARY =		Database independent interface for Perl
+COMPONENT_CPAN_AUTHOR =		HMBRAND
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e38b7a5efee129decda12383cf894963da971ffac303f54cc1b93e40e3cf9921
+	sha256:53ab32ac8c30295a776dde658df22be760936cdca5a3c003a23bda6d829fa184
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,5 +38,7 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
