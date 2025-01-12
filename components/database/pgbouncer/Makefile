@@ -17,11 +17,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
-COMPONENT_VERSION= 	1.23.1
+COMPONENT_VERSION= 	1.24.0
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1963b497231d9a560a62d266e4a2eae6881ab401853d93e5d292c3740eec5084
+COMPONENT_ARCHIVE_HASH=	sha256:e76adf941a3191a416e223c0b2cdbf73159eef80a2a32314af6fbd82e41a1d41
 COMPONENT_ARCHIVE_URL=	https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.pgbouncer.org/
 COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)
@@ -32,7 +32,7 @@ COMPONENT_LICENSE_FILE=	COPYRIGHT
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CLONEY_ARGS= CLONEY_MODE="hardlink"
