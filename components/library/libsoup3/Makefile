@@ -19,9 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsoup
-HUMAN_VERSION=		3.6.1
+HUMAN_VERSION=		3.6.3
 COMPONENT_SUMMARY= Libsoup is an HTTP client/server library for GNOME
-COMPONENT_ARCHIVE_HASH=	sha256:ceb1f1aa2bdd73b2cd8159d3998c96c55ef097ef15e4b4f36029209fa18af838
+COMPONENT_ARCHIVE_HASH=	sha256:a0d84ab07bd168b317d319b0dc40c8b301b4543fba2ec42fa733914b2081afbd
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/libsoup
 COMPONENT_FMRI= library/libsoup3
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -32,7 +32,7 @@ include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
 # GNU msgfmt is needed
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Testing needs apachectl and httpd
 PATH.prepend += /usr/apache2/2.4/bin
