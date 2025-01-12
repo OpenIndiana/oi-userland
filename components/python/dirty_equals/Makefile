@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dirty_equals
-HUMAN_VERSION =			0.8.0
+HUMAN_VERSION =			0.9.0
 COMPONENT_SUMMARY =		Doing dirty (but extremely useful) things with equals.
 COMPONENT_PROJECT_URL =		https://github.com/samuelcolvin/dirty-equals
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:798db3b9481b9a5024c0e520946507676ed2f0c65317d3e95bdce1a01657cf60
+	sha256:17f515970b04ed7900b733c95fd8091f4f85e52f1fb5f268757f25c858eb1f7b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
