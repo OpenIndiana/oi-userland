@@ -26,16 +26,13 @@
 # Copyright 2023 Carsten Grzemba
 #
 
-# There are a large number of macros in the GDB code written
-# specifically for GCC's preprocessor. Studio does not expand
-# these macros the same way GCC does, and the resulting gdb is
-# not usable. Building gdb with a GCC >= 4.7.2 produces very
-# good results, even on SPARC.
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdb
 COMPONENT_VERSION=      14.2
-COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -121,6 +118,8 @@ CONFIGURE_OPTIONS += --with-libexpat-prefix=/usr/lib
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --with-system-zlib
 CONFIGURE_OPTIONS += --without-guile
+# libbfd is provided by binutils
+CONFIGURE_OPTIONS += --disable-install-libbfd
 
 COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 
