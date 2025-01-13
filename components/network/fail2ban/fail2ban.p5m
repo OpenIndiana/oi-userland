@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2024 Geoff Weiss
+# This file was automatically generated using python-integrate-project
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -192,10 +192,10 @@ file path=etc/fail2ban/filter.d/zoneminder.conf
 file path=etc/fail2ban/jail.conf
 file path=etc/fail2ban/paths-common.conf
 file path=etc/fail2ban/paths-openindiana.conf
-file path=lib/svc/manifest/network/solaris-fail2ban.xml  restart_fmri=svc:/system/manifest-import:default
+file path=lib/svc/manifest/network/solaris-fail2ban.xml
 file path=lib/svc/method/svc-fail2ban
 file path=usr/bin/fail2ban-client
-link path=usr/bin/fail2ban-python target=usr/bin/python3.9 pkg.linted.userland.action002.0=true
+link path=usr/bin/fail2ban-python target=/usr/bin/python3.9
 file path=usr/bin/fail2ban-regex
 file path=usr/bin/fail2ban-server
 file path=usr/bin/fail2ban-testcases
@@ -433,3 +433,4 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # Automatically generated dependencies based on distribution metadata
+<transform link target=/usr/bin/python3\. -> default pkg.linted.userland.action002.0 true>
