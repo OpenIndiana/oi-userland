@@ -124,7 +124,7 @@ ok 27 - init creates a new deep directory
 ok 28 - init creates a new deep directory (umask vs. shared)
 ok 29 - init notices EEXIST (1)
 ok 30 - init notices EEXIST (2)
-ok 31 # skip init notices EPERM (missing SANITY of POSIXPERM,SANITY)
+ok 31 - init notices EPERM
 ok 32 - init creates a new bare directory with global --bare
 ok 33 - init prefers command line to GIT_DIR
 ok 34 - init with separate gitdir
@@ -132,61 +132,63 @@ ok 35 - explicit bare & --separate-git-dir incompatible
 ok 36 - implicit bare & --separate-git-dir incompatible
 ok 37 - bare & --separate-git-dir incompatible within worktree
 ok 38 - init in long base path
-ok 39 - init in long restricted base path
+ok 39 # skip init in long restricted base path (missing GETCWD_IGNORES_PERMS)
 ok 40 - re-init on .git file
 ok 41 - re-init to update git link
 ok 42 - re-init to move gitdir
 ok 43 - re-init to move gitdir symlink
-ok 44 - re-init to move gitdir with linked worktrees
-ok 45 - re-init to move gitdir within linked worktree
-ok 46 # skip .git hidden (missing MINGW)
-ok 47 # skip bare git dir not hidden (missing MINGW)
-ok 48 - remote init from does not use config from cwd
-ok 49 - re-init from a linked worktree
-ok 50 - init honors GIT_DEFAULT_HASH
-ok 51 - init honors --object-format
-ok 52 - init honors init.defaultObjectFormat
-ok 53 - init warns about invalid init.defaultObjectFormat
-ok 54 - --object-format overrides GIT_DEFAULT_HASH
-ok 55 - GIT_DEFAULT_HASH overrides init.defaultObjectFormat
-ok 56 - extensions.objectFormat is not allowed with repo version 0
-ok 57 - init rejects attempts to initialize with different hash
-ok 58 - extensions.refStorage is not allowed with repo version 0
-ok 59 - extensions.refStorage with files backend
-ok 60 - extensions.refStorage with unknown backend
-ok 61 - init with GIT_DEFAULT_REF_FORMAT=garbage
-ok 62 - init warns about invalid init.defaultRefFormat
-ok 63 - init with GIT_DEFAULT_REF_FORMAT=files
-ok 64 - init with --ref-format=files
-ok 65 - init with init.defaultRefFormat=files
-ok 66 - --ref-format=files overrides GIT_DEFAULT_REF_FORMAT
-ok 67 - init with GIT_DEFAULT_REF_FORMAT=reftable
-ok 68 - init with --ref-format=reftable
-ok 69 - init with init.defaultRefFormat=reftable
-ok 70 - --ref-format=reftable overrides GIT_DEFAULT_REF_FORMAT
-ok 71 - --ref-format= overrides GIT_DEFAULT_REF_FORMAT
-ok 72 - GIT_DEFAULT_REF_FORMAT= overrides init.defaultRefFormat
-ok 73 - re-init with same format (files)
-ok 74 - re-init with different format fails (files -> reftable)
-ok 75 - re-init with same format (reftable)
-ok 76 - re-init with different format fails (reftable -> files)
-ok 77 - init with --ref-format=garbage
-ok 78 # skip core.hidedotfiles = false (missing MINGW)
-ok 79 # skip redirect std handles (missing MINGW)
-ok 80 - --initial-branch
-ok 81 - overridden default initial branch name (config)
-ok 82 - advice on unconfigured init.defaultBranch
-ok 83 - overridden default main branch name (env)
-ok 84 - invalid default branch name
-ok 85 - branch -m with the initial branch
-ok 86 - init with includeIf.onbranch condition
-ok 87 - init with includeIf.onbranch condition with existing directory
-ok 88 - re-init with includeIf.onbranch condition
-ok 89 - re-init with includeIf.onbranch condition
-ok 90 - re-init skips non-matching includeIf.onbranch
-ok 91 - re-init reads matching includeIf.onbranch
-# passed all 91 test(s)
-1..91
+ok 44 - re-init to move gitdir with linked worktrees (absolute)
+ok 45 - re-init to move gitdir within linked worktree (absolute)
+ok 46 - re-init to move gitdir with linked worktrees (relative)
+ok 47 - re-init to move gitdir within linked worktree (relative)
+ok 48 # skip .git hidden (missing MINGW)
+ok 49 # skip bare git dir not hidden (missing MINGW)
+ok 50 - remote init from does not use config from cwd
+ok 51 - re-init from a linked worktree
+ok 52 - init honors GIT_DEFAULT_HASH
+ok 53 - init honors --object-format
+ok 54 - init honors init.defaultObjectFormat
+ok 55 - init warns about invalid init.defaultObjectFormat
+ok 56 - --object-format overrides GIT_DEFAULT_HASH
+ok 57 - GIT_DEFAULT_HASH overrides init.defaultObjectFormat
+ok 58 - extensions.objectFormat is not allowed with repo version 0
+ok 59 - init rejects attempts to initialize with different hash
+ok 60 - extensions.refStorage is not allowed with repo version 0
+ok 61 - extensions.refStorage with files backend
+ok 62 - extensions.refStorage with unknown backend
+ok 63 - init with GIT_DEFAULT_REF_FORMAT=garbage
+ok 64 - init warns about invalid init.defaultRefFormat
+ok 65 - init with GIT_DEFAULT_REF_FORMAT=files
+ok 66 - init with --ref-format=files
+ok 67 - init with init.defaultRefFormat=files
+ok 68 - --ref-format=files overrides GIT_DEFAULT_REF_FORMAT
+ok 69 - init with GIT_DEFAULT_REF_FORMAT=reftable
+ok 70 - init with --ref-format=reftable
+ok 71 - init with init.defaultRefFormat=reftable
+ok 72 - --ref-format=reftable overrides GIT_DEFAULT_REF_FORMAT
+ok 73 - --ref-format= overrides GIT_DEFAULT_REF_FORMAT
+ok 74 - GIT_DEFAULT_REF_FORMAT= overrides init.defaultRefFormat
+ok 75 - re-init with same format (files)
+ok 76 - re-init with different format fails (files -> reftable)
+ok 77 - re-init with same format (reftable)
+ok 78 - re-init with different format fails (reftable -> files)
+ok 79 - init with --ref-format=garbage
+ok 80 # skip core.hidedotfiles = false (missing MINGW)
+ok 81 # skip redirect std handles (missing MINGW)
+ok 82 - --initial-branch
+ok 83 - overridden default initial branch name (config)
+ok 84 - advice on unconfigured init.defaultBranch
+ok 85 - overridden default main branch name (env)
+ok 86 - invalid default branch name
+ok 87 - branch -m with the initial branch
+ok 88 - init with includeIf.onbranch condition
+ok 89 - init with includeIf.onbranch condition with existing directory
+ok 90 - re-init with includeIf.onbranch condition
+ok 91 - re-init with includeIf.onbranch condition
+ok 92 - re-init skips non-matching includeIf.onbranch
+ok 93 - re-init reads matching includeIf.onbranch
+# passed all 93 test(s)
+1..93
 *** t0002-gitfile.sh ***
 ok 1 - initial setup
 ok 2 - bad setup: invalid .git file format
@@ -263,14 +265,14 @@ ok 54 - user defined builtin_objectmode values are ignored
 1..54
 *** t0004-unwritable.sh ***
 ok 1 - setup
-ok 2 # skip write-tree should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 3 # skip write-tree output on unwritable repository (missing WRITE_TREE_OUT)
-ok 4 # skip commit should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 5 # skip commit output on unwritable repository (missing COMMIT_OUT)
-ok 6 # skip update-index should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 7 # skip update-index output on unwritable repository (missing UPDATE_INDEX_OUT)
-ok 8 # skip add should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 9 # skip add output on unwritable repository (missing ADD_OUT)
+ok 2 - write-tree should notice unwritable repository
+ok 3 - write-tree output on unwritable repository
+ok 4 - commit should notice unwritable repository
+ok 5 - commit output on unwritable repository
+ok 6 - update-index should notice unwritable repository
+ok 7 - update-index output on unwritable repository
+ok 8 - add should notice unwritable repository
+ok 9 - add output on unwritable repository
 # passed all 9 test(s)
 1..9
 *** t0005-signals.sh ***
@@ -1078,7 +1080,7 @@ ok 12 - pretty nested inline object and array 2
 ok 13 - inline object with no members
 ok 14 - inline array with no members
 ok 15 - larger empty example
-ok 16 - parse JSON using Perl
+ok 16 # skip parse JSON using Perl (missing PERLJSON)
 # passed all 16 test(s)
 1..16
 *** t0020-crlf.sh ***
@@ -1155,12 +1157,12 @@ ok 31 # skip delayed checkout with utf-8-collision don't write to the wrong plac
 ok 32 # skip delayed checkout with submodule collision don't write to the wrong place (missing CASE_INSENSITIVE_FS of SYMLINKS,CASE_INSENSITIVE_FS)
 ok 33 - setup for progress tests
 ok 34 - delayed checkout shows progress by default on tty (pathspec checkout)
-ok 35 - delayed checkout ommits progress on non-tty (pathspec checkout)
-ok 36 - delayed checkout ommits progress with --quiet (pathspec checkout)
+ok 35 - delayed checkout omits progress on non-tty (pathspec checkout)
+ok 36 - delayed checkout omits progress with --quiet (pathspec checkout)
 ok 37 - delayed checkout honors --[no]-progress (pathspec checkout)
 ok 38 - delayed checkout shows progress by default on tty (branch checkout)
-ok 39 - delayed checkout ommits progress on non-tty (branch checkout)
-ok 40 - delayed checkout ommits progress with --quiet (branch checkout)
+ok 39 - delayed checkout omits progress on non-tty (branch checkout)
+ok 40 - delayed checkout omits progress with --quiet (branch checkout)
 ok 41 - delayed checkout honors --[no]-progress (branch checkout)
 ok 42 - delayed checkout correctly reports the number of updated entries
 # passed all 42 test(s)
@@ -4292,7 +4294,7 @@ ok 6 - run_command can run a script without a #! line
 ok 7 - run_command does not try to execute a directory
 ok 8 - run_command passes over non-executable file
 ok 9 - run_command reports EACCES
-ok 10 # skip unreadable directory in PATH (missing SANITY of POSIXPERM,SANITY)
+ok 10 - unreadable directory in PATH
 ok 11 - run_command runs in parallel with more jobs available than tasks
 ok 12 - run_command runs ungrouped in parallel with more jobs available than tasks
 ok 13 - run_command runs in parallel with as many jobs as tasks
@@ -4336,8 +4338,8 @@ ok 2 - dir-iterator should iterate through all files
 ok 3 - dir-iterator should list files in the correct order
 ok 4 - begin should fail upon inexistent paths
 ok 5 - begin should fail upon non directory paths
-ok 6 # skip advance should not fail on errors by default (missing SANITY of POSIXPERM,SANITY)
-ok 7 # skip advance should fail on errors, w/ pedantic flag (missing SANITY of POSIXPERM,SANITY)
+ok 6 - advance should not fail on errors by default
+ok 7 - advance should fail on errors, w/ pedantic flag
 ok 8 - setup dirs with symlinks
 ok 9 - dir-iterator should not follow symlinks by default
 ok 10 - dir-iterator does not resolve top-level symlinks
@@ -4364,7 +4366,7 @@ ok 5 - --keep-going
 1..5
 *** t0070-fundamental.sh ***
 ok 1 - mktemp to nonexistent directory prints filename
-ok 2 # skip mktemp to unwritable directory prints filename (missing SANITY of POSIXPERM,SANITY)
+ok 2 - mktemp to unwritable directory prints filename
 ok 3 - git_mkstemps_mode does not fail if fd 0 is not open
 ok 4 - check for a bug in the regex routines
 ok 5 - incomplete sideband messages are reassembled
@@ -4620,25 +4622,28 @@ ok 33 - match multiple configured helpers with URLs
 ok 34 - match percent-encoded values
 ok 35 - match percent-encoded UTF-8 values in path
 ok 36 - match percent-encoded values in username
-ok 37 - fetch with multiple path components
-ok 38 - pull username from config
-ok 39 - honors username from URL over helper (URL)
-ok 40 - honors username from URL over helper (components)
-ok 41 - last matching username wins
-ok 42 - http paths can be part of context
-ok 43 - context uses urlmatch
-ok 44 - helpers can abort the process
-ok 45 - empty helper spec resets helper list
-ok 46 - url parser rejects embedded newlines
-ok 47 - host-less URLs are parsed as empty host
-ok 48 - credential system refuses to work with missing host
-ok 49 - credential system refuses to work with missing protocol
-ok 50 - url parser handles bare query marker
-ok 51 - url parser handles bare fragment marker
-ok 52 - url parser not confused by encoded markers
-ok 53 - credential config with partial URLs
-# passed all 53 test(s)
-1..53
+ok 37 - match percent-encoded values in hostname
+ok 38 - fetch with multiple path components
+ok 39 - pull username from config
+ok 40 - honors username from URL over helper (URL)
+ok 41 - honors username from URL over helper (components)
+ok 42 - last matching username wins
+ok 43 - http paths can be part of context
+ok 44 - context uses urlmatch
+ok 45 - helpers can abort the process
+ok 46 - empty helper spec resets helper list
+ok 47 - url parser rejects embedded newlines
+ok 48 - url parser rejects embedded carriage returns
+ok 49 - host-less URLs are parsed as empty host
+ok 50 - credential system refuses to work with missing host
+ok 51 - credential system refuses to work with missing protocol
+ok 52 - url parser handles bare query marker
+ok 53 - url parser handles bare fragment marker
+ok 54 - url parser not confused by encoded markers
+ok 55 - credential config with partial URLs
+ok 56 - interactive prompt is sanitized
+# passed all 56 test(s)
+1..56
 *** t0301-credential-cache.sh ***
 ok 1 - helper (cache) has no existing data
 ok 2 - helper (cache) stores password
@@ -4749,7 +4754,7 @@ ok 52 - helper (store) not confused by long header
 ok 53 - if custom xdg file exists, home and xdg files not created
 ok 54 - get: use home file if both home and xdg files have matches
 ok 55 - get: use xdg file if home file has no matches
-ok 56 # skip get: use xdg file if home file is unreadable (missing SANITY of POSIXPERM,SANITY)
+ok 56 - get: use xdg file if home file is unreadable
 ok 57 - store: if both xdg and home files exist, only store in home file
 ok 58 - erase: erase matching credentials from both xdg and home files
 ok 59 - get: ignore credentials without scheme as invalid
@@ -4801,8 +4806,8 @@ ok 10 - missing CLI object, but promised, passes fsck
 ok 11 - fetching of missing objects
 ok 12 - fetching of a promised object that promisor remote no longer has
 ok 13 - fetching of missing objects works with ref-in-want enabled
-ok 14 - fetching of missing objects from another promisor remote
-ok 15 - fetching of missing objects configures a promisor remote
+ok 14 - fetching from another promisor remote
+ok 15 - fetching with --filter configures a promisor remote
 ok 16 - fetching of missing blobs works
 ok 17 - fetching of missing trees does not fetch blobs
 ok 18 - rev-list stops traversal at missing and promised commit
@@ -5661,8 +5666,17 @@ ok 46 - git maintenance run --task=pack-refs --auto scales with size of packed-r
 *** t0602-reffiles-fsck.sh ***
 ok 1 - ref name should be checked
 ok 2 - ref name check should be adapted into fsck messages
-# passed all 2 test(s)
-1..2
+ok 3 - ref name check should work for multiple worktrees
+ok 4 - regular ref content should be checked (individual)
+ok 5 - regular ref content should be checked (aggregate)
+ok 6 - textual symref content should be checked (individual)
+ok 7 - textual symref content should be checked (aggregate)
+ok 8 - the target of the textual symref should be checked
+ok 9 - symlink symref content should be checked
+ok 10 - symlink symref content should be checked (worktree)
+ok 11 - ref content checks should work with worktrees
+# passed all 11 test(s)
+1..11
 *** t0610-reftable-basics.sh ***
 ok 1 - init: creates basic reftable structures
 ok 2 - init: sha256 object format via environment variable
@@ -5935,7 +5949,7 @@ ok 9 - 3-way not overwriting local changes (setup)
 ok 10 - 3-way not overwriting local changes (our side)
 ok 11 - 3-way not overwriting local changes (their side)
 ok 12 - funny symlink in work tree
-ok 13 # skip funny symlink in work tree, un-unlink-able (missing SANITY)
+ok 13 - funny symlink in work tree, un-unlink-able
 ok 14 - D/F setup
 ok 15 - D/F
 ok 16 - D/F resolve
@@ -7703,7 +7717,7 @@ ok 30 - find value with highest priority from a configset
 ok 31 - find value_list for a key from a configset
 ok 32 - proper error on non-existent files
 ok 33 - proper error on directory "files"
-ok 34 # skip proper error on non-accessible files (missing SANITY of POSIXPERM,SANITY)
+ok 34 - proper error on non-accessible files
 ok 35 - proper error on error in default config files
 ok 36 - proper error on error in custom config files
 ok 37 - check line errors for malformed values
@@ -8670,19 +8684,19 @@ ok 2 - superfluous arguments
 ok 3 - missing ref storage format
 ok 4 - unknown ref storage format
 ok 5 - files: migration to same format fails
-ok 6 - files -> reftable: migration with reflog fails
-ok 7 - files -> reftable: migration with worktree fails
-ok 8 - files -> reftable: unborn HEAD
-ok 9 - files -> reftable: single ref
-ok 10 - files -> reftable: bare repository
-ok 11 - files -> reftable: dangling symref
-ok 12 - files -> reftable: broken ref
-ok 13 - files -> reftable: pseudo-refs
-ok 14 - files -> reftable: special refs are left alone
-ok 15 - files -> reftable: a bunch of refs
-ok 16 - files -> reftable: dry-run migration does not modify repository
-ok 17 - reftable: migration to same format fails
-ok 18 - reftable -> files: migration with reflog fails
+ok 6 - files -> reftable: migration with worktree fails
+ok 7 - files -> reftable: unborn HEAD
+ok 8 - files -> reftable: single ref
+ok 9 - files -> reftable: bare repository
+ok 10 - files -> reftable: dangling symref
+ok 11 - files -> reftable: broken ref
+ok 12 - files -> reftable: pseudo-refs
+ok 13 - files -> reftable: special refs are left alone
+ok 14 - files -> reftable: a bunch of refs
+ok 15 - files -> reftable: dry-run migration does not modify repository
+ok 16 - files -> reftable: reflogs of symrefs with target deleted
+ok 17 - files -> reftable: reflogs order is retained
+ok 18 - reftable: migration to same format fails
 ok 19 - reftable -> files: migration with worktree fails
 ok 20 - reftable -> files: unborn HEAD
 ok 21 - reftable -> files: single ref
@@ -8693,10 +8707,12 @@ ok 25 - reftable -> files: pseudo-refs
 ok 26 - reftable -> files: special refs are left alone
 ok 27 - reftable -> files: a bunch of refs
 ok 28 - reftable -> files: dry-run migration does not modify repository
-ok 29 - migrating from files format deletes backend files
-ok 30 - migrating from reftable format deletes backend files
-# passed all 30 test(s)
-1..30
+ok 29 - reftable -> files: reflogs of symrefs with target deleted
+ok 30 - reftable -> files: reflogs order is retained
+ok 31 - migrating from files format deletes backend files
+ok 32 - migrating from reftable format deletes backend files
+# passed all 32 test(s)
+1..32
 *** t1500-rev-parse.sh ***
 ok 1 - setup
 ok 2 - toplevel: --is-bare-repository
@@ -8777,8 +8793,9 @@ ok 76 - showing the superproject correctly
 ok 77 - rev-parse --since= unsqueezed ordering
 ok 78 - rev-parse --bisect includes bad, excludes good
 ok 79 - --short= truncates to the actual hash length
-# passed all 79 test(s)
-1..79
+ok 80 - :/ and HEAD^{/} favor more recent matching commits
+# passed all 80 test(s)
+1..80
 *** t1501-work-tree.sh ***
 ok 1 - setup
 ok 2 - setup: helper for testing rev-parse
@@ -9300,7 +9317,7 @@ ok 21 - check splitIndex.sharedIndexExpire set to "never" and "now"
 ok 22 - same mode for index & split index
 ok 23 - split index respects core.sharedrepository 0666
 ok 24 - split index respects core.sharedrepository 0642
-ok 25 # skip graceful handling when splitting index is not allowed (missing SANITY of POSIXPERM,SANITY)
+ok 25 - graceful handling when splitting index is not allowed
 ok 26 - writing split index with null sha1 does not write cache tree
 ok 27 - do not refresh null base index
 ok 28 - reading split index at alternate location
@@ -10364,14 +10381,18 @@ ok 225 - "add" with uninitialized submodule, with submodule.recurse unset
 ok 226 - "add" with uninitialized submodule, with submodule.recurse set
 ok 227 - "add" with initialized submodule, with submodule.recurse unset
 ok 228 - "add" with initialized submodule, with submodule.recurse set
-# passed all 228 test(s)
-1..228
+ok 229 - can create worktrees with relative paths
+ok 230 - can create worktrees with absolute paths
+ok 231 - move repo without breaking relative internal links
+ok 232 - relative worktree sets extension config
+# passed all 232 test(s)
+1..232
 *** t2401-worktree-prune.sh ***
 ok 1 - initialize
 ok 2 - worktree prune on normal repo
 ok 3 - prune files inside $GIT_DIR/worktrees
 ok 4 - prune directories without gitdir
-ok 5 # skip prune directories with unreadable gitdir (missing SANITY)
+ok 5 - prune directories with unreadable gitdir
 ok 6 - prune directories with invalid gitdir
 ok 7 - prune directories with gitdir pointing to nowhere
 ok 8 - not prune locked checkout
@@ -10379,8 +10400,9 @@ ok 9 - not prune recent checkouts
 ok 10 - not prune proper checkouts
 ok 11 - prune duplicate (linked/linked)
 ok 12 - prune duplicate (main/linked)
-# passed all 12 test(s)
-1..12
+ok 13 - not prune proper worktrees inside linked worktree with relative paths
+# passed all 13 test(s)
+1..13
 *** t2402-worktree-list.sh ***
 ok 1 - setup
 ok 2 - rev-parse --git-common-dir on main worktree
@@ -10406,9 +10428,10 @@ ok 21 - "list" all worktrees from linked with a bare main
 ok 22 - bare repo cleanup
 ok 23 - broken main worktree still at the top
 ok 24 - linked worktrees are sorted
-ok 25 - worktree path when called in .git directory
-# passed all 25 test(s)
-1..25
+ok 25 - linked worktrees with relative paths are shown with absolute paths
+ok 26 - worktree path when called in .git directory
+# passed all 26 test(s)
+1..26
 *** t2403-worktree-move.sh ***
 ok 1 - setup
 ok 2 - lock main worktree
@@ -10441,8 +10464,10 @@ ok 28 - remove locked worktree (force)
 ok 29 - remove cleans up .git/worktrees when empty
 ok 30 - remove a repo with uninitialized submodule
 ok 31 - not remove a repo with initialized submodule
-# passed all 31 test(s)
-1..31
+ok 32 - move worktree with absolute path to relative path
+ok 33 - move worktree with relative path to absolute path
+# passed all 33 test(s)
+1..33
 *** t2404-worktree-config.sh ***
 ok 1 - setup
 ok 2 - config --worktree in single worktree
@@ -10494,8 +10519,12 @@ ok 17 - repair gitdir (implicit) from linked worktree
 ok 18 - unable to repair gitdir (implicit) from main worktree
 ok 19 - repair multiple gitdir files
 ok 20 - repair moved main and linked worktrees
-# passed all 20 test(s)
-1..20
+ok 21 - repair copied main and linked worktrees
+ok 22 - repair worktree with relative path with missing gitfile
+ok 23 - repair absolute worktree to use relative paths
+ok 24 - repair relative worktree to use absolute paths
+# passed all 24 test(s)
+1..24
 *** t2407-worktree-heads.sh ***
 ok 1 - setup
 ok 2 - refuse to overwrite: checked out in worktree
@@ -13160,8 +13189,9 @@ ok 43 - format-patch --range-diff with multiple notes
 ok 44 - --left-only/--right-only
 ok 45 - ranges with pathspecs
 ok 46 - submodule changes are shown irrespective of diff.submodule
-# passed all 46 test(s)
-1..46
+ok 47 - --diff-merges
+# passed all 47 test(s)
+1..47
 *** t3207-branch-submodule.sh ***
 ok 1 - setup superproject and submodule
 ok 2 - --recurse-submodules should create branches
@@ -13370,8 +13400,12 @@ ok 146 - 'git notes edit' removes empty note
 ok 147 - 'git notes edit --allow-empty' stores empty note
 ok 148 - empty notes are displayed by git log
 ok 149 - empty notes do not invoke the editor
-# passed all 149 test(s)
-1..149
+ok 150 - git notes add with -m/-F invokes editor with -e
+ok 151 - git notes append with -m/-F invokes the editor with -e
+ok 152 - git notes with a combination of -m, -F and -e invokes editor
+ok 153 - git notes append aborts when editor fails with -e
+# passed all 153 test(s)
+1..153
 *** t3302-notes-index-expensive.sh ***
 ok 1 - setup 10
 ok 2 - notes work
@@ -13642,8 +13676,9 @@ ok 35 - switch to branch not checked out
 ok 36 - switch to non-branch detaches HEAD
 ok 37 - refuse to switch to branch checked out elsewhere
 ok 38 - rebase when inside worktree subdirectory
-# passed all 38 test(s)
-1..38
+ok 39 - git rebase --update-ref with core.commentChar and branch on worktree
+# passed all 39 test(s)
+1..39
 *** t3401-rebase-and-am-rename.sh ***
 ok 1 - setup testcase where directory rename should be detected
 ok 2 - rebase --interactive: directory rename detected
@@ -14391,7 +14426,7 @@ ok 16 - git rebase --onto D refs/heads/main
 ok 17 - git rebase --onto D main
 ok 18 - git rebase --keep-base refs/heads/main
 ok 19 - git rebase --keep-base main
-ok 20 - git rebase --fork-point with ambigous refname
+ok 20 - git rebase --fork-point with ambiguous refname
 ok 21 - --fork-point and --root both given
 ok 22 - rebase.forkPoint set to false
 ok 23 - rebase.forkPoint set to false and then to true
@@ -14675,15 +14710,16 @@ ok 2 - simple fixup -C works
 ok 3 - simple fixup -c works
 ok 4 - fixup -C removes amend! from message
 ok 5 - fixup -C with conflicts gives correct message
-ok 6 - skipping fixup -C after fixup gives correct message
-ok 7 - sequence of fixup, fixup -C & squash --signoff works
-ok 8 - first fixup -C commented out in sequence fixup fixup -C fixup -C
-ok 9 - multiple fixup -c opens editor once
-ok 10 - sequence squash, fixup & fixup -c gives combined message
-ok 11 - fixup -C works upon --autosquash with amend!
-ok 12 - fixup -[Cc]<commit> works
-# passed all 12 test(s)
-1..12
+ok 6 - conflicting fixup -C after fixup with custom comment string
+ok 7 - skipping fixup -C after fixup gives correct message
+ok 8 - sequence of fixup, fixup -C & squash --signoff works
+ok 9 - first fixup -C commented out in sequence fixup fixup -C fixup -C
+ok 10 - multiple fixup -c opens editor once
+ok 11 - sequence squash, fixup & fixup -c gives combined message
+ok 12 - fixup -C works upon --autosquash with amend!
+ok 13 - fixup -[Cc]<commit> works
+# passed all 13 test(s)
+1..13
 *** t3438-rebase-broken-files.sh ***
 ok 1 - set up conflicting branches
 ok 2 - detect missing GIT_AUTHOR_NAME
@@ -14693,7 +14729,7 @@ ok 5 - detect duplicate GIT_AUTHOR_NAME
 ok 6 - detect duplicate GIT_AUTHOR_EMAIL
 ok 7 - detect duplicate GIT_AUTHOR_DATE
 ok 8 - unknown key in author-script
-ok 9 # skip unwritable rebased-patches does not leak (missing SANITY of POSIXPERM,SANITY)
+ok 9 - unwritable rebased-patches does not leak
 # passed all 9 test(s)
 1..9
 *** t3500-cherry.sh ***
@@ -14722,10 +14758,11 @@ ok 15 - titles of fresh reverts
 ok 16 - title of legacy double revert
 ok 17 - identification of reverted commit (default)
 ok 18 - identification of reverted commit (--reference)
-ok 19 - identification of reverted commit (revert.reference)
-ok 20 - cherry-pick is unaware of --reference (for now)
-# passed all 20 test(s)
-1..20
+ok 19 - git revert --reference with core.commentChar
+ok 20 - identification of reverted commit (revert.reference)
+ok 21 - cherry-pick is unaware of --reference (for now)
+# passed all 21 test(s)
+1..21
 *** t3502-cherry-pick-merge.sh ***
 ok 1 - setup
 ok 2 - cherry-pick -m complains of bogus numbers
@@ -14755,7 +14792,7 @@ ok 1 - setup
 ok 2 - conflicting merge
 ok 3 - fixup
 ok 4 - cherry-pick conflict with --rerere-autoupdate
-ok 5 - cherry-pick conflict repsects rerere.autoUpdate
+ok 5 - cherry-pick conflict respects rerere.autoUpdate
 ok 6 - cherry-pick conflict with --no-rerere-autoupdate
 ok 7 - cherry-pick --continue rejects --rerere-autoupdate
 ok 8 - cherry-pick --rerere-autoupdate more than once
@@ -15010,7 +15047,7 @@ ok 11 - Test that "git rm bar" succeeds
 ok 12 - Post-check that bar does not exist and is not in index after "git rm -f bar"
 ok 13 - Test that "git rm -- -q" succeeds (remove a file that looks like an option)
 ok 14 - Test that "git rm -f" succeeds with embedded space, tab, or newline characters.
-ok 15 # skip Test that "git rm -f" fails if its rm fails (missing SANITY)
+ok 15 - Test that "git rm -f" fails if its rm fails
 ok 16 - When the rm in "git rm -f" fails, it should not remove the file from the index
 ok 17 - Remove nonexistent file with --ignore-unmatch
 ok 18 - "rm" command printed
@@ -15149,11 +15186,11 @@ ok 23 - git add with filemode=0, symlinks=0 prefers stage 2 over stage 1
 ok 24 - git add --refresh
 ok 25 - git add --refresh with pathspec
 ok 26 - git add --refresh correctly reports no match error
-ok 27 # skip git add should fail atomically upon an unreadable file (missing SANITY of POSIXPERM,SANITY)
-ok 28 # skip git add --ignore-errors (missing SANITY of POSIXPERM,SANITY)
-ok 29 # skip git add (add.ignore-errors) (missing SANITY of POSIXPERM,SANITY)
-ok 30 # skip git add (add.ignore-errors = false) (missing SANITY of POSIXPERM,SANITY)
-ok 31 # skip --no-ignore-errors overrides config (missing SANITY of POSIXPERM,SANITY)
+ok 27 - git add should fail atomically upon an unreadable file
+ok 28 - git add --ignore-errors
+ok 29 - git add (add.ignore-errors)
+ok 30 - git add (add.ignore-errors = false)
+ok 31 - --no-ignore-errors overrides config
 ok 32 - git add 'fo\[ou\]bar' ignores foobar
 ok 33 - git add to resolve conflicts on otherwise ignored path
 ok 34 - "add non-existent" should fail
@@ -17824,7 +17861,7 @@ ok 9 - -U0 is valid, so is diff.context=0
 ok 1 - setup
 ok 2 - no order (=tree object order)
 ok 3 - missing orderfile
-ok 4 # skip unreadable orderfile (missing SANITY of POSIXPERM,SANITY)
+ok 4 - unreadable orderfile
 ok 5 - orderfile using option from subdir with --output
 ok 6 - orderfile using option (1)
 ok 7 - orderfile is fifo (1)
@@ -18094,8 +18131,9 @@ ok 12 - remerge-diff w/ diff-filter=R: relevant file + conflict header
 ok 13 - remerge-diff w/ pathspec: limits to relevant file including conflict header
 ok 14 - setup non-content conflicts
 ok 15 - remerge-diff turns off history simplification
-# passed all 15 test(s)
-1..15
+ok 16 - remerge-diff with --reverse
+# passed all 16 test(s)
+1..16
 *** t4100-apply-stat.sh ***
 ok 1 - rename
 ok 2 - rename with recount
@@ -18847,29 +18885,30 @@ ok 7 - shortlog wrapping
 ok 8 - shortlog from non-git directory
 ok 9 - shortlog can read --format=raw output
 ok 10 - shortlog from non-git directory refuses extra arguments
-ok 11 - shortlog should add newline when input line matches wraplen
-ok 12 - shortlog encoding
-ok 13 - shortlog with revision pseudo options
-ok 14 - shortlog with --output=<file>
-ok 15 - shortlog --committer (internal)
-ok 16 - shortlog --committer (external)
-ok 17 - --group=committer is the same as --committer
-ok 18 - shortlog --group=trailer:signed-off-by
-ok 19 - shortlog --group=format
-ok 20 - shortlog --group=<format> DWIM
-ok 21 - shortlog bogus --group
-ok 22 - trailer idents are split
-ok 23 - trailer idents are mailmapped
-ok 24 - shortlog de-duplicates trailers in a single commit
-ok 25 - shortlog de-duplicates trailers in a single commit (folded/unfolded values)
-ok 26 - shortlog can match multiple groups
-ok 27 - shortlog can match multiple format groups
-ok 28 - set up option selection tests
-ok 29 - --no-group resets group list to author
-ok 30 - --no-group resets trailer list
-ok 31 - stdin with multiple groups reports error
-# passed all 31 test(s)
-1..31
+ok 11 - shortlog --author from non-git directory does not segfault
+ok 12 - shortlog should add newline when input line matches wraplen
+ok 13 - shortlog encoding
+ok 14 - shortlog with revision pseudo options
+ok 15 - shortlog with --output=<file>
+ok 16 - shortlog --committer (internal)
+ok 17 - shortlog --committer (external)
+ok 18 - --group=committer is the same as --committer
+ok 19 - shortlog --group=trailer:signed-off-by
+ok 20 - shortlog --group=format
+ok 21 - shortlog --group=<format> DWIM
+ok 22 - shortlog bogus --group
+ok 23 - trailer idents are split
+ok 24 - trailer idents are mailmapped
+ok 25 - shortlog de-duplicates trailers in a single commit
+ok 26 - shortlog de-duplicates trailers in a single commit (folded/unfolded values)
+ok 27 - shortlog can match multiple groups
+ok 28 - shortlog can match multiple format groups
+ok 29 - set up option selection tests
+ok 30 - --no-group resets group list to author
+ok 31 - --no-group resets trailer list
+ok 32 - stdin with multiple groups reports error
+# passed all 32 test(s)
+1..32
 *** t4202-log.sh ***
 ok 1 - setup
 ok 2 - pretty
@@ -19796,7 +19835,7 @@ ok 28 - Check conflicted oids and modes without messages
 ok 29 - NUL terminated conflicted file "lines"
 ok 30 - error out by default for unrelated histories
 ok 31 - can override merge of unrelated histories
-ok 32 # skip merge-ort fails gracefully in a read-only repository (missing SANITY)
+ok 32 - merge-ort fails gracefully in a read-only repository
 ok 33 - --stdin with both a successful and a conflicted merge
 ok 34 - --merge-base is incompatible with --stdin
 ok 35 - specify merge-base as parent of branch2
@@ -20142,8 +20181,9 @@ ok 3 - modify and store mtime
 ok 4 - info/refs is not needlessly overwritten
 ok 5 - info/refs can be forced to update
 ok 6 - info/refs updates when changes are made
-# passed all 6 test(s)
-1..6
+ok 7 - midx does not create duplicate pack entries
+# passed all 7 test(s)
+1..7
 *** t5300-pack-object.sh ***
 ok 1 - setup
 ok 2 - setup pack-object <stdin
@@ -20153,56 +20193,59 @@ ok 5 - pack-object <stdin parsing: [|--revs] empty line
 ok 6 - pack-object <stdin parsing: [|--revs] with --stdin
 ok 7 - pack-object <stdin parsing: --stdin-packs handles garbage
 ok 8 - pack without delta
-ok 9 - pack-objects with bogus arguments
-ok 10 - unpack without delta
-ok 11 - unpack without delta (core.fsyncmethod=batch)
-ok 12 - pack with REF_DELTA
-ok 13 - unpack with REF_DELTA
-ok 14 - unpack with REF_DELTA (core.fsyncmethod=batch)
-ok 15 - pack with OFS_DELTA
-ok 16 - unpack with OFS_DELTA
-ok 17 - unpack with OFS_DELTA (core.fsyncmethod=batch)
-ok 18 - compare delta flavors
-ok 19 - use packed objects
-ok 20 - use packed deltified (REF_DELTA) objects
-ok 21 - use packed deltified (OFS_DELTA) objects
-ok 22 - survive missing objects/pack directory
-ok 23 - verify pack
-ok 24 - verify pack -v
-ok 25 - verify-pack catches mismatched .idx and .pack files
-ok 26 - verify-pack catches a corrupted pack signature
-ok 27 - verify-pack catches a corrupted pack version
-ok 28 - verify-pack catches a corrupted type/size of the 1st packed object data
-ok 29 - verify-pack catches a corrupted sum of the index file itself
-ok 30 - build pack index for an existing pack
-ok 31 - unpacking with --strict
-ok 32 - index-pack with --strict
-ok 33 - setup for --strict and --fsck-objects downgrading fsck msgs
-ok 34 - index-pack with --strict downgrading fsck msgs
-ok 35 - index-pack with --fsck-objects downgrading fsck msgs
-ok 36 - cleanup for --strict and --fsck-objects downgrading fsck msgs
-ok 37 - honor pack.packSizeLimit
-ok 38 - verify resulting packs
-ok 39 - tolerate packsizelimit smaller than biggest object
-ok 40 - verify resulting packs
-ok 41 - set up pack for non-repo tests
-ok 42 - index-pack --stdin complains of non-repo
-ok 43 - index-pack <pack> works in non-repo
-ok 44 - index-pack --strict <pack> works in non-repo
-ok 45 # skip index-pack --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
-ok 46 # skip pack-objects --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
-ok 47 - pack-objects in too-many-packs mode
-ok 48 - setup: fake a SHA1 hash collision
-ok 49 - make sure index-pack detects the SHA1 collision
-ok 50 - make sure index-pack detects the SHA1 collision (large blobs)
-ok 51 - prefetch objects
-ok 52 - negative window clamps to 0
-ok 53 - verify-pack with sha1 packfile
-ok 54 - index-pack outside of a sha1 repository
-ok 55 - verify-pack with sha256 packfile
-ok 56 - index-pack outside of a sha256 repository
-# passed all 56 test(s)
-1..56
+ok 9 - negative window clamps to 0
+ok 10 - pack-objects with bogus arguments
+ok 11 - unpack without delta
+ok 12 - unpack without delta (core.fsyncmethod=batch)
+ok 13 - pack with REF_DELTA
+ok 14 - unpack with REF_DELTA
+ok 15 - unpack with REF_DELTA (core.fsyncmethod=batch)
+ok 16 - pack with OFS_DELTA
+ok 17 - unpack with OFS_DELTA
+ok 18 - unpack with OFS_DELTA (core.fsyncmethod=batch)
+ok 19 - compare delta flavors
+ok 20 - use packed objects
+ok 21 - use packed deltified (REF_DELTA) objects
+ok 22 - use packed deltified (OFS_DELTA) objects
+ok 23 - survive missing objects/pack directory
+ok 24 - verify pack
+ok 25 - verify pack -v
+ok 26 - verify-pack catches mismatched .idx and .pack files
+ok 27 - verify-pack catches a corrupted pack signature
+ok 28 - verify-pack catches a corrupted pack version
+ok 29 - verify-pack catches a corrupted type/size of the 1st packed object data
+ok 30 - verify-pack catches a corrupted sum of the index file itself
+ok 31 - build pack index for an existing pack
+ok 32 - unpacking with --strict
+ok 33 - index-pack with --strict
+ok 34 - setup for --strict and --fsck-objects downgrading fsck msgs
+ok 35 - index-pack with --strict downgrading fsck msgs
+ok 36 - index-pack with --fsck-objects downgrading fsck msgs
+ok 37 - cleanup for --strict and --fsck-objects downgrading fsck msgs
+ok 38 - honor pack.packSizeLimit
+ok 39 - verify resulting packs
+ok 40 - tolerate packsizelimit smaller than biggest object
+ok 41 - verify resulting packs
+ok 42 - set up pack for non-repo tests
+ok 43 - index-pack --stdin complains of non-repo
+ok 44 - index-pack <pack> works in non-repo
+ok 45 - index-pack --strict <pack> works in non-repo
+ok 46 - show-index works OK outside a repository
+ok 47 - show-index works OK outside a repository with hash algo passed in via --object-format
+ok 48 - show-index works OK outside a repository with hash algo passed in via --object-format
+ok 49 # skip index-pack --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
+ok 50 # skip pack-objects --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
+ok 51 - pack-objects in too-many-packs mode
+ok 52 - setup: fake a SHA1 hash collision
+ok 53 - make sure index-pack detects the SHA1 collision
+ok 54 - make sure index-pack detects the SHA1 collision (large blobs)
+ok 55 - prefetch objects
+ok 56 - verify-pack with sha1 packfile
+ok 57 - index-pack outside of a sha1 repository
+ok 58 - verify-pack with sha256 packfile
+ok 59 - index-pack outside of a sha256 repository
+# passed all 59 test(s)
+1..59
 *** t5301-sliding-window.sh ***
 ok 1 - setup
 ok 2 - verify-pack -v, defaults
@@ -20526,84 +20569,86 @@ ok 148 - complains about multiple pack bitmaps
 ok 149 - incremental repack fails when bitmaps are requested
 ok 150 - incremental repack can disable bitmaps
 ok 151 - boundary-based traversal is used when requested
-ok 152 - setup test repository
-ok 153 - setup repo with moderate-sized history
-ok 154 - setup writing bitmaps during repack
-ok 155 - full repack creates bitmaps
-ok 156 - rev-list --test-bitmap verifies bitmaps
-ok 157 - counting commits via bitmap (full bitmap, second)
-ok 158 - counting partial commits via bitmap (full bitmap, second)
-ok 159 - counting commits with limit (full bitmap, second)
-ok 160 - counting non-linear history (full bitmap, second)
-ok 161 - counting commits with limiting (full bitmap, second)
-ok 162 - counting objects via bitmap (full bitmap, second)
-ok 163 - enumerate commits (full bitmap, second)
-ok 164 - enumerate --objects (full bitmap, second)
-ok 165 - bitmap --objects handles non-commit objects (full bitmap, second)
-ok 166 - counting commits via bitmap (full bitmap, other)
-ok 167 - counting partial commits via bitmap (full bitmap, other)
-ok 168 - counting commits with limit (full bitmap, other)
-ok 169 - counting non-linear history (full bitmap, other)
-ok 170 - counting commits with limiting (full bitmap, other)
-ok 171 - counting objects via bitmap (full bitmap, other)
-ok 172 - enumerate commits (full bitmap, other)
-ok 173 - enumerate --objects (full bitmap, other)
-ok 174 - bitmap --objects handles non-commit objects (full bitmap, other)
-ok 175 - clone from bitmapped repository
-ok 176 - partial clone from bitmapped repository
-ok 177 - setup further non-bitmapped commits
-ok 178 - counting commits via bitmap (partial bitmap, second)
-ok 179 - counting partial commits via bitmap (partial bitmap, second)
-ok 180 - counting commits with limit (partial bitmap, second)
-ok 181 - counting non-linear history (partial bitmap, second)
-ok 182 - counting commits with limiting (partial bitmap, second)
-ok 183 - counting objects via bitmap (partial bitmap, second)
-ok 184 - enumerate commits (partial bitmap, second)
-ok 185 - enumerate --objects (partial bitmap, second)
-ok 186 - bitmap --objects handles non-commit objects (partial bitmap, second)
-ok 187 - counting commits via bitmap (partial bitmap, other)
-ok 188 - counting partial commits via bitmap (partial bitmap, other)
-ok 189 - counting commits with limit (partial bitmap, other)
-ok 190 - counting non-linear history (partial bitmap, other)
-ok 191 - counting commits with limiting (partial bitmap, other)
-ok 192 - counting objects via bitmap (partial bitmap, other)
-ok 193 - enumerate commits (partial bitmap, other)
-ok 194 - enumerate --objects (partial bitmap, other)
-ok 195 - bitmap --objects handles non-commit objects (partial bitmap, other)
-ok 196 - fetch (partial bitmap)
-ok 197 - enumerating progress counts pack-reused objects
-ok 198 - pack-objects respects --local (non-local loose)
-ok 199 - pack-objects respects --honor-pack-keep (local non-bitmapped pack)
-ok 200 - pack-objects respects --local (non-local pack)
-ok 201 - pack-objects respects --honor-pack-keep (local bitmapped pack)
-ok 202 - pack-objects respects --local (non-local bitmapped pack)
-ok 203 - pack-objects to file can use bitmap
-ok 204 - full repack, reusing previous bitmaps
-ok 205 - fetch (full bitmap)
-ok 206 - create objects for missing-HAVE tests
-ok 207 - pack-objects respects --incremental
-ok 208 - pack with missing blob
-ok 209 - pack with missing tree
-ok 210 - pack with missing parent
-ok 211 # skip we can read jgit bitmaps (missing JGIT of JGIT,SHA1)
-ok 212 # skip jgit can read our bitmaps (missing JGIT of JGIT,SHA1)
-ok 213 - splitting packs does not generate bogus bitmaps
-ok 214 - set up reusable pack
-ok 215 - pack reuse respects --honor-pack-keep
-ok 216 - pack reuse respects --local
-ok 217 - pack reuse respects --incremental
-ok 218 - truncated bitmap fails gracefully (ewah)
-ok 219 - truncated bitmap fails gracefully (cache)
-ok 220 - set up thin delta-reuse parent
-ok 221 - fetch without bitmaps ignores delta against old base
-ok 222 - fetch with bitmaps can reuse old base
-ok 223 - pack.preferBitmapTips
-ok 224 - pack.preferBitmapTips
-ok 225 - complains about multiple pack bitmaps
-ok 226 - verify writing bitmap lookup table when enabled
-ok 227 - truncated bitmap fails gracefully (lookup table)
-# passed all 227 test(s)
-1..227
+ok 152 - left-right not confused by bitmap index
+ok 153 - left-right count not confused by bitmap-index
+ok 154 - setup test repository
+ok 155 - setup repo with moderate-sized history
+ok 156 - setup writing bitmaps during repack
+ok 157 - full repack creates bitmaps
+ok 158 - rev-list --test-bitmap verifies bitmaps
+ok 159 - counting commits via bitmap (full bitmap, second)
+ok 160 - counting partial commits via bitmap (full bitmap, second)
+ok 161 - counting commits with limit (full bitmap, second)
+ok 162 - counting non-linear history (full bitmap, second)
+ok 163 - counting commits with limiting (full bitmap, second)
+ok 164 - counting objects via bitmap (full bitmap, second)
+ok 165 - enumerate commits (full bitmap, second)
+ok 166 - enumerate --objects (full bitmap, second)
+ok 167 - bitmap --objects handles non-commit objects (full bitmap, second)
+ok 168 - counting commits via bitmap (full bitmap, other)
+ok 169 - counting partial commits via bitmap (full bitmap, other)
+ok 170 - counting commits with limit (full bitmap, other)
+ok 171 - counting non-linear history (full bitmap, other)
+ok 172 - counting commits with limiting (full bitmap, other)
+ok 173 - counting objects via bitmap (full bitmap, other)
+ok 174 - enumerate commits (full bitmap, other)
+ok 175 - enumerate --objects (full bitmap, other)
+ok 176 - bitmap --objects handles non-commit objects (full bitmap, other)
+ok 177 - clone from bitmapped repository
+ok 178 - partial clone from bitmapped repository
+ok 179 - setup further non-bitmapped commits
+ok 180 - counting commits via bitmap (partial bitmap, second)
+ok 181 - counting partial commits via bitmap (partial bitmap, second)
+ok 182 - counting commits with limit (partial bitmap, second)
+ok 183 - counting non-linear history (partial bitmap, second)
+ok 184 - counting commits with limiting (partial bitmap, second)
+ok 185 - counting objects via bitmap (partial bitmap, second)
+ok 186 - enumerate commits (partial bitmap, second)
+ok 187 - enumerate --objects (partial bitmap, second)
+ok 188 - bitmap --objects handles non-commit objects (partial bitmap, second)
+ok 189 - counting commits via bitmap (partial bitmap, other)
+ok 190 - counting partial commits via bitmap (partial bitmap, other)
+ok 191 - counting commits with limit (partial bitmap, other)
+ok 192 - counting non-linear history (partial bitmap, other)
+ok 193 - counting commits with limiting (partial bitmap, other)
+ok 194 - counting objects via bitmap (partial bitmap, other)
+ok 195 - enumerate commits (partial bitmap, other)
+ok 196 - enumerate --objects (partial bitmap, other)
+ok 197 - bitmap --objects handles non-commit objects (partial bitmap, other)
+ok 198 - fetch (partial bitmap)
+ok 199 - enumerating progress counts pack-reused objects
+ok 200 - pack-objects respects --local (non-local loose)
+ok 201 - pack-objects respects --honor-pack-keep (local non-bitmapped pack)
+ok 202 - pack-objects respects --local (non-local pack)
+ok 203 - pack-objects respects --honor-pack-keep (local bitmapped pack)
+ok 204 - pack-objects respects --local (non-local bitmapped pack)
+ok 205 - pack-objects to file can use bitmap
+ok 206 - full repack, reusing previous bitmaps
+ok 207 - fetch (full bitmap)
+ok 208 - create objects for missing-HAVE tests
+ok 209 - pack-objects respects --incremental
+ok 210 - pack with missing blob
+ok 211 - pack with missing tree
+ok 212 - pack with missing parent
+ok 213 # skip we can read jgit bitmaps (missing JGIT of JGIT,SHA1)
+ok 214 # skip jgit can read our bitmaps (missing JGIT of JGIT,SHA1)
+ok 215 - splitting packs does not generate bogus bitmaps
+ok 216 - set up reusable pack
+ok 217 - pack reuse respects --honor-pack-keep
+ok 218 - pack reuse respects --local
+ok 219 - pack reuse respects --incremental
+ok 220 - truncated bitmap fails gracefully (ewah)
+ok 221 - truncated bitmap fails gracefully (cache)
+ok 222 - set up thin delta-reuse parent
+ok 223 - fetch without bitmaps ignores delta against old base
+ok 224 - fetch with bitmaps can reuse old base
+ok 225 - pack.preferBitmapTips
+ok 226 - pack.preferBitmapTips
+ok 227 - complains about multiple pack bitmaps
+ok 228 - verify writing bitmap lookup table when enabled
+ok 229 - truncated bitmap fails gracefully (lookup table)
+# passed all 229 test(s)
+1..229
 *** t5311-pack-bitmaps-shallow.sh ***
 ok 1 - setup shallow repo
 ok 2 - turn on bitmaps in the parent
@@ -20764,7 +20809,7 @@ ok 60 - replace-objects invalidates commit-graph
 ok 61 - warn on improper hash version
 ok 62 - lower layers have overflow chunk
 ok 63 - git commit-graph verify
-ok 64 # skip detect permission problem (missing SANITY of POSIXPERM,SANITY)
+ok 64 - detect permission problem
 ok 65 - detect too small
 ok 66 - detect bad signature
 ok 67 - detect bad version
@@ -20979,7 +21024,7 @@ ok 11 - add one commit, write a merged graph
 ok 12 - check normal git operations: merged commit-graph: commit 12 vs 6
 ok 13 - create fork and chain across alternate
 ok 14 - check normal git operations: alternate: commit 13 vs 6
-ok 15 - test merge stragety constants
+ok 15 - test merge strategy constants
 ok 16 - remove commit-graph-chain file after flattening
 ok 17 - verify hashes along chain, even in shallow
 ok 18 - verify notices chain slice which is bogus (base)
@@ -21784,8 +21829,9 @@ ok 10 - omit delta with uninteresting base (same pack)
 ok 11 - omit delta from uninteresting base (cross pack)
 ok 12 - non-omitted delta in MIDX preferred pack
 ok 13 - duplicate objects
-# passed all 13 test(s)
-1..13
+ok 14 - duplicate objects with verbatim reuse
+# passed all 14 test(s)
+1..14
 *** t5333-pseudo-merge-bitmaps.sh ***
 ok 1 - setup
 ok 2 - bitmap traversal without pseudo-merges
@@ -22095,10 +22141,10 @@ ok 132 - proc-receive: report option old-oid and new-oid (builtin protocol/porce
 ok 133 - setup proc-receive hook (report with multiple rewrites, builtin protocol/porcelain)
 ok 134 - proc-receive: report with multiple rewrites (builtin protocol/porcelain)
 ok 135 - setup proc-receive hook (ft, builtin protocol)
-ok 136 - proc-receive: fall throught, let receive-pack to execute (builtin protocol)
+ok 136 - proc-receive: fall through, let receive-pack to execute (builtin protocol)
 ok 137 - cleanup (builtin protocol)
 ok 138 - setup proc-receive hook (fall-through, builtin protocol/porcelain)
-ok 139 - proc-receive: fall throught, let receive-pack to execute (builtin protocol/porcelain)
+ok 139 - proc-receive: fall through, let receive-pack to execute (builtin protocol/porcelain)
 ok 140 - cleanup (builtin protocol/porcelain)
 ok 141 - setup git config for remote-tracking of special refs
 ok 142 - setup proc-receive hook (multiple rewrites for one ref, no refname for the 1st rewrite, builtin protocol)
@@ -22185,7 +22231,7 @@ ok 40 - shallow clone pulling tags
 ok 41 - shallow cloning single tag
 ok 42 - clone shallow with packed refs
 ok 43 - in_vain not triggered before first ACK
-ok 44 - in_vain resetted upon ACK
+ok 44 - in_vain reset upon ACK
 ok 45 - fetch in shallow repo unreachable shallow objects
 ok 46 - fetch creating new shallow root
 ok 47 - setup tests for the --stdin parameter
@@ -22509,17 +22555,18 @@ ok 364 - clone shallow since selects no commits
 ok 365 - shallow since with commit graph and already-seen commit
 ok 366 - shallow clone exclude tag two
 ok 367 - fetch exclude tag one
-ok 368 - fetching deepen
-ok 369 - use ref advertisement to prune "have" lines sent
-ok 370 - same as last but with config overrides
-ok 371 - ensure bogus fetch.negotiationAlgorithm yields error
-ok 372 - fetch-pack with fsckObjects and keep-file does not segfault
-ok 373 - filtering by size
-ok 374 - filtering by size has no effect if support for it is not advertised
-ok 375 - fetch with --filter=blob:limit=0
-# passed all 375 test(s)
+ok 368 - fetch exclude tag one as revision
+ok 369 - fetching deepen
+ok 370 - use ref advertisement to prune "have" lines sent
+ok 371 - same as last but with config overrides
+ok 372 - ensure bogus fetch.negotiationAlgorithm yields error
+ok 373 - fetch-pack with fsckObjects and keep-file does not segfault
+ok 374 - filtering by size
+ok 375 - filtering by size has no effect if support for it is not advertised
+ok 376 - fetch with --filter=blob:limit=0
+# passed all 376 test(s)
 # SKIP no web server found at ''
-1..375
+1..376
 *** t5501-fetch-push-alternates.sh ***
 ok 1 - setup
 ok 2 - pushing into a repository with the same alternate
@@ -22612,92 +22659,101 @@ ok 27 - show -n
 ok 28 - prune
 ok 29 - set-head --delete
 ok 30 - set-head --auto
-ok 31 - set-head --auto has no problem w/multiple HEADs
-ok 32 - set-head explicit
-ok 33 - prune --dry-run
-ok 34 - add --mirror && prune
-ok 35 - add --mirror=fetch
-ok 36 - fetch mirrors act as mirrors during fetch
-ok 37 - fetch mirrors can prune
-ok 38 - fetch mirrors do not act as mirrors during push
-ok 39 - add fetch mirror with specific branches
-ok 40 - fetch mirror respects specific branches
-ok 41 - add --mirror=push
-ok 42 - push mirrors act as mirrors during push
-ok 43 - push mirrors do not act as mirrors during fetch
-ok 44 - push mirrors do not allow you to specify refs
-ok 45 - add alt && prune
-ok 46 - add with reachable tags (default)
-ok 47 - add --tags
-ok 48 - add --no-tags
-ok 49 - reject --no-no-tags
-ok 50 - update
-ok 51 - update with arguments
-ok 52 - update --prune
-ok 53 - update default
-ok 54 - update default (overridden, with funny whitespace)
-ok 55 - update (with remotes.default defined)
-ok 56 - "remote show" does not show symbolic refs
-ok 57 - reject adding remote with an invalid name
-ok 58 - rename a remote
-ok 59 - rename a remote renames repo remote.pushDefault
-ok 60 - rename a remote renames repo remote.pushDefault but ignores global
-ok 61 - rename a remote renames repo remote.pushDefault but keeps global
-ok 62 - rename handles remote without fetch refspec
-ok 63 - rename does not update a non-default fetch refspec
-ok 64 - rename a remote with name part of fetch spec
-ok 65 - rename a remote with name prefix of other remote
-ok 66 - rename succeeds with existing remote.<target>.prune
-ok 67 - remove a remote
-ok 68 - remove a remote removes repo remote.pushDefault
-ok 69 - remove a remote removes repo remote.pushDefault but ignores global
-ok 70 - remove a remote removes repo remote.pushDefault but keeps global
-ok 71 - migrate a remote from named file in $GIT_DIR/remotes
-ok 72 - migrate a remote from named file in $GIT_DIR/branches
-ok 73 - migrate a remote from named file in $GIT_DIR/branches (2)
-ok 74 - remote prune to cause a dangling symref
-ok 75 - show empty remote
-ok 76 - remote set-branches requires a remote
-ok 77 - remote set-branches
-ok 78 - remote set-branches with --mirror
-ok 79 - new remote
-ok 80 - get-url on new remote
-ok 81 - remote set-url with locked config
-ok 82 - remote set-url bar
-ok 83 - remote set-url baz bar
-ok 84 - remote set-url zot bar
-ok 85 - remote set-url --push zot baz
-ok 86 - remote set-url --push zot
-ok 87 - get-url with different urls
-ok 88 - remote set-url --push qux zot
-ok 89 - remote set-url --push foo qu+x
-ok 90 - remote set-url --push --add aaa
-ok 91 - get-url on multi push remote
-ok 92 - remote set-url --push bar aaa
-ok 93 - remote set-url --push --delete bar
-ok 94 - remote set-url --push --delete foo
-ok 95 - remote set-url --add bbb
-ok 96 - get-url on multi fetch remote
-ok 97 - remote set-url --delete .*
-ok 98 - remote set-url --delete bbb
-ok 99 - remote set-url --delete baz
-ok 100 - remote set-url --add ccc
-ok 101 - remote set-url --delete baz
-ok 102 - extra args: setup
-ok 103 - extra args: add nick url
-ok 104 - extra args: rename origin newname
-ok 105 - extra args: remove origin
-ok 106 - extra args: set-head origin main
-ok 107 - extra args: get-url origin newurl
-ok 108 - extra args: set-url origin newurl oldurl
-ok 109 - add remote matching the "insteadOf" URL
-ok 110 - unqualified <dst> refspec DWIM and advice
-ok 111 - refs/remotes/* <src> refspec and unqualified <dst> DWIM and advice
-ok 112 - empty config clears remote.*.url list
-ok 113 - empty config clears remote.*.pushurl list
+ok 31 - set-head --auto failure
+ok 32 - set-head --auto detects creation
+ok 33 - set-head --auto to update a non symbolic ref
+ok 34 - set-head --auto detects no change
+ok 35 - set-head --auto detects change
+ok 36 - set-head --auto detects strange ref
+ok 37 - set-head --auto has no problem w/multiple HEADs
+ok 38 - set-head changes followRemoteHEAD always to warn
+ok 39 - set-head explicit
+ok 40 - set-head --auto reports change
+ok 41 - prune --dry-run
+ok 42 - add --mirror && prune
+ok 43 - add --mirror setting HEAD
+ok 44 - add --mirror=fetch
+ok 45 - fetch mirrors act as mirrors during fetch
+ok 46 - fetch mirrors can prune
+ok 47 - fetch mirrors do not act as mirrors during push
+ok 48 - add fetch mirror with specific branches
+ok 49 - fetch mirror respects specific branches
+ok 50 - add --mirror=push
+ok 51 - push mirrors act as mirrors during push
+ok 52 - push mirrors do not act as mirrors during fetch
+ok 53 - push mirrors do not allow you to specify refs
+ok 54 - add alt && prune
+ok 55 - add with reachable tags (default)
+ok 56 - add --tags
+ok 57 - add --no-tags
+ok 58 - reject --no-no-tags
+ok 59 - update
+ok 60 - update with arguments
+ok 61 - update --prune
+ok 62 - update default
+ok 63 - update default (overridden, with funny whitespace)
+ok 64 - update (with remotes.default defined)
+ok 65 - "remote show" does not show symbolic refs
+ok 66 - reject adding remote with an invalid name
+ok 67 - rename a remote
+ok 68 - rename a remote renames repo remote.pushDefault
+ok 69 - rename a remote renames repo remote.pushDefault but ignores global
+ok 70 - rename a remote renames repo remote.pushDefault but keeps global
+ok 71 - rename handles remote without fetch refspec
+ok 72 - rename does not update a non-default fetch refspec
+ok 73 - rename a remote with name part of fetch spec
+ok 74 - rename a remote with name prefix of other remote
+ok 75 - rename succeeds with existing remote.<target>.prune
+ok 76 - remove a remote
+ok 77 - remove a remote removes repo remote.pushDefault
+ok 78 - remove a remote removes repo remote.pushDefault but ignores global
+ok 79 - remove a remote removes repo remote.pushDefault but keeps global
+ok 80 - migrate a remote from named file in $GIT_DIR/remotes
+ok 81 - migrate a remote from named file in $GIT_DIR/branches
+ok 82 - migrate a remote from named file in $GIT_DIR/branches (2)
+ok 83 - remote prune to cause a dangling symref
+ok 84 - show empty remote
+ok 85 - remote set-branches requires a remote
+ok 86 - remote set-branches
+ok 87 - remote set-branches with --mirror
+ok 88 - new remote
+ok 89 - get-url on new remote
+ok 90 - remote set-url with locked config
+ok 91 - remote set-url bar
+ok 92 - remote set-url baz bar
+ok 93 - remote set-url zot bar
+ok 94 - remote set-url --push zot baz
+ok 95 - remote set-url --push zot
+ok 96 - get-url with different urls
+ok 97 - remote set-url --push qux zot
+ok 98 - remote set-url --push foo qu+x
+ok 99 - remote set-url --push --add aaa
+ok 100 - get-url on multi push remote
+ok 101 - remote set-url --push bar aaa
+ok 102 - remote set-url --push --delete bar
+ok 103 - remote set-url --push --delete foo
+ok 104 - remote set-url --add bbb
+ok 105 - get-url on multi fetch remote
+ok 106 - remote set-url --delete .*
+ok 107 - remote set-url --delete bbb
+ok 108 - remote set-url --delete baz
+ok 109 - remote set-url --add ccc
+ok 110 - remote set-url --delete baz
+ok 111 - extra args: setup
+ok 112 - extra args: add nick url
+ok 113 - extra args: rename origin newname
+ok 114 - extra args: remove origin
+ok 115 - extra args: set-head origin main
+ok 116 - extra args: get-url origin newurl
+ok 117 - extra args: set-url origin newurl oldurl
+ok 118 - add remote matching the "insteadOf" URL
+ok 119 - unqualified <dst> refspec DWIM and advice
+ok 120 - refs/remotes/* <src> refspec and unqualified <dst> DWIM and advice
+ok 121 - empty config clears remote.*.url list
+ok 122 - empty config clears remote.*.pushurl list
 # still have 1 known breakage(s)
-# passed all remaining 112 test(s)
-1..113
+# passed all remaining 121 test(s)
+1..122
 *** t5506-remote-groups.sh ***
 ok 1 - setup
 ok 2 - no group updates all
@@ -22741,192 +22797,203 @@ ok 1 - setup
 ok 2 - clone and setup child repos
 ok 3 - fetch test
 ok 4 - fetch test for-merge
-ok 5 - fetch --prune on its own works as expected
-ok 6 - fetch --prune with a branch name keeps branches
-ok 7 - fetch --prune with a namespace keeps other namespaces
-ok 8 - fetch --prune handles overlapping refspecs
-ok 9 - fetch --prune --tags prunes branches but not tags
-ok 10 - fetch --prune --tags with branch does not prune other things
-ok 11 - fetch --prune --tags with refspec prunes based on refspec
-ok 12 - fetch --prune fails to delete branches
-ok 13 - fetch --atomic works with a single branch
-ok 14 - fetch --atomic works with multiple branches
-ok 15 - fetch --atomic works with mixed branches and tags
-ok 16 - fetch --atomic prunes references
-ok 17 - fetch --atomic aborts with non-fast-forward update
-ok 18 - fetch --atomic executes a single reference transaction only
-ok 19 - fetch --atomic aborts all reference updates if hook aborts
-ok 20 - fetch --atomic --append appends to FETCH_HEAD
-ok 21 - --refmap="" ignores configured refspec
-ok 22 - --refmap="" and --prune
-ok 23 - fetch tags when there is no tags
-ok 24 - fetch following tags
-ok 25 - fetch uses remote ref names to describe new refs
-ok 26 - fetch must not resolve short tag name
-ok 27 - fetch can now resolve short remote name
-ok 28 - create bundle 1
-ok 29 - header of bundle looks right
-ok 30 - create bundle 2
-ok 31 - unbundle 1
-ok 32 - bundle 1 has only 3 files 
-ok 33 - unbundle 2
-ok 34 - bundle does not prerequisite objects
-ok 35 - bundle should be able to create a full history
-ok 36 - fetch with a non-applying branch.<name>.merge
-ok 37 - fetch from GIT URL with a non-applying branch.<name>.merge [1]
-ok 38 - fetch from GIT URL with a non-applying branch.<name>.merge [2]
-ok 39 - fetch from GIT URL with a non-applying branch.<name>.merge [3]
-ok 40 - quoting of a strangely named repo
-ok 41 - bundle should record HEAD correctly
-ok 42 - mark initial state of origin/main
-ok 43 - explicit fetch should update tracking
-ok 44 - explicit pull should update tracking
-ok 45 - explicit --refmap is allowed only with command-line refspec
-ok 46 - explicit --refmap option overrides remote.*.fetch
-ok 47 - explicitly empty --refmap option disables remote.*.fetch
-ok 48 - configured fetch updates tracking
-ok 49 - non-matching refspecs do not confuse tracking update
-ok 50 - pushing nonexistent branch by mistake should not segv
-ok 51 - auto tag following fetches minimum
-ok 52 - refuse to fetch into the current branch
-ok 53 - fetch into the current branch with --update-head-ok
-ok 54 - fetch --dry-run does not touch FETCH_HEAD, but still prints what would be written
-ok 55 - --no-write-fetch-head does not touch FETCH_HEAD, and does not print what would be written
-ok 56 - --write-fetch-head gets defeated by --dry-run
-ok 57 - should be able to fetch with duplicate refspecs
-ok 58 - LHS of refspec follows ref disambiguation rules
-ok 59 - fetch.writeCommitGraph
-ok 60 - fetch.writeCommitGraph with submodules
-ok 61 - fetch from multiple configured URLs in single remote
-ok 62 - setup cmdline_setup variable for subsequent test
-ok 63 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 64 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 65 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 66 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 67 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 68 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 69 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
-ok 70 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
-ok 71 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
-ok 72 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
-ok 73 - name prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 74 - link prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 75 - name prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 76 - link prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 77 - name prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 78 - link prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 79 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
-ok 80 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
-ok 81 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 82 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 83 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 84 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 85 - name prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 86 - link prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 87 - name prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 88 - link prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 89 - name prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 90 - link prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 91 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 92 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 93 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 94 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 95 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 96 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 97 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
-ok 98 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
-ok 99 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
-ok 100 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
-ok 101 - name prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 102 - link prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 103 - name prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 104 - link prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 105 - name prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 106 - link prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 107 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
-ok 108 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
-ok 109 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 110 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 111 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 112 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 113 - name prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
-ok 114 - link prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
-ok 115 - name prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 116 - link prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 117 - name prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 118 - link prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 119 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
-ok 120 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
-ok 121 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 122 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
-ok 123 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 124 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
-ok 125 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
-ok 126 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
-ok 127 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
-ok 128 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
-ok 129 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune-tags; branch:kept tag:kept
-ok 130 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune-tags; branch:kept tag:kept
-ok 131 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 132 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:kept tag:kept
-ok 133 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true; branch:kept tag:kept
-ok 134 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true; branch:kept tag:kept
-ok 135 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags; branch:pruned tag:pruned
-ok 136 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags; branch:pruned tag:pruned
-ok 137 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:pruned tag:pruned
-ok 138 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:pruned tag:pruned
-ok 139 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=true; branch:pruned tag:pruned
-ok 140 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=true; branch:pruned tag:pruned
-ok 141 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:pruned tag:pruned
-ok 142 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:pruned tag:pruned
-ok 143 - name prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=false remote.origin.pruneTags=true; branch:pruned tag:pruned
-ok 144 - link prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=false remote.origin.pruneTags=true; branch:pruned tag:pruned
-ok 145 - name prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=true remote.origin.pruneTags=false; branch:kept tag:kept
-ok 146 - link prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=true remote.origin.pruneTags=false; branch:kept tag:kept
-ok 147 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
-ok 148 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
-ok 149 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset --prune origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
-ok 150 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset --prune origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
-ok 151 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true --prune origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
-ok 152 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true --prune origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
-ok 153 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune-tags; branch:kept tag:kept
-ok 154 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune-tags; branch:kept tag:kept
-ok 155 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune --prune-tags; branch:pruned tag:pruned
-ok 156 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune --prune-tags; branch:kept tag:pruned
-ok 157 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags origin; branch:pruned tag:pruned
-ok 158 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags origin; branch:kept tag:pruned
-ok 159 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset --prune origin; branch:pruned tag:pruned
-ok 160 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset --prune origin; branch:kept tag:pruned
-ok 161 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true --prune origin; branch:pruned tag:pruned
-ok 162 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true --prune origin; branch:kept tag:pruned
-ok 163 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset origin; branch:pruned tag:pruned
-ok 164 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset origin; branch:kept tag:pruned
-ok 165 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=true remote.origin.pruneTags=unset origin; branch:pruned tag:pruned
-ok 166 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=true remote.origin.pruneTags=unset origin; branch:kept tag:pruned
-ok 167 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=true origin; branch:pruned tag:pruned
-ok 168 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=true origin; branch:kept tag:pruned
-ok 169 - remove remote.origin.fetch "one"
-ok 170 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune --prune-tags; branch:kept tag:pruned
-ok 171 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune --prune-tags; branch:kept tag:pruned
-ok 172 - all boundary commits are excluded
-ok 173 - fetch --prune prints the remotes url
-ok 174 - branchname D/F conflict resolved by --prune
-ok 175 - branchname D/F conflict rejected with targeted error message
-ok 176 - fetching a one-level ref works
-ok 177 - fetching with auto-gc does not lock up
-ok 178 - fetch.hideRefs affects connectivity check
-ok 179 - transfer.hideRefs affects connectivity check
-ok 180 - prepare source branch
-ok 181 - fetch trumps transfer limit
-ok 182 - fetch trumps transfer limit
-ok 183 - --negotiation-tip limits "have" lines sent
-ok 184 - --negotiation-tip understands globs
-ok 185 - --negotiation-tip understands abbreviated SHA-1
-ok 186 - --negotiation-tip rejects missing OIDs
-ok 187 - clone does not get confused by a D/F conflict
-# passed all 187 test(s)
+ok 5 - fetch test remote HEAD
+ok 6 - fetch test remote HEAD change
+ok 7 - fetch test followRemoteHEAD never
+ok 8 - fetch test followRemoteHEAD warn no change
+ok 9 - fetch test followRemoteHEAD warn create
+ok 10 - fetch test followRemoteHEAD warn detached
+ok 11 - fetch test followRemoteHEAD warn quiet
+ok 12 - fetch test followRemoteHEAD warn-if-not-branch branch is same
+ok 13 - fetch test followRemoteHEAD warn-if-not-branch branch is different
+ok 14 - fetch test followRemoteHEAD always
+ok 15 - fetch --prune on its own works as expected
+ok 16 - fetch --prune with a branch name keeps branches
+ok 17 - fetch --prune with a namespace keeps other namespaces
+ok 18 - fetch --prune handles overlapping refspecs
+ok 19 - fetch --prune --tags prunes branches but not tags
+ok 20 - fetch --prune --tags with branch does not prune other things
+ok 21 - fetch --prune --tags with refspec prunes based on refspec
+ok 22 - fetch --tags gets tags even without a configured remote
+ok 23 - fetch --prune fails to delete branches
+ok 24 - fetch --atomic works with a single branch
+ok 25 - fetch --atomic works with multiple branches
+ok 26 - fetch --atomic works with mixed branches and tags
+ok 27 - fetch --atomic prunes references
+ok 28 - fetch --atomic aborts with non-fast-forward update
+ok 29 - fetch --atomic executes a single reference transaction only
+ok 30 - fetch --atomic aborts all reference updates if hook aborts
+ok 31 - fetch --atomic --append appends to FETCH_HEAD
+ok 32 - --refmap="" ignores configured refspec
+ok 33 - --refmap="" and --prune
+ok 34 - fetch tags when there is no tags
+ok 35 - fetch following tags
+ok 36 - fetch uses remote ref names to describe new refs
+ok 37 - fetch must not resolve short tag name
+ok 38 - fetch can now resolve short remote name
+ok 39 - create bundle 1
+ok 40 - header of bundle looks right
+ok 41 - create bundle 2
+ok 42 - unbundle 1
+ok 43 - bundle 1 has only 3 files 
+ok 44 - unbundle 2
+ok 45 - bundle does not prerequisite objects
+ok 46 - bundle should be able to create a full history
+ok 47 - fetch with a non-applying branch.<name>.merge
+ok 48 - fetch from GIT URL with a non-applying branch.<name>.merge [1]
+ok 49 - fetch from GIT URL with a non-applying branch.<name>.merge [2]
+ok 50 - fetch from GIT URL with a non-applying branch.<name>.merge [3]
+ok 51 - quoting of a strangely named repo
+ok 52 - bundle should record HEAD correctly
+ok 53 - mark initial state of origin/main
+ok 54 - explicit fetch should update tracking
+ok 55 - explicit pull should update tracking
+ok 56 - explicit --refmap is allowed only with command-line refspec
+ok 57 - explicit --refmap option overrides remote.*.fetch
+ok 58 - explicitly empty --refmap option disables remote.*.fetch
+ok 59 - configured fetch updates tracking
+ok 60 - non-matching refspecs do not confuse tracking update
+ok 61 - pushing nonexistent branch by mistake should not segv
+ok 62 - auto tag following fetches minimum
+ok 63 - refuse to fetch into the current branch
+ok 64 - fetch into the current branch with --update-head-ok
+ok 65 - fetch --dry-run does not touch FETCH_HEAD, but still prints what would be written
+ok 66 - --no-write-fetch-head does not touch FETCH_HEAD, and does not print what would be written
+ok 67 - --write-fetch-head gets defeated by --dry-run
+ok 68 - should be able to fetch with duplicate refspecs
+ok 69 - LHS of refspec follows ref disambiguation rules
+ok 70 - fetch.writeCommitGraph
+ok 71 - fetch.writeCommitGraph with submodules
+ok 72 - fetch from multiple configured URLs in single remote
+ok 73 - setup cmdline_setup variable for subsequent test
+ok 74 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 75 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 76 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 77 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 78 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 79 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 80 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
+ok 81 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
+ok 82 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
+ok 83 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
+ok 84 - name prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 85 - link prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 86 - name prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 87 - link prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 88 - name prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 89 - link prune fetch.prune=false remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 90 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
+ok 91 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
+ok 92 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 93 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 94 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 95 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 96 - name prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 97 - link prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 98 - name prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 99 - link prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 100 - name prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 101 - link prune fetch.prune=unset remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 102 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 103 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 104 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 105 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 106 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 107 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 108 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
+ok 109 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
+ok 110 - name prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
+ok 111 - link prune fetch.prune=false remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
+ok 112 - name prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 113 - link prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 114 - name prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 115 - link prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 116 - name prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 117 - link prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 118 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
+ok 119 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
+ok 120 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 121 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 122 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 123 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 124 - name prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
+ok 125 - link prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
+ok 126 - name prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 127 - link prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 128 - name prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 129 - link prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 130 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
+ok 131 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset; branch:pruned tag:kept
+ok 132 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 133 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune; branch:pruned tag:kept
+ok 134 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 135 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --no-prune; branch:kept tag:kept
+ok 136 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
+ok 137 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/*; branch:kept tag:pruned
+ok 138 - name prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
+ok 139 - link prune fetch.prune=true remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=unset --prune origin refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:pruned
+ok 140 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune-tags; branch:kept tag:kept
+ok 141 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune-tags; branch:kept tag:kept
+ok 142 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 143 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:kept tag:kept
+ok 144 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true; branch:kept tag:kept
+ok 145 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true; branch:kept tag:kept
+ok 146 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags; branch:pruned tag:pruned
+ok 147 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags; branch:pruned tag:pruned
+ok 148 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:pruned tag:pruned
+ok 149 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:pruned tag:pruned
+ok 150 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=true; branch:pruned tag:pruned
+ok 151 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=true; branch:pruned tag:pruned
+ok 152 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:pruned tag:pruned
+ok 153 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset; branch:pruned tag:pruned
+ok 154 - name prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=false remote.origin.pruneTags=true; branch:pruned tag:pruned
+ok 155 - link prune fetch.prune=false remote.origin.prune=true fetch.pruneTags=false remote.origin.pruneTags=true; branch:pruned tag:pruned
+ok 156 - name prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=true remote.origin.pruneTags=false; branch:kept tag:kept
+ok 157 - link prune fetch.prune=true remote.origin.prune=false fetch.pruneTags=true remote.origin.pruneTags=false; branch:kept tag:kept
+ok 158 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
+ok 159 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
+ok 160 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset --prune origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
+ok 161 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset --prune origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
+ok 162 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true --prune origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
+ok 163 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true --prune origin +refs/heads/*:refs/remotes/origin/*; branch:pruned tag:kept
+ok 164 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune-tags; branch:kept tag:kept
+ok 165 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune-tags; branch:kept tag:kept
+ok 166 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune --prune-tags; branch:pruned tag:pruned
+ok 167 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune --prune-tags; branch:kept tag:pruned
+ok 168 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags origin; branch:pruned tag:pruned
+ok 169 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset --prune --prune-tags origin; branch:kept tag:pruned
+ok 170 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset --prune origin; branch:pruned tag:pruned
+ok 171 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset --prune origin; branch:kept tag:pruned
+ok 172 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true --prune origin; branch:pruned tag:pruned
+ok 173 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=true --prune origin; branch:kept tag:pruned
+ok 174 - name prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset origin; branch:pruned tag:pruned
+ok 175 - link prune fetch.prune=true remote.origin.prune=unset fetch.pruneTags=true remote.origin.pruneTags=unset origin; branch:kept tag:pruned
+ok 176 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=true remote.origin.pruneTags=unset origin; branch:pruned tag:pruned
+ok 177 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=true remote.origin.pruneTags=unset origin; branch:kept tag:pruned
+ok 178 - name prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=true origin; branch:pruned tag:pruned
+ok 179 - link prune fetch.prune=unset remote.origin.prune=true fetch.pruneTags=unset remote.origin.pruneTags=true origin; branch:kept tag:pruned
+ok 180 - remove remote.origin.fetch "one"
+ok 181 - name prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune --prune-tags; branch:kept tag:pruned
+ok 182 - link prune fetch.prune=unset remote.origin.prune=unset fetch.pruneTags=unset remote.origin.pruneTags=unset origin --prune --prune-tags; branch:kept tag:pruned
+ok 183 - all boundary commits are excluded
+ok 184 - fetch --prune prints the remotes url
+ok 185 - branchname D/F conflict resolved by --prune
+ok 186 - branchname D/F conflict rejected with targeted error message
+ok 187 - fetching a one-level ref works
+ok 188 - fetching with auto-gc does not lock up
+ok 189 - fetch.hideRefs affects connectivity check
+ok 190 - transfer.hideRefs affects connectivity check
+ok 191 - prepare source branch
+ok 192 - fetch trumps transfer limit
+ok 193 - fetch trumps transfer limit
+ok 194 - --negotiation-tip limits "have" lines sent
+ok 195 - --negotiation-tip understands globs
+ok 196 - --negotiation-tip understands abbreviated SHA-1
+ok 197 - --negotiation-tip rejects missing OIDs
+ok 198 - clone does not get confused by a D/F conflict
+# passed all 198 test(s)
 # SKIP no web server found at ''
-1..187
+1..198
 *** t5511-refspec.sh ***
 ok 1 - push  (invalid)
 ok 2 - push :
@@ -23657,7 +23724,7 @@ ok 10 - fetch --update-shallow
 ok 11 - fetch --update-shallow into a repo with submodules
 ok 12 - fetch --update-shallow a commit that is also a shallow point into a repo with submodules
 ok 13 - fetch --update-shallow (with fetch.writeCommitGraph)
-ok 14 # skip shallow fetch from a read-only repo (missing SANITY of POSIXPERM,SANITY)
+ok 14 - shallow fetch from a read-only repo
 ok 15 - .git/shallow is edited by repack
 # passed all 15 test(s)
 # SKIP no web server found at ''
@@ -23883,30 +23950,33 @@ ok 16 - empty CONTENT_LENGTH
 *** t5564-http-proxy.sh ***
 1..0 # SKIP no web server found at ''
 *** t5570-git-daemon.sh ***
-ok 1 - setup repository
-ok 2 - create git-accessible bare repository
-ok 3 - clone git repository
-ok 4 - fetch changes via git protocol
-ok 5 - no-op fetch -v stderr is as expected
-ok 6 - no-op fetch without "-v" is quiet
-ok 7 - remote detects correct HEAD
-ok 8 - prepare pack objects
-ok 9 - fetch notices corrupt pack
-ok 10 - fetch notices corrupt idx
-ok 11 - client refuses to ask for repo with newline
-ok 12 - clone non-existent
-ok 13 - push disabled
-ok 14 - read access denied
-ok 15 - not exported
-ok 16 - clone non-existent
-ok 17 - push disabled
-ok 18 - read access denied
-ok 19 - not exported
-ok 20 - access repo via interpolated hostname
-ok 21 - hostname cannot break out of directory
-ok 22 - hostname interpolation works after LF-stripping
-# passed all 22 test(s)
-1..22
+ok 1 - daemon rejects invalid --init-timeout values
+ok 2 - daemon rejects invalid --timeout values
+ok 3 - daemon rejects invalid --max-connections values
+ok 4 - setup repository
+ok 5 - create git-accessible bare repository
+ok 6 - clone git repository
+ok 7 - fetch changes via git protocol
+ok 8 - no-op fetch -v stderr is as expected
+ok 9 - no-op fetch without "-v" is quiet
+ok 10 - remote detects correct HEAD
+ok 11 - prepare pack objects
+ok 12 - fetch notices corrupt pack
+ok 13 - fetch notices corrupt idx
+ok 14 - client refuses to ask for repo with newline
+ok 15 - clone non-existent
+ok 16 - push disabled
+ok 17 - read access denied
+ok 18 - not exported
+ok 19 - clone non-existent
+ok 20 - push disabled
+ok 21 - read access denied
+ok 22 - not exported
+ok 23 - access repo via interpolated hostname
+ok 24 - hostname cannot break out of directory
+ok 25 - hostname interpolation works after LF-stripping
+# passed all 25 test(s)
+1..25
 *** t5571-pre-push-hook.sh ***
 ok 1 - setup
 ok 2 - push with failing hook
@@ -24049,8 +24119,9 @@ ok 12 - push with matching : and negative refspec
 ok 13 - push with matching +: and negative refspec
 ok 14 - --prefetch correctly modifies refspecs
 ok 15 - --prefetch succeeds when refspec becomes empty
-# passed all 15 test(s)
-1..15
+ok 16 - --prefetch succeeds with empty command line refspec
+# passed all 16 test(s)
+1..16
 *** t5583-push-branches.sh ***
 ok 1 - setup bare remote
 ok 2 - setup different types of references
@@ -24306,10 +24377,11 @@ ok 17 - cloning non-existent directory fails
 ok 18 - cloning non-git directory fails
 ok 19 - cloning file:// does not hardlink
 ok 20 - cloning a local path with --no-local does not hardlink
-ok 21 - cloning locally respects "-u" for fetching refs
-ok 22 - local clone from repo with corrupt refs fails gracefully
-# passed all 22 test(s)
-1..22
+ok 21 - cloning a local path with --no-local from a different user succeeds
+ok 22 - cloning locally respects "-u" for fetching refs
+ok 23 - local clone from repo with corrupt refs fails gracefully
+# passed all 23 test(s)
+1..23
 *** t5606-clone-options.sh ***
 ok 1 - setup
 ok 2 - submodule.stickyRecursiveClone flag manipulates submodule.recurse value
@@ -24497,9 +24569,10 @@ ok 40 - fetch from a partial clone, protocol v0
 ok 41 - fetch from a partial clone, protocol v2
 ok 42 - repack does not loosen promisor objects
 ok 43 - lazy-fetch in submodule succeeds
-# passed all 43 test(s)
+ok 44 - after fetching descendants of non-promisor commits, gc works
+# passed all 44 test(s)
 # SKIP no web server found at ''
-1..43
+1..44
 *** t5617-clone-submodules-remote.sh ***
 ok 1 - setup
 ok 2 - setup bare clone for server
@@ -24585,47 +24658,53 @@ ok 9 - create repo to be served by file:// transport
 ok 10 - list refs with file:// using protocol v2
 ok 11 - ref advertisement is filtered with ls-remote using protocol v2
 ok 12 - server-options are sent when using ls-remote
-ok 13 - warn if using server-option with ls-remote with legacy protocol
-ok 14 - clone with file:// using protocol v2
-ok 15 - clone of empty repo propagates name of default branch
-ok 16 - ...but not if explicitly forbidden by config
-ok 17 - bare clone propagates empty default branch
-ok 18 - clone propagates unborn HEAD from non-empty repo
-ok 19 - clone propagates object-format from empty repo
-ok 20 - bare clone propagates unborn HEAD from non-empty repo
-ok 21 - defaulted HEAD uses remote branch if available
-ok 22 - fetch with file:// using protocol v2
-ok 23 - ref advertisement is filtered during fetch using protocol v2
-ok 24 - server-options are sent when fetching
-ok 25 - warn if using server-option with fetch with legacy protocol
-ok 26 - server-options are sent when cloning
-ok 27 - warn if using server-option with clone with legacy protocol
-ok 28 - upload-pack respects config using protocol v2
-ok 29 - setup filter tests
-ok 30 - partial clone
-ok 31 - dynamically fetch missing object
-ok 32 - when dynamically fetching missing object, do not list refs
-ok 33 - partial fetch
-ok 34 - do not advertise filter if not configured to do so
-ok 35 - partial clone warns if filter is not advertised
-ok 36 - even with handcrafted request, filter does not work if not advertised
-ok 37 - default refspec is used to filter ref when fetchcing
-ok 38 - fetch supports various ways of have lines
-ok 39 - fetch supports include-tag and tag following
-ok 40 - upload-pack respects client shallows
-ok 41 - ensure that multiple fetches in same process from a shallow repo works
-ok 42 - deepen-relative
-ok 43 - usage: --negotiate-only without --negotiation-tip
-ok 44 - usage: --negotiate-only with --recurse-submodules
-ok 45 - file:// --negotiate-only
-ok 46 - file:// --negotiate-only with protocol v0
-ok 47 - push with custom path does not request v2
-ok 48 - fetch with custom path does request v2
-ok 49 - archive with custom path does not request v2
-ok 50 - reject client packfile-uris if not advertised
-# passed all 50 test(s)
+ok 13 - server-options from configuration are used by ls-remote
+ok 14 - warn if using server-option with ls-remote with legacy protocol
+ok 15 - clone with file:// using protocol v2
+ok 16 - clone of empty repo propagates name of default branch
+ok 17 - ...but not if explicitly forbidden by config
+ok 18 - bare clone propagates empty default branch
+ok 19 - clone propagates unborn HEAD from non-empty repo
+ok 20 - clone propagates object-format from empty repo
+ok 21 - bare clone propagates unborn HEAD from non-empty repo
+ok 22 - defaulted HEAD uses remote branch if available
+ok 23 - fetch with file:// using protocol v2
+ok 24 - ref advertisement is filtered during fetch using protocol v2
+ok 25 - server-options are sent when fetching
+ok 26 - server-options are sent when fetch multiple remotes
+ok 27 - server-options from configuration are used by git-fetch
+ok 28 - warn if using server-option with fetch with legacy protocol
+ok 29 - server-options are sent when cloning
+ok 30 - server-options from configuration are used by git-clone
+ok 31 - warn if using server-option with clone with legacy protocol
+ok 32 - server-option configuration with legacy protocol is ok
+ok 33 - invalid server-option configuration
+ok 34 - upload-pack respects config using protocol v2
+ok 35 - setup filter tests
+ok 36 - partial clone
+ok 37 - dynamically fetch missing object
+ok 38 - when dynamically fetching missing object, do not list refs
+ok 39 - partial fetch
+ok 40 - do not advertise filter if not configured to do so
+ok 41 - partial clone warns if filter is not advertised
+ok 42 - even with handcrafted request, filter does not work if not advertised
+ok 43 - default refspec is used to filter ref when fetchcing
+ok 44 - fetch supports various ways of have lines
+ok 45 - fetch supports include-tag and tag following
+ok 46 - upload-pack respects client shallows
+ok 47 - ensure that multiple fetches in same process from a shallow repo works
+ok 48 - deepen-relative
+ok 49 - usage: --negotiate-only without --negotiation-tip
+ok 50 - usage: --negotiate-only with --recurse-submodules
+ok 51 - file:// --negotiate-only
+ok 52 - file:// --negotiate-only with protocol v0
+ok 53 - push with custom path does not request v2
+ok 54 - fetch with custom path does request v2
+ok 55 - archive with custom path does not request v2
+ok 56 - reject client packfile-uris if not advertised
+# passed all 56 test(s)
 # SKIP no web server found at ''
-1..50
+1..56
 *** t5703-upload-pack-ref-in-want.sh ***
 ok 1 - setup repository
 ok 2 - config controls ref-in-want advertisement
@@ -25079,8 +25158,9 @@ ok 49 - --bisect --first-parent
 ok 50 - --first-parent
 ok 51 - --bisect-vars --first-parent
 ok 52 - --bisect-all --first-parent
-# passed all 52 test(s)
-1..52
+ok 53 - --bisect without any revisions
+# passed all 53 test(s)
+1..53
 *** t6003-rev-list-topo-order.sh ***
 ok 1 - rev-list has correct number of entries
 ok 2 - simple topo order
@@ -25544,23 +25624,26 @@ ok 12 - create bundle 3 - two refs, same object
 ok 13 - create bundle 4 - with tags
 ok 14 - clone from bundle
 ok 15 - unfiltered bundle with --objects
-ok 16 - filtered bundle: blob:none
-ok 17 - filtered bundle: tree:0
-ok 18 - filtered bundle: tree:1
-ok 19 - filtered bundle: blob:limit=100
-ok 20 - cloning from filtered bundle has useful error
-ok 21 - verify catches unreachable, broken prerequisites
-ok 22 - bundle progress includes write phase
-ok 23 - create --quiet disables all bundle progress
-ok 24 - bundle progress with --no-quiet
-ok 25 - read bundle over stdin
-ok 26 - send a bundle to standard output
-ok 27 - unbundle outside of a repository
-ok 28 - list-heads outside of a repository
-ok 29 - list-heads with bundle using sha1
-ok 30 - list-heads with bundle using sha256
-# passed all 30 test(s)
-1..30
+ok 16 - full bundle upto annotated tag
+ok 17 - clone from full bundle upto annotated tag
+ok 18 - incremental bundle between two annotated tags
+ok 19 - filtered bundle: blob:none
+ok 20 - filtered bundle: tree:0
+ok 21 - filtered bundle: tree:1
+ok 22 - filtered bundle: blob:limit=100
+ok 23 - cloning from filtered bundle has useful error
+ok 24 - verify catches unreachable, broken prerequisites
+ok 25 - bundle progress includes write phase
+ok 26 - create --quiet disables all bundle progress
+ok 27 - bundle progress with --no-quiet
+ok 28 - read bundle over stdin
+ok 29 - send a bundle to standard output
+ok 30 - unbundle outside of a repository
+ok 31 - list-heads outside of a repository
+ok 32 - list-heads with bundle using sha1
+ok 33 - list-heads with bundle using sha256
+# passed all 33 test(s)
+1..33
 *** t6021-rev-list-exclude-hidden.sh ***
 ok 1 - setup
 ok 2 - invalid section
@@ -26191,14 +26274,19 @@ ok 85 - name-rev --all works with commitGraph
 ok 86 - name-rev --annotate-stdin works with commitGraph
 ok 87 - setup: describe commits with disjoint bases
 ok 88 - describe HEAD
-ok 89 - setup: describe commits with disjoint bases 2
-ok 90 - describe HEAD
-ok 91 - setup misleading taggerdates
-ok 92 - describe --contains unique-file~2
-ok 93 - describe --dirty with a file with changed stat
-ok 94 - describe --broken --dirty with a file with changed stat
-# passed all 94 test(s)
-1..94
+not ok 89 - describe --candidates=2 HEAD # TODO known breakage
+ok 90 - setup: describe commits with disjoint bases 2
+ok 91 - describe HEAD
+not ok 92 - describe --candidates=2 HEAD # TODO known breakage
+ok 93 - setup misleading taggerdates
+ok 94 - describe --contains unique-file~2
+ok 95 - describe --dirty with a file with changed stat
+ok 96 - describe --broken --dirty with a file with changed stat
+ok 97 - --always with no refs falls back to commit hash
+ok 98 - --exact-match does not show --always fallback
+# still have 2 known breakage(s)
+# passed all remaining 96 test(s)
+1..98
 *** t6130-pathspec-noglob.sh ***
 ok 1 - create commits with glob characters
 ok 2 - vanilla pathspec matches literally
@@ -26991,15 +27079,16 @@ ok 2 - merge
 ok 3 - check merge result in index
 ok 4 - check merge result in working tree
 ok 5 - retry the merge with longer context
-ok 6 - custom merge backend
+ok 6 - invalid conflict-marker-size 3a
 ok 7 - custom merge backend
-ok 8 - custom merge driver that is killed with a signal
-ok 9 - up-to-date merge without common ancestor
-ok 10 - custom merge does not lock index
-ok 11 - binary files with union attribute
-ok 12 - custom merge driver that is killed with a signal on recursive merge
-# passed all 12 test(s)
-1..12
+ok 8 - custom merge backend
+ok 9 - custom merge driver that is killed with a signal
+ok 10 - up-to-date merge without common ancestor
+ok 11 - custom merge does not lock index
+ok 12 - binary files with union attribute
+ok 13 - custom merge driver that is killed with a signal on recursive merge
+# passed all 13 test(s)
+1..13
 *** t6407-merge-binary.sh ***
 ok 1 - setup
 ok 2 - resolve
@@ -27589,7 +27678,7 @@ ok 56 - git_test_func: added submodule doesn't remove untracked unignored file w
 *** t6439-merge-co-error-msgs.sh ***
 ok 1 - setup
 ok 2 - untracked files overwritten by merge (fast and non-fast forward)
-ok 3 - untracked files or local changes ovewritten by merge
+ok 3 - untracked files or local changes overwritten by merge
 ok 4 - cannot switch branches because of local changes
 ok 5 - not uptodate file porcelain checkout error
 ok 6 - not_uptodate_dir porcelain checkout error
@@ -27787,8 +27876,10 @@ ok 49 - checking out a commit before submodule moved needs manual updates
 ok 50 - mv -k does not accidentally destroy submodules
 ok 51 - moving a submodule in nested directories
 ok 52 - moving nested submodules
-# passed all 52 test(s)
-1..52
+not ok 53 - nonsense mv triggers assertion failure and partially updated index # TODO known breakage
+# still have 1 known breakage(s)
+# passed all remaining 52 test(s)
+1..53
 *** t7002-mv-sparse-checkout.sh ***
 ok 1 - setup
 ok 2 - mv refuses to move sparse-to-sparse
@@ -27875,227 +27966,229 @@ ok 6 - creating a tag in an empty tree should fail
 ok 7 - creating a tag for HEAD in an empty tree should fail
 ok 8 - creating a tag for an unknown revision should fail
 ok 9 - creating a tag using default HEAD should succeed
-ok 10 - creating a tag with --create-reflog should create reflog
-ok 11 - annotated tag with --create-reflog has correct message
-ok 12 - --create-reflog does not create reflog on failure
-ok 13 - option core.logAllRefUpdates=always creates reflog
-ok 14 - listing all tags if one exists should succeed
-ok 15 - Multiple -l or --list options are equivalent to one -l option
-ok 16 - listing all tags if one exists should output that tag
-ok 17 - listing a tag using a matching pattern should succeed
-ok 18 - listing a tag with --ignore-case
-ok 19 - listing a tag using a matching pattern should output that tag
-ok 20 - listing tags using a non-matching pattern should succeed
-ok 21 - listing tags using a non-matching pattern should output nothing
-ok 22 - trying to create a tag with the name of one existing should fail
-ok 23 - trying to create a tag with a non-valid name should fail
-ok 24 - creating a tag using HEAD directly should succeed
-ok 25 - --force can create a tag with the name of one existing
-ok 26 - --force is moot with a non-existing tag name
-ok 27 - trying to delete an unknown tag should fail
-ok 28 - trying to delete tags without params should succeed and do nothing
-ok 29 - deleting two existing tags in one command should succeed
-ok 30 - creating a tag with the name of another deleted one should succeed
-ok 31 - trying to delete two tags, existing and not, should fail in the 2nd
-ok 32 - trying to delete an already deleted tag should fail
-ok 33 - listing all tags should print them ordered
-ok 34 - listing tags with substring as pattern must print those matching
-ok 35 - listing tags with a suffix as pattern must print those matching
-ok 36 - listing tags with a prefix as pattern must print those matching
-ok 37 - listing tags using a name as pattern must print that one matching
-ok 38 - listing tags using a name as pattern must print that one matching
-ok 39 - listing tags with ? in the pattern should print those matching
-ok 40 - listing tags using v.* should print nothing because none have v.
-ok 41 - listing tags using v* should print only those having v
-ok 42 - tag -l can accept multiple patterns
-ok 43 - tag -l <pattern> -l <pattern> works, as our buggy documentation previously suggested
-ok 44 - listing tags in column
-ok 45 - listing tags in column with column.*
-ok 46 - listing tag with -n --column should fail
-ok 47 - listing tags -n in column with column.ui ignored
-ok 48 - a non-annotated tag created without parameters should point to HEAD
-ok 49 - trying to verify an unknown tag should fail
-ok 50 - trying to verify a non-annotated and non-signed tag should fail
-ok 51 - trying to verify many non-annotated or unknown tags, should fail
-ok 52 - creating an annotated tag with -m message should succeed
-ok 53 - set up editor
-ok 54 - creating an annotated tag with -m message --edit should succeed
-ok 55 - creating an annotated tag with -F messagefile should succeed
-ok 56 - set up editor
-ok 57 - creating an annotated tag with -F messagefile --edit should succeed
-ok 58 - creating an annotated tag with -F - should succeed
-ok 59 - trying to create a tag with a non-existing -F file should fail
-ok 60 - trying to create tags giving both -m or -F options should fail
-ok 61 - creating a tag with an empty -m message should succeed
-ok 62 - creating a tag with an empty -F messagefile should succeed
-ok 63 - extra blanks in the message for an annotated tag should be removed
-ok 64 - creating a tag with blank -m message with spaces should succeed
-ok 65 - creating a tag with blank -F messagefile with spaces should succeed
-ok 66 - creating a tag with -F file of spaces and no newline should succeed
-ok 67 - creating a tag using a -F messagefile with #comments should succeed
-ok 68 - creating a tag with a #comment in the -m message should succeed
-ok 69 - creating a tag with #comments in the -F messagefile should succeed
-ok 70 - creating a tag with a file of #comment and no newline should succeed
-ok 71 - create tag with -m and --trailer
-ok 72 - list tag extracting trailers
-ok 73 - create tag with -F and --trailer
-ok 74 - create tag with -m and --trailer and --edit
-ok 75 - create tag with -F and --trailer and --edit
-ok 76 - create annotated tag and force editor when only --trailer is given
-ok 77 - bad editor causes panic when only --trailer is given
-ok 78 - listing the one-line message of a non-signed tag should succeed
-ok 79 - The -n 100 invocation means -n --list 100, not -n100
-ok 80 - listing the zero-lines message of a non-signed tag should succeed
-ok 81 - listing many message lines of a non-signed tag should succeed
-ok 82 - annotations for blobs are empty
-ok 83 - git tag --format with ahead-behind
-ok 84 # skip trying to verify an annotated non-signed tag should fail (missing GPG)
-ok 85 # skip trying to verify a file-annotated non-signed tag should fail (missing GPG)
-ok 86 # skip trying to verify two annotated non-signed tags should fail (missing GPG)
-ok 87 # skip creating a signed tag with -m message should succeed (missing GPG)
-ok 88 # skip sign with a given key id (missing GPG)
-ok 89 # skip sign with an unknown id (1) (missing GPG)
-ok 90 # skip sign with an unknown id (2) (missing GPG)
-ok 91 # skip -u implies signed tag (missing GPG)
-ok 92 # skip creating a signed tag with -F messagefile should succeed (missing GPG)
-ok 93 # skip creating a signed tag with -F - should succeed (missing GPG)
-ok 94 # skip -s implies annotated tag (missing GPG)
-ok 95 # skip git tag -s implied if configured with tag.forcesignannotated (missing GPG)
-ok 96 # skip lightweight with no message when configured with tag.forcesignannotated (missing GPG)
-ok 97 # skip git tag -a disable configured tag.forcesignannotated (missing GPG)
-ok 98 # skip git tag --sign enable GPG sign (missing GPG)
-ok 99 # skip git tag configured tag.gpgsign enables GPG sign (missing GPG)
-ok 100 # skip git tag --no-sign configured tag.gpgsign skip GPG sign (missing GPG)
-ok 101 # skip trying to create a signed tag with non-existing -F file should fail (missing GPG)
-ok 102 # skip verifying a signed tag should succeed (missing GPG)
-ok 103 # skip verifying two signed tags in one command should succeed (missing GPG)
-ok 104 # skip verifying many signed and non-signed tags should fail (missing GPG)
-ok 105 # skip verifying a forged tag should fail (missing GPG)
-ok 106 # skip verifying a proper tag with --format pass and format accordingly (missing GPG)
-ok 107 # skip verifying a forged tag with --format should fail silently (missing GPG)
-ok 108 # skip creating a signed tag with an empty -m message should succeed (missing GPG)
-ok 109 # skip creating a signed tag with an empty -F messagefile should succeed (missing GPG)
-ok 110 # skip extra blanks in the message for a signed tag should be removed (missing GPG)
-ok 111 # skip creating a signed tag with a blank -m message should succeed (missing GPG)
-ok 112 # skip creating a signed tag with blank -F file with spaces should succeed (missing GPG)
-ok 113 # skip creating a signed tag with spaces and no newline should succeed (missing GPG)
-ok 114 # skip signed tag with embedded PGP message (missing GPG)
-ok 115 # skip creating a signed tag with a -F file with #comments should succeed (missing GPG)
-ok 116 # skip creating a signed tag with #commented -m message should succeed (missing GPG)
-ok 117 # skip creating a signed tag with #commented -F messagefile should succeed (missing GPG)
-ok 118 # skip creating a signed tag with a #comment and no newline should succeed (missing GPG)
-ok 119 # skip listing the one-line message of a signed tag should succeed (missing GPG)
-ok 120 # skip listing the zero-lines message of a signed tag should succeed (missing GPG)
-ok 121 # skip listing many message lines of a signed tag should succeed (missing GPG)
-ok 122 # skip creating a signed tag pointing to a tree should succeed (missing GPG)
-ok 123 # skip creating a signed tag pointing to a blob should succeed (missing GPG)
-ok 124 # skip creating a signed tag pointing to another tag should succeed (missing GPG)
-ok 125 # skip creating a signed tag with rfc1991 (missing RFC1991,GPG of GPG,RFC1991)
-ok 126 # skip reediting a signed tag body omits signature (missing RFC1991,GPG of GPG,RFC1991)
-ok 127 # skip verifying rfc1991 signature (missing RFC1991,GPG of GPG,RFC1991)
-ok 128 # skip list tag with rfc1991 signature (missing RFC1991,GPG of GPG,RFC1991)
-ok 129 # skip verifying rfc1991 signature without --rfc1991 (missing RFC1991,GPG of GPG,RFC1991)
-ok 130 # skip list tag with rfc1991 signature without --rfc1991 (missing RFC1991,GPG of GPG,RFC1991)
-ok 131 # skip reediting a signed tag body omits signature (missing RFC1991,GPG of GPG,RFC1991)
-ok 132 # skip git tag -s fails if gpg is misconfigured (bad key) (missing GPG)
-ok 133 # skip git tag -s fails if gpg is misconfigured (bad signature format) (missing GPG)
-ok 134 # skip git verifies tag is valid with double signature (missing GPG)
-ok 135 # skip git tag -s fails if gpgsm is misconfigured (bad key) (missing GPGSM)
-ok 136 # skip git tag -s fails if gpgsm is misconfigured (bad signature format) (missing GPGSM)
-ok 137 # skip verify signed tag fails when public key is not present (missing GPG)
-ok 138 - git tag -a fails if tag annotation is empty
-ok 139 - message in editor has initial comment
-ok 140 - message in editor has initial comment: first line
-ok 141 - message in editor has initial comment: remainder
-ok 142 - overwriting an annotated tag should use its previous body
-ok 143 - filename for the message is relative to cwd
-ok 144 - filename for the message is relative to cwd
-ok 145 - creating second commit and tag
-ok 146 - creating third commit without tag
-ok 147 - checking that first commit is in all tags (hash)
-ok 148 - checking that first commit is in all tags (tag)
-ok 149 - checking that first commit is in all tags (relative)
-ok 150 - checking that first commit is not listed in any tag with --no-contains  (hash)
-ok 151 - checking that first commit is in all tags (tag)
-ok 152 - checking that first commit is in all tags (relative)
-ok 153 - checking that second commit only has one tag
-ok 154 - inverse of the last test, with --no-contains
-ok 155 - checking that third commit has no tags
-ok 156 - conversely --no-contains on the third commit lists all tags
-ok 157 - creating simple branch
-ok 158 - checking that branch head only has one tag
-ok 159 - checking that branch head with --no-contains lists all but one tag
-ok 160 - merging original branch into this branch
-ok 161 - checking that original branch head has one tag now
-ok 162 - checking that original branch head with --no-contains lists all but one tag now
-ok 163 - checking that initial commit is in all tags
-ok 164 - checking that --contains can be used in non-list mode
-ok 165 - checking that initial commit is in all tags with --no-contains
-ok 166 - mixing incompatibles modes and options is forbidden
-ok 167 - mixing incompatible modes with --contains is forbidden
-ok 168 - Doing 'git tag --list-like --contains <commit> <pattern> is permitted
-ok 169 - mixing incompatible modes with --with is forbidden
-ok 170 - Doing 'git tag --list-like --with <commit> <pattern> is permitted
-ok 171 - mixing incompatible modes with --no-contains is forbidden
-ok 172 - Doing 'git tag --list-like --no-contains <commit> <pattern> is permitted
-ok 173 - mixing incompatible modes with --without is forbidden
-ok 174 - Doing 'git tag --list-like --without <commit> <pattern> is permitted
-ok 175 - mixing incompatible modes with --merged is forbidden
-ok 176 - Doing 'git tag --list-like --merged <commit> <pattern> is permitted
-ok 177 - mixing incompatible modes with --no-merged is forbidden
-ok 178 - Doing 'git tag --list-like --no-merged <commit> <pattern> is permitted
-ok 179 - mixing incompatible modes with --points-at is forbidden
-ok 180 - Doing 'git tag --list-like --points-at <commit> <pattern> is permitted
-ok 181 - --points-at can be used in non-list mode
-ok 182 - --points-at is a synonym for --points-at HEAD
-ok 183 - --points-at finds lightweight tags
-ok 184 - --points-at finds annotated tags of commits
-ok 185 - --points-at finds annotated tags of tags
-ok 186 - recursive tagging should give advice
-ok 187 - multiple --points-at are OR-ed together
-ok 188 - lexical sort
-ok 189 - version sort
-ok 190 - reverse version sort
-ok 191 - reverse lexical sort
-ok 192 - configured lexical sort
-ok 193 - option override configured sort
-ok 194 - --no-sort cancels config sort keys
-ok 195 - --no-sort cancels command line sort keys
-ok 196 - --no-sort without subsequent --sort prints expected tags
-ok 197 - invalid sort parameter on command line
-ok 198 - invalid sort parameter in configuratoin
-ok 199 - version sort handles empty value for versionsort.{prereleaseSuffix,suffix}
-ok 200 - version sort with prerelease reordering
-ok 201 - reverse version sort with prerelease reordering
-ok 202 - version sort with prerelease reordering and common leading character
-ok 203 - version sort with prerelease reordering, multiple suffixes and common leading character
-ok 204 - version sort with prerelease reordering, multiple suffixes match the same tag
-ok 205 - version sort with prerelease reordering, multiple suffixes match starting at the same position
-ok 206 - version sort with general suffix reordering
-ok 207 - versionsort.suffix overrides versionsort.prereleaseSuffix
-ok 208 - version sort with very long prerelease suffix
-ok 209 - --contains and --no-contains work in a deep repo
-ok 210 - --format should list tags as per format given
-ok 211 - --format --omit-empty works
-ok 212 - git tag -l with --format="%(rest)" must fail
-ok 213 - set up color tests
-ok 214 - %(color) omitted without tty
-ok 215 - %(color) present with tty
-ok 216 - --color overrides auto-color
-ok 217 - color.ui=always overrides auto-color
-ok 218 - setup --merged test tags
-ok 219 - --merged can be used in non-list mode
-ok 220 - --merged is compatible with --no-merged
-ok 221 - --merged shows merged tags
-ok 222 - --no-merged show unmerged tags
-ok 223 - --no-merged can be used in non-list mode
-ok 224 - ambiguous branch/tags not marked
-ok 225 - --contains combined with --no-contains
-ok 226 - Does --[no-]contains stop at commits? Yes!
-ok 227 - If tag is created then tag message file is unlinked
-ok 228 - If tag cannot be created then tag message file is not unlinked
-# passed all 228 test(s)
-1..228
+ok 10 - HEAD is forbidden as a tagname
+ok 11 - "git tag" can remove a tag named HEAD
+ok 12 - creating a tag with --create-reflog should create reflog
+ok 13 - annotated tag with --create-reflog has correct message
+ok 14 - --create-reflog does not create reflog on failure
+ok 15 - option core.logAllRefUpdates=always creates reflog
+ok 16 - listing all tags if one exists should succeed
+ok 17 - Multiple -l or --list options are equivalent to one -l option
+ok 18 - listing all tags if one exists should output that tag
+ok 19 - listing a tag using a matching pattern should succeed
+ok 20 - listing a tag with --ignore-case
+ok 21 - listing a tag using a matching pattern should output that tag
+ok 22 - listing tags using a non-matching pattern should succeed
+ok 23 - listing tags using a non-matching pattern should output nothing
+ok 24 - trying to create a tag with the name of one existing should fail
+ok 25 - trying to create a tag with a non-valid name should fail
+ok 26 - creating a tag using HEAD directly should succeed
+ok 27 - --force can create a tag with the name of one existing
+ok 28 - --force is moot with a non-existing tag name
+ok 29 - trying to delete an unknown tag should fail
+ok 30 - trying to delete tags without params should succeed and do nothing
+ok 31 - deleting two existing tags in one command should succeed
+ok 32 - creating a tag with the name of another deleted one should succeed
+ok 33 - trying to delete two tags, existing and not, should fail in the 2nd
+ok 34 - trying to delete an already deleted tag should fail
+ok 35 - listing all tags should print them ordered
+ok 36 - listing tags with substring as pattern must print those matching
+ok 37 - listing tags with a suffix as pattern must print those matching
+ok 38 - listing tags with a prefix as pattern must print those matching
+ok 39 - listing tags using a name as pattern must print that one matching
+ok 40 - listing tags using a name as pattern must print that one matching
+ok 41 - listing tags with ? in the pattern should print those matching
+ok 42 - listing tags using v.* should print nothing because none have v.
+ok 43 - listing tags using v* should print only those having v
+ok 44 - tag -l can accept multiple patterns
+ok 45 - tag -l <pattern> -l <pattern> works, as our buggy documentation previously suggested
+ok 46 - listing tags in column
+ok 47 - listing tags in column with column.*
+ok 48 - listing tag with -n --column should fail
+ok 49 - listing tags -n in column with column.ui ignored
+ok 50 - a non-annotated tag created without parameters should point to HEAD
+ok 51 - trying to verify an unknown tag should fail
+ok 52 - trying to verify a non-annotated and non-signed tag should fail
+ok 53 - trying to verify many non-annotated or unknown tags, should fail
+ok 54 - creating an annotated tag with -m message should succeed
+ok 55 - set up editor
+ok 56 - creating an annotated tag with -m message --edit should succeed
+ok 57 - creating an annotated tag with -F messagefile should succeed
+ok 58 - set up editor
+ok 59 - creating an annotated tag with -F messagefile --edit should succeed
+ok 60 - creating an annotated tag with -F - should succeed
+ok 61 - trying to create a tag with a non-existing -F file should fail
+ok 62 - trying to create tags giving both -m or -F options should fail
+ok 63 - creating a tag with an empty -m message should succeed
+ok 64 - creating a tag with an empty -F messagefile should succeed
+ok 65 - extra blanks in the message for an annotated tag should be removed
+ok 66 - creating a tag with blank -m message with spaces should succeed
+ok 67 - creating a tag with blank -F messagefile with spaces should succeed
+ok 68 - creating a tag with -F file of spaces and no newline should succeed
+ok 69 - creating a tag using a -F messagefile with #comments should succeed
+ok 70 - creating a tag with a #comment in the -m message should succeed
+ok 71 - creating a tag with #comments in the -F messagefile should succeed
+ok 72 - creating a tag with a file of #comment and no newline should succeed
+ok 73 - create tag with -m and --trailer
+ok 74 - list tag extracting trailers
+ok 75 - create tag with -F and --trailer
+ok 76 - create tag with -m and --trailer and --edit
+ok 77 - create tag with -F and --trailer and --edit
+ok 78 - create annotated tag and force editor when only --trailer is given
+ok 79 - bad editor causes panic when only --trailer is given
+ok 80 - listing the one-line message of a non-signed tag should succeed
+ok 81 - The -n 100 invocation means -n --list 100, not -n100
+ok 82 - listing the zero-lines message of a non-signed tag should succeed
+ok 83 - listing many message lines of a non-signed tag should succeed
+ok 84 - annotations for blobs are empty
+ok 85 - git tag --format with ahead-behind
+ok 86 # skip trying to verify an annotated non-signed tag should fail (missing GPG)
+ok 87 # skip trying to verify a file-annotated non-signed tag should fail (missing GPG)
+ok 88 # skip trying to verify two annotated non-signed tags should fail (missing GPG)
+ok 89 # skip creating a signed tag with -m message should succeed (missing GPG)
+ok 90 # skip sign with a given key id (missing GPG)
+ok 91 # skip sign with an unknown id (1) (missing GPG)
+ok 92 # skip sign with an unknown id (2) (missing GPG)
+ok 93 # skip -u implies signed tag (missing GPG)
+ok 94 # skip creating a signed tag with -F messagefile should succeed (missing GPG)
+ok 95 # skip creating a signed tag with -F - should succeed (missing GPG)
+ok 96 # skip -s implies annotated tag (missing GPG)
+ok 97 # skip git tag -s implied if configured with tag.forcesignannotated (missing GPG)
+ok 98 # skip lightweight with no message when configured with tag.forcesignannotated (missing GPG)
+ok 99 # skip git tag -a disable configured tag.forcesignannotated (missing GPG)
+ok 100 # skip git tag --sign enable GPG sign (missing GPG)
+ok 101 # skip git tag configured tag.gpgsign enables GPG sign (missing GPG)
+ok 102 # skip git tag --no-sign configured tag.gpgsign skip GPG sign (missing GPG)
+ok 103 # skip trying to create a signed tag with non-existing -F file should fail (missing GPG)
+ok 104 # skip verifying a signed tag should succeed (missing GPG)
+ok 105 # skip verifying two signed tags in one command should succeed (missing GPG)
+ok 106 # skip verifying many signed and non-signed tags should fail (missing GPG)
+ok 107 # skip verifying a forged tag should fail (missing GPG)
+ok 108 # skip verifying a proper tag with --format pass and format accordingly (missing GPG)
+ok 109 # skip verifying a forged tag with --format should fail silently (missing GPG)
+ok 110 # skip creating a signed tag with an empty -m message should succeed (missing GPG)
+ok 111 # skip creating a signed tag with an empty -F messagefile should succeed (missing GPG)
+ok 112 # skip extra blanks in the message for a signed tag should be removed (missing GPG)
+ok 113 # skip creating a signed tag with a blank -m message should succeed (missing GPG)
+ok 114 # skip creating a signed tag with blank -F file with spaces should succeed (missing GPG)
+ok 115 # skip creating a signed tag with spaces and no newline should succeed (missing GPG)
+ok 116 # skip signed tag with embedded PGP message (missing GPG)
+ok 117 # skip creating a signed tag with a -F file with #comments should succeed (missing GPG)
+ok 118 # skip creating a signed tag with #commented -m message should succeed (missing GPG)
+ok 119 # skip creating a signed tag with #commented -F messagefile should succeed (missing GPG)
+ok 120 # skip creating a signed tag with a #comment and no newline should succeed (missing GPG)
+ok 121 # skip listing the one-line message of a signed tag should succeed (missing GPG)
+ok 122 # skip listing the zero-lines message of a signed tag should succeed (missing GPG)
+ok 123 # skip listing many message lines of a signed tag should succeed (missing GPG)
+ok 124 # skip creating a signed tag pointing to a tree should succeed (missing GPG)
+ok 125 # skip creating a signed tag pointing to a blob should succeed (missing GPG)
+ok 126 # skip creating a signed tag pointing to another tag should succeed (missing GPG)
+ok 127 # skip creating a signed tag with rfc1991 (missing RFC1991,GPG of GPG,RFC1991)
+ok 128 # skip reediting a signed tag body omits signature (missing RFC1991,GPG of GPG,RFC1991)
+ok 129 # skip verifying rfc1991 signature (missing RFC1991,GPG of GPG,RFC1991)
+ok 130 # skip list tag with rfc1991 signature (missing RFC1991,GPG of GPG,RFC1991)
+ok 131 # skip verifying rfc1991 signature without --rfc1991 (missing RFC1991,GPG of GPG,RFC1991)
+ok 132 # skip list tag with rfc1991 signature without --rfc1991 (missing RFC1991,GPG of GPG,RFC1991)
+ok 133 # skip reediting a signed tag body omits signature (missing RFC1991,GPG of GPG,RFC1991)
+ok 134 # skip git tag -s fails if gpg is misconfigured (bad key) (missing GPG)
+ok 135 # skip git tag -s fails if gpg is misconfigured (bad signature format) (missing GPG)
+ok 136 # skip git verifies tag is valid with double signature (missing GPG)
+ok 137 # skip git tag -s fails if gpgsm is misconfigured (bad key) (missing GPGSM)
+ok 138 # skip git tag -s fails if gpgsm is misconfigured (bad signature format) (missing GPGSM)
+ok 139 # skip verify signed tag fails when public key is not present (missing GPG)
+ok 140 - git tag -a fails if tag annotation is empty
+ok 141 - message in editor has initial comment
+ok 142 - message in editor has initial comment: first line
+ok 143 - message in editor has initial comment: remainder
+ok 144 - overwriting an annotated tag should use its previous body
+ok 145 - filename for the message is relative to cwd
+ok 146 - filename for the message is relative to cwd
+ok 147 - creating second commit and tag
+ok 148 - creating third commit without tag
+ok 149 - checking that first commit is in all tags (hash)
+ok 150 - checking that first commit is in all tags (tag)
+ok 151 - checking that first commit is in all tags (relative)
+ok 152 - checking that first commit is not listed in any tag with --no-contains  (hash)
+ok 153 - checking that first commit is in all tags (tag)
+ok 154 - checking that first commit is in all tags (relative)
+ok 155 - checking that second commit only has one tag
+ok 156 - inverse of the last test, with --no-contains
+ok 157 - checking that third commit has no tags
+ok 158 - conversely --no-contains on the third commit lists all tags
+ok 159 - creating simple branch
+ok 160 - checking that branch head only has one tag
+ok 161 - checking that branch head with --no-contains lists all but one tag
+ok 162 - merging original branch into this branch
+ok 163 - checking that original branch head has one tag now
+ok 164 - checking that original branch head with --no-contains lists all but one tag now
+ok 165 - checking that initial commit is in all tags
+ok 166 - checking that --contains can be used in non-list mode
+ok 167 - checking that initial commit is in all tags with --no-contains
+ok 168 - mixing incompatibles modes and options is forbidden
+ok 169 - mixing incompatible modes with --contains is forbidden
+ok 170 - Doing 'git tag --list-like --contains <commit> <pattern> is permitted
+ok 171 - mixing incompatible modes with --with is forbidden
+ok 172 - Doing 'git tag --list-like --with <commit> <pattern> is permitted
+ok 173 - mixing incompatible modes with --no-contains is forbidden
+ok 174 - Doing 'git tag --list-like --no-contains <commit> <pattern> is permitted
+ok 175 - mixing incompatible modes with --without is forbidden
+ok 176 - Doing 'git tag --list-like --without <commit> <pattern> is permitted
+ok 177 - mixing incompatible modes with --merged is forbidden
+ok 178 - Doing 'git tag --list-like --merged <commit> <pattern> is permitted
+ok 179 - mixing incompatible modes with --no-merged is forbidden
+ok 180 - Doing 'git tag --list-like --no-merged <commit> <pattern> is permitted
+ok 181 - mixing incompatible modes with --points-at is forbidden
+ok 182 - Doing 'git tag --list-like --points-at <commit> <pattern> is permitted
+ok 183 - --points-at can be used in non-list mode
+ok 184 - --points-at is a synonym for --points-at HEAD
+ok 185 - --points-at finds lightweight tags
+ok 186 - --points-at finds annotated tags of commits
+ok 187 - --points-at finds annotated tags of tags
+ok 188 - recursive tagging should give advice
+ok 189 - multiple --points-at are OR-ed together
+ok 190 - lexical sort
+ok 191 - version sort
+ok 192 - reverse version sort
+ok 193 - reverse lexical sort
+ok 194 - configured lexical sort
+ok 195 - option override configured sort
+ok 196 - --no-sort cancels config sort keys
+ok 197 - --no-sort cancels command line sort keys
+ok 198 - --no-sort without subsequent --sort prints expected tags
+ok 199 - invalid sort parameter on command line
+ok 200 - invalid sort parameter in configuratoin
+ok 201 - version sort handles empty value for versionsort.{prereleaseSuffix,suffix}
+ok 202 - version sort with prerelease reordering
+ok 203 - reverse version sort with prerelease reordering
+ok 204 - version sort with prerelease reordering and common leading character
+ok 205 - version sort with prerelease reordering, multiple suffixes and common leading character
+ok 206 - version sort with prerelease reordering, multiple suffixes match the same tag
+ok 207 - version sort with prerelease reordering, multiple suffixes match starting at the same position
+ok 208 - version sort with general suffix reordering
+ok 209 - versionsort.suffix overrides versionsort.prereleaseSuffix
+ok 210 - version sort with very long prerelease suffix
+ok 211 - --contains and --no-contains work in a deep repo
+ok 212 - --format should list tags as per format given
+ok 213 - --format --omit-empty works
+ok 214 - git tag -l with --format="%(rest)" must fail
+ok 215 - set up color tests
+ok 216 - %(color) omitted without tty
+ok 217 - %(color) present with tty
+ok 218 - --color overrides auto-color
+ok 219 - color.ui=always overrides auto-color
+ok 220 - setup --merged test tags
+ok 221 - --merged can be used in non-list mode
+ok 222 - --merged is compatible with --no-merged
+ok 223 - --merged shows merged tags
+ok 224 - --no-merged show unmerged tags
+ok 225 - --no-merged can be used in non-list mode
+ok 226 - ambiguous branch/tags not marked
+ok 227 - --contains combined with --no-contains
+ok 228 - Does --[no-]contains stop at commits? Yes!
+ok 229 - If tag is created then tag message file is unlinked
+ok 230 - If tag cannot be created then tag message file is not unlinked
+# passed all 230 test(s)
+1..230
 *** t7005-editor.sh ***
 ok 1 - determine default editor
 ok 2 - setup
@@ -28333,7 +28426,7 @@ ok 3 - verify and show ssh signatures
 ok 4 - verify-tag exits failure on expired signature key
 ok 5 - verify-tag exits failure on not yet valid signature key
 ok 6 - verify-tag succeeds with tag date and key validity matching
-ok 7 - verify-tag failes with tag date outside of key validity
+ok 7 - verify-tag fails with tag date outside of key validity
 ok 8 - detect fudged ssh signature
 ok 9 - verify ssh signatures with --raw
 ok 10 - verify signatures with --raw ssh
@@ -28461,7 +28554,7 @@ ok 1 - setup
 ok 2 - before initial commit, nothing added, only untracked
 ok 3 - before initial commit, things added
 ok 4 - before initial commit, things added (-z)
-ok 5 - make first commit, comfirm HEAD oid and branch
+ok 5 - make first commit, confirm HEAD oid and branch
 ok 6 - after first commit, create unstaged changes
 ok 7 - after first commit, stash existing changes
 ok 8 - after first commit but omit untracked files and branch
@@ -28843,11 +28936,11 @@ ok 25 - clean.requireForce and -n
 ok 26 - clean.requireForce and -f
 ok 27 - clean.requireForce and --interactive
 ok 28 - core.excludesfile
-ok 29 # skip removal failure (missing SANITY)
+ok 29 - removal failure
 ok 30 - nested git work tree
 ok 31 - should clean things that almost look like git but are not
 ok 32 - should not clean submodules
-ok 33 # skip should avoid cleaning possible submodules (missing SANITY of POSIXPERM,SANITY)
+ok 33 - should avoid cleaning possible submodules
 ok 34 - nested (empty) git should be kept
 ok 35 - nested bare repositories should be cleaned
 not ok 36 - nested (empty) bare repositories should be cleaned even when in .git # TODO known breakage
@@ -28857,7 +28950,7 @@ ok 39 - giving path to nested .git will not remove it
 ok 40 - giving path to nested .git/ will NOT remove contents
 ok 41 - force removal of nested git work tree
 ok 42 - git clean -e
-ok 43 # skip git clean -d with an unreadable empty directory (missing SANITY)
+ok 43 - git clean -d with an unreadable empty directory
 ok 44 - git clean -d respects pathspecs (dir is prefix of pathspec)
 ok 45 - git clean -d respects pathspecs (pathspec is prefix of dir)
 ok 46 - git clean -d skips untracked dirs containing ignored files
@@ -29887,7 +29980,7 @@ ok 66 - status submodule summary (clean submodule): commit
 ok 67 - status -s submodule summary (clean submodule)
 ok 68 - status -z implies porcelain
 ok 69 - commit --dry-run submodule summary (--amend)
-ok 70 # skip status succeeds in a read-only repository (missing SANITY of POSIXPERM,SANITY)
+ok 70 - status succeeds in a read-only repository
 ok 71 - --ignore-submodules=untracked suppresses submodules with untracked content
 ok 72 - .gitmodules ignore=untracked suppresses submodules with untracked content
 ok 73 - .git/config ignore=untracked suppresses submodules with untracked content
@@ -30111,12 +30204,12 @@ ok 41 - in-place editing with basic patch
 ok 42 - in-place editing with additional trailer
 ok 43 - in-place editing on stdin disallowed
 ok 44 - in-place editing on non-existing file
-ok 45 # skip in-place editing doesn't clobber original file on error (missing SANITY of POSIXPERM,SANITY)
+ok 45 - in-place editing doesn't clobber original file on error
 ok 46 - using "where = before"
 ok 47 - overriding configuration with "--where after"
 ok 48 - using "--where after" with "--no-where"
 ok 49 - using "--where after" with "--no-where" defaults to configuration
-ok 50 - using "--no-where" defaults to harcoded default if nothing configured
+ok 50 - using "--no-where" defaults to hardcoded default if nothing configured
 ok 51 - using "where = after"
 ok 52 - using "where = end"
 ok 53 - using "where = start"
@@ -30589,8 +30682,9 @@ ok 27 - mergetool -Oorder-file is honored
 ok 28 - mergetool --tool-help shows recognized tools
 ok 29 - mergetool hideResolved
 ok 30 - mergetool with guiDefault
-# passed all 30 test(s)
-1..30
+ok 31 - mergetool with non-existent tool
+# passed all 31 test(s)
+1..31
 *** t7611-merge-abort.sh ***
 ok 1 - setup
 ok 2 - fails without MERGE_HEAD (unstarted merge)
@@ -30710,7 +30804,7 @@ ok 8 - repack -k packs unreachable loose objects
 1..8
 *** t7702-repack-cyclic-alternate.sh ***
 ok 1 - setup
-ok 2 - re-packing repository with itsself as alternate
+ok 2 - re-packing repository with itself as alternate
 # passed all 2 test(s)
 1..2
 *** t7703-repack-geometric.sh ***
@@ -30826,21 +30920,23 @@ ok 77 - difftool --dir-diff syncs worktree with unstaged change --no-symlinks
 ok 78 - difftool --dir-diff syncs worktree with unstaged change --symlinks
 ok 79 - difftool --dir-diff syncs worktree without unstaged change --no-symlinks
 ok 80 - difftool --dir-diff syncs worktree without unstaged change --symlinks
-ok 81 - difftool --no-symlinks does not overwrite working tree file 
-ok 82 - difftool --no-symlinks detects conflict 
-ok 83 - difftool properly honors gitlink and core.worktree
-ok 84 - difftool --dir-diff symlinked directories
-ok 85 - difftool --dir-diff handles modified symlinks
-ok 86 - difftool --dir-diff writes symlinks as raw text
-ok 87 - add -N and difftool -d
-ok 88 - difftool --cached with unmerged files
-ok 89 - outside worktree
-ok 90 - difftool --gui, --tool and --extcmd are mutually exclusive
-ok 91 - difftool --rotate-to
-ok 92 - difftool --skip-to
-ok 93 - difftool --rotate/skip-to error condition
-# passed all 93 test(s)
-1..93
+ok 81 - difftool --dir-diff with no diff --no-symlinks
+ok 82 - difftool --dir-diff with no diff --symlinks
+ok 83 - difftool --no-symlinks does not overwrite working tree file 
+ok 84 - difftool --no-symlinks detects conflict 
+ok 85 - difftool properly honors gitlink and core.worktree
+ok 86 - difftool --dir-diff symlinked directories
+ok 87 - difftool --dir-diff handles modified symlinks
+ok 88 - difftool --dir-diff writes symlinks as raw text
+ok 89 - add -N and difftool -d
+ok 90 - difftool --cached with unmerged files
+ok 91 - outside worktree
+ok 92 - difftool --gui, --tool and --extcmd are mutually exclusive
+ok 93 - difftool --rotate-to
+ok 94 - difftool --skip-to
+ok 95 - difftool --rotate/skip-to error condition
+# passed all 95 test(s)
+1..95
 *** t7810-grep.sh ***
 ok 1 - setup
 ok 2 - grep should not segfault with a bad input
@@ -30898,213 +30994,215 @@ ok 53 - grep HEAD with '-c grep.patternType=extended -c grep.patternType=default
 ok 54 - grep HEAD with '-c grep.patternType=extended -c grep.patternType=default -c grep.patternType=fixed' interpreted as FIX
 ok 55 - grep --count HEAD
 ok 56 - grep --count -h HEAD
-ok 57 - grep HEAD should quote unusual pathnames
-ok 58 - grep HEAD in subdir should quote unusual relative pathnames
-ok 59 - grep -z HEAD with unusual pathnames
-ok 60 - grep -z HEAD in subdir with unusual relative pathnames
-ok 61 - grep -w in working tree
-ok 62 - grep -w in working tree (with --column)
-ok 63 - grep -w in working tree (with --column, extended OR)
-ok 64 - grep -w in working tree (with --column, --invert-match)
-ok 65 - grep in working tree (with --column, --invert-match, extended OR)
-ok 66 - grep in working tree (with --column, --invert-match, extended AND)
-ok 67 - grep in working tree (with --column, double-negation)
-ok 68 - grep -w in working tree (with --column, -C)
-ok 69 - grep -w in working tree (with --line-number, --column)
-ok 70 - grep -w in working tree (with non-extended patterns, --column)
-ok 71 - grep -w in working tree
+ok 57 - grep HEAD searches past invalid lines on UTF-8 locale
+ok 58 - grep HEAD should quote unusual pathnames
+ok 59 - grep HEAD in subdir should quote unusual relative pathnames
+ok 60 - grep -z HEAD with unusual pathnames
+ok 61 - grep -z HEAD in subdir with unusual relative pathnames
+ok 62 - grep -w in working tree
+ok 63 - grep -w in working tree (with --column)
+ok 64 - grep -w in working tree (with --column, extended OR)
+ok 65 - grep -w in working tree (with --column, --invert-match)
+ok 66 - grep in working tree (with --column, --invert-match, extended OR)
+ok 67 - grep in working tree (with --column, --invert-match, extended AND)
+ok 68 - grep in working tree (with --column, double-negation)
+ok 69 - grep -w in working tree (with --column, -C)
+ok 70 - grep -w in working tree (with --line-number, --column)
+ok 71 - grep -w in working tree (with non-extended patterns, --column)
 ok 72 - grep -w in working tree
-ok 73 - grep -w in working tree (w)
-ok 74 - grep -w in working tree (x)
-ok 75 - grep -w in working tree (y-1)
-ok 76 - grep -w in working tree (y-2)
-ok 77 - grep -w in working tree (z)
-ok 78 - grep in working tree (with --column, --only-matching)
-ok 79 - grep in working tree (t-1)
-ok 80 - grep in working tree (t-2)
-ok 81 - grep in working tree (t-3)
-ok 82 - grep -c in working tree (no /dev/null)
-ok 83 - grep --max-depth -1 in working tree
-ok 84 - grep --max-depth 0 in working tree
-ok 85 - grep --max-depth 0 -- '*' in working tree
-ok 86 - grep --max-depth 1 in working tree
-ok 87 - grep --max-depth 0 -- t in working tree
-ok 88 - grep --max-depth 0 -- . t in working tree
-ok 89 - grep --max-depth 0 -- t . in working tree
-ok 90 - grep in working tree with '-c grep.extendedRegexp=false' interpreted as BRE
-ok 91 - grep in working tree with '-c grep.extendedRegexp=true' interpreted as ERE
-ok 92 - grep in working tree with '-c grep.patternType=basic' interpreted as BRE
-ok 93 - grep in working tree with '-c grep.patternType=extended' interpreted as ERE
-ok 94 - grep in working tree with '-c grep.patternType=fixed' interpreted as FIX
-ok 95 - grep in working tree with grep.patterntype=perl
-ok 96 # skip grep in working tree with grep.patterntype=perl errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
-ok 97 - grep in working tree with '-c grep.patternType=default -c grep.extendedRegexp=true' interpreted as ERE
-ok 98 - grep in working tree with '-c grep.extendedRegexp=true -c grep.patternType=default' interpreted as ERE
-ok 99 - grep in working tree with '-c grep.patternType=extended -c grep.extendedRegexp=false' interpreted as ERE
-ok 100 - grep in working tree with '-c grep.patternType=basic -c grep.extendedRegexp=true' interpreted as BRE
-ok 101 - grep in working tree with '-c grep.extendedRegexp=false -c grep.patternType=extended' interpreted as ERE
-ok 102 - grep in working tree with '-c grep.extendedRegexp=true -c grep.patternType=basic' interpreted as BRE
-ok 103 - grep in working tree with '-c grep.extendedRegexp=true -c grep.extendedRegexp=false' interpreted as BRE
-ok 104 - grep in working tree with '-c grep.extendedRegexp=true -c grep.patternType=basic -c grep.extendedRegexp=false' interpreted as BRE
-ok 105 - grep in working tree with '-c grep.extendedRegexp=true -c grep.patternType=extended -c grep.extendedRegexp=false' interpreted as ERE
-ok 106 - grep in working tree with '-c grep.patternType=fixed -c grep.extendedRegexp=true -c grep.patternType=default' interpreted as ERE
-ok 107 - grep in working tree with '-c grep.extendedRegexp=false -c grep.patternType=default -c grep.extendedRegexp=true' interpreted as ERE
-ok 108 - grep in working tree with '-c grep.extendedRegexp=false -c grep.extendedRegexp=true -c grep.patternType=default' interpreted as ERE
-ok 109 - grep in working tree with '-c grep.patternType=default -c grep.extendedRegexp=true -c grep.patternType=basic' interpreted as BRE
-ok 110 - grep in working tree with '-c grep.patternType=extended -c grep.patternType=default' interpreted as BRE
-ok 111 - grep in working tree with '-c grep.patternType=extended -c grep.patternType=default -c grep.patternType=fixed' interpreted as FIX
-ok 112 - grep --count in working tree
-ok 113 - grep --count -h in working tree
-ok 114 - grep in working tree should quote unusual pathnames
-ok 115 - grep in working tree in subdir should quote unusual relative pathnames
-ok 116 - grep -z in working tree with unusual pathnames
-ok 117 - grep -z in working tree in subdir with unusual relative pathnames
-ok 118 - grep exactly one char in single-char multibyte file
-ok 119 - grep two chars in single-char multibyte file
-ok 120 - grep -l -C
-ok 121 - grep -c -C
-ok 122 - grep -L -C
-ok 123 - grep --files-without-match --quiet
-ok 124 - grep --max-count 0 (must exit with non-zero)
-ok 125 - grep --max-count 3
-ok 126 - grep --max-count -1 (no limit)
-ok 127 - grep --max-count 1 --context 2
-ok 128 - grep --max-count 1 --show-function
-ok 129 - grep --max-count 2 --show-function
-ok 130 - grep --max-count 1 --count
-ok 131 - grep --max-count 1 (multiple files)
-ok 132 - grep --max-count 1 --context 1 (multiple files)
-ok 133 - grep -e A --and -e B
-ok 134 - grep ( -e A --or -e B ) --and -e B
-ok 135 - grep -e A --and --not -e B
-ok 136 - grep should ignore GREP_OPTIONS
-ok 137 - grep -f, non-existent file
-ok 138 - grep -f, one pattern
-ok 139 - grep -f, multiple patterns
-ok 140 - grep, multiple patterns
-ok 141 - grep -f, ignore empty lines
-ok 142 - grep -f, ignore empty lines, read patterns from stdin
-ok 143 - grep -f, use cwd relative file
-ok 144 - grep -q, silently report matches
-ok 145 - grep -C1 hunk mark between files
-ok 146 - log grep setup
-ok 147 - log grep (1)
-ok 148 - log grep (2)
-ok 149 - log grep (3)
-ok 150 - log grep (4)
-ok 151 - log grep (5)
-ok 152 - log grep (6)
-ok 153 - log grep (7)
-ok 154 - log grep (8)
-ok 155 - log grep (9)
-ok 156 - log grep (9)
-ok 157 - log --grep-reflog can only be used under -g
-ok 158 - log with multiple --grep uses union
-ok 159 - log --all-match with multiple --grep uses intersection
-ok 160 - log with multiple --author uses union
-ok 161 - log --all-match with multiple --author still uses union
-ok 162 - log --grep --author uses intersection
-ok 163 - log --grep --grep --author takes union of greps and intersects with author
-ok 164 - log ---all-match -grep --author --author still takes union of authors and intersects with grep
-ok 165 - log --grep --author --author takes union of authors and intersects with grep
-ok 166 - log --all-match --grep --grep --author takes intersection
-ok 167 - log --author does not search in timestamp
-ok 168 - log --committer does not search in timestamp
-ok 169 - grep with CE_VALID file
-ok 170 - grep -p with userdiff
-ok 171 - grep -p
-ok 172 - grep -p -B5
-ok 173 - grep -W
-ok 174 - grep -W shows no trailing empty lines
-ok 175 - grep -W with userdiff
-ok 176 -  includes preceding comment
-ok 177 -  includes function line
-ok 178 -  includes matching line
-ok 179 -  includes last line of the function
-ok 180 - grep --threads=0 & -c grep.threads=0
-ok 181 - grep --threads=1 & -c grep.threads=1
-ok 182 - grep --threads=2 & -c grep.threads=2
-ok 183 - grep --threads=3 & -c grep.threads=3
-ok 184 - grep --threads=4 & -c grep.threads=4
-ok 185 - grep --threads=5 & -c grep.threads=5
-ok 186 - grep --threads=6 & -c grep.threads=6
-ok 187 - grep --threads=7 & -c grep.threads=7
-ok 188 - grep --threads=8 & -c grep.threads=8
-ok 189 - grep --threads=9 & -c grep.threads=9
-ok 190 - grep --threads=10 & -c grep.threads=10
-ok 191 # skip grep --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
-ok 192 - grep from a subdirectory to search wider area (1)
-ok 193 - grep from a subdirectory to search wider area (2)
-ok 194 - grep -Fi
-ok 195 - outside of git repository
-ok 196 - outside of git repository with fallbackToNoIndex
-ok 197 - no repository with path outside $cwd
-ok 198 - inside git repository but with --no-index
-ok 199 - grep --no-index descends into repos, but not .git
-ok 200 - setup double-dash tests
-ok 201 - grep -- pattern
-ok 202 - grep -- pattern -- pathspec
-ok 203 - grep -e pattern -- path
-ok 204 - grep -e -- -- path
-ok 205 - dashdash disambiguates rev as rev
-ok 206 - dashdash disambiguates pathspec as pathspec
-ok 207 - report bogus arg without dashdash
-ok 208 - report bogus rev with dashdash
-ok 209 - allow non-existent path with dashdash
-ok 210 - grep --no-index pattern -- path
-ok 211 - grep --no-index complains of revs
-ok 212 - grep --no-index prefers paths to revs
-ok 213 - grep --no-index does not "diagnose" revs
-ok 214 - grep --perl-regexp pattern
-ok 215 # skip grep --perl-regexp pattern errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
-ok 216 - grep -P pattern
-ok 217 - grep -P with (*NO_JIT) doesn't error out
-ok 218 # skip grep -P pattern errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
-ok 219 - grep pattern with grep.extendedRegexp=true
-ok 220 - grep -P pattern with grep.extendedRegexp=true
-ok 221 - grep -P -v pattern
-ok 222 - grep -P -i pattern
-ok 223 - grep -P -w pattern
-ok 224 - grep -P backreferences work (the PCRE NO_AUTO_CAPTURE flag is not set)
-ok 225 - grep -G invalidpattern properly dies 
-ok 226 - grep invalidpattern properly dies with grep.patternType=basic
-ok 227 - grep -E invalidpattern properly dies 
-ok 228 - grep invalidpattern properly dies with grep.patternType=extended
-ok 229 - grep -P invalidpattern properly dies 
-ok 230 - grep invalidpattern properly dies with grep.patternType=perl
-ok 231 - grep -G -E -F pattern
-ok 232 - grep pattern with grep.patternType=basic, =extended, =fixed
-ok 233 - grep -E -F -G pattern
-ok 234 - grep pattern with grep.patternType=extended, =fixed, =basic
-ok 235 - grep -F -G -E pattern
-ok 236 - grep pattern with grep.patternType=fixed, =basic, =extended
-ok 237 - grep -G -F -P -E pattern
-ok 238 - grep pattern with grep.patternType=fixed, =basic, =perl, =extended
-ok 239 - grep -G -F -E -P pattern
-ok 240 - grep pattern with grep.patternType=fixed, =basic, =extended, =perl
-ok 241 - grep -P pattern with grep.patternType=fixed
-ok 242 - grep -F pattern with grep.patternType=basic
-ok 243 - grep -G pattern with grep.patternType=fixed
-ok 244 - grep -E pattern with grep.patternType=fixed
-ok 245 - grep --color, separator
-ok 246 - grep --break
-ok 247 - grep --break with context
-ok 248 - grep --heading
-ok 249 - mimic ack-grep --group
-ok 250 - grep -E "^ "
-ok 251 - grep -P "^ "
-ok 252 - grep --color -e A -e B with context
-ok 253 - grep --color -e A --and -e B with context
-ok 254 - grep --color -e A --and --not -e B with context
-ok 255 - grep --color -e A --and -e B -p with context
-ok 256 - grep can find things only in the work tree
-ok 257 - grep can find things only in the work tree (i-t-a)
-ok 258 - grep does not search work tree with assume unchanged
-ok 259 - grep can find things only in the index
-ok 260 - grep does not report i-t-a with -L --cached
-ok 261 - grep does not report i-t-a and assume unchanged with -L
-# passed all 261 test(s)
-1..261
+ok 73 - grep -w in working tree
+ok 74 - grep -w in working tree (w)
+ok 75 - grep -w in working tree (x)
+ok 76 - grep -w in working tree (y-1)
+ok 77 - grep -w in working tree (y-2)
+ok 78 - grep -w in working tree (z)
+ok 79 - grep in working tree (with --column, --only-matching)
+ok 80 - grep in working tree (t-1)
+ok 81 - grep in working tree (t-2)
+ok 82 - grep in working tree (t-3)
+ok 83 - grep -c in working tree (no /dev/null)
+ok 84 - grep --max-depth -1 in working tree
+ok 85 - grep --max-depth 0 in working tree
+ok 86 - grep --max-depth 0 -- '*' in working tree
+ok 87 - grep --max-depth 1 in working tree
+ok 88 - grep --max-depth 0 -- t in working tree
+ok 89 - grep --max-depth 0 -- . t in working tree
+ok 90 - grep --max-depth 0 -- t . in working tree
+ok 91 - grep in working tree with '-c grep.extendedRegexp=false' interpreted as BRE
+ok 92 - grep in working tree with '-c grep.extendedRegexp=true' interpreted as ERE
+ok 93 - grep in working tree with '-c grep.patternType=basic' interpreted as BRE
+ok 94 - grep in working tree with '-c grep.patternType=extended' interpreted as ERE
+ok 95 - grep in working tree with '-c grep.patternType=fixed' interpreted as FIX
+ok 96 - grep in working tree with grep.patterntype=perl
+ok 97 # skip grep in working tree with grep.patterntype=perl errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
+ok 98 - grep in working tree with '-c grep.patternType=default -c grep.extendedRegexp=true' interpreted as ERE
+ok 99 - grep in working tree with '-c grep.extendedRegexp=true -c grep.patternType=default' interpreted as ERE
+ok 100 - grep in working tree with '-c grep.patternType=extended -c grep.extendedRegexp=false' interpreted as ERE
+ok 101 - grep in working tree with '-c grep.patternType=basic -c grep.extendedRegexp=true' interpreted as BRE
+ok 102 - grep in working tree with '-c grep.extendedRegexp=false -c grep.patternType=extended' interpreted as ERE
+ok 103 - grep in working tree with '-c grep.extendedRegexp=true -c grep.patternType=basic' interpreted as BRE
+ok 104 - grep in working tree with '-c grep.extendedRegexp=true -c grep.extendedRegexp=false' interpreted as BRE
+ok 105 - grep in working tree with '-c grep.extendedRegexp=true -c grep.patternType=basic -c grep.extendedRegexp=false' interpreted as BRE
+ok 106 - grep in working tree with '-c grep.extendedRegexp=true -c grep.patternType=extended -c grep.extendedRegexp=false' interpreted as ERE
+ok 107 - grep in working tree with '-c grep.patternType=fixed -c grep.extendedRegexp=true -c grep.patternType=default' interpreted as ERE
+ok 108 - grep in working tree with '-c grep.extendedRegexp=false -c grep.patternType=default -c grep.extendedRegexp=true' interpreted as ERE
+ok 109 - grep in working tree with '-c grep.extendedRegexp=false -c grep.extendedRegexp=true -c grep.patternType=default' interpreted as ERE
+ok 110 - grep in working tree with '-c grep.patternType=default -c grep.extendedRegexp=true -c grep.patternType=basic' interpreted as BRE
+ok 111 - grep in working tree with '-c grep.patternType=extended -c grep.patternType=default' interpreted as BRE
+ok 112 - grep in working tree with '-c grep.patternType=extended -c grep.patternType=default -c grep.patternType=fixed' interpreted as FIX
+ok 113 - grep --count in working tree
+ok 114 - grep --count -h in working tree
+ok 115 - grep in working tree searches past invalid lines on UTF-8 locale
+ok 116 - grep in working tree should quote unusual pathnames
+ok 117 - grep in working tree in subdir should quote unusual relative pathnames
+ok 118 - grep -z in working tree with unusual pathnames
+ok 119 - grep -z in working tree in subdir with unusual relative pathnames
+ok 120 - grep exactly one char in single-char multibyte file
+ok 121 - grep two chars in single-char multibyte file
+ok 122 - grep -l -C
+ok 123 - grep -c -C
+ok 124 - grep -L -C
+ok 125 - grep --files-without-match --quiet
+ok 126 - grep --max-count 0 (must exit with non-zero)
+ok 127 - grep --max-count 3
+ok 128 - grep --max-count -1 (no limit)
+ok 129 - grep --max-count 1 --context 2
+ok 130 - grep --max-count 1 --show-function
+ok 131 - grep --max-count 2 --show-function
+ok 132 - grep --max-count 1 --count
+ok 133 - grep --max-count 1 (multiple files)
+ok 134 - grep --max-count 1 --context 1 (multiple files)
+ok 135 - grep -e A --and -e B
+ok 136 - grep ( -e A --or -e B ) --and -e B
+ok 137 - grep -e A --and --not -e B
+ok 138 - grep should ignore GREP_OPTIONS
+ok 139 - grep -f, non-existent file
+ok 140 - grep -f, one pattern
+ok 141 - grep -f, multiple patterns
+ok 142 - grep, multiple patterns
+ok 143 - grep -f, ignore empty lines
+ok 144 - grep -f, ignore empty lines, read patterns from stdin
+ok 145 - grep -f, use cwd relative file
+ok 146 - grep -q, silently report matches
+ok 147 - grep -C1 hunk mark between files
+ok 148 - log grep setup
+ok 149 - log grep (1)
+ok 150 - log grep (2)
+ok 151 - log grep (3)
+ok 152 - log grep (4)
+ok 153 - log grep (5)
+ok 154 - log grep (6)
+ok 155 - log grep (7)
+ok 156 - log grep (8)
+ok 157 - log grep (9)
+ok 158 - log grep (9)
+ok 159 - log --grep-reflog can only be used under -g
+ok 160 - log with multiple --grep uses union
+ok 161 - log --all-match with multiple --grep uses intersection
+ok 162 - log with multiple --author uses union
+ok 163 - log --all-match with multiple --author still uses union
+ok 164 - log --grep --author uses intersection
+ok 165 - log --grep --grep --author takes union of greps and intersects with author
+ok 166 - log ---all-match -grep --author --author still takes union of authors and intersects with grep
+ok 167 - log --grep --author --author takes union of authors and intersects with grep
+ok 168 - log --all-match --grep --grep --author takes intersection
+ok 169 - log --author does not search in timestamp
+ok 170 - log --committer does not search in timestamp
+ok 171 - grep with CE_VALID file
+ok 172 - grep -p with userdiff
+ok 173 - grep -p
+ok 174 - grep -p -B5
+ok 175 - grep -W
+ok 176 - grep -W shows no trailing empty lines
+ok 177 - grep -W with userdiff
+ok 178 -  includes preceding comment
+ok 179 -  includes function line
+ok 180 -  includes matching line
+ok 181 -  includes last line of the function
+ok 182 - grep --threads=0 & -c grep.threads=0
+ok 183 - grep --threads=1 & -c grep.threads=1
+ok 184 - grep --threads=2 & -c grep.threads=2
+ok 185 - grep --threads=3 & -c grep.threads=3
+ok 186 - grep --threads=4 & -c grep.threads=4
+ok 187 - grep --threads=5 & -c grep.threads=5
+ok 188 - grep --threads=6 & -c grep.threads=6
+ok 189 - grep --threads=7 & -c grep.threads=7
+ok 190 - grep --threads=8 & -c grep.threads=8
+ok 191 - grep --threads=9 & -c grep.threads=9
+ok 192 - grep --threads=10 & -c grep.threads=10
+ok 193 # skip grep --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
+ok 194 - grep from a subdirectory to search wider area (1)
+ok 195 - grep from a subdirectory to search wider area (2)
+ok 196 - grep -Fi
+ok 197 - outside of git repository
+ok 198 - outside of git repository with fallbackToNoIndex
+ok 199 - no repository with path outside $cwd
+ok 200 - inside git repository but with --no-index
+ok 201 - grep --no-index descends into repos, but not .git
+ok 202 - setup double-dash tests
+ok 203 - grep -- pattern
+ok 204 - grep -- pattern -- pathspec
+ok 205 - grep -e pattern -- path
+ok 206 - grep -e -- -- path
+ok 207 - dashdash disambiguates rev as rev
+ok 208 - dashdash disambiguates pathspec as pathspec
+ok 209 - report bogus arg without dashdash
+ok 210 - report bogus rev with dashdash
+ok 211 - allow non-existent path with dashdash
+ok 212 - grep --no-index pattern -- path
+ok 213 - grep --no-index complains of revs
+ok 214 - grep --no-index prefers paths to revs
+ok 215 - grep --no-index does not "diagnose" revs
+ok 216 - grep --perl-regexp pattern
+ok 217 # skip grep --perl-regexp pattern errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
+ok 218 - grep -P pattern
+ok 219 - grep -P with (*NO_JIT) doesn't error out
+ok 220 # skip grep -P pattern errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
+ok 221 - grep pattern with grep.extendedRegexp=true
+ok 222 - grep -P pattern with grep.extendedRegexp=true
+ok 223 - grep -P -v pattern
+ok 224 - grep -P -i pattern
+ok 225 - grep -P -w pattern
+ok 226 - grep -P backreferences work (the PCRE NO_AUTO_CAPTURE flag is not set)
+ok 227 - grep -G invalidpattern properly dies 
+ok 228 - grep invalidpattern properly dies with grep.patternType=basic
+ok 229 - grep -E invalidpattern properly dies 
+ok 230 - grep invalidpattern properly dies with grep.patternType=extended
+ok 231 - grep -P invalidpattern properly dies 
+ok 232 - grep invalidpattern properly dies with grep.patternType=perl
+ok 233 - grep -G -E -F pattern
+ok 234 - grep pattern with grep.patternType=basic, =extended, =fixed
+ok 235 - grep -E -F -G pattern
+ok 236 - grep pattern with grep.patternType=extended, =fixed, =basic
+ok 237 - grep -F -G -E pattern
+ok 238 - grep pattern with grep.patternType=fixed, =basic, =extended
+ok 239 - grep -G -F -P -E pattern
+ok 240 - grep pattern with grep.patternType=fixed, =basic, =perl, =extended
+ok 241 - grep -G -F -E -P pattern
+ok 242 - grep pattern with grep.patternType=fixed, =basic, =extended, =perl
+ok 243 - grep -P pattern with grep.patternType=fixed
+ok 244 - grep -F pattern with grep.patternType=basic
+ok 245 - grep -G pattern with grep.patternType=fixed
+ok 246 - grep -E pattern with grep.patternType=fixed
+ok 247 - grep --color, separator
+ok 248 - grep --break
+ok 249 - grep --break with context
+ok 250 - grep --heading
+ok 251 - mimic ack-grep --group
+ok 252 - grep -E "^ "
+ok 253 - grep -P "^ "
+ok 254 - grep --color -e A -e B with context
+ok 255 - grep --color -e A --and -e B with context
+ok 256 - grep --color -e A --and --not -e B with context
+ok 257 - grep --color -e A --and -e B -p with context
+ok 258 - grep can find things only in the work tree
+ok 259 - grep can find things only in the work tree (i-t-a)
+ok 260 - grep does not search work tree with assume unchanged
+ok 261 - grep can find things only in the index
+ok 262 - grep does not report i-t-a with -L --cached
+ok 263 - grep does not report i-t-a and assume unchanged with -L
+# passed all 263 test(s)
+1..263
 *** t7811-grep-open.sh ***
 ok 1 - determine default pager
 ok 2 - setup
@@ -31428,8 +31526,9 @@ ok 51 - failed schedule prevents config change
 ok 52 - --no-detach causes maintenance to not run in background
 ok 53 - --detach causes maintenance to run in background
 ok 54 - repacking loose objects is quiet
-# passed all 54 test(s)
-1..54
+ok 55 - maintenance aborts with existing lock file
+# passed all 55 test(s)
+1..55
 *** t8001-annotate.sh ***
 ok 1 - setup A lines
 ok 2 - blame 1 author
@@ -31680,10 +31779,14 @@ ok 126 - blame --abbrev=<n> works
 ok 127 - blame -l aligns regular and boundary commits
 ok 128 - blame --abbrev with full length behaves like -l
 ok 129 - --no-abbrev works like --abbrev with full length
-ok 130 - --exclude-promisor-objects does not BUG-crash
-ok 131 - blame with uncommitted edits in partial clone does not crash
-# passed all 131 test(s)
-1..131
+ok 130 - blame --abbrev gets truncated
+ok 131 - blame --abbrev gets truncated with boundary commit
+ok 132 - blame --abbrev -b truncates the blank boundary
+ok 133 - blame with excessive --abbrev and -b culls to hash length
+ok 134 - --exclude-promisor-objects does not BUG-crash
+ok 135 - blame with uncommitted edits in partial clone does not crash
+# passed all 135 test(s)
+1..135
 *** t8003-blame-corner-cases.sh ***
 ok 1 - setup
 ok 2 - straight copy without -C
@@ -32438,228 +32541,234 @@ ok 27 - B: fail on invalid committer (2)
 ok 28 - B: fail on invalid committer (3)
 ok 29 - B: fail on invalid committer (4)
 ok 30 - B: fail on invalid committer (5)
-ok 31 - C: incremental import create pack from stdin
-ok 32 - C: verify pack
-ok 33 - C: validate reuse existing blob
-ok 34 - C: verify commit
-ok 35 - C: validate rename result
-ok 36 - D: inline data in commit
-ok 37 - D: verify pack
-ok 38 - D: validate new files added
-ok 39 - D: verify file5
-ok 40 - D: verify file6
-ok 41 - E: rfc2822 date, --date-format=raw
-ok 42 - E: rfc2822 date, --date-format=rfc2822
-ok 43 - E: verify pack
-ok 44 - E: verify commit
-ok 45 - F: non-fast-forward update skips
-ok 46 - F: verify pack
-ok 47 - F: verify other commit
-ok 48 - G: non-fast-forward update forced
-ok 49 - G: verify pack
-ok 50 - G: branch changed, but logged
-ok 51 - H: deletall, add 1
-ok 52 - H: verify pack
-ok 53 - H: validate old files removed, new files added
-ok 54 - H: verify file
-ok 55 - I: export-pack-edges
-ok 56 - I: verify edge list
-ok 57 - J: reset existing branch creates empty commit
-ok 58 - J: branch has 1 commit, empty tree
-ok 59 - J: tag must fail on empty branch
-ok 60 - K: reinit branch with from
-ok 61 - K: verify K^1 = branch^1
-ok 62 - L: verify internal tree sorting
-ok 63 - L: nested tree copy does not corrupt deltas
-ok 64 - M: rename file in same subdirectory
-ok 65 - M: rename file to new subdirectory
-ok 66 - M: rename subdirectory to new subdirectory
-ok 67 - M: rename root ("") to subdirectory
-ok 68 - M: rename root () to subdirectory
-ok 69 - N: copy file in same subdirectory
-ok 70 - N: copy then modify subdirectory
-ok 71 - N: copy dirty subdirectory
-ok 72 - N: copy directory by id
-ok 73 - N: read and copy directory
-ok 74 - N: empty directory reads as missing
-ok 75 - N: copy root ("") by tree hash
-ok 76 - N: copy root ("") by path
-ok 77 - N: copy root () by tree hash
-ok 78 - N: copy root () by path
-ok 79 - N: delete directory by copying
-ok 80 - N: modify copied tree
-ok 81 - N: reject foo/ syntax
-ok 82 - N: reject foo/ syntax in copy source
-ok 83 - N: reject foo/ syntax in rename source
-ok 84 - N: reject foo/ syntax in ls argument
-ok 85 - N: copy to root ("") by id and modify
-ok 86 - N: extract subtree to the root ("")
-ok 87 - N: modify subtree, extract it to the root (""), and modify again
-ok 88 - N: copy to root () by id and modify
-ok 89 - N: extract subtree to the root ()
-ok 90 - N: modify subtree, extract it to the root (), and modify again
-ok 91 - O: comments are all skipped
-ok 92 - O: blank lines not necessary after data commands
-ok 93 - O: repack before next test
-ok 94 - O: blank lines not necessary after other commands
-ok 95 - O: progress outputs as requested by input
-ok 96 - P: superproject & submodule mix
-ok 97 - P: verbatim SHA gitlinks
-ok 98 - P: fail on inline gitlink
-ok 99 - P: fail on blob mark in gitlink
-ok 100 - Q: commit notes
-ok 101 - Q: verify pack
-ok 102 - Q: verify first commit
-ok 103 - Q: verify second commit
-ok 104 - Q: verify third commit
-ok 105 - Q: verify first notes commit
-ok 106 - Q: verify first notes tree
-ok 107 - Q: verify first note for first commit
-ok 108 - Q: verify first note for second commit
-ok 109 - Q: verify first note for third commit
-ok 110 - Q: verify second notes commit
-ok 111 - Q: verify second notes tree
-ok 112 - Q: verify second note for first commit
+ok 31 - B: fail on invalid file path of ..
+ok 32 - B: fail on invalid file path of .
+ok 33 # skip B: fail on invalid file path of C: (missing WINDOWS)
+ok 34 - B: fail on invalid file path of .git
+ok 35 - B: fail on invalid file path of .gitmodules
+ok 36 - C: incremental import create pack from stdin
+ok 37 - C: verify pack
+ok 38 - C: validate reuse existing blob
+ok 39 - C: verify commit
+ok 40 - C: validate rename result
+ok 41 - D: inline data in commit
+ok 42 - D: verify pack
+ok 43 - D: validate new files added
+ok 44 - D: verify file5
+ok 45 - D: verify file6
+ok 46 - E: rfc2822 date, --date-format=raw
+ok 47 - E: rfc2822 date, --date-format=rfc2822
+ok 48 - E: verify pack
+ok 49 - E: verify commit
+ok 50 - F: non-fast-forward update skips
+ok 51 - F: verify pack
+ok 52 - F: verify other commit
+ok 53 - G: non-fast-forward update forced
+ok 54 - G: verify pack
+ok 55 - G: branch changed, but logged
+ok 56 - H: deletall, add 1
+ok 57 - H: verify pack
+ok 58 - H: validate old files removed, new files added
+ok 59 - H: verify file
+ok 60 - I: export-pack-edges
+ok 61 - I: verify edge list
+ok 62 - J: reset existing branch creates empty commit
+ok 63 - J: branch has 1 commit, empty tree
+ok 64 - J: tag must fail on empty branch
+ok 65 - K: reinit branch with from
+ok 66 - K: verify K^1 = branch^1
+ok 67 - L: verify internal tree sorting
+ok 68 - L: nested tree copy does not corrupt deltas
+ok 69 - M: rename file in same subdirectory
+ok 70 - M: rename file to new subdirectory
+ok 71 - M: rename subdirectory to new subdirectory
+ok 72 - M: rename root ("") to subdirectory
+ok 73 - M: rename root () to subdirectory
+ok 74 - N: copy file in same subdirectory
+ok 75 - N: copy then modify subdirectory
+ok 76 - N: copy dirty subdirectory
+ok 77 - N: copy directory by id
+ok 78 - N: read and copy directory
+ok 79 - N: empty directory reads as missing
+ok 80 - N: copy root ("") by tree hash
+ok 81 - N: copy root ("") by path
+ok 82 - N: copy root () by tree hash
+ok 83 - N: copy root () by path
+ok 84 - N: delete directory by copying
+ok 85 - N: modify copied tree
+ok 86 - N: reject foo/ syntax
+ok 87 - N: reject foo/ syntax in copy source
+ok 88 - N: reject foo/ syntax in rename source
+ok 89 - N: reject foo/ syntax in ls argument
+ok 90 - N: copy to root ("") by id and modify
+ok 91 - N: extract subtree to the root ("")
+ok 92 - N: modify subtree, extract it to the root (""), and modify again
+ok 93 - N: copy to root () by id and modify
+ok 94 - N: extract subtree to the root ()
+ok 95 - N: modify subtree, extract it to the root (), and modify again
+ok 96 - O: comments are all skipped
+ok 97 - O: blank lines not necessary after data commands
+ok 98 - O: repack before next test
+ok 99 - O: blank lines not necessary after other commands
+ok 100 - O: progress outputs as requested by input
+ok 101 - P: superproject & submodule mix
+ok 102 - P: verbatim SHA gitlinks
+ok 103 - P: fail on inline gitlink
+ok 104 - P: fail on blob mark in gitlink
+ok 105 - Q: commit notes
+ok 106 - Q: verify pack
+ok 107 - Q: verify first commit
+ok 108 - Q: verify second commit
+ok 109 - Q: verify third commit
+ok 110 - Q: verify first notes commit
+ok 111 - Q: verify first notes tree
+ok 112 - Q: verify first note for first commit
 ok 113 - Q: verify first note for second commit
 ok 114 - Q: verify first note for third commit
-ok 115 - Q: verify third notes commit
-ok 116 - Q: verify third notes tree
-ok 117 - Q: verify third note for first commit
-ok 118 - Q: verify fourth notes commit
-ok 119 - Q: verify fourth notes tree
-ok 120 - Q: verify second note for second commit
-ok 121 - Q: deny note on empty branch
-ok 122 - R: abort on unsupported feature
-ok 123 - R: supported feature is accepted
-ok 124 - R: abort on receiving feature after data command
-ok 125 - R: import-marks features forbidden by default
-ok 126 - R: only one import-marks feature allowed per stream
-ok 127 - R: export-marks feature forbidden by default
-ok 128 - R: export-marks feature results in a marks file being created
-ok 129 - R: export-marks options can be overridden by commandline options
-ok 130 - R: catch typo in marks file name
-ok 131 - R: import and output marks can be the same file
-ok 132 - R: --import-marks=foo --output-marks=foo to create foo fails
-ok 133 - R: --import-marks-if-exists
-ok 134 - R: feature import-marks-if-exists
-ok 135 - R: import to output marks works without any content
-ok 136 - R: import marks prefers commandline marks file over the stream
-ok 137 - R: multiple --import-marks= should be honoured
-ok 138 - R: feature relative-marks should be honoured
-ok 139 - R: feature no-relative-marks should be honoured
-ok 140 - R: feature ls supported
-ok 141 - R: feature cat-blob supported
-ok 142 - R: cat-blob-fd must be a nonnegative integer
-ok 143 - R: print old blob
-ok 144 - R: in-stream cat-blob-fd not respected
-ok 145 - R: print mark for new blob
-ok 146 - R: print new blob
-ok 147 - R: print new blob by sha1
-ok 148 - setup: big file
-ok 149 - R: print two blobs to stdout
-ok 150 - R: copy using cat-file
-ok 151 - R: print blob mid-commit
-ok 152 - R: print staged blob within commit
-ok 153 - R: quiet option results in no stats being output
-ok 154 - R: feature done means terminating "done" is mandatory
-ok 155 - R: terminating "done" with trailing gibberish is ok
-ok 156 - R: terminating "done" within commit
-ok 157 - R: die on unknown option
-ok 158 - R: unknown commandline options are rejected
-ok 159 - R: die on invalid option argument
-ok 160 - R: ignore non-git options
-ok 161 - R: corrupt lines do not mess marks file
-ok 162 - R: blob bigger than threshold
-ok 163 - R: verify created pack
-ok 164 - R: verify written objects
-ok 165 - R: blob appears only once
-ok 166 - S: initialize for S tests
-ok 167 - S: filemodify with garbage after mark must fail
-ok 168 - S: filemodify with garbage after inline must fail
-ok 169 - S: filemodify with garbage after sha1 must fail
-ok 170 - S: notemodify with garbage after mark dataref must fail
-ok 171 - S: notemodify with garbage after inline dataref must fail
-ok 172 - S: notemodify with garbage after sha1 dataref must fail
-ok 173 - S: notemodify with garbage after mark commit-ish must fail
-ok 174 - S: from with garbage after mark must fail
-ok 175 - S: merge with garbage after mark must fail
-ok 176 - S: tag with garbage after mark must fail
-ok 177 - S: cat-blob with garbage after mark must fail
-ok 178 - S: ls with garbage after mark must fail
-ok 179 - S: ls with garbage after sha1 must fail
-ok 180 - S: paths at EOL with quoted spaces must work
-ok 181 - S: paths at EOL with unquoted spaces must work
-ok 182 - S: paths at EOL with octal escapes must work
-ok 183 - S: paths before space with quoted spaces must work
-ok 184 - S: paths before space with no unquoted spaces must work
-ok 185 - S: paths before space with octal escapes must work
-ok 186 - S: filemodify with unclosed " in path must fail
-ok 187 - S: filemodify with invalid escape in quoted path must fail
-ok 188 - S: filemodify with escaped NUL in quoted path must fail
-ok 189 - S: filemodify with garbage after quoted path must fail
-ok 190 - S: filemodify with space after quoted path must fail
-ok 191 - S: filedelete with unclosed " in path must fail
-ok 192 - S: filedelete with invalid escape in quoted path must fail
-ok 193 - S: filedelete with escaped NUL in quoted path must fail
-ok 194 - S: filedelete with garbage after quoted path must fail
-ok 195 - S: filedelete with space after quoted path must fail
-ok 196 - S: filecopy with unclosed " in source must fail
-ok 197 - S: filecopy with invalid escape in quoted source must fail
-ok 198 - S: filecopy with escaped NUL in quoted source must fail
-ok 199 - S: filecopy with missing space after quoted source must fail
-ok 200 - S: filecopy with missing space after unquoted source must fail
-ok 201 - S: filecopy with unclosed " in dest must fail
-ok 202 - S: filecopy with invalid escape in quoted dest must fail
-ok 203 - S: filecopy with escaped NUL in quoted dest must fail
-ok 204 - S: filecopy with garbage after quoted dest must fail
-ok 205 - S: filecopy with space after quoted dest must fail
-ok 206 - S: filerename with unclosed " in source must fail
-ok 207 - S: filerename with invalid escape in quoted source must fail
-ok 208 - S: filerename with escaped NUL in quoted source must fail
-ok 209 - S: filerename with missing space after quoted source must fail
-ok 210 - S: filerename with missing space after unquoted source must fail
-ok 211 - S: filerename with unclosed " in dest must fail
-ok 212 - S: filerename with invalid escape in quoted dest must fail
-ok 213 - S: filerename with escaped NUL in quoted dest must fail
-ok 214 - S: filerename with garbage after quoted dest must fail
-ok 215 - S: filerename with space after quoted dest must fail
-ok 216 - S: ls (in commit) with unclosed " in path must fail
-ok 217 - S: ls (in commit) with invalid escape in quoted path must fail
-ok 218 - S: ls (in commit) with escaped NUL in quoted path must fail
-ok 219 - S: ls (in commit) with garbage after quoted path must fail
-ok 220 - S: ls (in commit) with space after quoted path must fail
-ok 221 - S: ls (without dataref in commit) with unclosed " in path must fail
-ok 222 - S: ls (without dataref in commit) with invalid escape in quoted path must fail
-ok 223 - S: ls (without dataref in commit) with escaped NUL in quoted path must fail
-ok 224 - S: ls (without dataref in commit) with garbage after quoted path must fail
-ok 225 - S: ls (without dataref in commit) with space after quoted path must fail
-ok 226 - T: ls root ("") tree
-ok 227 - T: ls root () tree
-ok 228 - T: delete branch
-ok 229 - T: empty reset doesnt delete branch
-ok 230 - U: initialize for U tests
-ok 231 - U: filedelete file succeeds
-ok 232 - U: validate file delete result
-ok 233 - U: filedelete directory succeeds
-ok 234 - U: validate directory delete result
-ok 235 - U: filedelete root ("") succeeds
-ok 236 - U: validate root ("") delete result
-ok 237 - U: filedelete root () succeeds
-ok 238 - U: validate root () delete result
-ok 239 - V: checkpoint helper does not get stuck with extra output
-ok 240 - V: checkpoint updates refs after reset
-ok 241 - V: checkpoint updates refs and marks after commit
-ok 242 - V: checkpoint updates refs and marks after commit (no new objects)
-ok 243 - V: checkpoint updates tags after tag
-ok 244 - W: get-mark & empty orphan commit with no newlines
-ok 245 - W: get-mark & empty orphan commit with one newline
-ok 246 - W: get-mark & empty orphan commit with ugly second newline
-ok 247 - W: get-mark & empty orphan commit with erroneous third newline
-ok 248 - X: handling encoding
-ok 249 - Y: setup
-ok 250 - Y: rewrite submodules
-# passed all 250 test(s)
-1..250
+ok 115 - Q: verify second notes commit
+ok 116 - Q: verify second notes tree
+ok 117 - Q: verify second note for first commit
+ok 118 - Q: verify first note for second commit
+ok 119 - Q: verify first note for third commit
+ok 120 - Q: verify third notes commit
+ok 121 - Q: verify third notes tree
+ok 122 - Q: verify third note for first commit
+ok 123 - Q: verify fourth notes commit
+ok 124 - Q: verify fourth notes tree
+ok 125 - Q: verify second note for second commit
+ok 126 - Q: deny note on empty branch
+ok 127 - R: abort on unsupported feature
+ok 128 - R: supported feature is accepted
+ok 129 - R: abort on receiving feature after data command
+ok 130 - R: import-marks features forbidden by default
+ok 131 - R: only one import-marks feature allowed per stream
+ok 132 - R: export-marks feature forbidden by default
+ok 133 - R: export-marks feature results in a marks file being created
+ok 134 - R: export-marks options can be overridden by commandline options
+ok 135 - R: catch typo in marks file name
+ok 136 - R: import and output marks can be the same file
+ok 137 - R: --import-marks=foo --output-marks=foo to create foo fails
+ok 138 - R: --import-marks-if-exists
+ok 139 - R: feature import-marks-if-exists
+ok 140 - R: import to output marks works without any content
+ok 141 - R: import marks prefers commandline marks file over the stream
+ok 142 - R: multiple --import-marks= should be honoured
+ok 143 - R: feature relative-marks should be honoured
+ok 144 - R: feature no-relative-marks should be honoured
+ok 145 - R: feature ls supported
+ok 146 - R: feature cat-blob supported
+ok 147 - R: cat-blob-fd must be a nonnegative integer
+ok 148 - R: print old blob
+ok 149 - R: in-stream cat-blob-fd not respected
+ok 150 - R: print mark for new blob
+ok 151 - R: print new blob
+ok 152 - R: print new blob by sha1
+ok 153 - setup: big file
+ok 154 - R: print two blobs to stdout
+ok 155 - R: copy using cat-file
+ok 156 - R: print blob mid-commit
+ok 157 - R: print staged blob within commit
+ok 158 - R: quiet option results in no stats being output
+ok 159 - R: feature done means terminating "done" is mandatory
+ok 160 - R: terminating "done" with trailing gibberish is ok
+ok 161 - R: terminating "done" within commit
+ok 162 - R: die on unknown option
+ok 163 - R: unknown commandline options are rejected
+ok 164 - R: die on invalid option argument
+ok 165 - R: ignore non-git options
+ok 166 - R: corrupt lines do not mess marks file
+ok 167 - R: blob bigger than threshold
+ok 168 - R: verify created pack
+ok 169 - R: verify written objects
+ok 170 - R: blob appears only once
+ok 171 - S: initialize for S tests
+ok 172 - S: filemodify with garbage after mark must fail
+ok 173 - S: filemodify with garbage after inline must fail
+ok 174 - S: filemodify with garbage after sha1 must fail
+ok 175 - S: notemodify with garbage after mark dataref must fail
+ok 176 - S: notemodify with garbage after inline dataref must fail
+ok 177 - S: notemodify with garbage after sha1 dataref must fail
+ok 178 - S: notemodify with garbage after mark commit-ish must fail
+ok 179 - S: from with garbage after mark must fail
+ok 180 - S: merge with garbage after mark must fail
+ok 181 - S: tag with garbage after mark must fail
+ok 182 - S: cat-blob with garbage after mark must fail
+ok 183 - S: ls with garbage after mark must fail
+ok 184 - S: ls with garbage after sha1 must fail
+ok 185 - S: paths at EOL with quoted spaces must work
+ok 186 - S: paths at EOL with unquoted spaces must work
+ok 187 - S: paths at EOL with octal escapes must work
+ok 188 - S: paths before space with quoted spaces must work
+ok 189 - S: paths before space with no unquoted spaces must work
+ok 190 - S: paths before space with octal escapes must work
+ok 191 - S: filemodify with unclosed " in path must fail
+ok 192 - S: filemodify with invalid escape in quoted path must fail
+ok 193 - S: filemodify with escaped NUL in quoted path must fail
+ok 194 - S: filemodify with garbage after quoted path must fail
+ok 195 - S: filemodify with space after quoted path must fail
+ok 196 - S: filedelete with unclosed " in path must fail
+ok 197 - S: filedelete with invalid escape in quoted path must fail
+ok 198 - S: filedelete with escaped NUL in quoted path must fail
+ok 199 - S: filedelete with garbage after quoted path must fail
+ok 200 - S: filedelete with space after quoted path must fail
+ok 201 - S: filecopy with unclosed " in source must fail
+ok 202 - S: filecopy with invalid escape in quoted source must fail
+ok 203 - S: filecopy with escaped NUL in quoted source must fail
+ok 204 - S: filecopy with missing space after quoted source must fail
+ok 205 - S: filecopy with missing space after unquoted source must fail
+ok 206 - S: filecopy with unclosed " in dest must fail
+ok 207 - S: filecopy with invalid escape in quoted dest must fail
+ok 208 - S: filecopy with escaped NUL in quoted dest must fail
+ok 209 - S: filecopy with garbage after quoted dest must fail
+ok 210 - S: filecopy with space after quoted dest must fail
+ok 211 - S: filerename with unclosed " in source must fail
+ok 212 - S: filerename with invalid escape in quoted source must fail
+ok 213 - S: filerename with escaped NUL in quoted source must fail
+ok 214 - S: filerename with missing space after quoted source must fail
+ok 215 - S: filerename with missing space after unquoted source must fail
+ok 216 - S: filerename with unclosed " in dest must fail
+ok 217 - S: filerename with invalid escape in quoted dest must fail
+ok 218 - S: filerename with escaped NUL in quoted dest must fail
+ok 219 - S: filerename with garbage after quoted dest must fail
+ok 220 - S: filerename with space after quoted dest must fail
+ok 221 - S: ls (in commit) with unclosed " in path must fail
+ok 222 - S: ls (in commit) with invalid escape in quoted path must fail
+ok 223 - S: ls (in commit) with escaped NUL in quoted path must fail
+ok 224 - S: ls (in commit) with garbage after quoted path must fail
+ok 225 - S: ls (in commit) with space after quoted path must fail
+ok 226 - S: ls (without dataref in commit) with unclosed " in path must fail
+ok 227 - S: ls (without dataref in commit) with invalid escape in quoted path must fail
+ok 228 - S: ls (without dataref in commit) with escaped NUL in quoted path must fail
+ok 229 - S: ls (without dataref in commit) with garbage after quoted path must fail
+ok 230 - S: ls (without dataref in commit) with space after quoted path must fail
+ok 231 - T: ls root ("") tree
+ok 232 - T: ls root () tree
+ok 233 - T: delete branch
+ok 234 - T: empty reset doesnt delete branch
+ok 235 - U: initialize for U tests
+ok 236 - U: filedelete file succeeds
+ok 237 - U: validate file delete result
+ok 238 - U: filedelete directory succeeds
+ok 239 - U: validate directory delete result
+ok 240 - U: filedelete root ("") succeeds
+ok 241 - U: validate root ("") delete result
+ok 242 - U: filedelete root () succeeds
+ok 243 - U: validate root () delete result
+ok 244 - V: checkpoint helper does not get stuck with extra output
+ok 245 - V: checkpoint updates refs after reset
+ok 246 - V: checkpoint updates refs and marks after commit
+ok 247 - V: checkpoint updates refs and marks after commit (no new objects)
+ok 248 - V: checkpoint updates tags after tag
+ok 249 - W: get-mark & empty orphan commit with no newlines
+ok 250 - W: get-mark & empty orphan commit with one newline
+ok 251 - W: get-mark & empty orphan commit with ugly second newline
+ok 252 - W: get-mark & empty orphan commit with erroneous third newline
+ok 253 - X: handling encoding
+ok 254 - X: replace ref that becomes useless is removed
+ok 255 - Y: setup
+ok 256 - Y: rewrite submodules
+# passed all 256 test(s)
+1..256
 *** t9301-fast-import-notes.sh ***
 ok 1 - set up main branch
 ok 2 - add notes with simple M command
@@ -33507,10 +33616,10 @@ ok 67 - prompt - conflict indicator
 # passed all 67 test(s)
 1..67
 
-missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS ADD_OUT AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE FSMONITOR_DAEMON GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
+missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UTF8_NFD_TO_NFC WINDOWS
 
 fixed   1
-success 29773
+success 29908
 failed  0
-broken  268
-total   30524
+broken  271
+total   30631
