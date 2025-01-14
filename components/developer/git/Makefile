@@ -29,13 +29,13 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.47.1
+COMPONENT_VERSION=	2.48.1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:f3d8f9bb23ae392374e91cd9d395970dabc5b9c5ee72f39884613cd84a6ed310
+COMPONENT_ARCHIVE_HASH=	sha256:1c5d545f5dc1eb51e95d2c50d98fdf88b1a36ba1fa30e9ae5d5385c6024f82ad
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
@@ -46,7 +46,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:ffc2005a89b056c0727b667f6beda0068371619762ea4844ad0229091befee13
+COMPONENT_ARCHIVE_HASH_1=	sha256:4c0ede7afa4d6dbf602d2f2fd151c36ab57d3224e6b9fd17342e85f05d386886
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -150,6 +150,7 @@ $(BUILD_DIR_64)/.contrib: $(BUILD_DIR_64)/.contrib-subtree
 
 # Install steps taken from contrib/subtree/INSTALL
 $(BUILD_DIR_64)/.contrib-subtree:
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/Documentation asciidoc.conf
 	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR)
 	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install
 	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install-doc
