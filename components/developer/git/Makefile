@@ -150,6 +150,7 @@ $(BUILD_DIR_64)/.contrib: $(BUILD_DIR_64)/.contrib-subtree
 
 # Install steps taken from contrib/subtree/INSTALL
 $(BUILD_DIR_64)/.contrib-subtree:
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/Documentation asciidoc.conf
 	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR)
 	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install
 	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install-doc
