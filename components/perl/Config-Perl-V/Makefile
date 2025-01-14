@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Config-Perl-V
-HUMAN_VERSION =			0.36
-COMPONENT_REVISION =		4
+HUMAN_VERSION =			0.38
 COMPONENT_SUMMARY =		Structured data retrieval of perl -V output
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Config-Perl-V-0.36.tgz
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Config-Perl-V-0.38.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4a39c56e0e69d3b1811cf8db4736c53888b12c08bd2480e0a3ef3fcca2ff1e6f
+	sha256:ea89e60b0f2120c55aca39d71b9e1c12809abf0909be444d294f3f502307762e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
