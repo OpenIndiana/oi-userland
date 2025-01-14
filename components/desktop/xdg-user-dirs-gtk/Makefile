@@ -12,28 +12,27 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
+BUILD_STYLE = meson
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdg-user-dirs-gtk
-COMPONENT_VERSION=	0.11
-COMPONENT_PROJECT_URL=	https://www.gnome.org
-COMPONENT_SUMMARY=	Tool to help manage user directories
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:534bd563d3c0e3f8dcbf3578cb8ab0e49d3ba41c966d477c8af9438364121e7d
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+HUMAN_VERSION=			0.12
+COMPONENT_VERSION_MAJOR=	$(HUMAN_VERSION)
+COMPONENT_SUMMARY=		Integrates xdg-user-dirs into the Gnome desktop and Gtk+ applications
+COMPONENT_ARCHIVE_HASH=		sha256:8a5630eac139bb39504bf81bf62483ae94a8aac0c92bee904baf4e4333b8a5c1
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
-COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE=		GPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_FMRI=		desktop/xdg/xdg-user-dirs-gtk
 
 TEST_TARGET=	$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH=$(PATH.gnu)
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk3
