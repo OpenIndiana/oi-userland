@@ -1,6 +1,6 @@
---- libcanberra-0.25/src/Makefile.am-orig	2010-09-13 23:46:23.884713926 -0500
-+++ libcanberra-0.25/src/Makefile.am	2010-09-13 23:46:45.949907623 -0500
-@@ -60,8 +60,10 @@ libcanberra_la_SOURCES = \
+--- libcanberra-0.30/src/Makefile.am.orig
++++ libcanberra-0.30/src/Makefile.am
+@@ -63,8 +63,10 @@
  	fork-detect.c fork-detect.h
  libcanberra_la_CFLAGS = \
  	$(AM_CFLAGS) \
@@ -11,8 +11,8 @@
  	$(VORBIS_LIBS)
  libcanberra_la_LDFLAGS = \
  	-export-dynamic \
---- libcanberra-0.25/src/common.c-orig	2010-09-13 19:17:02.032029728 -0500
-+++ libcanberra-0.25/src/common.c	2010-09-14 00:06:00.628638823 -0500
+--- libcanberra-0.30/src/common.c.orig
++++ libcanberra-0.30/src/common.c
 @@ -26,6 +26,8 @@
  
  #include <stdarg.h>
@@ -31,7 +31,7 @@
  /**
   * SECTION:canberra
   * @short_description: General libcanberra API
-@@ -129,6 +133,7 @@ int ca_context_create(ca_context **_c) {
+@@ -129,6 +133,7 @@
          ca_context *c;
          int ret;
          const char *d;
@@ -39,7 +39,7 @@
  
          ca_return_val_if_fail(!ca_detect_fork(), CA_ERROR_FORKED);
          ca_return_val_if_fail(_c, CA_ERROR_INVALID);
-@@ -153,13 +158,79 @@ int ca_context_create(ca_context **_c) {
+@@ -153,13 +158,79 @@
                  }
          }
  
@@ -121,8 +121,8 @@
          *_c = c;
          return CA_SUCCESS;
  }
---- libcanberra-0.30/configure.ac.orig	2012-09-25 02:21:07.000000000 +0200
-+++ libcanberra-0.30/configure.ac	2023-12-17 10:33:04.145775951 +0100
+--- libcanberra-0.30/configure.ac.orig
++++ libcanberra-0.30/configure.ac
 @@ -114,9 +114,6 @@
          -fdata-sections])
  AC_SUBST([WARNINGFLAGS], $with_cflags)
