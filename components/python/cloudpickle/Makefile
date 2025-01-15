@@ -19,11 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cloudpickle
-HUMAN_VERSION =			3.1.0
+HUMAN_VERSION =			3.1.1
 COMPONENT_SUMMARY =		Pickler class to extend the standard pickle.Pickler functionality
 COMPONENT_PROJECT_URL =		https://github.com/cloudpipe/cloudpickle
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/cloudpipe/cloudpickle/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:81a929b6e3c7335c863c771d673d105f02efdb89dfaba0c90495d1c64796601b
+	sha256:f1a9fcfccfd94c5999bff2eb7fa7107eb0a2f70b8b12573fcbcf2659af7cf9c1
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
