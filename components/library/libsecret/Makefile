@@ -21,9 +21,9 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libsecret
-HUMAN_VERSION=		0.21.4
+HUMAN_VERSION=		0.21.6
 COMPONENT_SUMMARY=	GObject-based library for storing and receiving secrets
-COMPONENT_ARCHIVE_HASH=	sha256:163d08d783be6d4ab9a979ceb5a4fecbc1d9660d3c34168c581301cd53912b20
+COMPONENT_ARCHIVE_HASH=	sha256:747b8c175be108c880d3adfb9c3537ea66e520e4ad2dccf5dce58003aeeca090
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_LICENSE=      LGPL-2.1-only
@@ -59,6 +59,9 @@ TEST_REQUIRED_PACKAGES += x11/server/xvfb
 COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
 COMPONENT_TEST_ENV += DISPLAY=:0
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
+# Testing needs to find dbus-daemon
+COMPONENT_TEST_ENV += PATH="$(PATH):$(USRLIBEXECDIR)"
 
 # Some tests are using mlock(3c) and expects it to pass.  Since mlock() is
 # restricted function in illumos we need to make sure the additional privileges
