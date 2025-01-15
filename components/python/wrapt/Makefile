@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wrapt
-HUMAN_VERSION =			1.17.1
+HUMAN_VERSION =			1.17.2
 COMPONENT_SUMMARY =		Module for decorators, wrappers and monkey patching.
 COMPONENT_PROJECT_URL =		https://github.com/GrahamDumpleton/wrapt
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:16b2fdfa09a74a3930175b6d9d7d008022aa72a4f02de2b3eecafcc1adfd3cfe
+	sha256:41388e9d4d1522446fe79d3213196bd9e3b301a336965b9e27ca2788ebd122f3
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
