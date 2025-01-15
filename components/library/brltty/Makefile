@@ -19,16 +19,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         brltty
-COMPONENT_VERSION=      6.6
+COMPONENT_VERSION=	6.7
 COMPONENT_SUMMARY=      Braille support
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ab11cfc5fbd7ef0ec876ffea7e131e424b2fd004b6158064e1a2e46412825529
+COMPONENT_ARCHIVE_HASH=	sha256:ea5594acf307b58d2ecdc6423f762d7881e30d91d396f71a2adbf9440a27ac58
 COMPONENT_PROJECT_URL=  https://brltty.app/
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/accessibility/brltty
 COMPONENT_CLASSIFICATION=Applications/Universal Access
-COMPONENT_LICENSE=      GPLv2,LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
+COMPONENT_LICENSE_FILE=	LICENSE-LGPL
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -36,10 +37,10 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 # Missing files on install without this
-COMPONENT_PRE_CONFIGURE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D)) ;
+CLONEY_MODE = symlink
 
 # Needed because we patch configure.ac
-COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D) ; ./autogen) ;
+COMPONENT_PREP_ACTION += (cd $(@D) ; ./autogen) ;
 
 CC +=		$(CC_BITS)
 CFLAGS +=	$(CC_PIC)
@@ -47,9 +48,6 @@ CFLAGS +=	-I/usr/include/pcre -I/usr/include/liblouis -I/usr/include/ncurses
 CPPFLAGS +=	-D_SYS_UCONTEXT_H # Workaround Bug Id 15558893
 
 # Disable python bindings for now.
-CONFIGURE_ENV += PYTHON="$(PYTHON)"
-PKG_MACROS += PYVER="$(PYTHON_VERSION)"
-
 CONFIGURE_OPTIONS +=    --disable-python-bindings
 CONFIGURE_OPTIONS +=    --disable-java-bindings
 CONFIGURE_OPTIONS +=    --disable-lisp-bindings
@@ -63,8 +61,6 @@ CONFIGURE_OPTIONS +=    --without-midi-package
 CONFIGURE_OPTIONS +=    --without-writable-directory
 CONFIGURE_OPTIONS +=    --with-gui-toolkit=Xaw
 CONFIGURE_OPTIONS +=    --with-curses=ncurses
-CONFIGURE_OPTIONS +=    --localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
@@ -94,10 +90,10 @@ COMPONENT_INSTALL_ARGS += INSTALL_ROOT=$(PROTO_DIR)
 REQUIRED_PACKAGES += system/header/header-ugen
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/liblouis
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre2
