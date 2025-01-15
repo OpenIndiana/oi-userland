@@ -1,10 +1,9 @@
 See https://reviews.llvm.org/D140075
 See https://bugzilla.mozilla.org/show_bug.cgi?id=1795899
 
-diff --git a/clang/include/clang-c/Index.h b/clang/include/clang-c/Index.h
---- a/tools/clang/include/clang-c/Index.h
-+++ b/tools/clang/include/clang-c/Index.h
-@@ -2795,7 +2795,9 @@
+--- llvm-19.1.7.src/tools/clang/include/clang-c/Index.h.orig
++++ llvm-19.1.7.src/tools/clang/include/clang-c/Index.h
+@@ -2974,7 +2974,9 @@
  
    CXType_ExtVector = 176,
    CXType_Atomic = 177,
@@ -15,10 +14,9 @@ diff --git a/clang/include/clang-c/Index.h b/clang/include/clang-c/Index.h
  };
  
  /**
-diff --git a/clang/lib/Sema/SemaCodeComplete.cpp b/clang/lib/Sema/SemaCodeComplete.cpp
---- a/tools/clang/lib/Sema/SemaCodeComplete.cpp
-+++ b/tools/clang/lib/Sema/SemaCodeComplete.cpp
-@@ -4062,6 +4062,7 @@
+--- llvm-19.1.7.src/tools/clang/lib/Sema/SemaCodeComplete.cpp.orig
++++ llvm-19.1.7.src/tools/clang/lib/Sema/SemaCodeComplete.cpp
+@@ -4144,6 +4144,7 @@
      return CXCursor_TranslationUnit;
  
    case Decl::Using:
@@ -26,9 +24,8 @@ diff --git a/clang/lib/Sema/SemaCodeComplete.cpp b/clang/lib/Sema/SemaCodeComple
    case Decl::UnresolvedUsingValue:
    case Decl::UnresolvedUsingTypename:
      return CXCursor_UsingDeclaration;
-diff --git a/clang/test/Index/print-type.cpp b/clang/test/Index/print-type.cpp
---- a/tools/clang/test/Index/print-type.cpp
-+++ b/tools/clang/test/Index/print-type.cpp
+--- llvm-19.1.7.src/tools/clang/test/Index/print-type.cpp.orig
++++ llvm-19.1.7.src/tools/clang/test/Index/print-type.cpp
 @@ -92,6 +92,14 @@
  }
  
@@ -50,10 +47,9 @@ diff --git a/clang/test/Index/print-type.cpp b/clang/test/Index/print-type.cpp
  // CHECK: Namespace=InlineNS:94:18 (Definition) [type=] [typekind=Invalid] [isPOD=0] [isAnonRecDecl=0] [isInlineNamespace=1]
 +// CHECK: UsingDeclaration=ToBeExportedType[97:15] [type=] [typekind=Invalid] [isPOD=0] [isAnonRecDecl=0]
 +// CHECK: ParmDecl=f:101:39 (Definition) [type=ToBeExportedType] [typekind=Elaborated] [canonicaltype=int] [canonicaltypekind=Int] [isPOD=1] [isAnonRecDecl=0]
-diff --git a/clang/tools/libclang/CXCursor.cpp b/clang/tools/libclang/CXCursor.cpp
---- a/tools/clang/tools/libclang/CXCursor.cpp
-+++ b/tools/clang/tools/libclang/CXCursor.cpp
-@@ -1276,6 +1276,10 @@
+--- llvm-19.1.7.src/tools/clang/tools/libclang/CXCursor.cpp.orig
++++ llvm-19.1.7.src/tools/clang/tools/libclang/CXCursor.cpp
+@@ -1296,6 +1296,10 @@
      return MakeCursorTypeRef(Tag->getDecl(), Loc, TU);
    if (const TemplateTypeParmType *TemplP = Ty->getAs<TemplateTypeParmType>())
      return MakeCursorTypeRef(TemplP->getDecl(), Loc, TU);
@@ -64,9 +60,8 @@ diff --git a/clang/tools/libclang/CXCursor.cpp b/clang/tools/libclang/CXCursor.c
  
    return cursor;
  }
-diff --git a/clang/tools/libclang/CXType.cpp b/clang/tools/libclang/CXType.cpp
---- a/tools/clang/tools/libclang/CXType.cpp
-+++ b/tools/clang/tools/libclang/CXType.cpp
+--- llvm-19.1.7.src/tools/clang/tools/libclang/CXType.cpp.orig
++++ llvm-19.1.7.src/tools/clang/tools/libclang/CXType.cpp
 @@ -100,6 +100,7 @@
      TKCASE(Record);
      TKCASE(Enum);
@@ -147,4 +142,3 @@ diff --git a/clang/tools/libclang/CXType.cpp b/clang/tools/libclang/CXType.cpp
      TKIND(ObjCInterface);
      TKIND(ObjCObject);
      TKIND(ObjCObjectPointer);
-

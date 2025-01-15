@@ -23,13 +23,13 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		clang
-COMPONENT_VERSION=	19.1.6
+COMPONENT_VERSION=	19.1.7
 CLANG_VERSION=		$(firstword $(subst ., ,$(COMPONENT_VERSION)))
 COMPONENT_SUMMARY=	LLVM tools and Clang compiler
 COMPONENT_PROJECT_URL=	https://llvm.org/
 COMPONENT_SRC=		$(LLVM_NAME)-$(COMPONENT_VERSION).src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ad1a3b125ff014ded290094088de40efb9193ce81a24278184230b7d401f8a3e
+COMPONENT_ARCHIVE_HASH=	sha256:96f833c6ad99a3e8e1d9aca5f439b8fd2c7efdcf83b664e0af1c0712c5315910
 COMPONENT_ARCHIVE_URL=  https://github.com/llvm/llvm-project/releases/download/llvmorg-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		$(CLANG_DEVELOPER_PKG)
 COMPONENT_CLASSIFICATION=	Development/C
@@ -42,15 +42,15 @@ LLVM_NAME= llvm
 CLANG_NAME= clang
 
 COMPONENT_ARCHIVE_1=    $(CLANG_NAME)-$(COMPONENT_VERSION).src.tar.xz
-COMPONENT_ARCHIVE_HASH_1= sha256:6358cbb3e14687ca2f3465c61cffc65589b448aaa912ec2c163ef9fc046e8a89
+COMPONENT_ARCHIVE_HASH_1=	sha256:11e5e4ecab5338b9914de3b83a4622cb200de466b7c56ba675afb72fa7d64675
 COMPONENT_ARCHIVE_URL_1=https://github.com/llvm/llvm-project/releases/download/llvmorg-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_ARCHIVE_2=    cmake-$(COMPONENT_VERSION).src.tar.xz
-COMPONENT_ARCHIVE_HASH_2= sha256:9c7ec82d9a240dc2287b8de89d6881bb64ceea0dcd6ce133c34ef65bda22d99e
+COMPONENT_ARCHIVE_HASH_2=	sha256:11c5a28f90053b0c43d0dec3d0ad579347fc277199c005206b963c19aae514e3
 COMPONENT_ARCHIVE_URL_2=https://github.com/llvm/llvm-project/releases/download/llvmorg-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_2)
 
 COMPONENT_ARCHIVE_3=    third-party-$(COMPONENT_VERSION).src.tar.xz
-COMPONENT_ARCHIVE_HASH_3= sha256:0e8048333bab2ba3607910e5d074259f08dccf00615778d03a2a55416718eb45
+COMPONENT_ARCHIVE_HASH_3=	sha256:b96deca1d3097c7ffd4ff2bb904a50bdd56bec7ed1413ffb0d1d01af87b72c12
 COMPONENT_ARCHIVE_URL_3=https://github.com/llvm/llvm-project/releases/download/llvmorg-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_3)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -73,7 +73,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D); )
 
 COMPONENT_POST_INSTALL_ACTION =  \
         for file in `echo $(PROTO_DIR)/$(CMAKE_PREFIX)/bin/*`; do \
-                /usr/bin/elfedit -e 'dyn:runpath $(GCC_LIBDIR):$(CMAKE_PREFIX)/lib' $$file ; \
+                $(ELFEDIT) -e 'dyn:runpath $(GCC_LIBDIR):$(CMAKE_PREFIX)/lib' $$file ; \
         done && \
         for file in \
                 `ggrep -rlh '^\#!*/usr/bin/env python' $(PROTO_DIR)/$(CMAKE_PREFIX)`; do \
@@ -109,6 +109,11 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/.*/d" '
 
 TESTSUITE_MAKE = $(GMAKE)
+
+# Python modules are installed in non-default locations so make sure pkgdepend
+# is able to find them
+PKGDEPEND_RUNPATH += $(CLANG_LIBDIR)
+PKGDEPEND_RUNPATH += $(CLANG_PREFIX)/share/scan-view/
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

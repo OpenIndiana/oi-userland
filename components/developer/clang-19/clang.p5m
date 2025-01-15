@@ -29,10 +29,14 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file link path="usr/clang/([^/]+)(/bin/[^/]+)$" -> emit \
     link path=usr%<2> target=../clang/%<1>%<2> mediator=clang mediator-version=%<1> >
 
+# https://github.com/llvm/llvm-project/issues/120299
+<transform file path=.*/scan-view$ -> add pkg.depend.bypass-generate .*urllib2.*>
+<transform file path=.*/scan-view$ -> add pkg.depend.bypass-generate .*SocketServer.*>
+
 file path=usr/clang/$(CLANGVER)/bin/FileCheck
 file path=usr/clang/$(CLANGVER)/bin/UnicodeNameMappingGenerator
 file path=usr/clang/$(CLANGVER)/bin/amdgpu-arch
-file path=usr/clang/$(CLANGVER)/bin/analyze-build pkg.depend.bypass-generate=.*
+file path=usr/clang/$(CLANGVER)/bin/analyze-build
 file path=usr/clang/$(CLANGVER)/bin/bugpoint
 file path=usr/clang/$(CLANGVER)/bin/c-index-test
 link path=usr/clang/$(CLANGVER)/bin/clang target=clang-19
@@ -58,7 +62,7 @@ file path=usr/clang/$(CLANGVER)/bin/diagtool
 file path=usr/clang/$(CLANGVER)/bin/dsymutil
 file path=usr/clang/$(CLANGVER)/bin/git-clang-format
 file path=usr/clang/$(CLANGVER)/bin/hmaptool
-file path=usr/clang/$(CLANGVER)/bin/intercept-build pkg.depend.bypass-generate=.*
+file path=usr/clang/$(CLANGVER)/bin/intercept-build
 file path=usr/clang/$(CLANGVER)/bin/llc
 file path=usr/clang/$(CLANGVER)/bin/lli
 file path=usr/clang/$(CLANGVER)/bin/lli-child-target
@@ -140,8 +144,8 @@ file path=usr/clang/$(CLANGVER)/bin/reduce-chunk-list
 file path=usr/clang/$(CLANGVER)/bin/sancov
 file path=usr/clang/$(CLANGVER)/bin/sanstats
 file path=usr/clang/$(CLANGVER)/bin/scan-build
-file path=usr/clang/$(CLANGVER)/bin/scan-build-py pkg.depend.bypass-generate=.*
-file path=usr/clang/$(CLANGVER)/bin/scan-view pkg.depend.bypass-generate=.*
+file path=usr/clang/$(CLANGVER)/bin/scan-build-py
+file path=usr/clang/$(CLANGVER)/bin/scan-view
 file path=usr/clang/$(CLANGVER)/bin/split-file
 file path=usr/clang/$(CLANGVER)/bin/verify-uselistorder
 file path=usr/clang/$(CLANGVER)/bin/yaml-bench
