@@ -240,6 +240,7 @@ test_normalize_case_for_drive (pyfakefs.tests.fake_filesystem_test.NormalizeCase
 test_normalize_case_for_lazily_added_empty_file (pyfakefs.tests.fake_filesystem_test.NormalizeCaseTest) ... skipped 'Regression test for Windows problem only'
 test_normalize_case_for_non_existing_file (pyfakefs.tests.fake_filesystem_test.NormalizeCaseTest) ... ok
 test_absolute_path_remains_unchanged (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
+test_cwd_from_pathlib_path (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_dot_path_is_normalized (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_dotted_path_is_normalized (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_empty_path_should_get_normalized_to_root_path (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
@@ -2114,11 +2115,11 @@ Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
   File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
   File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
 FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
@@ -2126,11 +2127,11 @@ Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
   File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
   File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
 FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_fs (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
@@ -2138,11 +2139,11 @@ Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
   File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
   File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
 FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_fs_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
@@ -2150,11 +2151,11 @@ Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
   File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
   File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
 FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_without_patcher (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
@@ -2957,7 +2958,7 @@ test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest)
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2671 tests
+Ran 2672 tests
 
 OK (skipped=1085, expected failures=2)
 py$(PYV): commands[1]> python -m pyfakefs.tests.all_tests_without_extra_packages
@@ -3201,6 +3202,7 @@ test_normalize_case_for_drive (pyfakefs.tests.fake_filesystem_test.NormalizeCase
 test_normalize_case_for_lazily_added_empty_file (pyfakefs.tests.fake_filesystem_test.NormalizeCaseTest) ... skipped 'Regression test for Windows problem only'
 test_normalize_case_for_non_existing_file (pyfakefs.tests.fake_filesystem_test.NormalizeCaseTest) ... ok
 test_absolute_path_remains_unchanged (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
+test_cwd_from_pathlib_path (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_dot_path_is_normalized (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_dotted_path_is_normalized (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_empty_path_should_get_normalized_to_root_path (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
@@ -5075,11 +5077,11 @@ Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
   File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
   File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
 FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
@@ -5087,11 +5089,11 @@ Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
   File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
   File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
 FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_fs (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
@@ -5099,11 +5101,11 @@ Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
   File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
   File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
 FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_fs_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
@@ -5111,11 +5113,11 @@ Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
   File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
   File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
 FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_without_patcher (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
@@ -5918,7 +5920,7 @@ test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest)
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2671 tests
+Ran 2672 tests
 
 OK (skipped=1175, expected failures=2)
 py$(PYV): commands[2]> python -m pytest pyfakefs/pytest_tests/pytest_plugin_test.py
@@ -5945,7 +5947,7 @@ pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume
   $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
   
   Traceback (most recent call last):
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 2154, in remove_object
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2157, in remove_object
       target_directory.remove_entry(basename)
     File "$(@D)/pyfakefs/fake_file.py", line 592, in remove_entry
       entry = self.get_entry(pathname_name)
@@ -5962,15 +5964,15 @@ pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume
       self.tempfile_cleanup(self_, unlink or os.unlink)
     File "$(PYTHON_DIR)/tempfile.py", line 457, in close
       unlink(self.name)
-    File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+    File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
       return f(*args, **kwargs)
     File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
       self.filesystem.remove(path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
       self.remove_object(norm_path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
       self.raise_os_error(errno.ENOENT, file_path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
       raise OSError(err_no, message, filename)
   FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
   
@@ -5980,7 +5982,7 @@ pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume_contextmanager
   $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
   
   Traceback (most recent call last):
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 2154, in remove_object
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2157, in remove_object
       target_directory.remove_entry(basename)
     File "$(@D)/pyfakefs/fake_file.py", line 592, in remove_entry
       entry = self.get_entry(pathname_name)
@@ -5997,15 +5999,15 @@ pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume_contextmanager
       self.tempfile_cleanup(self_, unlink or os.unlink)
     File "$(PYTHON_DIR)/tempfile.py", line 457, in close
       unlink(self.name)
-    File "$(@D)/pyfakefs/fake_os.py", line 1456, in wrapped
+    File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
       return f(*args, **kwargs)
     File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
       self.filesystem.remove(path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 3072, in remove
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
       self.remove_object(norm_path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 2156, in remove_object
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
       self.raise_os_error(errno.ENOENT, file_path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 489, in raise_os_error
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
       raise OSError(err_no, message, filename)
   FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
   
