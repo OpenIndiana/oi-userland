@@ -13,12 +13,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_STYLE= configure
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libcanberra
 COMPONENT_VERSION=      0.30
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Event Sound API Using XDG Sound Theming Specification
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -27,24 +26,15 @@ COMPONENT_ARCHIVE_URL=  http://0pointer.de/lennart/projects/libcanberra/$(COMPON
 COMPONENT_PROJECT_URL=  http://0pointer.de/lennart/projects/libcanberra/
 COMPONENT_FMRI=         library/desktop/xdg/libcanberra
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= LGPL
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(PATH.gnu)
-
-COMPONENT_PREP_ACTION= ( \
-	cd $(@D)  && \
-	libtoolize --copy --force && \
-	glib-gettextize -f && \
-	aclocal -I m4 && \
-	automake -c -f -a && \
-	autoconf )
+COMPONENT_PREP_ACTION += cd $(@D) && $(ENV) PATH="$(PATH)" autoreconf -fi ;
 
 CFLAGS += -I/usr/include/gconf/2
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --disable-static
 
