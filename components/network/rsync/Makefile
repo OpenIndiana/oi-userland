@@ -28,12 +28,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
-COMPONENT_VERSION=	3.4.0
+COMPONENT_VERSION=	3.4.1
 COMPONENT_SUMMARY=	Utility that provides fast incremental file transfer and copy
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8e942f95a44226a012fe822faffa6c7fc38c34047add3a0c941e9bc8b8b93aa4
+COMPONENT_ARCHIVE_HASH=	sha256:2924bcb3a1ed8b551fc101f740b9f0fe0a202b115027647cf69850d65fd88c52
 COMPONENT_ARCHIVE_URL=	https://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/rsync
 COMPONENT_CLASSIFICATION= Applications/System Utilities
