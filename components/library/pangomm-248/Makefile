@@ -21,9 +21,9 @@ include ../../../make-rules/shared-macros.mk
 # This is pangomm-2.48 ABI series
 
 COMPONENT_NAME=			pangomm
-HUMAN_VERSION=			2.54.0
+HUMAN_VERSION=			2.56.1
 COMPONENT_SUMMARY=		C++ API for Pango
-COMPONENT_ARCHIVE_HASH=		sha256:4a5b1fd1b7c47a1af45277ea82b5abeaca8e08fb10a27daa6394cf88d74e7acf
+COMPONENT_ARCHIVE_HASH=		sha256:539f5aa60e9bdc6b955bb448e2a62cc14562744df690258040fbb74bf885755d
 COMPONENT_FMRI=			library/desktop/c++/pangomm-248
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
