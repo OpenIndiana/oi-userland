@@ -21,12 +21,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvpn
-COMPONENT_VERSION=	2.6.12
+COMPONENT_VERSION=	2.6.13
 COMPONENT_SUMMARY=	OpenVPN is a full-featured open source SSL VPN solution
 COMPONENT_PROJECT_URL=	https://openvpn.net
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1c610fddeb686e34f1367c347e027e418e07523a10f4d8ce4a2c2af2f61a1929
+COMPONENT_ARCHIVE_HASH=	sha256:1af10b86922bd7c99827cc0f151dfe9684337b8e5ebdb397539172841ac24a6a
 COMPONENT_ARCHIVE_URL=	https://build.openvpn.net/downloads/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/openvpn
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -52,7 +52,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/cannot find/p"'
 
 # Build dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/docutils
 REQUIRED_PACKAGES += driver/network/header-tun
+TEST_REQUIRED_PACKAGES += library/cmocka
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
