@@ -3,9 +3,8 @@ openjpip.h and openjpip.c can't use index_t as a convenience typedef,
 because OI inherited index_t in sys/types.h from Solaris.  Adjust to
 use the underlying index_param_t instead.
 
-diff -ur openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.h openjpeg-2.3.1/src/lib/openjpip/openjpip.h
---- openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.h	2019-04-02 07:45:15.000000000 +0000
-+++ openjpeg-2.3.1/src/lib/openjpip/openjpip.h	2019-06-10 18:57:32.089518326 +0000
+--- openjpeg-2.5.3/src/lib/openjpip/openjpip.h.orig
++++ openjpeg-2.5.3/src/lib/openjpip/openjpip.h
 @@ -281,23 +281,20 @@
   *  test the format of index (cidx) box in JP2 file
   */
@@ -41,10 +40,9 @@ diff -ur openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.h openjpeg-2.3.1/src/lib/
  
  #endif /*SERVER*/
  
-diff -ur openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.c openjpeg-2.3.1/src/lib/openjpip/openjpip.c
---- openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.c	2019-04-02 07:45:15.000000000 +0000
-+++ openjpeg-2.3.1/src/lib/openjpip/openjpip.c	2019-06-10 18:58:14.867415880 +0000
-@@ -443,7 +443,7 @@
+--- openjpeg-2.5.3/src/lib/openjpip/openjpip.c.orig
++++ openjpeg-2.5.3/src/lib/openjpip/openjpip.c
+@@ -445,7 +445,7 @@
      opj_free(*dec);
  }
  
@@ -53,7 +51,7 @@ diff -ur openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.c openjpeg-2.3.1/src/lib/
  {
      char *data;
  
-@@ -471,12 +471,12 @@
+@@ -473,12 +473,12 @@
      return parse_jp2file(fd);
  }
  
@@ -68,9 +66,8 @@ diff -ur openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.c openjpeg-2.3.1/src/lib/
  {
      print_index(*index);
  }
-diff -ur openjpeg-2.3.1.orig/src/bin/jpip/opj_jpip_test.c openjpeg-2.3.1/src/bin/jpip/opj_jpip_test.c
---- openjpeg-2.3.1.orig/src/bin/jpip/opj_jpip_test.c	2019-04-02 07:45:15.000000000 +0000
-+++ openjpeg-2.3.1/src/bin/jpip/opj_jpip_test.c	2019-06-10 18:58:50.711326186 +0000
+--- openjpeg-2.5.3/src/bin/jpip/opj_jpip_test.c.orig
++++ openjpeg-2.5.3/src/bin/jpip/opj_jpip_test.c
 @@ -52,7 +52,7 @@
  main(int argc, char *argv[])
  {
