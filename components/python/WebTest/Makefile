@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		webtest
-HUMAN_VERSION =			3.0.2
+HUMAN_VERSION =			3.0.3
 COMPONENT_SUMMARY =		Helper to test WSGI applications
 COMPONENT_PROJECT_URL =		https://docs.pylonsproject.org/projects/webtest/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0b2de681c16f57b31da5cce6e94ff03cdc77bd86c37a57ba0ee27fed8e065ceb
+	sha256:b635f6fe6584bc9737496b687155e9373f3d01bcb1b46169007da0f7ba6238f9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	license.rst
 
