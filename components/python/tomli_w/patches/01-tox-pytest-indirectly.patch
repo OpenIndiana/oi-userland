@@ -1,11 +1,11 @@
---- tomli-w-1.1.0/pyproject.toml.orig
-+++ tomli-w-1.1.0/pyproject.toml
+--- tomli-w-1.2.0/pyproject.toml.orig
++++ tomli-w-1.2.0/pyproject.toml
 @@ -59,7 +59,7 @@
- description = run tests against a built package
- deps = -r tests/requirements.txt
- commands =
--    pytest {posargs}
-+    python -m pytest {posargs}
+     "-r tests/requirements.txt",
+ ]
+ commands = [
+-    ["pytest", { replace = "posargs", extend = true }],
++    ["python", "-m", "pytest", { replace = "posargs", extend = true }],
+ ]
  
- [testenv:pre-commit]
- description = run linters
+ [tool.tox.env."pre-commit"]
