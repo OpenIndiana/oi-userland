@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		referencing
-HUMAN_VERSION =			0.35.1
-COMPONENT_SUMMARY =		referencing - JSON Referencing + Python
+HUMAN_VERSION =			0.36.1
+COMPONENT_SUMMARY =		JSON Referencing + Python
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/referencing
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:25b42124a6c8b632a425174f24087783efb348a6f1e0008e63cd4466fedf703c
+	sha256:ca2e6492769e3602957e9b831b94211599d2aade9477f5d44110d2530cf9aade
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -40,6 +40,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/attrs
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/rpds-py
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-subtests
