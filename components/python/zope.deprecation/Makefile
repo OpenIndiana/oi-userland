@@ -11,23 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.deprecation
+#   $WS_TOOLS/python-integrate-project -d python/zope.deprecation zope_deprecation
 #
 
-BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.deprecation
-HUMAN_VERSION =			5.0
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		zope.deprecation - Zope Deprecation Infrastructure
+COMPONENT_NAME =		zope_deprecation
+HUMAN_VERSION =			5.1
+COMPONENT_SUMMARY =		Zope Deprecation Infrastructure
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.deprecation
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ba/de/a47e434ed1804d82f3fd7561aee5c55914c72d87f54cac6b99c15cbe7f89/zope.deprecation-5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b7c32d3392036b2145c40b3103e7322db68662ab09b7267afe1532a9d93f640f
+	sha256:46bed4611fb53edc731aadeb64b28308bcb848f4cc150c60c948d078f7108721
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -39,5 +35,4 @@ COMPONENT_TEST_TARGETS += -- -vv
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
