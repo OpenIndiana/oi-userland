@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project -d python/ZConfig zconfig
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zconfig
-HUMAN_VERSION =			4.1
-COMPONENT_SUMMARY =		zconfig - Structured Configuration Library
+HUMAN_VERSION =			4.2
+COMPONENT_SUMMARY =		Structured Configuration Library
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/ZConfig/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b6a79dda157f3698c8768d2cedc263216e8af240d3cf9d09a02a64291114eb20
+	sha256:a0e4b5277c4cee8060ce335a578ac458f82c240ae96b16659200dbc4d98bfcce
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -38,10 +38,10 @@ COMPONENT_POST_UNPACK_ACTION += \
 COMPONENT_TEST_TARGETS += -- -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/docutils
 TEST_REQUIRED_PACKAGES.python += library/python/manuel
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/zope-exceptions
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
