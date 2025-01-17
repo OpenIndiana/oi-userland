@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		powerline
-HUMAN_VERSION =			2.8.3
-COMPONENT_SUMMARY =		powerline - The ultimate statusline/prompt utility
+HUMAN_VERSION =			2.8.4
+COMPONENT_SUMMARY =		The ultimate statusline/prompt utility
 COMPONENT_PROJECT_URL =		https://github.com/powerline/powerline/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/powerline/powerline/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:45d838dbac94a1363942899708b6ce7c71c1cad9e1b9d048affab4f630c4cb98
+	sha256:9e846af9379b57e410efe264cff3a6b98eb78dd9526e83016776ae5ffc5798f4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
