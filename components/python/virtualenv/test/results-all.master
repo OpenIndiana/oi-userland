@@ -9,7 +9,7 @@ configfile: pyproject.toml
 timeout: 600.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 339 items
+collecting ... collected 354 items
 
 tests/integration/test_cachedir_tag.py::test_cachedir_tag_ignored_by_tag PASSED
 tests/integration/test_run_int.py::test_app_data_pinning PASSED
@@ -147,6 +147,7 @@ tests/unit/discovery/py_info/test_py_info.py::test_py_info_ignores_distutils_con
 tests/unit/discovery/py_info/test_py_info.py::test_py_info_setuptools PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_py_info_to_system_raises SKIPPED
 tests/unit/discovery/py_info/test_py_info.py::test_satisfy_not_arch PASSED
+tests/unit/discovery/py_info/test_py_info.py::test_satisfy_not_threaded PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_satisfy_not_version[2.9.21] PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_satisfy_not_version[2.9] PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_satisfy_not_version[2] PASSED
@@ -221,10 +222,14 @@ tests/unit/discovery/test_discovery.py::test_discovery_via_path[none-upper] PASS
 tests/unit/discovery/test_discovery.py::test_discovery_via_path_in_nonbrowseable_directory PASSED
 tests/unit/discovery/test_discovery.py::test_discovery_via_path_not_found PASSED
 tests/unit/discovery/test_discovery.py::test_relative_path PASSED
+tests/unit/discovery/test_discovery.py::test_returns_first_python_specified_when_no_env_var_is_specified PASSED
+tests/unit/discovery/test_discovery.py::test_returns_first_python_specified_when_only_env_var_one_is_specified PASSED
+tests/unit/discovery/test_discovery.py::test_returns_second_python_specified_when_more_than_one_is_specified_and_env_var_is_specified PASSED
 tests/unit/discovery/test_py_spec.py::test_bad_py_spec PASSED
 tests/unit/discovery/test_py_spec.py::test_py_spec_first_digit_only_major PASSED
 tests/unit/discovery/test_py_spec.py::test_relative_spec PASSED
 tests/unit/discovery/test_py_spec.py::test_spec_satisfies_arch PASSED
+tests/unit/discovery/test_py_spec.py::test_spec_satisfies_free_threaded PASSED
 tests/unit/discovery/test_py_spec.py::test_spec_satisfies_implementation_nok PASSED
 tests/unit/discovery/test_py_spec.py::test_spec_satisfies_implementation_ok[CPython-cpython] PASSED
 tests/unit/discovery/test_py_spec.py::test_spec_satisfies_implementation_ok[jython-jython] PASSED
@@ -258,22 +263,32 @@ tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[-] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3-3.9.21] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3-3.9] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3-3] PASSED
-tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3-] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9-3.9.21] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9-3.9] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9-3] PASSED
-tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9-] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.21-3.9.21] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.21-3.9] PASSED
 tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.21-3] PASSED
-tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.21-] PASSED
-tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[cpython-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe] SKIPPED
+tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.21t-3.9.21t] PASSED
+tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.21t-3.9t] PASSED
+tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9.21t-3t] PASSED
+tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9t-3.9.21t] PASSED
+tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9t-3.9t] PASSED
+tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3.9t-3t] PASSED
+tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3t-3.9.21t] PASSED
+tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3t-3.9t] PASSED
+tests/unit/discovery/test_py_spec.py::test_version_satisfies_ok[3t-3t] PASSED
+tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[3t-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python313\\python3.13t.exe] SKIPPED
+tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[cpython-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python313\\python3.13t.exe] SKIPPED
+tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[cpython3-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[cpython3.10-C:\\Users\\user\\Miniconda3-64\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[cpython3.12-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[cpython3.6-Z:\\CompanyA\\Python\\3.6\\python.exe] SKIPPED
-tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe] SKIPPED
+tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python313\\python3.13t.exe] SKIPPED
+tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python3-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python3.10-C:\\Users\\user\\Miniconda3-64\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python3.12-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe] SKIPPED
+tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python3.13t-C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python313\\python3.13t.exe] SKIPPED
 tests/unit/discovery/windows/test_windows.py::test_propose_interpreters[python3.6-Z:\\CompanyA\\Python\\3.6\\python.exe] SKIPPED
 tests/unit/discovery/windows/test_windows_pep514.py::test_pep514 SKIPPED
 tests/unit/discovery/windows/test_windows_pep514.py::test_pep514_run SKIPPED
@@ -352,7 +367,7 @@ tests/unit/test_util.py::test_reentrant_file_lock_is_thread_safe PASSED
 tests/unit/test_util.py::test_run_fail PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 313 passed, 26 skipped ========
+======== 324 passed, 30 skipped ========
 py$(PYV): commands[2]> python -m coverage combine
 py$(PYV): commands[3]> python -m coverage report --skip-covered --show-missing
 Name                                                                                                                                                                              Stmts   Miss Branch BrPart  Cover   Missing
@@ -383,13 +398,13 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/built
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/via_global_self_do.py      79     11     36      7    79%   34->36, 43, 45-53, 55, 57, 90->89
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/store.py                           10      5      2      0    42%   7-9, 13-14
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/venv.py                            72      9     22      5    83%   34, 37, 39, 43, 59-60, 63-71
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/builtin.py                                    149     36     58     12    72%   80, 99-110, 122->125, 126, 132->137, 138-146, 165-168, 169->exit, 172->170, 185-193, 202, 208
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/cached_py_info.py                             111      8     32      7    90%   59-60, 72-75, 132->140, 136, 142->150, 146, 166
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/builtin.py                                    153     36     60     12    73%   84, 103-114, 126->129, 130, 136->141, 142-150, 169-172, 173->exit, 176->174, 189-197, 206, 212
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/cached_py_info.py                             112      8     32      7    90%   60-61, 78-81, 143->151, 147, 153->161, 157, 177
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/discover.py                                    18      0      2      1    95%   40->43
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/py_info.py                                    345     50    116     16    81%   43, 72-73, 92-97, 135-156, 180-181, 184->187, 197, 205-206, 210, 219, 244-246, 258, 308->319, 313-315, 387-391, 414-423, 427, 436-437, 465, 474->476, 537->539, 545->540, 549->540
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/py_spec.py                                     74      0     30      1    99%   56->61
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/py_info.py                                    352     51    122     17    81%   43, 73-74, 93-98, 136-157, 181-182, 185->188, 198, 206-207, 211, 220, 245-247, 259, 314->325, 319-321, 396-400, 423-432, 436, 445-446, 474, 483->485, 536, 550->552, 558->553, 562->553
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/py_spec.py                                     79      0     32      1    99%   59->64
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/windows/__init__.py                            18     18      6      0     0%   1-44
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/windows/pep514.py                             106    106     36      0     0%   3-148
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/discovery/windows/pep514.py                             116    116     42      0     0%   3-161
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/info.py                                                  41      9      8      2    78%   35->48, 37-45
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/report.py                                                29      1      6      1    94%   28
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/__init__.py                                          74      3     10      1    95%   95, 100-101
@@ -414,7 +429,7 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/subprocess/__init__.py
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/zipapp.py                                           28     18      4      0    31%   13-15, 19-24, 28-37
 tests/conftest.py                                                                                                                                                                   253     33     68     17    81%   30->exit, 40, 45-47, 59-64, 71, 84-85, 89, 116, 135, 160-161, 167->186, 177-184, 231, 242->271, 266->265, 281-282, 290->287, 292-293, 334, 354->exit, 360-362
 tests/integration/test_run_int.py                                                                                                                                                    18      1      4      1    91%   27
-tests/integration/test_zipapp.py                                                                                                                                                     77     16     10      2    72%   25-53, 56
+tests/integration/test_zipapp.py                                                                                                                                                     80     19     14      2    67%   25-56, 59
 tests/unit/activation/conftest.py                                                                                                                                                   161     11     18      3    92%   52, 69, 82-85, 185-190
 tests/unit/activation/test_batch.py                                                                                                                                                  53     15      4      0    67%   24, 27-30, 33, 60-62, 71, 74-77, 80
 tests/unit/activation/test_csh.py                                                                                                                                                    20      6      4      2    67%   21-30
@@ -424,19 +439,19 @@ tests/unit/create/conftest.py                                                   
 tests/unit/create/test_creator.py                                                                                                                                                   417     46     92     16    85%   67, 86, 99->103, 101, 103->97, 142, 174->180, 181, 190, 208-210, 213-217, 221, 277, 347, 380-382, 388, 456-464, 471-490, 529->531, 596-597
 tests/unit/create/via_global_ref/builtin/testing/path.py                                                                                                                             62      4      8      3    90%   20, 50->55, 57, 73-74
 tests/unit/create/via_global_ref/builtin/testing/py_info.py                                                                                                                          14      3      0      0    79%   13-16
-tests/unit/create/via_global_ref/test_build_c_ext.py                                                                                                                                 36      8      4      0    70%   19-26
-tests/unit/discovery/py_info/test_py_info.py                                                                                                                                        236     31     22      4    86%   167, 291, 300, 320-327, 335, 362, 395-413, 419-483
+tests/unit/create/via_global_ref/test_build_c_ext.py                                                                                                                                 39      9      6      1    69%   19-26, 47
+tests/unit/discovery/py_info/test_py_info.py                                                                                                                                        242     31     22      4    87%   177, 301, 310, 330-337, 345, 372, 405-423, 429-493
 tests/unit/discovery/py_info/test_py_info_exe_based_of.py                                                                                                                            45      3      6      2    90%   41, 47-48
-tests/unit/discovery/test_discovery.py                                                                                                                                               74      1     12      2    97%   36->40, 48
-tests/unit/discovery/test_py_spec.py                                                                                                                                                 83      1     14      1    98%   98
-tests/unit/discovery/windows/conftest.py                                                                                                                                             66     57     12      0    12%   11-65, 70-78, 84-102
-tests/unit/discovery/windows/test_windows.py                                                                                                                                         13      4      0      0    69%   31-35
-tests/unit/discovery/windows/test_windows_pep514.py                                                                                                                                  22     12      0      0    45%   12-15, 33-65
+tests/unit/discovery/test_discovery.py                                                                                                                                               96      1     12      2    97%   37->41, 49
+tests/unit/discovery/test_py_spec.py                                                                                                                                                 96      2     20      2    97%   91, 117
+tests/unit/discovery/windows/conftest.py                                                                                                                                             68     59     12      0    11%   11-65, 70-79, 85-105
+tests/unit/discovery/windows/test_windows.py                                                                                                                                         13      4      0      0    69%   36-40
+tests/unit/discovery/windows/test_windows_pep514.py                                                                                                                                  22     12      0      0    45%   12-15, 90-123
 tests/unit/seed/embed/test_bootstrap_link_via_app_data.py                                                                                                                           149      0     22      1    99%   117->exit
 tests/unit/seed/wheels/test_periodic_update.py                                                                                                                                      334      1      8      1    99%   321
 tests/unit/test_util.py                                                                                                                                                              27      2      2      0    93%   35-36
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                                              7080   1007   1346    194    83%
+TOTAL                                                                                                                                                                              7156   1025   1374    197    83%
 
 59 files skipped due to complete coverage.
 py$(PYV): commands[4]> python -m coverage xml -o $(@D)/.tox/coverage.py$(PYV).xml
