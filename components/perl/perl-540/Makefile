@@ -25,8 +25,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
-COMPONENT_VERSION =		5.40.0
-COMPONENT_REVISION =		3
+COMPONENT_VERSION =		5.40.1
 PERL_VERSION =			$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 PLV =				$(subst .,,$(PERL_VERSION))
 COMPONENT_SUMMARY =		Perl $(PERL_VERSION)
@@ -34,7 +33,7 @@ COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d5325300ad267624cb0b7d512cfdfcd74fa7fe00c455c5b51a6bd53e5e199ef9
+	sha256:dfa20c2eef2b4af133525610bbb65dd13777ecf998c9c5b1ccf0d308e732ee3f
 COMPONENT_ARCHIVE_URL =		https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =		runtime/perl-$(PLV)
 COMPONENT_CLASSIFICATION =	Development/Perl
@@ -538,8 +537,10 @@ PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/bin/perl
 PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/bin/perlbug
 PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/man/man1/perlbug.1
 
-# Auto-generated dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += database/berkeleydb-5
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
