@@ -46,7 +46,7 @@ X11_SERVERLIBS_DIR= /usr/lib/xorg
 
 CONFIGURE_OPTIONS += --libdir='lib/mesa/amd64'
 
-PKG_HARDLINKS += usr/lib/xorg/modules/dri/kms_swrast_dri.so
+PKG_HARDLINKS += usr/lib/xorg/modules/dri/$(MACH64)/kms_swrast_dri.so
 
 # Command line options to GNU autoconf configure script
 CONFIGURE_OPTIONS += -Dgallium-drivers='swrast, i915, r600'
