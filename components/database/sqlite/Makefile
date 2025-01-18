@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
 COMPONENT_VERSION=      3.47.2
+COMPONENT_REVISION=     1
 TARBALL_VERSION=		3470200
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
@@ -88,7 +89,7 @@ COMPONENT_INSTALL_ENV += PATH=$(PATH)
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/ ;
 
 # Move tcl components to expected location
-COMPONENT_POST_INSTALL_ACTION.64 += $(MKDIR) $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/amd64 ; /usr/bin/mv $(PROTOUSRLIBDIR.64)/sqlite$(COMPONENT_VERSION)/* $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/amd64/ ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(MKDIR) $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/$(MACH64) ; /usr/bin/mv $(PROTOUSRLIBDIR.64)/sqlite$(COMPONENT_VERSION)/* $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/$(MACH64)/ ;
 
 COMPONENT_TEST_TARGETS= test
 
