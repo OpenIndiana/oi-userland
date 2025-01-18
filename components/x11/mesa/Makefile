@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 21.3.9
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
@@ -46,7 +46,7 @@ X11_SERVERLIBS_DIR= /usr/lib/xorg
 
 CONFIGURE_OPTIONS += --libdir='lib/mesa/amd64'
 
-PKG_HARDLINKS += usr/lib/xorg/modules/dri/kms_swrast_dri.so
+PKG_HARDLINKS += usr/lib/xorg/modules/dri/$(MACH64)/kms_swrast_dri.so
 
 # Command line options to GNU autoconf configure script
 CONFIGURE_OPTIONS += -Dgallium-drivers='swrast, i915, r600'
@@ -66,7 +66,7 @@ CONFIGURE_OPTIONS += -Dshared-glapi=enabled
 CONFIGURE_OPTIONS += -Dgallium-xvmc=enabled
 CONFIGURE_OPTIONS += -Dgallium-xa=enabled
 CONFIGURE_OPTIONS += -Ddri-drivers=''
-CONFIGURE_OPTIONS += -Ddri-drivers-path=$(X11_SERVERMODS_DIR)/dri
+CONFIGURE_OPTIONS += -Ddri-drivers-path='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += -Delf-tls=false
 
 CFLAGS += $(XPG7MODE)
@@ -93,7 +93,7 @@ COMPONENT_POST_INSTALL_ACTION.64 += \
 	  $(PROTOUSRLIBDIR)/mesa/$(MACH64)/$$f ; \
 	done ; \
 	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR)" \
-	  $(PROTOUSRLIBDIR)/xorg/modules/dri/i915_dri.so ; \
+	  $(PROTOUSRLIBDIR)/xorg/modules/dri/$(MACH64)/i915_dri.so ; \
 	mv $(PROTOUSRDIR)/include/GL $(PROTOUSRDIR)/include/mesa
 
 # Manually added build dependencies
