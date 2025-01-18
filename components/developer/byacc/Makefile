@@ -35,6 +35,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		byacc
 COMPONENT_VERSION=	20241231
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	byacc - Berkeley Yacc is an LALR(1) parser generator
 COMPONENT_PROJECT_URL=	https://invisible-island.net/archives/byacc
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,15 +49,13 @@ COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=	PublicDomain
 COMPONENT_LICENSE_FILE= LICENSE
 
-include $(WS_MAKE_RULES)/common.mk
-
 # configure in byacc sources from Invisible-Island is created by autoconf 2.52 and does not understand --localedir
-COMPONENT_PREP_ACTION = ( cd $(@D) && \
-                          autoconf)
+CONFIGURE_DEFAULT_DIRS= pre-2.60
+
+include $(WS_MAKE_RULES)/common.mk
 
 # delete date and time with GSED (delete second line of test output)
 COMPONENT_TEST_TRANSFORMS += '-e "2d"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-
