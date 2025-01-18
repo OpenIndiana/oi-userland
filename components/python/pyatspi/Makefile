@@ -13,40 +13,36 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=NO_ARCH
 SINGLE_PYTHON_VERSION = no
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyatspi
-# Notes: updating this package would also need to update at-spi2-core, orca and possibly others, too. pyatspi > 2.35 use gtk3.
-COMPONENT_MJR_VERSION=	2.24
-COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=	2
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_SUMMARY=	Python API to AT-SPI on D-Bus
+HUMAN_VERSION=		2.46.1
+COMPONENT_SUMMARY=	Python wrapper around libatspi
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Accessibility
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e7ef47a5d387fdc64a01722ef2bcced54c4d6b225fbe34867189e1f88ff0a692
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/pyatspi/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:f91f6a57434e9c07d13d5c4bf819dd78e8ee605aac2ae45d8c64c28114fb041b
 COMPONENT_FMRI=	library/python/pyatspi2
 COMPONENT_CLASSIFICATION=	Applications/Universal Access
-COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE=	LGPL-2.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
-# Tests don't work as configure doesn't find the python dbus module
-TEST_TARGET=	$(NO_TESTS)
-
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --with-python=$(PYTHON)
-CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-tests
 
 # Ensure Python modules are installed into vendor package directories:
 CONFIGURE_ENV+=		am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
+
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Manually added build dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
