@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023, 2024 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024, 2025 David Stes
 #
 
 
@@ -27,7 +27,7 @@
 # the driver script checks (with ckformat) the Smalltalk image
 # image format 6521 or 7033 : start VM 32bit  (not included any longer)
 # image format 68021 or 68533 : start VM 64bit
-BUILD_BITS=64
+
 USE_COMMON_TEST_MASTER= no
 
 # the SSL module is supporting 1.1 and 3.x but SUnit testframework is not
@@ -49,9 +49,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		stack-spur
-COMPONENT_VERSION=	5.0.3475
-GIT_TAG=		sun-v5.0.69
-PLUGIN_REV=		5.0-202412141720
+COMPONENT_VERSION=	5.0.3504
+GIT_TAG=		sun-v5.0.70
+PLUGIN_REV=		5.0-202501172014
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/stack-spur
@@ -65,7 +65,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4bf8791bea40ed4f730e23286d7357abee1a26f0a3c8d2dbef29431fbfebe79c
+COMPONENT_ARCHIVE_HASH=	sha256:31eb43ecea76728b4a83ed8cebdcf70f9adeea324e990895e7c134a8cb91854c
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
