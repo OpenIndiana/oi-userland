@@ -15,18 +15,14 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_TYPE= configure
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freeipmi
-COMPONENT_VERSION=	1.6.14
-COMPONENT_SUMMARY=	GNU FreeIPMI - in-band and out-of-band IPMI
-COMPONENT_DESCRIPTION=	GNU FreeIPMI - in-band and out-of-band IPMI software based on the \
-IPMI v1.5/2.0 specification ($(COMPONENT_VERSION))
+COMPONENT_VERSION=	1.6.15
+COMPONENT_SUMMARY=	GNU FreeIPMI - in-band and out-of-band IPMI software based on the IPMI v1.5/2.0 specification
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1a3dac5c76b7ccc4d4f86aa12b8ef9b212baef7489bf05e899b89abb7e14edb5
+COMPONENT_ARCHIVE_HASH= sha256:d6929c354639f5ce75b5b1897e8b366eb63625c23e5c4590a7aea034fe2b8caf
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/freeipmi/
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/management/$(COMPONENT_NAME)
@@ -34,25 +30,23 @@ COMPONENT_CLASSIFICATION=	System/Hardware
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# gcc 14 complains about this
+CFLAGS += -Wno-error=implicit-function-declaration
 
 CFLAGS += $(CPP_LARGEFILES) -DMAXHOSTNAMELEN=256
 CPPFLAGS += $(CPP_LARGEFILES) -DMAXHOSTNAMELEN=256
 
 CONFIGURE_OPTIONS += --infodir=/usr/share/doc/freeipmi/info
 CONFIGURE_OPTIONS += --libdir=$(USRLIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-dont-check-for-root
 
 # This is needed to avoid using CCACHE for CPP in this recipe:
 # they use CPP to build manpages! Go figure...
 CONFIGURE_ENV += CPP_FOR_BUILD=$(GCC_ROOT)/bin/cpp
-
-# Ensure 32-bit configs are installed last
-$(INSTALL_32): $(INSTALL_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
