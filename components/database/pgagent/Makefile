@@ -13,17 +13,16 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pgAgent
 COMPONENT_FILENAME=	pgagent
-COMPONENT_VERSION= 	4.2.2
+COMPONENT_VERSION= 	4.2.3
 COMPONENT_SUMMARY= 	pgAgent job scheduler for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_FILENAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6eb6c96eafaeb996b510b8ea683c1612e8120f5b33a1ec428eeb7360a4803f70
+COMPONENT_ARCHIVE_HASH=	sha256:d4af82e8b4063aa1ca9c407562a3bbc9c9951353538f83d82a7e523f40276388
 COMPONENT_ARCHIVE_URL=	https://github.com/pgadmin-org/pgagent/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.pgadmin.org/
 COMPONENT_FMRI=	database/postgres/pgagent
