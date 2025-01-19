@@ -20,9 +20,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
-HUMAN_VERSION=		1.56.0
+HUMAN_VERSION=		1.56.1
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
-COMPONENT_ARCHIVE_HASH=	sha256:1fb98b338ee6f7cf8ef96153b7d242f4568fe60f9b7434524eca630a57bd538b
+COMPONENT_ARCHIVE_HASH=	sha256:426be66460c98b8378573e7f6b0b2ab450f6bb6d2ec7cecc33ae81178f246480
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
@@ -34,6 +34,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Testing needs GNU tools
 PATH= $(PATH.gnu)
+
+# needed to produce GIR and Typelib files
+CONFIGURE_OPTIONS += -Dintrospection=enabled
 
 # Dynamic library version number
 SOVER := 0.$(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
