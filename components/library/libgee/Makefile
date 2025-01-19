@@ -20,37 +20,35 @@
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 # Copyright (c) 2018 Jason Martin
-# Copyright (c) 2021 Andreas Wacknitz
+# Copyright (c) 2025 Andreas Wacknitz
 #
-BUILD_BITS=	64_and_32
+
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     libgee
-COMPONENT_VERSION=  0.20.6
+COMPONENT_VERSION=  0.20.8
 COMPONENT_SUMMARY=  GObject based collection and utility library
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Libgee
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:1bf834f5e10d60cc6124d74ed3c1dd38da646787fbf7872220b8b4068e476d4d
+COMPONENT_ARCHIVE_HASH=	sha256:189815ac143d89867193b0c52b7dc31f3aa108a15f04d6b5dca2b6adfad0b0ee
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libgee/0.20/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/desktop/libgee
 COMPONENT_CLASSIFICATION=	Development/GNOME and GTK+
 COMPONENT_LICENSE = LGPLv2.1
+COMPONENT_LICENSE_FILE = COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS	+=	--disable-static
-CONFIGURE_OPTIONS	+=	--enable-shared
-CONFIGURE_OPTIONS	+=	--disable-dependency-tracking
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/[0-9]*\:[0-9]*\:[0-9]*\.[0-9]*//" ' \
-	'-e "s/gtester:[0-9]*/gtester/" ' \
-    '-n ' \
-	'-e "/WARNING/p" ' \
-	'-e "/PASS:/p" ' \
-    '-e "/OK/p" '
+COMPONENT_TEST_TRANSFORMS += ' -e "/OK/p" '
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/build/pkg-config
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
