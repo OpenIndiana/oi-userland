@@ -36,6 +36,14 @@ USE_OPENSSL10=yes
 # the default OpenIndiana JPEG_IMPLEM at time of writing is libjpeg8-turbo
 JPEG_IMPLEM=libjpeg8-turbo
 
+# problems OpenSmalltalk and gcc
+# the default gcc_OPT flags with -O2 do not work (see below)
+# this has been the case for many years
+# extra problems with gcc 14.2 
+# gcc_OPT+=		-Wno-error=implicit-function-declaration
+# problem with iconv and restrict keyword
+GCC_VERSION=	13
+
 include ../../../../make-rules/shared-macros.mk
 
 # there is no official triplet version for opensmalltalk-vm
@@ -44,6 +52,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cog-spur
 COMPONENT_VERSION=	5.0.3504
+COMPONENT_REVISION=	1
 GIT_TAG=		sun-v5.0.70
 PLUGIN_REV=		5.0-202501172014-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
