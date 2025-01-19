@@ -10,18 +10,18 @@
 #
 
 #
-# Copyright 2022 Andreas Wacknitz
+# Copyright 2025 Andreas Wacknitz
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lzlib
-COMPONENT_VERSION=	1.14
+COMPONENT_VERSION=	1.15
 COMPONENT_SUMMARY=	Lzlib is a data compression library providing in-memory LZMA compression and decompression functions
 COMPONENT_PROJECT_URL=	https://lzip.nongnu.org/lzlib.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH= sha256:e362ecccd82d4dd297df6a51b952c65d2172f9bf41a5c4590d3604d83aa519d3
+COMPONENT_ARCHIVE_HASH= sha256:9d45480e7c8171c64fa1d5beee2cbd82e69febe910f0ce628b876a8fe2141534
 COMPONENT_ARCHIVE_URL=	https://download.savannah.gnu.org/releases/lzip/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries

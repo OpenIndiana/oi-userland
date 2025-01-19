@@ -1,12 +1,11 @@
-diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
---- a~/Makefile.in	1970-01-01 00:00:00
-+++ a/Makefile.in	1970-01-01 00:00:00
-@@ -26,7 +26,7 @@ lib$(libname).a : lzlib.o
+--- lzlib-1.15/Makefile.in.orig	2024-11-03 20:02:28.000000000 +0100
++++ lzlib-1.15/Makefile.in	2025-01-19 13:03:40.061598989 +0100
+@@ -29,7 +29,7 @@
  	$(AR) $(ARFLAGS) $@ $<
  
- lib$(libname).so.$(pkgversion) : lzlib_sh.o
--	$(CC) $(CFLAGS) $(LDFLAGS) -fpic -fPIC -shared -Wl,--soname=lib$(libname).so.$(soversion) -o $@ $<
-+	$(CC) $(CFLAGS) $(LDFLAGS) -fpic -fPIC -shared -Wl,-h,lib$(libname).so.$(soversion) -o $@ $<
+ lib$(libname).so.$(soversion) : lzlib_sh.o
+-	$(CC) $(CFLAGS) $(LDFLAGS) -fpic -fPIC -shared -Wl,--soname=$@ -o $@ $< || \
++	$(CC) $(CFLAGS) $(LDFLAGS) -fpic -fPIC -shared -Wl,-h,$@ -o $@ $< || \
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -fpic -fPIC -shared -o $@ $<
  
- $(progname) : $(objs) lib$(libname).a
- 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(objs) lib$(libname).a
+ bin : $(progname_static) $(progname_shared)
