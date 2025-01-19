@@ -11,7 +11,7 @@
 
 #
 # Copyright 2023 Niklas Poslovski
-# Copyright 2023 Andreas Wacknitz
+# Copyright 2025 Andreas Wacknitz
 #
 
 BUILD_STYLE= meson
@@ -19,9 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsoup
-HUMAN_VERSION=		3.6.3
+HUMAN_VERSION=		3.6.4
 COMPONENT_SUMMARY= Libsoup is an HTTP client/server library for GNOME
-COMPONENT_ARCHIVE_HASH=	sha256:a0d84ab07bd168b317d319b0dc40c8b301b4543fba2ec42fa733914b2081afbd
+COMPONENT_ARCHIVE_HASH=	sha256:9b54c76f5276b05bebcaf2b6c2a141a188fc7bb1d0624eda259dac13a6665c8a
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/libsoup
 COMPONENT_FMRI= library/libsoup3
 COMPONENT_CLASSIFICATION= System/Libraries
