@@ -1,25 +1,26 @@
---- coreutils-9.5/tests/df/no-mtab-status.sh.orig
-+++ coreutils-9.5/tests/df/no-mtab-status.sh
-@@ -35,9 +35,13 @@
- #define _GNU_SOURCE
- #include <stdio.h>
+--- coreutils-9.6/tests/df/no-mtab-status.sh.orig	2025-01-15 18:07:19.000000000 +0100
++++ coreutils-9.6/tests/df/no-mtab-status.sh	2025-01-19 18:25:45.042646204 +0100
+@@ -34,10 +34,14 @@
+ #include <stdlib.h>
  #include <errno.h>
+ #include <fcntl.h>
 -#include <mntent.h>
  #include <string.h>
+ #include <stdarg.h>
  #include <dlfcn.h>
-+#ifdef __sun
-+#include <sys/mnttab.h>
++#ifdef __illumos__
++#   include <sys/mntent.h>
 +#else
-+#include <mntent.h>
++#   include <mntent.h>
 +#endif
  
  #define STREQ(a, b) (strcmp (a, b) == 0)
  
-@@ -69,7 +73,11 @@
-     return fopen_func(path, mode);
+@@ -76,7 +80,11 @@
+     return open_func(path, flags, mode);
  }
  
-+#ifdef __sun
++#ifdef __illumos__
 +int getmntent (FILE *fp, struct mnttab *mp)
 +#else
  struct mntent *getmntent (FILE *fp)
@@ -27,11 +28,11 @@
  {
    /* Prove that LD_PRELOAD works. */
    static int done = 0;
-@@ -80,7 +88,11 @@
+@@ -87,7 +95,11 @@
      }
    /* Now simulate the failure. */
    errno = ENOENT;
-+#ifdef __sun
++#ifdef __illumos__
 +  return -1;
 +#else
    return NULL;

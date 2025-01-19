@@ -21,7 +21,7 @@ SKIP: tests/tail/inotify-rotate-resources.sh
 SKIP: tests/tail/inotify-dir-recreate.sh
 SKIP: tests/tail/inotify-only-regular.sh
 PASS: tests/chmod/no-x.sh
-SKIP: tests/chgrp/basic.sh
+PASS: tests/chgrp/basic.sh
 PASS: tests/rm/dangling-symlink.sh
 PASS: tests/ls/ls-time.sh
 PASS: tests/rm/d-1.sh
@@ -68,11 +68,11 @@ PASS: tests/rm/unreadable.pl
 PASS: tests/rm/v-slash.sh
 SKIP: tests/rm/many-dir-entries-vs-OOM.sh
 SKIP: tests/rm/rm-readdir-fail.sh
-SKIP: tests/chgrp/default-no-deref.sh
-SKIP: tests/chgrp/deref.sh
-SKIP: tests/chgrp/no-x.sh
-SKIP: tests/chgrp/posix-H.sh
-SKIP: tests/chgrp/recurse.sh
+PASS: tests/chgrp/default-no-deref.sh
+PASS: tests/chgrp/deref.sh
+PASS: tests/chgrp/no-x.sh
+PASS: tests/chgrp/posix-H.sh
+PASS: tests/chgrp/recurse.sh
 PASS: tests/fmt/base.pl
 PASS: tests/fmt/goal-option.sh
 PASS: tests/fmt/long-line.sh
@@ -100,6 +100,7 @@ PASS: tests/ptx/ptx-overrun.sh
 PASS: tests/misc/xstrtol.pl
 PASS: tests/tail/overlay-headers.sh
 PASS: tests/tail/pid.sh
+PASS: tests/tail/pid-pipe.sh
 PASS: tests/od/od.pl
 PASS: tests/od/od-endian.sh
 PASS: tests/od/od-float.sh
@@ -186,6 +187,7 @@ PASS: tests/misc/printenv.sh
 PASS: tests/printf/printf.sh
 PASS: tests/printf/printf-cov.pl
 PASS: tests/printf/printf-hex.sh
+PASS: tests/printf/printf-indexed.sh
 PASS: tests/printf/printf-mb.sh
 PASS: tests/printf/printf-surprise.sh
 PASS: tests/printf/printf-quote.sh
@@ -330,7 +332,7 @@ PASS: tests/cp/dir-rm-dest.sh
 PASS: tests/cp/dir-slash.sh
 PASS: tests/cp/dir-vs-file.sh
 PASS: tests/cp/existing-perm-dir.sh
-SKIP: tests/cp/existing-perm-race.sh
+PASS: tests/cp/existing-perm-race.sh
 PASS: tests/cp/fail-perm.sh
 PASS: tests/cp/keep-directory-symlink.sh
 SKIP: tests/cp/sparse-extents.sh
@@ -470,7 +472,6 @@ PASS: tests/ls/m-option.sh
 PASS: tests/ls/w-option.sh
 PASS: tests/ls/multihardlink.sh
 PASS: tests/ls/no-arg.sh
-SKIP: tests/ls/no-cap.sh
 PASS: tests/ls/selinux-segfault.sh
 PASS: tests/ls/quote-align.sh
 PASS: tests/ls/size-align.sh
@@ -479,6 +480,7 @@ PASS: tests/ls/recursive.sh
 SKIP: tests/ls/removed-directory.sh
 PASS: tests/ls/root-rel-symlink-color.sh
 PASS: tests/ls/rt-1.sh
+SKIP: tests/ls/selinux.sh
 SKIP: tests/ls/slink-acl.sh
 SKIP: tests/ls/stat-dtype.sh
 PASS: tests/ls/stat-failed.sh
@@ -596,6 +598,7 @@ SKIP: tests/du/bind-mount-dir-cycle-v2.sh
 SKIP: tests/id/setgid.sh
 SKIP: tests/install/install-C-root.sh
 SKIP: tests/ls/capability.sh
+SKIP: tests/ls/no-cap.sh
 SKIP: tests/ls/nameless-uid.sh
 SKIP: tests/chcon/chcon.sh
 SKIP: tests/chroot/chroot-credentials.sh
@@ -651,9 +654,10 @@ SKIP: tests/factor/t33.sh
 SKIP: tests/factor/t34.sh
 SKIP: tests/factor/t35.sh
 SKIP: tests/factor/t36.sh
-# TOTAL: 653
-# PASS:  496
-# SKIP:  156
+SKIP: tests/factor/t37.sh
+# TOTAL: 657
+# PASS:  505
+# SKIP:  151
 # XFAIL: 0
 # FAIL:  1
 # XPASS: 0
@@ -668,16 +672,10 @@ SKIP: tests/tail/inotify-rotate
 SKIP: tests/tail/inotify-rotate-resources
 SKIP: tests/tail/inotify-dir-recreate
 SKIP: tests/tail/inotify-only-regular
-SKIP: tests/chgrp/basic
 SKIP: tests/rm/hash
 SKIP: tests/rm/r-root
 SKIP: tests/rm/many-dir-entries-vs-OOM
 SKIP: tests/rm/rm-readdir-fail
-SKIP: tests/chgrp/default-no-deref
-SKIP: tests/chgrp/deref
-SKIP: tests/chgrp/no-x
-SKIP: tests/chgrp/posix-H
-SKIP: tests/chgrp/recurse
 SKIP: tests/seq/seq-long-double
 SKIP: tests/tail/tail-sysfs
 SKIP: tests/tail/tail-n0f
@@ -704,7 +702,6 @@ SKIP: tests/tac/tac-continue
 SKIP: tests/timeout/timeout-group
 SKIP: tests/misc/xattr
 SKIP: tests/cp/acl
-SKIP: tests/cp/existing-perm-race
 SKIP: tests/cp/sparse-extents
 SKIP: tests/cp/copy-FMR
 SKIP: tests/cp/nfs-removal-race
@@ -728,8 +725,8 @@ SKIP: tests/install/install-C-selinux
 SKIP: tests/install/install-Z-selinux
 SKIP: tests/ls/acl
 SKIP: tests/ls/getxattr-speedup
-SKIP: tests/ls/no-cap
 SKIP: tests/ls/removed-directory
+SKIP: tests/ls/selinux
 SKIP: tests/ls/slink-acl
 SKIP: tests/ls/stat-dtype
 SKIP: tests/ls/stat-free-color
@@ -760,6 +757,7 @@ SKIP: tests/du/bind-mount-dir-cycle-v2
 SKIP: tests/id/setgid
 SKIP: tests/install/install-C-root
 SKIP: tests/ls/capability
+SKIP: tests/ls/no-cap
 SKIP: tests/ls/nameless-uid
 SKIP: tests/chcon/chcon
 SKIP: tests/chroot/chroot-credentials
@@ -815,9 +813,10 @@ SKIP: tests/factor/t33
 SKIP: tests/factor/t34
 SKIP: tests/factor/t35
 SKIP: tests/factor/t36
-# TOTAL: 653
-# PASS:  496
-# SKIP:  156
+SKIP: tests/factor/t37
+# TOTAL: 657
+# PASS:  505
+# SKIP:  151
 # XFAIL: 0
 # FAIL:  1
 # XPASS: 0
