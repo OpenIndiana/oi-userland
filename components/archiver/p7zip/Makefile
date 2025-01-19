@@ -26,17 +26,17 @@
 
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
+
 ENV = /usr/bin/env
 
 COMPONENT_NAME=         p7zip
-COMPONENT_VERSION=      17.5
-HUMAN_VERSION=		17.05
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=      17.6
+HUMAN_VERSION=		17.06
 COMPONENT_SUMMARY=      The p7zip compression and archiving utility
 COMPONENT_PROJECT_URL=  https://github.com/p7zip-project/p7zip
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d2788f892571058c08d27095c22154579dfefb807ebe357d145ab2ddddefb1a6
+COMPONENT_ARCHIVE_HASH= sha256:c35640020e8f044b425d9c18e1808ff9206dc7caf77c9720f57eb0849d714cd1
 COMPONENT_ARCHIVE_URL=	https://github.com/p7zip-project/p7zip/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         compress/p7zip
 COMPONENT_CLASSIFICATION= System/Core
