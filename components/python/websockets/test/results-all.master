@@ -94,12 +94,16 @@ test_cross_origin_redirect (tests.asyncio.test_client.UnixClientTests)
 Client doesn't follows redirect to a URI on a different origin. ... ok
 test_set_host_header (tests.asyncio.test_client.UnixClientTests)
 Client sets the Host header to the host in the WebSocket URI. ... ok
+test_acknowledge_canceled_ping (tests.asyncio.test_connection.ClientConnectionTests)
+ping is acknowledged by a pong with the same payload after being canceled. ... ok
 test_acknowledge_ping (tests.asyncio.test_connection.ClientConnectionTests)
 ping is acknowledged by a pong with the same payload. ... ok
 test_acknowledge_ping_non_matching_pong (tests.asyncio.test_connection.ClientConnectionTests)
 ping isn't acknowledged by a pong with a different payload. ... ok
+test_acknowledge_previous_canceled_ping (tests.asyncio.test_connection.ClientConnectionTests)
+ping is acknowledged by a pong for a later ping after being canceled. ... ok
 test_acknowledge_previous_ping (tests.asyncio.test_connection.ClientConnectionTests)
-ping is acknowledged by a pong with the same payload as a later ping. ... ok
+ping is acknowledged by a pong for a later ping. ... ok
 test_aenter (tests.asyncio.test_connection.ClientConnectionTests)
 __aenter__ returns the connection itself. ... ok
 test_aexit (tests.asyncio.test_connection.ClientConnectionTests)
@@ -342,12 +346,16 @@ test_writing_in_data_received_fails (tests.asyncio.test_connection.ClientConnect
 Error when responding to incoming frames is correctly reported. ... ok
 test_writing_in_send_context_fails (tests.asyncio.test_connection.ClientConnectionTests)
 Error when sending outgoing frame is correctly reported. ... ok
+test_acknowledge_canceled_ping (tests.asyncio.test_connection.ServerConnectionTests)
+ping is acknowledged by a pong with the same payload after being canceled. ... ok
 test_acknowledge_ping (tests.asyncio.test_connection.ServerConnectionTests)
 ping is acknowledged by a pong with the same payload. ... ok
 test_acknowledge_ping_non_matching_pong (tests.asyncio.test_connection.ServerConnectionTests)
 ping isn't acknowledged by a pong with a different payload. ... ok
+test_acknowledge_previous_canceled_ping (tests.asyncio.test_connection.ServerConnectionTests)
+ping is acknowledged by a pong for a later ping after being canceled. ... ok
 test_acknowledge_previous_ping (tests.asyncio.test_connection.ServerConnectionTests)
-ping is acknowledged by a pong with the same payload as a later ping. ... ok
+ping is acknowledged by a pong for a later ping. ... ok
 test_aenter (tests.asyncio.test_connection.ServerConnectionTests)
 __aenter__ returns the connection itself. ... ok
 test_aexit (tests.asyncio.test_connection.ServerConnectionTests)
@@ -1505,7 +1513,7 @@ ping is acknowledged by a pong with the same payload. ... ok
 test_acknowledge_ping_non_matching_pong (tests.sync.test_connection.ClientConnectionTests)
 ping isn't acknowledged by a pong with a different payload. ... ok
 test_acknowledge_previous_ping (tests.sync.test_connection.ClientConnectionTests)
-ping is acknowledged by a pong with the same payload as a later ping. ... ok
+ping is acknowledged by a pong for as a later ping. ... ok
 test_close (tests.sync.test_connection.ClientConnectionTests)
 close sends a close frame. ... ok
 test_close_code (tests.sync.test_connection.ClientConnectionTests)
@@ -1681,7 +1689,7 @@ ping is acknowledged by a pong with the same payload. ... ok
 test_acknowledge_ping_non_matching_pong (tests.sync.test_connection.ServerConnectionTests)
 ping isn't acknowledged by a pong with a different payload. ... ok
 test_acknowledge_previous_ping (tests.sync.test_connection.ServerConnectionTests)
-ping is acknowledged by a pong with the same payload as a later ping. ... ok
+ping is acknowledged by a pong for as a later ping. ... ok
 test_close (tests.sync.test_connection.ServerConnectionTests)
 close sends a close frame. ... ok
 test_close_code (tests.sync.test_connection.ServerConnectionTests)
@@ -1854,6 +1862,8 @@ test_writing_in_send_context_fails (tests.sync.test_connection.ServerConnectionT
 Error when sending outgoing frame is correctly reported. ... ok
 test_close_is_idempotent (tests.sync.test_messages.AssemblerTests)
 close can be called multiple times safely. ... ok
+test_close_resumes_reading (tests.sync.test_messages.AssemblerTests)
+close unblocks reading when queue is above the high-water mark. ... ok
 test_get_binary_message_already_received (tests.sync.test_messages.AssemblerTests)
 get returns a binary message that is already received. ... ok
 test_get_binary_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
@@ -1938,6 +1948,14 @@ test_get_text_message_already_received (tests.sync.test_messages.AssemblerTests)
 get returns a text message that is already received. ... ok
 test_get_text_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
 get returns a text message when it is received. ... ok
+test_get_timeout_0_fragmented_message_already_received (tests.sync.test_messages.AssemblerTests)
+get(timeout=0) returns a fragmented message that is already received. ... ok
+test_get_timeout_0_fragmented_message_partially_received (tests.sync.test_messages.AssemblerTests)
+get(timeout=0) times out when a fragmented message is partially received. ... ok
+test_get_timeout_0_message_already_received (tests.sync.test_messages.AssemblerTests)
+get(timeout=0) returns a message that is already received. ... ok
+test_get_timeout_0_message_not_received_yet (tests.sync.test_messages.AssemblerTests)
+get(timeout=0) times out when no message is already received. ... ok
 test_get_timeout_after_first_frame (tests.sync.test_messages.AssemblerTests)
 get times out after reading the first frame. ... ok
 test_get_timeout_before_first_frame (tests.sync.test_messages.AssemblerTests)
@@ -2300,13 +2318,18 @@ test_parse_unsupported_method (tests.test_http11.RequestTests) ... ok
 test_parse_unsupported_protocol (tests.test_http11.RequestTests) ... ok
 test_serialize (tests.test_http11.RequestTests) ... ok
 test_parse (tests.test_http11.ResponseTests) ... ok
+test_parse_body (tests.test_http11.ResponseTests) ... ok
 test_parse_body_no_content (tests.test_http11.ResponseTests) ... ok
 test_parse_body_not_modified (tests.test_http11.ResponseTests) ... ok
+test_parse_body_too_large (tests.test_http11.ResponseTests) ... ok
+test_parse_body_with_chunked_transfer_encoding (tests.test_http11.ResponseTests) ... ok
+test_parse_body_with_chunked_transfer_encoding_and_chunk_too_large (tests.test_http11.ResponseTests) ... ok
+test_parse_body_with_chunked_transfer_encoding_and_chunk_way_too_large (tests.test_http11.ResponseTests) ... ok
+test_parse_body_with_chunked_transfer_encoding_and_chunk_without_crlf (tests.test_http11.ResponseTests) ... ok
 test_parse_body_with_content_length (tests.test_http11.ResponseTests) ... ok
-test_parse_body_with_content_length_too_long (tests.test_http11.ResponseTests) ... ok
-test_parse_body_with_transfer_encoding (tests.test_http11.ResponseTests) ... ok
-test_parse_body_without_content_length (tests.test_http11.ResponseTests) ... ok
-test_parse_body_without_content_length_too_long (tests.test_http11.ResponseTests) ... ok
+test_parse_body_with_content_length_and_body_too_large (tests.test_http11.ResponseTests) ... ok
+test_parse_body_with_content_length_and_body_way_too_large (tests.test_http11.ResponseTests) ... ok
+test_parse_body_with_unsupported_transfer_encoding (tests.test_http11.ResponseTests) ... ok
 test_parse_empty (tests.test_http11.ResponseTests) ... ok
 test_parse_invalid_header (tests.test_http11.ResponseTests) ... ok
 test_parse_invalid_reason (tests.test_http11.ResponseTests) ... ok
@@ -2572,6 +2595,8 @@ test_no_subprotocols_supported (tests.test_server.HandshakeTests)
 Client offers a subprotocol, but the server doesn't support any. ... ok
 test_origin (tests.test_server.HandshakeTests)
 Handshake succeeds when checking origin. ... ok
+test_partial_match_origin_regex (tests.test_server.HandshakeTests)
+Handshake fails when checking origins and the origin a partial match. ... ok
 test_select_no_subprotocol (tests.test_server.HandshakeTests)
 Server doesn't enable any subprotocol with select_subprotocol. ... ok
 test_select_subprotocol (tests.test_server.HandshakeTests)
@@ -2582,6 +2607,8 @@ test_supported_extension_parameters (tests.test_server.HandshakeTests)
 Client offers an extension with parameters supported by the server. ... ok
 test_supported_origin (tests.test_server.HandshakeTests)
 Handshake succeeds when checking origins and the origin is supported. ... ok
+test_supported_origin_regex (tests.test_server.HandshakeTests)
+Handshake succeeds when checking origins and the origin is supported. ... ok
 test_supported_subprotocol (tests.test_server.HandshakeTests)
 Server enables one of the subprotocols when the client offers it. ... ok
 test_truncated_key (tests.test_server.HandshakeTests)
@@ -2591,7 +2618,9 @@ Handshake fails when checking origin and the Origin header is unexpected. ... ok
 test_unsupported_extension_parameters (tests.test_server.HandshakeTests)
 Client offers an extension with parameters unsupported by the server. ... ok
 test_unsupported_origin (tests.test_server.HandshakeTests)
-Handshake succeeds when checking origins and the origin is unsupported. ... ok
+Handshake fails when checking origins and the origin is unsupported. ... ok
+test_unsupported_origin_regex (tests.test_server.HandshakeTests)
+Handshake fails when checking origins and the origin is unsupported. ... ok
 test_unsupported_subprotocol (tests.test_server.HandshakeTests)
 Server expects one of the subprotocols, but the client doesn't offer any. ... ok
 test_bypass_handshake (tests.test_server.MiscTests)
@@ -2650,7 +2679,7 @@ test_accept_key (tests.test_utils.UtilsTests) ... ok
 test_generate_key (tests.test_utils.UtilsTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 1819 tests
+Ran 1836 tests
 
 OK (skipped=23)
   py$(PYV): OK
