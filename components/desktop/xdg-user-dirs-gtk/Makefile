@@ -17,16 +17,14 @@ BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdg-user-dirs-gtk
-HUMAN_VERSION=			0.12
+HUMAN_VERSION=			0.14
 COMPONENT_VERSION_MAJOR=	$(HUMAN_VERSION)
 COMPONENT_SUMMARY=		Integrates xdg-user-dirs into the Gnome desktop and Gtk+ applications
-COMPONENT_ARCHIVE_HASH=		sha256:8a5630eac139bb39504bf81bf62483ae94a8aac0c92bee904baf4e4333b8a5c1
+COMPONENT_ARCHIVE_HASH=		sha256:537fbe142b24736ed7894e4a01f69fd758cb6c7a677a382879529d217f4a2873
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=		GPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_FMRI=		desktop/xdg/xdg-user-dirs-gtk
-
-TEST_TARGET=	$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
