@@ -25,8 +25,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
-COMPONENT_VERSION =		5.38.2
-COMPONENT_REVISION =		2
+COMPONENT_VERSION =		5.38.3
 PERL_VERSION =			$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 PLV =				$(subst .,,$(PERL_VERSION))
 COMPONENT_SUMMARY =		Perl $(PERL_VERSION)
@@ -34,7 +33,7 @@ COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d91115e90b896520e83d4de6b52f8254ef2b70a8d545ffab33200ea9f1cf29e8
+	sha256:da4c8ae1e91d60a52e02e0009618fc6aa62e1ac90b3f302969e2cf490c122dcc
 COMPONENT_ARCHIVE_URL =		https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =		runtime/perl-$(PLV)
 COMPONENT_CLASSIFICATION =	Development/Perl
@@ -66,7 +65,7 @@ COMPONENT_SUMMARY.CPAN-Meta = the distribution metadata for a CPAN dist
 
 # CPAN-Meta-Requirements
 COMPONENT_FMRI.CPAN-Meta-Requirements = library/perl-5/cpan-meta-requirements-$(PLV)
-IPS_COMPONENT_VERSION.CPAN-Meta-Requirements = 2.143	# We already had this version integrated
+IPS_COMPONENT_VERSION.CPAN-Meta-Requirements = 2.140
 HUMAN_VERSION.CPAN-Meta-Requirements = 2.140
 COMPONENT_SUMMARY.CPAN-Meta-Requirements = a set of version requirements for a CPAN dist
 
@@ -532,8 +531,10 @@ PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/bin/perl
 PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/bin/perlbug
 PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/man/man1/perlbug.1
 
-# Auto-generated dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += database/berkeleydb-5
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
