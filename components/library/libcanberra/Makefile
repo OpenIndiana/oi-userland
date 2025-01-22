@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libcanberra
 COMPONENT_VERSION=      0.30
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      Event Sound API Using XDG Sound Theming Specification
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -31,15 +31,13 @@ COMPONENT_LICENSE_FILE= LGPL
 
 include $(WS_MAKE_RULES)/common.mk
 
+# We are patching configure.ac
 COMPONENT_PREP_ACTION += cd $(@D) && $(ENV) PATH="$(PATH)" autoreconf -fi ;
-
-CFLAGS += -I/usr/include/gconf/2
 
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/gtk2
