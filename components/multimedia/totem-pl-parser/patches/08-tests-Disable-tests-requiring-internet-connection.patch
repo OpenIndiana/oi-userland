@@ -1,0 +1,67 @@
+This patch comes from
+https://sources.debian.org/patches/totem-pl-parser/3.26.6-2/debian/tests-Disable-tests-requiring-internet-connection.patch/
+
+--- totem-pl-parser-3.26.6/plparse/tests/parser.c.orig
++++ totem-pl-parser-3.26.6/plparse/tests/parser.c
+@@ -30,6 +30,7 @@
+ static char *option_base_uri = NULL;
+ static char **uris = NULL;
+ static gboolean http_supported = FALSE;
++static gboolean network_supported = FALSE;
+ 
+ static char *
+ get_relative_uri (const char *rel)
+@@ -546,7 +547,7 @@
+ static void
+ test_itms_parsing (void)
+ {
+-	if (http_supported == FALSE) {
++	if (http_supported == FALSE || network_supported == FALSE) {
+ 		g_test_message ("HTTP support required to test ITMS");
+ 		return;
+ 	}
+@@ -1111,7 +1112,7 @@
+ 	if (!g_test_slow ())
+ 		return;
+ 
+-	if (http_supported == FALSE) {
++	if (http_supported == FALSE || network_supported == FALSE) {
+ 		g_test_message ("HTTP support required to test broken ASX");
+ 		return;
+ 	}
+@@ -1126,7 +1127,7 @@
+ {
+ 	TotemPlParserResult result;
+ 
+-	if (http_supported == FALSE) {
++	if (http_supported == FALSE || network_supported == FALSE) {
+ 		g_test_message ("HTTP support required to test text/plain XML");
+ 		return;
+ 	}
+@@ -1141,7 +1142,7 @@
+ {
+ 	TotemPlParserResult result;
+ 
+-	if (http_supported == FALSE) {
++	if (http_supported == FALSE || network_supported == FALSE) {
+ 		g_test_message ("HTTP support required to test compressed content-encoding");
+ 		return;
+ 	}
+@@ -1810,11 +1811,17 @@
+ 		}
+ 	}
+ 
++	network_supported = http_supported;
++
+ 	if (http_supported == FALSE) {
+ 		if (error_out_on_http)
+ 			g_error ("gvfs with http support is required (no http)");
+ 		else
+ 			g_message ("gvfs with http support is required (no http)");
++	} else {
++		network_supported = FALSE;
++		g_message ("gvfs has http support, but disabling tests requiring internet "
++		           "connection anyways, as they may be unreliable at build time");
+ 	}
+ }
+ 

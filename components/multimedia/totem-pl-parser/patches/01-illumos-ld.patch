@@ -1,0 +1,20 @@
+--- totem-pl-parser-3.26.6/plparse/meson.build.orig
++++ totem-pl-parser-3.26.6/plparse/meson.build
+@@ -60,7 +60,7 @@
+ plparser_cflags = extra_warning_cflags + ['-DLIBEXECDIR="@0@"'.format(libexecdir)]
+ 
+ symbol_map = 'plparser.map'
+-symbol_link_args = '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), symbol_map)
++symbol_link_args = '-Wl,-M,@0@/@1@'.format(meson.current_source_dir(), symbol_map)
+ 
+ plparser_lib = library('totem-plparser',
+                        plparser_sources, features_h,
+@@ -96,7 +96,7 @@
+ ]
+ 
+ mini_symbol_map = 'plparser-mini.map'
+-mini_symbol_link_args = '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), mini_symbol_map)
++mini_symbol_link_args = '-Wl,-M,@0@/@1@'.format(meson.current_source_dir(), mini_symbol_map)
+ 
+ plparser_mini_lib = library('totem-plparser-mini',
+                             plparser_mini_sources,
