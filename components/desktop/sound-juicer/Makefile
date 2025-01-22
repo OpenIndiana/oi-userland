@@ -37,6 +37,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(INSTALL) -D $(COMPONENT_DIR)/files/desktop-cd-ripping-sound-juicer \
 		$(PROTOETCSECDIR)/exec_attr.d/desktop-cd-ripping-sound-juicer ;
 
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/good
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/cd-burning/brasero
 REQUIRED_PACKAGES += library/audio/gstreamer1
