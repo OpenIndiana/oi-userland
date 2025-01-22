@@ -19,26 +19,40 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libidn2
-COMPONENT_VERSION=	2.3.4
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.3.7
 COMPONENT_SUMMARY=	An implementation of IDNA2008 internationalized domain names
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:93caba72b4e051d1f8d4f5a076ab63c99b77faee019b72b9783b267986dbb45f
+COMPONENT_ARCHIVE_HASH=	sha256:4c21a791b610b9519b9d0e12b8097bf2f359b12f8dd92647611a929e6bfd7d64
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libidn/
 COMPONENT_FMRI=		library/libidn2
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_LICENSE=	LGPLv3, GPLv2
+COMPONENT_LICENSE=	GPL-2.0-only AND LGPL-3.0-only
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --enable-static=no
-CONFIGURE_OPTIONS += --includedir=/usr/include/idn2
+# helper target
+update-license-file: patch
+	( \
+		printf -- '--- COPYING ---------------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING ; \
+		printf '\n--- COPYING.LESSERv3 ------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LESSERv3 ; \
+		printf '\n--- COPYING.unicode -------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.unicode ; \
+		printf '\n--- COPYINGv2 -------------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYINGv2 \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
-# Without the following one test (libidn2) fails: 
-unexport SHELLOPTS
+CONFIGURE_INCLUDEDIR = /usr/include/idn2
+
+CONFIGURE_OPTIONS += --enable-static=no
+
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRBINDIR32) ;
+# We do not want the info index file
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libunistring
