@@ -9,64 +9,42 @@
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
+# Copyright 2025 Marcel Telka
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
+BUILD_STYLE = meson
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         sound-juicer
-COMPONENT_VERSION=      2.32.0
-COMPONENT_REVISION=     4
-COMPONENT_PROJECT_URL=  https://wiki.gnome.org/SoundJuicer
-COMPONENT_SUMMARY=      CD ripping tool
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=			sound-juicer
+COMPONENT_VERSION=		3.40.0
+COMPONENT_SUMMARY=		CD ripping tool using GTK+ and GStreamer
 COMPONENT_ARCHIVE_HASH= \
-	sha256:f6040e19e50094daff9699dea3e9884ce3226a61f28acbe9ad3a0458975a305a
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
-COMPONENT_CLASSIFICATION=Applications/Sound and Video
-COMPONENT_FMRI=         desktop/cd-ripping/sound-juicer
-COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE= COPYING
+	sha256:2ee882744391beb4c6d64a0f6825fb765510b706ec2b704bfb42e42afaae1de6
+COMPONENT_CLASSIFICATION=	Applications/Sound and Video
+COMPONENT_FMRI=			desktop/cd-ripping/sound-juicer
+COMPONENT_LICENSE=		GPL-2.0-only
+COMPONENT_LICENSE_FILE=		COPYING
 
-TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH=$(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
-					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-					cd $(@D)/po-sun && $(MAKE) all &&\
-					cd $(@D) && intltoolize --force --copy --automake &&\
-					aclocal -I ./m4 &&\
-					autoheader &&\
-					automake -a -f -c --gnu &&\
-					autoconf )
-					
-CONFIGURE_SCRIPT=       $(@D)/configure
-
-gcc_OPT		= -O2
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--localstatedir=/var
-CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--with-gtk=3.0
-
-COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+# Install additional file
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) -D $(COMPONENT_DIR)/files/desktop-cd-ripping-sound-juicer \
+		$(PROTOETCSECDIR)/exec_attr.d/desktop-cd-ripping-sound-juicer ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/cd-burning/brasero
-REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += library/audio/gstreamer
-REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
-REQUIRED_PACKAGES += library/audio/libcdio
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/musicbrainz/libmusicbrainz-3
+REQUIRED_PACKAGES += library/musicbrainz/libdiscid
+REQUIRED_PACKAGES += library/musicbrainz/libmusicbrainz-5
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus-glib
