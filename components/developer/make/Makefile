@@ -23,48 +23,32 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=			32_and_64
-BUILD_SYSTEM=		configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		make
-COMPONENT_VERSION=	4.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.4.1
+COMPONENT_SUMMARY=	A utility for directing compilation
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/make/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e05fdde47c5f7ca45cb697e973894ff4f5d79e13b750ed57d7b66d8defc78e19
+COMPONENT_ARCHIVE_HASH=	sha256:dd16fb1d67bfab79a72f5e8390735c49e3e8e70b4945a15ab1f81ddb78658fb3
+COMPONENT_FMRI=		developer/build/gnu-make
+COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/make/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPL-3.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
-
-COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
-
 CONFIGURE_OPTIONS += --program-prefix=g
-CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --with-guile
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# force re-runs to be the same
-COMPONENT_PRE_TEST_ACTION = ( $(TOUCH) $(SOURCE_DIR)/getloadavg.c )
-
 # Strip compilation lines from test output
-COMPONENT_TEST_TRANSFORMS += \
-    '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^1-minute.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^.*load average.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^.*Running tests for GNU make.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^.==========.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^Clearing work.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^config.status: .*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
-    '-e "/^XXX_CC_XXX$$/d" '
+COMPONENT_TEST_TRANSFORMS += "-e '/^Clearing /d'"
+COMPONENT_TEST_TRANSFORMS += -n
+COMPONENT_TEST_TRANSFORMS += "-e '/^-------/,/^======/p'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/guile
