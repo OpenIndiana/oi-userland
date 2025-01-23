@@ -21,50 +21,50 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =            openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR =     4.1
-COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).5
-COMPONENT_REVISION =        3
+COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).7
 COMPONENT_SUMMARY =         OpenMPI - High Performance Message Passing Library
 COMPONENT_PROJECT_URL =     https://www.open-mpi.org
 COMPONENT_SRC_NAME =        openmpi
 COMPONENT_SRC =             $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =         $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH =    sha256:c018b127619d2a2a30c1931f316fc8a245926d0f5b4ebed4711f9695e7f70925
+COMPONENT_ARCHIVE_HASH =    sha256:3956daf86e8b570e31155d92ed4b2b1699bc36455ae24a0d98ca376d3e8b4e9d
 COMPONENT_ARCHIVE_URL =     https://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
 COMPONENT_LICENSE      =    BSD 2-Clause
-COMPONENT_LICENSE_FILE =    $(COMPONENT_SRC_NAME).license
-
+COMPONENT_LICENSE_FILE =    LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-unexport SHELLOPTS
+# gcc 14 complains about this
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
 
-CONFIGURE_PREFIX=    $(MPI_PREFIX)
+CONFIGURE_PREFIX= $(MPI_PREFIX)
 
-CONFIGURE_OPTIONS+= --bindir=$(MPI_BINDIR)
-CONFIGURE_OPTIONS+= --datadir=$(MPI_DATADIR)
-CONFIGURE_OPTIONS+= --docdir=$(MPI_DOCDIR)
-CONFIGURE_OPTIONS+= --htmldir=$(MPI_HTMLDIR)
-CONFIGURE_OPTIONS+= --includedir=$(MPI_INCDIR)
-CONFIGURE_OPTIONS+= --libdir=$(MPI_LIBDIR)
-CONFIGURE_OPTIONS+= --mandir=$(MPI_MANDIR)
-CONFIGURE_OPTIONS+= --sbindir=$(MPI_SBINDIR)
-CONFIGURE_OPTIONS+= --sysconfdir=$(MPI_ETCDIR)
-CONFIGURE_OPTIONS+= --enable-ipv6
-CONFIGURE_OPTIONS+= --enable-mpi-fortran=usempi
-CONFIGURE_OPTIONS+= --enable-mpi-cxx
-CONFIGURE_OPTIONS+= --enable-mpi-cxx-seek
-CONFIGURE_OPTIONS+= --disable-event-epoll
-CONFIGURE_OPTIONS+= --with-package-string=Openindiana
-CONFIGURE_OPTIONS+= --with-wrapper-cflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+= --with-wrapper-cxxflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+= --with-wrapper-fcflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+= --with-wrapper-libs="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+= --without-slurm
-CONFIGURE_OPTIONS+= ompi_cv_fortran_ignore_tkr_data=0
+CONFIGURE_OPTIONS += --bindir=$(MPI_BINDIR)
+CONFIGURE_OPTIONS += --datadir=$(MPI_DATADIR)
+CONFIGURE_OPTIONS += --docdir=$(MPI_DOCDIR)
+CONFIGURE_OPTIONS += --htmldir=$(MPI_HTMLDIR)
+CONFIGURE_OPTIONS += --includedir=$(MPI_INCDIR)
+CONFIGURE_OPTIONS += --libdir=$(MPI_LIBDIR)
+CONFIGURE_OPTIONS += --mandir=$(MPI_MANDIR)
+CONFIGURE_OPTIONS += --sbindir=$(MPI_SBINDIR)
+CONFIGURE_OPTIONS += --sysconfdir=$(MPI_ETCDIR)
+CONFIGURE_OPTIONS += --enable-ipv6
+CONFIGURE_OPTIONS += --enable-mpi-fortran=usempi
+CONFIGURE_OPTIONS += --enable-mpi-cxx
+CONFIGURE_OPTIONS += --enable-mpi-cxx-seek
+CONFIGURE_OPTIONS += --disable-event-epoll
+CONFIGURE_OPTIONS += --with-package-string=Openindiana
+CONFIGURE_OPTIONS += --with-wrapper-cflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS += --with-wrapper-cxxflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS += --with-wrapper-fcflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS += --with-wrapper-libs="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS += --without-slurm
+CONFIGURE_OPTIONS += ompi_cv_fortran_ignore_tkr_data=0
 
 $(BUILD_DIR)/modulefile.%:		files/modulefile
 	/bin/sed -e "s#%%BITS%%#$*#g" \
