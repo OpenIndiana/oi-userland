@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-URandom
-HUMAN_VERSION =			0.50
+HUMAN_VERSION =			0.52
 COMPONENT_SUMMARY =		Provide non blocking randomness
 COMPONENT_CPAN_AUTHOR =		DDICK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fa1fba2827dfda3b75f78c77800fe811920e6d511a84c060ffd63d47a63c9653
+	sha256:8ea7061d8d71c5e73e03b5c181a221b6163ef1be0ecae9f3fcd9ef135bf70eb6
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
