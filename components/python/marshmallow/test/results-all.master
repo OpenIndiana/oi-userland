@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1223 items
+collecting ... collected 1238 items
 
 tests/test_decorators.py::test_decorated_processors[True] PASSED
 tests/test_decorators.py::test_decorated_processors[False] PASSED
@@ -34,6 +34,7 @@ tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_da
 tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator PASSED
 tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error PASSED
 tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors PASSED
+tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict PASSED
 tests/test_decorators.py::test_decorator_error_handling PASSED
 tests/test_decorators.py::test_decorator_error_handling_with_load[pre_load] PASSED
 tests/test_decorators.py::test_decorator_error_handling_with_load[post_load] PASSED
@@ -43,6 +44,7 @@ tests/test_decorators.py::test_decorator_error_handling_with_dump[pre_dump] PASS
 tests/test_decorators.py::test_decorator_error_handling_with_dump[post_dump] PASSED
 tests/test_decorators.py::test_decorator_post_dump_with_nested_original_and_pass_many[data0-expected_data0-expected_original_data0] PASSED
 tests/test_decorators.py::test_decorator_post_load_with_nested_original_and_pass_many[data0-expected_data0-expected_original_data0] PASSED
+tests/test_decorators.py::test_post_load_method_that_appends_to_data PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[String] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Integer] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Boolean] PASSED
@@ -157,12 +159,11 @@ tests/test_deserialization.py::TestFieldDeserialization::test_iso_datetime_field
 tests/test_deserialization.py::TestFieldDeserialization::test_iso_datetime_field_deserialization[2013-11-10T01:23:45-06:00-expected4-True-iso8601] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025-expected0] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025-expected1] PASSED
-tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025-expected2] PASSED
-tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025.12-expected3] PASSED
-tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025.123456-expected4] PASSED
-tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1-expected5] PASSED
-tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1384043025000-expected6] PASSED
-tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1000-expected7] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025.12-expected2] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025.123456-expected3] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1-expected4] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1384043025000-expected5] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1000-expected6] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-timestamp] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-timestamp_ms] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[!@#-timestamp] PASSED
@@ -610,6 +611,7 @@ tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_w
 tests/test_fields.py::TestDictNested::test_dict_nested_partial_propagated_to_nested PASSED
 tests/test_options.py::TestUnordered::test_unordered_dump_returns_dict PASSED
 tests/test_options.py::TestUnordered::test_unordered_load_returns_dict PASSED
+tests/test_options.py::TestFieldOrdering::test_ordered_option_is_deprecate PASSED
 tests/test_options.py::TestFieldOrdering::test_ordered_option_is_inherited[False] PASSED
 tests/test_options.py::TestFieldOrdering::test_ordered_option_is_inherited[True] PASSED
 tests/test_options.py::TestFieldOrdering::test_ordering_is_off_by_default PASSED
@@ -1156,6 +1158,19 @@ tests/test_validate.py::test_url_dont_require_tld_invalid[http:// /foo/bar] PASS
 tests/test_validate.py::test_url_dont_require_tld_invalid[] PASSED
 tests/test_validate.py::test_url_dont_require_tld_invalid[None] PASSED
 tests/test_validate.py::test_url_custom_scheme PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[file:///tmp/tmp1234] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/tmp/tmp1234] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[file:///C:/Users/test/file.txt] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/C:/Program%20Files/file.exe] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[file:///home/user/documents/test.pdf] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[file:///tmp/test%20file.txt] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[file:///] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/] PASSED
+tests/test_validate.py::test_url_rejects_invalid_file_urls[file://] PASSED
+tests/test_validate.py::test_url_rejects_invalid_file_urls[file:/tmp/file.txt] PASSED
+tests/test_validate.py::test_url_rejects_invalid_file_urls[file:tmp/file.txt] PASSED
+tests/test_validate.py::test_url_rejects_invalid_file_urls[file://hostname/path] PASSED
+tests/test_validate.py::test_url_rejects_invalid_file_urls[file:///tmp/test file.txt] PASSED
 tests/test_validate.py::test_url_relative_and_custom_schemes PASSED
 tests/test_validate.py::test_url_custom_message PASSED
 tests/test_validate.py::test_url_repr PASSED
@@ -1231,6 +1246,6 @@ tests/test_validate.py::test_containsnoneof_mixing_types PASSED
 tests/test_validate.py::test_and PASSED
 tests/test_version_attributes.py::test_version_attributes_deprecated PASSED
 
-======== 1223 passed ========
+======== 1238 passed ========
   py$(PYV): OK
   congratulations :)
