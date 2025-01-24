@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		prompt_toolkit
-HUMAN_VERSION =			3.0.48
+HUMAN_VERSION =			3.0.50
 COMPONENT_SUMMARY =		Library for building powerful interactive command lines in Python
 COMPONENT_PROJECT_URL =		https://github.com/prompt-toolkit/python-prompt-toolkit
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/prompt-toolkit/python-prompt-toolkit/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b7fca20ef46ead93ead9b16e79e01362c83e1da9591e1e49a0e31a93299c5785
+	sha256:7d35a40f274afdda55add26ae324bb4dd5ae2782e73d9a014642bc15339f6f10
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,6 +36,5 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wcwidth
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
