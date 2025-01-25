@@ -20,11 +20,12 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBI
-HUMAN_VERSION =			1.646
+HUMAN_VERSION =			1.647
 COMPONENT_SUMMARY =		Database independent interface for Perl
-COMPONENT_CPAN_AUTHOR =		HMBRAND
+COMPONENT_ARCHIVE_URL =		\
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBI-1.647.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:53ab32ac8c30295a776dde658df22be760936cdca5a3c003a23bda6d829fa184
+	sha256:0df16af8e5b3225a68b7b592ab531004ddb35a9682b50300ce50174ad867d9aa
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
