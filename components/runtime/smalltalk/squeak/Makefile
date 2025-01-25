@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023, 2024 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024, 2025 David Stes
 #
 
 
@@ -18,7 +18,7 @@
 # See http://squeak.org and http://squeakvm.org
 #
 # squeak uses cmake and a custom configure script (not GNU autoconf)
-# in order to build this package, "cmake" must be installed
+# in order to build this package, "cmake" and "pkg-config" must be installed
 #
 # squeak was built both in 32-bit and 64-bit mode
 # but since 2023 version 4.20.6 now only in 64 bit per OpenIndiana request
@@ -50,7 +50,6 @@
 # so we deliver a patch and rename files
 # in order to put the 64-bit objects in their usual usr/lib/amd64 location
 
-BUILD_BITS=64
 USE_COMMON_TEST_MASTER=no
 
 # there is support for OpenSSL 1.1 and 3.x in the squeak SSL module
@@ -72,7 +71,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.20.10
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -118,6 +117,13 @@ PATH=$(PATH.gnu)
 
 gcc_OPT=	-O
 
+# for gcc 14.2 add -Wno-error options
+gcc_OPT+=		-Wno-error=implicit-function-declaration
+gcc_OPT+=		-Wno-error=incompatible-pointer-types
+gcc_OPT+=		-Wno-error=return-mismatch
+gcc_OPT+=		-Wno-error=int-to-pointer-cast
+gcc_OPT+=		-Wno-error=int-conversion
+
 # add -D_FILE_OFFSET_BITS=64 to CPPFLAGS but unlike OpenSmalltalk,
 # must also add this to CFLAGS because Squeak configure is not using CPPFLAGS
 # (see CFLAGS += CPPFLAGS below)
@@ -149,11 +155,17 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
      \! -name jmemdatadst.c \
   -exec rm {} \;)
 
+# do not build vm-sound-Sun as we only package vm-sound-pulse (bug #17109)
+# do not build Mpeg3Plugin and RePlugin as it uses old copies of those libraries
+# do not build GStreamerPlugin, it uses the GStreamer 0.10 and not GStreamer 1.0 (bug #17111)
+ 
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/cmake/configure
 CONFIGURE_OPTIONS +=	--src=$(SOURCE_DIR)/src
 CONFIGURE_OPTIONS +=    --link-shared-lib
+CONFIGURE_OPTIONS +=    --without-vm-sound-Sun
 CONFIGURE_OPTIONS +=    --without-RePlugin
 CONFIGURE_OPTIONS +=    --without-Mpeg3Plugin
+CONFIGURE_OPTIONS +=    --without-GStreamerPlugin
 
 # in the 64bit case the vm is called squeakvm64 (not squeakvm)
 # the plugin directory under usr/lib/squeak has a _64bit suffix
@@ -192,14 +204,12 @@ REQUIRED_PACKAGES += system/library/dbus
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
-REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
