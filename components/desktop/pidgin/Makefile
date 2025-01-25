@@ -19,12 +19,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pidgin
-COMPONENT_VERSION=      2.14.13
+COMPONENT_VERSION=      2.14.14
 COMPONENT_SUMMARY=      Multiprotocol Instant Messaging Client
 COMPONENT_PROJECT_URL=  https://www.pidgin.im
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:120049dc8e17e09a2a7d256aff2191ff8491abb840c8c7eb319a161e2df16ba8
+COMPONENT_ARCHIVE_HASH= sha256:0ffc9994def10260f98a55cd132deefa8dc4a9835451cc0e982747bd458e2356
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=         communication/im/pidgin
 COMPONENT_CLASSIFICATION=Applications/Internet
@@ -52,7 +52,6 @@ COMPONENT_PRE_CONFIGURE_ACTION= ( cp -rp $(SOURCE_DIR)/* $(@D) && \
 
 CONFIGURE_SCRIPT=	$(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS+=	--enable-gnutls=no
 CONFIGURE_OPTIONS+=	--with-nss-includes=/usr/include/mps
 CONFIGURE_OPTIONS+=	--with-nss-libs=/usr/lib/mps/64
@@ -78,11 +77,11 @@ CONFIGURE_ENV+=	CPPFLAGS="$(CPPFLAGS)"
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
-PYTHON_REQUIRED_PACKAGES += library/python/python-dbus
+PYTHON_REQUIRED_PACKAGES += library/python/dbus-python
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
