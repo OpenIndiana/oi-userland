@@ -10,8 +10,7 @@
 #
 
 #
-# Copyright 2021 Andreas Wacknitz
-# Copyright 2023 Niklas Poslovski
+# Copyright 2025 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -105,7 +104,6 @@ file path=usr/include/git2/sys/odb_backend.h
 file path=usr/include/git2/sys/openssl.h
 file path=usr/include/git2/sys/path.h
 file path=usr/include/git2/sys/refdb_backend.h
-file path=usr/include/git2/sys/reflog.h
 file path=usr/include/git2/sys/refs.h
 file path=usr/include/git2/sys/remote.h
 file path=usr/include/git2/sys/repository.h
@@ -119,10 +117,14 @@ file path=usr/include/git2/tree.h
 file path=usr/include/git2/types.h
 file path=usr/include/git2/version.h
 file path=usr/include/git2/worktree.h
-link path=usr/lib/$(MACH64)/libgit2.so target=libgit2.so.1.8
+link path=usr/lib/$(MACH64)/libgit2.so target=libgit2.so.1.9
 file path=usr/lib/$(MACH64)/libgit2.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libgit2.so.1.8 target=libgit2.so.$(HUMAN_VERSION)
-# We need to provide the last version, too, because cargo (rustc) is linked against it.
+link path=usr/lib/$(MACH64)/libgit2.so.1.9 target=libgit2.so.$(HUMAN_VERSION)
+# We also need to provide the version that cargo (rustc) is linked against.
 # Remember to check for backwards compatibility as cargo is needed to rebuild the rustc package.
-link path=usr/lib/$(MACH64)/libgit2.so.1.7 target=libgit2.so.1.8
+link path=usr/lib/$(MACH64)/libgit2.so.1.8 target=libgit2.so.1.9
 file path=usr/lib/$(MACH64)/pkgconfig/libgit2.pc
+file path=usr/lib/cmake/libgit2/libgit2Config.cmake
+file path=usr/lib/cmake/libgit2/libgit2ConfigVersion.cmake
+file path=usr/lib/cmake/libgit2/libgit2Targets-release.cmake
+file path=usr/lib/cmake/libgit2/libgit2Targets.cmake
