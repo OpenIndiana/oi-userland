@@ -19,11 +19,10 @@ BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         gtk+
-HUMAN_VERSION=		3.24.43
-COMPONENT_REVISION=     1
+COMPONENT_NAME=         gtk
+HUMAN_VERSION=		3.24.48
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
-COMPONENT_ARCHIVE_HASH= sha256:7e04f0648515034b806b74ae5d774d87cffb1a2a96c468cb5be476d51bf2f3c7
+COMPONENT_ARCHIVE_HASH=	sha256:d10ce9ea9df44c1016d8d1721f39e55d3d607fcfb85334aec0d236cdc9a70556
 COMPONENT_PROJECT_URL=  https://www.gtk.org/
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_FMRI=         library/desktop/gtk3
@@ -33,19 +32,13 @@ COMPONENT_LICENSE_FILE= COPYING
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH= $(PATH.gnu)
 
-CFLAGS += -I/usr/X11/include
-
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dwayland_backend=false
 CONFIGURE_OPTIONS += -Dprint_backends=cups,file
 CONFIGURE_OPTIONS += -Dman=true
 CONFIGURE_OPTIONS += -Dgtk_doc=true
-
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CC="$(CC)"
 
 # Testing needs an X server
 TEST_REQUIRED_PACKAGES += x11/server/xvfb
