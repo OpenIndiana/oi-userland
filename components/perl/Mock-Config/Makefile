@@ -11,22 +11,24 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Mock::Config
+#   $WS_TOOLS/perl-integrate-module Mock-Config
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mock::Config
-HUMAN_VERSION =			0.03
-COMPONENT_SUMMARY =		Mock::Config - temporarily set Config or XSConfig values
+COMPONENT_NAME =		Mock-Config
+HUMAN_VERSION =			0.04
+COMPONENT_SUMMARY =		temporarily set Config or XSConfig values
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a5b8345757ca4f2b9335f5be14e93ebbb502865233a755bf53bc7156deec001b
+	sha256:affa28b42a84a087c93ee70769104d80a34ca2e1dc496230cc4caca66f1ea502
 COMPONENT_LICENSE =		Artistic-2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
