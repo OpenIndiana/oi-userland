@@ -1,0 +1,25 @@
+illumos fails with EEXIST, not ENOTEMPTY here.
+See also https://www.illumos.org/issues/14631
+
+--- mercurial-6.9.1/tests/test-merge1.t.orig
++++ mercurial-6.9.1/tests/test-merge1.t
+@@ -30,7 +30,7 @@
+   $ mkdir b && touch b/nonempty
+   $ hg up
+   abort: Unlinking directory not permitted: *$TESTTMP/t/b* (glob) (windows !)
+-  abort: Directory not empty: '?\$TESTTMP/t/b'? (re) (no-windows !)
++  abort: File exists: '$TESTTMP/t/b'
+   [255]
+   $ hg ci
+   abort: last update was interrupted
+--- mercurial-6.9.1/tests/test-update-names.t.orig
++++ mercurial-6.9.1/tests/test-update-names.t
+@@ -51,7 +51,7 @@
+   ? name/file
+   $ hg up 1
+   abort: Unlinking directory not permitted: *$TESTTMP/r1/r2/name* (glob) (windows !)
+-  abort: Directory not empty: '?\$TESTTMP/r1/r2/name'? (re) (no-windows !)
++  abort: File exists: '$TESTTMP/r1/r2/name'
+   [255]
+   $ cat name/file
+   text

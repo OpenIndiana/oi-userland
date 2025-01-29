@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mercurial
-HUMAN_VERSION =			6.8.1
+HUMAN_VERSION =			6.9.1
 COMPONENT_SUMMARY =		Fast scalable distributed SCM (revision control, version control) system
-COMPONENT_PROJECT_URL =		https://mercurial-scm.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:030e8a7a6d590e4eaeb403ee25675615cd80d236f3ab8a0b56dcc84181158b05
+	sha256:e577577ee9a97a9f84d3c34d53ccb8b9354263d6ab96447525094f3e0a567270
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -42,35 +41,20 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_POST_BUILD_ACTION += cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) doc ;
 COMPONENT_POST_INSTALL_ACTION += cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) $(GMAKE) DESTDIR=$(PROTO_DIR) PREFIX=$(USRDIR) install-doc ;
 
-# Use bash in sh mode for the tests; using /bin/sh on Solaris hasn't always
-# worked, and using /bin/bash doesn't always work, either.  Also skip the
-# tests which try to check all the code in the userland gate.  And finally,
-# test the bits from the proto area, rather than rebuilding.  Given the way the
-# test suite works, the hg executable must be named "hg".
-TEST_BLACKLIST = \
-	test-check-code.t \
-	test-check-config.t \
-	test-devel-warnings.t \
-	test-hghave.t \
-	test-run-tests.t \
-	test-merge1.t \
-	test-removeemptydirs.t \
-	test-update-names.t
-
+# This test fails with PYTHONPATH set
+TEST_BLACKLIST += test-hghave.t
 # https://bz.mercurial-scm.org/show_bug.cgi?id=6402
 TEST_BLACKLIST += test-stdio.py
-
-# https://www.mercurial-scm.org/pipermail/mercurial-devel/2017-March/093876.html
-TEST_BLACKLIST += \
-	test-ssh-bundle1.t \
-	test-bundle2-exchange.t
-
 # https://bz.mercurial-scm.org/show_bug.cgi?id=6915
 TEST_BLACKLIST += test-patchbomb.t
-
 # https://bz.mercurial-scm.org/show_bug.cgi?id=6899
 TEST_BLACKLIST += test-revlog-mmapindex.t
+# https://bz.mercurial-scm.org/show_bug.cgi?id=6957
+TEST_BLACKLIST += test-highlight.t
 
+# Use bash in sh mode for the tests; using /bin/sh on Solaris hasn't always
+# worked, and using /bin/bash doesn't always work, either.
+# Test the bits from the proto area, rather than rebuilding.
 COMPONENT_PRE_TEST_ACTION += \
 	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
 	printf "%s\n" $(TEST_BLACKLIST) > blacklist);
