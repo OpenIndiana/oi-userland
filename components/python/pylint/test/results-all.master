@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 2162 items
+collecting ... collected 2183 items
 
 tests/benchmark/test_baseline_benchmarks.py::TestEstablishBaselineBenchmarks::test_baseline_benchmark_check_parallel_j2 PASSED
 tests/benchmark/test_baseline_benchmarks.py::TestEstablishBaselineBenchmarks::test_baseline_benchmark_j1 PASSED
@@ -1939,7 +1939,28 @@ tests/test_pragma_parser.py::test_unknown_keyword_with_missing_messages PASSED
 tests/test_pragma_parser.py::test_unknown_keyword_without_messages PASSED
 tests/test_pragma_parser.py::test_unsupported_assignment PASSED
 tests/test_pylint_runners.py::test_pylint_argument_deduplication PASSED
-tests/test_pylint_runners.py::test_pylint_run_jobs_equal_zero_dont_crash_with_cpu_fraction PASSED
+tests/test_pylint_runners.py::test_pylint_run_dont_crash_with_cgroupv1[-1-1023-] PASSED
+tests/test_pylint_runners.py::test_pylint_run_dont_crash_with_cgroupv1[-1-1024-] PASSED
+tests/test_pylint_runners.py::test_pylint_run_dont_crash_with_cgroupv1[-1-2-] PASSED
+tests/test_pylint_runners.py::test_pylint_run_dont_crash_with_cgroupv1[100--200] PASSED
+tests/test_pylint_runners.py::test_pylint_run_dont_crash_with_cgroupv1[1000--1000] PASSED
+tests/test_pylint_runners.py::test_pylint_run_dont_crash_with_cgroupv1[999--1000] PASSED
+tests/test_pylint_runners.py::test_pylint_run_dont_crash_with_cgroupv2[1 2] PASSED
+tests/test_pylint_runners.py::test_pylint_run_dont_crash_with_cgroupv2[max 100000] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv1[-1-1023--1] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv1[-1-1024--1] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv1[-1-2--1] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv1[-1-2048--2] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv1[100--200-1] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv1[1000--1000-1] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv1[2000--1000-2] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv1[999--1000-1] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv2[100000 100000-1] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv2[200000 100000-2] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv2[299999 100000-2] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv2[300000 100000-3] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv2[50000 100000-1] PASSED
+tests/test_pylint_runners.py::test_query_cpu_cgroupv2[max 100000-None] PASSED
 tests/test_pylint_runners.py::test_runner[run_pylint] PASSED
 tests/test_pylint_runners.py::test_runner[run_pyreverse] PASSED
 tests/test_pylint_runners.py::test_runner[run_symilar] PASSED
@@ -2171,6 +2192,6 @@ tests/utils/unittest_ast_walker.py::TestASTWalker::test_only_required_for_messag
 tests/utils/unittest_utils.py::test_decoding_stream_known_encoding PASSED
 tests/utils/unittest_utils.py::test_decoding_stream_unknown_encoding PASSED
 
-======== 1863 passed, 294 skipped, 5 xfailed ========
+======== 1884 passed, 294 skipped, 5 xfailed ========
   py$(PYV): OK
   congratulations :)
