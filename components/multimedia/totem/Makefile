@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= totem
 COMPONENT_VERSION =		42.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY= Totem Multimedia Player
 COMPONENT_ARCHIVE_HASH=		sha256:4af0491ddb95df8b33aee399d3a50f9c7ab17de88d3af63356567cf88f57e6ab
 COMPONENT_FMRI = gnome/media/totem
