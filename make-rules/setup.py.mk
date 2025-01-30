@@ -163,7 +163,7 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 # setuptools-rust) do not pollute user's home directory with cargo bits.
 COMPONENT_BUILD_ENV += CARGO_HOME=$(@D)/.cargo
 # Similarly, force our preferred target linker for cargo.
-COMPONENT_BUILD_ENV += CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | tr '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
+COMPONENT_BUILD_ENV += CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | $(TR) '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
 
 # Make sure the default Python version is installed last and so is the
 # canonical version.  This is needed for components that keep PYTHON_VERSIONS

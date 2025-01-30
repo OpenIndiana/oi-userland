@@ -40,7 +40,7 @@ COMPONENT_PREP_ACTION += $(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
 
 # Common cargo environment
 CARGO_ENV += CARGO_HOME=$(@D)/.cargo
-CARGO_ENV += CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | tr '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
+CARGO_ENV += CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | $(TR) '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
 CARGO_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 # Configure

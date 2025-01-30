@@ -66,6 +66,6 @@ BUILD_VERSION ?=  $(PKG_SOLARIS_VERSION)-$(BRANCHID)
 #CANONICAL_REPO ?=		http://ipkg.us.oracle.com/solaris12/dev/
 
 # Pre-set some variables with GIT repo details
-USERLAND_GIT_REMOTE ?= $(shell git remote -v | awk '/origin.*fetch/ { print $$2 }')
-USERLAND_GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
-USERLAND_GIT_REV ?= $(shell git rev-parse HEAD)
+USERLAND_GIT_REMOTE ?= $(shell $(GIT) remote -v | $(NAWK) '/origin.*fetch/ { print $$2 }')
+USERLAND_GIT_BRANCH ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD)
+USERLAND_GIT_REV ?= $(shell $(GIT) rev-parse HEAD)
