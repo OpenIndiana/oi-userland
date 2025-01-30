@@ -22,22 +22,19 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gstreamer
-COMPONENT_VERSION=	1.24.11
+COMPONENT_VERSION=	1.24.12
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:093a379602a250d5cd33b88e723757c80198317efde33893edf3c87b6e53b907
+COMPONENT_ARCHIVE_HASH=	sha256:b3522d1b4fe174fff3b3c7f0603493e2367bd1c43f5804df15b634bd22b1036f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		library/audio/gstreamer1
+COMPONENT_FMRI=		library/audio/gstreamer
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4152
-GCC_VERSION = 13
 
 CONFIGURE_OPTIONS += -Dexamples=disabled
 CONFIGURE_OPTIONS += -Dintrospection=enabled
@@ -47,7 +44,7 @@ PYTHON_SCRIPTS += usr/libexec/gstreamer-1.0/gst-plugins-doc-cache-generator
 
 # Install additional file
 COMPONENT_POST_INSTALL_ACTION += \
-	$(INSTALL) -D files/prof_attr $(PROTOETCSECDIR)/prof_attr.d/library-audio-gstreamer1
+	$(INSTALL) -D files/prof_attr $(PROTOETCSECDIR)/prof_attr.d/library-audio-gstreamer
 
 # Dynamic library version number
 SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION)))).0
