@@ -26,8 +26,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr/lib/(.*)gtk-3.0/3.0.0/immodules/(.*) ->  default restart_fmri svc:/application/desktop-cache/input-method-cache:default>
 
-depend type=require fmri=gnome/theme/gnome-icon-theme-symbolic
 depend type=require fmri=desktop/shared-mime-info
+# We should depend on the default icon theme to make sure everything works as
+# expected.  See DEFAULT_ICON_THEME macro in gtk sources.
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/share/icons/Adwaita/index.theme
 
 file path=etc/gtk-3.0/im-multipress.conf preserve=true
 file path=usr/bin/gtk-builder-tool
