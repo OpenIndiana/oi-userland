@@ -22,14 +22,14 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-ugly
-COMPONENT_VERSION=	1.24.11
+COMPONENT_VERSION=	1.24.12
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:3a1f58a33aee8d13522865bcb564007a6837ef5711d7dfff8ce4260921013f8a
+COMPONENT_ARCHIVE_HASH=	sha256:19ed6eef4ea1a742234fb35e2cdb107168595a4dd409a9fac0b7a16543eee78b
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
+COMPONENT_FMRI=         library/audio/gstreamer/plugin/ugly
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
@@ -43,8 +43,8 @@ CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userlan
 CONFIGURE_OPTIONS += -Dgpl=enabled
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/audio/liba52
 REQUIRED_PACKAGES += library/audio/libcdio
 REQUIRED_PACKAGES += library/glib2
