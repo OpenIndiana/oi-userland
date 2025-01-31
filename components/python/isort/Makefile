@@ -19,13 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		isort
-HUMAN_VERSION =			5.13.2
-COMPONENT_SUMMARY =		isort - A Python utility / library to sort Python imports.
-COMPONENT_PROJECT_URL =		https://pycqa.github.io/isort/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/87/f9/c1eb8635a24e87ade2efce21e3ce8cd6b8630bb685ddc9cdaca1349b2eb5/isort-5.13.2.tar.gz
+HUMAN_VERSION =			6.0.0
+COMPONENT_SUMMARY =		A Python utility / library to sort Python imports.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:48fdfcb9face5d58a4f6dde2e72a1fb8dcaf8ab26f95ab49fab84c2ddefb0109
+	sha256:75d9d8a1438a9432a7d7b54f2d3b45cad9a4a0fdba43617d9873379704a8bdf1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,6 +30,45 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_PEP735 += dev
+
+# We have no hypothesmith packaged yet.
+PYTEST_ADDOPTS += --ignore tests/integration/test_hypothesmith.py
+# We have no pylama packaged yet.
+PYTEST_ADDOPTS += --ignore tests/unit/test_pylama_isort.py
+
+# https://github.com/PyCQA/isort/issues/2129
+PYTEST_ADDOPTS += --deselect tests/integration/test_setting_combinations.py::test_isort_is_idempotent
+PYTEST_ADDOPTS += --deselect tests/integration/test_setting_combinations.py::test_isort_doesnt_lose_imports_or_comments
+PYTEST_ADDOPTS += --deselect tests/unit/test_deprecated_finders.py::TestRequirementsFinder::test_requirements_dir
+PYTEST_ADDOPTS += --deselect tests/unit/test_deprecated_finders.py::test_requirements_finder
+PYTEST_ADDOPTS += --deselect tests/unit/test_ticketed_features.py::test_isort_supports_shared_profiles_issue_970
+PYTEST_ADDOPTS += --deselect tests/unit/test_ticketed_features.py::test_sort_configurable_sort_issue_1732
+
+# https://github.com/PyCQA/isort/issues/2355
+PYTEST_ADDOPTS += --deselect tests/unit/test_isort.py::test_cimport_support
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/colorama
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/flake8-bugbear
+TEST_REQUIRED_PACKAGES.python += library/python/httpx
+TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
+TEST_REQUIRED_PACKAGES.python += library/python/libcst
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/mypy-extensions
+TEST_REQUIRED_PACKAGES.python += library/python/pip
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/toml
+TEST_REQUIRED_PACKAGES.python += library/python/tomli
+TEST_REQUIRED_PACKAGES.python += library/python/types-setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/types-toml
