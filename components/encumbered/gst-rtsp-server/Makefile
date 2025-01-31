@@ -19,14 +19,14 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-rtsp-server
-COMPONENT_VERSION=	1.24.11
+COMPONENT_VERSION=	1.24.12
 COMPONENT_SUMMARY=      Multimedia graph framework - rtsp server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:d147ff75bc445235fe0a4a4714c26d6b7bf9a485a1ae3a722bd530ab28f98bd3
+COMPONENT_ARCHIVE_HASH=	sha256:a335f73687d2efe22db94348c6893c73b53a2c6bc55ee7a590028ba196ddc623
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=         library/audio/gstreamer1/rtsp-server
+COMPONENT_FMRI=         library/audio/gstreamer/rtsp-server
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
@@ -46,10 +46,10 @@ PKG_MACROS += SOVER=$(SOVER)
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/bad
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
