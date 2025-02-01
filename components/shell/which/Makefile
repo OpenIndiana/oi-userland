@@ -21,35 +21,34 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-PREFERRED_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		which
-COMPONENT_VERSION=	2.21
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.22
+COMPONENT_SUMMARY=	GNU which - Utility to show the full path of (shell) commands
 COMPONENT_PROJECT_URL=	https://savannah.gnu.org/projects/which/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f4a245b94124b377d8b49646bf421f9155d36aa7614b6ebf83705d3ffc76eaad
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/which/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:9f85cde3f2c257021b8508f756704bee6002fa8f5680297d30f186cc1f342af5
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/which/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/which
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_PREFIX    =	/usr/gnu
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=	--disable-iberty
-CONFIGURE_OPTIONS  +=	--disable-dependency-tracking
+COMPONENT_POST_INSTALL_ACTION += ( $(RM) $(PROTOUSRSHAREDIR)/info/dir );
 
-build:		$(BUILD_64)
+CFLAGS += $(XPG6MODE)
+CFLAGS += -DNEED_XMALLOC=1
 
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
+CONFIGURE_PREFIX    = /usr/gnu
+CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS  += --enable-year2038
+CONFIGURE_OPTIONS  += --disable-iberty
+CONFIGURE_OPTIONS  += --disable-dependency-tracking
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
