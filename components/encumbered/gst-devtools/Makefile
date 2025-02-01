@@ -19,14 +19,14 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-devtools
-COMPONENT_VERSION=	1.24.11
+COMPONENT_VERSION=	1.24.12
 COMPONENT_SUMMARY=      Multimedia graph framework - devtools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:73990a939c1ea9d9ca199b8cd135dd3a7120b495004aaa79299257d9cd897834
+COMPONENT_ARCHIVE_HASH=	sha256:4ef3dd12e5827068d6db7ad01876d1216a80717116c24a0d5b3b57fd7e3c3478
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=         library/audio/gstreamer1/devtools
+COMPONENT_FMRI=         library/audio/gstreamer/devtools
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	validate/COPYING
@@ -55,10 +55,10 @@ REQUIRED_PACKAGES += system/header/header-audio
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
-REQUIRED_PACKAGES += library/audio/gstreamer1/rtsp-server
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/bad
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer/rtsp-server
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/json-glib
