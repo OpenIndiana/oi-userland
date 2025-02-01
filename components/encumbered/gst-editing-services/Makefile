@@ -19,15 +19,15 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services
-COMPONENT_VERSION=	1.24.11
+COMPONENT_VERSION=	1.24.12
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:85fd74dab259e137a95ab4427e009dd853f4ca82874500cb5493c33bcef1ef08
+COMPONENT_ARCHIVE_HASH=	sha256:688222f270d24be4ed8a3852fa331897db662c7b813fbc39f6deb176b33ec9c0
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_FMRI=		library/audio/gstreamer1/editing-services
+COMPONENT_FMRI=		library/audio/gstreamer/editing-services
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
 
@@ -52,14 +52,14 @@ PKG_MACROS += SOVER=$(SOVER)
 
 # Dependencies not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/bad
 REQUIRED_PACKAGES += utility/bash-completion
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/devtools
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
