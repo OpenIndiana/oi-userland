@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		rapidfuzz
-HUMAN_VERSION =			3.11.0
+HUMAN_VERSION =			3.12.1
 COMPONENT_SUMMARY =		rapid fuzzy string matching
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a53ca4d3f52f00b393fab9b5913c5bafb9afc27d030c8a1db1283da6917a860f
+	sha256:6a98bbca18b4a37adddf2d8201856441c26e9c981d8895491b5bc857b5f780eb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
