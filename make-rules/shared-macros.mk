@@ -919,13 +919,16 @@ PERL5BINDIR = 	$(PERL5BINDIR.$(PERL_VERSION))
 PERL =		$(PERL.$(PERL_VERSION))
 POD2MAN =	$(POD2MAN.$(PERL_VERSION))
 
-PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
+PERL_ARCH =	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 # Optimally we should ask perl which C compiler was used but it doesn't
 # result in a full path name.  Only "c" is being recorded
 # inside perl builds while we actually need a full path to
 # the compiler.
-#PERL_CC :=	$(shell $(PERL) -e 'use Config; print $$Config{cc}')
+#PERL_CC =	$(shell $(PERL) -e 'use Config; print $$Config{cc}')
+
+# PERL options which depend on C options should be placed here
+PERL_OPTIMIZE =	$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
 
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
@@ -1475,9 +1478,6 @@ COMPONENT_INSTALL_ENV= \
 COMPONENT_BUILD_ENV += PATH="$(PATH)"
 COMPONENT_INSTALL_ENV += PATH="$(PATH)"
 COMPONENT_TEST_ENV += PATH="$(PATH)"
-
-# PERL options which depend on C options should be placed here
-PERL_OPTIMIZE :=	$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
 
 # Rewrite absolute source-code paths into relative for ccache, so that any
 # workspace with a shared CCACHE_DIR can benefit when compiling a component
