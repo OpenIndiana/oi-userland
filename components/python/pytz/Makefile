@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytz
-HUMAN_VERSION =			2024.2
+HUMAN_VERSION =			2025.1
 COMPONENT_SUMMARY =		World timezone definitions, modern and historical
 COMPONENT_PROJECT_URL =		http://pythonhosted.org/pytz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2aa355083c50a0f93fa581709deac0c9ad65cca8a9e9beac660adcbd493c798a
+	sha256:c2db42be2a2518b28e65f9207c4d05e6ff547d1efa4086469ef855e4ab70178e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
