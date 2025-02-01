@@ -28,15 +28,14 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.8.32
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.8.33
 COMPONENT_SUMMARY=	The GNU Midnight Commander file manager
 COMPONENT_DESCRIPTION=	GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell
 COMPONENT_PROJECT_URL=	https://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/MidnightCommander/mc/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5b8e6a66b53f67a430296e3e490c00af17cbbb449f6c56f406ff02a11d516ba1
+COMPONENT_ARCHIVE_HASH=	sha256:092e440930fda43574739e45a8b41af384b974e6720184b6707d127b84082c51
 COMPONENT_FMRI=		file/mc
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_LICENSE=	GPLv3
@@ -46,7 +45,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset
 CONFIGURE_OPTIONS += --disable-vfs-undelfs
