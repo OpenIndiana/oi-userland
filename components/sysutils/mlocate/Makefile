@@ -23,12 +23,12 @@
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mlocate
 COMPONENT_VERSION=      0.26
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      mlocate - A utility for finding files by name quickly
 COMPONENT_FMRI=         file/mlocate 
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -39,13 +39,23 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:3063df79fe198fb9618e180c54baf3105b33d88fe602ff2d8570aaf944f1263e
 COMPONENT_ARCHIVE_URL=  https://releases.pagure.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -vif )
 COMPONENT_POST_INSTALL_ACTION= \
     @$(MKDIR) -p $(PROTO_DIR)/etc/; \
     $(CP) files/updatedb.conf $(PROTO_DIR)/etc/ 
+
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)/cache
+
+COMPONENT_TEST_TRANSFORMS += '-e "/ok/p" '
+COMPONENT_TEST_TRANSFORMS += '-e "/FAILED/p" '
+COMPONENT_TEST_TRANSFORMS += '-e "/failed/p" '
+COMPONENT_TEST_TRANSFORMS += '-e "/skipped/p" '
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)
