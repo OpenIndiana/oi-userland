@@ -34,13 +34,13 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.43.1
+COMPONENT_VERSION=	2.44
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:13f74202a3c4c51118b797a39ea4200d3f6cfbe224da6d1d95bb938480132dfd
+COMPONENT_ARCHIVE_HASH=	sha256:ce2017e059d63e67ddb9240e9d4ec49c2893605035cd60e92ad53177f4377237
 COMPONENT_FMRI=		developer/gnu-binutils
 COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
@@ -66,6 +66,9 @@ CONFIGURE_OPTIONS +=    --target=$(GNU_TRIPLET)
 # as warnings will be generated for grub and loader.
 # Once illumos-gate will get appropriate fix, this
 # option should be removed.
+#
+# See https://www.illumos.org/issues/15028
+#
 CONFIGURE_OPTIONS +=	--enable-warn-rwx-segments=no
 
 COMPONENT_TEST_ARGS += -k
