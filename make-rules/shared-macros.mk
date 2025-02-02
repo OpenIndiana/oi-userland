@@ -32,6 +32,21 @@ PATH.gnu =	$(subst $(space),:,$(strip $(PATH.prepend))):$(GNUBIN):$(USRBINDIR$(B
 # Default PATH
 PATH = $(PATH.illumos)
 
+#
+# Following settings should be done as soon as possible, even before the first
+# $(shell) function invocation.
+#
+# We prefer bash as the shell
+SHELL = /bin/bash
+# Full paths to used tools
+CUT = /usr/bin/cut
+GETCONF = /usr/bin/getconf
+GIT = /usr/bin/git
+SHA1SUM = /usr/bin/sha1sum
+TR = /usr/bin/tr
+UNAME = /usr/bin/uname
+WHICH = /usr/bin/which
+
 # The location of an internal mirror of community source archives that we build
 # in this gate.  This mirror has been seeded to include "custom" source archives
 # for a few components where the communities either no longer provide matching
@@ -54,10 +69,10 @@ DLC_ARCHIVE_MIRROR = https://dlc.openindiana.org/oi-userland/source-archives
 # Look for file at DLC server as last resort
 export DOWNLOAD_FALLBACK_PATH =  $(DLC_ARCHIVE_MIRROR)
 
-# The workspace starts at the mercurial root
+# The workspace starts at the git root
 ifeq ($(origin WS_TOP), undefined)
 export WS_TOP := \
-	$(shell git rev-parse --show-toplevel || hg root 2>/dev/null)
+	$(shell $(GIT) rev-parse --show-toplevel)
 endif
 
 USERLAND_ARCHIVES ?=	$(WS_TOP)/archives/
@@ -82,8 +97,6 @@ build:		SHELLOPTS=
 test:		SHELLOPTS=
 install:	SHELLOPTS=
 publish:	SHELLOPTS=pipefail
-
-SHELL=	/bin/bash
 
 # This can be overridden to avoid rebuilding when you touch a Makefile
 MAKEFILE_PREREQ =	Makefile
@@ -116,7 +129,7 @@ ROOT =			/
 DISTRIBUTION_NAME = OpenIndiana Hipster
 DISTRIBUTION_VERSION = 2024.10
 # Native OS version
-OS_VERSION :=		$(shell uname -r)
+OS_VERSION :=		$(shell $(UNAME) -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 # Target OS version
 PKG_SOLARIS_VERSION ?= 5.11
@@ -437,7 +450,7 @@ CONSTANT_TIME +=	TIME_CONSTANT=$(TIME_CONSTANT)
 MACH_LIST = sparc i386
 
 # set MACH from uname -p to either sparc or i386
-MACH :=		$(shell uname -p)
+MACH :=		$(shell $(UNAME) -p)
 
 # set MACH32 from MACH to either sparcv7 or i86
 MACH32_1 =	$(MACH:sparc=sparcv7)
@@ -628,7 +641,7 @@ export CCACHE := $(shell \
             ; then \
                 for F in \
                     "$$CCACHE" \
-                    `which ccache 2>/dev/null | egrep '^/'` \
+                    `$(WHICH) ccache 2>/dev/null | egrep '^/'` \
                     /usr/bin/ccache \
                 ; do if test -n "$$F" && test -x "$$F" ; then \
                         echo "$$F" ; \
@@ -1219,8 +1232,8 @@ CPP_C99_EXTENDED_MATH =	-D_STDC_99
 
 # Enables large file support for components that have no other means of doing
 # so.  Use CPP_LARGEFILES and not the .32/.64 variety directly
-CPP_LARGEFILES.32 :=	$(shell getconf LFS_CFLAGS)
-CPP_LARGEFILES.64 :=	$(shell getconf LFS64_CFLAGS)
+CPP_LARGEFILES.32 :=	$(shell $(GETCONF) LFS_CFLAGS)
+CPP_LARGEFILES.64 :=	$(shell $(GETCONF) LFS64_CFLAGS)
 CPP_LARGEFILES =		$(CPP_LARGEFILES.$(BITS))
 
 # Enables some #pragma redefine_extname to POSIX-compliant Standard C Library

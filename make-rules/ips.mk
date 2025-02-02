@@ -172,16 +172,16 @@ CANONICAL_MANIFESTS +=  $(GENERATED_ARCH_MANIFESTS)
 	$(CP) $< $@
 
 define ips-print-depend-require-rule
-$(shell cat $(1) $(WS_TOP)/transforms/print-depend-require |\
+$(shell $(CAT) $(1) $(WS_TOP)/transforms/print-depend-require |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
+	$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-depend-require-versioned-rule
 $(foreach v,$($(1)V_VALUES),\
-	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
+	$(shell $(CAT) $(2) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
+	$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
 endef
 
 define ips-print-depend-require-type-rule
@@ -189,16 +189,16 @@ $(foreach m,$($(1)_MANIFESTS),$(call ips-print-depend-require-versioned-rule,$(1
 endef
 
 define ips-print-names-rule
-$(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
+$(shell $(CAT) $(1) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $(call per-manifest-options,$(1:.p5m=)) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
+	$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-names-versioned-rule
 $(foreach v,$($(1)V_VALUES),\
-	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
+	$(shell $(CAT) $(2) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
+	$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
 endef
 
 #
@@ -206,10 +206,10 @@ endef
 # name of the generic package which pulls in the concrete packages.
 #
 define ips-print-names-generic-rule
-$(shell cat $(2) $(WS_TOP)/transforms/mkgeneric $(BUILD_DIR)/mkgeneric-python \
+$(shell $(CAT) $(2) $(WS_TOP)/transforms/mkgeneric $(BUILD_DIR)/mkgeneric-python \
     $(WS_TOP)/transforms/print-pkgs |\
     $(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=\#\#\# /dev/fd/0 |\
-    sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
+    $(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-names-type-rule
@@ -339,7 +339,7 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 
 # copy the canonical manifest(s) to the build tree
 $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
-	cat $(METADATA_TEMPLATE) $< >$@
+	$(CAT) $(METADATA_TEMPLATE) $< >$@
 
 # The text of a transform that will emit a dependency conditional on the
 # presence of a particular version of a runtime, which will then draw in the
@@ -389,7 +389,7 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 	$(PKGMOGRIFY) -D PYV=### $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
-	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+	if [ -f $*-GENFRAG.p5m ]; then $(CAT) $*-GENFRAG.p5m >> $@; fi
 
 # Define and execute a macro that generates a rule to create a manifest for a
 # perl module specific to a particular version of the perl runtime.
@@ -419,7 +419,7 @@ $(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PR
 $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
 	$(PKGMOGRIFY) -D PLV=### $(BUILD_DIR)/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
-	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+	if [ -f $*-GENFRAG.p5m ]; then $(CAT) $*-GENFRAG.p5m >> $@; fi
 
 # Rule to generate historical manifests from the $(HISTORY) file.
 define history-manifest-rule
@@ -440,7 +440,7 @@ $(MANIFEST_BASE)-%-$(subst .,,$(1)).mogrified: \
 
 $(MANIFEST_BASE)-%-$(subst .,,$(1)).p5m: %-RUBYVER.p5m
 	if [ -f $$*-$(subst .,,$(1))GENFRAG.p5m ]; then \
-	        cat $$*-$(subst .,,$(1))GENFRAG.p5m >> $$@; \
+	        $(CAT) $$*-$(subst .,,$(1))GENFRAG.p5m >> $$@; \
 	fi
 	$(PKGMOGRIFY) -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
 	    -D RUBYV=$(subst .,,$(1)) $$< > $$@
@@ -464,7 +464,7 @@ $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PR
 $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
 	$(PKGMOGRIFY) -D RUBYV=### $(BUILD_DIR)/mkgeneric-ruby \
 	        $(WS_TOP)/transforms/mkgeneric $< > $@
-	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+	if [ -f $*-GENFRAG.p5m ]; then $(CAT) $*-GENFRAG.p5m >> $@; fi
 
 per-manifest-options = $(foreach var,$(PKG_VARS),$(if $($(var).$(1)),-D $(var)="$(strip $($(var).$(1)))")) \
 	$(if $(COMPONENT_CLASSIFICATION.$(1)),-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION.$(1)))")
@@ -473,13 +473,13 @@ per-manifest-options = $(foreach var,$(PKG_VARS),$(if $($(var).$(1)),-D $(var)="
 $(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR) $(MAKEFILE_PREREQ)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $(call per-manifest-options,$*) $< \
 		$(PUBLISH_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # mogrify parameterized manifests
 $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR) $(MAKEFILE_PREREQ)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # mangle the file contents
 $(BUILD_DIR) $(MANGLED_DIR):
@@ -586,7 +586,7 @@ PKGSEND_PUBLISH_OPTIONS += -T \*.py
 $(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(FINAL_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 	@echo "NEW PACKAGE CONTENTS ARE LOCALLY VALIDATED AND READY TO GO"
 
 $(MANIFEST_BASE)-%.histogrified: $(MANIFEST_BASE)-%.p5m
@@ -619,16 +619,16 @@ print-package-names:	canonical-manifests $(MKGENERIC_SCRIPTS)
 	    | tr ' ' '\n' | $(SORT) -u
 
 print-package-paths:	canonical-manifests
-	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+	@$(CAT) $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | \
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | \
 		$(SORT) -u
 
 install-packages:	publish
 	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
-	    cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+	    $(CAT) $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 	    $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-	    sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | \
+	    $(GSED) -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | \
 	    $(SORT) -u | \
 	    (cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
 	 else ; \
@@ -662,7 +662,7 @@ $(foreach var, $(PKG_VARS), \
 required-pkgs.mk:	Makefile
 	@echo "generating $@ from Makefile REQUIRED_* data"
 	@pkg search -H -l '<$(DEPENDS:%=% OR) /bin/true>' \
-		| sed -e 's/pkg:\/\(.*\)@.*/REQUIRED_PKGS += \1/g' >$@
+		| $(GSED) -e 's/pkg:\/\(.*\)@.*/REQUIRED_PKGS += \1/g' >$@
 
 pre-prep:	required-pkgs.mk
 

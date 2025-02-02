@@ -42,7 +42,7 @@ COMPONENT_ARCHIVE_URL ?= \
   https://ftp.gnu.org/gnu/gcc/gcc-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 PATCH_EACH_ARCHIVE=1
-PATCHDIR_PATCHES = $(shell find $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
+PATCHDIR_PATCHES = $(shell $(FIND) $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
                                 2>/dev/null | $(SORT))
 
 MPFR_NAME= mpfr
@@ -131,8 +131,8 @@ CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
 
 # If the compiler used to build matches the compiler being built, there is no
 # need for a 3 stage build.
-CONFIGURE_OPTIONS += $(if $(strip $(shell $(CC) --version | grep $(COMPONENT_VERSION))),--disable-bootstrap,)
-COMPONENT_BUILD_TARGETS = $(if $(strip $(shell $(CC) --version | grep $(COMPONENT_VERSION))),,bootstrap)
+CONFIGURE_OPTIONS += $(if $(strip $(shell $(CC) --version | $(GNU_GREP) $(COMPONENT_VERSION))),--disable-bootstrap,)
+COMPONENT_BUILD_TARGETS = $(if $(strip $(shell $(CC) --version | $(GNU_GREP) $(COMPONENT_VERSION))),,bootstrap)
 
 # The Sun Assembler is only used on SPARC gates.
 CONFIGURE_OPTIONS+= --with-gnu-as --with-as=/usr/bin/gas
@@ -167,9 +167,9 @@ COMPONENT_PRE_TEST_ACTION += \
 	 $(ENV) $(COMPONENT_PRE_TEST_ENV) \
 	        $(GMAKE) -k -i $(JOBS:%=-j%) check RUNTESTFLAGS="--target_board=unix/-m64\{,-msave-args\}" ; \
 	 $(FIND) . -name  '*.sum' | while read f; do \
-	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
-	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | $(SORT) -k 2 >> $f.2; \
-	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
+	        $(GSED) -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
+	        $(GSED) -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | $(GNU_GREP) '^.*: ' | $(SORT) -k 2 >> $f.2; \
+	        $(GSED) -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
 	        mv $f.2 $f; done; \
 	 $(GMAKE) mail-report.log)
 else
@@ -179,9 +179,9 @@ COMPONENT_PRE_TEST_ACTION += \
 	 $(ENV) $(COMPONENT_PRE_TEST_ENV) \
 	        $(GMAKE) -k -i $(JOBS:%=-j%) check RUNTESTFLAGS="--target_board=unix/-m64" ; \
 	 $(FIND) . -name  '*.sum' | while read f; do \
-	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
-	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | $(SORT) -k 2 >> $f.2; \
-	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
+	        $(GSED) -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
+	        $(GSED) -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | $(GNU_GREP) '^.*: ' | $(SORT) -k 2 >> $f.2; \
+	        $(GSED) -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
 	        mv $f.2 $f; done; \
 	 $(GMAKE) mail-report.log)
 endif
