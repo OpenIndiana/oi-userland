@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Warnings
-HUMAN_VERSION =			0.037
+HUMAN_VERSION =			0.038
 COMPONENT_SUMMARY =		Test for warnings and the lack of them
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:682de3e7a3e8ac9265c53d0e314b8b903294c5199c005bd37e808f4484c25df2
+	sha256:3da27e003a3c3cafed3c09b42be05cf9bdbff0bee5c8590a731b02853880a273
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENCE
 
@@ -42,4 +42,5 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-check
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-requirements
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/padwalker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/term-ansicolor
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
