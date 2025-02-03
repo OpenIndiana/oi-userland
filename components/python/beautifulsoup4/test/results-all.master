@@ -4,7 +4,8 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 664 items
+configfile: pyproject.toml
+collecting ... collected 836 items
 
 bs4/tests/test_builder.py::TestDetectsXMLParsedAsHTML::test_warn_if_markup_looks_like_xml[<?xml ><html>Actually XHTML</html>-False] PASSED
 bs4/tests/test_builder.py::TestDetectsXMLParsedAsHTML::test_warn_if_markup_looks_like_xml[<?xml ><no-html-tag>-True] PASSED
@@ -91,11 +92,24 @@ bs4/tests/test_dammit.py::TestEncodingDetector::test_encoding_detector_replaces_
 bs4/tests/test_dammit.py::TestEncodingDetector::test_find_declared_encoding PASSED
 bs4/tests/test_dammit.py::TestEncodingDetector::test_known_definite_versus_user_encodings PASSED
 bs4/tests/test_dammit.py::TestEncodingDetector::test_last_ditch_entity_replacement PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_ambiguous_ampersands_escaped[&nosuchentity;-&amp;nosuchentity;] PASSED
 bs4/tests/test_dammit.py::TestEntitySubstitution::test_html5_entity PASSED
 bs4/tests/test_dammit.py::TestEntitySubstitution::test_html5_entity_with_variation_selector PASSED
 bs4/tests/test_dammit.py::TestEntitySubstitution::test_quotes_not_html_substituted PASSED
 bs4/tests/test_dammit.py::TestEntitySubstitution::test_substitute_html[\u2018\u2019foo\u201c\u201d-&lsquo;&rsquo;foo&ldquo;&rdquo;] PASSED
 bs4/tests/test_dammit.py::TestEntitySubstitution::test_substitute_html[foo\u2200\u2603\xf5bar-foo&forall;\u2603&otilde;bar] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_unambiguous_ampersands_not_escaped[&123-&amp;123] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_unambiguous_ampersands_not_escaped[&abc-&amp;abc] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_unambiguous_ampersands_not_escaped[foo & bar-foo &amp; bar] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_unambiguous_ampersands_not_escaped[foo &0 bar-foo &amp;0 bar] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_unambiguous_ampersands_not_escaped[foo &lolwat bar-foo &amp;lolwat bar] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_unambiguous_ampersands_not_escaped[foo&&& bar-foo&amp;&amp;&amp; bar] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_unambiguous_ampersands_not_escaped[foo&-foo&amp;] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_unambiguous_ampersands_not_escaped[x=1&y=2-x=1&amp;y=2] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_when_entity_ampersands_are_escaped[&#247;-&amp;#247;-&amp;#247;-&amp;#247;] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_when_entity_ampersands_are_escaped[&#xa1;-&amp;#xa1;-&amp;#xa1;-&amp;#xa1;] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_when_entity_ampersands_are_escaped[&divide;-&amp;divide;-&amp;divide;-&divide;] PASSED
+bs4/tests/test_dammit.py::TestEntitySubstitution::test_when_entity_ampersands_are_escaped[&nonesuch;-&amp;nonesuch;-&amp;nonesuch;-&amp;nonesuch;] PASSED
 bs4/tests/test_dammit.py::TestEntitySubstitution::test_xml_attribute_quoting_escapes_single_quotes_when_value_contains_both_single_and_double_quotes PASSED
 bs4/tests/test_dammit.py::TestEntitySubstitution::test_xml_attribute_quoting_normally_uses_double_quotes PASSED
 bs4/tests/test_dammit.py::TestEntitySubstitution::test_xml_attribute_quoting_uses_single_quotes_when_value_contains_double_quotes PASSED
@@ -116,14 +130,100 @@ bs4/tests/test_dammit.py::TestUnicodeDammit::test_smart_quotes_to[ascii-''""] PA
 bs4/tests/test_dammit.py::TestUnicodeDammit::test_smart_quotes_to[html-&lsquo;&rsquo;&ldquo;&rdquo;] PASSED
 bs4/tests/test_dammit.py::TestUnicodeDammit::test_smart_quotes_to[xml-&#x2018;&#x2019;&#x201C;&#x201D;] PASSED
 bs4/tests/test_dammit.py::TestUnicodeDammit::test_unicode_input PASSED
+bs4/tests/test_element.py::TestAttributeDicts::test_html_attribute_value_handling PASSED
+bs4/tests/test_element.py::TestAttributeDicts::test_xml_attribute_value_handling PASSED
+bs4/tests/test_element.py::TestAttributeValueWithCharsetSubstitution::test_charset_meta_attribute_value PASSED
 bs4/tests/test_element.py::TestAttributeValueWithCharsetSubstitution::test_content_meta_attribute_value PASSED
 bs4/tests/test_element.py::TestNamedspacedAttribute::test_attribute_is_equivalent_to_colon_separated_string PASSED
 bs4/tests/test_element.py::TestNamedspacedAttribute::test_attributes_are_equivalent_if_prefix_and_name_identical PASSED
 bs4/tests/test_element.py::TestNamedspacedAttribute::test_name_may_be_none_or_missing PASSED
 bs4/tests/test_element.py::TestNamedspacedAttribute::test_namespace_may_be_none_or_missing PASSED
+bs4/tests/test_element.py::TestResultSet::test_getattr_exception PASSED
+bs4/tests/test_filter.py::TestElementFilter::test_allow_string_creation PASSED
+bs4/tests/test_filter.py::TestElementFilter::test_allow_tag_creation PASSED
+bs4/tests/test_filter.py::TestElementFilter::test_default_behavior PASSED
+bs4/tests/test_filter.py::TestElementFilter::test_match PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args0-constructor_kwargs0-result0] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args1-constructor_kwargs1-result1] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args10-constructor_kwargs10-result10] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args11-constructor_kwargs11-result11] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args2-constructor_kwargs2-result2] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args3-constructor_kwargs3-result3] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args4-constructor_kwargs4-result4] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args5-constructor_kwargs5-result5] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args6-constructor_kwargs6-result6] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args7-constructor_kwargs7-result7] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args8-constructor_kwargs8-result8] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_constructor[constructor_args9-constructor_kwargs9-result9] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_empty_match_not_allowed PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_full_match_not_allowed PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs0-a-True] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs1-ab-False] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs10-UPPERCASE-True] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs11-lowercase-False] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs12-UPPERCASE-False] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs13-lowercase-True] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs2-a-True] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs3-ab-True] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs4-a-True] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs5-ab-False] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs6-any random value-True] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs7-None-False] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs8-any random value-False] PASSED
+bs4/tests/test_filter.py::TestMatchRule::test_matches_string[rule_kwargs9-None-True] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules[100-result8] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules[False-result3] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules[True-result2] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules[_match_function-result5] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules[a-result0] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules[a-result1] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules[a-result4] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules[obj6-result6] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules[obj7-result7] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules_different_classes[AttributeValueMatchRule-result0] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules_different_classes[StringMatchRule-result1] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test__make_match_rules_nested_list PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_allowing_tag_implies_allowing_its_contents PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_constructor PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_constructor_class_attribute PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_constructor_string_deprecated_text_argument PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_constructor_with_overlapping_attributes PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_documentation_examples PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_match_against_multi_valued_attribute PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_match_against_multi_valued_attribute_as_string PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_matches_tag_with_only_string PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_matches_tag_with_prefix PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_one_attribute_rule_must_match_for_each_attribute PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_one_name_rule_must_match PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_one_string_rule_must_match PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_parse_only_combining_tag_and_string[soupstrainer0] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_parse_only_combining_tag_and_string[soupstrainer1] PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_scalar_attrs_becomes_class_restriction PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_search_deprecated PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_search_tag_deprecated PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs0-tag_kwargs0-True] PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs1-tag_kwargs1-False] PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs2-tag_kwargs2-True] PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs3-tag_kwargs3-True] PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs4-tag_kwargs4-True] PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs5-tag_kwargs5-False] PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs6-tag_kwargs6-True] PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs7-tag_kwargs7-False] PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs8-tag_kwargs8-True] PASSED
+bs4/tests/test_filter.py::TestTagNameMatchRule::test_matches_tag[rule_kwargs9-tag_kwargs9-False] PASSED
 bs4/tests/test_formatter.py::TestFormatter::test_default_attributes PASSED
 bs4/tests/test_formatter.py::TestFormatter::test_default_indent_value PASSED
 bs4/tests/test_formatter.py::TestFormatter::test_empty_attributes_are_booleans PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_round_trip PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_substitution[&123-&amp;123-&123] PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_substitution[&abc-&amp;abc-&abc] PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_substitution[&nosuchentity;-&amp;nosuchentity;-&amp;nosuchentity;] PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_substitution[foo & bar-foo &amp; bar-foo & bar] PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_substitution[foo &0 bar-foo &amp;0 bar-foo &0 bar] PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_substitution[foo &lolwat bar-foo &amp;lolwat bar-foo &lolwat bar] PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_substitution[foo&&& bar-foo&amp;&amp;&amp; bar-foo&&& bar] PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_substitution[foo&-foo&amp;-foo&] PASSED
+bs4/tests/test_formatter.py::TestFormatter::test_entity_substitution[x=1&y=2-x=1&amp;y=2-x=1&y=2] PASSED
 bs4/tests/test_formatter.py::TestFormatter::test_indent[-1-<a>\n<b>\ntext\n</b>\n</a>\n] PASSED
 bs4/tests/test_formatter.py::TestFormatter::test_indent[-<a>\n<b>\ntext\n</b>\n</a>\n] PASSED
 bs4/tests/test_formatter.py::TestFormatter::test_indent[0-<a>\n<b>\ntext\n</b>\n</a>\n] PASSED
@@ -171,9 +271,12 @@ bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_cloned_multivalue_node SKI
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_closing_tag_with_no_opening_tag SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_comment SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_correctly_nested_tables SKIPPED
+bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_custom_attribute_dict_class SKIPPED
+bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_custom_attribute_value_list_class SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_deepcopy SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_deeply_nested_multivalued_attribute SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_detect_xml_parsed_as_html SKIPPED
+bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_doctype_filtered SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_double_head SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_empty_comment SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_empty_doctype SKIPPED
@@ -191,6 +294,7 @@ bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_html5_attributes SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_html5_style_meta_tag_reflects_current_encoding SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_html_tags_have_namespace SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_invalid_doctype SKIPPED
+bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_invalid_html_entity SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_mathml_tags_have_namespace SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_meta_tag_reflects_current_encoding SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_mixed_case_doctype SKIPPED
@@ -210,6 +314,8 @@ bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_normal_doctypes SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_out_of_range_entity SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_p_tag_is_never_empty_element SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_pickle_and_unpickle_identity SKIPPED
+bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_prepare_markup_warnings[document_declared_encoding-utf8] SKIPPED
+bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_prepare_markup_warnings[exclude_encodings-value1] SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_preserved_whitespace_in_pre_and_textarea SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_processing_instruction SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_public_doctype_with_url SKIPPED
@@ -254,9 +360,12 @@ bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_can_parse_unicode_
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_closing_tag_with_no_opening_tag PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_comment PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_correctly_nested_tables PASSED
+bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_custom_attribute_dict_class PASSED
+bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_custom_attribute_value_list_class PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_deepcopy PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_deeply_nested_multivalued_attribute PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_detect_xml_parsed_as_html PASSED
+bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_doctype_filtered PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_double_head PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_empty_doctype PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_empty_element PASSED
@@ -271,6 +380,7 @@ bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_head_tag_between_h
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_html5_attributes PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_html5_style_meta_tag_reflects_current_encoding PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_invalid_doctype PASSED
+bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_invalid_html_entity PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_meta_tag_reflects_current_encoding PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_mixed_case_doctype PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_multipart_strings PASSED
@@ -329,9 +439,12 @@ bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_can_parse_unicode_document PAS
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_closing_tag_with_no_opening_tag PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_comment PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_correctly_nested_tables PASSED
+bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_custom_attribute_dict_class PASSED
+bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_custom_attribute_value_list_class PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_deepcopy PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_deeply_nested_multivalued_attribute PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_detect_xml_parsed_as_html PASSED
+bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_doctype_filtered PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_double_head PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_empty_doctype PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_empty_element_tags PASSED
@@ -344,6 +457,7 @@ bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_escaped_ampersand_in_attribute
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_head_tag_between_head_and_body PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_html5_style_meta_tag_reflects_current_encoding PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_invalid_doctype PASSED
+bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_invalid_html_entity PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_meta_tag_reflects_current_encoding PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_mixed_case_doctype PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_multipart_strings PASSED
@@ -391,8 +505,11 @@ bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_can_parse_unicode_document 
 bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_can_parse_unicode_document_begining_with_bom PASSED
 bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_closing_namespaced_tag PASSED
 bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_copy_tag_preserves_namespace PASSED
+bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_custom_attribute_dict_class PASSED
+bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_custom_attribute_value_list_class PASSED
 bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_docstring_generated PASSED
 bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_docstring_includes_correct_encoding PASSED
+bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_doctype_filtered PASSED
 bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_find_by_prefixed_name PASSED
 bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_formatter_processes_script_tag_for_xml_documents PASSED
 bs4/tests/test_lxml.py::TestLXMLXMLTreeBuilder::test_invalid_doctype PASSED
@@ -429,6 +546,8 @@ bs4/tests/test_pageelement.py::TestEncoding::test_encoding_substitutes_unrecogni
 bs4/tests/test_pageelement.py::TestEncoding::test_repr PASSED
 bs4/tests/test_pageelement.py::TestEncoding::test_tag_containing_unicode_string_can_be_encoded PASSED
 bs4/tests/test_pageelement.py::TestEncoding::test_unicode_string_can_be_encoded PASSED
+bs4/tests/test_pageelement.py::TestEquality::test_comparison PASSED
+bs4/tests/test_pageelement.py::TestEquality::test_hash PASSED
 bs4/tests/test_pageelement.py::TestFormatters::test_default_formatter_is_minimal PASSED
 bs4/tests/test_pageelement.py::TestFormatters::test_encoding_substitution PASSED
 bs4/tests/test_pageelement.py::TestFormatters::test_encoding_substitution_doesnt_happen_if_tag_is_strained PASSED
@@ -461,6 +580,9 @@ bs4/tests/test_soup.py::TestConstructor::test_cdata_list_attributes PASSED
 bs4/tests/test_soup.py::TestConstructor::test_custom_builder_class PASSED
 bs4/tests/test_soup.py::TestConstructor::test_embedded_null PASSED
 bs4/tests/test_soup.py::TestConstructor::test_exclude_encodings PASSED
+bs4/tests/test_soup.py::TestConstructor::test_invalid_markup_type[1] PASSED
+bs4/tests/test_soup.py::TestConstructor::test_invalid_markup_type[<lambda>] PASSED
+bs4/tests/test_soup.py::TestConstructor::test_invalid_markup_type[False] PASSED
 bs4/tests/test_soup.py::TestConstructor::test_parser_markup_rejection PASSED
 bs4/tests/test_soup.py::TestConstructor::test_replacement_classes PASSED
 bs4/tests/test_soup.py::TestConstructor::test_short_unicode_input PASSED
@@ -495,12 +617,33 @@ bs4/tests/test_soup.py::TestSelectiveParsing::test_parse_with_soupstrainer PASSE
 bs4/tests/test_soup.py::TestWarnings::test_fromEncoding_renamed_to_from_encoding PASSED
 bs4/tests/test_soup.py::TestWarnings::test_no_warning_if_explicit_parser_specified PASSED
 bs4/tests/test_soup.py::TestWarnings::test_parseOnlyThese_renamed_to_parse_only PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[/home/user/file] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[:-at-the-front.html] PASSED
 bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[c:\\user\\file.html\\\\server\\share\\path\\file] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains#.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains$.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains&.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains*.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains:.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains;.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains<.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains>.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains?.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[contains|.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[filename] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[log message containing a url http://www.url.com/ right there.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[looks/like/a/filename/but/oops/theres/a#comment.html] PASSED
 bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[markup.com] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[markup.jpg] PASSED
 bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[markup.js] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[markup.markup] PASSED
 bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[markuphtml] PASSED
-bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_warning[/home/user/file] PASSED
-bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_warning[c:\\user\x0cile] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[two  consecutive  spaces.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[two//consecutive//slashes.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_no_warning[two\nlines.html] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_warning[/home/user/file.txt] PASSED
+bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_warning[c:\\user\\file.html\\\\server\\share\\path\\file.XhTml] PASSED
 bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_warning[markup.HTML] PASSED
 bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_warning[markup.htm] PASSED
 bs4/tests/test_soup.py::TestWarnings::test_resembles_filename_warning[markup.html] PASSED
@@ -514,6 +657,7 @@ bs4/tests/test_soup.py::TestWarnings::test_url_warning_with_unicode_and_space PA
 bs4/tests/test_soup.py::TestWarnings::test_url_warning_with_unicode_url PASSED
 bs4/tests/test_soup.py::TestWarnings::test_warning_if_no_parser_specified PASSED
 bs4/tests/test_soup.py::TestWarnings::test_warning_if_parser_specified_too_vague PASSED
+bs4/tests/test_soup.py::TestWarnings::test_warning_if_strainer_filters_everything PASSED
 bs4/tests/test_tag.py::TestMultiValuedAttributes::test_accept_charset PASSED
 bs4/tests/test_tag.py::TestMultiValuedAttributes::test_attributes_joined_into_string_on_output PASSED
 bs4/tests/test_tag.py::TestMultiValuedAttributes::test_cdata_attribute_applying_only_to_one_tag PASSED
@@ -550,7 +694,6 @@ bs4/tests/test_tree.py::TestDeprecatedArguments::test_find_type_method_string[fi
 bs4/tests/test_tree.py::TestDeprecatedArguments::test_find_type_method_string[find_previous] PASSED
 bs4/tests/test_tree.py::TestDeprecatedArguments::test_find_type_method_string[find_previous_sibling] PASSED
 bs4/tests/test_tree.py::TestDeprecatedArguments::test_find_type_method_string[find_previous_siblings] PASSED
-bs4/tests/test_tree.py::TestDeprecatedArguments::test_soupstrainer_constructor_string PASSED
 bs4/tests/test_tree.py::TestFind::test_find_everything PASSED
 bs4/tests/test_tree.py::TestFind::test_find_everything_with_name PASSED
 bs4/tests/test_tree.py::TestFind::test_find_tag PASSED
@@ -593,7 +736,7 @@ bs4/tests/test_tree.py::TestNextOperations::test_find_all_next PASSED
 bs4/tests/test_tree.py::TestNextOperations::test_find_next PASSED
 bs4/tests/test_tree.py::TestNextOperations::test_find_next_for_text_element PASSED
 bs4/tests/test_tree.py::TestNextOperations::test_next PASSED
-bs4/tests/test_tree.py::TestNextOperations::test_next_generator PASSED
+bs4/tests/test_tree.py::TestNextOperations::test_next_generators PASSED
 bs4/tests/test_tree.py::TestNextOperations::test_next_of_last_item_is_none PASSED
 bs4/tests/test_tree.py::TestNextOperations::test_next_of_root_is_none PASSED
 bs4/tests/test_tree.py::TestNextSibling::test_find_next_sibling PASSED
@@ -602,19 +745,21 @@ bs4/tests/test_tree.py::TestNextSibling::test_next_sibling_for_text_element PASS
 bs4/tests/test_tree.py::TestNextSibling::test_next_sibling_may_not_exist PASSED
 bs4/tests/test_tree.py::TestNextSibling::test_next_sibling_of_root_is_none PASSED
 bs4/tests/test_tree.py::TestNextSibling::test_next_siblings PASSED
+bs4/tests/test_tree.py::TestNextSibling::test_next_siblings_generators PASSED
 bs4/tests/test_tree.py::TestParentOperations::test_find_parent PASSED
 bs4/tests/test_tree.py::TestParentOperations::test_find_parents PASSED
 bs4/tests/test_tree.py::TestParentOperations::test_parent PASSED
 bs4/tests/test_tree.py::TestParentOperations::test_parent_generator PASSED
 bs4/tests/test_tree.py::TestParentOperations::test_parent_of_text_element PASSED
 bs4/tests/test_tree.py::TestParentOperations::test_parent_of_top_tag_is_soup_object PASSED
+bs4/tests/test_tree.py::TestParentOperations::test_self_and_parent_generator PASSED
 bs4/tests/test_tree.py::TestParentOperations::test_soup_object_has_no_parent PASSED
 bs4/tests/test_tree.py::TestParentOperations::test_text_element_find_parent PASSED
 bs4/tests/test_tree.py::TestPreviousOperations::test_find_all_previous PASSED
 bs4/tests/test_tree.py::TestPreviousOperations::test_find_previous PASSED
 bs4/tests/test_tree.py::TestPreviousOperations::test_find_previous_for_text_element PASSED
 bs4/tests/test_tree.py::TestPreviousOperations::test_previous PASSED
-bs4/tests/test_tree.py::TestPreviousOperations::test_previous_generator PASSED
+bs4/tests/test_tree.py::TestPreviousOperations::test_previous_generators PASSED
 bs4/tests/test_tree.py::TestPreviousOperations::test_previous_of_first_item_is_none PASSED
 bs4/tests/test_tree.py::TestPreviousOperations::test_previous_of_root_is_none PASSED
 bs4/tests/test_tree.py::TestPreviousSibling::test_find_previous_sibling PASSED
@@ -623,18 +768,31 @@ bs4/tests/test_tree.py::TestPreviousSibling::test_previous_sibling_for_text_elem
 bs4/tests/test_tree.py::TestPreviousSibling::test_previous_sibling_may_not_exist PASSED
 bs4/tests/test_tree.py::TestPreviousSibling::test_previous_sibling_of_root_is_none PASSED
 bs4/tests/test_tree.py::TestPreviousSibling::test_previous_siblings PASSED
+bs4/tests/test_tree.py::TestPreviousSibling::test_previous_siblings_generators PASSED
 bs4/tests/test_tree.py::TestSmooth::test_smooth PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_append PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_append_child_thats_already_at_the_end PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_append_to_contents_moves_tag PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_attribute_modification PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_clear PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_consecutive_text_nodes PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_decompose PASSED
-bs4/tests/test_tree.py::TestTreeModification::test_extend PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_decompose_string PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extend_with_a_list_of_elements PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extend_with_a_list_of_strings PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extend_with_a_single_non_tag_element[<lambda>-<a>1</a><b>abcde</b>] PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extend_with_a_single_non_tag_element[<lambda>-<a></a><b>1</b>] PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_extend_with_another_tags_contents[<lambda>0] PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_extend_with_another_tags_contents[<lambda>1] PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_extract PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_extract_distinguishes_between_identical_strings PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extract_during_iteration[children-<div><em>child1</em><p id="start"></p><p>child3</p></div>] PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extract_during_iteration[descendants-<div><em>child1</em><p id="start"></p><p>child3</p></div>] PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extract_during_iteration[next_elements-<div><em>child1</em><p id="start"></p><p>child3</p></div>] PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extract_during_iteration[next_siblings-<div><em>child1</em><p id="start"><a>Second <em>child</em></a></p></div>] PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extract_during_iteration[parents-] PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extract_during_iteration[previous_elements-] PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_extract_during_iteration[previous_siblings-<div><p id="start"><a>Second <em>child</em></a></p><p>child3</p></div>] PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_extract_multiples_of_same_tag PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_extract_works_when_element_is_surrounded_by_identical_strings PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_insert_after PASSED
@@ -642,12 +800,15 @@ bs4/tests/test_tree.py::TestTreeModification::test_insert_after_raises_exception
 bs4/tests/test_tree.py::TestTreeModification::test_insert_beautifulsoup_object_inserts_children PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_insert_before PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_insert_before_raises_notimplementederror_if_before_has_no_meaning PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_insert_into_the_current_location PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_insert_multiple_after PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_insert_multiple_before PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_insert_multiple_elements PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_insert_string PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_insert_tag PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_insert_tag_into_itself_raises_exception PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_insert_works_on_empty_element_tag PASSED
+bs4/tests/test_tree.py::TestTreeModification::test_insertion_returns_inserted_things PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_move_tag_to_beginning_of_parent PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_nested_tag_replace_with PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_new_tag_creation PASSED
@@ -670,7 +831,19 @@ bs4/tests/test_tree.py::TestTreeModification::test_unwrap_returns_thing_that_was
 bs4/tests/test_tree.py::TestTreeModification::test_wrap PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_wrap_extracts_tag_from_elsewhere PASSED
 bs4/tests/test_tree.py::TestTreeModification::test_wrap_puts_new_contents_at_the_end PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_all] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_all_next] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_all_previous] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_next] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_next_sibling] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_next_siblings] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_parent] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_parents] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_previous] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_previous_sibling] PASSED
+bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_previous_siblings] PASSED
 
-======== 563 passed, 101 skipped ========
+======== 729 passed, 107 skipped ========
   py$(PYV): OK
   congratulations :)
