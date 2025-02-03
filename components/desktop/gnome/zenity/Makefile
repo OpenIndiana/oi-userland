@@ -18,16 +18,14 @@ BUILD_STYLE = meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         zenity
-COMPONENT_VERSION=      3.44.4
+COMPONENT_VERSION=      3.44.5
 COMPONENT_SUMMARY=      GNOME graphical dialog box generator
 COMPONENT_ARCHIVE_HASH= \
-	sha256:f1a4c958f4d4103f644457e440fd4bd86cf8b0502e9ace06002c98e36cd84a18
+	sha256:29ac447f4246b1da783a3c28ddc80b0ef7c80eccd5836ad9140abf89841d0eab
 COMPONENT_FMRI=		gnome/zenity
 COMPONENT_CLASSIFICATION=Development/GNOME and GTK+
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
-
-TEST_TARGET=$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
