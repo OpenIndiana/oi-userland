@@ -11,26 +11,29 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module YAML::LibYAML
+#   $WS_TOOLS/perl-integrate-module YAML-LibYAML
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		YAML::LibYAML
-HUMAN_VERSION =			0.902.0
-COMPONENT_SUMMARY =		YAML::LibYAML - Perl YAML Serialization using XS and libyaml
+COMPONENT_NAME =		YAML-LibYAML
+HUMAN_VERSION =			v0.903.0
+COMPONENT_SUMMARY =		Perl YAML Serialization using XS and libyaml
 COMPONENT_CPAN_AUTHOR =		TINITA
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:afde84ac0a97ba631d4abc7e0562910839564b93eef89c41742f57d289e03440
+	sha256:67da1d1634101fa0c4b2df0c77cd413b00953425f93a13dac8aa9383049d9c0c
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
-
-COMPONENT_SRC =			$(COMPONENT_NAME)-v$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-path
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
