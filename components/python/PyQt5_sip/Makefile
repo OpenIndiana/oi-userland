@@ -19,20 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyqt5_sip
-HUMAN_VERSION =			12.16.1
+HUMAN_VERSION =			12.17.0
 COMPONENT_SUMMARY =		The sip module support for PyQt5
 COMPONENT_PROJECT_URL =		https://github.com/Python-SIP/sip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8c831f8b619811a32369d72339faa50ae53a963f5fdfa4d71f845c63e9673125
+	sha256:682dadcdbd2239af9fdc0c0628e2776b820e128bec88b49b8d692fe682f90b4f
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Testing fails without this, although there are no tests to run.
-COMPONENT_PRE_TEST_ACTION += $(MKDIR) $(@D)/PyQt5 ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
