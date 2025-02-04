@@ -30,13 +30,13 @@ ESR =
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=1
-# CANDIDATE_BETA=10
+# CANDIDATE_BUILD=2
+# CANDIDATE_BETA=9
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	134.0.2
+COMPONENT_VERSION =	135.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     5da13af5e6be251b70e994c8b4bd35fb5271f1e3
+COMPONENT_GIT_HASH=     827e12a962ef47511089af4498f65ebf42fa57ca31db790bfd7e9a820d16b960
 COMPONENT_SRC=          gecko-dev-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla/gecko-dev/archive/$(COMPONENT_ARCHIVE)
@@ -73,11 +73,11 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:6c6eb7ff13fa689c5cace23a28533361d1ca29158329b6f1c2f2d1c91c53dd27
+COMPONENT_ARCHIVE_HASH= sha256:161f4b3b1f58966399fe57522d7e67e9d266bc070a521cd508ffe3856dc4bd05
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.82.0
+RUST_VERSION = 1.83.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -149,8 +149,6 @@ COMPILER.clang= clang
 COMPILER = $(COMPILER.$(CC_TYPE))
 
 CXXFLAGS += -Wno-invalid-offsetof -fpermissive
-# xpcom uses DEF XP_SOLARIS
-CXXFLAGS += -DXP_SOLARIS
 # type problem compiling ffvpx with clang 
 CFLAGS += -D__int8_t_defined
 
