@@ -32,9 +32,8 @@ ENV = /usr/bin/env
 # BUILD_GITHUB=1
 
 COMPONENT_NAME=         libreoffice
-COMPONENT_VERSION=      24.8.4
-COMPONENT_RC_VERSION=	2
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      24.8.5
+COMPONENT_RC_VERSION=	1
 ifdef BUILD_ALPHA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).alpha$(BUILD_ALPHA)
 else ifdef BUILD_BETA
@@ -191,8 +190,8 @@ COMPONENT_ARCHIVE_27 = libcmis-0.6.2.tar.xz
 COMPONENT_ARCHIVE_HASH_27 = sha256:1b5c2d7258ff93eb5f9958ff0e4dfd7332dc75a071bb717dde2217a26602a644
 COMPONENT_ARCHIVE_URL_27 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_27)
 
-COMPONENT_ARCHIVE_28 = gpgme-1.24.0.tar.bz2
-COMPONENT_ARCHIVE_HASH_28 = sha256:61e3a6ad89323fecfaff176bc1728fb8c3312f2faa83424d9d5077ba20f5f7da
+COMPONENT_ARCHIVE_28 = gpgme-1.24.1.tar.bz2
+COMPONENT_ARCHIVE_HASH_28 = sha256:ea05d0258e71061d61716584ec34cef59330a91340571edc46b78374973ba85f
 COMPONENT_ARCHIVE_URL_28 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_28)
 
 COMPONENT_ARCHIVE_29 = libassuan-3.0.1.tar.bz2
@@ -322,7 +321,7 @@ endif
 
 include $(WS_MAKE_RULES)/common.mk
 
-GCC_VERSION= 13
+# GCC_VERSION= 13
 
 PATH= $(PATH.gnu)
 
@@ -544,7 +543,7 @@ REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/c++/harfbuzz
