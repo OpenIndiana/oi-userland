@@ -12,13 +12,13 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stardict
 COMPONENT_MJR_VERSION=	3.0.7
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).2
 HUMAN_VERSION=		3.0.7-2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	International dictionary software
 COMPONENT_PROJECT_URL=	https://stardict-4.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_MJR_VERSION)
@@ -27,17 +27,16 @@ COMPONENT_ARCHIVE_HASH=	sha256:d766f4efb1ae868855a47f39b2def66dd7a3232ca54c651c9
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/stardict-4/files/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=		system/desktop/stardict
 COMPONENT_CLASSIFICATION=	Applications/Accessories
-COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE=	GPL-3.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(MYSQL_BINDIR):$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf -fiv )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-deprecations
 CONFIGURE_OPTIONS += --disable-festival
 CONFIGURE_OPTIONS += --disable-advertisement
@@ -52,10 +51,12 @@ LDFLAGS += -lnsl -lsocket
 
 CPPFLAGS += $(XPG6MODE)
 
+# https://sourceforge.net/p/stardict-4/tickets/12/
+CPPFLAGS += -fpermissive
+
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 
 # Auto-generated dependencies
