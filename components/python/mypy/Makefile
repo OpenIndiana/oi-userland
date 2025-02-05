@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mypy
-HUMAN_VERSION =			1.14.1
+HUMAN_VERSION =			1.15.0
 COMPONENT_SUMMARY =		Optional static typing for Python
 COMPONENT_PROJECT_URL =		https://www.mypy-lang.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7ec88144fe9b510e8475ec2f5f251992690fcf89ccb4500b214b4226abcd32d6
+	sha256:404534629d51d3efea5c800ee7c42b72a6554d6c400e6a79eafe15d11341fd43
 COMPONENT_LICENSE =		MIT AND PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,6 +38,9 @@ PYTEST_ADDOPTS += -p no:cov
 
 # https://github.com/python/mypy/issues/16265
 PYTEST_FASTFAIL=
+
+# Testing fails when there is types-pytz installed.
+TEST_CONFLICTING_PACKAGES.python += library/python/types-pytz
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/mypy-extensions
