@@ -13,25 +13,23 @@
 # Copyright 2024 Till Wegmüller
 #
 
-BUILD_BITS=64
-BUILD_STYLE=justmake
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libxxhash
-COMPONENT_VERSION= 0.8.2
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 0.8.3
 COMPONENT_SUMMARY= Extremely fast non-cryptographic hash algorithm
 COMPONENT_PROJECT_URL= http://www.xxhash.com/
-COMPONENT_FMRI= library/$(COMPONENT_NAME)
-COMPONENT_FMRI.xxhsum = sysutils/xxhsum
-COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=		xxHash-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_URL= https://github.com/Cyan4973/xxHash/archive/refs/tags/v$(COMPONENT_VERSION).zip
-COMPONENT_ARCHIVE_HASH= sha256:a33d7e8798bebb297095b715f93a71c5e535919434ce27ddc65e72e4e0fda3b9
+COMPONENT_ARCHIVE_HASH= sha256:db2c12e6f05d45546d3581b6881b25090fd65ab5194891da0b2a1a9c49beda66
+COMPONENT_FMRI= library/$(COMPONENT_NAME)
+COMPONENT_FMRI.xxhsum = sysutils/xxhsum
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE= BSD 2-Clause License
 
-TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_INSTALL_ENV += PREFIX=$(USRDIR)
