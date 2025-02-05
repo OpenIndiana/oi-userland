@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		factory_boy
-HUMAN_VERSION =			3.3.1
+HUMAN_VERSION =			3.3.3
 COMPONENT_SUMMARY =		A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby.
 COMPONENT_PROJECT_URL =		https://github.com/FactoryBoy/factory_boy
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8317aa5289cdfc45f9cae570feb07a6177316c82e34d14df3c2e1f22f26abef0
+	sha256:866862d226128dfac7f2b4160287e899daf54f2612778327dd03d0e2cb1e3d03
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
