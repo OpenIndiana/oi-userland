@@ -1,18 +1,25 @@
 We cannot compare against origin/main branch because we build from sdist, not git.
 
---- pipdeptree-2.24.0/tox.ini.orig
-+++ pipdeptree-2.24.0/tox.ini
-@@ -33,7 +33,6 @@
-       --cov-report html:{env_tmp_dir}{/}htmlcov --cov-report xml:{work_dir}{/}coverage.{env_name}.xml \
-       --junitxml {work_dir}{/}junit.{env_name}.xml \
-       tests}
--    diff-cover --compare-branch {env:DIFF_AGAINST:origin/main} {work_dir}{/}coverage.{env_name}.xml --fail-under 100
+--- pipdeptree-2.25.0/tox.toml.orig
++++ pipdeptree-2.25.0/tox.toml
+@@ -43,14 +43,6 @@
+       "tests",
+     ] },
+   ],
+-  [
+-    "diff-cover",
+-    "--compare-branch",
+-    "{env:DIFF_AGAINST:origin/main}",
+-    "{work_dir}{/}coverage.{env_name}.xml",
+-    "--fail-under",
+-    "100",
+-  ],
+ ]
  
- [testenv:fix]
- description = format the code base to adhere to our styles, and complain about what we cannot do automatically
---- pipdeptree-2.24.0/pyproject.toml.orig
-+++ pipdeptree-2.24.0/pyproject.toml
-@@ -49,7 +49,6 @@
+ [env.fix]
+--- pipdeptree-2.25.0/pyproject.toml.orig
++++ pipdeptree-2.25.0/pyproject.toml
+@@ -48,7 +48,6 @@
  ]
  optional-dependencies.test = [
    "covdefaults>=2.3",
