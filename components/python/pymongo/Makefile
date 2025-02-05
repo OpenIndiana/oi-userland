@@ -19,21 +19,30 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			10.10.10.10
+HUMAN_VERSION =			4.11
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python driver for MongoDB <http://www.mongodb.org>
 COMPONENT_PROJECT_URL =		https://www.mongodb.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6e49aca96d7ce4d71ea70ee6e5dd8aab3507a172f7585699052193cb4f981bff
+	sha256:21b9969e155c4b16a160fbe90c390a07ca7514479af6c3811b1d15ead26e10ba
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+# The 10.10.10.10 version was briefly available at PyPI and so we packaged it.
+# It later disappeared because it was created mistakenly but since IPS cannot
+# downgrade we need to keep it.
+COMPONENT_VERSION =		10.10.10.10
 
 include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS += requirements/test.txt
+
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/dnspython
