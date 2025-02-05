@@ -13,46 +13,36 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS= 32_and_64
+BUILD_STYLE = meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
-USE_COMMON_TEST_MASTER= no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rest
-COMPONENT_VERSION= 0.8.1
-COMPONENT_REVISION= 1
+HUMAN_VERSION=			0.9.1
 COMPONENT_SUMMARY= A library designed to make it easier to access web services that claim to be 'RESTful'
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:0513aad38e5d3cedd4ae3c551634e3be1b9baaa79775e53b2dba9456f15b01c9
-COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/Librest
+COMPONENT_ARCHIVE_HASH=		sha256:9266a5c10ece383e193dfb7ffb07b509cc1f51521ab8dad76af96ed14212c2e3
+COMPONENT_PROJECT_URL=		https://gitlab.gnome.org/GNOME/librest
 COMPONENT_FMRI= library/desktop/librest
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE=		LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH=$(PATH.gnu)
-
-CONFIGURE_OPTIONS += --with-ca-certificates=/etc/certs/ca-certificates.crt
-CONFIGURE_OPTIONS.64 += --enable-introspection
-
-# gobject introspection
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-# for tests to pass
-unexport SHELLOPTS
-
-COMPONENT_TEST_ARGS= -k -i
 
 # Manually added dependency
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/gtk4
+REQUIRED_PACKAGES += library/desktop/gtksourceview-5
+REQUIRED_PACKAGES += library/desktop/json-glib
+REQUIRED_PACKAGES += library/desktop/libadwaita
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libsoup
+REQUIRED_PACKAGES += library/libsoup3
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
