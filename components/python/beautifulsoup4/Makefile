@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		beautifulsoup4
-HUMAN_VERSION =			4.13.1
+HUMAN_VERSION =			4.13.3
 COMPONENT_SUMMARY =		Screen-scraping library
 COMPONENT_PROJECT_URL =		https://www.crummy.com/software/BeautifulSoup/bs4/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:741c8b6903a1e4ae8ba32b9c9ae7510dab7a197fdbadcf9fcdeb0891ef5ec66a
+	sha256:1bd32405dacc920b42b83ba01644747ed77456a65760e285fbc47633ceddaf8b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
