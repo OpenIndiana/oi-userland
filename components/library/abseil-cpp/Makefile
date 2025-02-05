@@ -13,29 +13,48 @@
 #
 
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD = yes
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         abseil-cpp
-COMPONENT_VERSION=      20240116.2
+COMPONENT_VERSION=	20240116.3
 COMPONENT_SUMMARY=      Collection of C++ library code designed to augment the C++ standard library
 COMPONENT_PROJECT_URL=  https://abseil.io
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:733726b8c3a6d39a4120d7e45ea8b41a434cdacde401cba500f14236c49b39dc
+COMPONENT_ARCHIVE_HASH=	sha256:e887b423da5a1ba66e71610094fd7147ff2febfedccdfbf00f2c644ac21adf83
 COMPONENT_ARCHIVE_URL=	https://github.com/abseil/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/c++/abseil-cpp
 COMPONENT_CLASSIFICATION=       Development/C++
-COMPONENT_LICENSE=      Apache
+COMPONENT_LICENSE=	Apache-2.0
 COMPONENT_LICENSE_FILE= LICENSE
 
-# Tests require Googletest which we don't have yet.
-TEST_TARGET= $(NO_TESTS)
+COMPONENT_FMRI.library=		$(COMPONENT_FMRI)-$(SOVER)
+COMPONENT_SUMMARY.library=	$(COMPONENT_SUMMARY) (runtime libraries)
+
 include $(WS_MAKE_RULES)/common.mk
 
+# We need shared libraries, not static
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
+# Build tests
+CMAKE_OPTIONS += -DABSL_BUILD_TESTING=ON
+# ... and use our packaged googletest
+CMAKE_OPTIONS += -DABSL_USE_EXTERNAL_GOOGLETEST=ON
+
+# Dynamic library version number
+SOVER := $(shell echo $(COMPONENT_VERSION) | $(CUT) -c 3-6)
+
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER)/$$(SOVER)/'
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += developer/googletest
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
