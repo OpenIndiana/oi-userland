@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keepassxc
 COMPONENT_VERSION=	2.7.9
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	Cross-platform community-driven port of Keepass password manager
 COMPONENT_PROJECT_URL=	https://keepassxc.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
