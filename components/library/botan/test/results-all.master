@@ -1,7 +1,7 @@
-Testing Botan 3.6.1 (release, dated 20241026, revision git:d1ad41eef0d7039f79ac89d180f0d697936b09f1, distribution unspecified)
+Testing Botan 3.7.1 (release, dated 20250205, revision git:09cc7f97ceb828c19461b2a63f820d3226bb921b, distribution unspecified)
 Properties:
-  CPU flags: rdtsc sse2 ssse3 avx2 bmi2 aes_ni clmul rdrand
-  drbg_seed: 1802178F6F514B4A
+  CPU flags: rdtsc sse2 ssse3 avx2 bmi2 adx aes_ni clmul rdrand rdseed
+  drbg_seed: 18219988ADB1E739
 aead:
 AES-128/CCM(10,2) ran 86 tests all ok
 AES-128/CCM(12,2) ran 43 tests all ok
@@ -21,17 +21,17 @@ AES-128/CCM(8,2) ran 172 tests all ok
 AES-128/CCM(8,3) ran 43 tests all ok
 AES-128/EAX ran 4514 tests all ok
 AES-128/EAX(8) ran 84 tests all ok
-AES-128/GCM ran 920 tests all ok
-AES-128/GCM(12) ran 140 tests all ok
-AES-128/GCM(8) ran 42 tests all ok
+AES-128/GCM ran 952 tests all ok
+AES-128/GCM(12) ran 147 tests all ok
+AES-128/GCM(8) ran 49 tests all ok
 AES-128/OCB ran 1835 tests all ok
 AES-128/OCB(12) ran 49 tests all ok
 AES-128/SIV ran 12801 tests all ok
 AES-192/EAX ran 231 tests all ok
-AES-192/GCM ran 279 tests all ok
+AES-192/GCM ran 287 tests all ok
 AES-192/GCM(12) ran 98 tests all ok
 AES-256/EAX ran 287 tests all ok
-AES-256/GCM ran 279 tests all ok
+AES-256/GCM ran 287 tests all ok
 AES-256/GCM(12) ran 98 tests all ok
 AES-256/GCM(13) ran 98 tests all ok
 AES-256/GCM(14) ran 98 tests all ok
@@ -42,6 +42,8 @@ Blowfish/EAX ran 818 tests all ok
 ChaCha20Poly1305 ran 70455 tests all ok
 DES/EAX ran 818 tests all ok
 SHACAL2/OCB(32) ran 125 tests all ok
+SM4/CCM(16,3) ran 43 tests all ok
+SM4/GCM ran 49 tests all ok
 Threefish-512/EAX ran 49 tests all ok
 Threefish-512/OCB(32) ran 41 tests all ok
 TripleDES/EAX ran 818 tests all ok
@@ -64,14 +66,14 @@ Cascade(Serpent,Twofish) ran 57 tests all ok
 DES ran 6099 tests all ok
 GOST-28147-89(R3411_94_TestParam) ran 342 tests all ok
 GOST-28147-89(R3411_CryptoPro) ran 190 tests all ok
-IDEA ran 10317 tests all ok
+IDEA ran 10298 tests all ok
 Kuznyechik ran 1235 tests all ok
 Lion(SHA-1,RC4,64) ran 19 tests all ok
 Noekeon ran 19570 tests all ok
 SEED ran 76 tests all ok
 SHACAL2 ran 19399 tests all ok
 SM4 ran 361 tests all ok
-Serpent ran 19912 tests all ok
+Serpent ran 19893 tests all ok
 Threefish-512 ran 95 tests all ok
 TripleDES ran 1064 tests all ok
 Twofish ran 20957 tests all ok
@@ -96,7 +98,7 @@ MD5 ran 916 tests all ok
 Parallel(MD5,SHA-1) ran 17 tests all ok
 Parallel(SHA-256,SHA-512) ran 19 tests all ok
 RIPEMD-160 ran 895 tests all ok
-SHA-1 ran 921 tests all ok
+SHA-1 ran 930 tests all ok
 SHA-224 ran 40 tests all ok
 SHA-256 ran 4675 tests all ok
 SHA-3(224) ran 1199 tests all ok
@@ -134,53 +136,107 @@ HKDF-Expand(HMAC(SHA-1)) ran 16 tests all ok
 HKDF-Expand(HMAC(SHA-256)) ran 12 tests all ok
 HKDF-Expand(HMAC(SHA-512)) ran 20 tests all ok
 HKDF-Extract(HMAC(SHA-1)) ran 16 tests all ok
-HKDF-Extract(HMAC(SHA-256)) ran 12 tests all ok
+HKDF-Extract(HMAC(SHA-256)) ran 15 tests all ok
 HKDF-Extract(HMAC(SHA-512)) ran 20 tests all ok
 KDF1(SHA-1) ran 24 tests all ok
 KDF1-18033(SHA-1) ran 8 tests all ok
 KDF1-18033(SHA-256) ran 8 tests all ok
-KDF2(SHA-1) ran 316 tests all ok
+KDF2(SHA-1) ran 318 tests all ok
 KDF2(SHA-256) ran 4 tests all ok
 SP800-108-Counter(CMAC(AES-128)) ran 120 tests all ok
+SP800-108-Counter(CMAC(AES-128),16,32) ran 4 tests all ok
+SP800-108-Counter(CMAC(AES-128),24,32) ran 4 tests all ok
+SP800-108-Counter(CMAC(AES-128),8,32) ran 4 tests all ok
 SP800-108-Counter(CMAC(AES-192)) ran 120 tests all ok
 SP800-108-Counter(CMAC(AES-256)) ran 120 tests all ok
 SP800-108-Counter(CMAC(TripleDES)) ran 120 tests all ok
 SP800-108-Counter(HMAC(SHA-1)) ran 120 tests all ok
-SP800-108-Counter(HMAC(SHA-256)) ran 120 tests all ok
+SP800-108-Counter(HMAC(SHA-256)) ran 136 tests all ok
+SP800-108-Counter(HMAC(SHA-256),16,16) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),16,24) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),16,32) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),16,8) ran 8 tests all ok
+SP800-108-Counter(HMAC(SHA-256),24,16) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),24,24) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),24,32) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),24,8) ran 8 tests all ok
+SP800-108-Counter(HMAC(SHA-256),32,16) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),32,24) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),32,8) ran 8 tests all ok
+SP800-108-Counter(HMAC(SHA-256),8,16) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),8,24) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),8,32) ran 16 tests all ok
+SP800-108-Counter(HMAC(SHA-256),8,8) ran 8 tests all ok
 SP800-108-Counter(HMAC(SHA-384)) ran 120 tests all ok
 SP800-108-Counter(HMAC(SHA-512)) ran 120 tests all ok
 SP800-108-Feedback(CMAC(AES-128)) ran 120 tests all ok
+SP800-108-Feedback(CMAC(AES-128),16,32) ran 4 tests all ok
+SP800-108-Feedback(CMAC(AES-128),24,32) ran 4 tests all ok
+SP800-108-Feedback(CMAC(AES-128),8,32) ran 4 tests all ok
 SP800-108-Feedback(CMAC(AES-192)) ran 120 tests all ok
 SP800-108-Feedback(CMAC(AES-256)) ran 120 tests all ok
 SP800-108-Feedback(CMAC(TripleDES)) ran 120 tests all ok
 SP800-108-Feedback(HMAC(SHA-1)) ran 120 tests all ok
-SP800-108-Feedback(HMAC(SHA-256)) ran 120 tests all ok
+SP800-108-Feedback(HMAC(SHA-256)) ran 136 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),16,16) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),16,24) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),16,32) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),16,8) ran 8 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),24,16) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),24,24) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),24,32) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),24,8) ran 8 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),32,16) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),32,24) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),32,8) ran 8 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),8,16) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),8,24) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),8,32) ran 16 tests all ok
+SP800-108-Feedback(HMAC(SHA-256),8,8) ran 8 tests all ok
 SP800-108-Feedback(HMAC(SHA-384)) ran 120 tests all ok
 SP800-108-Feedback(HMAC(SHA-512)) ran 120 tests all ok
 SP800-108-Pipeline(CMAC(AES-128)) ran 120 tests all ok
+SP800-108-Pipeline(CMAC(AES-128),16,32) ran 4 tests all ok
+SP800-108-Pipeline(CMAC(AES-128),24,32) ran 4 tests all ok
+SP800-108-Pipeline(CMAC(AES-128),8,32) ran 4 tests all ok
 SP800-108-Pipeline(CMAC(AES-192)) ran 120 tests all ok
 SP800-108-Pipeline(CMAC(AES-256)) ran 120 tests all ok
 SP800-108-Pipeline(CMAC(TripleDES)) ran 120 tests all ok
 SP800-108-Pipeline(HMAC(SHA-1)) ran 120 tests all ok
-SP800-108-Pipeline(HMAC(SHA-256)) ran 120 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256)) ran 136 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),16,16) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),16,24) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),16,32) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),16,8) ran 8 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),24,16) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),24,24) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),24,32) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),24,8) ran 8 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),32,16) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),32,24) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),32,8) ran 8 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),8,16) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),8,24) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),8,32) ran 16 tests all ok
+SP800-108-Pipeline(HMAC(SHA-256),8,8) ran 8 tests all ok
 SP800-108-Pipeline(HMAC(SHA-384)) ran 120 tests all ok
 SP800-108-Pipeline(HMAC(SHA-512)) ran 120 tests all ok
-SP800-56A(HMAC(SHA-1)) ran 200 tests all ok
-SP800-56A(HMAC(SHA-224)) ran 228 tests all ok
-SP800-56A(HMAC(SHA-256)) ran 196 tests all ok
+SP800-56A(HMAC(SHA-1)) ran 204 tests all ok
+SP800-56A(HMAC(SHA-224)) ran 231 tests all ok
+SP800-56A(HMAC(SHA-256)) ran 199 tests all ok
 SP800-56A(HMAC(SHA-3(512))) ran 32 tests all ok
-SP800-56A(HMAC(SHA-384)) ran 196 tests all ok
-SP800-56A(HMAC(SHA-512)) ran 220 tests all ok
+SP800-56A(HMAC(SHA-384)) ran 199 tests all ok
+SP800-56A(HMAC(SHA-512)) ran 222 tests all ok
 SP800-56A(KMAC-128) ran 36 tests all ok
-SP800-56A(SHA-1) ran 188 tests all ok
-SP800-56A(SHA-224) ran 200 tests all ok
-SP800-56A(SHA-256) ran 188 tests all ok
+SP800-56A(SHA-1) ran 189 tests all ok
+SP800-56A(SHA-224) ran 201 tests all ok
+SP800-56A(SHA-256) ran 189 tests all ok
 SP800-56A(SHA-3(512)) ran 8 tests all ok
-SP800-56A(SHA-384) ran 188 tests all ok
-SP800-56A(SHA-512) ran 204 tests all ok
+SP800-56A(SHA-384) ran 189 tests all ok
+SP800-56A(SHA-512) ran 205 tests all ok
 SP800-56C(HMAC(SHA-1)) ran 40 tests all ok
 SP800-56C(HMAC(SHA-256)) ran 40 tests all ok
-SP800-56C(HMAC(SHA-384)) ran 40 tests all ok
+SP800-56C(HMAC(SHA-384)) ran 41 tests all ok
 SP800-56C(HMAC(SHA-512)) ran 40 tests all ok
 TLS-12-PRF(HMAC(SHA-224)) ran 4 tests all ok
 TLS-12-PRF(HMAC(SHA-256)) ran 4 tests all ok
@@ -286,7 +342,7 @@ CTR-BE(Serpent) ran 3325 tests all ok
 CTR-BE(TripleDES) ran 4047 tests all ok
 ChaCha(12) ran 38 tests all ok
 ChaCha(20) ran 1634 tests all ok
-ChaCha(8) ran 379 tests all ok
+ChaCha(8) ran 397 tests all ok
 MARK-4 ran 95 tests all ok
 OFB(AES-128) ran 209 tests all ok
 OFB(AES-192) ran 19 tests all ok
@@ -367,7 +423,68 @@ BigInt truncated/padded binary serialization ran 5 tests all ok
 bit_ops:
 ctz ran 6 tests all ok
 is_power_of_2 ran 15 tests all ok
+popcount ran 20 tests all ok
+reverse_bits ran 12 tests all ok
 significant_bytes ran 14 tests all ok
+bitvector:
+Bitvector in strong type ran 81 tests all ok
+Conditional XOR, Gauss Workload ran 1 tests all ok
+Iterators: bare usage ran 24 tests all ok
+Iterators: bare usage ran 24 tests all ok
+Iterators: large bitvector ran 500 tests all ok
+Iterators: large bitvector ran 500 tests all ok
+Iterators: range-based for loop ran 13 tests all ok
+Iterators: range-based for loop ran 13 tests all ok
+Iterators: satiesfies C++20 concepts ran 8 tests all ok
+Iterators: satiesfies C++20 concepts ran 8 tests all ok
+Iterators: std::distance and std::advance ran 3 tests all ok
+Iterators: std::distance and std::advance ran 3 tests all ok
+accessors validate offsets ran 5 tests all ok
+allocated bitvector has capacity ran 3 tests all ok
+any, none and all ran 30 tests all ok
+bits in many blocks ran 211 tests all ok
+bitwise AND ran 41 tests all ok
+bitwise OR ran 41 tests all ok
+bitwise XOR ran 41 tests all ok
+bitwise assignment modifiers ran 14 tests all ok
+bitwise operators with heterogeneous allocators ran 126 tests all ok
+bitwise_equals ran 4 tests all ok
+byte-aligned 2 ran 349 tests all ok
+byte-aligned copy ran 128 tests all ok
+byte-aligned copy must zero-out unused bits ran 33 tests all ok
+byte-aligned unsigned integer subvector ran 244 tests all ok
+byte-aligned unsigned integer subvector replacement ran 1004 tests all ok
+conditional XOR, block aligned ran 2 tests all ok
+conditional XOR, byte aligned ran 2 tests all ok
+conditional XOR, no alignment ran 2 tests all ok
+default constructed bitvector ran 5 tests all ok
+empty byte-array ran 3 tests all ok
+empty copy is allowed ran 3 tests all ok
+flipping bits ran 5 tests all ok
+hamming weight ran 10 tests all ok
+hamming weight oddness ran 2 tests all ok
+load all bits from byte-array (aligned data) ran 65 tests all ok
+load all bits from byte-array (unaligned blocks) ran 64 tests all ok
+load bits from byte-array (unaligned data) ran 32 tests all ok
+multiblock handling ran 129 tests all ok
+one bit ran 10 tests all ok
+pop_back() shortens bitvector ran 10 tests all ok
+preallocated construction of bitvector ran 12 tests all ok
+push_back() extends bitvector ran 10 tests all ok
+range errors are caught ran 4 tests all ok
+reserved bitvector has capacity ran 6 tests all ok
+resize() ran 12 tests all ok
+set and unset ran 256 tests all ok
+setting bits ran 24 tests all ok
+subscript operator ran 6 tests all ok
+subscript operator does not validate offsets ran 2 tests all ok
+to_bytes() uses secure_allocator if necessary ran 2 tests all ok
+to_bytes(std::span) can handle non-zero out-memory ran 1 tests all ok
+to_bytes(std::span) can handle non-zero out-memory ran 1 tests all ok
+unaligned copy ran 349 tests all ok
+unaligned unsigned integer subvector ran 240 tests all ok
+unaligned unsigned integer subvector replacement ran 1400 tests all ok
+unsetting bits ran 28 tests all ok
 blowfish_salted:
 Blowfish salted key schedule ran 11 tests all ok
 bn_add:
@@ -378,10 +495,12 @@ BigInt Comparison LT ran 12 tests all ok
 BigInt Comparison LTE ran 14 tests all ok
 bn_div:
 BigInt Divide ran 4344 tests all ok
+bn_div_pow2k:
+BigInt ct_divide_pow2k ran 67434 tests all ok
 bn_gcd:
 BigInt GCD ran 364 tests all ok
 bn_invmod:
-BigInt InvMod ran 221 tests all ok
+BigInt InvMod ran 367 tests all ok
 bn_isprime:
 BigInt Test NonPrime ran 107 tests all ok
 BigInt Test Prime ran 25 tests all ok
@@ -394,7 +513,7 @@ BigInt Lshift ran 100 tests all ok
 bn_lucas:
 Lucas primality test ran 2999 tests all ok
 bn_mod:
-BigInt Mod ran 394 tests all ok
+BigInt Mod ran 494 tests all ok
 bn_mul:
 BigInt Multiply ran 416 tests all ok
 bn_powmod:
@@ -456,7 +575,7 @@ Flatfile Certificate Store - rejects bundles with non-CA certs ran 1 tests all o
 certstor_system:
 System Certificate Store - Find Certificate by SHA1(pubkey) ran 4 tests all ok
 System Certificate Store - Find Certificate by SHA1(pubkey) - regression test for GH #2779 ran 3 tests all ok
-System Certificate Store - Find Certificate by UTF8 subject DN ran 5 tests all ok
+System Certificate Store - Find Certificate by UTF8 subject DN ran 11 tests all ok
 System Certificate Store - Find Certificate by subject DN ran 3 tests all ok
 System Certificate Store - Find Certificate by subject DN and key ID ran 3 tests all ok
 System Certificate Store - Find Certificates by subject DN and key ID ran 4 tests all ok
@@ -477,6 +596,20 @@ ChaCha_RNG Security Level ran 1 tests all ok
 ChaCha_RNG randomize ran 4096 tests all ok
 charset:
 Charset ran 8 tests all ok
+cmce_generic_kat:
+PQC KAT for ClassicMcEliece with parameters 348864 ran 13 tests all ok
+PQC KAT for ClassicMcEliece with parameters 6960119pcf ran 13 tests all ok
+cmce_generic_keygen:
+ClassicMcEliece ClassicMcEliece_348864 keygen ran 37 tests all ok
+ClassicMcEliece ClassicMcEliece_6960119pcf keygen ran 37 tests all ok
+cmce_invalid:
+CMCE Invalid Ciphertext Test ran 3 tests all ok
+cmce_utility:
+GF Poly Mul ran 1 tests all ok
+GF inv test ran 1 tests all ok
+Irreducible Polynomial Generation ran 2 tests all ok
+No endless loop with rigged RNG ran 1 tests all ok
+Seed expansion ran 1 tests all ok
 compression_tests:
 bz2 compression ran 30 tests all ok
 deflate compression ran 30 tests all ok
@@ -660,23 +793,153 @@ ECC hash to curve SSWU-RO secp521r1 ran 5 tests all ok
 ec_h2c_xmd:
 ECC hash to curve XMD SHA-256 ran 10 tests all ok
 ECC hash to curve XMD SHA-512 ran 10 tests all ok
+ec_point_arith:
+EC_AffinePoint arithmetic brainpool160r1 ran 115 tests all ok
+EC_AffinePoint arithmetic brainpool192r1 ran 115 tests all ok
+EC_AffinePoint arithmetic brainpool224r1 ran 115 tests all ok
+EC_AffinePoint arithmetic brainpool256r1 ran 115 tests all ok
+EC_AffinePoint arithmetic brainpool320r1 ran 115 tests all ok
+EC_AffinePoint arithmetic brainpool384r1 ran 115 tests all ok
+EC_AffinePoint arithmetic brainpool512r1 ran 115 tests all ok
+EC_AffinePoint arithmetic frp256v1 ran 115 tests all ok
+EC_AffinePoint arithmetic gost_256A ran 115 tests all ok
+EC_AffinePoint arithmetic gost_512A ran 115 tests all ok
+EC_AffinePoint arithmetic numsp512d1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp160k1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp160r1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp160r2 ran 115 tests all ok
+EC_AffinePoint arithmetic secp192k1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp192r1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp224k1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp224r1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp256k1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp256r1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp384r1 ran 115 tests all ok
+EC_AffinePoint arithmetic secp521r1 ran 115 tests all ok
+EC_AffinePoint arithmetic sm2p256v1 ran 115 tests all ok
+EC_AffinePoint arithmetic x962_p192v2 ran 115 tests all ok
+EC_AffinePoint arithmetic x962_p192v3 ran 115 tests all ok
+EC_AffinePoint arithmetic x962_p239v1 ran 115 tests all ok
+EC_AffinePoint arithmetic x962_p239v2 ran 115 tests all ok
+EC_AffinePoint arithmetic x962_p239v3 ran 115 tests all ok
+ec_point_enc:
+EC_AffinePoint encoding brainpool160r1 ran 700 tests all ok
+EC_AffinePoint encoding brainpool192r1 ran 700 tests all ok
+EC_AffinePoint encoding brainpool224r1 ran 700 tests all ok
+EC_AffinePoint encoding brainpool256r1 ran 700 tests all ok
+EC_AffinePoint encoding brainpool320r1 ran 700 tests all ok
+EC_AffinePoint encoding brainpool384r1 ran 700 tests all ok
+EC_AffinePoint encoding brainpool512r1 ran 700 tests all ok
+EC_AffinePoint encoding frp256v1 ran 700 tests all ok
+EC_AffinePoint encoding gost_256A ran 700 tests all ok
+EC_AffinePoint encoding gost_512A ran 700 tests all ok
+EC_AffinePoint encoding numsp512d1 ran 700 tests all ok
+EC_AffinePoint encoding secp160k1 ran 700 tests all ok
+EC_AffinePoint encoding secp160r1 ran 700 tests all ok
+EC_AffinePoint encoding secp160r2 ran 700 tests all ok
+EC_AffinePoint encoding secp192k1 ran 700 tests all ok
+EC_AffinePoint encoding secp192r1 ran 700 tests all ok
+EC_AffinePoint encoding secp224k1 ran 700 tests all ok
+EC_AffinePoint encoding secp224r1 ran 700 tests all ok
+EC_AffinePoint encoding secp256k1 ran 700 tests all ok
+EC_AffinePoint encoding secp256r1 ran 700 tests all ok
+EC_AffinePoint encoding secp384r1 ran 700 tests all ok
+EC_AffinePoint encoding secp521r1 ran 700 tests all ok
+EC_AffinePoint encoding sm2p256v1 ran 700 tests all ok
+EC_AffinePoint encoding x962_p192v2 ran 700 tests all ok
+EC_AffinePoint encoding x962_p192v3 ran 700 tests all ok
+EC_AffinePoint encoding x962_p239v1 ran 700 tests all ok
+EC_AffinePoint encoding x962_p239v2 ran 700 tests all ok
+EC_AffinePoint encoding x962_p239v3 ran 700 tests all ok
 ecc_basemul:
-ECC base point multiply brainpool224r1 ran 10 tests all ok
-ECC base point multiply brainpool256r1 ran 10 tests all ok
-ECC base point multiply brainpool384r1 ran 10 tests all ok
-ECC base point multiply brainpool512r1 ran 10 tests all ok
-ECC base point multiply frp256v1 ran 260 tests all ok
-ECC base point multiply numsp512d1 ran 475 tests all ok
-ECC base point multiply secp160r1 ran 20 tests all ok
-ECC base point multiply secp192r1 ran 260 tests all ok
-ECC base point multiply secp224r1 ran 260 tests all ok
-ECC base point multiply secp256k1 ran 250 tests all ok
-ECC base point multiply secp256r1 ran 260 tests all ok
-ECC base point multiply secp384r1 ran 260 tests all ok
-ECC base point multiply secp521r1 ran 260 tests all ok
-ECC base point multiply sm2p256v1 ran 320 tests all ok
+ECC base point multiply brainpool224r1 ran 6 tests all ok
+ECC base point multiply brainpool256r1 ran 6 tests all ok
+ECC base point multiply brainpool384r1 ran 6 tests all ok
+ECC base point multiply brainpool512r1 ran 6 tests all ok
+ECC base point multiply frp256v1 ran 156 tests all ok
+ECC base point multiply numsp512d1 ran 285 tests all ok
+ECC base point multiply secp160r1 ran 18 tests all ok
+ECC base point multiply secp192r1 ran 156 tests all ok
+ECC base point multiply secp224r1 ran 156 tests all ok
+ECC base point multiply secp256k1 ran 150 tests all ok
+ECC base point multiply secp256r1 ran 156 tests all ok
+ECC base point multiply secp384r1 ran 156 tests all ok
+ECC base point multiply secp521r1 ran 156 tests all ok
+ECC base point multiply sm2p256v1 ran 192 tests all ok
 ecc_invalid:
 ECC invalid keys ran 5 tests all ok
+ecc_mul2:
+ECC mul2 brainpool192r1 ran 504 tests all ok
+ECC mul2 brainpool224r1 ran 504 tests all ok
+ECC mul2 brainpool256r1 ran 504 tests all ok
+ECC mul2 brainpool384r1 ran 504 tests all ok
+ECC mul2 brainpool512r1 ran 504 tests all ok
+ECC mul2 secp192r1 ran 504 tests all ok
+ECC mul2 secp224k1 ran 504 tests all ok
+ECC mul2 secp224r1 ran 504 tests all ok
+ECC mul2 secp256k1 ran 504 tests all ok
+ECC mul2 secp256r1 ran 504 tests all ok
+ECC mul2 secp384r1 ran 504 tests all ok
+ECC mul2 secp521r1 ran 504 tests all ok
+ECC mul2 sm2p256v1 ran 504 tests all ok
+ecc_mul2_inf:
+ECC mul2 inf brainpool160r1 ran 8 tests all ok
+ECC mul2 inf brainpool192r1 ran 8 tests all ok
+ECC mul2 inf brainpool224r1 ran 8 tests all ok
+ECC mul2 inf brainpool256r1 ran 8 tests all ok
+ECC mul2 inf brainpool320r1 ran 8 tests all ok
+ECC mul2 inf brainpool384r1 ran 8 tests all ok
+ECC mul2 inf brainpool512r1 ran 8 tests all ok
+ECC mul2 inf frp256v1 ran 8 tests all ok
+ECC mul2 inf gost_256A ran 8 tests all ok
+ECC mul2 inf gost_512A ran 8 tests all ok
+ECC mul2 inf numsp512d1 ran 8 tests all ok
+ECC mul2 inf secp160k1 ran 8 tests all ok
+ECC mul2 inf secp160r1 ran 8 tests all ok
+ECC mul2 inf secp160r2 ran 8 tests all ok
+ECC mul2 inf secp192k1 ran 8 tests all ok
+ECC mul2 inf secp192r1 ran 8 tests all ok
+ECC mul2 inf secp224k1 ran 8 tests all ok
+ECC mul2 inf secp224r1 ran 8 tests all ok
+ECC mul2 inf secp256k1 ran 8 tests all ok
+ECC mul2 inf secp256r1 ran 8 tests all ok
+ECC mul2 inf secp384r1 ran 8 tests all ok
+ECC mul2 inf secp521r1 ran 8 tests all ok
+ECC mul2 inf sm2p256v1 ran 8 tests all ok
+ECC mul2 inf x962_p192v2 ran 8 tests all ok
+ECC mul2 inf x962_p192v3 ran 8 tests all ok
+ECC mul2 inf x962_p239v1 ran 8 tests all ok
+ECC mul2 inf x962_p239v2 ran 8 tests all ok
+ECC mul2 inf x962_p239v3 ran 8 tests all ok
+ecc_pt_addition:
+ECC addition brainpool160r1 ran 13 tests all ok
+ECC addition brainpool192r1 ran 13 tests all ok
+ECC addition brainpool224r1 ran 13 tests all ok
+ECC addition brainpool256r1 ran 13 tests all ok
+ECC addition brainpool320r1 ran 13 tests all ok
+ECC addition brainpool384r1 ran 13 tests all ok
+ECC addition brainpool512r1 ran 13 tests all ok
+ECC addition frp256v1 ran 13 tests all ok
+ECC addition gost_256A ran 13 tests all ok
+ECC addition gost_512A ran 13 tests all ok
+ECC addition numsp512d1 ran 13 tests all ok
+ECC addition secp160k1 ran 13 tests all ok
+ECC addition secp160r1 ran 13 tests all ok
+ECC addition secp160r2 ran 13 tests all ok
+ECC addition secp192k1 ran 13 tests all ok
+ECC addition secp192r1 ran 13 tests all ok
+ECC addition secp224k1 ran 13 tests all ok
+ECC addition secp224r1 ran 13 tests all ok
+ECC addition secp256k1 ran 13 tests all ok
+ECC addition secp256r1 ran 13 tests all ok
+ECC addition secp384r1 ran 13 tests all ok
+ECC addition secp521r1 ran 13 tests all ok
+ECC addition sm2p256v1 ran 13 tests all ok
+ECC addition x962_p192v2 ran 13 tests all ok
+ECC addition x962_p192v3 ran 13 tests all ok
+ECC addition x962_p239v1 ran 13 tests all ok
+ECC addition x962_p239v2 ran 13 tests all ok
+ECC addition x962_p239v3 ran 13 tests all ok
 ecc_randomized:
 ECC randomized brainpool160r1 ran 39 tests all ok
 ECC randomized brainpool192r1 ran 39 tests all ok
@@ -706,18 +969,57 @@ ECC randomized x962_p192v3 ran 39 tests all ok
 ECC randomized x962_p239v1 ran 39 tests all ok
 ECC randomized x962_p239v2 ran 39 tests all ok
 ECC randomized x962_p239v3 ran 39 tests all ok
+ecc_scalar_arith:
+ECC scalar arithmetic brainpool160r1 ran 1927 tests all ok
+ECC scalar arithmetic brainpool192r1 ran 1927 tests all ok
+ECC scalar arithmetic brainpool224r1 ran 1927 tests all ok
+ECC scalar arithmetic brainpool256r1 ran 1927 tests all ok
+ECC scalar arithmetic brainpool320r1 ran 1927 tests all ok
+ECC scalar arithmetic brainpool384r1 ran 1927 tests all ok
+ECC scalar arithmetic brainpool512r1 ran 1927 tests all ok
+ECC scalar arithmetic frp256v1 ran 1927 tests all ok
+ECC scalar arithmetic gost_256A ran 1927 tests all ok
+ECC scalar arithmetic gost_512A ran 1927 tests all ok
+ECC scalar arithmetic numsp512d1 ran 1927 tests all ok
+ECC scalar arithmetic secp160k1 ran 1927 tests all ok
+ECC scalar arithmetic secp160r1 ran 1927 tests all ok
+ECC scalar arithmetic secp160r2 ran 1927 tests all ok
+ECC scalar arithmetic secp192k1 ran 1927 tests all ok
+ECC scalar arithmetic secp192r1 ran 1927 tests all ok
+ECC scalar arithmetic secp224k1 ran 1927 tests all ok
+ECC scalar arithmetic secp224r1 ran 1927 tests all ok
+ECC scalar arithmetic secp256k1 ran 1927 tests all ok
+ECC scalar arithmetic secp256r1 ran 1927 tests all ok
+ECC scalar arithmetic secp384r1 ran 1927 tests all ok
+ECC scalar arithmetic secp521r1 ran 1927 tests all ok
+ECC scalar arithmetic sm2p256v1 ran 1927 tests all ok
+ECC scalar arithmetic x962_p192v2 ran 1927 tests all ok
+ECC scalar arithmetic x962_p192v3 ran 1927 tests all ok
+ECC scalar arithmetic x962_p239v1 ran 1927 tests all ok
+ECC scalar arithmetic x962_p239v2 ran 1927 tests all ok
+ECC scalar arithmetic x962_p239v3 ran 1927 tests all ok
 ecc_unit:
-ECC Unit ran 13 tests all ok
-ECC registration ran 1 tests all ok
+Decode EC_Group with seed ran 2 tests all ok
+ECC registration ran 2 tests all ok
 EC_Group from params ran 1 tests all ok
 EC_Group registering non-match ran 1 tests all ok
+EC_Group registration of standard group with custom OID ran 7 tests all ok
 EC_Group with duplicate group order ran 4 tests all ok
+Mixed Point Arithmetic ran 2 tests all ok
 ecc_varmul:
-ECC var point multiply secp160r1 ran 12 tests all ok
-ECC var point multiply secp160r2 ran 12 tests all ok
-ECC var point multiply secp256r1 ran 12 tests all ok
-ECC var point multiply secp384r1 ran 12 tests all ok
-ECC var point multiply secp521r1 ran 12 tests all ok
+ECC var point multiply brainpool224r1 ran 315 tests all ok
+ECC var point multiply brainpool256r1 ran 315 tests all ok
+ECC var point multiply brainpool384r1 ran 315 tests all ok
+ECC var point multiply brainpool512r1 ran 315 tests all ok
+ECC var point multiply secp160r1 ran 325 tests all ok
+ECC var point multiply secp160r2 ran 325 tests all ok
+ECC var point multiply secp192r1 ran 315 tests all ok
+ECC var point multiply secp224r1 ran 315 tests all ok
+ECC var point multiply secp256k1 ran 315 tests all ok
+ECC var point multiply secp256r1 ran 325 tests all ok
+ECC var point multiply secp384r1 ran 325 tests all ok
+ECC var point multiply secp521r1 ran 325 tests all ok
+ECC var point multiply sm2p256v1 ran 315 tests all ok
 ecdh_all_groups:
 ECDH brainpool160r1 ran 100 tests all ok
 ECDH brainpool192r1 ran 100 tests all ok
@@ -797,7 +1099,7 @@ ECDSA x962_p239v3 ran 384 tests all ok
 ecdsa_invalid:
 ECDSA invalid keys ran 78 tests all ok
 ecdsa_key_recovery:
-ECDSA key recovery ran 8 tests all ok
+ECDSA key recovery ran 6 tests all ok
 ecdsa_keygen:
 ECDSA brainpool160r1 keygen ran 39 tests all ok
 ECDSA brainpool192r1 keygen ran 39 tests all ok
@@ -891,7 +1193,12 @@ ECDSA-secp521r1/SHA-512 signature generation ran 24 tests all ok
 ecdsa_sign_verify_der:
 ECDSA/SHA-512 signature sign/verify using DER format ran 7 tests all ok
 ecdsa_unit:
-ECDSA Unit ran 22 tests all ok
+Check ECDSA signature ran 1 tests all ok
+Check ECDSA signature SHA-1 ran 1 tests all ok
+ECDSA Unit ran 6 tests all ok
+ECDSA encoding ran 196 tests all ok
+ECDSA read_pkcs8 ran 2 tests all ok
+Parse CSCA cert ran 5 tests all ok
 ecdsa_verify:
 ECDSA-secp256k1/Raw signature verification ran 28 tests all ok
 ECDSA-secp256r1/Raw signature verification ran 64 tests all ok
@@ -1036,7 +1343,7 @@ PKCSv15 Decoding ran 47 tests all ok
 entropy:
 Entropy source getentropy ran 9 tests all ok
 Entropy source rdrand ran 9 tests all ok
-Entropy source rdseed ran 1 tests all ok
+Entropy source rdseed ran 9 tests all ok
 Entropy source system_rng ran 9 tests all ok
 extendable_output_functions:
 AES-256/CTR XOF failure modes ran 3 tests all ok
@@ -1058,6 +1365,8 @@ ffi_cert_validation:
 FFI Cert Validation ran 39 tests all ok
 ffi_chacha:
 FFI ChaCha20Poly1305 ran 64 tests all ok
+ffi_cmce:
+FFI Classic McEliece ran 64 tests all ok
 ffi_crl:
 FFI CRL ran 11 tests all ok
 ffi_dh:
@@ -1071,7 +1380,7 @@ FFI ECDH ran 82 tests all ok
 ffi_ecdsa:
 FFI ECDSA ran 80 tests all ok
 ffi_ecdsa_certificate:
-FFI ECDSA cert ran 42 tests all ok
+FFI ECDSA cert ran 41 tests all ok
 ffi_ed25519:
 FFI Ed25519 ran 20 tests all ok
 ffi_ed448:
@@ -1355,6 +1664,8 @@ ml-dsa_kat_8x7_Deterministic:
 ML-DSA-8x7_Deterministic ran 150 tests all ok
 ml-dsa_kat_8x7_Randomized:
 ML-DSA-8x7_Randomized ran 150 tests all ok
+ml_dsa_verify:
+ML-DSA/Pure signature verification ran 1492 tests all ok
 ml_kem_acvp_kat_encap:
 PQC ACVP KAT for ML-KEM Encap with parameters ML-KEM-1024 ran 75 tests all ok
 PQC ACVP KAT for ML-KEM Encap with parameters ML-KEM-512 ran 75 tests all ok
@@ -1376,12 +1687,6 @@ nist_key_wrap:
 NIST keywrap ran 272 tests all ok
 nist_key_wrap_invalid:
 NIST keywrap (invalid inputs) ran 10 tests all ok
-nist_redc:
-NIST P-192 reduction ran 34 tests all ok
-NIST P-224 reduction ran 34 tests all ok
-NIST P-256 reduction ran 34 tests all ok
-NIST P-384 reduction ran 34 tests all ok
-NIST P-521 reduction ran 34 tests all ok
 ocb_lazy_alloc:
 ocb_long:
 OCB long ran 3474 tests all ok
@@ -1398,7 +1703,7 @@ OCSP request check with next_update with max_age ran 12 tests all ok
 OCSP request encoding ran 3 tests all ok
 OCSP request softfail check ran 3 tests all ok
 OCSP response certificate access ran 3 tests all ok
-OCSP response finding signature certificates ran 6 tests all ok
+OCSP response finding signature certificates ran 9 tests all ok
 OCSP response parsing ran 7 tests all ok
 OCSP response with user-defined (additional) responder certificate ran 4 tests all ok
 octetstring:
@@ -1433,55 +1738,6 @@ otp_totp:
 TOTP SHA-1 ran 24 tests all ok
 passhash9:
 passhash9 ran 17 tests all ok
-pcurves_arith:
-Pcurves point operations brainpool256r1 ran 108 tests all ok
-Pcurves point operations brainpool384r1 ran 108 tests all ok
-Pcurves point operations brainpool512r1 ran 108 tests all ok
-Pcurves point operations frp256v1 ran 108 tests all ok
-Pcurves point operations numsp512d1 ran 108 tests all ok
-Pcurves point operations secp192r1 ran 108 tests all ok
-Pcurves point operations secp224r1 ran 108 tests all ok
-Pcurves point operations secp256k1 ran 108 tests all ok
-Pcurves point operations secp256r1 ran 108 tests all ok
-Pcurves point operations secp384r1 ran 108 tests all ok
-Pcurves point operations secp521r1 ran 108 tests all ok
-Pcurves point operations sm2p256v1 ran 108 tests all ok
-pcurves_basemul:
-Pcurves base point multiply brainpool256r1 ran 10 tests all ok
-Pcurves base point multiply brainpool384r1 ran 10 tests all ok
-Pcurves base point multiply brainpool512r1 ran 10 tests all ok
-Pcurves base point multiply frp256v1 ran 260 tests all ok
-Pcurves base point multiply numsp512d1 ran 475 tests all ok
-Pcurves base point multiply secp192r1 ran 260 tests all ok
-Pcurves base point multiply secp224r1 ran 260 tests all ok
-Pcurves base point multiply secp256k1 ran 250 tests all ok
-Pcurves base point multiply secp256r1 ran 260 tests all ok
-Pcurves base point multiply secp384r1 ran 260 tests all ok
-Pcurves base point multiply secp521r1 ran 260 tests all ok
-Pcurves base point multiply sm2p256v1 ran 320 tests all ok
-pcurves_ecdh:
-Pcurves ECDH brainpool256r1 ran 2 tests all ok
-Pcurves ECDH brainpool384r1 ran 2 tests all ok
-Pcurves ECDH brainpool512r1 ran 2 tests all ok
-Pcurves ECDH frp256v1 ran 25 tests all ok
-Pcurves ECDH secp192r1 ran 25 tests all ok
-Pcurves ECDH secp224r1 ran 25 tests all ok
-Pcurves ECDH secp256r1 ran 25 tests all ok
-Pcurves ECDH secp384r1 ran 25 tests all ok
-Pcurves ECDH secp521r1 ran 25 tests all ok
-pcurves_point_enc:
-Pcurves point operations brainpool256r1 ran 500 tests all ok
-Pcurves point operations brainpool384r1 ran 500 tests all ok
-Pcurves point operations brainpool512r1 ran 500 tests all ok
-Pcurves point operations frp256v1 ran 500 tests all ok
-Pcurves point operations numsp512d1 ran 500 tests all ok
-Pcurves point operations secp192r1 ran 500 tests all ok
-Pcurves point operations secp224r1 ran 500 tests all ok
-Pcurves point operations secp256k1 ran 500 tests all ok
-Pcurves point operations secp256r1 ran 500 tests all ok
-Pcurves point operations secp384r1 ran 500 tests all ok
-Pcurves point operations secp521r1 ran 500 tests all ok
-Pcurves point operations sm2p256v1 ran 500 tests all ok
 pem:
 PEM encoding ran 5 tests all ok
 pgp_s2k_iter:
@@ -1496,11 +1752,13 @@ Sign/verify API tests Ed25519/Ed25519ph ran 12 tests all ok
 Sign/verify API tests Ed25519/Pure ran 12 tests all ok
 Sign/verify API tests GOST-34.10(gost_256A)/Raw ran 12 tests all ok
 Sign/verify API tests HSS-LMS(SHA-256,HW(5,8)) ran 12 tests all ok
-Sign/verify API tests RSA(2048)/PSSR(SHA-256) ran 12 tests all ok
+Sign/verify API tests RSA(2048)/PSS(SHA-256) ran 12 tests all ok
 Sign/verify API tests SLH-DSA(SLH-DSA-SHA2-128f) ran 12 tests all ok
 Sign/verify API tests SM2(secp256r1)/ALICE123@YAHOO.COM,Raw ran 12 tests all ok
 Sign/verify API tests SM2(secp256r1)/ALICE123@YAHOO.COM,SM3 ran 12 tests all ok
 Sign/verify API tests XMSS(XMSS-SHA2_10_256)/SHA2_10_256 ran 12 tests all ok
+pk_key_decoding:
+PK Key Decoding ran 1 tests all ok
 pk_pad_emsa_unit:
 EMSA_name_tests ran 9 tests all ok
 pk_workfactor:
@@ -1551,16 +1809,21 @@ roughtime nonce ran 4 tests all ok
 roughtime server_information ran 14 tests all ok
 rsa_blinding:
 RSA blinding ran 450 tests all ok
+rsa_compute_d:
+RSA compute exponent ran 3988 tests all ok
 rsa_decrypt:
 RSA/OAEP(SHA-224,MGF1(SHA-256)) decryption ran 6 tests all ok
 RSA/OAEP(SHA-256,MGF1(SHA-1)) decryption ran 6 tests all ok
 RSA/OAEP(SHA-256,MGF1(SHA-512)) decryption ran 6 tests all ok
 RSA/OAEP(SHA-512,MGF1(SHA-1)) decryption ran 6 tests all ok
 RSA/OAEP(SHA-512,MGF1(SHA-512),TCPA) decryption ran 1 tests all ok
+rsa_decrypt_or_random:
+RSA decrypt_or_random OAEP(SHA-256) ran 658 tests all ok
+RSA decrypt_or_random PKCS1v15 ran 658 tests all ok
 rsa_encrypt:
 RSA/EME-PKCS1-v1_5 encryption ran 60 tests all ok
 RSA/OAEP(SHA-1) encryption ran 228 tests all ok
-RSA/Raw encryption ran 825 tests all ok
+RSA/Raw encryption ran 1538 tests all ok
 rsa_kem:
 RSA/KDF1-18033(SHA-1) KEM ran 16 tests all ok
 RSA/KDF1-18033(SHA-256) KEM ran 16 tests all ok
@@ -1576,67 +1839,78 @@ RSA keygen with bad RNG ran 2 tests all ok
 rsa_keygen_stability:
 RSA 1024 keygen stability ran 1 tests all ok
 rsa_pss:
-RSA/PSSR(SHA-224,MGF1,15) signature generation ran 120 tests all ok
-RSA/PSSR(SHA-224,MGF1,28) signature generation ran 120 tests all ok
-RSA/PSSR(SHA-256,MGF1,20) signature generation ran 120 tests all ok
-RSA/PSSR(SHA-256,MGF1,32) signature generation ran 120 tests all ok
-RSA/PSSR(SHA-384,MGF1,25) signature generation ran 120 tests all ok
-RSA/PSSR(SHA-384,MGF1,48) signature generation ran 120 tests all ok
-RSA/PSSR(SHA-512,MGF1,30) signature generation ran 120 tests all ok
-RSA/PSSR(SHA-512,MGF1,62) signature generation ran 120 tests all ok
+RSA/PSS(SHA-224,MGF1,15) signature generation ran 120 tests all ok
+RSA/PSS(SHA-224,MGF1,28) signature generation ran 120 tests all ok
+RSA/PSS(SHA-256,MGF1,20) signature generation ran 120 tests all ok
+RSA/PSS(SHA-256,MGF1,32) signature generation ran 120 tests all ok
+RSA/PSS(SHA-3(224),MGF1,0) signature generation ran 12 tests all ok
+RSA/PSS(SHA-3(224),MGF1,17) signature generation ran 12 tests all ok
+RSA/PSS(SHA-3(256),MGF1,0) signature generation ran 12 tests all ok
+RSA/PSS(SHA-3(256),MGF1,17) signature generation ran 12 tests all ok
+RSA/PSS(SHA-3(384),MGF1,0) signature generation ran 12 tests all ok
+RSA/PSS(SHA-3(384),MGF1,17) signature generation ran 12 tests all ok
+RSA/PSS(SHA-3(512),MGF1,0) signature generation ran 12 tests all ok
+RSA/PSS(SHA-3(512),MGF1,17) signature generation ran 12 tests all ok
+RSA/PSS(SHA-384,MGF1,25) signature generation ran 120 tests all ok
+RSA/PSS(SHA-384,MGF1,48) signature generation ran 120 tests all ok
+RSA/PSS(SHA-512,MGF1,30) signature generation ran 120 tests all ok
+RSA/PSS(SHA-512,MGF1,62) signature generation ran 120 tests all ok
 rsa_pss_raw:
-RSA/PSSR_Raw(SHA-224,MGF1,15) signature generation ran 120 tests all ok
-RSA/PSSR_Raw(SHA-224,MGF1,28) signature generation ran 120 tests all ok
-RSA/PSSR_Raw(SHA-256,MGF1,20) signature generation ran 120 tests all ok
-RSA/PSSR_Raw(SHA-256,MGF1,32) signature generation ran 120 tests all ok
-RSA/PSSR_Raw(SHA-384,MGF1,25) signature generation ran 120 tests all ok
-RSA/PSSR_Raw(SHA-384,MGF1,48) signature generation ran 120 tests all ok
-RSA/PSSR_Raw(SHA-512,MGF1,30) signature generation ran 120 tests all ok
-RSA/PSSR_Raw(SHA-512,MGF1,62) signature generation ran 120 tests all ok
+RSA/PSS_Raw(SHA-224,MGF1,15) signature generation ran 120 tests all ok
+RSA/PSS_Raw(SHA-224,MGF1,28) signature generation ran 120 tests all ok
+RSA/PSS_Raw(SHA-256,MGF1,20) signature generation ran 120 tests all ok
+RSA/PSS_Raw(SHA-256,MGF1,32) signature generation ran 120 tests all ok
+RSA/PSS_Raw(SHA-384,MGF1,25) signature generation ran 120 tests all ok
+RSA/PSS_Raw(SHA-384,MGF1,48) signature generation ran 120 tests all ok
+RSA/PSS_Raw(SHA-512,MGF1,30) signature generation ran 120 tests all ok
+RSA/PSS_Raw(SHA-512,MGF1,62) signature generation ran 120 tests all ok
 rsa_sign:
-RSA/EMSA2(RIPEMD-160) signature generation ran 48 tests all ok
-RSA/EMSA2(SHA-1) signature generation ran 24 tests all ok
-RSA/EMSA2(SHA-224) signature generation ran 48 tests all ok
-RSA/EMSA2(SHA-256) signature generation ran 48 tests all ok
-RSA/EMSA2(SHA-384) signature generation ran 48 tests all ok
-RSA/EMSA2(SHA-512) signature generation ran 48 tests all ok
-RSA/EMSA2(Whirlpool) signature generation ran 48 tests all ok
-RSA/EMSA3(MD5) signature generation ran 108 tests all ok
-RSA/EMSA3(RIPEMD-160) signature generation ran 48 tests all ok
-RSA/EMSA3(Raw) signature generation ran 60 tests all ok
-RSA/EMSA3(Raw,MD5) signature generation ran 12 tests all ok
-RSA/EMSA3(SHA-224) signature generation ran 36 tests all ok
-RSA/EMSA3(SHA-256) signature generation ran 72 tests all ok
-RSA/EMSA3(SHA-384) signature generation ran 48 tests all ok
-RSA/EMSA3(SHA-512) signature generation ran 48 tests all ok
-RSA/EMSA4(SHA-1) signature generation ran 360 tests all ok
 RSA/ISO_9796_DS2(RIPEMD-160) signature generation ran 12 tests all ok
 RSA/ISO_9796_DS2(SHA-1,imp) signature generation ran 12 tests all ok
 RSA/ISO_9796_DS3(SHA-1,exp) signature generation ran 12 tests all ok
 RSA/ISO_9796_DS3(SHA-1,imp) signature generation ran 12 tests all ok
+RSA/PKCS1v15(MD5) signature generation ran 108 tests all ok
+RSA/PKCS1v15(RIPEMD-160) signature generation ran 48 tests all ok
+RSA/PKCS1v15(Raw) signature generation ran 60 tests all ok
+RSA/PKCS1v15(Raw,MD5) signature generation ran 12 tests all ok
 RSA/PKCS1v15(SHA-1) signature generation ran 120 tests all ok
-RSA/Raw signature generation ran 12 tests all ok
+RSA/PKCS1v15(SHA-224) signature generation ran 36 tests all ok
+RSA/PKCS1v15(SHA-256) signature generation ran 72 tests all ok
+RSA/PKCS1v15(SHA-384) signature generation ran 48 tests all ok
+RSA/PKCS1v15(SHA-512) signature generation ran 48 tests all ok
+RSA/PSS(SHA-1) signature generation ran 360 tests all ok
+RSA/Raw signature generation ran 792 tests all ok
+RSA/X9.31(RIPEMD-160) signature generation ran 48 tests all ok
+RSA/X9.31(SHA-1) signature generation ran 24 tests all ok
+RSA/X9.31(SHA-224) signature generation ran 48 tests all ok
+RSA/X9.31(SHA-256) signature generation ran 48 tests all ok
+RSA/X9.31(SHA-384) signature generation ran 48 tests all ok
+RSA/X9.31(SHA-512) signature generation ran 48 tests all ok
+RSA/X9.31(Whirlpool) signature generation ran 48 tests all ok
 rsa_verify:
-RSA/EMSA4(SHA-1) signature verification ran 112 tests all ok
-RSA/EMSA_PKCS1(SHA-256) signature verification ran 8 tests all ok
 RSA/ISO_9796_DS2(RIPEMD-160,exp) signature verification ran 8 tests all ok
 RSA/ISO_9796_DS2(RIPEMD-160,imp) signature verification ran 8 tests all ok
 RSA/ISO_9796_DS3(RIPEMD-160,imp) signature verification ran 8 tests all ok
 RSA/ISO_9796_DS3(SHA-1,exp) signature verification ran 8 tests all ok
-RSA/PSSR(RIPEMD-160) signature verification ran 32 tests all ok
-RSA/PSSR(SHA-1) signature verification ran 552 tests all ok
-RSA/PSSR(SHA-224) signature verification ran 104 tests all ok
-RSA/PSSR(SHA-256) signature verification ran 104 tests all ok
-RSA/PSSR(SHA-384) signature verification ran 72 tests all ok
-RSA/PSSR(SHA-512) signature verification ran 72 tests all ok
-RSA/Raw signature verification ran 8 tests all ok
+RSA/PKCS1v15(SHA-256) signature verification ran 8 tests all ok
+RSA/PSS(RIPEMD-160) signature verification ran 32 tests all ok
+RSA/PSS(SHA-1) signature verification ran 664 tests all ok
+RSA/PSS(SHA-224) signature verification ran 104 tests all ok
+RSA/PSS(SHA-256) signature verification ran 104 tests all ok
+RSA/PSS(SHA-3(224)) signature verification ran 8 tests all ok
+RSA/PSS(SHA-3(256)) signature verification ran 8 tests all ok
+RSA/PSS(SHA-3(384)) signature verification ran 8 tests all ok
+RSA/PSS(SHA-3(512)) signature verification ran 8 tests all ok
+RSA/PSS(SHA-384) signature verification ran 72 tests all ok
+RSA/PSS(SHA-512) signature verification ran 72 tests all ok
+RSA/Raw signature verification ran 528 tests all ok
 rsa_verify_invalid:
-RSA/EMSA4(SHA-1) verify invalid signature ran 45 tests all ok
-RSA/EMSA4(SHA-224) verify invalid signature ran 45 tests all ok
-RSA/EMSA4(SHA-256) verify invalid signature ran 45 tests all ok
-RSA/EMSA4(SHA-384) verify invalid signature ran 45 tests all ok
-RSA/EMSA4(SHA-512) verify invalid signature ran 45 tests all ok
-RSA/EMSA_PKCS1(SHA-256) verify invalid signature ran 141 tests all ok
+RSA/PKCS1v15(SHA-256) verify invalid signature ran 141 tests all ok
+RSA/PSS(SHA-1) verify invalid signature ran 45 tests all ok
+RSA/PSS(SHA-224) verify invalid signature ran 45 tests all ok
+RSA/PSS(SHA-256) verify invalid signature ran 45 tests all ok
+RSA/PSS(SHA-384) verify invalid signature ran 45 tests all ok
+RSA/PSS(SHA-512) verify invalid signature ran 45 tests all ok
 scoped_cleanup:
 cleanup isn't called after disengaging ran 1 tests all ok
 leaving a function, results in cleanup ran 3 tests all ok
@@ -1726,6 +2000,7 @@ arithmetics with Strong<> ran 18 tests all ok
 behaves like a standard container ran 7 tests all ok
 binds to a std::span<> ran 1 tests all ok
 binds to a std::span<> ran 1 tests all ok
+bounds-checked accessors are exposed opportunistically ran 6 tests all ok
 byte-container strong types can be randomly generated ran 3 tests all ok
 comparison operators with POD are always allowed ran 16 tests all ok
 comparison operators with Strong<> ran 8 tests all ok
@@ -1741,6 +2016,7 @@ is_strong_type ran 6 tests all ok
 std::string container ran 1 tests all ok
 std::string container ran 1 tests all ok
 strong types are sortable ran 4 tests all ok
+subscript accessors are exposed ran 3 tests all ok
 unwrapping a non-strong type does not alter return reference type ran 12 tests all ok
 unwrapping a strong type wisely chooses return reference type ran 12 tests all ok
 value retrieval ran 2 tests all ok
@@ -2046,12 +2322,12 @@ Client aborts in tls_session_established with internal_error: TLS v1.2 ran 12 te
 DTLS v1.2 3DES ECDH ran 112 tests all ok
 DTLS v1.2 3DES RSA ran 112 tests all ok
 DTLS v1.2 AES-128 DH ran 55 tests all ok
-DTLS v1.2 AES-128 ECDH ran 112 tests all ok
-DTLS v1.2 AES-128 RSA ran 112 tests all ok
+DTLS v1.2 AES-128 ECDH ran 110 tests all ok
+DTLS v1.2 AES-128 RSA ran 111 tests all ok
 DTLS v1.2 AES-128/CCM PSK ran 56 tests all ok
-DTLS v1.2 AES-128/CCM-8 PSK ran 55 tests all ok
+DTLS v1.2 AES-128/CCM-8 PSK ran 56 tests all ok
 DTLS v1.2 AES-128/GCM ECDH ran 56 tests all ok
-DTLS v1.2 AES-128/GCM ECDH RSA ran 56 tests all ok
+DTLS v1.2 AES-128/GCM ECDH RSA ran 54 tests all ok
 DTLS v1.2 AES-128/GCM ECDH no OCSP ran 54 tests all ok
 DTLS v1.2 AES-128/GCM ECDHE_PSK ran 56 tests all ok
 DTLS v1.2 AES-128/GCM FFDHE-2048 ran 55 tests all ok
@@ -2063,8 +2339,8 @@ DTLS v1.2 AES-128/GCM x25519 ran 56 tests all ok
 DTLS v1.2 AES-256/GCM client certs ran 62 tests all ok
 DTLS v1.2 AES-256/GCM numsp256d1 ran 16 tests all ok
 DTLS v1.2 AES-256/GCM p521 ran 56 tests all ok
-DTLS v1.2 AES-256/OCB ECDH ran 55 tests all ok
-DTLS v1.2 ARIA/GCM ECDH ran 56 tests all ok
+DTLS v1.2 AES-256/OCB ECDH ran 56 tests all ok
+DTLS v1.2 ARIA/GCM ECDH ran 55 tests all ok
 DTLS v1.2 Camellia-128/GCM ECDH ran 56 tests all ok
 DTLS v1.2 ChaCha20Poly1305 ECDH ran 56 tests all ok
 Server aborts in tls_session_established with access_denied: DTLS v1.2 ran 12 tests all ok
@@ -2079,20 +2355,20 @@ Server aborts in tls_session_established with internal_error: DTLS v1.2 ran 12 t
 Server aborts in tls_session_established with internal_error: DTLS v1.2 ran 12 tests all ok
 Server aborts in tls_session_established with internal_error: TLS v1.2 ran 10 tests all ok
 Server aborts in tls_session_established with internal_error: TLS v1.2 ran 10 tests all ok
-TLS v1.2 3DES ECDH ran 104 tests all ok
+TLS v1.2 3DES ECDH ran 103 tests all ok
 TLS v1.2 3DES RSA ran 104 tests all ok
 TLS v1.2 AES-128 DH ran 51 tests all ok
 TLS v1.2 AES-128 ECDH ran 102 tests all ok
-TLS v1.2 AES-128 RSA ran 103 tests all ok
-TLS v1.2 AES-128/CCM PSK ran 51 tests all ok
+TLS v1.2 AES-128 RSA ran 102 tests all ok
+TLS v1.2 AES-128/CCM PSK ran 52 tests all ok
 TLS v1.2 AES-128/CCM-8 PSK ran 52 tests all ok
-TLS v1.2 AES-128/GCM ECDH ran 50 tests all ok
-TLS v1.2 AES-128/GCM ECDH RSA ran 50 tests all ok
+TLS v1.2 AES-128/GCM ECDH ran 52 tests all ok
+TLS v1.2 AES-128/GCM ECDH RSA ran 52 tests all ok
 TLS v1.2 AES-128/GCM ECDH no OCSP ran 52 tests all ok
 TLS v1.2 AES-128/GCM ECDHE_PSK ran 52 tests all ok
 TLS v1.2 AES-128/GCM FFDHE-2048 ran 51 tests all ok
-TLS v1.2 AES-128/GCM PSK ran 51 tests all ok
-TLS v1.2 AES-128/GCM RSA ran 51 tests all ok
+TLS v1.2 AES-128/GCM PSK ran 52 tests all ok
+TLS v1.2 AES-128/GCM RSA ran 52 tests all ok
 TLS v1.2 AES-128/GCM bp256r1 ran 52 tests all ok
 TLS v1.2 AES-128/GCM point compression ran 52 tests all ok
 TLS v1.2 AES-128/GCM x25519 ran 52 tests all ok
@@ -2101,16 +2377,17 @@ TLS v1.2 AES-256/GCM numsp256d1 ran 12 tests all ok
 TLS v1.2 AES-256/GCM p521 ran 52 tests all ok
 TLS v1.2 AES-256/OCB ECDH ran 51 tests all ok
 TLS v1.2 ARIA/GCM ECDH ran 52 tests all ok
-TLS v1.2 Camellia-128/GCM ECDH ran 51 tests all ok
-TLS v1.2 ChaCha20Poly1305 ECDH ran 52 tests all ok
+TLS v1.2 Camellia-128/GCM ECDH ran 52 tests all ok
+TLS v1.2 ChaCha20Poly1305 ECDH ran 51 tests all ok
 TLS v1.2 Strict policy ran 52 tests all ok
 TLS v1.2 Suite B ran 52 tests all ok
 uri:
-uri constructors ran 3 tests all ok
-uri factories ran 53 tests all ok
-uri to_string ran 5 tests all ok
+URI constructors ran 3 tests all ok
+URI parsing ran 37 tests all ok
+URI parsing invalid ran 7 tests all ok
+URI to_string ran 4 tests all ok
 util_dates:
-Date parsing ran 81 tests all ok
+Date parsing ran 117 tests all ok
 calendar_point::to_string ran 1 tests all ok
 calendar_point::to_string ran 1 tests all ok
 util_read_kv:
@@ -2190,13 +2467,14 @@ X509 Extensions ran 204 tests all ok
 X509 Extensions API ran 16 tests all ok
 X509 GOST-2012 certificates ran 1 tests all ok
 X509 Hashes ran 240 tests all ok
-X509 Padding Config ran 10 tests all ok
+X509 Padding Config ran 11 tests all ok
 X509 RSA-PSS certificate ran 1 tests all ok
 X509 Self Issued ran 12 tests all ok
 X509 TNAuthList decode ran 14 tests all ok
 X509 Time ran 75 tests all ok
 X509 Unit ran 348 tests all ok
 X509 Usage ran 122 tests all ok
+X509 Valid Constraints ClassicMcEliece ran 10 tests all ok
 X509 Valid Constraints DH ran 12 tests all ok
 X509 Valid Constraints DSA ran 12 tests all ok
 X509 Valid Constraints Dilithium ran 12 tests all ok
@@ -2277,4 +2555,4 @@ XMSS/SHAKE_20_256 verify invalid signature ran 28 tests all ok
 XMSS/SHAKE_20_512 verify invalid signature ran 28 tests all ok
 zfec:
 ZFEC encoding/decoding ran 3483 tests all ok
-Tests complete ran 2829879 tests all tests ok
+Tests complete ran 2990112 tests all tests ok
